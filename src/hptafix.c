@@ -202,7 +202,7 @@ void autoPassive()
                                           }
 
                                   /* pause areas with one link alive while others are paused */
-                                  if (config->autoAreaPause)
+                                  if (robot->autoAreaPause)
                                       rc += pauseArea(ACT_PAUSE, config->links[i], NULL);
 #ifdef DO_PERL
                                   /* update perl vars */
