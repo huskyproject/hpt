@@ -1,7 +1,7 @@
 ##################################################################
 # Husky config for Node system
 
-Version		0.15
+Version		1.4
 
 Name		Holiday System
 Sysop		Pavel Andreew
@@ -36,7 +36,7 @@ Pack		zip zip -9 -j -q $a $f
 Unpack  "rar e -y  $a $p"   0 52617221
 #Pack  rar rar a -std -ep $a $f
 
-Unpack  "unarj e $a $p" 0 60ea
+Unpack  "cd $p; unarj e $a" 0 60ea
 #Pack  arj arj a -+ -e -y $a $f
 
 #SeparateBundles
@@ -68,4 +68,4 @@ CarbonCopy PAVEL.PERSONAL
 ############################################################################
 # If no routing in config, HPT don't touch outgoing netmail (only receive)
 #route normal 2:5080/80 *
-#route hold 2:5080/59.*
+#route hold no-route 2:5080/59.*
