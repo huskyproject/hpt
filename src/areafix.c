@@ -2080,7 +2080,10 @@ void autoPassive()
 	      while ((line = readLine(f)) != NULL) {
 		  line = trimLine(line);
 		  path = line;
-		  if (!isarcmail(path)) continue;
+		  if (!isarcmail(path)) {
+		      nfree(line);
+		      continue;
+		  }
 		  if (*path && (*path == '^' || *path == '#')) {
 		      path++;
 		      // set Pause if files stored only in outbound
@@ -2116,13 +2119,13 @@ void autoPassive()
 
 				  // unsubscribe link from areas without non-paused links
 				  unsubscribeFromPausedEchoAreas(&(config->links[i]));
-			      }
+			      } // end changepause
 			      nfree(line);
-			      fclose(f);
+			      //fclose(f); file closed after endwhile
 			      break;
 			  }
 		      } /* endif */
-		  } /* endif */
+		  } /* endif ^# */
 		  nfree(line);
 	      } /* endwhile */
 	      fclose(f);
