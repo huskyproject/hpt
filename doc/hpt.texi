@@ -289,6 +289,7 @@ FIDOCONFIG about location of config file and keywords ideology.
 * NoProcessBundles::            no unpack arcmail bundles
 * Origin::                      add specified origin to hpt messages
 * Pack::                        definition for packer
+* PackNetMailOnScan::           pack netmail found in EchoTossLog file when scan
 * ProcessPkt::                  execute string before tossing pkts
 * PublicGroup::                 this is a list of groups for public echo acess
 * Remap::                       remap mail to other address
@@ -835,7 +836,7 @@ areafix (if no areafixOrigin defined).
 
 This statement cannot be repeated.
 
-@node Pack, ProcessPkt, Origin, Keywords
+@node Pack, PackNetMailOnScan, Origin, Keywords
 @subsection Pack
 @findex Pack
 @table @asis
@@ -855,7 +856,24 @@ $f will be replaced by the file which should be packed into the archive.
 
 This statement can be repeated.
 
-@node ProcessPkt, PublicGroup, Pack, Keywords
+@node PackNetMailOnScan, ProcessPkt, Pack, Keywords
+@subsection PackNetMailOnScan
+@findex PackNetMailOnScan
+@table @asis
+@item Syntax:
+@code{PackNetMailOnScan <bool>}
+@item Example:
+@code{PackNetMailOnScan off}
+@end table
+
+When PackNetMailOnScan is "on" (default) hpt packs netmail when doing
+"hpt scan" and netmail area is found in EchoTossLog file. When it is
+"off" hpt leaves netmail area(s) in EchoTossLog file until "hpt pack" is
+invoked.
+
+This statement can be repeated (overwrides old setting).
+
+@node ProcessPkt, PublicGroup, PackNetMailOnScan, Keywords
 @subsection ProcessPkt
 @findex ProcessPkt
 @table @asis

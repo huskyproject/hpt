@@ -698,7 +698,7 @@ void scanExport(int type, char *str) {
    int i;
    FILE *f = NULL;
    FILE *ftmp = NULL;
-   char *tmplogname;
+   char *tmplogname = NULL;
    char *line;
    struct stat st;
    
@@ -712,11 +712,11 @@ void scanExport(int type, char *str) {
    if (type & SCN_ALL) {
        if (config->echotosslog)
        {
-           tmplogname = (char *) smalloc(strlen(config->echotosslog)+7);
-           // assuming we have max. 5 digits pid + '.' and '\0'
-           sprintf(tmplogname, "%s.%u", config->echotosslog, getpid());
            f = fopen(config->echotosslog, "r");
-	   if (f != NULL) {
+	   if (f != NULL && config->packNetMailOnScan == 0) {
+               tmplogname = (char *) smalloc(strlen(config->echotosslog)+7);
+               // assuming we have max. 5 digits pid + '.' and '\0'
+               sprintf(tmplogname, "%s.%u", config->echotosslog, getpid());
                ftmp = fopen(tmplogname, "w");
                if (ftmp == NULL) {
                    w_log('9', "Can't open file %s for writing : %s", tmplogname, strerror(errno));
@@ -773,17 +773,21 @@ void scanExport(int type, char *str) {
 	    if (*line && line[strlen(line)-1] == '\r')
 	       line[strlen(line)-1] = '\0';  /* fix for DOSish echotoss.log */
             striptwhite(line);
-            /* exclude NetmailAreas in echoTossLogFile */
-            if (type & SCN_ECHOMAIL) {
-                if (getNetMailArea(config, line) == NULL)
-                    scanByName(line);
-                else
-                    fprintf(ftmp, "%s\n", line);
+            if (!ftmp) { // the same as if(config->packNetMailOnScan) {
+                scanByName(line);
             } else {
-                if (getNetMailArea(config, line) != NULL)
-                    scanByName(line);
-                else
-                    fprintf(ftmp, "%s\n", line);
+                /* exclude NetmailAreas in echoTossLogFile */
+                if (type & SCN_ECHOMAIL) {
+                    if (getNetMailArea(config, line) == NULL)
+                        scanByName(line);
+                    else
+                        fprintf(ftmp, "%s\n", line);
+                } else {
+                    if (getNetMailArea(config, line) != NULL)
+                        scanByName(line);
+                    else
+                        fprintf(ftmp, "%s\n", line);
+                }
             }
             nfree(line);
          }
@@ -793,26 +797,28 @@ void scanExport(int type, char *str) {
    if (f != NULL) { 
        fclose(f);
        if (ftmp != NULL) fclose(ftmp);
-       stat(tmplogname, &st);
+       st.st_size = 0;
+       if (tmplogname) stat(tmplogname, &st);
        if (type & SCN_ALL) {
            if (st.st_size == 0) { // all entries was processed
                remove(config->echotosslog);
-               remove(tmplogname);
+               if (tmplogname) remove(tmplogname);
            } else { // we still have areas
                remove(config->echotosslog);
                rename(tmplogname, config->echotosslog);
            }
-       } else {
-       if (type & SCN_FILE)
+       } 
+       else if (type & SCN_FILE) {
            if (st.st_size == 0) {
                remove(str);
-               remove(tmplogname);
-           } else {
+               if (tmplogname) remove(tmplogname);
+    	   } else {
                remove(str);
                rename(tmplogname, str);
            }
        }
    };
+   if (tmplogname) nfree (tmplogname);
 
 //   if (type & SCN_ECHOMAIL) arcmail(NULL);
 //   if (type & SCN_ECHOMAIL)
