@@ -103,7 +103,8 @@ void print_help(void) {
     fprintf(stdout,"              -f flags(s)\n");
     fprintf(stdout,"                 flags  to  set  to the posted msg. possible ones\n");
     fprintf(stdout,"                 are: pvt, crash, read, sent, att,  fwd,  orphan,\n");
-    fprintf(stdout,"                 k/s, loc, hld, xx2,  frq, rrq, cpt, arq, urq;\n");
+    fprintf(stdout,"                 k/s, loc, hld, xx2,  frq, rrq, cpt, arq, urq,\n");
+    fprintf(stdout,"                 kfs, tfs, dir, imm, cfm, npd;\n");
     fprintf(stdout,"                 use it without trailing brackets like this:  pvt\n");
     fprintf(stdout,"                 loc k/s\n\n");
     fprintf(stdout,"              -x export message to echo links\n\n");
@@ -115,9 +116,20 @@ void print_help(void) {
     exit(EX_OK);
 }
 
+static char *extattr(char *line)
+{
+    static char *eattr[] = { "KFS", "TFS", "DIR", "IMM", "CFM", "NPD" };
+    int i;
+
+    for (i=0; i<sizeof(eattr)/sizeof(eattr[0]); i++)
+        if (stricmp(line, eattr[i]) == 0)
+            return eattr[i];
+    return NULL;
+}
+
 void post(int c, unsigned int *n, char *params[])
 {
-    char *area = NULL, *tearl = NULL, *origin = NULL;
+    char *area = NULL, *tearl = NULL, *origin = NULL, *flags = NULL;
     FILE *text = NULL;
     FILE *tmpfile = NULL;
     char *tmpname = NULL;
@@ -192,9 +204,15 @@ void post(int c, unsigned int *n, char *params[])
                         break;
                     }; break;
                     case 'f':    // flags
-                        for ((*n)++; params[*n]!=NULL && (attr=str2attr(params[*n]))!=-1L;) {
-                            msg.attributes |= attr;
-                            (*n)++;
+                        (*n)++;
+                        for ((*n)++; params[*n]!=NULL; (*n)++) {
+                            char *p;
+                            if ((attr=str2attr(params[*n])) != -1L)
+                                msg.attributes |= attr;
+                            else if ((p=extattr(params[*n])) != NULL)
+                                xscatprintf(&flags, " %s", p);
+                            else
+                                break;
                         }
                         (*n)--;
                         break;
@@ -378,6 +396,7 @@ void post(int c, unsigned int *n, char *params[])
             if(!msg.netMail) memset(&msg.destAddr, '\0', sizeof(s_addr));
 
             msg.text = createKludges(config->disableTID,area, &msg.origAddr, &msg.destAddr,versionStr);
+            if (flags) xscatprintf(&msg.text, "\001 FLAGS%s\r", flags);
 
             if( uuepost )
             {
