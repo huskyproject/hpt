@@ -298,6 +298,10 @@ e_BadmailReasons autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAd
     if ( !isLinkOfArea(creatingLink,area) ) {
 	xscatprintf(&buff, " %s", hisaddr);
 	Addlink(config, creatingLink, area);
+        if (config->createAddUplink) {
+          xstrcat(&buff, " -def");
+          if (area) area->downlinks[area->downlinkCount-1]->defLink = 1;
+        }
     }
 
     /*  subscribe downlinks if present */

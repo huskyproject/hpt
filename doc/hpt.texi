@@ -346,6 +346,7 @@ define links and areas before any carbone definitions
 * AutoPassive::                 set pause for links who don't poll our system
 * BeforePack::                  execute string before pack pkt files
 * BundleNameStyle::             style of filenames of arcmail bundles
+* CreateAddUplink::             set default uplink for auto-created areas
 * CreateAreasCase::             case of autocreated areas names
 * CreateFwdNonPass::            autocreate non-passthru echoes in fwd.req. operations
 * DefArcmailSize::		default size for arcmail bundle
@@ -714,7 +715,7 @@ external utility.
 
 This statement cannot be repeated.
 
-@node BundleNameStyle, CreateAreasCase, BeforePack, Keywords
+@node BundleNameStyle, CreateAddUplink, BeforePack, Keywords
 @subsection BundleNameStyle
 @findex BundleNameStyle
 @table @asis
@@ -763,7 +764,23 @@ This statement cannot be repeated.
 
 See also @xref{LinkBundleNameStyle}.
 
-@node CreateAreasCase, CreateFwdNonPass, BundleNameStyle, Keywords
+@node CreateAddUplink, CreateAreasCase, BundleNameStyle, Keywords
+@subsection CreateAddUplink
+@findex CreateAddUplink
+@table @asis
+@item Syntax:
+@code{createAddUplink <bool>}
+@item Example:
+@code{createAddUplink}
+@end table
+
+If enabled, the link from which an area is auto-created is marked as
+the default uplink for this area. By default, turned off. Note that you
+can set similar behaviour via autoAreaCreateDefaults for the link.
+
+This statement cannot be repeated.
+
+@node CreateAreasCase, CreateFwdNonPass, CreateAddUplink, Keywords
 @subsection CreateAreasCase
 @findex CreateAreasCase
 @table @asis
