@@ -534,7 +534,7 @@ void scan(void)
    UINT i;
    FILE *f = NULL;
    char *line, buff[80];
-   s_area *area;
+   s_area *area = NULL;
 
    // load recoding tables
    if (config->outtab != NULL) getctab(outtab, config->outtab);
@@ -565,12 +565,12 @@ void scan(void)
 
          if (line != NULL) {
 			if (stricmp(config->netMailArea.areaName,line)==0) cmPack=1;
-            area = getArea(config, line);
+            else area = getArea(config, line);
             if (area == &(config->badArea)) {
                sprintf(buff, "Area \'%s\' is not found -> Scanning stop.", line);
                writeLogEntry(hpt_log, '3', buff);
             } else {
-               scanEMArea(area);
+               if (area) scanEMArea(area);
             } /* endif */
             free(line);
          }
