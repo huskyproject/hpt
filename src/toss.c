@@ -766,7 +766,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	(*path)[*pathCount].node = (UINT16) echo->useAka->node;
 	(*pathCount) = 1;
     }
-	
+
 #ifdef DEBUG_HPT
     for (i=0; i< *pathCount;i++) printf("%u/%u ", (*path)[i].net, (*path)[i].node);
 #endif
@@ -812,10 +812,10 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 
     // add msg to the pkt's of the downlinks
     for (i = 0; i<echo->downlinkCount; i++) {
-		
+
 	// no link at this index -> break;
 	if (newLinks[i] == NULL) break;
-		
+
 	// check packet size
 	if (newLinks[i]->link->pktFile != NULL && newLinks[i]->link->pktSize != 0) {
 	    len = fsize(newLinks[i]->link->pktFile);
@@ -824,21 +824,21 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		nfree(newLinks[i]->link->packFile);
 	    }
 	}
-		
+
 	// create pktfile if necessary
 	if (newLinks[i]->link->pktFile == NULL) {
 	    // pktFile does not exist
 	    if ( createTempPktFileName(newLinks[i]->link) )
 		exit_hpt("Could not create new pkt!",1);
 	}
-		
+
 	makePktHeader(NULL, &header);
 	header.origAddr = *(newLinks[i]->link->ourAka);
 	header.destAddr = newLinks[i]->link->hisAka;
 	if (newLinks[i]->link->pktPwd != NULL)
 	    strcpy(header.pktPassword, newLinks[i]->link->pktPwd);
 	pkt = openPktForAppending(newLinks[i]->link->pktFile, &header);
-		
+
 	// an echomail msg must be adressed to the link
 	msg->destAddr = header.destAddr;
 	// .. and must come from us

@@ -335,6 +335,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    s_link      *link, *virtualLink;
    char        freeVirtualLink = 0;
    char        *flags=NULL;
+   int         r, arcNetmail;
 
    memset(&msg,'\0',sizeof(s_message));
    convertMsgHeader(*xmsg, &msg);
@@ -426,10 +427,26 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    // no route
    if (prio!=NORMAL || (xmsg->attr & MSGFRQ)==MSGFRQ) {
 	   // direct, crash, immediate, hold messages
-	   if (createOutboundFileName(virtualLink, prio, PKT) == 0) {
+           if (virtualLink->arcNetmail &&
+               prio == cvtFlavour2Prio(virtualLink->echoMailFlavour)) {
+                   arcNetmail = 1;
+                   if (virtualLink->pktFile && virtualLink->pktSize)
+                        if (fsize(virtualLink->pktFile) >= virtualLink->pktSize * 1024L) {
+                             nfree(virtualLink->pktFile);
+                             nfree(virtualLink->packFile);
+                        }
+                   if (virtualLink->pktFile == NULL)
+                        r = createTempPktFileName(virtualLink);
+                   else
+                        r = 0;
+           } else {
+                   arcNetmail = 0;
+                   r = createOutboundFileName(virtualLink, prio, PKT);
+           }
+	   if (r == 0) {
 		   addViaToMsg(&msg, msg.origAddr);
 		   makePktHeader(virtualLink, &header);
-		   pkt = openPktForAppending(virtualLink->floFile, &header);
+		   pkt = openPktForAppending(arcNetmail ? virtualLink->pktFile : virtualLink->floFile, &header);
 		   writeMsgToPkt(pkt, msg);
 		   closeCreatedPkt(pkt);
 		   if (prio==CRASH) w_log('7', "Crash-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
@@ -437,37 +454,58 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   else if (prio==DIRECT) w_log('7', "Direct-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 		   else if (prio==IMMEDIATE) w_log('7', "Immediate-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 		   else if (prio==NORMAL) w_log('7', "Normal-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   remove(virtualLink->bsyFile);
-		   nfree(virtualLink->bsyFile);
+                   if (!arcNetmail) {
+		         remove(virtualLink->bsyFile);
+		         nfree(virtualLink->bsyFile);
+		         nfree(virtualLink->floFile);
+                   }
 		   // mark Mail as sent
 		   xmsg->attr |= MSGSENT;
 		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-		   nfree(virtualLink->floFile);
 	   }
    } else {
-       // no crash, no hold flag -> route netmail
+           // no crash, no hold flag -> route netmail
 	   route = findRouteForNetmail(msg);
 	   link = getLinkForRoute(route, &msg);
-	   
+
 	   if ((route != NULL) && (link != NULL) && (route->routeVia != nopack)) {
 		   prio = cvtFlavour2Prio(route->flavour);
-		   if (createOutboundFileName(link, prio, PKT) == 0) {
+                   if (link->arcNetmail &&
+                       route->flavour == link->echoMailFlavour) {
+                           arcNetmail = 1;
+                           if (link->pktFile && link->pktSize)
+                                if (fsize(link->pktFile) >= link->pktSize * 1024L) {
+                                     nfree(link->pktFile);
+                                     nfree(link->packFile);
+                                }
+
+                           if (link->pktFile == NULL)
+                                r = createTempPktFileName(link);
+                           else
+                                r = 0;
+                   } else {
+                           arcNetmail = 0;
+                           r = createOutboundFileName(link, prio, PKT);
+                   }
+		   if (r == 0) {
 			   addViaToMsg(&msg, *(link->ourAka));
 			   makePktHeader(NULL, &header);
 			   header.destAddr = link->hisAka;
 			   header.origAddr = *(link->ourAka);
 			   if (link->pktPwd != NULL)
 				   strcpy(&(header.pktPassword[0]), link->pktPwd);
-			   pkt = openPktForAppending(link->floFile, &header);
+			   pkt = openPktForAppending(arcNetmail ? link->pktFile : link->floFile, &header);
 			   writeMsgToPkt(pkt, msg);
 			   closeCreatedPkt(pkt);
 			   w_log('7', "Msg from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
-			   remove(link->bsyFile);
-			   nfree(link->bsyFile);
+                           if (!arcNetmail) {
+			        remove(link->bsyFile);
+			        nfree(link->bsyFile);
+			        nfree(link->floFile);
+                           }
 			   // mark Mail as sent
 			   xmsg->attr |= MSGSENT;
 			   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-			   nfree(link->floFile);
 		   }
 	   } else {
                 if ((xmsg->attr & MSGFILE) == MSGFILE) w_log('7', "no routeFile found or no-pack for %s - leave mail untouched", aka2str(msg.destAddr));
@@ -654,7 +692,7 @@ void scanExport(int type, char *str) {
    	if (config->echotosslog)
    		f = fopen(config->echotosslog, "r");
    };
-   
+
    if (type & SCN_FILE) f = fopen(str, "r");
 
    if (type & SCN_NAME) {
@@ -701,9 +739,10 @@ void scanExport(int type, char *str) {
    };
 
 //   if (type & SCN_ECHOMAIL) arcmail(NULL);
-   if (type & SCN_ECHOMAIL) tossTempOutbound(config->tempOutbound);
-   
+//   if (type & SCN_ECHOMAIL)
+   // pack tempOutbound after scan Echomail, Netmail or EchoTossLogFile
+   tossTempOutbound(config->tempOutbound);
+
    writeDupeFiles();
    writeScanStatToLog();
 }
-   
