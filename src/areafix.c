@@ -646,17 +646,19 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
                     // why do you need to redefine the same filename?
                     fileName = safe_strdup(getCurConfName());
                     strend = get_hcfgPos();
+                    if(strbeg > strend) strbeg = 0;
                     break;
                 }
             }
         }
         strbeg = get_hcfgPos();
         nfree(line);
+        nfree(cfgline);
     }
     nfree(line);
     if (strend == -1) { // impossible // error occurred
         close_conf();
-        nfree(tmpPtr);
+        nfree(cfgline);
         nfree(fileName);
         return -1;
     }
@@ -1256,6 +1258,7 @@ char *unsubscribe(s_link *link, char *cmd) {
 	    break;
 	}
     }
+    if(config->areafixQueueFile)
     report = af_Req2Idle(line, report, link->hisAka);
     if (report == NULL) {
         if (matched) {
