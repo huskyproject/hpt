@@ -11,8 +11,9 @@ Address		2:5080/59
 PublicGroup 	A,B,C,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z
 Origin		* Association of Holiday Mail Robots *
 AreaFixFromPkt
-#AreaFixKillReports  # removed
-AreafixReportsAttr loc pvt k/s npd # dir -uncomment for kill areafix reports
+#AreaFixKillReports  # token removed
+AreafixReportsAttr loc pvt k/s npd  # kill areafix reports
+#AreafixReportsAttr loc pvt k/s npd dir # kill areafix reports and send directly
 
 AreafixKillRequests
 AreaFixHelp	/etc/husky/areafix.hlp
