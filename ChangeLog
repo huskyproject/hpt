@@ -1,3 +1,7 @@
+2002-07-03 Wednesday 19:46  stas
+
+	* src/hptlink.c (1.40.2.1): Fix warnings (merge from current)
+
 2002-07-02 Tuesday 10:44  mche
 
 	* src/areafix.c (1.316.2.2): making shure that config is closed
