@@ -192,7 +192,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
    forwardMsgToLinks(echo, &msg, *echo->useAka);
    
    // process carbon copy
-   if (config->carbonOut) carbonCopy(&msg, echo);
+   if (config->carbonOut) carbonCopy(&msg, &xmsg, echo);
 
    // mark msg as sent and scanned
    xmsg.attr |= MSGSENT;
