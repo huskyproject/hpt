@@ -44,6 +44,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <ctype.h>
+#include <errno.h>
 
 #include <pkt.h>
 #include <global.h>
@@ -89,7 +90,8 @@ char *createDupeFileName(s_area *area) {
     } else {
 	if (area->fileName) xstrcat(&name, (ptr = strrchr(area->fileName,PATH_DELIM))
 				    ? ptr+1 : area->fileName);
-	else xstrcat(&name, "passthru");
+	//else xstrcat(&name, "passthru");
+	else xscatprintf(&name, "%X", strcrc32(area->areaName,0xFFFFFFFFUL) );
     }
 
     switch (config->typeDupeBase) {
@@ -381,7 +383,8 @@ s_dupeMemory *readDupeFile(s_area *area) {
        fclose(f);
    } else {
        if (fexist(fileName)) w_log('2', "Error reading dupes");
-       else w_log('2', "Dupe base not found");
+       else if (errno != ENOENT)
+	  w_log('2', "Dupe base read error: %s", strerror(errno) );
    }
    
    nfree(fileName);
