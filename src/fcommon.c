@@ -503,7 +503,7 @@ int createTempPktFileName(s_link *link)
 		counter = 0;
 		do {
 			nfree(pfileName);
-			xscatprintf(&pfileName, "%06lx%02x.%s%c", (long)aTime, counter%256, wday, ext3[counter/256]);
+			xscatprintf(&pfileName, "%s%06lx%02x.%s%c", tmp, (long)aTime, counter%256, wday, ext3[counter/256]);
 			counter++;
 		} while ((fexist(pfileName) || fileNameAlreadyUsed(NULL, pfileName))
 				 && (counter < numExt*256));
