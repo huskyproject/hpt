@@ -672,7 +672,7 @@ int cmdcall(const char *cmd)
   char **list;
 
   list = mk_lst(cmd);
-  cmdexit = spawnvp(P_WAIT, basename(list[0]), list);
+  cmdexit = spawnvp(P_WAIT, list[0], list);
   nfree(list[0]);
   nfree(list);
 
