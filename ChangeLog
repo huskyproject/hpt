@@ -1,3 +1,8 @@
+2003-02-27 Thursday 06:36  sfpavel
+
+	* config/config (1.9): Fix sample config [patch from Alex Buloichik
+	<alex73@zaval.org>]
+
 2003-02-26 Wednesday 09:55  stas_degteff
 
 	* src/txt2pkt.c (hpt-1_4-stable.2): String '(none)' don't
