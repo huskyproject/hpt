@@ -1637,14 +1637,16 @@ void afix(void)
 		    MsgToStruct(SQmsg, xmsg, &msg);
 		    processAreaFix(&msg, NULL);
 			if (config->areafixKillRequests) {
+				MsgCloseMsg(SQmsg);
 				MsgKillMsg(netmail, i);
 			} else {
 				xmsg.attr |= MSGREAD;
 				MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+				MsgCloseMsg(SQmsg);
 			}
 		    freeMsgBuffers(&msg);
 	    }
-
+           else
 	    MsgCloseMsg(SQmsg);
 
 	} /* endfor */
