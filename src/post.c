@@ -221,6 +221,11 @@ void post(int c, unsigned int *n, char *params[])
                         echo = getArea(config, area);
                         strUpper(area);
                         strUpper(echo->areaName);
+                        if (echo == &(config->badArea)) {
+                            w_log(LL_ERROR, "post: wrong area to post: %s" , area);
+                            *n = (unsigned int)c;
+                            quit = 1;
+                        }
                         break;
                     case 's':    // subject
                         msg.subjectLine = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
@@ -461,9 +466,7 @@ void post(int c, unsigned int *n, char *params[])
                 }
                 if (msg.netMail) {
                     processNMMsg(&msg, NULL, NULL, 0, MSGLOCAL);
-                    cmPack = 1;
-                }
-                else {
+                }  else {
                     processEMMsg(&msg, msg.origAddr, 1, (MSGSCANNED|MSGSENT|MSGLOCAL));
                 }
             }
@@ -472,10 +475,7 @@ void post(int c, unsigned int *n, char *params[])
 
         if (export) 
         {
-            if (msg.netMail)
-                scanExport((SCN_NAME & SCN_NETMAIL), (area) ? area : echo->areaName);
-            else 
-                scanExport((SCN_NAME & SCN_ECHOMAIL), (area) ? area : echo->areaName);
+            scanExport(SCN_NAME, (area) ? area : echo->areaName);
         }
 
         closeOpenedPkt();
