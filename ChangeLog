@@ -1,3 +1,13 @@
+2002-11-04 Monday 13:15  stas_degteff
+
+	* doc/hpt.texi (1.88): Fix describe mandatory for link; add manual
+	description
+
+2002-11-04 Monday 06:28  pgul
+
+	* src/: areafix.c (1.359), post.c (1.98): Add MsgCloseApi() call
+	after post and relink
+
 2002-11-03 Sunday 04:21  d_sergienko
 
 	* BUG-REPORTING (1.2), BUGS (1.19), INSTALL (1.12), README (1.15):
