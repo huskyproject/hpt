@@ -21,6 +21,6 @@ A: (DK)
    This function called only if other perl hooks had been called before.
      
 Q: Can I compile hpt with perl support, but perl56.dll is to be used only when 
-   it's being needed?
+Q: it's being needed?
 A: (DK)
    Yes. See config statement 'HptPerlFile'
