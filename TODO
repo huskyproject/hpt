@@ -1,7 +1,20 @@
+TODO-List for HPT
+=================
+
+Category 1: Will certainly be implemented until next release
+============================================================
+
 - jam message base support
-- execute external programs before pack & after unpack
+
+Category 2: Might be implemented, but volunteers are always very welcome!
+=========================================================================
+
 - hpt should sort pkts in the inbound directories in order of the date/time.
   So older pkts are processed before newer ones.
+
+Category 3: Will only be included if volunteers send patches
+============================================================
+
 - divide hpt into several programs:
   tosser
   packer
@@ -12,5 +25,6 @@
 - zone-gating
 - nodelist access
 - real hub-routing
-- regexps for routing
-- go on holiday 
+
+Category 4: Will not be implemented
+===================================

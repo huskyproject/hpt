@@ -570,7 +570,7 @@ void scan(void)
                sprintf(buff, "Area \'%s\' is not found -> Scanning stop.", line);
                writeLogEntry(hpt_log, '3', buff);
             } else {
-               if (area) scanEMArea(area);
+               if (area && !area->scn) { scanEMArea(area); area->scn=1; }
             } /* endif */
             free(line);
          }
@@ -612,12 +612,13 @@ void scanF(char *filename)
          line = readLine(f);
 
          if (line != NULL) {
-            area = getArea(config, line);
+			if (stricmp(config->netMailArea.areaName,line)==0) cmPack=1;
+            else area = getArea(config, line);
             if (area == &(config->badArea)) {
                sprintf(buff, "Area \'%s\' is not found -> Scanning stop.", line);
                writeLogEntry(hpt_log, '3', buff);
             } else {
-	       scanEMArea(area);
+               if (area && !area->scn) { scanEMArea(area); area->scn=1; }
             } /* endif */
             free(line);
          }

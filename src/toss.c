@@ -260,7 +260,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip)
             recodeToInternalCharset(msg->text);
             recodeToInternalCharset(msg->toUserName);
             recodeToInternalCharset(msg->fromUserName);
-                        msg->recode = 1;
+			msg->recode = 1;
          }
 
          textWithoutArea = msg->text;
@@ -1425,11 +1425,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
 
    // unpack bundle
    if (found) {
-#ifdef UNIX
-      fillCmdStatement(cmd, config->unpack[i-1].call, fileName, "", config->tempInbound);
-#else
-      fillCmdStatement(cmd, config->unpack[i-1].call, fileName, "", config->tempInbound);
-#endif
+	  fillCmdStatement(cmd,config->unpack[i-1].call,fileName,"",config->tempInbound);
       sprintf(buff, "bundle %s: unpacking with \"%s\"", fileName, cmd);
       writeLogEntry(hpt_log, '6', buff);
       if ((cmdexit = system(cmd)) != 0) {
@@ -1437,6 +1433,14 @@ int  processArc(char *fileName, e_tossSecurity sec)
          writeLogEntry(hpt_log, '6', buff);
          return 3;
       };
+	  if (config->afterUnpack) {
+		  sprintf(buff, "afterUnpack: execute string \"%s\"", config->afterUnpack);
+		  writeLogEntry(hpt_log, '6', buff);
+		  if ((cmdexit = system(config->afterUnpack)) != 0) {
+			  sprintf(buff, "exec failed, code %d", cmdexit);
+			  writeLogEntry(hpt_log, '6', buff);
+		  };
+	  }
    } else {
       sprintf(buff, "bundle %s: cannot find unpacker", fileName);
       writeLogEntry(hpt_log, '6', buff);
@@ -1592,6 +1596,15 @@ void arcmail() {
    int i, cmdexit;
    FILE *flo;
    s_link *link;
+   
+   if (config->beforePack) {
+	   sprintf(logmsg, "beforePack: execute string \"%s\"", config->beforePack);
+	   writeLogEntry(hpt_log, '6', logmsg);
+	   if ((cmdexit = system(config->beforePack)) != 0) {
+		   sprintf(logmsg, "exec failed, code %d", cmdexit);
+		   writeLogEntry(hpt_log, '6', logmsg);
+	   };
+   }
    
    for (i = 0 ; i < config->linkCount; i++) {
 	   
