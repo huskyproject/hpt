@@ -1,3 +1,7 @@
+2003-02-24 Monday 11:08  pgul
+
+	* doc/hpt-FAQ.russian (1.81): Fixed elif -> elseif
+
 2003-02-23 Sunday 19:24  d_sergienko
 
 	* doc/hpt.texi, src/query.c (hpt-1_4-stable.[2,4]): Use
