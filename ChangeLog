@@ -2,6 +2,11 @@ hpt 0.29
 --------
 
 ----- cvs ci ------
+Sun Jun 27  17:16:00
+Fedor:
+* fixed small bug with intab when request %LIST (description of area)
+
+----- cvs ci ------
 Wed Jun 23 09:13:20 CEST 1999
 mtt:
 * fixed the creation of dupe-bases in win32 version of hpt

@@ -319,7 +319,7 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
 
 char *list(s_message *msg, s_link *link) {
 
-	int i,j,active,avail,rc,arealen,desclen,len;
+	int i,active,avail,rc,arealen,desclen,len;
 	char *report, addline[256];
 	
 	sprintf(addline, "Available areas for %s\r\r", aka2str(link->hisAka));
@@ -353,7 +353,7 @@ char *list(s_message *msg, s_link *link) {
 			if (desclen!=0)
 			{
 			       strcat(report," ");
-			       for (j=0;j<33-arealen;j++) strcat(report,".");
+			       strcat(report, print_ch(32-arealen, '.'));
                                strcat(report," ");
                                strcat(report,config->echoAreas[i].description);
 			}
@@ -476,8 +476,9 @@ char *available(s_link *link) {
     for (j = 0; j < config->linkCount; j++) {
 		uplink = &(config->links[j]);
 
-		if (uplink->forwardRequestFile!=NULL) {
-			if ((f=fopen(uplink->forwardRequestFile,"r")) == NULL)
+		if ((uplink->forwardRequestFile!=NULL && uplink->LinkGrp == NULL) ||
+		    (uplink->forwardRequestFile!=NULL && strchr(link->AccessGrp, *(uplink->LinkGrp)))) {
+                   if ((f=fopen(uplink->forwardRequestFile,"r")) == NULL)
 				{
 					fprintf(stderr,"areafix: cannot open forwardRequestFile \"%s\"\n", uplink->forwardRequestFile);
 					sprintf(addline,"areafix: cannot open forwardRequestFile \"%s\"\n", uplink->forwardRequestFile);
@@ -504,7 +505,7 @@ char *available(s_link *link) {
 			strcat (report,avail);
 			free(avail);
 
-			sprintf(addline,"  %s\r\r",print_ch(75,'-'));
+			sprintf(addline," %s\r\r",print_ch(77,'-'));
 			report=(char*) realloc(report,strlen(report)+strlen(addline)+1);
 			strcat (report,addline);
 
@@ -1415,7 +1416,7 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
     
     tab = config->intab;
     
-    if (RetFix == AVAIL) {
+    if (RetFix == AVAIL || RetFix == LIST) {
 	config->intab = NULL;
     }
     
