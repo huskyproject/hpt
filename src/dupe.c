@@ -72,10 +72,11 @@ char *createDupeFileName(s_area *area) {
 
 //    w_log(LL_FUNC,"dupe.c::createDupeFileName()");
 
-    if (!area->DOSFile) {
+    if (!area->DOSFile) {/*
 	if (area->fileName) xstrcat(&name, (ptr = strrchr(area->fileName,PATH_DELIM))
 				    ? ptr+1 : area->fileName);
-	else name = makeMsgbFileName(config, area->areaName);
+	else*/ 
+        name = makeMsgbFileName(config, area->areaName);
     } else {
 	if (area->fileName) xstrcat(&name, (ptr = strrchr(area->fileName,PATH_DELIM))
 				    ? ptr+1 : area->fileName);
