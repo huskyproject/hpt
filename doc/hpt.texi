@@ -1074,7 +1074,7 @@ This statement cannot be repeated.
 @end table
 
 This area used for areafix scanning. Replyes from areafix will be also
-stored here. @strong{robotsArea must be NetmailArea!}
+stored here. @strong{RobotsArea must be NetmailArea for securoty purposes!}
 
 This statement cannot be repeated.
 
