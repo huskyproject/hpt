@@ -1,18 +1,23 @@
 # for gcc, use this:
-#CC    = gcc -Wall -g
-# for DEC CC, use this:
-CC      = cc -g
-INSTDIR = /home/fido/bin
-MANDIR  = /home/fido/man
-LIBDIR  = /home/fido/lib
+# CC    = gcc -Wall
+# for xlc, use this:
+CC      = cc -qcpluscmt
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o strsep.o link.o crc.o
+# include Husky-Makefile-Config
+include ../../huskymak.cfg
+
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o strsep.o crc.o
 SRC_DIR = ../src/
 
-CFLAGS     = -c -I../../fidoconfig -I../../smapi -I../h -O2 -s -DUNIX
-LFLAGS     = -L$(LIBDIR)
-FIDOCONFIG = -lfidoconfig
-SMAPI      = -lsmapiunix
+ifeq ($(DEBUG), 1)
+ CFLAGS     = -c -I $(INCDIR) -I ../h -O2 -ggdb -DUNIX
+else
+ CFLAGS     = -c -I $(INCDIR) -I ../h -O2 -s -DUNIX
+endif
+
+LFLAGS     = -L $(LIBDIR)
+FIDOCONFIG = -l fidoconfig
+SMAPI      = -l smapiunix
 
 
 all: $(OBJS) \
@@ -46,10 +51,11 @@ clean:
 	-rm *~
 
 distclean: clean
-	-rm purgeDupes hpt tpkt tlog pktinfo
+	-rm hpt pktinfo purgeDupes
 
-install:
-	cp  hpt pktinfo purgeDupes $(INSTDIR)
-	cp  ../linux/hpt.1 $(MANDIR)/man1
-	cp  ../linux/purgeDupes.1 $(MANDIR)/man1
+install: hpt pktinfo purgeDupes hpt.1
+	install $(IBOPT) hpt pktinfo purgeDupes $(BINDIR)
+	gzip -c hpt.1 > hpt.1.gz
+	gzip -c purgeDupes.1 > purgeDupes.1.gz
+	install $(IMOPT) hpt.1.gz purgeDupes.1.gz $(MANDIR)/man1
 

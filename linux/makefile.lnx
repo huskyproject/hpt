@@ -1,8 +1,8 @@
+# include Husky-Makefile-Config
+include ../../huskymak.cfg
+
 HASHDUPE = 0
-DEBUG    = 1
 CC       = gcc 
-INSTDIR  = /usr/local/bin
-MANDIR   = /usr/local/man
 
 OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o crc.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o
 SRC_DIR = ../src/
@@ -10,21 +10,21 @@ SRC_DIR = ../src/
 ifeq ($(HASHDUPE), 1)
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -ggdb -O3 -DUNIX -DHASHDUPE
-  LFLAGS  =
+  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -ggdb -O3 -DUNIX -DHASHDUPE
+  LFLAGS  = -L$(LIBDIR)
 else
-  CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -O3 -s -DUNIX -DHASHDUPE
-  LFLAGS  =  
+  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -O3 -s -DUNIX -DHASHDUPE
+  LFLAGS  = -L$(LIBDIR)
 endif
 
 else
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -ggdb -O6 -DUNIX
-  LFLAGS  =
+  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -ggdb -O6 -DUNIX
+  LFLAGS  = -L$(LIBDIR)
 else
-  CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -O3 -s -DUNIX
-  LFLAGS  =  
+  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -O3 -s -DUNIX
+  LFLAGS  = -L$(LIBDIR)
 endif
 
 endif
@@ -75,21 +75,20 @@ clean:
 	-rm core
 
 distclean: clean
-ifeq ($(HASHDUPE), 0)
 	-rm tpkt txt2pkt pktinfo hpt purgeDupes tlog
-else
-	-rm tpkt txt2pkt pktinfo hpt tlog
-endif
 	-rm *.1.gz
 	-rm *.log
 
-install:
-	gzip -c hpt.1 > hpt.1.gz
 ifeq ($(HASHDUPE), 0)
-	install -s hpt pktinfo purgeDupes txt2pkt $(INSTDIR)
+install: hpt pktinfo purgeDupes txt2pkt hpt.1
+	gzip -c hpt.1 > hpt.1.gz
+	install $(IBOPT) hpt pktinfo purgeDupes txt2pkt $(BINDIR)
 	gzip -c purgeDupes.1 > purgeDupes.1.gz
-	install hpt.1.gz purgeDupes.1.gz $(MANDIR)/man1
+	install $(IMOPT) hpt.1.gz purgeDupes.1.gz $(MANDIR)/man1
 else
-	install -s hpt pktinfo txt2pkt $(INSTDIR)
-	install hpt.1.gz $(MANDIR)/man1
+install: hpt pktinfo txt2pkt hpt.1
+	gzip -c hpt.1 > hpt.1.gz
+	install $(IBOPT) hpt pktinfo txt2pkt $(BINDIR)
+	install $(IMOPT) hpt.1.gz $(MANDIR)/man1
 endif
+

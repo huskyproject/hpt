@@ -1,0 +1,61 @@
+# include Husky-Makefile-Config
+!include ..\..\huskymak.cfg
+
+CC      = wcc
+LINK    = WLINK
+
+OBJS    = hpt.obj, strsep.obj, pkt.obj, common.obj, log.obj, config.obj, global.obj, toss.obj, crc.obj
+SRC_DIR = ..\src
+
+!IF $(DEBUG) == 1
+CFLAGS  = -d2 -hw -i=..\h -we -zq -bt=dos -D__DOS__
+LFLAGS  = FORM DOS LIBpath e:\watcom\lib286\dos
+!ELSE
+CFLAGS  = -i..\h -oneatx -we -zq -bt=dos -D__DOS__
+LFLAGS  = FORM DOS LIBpath e:\watcom\lib286\dos
+!ENDIF
+
+all: $(OBJS) \
+     pktinfo.exe \
+     tlog.exe \
+     tconfig.exe \
+     hpt.exe
+
+$(OBJS): $(SRC_DIR)\$*.c
+  @echo compiling $*.c
+  $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
+
+pktinfo.obj tlog.obj tconfig.obj: $(SRC_DIR)\$*.c
+  @echo compiling $*.c
+  $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
+
+pktinfo.exe: pktinfo.obj common.obj pkt.obj
+  @echo linking pktinfo
+  $(LINK) $(LFLAGS) FILE pktinfo.obj, common.obj, pkt.obj NAME pktinfo.exe
+
+tlog.exe: tlog.obj log.obj
+  @echo linking tlog
+  $(LINK) $(LFLAGS) FILE tlog.obj, log.obj NAME tlog.exe
+
+tconfig.exe: tconfig.obj config.obj common.obj
+  @echo linking tconfig
+  $(LINK) $(LFLAGS) FILE tconfig.obj, config.obj, common.obj NAME tconfig.exe
+
+hpt.exe: $(OBJS)
+  @echo linking hpt
+  $(LINK) $(LFLAGS) FILE $(OBJS) NAME hpt.exe
+
+clean:
+	del *.obj
+	del *.bak
+
+distclean: clean
+	del *.exe
+
+install: hpt.exe purged.exe pktinfo.exe tpkt.exe tlog.exe
+	copy hpt.exe $(BINDIR)
+	copy purged.exe $(BINDIR)
+	copy pktinfo.exe $(BINDIR)
+	copy tpkt.exe $(BINDIR)
+	copy tlog.exe $(BINDIR)
+

@@ -1,19 +1,20 @@
+# include Husky-Makefile-Config
+include ../../huskymak.cfg
+
 CC    = gcc -Wall
-INSTDIR = /usr/local/bin
-MANDIR  = /usr/local/man
-LIBDIR  = /usr/local/lib
 
 OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o crc.o
 SRC_DIR = ../src/
 CDIR = ../linux
 
-CFLAGS     = -c -I ../../fidoconfig -I ../../smapi -I ../h -O2 -pipe -DUNIX
-LFLAGS     = -L $(LIBDIR) -L ../../smapi -L ../../fidoconfig
+ifeq ($(DEBUG), 1)
+ CFLAGS     = -c -I $(INCDIR) -I ../h -O2 -pipe -DUNIX -g
+else
+ CFLAGS     = -c -I $(INCDIR) -I ../h -O2 -pipe -DUNIX -s
+endif
+LFLAGS     = -L $(LIBDIR)
 FIDOCONFIG = -lfidoconfig
 SMAPI      = -lsmapibsd
-
-IOPT  = -c -m 644 -o bin -g bin
-IBOPT = -s -c -m 755 -o bin -g bin
 
 ALLBIN = pktinfo tlog tpkt hpt purgeDupes
 
@@ -38,11 +39,15 @@ purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o log.o recode.o
 	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o log.o recode.o $(FIDOCONFIG) $(SMAPI)
 
 clean:
-	-rm -f *.o *.1.gz $(ALLBIN)
+	-rm -f *.o *.1.gz
 	-rm *~
 
-install:
-	install $(IBOPT) $(ALLBIN) $(INSTDIR)
+distclean:
+	-rm $(ALLBIN)
+
+install: $(ALLBIN) $(CDIR)/hpt.1
+	install $(IBOPT) $(ALLBIN) $(BINDIR)
 	gzip -c $(CDIR)/hpt.1 > hpt.1.gz
 	gzip -c $(CDIR)/purgeDupes.1 > purgeDupes.1.gz
-	install $(IOPT) hpt.1.gz purgeDupes.1.gz $(MANDIR)/man1
+	install $(IMOPT) hpt.1.gz purgeDupes.1.gz $(MANDIR)/man1
+

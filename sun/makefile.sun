@@ -1,20 +1,20 @@
-DEBUG   = 1
+# include Husky-Makefile-Config
+include ../../huskymak.cfg
+
 CC      = gcc 
-INSTDIR = /usr/local/bin
-MANDIR  = /usr/local/man
 
 OBJS    = hpt.o pktread.o pktwrite.o fcommon.o areafix.o log.o global.o recode.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o link.o post.o strsep.o crc.o
 SRC_DIR = ../src/
 
-FIDOCONFIG = ../../fidoconfig/libfidoconfig.a
-SMAPI      = ../../smapi/libsmapisun.a
+FIDOCONFIG = $(LIBDIR)/libfidoconfig.a
+SMAPI      = $(LIBDIR)/libsmapisun.a
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -g -O2 -s -DUNIX -D_POSIX_C_SOURCE
-  LFLAGS  = 
+  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -g -O2 -DUNIX -D_POSIX_C_SOURCE
+  LFLAGS  = -L$(LIBDIR)
 else
-  CFLAGS  = -c -I../h -I../../smapi -Wall -O2 -s -DUNIX $(CADDFLAGS) -D_POSIX_X_SOURCE
-  LFLAGS  =  
+  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -O2 -s -DUNIX $(CADDFLAGS) -D_POSIX_X_SOURCE
+  LFLAGS  = -L$(LIBDIR)
 endif
 
 all: $(OBJS) \
@@ -46,8 +46,12 @@ clean:
 	-rm -f *.o
 	-rm *~
 
-install:
-	install -s hpt pktinfo purgeDupes $(INSTDIR)
+distclean: clean
+	-rm hpt pktinfo tlog tpkt purgeDupes
+
+install: hpt pktinfo purgeDupes hpt.1
+	install $(IBOPT) hpt pktinfo purgeDupes $(BINDIR)
 	gzip -c hpt.1 > hpt.1.gz
 	gzip -c purgeDupes.1 > purgeDupes.1.gz
-	install hpt.1.gz purgeDupes.1.gz $(MANDIR)/man1
+	install $(IMOPT) hpt.1.gz purgeDupes.1.gz $(MANDIR)/man1
+
