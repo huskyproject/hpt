@@ -2,6 +2,11 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Jun 18 13:35:07 NOVST 2000
+max:
+* manual tearline, origin
+
+----- cvs ci ------
 Sat Jun 17 22:14:27 NOVST 2000
 max:
 * hpt relink sets local flag on the messages

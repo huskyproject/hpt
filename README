@@ -1,5 +1,4 @@
 The following things of fidoconfig are currently not implemented in HPT:
-------------------------------------------------------------------------
 
 - enc / noenc is not used to route a netmail
 - hub-routing does not use the hubs defined in the nodelist but uses the nodes
@@ -9,3 +8,12 @@ The following things of fidoconfig are currently not implemented in HPT:
         not exist. 
 
   BE CAREFUL!
+
+Renaming suffxies:
+
+.tos - hpt crashes on this pkt, report to developers!
+.sec - pktpwd problem or link not found
+.acs - could not open pkt
+.bad - not/wrong pkt
+.ntu - not to us
+.err - msg tossing problem (couldn't open area/couldn't write msg)

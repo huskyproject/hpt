@@ -198,13 +198,14 @@ int main(int argc, char *argv[])
 
       msg.netMail = 1;
 
-      if (tearl != NULL) {
-         sprintf(tmp, "\r--- %s\r", tearl);
+      if (tearl || config->tearline) {
+         sprintf(tmp, "\r--- %s\r", (tearl) ? tearl : config->tearline);
          strcat((char *)textBuffer, (char *)tmp);
       }
       if (area != NULL) {
          sprintf(tmp, " * Origin: %s (%d:%d/%d.%d)\r",
-                 orig, msg.origAddr.zone, msg.origAddr.net,
+                 (orig) ? orig : (config->origin) ? config->origin : "",
+		 msg.origAddr.zone, msg.origAddr.net,
                  msg.origAddr.node, msg.origAddr.point);
          strcat(textBuffer, tmp);
          sprintf(tmp,"SEEN-BY: %d/%d\r\1PATH: %d/%d\r",

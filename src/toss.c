@@ -1101,7 +1101,9 @@ void writeMsgToSysop()
     for (i = 0; i < config->addrCount; i++) {
 	if (msgToSysop[i]) {
 	    xscatprintf(&(msgToSysop[i]->text), " \r--- %s\r * Origin: %s (%s)\r", 
-			versionStr, config->name, aka2str(msgToSysop[i]->origAddr));
+			(config->tearline) ? config->tearline : "",
+			(config->origin) ? config->origin : config->name,
+			aka2str(msgToSysop[i]->origAddr));
 	    msgToSysop[i]->textLength = strlen(msgToSysop[i]->text);
 	    
 	    if (msgToSysop[i]->netMail == 1) 

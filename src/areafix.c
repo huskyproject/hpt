@@ -1354,7 +1354,7 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 
 void preprocText(char *split, s_message *msg)
 {
-    char *orig = config->areafixOrigin;
+    char *orig = (config->areafixOrigin) ? config->areafixOrigin : config->origin;
 
     msg->text = createKludges(NULL, &msg->origAddr, &msg->destAddr);
     xscatprintf(&split, " \r--- %s areafix\r", versionStr);

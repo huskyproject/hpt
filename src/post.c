@@ -232,10 +232,12 @@ void post(int c, unsigned int *n, char *params[])
 
       msg.text = createKludges(area, &msg.origAddr, &msg.destAddr);
       xstrcat((char **)(&(msg.text)), (char *)textBuffer);
-      nfree(textBuffer);
+      free(textBuffer);
 
       xscatprintf(&msg.text, "\r--- %s\r * Origin: %s (%s)\r",
-              versionStr, config->name, aka2str(msg.origAddr));
+              (config->tearline) ? config->tearline : "",
+	      (config->origin) ? config->origin : config->name,
+	      aka2str(msg.origAddr));
 
       msg.textLength = strlen(msg.text);
 
