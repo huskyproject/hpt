@@ -1,3 +1,8 @@
+2002-10-19 Saturday 19:03  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.13): Fix husky/BeOS
+	maintainer info
+
 2002-10-18 Friday 12:31  stas_degteff
 
 	* src/toss.c (hpt-1_2-stable.7): Prevent EMX compilation warnings
