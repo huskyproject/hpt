@@ -1,3 +1,10 @@
+hpt (0.9.8-4) unstable; urgency=low
+
+  * Deleted most of my changes to the upstream makefiles. They are now in
+    debian/rules.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Thu, 12 Apr 2001 13:18:24 +0200
+
 hpt (0.9.8-3) unstable; urgency=low
 
   * doc-base was missing.

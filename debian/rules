@@ -31,12 +31,17 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp configure-stamp
-
-	# Add here commands to clean up after the build process.
 	-$(MAKE) clean
 	-cd doc ;\
 	$(MAKE) clean
-
+	-rm -f configure-stamp
+	-rm -f build-stamp
+	-rm -rf debian/$(PACKAGE)
+	-rm -f debian/postinst.debhelper
+	-rm -f debian/postrm.debhelper
+	-rm -f debian/prerm.debhelper
+	-rm -f debian/substvars
+	-rm -f debian/files
 	dh_clean
 
 install: build
