@@ -175,13 +175,6 @@ void buildAreaTree(s_area *area)
      return;
    }
 
-#ifndef __NT__
-   if ((area->msgbType & MSGTYPE_JAM) == MSGTYPE_JAM) {
-     fprintf(outlog, "JAM, ignoring\n");
-     return;
-   }
-#endif
-
    if((area->useAka)!=NULL)
       node.zone = (area->useAka)->zone;
    else
