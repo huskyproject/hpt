@@ -486,8 +486,13 @@ int dupeDetection(s_area *area, const s_message msg) {
 
     if (str == NULL) 
     {   /* Kluge MSGID is not found so make it from crc of message body */
-        if (msg.text) 
-            xscatprintf (&str, "MSGID: %08lx",strcrc32(msg.text, 0xFFFFFFFFL));
+        if (msg.text)
+        {
+            char *hbuf=NULL;
+            xstrscat(&hbuf,msg.text,msg.fromUserName,msg.datetime,msg.toUserName,msg.subjectLine,NULL);  
+            xscatprintf (&str, "MSGID: %08lx",strcrc32(hbuf, 0xFFFFFFFFL));
+            nfree(hbuf);
+        }
         else 
             return 1; /*  without msg.text - message is empty, no dupeCheck */
     }
