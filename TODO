@@ -4,6 +4,7 @@ TODO-List for HPT
 Category 1: Will certainly be implemented until next release
 ============================================================
 - zone seen-by stripping
+- date fixing (take code from pktdate)
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

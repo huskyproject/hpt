@@ -3,8 +3,10 @@ hpt 0.9.6
 
 ----- cvs ci ------
 Thu May 18 10:07:35 NOVST 2000
-max (patch from Serguei Revtov):
-* Use zone of our area AKA in hpttree instead of 2
+max:
+* Use zone of our area AKA in hpttree instead of 2 (patch from Serguei Revtov)
+* fix statistic (exported messages)
+* remove arcmail bundle after unpacking
 
 ----- cvs ci ------
 Sat May 13 20:29:59 NOVST 2000

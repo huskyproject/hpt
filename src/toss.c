@@ -618,8 +618,8 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		msg->origAddr = header.origAddr;
 		writeMsgToPkt(pkt, *msg);
 		closeCreatedPkt(pkt);
+		statToss.exported++;
 	}
-	
 }
 
 void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
@@ -1184,35 +1184,33 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
    if (writeAccess!=0) echo = &(config->badArea);
 		
    if (echo != &(config->badArea)) {
-      if (dupeDetection(echo, *msg)==1) {
-         // no dupe
+	  if (dupeDetection(echo, *msg)==1) {
+		  // no dupe
 
-         if ((echo->downlinkCount > 1) ||
-	     // if only one downlink, we've got the mail from him
-	     ((echo->downlinkCount > 0) && (!addrComp(pktOrigAddr,*echo->useAka))))   // or it's our own aka
-	   {  
-	     forwardMsgToLinks(echo, msg, pktOrigAddr);
-	     statToss.exported++;
-	   }
-         if ((config->carbonCount != 0) && (!dontdocc)) ccrc = carbonCopy(msg, echo);
+		  // if only one downlink, we've got the mail from him
+		  if ((echo->downlinkCount > 1) ||
+			  ((echo->downlinkCount > 0) && 
+			   (addrComp(pktOrigAddr,*echo->useAka)!=0))) // or it's our own aka
+			  forwardMsgToLinks(echo, msg, pktOrigAddr);
+		  
+		  if ((config->carbonCount != 0) && (!dontdocc)) ccrc = carbonCopy(msg, echo);
 
-	 if (ccrc <= 1) {
-           echo->imported++;  // area has got new messages
-       	   if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-              rc = putMsgInArea(echo, msg, 1, forceattr);
-      	      statToss.saved++;
-           } 
-	   else {
-	       statToss.passthrough++;
-	       rc = 1; //passthrough does always work
-	   }
-	 } else rc = 1; // normal exit for carbon move & delete
-
+		  if (ccrc <= 1) {
+			  echo->imported++;  // area has got new messages
+			  if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
+				  rc = putMsgInArea(echo, msg, 1, forceattr);
+				  statToss.saved++;
+			  } 
+			  else {
+				  statToss.passthrough++;
+				  rc = 1; //passthrough does always work
+			  }
+		  } else rc = 1; // normal exit for carbon move & delete
 
       } else {
-         // msg is dupe
-         if (echo->dupeCheck == dcMove) {
-            rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
+		 // msg is dupe
+		 if (echo->dupeCheck == dcMove) {
+			rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
          } else rc = 1;
          statToss.dupes++;
       }
@@ -1449,7 +1447,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 		       fileName, header->origAddr.zone, header->origAddr.net,
 		       header->origAddr.node, header->origAddr.point);
 	       processIt = 2;
-	       rc = 5;
+	       rc = 1;
 	     }
 	     break;
 
@@ -1487,8 +1485,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 		   while ((msg = readMsgFromPkt(pkt, header)) != NULL) {
                if (msg != NULL) {
 				   if ((processIt == 1) || ((processIt==2) && (msg->netMail==1)))
-					   rc = processMsg(msg, header);
-					   if (rc==1) rc=0; else rc=5;
+					if (processMsg(msg, header)!=1) rc=5;
 				   freeMsgBuffers(msg);
 				   free(msg);
                }
@@ -1586,8 +1583,9 @@ int  processArc(char *fileName, e_tossSecurity sec)
       return 3;
    };
    statToss.arch++;
+   remove(fileName);
    processDir(config->tempInbound, sec);
-   return 0;
+   return 6;
 }
 
 
@@ -1695,7 +1693,7 @@ void processDir(char *directory, e_tossSecurity sec)
             rc = processArc(dummy, sec);
 
          switch (rc) {
-            case 1:   // pktpwd problem
+            case 1:   // pktpwd problem or link not found
                newFileName=changeFileSuffix(dummy, "sec");
                break;
             case 2:  // could not open pkt
@@ -1709,6 +1707,8 @@ void processDir(char *directory, e_tossSecurity sec)
                break;
             case 5:  // msg tossing problem
                newFileName=changeFileSuffix(dummy, "err");
+               break;
+            case 6:  // bundle already removed
                break;
             default:
                remove (dummy);
