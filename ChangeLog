@@ -1,3 +1,15 @@
+2005-01-09 Sunday 17:30  val_khokhlov
+
+	* src/: hpt.c (1.193), perl.c (1.86): use baseDir from s_link_robot
+
+2005-01-09 Sunday 17:29  val_khokhlov
+
+	* src/hptafix.c (1.18): make callback for getArea()
+
+2005-01-09 Sunday 16:44  val_khokhlov
+
+	* src/hptafix.c (1.17): move area name validation code from areafix
+
 2005-01-02 Sunday 16:45  val_khokhlov
 
 	* src/toss.c (1.540): move some vars from s_link into s_link_robot
