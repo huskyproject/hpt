@@ -1175,7 +1175,7 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 			      an, print_ch(49-strlen(an), '.'), rescanCount);
 			  writeLogEntry(hpt_log,'8',"areafix: %s rescanned %lu mails to %s",
 			      area->areaName, rescanCount, aka2str(link->hisAka));
-			  arcmail();
+			  arcmail(NULL);
 
 			}
 			break;

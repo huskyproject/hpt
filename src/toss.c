@@ -577,6 +577,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    FILE     *pkt;
    s_pktHeader header;
    s_arealink   **newLinks;  // links who does not have their aka in seenBys and thus have not got the echomail.
+   long len;
 
    if (!echo->tinySB) {
           createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
@@ -666,6 +667,13 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 
       // does the link has read access for this echo?
       if (newLinks[i]->export == 0) continue;
+
+      if (newLinks[i]->link->pktFile != NULL && newLinks[i]->link->pktSize != 0) { // check packet size
+         len = fsize(newLinks[i]->link->pktFile);
+         if (len >= (newLinks[i]->link->pktSize * 1024L)) { // Stop writing to pkt
+            arcmail(newLinks[i]->link);
+         }
+      }
 
       // create pktfile if necessary
       if (newLinks[i]->link->pktFile == NULL) {
@@ -1171,7 +1179,7 @@ void writeMsgToSysop()
 		    free(seenByPath);
 		    if (echo->downlinkCount > 0) {
 			forwardMsgToLinks(echo, msgToSysop[i], msgToSysop[i]->origAddr);
-			arcmail();
+			arcmail(NULL);
 		    }
 		} else {
 		    putMsgInBadArea(msgToSysop[i], msgToSysop[i]->origAddr, 0);
@@ -1813,11 +1821,18 @@ int find_old_arcmail(s_link *link, FILE *flo)
 	return 0;
 }
 
-void arcmail() {
+void arcmail(s_link *tolink) {
    char cmd[256], *pkt, *lastPathDelim, saveChar, sepDir[14];
    int i, cmdexit;
    FILE *flo;
    s_link *link;
+   int startlink=0;
+   int endlink = config->linkCount;
+
+   if (tolink != NULL) {
+      startlink = tolink - config->links;
+      endlink = startlink + 1;
+   }
    
    if (config->beforePack) {
 	   writeLogEntry(hpt_log, '6', "beforePack: execute string \"%s\"", config->beforePack);
@@ -1826,7 +1841,7 @@ void arcmail() {
 	   };
    }
    
-   for (i = 0 ; i < config->linkCount; i++) {
+   for (i = startlink ; i < endlink; i++) {
 	   
 	  link = &(config->links[i]);
 	  
@@ -2040,7 +2055,7 @@ void tossTempOutbound(char *directory)
 			   link->pktFile = dummy;
 
 			   fclose(pkt);
-			   arcmail();
+			   arcmail(NULL);
 		   } else {
  			   free(dummy);
 			   writeLogEntry(hpt_log, '9', "found non packed mail without matching link in tempOutbound");
@@ -2118,7 +2133,7 @@ void toss()
 
    // write statToss to Log
    writeTossStatsToLog();
-   arcmail();
+   arcmail(NULL);
 }
 
 int packBadArea(HMSG hmsg, XMSG xmsg)
@@ -2244,7 +2259,7 @@ void tossFromBadArea()
 
       MsgCloseArea(area);
       
-      arcmail();
+      arcmail(NULL);
       
    } else 
       writeLogEntry(hpt_log, '9', "Could not open %s", config->badArea.fileName);

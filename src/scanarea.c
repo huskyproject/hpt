@@ -170,6 +170,8 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
    s_pktHeader  header;
    FILE         *pkt;
    s_link	*link;
+   long len;
+
    makeMsg(hmsg, xmsg, &msg, echo, 0);
 
    //translating name of the area to uppercase
@@ -183,6 +185,13 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
        if (link->Pause && !echo->noPause) continue;
        // check access read for link
        if (readCheck(echo, link)) continue;
+          if (link->pktFile != NULL && link->pktSize != 0) { // check packet size
+             len = fsize(link->pktFile);
+             if (len >= link->pktSize * 1024L) { // Stop writing to pkt
+                arcmail(link);
+             }
+          }
+
 	  if (link->pktFile == NULL) {
 		   
 		  // pktFile does not exist

@@ -602,7 +602,7 @@ void scanExport(int type, char *str) {
       if (type & SCN_ALL) remove(config->echotosslog);
    };
 
-   if (type & SCN_ECHOMAIL) arcmail();
+   if (type & SCN_ECHOMAIL) arcmail(NULL);
    
    writeScanStatToLog();
 }
