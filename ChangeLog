@@ -2,6 +2,13 @@ hpt 0.9.8 (development version)
 ---------	
 
 ---- cvs ci ------
+Sun Mar 11 12:26:29 NOVT 2001
+max:
+* lock file creates 1 byte length (OS/2 fix)
+* don't close lock file before remove()
+* getfree.c
+
+---- cvs ci ------
 Fri Mar  9 15:50:00 NOVT 2001
 max:
 * changed route procedure: now route & routeMail the same, and file attaches

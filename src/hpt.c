@@ -67,12 +67,13 @@
 #include <recode.h>
 #include <date.h>
 
-
 s_message **msgToSysop = NULL;
 char *scanParmA;
 char *scanParmF;
 char force = 0;
 int fd;
+
+extern unsigned long getfree (char *path);
 
 /* kn: I've really tried not to break it. 
    FIXME: if there is pack and scan options on cmd line - one set 
@@ -307,13 +308,20 @@ void processConfig()
 		   fprintf(stderr,"cannot create lock file: %s\n",config->lockfile);
 		   disposeConfig(config);
            exit(1);
-	   } else if (lock(fd,0,0)<0) {
-		   fprintf(stderr,"lock file used by another process! exit...\n");
-		   disposeConfig(config);
-		   exit(1);
+	   } else {
+		   if (write(fd," ", 1)!=1) {
+			   fprintf(stderr,"can't write lo lock file! exit...\n");
+			   disposeConfig(config);
+			   exit(1);
+		   }
+		   if (lock(fd,0,1)<0) {
+			   fprintf(stderr,"lock file used by another process! exit...\n");
+			   disposeConfig(config);
+			   exit(1);
+		   }
 	   }
    }
-	   
+
    // open Logfile
    if (config->logFileDir) {
 	   xstrscat(&buff, config->logFileDir, "hpt.log", NULL);
@@ -400,7 +408,8 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    }
 #endif
 
-   
+   //printf("free space: %lu Mb\n", getfree("/"));
+
    if ( initSMAPI == -1 ) {
 	   // init SMAPI
 	   initSMAPI = 0;
@@ -408,7 +417,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 	   m.def_zone = (UINT16) config->addr[0].zone;
 	   if (MsgOpenApi(&m) != 0) {
 		   exit_hpt("MsgApiOpen Error",1);
-	   } /*endif */
+	   }
    }
    
    msgToSysop = (s_message**) safe_malloc(config->addrCount * sizeof(s_message*));
@@ -469,7 +478,9 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    nfree(versionStr);
 
    if (config->lockfile) {
-	   close(fd);
+//     we do not needed this imho.
+//     hpt can remove locked file from another process
+//	   close(fd);
 	   remove(config->lockfile);
    }
 

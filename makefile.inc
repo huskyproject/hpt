@@ -11,10 +11,11 @@ EXENAMEFLAG=-o
 #SRC_DIR=../src/
 #LIBS   =-L$(LIBDIR) -lfidoconfig -lsmapi
 
-OBJS    = fcommon$(OBJ) hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) log$(OBJ) \
-          global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) seenby$(OBJ) \
-          crc$(OBJ) dupe$(OBJ) tree$(OBJ) recode$(OBJ) areafix$(OBJ) arealist$(OBJ) \
-          post$(OBJ) link$(OBJ) strsep$(OBJ) $(PERLOBJ)
+OBJS    = fcommon$(OBJ) getfree$(OBJ) hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) \
+	  log$(OBJ) global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) \
+	  seenby$(OBJ) crc$(OBJ) dupe$(OBJ) tree$(OBJ) recode$(OBJ) \
+	  areafix$(OBJ) arealist$(OBJ) post$(OBJ) link$(OBJ) strsep$(OBJ) \
+	  $(PERLOBJ)
 
 
 commonall: $(OBJS) \
