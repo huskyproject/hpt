@@ -250,6 +250,8 @@ MinDiskFreeSpace 10
 -debug в параметрах EchoArea. Так можно отследить, что сообщение с нужным
 MSGID записано в pkt файл для линка. А 19-08-01 я добавил еще имя pkt файла.
 
+PG> В JAM при переполнении диска почта теряется только в smapi до 2001/12/17.
+
 /------/
 
 >[11] Q: Так как насчет фичи "X"?
@@ -464,7 +466,7 @@ http://www.jamnet.lgg.ru/uht/docs/uhtd.zip
 
 A: (PG)
 
-if [module]==hpt
+if "[module]"=="hpt"
   ReportTo hpt.reports
 else
   ReportTo htick.reports
@@ -517,8 +519,8 @@ BSOpack by Dmitry Sergienko.
 A: (PG)
 
 В current прописать для линка "arcNetmail", и тогда, если флейвор
-будет совпадает с EchoMailFlavour, netmail будет паковаться в
-бандлы всесте с echomail.
+совпадает с EchoMailFlavour, netmail будет паковаться в бандлы
+всесте с echomail.
 
 /------/
 
