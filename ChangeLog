@@ -9,6 +9,11 @@ max:
 * disableTID
 
 ----- cvs ci ------
+Fri Apr 14 21:00:00 MSK 2000
+nn:
+* areafixKillRequests fix
+
+----- cvs ci ------
 Wed Apr 12 13:57:24 MSD 2000
 max (patch from Serguei Revtov):
 * print message attributes in pktinfo
