@@ -402,6 +402,30 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
    echo = getArea(config, area);
    statToss.echoMail++;
 
+   if (echo != &(config->badArea)) {
+      if (dupeDetection(echo, *msg)==1) {
+         // no dupe
+
+         if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
+            forwardMsgToLinks(echo, msg, pktOrigAddr);
+            statToss.exported++;
+         }
+
+         if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
+            putMsgInArea(echo, msg);
+            echo->imported = 1;  // area has got new messages
+	    statToss.saved++;
+         } else statToss.passthrough++;
+   
+      } else {
+         // msg is dupe
+         if (echo->dupeCheck == move) {
+            putMsgInArea(&(config->dupeArea), msg);
+         }
+	 statToss.dupes++;
+      }
+   }
+
    if (echo == &(config->badArea)) {
       // checking for autocreate option
       link = getLinkFromAddr(*config, pktOrigAddr);
@@ -410,30 +434,9 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
          echo = getArea(config, area);
       } else
          // no autoareaCreate -> msg to bad
-         putMsgInArea(echo, msg);
          statToss.bad++;
-   }
-
-   if (echo != &(config->badArea)) {
-      if (dupeDetection(echo, *msg)==1) {
-         // no dupe
-
-         if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-            putMsgInArea(echo, msg);
-            echo->imported = 1;  // area has got new messages
-	    statToss.saved++;
-         } else statToss.passthrough++;
-         if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
-            forwardMsgToLinks(echo, msg, pktOrigAddr);
-            statToss.exported++;
-         }
-      } else {
-         // msg is dupe
-         if (echo->dupeCheck == move) {
-            putMsgInArea(&(config->dupeArea), msg);
-         }
-	 statToss.dupes++;
-      }
+      
+      putMsgInArea(echo, msg);
    }
 
    free(textBuff);

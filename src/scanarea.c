@@ -95,7 +95,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
    msg->textLength = MsgGetTextLen(hmsg);
    msg->text = (char *) malloc(msg->textLength+strlen(seenByPath)+strlen(kludgeLines)+strlen(echo->areaName)+strlen("AREA:\r")+1+1); // second 1 for \r at the end of the origin line
    strcpy(msg->text, "AREA:");
-   strcat(msg->text, echo->areaName);
+   strcat(msg->text, strUpper(echo->areaName));
    strcat(msg->text, "\r");
    strcat(msg->text, kludgeLines);
    MsgReadMsg(hmsg, NULL, 0, msg->textLength, msg->text+strlen(msg->text), 0, NULL);
