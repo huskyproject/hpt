@@ -1,3 +1,8 @@
+2002-12-03 Tuesday 14:17  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.27): Change Q9 (golded &
+	fidoconfig)
+
 2002-11-26 Tuesday 13:45  stas_degteff
 
 	* src/link.c (hpt-1_2-stable.5): MFC: Prevent EMX compilation
