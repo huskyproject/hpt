@@ -352,7 +352,7 @@ s_dupeMemory *readDupeFile(s_area *area) {
    TimeStamp = time (NULL);
 
    dupeMemory = safe_malloc(sizeof(s_dupeMemory));
-   tree_init(&(dupeMemory->avlTree));
+   tree_init(&(dupeMemory->avlTree),1);
    
    if (config->typeDupeBase!=commonDupeBase) {
        fileName = createDupeFileName(area);
