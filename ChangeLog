@@ -1,3 +1,16 @@
+2002-03-16 Saturday 13:34  mche
+
+	* h/toss.h (1.45), src/toss.c (1.393): duplicated code removed
+
+2002-03-16 Saturday 13:21  mche
+
+	* src/hpt.c (1.137): changed: commandline commands
+
+2002-03-16 Saturday 13:19  mche
+
+	* src/areafix.c (1.270), src/query.c (1.30), h/areafix.h (1.26):
+	expanded forward request logic
+
 2002-03-15 Friday 15:05  mche
 
 	* TODO (1.186): no message
