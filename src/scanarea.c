@@ -65,6 +65,7 @@
 #endif
 
 // create seen-by's & path
+/* is not used
 char *createSeenByPath(s_area *echo) {
 	unsigned int i, seenByCount = 0;
 	s_seenBy *seenBys = NULL;
@@ -95,6 +96,7 @@ char *createSeenByPath(s_area *echo) {
 
 	return seenByPath;
 }
+*/
 
 void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
 {

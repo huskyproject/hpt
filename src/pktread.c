@@ -227,7 +227,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
    int valid_intl_kludge = 0;
    int zonegated = 0;
    s_addr intl_from, intl_to;
-   int i;
+   UINT i;
 
    copy = buffer;
    start = strstr(msg->text, "FMPT");

@@ -44,4 +44,24 @@ void sortSeenBys(s_seenBy *seenBys, UINT count);
 
 char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading);
 
+void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy
+							  **seenBys, UINT *seenByCount);
+
+void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount);
+
+/*
+  This function puts all the links of the echoarea in the newLink
+  array who does not have got the mail, zoneLinks - the links who
+  receive msg with stripped seen-by's.
+*/
+
+void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
+			           s_area *echo,
+                       s_arealink ***newLinks,
+			           s_arealink ***zoneLinks,
+                       s_arealink ***otherLinks,
+                       s_addr pktOrigAddr);
+
+
+
 #endif

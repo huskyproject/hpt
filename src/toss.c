@@ -280,230 +280,6 @@ int putMsgInDupeArea(s_addr addr, s_message *msg, dword forceattr)
 }
 */
 
-void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, UINT *seenByCount)
-{
-    char *seenByText=NULL, *start = NULL, *token = NULL;
-    unsigned long temp;
-    char *endptr = NULL;
-    UINT seenByAlloced;
-
-    *seenByCount = seenByAlloced = 0;
-
-    start = strrstr(msg->text, " * Origin:"); // jump over Origin
-    if (start == NULL) start = msg->text;
-
-    // find beginning of seen-by lines
-    do {
-	start = strstr(start, "SEEN-BY:");
-	if (start == NULL) return;
-	start += 8; // jump over SEEN-BY:
-
-	while (*start == ' ') start++; // find first word after SEEN-BY:
-    } while (!isdigit(*start));
-
-    // now that we have the start of the SEEN-BY's we can tokenize the lines and read them in
-    xstrcat(&seenByText, start);
-
-    token = strtok(seenByText, " \r\t\376");
-    while (token != NULL) {
-	if (isdigit(*token)) {
-	    // parse token
-	    temp = strtoul(token, &endptr, 10);
-	    if (*endptr==':') {
-		token = endptr+1;
-		temp = strtoul(token, &endptr, 10);
-	    }
-	    if (*endptr && *endptr != '/')
-		continue;
-
-	    // get new memory
-	    if ((*seenByCount)++ >= seenByAlloced)
-		(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAlloced+=32));
-
-	    if ((*endptr) == '\0') {
-		// only node aka
-		(*seenBys)[*seenByCount-1].node = (UINT16) temp;
-		// use net aka of last seenBy
-		(*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
-	    } else {
-		// net and node aka
-		(*seenBys)[*seenByCount-1].net = (UINT16) temp;
-		// eat up '/'
-		endptr++;
-		(*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
-	    }
-	} else if (strcmp(token,"SEEN-BY:")!=0) break; // not digit and not SEEN-BY
-	
-	token = strtok(NULL, " \r\t\376");
-    } // end while
-
-    if (*seenByCount != seenByAlloced)
-	(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
-    //test output for reading of seenBys...
-#ifdef DEBUG_HPT
-    for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
-#endif
-//   exit(2);
-
-    nfree(seenByText);
-}
-
-void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount)
-{
-
-    // DON'T GET MESSED UP WITH THE VARIABLES NAMED SEENBY...
-    // THIS FUNCTION READS PATH!!!
-
-    char *seenByText=NULL, *start = NULL, *token = NULL;
-    char *endptr = NULL;
-    unsigned long temp;
-    UINT seenByAlloced;
-#ifdef DEBUG_HPT
-    int i;
-#endif
-
-    *seenByCount = seenByAlloced = 0;
-
-    start = strrstr(msg->text, " * Origin:"); // jump over Origin
-    if (start == NULL) start = msg->text;
-
-    // find beginning of path lines
-    do {
-	start = strstr(start, "\001PATH:");
-	if (start == NULL) return;
-	start += 7; // jump over PATH:
-
-	while (*start == ' ') start++; // find first word after PATH:
-    } while (!isdigit(*start));
-
-    // now that we have the start of the PATH' so we can tokenize the lines and read them in
-    xstrcat(&seenByText, start);
-
-    token = strtok(seenByText, " \r\t\376");
-    while (token != NULL) {
-	if (isdigit(*token)) {
-	    // parse token
-	    temp = strtoul(token, &endptr, 10);
-	    if (*endptr==':') {
-		token = endptr+1;
-		temp = strtoul(token, &endptr, 10);
-	    }
-	    if (*endptr && *endptr != '/')
-		continue;
-
-	    // get new memory
-	    if ((*seenByCount)++ >= seenByAlloced)
-		(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAlloced+=32));
-
-	    if ((*endptr) == '\0') {
-		// only node aka
-		(*seenBys)[*seenByCount-1].node = (UINT16) temp;
-		// use net aka of last seenBy
-		(*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
-	    } else {
-		// net and node aka
-		(*seenBys)[*seenByCount-1].net = (UINT16) temp;
-		// eat up '/'
-		endptr++;
-		(*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
-	    }
-	} else if (strcmp(token, "\001PATH:")!=0) break; // not digit and not PATH
-	token = strtok(NULL, " \r\t\376");
-    }
-
-    if (*seenByCount != seenByAlloced)
-	(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
-
-    // test output for reading of paths...
-#ifdef DEBUG_HPT
-    for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
-#endif
-    //exit(2);
-
-    nfree(seenByText);
-}
-
-/**
-  * This function returns 0 if the link is not in seenBy else it returns 1.
-  */
-
-int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link,
-	      s_addr pktOrigAddr, s_area *area)
-{
-    UINT i,j;
-
-    // the link where we got the mail from
-    if (addrComp(pktOrigAddr, link->hisAka) == 0) return 1;
-
-    if (seenBys==NULL) return 0;
-
-    // a point always gets the mail
-    // if (link->hisAka.point != 0) return 0;
-
-    // send the mail to links within our node-system
-    if ((link->hisAka.zone == area->useAka->zone) &&
-        (link->hisAka.net  == area->useAka->net) &&
-        (link->hisAka.node == area->useAka->node))
-	return 0;
-
-    for (i=0; i < seenByCount; i++) {
-	if ((link->hisAka.net==seenBys[i].net) &&
-	    (link->hisAka.node==seenBys[i].node)) {
-		
-	    for (j=0; j < config->ignoreSeenCount; j++) {
-		if (config->ignoreSeen[j].net == seenBys[i].net &&
-		    config->ignoreSeen[j].node == seenBys[i].node) {
-		    link->sb = 1; // fix for double seen-bys
-		    return 0;
-		}
-	    }
-	    for (j=0; j < area->sbignCount; j++) {
-		if (area->sbign[j].net == seenBys[i].net &&
-		    area->sbign[j].node == seenBys[i].node) {
-		    link->sb = 1; // fix for double seen-bys
-		    return 0;
-		}
-	    }
-
-	    return 1;
-	}
-    }
-    return 0;
-}
-
-/*
-  This function puts all the links of the echoarea in the newLink
-  array who does not have got the mail, zoneLinks - the links who
-  receive msg with stripped seen-by's.
-*/
-
-void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
-			s_area *echo, s_arealink ***newLinks,
-			s_arealink ***zoneLinks, s_addr pktOrigAddr) {
-    UINT i, j=0, k=0;
-	
-    *newLinks = (s_arealink **) scalloc(echo->downlinkCount,sizeof(s_arealink*));
-    *zoneLinks = (s_arealink **) scalloc(echo->downlinkCount,sizeof(s_arealink*));
-    if (*newLinks==NULL || *zoneLinks==NULL) exit_hpt("out of memory",1);
-
-    for (i=0; i < echo->downlinkCount; i++) {
-	// is the link in SEEN-BYs?
-	if ( checkLink(seenBys, seenByCount, echo->downlinks[i]->link,
-		       pktOrigAddr, echo)!=0) continue;
-	// link with "export off"
-	if (echo->downlinks[i]->export == 0) continue;
-
-	if (pktOrigAddr.zone==echo->downlinks[i]->link->hisAka.zone) {
-	    // links with same zone
-	    (*newLinks)[j] = echo->downlinks[i];
-	    j++;
-	} else {
-	    // links in different zones
-	    (*zoneLinks)[k] = echo->downlinks[i];
-	    k++;
-	}
-    }
-}
 
 void closeOpenedPkt(void) {
     unsigned int i;
@@ -581,16 +357,16 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
     }
 
     for (i=0; i<config->addToSeenCount; i++) {
-	(*seenByCount)++;
-	(*seenBys) = (s_seenBy*) safe_realloc(*seenBys,sizeof(s_seenBy)*(*seenByCount));
-	(*seenBys)[*seenByCount-1].net = (UINT16) config->addToSeen[i].net;
-	(*seenBys)[*seenByCount-1].node = (UINT16) config->addToSeen[i].node;
+        (*seenByCount)++;
+        (*seenBys) = (s_seenBy*) safe_realloc(*seenBys,sizeof(s_seenBy)*(*seenByCount));
+        (*seenBys)[*seenByCount-1].net = (UINT16) config->addToSeen[i].net;
+        (*seenBys)[*seenByCount-1].node = (UINT16) config->addToSeen[i].node;
     }
     for (i=0; i<echo->sbaddCount; i++) {
-	(*seenByCount)++;
-	(*seenBys) = (s_seenBy*) safe_realloc(*seenBys,sizeof(s_seenBy)*(*seenByCount));
-	(*seenBys)[*seenByCount-1].net = (UINT16) echo->sbadd[i].net;
-	(*seenBys)[*seenByCount-1].node = (UINT16) echo->sbadd[i].node;
+        (*seenByCount)++;
+        (*seenBys) = (s_seenBy*) safe_realloc(*seenBys,sizeof(s_seenBy)*(*seenByCount));
+        (*seenBys)[*seenByCount-1].net = (UINT16) echo->sbadd[i].net;
+        (*seenBys)[*seenByCount-1].node = (UINT16) echo->sbadd[i].node;
     }
 
     // add our aka to seen-by (zonegating link must strip our aka)
@@ -612,18 +388,18 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 
     // add seenBy for newLinks
     for (i=0; i<echo->downlinkCount; i++) {
-		
-	// no link at this index -> break
-	if (newLinks[i] == NULL) break;
-	// don't include points in SEEN-BYs
-	if (newLinks[i]->link->hisAka.point != 0) continue;
-	// fix for IgnoreSeen & -sbign
-	if (newLinks[i]->link->sb == 1) continue;
-
-	(*seenBys) = (s_seenBy*) safe_realloc((*seenBys), sizeof(s_seenBy) * (*seenByCount+1));
-	(*seenBys)[*seenByCount].net = (UINT16) newLinks[i]->link->hisAka.net;
-	(*seenBys)[*seenByCount].node = (UINT16) newLinks[i]->link->hisAka.node;
-	(*seenByCount)++;
+        
+        // no link at this index -> break
+        if (newLinks[i] == NULL) break;
+        // don't include points in SEEN-BYs
+        if (newLinks[i]->link->hisAka.point != 0) continue;
+        // fix for IgnoreSeen & -sbign
+        if (newLinks[i]->link->sb == 1) continue;
+        
+        (*seenBys) = (s_seenBy*) safe_realloc((*seenBys), sizeof(s_seenBy) * (*seenByCount+1));
+        (*seenBys)[*seenByCount].net = (UINT16) newLinks[i]->link->hisAka.net;
+        (*seenBys)[*seenByCount].node = (UINT16) newLinks[i]->link->hisAka.node;
+        (*seenByCount)++;
     }
 
     sortSeenBys((*seenBys), *seenByCount);
@@ -633,20 +409,20 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 #endif
 
     if (*pathCount > 0) {
-	if (((*path)[*pathCount-1].net != echo->useAka->net) ||
-	    ((*path)[*pathCount-1].node != echo->useAka->node)) {
-	    // add our aka to path
-	    (*path) = (s_seenBy*) safe_realloc((*path), sizeof(s_seenBy) * (*pathCount+1));
-	    (*path)[*pathCount].net = (UINT16) echo->useAka->net;
-	    (*path)[*pathCount].node = (UINT16) echo->useAka->node;
-	    (*pathCount)++;
-	}
+        if (((*path)[*pathCount-1].net != echo->useAka->net) ||
+            ((*path)[*pathCount-1].node != echo->useAka->node)) {
+            // add our aka to path
+            (*path) = (s_seenBy*) safe_realloc((*path), sizeof(s_seenBy) * (*pathCount+1));
+            (*path)[*pathCount].net = (UINT16) echo->useAka->net;
+            (*path)[*pathCount].node = (UINT16) echo->useAka->node;
+            (*pathCount)++;
+        }
     } else {
-	(*pathCount) = 0;
-	(*path) = (s_seenBy*) safe_realloc((*path),sizeof(s_seenBy));
-	(*path)[*pathCount].net = (UINT16) echo->useAka->net;
-	(*path)[*pathCount].node = (UINT16) echo->useAka->node;
-	(*pathCount) = 1;
+        (*pathCount) = 0;
+        (*path) = (s_seenBy*) safe_realloc((*path),sizeof(s_seenBy));
+        (*path)[*pathCount].net = (UINT16) echo->useAka->net;
+        (*path)[*pathCount].node = (UINT16) echo->useAka->node;
+        (*pathCount) = 1;
     }
 
 #ifdef DEBUG_HPT
@@ -695,65 +471,65 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
     // add msg to the pkt's of the downlinks
     if (maxopenpkt == 0) setmaxopen();
     for (i = 0; i<echo->downlinkCount; i++) {
-
-	// no link at this index -> break;
-	if (newLinks[i] == NULL) break;
-
-	// check packet size
-	if (newLinks[i]->link->pktFile != NULL && newLinks[i]->link->pktSize != 0) {
-	    len = newLinks[i]->link->pkt ? ftell(newLinks[i]->link->pkt) : fsize(newLinks[i]->link->pktFile);
-	    if (len >= (newLinks[i]->link->pktSize * 1024L)) { // Stop writing to pkt
-		if (newLinks[i]->link->pkt) {
-		    fclose(newLinks[i]->link->pkt);
-		    newLinks[i]->link->pkt = NULL;
-		    nopenpkt--;
-		}
-		nfree(newLinks[i]->link->pktFile);
-		nfree(newLinks[i]->link->packFile);
-	    }
-	}
-
-	// create pktfile if necessary
-	if (newLinks[i]->link->pktFile == NULL) {
-	    // pktFile does not exist
-	    if ( createTempPktFileName(newLinks[i]->link) )
-		exit_hpt("Could not create new pkt!",1);
-	}
-
-	makePktHeader(NULL, &header);
-	header.origAddr = *(newLinks[i]->link->ourAka);
-	header.destAddr = newLinks[i]->link->hisAka;
-	if (newLinks[i]->link->pktPwd != NULL)
-	    strcpy(header.pktPassword, newLinks[i]->link->pktPwd);
-	if (newLinks[i]->link->pkt == NULL) {
-	    newLinks[i]->link->pkt = openPktForAppending(newLinks[i]->link->pktFile, &header);
-	    nopenpkt++;
-	}
-
-	// an echomail msg must be adressed to the link
-	msg->destAddr = header.destAddr;
-	// .. and must come from us
-	msg->origAddr = header.origAddr;
-	rc += writeMsgToPkt(newLinks[i]->link->pkt, *msg);
-	if (rc) w_log(LL_ERR,"can't write msg to pkt: %s",
-		      newLinks[i]->link->pktFile);
-	if (nopenpkt >= maxopenpkt-12 || // std streams, in pkt, msgbase, log
-	    (newLinks[i]->link->pktSize && ftell(newLinks[i]->link->pkt)>=newLinks[i]->link->pktSize * 1024L)) {
-	    rc += closeCreatedPkt(newLinks[i]->link->pkt);
-	    if (rc) w_log(LL_ERR,"can't close pkt: %s",
-		          newLinks[i]->link->pktFile);
-	    newLinks[i]->link->pkt = NULL;
-	    nopenpkt--;
-	}
-	if (f) {
-	    if (rc) fputs(" failed: ",f);
-	    fputs(aka2str(header.destAddr),f);
-	    fputc('>',f);
-	    fputs(get_filename(newLinks[i]->link->pktFile),f);
-	    fputc(' ',f);
-	}
-	if (rc==0) statToss.exported++;
-	else rc=0;
+        
+        // no link at this index -> break;
+        if (newLinks[i] == NULL) break;
+        
+        // check packet size
+        if (newLinks[i]->link->pktFile != NULL && newLinks[i]->link->pktSize != 0) {
+            len = newLinks[i]->link->pkt ? ftell(newLinks[i]->link->pkt) : fsize(newLinks[i]->link->pktFile);
+            if (len >= (newLinks[i]->link->pktSize * 1024L)) { // Stop writing to pkt
+                if (newLinks[i]->link->pkt) {
+                    fclose(newLinks[i]->link->pkt);
+                    newLinks[i]->link->pkt = NULL;
+                    nopenpkt--;
+                }
+                nfree(newLinks[i]->link->pktFile);
+                nfree(newLinks[i]->link->packFile);
+            }
+        }
+        
+        // create pktfile if necessary
+        if (newLinks[i]->link->pktFile == NULL) {
+            // pktFile does not exist
+            if ( createTempPktFileName(newLinks[i]->link) )
+                exit_hpt("Could not create new pkt!",1);
+        }
+        
+        makePktHeader(NULL, &header);
+        header.origAddr = *(newLinks[i]->link->ourAka);
+        header.destAddr = newLinks[i]->link->hisAka;
+        if (newLinks[i]->link->pktPwd != NULL)
+            strcpy(header.pktPassword, newLinks[i]->link->pktPwd);
+        if (newLinks[i]->link->pkt == NULL) {
+            newLinks[i]->link->pkt = openPktForAppending(newLinks[i]->link->pktFile, &header);
+            nopenpkt++;
+        }
+        
+        // an echomail msg must be adressed to the link
+        msg->destAddr = header.destAddr;
+        // .. and must come from us
+        msg->origAddr = header.origAddr;
+        rc += writeMsgToPkt(newLinks[i]->link->pkt, *msg);
+        if (rc) w_log(LL_ERR,"can't write msg to pkt: %s",
+            newLinks[i]->link->pktFile);
+        if (nopenpkt >= maxopenpkt-12 || // std streams, in pkt, msgbase, log
+            (newLinks[i]->link->pktSize && ftell(newLinks[i]->link->pkt)>=newLinks[i]->link->pktSize * 1024L)) {
+            rc += closeCreatedPkt(newLinks[i]->link->pkt);
+            if (rc) w_log(LL_ERR,"can't close pkt: %s",
+                newLinks[i]->link->pktFile);
+            newLinks[i]->link->pkt = NULL;
+            nopenpkt--;
+        }
+        if (f) {
+            if (rc) fputs(" failed: ",f);
+            fputs(aka2str(header.destAddr),f);
+            fputc('>',f);
+            fputs(get_filename(newLinks[i]->link->pktFile),f);
+            fputc(' ',f);
+        }
+        if (rc==0) statToss.exported++;
+        else rc=0;
     }
 
     if (f) fclose(f);
@@ -762,20 +538,26 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 
 void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 {
-    s_seenBy *seenBys = NULL, *path = NULL;
-    UINT     seenByCount, pathCount;
+    s_seenBy *rseenBys = NULL,*seenBys = NULL, *path = NULL;
+    UINT     seenByCount = 0 , rseenByCount = 0, pathCount = 0;
+
     // links who does not have their aka in seenBys and thus have not got the echomail
-    s_arealink **newLinks = NULL, **zoneLinks = NULL;
+    s_arealink **newLinks = NULL, **zoneLinks = NULL, **otherLinks = NULL;
 
     createSeenByArrayFromMsg(echo, msg, &seenBys, &seenByCount);
     createPathArrayFromMsg(msg, &path, &pathCount);
 
-    createNewLinkArray(seenBys, seenByCount, echo, &newLinks, &zoneLinks, pktOrigAddr);
+    createNewLinkArray(seenBys, seenByCount, echo, &newLinks, &zoneLinks, &otherLinks, pktOrigAddr);
 
-    forwardToLinks(msg, echo, newLinks, &seenBys, &seenByCount, &path, &pathCount);
-    if (zoneLinks!=NULL) {
-	if (echo->useAka->zone != pktOrigAddr.zone) seenByCount = 0;
-	forwardToLinks(msg, echo, zoneLinks, &seenBys, &seenByCount, &path, &pathCount);
+    if(otherLinks)
+        forwardToLinks(msg, echo, otherLinks, &path, &pathCount, &path, &pathCount);
+
+    if(newLinks)
+        forwardToLinks(msg, echo, newLinks, &seenBys, &seenByCount, &path, &pathCount);
+
+    if (zoneLinks) {
+        if (echo->useAka->zone != pktOrigAddr.zone) seenByCount = 0;
+        forwardToLinks(msg, echo, zoneLinks, &seenBys, &seenByCount, &path, &pathCount);
     }
 
     nfree(seenBys);

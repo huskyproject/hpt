@@ -58,7 +58,7 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
 {
    #define size 81
    #define addr2dSize 13
-   int  i;
+   UINT  i;
    char *text=NULL, *line = NULL, addr2d[addr2dSize];
 
    if (seenByCount==0) {              //return empty control line
@@ -106,5 +106,247 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
    strncat(text, "\r", size);
 
    return text;
+}
+
+void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, UINT *seenByCount)
+{
+    char *seenByText=NULL, *start = NULL, *token = NULL;
+    unsigned long temp;
+    char *endptr = NULL;
+    UINT seenByAlloced;
+
+    *seenByCount = seenByAlloced = 0;
+
+    start = strrstr(msg->text, " * Origin:"); // jump over Origin
+    if (start == NULL) start = msg->text;
+
+    // find beginning of seen-by lines
+    do {
+	start = strstr(start, "SEEN-BY:");
+	if (start == NULL) return;
+	start += 8; // jump over SEEN-BY:
+
+	while (*start == ' ') start++; // find first word after SEEN-BY:
+    } while (!isdigit(*start));
+
+    // now that we have the start of the SEEN-BY's we can tokenize the lines and read them in
+    xstrcat(&seenByText, start);
+
+    token = strtok(seenByText, " \r\t\376");
+    while (token != NULL) {
+	if (isdigit(*token)) {
+	    // parse token
+	    temp = strtoul(token, &endptr, 10);
+	    if (*endptr==':') {
+		token = endptr+1;
+		temp = strtoul(token, &endptr, 10);
+	    }
+	    if (*endptr && *endptr != '/')
+		continue;
+
+	    // get new memory
+	    if ((*seenByCount)++ >= seenByAlloced)
+		(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAlloced+=32));
+
+	    if ((*endptr) == '\0') {
+		// only node aka
+		(*seenBys)[*seenByCount-1].node = (UINT16) temp;
+		// use net aka of last seenBy
+		(*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
+	    } else {
+		// net and node aka
+		(*seenBys)[*seenByCount-1].net = (UINT16) temp;
+		// eat up '/'
+		endptr++;
+		(*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
+	    }
+	} else if (strcmp(token,"SEEN-BY:")!=0) break; // not digit and not SEEN-BY
+	
+	token = strtok(NULL, " \r\t\376");
+    } // end while
+
+    if (*seenByCount != seenByAlloced)
+	(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
+    //test output for reading of seenBys...
+#ifdef DEBUG_HPT
+    for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
+#endif
+//   exit(2);
+
+    nfree(seenByText);
+}
+
+void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount)
+{
+
+    // DON'T GET MESSED UP WITH THE VARIABLES NAMED SEENBY...
+    // THIS FUNCTION READS PATH!!!
+
+    char *seenByText=NULL, *start = NULL, *token = NULL;
+    char *endptr = NULL;
+    unsigned long temp;
+    UINT seenByAlloced;
+#ifdef DEBUG_HPT
+    int i;
+#endif
+
+    *seenByCount = seenByAlloced = 0;
+
+    start = strrstr(msg->text, " * Origin:"); // jump over Origin
+    if (start == NULL) start = msg->text;
+
+    // find beginning of path lines
+    do {
+	start = strstr(start, "\001PATH:");
+	if (start == NULL) return;
+	start += 7; // jump over PATH:
+
+	while (*start == ' ') start++; // find first word after PATH:
+    } while (!isdigit(*start));
+
+    // now that we have the start of the PATH' so we can tokenize the lines and read them in
+    xstrcat(&seenByText, start);
+
+    token = strtok(seenByText, " \r\t\376");
+    while (token != NULL) {
+	if (isdigit(*token)) {
+	    // parse token
+	    temp = strtoul(token, &endptr, 10);
+	    if (*endptr==':') {
+		token = endptr+1;
+		temp = strtoul(token, &endptr, 10);
+	    }
+	    if (*endptr && *endptr != '/')
+		continue;
+
+	    // get new memory
+	    if ((*seenByCount)++ >= seenByAlloced)
+		(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAlloced+=32));
+
+	    if ((*endptr) == '\0') {
+		// only node aka
+		(*seenBys)[*seenByCount-1].node = (UINT16) temp;
+		// use net aka of last seenBy
+		(*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
+	    } else {
+		// net and node aka
+		(*seenBys)[*seenByCount-1].net = (UINT16) temp;
+		// eat up '/'
+		endptr++;
+		(*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
+	    }
+	} else if (strcmp(token, "\001PATH:")!=0) break; // not digit and not PATH
+	token = strtok(NULL, " \r\t\376");
+    }
+
+    if (*seenByCount != seenByAlloced)
+	(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
+
+    // test output for reading of paths...
+#ifdef DEBUG_HPT
+    for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
+#endif
+    //exit(2);
+
+    nfree(seenByText);
+}
+
+/**
+  * This function returns 0 if the link is not in seenBy else it returns 1.
+  */
+
+int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link,
+	      s_addr pktOrigAddr, s_area *area)
+{
+    UINT i,j;
+
+    // the link where we got the mail from
+    if (addrComp(pktOrigAddr, link->hisAka) == 0) return 1;
+
+    if (seenBys==NULL) return 0;
+
+    // a point always gets the mail
+    // if (link->hisAka.point != 0) return 0;
+
+    // send the mail to links within our node-system
+    if ((link->hisAka.zone == area->useAka->zone) &&
+        (link->hisAka.net  == area->useAka->net) &&
+        (link->hisAka.node == area->useAka->node))
+	return 0;
+
+    for (i=0; i < seenByCount; i++) {
+	if ((link->hisAka.net==seenBys[i].net) &&
+	    (link->hisAka.node==seenBys[i].node)) {
+		
+	    for (j=0; j < config->ignoreSeenCount; j++) {
+		if (config->ignoreSeen[j].net == seenBys[i].net &&
+		    config->ignoreSeen[j].node == seenBys[i].node) {
+		    link->sb = 1; // fix for double seen-bys
+		    return 0;
+		}
+	    }
+	    for (j=0; j < area->sbignCount; j++) {
+		if (area->sbign[j].net == seenBys[i].net &&
+		    area->sbign[j].node == seenBys[i].node) {
+		    link->sb = 1; // fix for double seen-bys
+		    return 0;
+		}
+	    }
+
+	    return 1;
+	}
+    }
+    return 0;
+}
+
+/*
+  This function puts all the links of the echoarea in the newLink
+  array who does not have got the mail, zoneLinks - the links who
+  receive msg with stripped seen-by's.
+*/
+
+void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
+			           s_area *echo,
+                       s_arealink ***newLinks,
+			           s_arealink ***zoneLinks,
+                       s_arealink ***otherLinks,
+                       s_addr pktOrigAddr) 
+{
+    UINT i, lFound = 0, zFound = 0, oFound = 0;
+    int nRet = 0;
+    
+    *newLinks =  (s_arealink **)safe_calloc(echo->downlinkCount,sizeof(s_arealink*));
+    *zoneLinks = (s_arealink **)safe_calloc(echo->downlinkCount,sizeof(s_arealink*));
+    *otherLinks =(s_arealink **)safe_calloc(echo->downlinkCount,sizeof(s_arealink*));
+
+    
+    for (i=0; i < echo->downlinkCount; i++) {
+        // is the link in SEEN-BYs?
+        if ( checkLink(seenBys, seenByCount, echo->downlinks[i]->link,
+            pktOrigAddr, echo)!=0) continue;
+        // link with "export off"
+        if (echo->downlinks[i]->export == 0) continue;
+        
+        if (pktOrigAddr.zone==echo->downlinks[i]->link->hisAka.zone) {
+            // links with same zone
+            if(echo->downlinks[i]->link->reducedSeenBy)
+            {
+                (*otherLinks)[oFound++] = echo->downlinks[i];
+            }
+            else
+            {
+                (*newLinks)[lFound++] = echo->downlinks[i];
+            }
+        } else {
+            // links in different zones
+            (*zoneLinks)[zFound++] = echo->downlinks[i];
+        }
+    }
+    if(lFound == 0)
+        nfree(*newLinks);
+    if(zFound == 0)
+        nfree(*zoneLinks);
+    if(oFound == 0)
+        nfree(*otherLinks);
 }
 
