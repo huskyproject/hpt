@@ -70,7 +70,7 @@ static char **rulesList = NULL;
 
 int isOurAka(s_addr link)
 {
-    int i;
+    unsigned int i;
     for (i = 0; i < config->addrCount; i++) {
         if (addrComp(link, config->addr[i])==0) return 1;
     }
@@ -79,7 +79,7 @@ int isOurAka(s_addr link)
 
 int isAreaLink(s_addr link, s_area *area)
 {
-    int i;
+    unsigned int i;
     for (i = 0; i < area->downlinkCount; i++) {
         if (addrComp(link, area->downlinks[i]->link->hisAka)==0) {
             return i; // return index of link
@@ -371,7 +371,7 @@ char *getPatternFromLine(char *line, int *reversed)
 }
 
 char *list(s_link *link, char *cmdline) {
-    int i, active, avail, rc = 0;
+    unsigned int i, active, avail, rc = 0;
     char *report = NULL;
     char *list = NULL;
     char *pattern = NULL;
@@ -426,7 +426,7 @@ char *list(s_link *link, char *cmdline) {
 }
 
 char *linked(s_link *link) {
-    int i, n, rc;
+    unsigned int i, n, rc;
     char *report = NULL;
 
     xscatprintf(&report, "\r%s areas on %s\r\r", 
@@ -446,7 +446,7 @@ char *linked(s_link *link) {
 }
 
 char *unlinked(s_link *link) {
-    int i, rc;
+    unsigned int i, rc;
     char *report = NULL;
     s_area *areas;
 
@@ -510,7 +510,7 @@ int tag_mask(char *tag, char **mask, unsigned num) {
 char *available(s_link *link, char *cmdline)
 {
     FILE *f;
-    int j=0, found;
+    unsigned int j=0, found;
     unsigned int k, rc;
     char *report = NULL, *line, *token, *running, linkAka[SIZE_aka2str];
     char *pattern;
@@ -882,10 +882,10 @@ static int compare_links_priority(const void *a, const void *b) {
 }
 
 int forwardRequest(char *areatag, s_link *dwlink) {
-    int i, rc = 1;
+    unsigned int i, rc = 1;
     s_link *uplink;
     int *Indexes;
-    int Requestable = 0;
+    unsigned int Requestable = 0;
 
     /* From Lev Serebryakov -- sort Links by priority */
     Indexes = safe_malloc(sizeof(int)*config->linkCount);
@@ -1151,7 +1151,7 @@ char *errorRQ(char *line) {
 
 static char *do_delete(s_link *link, s_area *area) {
     char *report = NULL, *an = area->areaName;
-    int i;
+    unsigned int i;
 
     if(config->areafixQueueFile) { // add deleted area to queue file
         af_CheckAreaInQuery( area->areaName, 
@@ -1248,7 +1248,7 @@ char *delete(s_link *link, char *cmd) {
 }
 
 char *unsubscribe(s_link *link, char *cmd) {
-    int i, rc = 2, j, from_us=0;
+    unsigned int i, rc = 2, j, from_us=0;
     char *line, *an, *report = NULL;
     s_area *area;
 	
@@ -1275,7 +1275,6 @@ char *unsubscribe(s_link *link, char *cmd) {
 	switch (rc) {
 	case 0:
 	    if (from_us == 0) {
-		int i;
         for (i=0; i<area->downlinkCount; i++) {
             if (addrComp(link->hisAka, area->downlinks[i]->link->hisAka)==0 &&
                 area->downlinks[i]->defLink)
@@ -1588,7 +1587,7 @@ char *info_link(s_link *link)
     char hisAddr[]="Your address: ";
     char ourAddr[]="AKA used here: ";
     char Arch[]="Compression: ";
-    int i;
+	unsigned int i;
     
     sprintf(linkAka,aka2str(link->hisAka));
     xscatprintf(&report, "Here is some information about our link:\r\r %s%s\r%s%s\r  %s", hisAddr, linkAka, ourAddr, aka2str(*link->ourAka), Arch);
@@ -1667,7 +1666,7 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount)
        highestMsg    = MsgGetHighMsg(area);
 
        // if rescanCount == -1 all mails should be rescanned
-       if ((rescanCount == -1) || (rescanCount > highestMsg))
+       if ((rescanCount == -1) || (rescanCount > (long)highestMsg))
 	   rescanCount = highestMsg;
 
        while (i <= highestMsg) {
@@ -1692,7 +1691,7 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount)
 }
 
 char *rescan(s_link *link, char *cmd) {
-    int i, c, rc = 0;
+    unsigned int i, c, rc = 0;
     long rescanCount = -1, rcc;
     char *report = NULL, *line, *countstr, *an, *end;
     s_area *area;
@@ -2057,7 +2056,7 @@ void RetRules (s_message *msg, s_link *link, char *areaName)
 
 int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 {
-    int i, security=1, notforme = 0;
+    unsigned int i, security=1, notforme = 0;
     s_link *link = NULL;
     s_link *tmplink = NULL;
     s_message *linkmsg;
@@ -2399,7 +2398,7 @@ void autoPassive()
   s_message *msg;
   FILE *f;
   char *line, *path;
-  int i;
+  unsigned int i;
 
   for (i = 0; i < config->linkCount; i++) {
 
