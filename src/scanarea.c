@@ -65,7 +65,7 @@
 
 // create seen-by's & path
 char *createSeenByPath(s_area *echo) {
-	int i, seenByCount = 0;
+	unsigned int i, seenByCount = 0;
 	s_seenBy *seenBys = NULL;
 	char *seenByPath = NULL;
 	
@@ -234,6 +234,7 @@ void scanEMArea(s_area *echo)
 	   statScan.msgs++;
 	   MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
 	   if (((xmsg.attr & MSGSENT) != MSGSENT) &&
+           ((xmsg.attr & MSGLOCKED) != MSGLOCKED) &&
 	       ((xmsg.attr & MSGLOCAL) == MSGLOCAL)) {
 	       packEMMsg(hmsg, &xmsg, echo);
 	   }

@@ -608,10 +608,14 @@ void scanNMArea(s_area *area)
 	   cvtAddr(xmsg.dest, &dest);
 	   for_us = 0;
 	   for (j=0; j < config->addrCount; j++)
+       {
 	       if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
-                
+       }   
 	   // if not sent and not for us -> pack it
-	   if (((xmsg.attr & MSGSENT) != MSGSENT) && (for_us==0)) {
+       if (((xmsg.attr & MSGSENT) != MSGSENT) &&
+           ((xmsg.attr & MSGLOCKED) != MSGLOCKED) &&
+           (for_us==0))
+       {
 	       if (packMsg(msg, &xmsg, area) == 0) {
 		   statScan.exported++;
 		   area->scn++;
