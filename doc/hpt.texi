@@ -275,6 +275,7 @@ FIDOCONFIG about location of config file and keywords ideology.
 * AreafixKillRequests::         delete areafix requests
 * AreafixMsgSize::              maximum areafix report size
 * AreafixNames::                set additional areafix names
+* AreafixFromName::		set From: field in response messages
 * AreafixOrigin::		set origin for areafix reports
 * AreafixSplitStr::             set split string for splitted areafix messages
 * AreafixQueryReports::         insert linked areas list into areafix reports
@@ -432,7 +433,7 @@ If not defined, areafix reports will be not splitted...
 
 This statement cannot be repeated.
 
-@node AreafixNames, AreafixOrigin, AreafixMsgSize, Keywords
+@node AreafixNames, AreafixFromName, AreafixMsgSize, Keywords
 @subsection AreafixNames
 @findex AreafixNames
 @table @asis
@@ -447,7 +448,48 @@ Set additional names for areafix robot. Default is "areafix", "areamgr",
 
 This statement cannot be repeated.
 
-@node AreafixOrigin, AreafixSplitStr, AreafixNames, Keywords
+@node AreafixFromName, AreafixOrigin, AreafixNames, Keywords
+@subsection AreafixFromName
+@findex AreafixFromName
+@table @asis
+@item Syntax:
+@code{AreafixFromName <string>}
+@item Example:
+@code{AreafixFromName "HPT AreaFix"}
+@end table
+
+	Use value from @code{AreafixFromName} in field @code{From} when
+responding on messages to areafix. If this token not defined, name in
+original message will be used. Example:
+@example
+
+1) AreafixFromName not defined in config:
+
+Original message to areafix:
+----------------------------
+From: Sysop
+To: ArEaFiX
+
+AreaFix's response:
+-------------------
+From: ArEaFiX
+To: Sysop
+
+2) AreafixFromName "HPT AreaFix"
+
+Original message to areafix:
+----------------------------
+From: Sysop
+To: ArEaFiX
+
+AreaFix's response:
+-------------------
+From: HPT AreaFix
+To: Sysop
+
+@end example
+
+@node AreafixOrigin, AreafixSplitStr, AreafixFromName, Keywords
 @subsection AreafixOrigin
 @findex AreafixOrigin
 @table @asis

@@ -1791,10 +1791,17 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 	if (partnum) xscatprintf(&newsubj, "%s (%d)", subj, partnum);
 	else newsubj = subj;
 
+        if (config->areafixFromName == NULL)
 	tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
 			     msg->toUserName,
 			     msg->fromUserName, newsubj, 1,
-                 config->areafixKillReports);
+                             config->areafixKillReports);
+        else
+            tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
+                                 config->areafixFromName,
+                                 msg->fromUserName, newsubj, 1,
+                                 config->areafixKillReports);
+
 
 	preprocText(split, tmpmsg);
 	processNMMsg(tmpmsg, NULL, getNetMailArea(config,config->robotsArea),
