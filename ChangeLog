@@ -1,3 +1,8 @@
+2002-01-30 Wednesday 10:24  ml
+
+	* src/areafix.c (1.254): do not forward request to area with no
+	access
+
 2002-01-28 Monday 21:33  stas
 
 	* src/areafix.c (1.253): Add log messages with high levels. Insert
