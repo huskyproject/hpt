@@ -338,16 +338,22 @@ static void restoreperlerr(int saveerr, int pid)
 static int PerlStart(void)
 {
    int rc;
-   char *perlargs[]={"", PERLFILE, NULL};
+   char *perlfile;
+   char *perlargs[]={"", NULL, NULL};
    int saveerr, pid;
 
+   if (config->hptPerlFile != NULL)
+     perlfile = config->hptPerlFile;
+   else
+     perlfile = PERLFILE;
+   perlargs[1] = perlfile;
 #ifdef _MSC_VER
-   if (_access(PERLFILE, R_OK))
+   if (_access(perlfile, R_OK))
 #else
-   if (access(PERLFILE, R_OK))
+   if (access(perlfile, R_OK))
 #endif
-   { w_log('8', "Can't read " PERLFILE ": %s, perl filtering disabled",
-                   strerror(errno));
+   { w_log('8', "Can't read %s: %s, perl filtering disabled",
+                   perlfile, strerror(errno));
      do_perl=0;
      return 1;
    }
@@ -357,7 +363,8 @@ static int PerlStart(void)
    rc=perl_parse(perl, xs_init, 2, perlargs, NULL);
    restoreperlerr(saveerr, pid);
    if (rc)
-   { w_log('9', "Can't parse " PERLFILE ", perl filtering disabled");
+   { w_log('9', "Can't parse %s, perl filtering disabled",
+                   perlfile);
      perl_destruct(perl);
      perl_free(perl);
      perl=NULL;

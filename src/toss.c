@@ -1351,8 +1351,9 @@ int carbonCopy(s_message *msg, s_area *echo)
                             rc &= 1;
                 if (config->carbonAndQuit)
 		    /* not skip quit or delete */
-                    if ((cb->areaName && *cb->areaName!='*') || cb->move==2) 
+                    if ((cb->areaName && *cb->areaName!='*') ||	cb->move==2) {
                         return rc;
+		    }
             }
             break;
         case CC_AND: /* AND */
