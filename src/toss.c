@@ -609,6 +609,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    s_link *creatingLink;
    s_addr *aka;
    char *description=NULL;
+   char *NewAutoCreate=NULL;
 
    //translating name of the area to lowercase, much better imho.
    while (*c_area != '\0') {
@@ -622,6 +623,9 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
    creatingLink = getLinkFromAddr(*config, pktOrigAddr);
 
+   NewAutoCreate=(char *) calloc (strlen(creatingLink->autoCreateDefaults)+1,sizeof(char));
+   strcpy (NewAutoCreate,creatingLink->autoCreateDefaults);
+   
    fileName = creatingLink->autoCreateFile;
    if (fileName == NULL) fileName = getConfigFileName();
 
@@ -680,24 +684,24 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
        if (out) {
          if (((description=strtok(NULL," \t\n"))!=NULL) && (description=strstr(line,description))!=NULL) {
            fileName=NULL;
-           if ((fileName=strstr(creatingLink->autoCreateDefaults, "-d "))==NULL) {
+           if ((fileName=strstr(NewAutoCreate, "-d "))==NULL) {
                char *tmp;
-               tmp=(char *) calloc (strlen(creatingLink->autoCreateDefaults)+strlen(description)+6,sizeof(char));
-               sprintf (tmp,"%s -d \"%s\"",creatingLink->autoCreateDefaults,description);
-               free(creatingLink->autoCreateDefaults);
-               creatingLink->autoCreateDefaults=tmp;
+               tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(description)+6,sizeof(char));
+               sprintf (tmp,"%s -d \"%s\"",NewAutoCreate,description);
+               free(NewAutoCreate);
+               NewAutoCreate=tmp;
            }
-           if (fileName) {
+           else {
              char *tmp;
              
-             tmp=(char *) calloc (strlen(creatingLink->autoCreateDefaults)+strlen(description)+6,sizeof(char));
+             tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(description)+6,sizeof(char));
              fileName[0]='\0';
-             sprintf (tmp,"%s-d \"%s\"",creatingLink->autoCreateDefaults,description);
+             sprintf (tmp,"%s-d \"%s\"",NewAutoCreate,description);
              fileName++;
              fileName=rindex(fileName,'\"')+1;
              strcat(tmp,fileName);
-             free (creatingLink->autoCreateDefaults);
-             creatingLink->autoCreateDefaults=tmp;
+             free (NewAutoCreate);
+             NewAutoCreate=tmp;
            }  
          }
        }
@@ -705,17 +709,18 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
      }
    }
 
-   if ((creatingLink->autoCreateDefaults != NULL) &&
-       (strlen(buff)+strlen(creatingLink->autoCreateDefaults))<255) {
-           if ((fileName=strstr(creatingLink->autoCreateDefaults, "-g")) == NULL) {
+   if ((NewAutoCreate != NULL) &&
+       (strlen(buff)+strlen(NewAutoCreate))<255) {
+           if ((fileName=strstr(NewAutoCreate, "-g")) == NULL) {
 	       if (creatingLink->LinkGrp) {
 	           sprintf(buff+strlen(buff), " -g %c", *(creatingLink->LinkGrp));
 	       }
 	   }
-	   sprintf(buff+strlen(buff), " %s", creatingLink->autoCreateDefaults);
+	   sprintf(buff+strlen(buff), " %s", NewAutoCreate);
    } else if (creatingLink->LinkGrp)
 	       sprintf(buff+strlen(buff), " -g %c", *(creatingLink->LinkGrp));
 
+   free(NewAutoCreate);
 
    sprintf(buff+strlen(buff), " %s", hisaddr);
    

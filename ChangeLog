@@ -2,6 +2,13 @@ hpt 0.27
 --------
 
 ----- cvs ci ------
+Fri Apr  9 11:03:45 MET DST 1999
+Antonio: (applied by mtt)
++ If hpt create an area and take his description from ForwardRequestFile,
+  and then create another area, description for this area was the same that
+  previous area. Fixed.
+
+----- cvs ci ------
 Tue Apr  6 18:23:17 CEST 1999
 Antonio: (applied by mtt)
 + Fidoconfig and hpt now supports descriptions for areas. See docs for
