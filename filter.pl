@@ -2,7 +2,7 @@
 #
 # str2attr(attr);
 #
-# writeLogEntry(level, str);
+# log(level, str);
 # no printf() format, use sprintf()!
 #
 # crc32(str)
