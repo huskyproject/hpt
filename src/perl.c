@@ -52,6 +52,10 @@ extern "C" {
 #define sv_undef PL_sv_undef
 #endif
 
+#ifndef min
+#define min(a, b)	((a) < (b) ? (a) : (b))
+#endif
+
 /* for alike */
 #define MAX_LDIST_LEN      40 // max word len to compair
 #define ADDITION           1  // penality for needing to add a character
@@ -445,7 +449,7 @@ static void perlthread(ULONG arg)
 {
   FILE *f;
   char str[256], *p;
-  if ((f+open((int)arg, "r")) == NULL)
+  if ((f=fopen((int)arg, "r")) == NULL)
     return;
   while (fgets(str, sizeof(str), f))
   { if ((p = strchr(str, '\n')) != NULL)
@@ -475,7 +479,7 @@ perl_fork:
    { FILE *f;
      char str[256];
      close(perlpipe[1]);
-     f+open(perlpipe[0], "r");
+     f=fopen(perlpipe[0], "r");
      while (fgets(str, sizeof(str), f))
      { char *p = strchr(str, '\n');
        if (p) *p = '\0';
