@@ -198,97 +198,6 @@ int subscribeAreaCheck(s_area *area, char *areaname, s_link *link)
     return rc;
 }
 
-void addlink(s_link *link, s_area *area)
-{
-    s_arealink *arealink;
-
-    area->downlinks = safe_realloc (area->downlinks, sizeof(s_arealink*)*(area->downlinkCount+1));
-    arealink = area->downlinks[area->downlinkCount] = (s_arealink*) safe_malloc(sizeof(s_arealink));
-
-    memset(arealink, '\0', sizeof(s_arealink));
-    arealink->link = link;
-
-    if (link->numOptGrp > 0) {
-	// default set export on, import on, mandatory off
-	arealink->export = 1;
-	arealink->import = 1;
-	arealink->mandatory = 0;
-	arealink->manual = 0;
-
-	if (grpInArray(area->group,link->optGrp,link->numOptGrp)) {
-	    arealink->export = link->export;
-	    arealink->import = link->import;
-	    arealink->mandatory = link->mandatory;
-	    arealink->manual = link->manual;
-	}
-    } else {
-	arealink->export = link->export;
-	arealink->import = link->import;
-	arealink->mandatory = link->mandatory;
-	arealink->manual = link->manual;
-    }
-    if (area->mandatory) arealink->mandatory = 1;
-    if (area->manual) arealink->manual = 1;
-    if (link->level < area->levelread)	arealink->export=0;
-    if (link->level < area->levelwrite) arealink->import=0;
-    // paused link can't receive mail
-    if ((link->Pause & EPAUSE) == EPAUSE) arealink->export = 0;
-
-    area->downlinkCount++;
-}
-
-void removelink(s_link *link, s_area *area)
-{
-    int i;
-
-    if ( (i=isAreaLink(link->hisAka, area)) != -1) {
-	nfree(area->downlinks[i]);
-	area->downlinks[i] = area->downlinks[area->downlinkCount-1];
-	area->downlinkCount--;
-    }
-}
-/* moved to fidoconfig
-s_message *makeMessage (s_addr *origAddr, s_addr *destAddr,
-			char *fromName,	char *toName, char *subject, int netmail)
-{
-    // netmail == 0 - echomail
-    // netmail == 1 - netmail
-    time_t time_cur;
-    s_message *msg;
-
-    if (toName == NULL) toName = "sysop";
-
-    time_cur = time(NULL);
-
-    msg = (s_message*) safe_malloc(sizeof(s_message));
-    memset(msg, '\0', sizeof(s_message));
-
-    msg->origAddr.zone = origAddr->zone;
-    msg->origAddr.net = origAddr->net;
-    msg->origAddr.node = origAddr->node;
-    msg->origAddr.point = origAddr->point;
-
-    msg->destAddr.zone = destAddr->zone;
-    msg->destAddr.net = destAddr->net;
-    msg->destAddr.node = destAddr->node;
-    msg->destAddr.point = destAddr->point;
-	
-    xstrcat(&(msg->fromUserName), fromName);
-    xstrcat(&(msg->toUserName), toName);
-    xstrcat(&(msg->subjectLine), subject);
-
-    msg->attributes |= MSGLOCAL;
-    if (netmail) {
-	msg->attributes |= MSGPRIVATE;
-	msg->netMail = 1;
-    }
-    if (config->areafixKillReports) msg->attributes |= MSGKILL;
-
-    fts_time((char*)msg->datetime, localtime(&time_cur));
-
-    return msg;
-}
-*/
 char *getPatternFromLine(char *line, int *reversed)
 {
 
@@ -992,7 +901,7 @@ char *subscribe(s_link *link, char *cmd) {
            }
         } else {
             if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==ADD_OK) {
-                addlink(link, area);
+                Addlink(link, area, NULL);
                 fixRules (link, area->areaName);
                 af_CheckAreaInQuery(an, NULL, NULL, DELIDLE);
                 xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
@@ -1039,7 +948,7 @@ char *subscribe(s_link *link, char *cmd) {
             area = getArea(config, line);
             if ( !isLinkOfArea(link, area) ) {
                 if(changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==ADD_OK) {
-                    addlink(link, area);
+                    Addlink(link, area, NULL);
                     fixRules (link, area->areaName);
                     w_log( LL_AREAFIX, "areafix: %s subscribed to area %s",
                         aka2str(link->hisAka),line);
@@ -1227,7 +1136,7 @@ char *unsubscribe(s_link *link, char *cmd) {
                     if (addrComp(link->hisAka, area->downlinks[k]->link->hisAka)==0 &&
                         area->downlinks[k]->defLink)
                         return do_delete(link, area);
-                    removelink(link, area);
+                    RemoveLink(link, area, NULL);
                     if ((area->msgbType == MSGTYPE_PASSTHROUGH) &&
                         (area->downlinkCount == 1) &&
                         (area->downlinks[0]->link->hisAka.point == 0))

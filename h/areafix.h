@@ -30,7 +30,6 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd);
 void afix(s_addr addr, char *cmd);
 void autoPassive(void);
 int relink (char *straddr);
-void addlink(s_link *link, s_area *area);
 char *rescan(s_link *link, char *cmd);
 char *errorRQ(char *line);
 int isPatternLine(char *s);

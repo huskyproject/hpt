@@ -732,73 +732,77 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
     for (i=0; i<config->carbonCount; i++,++cb) {
         /* Dont come to use netmail on echomail and vise verse */
         if (cb->move!=2 && ((msg->netMail && !cb->netMail) ||
-			    (!msg->netMail &&  cb->netMail))) continue;
-
+            (!msg->netMail &&  cb->netMail))) continue;
+        
         area = cb->area;
-		
-	if(!cb->rule&CC_AND)
+        
+        if(!cb->rule&CC_AND)
+        {
             if (!cb->extspawn && // fix for extspawn
                 cb->areaName != NULL && // fix for carbonDelete
-		// dont CC to the echo the mail comes from
-        	!stricmp(echo->areaName,area->areaName)
-		) continue;
-
+                // dont CC to the echo the mail comes from
+                !stricmp(echo->areaName,area->areaName)
+                ) 
+                continue;
+        }    
         switch (cb->ctype) {
         case ct_to:
             result=patimat(msg->toUserName,cb->str);
             break;
-
+            
         case ct_from:
             result=patimat(msg->fromUserName,cb->str);
             break;
-
+            
         case ct_kludge:
         case ct_msgtext:
             testptr=msg->text;
-	    /* skip area: kludge */
-	    if (strncmp(testptr, "AREA:", 5) == 0)
-		if ((testptr = strchr(testptr, '\r')) != NULL)
-		    testptr++;
-	    /* cb->str is substring, so pattern must be "*str*" */
-	    pattern=safe_malloc(strlen(cb->str)+3);
-	    *pattern='*';
-	    strcpy(pattern+1, cb->str);
-	    strcat(pattern, "*");
-	    result=0;
-
-	    /* check the message line by line */
-	    while (testptr) {
-		testptr2 = strchr(testptr, '\r');
-		if ((*testptr == '\001' && cb->ctype == ct_kludge) ||
-		    (*testptr != '\001' && cb->ctype == ct_msgtext)) {
-		    if (testptr2) *testptr2 = '\0';
-		    result = patimat(testptr, pattern);
-		    if (testptr2) *testptr2 = '\r';
-		    if (result) break;
-		}
-		if (testptr2)
-		    testptr = testptr2+1;
-		else
-		    break;
-	    }
-	    nfree(pattern);
-	    break;
-
+            /* skip area: kludge */
+            if (strncmp(testptr, "AREA:", 5) == 0)
+            {
+                if ((testptr = strchr(testptr, '\r')) != NULL)
+                    testptr++;
+            }
+            /* cb->str is substring, so pattern must be "*str*" */
+            pattern=safe_malloc(strlen(cb->str)+3);
+            *pattern='*';
+            strcpy(pattern+1, cb->str);
+            strcat(pattern, "*");
+            result=0;
+            
+            /* check the message line by line */
+            while (testptr) {
+                testptr2 = strchr(testptr, '\r');
+                if ((*testptr == '\001' && cb->ctype == ct_kludge) ||
+                    (*testptr != '\001' && cb->ctype == ct_msgtext)) {
+                    if (testptr2) *testptr2 = '\0';
+                    result = patimat(testptr, pattern);
+                    if (testptr2) *testptr2 = '\r';
+                    if (result) break;
+                }
+                if (testptr2)
+                    testptr = testptr2+1;
+                else
+                    break;
+            }
+            nfree(pattern);
+            break;
+            
         case ct_subject:
             result=patimat(msg->subjectLine,cb->str);
             break;
-
+            
         case ct_addr:
             result=!addrComp(msg->origAddr, cb->addr);
             break;
-
+            
         case ct_fromarea:
-	    result=patimat(echo->areaName,cb->str);
+            result=patimat(echo->areaName,cb->str);
             break;
-
+            
         case ct_group:
             if(echo->group!=NULL){
-		/* cb->str for example Fido,xxx,.. */
+                /* cb->str for example Fido,xxx,.. */
                 testptr=cb->str;
                 do{
                     if(NULL==(testptr=fc_stristr(echo->group,testptr)))
@@ -811,23 +815,23 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
             }
             break;
         }
-
+        
         if(cb->rule&CC_NOT) /* NOT on/off */
             result=!result;
-
+        
         switch(cb->rule&CC_AND){ /* what operation with next result */
         case CC_OR: /* OR */
             if (result && area && cb->move!=2 && !config->carbonAndQuit) {
                 /* check if we've done cc to dest area already */
                 for (ncop=0; ncop < copiedToCount && result; ncop++)
                     if (area == copiedTo[ncop]) result = 0;
-                if (result) {
-                    copiedTo = safe_realloc (copiedTo, (copiedToCount+1) * sizeof (s_area *));
-                    copiedTo[copiedToCount] = area;
-                    copiedToCount++;
-                }
+                    if (result) {
+                        copiedTo = safe_realloc (copiedTo, (copiedToCount+1) * sizeof (s_area *));
+                        copiedTo[copiedToCount] = area;
+                        copiedToCount++;
+                    }
             }
-
+            
             if(result){
                 /* make cc */
                 /* Set value: 1 if copy 3 if move */
@@ -836,16 +840,17 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
                     processExternal(echo,msg,*cb);
                 else
                     if (cb->areaName && cb->move!=2)
+                    {
                         if (!processCarbonCopy(area,echo,msg,*cb))
                             rc &= 1;
-
-		// delete CarbonMove and CarbonDelete messages
-		if (cb->move && xmsg) xmsg->attr |= MSGKILL;
-                if (config->carbonAndQuit)
-		    /* not skip quit or delete */
-                    if ((cb->areaName && *cb->areaName!='*') ||	cb->move==2) {
-                        return rc;
-		    }
+                    }
+                    // delete CarbonMove and CarbonDelete messages
+                    if (cb->move && xmsg) xmsg->attr |= MSGKILL;
+                    if (config->carbonAndQuit)
+                        /* not skip quit or delete */
+                        if ((cb->areaName && *cb->areaName!='*') ||	cb->move==2) {
+                            return rc;
+                        }
             }
             break;
         case CC_AND: /* AND */
@@ -859,7 +864,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
             break;
         }
     } /* end for() */
-
+    
     if (copiedTo) nfree (copiedTo);
     return rc;
 }

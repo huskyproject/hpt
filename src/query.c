@@ -247,7 +247,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     area = &(config->echoAreas[config->echoAreaCount-1]);
     if ( !isLinkOfArea(creatingLink,area) ) {
 	xscatprintf(&buff, " %s", hisaddr);
-	addlink(creatingLink, area);
+	Addlink(creatingLink, area, NULL);
     }
 
     // subscribe downlinks if present
@@ -261,7 +261,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
             ) {
             xstrcat( &buff, " " );
             xstrcat( &buff, aka2str(areaNode->downlinks[i]) );
-            addlink(getLinkFromAddr(config,areaNode->downlinks[i]), area);
+            Addlink(getLinkFromAddr(config,areaNode->downlinks[i]), area, NULL);
             }
         }
     }
