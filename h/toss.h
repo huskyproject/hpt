@@ -38,7 +38,8 @@ struct statToss {
    int echoMail, netMail;
    int dupes, bad, empty;
    int inBytes;
-   time_t startTossing;
+//   time_t startTossing;
+   time_t realTime;
 };
 typedef struct statToss s_statToss;
 

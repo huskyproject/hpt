@@ -3,6 +3,11 @@ hpt 0.9.6
 
 
 ----- cvs ci ------
+Thu Jan  3 02:35:29 NOVT 2000
+max:
+* speed of tossing in statistic shows the time of read/write pkt & msg files
+
+----- cvs ci ------
 Tue Feb  1 16:23:04 NOVT 2000
 max:
 * fixed bug in %rescan (report by Lev Serebryakov)

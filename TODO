@@ -4,11 +4,11 @@ TODO-List for HPT
 Category 1: Will certainly be implemented until next release
 ============================================================
 
-- real statistics - speed (max)
-- check dupebase filename creation - dos & passthrough areas
-- fix file route
-- fix HASHDUPEs under non unices
 - check group access
+- fix HASHDUPEs under non unices
+- check dupebase filename creation - dos & passthrough areas
+- clean autoCreate code
+- do not open/close files on each msg
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

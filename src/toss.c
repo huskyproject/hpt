@@ -1376,6 +1376,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
    s_link      *link;
    char        rc = 0;
    struct stat statBuff;
+   time_t      realtime;
    /* +AS+ */
    char        *extcmd;
    int         cmdexit;
@@ -1477,14 +1478,17 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	   }
 	   
 	   if (processIt != 0) {
-	     while ((msg = readMsgFromPkt(pkt, header)) != NULL) {
+		   realtime = time(NULL);
+		   while ((msg = readMsgFromPkt(pkt, header)) != NULL) {
                if (msg != NULL) {
-		 if ((processIt == 1) || ((processIt==2) && (msg->netMail==1)))
-		   rc = !processMsg(msg, header) || rc == 5 ? 5 : 0;
-		 freeMsgBuffers(msg);
-		 free(msg);
+				   if ((processIt == 1) || ((processIt==2) && (msg->netMail==1)))
+					   rc = !processMsg(msg, header) || rc == 5 ? 5 : 0;
+				   freeMsgBuffers(msg);
+				   free(msg);
                }
-	     }
+		   }
+		   // real time of process pkt & msg without external programs
+		   statToss.realTime += time(NULL) - realtime;
 	   }
 	   
 	 } else {
@@ -1691,7 +1695,8 @@ void processDir(char *directory, e_tossSecurity sec)
 void writeTossStatsToLog(void) {
    int i;
    float inMailsec, outMailsec, inKBsec;
-   time_t diff = time(NULL) - statToss.startTossing;
+//   time_t diff = time(NULL) - statToss.startTossing;
+   time_t diff = statToss.realTime;
    char logchar;
 
    if (statToss.pkts==0 && statToss.msgs==0)
@@ -2028,7 +2033,7 @@ void toss()
    
    // set stats to 0
    memset(&statToss, 0, sizeof(s_statToss));
-   statToss.startTossing = time(NULL);
+//   statToss.startTossing = time(NULL);
    writeLogEntry(hpt_log, '1', "Start tossing...");
    processDir(config->localInbound, secLocalInbound);
    processDir(config->protInbound, secProtInbound);

@@ -289,7 +289,7 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
     
     time_cur = time(NULL);
     
-    msg = (s_message*)calloc(1, sizeof(s_message));
+    msg = (s_message*) calloc(1, sizeof(s_message));
     
     msg->origAddr.zone = origAddr->zone;
     msg->origAddr.net = origAddr->net;
@@ -300,17 +300,10 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
     msg->destAddr.net = destAddr->net;
     msg->destAddr.node = destAddr->node;
     msg->destAddr.point = destAddr->point;
-
 	
-
-    msg->fromUserName = (char*) malloc(strlen(fromName)+1);
-    strcpy(msg->fromUserName, fromName);
-    
-    msg->toUserName = (char*) malloc(strlen(toName)+1);
-    strcpy(msg->toUserName, toName);
-    
-    msg->subjectLine = (char*) malloc(strlen(subject)+1);
-    strcpy(msg->subjectLine, subject);
+    xstrcat(&(msg->fromUserName), fromName);
+    xstrcat(&(msg->toUserName), toName);
+    xstrcat(&(msg->subjectLine), subject);
 
     msg->attributes = MSGLOCAL;
     if (netmail) {
