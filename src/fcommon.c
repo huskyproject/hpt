@@ -41,11 +41,11 @@
 #endif
 #if defined (__TURBOC__)
 #include <process.h>
-#include <dir.h>
+//#include <dir.h> Remove after Oct 13 2000
 #endif
-#ifdef __IBMC__
-#include <direct.h>
-#endif
+//#ifdef __IBMC__ Remove after Oct 13 2000
+//#include <direct.h>
+//#endif
 #ifdef __WATCOMC__
 #include <fcntl.h>
 #define AW_S_ISDIR(a) (((a) & S_IFDIR) != 0)
@@ -73,6 +73,7 @@
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
+#include <fidoconf/dirlayer.h>
 
 #include <smapi/typedefs.h>
 #include <smapi/compiler.h>
@@ -196,6 +197,71 @@ int fileNameAlreadyUsed(char *pktName, char *packName) {
    return 0;
 }
 
+
+static char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
+
+void cleanEmptyBundles(char *pathName, int npos)
+// Removing old empty bundles when bundleNameStyle == addDiff
+{
+   char           *ptr, *tmpfile, *pattern, savech;
+   int            i, found;
+   DIR            *dir;
+   struct dirent  *file;
+   struct stat stbuf;
+   time_t tr;
+
+
+   tmpfile = safe_malloc(strlen(pathName) + 4);
+
+   strcpy(tmpfile, pathName);
+   savech = tmpfile[npos-1]; // there must be path delimiter
+   tmpfile[npos-1] = '\0';
+   
+   if(!(dir = opendir(tmpfile))) { // nothing to clean
+      nfree(tmpfile);
+      return;
+   }
+
+   tmpfile[npos-1] = savech;
+
+   pattern = safe_malloc(strlen(tmpfile+npos) + 4);
+   strcpy(pattern, tmpfile+npos);
+
+   for (ptr=pattern; *ptr; ptr++);
+   ptr[2]='?';
+   ptr[3]='\0';
+
+   tr = time(NULL);
+
+   while ((file = readdir(dir)) != NULL) {
+
+      for (found=0, i=0; i<7 && !found; i++) {
+
+         ptr[0] = wdays[i][0];
+         ptr[1] = wdays[i][1];
+
+         if ( patimat(file->d_name, pattern) == 1 ) {
+
+            strcpy(tmpfile+npos, file->d_name);
+
+            if ( stat(tmpfile, &stbuf) == 0) {
+
+               if (tr - stbuf.st_mtime >= 60*60*24 && stbuf.st_size == 0 ) {
+
+                  remove (tmpfile); // old empty bundle
+
+               }
+            }
+            found++;
+         }
+      }
+   }
+
+   closedir(dir);
+   nfree(pattern);
+   nfree(tmpfile);
+}
+
 int createTempPktFileName(s_link *link)
 {
     /* pkt file in tempOutbound */
@@ -206,7 +272,6 @@ int createTempPktFileName(s_link *link)
     char  *tmpPFileName = (char *) safe_malloc(strlen(config->outbound)+13+13+12+1);
     time_t aTime = time(NULL);  /* get actual time */
     int counter = 0;
-    char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
     char limiter=PATH_DELIM;
     char zoneSuffix[6] = "\0";
 
@@ -298,19 +363,23 @@ int createTempPktFileName(s_link *link)
 	switch ( config->bundleNameStyle ) {
 
 	case addrDiff:
-		if ( link->hisAka.point == 0 ) {
-			sprintf (ptr, "%04hx%04hx.%s",
-					 link->ourAka->net - link->hisAka.net,
-					 link->ourAka->node - link->hisAka.node,
-					 wday);
+
+		if ( link->hisAka.point == 0 && config->addr[0].point == 0) {
+			sprintf (ptr, "%04hx%04hx.",
+					 config->addr[0].net - link->hisAka.net,
+					 config->addr[0].node - link->hisAka.node);
 		} else {
-			sprintf (ptr, "%08hx.%s", link->hisAka.point, wday);
+			sprintf (ptr, "%04hx%04hx.",
+					 config->addr[0].node - link->hisAka.node,
+					 config->addr[0].point- link->hisAka.point);
 		}
+
+	        cleanEmptyBundles(tmpPFileName, ptr-tmpPFileName);
 
 		counter = 0;
 		for (i=0; i<numExt; i++) {
 
-			sprintf(pfileName, "%s%c", tmpPFileName, ext3[i]);
+			sprintf(pfileName, "%s%s%c", tmpPFileName, wday, ext3[i]);
 
 			if (stat(pfileName, &stbuf) == 0) {
 
@@ -340,7 +409,7 @@ int createTempPktFileName(s_link *link)
 			return i;
 		}
 		
-		sprintf(pfileName, "%s%c", tmpPFileName, ext3[counter]);
+		sprintf(pfileName, "%s%s%c", tmpPFileName, wday, ext3[counter]);
 
 		break;
 

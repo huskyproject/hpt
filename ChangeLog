@@ -2,6 +2,12 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Wed Sep 14 15:44:37 NOVST 2000
+max (patch from Serguei Revtov):
+* change in bundle names generation algorithm (bundleStyle addrDiff)
+* removing old empty bundles (bundleStyle addrDiff)
+
+----- cvs ci ------
 Wed Sep 13 16:30:05 NOVST 2000
 max:
 * don't add NOECHO msg if %rescan from SDM area
