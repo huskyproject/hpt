@@ -13,15 +13,18 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - optimize packing (several files)
 - advanced fileboxes
 - templates
-- remote change areafixpwd, pktpwd, ticpwd, filefixpwd by links
+- remote change areafixpwd, pktpwd, ticpwd, filefixpwd by links [done by AL]
 - add areafix %users command which sends list of links, subscribed to echo
 - specify log file for hptlink in command line (or config?)
+- processing of echomail.jam by hpt link (or hptlink).
+- correctNMAddress when packing messages from msgbase
+- rewrite zonegating algorythm.
 
 Category 3: Will only be included if volunteers send patches
 ============================================================
-- remove areafix from hpt, make hptfix (areafix & filefix)
-- include libinfozip calls to hpt source (partially done)
-- change uplinks from command line
+- remove areafix from hpt, make hptfix (areafix & filefix) [done by VK]
+- include libinfozip calls to hpt source (partially done) [done by MC]
+- change uplinks from command line [done by AL]
 - change CHRS kludge when recode message
 
 Category 4: Will not be implemented
