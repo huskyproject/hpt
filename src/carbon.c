@@ -204,6 +204,8 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
         /* Temporary make it \0 terminated string */
         *p = '\0';
         xstrcat(&msg->text,line);
+        /* and then we *must* put '\r' back. */
+        xstrcat(&msg->text, "\r");
         *p = '\r';
         line = p+1;
     }
@@ -217,7 +219,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
                 i = (size_t) (p - text) + 1;
         }
         xstrscat(&msg->text,
-            "\r" ,
+            msg->text ? (msg->text[strlen(msg->text)-1] == '\r' ?"":"\r") : "" ,
             (config->carbonExcludeFwdFrom) ? "" : " * Forwarded from area '",
             (config->carbonExcludeFwdFrom) ? "" : echo->areaName,
             (config->carbonExcludeFwdFrom) ? "" : "'\r",
