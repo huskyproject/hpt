@@ -15,7 +15,7 @@ typedef struct arealist {
 	ps_arealistitem areas;
 } s_arealist, *ps_arealist;
 
-ps_arealist newAreaList();
+ps_arealist newAreaList(void);
 void freeAreaList(ps_arealist al);
 int addAreaListItem(ps_arealist al, int active, char *tag, char *desc);
 void sortAreaList(ps_arealist al);
