@@ -201,7 +201,7 @@ sub filter
     { unless ($lastpath =~ m/^2:50/)
       { if ($origin =~ /^2:46/)
         {
-          putMsgInArea("UNSECURE", $fromnme, $toname, $fromaddr,
+          putMsgInArea("UNSECURE", $fromname, $toname, $fromaddr, $toaddr,
              $subject, $date, "pvt sent read",
              "hpt> R46 is r/o in PVT.EXCH.*\r" . $text, 0);
           $kill = 1;
@@ -459,8 +459,8 @@ EOF
       {
         putMsgInArea("BADMAIL", $fromname, $toname, $fromaddr, $toaddr,
            $subject, $date, "pvt sent read",
-           "hpt> $toname request with RRC\r" . $text, 0);
-        $kill = 1;
+           "hpt> $toname request with RRC\r" . $text, 0) ||
+        ($kill = 1);
         return "$toname request with RRC";
       }
     }
@@ -470,8 +470,8 @@ EOF
       { receipt($fromaddr, $toaddr, $fromname, $toname, $subject, $date);
       }
       putMsgInArea("GUL", $fromname, $toname, $fromaddr, $toaddr,
-                $subject, $date, "pvt sent read", $subject, $text, 0);
-      $kill = 1;
+                $subject, $date, "pvt sent read", $subject, $text, 0) ||
+      ($kill = 1);
       return "Message to gul";
     }
   }
