@@ -8,7 +8,7 @@
 /*                             FIDONet 2:5020/79                      */
 /*                                                                    */
 /*  This program is  free software;  you can  redistribute it and/or  */
-/*  modify it  under  the terms of the GNU General Public License as  */ 
+/*  modify it  under  the terms of the GNU General Public License as  */
 /*  published  by the  Free Software Foundation; either version 2 of  */
 /*  the License, or (at your option) any later version. See COPYING.  */
 /*--------------------------------------------------------------------*/
@@ -18,12 +18,12 @@
 #include <limits.h>
 
 unsigned long getfree (char *path) {
-char RPN[MAXPATHLEN];	// root path 
+char RPN[MAXPATHLEN];	// root path
 char *pRPN;             // Pointer to Root path
-DWORD SPC;				// sectors per cluster 
-DWORD BPS;				// bytes per sector 
-DWORD FC;				// number of free clusters  
-DWORD TNC;				// total number of clusters  
+DWORD SPC;				// sectors per cluster
+DWORD BPS;				// bytes per sector
+DWORD FC;				// number of free clusters
+DWORD TNC;				// total number of clusters
 BOOL rc;
 
   pRPN = RPN;
@@ -47,7 +47,7 @@ BOOL rc;
       do {
 		  RPN[i] = path[i];
 	  } while (path[i++] != '\\');
-      
+
       RPN[i] = '\0';
 
   } else {
@@ -62,8 +62,7 @@ BOOL rc;
     return (unsigned long) (BPS * SPC * FC);
   }
 }
-#endif
-#if defined(__OS2__)
+#elif defined(__OS2__) || defined(OS2)
 
 #ifdef __WATCOMC__
 #define __IBMC__ 0
@@ -101,8 +100,7 @@ unsigned long getfree (char *path)
     return fsa.cSectorUnit * fsa.cUnitAvail * fsa.cbSector;
   }
 }
-#endif
-#if defined(UNIX) || defined (__linux__)
+#elif defined(UNIX) || defined (__linux__)
 /*
    This was taken from ifmail, and modified a bit for binkd -- mff, 1997
 
