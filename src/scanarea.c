@@ -141,8 +141,17 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    
    // create text
    msg->textLength = MsgGetTextLen(hmsg);
-   if (action == 0) msg->text = (char *)calloc(msg->textLength+strlen(seenByPath)+strlen(kludgeLines)+strlen(echo->areaName)+strlen("AREA:\r")+1+1, sizeof(char)); // second 1 for \r at the end of the origin line
-   else msg->text = (char *)calloc(msg->textLength+strlen(kludgeLines)+1, sizeof(char)); 
+   switch (action) {
+   case 0:
+      msg->text = (char *)calloc(msg->textLength+strlen(seenByPath)+strlen(kludgeLines)+strlen(echo->areaName)+strlen("AREA:\r")+1+1, sizeof(char));
+      break;
+   case 1:
+      msg->text = (char *)calloc(msg->textLength+strlen(kludgeLines)+strlen(echo->areaName)+strlen("AREA:\r")+1+1, sizeof(char));
+      break;
+   default: 
+      msg->text = (char *)calloc(msg->textLength+strlen(kludgeLines)+1, sizeof(char)); 
+     break;
+   } /* endswitch */
    if (action != 2) {
        strcpy(msg->text, "AREA:");
        strcat(msg->text, strUpper(echo->areaName));

@@ -28,6 +28,7 @@ char *strseparate(char **pp, const char *delim)
     {
       *pp = q + 1;
       *q = '\0';
+      while (**pp && strchr(delim, **pp)) (*pp)++;
     }
   else
     *pp = 0;

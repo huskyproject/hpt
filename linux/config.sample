@@ -102,7 +102,7 @@ LogFileDir	/home/fido/log
 DupeHistoryDir	/home/fido/files/dupes
 NodeListDir	/home/fido/nodelist
 MsgBaseDir	/home/fido/msgBase
-public		/home/mtt/fido/public
+public		/home/fido/public
 
 # I don't want hpt to write log entries, if nothing had happend 
 loglevels 23456789

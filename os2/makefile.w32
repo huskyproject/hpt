@@ -16,6 +16,7 @@ LFLAGS  =
 all: $(OBJS) \
      pktinfo.exe \
      tlog.exe \
+     purgedup.exe \
      hpt.exe
 
 $(OBJS): $(SRC_DIR)\$*.c
@@ -33,6 +34,10 @@ pktinfo.exe: pktinfo.obj fcommon.obj pktread.obj
 tlog.exe: tlog.obj log.obj
   @echo linking tlog
   $(LINK) $(LFLAGS) FILE tlog.obj, log.obj NAME tlog.exe
+
+purgedup.exe: purgeDupes.obj global.obj dupe.obj tree.obj pktread.obj log.obj recode.obj
+  @echo linking purgedup
+  $(LINK) $(LFLAGS) FILE purgeDupes.obj, global.obj, dupe.obj, tree.obj, pktread.obj, log.obj, recode.obj LIBRARY ..\..\smapi\smapiwco, ..\..\fidoconfig\fidoconfig NAME purgedup.exe
 
 hpt.exe: $(OBJS)
   @echo linking hpt
