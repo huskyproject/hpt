@@ -1,3 +1,16 @@
+2002-11-20 Wednesday 11:50  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.24): Fix FAQ date
+
+2002-11-20 Wednesday 11:46  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.23): question about big stuff
+	in temp directory (MFC)
+
+2002-11-20 Wednesday 05:40  stas_degteff
+
+	* HISTORY (hpt-1_2-stable.8): Info about 'NoRules' token
+
 2002-11-19 Tuesday 13:34  stas_degteff
 
 	* HISTORY (hpt-1_2-stable.7): Remove obsoleted info about sendrules
