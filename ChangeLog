@@ -1,3 +1,7 @@
+2002-05-02 Thursday 15:07  d.sergienko
+
+	* src/areafix.c (1.293): new unsubscribing code (test it please)
+
 2002-04-28 Sunday 21:20  pavel.gulchouck
 
 	* src/areafix.c (1.292): fix spelling
