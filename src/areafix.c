@@ -64,7 +64,6 @@
 #include <fidoconf/recode.h>
 #include <areafix.h>
 #include <scanarea.h>
-#include <arealist.h>
 #include <hpt.h>
 #include <dupe.h>
 #include <query.h>
