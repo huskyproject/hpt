@@ -776,7 +776,11 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         break;
     default: break;
     } // switch (action)
-    fprintf(f_conf, "%s%s%s", cfgline, cfgEol(), line);
+    if(cfgline) { // line not deleted
+        fprintf(f_conf, "%s%s%s", cfgline, cfgEol(), line);
+    } else {
+        fprintf(f_conf, "%s", line);
+    }
     fclose(f_conf);
     nfree(line);
     nfree(cfgline);
