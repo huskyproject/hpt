@@ -39,7 +39,6 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/file.h>
 #include <signal.h>
 #include <fcntl.h>
 
@@ -249,11 +248,11 @@ void allDiff(char *nam, char *var, ...)
 
 void processConfig()
 {
-#if !defined(__OS2__) && !defined(UNIX)
-   time_t   time_cur, locklife = 0;
-   struct   stat stat_file;
-#endif
    char *buff = NULL;
+//#if !defined(__OS2__) && !defined(UNIX)
+//   time_t   time_cur, locklife = 0;
+//   struct   stat stat_file;
+//#endif
 //   unsigned long pid;
 //   FILE *f;
 
@@ -297,7 +296,11 @@ void processConfig()
    else if (config->lockfile!=NULL) createLockFile(config->lockfile);
 */
    if (config->lockfile) {
+#ifndef __BEOS__
 	   if ( (fd=open(config->lockfile, O_CREAT|O_RDWR,S_IREAD|S_IWRITE)) < 0 ) {
+#else
+	   if ((fd=open(config->lockfile,O_CREAT|O_RDWR|O_EXCL,S_IREAD|S_IWRITE))<0) {
+#endif
 		   fprintf(stderr,"cannot create lock file: %s\n",config->lockfile);
 		   disposeConfig(config);
            exit(1);

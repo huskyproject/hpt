@@ -1498,7 +1498,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 					   statToss.saved += rc;
 				   }
 				   else { // passthrough
-					   if (echo->downlinkCount==1)
+					   if (echo->downlinkCount==1 && dontdocc==0)
 						   rc = putMsgInBadArea(msg, pktOrigAddr, 10);
 					   else {
 						   statToss.passthrough++;

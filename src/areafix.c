@@ -282,7 +282,7 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
     time_t time_cur;
     s_message *msg;
 
-    if (toName == NULL) toName = "Sysop";
+    if (toName == NULL) toName = "sysop";
     
     time_cur = time(NULL);
     

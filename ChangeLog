@@ -2,6 +2,12 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Tue Feb 27 21:31:50 NOVT 2001
+max:
+* don't move msg to BadArea when carbon to passthrough area with one link
+* fixed compiling warnings under win32
+
+----- cvs ci ------
 Sun Feb 25 15:50:46 NOVT 2001
 max:
 * del "\001FLAGS" from incoming mail
