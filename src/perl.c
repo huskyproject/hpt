@@ -19,19 +19,6 @@
 #include <sys/types.h>
 #endif
 
-#include <fidoconf/common.h>
-#include <fidoconf/xstr.h>
-#include <fidoconf/crc.h>
-#include <smapi/progprot.h>
-#include <fidoconf/afixcmd.h>
-
-#include <fcommon.h>
-#include <pkt.h>
-#include <global.h>
-#include <version.h>
-#include <toss.h>
-#include <hptperl.h>
-
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -59,6 +46,25 @@ extern "C" {
 #  endif
 #endif
 
+
+/* smapi includes */
+#include <smapi/progprot.h>
+#include <smapi/compiler.h>
+
+
+/* fidoconf includes */
+#include <fidoconf/common.h>
+#include <fidoconf/xstr.h>
+#include <fidoconf/crc.h>
+#include <fidoconf/afixcmd.h>
+
+/* hpt includes */
+#include <fcommon.h>
+#include <pkt.h>
+#include <global.h>
+#include <version.h>
+#include <toss.h>
+#include <hptperl.h>
 
 
 #ifndef sv_undef
