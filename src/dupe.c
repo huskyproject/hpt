@@ -81,41 +81,41 @@ char *strtolower(char *string) {
 }
 
 char *createDupeFileName(s_area *area) {
-	char *name=NULL, *afname, *retname=NULL;
-	
-	if (!area->DOSFile) {
-		xstrcat(&name, area->areaName);
-		// FIXME: there may be forbidden symbols in areaName
-	} else {
-		if (area->fileName)
-			xstrcat(&name,(afname=strrchr(area->fileName,PATH_DELIM))
-					? afname+1 : area->fileName);
-		else xstrcat(&name, "passthru");
-	}
+    char *name=NULL, *ptr, *retname=NULL;
 
-	switch (config->typeDupeBase) {
-	case hashDupes:
-		xstrcat(&name,".dph");
-		break;
-	case hashDupesWmsgid:
-		xstrcat(&name,".dpd");
-		break;
-	case textDupes:
-		xstrcat(&name,".dpt");
-		break;
-	case commonDupeBase:
-		break;
-	}
+    if (!area->DOSFile) {
+	xstrcat(&name, area->areaName);
+	// fix for passthrough areas with PATH_DELIM in AREATAG
+	if ( (ptr = strchr(name, PATH_DELIM)) != NULL ) *ptr = '_';
+    } else {
+	if (area->fileName) xstrcat(&name, (ptr = strrchr(area->fileName,PATH_DELIM))
+				    ? ptr+1 : area->fileName);
+	else xstrcat(&name, "passthru");
+    }
 
-	if (config->areasFileNameCase == eUpper)
-		name = strUpper(name);
-	else 
-		name = strLower(name);
+    switch (config->typeDupeBase) {
+    case hashDupes:
+	xstrcat(&name,".dph");
+	break;
+    case hashDupesWmsgid:
+	xstrcat(&name,".dpd");
+	break;
+    case textDupes:
+	xstrcat(&name,".dpt");
+	break;
+    case commonDupeBase:
+	break;
+    }
 
-	xstrscat(&retname, config->dupeHistoryDir, name, NULL);
-	nfree(name);
-	
-	return retname;
+    if (config->areasFileNameCase == eUpper)
+	name = strUpper(name);
+    else 
+	name = strLower(name);
+
+    xstrscat(&retname, config->dupeHistoryDir, name, NULL);
+    nfree(name);
+    
+    return retname;
 }
 
 int compareEntriesBlank(char *e1, char *e2) {
