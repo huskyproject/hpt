@@ -1,3 +1,13 @@
+2003-01-21 Tuesday 10:10  stas_degteff
+
+	* doc/hpt.texi (hpt-1_2-stable.7): Fix misprint. Thanks to Max
+	Chernogor
+
+2003-01-21 Tuesday 06:04  stas_degteff
+
+	* doc/hpt.texi (hpt-1_2-stable.6): Update RobotsArea description
+	(about security hole for echomail robotsarea)
+
 2003-01-15 Wednesday 07:04  stas_degteff
 
 	* src/toss.c (hpt-1_2-stable.10): MFC: fix kludge location in
