@@ -40,9 +40,20 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#if !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
+
+
+#include <smapi/compiler.h>
+
+#ifdef HAS_IO_H
+#include <io.h>
+#endif
+
+#ifdef HAS_UNISTD_H
 #include <unistd.h>
 #endif
+
+#include <smapi/patmat.h>
+#include <smapi/progprot.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
@@ -50,18 +61,16 @@
 #include <fidoconf/areatree.h>
 #include <fidoconf/afixcmd.h>
 #include <fidoconf/arealist.h>
+#include <fidoconf/recode.h>
 
 #include <fcommon.h>
 #include <global.h>
 #include <pkt.h>
 #include <version.h>
 #include <toss.h>
-#include <smapi/patmat.h>
 #include <ctype.h>
-#include <smapi/progprot.h>
 #include <seenby.h>
 #include <scan.h>
-#include <fidoconf/recode.h>
 #include <areafix.h>
 #include <scanarea.h>
 #include <hpt.h>

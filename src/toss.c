@@ -45,22 +45,28 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+/* compiler.h */
+#include <smapi/compiler.h>
+
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
   /* we can't include windows.h for prevent compiler errors ... */
 /*#  include <windows.h>*/
 #  define CharToOem CharToOemA
 #endif
 
-
-#if !(defined(__TURBOC__) || (defined (_MSC_VER) && (_MSC_VER >= 1200)))
+#ifdef HAS_UNISTD_H
 #include <unistd.h>
 #endif
 
-#if defined(OS2)
+#ifdef HAS_IO_H
+#include <io.h>
+#endif
+
+#if defined(__OS2__)
 #include <os2.h>
 #endif
 
-#if defined(__DJGPP__)
+#ifdef HAS_DOS_H
 #include <dos.h>
 #endif
 
@@ -69,13 +75,14 @@
 #define GetFileAttributes GetFileAttributesA
 #endif
 
-#include <smapi/compiler.h>
+/* smapi */
 #include <smapi/progprot.h>
 #include <smapi/typedefs.h>
 #include <smapi/msgapi.h>
 #include <smapi/stamp.h>
 #include <smapi/patmat.h>
 
+/* fidoconf */
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/dirlayer.h>
@@ -92,6 +99,7 @@
 #   include "hpt_zlib/hptzip.h"
 #endif
 
+/* hpt */
 #include <pkt.h>
 #include <scan.h>
 #include <toss.h>
@@ -1395,7 +1403,7 @@ void processDir(char *directory, e_tossSecurity sec)
     char *newFileName=NULL;
     char *ext[]={NULL, "sec", "asc", "bad", "ntu", "err", "flt"};
 
-#ifndef UNIX
+#ifndef __UNIX__
     unsigned fattrs;
 #endif
 
@@ -1427,7 +1435,7 @@ void processDir(char *directory, e_tossSecurity sec)
 	strcpy(dummy,directory);
 	strcat(dummy,file->d_name);
 
-#if !defined(UNIX)
+#if !defined(__UNIX__)
 #if defined(__TURBOC__) || defined(__DJGPP__)
 	_dos_getfileattr(dummy, &fattrs);
 #elif defined(__MINGW32__)
@@ -1605,7 +1613,7 @@ int find_old_arcmail(s_link *link, FILE *flo)
     unsigned as;
 
     while ((line = readLine(flo)) != NULL) {
-#ifndef UNIX
+#ifndef __UNIX__
 	line = trimLine(line);
 #endif
 	if ((*line=='^' || *line=='#') && isArcMail(line + 1)) {
@@ -2021,7 +2029,7 @@ void writeImportLog(void) {
 		    fprintf(f, "%s\n", config->localAreas[i].areaName);
 		
 	    fclose(f);
-#ifdef UNIX
+#ifdef __UNIX__
 	    chown(config->importlog, config->loguid, config->loggid);
 	    if (config -> logperm != -1) chmod(config->importlog, config->logperm);
 #endif
@@ -2038,7 +2046,7 @@ void writeImportLog(void) {
 
 #define MAXOPEN_DEFAULT 512
 
-#if defined(OS2)
+#if defined(__OS2__)
 
 #define INCL_DOS
 
@@ -2067,10 +2075,9 @@ static void setmaxopen(void) {
 	/*  return; */
     }
 
-#elif defined(UNIX)
+#elif defined(__UNIX__)
 
 #include <sys/resource.h>
-#include <unistd.h>
 
 static void setmaxopen(void) {
 #ifdef RLIMIT_NOFILE

@@ -1,5 +1,12 @@
 /* $Id$ */
 
+#ifndef _HPTPPERL_H
+#define _HPTPPERL_H
+
+#if defined(__NT__) && !defined(WIN32) /* WIN32 needed for perl-core include files */
+#  define WIN32
+#endif
+
 #define PERLFILE        "filter.pl"
 #define PERLFILT        "filter"
 #define PERLPKT         "process_pkt"
@@ -21,3 +28,5 @@ void perlbeforepack(void);
 int perltossbad(s_message *msg, char *area, hs_addr pktOrigAddr, char *reason);
 int PerlStart(void);
 void perldone(void);
+
+#endif

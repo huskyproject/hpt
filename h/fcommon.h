@@ -97,7 +97,7 @@ int    createOutboundFileNameAka(s_link *link, e_flavour prio, e_pollType typ, h
 int __stdcall SetConsoleTitleA( const char* lpConsoleTitle );
 #endif
 
-#if defined (__EMX__)
+#ifdef  HAS_IO_H
 #include <io.h>
 #endif
 

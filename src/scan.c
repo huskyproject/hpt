@@ -37,22 +37,27 @@
 #include <string.h>
 #include <time.h>
 #include <errno.h>
+#include <process.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#if defined (UNIX)
+/* compiler.h */
+#include <smapi/compiler.h>
+
+#ifdef HAS_UNISTD_H
 #include <unistd.h>
 #endif
 
-#if defined (__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__) || defined (__EMX__) || (defined (_MSC_VER) && (_MSC_VER >= 1200))
-  #include <process.h>
-  #include <io.h>
+#ifdef HAS_IO_H
+#include <io.h>
 #endif
 
+/* smapi */
 #include <smapi/progprot.h>
 #include <smapi/msgapi.h>
 #include <smapi/patmat.h>
 
+/* fidoconf */
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
@@ -61,6 +66,7 @@
 #include <fidoconf/recode.h>
 #include <fidoconf/log.h>
 
+/* hpt */
 #include <fcommon.h>
 #include <pkt.h>
 #include <scan.h>

@@ -50,18 +50,20 @@ be cleared.
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef OS2
+#include <smapi/compiler.h>
+
+#ifdef __OS2__
 #define INCL_DOSFILEMSG /* for DosSetMaxFH() */
 #include <os2.h>
 #endif
+
+#include <smapi/msgapi.h>
+#include <smapi/api_jam.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/typesize.h>
 #include <fidoconf/crc.h>
-
-#include <smapi/msgapi.h>
-#include <smapi/api_jam.h>
 
 #include <fidoconf/log.h>
 #include <global.h>
@@ -202,7 +204,7 @@ int linkArea(s_area *area, int netMail)
             MsgCloseArea(harea);
             return 0;
         };
-#ifdef OS2
+#ifdef __OS2__
         if (area->msgbType & MSGTYPE_SDM)
 #if defined(__WATCOMC__)
             _grow_handles(msgsNum+20);

@@ -41,11 +41,16 @@ tearline generation added
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#if defined(__BEOS__)
+#include <smapi/compiler.h>
+
+#ifdef HAS_SYS_SYSEXITS_H
 #include <sys/sysexits.h>
-#elif defined(UNIX)
+#endif
+#ifdef HAS_SYSEXITS_H
 #include <sysexits.h>
 #endif
+
+#include <smapi/progprot.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
@@ -63,8 +68,6 @@ tearline generation added
 #include <scanarea.h>
 #include <scan.h>
 
-
-#include <smapi/progprot.h>
 
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
 /* we can't include windows.h for several reasons ... */
@@ -280,7 +283,7 @@ void post(int c, unsigned int *n, char *params[])
                     fname = GetFilenameFromPathname(params[*n]);
                     /* Write the 'begin' line, giving it a mode of 0600 */
 		    perms = 0644;
-#ifdef UNIX
+#ifdef __UNIX__
 		    {
 			struct stat st;
 			if (fstat(fileno(text), &st) == 0)

@@ -35,34 +35,41 @@
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
-
-#if defined(__BEOS__)
-#include <sys/sysexits.h>
-#elif defined(UNIX)
-#include <sysexits.h>
-#endif
-
-#if !defined(__IBMC__) && !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
-#include <unistd.h>
-#endif
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
 #include <fcntl.h>
 
-#include "smapi/progprot.h"
-#include "smapi/msgapi.h"
-#include "smapi/patmat.h"
+#include <smapi/compiler.h>
 
-#include "fidoconf/fidoconf.h"
-#include "fidoconf/xstr.h"
-#include "fidoconf/common.h"
-#include "fidoconf/dirlayer.h"
-#include "fidoconf/afixcmd.h"
+#ifdef HAS_IO_H
+#include <io.h>
+#endif
 
-#include "fidoconf/log.h"
-#include "fidoconf/recode.h"
+#ifdef HAS_UNISTD_H
+#include <unistd.h>
+#endif
+
+#if defined(HAS_SYS_SYSEXITS_H)
+#include <sys/sysexits.h>
+#endif
+#if defined(HAS_SYSEXITS_H)
+#include <sysexits.h>
+#endif
+
+#include <smapi/progprot.h>
+#include <smapi/msgapi.h>
+#include <smapi/patmat.h>
+
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/xstr.h>
+#include <fidoconf/common.h>
+#include <fidoconf/dirlayer.h>
+#include <fidoconf/afixcmd.h>
+
+#include <fidoconf/log.h>
+#include <fidoconf/recode.h>
 #include <fidoconf/version.h>
 
 #include "version.h"

@@ -24,33 +24,32 @@
 
 #include <stdio.h>
 #include <ctype.h>
-
-#ifdef UNIX
-#include <unistd.h>
 #include <strings.h>
-#else
+#include <string.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+
+#include <smapi/compiler.h>
+
+#ifdef HAS_IO_H
 #include <io.h>
 #endif
 
-#ifdef __EMX__
-#include <share.h>
-#include <sys/types.h>
-#else
-#include <fcntl.h>
+#ifdef HAS_UNISTD_H
+#include <unistd.h>
 #endif
-#include <sys/stat.h>
 
+#ifdef HAS_SHARE_H
+#include <share.h>
+#endif
+
+#include <smapi/prog.h>
 #include <smapi/msgapi.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
-#include <string.h>
-
-#if defined ( __WATCOMC__ )
-#include <smapi/prog.h>
-#include <share.h>
-#endif
-
-#include <stdlib.h>
 
 #include <version.h>
 #include <global.h>
@@ -625,29 +624,6 @@ int main(int argc, char **argv) {
    setvar("version", line);
    nfree(line);
    SetAppModule(M_HPT);
-
-/*
-   xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVICE, VER_BRANCH);
-
-#ifdef __linux__
-   xstrcat(&version, "/lnx");
-#elif defined(__FreeBSD__) || defined(__NetBSD__)
-   xstrcat(&version, "/bsd");
-#elif defined(__OS2__) || defined(OS2)
-   xstrcat(&version, "/os2");
-#elif defined(__NT__)
-   xstrcat(&version, "/w32");
-#elif defined(__sun__)
-   xstrcat(&version, "/sun");
-#elif defined(MSDOS)
-   xstrcat(&version, "/dos");
-#elif defined(__BEOS__)
-   xstrcat(&version, "/beos");
-#endif
-
-   if (strcmp(VER_BRANCH,"-stable")!=0) xscatprintf(&version, " %s", cvs_date);
-   xscatprintf(&versionStr,"hptlink %s", version);
-*/
 
    versionStr = GenVersionStr( "hptlink", VER_MAJOR, VER_MINOR, VER_PATCH,
                                VER_BRANCH, cvs_date );

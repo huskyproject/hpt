@@ -25,33 +25,32 @@
  */
 
 
-#if defined (UNIX)
-#   include <unistd.h>
-#endif
 #include <stdlib.h>
 #include <string.h>
+#include <process.h>
+
+#include <smapi/compiler.h>
+
+#ifdef HAS_IO_H
+#include <io.h>
+#endif
+
+#ifdef HAS_UNISTD_H
+#include <unistd.h>
+#endif
+
+#ifdef HAS_DOS_H
+#include <dos.h>
+#endif
+
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/recode.h>
 #include <fidoconf/temp.h>
 #include <fidoconf/xstr.h>
 
-#if defined (__MINGW32__) || defined (__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__) || defined (__EMX__) || (defined (_MSC_VER) && (_MSC_VER >= 1200))
-#include <process.h>
-#include <io.h>
-#endif
-
-#if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
-#include <dos.h>
-#include <process.h>
-#endif
-
 #include "global.h"
 #include "toss.h"
-
-#if defined(UNIX) || defined(__EMX__) || defined(__DJGPP__)
-#define HAVE_POPEN
-#endif
 
 extern s_statToss statToss;
 
@@ -96,7 +95,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
     int  rc;
 
     progname = carbon.areaName;
-#ifdef HAVE_POPEN	
+#ifdef HAS_popen_close
     if (*progname == '|') {
 	msgfp = popen(progname + 1, "wt");
     } else
@@ -120,7 +119,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
       else
         fputc(*p, msgfp);
     fputc('\n', msgfp);
-#ifdef HAVE_POPEN	
+#ifdef HAS_popen_close
     if (*progname == '|') {
       pclose(msgfp);
       rc = 0;

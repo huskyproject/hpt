@@ -38,27 +38,28 @@
 #include <ctype.h>
 #include <errno.h>
 
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
-#include <fidoconf/xstr.h>
-#include <fidoconf/afixcmd.h>
-
-#include <pkt.h>
-#include <scan.h>
-#include <seenby.h>
-#include <fidoconf/log.h>
-#include <global.h>
-#include <version.h>
-#include <fidoconf/recode.h>
-#include <toss.h>
-#include <hpt.h>
-#include <dupe.h>
+#include <smapi/compiler.h>
 
 #include <smapi/msgapi.h>
 #include <smapi/stamp.h>
 #include <smapi/typedefs.h>
-#include <smapi/compiler.h>
 #include <smapi/progprot.h>
+
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
+#include <fidoconf/xstr.h>
+#include <fidoconf/afixcmd.h>
+#include <fidoconf/log.h>
+#include <fidoconf/recode.h>
+
+#include <pkt.h>
+#include <scan.h>
+#include <seenby.h>
+#include <global.h>
+#include <version.h>
+#include <toss.h>
+#include <hpt.h>
+#include <dupe.h>
 
 #ifdef DO_PERL
 #include <hptperl.h>

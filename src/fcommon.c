@@ -63,7 +63,7 @@
 #include <dos.h>
 #endif
 
-#if defined(__TURBOC__) || defined(__IBMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
+#if defined(__TURBOC__) || defined(__IBMC__) || (__MSVC__)
 
 #if !defined(S_ISDIR)
 #define S_ISDIR(a) (((a) & S_IFDIR) != 0)
@@ -553,7 +553,7 @@ int createDirectoryTree(const char *pathName) {
    }
    slash = start;
 
-#ifndef UNIX
+#ifndef __UNIX__
    /*  if there is a drivename, jump over it */
    if (slash[1] == ':') slash += 2;
 #endif

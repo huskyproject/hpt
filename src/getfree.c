@@ -45,22 +45,6 @@
 
 #include <fidoconf/log.h>
 
-/*#if defined(__NT__)*/
-#if 0
-
-/* See  fidoconf/log.h  */
-#  define LL_ERROR   	'A'      /* Trivial error: continue */
-#  define LL_ERR     LL_ERROR
-#  define LL_WARN    	'B'      /* Warning */
-   extern void w_log(char key, char *logString, ...);
-
-#else
-
-#  include <fidoconf/log.h>
-
-#endif
-
-
 #if defined(__NT__)
 
 #ifdef __WATCOMC__

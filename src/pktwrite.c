@@ -32,20 +32,21 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <errno.h>
 
-/*  see pktread.c for a comment on malloc.h! */
-/* #if !defined(__FreeBSD__) */
-/* #include <malloc.h> */
-/* #endif */
+#include <smapi/compiler.h>
 
-#if (defined (__WATCOMC__) && defined (__NT__)) || defined(__TURBOC__)
+#ifdef HAS_DOS_H
 #include <dos.h>
 #endif
-#include <string.h>
-#if !defined(__TURBOC__) && !(defined (_MSC_VER) && (_MSC_VER >= 1200))
+#ifdef HAS_UNISTD_H
 #include <unistd.h>
 #endif
-#include <errno.h>
+
+#include <smapi/typedefs.h>
+#include <smapi/progprot.h>
+#include <smapi/stamp.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/xstr.h>
@@ -54,10 +55,6 @@
 #include <pkt.h>
 #include <global.h>
 
-#include <smapi/stamp.h>
-#include <smapi/typedefs.h>
-#include <smapi/compiler.h>
-#include <smapi/progprot.h>
 #include <version.h>
 
 

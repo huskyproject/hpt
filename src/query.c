@@ -11,9 +11,20 @@
 #include <ctype.h>
 #include <errno.h>
 
-/* smapi */
+/* compiler.h */
 #include <smapi/compiler.h>
+
+#ifdef HAS_UNISTD_H
+#include <unistd.h>
+#endif
+
+#ifdef HAS_DOS_H
+#include <dos.h>
+#endif
+
+/* smapi */
 #include <smapi/progprot.h>
+
 
 /* fidoconf */
 #include <fidoconf/fidoconf.h>
@@ -27,14 +38,6 @@
 #include <toss.h>
 #include <areafix.h>
 #include <query.h>
-
-#if !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
-#include <unistd.h>
-#endif
-#if (defined (__WATCOMC__) && defined (__NT__)) || defined(__TURBOC__)
-#include <dos.h>
-#endif
-
 
 static  time_t  tnow;
 const   long    secInDay = 3600*24;

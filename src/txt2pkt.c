@@ -28,35 +28,41 @@
 #include <string.h>
 #include <time.h>
 
-#if defined(__BEOS__)
+
+/* compiler.h */
+#include <smapi/compiler.h>
+
+#ifdef HAS_UNISTD_H
+#include <unistd.h>
+#endif
+
+#ifdef HAS_DOS_H
+#include <dos.h>
+#endif
+
+#if defined(HAS_SYS_SYSEXITS_H)
 #include <sys/sysexits.h>
-#elif defined(UNIX)
+#endif
+#if defined(HAS_SYSEXITS_H)
 #include <sysexits.h>
 #endif
 
-#if !defined (__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
-#include <unistd.h>
-#else
-#include <dos.h>
-#endif
-
-#if (defined (__WATCOMC__) && defined (__NT__)) || defined(__TURBOC__)
-#include <dos.h>
-#endif
-
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
-/* we can't include windows.h for several reasons ... */
+/* we can't include windows.h to prevent type redefinitions ... */
 #define CharToOem CharToOemA
 #endif
 
+/* smapi */
 #include <smapi/progprot.h>
 
+/*  fidoconf */
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/afixcmd.h>
 #include <fidoconf/recode.h>
 
+/* hpt */
 #include <global.h>
 #include <pkt.h>
 #include <version.h>
@@ -234,7 +240,7 @@ int main(int argc, char *argv[])
    header.capabilityWord = 1;
    header.prodData = 0;
 
-#ifdef UNIX
+#ifdef __UNIX__
    xstrcat(&tmp, (dir) ? dir : "./");
    if (tmp[strlen(tmp)-1] != '/') xstrcat(&tmp,"/");
 #else

@@ -32,21 +32,11 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
-
-/*  changed by tobi: malloc.h is completely nonstandard and should not be */
-/*  necessary if stdlib.h is there. if your compiler needs malloc.h, then */
-/*  please include it by doing a #ifdef YOURCOMPILER, and don't do it like */
-/*  below. E.g., we want to list the compilers that NEED malloc.h, not to  */
-/*  list those that do NOT need it! */
-/*  */
-/*  #if !defined(__FreeBSD__)  */
-/*  #include <malloc.h> */
-/*  #endif */
-
 #include <string.h>
 #include <ctype.h>
 
 #include <smapi/compiler.h>
+
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
@@ -666,9 +656,9 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
         return 2; /*  exit with error */
     }
     
-#if !defined(MSDOS) || defined(__FLAT__) || defined(__DJGPP__)
+#if !defined(__DOS__) || defined(__FLAT__)
 #ifdef DEBUG_HPT
-    w_log(LL_DEBUG, "32bit");
+    w_log(LL_DEBUG, "readMsgFromPkt()  32bit");
 #endif
     do {
         len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
@@ -677,7 +667,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
     } while (len == BUFFERSIZE+1);
 #else
 #ifdef DEBUG_HPT
-    w_log(LL_DEBUG, "DOS-16");
+    w_log(LL_DEBUG, "readMsgFromPkt() DOS-16");
 #endif
     /* DOS: read only one segment of message */
     len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");

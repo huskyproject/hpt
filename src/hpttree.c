@@ -21,44 +21,44 @@
  * $Id$
  */
 
-#include <stdio.h>
 #include <ctype.h>
-
-#if defined(__BEOS__)
-#include <sys/sysexits.h>
-#elif defined(UNIX)
-#include <sysexits.h>
-#endif
-
-#ifdef UNIX
-#include <unistd.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
 #include <strings.h>
-#else
+
+#include <smapi/compiler.h>
+
+#ifdef HAS_IO_H
 #include <io.h>
 #endif
 
-#ifdef __EMX__
-#include <share.h>
-#include <sys/types.h>
-#else
-#include <fcntl.h>
+#ifdef HAS_UNISTD_H
+#include <unistd.h>
 #endif
-#include <sys/stat.h>
 
+#ifdef HAS_SHARE_H
+#include <share.h>
+#endif
+
+#ifdef HAS_SYS_SYSEXITS_H
+#include <sys/sysexits.h>
+#endif
+#ifdef HAS_SYSEXITS_H
+#include <sysexits.h>
+#endif
+
+#include <smapi/prog.h>
+#include <smapi/progprot.h>
 #include <smapi/msgapi.h>
+
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 
-#include <string.h>
-
-#if defined ( __WATCOMC__ )
-#include <smapi/prog.h>
-#include <share.h>
-#endif
-
-#include <stdlib.h>
-#include <time.h>
-#include <smapi/progprot.h>
 
 s_fidoconfig *cfg;
 
@@ -79,7 +79,7 @@ char *version = "1.04";
 int *linksOnLevel = NULL;
 int linksInArray = 0;
 
-#ifdef UNIX
+#ifdef __UNIX__
 int charsPG = 0;
 #else
 int charsPG = 1;
