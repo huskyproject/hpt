@@ -98,7 +98,7 @@ static char *GetKludgeText(byte *ctl, char *kludge)
 
    pToken = (char *) GetCtrlToken(ctl, (byte *)kludge);
    if (pToken) {
-      pKludge = strdup(pToken+1+strlen(kludge));
+      pKludge = safe_strdup(pToken+1+strlen(kludge));
       nfree(pToken);
       return pKludge;
    } else

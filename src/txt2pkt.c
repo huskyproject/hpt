@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
    }
 
    for (quit = 0;n < argc && !quit; n++) {
-      if (*argv[n] == '-') {
+      if (*argv[n] == '-' && argv[n][1]) {
          switch(argv[n][1]) {
             case 'a':    // address
                switch(argv[n][2]) {
@@ -70,7 +70,8 @@ int main(int argc, char *argv[])
                   default:
                      quit = 1;
                      break;
-               }; break;
+               } 
+               break;
             case 'x':    // address
                switch(argv[n][2]) {
                   case 'f':
@@ -82,18 +83,19 @@ int main(int argc, char *argv[])
                   default:
                      quit = 1;
                      break;
-               }; break;
+               } 
+               break;
             case 'n':    // name
                switch(argv[n][2]) {
                   case 't':
-                     msg.toUserName = (char *) malloc(strlen(argv[++n]) + 1);
+                     msg.toUserName = (char *) safe_malloc(strlen(argv[++n]) + 1);
                      strcpy(msg.toUserName, argv[n]);
 #ifdef __NT__
                      CharToOem(msg.toUserName, msg.toUserName);
 #endif
                      break;
                   case 'f':
-                     msg.fromUserName = (char *) malloc(strlen(argv[++n]) + 1);
+                     msg.fromUserName = (char *) safe_malloc(strlen(argv[++n]) + 1);
                      strcpy(msg.fromUserName, argv[n]);
 #ifdef __NT__
                      CharToOem(msg.fromUserName, msg.fromUserName);
@@ -102,7 +104,8 @@ int main(int argc, char *argv[])
                   default:
                      quit = 1;
                      break;
-               }; break;
+               }
+               break;
             case 'e':    // echo name
                area = argv[++n];
                break;
@@ -125,7 +128,7 @@ int main(int argc, char *argv[])
                dir = argv[++n];
                break;
             case 's':    // subject
-               msg.subjectLine = (char *) malloc(strlen(argv[++n]) + 1);
+               msg.subjectLine = (char *) safe_malloc(strlen(argv[++n]) + 1);
                strcpy(msg.subjectLine, argv[n]);
 #ifdef __NT__
                CharToOem(msg.subjectLine, msg.subjectLine);
@@ -134,36 +137,40 @@ int main(int argc, char *argv[])
 	    default:
                quit = 1;
                break;
-         };
+         }
       } else {
-         if ((text = fopen(argv[n], "rt")) != NULL) {
+         if (strcmp(argv[n], "-") == 0)
+            text = stdin;
+         else
+            text = fopen(argv[n], "rt");
+         if (text != NULL) {
+            int cursize = TEXTBUFFERSIZE, c;
             /* reserve 512kb + 1 (or 32kb+1) text Buffer */
-            xstralloc(&textBuffer, (size_t)(TEXTBUFFERSIZE+1));
-            for (msg.textLength = 0; msg.textLength < (long) TEXTBUFFERSIZE; msg.textLength++) {
-                int c = getc(text);
-                if (c == EOF) {
+            textBuffer = safe_malloc(cursize);
+            for (msg.textLength = 0;; msg.textLength++) {
+                if (msg.textLength >= cursize)
+                    textBuffer = safe_realloc(textBuffer, cursize += TEXTBUFFERSIZE);
+                c = getc(text);
+                if (c == EOF || c == 0) {
                     textBuffer[msg.textLength] = 0;
                     break;
                 }
-                if ((textBuffer[msg.textLength] = (char)c) == 0)
-                    break;
-                if (feof(text)) {
-                    textBuffer[++msg.textLength] = 0;
-                    break;
-                }; /* endif */
+                textBuffer[msg.textLength] = (char)c;
                 if ('\r' == textBuffer[msg.textLength])
                     msg.textLength--;
                 if ('\n' == textBuffer[msg.textLength])
                     textBuffer[msg.textLength] = '\r';
-            }; /* endfor */
-            textBuffer[msg.textLength-1] = 0;
+            } /* endfor */
+            while (!feof(text))
+                getc(text);
+            if (strcmp(argv[n], "-"))
             fclose(text);
          } else {
 	    printf("Text file not found\n");
 	    exit(1);
-	 };
-      };  
-   };
+	 }
+      }
+   }
 
    header.hiProductCode  = 0;
    header.loProductCode  = 0xfe;

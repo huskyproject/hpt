@@ -232,7 +232,7 @@ int createTempPktFileName(s_link *link)
         strcpy(zoneOutbound, config->outbound);
         strcpy(zoneOutbound+strlen(zoneOutbound)-1, zoneSuffix);
     } else
-        zoneOutbound = strdup(config->outbound);
+        zoneOutbound = safe_strdup(config->outbound);
 
 
    /* There is a problem here: Since we use the tmpOutbound fileName for
@@ -343,7 +343,7 @@ int createTempPktFileName(s_link *link)
         strcpy(zoneOutbound, config->outbound);
         strcpy(zoneOutbound+strlen(zoneOutbound)-1, zoneSuffix);
     } else
-        zoneOutbound = strdup(config->outbound);
+        zoneOutbound = safe_strdup(config->outbound);
 
     do
     {
@@ -565,9 +565,23 @@ void *safe_malloc(size_t size)
     return ptr;
 }
 
+void *safe_calloc(size_t nmemb, size_t size)
+{
+    void *ptr = safe_malloc (size*nmemb);
+    memset(ptr,'\0',size*nmemb);
+    return ptr;
+}
+
 void *safe_realloc(void *ptr, size_t size)
 {
     void *newptr = realloc (ptr, size);
     if (newptr == NULL) exit_hpt("out of memory", 1);
     return newptr;
+}
+
+char *safe_strdup(const char *src)
+{
+    char *ptr = strdup (src);
+    if (ptr == NULL) exit_hpt("out of memory", 1);
+    return ptr;
 }

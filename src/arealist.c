@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #if !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
@@ -78,7 +79,7 @@ int addAreaListItem(ps_arealist al, int active, char *tag, char *desc)
 		al->maxcount += LIST_PAGE_SIZE;
     }
     al->areas[al->count].active = active;
-    al->areas[al->count].tag = strdup(tag);
+    al->areas[al->count].tag = safe_strdup(tag);
     if(desc) {
     	l = strlen(desc);
     	al->areas[al->count].desc = safe_malloc(l+3);

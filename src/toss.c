@@ -1823,7 +1823,7 @@ int find_old_arcmail(s_link *link, FILE *flo)
  	     	for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
 	            if (patimat(line, validExt[i]) == 1) {
 			nfree(bundle);
-			bundle = strdup(line + 1); // One char for first symbol in flo file
+			bundle = safe_strdup(line + 1); // One char for first symbol in flo file
 			break;
 		}
 		nfree(line);
@@ -2038,7 +2038,7 @@ void fix_qqq(char *filename)
 	if (l > 3 && newname != NULL && toupper(filename[l-1]) == 'Q' &&
 	    toupper(filename[l-2]) == 'Q' && toupper(filename[l-3]) == 'Q')
 	{
-		newname = strdup(filename);
+		newname = safe_strdup(filename);
 
 	        strcpy(newname + l - 3, "pkt");
                 if (rename(newname, filename) == 0)

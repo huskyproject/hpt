@@ -2,6 +2,11 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Jul  2 16:13:24 NOVST 2000
+max:
+* safe_strdup()
+
+----- cvs ci ------
 Sat Jul 1 19:11:34 MSK 2000
 Nestyurkin Nikolay:
 * new make files in 'make' directory

@@ -183,35 +183,37 @@ void post(int c, unsigned int *n, char *params[])
          else
             text = stdin;
          if (text != NULL) {
+            int c, cursize=TEXTBUFFERSIZE;
             /* reserve 512kb + 1 (or 32kb+1) text Buffer */
-            xstralloc(&textBuffer, (size_t) (TEXTBUFFERSIZE+1));
-            for (msg.textLength = 0; msg.textLength < (long) TEXTBUFFERSIZE; msg.textLength++) {
-	       int c = getc(text);
-	       if (c == EOF) {
+            textBuffer = safe_malloc(cursize);
+            for (msg.textLength = 0;; msg.textLength++) {
+               if (msg.textLength >= cursize)
+                   textBuffer = safe_realloc(textBuffer, cursize += TEXTBUFFERSIZE);
+	       c = getc(text);
+	       if (c == EOF || c == 0) {
 		   textBuffer[msg.textLength] = 0;
 		   break;
 	       }
-               if ((textBuffer[msg.textLength] = (char)c) == 0)
-                  break;
-               if (feof(text)) {
-                  textBuffer[++msg.textLength] = 0;
-                  break;
-               }; /* endif */
+	       textBuffer[msg.textLength] = (char)c;
+               if ('\r' == textBuffer[msg.textLength])
+                  msg.textLength--;
                if ('\n' == textBuffer[msg.textLength])
                   textBuffer[msg.textLength] = '\r';
-            }; /* endfor */
-            textBuffer[msg.textLength-1] = 0;
+            } /* endfor */
+            while (!feof(text))
+                getc(text);
+            if (strcmp(params[*n], "-"))
             fclose(text);
             if (strcmp(params[*n], "-")&&erasef==1)
                remove(params[*n]);
          } else {
             fprintf(stderr, "hpt post: failed to open input file %s\n", params[*n]);
-        };
+        }
       } else {
          fprintf(stderr, "hpt post: several input files on cmd line\n");
          quit = 1;
-      };
-   };
+      }
+   }
    // won't be set in the msgbase, because the mail is processed if it were received
    (*n)--; tm = localtime(&t);
    strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", tm);
@@ -220,11 +222,11 @@ void post(int c, unsigned int *n, char *params[])
       if (msg.origAddr.zone == 0) // maybe origaddr isn't specified ?
          msg.origAddr = config->addr[0];
       if (msg.fromUserName == NULL)
-          msg.fromUserName = strdup(config->sysop);
+          msg.fromUserName = safe_strdup(config->sysop);
       if (msg.toUserName == NULL)
-          msg.toUserName = strdup("All");
+          msg.toUserName = safe_strdup("All");
       if (msg.subjectLine == NULL)
-          msg.subjectLine = strdup("");
+          msg.subjectLine = safe_strdup("");
 
       msg.netMail = (char)(area == NULL);
       /*FIXME*/
