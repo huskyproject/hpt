@@ -1,3 +1,13 @@
+2003-05-21 Wednesday 08:55  sfpavel
+
+	* debian/control (hpt-1_4-stable.3): Change debian maintainer's
+	E-mail
+
+2003-05-21 Wednesday 08:41  sfpavel
+
+	* config/config, debian/changelog (hpt-1_4-stable.[1,5]): New
+	version: 1.4-RC1
+
 2003-05-11 Sunday 00:32  d_sergienko
 
 	* HISTORY, src/scan.c (hpt-1_4-stable.[5,1]): keepTrsMail works now
