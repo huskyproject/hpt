@@ -238,7 +238,9 @@ int linkArea(s_area *area, int netMail)
          curr -> msgPos  = MsgMsgnToUid(harea, i);
 	 curr -> freeReply = 0;
          curr -> relinked = 0;
-         curr -> replyto = curr -> replynext = 0;
+         curr -> replyto = 0;
+         if (area->msgbType & MSGTYPE_JAM)
+             curr -> replynext = 0;
       }
 
       /* Pass 2nd : search for reply links and build relations*/

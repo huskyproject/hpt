@@ -1,3 +1,8 @@
+----- cvs ci ------
+Sun Oct  8 23:10:13 MSZ 2000
+tobi
+* fix: hpt link worked nonreliably or even crashed on all message base
+  type except jam.
 
 ----- cvs ci ------
 Thu 28 Sep 2000 23:34:03 MEZ
