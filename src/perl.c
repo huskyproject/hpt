@@ -742,8 +742,6 @@ int perlfilter(s_message *msg, s_addr pktOrigAddr, int secure)
        if (area)
          w_log('8', "PerlFilter: Area %s from %s %s killed%s%s",
                        area, msg->fromUserName, aka2str(msg->origAddr),
-                       msg->origAddr.zone, msg->origAddr.net,
-                       msg->origAddr.node, msg->origAddr.point,
                        prc ? ": " : "", prc ? prc : "");
        else
          w_log('8', "PerlFilter: NetMail from %s %s to %s %s killed%s%s",
