@@ -612,7 +612,7 @@ int createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ)
 void *safe_malloc(size_t size)
 {
     void *ptr = malloc (size);
-    if (ptr == NULL) exit_hpt("out of memory", 1);
+    if (ptr == NULL) exit_hpt("out of memory (safe_malloc())", 1);
     return ptr;
 }
 
@@ -626,15 +626,16 @@ void *safe_calloc(size_t nmemb, size_t size)
 void *safe_realloc(void *ptr, size_t size)
 {
     void *newptr = realloc (ptr, size);
-    if (newptr == NULL) exit_hpt("out of memory", 1);
+    if (newptr == NULL) exit_hpt("out of memory (safe_realloc())", 1);
     return newptr;
 }
 
 char *safe_strdup(const char *src)
 {
     char *ptr=NULL;
-    if ( !( ptr = sstrdup (src) ) ) /* use sstrdup() from fidoconfig library */
-        exit_hpt("out of memory", 1);
+    if(src)
+      if ( !( ptr = strdup (src) ) ) /* use sstrdup() from fidoconfig library */
+        exit_hpt("out of memory (safe_strdup())", 1);
     return ptr;
 }
 
