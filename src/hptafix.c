@@ -485,6 +485,7 @@ int init_hptafix(void) {
   /* vars */
   af_config      = config;
   af_cfgFile     = cfgFile;
+  af_app         = &theApp;
   af_versionStr  = versionStr;
   af_quiet       = quiet;
   af_silent_mode = silent_mode;
