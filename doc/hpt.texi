@@ -2096,6 +2096,7 @@ This statement cannot be repeated.
 * DenyUncondFwdReqAccess::      deny access to unconditional forward requests
 * EchoMailFlavour::             flavour for outgoing echomail
 * Export::                      rules for echomail export
+* Flavour::                     flavour for netmail, echomail and fileechoes
 * ForwardAreaPriority::         forward requests priority
 * ForwardPkts::                 shall we forward inbound packets for this node?
 * ForwardRequestFile::          file for forwardRequest, AvialableAreas & descriptions
@@ -2515,7 +2516,7 @@ For example set echomailFlavour for points to hold and for uplink crash.
 
 This statement can only be repeated for different links.
 
-@node Export, ForwardAreaPriority, EchoMailFlavour, Link Keywords
+@node Export, Flavour, EchoMailFlavour, Link Keywords
 @subsection Export
 @findex Export
 @table @asis
@@ -2533,7 +2534,24 @@ link at all.
 
 This statement can only be repeated for different links.
 
-@node ForwardAreaPriority, ForwardPkts, Export, Link Keywords
+@node Flavour, ForwardAreaPriority, Export, Link Keywords
+@subsection Flavour
+@findex Flavour
+@table @asis
+@item Syntax:
+@code{flavour <hold | normal | crash | direct | immediate>}
+@item Example:
+@code{flavour hold}
+@end table
+
+This statement sets the flavours for netmail, echomail and fileechoes
+simultaneously. Note that you can combine this with @code{netMailFlavour},
+@code{echoMailFlavour} or @code{fileEchoFlavour}; in this case the latest
+flavour is applied.
+
+This statement can only be repeated for different links.
+
+@node ForwardAreaPriority, ForwardPkts, Flavour, Link Keywords
 @subsection ForwardAreaPriority
 @findex ForwardAreaPriority
 @table @asis
