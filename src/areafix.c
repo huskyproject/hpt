@@ -1885,9 +1885,10 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     }
     // remove kluges
     tmp = msg->text;
-	token = strseparate (&tmp,"\n\r");
+    token = strseparate (&tmp,"\n\r");
     while(token != NULL) {
-        if( token[0] != '\001' && token[0]!='-' && token[1]!='-' && token[2]!='-' )
+        if( token[0] == '\001' || (token[0]=='-' && token[1]=='-' && token[2]=='-') )
+          continue;
         xstrscat(&textBuff,token,"\r",NULL);
         token = strseparate (&tmp,"\n\r");
     }
