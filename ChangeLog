@@ -1,3 +1,8 @@
+2003-12-27 Saturday 21:35  andrew_ladutsko
+
+	* doc/hpt.texi (1.143): fixed description of sendNotifyMessages
+	token
+
 2003-12-25 Thursday 20:04  i_zkh
 
 	* doc/hpt.texi (1.142): Fixed misprint
