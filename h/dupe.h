@@ -46,7 +46,7 @@ typedef struct dupeEntry s_dupeEntry;
 */
 
 struct dupeMemory {
-  int *tree;
+  tree *avlTree;
 };
 
 typedef struct dupeMemory s_dupeMemory;

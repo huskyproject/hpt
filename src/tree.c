@@ -512,16 +512,16 @@ int	(*pfi_uar)();
 	EXITV
 }
 
-void countEach(pc_data)
+int countEach(pc_data)
 char *pc_data;
 {
    ENTER("count")
-   if (*pc_data) count++;
-   EXITV
+   count++;
+   EXIT(TRUE)
 }
 
 unsigned long tree_count(ppr_tree)
-tree *ppr_tree;
+tree **ppr_tree;
 {
    count = 0;
    tree_trav(ppr_tree, &countEach);

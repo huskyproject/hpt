@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include <dupe.h>
 #include <pkt.h>
 
 #include <global.h>
@@ -12,8 +11,9 @@
 #include <compiler.h>
 #include <stamp.h>
 #include <progprot.h>
+#include <dupe.h>
 
-FILE *write;
+FILE *fDupe;
 
 char *createDupeFileName(s_area *area) {
    char *name;
@@ -35,26 +35,31 @@ int compareEntries(const void *e1, const void *e2) {
    rc = strcmp(a->from, b->from);
    if (rc == 0) rc = strcmp(a->to, b->to);
    if (rc == 0) rc = strcmp(a->subject, b->subject);
-   if (rc == 0) rc = strcmp(a->msgid, b->msgid);
+   if ((rc == 0) && (a->msgid != NULL && b->msgid != NULL)) rc = strcmp(a->msgid, b->msgid);
 
    return rc;
 }
 
 int writeEntry(s_dupeEntry *entry) {
-   fputc(strlen(entry->from), write); fputs(entry->from, write);
-   fputc(strlen(entry->to), write); fputs(entry->to, write);
-   fputc(strlen(entry->subject), write); fputs(entry->subject, write);
-   fputc(strlen(entry->msgid), write); fputs(entry->msgid, write);
+   fputc(strlen(entry->from), fDupe); fputs(entry->from, fDupe);
+   fputc(strlen(entry->to), fDupe); fputs(entry->to, fDupe);
+   fputc(strlen(entry->subject), fDupe); fputs(entry->subject, fDupe);
+   if (entry->msgid != NULL) {
+      fputc(strlen(entry->msgid), fDupe);
+      fputs(entry->msgid, fDupe);
+   }
+   else fputc(0, fDupe);
    
-   return 0;
+   return 1;
 }
    
-void deleteEntry(s_dupeEntry *entry) {
+int deleteEntry(s_dupeEntry *entry) {
    free(entry->to);
    free(entry->from);
    free(entry->subject);
    free(entry->msgid);
    free(entry);
+   return 1;
 }
 
 void doReading(FILE *f, s_dupeMemory *mem) {
@@ -98,7 +103,7 @@ void doReading(FILE *f, s_dupeMemory *mem) {
          length = getc(f);
          entry->msgid = malloc(length+1);
          fgets(entry->msgid, length+1, f);
-         tree_add(&(mem->tree), &compareEntries, entry, &deleteEntry);
+         tree_add(&(mem->avlTree), &compareEntries, (char *) entry, &deleteEntry);
       }
       
       free(packHeader);
@@ -113,7 +118,7 @@ s_dupeMemory *readDupeFile(s_area *area) {
    s_dupeMemory *dupeMemory;
    
    dupeMemory = malloc(sizeof(s_dupeMemory));
-   tree_init(&dupeMemory->tree);
+   tree_init(&(dupeMemory->avlTree));
 
    fileName = createDupeFileName(area);
    f = fopen(fileName, "rb");
@@ -129,7 +134,8 @@ s_dupeMemory *readDupeFile(s_area *area) {
 
 int appendToDupeFile(char *name, s_dupeMemory newDupeEntries) {
    FILE *f;
-   UINT32 packs;
+   UINT16 fileHeaderSize;
+   s_dupeFileHeader *fileHeader;
    s_dupePackHeader packHeader;
    
 
@@ -137,27 +143,28 @@ int appendToDupeFile(char *name, s_dupeMemory newDupeEntries) {
 
    if (f == NULL) return 1;
 
-   // seek for noOfPacks
-   fseek(f, 8, SEEK_SET);
-   // read noOfPacks
-   fread(&packs, sizeof(UINT32), 1, f);
-   // seek for noOfPacks
-   fseek(f, 8, SEEK_SET);
-   // write noOfPacks+1
-   packs++;
-   fwrite(&packs, sizeof(UINT32), 1, f);
+   // modify fileHeader
+   fread(&fileHeaderSize, sizeof(UINT16), 1, f);
+   fileHeader = malloc(fileHeaderSize);
+   fseek(f, 0, SEEK_SET);
+   fread(fileHeader, fileHeaderSize, 1, f);
+
+   fileHeader->noOfPacks++;
+   fseek(f, 0, SEEK_SET);
+   fwrite(fileHeader, fileHeaderSize, 1, f);
+   free(fileHeader);
 
    // add new packet to end of file
    fseek(f, 0, SEEK_END);
-   packHeader.noOfEntries = tree_count(newDupeEntries.tree);
+   packHeader.noOfEntries = tree_count(&(newDupeEntries.avlTree));
    packHeader.time_tSize  = sizeof(time_t);
    packHeader.packTime    = time(NULL);
    fwrite(&packHeader, sizeof(s_dupePackHeader), 1, f);
 
    // add entries
-   write = f;
-   tree_trav(newDupeEntries.tree, &writeEntry);
-   write = NULL;
+   fDupe = f;
+   tree_trav(&(newDupeEntries.avlTree), &writeEntry);
+   fDupe = NULL;
          
    fclose(f);
 
@@ -183,15 +190,16 @@ int createDupeFile(char *name, s_dupeMemory newDupeEntries) {
       fwrite(&fileHeader, sizeof(s_dupeFileHeader), 1, f);
 
       // create only one pack, since this is a new dupeFile
-      packHeader.noOfEntries   = tree_count(newDupeEntries.tree);
+      packHeader.noOfEntries   = tree_count(&(newDupeEntries.avlTree));
       packHeader.time_tSize    = sizeof(time_t);
       packHeader.packTime      = time(NULL);
       fwrite(&packHeader, sizeof(s_dupePackHeader), 1, f);
 
       // write new Entries
-      write = f;
-      tree_trav(newDupeEntries.tree, &writeEntry);
-      write = NULL;
+      fDupe = f;
+      tree_trav(&(newDupeEntries.avlTree), &writeEntry);
+      fDupe = NULL;
+      fclose(f);
       
       return 0;
    } else return 1;
@@ -204,7 +212,7 @@ int writeToDupeFile(s_area *area) {
 
    if (newDupes != NULL) {
 
-      if (tree_count(newDupes->tree) > 0) {
+      if (tree_count(&(newDupes->avlTree)) > 0) {
 
          fileName = createDupeFileName(area);
 
@@ -220,9 +228,11 @@ int writeToDupeFile(s_area *area) {
 }
 
 int isDupe(s_area area, s_dupeEntry *entry) {
-   char first = 0, second = 0;
+   s_dupeMemory *dupes = area.dupes, *newDupes = area.newDupes;
 
-   return (first || second);
+   return (
+           (tree_srch(&(dupes->avlTree), &compareEntries, (char *) entry)!= NULL)
+   ||      (tree_srch(&(newDupes->avlTree), &compareEntries, (char *) entry) != NULL) );
 }
 
 int dupeDetection(s_area *area, const s_message msg) {
@@ -231,7 +241,7 @@ int dupeDetection(s_area *area, const s_message msg) {
    char         *str;
 
    if (area->dupeCheck == off) return 1; // no dupeCheck return 1 "no dupe"
-   
+
    // test if dupeDatabase is already read
    if (area->dupes == NULL) {
       //read Dupes
@@ -241,7 +251,7 @@ int dupeDetection(s_area *area, const s_message msg) {
    if (area->newDupes == NULL) {
       //make newDupes "NULL-struct"
       newDupes = malloc(sizeof(s_dupeMemory));
-      tree_init(&newDupes->tree);
+      tree_init(&(newDupes->avlTree));
       area->newDupes = newDupes;
    }
 
@@ -251,11 +261,14 @@ int dupeDetection(s_area *area, const s_message msg) {
    entry->to      = malloc(strlen(msg.toUserName)+1); strcpy(entry->to, msg.toUserName);
    entry->subject = malloc(strlen(msg.subjectLine)+1); strcpy(entry->subject, msg.subjectLine);
    str = getKludge(msg, "MSGID:");
-   entry->msgid   = malloc(strlen(str)+1); strcpy(entry->msgid, str);
+   if (str != NULL) {
+      entry->msgid   = malloc(strlen(str)+1-7); strcpy(entry->msgid, str+7);
+      free(str);
+   } else entry->msgid = NULL;
 
    if (!isDupe(*area, entry)) {
       // add to newDupes
-      tree_add(&newDupes->tree, &compareEntries, entry, &deleteEntry);
+      tree_add(&(newDupes->avlTree), &compareEntries, (char *) entry, &deleteEntry);
       return 1;
    }
    // it is a dupe do nothing but return 0
