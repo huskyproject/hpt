@@ -121,7 +121,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
 
    // convert kludgeLines
    ctrlLen = MsgGetCtrlLen(hmsg);
-   ctrlBuff = (UCHAR *) safe_malloc(ctrlLen);
+   ctrlBuff = (UCHAR *) safe_malloc(ctrlLen+1);
    MsgReadMsg(hmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
    /* MsgReadMsg does not do zero termination! */
    //ctrlBuff[ctrlLen] = '\0'; // now it is do it

@@ -2,6 +2,12 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Jan 20 10:00:21 NOVT 2001
+max:
+* fixed yesterday bug in packing (maybe scanning too)
+* fixed init of flags in processAttachs() & packMsg()
+
+----- cvs ci ------
 Fri Jan 19 22:15:10 NOVT 2001
 max:
 * possible speed up (changing strlen(msg->text) to msg->textLength

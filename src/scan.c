@@ -104,8 +104,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg)
 
    // get kludge lines
    ctrlLen = MsgGetCtrlLen(SQmsg);
-//   ctrlBuff = (unsigned char *) safe_malloc(ctrlLen+1);
-   ctrlBuff = (unsigned char *) safe_malloc(ctrlLen);
+   ctrlBuff = (unsigned char *) safe_malloc(ctrlLen+1);
    MsgReadMsg(SQmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
    /* MsgReadMsg does not do zero termination! */
    //ctrlBuff[ctrlLen] = '\0'; // now smapi do it
@@ -113,7 +112,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg)
    nfree(ctrlBuff);
 
    // make text
-   msg->textLength = MsgGetTextLen(SQmsg); // including zero termination
+   msg->textLength = MsgGetTextLen(SQmsg); // including zero termination???
 
    ctrlLen = strlen(msg->text);
    xstralloc(&(msg->text), msg->textLength + ctrlLen);
@@ -253,7 +252,7 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 void processAttachs(s_link *link, s_message *msg)
 {
    FILE *flo;
-   char *p, *running, *token, *flags;
+   char *p, *running, *token, *flags=NULL;
    char *newSubjectLine = NULL;
 
    flo = fopen(link->floFile, "a");
@@ -321,7 +320,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    s_route     *route;
    s_link      *link, *virtualLink;
    char        freeVirtualLink = 0;
-   char        *flags;
+   char        *flags=NULL;
 
    memset(&msg,'\0',sizeof(s_message));
    convertMsgHeader(*xmsg, &msg);
