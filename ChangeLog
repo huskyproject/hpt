@@ -1,3 +1,57 @@
+2002-01-27 Sunday 21:25  stas
+
+	* h/query.h (1.5): enum changeConfigRet modification.
+
+2002-01-27 Sunday 20:12  stas
+
+	* src/txt2pkt.c (1.32): Prevent buffer overflow.
+
+2002-01-27 Sunday 20:07  stas
+
+	* src/txt2pkt.c (1.31): Fix memory fault if illegal option present.
+
+2002-01-27 Sunday 19:30  stas
+
+	* src/txt2pkt.c (1.30), man/txt2pkt.1 (1.2): Update help message in
+	txt2pkt utility and corresponded man page.
+
+2002-01-27 Sunday 17:57  stas
+
+	* src/areafix.c (1.249): Prevent buffer overflow.
+
+2002-01-27 Sunday 17:41  stas
+
+	* src/: areafix.c (1.248), hpt.c (1.128), seenby.c (1.20): Fix
+	'2002-01-25 Friday 16:17' patch: replace snprintf to sprintf (for
+	ISO C compatibility).
+
+2002-01-27 Sunday 17:03  stas
+
+	* Makefile (1.10): Install txt2pkt man page.
+
+2002-01-27 Sunday 15:38  stas
+
+	* misc/pretty.pl (1.2): Add the '-c' option (copy mode) and change
+	temp & old file names.
+
+2002-01-27 Sunday 15:00  ml
+
+	* src/dupe.c (1.52): don't print error reading dupes when area just
+	autocreated
+
+2002-01-27 Sunday 13:30  stas
+
+	* src/toss.c (1.387): Add some log messages with high loglevels.
+
+2002-01-27 Sunday 13:02  stas
+
+	* src/areafix.c (1.247): Fix for '2002-01-22 Tuesday 18:48' patch.
+
+2002-01-27 Sunday 10:00  stas
+
+	* misc/hptlogstat.pl (1.1): hpt log statistics script (perl) by
+	Valery Kondakoff (2:5020/163)
+
 2002-01-26 Saturday 15:52  mche
 
 	* src/areafix.c (1.246): added code for queryfile support
