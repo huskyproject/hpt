@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # hptstat (c)opyright 2002-03, by val khokhlov
-$ver="0.8";
+$VERSION = "0.9";
 %areas;                       # areas found in stat (tag=>id), id=1,2,3,...
 @area_tag;                    # ...reverse array (id=>tag)
 %links;                       # links found in stat
@@ -14,8 +14,15 @@ $INB = $OUTB = 0;             # total input and output bytes
 # MODIFY THE SECTION BELOW TO CUSTOMIZE REPORT
 # -->---
 
-# init(<default binary stat log>[, <default config file>])
-init("/home/val/fido/log/hpt.sta", "/home/val/fido/hpt/hpt.conf");
+# init([<default binary stat log>[, <default config file>]])
+init(); #init("/home/val/fido/log/hpt.sta", "/home/val/fido/hpt/hpt.conf");
+
+# file(<name>|"-") to save part of report to file <name>, stdout if "-"
+#file("areas.rep");
+
+# pkt(<hash>) to save part of report to .pkt, <hash> keys: subj,from,to,area
+#pkt({'from'=>'advhptstat', 'subj'=>'Areas summary'});
+
 # header
 print center("hpt statistics"),
       center(localtime($stat1)." - ".localtime($stat2)), "\n";
@@ -37,10 +44,10 @@ print center("Zero traffic areas"), "\n",
 # bad and dupe combined report
 print center("Bad and duplicate messages"), "\n",
       join("\n", make_baddupe(['Dupe', ' Bad'], 2, [7,8], [7,8])), "\n\n";
-
 # --<---
 # END OF CUSTOMIZATION SECTION
 # ====================================================================
+done();
 
 # --------------------------------------------------------------------
 # center a line
@@ -93,10 +100,24 @@ eval {
     if ($warn) { print STDERR " * error processing, skipped\n" if $DBG; }
     else { die $@; }
   }
+  else {
+    if (defined $move) {
+      my $to = POSIX::strftime($move, (localtime)[0..5]);
+      print STDERR " * moving successfully processed file $name to $to" if $DBG; 
+      File::Path::mkpath( File::Basename::dirname($to) );
+      File::Copy::move($name, $to);
+    }
+    elsif ($del) { 
+      print STDERR " * deleting successfully processed file $name" if $DBG; 
+      unlink $name; 
+    }
+  }
 }
 # --------------------------------------------------------------------
 # parse hpt config
 sub parse_config {
+  my %tokens = ('advstatisticsfile'=>1, 'address'=>2, 'sysop'=>1, 'reportto'=>1,
+                'localinbound'=>1, 'origin'=>1, 'tearline'=>1);
   my $in_link;
   local *F;
   my ($name) = @_;
@@ -108,15 +129,17 @@ sub parse_config {
     next if /^#/;
     s/\s+#\s+.*$//;
     next if /^\s*$/;
+    my ($cmd) = /^\s*(\S+)/; my $lcmd = lc $cmd;
     # parse stat file
-    if (/^\s*advStatisticsFile\s+/i) {
-      my @s = /^\s*\S+\s+(?:"(.*?)(?<!\\)"|(\S+))/;
-      $stat_file = $s[0].$s[1];
-      $stat_file =~ s/\[([^\]]+)\]/$SET{$1} or $ENV{$1}/eg;
-      print STDERR " * found advStatisticsFile: $stat_file\n" if $DBG;
+    if ($tokens{$lcmd} && ($tokens{$lcmd} < 2 || !defined $config{$lcmd})) {
+      my @s = /^\s*\S+\s+(?:"(.*?)(?<!\\)"|(.+?)\s*$)/;
+      my $s = $s[0].$s[1];
+      $s =~ s/\[([^\]]+)\]/$SET{$1} or $ENV{$1}/eg;
+      print STDERR " * found $cmd: $s\n" if $DBG;
+      $config{$lcmd} = $s;
     }
     # parse area
-    elsif (/^\s*echoarea\s+/i) {
+    elsif ($lcmd eq 'echoarea') {
       my @s = /^\s*\S+\s+(?:"(.*?)(?<!\\)"|(\S+))/;
       my $tag = $s[0].$s[1];
       $config_areas{$tag} = {uplink=>undef, links=>[]};
@@ -130,21 +153,21 @@ sub parse_config {
       }
     }
     # parse link
-    elsif (/^\s*link\s+/i) { $in_link = 1; }
-    elsif ($in_link && /^\s*aka/i) {
+    elsif ($lcmd eq 'link') { $in_link = 1; }
+    elsif ($in_link && $lcmd eq 'aka') {
       my ($aka) = /^\s*\S+\s+(\S+)/;
       $aka =~ s/\.0+$//;
       push @config_links, $aka;
     }
     # parse set
-    elsif (/^\s*set\s+/i) {
+    elsif ($lcmd eq 'set') {
       my ($s1, $s2) = /^\s*\S+\s+(\S+)[^=]*=\s*"?(.*?)"?\s*$/o;
       $s2 =~ s/\[([^\]]+)\]/$SET{$1} or $ENV{$1}/eg;
       print STDERR " * found set: $s1=$s2\n" if $DBG;
       $SET{$s1} = $s2;
     }
     # parse include
-    elsif (/^\s*include\s+/i) {
+    elsif ($lcmd eq 'include') {
       my @s = /^\s*\S+\s+(?:"(.*?)(?<!\\)"|(\S+))/o;
       my $s = $s[0].$s[1];
       $s =~ s/\[([^\]]+)\]/$SET{$1} or $ENV{$1}/eg;
@@ -152,6 +175,7 @@ sub parse_config {
     }
   }
   close F;
+  $stat_file = $config{'advstatisticsfile'};
 }
 # --------------------------------------------------------------------
 # traffic to string: traf2str($traf); format: ###x or #.#x, x=[kMG]
@@ -198,8 +222,8 @@ sub out_histgr {
     my $s = sprintf "%-${maxlen}s ³", $v->[0];
     for (my $l = 0; $l < $len; $l++) {
       my $ch = 0;
-      $ch |= 1 if ($len*$v->[2]/$max > $l);
-      $ch |= 2 if ($len*$v->[3]/$max > $l);
+      $ch |= 1 if ($max && $len*$v->[2]/$max > $l);
+      $ch |= 2 if ($max && $len*$v->[3]/$max > $l);
       $s .= $symb[$ch];
     }
     $s .= "³";
@@ -483,14 +507,32 @@ sub parse_cmdline {
       $dt1 = str2time($s1) or die "Bad date format: $s1\n";
       $dt2 = str2time($s2, $dt1) or die "Bad date format: $s2\n";
     }
+    elsif (lc $ARGV[$i] eq '-m') {
+      die "Use: -m <archive layout>\n" if $i+1 >= @ARGV;
+      $move = $ARGV[$i+1];
+      $i++;
+    }
+    elsif ($ARGV[$i] =~ /^--move/io) {
+      ($move) = $ARGV[$i] =~ /^--move=(.+)$/io or die "use: --move=<archive-layout>\n";
+    }
+    elsif ($ARGV[$i] =~ /^(?:-d|-[Dd][Ee][Ll])$/o) { $del = 1; }
     elsif ($ARGV[$i] =~ /^(?:-h|-\?|--[Hh][Ee][Ll][Pp])$/o) { print USAGE(); exit; }
     elsif ($ARGV[$i] =~ /^(?:-D|--[Dd][Ee][Bb][Uu][Gg])$/o) { $DBG = 1; }
-    elsif (-f $ARGV[$i]) { push @stat_file, $ARGV[$i]; last; }
+    elsif (-f $ARGV[$i]) { push @stat_file, $ARGV[$i]; $i++; last; }
     else { die "Unknown parameter or missing stat file: $ARGV[$i]\n"; }
   }
   for (; $i < @ARGV; $i++) {
     if (-f $ARGV[$i]) { push @stat_file, $ARGV[$i]; last; }
     else { die "Missing stat file: $ARGV[$i]\n"; }
+  }
+  # make sure ;)
+  if (defined $move || defined $archive) {
+    die "POSIX perl module is required for archive processing\n" unless eval { require POSIX; 1; };
+  }
+  if (defined $move) {
+    for ( ('File/Basename.pm', 'File/Copy.pm', 'File/Path.pm') ) {
+      die "$_ perl module is required for archive processing\n" unless eval { require; 1; };
+    }
   }
 }
 # --------------------------------------------------------------------
@@ -504,14 +546,18 @@ sub init {
   # parse stat archive
   if (defined $archive) {
     print STDERR " * period: ".localtime($dt1)."-".localtime($dt2)."\n * archive layout: $archive\n" if $DBG;
+    my ($s, $s0);
     for (my $i = $dt1; $i < $dt2; $i += 3600*24) {
       #print STDERR " * strftime=".POSIX::strftime($archive, (localtime($i))[0..5])." for date ".localtime($i)."\n" if $DBG;
-      parse_stat( POSIX::strftime($archive, (localtime($i))[0..5]), 1 );
+      $s = POSIX::strftime($archive, (localtime($i))[0..5]);
+      next if $s eq $s0;
+      parse_stat($s, 1);
+      $s0 = $s;
     }
   }
   # parse several stat files
   elsif (@stat_file > 0) {
-    for $stat_file (@stat_file) { parse_stat($stat_file); }
+    for my $stat_file (@stat_file) { parse_stat($stat_file); }
   }
   # parse one stat file only
   else {
@@ -520,13 +566,88 @@ sub init {
     parse_stat($stat_file);
   }
 }
+# --------------------------------------------------------------------
+# close files
+sub done {
+  if (defined $footer) {
+    print $footer;
+    my $buf; my $sz = tell PKT; seek PKT, 0, 0;
+    read PKT, $buf, $sz;
+    $buf =~ tr!\n!\r!;
+    seek PKT, 0, 0; print PKT $buf;
+    close PKT; undef $footer;
+  }
+  elsif (defined $file) { close OUT; undef $file; }
+}
+# --------------------------------------------------------------------
+# file
+sub file {
+  done();
+  open OUT, ">$_[0]" or die "Can't create file $_[0]\n"; select OUT;
+  $file = 1;
+}
+# --------------------------------------------------------------------
+# pkt
+sub pkt {
+  my @mon = qw'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec';
+  sleep 1 if defined $footer;
+  done(); 
+  # params
+  my $msg = $_[0];
+  $msg->{'from'} = "Statistic generator" unless defined $msg->{'from'};
+  $msg->{'subj'} = "hpt statistics" unless defined $msg->{'subj'};
+  $msg->{'area'} = $config{'reportto'} unless defined $msg->{'area'};
+  $msg->{'area'} = undef if lc($msg->{'area'}) eq 'netmail' || $msg->{'area'} eq '';
+  unless (defined $msg->{'to'}) {
+    $msg->{'to'} = defined $msg->{'area'} ? 'All' : $config{'sysop'};
+  }
+  $msg->{'tearline'} = $config{'tearline'} unless defined $msg->{'tearline'};
+  $msg->{'tearline'} = "advhptstat ver.$VERSION" if $msg->{'tearline'} eq '';
+  $msg->{'origin'} = $config{'origin'} unless defined $msg->{'origin'};
+  # get .pkt name
+  for (my $i = 0; $i <= 9999; $i++) {
+    $pktname = $config{'localinbound'}.sprintf("/ahcc%04d.pkt", $i);
+    last unless -f $pktname;
+  }
+  print STDERR " * creating pkt $pktname ($msg->{from} -> $msg->{to}: $msg->{subj})\n" if $DBG;
+  open PKT, "+>$pktname" or die "Can't create file $name\n"; binmode PKT; select PKT;
+  # type-2+ (fsc-0048) header
+  my @t = localtime; $t[5] %= 100;
+  my @from = $config{'address'} =~ m!^(\d+):(\d+)/(\d+)(?:\.(\d+))?!;
+  my $passwd = ''; my @to = @from[0..3];
+  my $hdr = pack 'S12 C2 Z8 S2 S2 C2 S5 L', $from[2], $to[2], 
+                                    $t[5], $t[4], $t[3], $t[2], $t[1], $t[0],
+                                    0, 2, ($from[3] ? -1 : $from[1]), $to[1], 0xfe, 0, $passwd, $from[0], $to[0],
+                                    ($from[3] ? $from[1] : 0), 0x0200, 0, 0, 0x0002, $from[0], $to[0], $from[3], $to[3], 0;
+  print $hdr;
+  # add packed message header
+  my $hdr = pack 'S6 Z20', $from[2], $to[2], $from[1], $to[1], 
+                           defined $msg->{'area'} ? 0x100 : 0x101, 0,
+                           sprintf('%02d %3s %02d  %02d:%02d:%02d', $t[3], $mon[$t[4]], $t[5]%100, $t[2], $t[1], $t[0]);
+  $hdr .= substr($msg->{'to'},   0, 35)."\x00";
+  $hdr .= substr($msg->{'from'}, 0, 35)."\x00";
+  $hdr .= substr($msg->{'subj'}, 0, 71)."\x00";
+  print "\x02\x00", $hdr;
+  if ( defined $msg->{'area'} ) { print "AREA:$msg->{area}\r"; }
+  else {
+    printf "\x01INTL %d:%d/%d %d:%d/%d\r", @to[0..2], @from[0..2];
+    printf "\x01TOPT %d\r", $to[3] if $to[3];
+    printf "\x01FMPT %d\r", $from[3] if $from[3];
+  }
+  printf "\x01MSGID %s %08x\r", $config{'address'}, time;
+  $footer = "--- $msg->{tearline}\r";
+  $footer .= " * Origin: $msg->{origin} ($config{address})\r" if defined $msg->{'area'};
+  $footer .= "\x00\x00\x00";
+}
 
 sub USAGE () { return <<EOF
-advhptstat ver.$ver, (c)opyright 2002-03, by val khokhlov
+advhptstat ver.$VERSION, (c)opyright 2002-03, by val khokhlov
 
-  Usage: advhptstat [options] [stat file...]
+  Usage: advhptstat [options] [stat file(s)...]
   Options are:
     -c <config>, --conf=<config>           specifies config file name
+    -d, --del                              delete sucessfully processed logs
+    -m <layout>, --move=<layout>           archive successfully processed logs
     -z, --gz                               force use gzip'ed binary stat logs
   Instead of one or more stat files you can use archive for a period:
     -a <layout> <start> <end>, --arch=<layout>,<start>,<end>
