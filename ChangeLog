@@ -1,3 +1,25 @@
+2001-12-09 Sunday 19:38  ml
+
+	* doc/: hpt-FAQ.russian (1.11), hpt.texi (1.42): doc updates
+
+2001-12-09 Sunday 19:37  ml
+
+	* src/hpt.c (1.116): fix memleak when printing console title under
+	win32
+
+2001-12-09 Sunday 16:30  ml
+
+	* src/areafix.c (1.223): areafixQueryReports
+
+2001-12-09 Sunday 15:58  ml
+
+	* src/toss.c (1.366): write statistics from dupe and bad areas to
+	areas summary
+
+2001-12-09 Sunday 07:29  ml
+
+	* src/areafix.c (1.222): print 'not found' for hidden areas
+
 2001-11-13 Tuesday 14:58  ml
 
 	* doc/hpt-FAQ.russian (1.10), man/hpttree.1 (1.2), src/fcommon.c
