@@ -223,6 +223,18 @@ int processCommandLine(int argc, char **argv)
 		  }
 		  cmAfix = 1;
 		  continue;
+      } else if (stricmp(argv[i], "afix!") == 0) {
+		  if (i < argc-1) {
+			  i++;
+			  string2addr(argv[i], &afixAddr);
+			  if (i < argc-1) {
+				  i++;
+				  xstrcat(&afixCmd,argv[i]);
+			  } else printf("parameter missing after \"%s\"!\n", argv[i]);
+		  }
+		  cmAfix = 1;
+          cmNotifyLink = 1;
+		  continue;
       } else if (stricmp(argv[i], "post") == 0) {
          ++i; post(argc, (unsigned*)&i, argv);
       } else if (stricmp(argv[i], "relink") == 0) {
