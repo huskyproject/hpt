@@ -56,6 +56,10 @@ Example:
 %PKTSIZE 0                    <- set max. packet (*.pkt) size to unlimited
 %ARCMAILSIZE NNN              <- set max. bundle size to NNN kb
 %ARCMAILSIZE 0                <- set max. bundle size to unlimited
+%AREAFIXPWD [password]        <- set new password for areafix requests,
+                                 an empty password is allowed
+%PKTPWD [password]            <- set new password for *.pkt, maximum 8 chars,
+                                 an empty password is allowed
 
   Note: you may also specify 1/0 as the aliases for on/off.
         Ex.: "%RSB 1" acts the same as "%RSB on".
