@@ -1,3 +1,5 @@
 hpt 1.9.0-current
 cvs tag: HEAD
-required: fidoconfig 1.9-current, smapi 2.5-current, huskylib 0.1-current
+required: fidoconfig 1.9-current, smapi 2.5-current, huskylib 0.1-current,
+			areafix 0.1-current, hptzip 0.1-current (optional)
+
