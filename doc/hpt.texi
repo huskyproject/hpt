@@ -3909,7 +3909,7 @@ for second address in second netmail area respectively, you must add
 @end table
 
 @node ZoneGating, Perl support, Netmail, Advanced Concepts
-@section How Zone Gating works for echomail and what seen-bys is stripped
+@section hpt ZoneGating implementation for echomail
 
 We have EchoArea with links from zone1 & zone2. Echo->useAka with
 zone2. Defined by "-a <addr>" or the by the first Echo->address from
@@ -3927,29 +3927,28 @@ split links in to groups: with (pktaddr.zone == linkaddr.zone) and
 send msg to first group of links (their aka adding to seen-bys and
 echo->useAka too if not in seen-bys yet)
 @item 4.
-if (pktaddr.zone != echo->useAka.zone) seen-bys cleaned.
+seen-bys cleaned.
 @item 5.
-send msg to second group of links (their aka adding to seen-bys and
-echo->useAka too if not in seen-bys yet)
+send msg to second group of links. seen-bys contain only one address - 
+address of link who receives this message.
 @item 6.
-store msg in msgbase
+store msg in msgbase keeping original seen-bys.
 @end table
 
-Examples:
+WARNING: if you have several links in one zone wich is not equal to 
+pktaddr.zone hpt will generate only one seen-by for any such link.
+This may cause dupes after you. Example:
+@example
+1---2 
+|  /
+3/
 
-a) msg comes from z1. for z1 links we sending seen-bys with z2
-   nodes. but z1 links must clean seen-bys by themselves (this is z2
-   echo) or download this echo from z1 link. after that seen-bys cleaned
-   and msg forwarded to z2 links. in the msgbase seen-bys from z2 links
-   only.
-
-b) msg comes from z2. forward it to z2 links. then forward to z1
-   links. seen-bys not cleaned: this is z2 echo and z1 links must clean
-   it by themselves or receive echo from z1 link. store in msgbase with
-   all seen-bys from z1 & z2 nodes.
-
-c) scan works the same: first sending to z2 links, adding to seen-by's
-   z1 links and export to them.
+We received pkt from 1 (Z2) and send message from it to 2 & 3 (Z1).
+message to 2 will contain in seen-by only 2 and message to 3 will contain
+only seen-by 3. There is a link between 2 & 3 and 2 subscribed on 3 to 
+this echo too. If there is no dupechecking at 2 & 3 dup-ring will be 
+created.
+@end example
 
 @node Perl support, , ZoneGating , Advanced Concepts
 @section Perl support in HPT

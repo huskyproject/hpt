@@ -42,7 +42,7 @@ Changes between hpt-1.2-stable and hpt-1.4-stable
      the same pkt name and archiver will overwrite existing pkt in bundle.
      Now before generating 1st pkt hpt make a delay in 1 second to prevent 
      this.
-
+   - changed zonegating algorythm (see docs)
 
 HPT 1.2.3-release
 (1.2-stable branch started 25.06.2002)

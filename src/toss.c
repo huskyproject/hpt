@@ -541,7 +541,8 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, hs_addr pktOrigAddr)
         forwardToLinks(msg, echo, newLinks, &seenBys, &seenByCount, &path, &pathCount);
 
     if (zoneLinks) {
-        if (echo->useAka->zone != pktOrigAddr.zone) seenByCount = 0;
+        /* FIXME: all nodes with zone != pktOrigAddr.zone will get only one address in seen-by */
+        seenByCount = 0;
         forwardToLinks(msg, echo, zoneLinks, &seenBys, &seenByCount, &path, &pathCount);
     }
 
