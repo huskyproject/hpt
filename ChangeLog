@@ -1,3 +1,17 @@
+2002-07-02 Tuesday 16:36  mche
+
+	* src/toss.c (1.422): fix log messages errrors
+
+2002-07-02 Tuesday 15:58  stas
+
+	* debian/: changelog (1.11), control (1.9), postinst (1.2): Change
+	debian control files (like in -stable branch)
+
+2002-07-02 Tuesday 10:41  mche
+
+	* src/areafix.c (1.318): making shure that config is closed before
+	opening
+
 2002-07-01 Monday 22:15  stas
 
 	* src/hptlink.c (1.41): Fix warning message
