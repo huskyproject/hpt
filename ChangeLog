@@ -1,3 +1,7 @@
+hpt 0.9.7a
+----------
+(pending for release)
+
 ----- cvs ci ------
 Sa  16 Sep 2000 23:21:24 CEST
 tobi (patch from max from current)
@@ -17,6 +21,8 @@ Mon Sep 11 10:56:46 NOVST 2000
 max:
 * hptlink.c & link.c from development branch (linking jam areas & 
   "hpt link" speedup)
+  NOTE: FOR LINKING JAM AREAS, YOU NEED SMAPI-1.6.4a! SMAPI-1.6.4
+  (WITHOUT .a) WILL PRODUCE INCORRECT RESULTS!
 
 ----- cvs ci ------
 Sat Sep  9 23:51:15 CEST 2000
@@ -56,6 +62,11 @@ Mon Aug  7 10:06:33 MEZ 2000
 tobi (patch from serguei i. revtov)
 * migrated bugfix for hptlink from current branch: fixed hptlink to link
   LOCALareas when specified by arguments or in the importlog file.
+
+----- cvs ci ------
+Tue Aug 06 20:36:01 CEST 2000
+tobi:
+* support for BeOS
 
 ----- cvs ci ------
 Mon Jul 31 08:16:37 MSZ 2000
