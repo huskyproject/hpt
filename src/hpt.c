@@ -418,6 +418,11 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    xscatprintf(&versionStr,"hpt %s", version);
 
    rc = processCommandLine(argc, argv);
+   if ((rc==1 || rc==EX_USAGE) && config!=NULL)
+      if (config->lockfile) {
+         close(lock_fd);
+         remove(config->lockfile);
+      }
    if (rc==1) exit(EX_OK);
    if (rc==EX_USAGE) exit(EX_USAGE);
 
