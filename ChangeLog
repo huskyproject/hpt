@@ -1,3 +1,7 @@
+2001-07-26 Thursday 17:05  ml
+
+	* doc/hpt.texi (1.32): readonly & writeonly tokens
+
 2001-07-24 Tuesday 14:12  pavel.gulchouck
 
 	* src/toss.c (1.355): path & seen-by processing speedup
