@@ -1,3 +1,8 @@
+2001-12-27 Thursday 20:52  pavel.gulchouck
+
+	* src/toss.c (1.376): bugfix: subscribe link requested echo via
+	uplink manager to the echo
+
 2001-12-26 Wednesday 18:33  mche
 
 	* src/: pktread.c (1.79), pktwrite.c (1.31): moved functions
