@@ -1,3 +1,7 @@
+2002-07-21 Sunday 21:01  stas
+
+	* src/scan.c (1.168): Add (debug-levels) log output
+
 2002-07-17 Wednesday 22:58  tobi
 
 	* src/: pktread.c (1.87), pktwrite.c (1.37): Fixes for MacOS X
