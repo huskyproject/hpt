@@ -575,6 +575,7 @@ void toss()
 
    // load recoding tables if needed
    if (config->intab != NULL) getctab(&intab, config->intab);
+   if (config->outtab != NULL) getctab(&outtab, config->outtab);
 
    // set stats to 0
    memset(&statToss, sizeof(s_statToss), 0);
