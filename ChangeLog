@@ -1,3 +1,7 @@
+2003-10-24 Friday 15:09  val_khokhlov
+
+	* src/perl.c (1.71): better readonly processing for perl vars
+
 2003-10-21 Tuesday 04:15  andr_lukyanov
 
 	* make/makeperl.mvc (1.18): Removed old makefiles
