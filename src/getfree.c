@@ -216,8 +216,16 @@ unsigned long getfree (char *path)
 
 #endif
 
+#elif defined(MSDOS)
+#include <limits.h>
+unsigned long getfree (char *path)
+{
+  w_log ('9', "warning: free space doesn't checked in %s",path);
+  return ULONG_MAX;
+}
 #else
-
+    
 #error "unknown system!"
-
+    
 #endif
+    
