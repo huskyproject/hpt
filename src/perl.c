@@ -828,6 +828,7 @@ static XS(perl_strftime)
   dXSARGS;
   struct tm tm;
   char buf[64];
+  STRLEN n_a;
   if (items != 1 && items != 2 && (items < 7 || items > 10))
   { w_log(LL_ERR, "wrong params number to strftime (need 1, 2, 7..10, exist %d)", items);
     XSRETURN_UNDEF;
@@ -845,10 +846,10 @@ static XS(perl_strftime)
     tm.tm_yday  = (items > 8) ? SvIV(ST(9)) : -1;
     tm.tm_isdst = -1 /*(items > 9) ? -1 SvIV(ST(10)) : -1*/;
     mktime(&tm); /* make it valid */
-    strftime(buf, sizeof(buf), SvPV_nolen(ST(0)), &tm);
+    strftime(buf, sizeof(buf), SvPV(ST(0), n_a), &tm);
   } else { 
     time_t t = (items == 2) ? (time_t)SvUV(ST(1)) : time(NULL);
-    strftime(buf, sizeof(buf), SvPV_nolen(ST(0)), localtime(&t));
+    strftime(buf, sizeof(buf), SvPV(ST(0), n_a), localtime(&t));
   }
   XSRETURN_PV(buf);
 }
