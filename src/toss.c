@@ -400,6 +400,9 @@ int readCheck(s_area *echo, s_link *link) {
 	if (link == echo->downlinks[i]->link) break;
     }
     if (i == echo->downlinkCount) return 4;
+
+    // pause
+    if (link->Pause) return 3;
     
     if (echo->group && echo->group != '\060') {
 	if (link->AccessGrp) {

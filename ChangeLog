@@ -1,6 +1,10 @@
 hpt 0.27
 --------
 
+Sat Apr 17 23:00:43 NOVST 1999
+Max:
+- fixed link pause (now it is working)
+
 Sat Apr 17 12:10
 Antonio:
 + fixed a bug in description code of autoCreate. Someone that had segfaults,
