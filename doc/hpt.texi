@@ -433,7 +433,7 @@ This statement can be repeated.
 @code{afterUnpack pktpack /home/fido/in.tmp/*.pkt}
 @end table
 
-This <string> executes after unpacking arcmail bundle. You may process
+This <string> is executed after unpacking arcmail bundle. You may process
 your pkt files in @code{tempInbound} directory with external utility.
 
 This statement cannot be repeated.
@@ -709,7 +709,7 @@ This statement cannot be repeated.
 @code{beforePack pktpack /home/fido/out.tmp/*.pkt}
 @end table
 
-This <string> executes before packing pkt files to arcmail bundles. You
+This <string> is executed before packing pkt files to arcmail bundles. You
 may process your pkt files in @code{tempOutbound} directory with
 external utility.
 
@@ -1250,7 +1250,7 @@ This statement can be repeated (overrides old setting).
 @code{processPkt pktdate}
 @end table
 
-The <string> willl be executed before tossing each pkt file. You can
+The <string> is executed before tossing each pkt file. You can
 fix your pkts using pktdate or any other tool before tossing them. Note that
 pkt file may be renamed depending of @code{tossingExt} token value.
 
