@@ -411,7 +411,10 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
                  pkt = openPktForAppending(link->floFile, &header);
                  writeMsgToPkt(pkt, msg);
                  closeCreatedPkt(pkt);
-                 sprintf(buff, "Msg from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
+                 sprintf(buff, "Msg from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone
+
+
+, link->hisAka.net, link->hisAka.node, link->hisAka.point);
                  writeLogEntry(log, '7', buff);
                  remove(link->bsyFile);
                  free(link->bsyFile);
@@ -501,12 +504,18 @@ void scanNMArea(void)
 
 void writeScanStatToLog(void) {
    char buff[100];
-   
-   writeLogEntry(log, '4', "Statistics");
+   char logchar;
+
+   if (statScan.exported==0)
+      logchar='1';
+     else
+      logchar='4';
+
+   writeLogEntry(log, logchar, "Statistics");
    sprintf(buff, "    areas: % 4d   msgs: % 6d", statScan.areas, statScan.msgs);
-   writeLogEntry(log, '4', buff);
+   writeLogEntry(log, logchar, buff);
    sprintf(buff, "    exported: % 4d", statScan.exported);
-   writeLogEntry(log, '4', buff);
+   writeLogEntry(log, logchar, buff);
 }
 
 void pack(void) {
@@ -514,7 +523,7 @@ void pack(void) {
    if (config->outtab != NULL) getctab(outtab, config->outtab);
    
    memset(&statScan, 0, sizeof(s_statScan));
-   writeLogEntry(log, '4', "Start packing...");
+   writeLogEntry(log, '1', "Start packing...");
    scanNMArea();
    statScan.areas++;
    writeScanStatToLog();
@@ -532,7 +541,7 @@ void scan(void)
 
    // zero statScan
    memset(&statScan, 0, sizeof(s_statScan));
-   writeLogEntry(log,'4', "Start scanning...");
+   writeLogEntry(log,'1', "Start scanning...");
 
    // open echotoss file
    f = fopen(config->echotosslog, "r");

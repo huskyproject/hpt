@@ -1,34 +1,33 @@
-/*:ts=8*/
 /*****************************************************************************
- * HPT --- FTN NetMail/EchoMail Tosser
+ * HTICK --- FTN Ticker / Request Processor
  *****************************************************************************
- * Copyright (C) 1997-1999
+ * Copyright (C) 1999 by
  *
- * Matthias Tichy
+ * Gabriel Plutzar
  *
- * Fido:     2:2433/1245 2:2433/1247 2:2432/605.14
- * Internet: mtt@tichy.de
+ * Fido:     2:31/1
+ * Internet: gabriel@hit.priv.at
  *
- * Grimmestr. 12         Buchholzer Weg 4
- * 33098 Paderborn       40472 Duesseldorf
- * Germany               Germany
+ * Vienna, Austria, Europe
  *
- * This file is part of HPT.
+ * This file is part of HTICK, which is based on HPT by Matthias Tichy, 
+ * 2:2432/605.14 2:2433/1245, mtt@tichy.de
  *
- * HPT is free software; you can redistribute it and/or modify it
+ * HTICK is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 2, or (at your option) any
  * later version.
  *
- * HPT is distributed in the hope that it will be useful, but
+ * HTICK is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with HPT; see the file COPYING.  If not, write to the Free
+ * along with HTICK; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *****************************************************************************/
+
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,8 +37,6 @@
 s_log *openLog(char *fileName, char *appN, char *keys)
 {
    s_log      *temp;
-   time_t     currentTime;
-   struct tm  *locTime;
 
    temp = (s_log *) malloc(sizeof(s_log));
    temp->logFile = fopen(fileName, "a");
@@ -57,62 +54,8 @@ s_log *openLog(char *fileName, char *appN, char *keys)
    temp->keysAllowed = (char *) malloc (strlen(keys)+1);
    strcpy(temp->keysAllowed, keys);
 
-   /* make first line of log */
-   fprintf(temp->logFile, "----------  ");
+   temp->firstLinePrinted=0;
 
-   currentTime = time(NULL);
-   locTime = localtime(&currentTime);
-   switch (locTime->tm_wday) {
-   case 0: fprintf(temp->logFile, "Sun");
-      break;
-   case 1: fprintf(temp->logFile, "Mon");
-      break;
-   case 2: fprintf(temp->logFile, "Tue");
-      break;
-   case 3: fprintf(temp->logFile, "Wed");
-      break;
-   case 4: fprintf(temp->logFile, "Thu");
-      break;
-   case 5: fprintf(temp->logFile, "Fri");
-      break;
-   case 6: fprintf(temp->logFile, "Sat");
-      break;
-   default:
-     break;
-   } /* endswitch */
-
-   fprintf(temp->logFile, " %2u ", locTime->tm_mday);
-
-   switch (locTime->tm_mon) {
-   case 0: fprintf(temp->logFile, "Jan");
-      break;
-   case 1: fprintf(temp->logFile, "Feb");
-      break;
-   case 2: fprintf(temp->logFile, "Mar");
-      break;
-   case 3: fprintf(temp->logFile, "Apr");
-      break;
-   case 4: fprintf(temp->logFile, "May");
-      break;
-   case 5: fprintf(temp->logFile, "Jun");
-      break;
-   case 6: fprintf(temp->logFile, "Jul");
-      break;
-   case 7: fprintf(temp->logFile, "Aug");
-      break;
-   case 8: fprintf(temp->logFile, "Sep");
-      break;
-   case 9: fprintf(temp->logFile, "Oct");
-      break;
-   case 10: fprintf(temp->logFile, "Nov");
-      break;
-   case 11: fprintf(temp->logFile, "Dec");
-      break;
-   default:
-     break;
-   } /* endswitch */
-
-   fprintf(temp->logFile, " %02u, %s\n", locTime->tm_year % 100, appN);
    return temp;
 }
 
@@ -120,7 +63,8 @@ void closeLog(s_log *log)
 {
    if (log != NULL) {
       if (log->open != 0) {
-         fprintf(log->logFile, "\n");
+         if (log->firstLinePrinted)
+            fprintf(log->logFile, "\n");
          fclose(log->logFile);
          log->open = 0;
       } /* endif */
@@ -135,8 +79,73 @@ void writeLogEntry(s_log *log, char key, char *logString)
 {
    time_t     currentTime;
    struct tm  *locTime;
+
    if (NULL != log) {
-     if ((0 != log->open) && (NULL != strchr(log->keysAllowed, key))) {
+     if (0 != log->open && NULL != strchr(log->keysAllowed, key)) 
+        {
+        if (!log->firstLinePrinted)
+           {
+           /* make first line of log */
+           fprintf(log->logFile, "----------  ");
+
+           currentTime = time(NULL);
+           locTime = localtime(&currentTime);
+           switch (locTime->tm_wday) {
+           case 0: fprintf(log->logFile, "Sun");
+              break;
+           case 1: fprintf(log->logFile, "Mon");
+              break;
+           case 2: fprintf(log->logFile, "Tue");
+              break;
+           case 3: fprintf(log->logFile, "Wed");
+              break;
+           case 4: fprintf(log->logFile, "Thu");
+              break;
+           case 5: fprintf(log->logFile, "Fri");
+              break;
+           case 6: fprintf(log->logFile, "Sat");
+              break;
+           default:
+             break;
+           } /* endswitch */
+
+           fprintf(log->logFile, " %2u ", locTime->tm_mday);
+
+           switch (locTime->tm_mon) {
+           case 0: fprintf(log->logFile, "Jan");
+              break;
+           case 1: fprintf(log->logFile, "Feb");
+              break;
+           case 2: fprintf(log->logFile, "Mar");
+              break;
+           case 3: fprintf(log->logFile, "Apr");
+              break;
+           case 4: fprintf(log->logFile, "May");
+              break;
+           case 5: fprintf(log->logFile, "Jun");
+              break;
+           case 6: fprintf(log->logFile, "Jul");
+              break;
+           case 7: fprintf(log->logFile, "Aug");
+              break;
+           case 8: fprintf(log->logFile, "Sep");
+              break;
+           case 9: fprintf(log->logFile, "Oct");
+              break;
+           case 10: fprintf(log->logFile, "Nov");
+              break;
+           case 11: fprintf(log->logFile, "Dec");
+              break;
+           default:
+             break;
+           } /* endswitch */
+
+           fprintf(log->logFile, " %02u, %s\n", locTime->tm_year % 100,
+                   log->appName);
+
+           log->firstLinePrinted=1;
+           }
+
         currentTime = time(NULL);
         locTime = localtime(&currentTime);
         fprintf(log->logFile, "%c %02u.%02u.%02u  %s\n", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec, logString);

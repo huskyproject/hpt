@@ -1,6 +1,17 @@
 hpt 0.27
 --------
 
+Mon Mar  1 22:00
+  Gabriel Plutzar
++ included support for generic new keyword for LogLevels                       
+  * LogLevels <string>                                               
+    You can specify all Loglevels you want in your log               
+    Default is 123456789, use 23456789 if you don't want all the IDLE
+    sessions in your logfile (eg when you start hpt once a minute)   
+  + Major Changes in log.c & log.h were necessary to supress unwanted
+    log file entries in IDLE only hpt sessions (like regularily scanning
+    the netmail area without something happening worth logging)
+  + Changes to the code to force all unneeded log entries to loglevel 1
 
 hpt 0.26
 (released on Mon Mar  1 19:47:36 CET 1999)

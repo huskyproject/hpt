@@ -871,7 +871,9 @@ void processMsg(s_message *msg, s_pktHeader *pktHeader)
 
    statToss.msgs++;
    if (msg->netMail == 1) {
-           if (stricmp(msg->toUserName,"areafix")==0) {
+           if (stricmp(msg->toUserName,"areafix")==0 ||
+               stricmp(msg->toUserName,"areamgr")==0 ||
+               stricmp(msg->toUserName,"hpt")==0) {
                    processAreaFix(msg, pktHeader);
            } else
                    processNMMsg(msg, pktHeader);
@@ -1112,6 +1114,12 @@ void writeTossStatsToLog(void) {
    char buff[100];
    float inMailsec, outMailsec, inKBsec;
    time_t diff = time(NULL) - statToss.startTossing;
+   char logchar;
+
+   if (statToss.pkts==0 && statToss.msgs==0)
+      logchar='1';
+     else
+      logchar='4';
 
    if (diff == 0) diff = 1;
 
@@ -1119,17 +1127,17 @@ void writeTossStatsToLog(void) {
    outMailsec = ((float)(statToss.exported)) / diff;
    inKBsec = ((float)(statToss.inBytes)) / diff / 1024;
 
-   writeLogEntry(log, '4', "Statistics:");
+   writeLogEntry(log, logchar, "Statistics:");
    sprintf(buff, "   pkt's: % 3d   msgs: % 5d   echoMail: % 5d   netmail: % 5d", statToss.pkts, statToss.msgs, statToss.echoMail, statToss.netMail);
-   writeLogEntry(log, '4', buff);
+   writeLogEntry(log, logchar, buff);
    sprintf(buff, "   saved: % 5d   passthrough: % 5d   exported: % 5d", statToss.saved, statToss.passthrough, statToss.exported);
-   writeLogEntry(log, '4', buff);
+   writeLogEntry(log, logchar, buff);
    sprintf(buff, "   dupes: % 5d   bad: % 5d", statToss.dupes, statToss.bad);
-   writeLogEntry(log, '4', buff);
+   writeLogEntry(log, logchar, buff);
    sprintf(buff, "   Input: % 8.2f mails/sec   Output: % 8.2f mails/sec", inMailsec, outMailsec);
-   writeLogEntry(log, '4', buff);
+   writeLogEntry(log, logchar, buff);
    sprintf(buff, "          % 8.2f kb/sec", inKBsec);
-   writeLogEntry(log, '4', buff);
+   writeLogEntry(log, logchar, buff);
 }
 
 void arcmail() {
@@ -1352,7 +1360,7 @@ void toss()
    // set stats to 0
    memset(&statToss, 0, sizeof(s_statToss));
    statToss.startTossing = time(NULL);
-   writeLogEntry(log, '4', "Start tossing...");
+   writeLogEntry(log, '1', "Start tossing...");
    processDir(config->localInbound, secLocalInbound);
    processDir(config->protInbound, secProtInbound);
    processDir(config->inbound, secInbound);

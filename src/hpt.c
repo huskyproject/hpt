@@ -120,7 +120,10 @@ void processConfig()
      buff = (char *) malloc(strlen(config->logFileDir)+7+1); /* 7 for hpt.log */
      strcpy(buff, config->logFileDir),
      strcat(buff, "hpt.log");
-     log = openLog(buff, versionStr, "123456789");
+     if (config->loglevels==NULL)                           
+        log = openLog(buff, versionStr, "123456789");       
+       else                                                 
+        log = openLog(buff, versionStr, config->loglevels); 
      free(buff);
    } else printf("You have no logFileDir in your config, there will be no log created");
    if (log==NULL) printf("Could not open logfile: %s\n", buff);
@@ -134,7 +137,7 @@ void processConfig()
 
    if (config->addrCount == 0 ||
        config->linkCount == 0 ||
-       config->linkCount == 0 ||
+       config->routeCount == 0 ||
        config->tempInbound == NULL ||
        config->tempOutbound == NULL) {
       if (config->lockfile != NULL) remove(config->lockfile);
