@@ -117,7 +117,10 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header)
       else msgHeader.attr &= ~MSGFWD;
    }
    else
-      msgHeader.attr = msg->attributes;
+     {
+       msgHeader.attr = msg->attributes;
+       msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD | MSGFRQ | MSGSCANNED | MSGLOCKED); // kill these flags
+     }
    
    strcpy((char *) msgHeader.from,msg->fromUserName);
    strcpy((char *) msgHeader.to, msg->toUserName);
@@ -580,6 +583,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 int autoCreate(char *c_area, s_addr pktOrigAddr)
 {
    FILE *f;
+   char *fileName;
    char buff[255], myaddr[20], hisaddr[20];
    int i=0;
    s_link *creatingLink;
@@ -595,13 +599,21 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
 
    while (i>0) {c_area--;i--;};
 
-   if ((f=fopen(getConfigFileName(),"a")) == NULL)
-           {
-                   fprintf(stderr,"autocreate: cannot open config file\n");
-                   return 1;
-           }
-
    creatingLink = getLinkFromAddr(*config, pktOrigAddr);
+
+   fileName = creatingLink->autoCreateFile;
+   if (fileName == NULL) fileName = getConfigFileName();
+
+   f = fopen(fileName, "a");
+   if (f == NULL) {
+      f = fopen(getConfigFileName(), "a");
+      if (f == NULL)
+	 {
+	    fprintf(stderr,"autocreate: cannot open config file\n");
+	    return 1;
+	 }
+   }
+
    aka = creatingLink->ourAka;
 
    // making local address and address of uplink
@@ -730,7 +742,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 
       } else {
          // msg is dupe
-         if (echo->dupeCheck == move) {
+         if (echo->dupeCheck == dcMove) {
             putMsgInArea(&(config->dupeArea), msg, 0);
          }
          statToss.dupes++;

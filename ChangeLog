@@ -1,7 +1,13 @@
-
 hpt 0.26
 --------
 
+Mon Feb 15 18:21:51 CET 1999
+- echomails now have the flags minus the unnecessary flags like CRASH
+- added autoCreateFile
+  Max Levenkov:
++ added TossGrp support for areafix
+- rewritten some dummy moments in areafix.c
+	
 ----- cvs ci ------
 Sun Feb 14 12:57:04 CET 1999
 - applied max patch. the first echomail to an autocreated area was not

@@ -212,7 +212,7 @@ void linkAreas(void)
 
       /* link all echomail areas */
       for (i = 0; i < config -> echoAreaCount; i++)
-         if (config -> echoAreas[i].dupeCheck != off)
+         if (config -> echoAreas[i].dupeCheck != dcOff)
             linkArea(&(config -> echoAreas[i]), 0);
       /* link NetMailArea */
       linkArea(&(config->netMailArea),1);
@@ -227,7 +227,7 @@ void linkAreas(void)
             if(strcmp(config->netMailArea.areaName,line)==0) linkArea(&(config->netMailArea),1);
             else {
                area = getArea(config, line);
-               if ((area->dupeCheck != off) && (area->areaName != config->badArea.areaName)) linkArea(area,0);
+               if ((area->dupeCheck != dcOff) && (area->areaName != config->badArea.areaName)) linkArea(area,0);
                free(line);
             }
          }

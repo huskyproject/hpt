@@ -58,7 +58,7 @@ int main()
    header.majorProductRev = 0;
    header.minorProductRev = 26;
    //header.pktPassword[0] = 0;
-   strcpy(header.pktPassword, "xx");
+   strcpy(header.pktPassword, "xxx");
    header.pktCreated = time(NULL);
 
    header.capabilityWord = 1;

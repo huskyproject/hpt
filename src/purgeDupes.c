@@ -172,7 +172,7 @@ int main() {
    if (config != NULL) {
 
       for (i = 0; i < config->echoAreaCount; i++)
-         if (config->echoAreas[i].dupeCheck != off) {
+         if (config->echoAreas[i].dupeCheck != dcOff) {
             printf("%s\n", config->echoAreas[i].areaName);
             processArea(&(config->echoAreas[i]));
          }

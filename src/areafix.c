@@ -118,9 +118,9 @@ int addstring(FILE *f, char *straka) {
 	cfglen=endpos-areapos;
 	
 	// storing end of file...
-	cfg = (char*) calloc((size_t) cfglen, sizeof(char*));
+	cfg = (char*) calloc((size_t) cfglen+1, sizeof(char));
 	fseek(f,-cfglen,SEEK_END);
-	fread(cfg,sizeof(char*),(size_t) cfglen,f);
+	fread(cfg,sizeof(char),(size_t) cfglen,f);
 	
 	// write config
 	fseek(f,-cfglen,SEEK_END);
@@ -134,7 +134,7 @@ int addstring(FILE *f, char *straka) {
 
 int delstring(FILE *f, char *fileName, char *straka, int before_str) {
 	int al,i=1;
-    char *cfg, c, j='\040';
+	char *cfg, c, j='\040';
 	long areapos,endpos,cfglen;
 
 	al=strlen(straka);
@@ -157,9 +157,9 @@ int delstring(FILE *f, char *fileName, char *straka, int before_str) {
 	cfglen=endpos-areapos-al;
 	
 	// storing end of file...
-	cfg=(char*) calloc((size_t) cfglen,sizeof(char*));
+	cfg=(char*) calloc((size_t) cfglen+1,sizeof(char));
 	fseek(f,-cfglen-1,SEEK_END);
-	fread(cfg,sizeof(char*),(size_t) (cfglen+1),f);
+	fread(cfg,sizeof(char),(size_t) (cfglen+1),f);
 	
 	// write config
 	fseek(f,-cfglen-al-1-before_str,SEEK_END);
@@ -237,27 +237,29 @@ void removelink (s_link *link, s_area *area) {
 
 char *list(s_message *msg, s_link *link) {
 
-	int i,n,rc;
+	int i,n1=0,n2=0,rc;
 	char *report, addline[256];
 
-	report=(char*) calloc(1,sizeof(char*));
+	report=(char*) calloc(1,sizeof(char));
 
-        for (i=0,n=0; i< config->echoAreaCount; i++) {
+        for (i=0; i< config->echoAreaCount; i++) {
 
                 if (config->echoAreas[i].hide==1) continue; // do not display hidden areas..
+		if ((config->echoAreas[i].group!='\060') && (link->TossGrp==NULL)) continue;
+		if ((config->echoAreas[i].group!='\060') && (link->TossGrp!=NULL) && (strchr(link->TossGrp,config->echoAreas[i].group)==NULL)) continue;
 
-		report=(char*) realloc(report, strlen(report)+
-							   strlen(config->echoAreas[i].areaName)+3);
+		report=(char*) realloc(report, strlen(report)+strlen(config->echoAreas[i].areaName)+3);
 		rc=subscribeCheck(config->echoAreas[i],msg);
 		if (!rc) {
 			strcat(report,"*");
-			n++;
+			n1++;
 		} else strcat(report," ");
 		strcat(report,config->echoAreas[i].areaName);
 		strcat(report,"\r");
+		n2++;
 	}
 	
-	sprintf(addline,"\r ---\r\r %i areas of %i\r\r",n,config->echoAreaCount);
+	sprintf(addline,"\r ---\r\r %i areas of %i\r\r",n1,n2);
 	report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
 	strcat(report, addline);
 
@@ -285,7 +287,7 @@ char *help(s_link *link) {
 		fseek(f,0l,SEEK_END);
 		endpos=ftell(f);
 		
-		help=(char*) calloc((size_t) endpos,sizeof(char*));
+		help=(char*) calloc((size_t) endpos,sizeof(char));
 
 		fseek(f,0l,SEEK_SET);
 		fread(help,1,(size_t) endpos,f);
@@ -390,7 +392,7 @@ int strip(char *text) {
 char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	int i, rc=2;
 	char *line, *report, addline[256], logmsg[256], *header = "Result of your query: ";
-	s_area *area;
+	s_area *area=NULL;
 
 	line = cmd;
 
@@ -405,12 +407,19 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		rc=subscribeAreaCheck(&(config->echoAreas[i]),msg,line);
                 if ( rc==2 ) continue;
 
-                area = &(config->echoAreas[i]);
+		area = &(config->echoAreas[i]);
 
+		// link not allowed to subscribe this area (we hide it)
+		if ((area->group!='\060') && (link->TossGrp==NULL)) rc=2;
+		if ((area->group!='\060') && (link->TossGrp!=NULL)) {
+		    if (strchr(link->TossGrp,area->group)==NULL) rc=2;
+		}
+		
                 switch (rc) {
                 case 0: sprintf(addline,"you are already linked to area %s\r", area->areaName);
                         break;
-                case 2:	sprintf(addline,"no area '%s' in my config\r",area->areaName);
+                case 2:	if (strstr(line,"*") != NULL) continue;
+			sprintf(addline,"no area '%s' in my config\r",line);
                         break;
                 case 1:	changeconfig (getConfigFileName(), area->areaName, link, 0);
                         area->downlinks = realloc(area->downlinks, sizeof(s_link*)*(area->downlinkCount+1));
@@ -420,6 +429,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
                         sprintf(logmsg,"areafix: %s subscribed to %s",link->name,area->areaName);
                         writeLogEntry(log, '8', logmsg);
                         break;
+		default: continue;
                 }
         
                 report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
@@ -449,14 +459,21 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		if ( rc==2 ) continue;
 		
 		area = &(config->echoAreas[i]);
+
+		// link don't know about unavilable areas
+		if ((area->group!='\060') && (link->TossGrp==NULL)) rc=2;
+		if ((area->group!='\060') && (link->TossGrp!=NULL)) {
+		    if (strchr(link->TossGrp,area->group)==NULL) rc=2;
+		}
 		
 		switch (rc) {
 		case 1: 
-			if (strstr(line,"*") != NULL) addline[0] = 0;
+			if (strstr(line,"*") != NULL) continue;
 			else sprintf(addline,"you are not linked to area %s\r",area->areaName);
 			break;
 		case 2:
-			sprintf(addline,"no area '%s' in my config\r",area->areaName);
+			if (strstr(line,"*") != NULL) continue;
+			sprintf(addline,"no area '%s' in my config\r",line);
 			break;
 		case 0:
 			changeconfig (getConfigFileName(), area->areaName, link, 1);
@@ -465,12 +482,12 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 			sprintf(logmsg,"areafix: %s unsubscribed from %s",link->name,area->areaName);
 			writeLogEntry(log, '8', logmsg);
 			break;
+		default: continue;
 		}
-		
-		if (addline[0] != 0) {
-			report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
-			strcat(report, addline);
-		}
+
+    		report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
+		strcat(report, addline);
+
 	}
 	return report;
 }
@@ -550,15 +567,15 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		} else security=1;
 	}
 	
-	tmp=(char*) calloc(128,sizeof(char*));
+	tmp=(char*) calloc(128,sizeof(char));
 	createKludges(tmp, NULL, link->ourAka, &(pktHeader->origAddr));
-	report=(char*) calloc(strlen(tmp)+1,sizeof(char*));
+	report=(char*) calloc(strlen(tmp)+1,sizeof(char));
 	strcpy(report,tmp);
 	
 
 	if (!security) {
 		
-		textBuff=(char *) calloc(strlen(msg->text),sizeof(char*));
+		textBuff=(char *) calloc(strlen(msg->text),sizeof(char));
 		strcpy(textBuff,msg->text);
 		
 		i=strip(textBuff);
@@ -577,14 +594,14 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 			tmp = strtok(NULL, "\n\r\t");
 		}
 		
-		tmp=(char*) realloc(tmp,80*sizeof(char*));
+		tmp=(char*) realloc(tmp,80*sizeof(char));
 		sprintf(tmp, " \r--- %s areafix\r", versionStr);
 		report=(char*) realloc(report,strlen(report)+strlen(tmp)+1);
 		strcat(report,tmp);
 
 	} else {
 		
-		tmp=(char*) realloc(tmp,80*sizeof(char*));
+		tmp=(char*) realloc(tmp,80*sizeof(char));
 		sprintf(tmp, " \r security violation!\r\r--- hpt areafix\r");
 		report=(char*) realloc(report,strlen(report)+strlen(tmp)+1);
 		strcat(report,tmp);

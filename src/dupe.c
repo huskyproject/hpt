@@ -337,7 +337,7 @@ int dupeDetection(s_area *area, const s_message msg) {
    s_dupeEntry  *entry;
    char         *str;
 
-   if (area->dupeCheck == off) return 1; // no dupeCheck return 1 "no dupe"
+   if (area->dupeCheck == dcOff) return 1; // no dupeCheck return 1 "no dupe"
 
    // test if dupeDatabase is already read
    if (area->dupes == NULL) {
