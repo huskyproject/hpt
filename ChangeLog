@@ -1,3 +1,12 @@
+2002-06-29 Saturday 21:11  stas
+
+	* misc/deadareas.pl (1.3): Change dupebase files suffix: 'dpd' to
+	'dpn'. (Fix from Vladimir Leonov 2:5061/122).
+
+2002-06-29 Saturday 20:58  stas
+
+	* TODO (1.192): Add EchoAreaGroupDefaults to Category 2
+
 2002-06-28 Friday 14:44  stas
 
 	* src/toss.c (1.421): w_log() format string fix
