@@ -305,7 +305,7 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
 
    if (cmScan == 1) scanExport(SCN_ALL  | SCN_ECHOMAIL, NULL);
    if (cmScan &  2) scanExport(SCN_FILE | SCN_ECHOMAIL, scanParmF);
-   if (cmScan &  4) scanExport(SCN_NAME | SCN_ECHOMAIL, scanParmA);
+   if ((cmScan &  4) && scanParmA) scanExport(SCN_NAME | SCN_ECHOMAIL, scanParmA);
    if (cmAfix == 1) afix();
     
    if (cmPack == 1) scanExport(SCN_ALL  | SCN_NETMAIL, NULL);

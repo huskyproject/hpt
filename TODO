@@ -7,20 +7,17 @@ Category 1: Will certainly be implemented until next release
 - fix reading long messages under ms-dos (path & seen-by)
 - tearline. origin tokens...
 - fix for err + dupes
-- fix "hpt scan -a"
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 - fileboxes
 - templates
-- scan uplink-responses (from forwarded requests) and send info to 
-  requesting downlink
 
 Category 3: Will only be included if volunteers send patches
 ============================================================
 - use spawn() instead of system() under win32
 - remove areafix from hpt, make hptfix (areafix & filefix)
-- area-deletion etc. via areafix
+- area-deletion etc. via areafix (external utility)
 
 Category 4: Will not be implemented
 ===================================

@@ -3,7 +3,9 @@ hpt 0.9.7 (development version)
 
 ----- cvs ci ------
 Wed Jun  7 09:44:09 MSD 2000
-max (patch from Serguei Revtov):
+max:
+* fixed "hpt scan -a"
+patch from Serguei Revtov:
 * bugfix for creation of lock file in fcommon.c
 * compiling tree.c on win32
 * fix crash in autocreate when no Sysop specified in config
