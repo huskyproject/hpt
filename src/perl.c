@@ -1111,7 +1111,7 @@ void perlbeforepack(void)
    }
 }
 
-int perltossbad(s_message *msg, char *areaName, s_addr pktOrigAddr, char *reason)
+int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reason)
 {
    char *prc;
    SV *svfromname, *svfromaddr, *svtoname, *svtoaddr, *svpktfrom;
