@@ -489,17 +489,21 @@ void forwardMsgToLinks_rsb(s_area *echo, s_message *msg, hs_addr pktOrigAddr, in
 void forwardMsgToLinks(s_area *echo, s_message *msg, hs_addr pktOrigAddr)
 {
     char *msgtext;
+    UINT textlen;
     msgtext = safe_strdup(msg->text);
+    textlen = msg->textLength;
     /* forward message to all links with normal seen-bys */
     forwardMsgToLinks_rsb(echo, msg, pktOrigAddr, 0);
     /* restore original message text with original path & seen-bys */
     nfree(msg->text);
     msg->text = safe_strdup(msgtext);
+    msg->textLength = textlen;
     /* and now forward message to links with reduced seen-bys */
     forwardMsgToLinks_rsb(echo, msg, pktOrigAddr, 1);
     /* restore original message text with original path & seen-bys */
     nfree(msg->text);
     msg->text = safe_strdup(msgtext);
+    msg->textLength = textlen;
 }
 
 /* return value: 1 if success, 0 if fail */
