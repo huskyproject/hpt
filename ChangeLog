@@ -1,3 +1,12 @@
+2003-12-24 Wednesday 13:23  val_khokhlov
+
+	* src/hpt.c (1.190): fix newlines
+
+2003-12-24 Wednesday 13:21  val_khokhlov
+
+	* src/hptafix.c (1.4): update arealink access when autoPause (patch
+	by Andrew Ladutsko)
+
 2003-12-23 Tuesday 15:02  val_khokhlov
 
 	* h/global.h (1.42), h/hptafix.h (1.2), src/global.c (1.53),
