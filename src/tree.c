@@ -77,21 +77,6 @@ char	*pc_user;
 }
 
 
-void tree_add(ppr_tree, pfi_compare, pc_user, pfi_delete)
-tree	**ppr_tree;
-int	(*pfi_compare)();
-char	*pc_user;
-int	(*pfi_delete)();
-{
-	void	sprout();
-	int	i_balance = FALSE;
-
-	ENTER("tree_add")
-	sprout(ppr_tree, pc_user, &i_balance, pfi_compare, pfi_delete);
-	EXITV
-}
-
-
 static void sprout(ppr, pc_data, pi_balance, pfi_compare, pfi_delete)
 tree	**ppr;
 char	*pc_data;
@@ -247,81 +232,78 @@ int	(*pfi_delete)();
 }
 
 
-int tree_delete(ppr_p, pfi_compare, pc_user, pfi_uar)
-tree	**ppr_p;
+void tree_add(ppr_tree, pfi_compare, pc_user, pfi_delete)
+tree	**ppr_tree;
 int	(*pfi_compare)();
 char	*pc_user;
-int	(*pfi_uar)();
+int	(*pfi_delete)();
 {
-	int	i_balance = FALSE, i_uar_called = FALSE;
+	void	sprout();
+	int	i_balance = FALSE;
 
-	ENTER("tree_delete");
-	EXIT(delete(ppr_p, pfi_compare, pc_user, pfi_uar,
-				&i_balance, &i_uar_called))
+	ENTER("tree_add")
+	sprout(ppr_tree, pc_user, &i_balance, pfi_compare, pfi_delete);
+	EXITV
 }
 
 
-static int delete(ppr_p, pfi_compare, pc_user, pfi_uar,
-						pi_balance, pi_uar_called)
+static void balanceR(ppr_p, pi_balance)
 tree	**ppr_p;
-int	(*pfi_compare)();
-char	*pc_user;
-int	(*pfi_uar)();
 int	*pi_balance;
-int	*pi_uar_called;
 {
-	void	del(), balanceL(), balanceR();
-	tree	*pr_q;
-	int	i_comp, i_ret;
+	tree	*p1, *p2;
+	int	b1, b2;
 
-	ENTER("delete")
-
-	if (*ppr_p == NULL) {
-		MSG("key not in tree")
-		EXIT(FALSE)
-	}
-
-	i_comp = (*pfi_compare)((*ppr_p)->tree_p, pc_user);
-	if (i_comp > 0) {
-		MSG("too high - scan left")
-		i_ret = delete(&(*ppr_p)->tree_l, pfi_compare, pc_user, pfi_uar,
-						pi_balance, pi_uar_called);
-		if (*pi_balance)
-			balanceL(ppr_p, pi_balance);
-	}
-	else if (i_comp < 0) {
-		MSG("too low - scan right")
-		i_ret = delete(&(*ppr_p)->tree_r, pfi_compare, pc_user, pfi_uar,
-						pi_balance, pi_uar_called);
-		if (*pi_balance)
-			balanceR(ppr_p, pi_balance);
-	}
-	else {
-		MSG("equal")
-		pr_q = *ppr_p;
-		if (pr_q->tree_r == NULL) {
-			MSG("right subtree null")
-			*ppr_p = pr_q->tree_l;
-			*pi_balance = TRUE;
+	ENTER("balanceR")
+	MSG("right branch has shrunk")
+	switch ((*ppr_p)->tree_b)
+	{
+	case 1:	MSG("was imbalanced, fixed implicitly")
+		(*ppr_p)->tree_b = 0;
+		break;
+	case 0:	MSG("was okay, is now one off")
+		(*ppr_p)->tree_b = -1;
+		*pi_balance = FALSE;
+		break;
+	case -1: MSG("was already off, this is too much")
+		p1 = (*ppr_p)->tree_l;
+		b1 = p1->tree_b;
+		if (b1 <= 0) {
+			MSG("single LL")
+			(*ppr_p)->tree_l = p1->tree_r;
+			p1->tree_r = *ppr_p;
+			if (b1 == 0) {
+				MSG("b1 == 0")
+				(*ppr_p)->tree_b = -1;
+				p1->tree_b = 1;
+				*pi_balance = FALSE;
+			} else {
+				MSG("b1 != 0")
+				(*ppr_p)->tree_b = 0;
+				p1->tree_b = 0;
+			}
+			*ppr_p = p1;
+		} else {
+			MSG("double LR")
+			p2 = p1->tree_r;
+			b2 = p2->tree_b;
+			p1->tree_r = p2->tree_l;
+			p2->tree_l = p1;
+			(*ppr_p)->tree_l = p2->tree_r;
+			p2->tree_r = *ppr_p;
+			if (b2 == -1)
+				(*ppr_p)->tree_b = 1;
+			else
+				(*ppr_p)->tree_b = 0;
+			if (b2 == 1)
+				p1->tree_b = -1;
+			else
+				p1->tree_b = 0;
+			*ppr_p = p2;
+			p2->tree_b = 0;
 		}
-		else if (pr_q->tree_l == NULL) {
-			MSG("right subtree non-null, left subtree null")
-			*ppr_p = pr_q->tree_r;
-			*pi_balance = TRUE;
-		}
-		else {
-			MSG("neither subtree null")
-			del(&pr_q->tree_l, pi_balance, &pr_q, pfi_uar,
-								pi_uar_called);
-			if (*pi_balance)
-				balanceL(ppr_p, pi_balance);
-		}
-		free(pr_q);
-		if (!*pi_uar_called && pfi_uar)
-			(*pfi_uar)(pr_q->tree_p);
-		i_ret = TRUE;
 	}
-	EXIT(i_ret)
+	EXITV
 }
 
 
@@ -416,63 +398,81 @@ int	*pi_balance;
 }
 
 
-static void balanceR(ppr_p, pi_balance)
+static int delete(ppr_p, pfi_compare, pc_user, pfi_uar,
+						pi_balance, pi_uar_called)
 tree	**ppr_p;
+int	(*pfi_compare)();
+char	*pc_user;
+int	(*pfi_uar)();
 int	*pi_balance;
+int	*pi_uar_called;
 {
-	tree	*p1, *p2;
-	int	b1, b2;
+	void	del(), balanceL(), balanceR();
+	tree	*pr_q;
+	int	i_comp, i_ret;
 
-	ENTER("balanceR")
-	MSG("right branch has shrunk")
-	switch ((*ppr_p)->tree_b)
-	{
-	case 1:	MSG("was imbalanced, fixed implicitly")
-		(*ppr_p)->tree_b = 0;
-		break;
-	case 0:	MSG("was okay, is now one off")
-		(*ppr_p)->tree_b = -1;
-		*pi_balance = FALSE;
-		break;
-	case -1: MSG("was already off, this is too much")
-		p1 = (*ppr_p)->tree_l;
-		b1 = p1->tree_b;
-		if (b1 <= 0) {
-			MSG("single LL")
-			(*ppr_p)->tree_l = p1->tree_r;
-			p1->tree_r = *ppr_p;
-			if (b1 == 0) {
-				MSG("b1 == 0")
-				(*ppr_p)->tree_b = -1;
-				p1->tree_b = 1;
-				*pi_balance = FALSE;
-			} else {
-				MSG("b1 != 0")
-				(*ppr_p)->tree_b = 0;
-				p1->tree_b = 0;
-			}
-			*ppr_p = p1;
-		} else {
-			MSG("double LR")
-			p2 = p1->tree_r;
-			b2 = p2->tree_b;
-			p1->tree_r = p2->tree_l;
-			p2->tree_l = p1;
-			(*ppr_p)->tree_l = p2->tree_r;
-			p2->tree_r = *ppr_p;
-			if (b2 == -1)
-				(*ppr_p)->tree_b = 1;
-			else
-				(*ppr_p)->tree_b = 0;
-			if (b2 == 1)
-				p1->tree_b = -1;
-			else
-				p1->tree_b = 0;
-			*ppr_p = p2;
-			p2->tree_b = 0;
-		}
+	ENTER("delete")
+
+	if (*ppr_p == NULL) {
+		MSG("key not in tree")
+		EXIT(FALSE)
 	}
-	EXITV
+
+	i_comp = (*pfi_compare)((*ppr_p)->tree_p, pc_user);
+	if (i_comp > 0) {
+		MSG("too high - scan left")
+		i_ret = delete(&(*ppr_p)->tree_l, pfi_compare, pc_user, pfi_uar,
+						pi_balance, pi_uar_called);
+		if (*pi_balance)
+			balanceL(ppr_p, pi_balance);
+	}
+	else if (i_comp < 0) {
+		MSG("too low - scan right")
+		i_ret = delete(&(*ppr_p)->tree_r, pfi_compare, pc_user, pfi_uar,
+						pi_balance, pi_uar_called);
+		if (*pi_balance)
+			balanceR(ppr_p, pi_balance);
+	}
+	else {
+		MSG("equal")
+		pr_q = *ppr_p;
+		if (pr_q->tree_r == NULL) {
+			MSG("right subtree null")
+			*ppr_p = pr_q->tree_l;
+			*pi_balance = TRUE;
+		}
+		else if (pr_q->tree_l == NULL) {
+			MSG("right subtree non-null, left subtree null")
+			*ppr_p = pr_q->tree_r;
+			*pi_balance = TRUE;
+		}
+		else {
+			MSG("neither subtree null")
+			del(&pr_q->tree_l, pi_balance, &pr_q, pfi_uar,
+								pi_uar_called);
+			if (*pi_balance)
+				balanceL(ppr_p, pi_balance);
+		}
+		free(pr_q);
+		if (!*pi_uar_called && pfi_uar)
+			(*pfi_uar)(pr_q->tree_p);
+		i_ret = TRUE;
+	}
+	EXIT(i_ret)
+}
+
+
+int tree_delete(ppr_p, pfi_compare, pc_user, pfi_uar)
+tree	**ppr_p;
+int	(*pfi_compare)();
+char	*pc_user;
+int	(*pfi_uar)();
+{
+	int	i_balance = FALSE, i_uar_called = FALSE;
+
+	ENTER("tree_delete");
+	EXIT(delete(ppr_p, pfi_compare, pc_user, pfi_uar,
+				&i_balance, &i_uar_called))
 }
 
 

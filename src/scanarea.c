@@ -74,7 +74,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
 
    msg->attributes = xmsg.attr & !MSGLOCAL; // msg should not have MSGLOCAL bit set
    //strcpy(msg->datetime, xmsg.__ftsc_date);
-   sc_time(&(xmsg.date_written), msg->datetime);
+   sc_time((union stamp_combo *) &(xmsg.date_written), msg->datetime);
 
    msg->toUserName   = (char *) malloc(strlen(xmsg.to)+1);
    strcpy(msg->toUserName, xmsg.to);

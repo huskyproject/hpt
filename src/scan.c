@@ -151,7 +151,11 @@ s_route *findRouteForNetmail(s_message msg)
    char addrStr[24];
    UINT i;
 
-   sprintf(addrStr, "%u:%u/%u.%u", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+   // FIX ME - we need a better solution here...
+   if (msg.destAddr.point == 0)
+      sprintf(addrStr, "%u:%u/%u", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node);
+   else
+      sprintf(addrStr, "%u:%u/%u.%u", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 
    if ((msg.attributes & MSGFILE) == MSGFILE) {
       // if msg has file attached
@@ -188,6 +192,8 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 
       tempLink.hisAka = msg->destAddr;
       tempLink.ourAka = &(config->addr[0]);
+      tempLink.name   = (char *) malloc(1);
+      tempLink.name[0] = '\0';
        
       switch (route->routeVia) {
           
@@ -454,10 +460,17 @@ void scanNMArea(void)
          for (j=0; j < config->addrCount; j++)
             if (addrComp(orig, config->addr[j])==0) {from_us = 1; break;}
          
-         if ((!for_us) && (!from_us)) MsgKillMsg(netmail, i);
+/*         if ((!for_us) && (!from_us)) MsgKillMsg(netmail, i);
 
          // kill/sent flag
          if ((xmsg.attr & MSGKILL) == MSGKILL) MsgKillMsg(netmail, i);
+         */
+
+         if (((!for_us) && (!from_us)) || (xmsg.attr & MSGKILL)) {
+              MsgKillMsg(netmail, i);
+              i--;
+         }
+         
       } /* endfor */
 
       MsgCloseArea(netmail);

@@ -8,6 +8,7 @@
   linker
   areafix
 - put pkt´s into an existing archive
+- areafix: forward of requests
 - zone-gating
 - nodelist access
 - real hub-routing

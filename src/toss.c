@@ -127,7 +127,7 @@ XMSG createXMSG(s_message *msg)
    msgHeader.replyto = 0;
    memset(&(msgHeader.replies), 0, 40);   // no replies
    strcpy((char *) msgHeader.__ftsc_date, msg->datetime);
-   ASCII_Date_To_Binary(msg->datetime, &(msgHeader.date_written));
+   ASCII_Date_To_Binary(msg->datetime, (union stamp_combo *) &(msgHeader.date_written));
 
    currentTime = time(NULL);
    date = localtime(&currentTime);
@@ -888,7 +888,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
             }
          }
 
-      }
+      } else rc = 4;
 
       free(header);
 
@@ -1024,6 +1024,8 @@ void processDir(char *directory, e_tossSecurity sec)
             case 3:  // not/wrong pkt
                changeFileSuffix(dummy, "bad");
                break;
+            case 4:  // not to us
+               changeFileSuffix(dummy, "ntu");
             default:
                remove (dummy);
                break;
