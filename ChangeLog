@@ -1,3 +1,16 @@
+2002-11-11 Monday 11:58  pgul
+
+	* src/fcommon.c (1.142): Fix previous patch
+
+2002-11-11 Monday 11:00  pgul
+
+	* src/areafix.c (1.361): Don't delete dupebase when deleting area
+	if commonDupeBase using
+
+2002-11-11 Monday 07:41  mche
+
+	* src/toss.c (1.464): fix coredump on scaning
+
 2002-11-10 Sunday 16:18  pgul
 
 	* h/fcommon.h (1.45), src/fcommon.c (1.141), src/toss.c (1.463):
@@ -291,15 +304,17 @@
 
 2002-10-14 Monday 12:18  andrews42
 
-	* misc/hpt_ro/ro.cfg (1.4): minor comments changes
+	* misc/hpt_ro/ro.cfg (1.4, hpt-1_2-release): minor comments changes
 
 2002-10-14 Monday 12:15  andrews42
 
-	* misc/hpt_ro/ro_readme_rus.txt (1.4): Some typos fixed
+	* misc/hpt_ro/ro_readme_rus.txt (1.4, hpt-1_2-release): Some typos
+	fixed
 
 2002-10-14 Monday 12:14  andrews42
 
-	* misc/hpt_ro/ro_readme_eng.txt (1.1): English readme added
+	* misc/hpt_ro/ro_readme_eng.txt (1.1, hpt-1_2-release): English
+	readme added
 
 2002-10-14 Monday 10:25  stas_degteff
 
@@ -501,16 +516,18 @@
 
 2002-09-27 Friday 08:05  andrews42
 
-	* misc/hpt_ro/: ro_parser.pl (1.2), ro_readme_rus.txt (1.2):
-	denyonly parameter added
+	* misc/hpt_ro/: ro_parser.pl (1.2, hpt-1_2-release),
+	ro_readme_rus.txt (1.2): denyonly parameter added
 
 2002-09-27 Friday 07:29  andrews42
 
-	* misc/hpt_ro/: Hpt_ro.pm (1.2), ro.cfg (1.3): Cosmetic changes
+	* misc/hpt_ro/: Hpt_ro.pm (1.2, hpt-1_2-release), ro.cfg (1.3):
+	Cosmetic changes
 
 2002-09-27 Friday 07:23  andrews42
 
-	* misc/hpt_ro/ro_purge.pl (1.2): fix warning if $0 has no path
+	* misc/hpt_ro/ro_purge.pl (1.2, hpt-1_2-release): fix warning if $0
+	has no path
 
 2002-09-27 Friday 03:57  stas_degteff
 
@@ -1277,8 +1294,8 @@
 
 2002-06-24 Monday 12:28  stas
 
-	* man/hptlink.1 (1.3): Update hptlink man page: remove -l option ;
-	add AUTORS, SEE ALSO, FILES sections.
+	* man/hptlink.1 (1.3, hpt-1_2-release): Update hptlink man page:
+	remove -l option ; add AUTORS, SEE ALSO, FILES sections.
 
 2002-06-22 Saturday 12:02  mche
 
@@ -1322,11 +1339,12 @@
 
 2002-06-17 Monday 11:54  stas
 
-	* src/: areafix.c (1.315), dupe.c (1.64), fcommon.c (1.130),
-	getfree.c (1.20), hpt.c (1.153), link.c (1.54), perl.c (1.37),
-	pktread.c (1.86), post.c (1.87), query.c (1.50), scan.c (1.164),
-	scanarea.c (1.83), tlog.c (1.12), toss.c (1.415): New loglevels
-	applied. Use LL_* defines.
+	* src/: areafix.c (1.315), dupe.c (1.64, hpt-1_2-release),
+	fcommon.c (1.130, hpt-1_2-release), getfree.c (1.20), hpt.c
+	(1.153), link.c (1.54), perl.c (1.37), pktread.c (1.86), post.c
+	(1.87, hpt-1_2-release), query.c (1.50), scan.c (1.164), scanarea.c
+	(1.83), tlog.c (1.12, hpt-1_2-release), toss.c (1.415): New
+	loglevels applied. Use LL_* defines.
 
 2002-06-17 Monday 11:51  stas
 
@@ -1366,17 +1384,17 @@
 2002-06-09 Sunday 13:34  mche
 
 	* src/: areafix.c (1.310), dupe.c (1.62), getfree.c (1.19), hpt.c
-	(1.152), hptlink.c (1.35), link.c (1.53), pktinfo.c (1.16),
-	pktread.c (1.85), pktwrite.c (1.36), scan.c (1.163), toss.c
-	(1.414): fix cygwin warnings
+	(1.152), hptlink.c (1.35), link.c (1.53), pktinfo.c (1.16,
+	hpt-1_2-release), pktread.c (1.85), pktwrite.c (1.36), scan.c
+	(1.163), toss.c (1.414): fix cygwin warnings
 
 2002-06-09 Sunday 13:29  mche
 
-	* h/pkt.h (1.27): removed commented code
+	* h/pkt.h (1.27, hpt-1_2-release): removed commented code
 
 2002-06-09 Sunday 13:28  mche
 
-	* make/makefile.cyg (1.2): increase warnings level
+	* make/makefile.cyg (1.2, hpt-1_2-release): increase warnings level
 
 2002-06-09 Sunday 10:05  mche
 
@@ -1384,8 +1402,8 @@
 
 2002-06-08 Saturday 13:53  mche
 
-	* src/areafix.c (1.309), src/query.c (1.49), h/areafix.h (1.30):
-	IsAreaAvailable() moved to fidoconfig
+	* src/areafix.c (1.309), src/query.c (1.49), h/areafix.h (1.30,
+	hpt-1_2-release): IsAreaAvailable() moved to fidoconfig
 
 2002-06-06 Thursday 21:16  oliver.grimm
 
@@ -1413,8 +1431,8 @@
 
 2002-06-04 Tuesday 16:42  pavel.gulchouck
 
-	* h/fcommon.h (1.41), src/fcommon.c (1.129): removed commented out
-	Truncate
+	* h/fcommon.h (1.41, hpt-1_2-release), src/fcommon.c (1.129):
+	removed commented out Truncate
 
 2002-06-04 Tuesday 16:30  pavel.gulchouck
 
@@ -1435,9 +1453,9 @@
 
 2002-05-30 Thursday 15:18  stas
 
-	* src/: scan.c (1.159), scanarea.c (1.81), seenby.c (1.22), tlog.c
-	(1.11), toss.c (1.413): Add intialisations in declarations for
-	pointers.
+	* src/: scan.c (1.159), scanarea.c (1.81), seenby.c (1.22,
+	hpt-1_2-release), tlog.c (1.11), toss.c (1.413): Add intialisations
+	in declarations for pointers.
 
 2002-05-30 Thursday 14:58  stas
 
@@ -1482,7 +1500,7 @@
 
 2002-05-21 Tuesday 12:41  mche
 
-	* make/makeperl.mvc (1.9): fix compilation
+	* make/makeperl.mvc (1.9, hpt-1_2-release): fix compilation
 
 2002-05-21 Tuesday 09:13  mche
 
@@ -1499,8 +1517,9 @@
 
 2002-05-20 Monday 09:43  pavel.gulchouck
 
-	* src/: fcommon.c (1.127), hpt.c (1.149), hpttree.c (1.23), post.c
-	(1.85), txt2pkt.c (1.37): BeOS compilation fix
+	* src/: fcommon.c (1.127), hpt.c (1.149), hpttree.c (1.23,
+	hpt-1_2-release), post.c (1.85), txt2pkt.c (1.37, hpt-1_2-release):
+	BeOS compilation fix
 
 2002-05-19 Sunday 08:52  ml
 
@@ -1514,7 +1533,7 @@
 
 2002-05-18 Saturday 19:24  pavel.gulchouck
 
-	* misc/hpt-stat.russian (1.3): bugfix
+	* misc/hpt-stat.russian (1.3, hpt-1_2-release): bugfix
 
 2002-05-18 Saturday 18:26  pavel.gulchouck
 
@@ -1580,7 +1599,7 @@
 
 2002-05-13 Monday 06:37  mche
 
-	* make/makeperl.mvcdll (1.5): compilation fixed
+	* make/makeperl.mvcdll (1.5, hpt-1_2-release): compilation fixed
 
 2002-05-12 Sunday 14:51  d.sergienko
 
@@ -1622,9 +1641,9 @@
 
 2002-05-07 Tuesday 07:51  pavel.gulchouck
 
-	* filter.pl (1.9), doc/hpt.texi (1.63), h/hptperl.h (1.6),
-	src/perl.c (1.34), src/toss.c (1.406): added new perl hook tossbad,
-	called when put message to badarea
+	* filter.pl (1.9, hpt-1_2-release), doc/hpt.texi (1.63),
+	h/hptperl.h (1.6), src/perl.c (1.34), src/toss.c (1.406): added new
+	perl hook tossbad, called when put message to badarea
 
 2002-05-06 Monday 16:15  pavel.gulchouck
 
@@ -1719,11 +1738,13 @@
 
 2002-04-24 Wednesday 09:49  d.sergienko
 
-	* h/: areafix.h (1.28), arealist.h (1.3), dupe.h (1.19), fcommon.h
-	(1.40), global.h (1.31), hpt.h (1.7), hptperl.h (1.5), link.h
-	(1.6), pkt.h (1.22), post.h (1.4), query.h (1.14), scan.h (1.15),
-	scanarea.h (1.4), seenby.h (1.8), toss.h (1.46), version.h (1.8):
-	added rcs_id.
+	* h/: areafix.h (1.28), arealist.h (1.3), dupe.h (1.19,
+	hpt-1_2-release), fcommon.h (1.40), global.h (1.31,
+	hpt-1_2-release), hpt.h (1.7, hpt-1_2-release), hptperl.h (1.5),
+	link.h (1.6), pkt.h (1.22), post.h (1.4, hpt-1_2-release), query.h
+	(1.14, hpt-1_2-release), scan.h (1.15, hpt-1_2-release), scanarea.h
+	(1.4, hpt-1_2-release), seenby.h (1.8, hpt-1_2-release), toss.h
+	(1.46), version.h (1.8, hpt-1_2-release): added rcs_id.
 
 2002-04-24 Wednesday 09:28  d.sergienko
 
@@ -1732,7 +1753,8 @@
 	(1.146), hptlink.c (1.34), hpttree.c (1.21), link.c (1.51), perl.c
 	(1.29), pktinfo.c (1.15), pktread.c (1.83), pktwrite.c (1.34),
 	post.c (1.72), query.c (1.40), scan.c (1.151), scanarea.c (1.79),
-	seenby.c (1.21), tlog.c (1.10), tpkt.c (1.26): added rcs_id.
+	seenby.c (1.21), tlog.c (1.10), tpkt.c (1.26, hpt-1_2-release):
+	added rcs_id.
 
 2002-04-24 Wednesday 09:13  d.sergienko
 
@@ -1777,7 +1799,8 @@
 
 2002-04-22 Monday 11:03  pavel.gulchouck
 
-	* misc/filter.pl (1.7): process CrashEcho list reply
+	* misc/filter.pl (1.7, hpt-1_2-release): process CrashEcho list
+	reply
 
 2002-04-20 Saturday 12:49  mche
 
@@ -1821,8 +1844,8 @@
 
 2002-04-14 Sunday 17:52  ml
 
-	* misc/make_rules (1.1): bash script for making rules dir from
-	fileecho's xofcerules dir
+	* misc/make_rules (1.1, hpt-1_2-release): bash script for making
+	rules dir from fileecho's xofcerules dir
 
 2002-04-14 Sunday 17:42  ml
 
@@ -1936,7 +1959,7 @@
 
 2002-03-21 Thursday 08:48  mche
 
-	* man/hpt.1 (1.16): man updated
+	* man/hpt.1 (1.16, hpt-1_2-release): man updated
 
 2002-03-21 Thursday 07:04  mche
 
@@ -2071,7 +2094,7 @@
 
 2002-03-08 Friday 18:58  ml
 
-	* misc/hptlogstat.pl (1.3): new version
+	* misc/hptlogstat.pl (1.3, hpt-1_2-release): new version
 
 2002-03-06 Wednesday 16:38  mche
 
@@ -2110,9 +2133,9 @@
 
 2002-03-05 Tuesday 00:27  joerg.jaspert
 
-	* debian/: README.Debian (1.3), changelog (1.9), control (1.7),
-	docs (1.3), huskymak.cfg (1.9), rules (1.7): New Debian Package
-	built
+	* debian/: README.Debian (1.3, hpt-1_2-release), changelog (1.9),
+	control (1.7), docs (1.3), huskymak.cfg (1.9), rules (1.7): New
+	Debian Package built
 
 2002-03-04 Monday 17:54  pavel.gulchouck
 
@@ -2147,8 +2170,8 @@
 
 2002-03-01 Friday 13:15  mche
 
-	* make/: makefile.mvcdll (1.3), makeperl.mvcdll (1.3): makefile
-	updates (change optimization)
+	* make/: makefile.mvcdll (1.3, hpt-1_2-release), makeperl.mvcdll
+	(1.3): makefile updates (change optimization)
 
 2002-03-01 Friday 08:17  ml
 
@@ -2161,7 +2184,7 @@
 
 2002-02-28 Thursday 14:35  d.sergienko
 
-	* misc/areafix.hlp (1.16): 
+	* misc/areafix.hlp (1.16, hpt-1_2-release): 
 	added documentation about new syntax of %list and %avail
 
 2002-02-28 Thursday 14:28  d.sergienko
@@ -2355,7 +2378,7 @@
 
 2002-02-09 Saturday 08:18  ml
 
-	* misc/cut-hptlog.pl (1.2): update
+	* misc/cut-hptlog.pl (1.2, hpt-1_2-release): update
 
 2002-02-08 Friday 17:22  mche
 
@@ -2372,7 +2395,8 @@
 
 2002-02-07 Thursday 09:09  ml
 
-	* make/makefile.bcd (1.3): compile without semaphores for msdos
+	* make/makefile.bcd (1.3, hpt-1_2-release): compile without
+	semaphores for msdos
 
 2002-02-07 Thursday 08:56  ml
 
@@ -2500,8 +2524,8 @@
 
 2002-01-27 Sunday 14:38  stas
 
-	* misc/pretty.pl (1.2): Add the '-c' option (copy mode) and change
-	temp & old file names.
+	* misc/pretty.pl (1.2, hpt-1_2-release): Add the '-c' option (copy
+	mode) and change temp & old file names.
 
 2002-01-27 Sunday 14:00  ml
 
@@ -2679,9 +2703,9 @@
 
 2002-01-19 Saturday 08:54  ml
 
-	* TODO (1.184), doc/hpt.texi (1.55), make/makefile.lnx (1.6),
-	src/areafix.c (1.238), src/query.c (1.6): fixed bug in areafix when
-	unsubscribing node addr with trailing .0
+	* TODO (1.184), doc/hpt.texi (1.55), make/makefile.lnx (1.6,
+	hpt-1_2-release), src/areafix.c (1.238), src/query.c (1.6): fixed
+	bug in areafix when unsubscribing node addr with trailing .0
 
 2002-01-19 Saturday 07:33  ml
 
@@ -3009,7 +3033,7 @@
 
 2001-10-19 Friday 10:30  ml
 
-	* doc/perlwin32.rus (1.1), make/makefile.be (1.2),
+	* doc/perlwin32.rus (1.1), make/makefile.be (1.2, hpt-1_2-release),
 	make/makeperl.mvc (1.1), src/perl.c (1.15): perl for win32 support
 
 2001-10-19 Friday 07:34  pavel.gulchouck
@@ -3306,8 +3330,9 @@
 
 2001-05-15 Tuesday 12:32  ml
 
-	* make/makefile.wcw (1.3), src/scan.c (1.128), src/toss.c (1.344):
-	write log error when processing fileattach and no fileroute defined
+	* make/makefile.wcw (1.3, hpt-1_2-release), src/scan.c (1.128),
+	src/toss.c (1.344): write log error when processing fileattach and
+	no fileroute defined
 
 2001-05-09 Wednesday 16:47  ml
 
@@ -3354,7 +3379,7 @@
 
 2001-05-03 Thursday 11:25  ml
 
-	* .cvs2cl (1.1): added .cvs2cl file
+	* .cvs2cl (1.1, hpt-1_2-release): added .cvs2cl file
 
 2001-04-30 Monday 06:26  kazimirow
 
@@ -3471,12 +3496,13 @@
 
 2001-02-11 Sunday 18:36  ml
 
-	* doc/: Makefile (1.1), hpt.texi (1.1), makefile.lnx (1.1),
-	makefile.os2 (1.1): doc
+	* doc/: Makefile (1.1), hpt.texi (1.1), makefile.lnx (1.1,
+	hpt-1_2-release), makefile.os2 (1.1, hpt-1_2-release): doc
 
 2001-02-09 Friday 08:57  pavel.gulchouck
 
-	* make/makeperl.inc (1.2): failed if $PERL not defined
+	* make/makeperl.inc (1.2, hpt-1_2-release): failed if $PERL not
+	defined
 
 2001-01-30 Tuesday 20:47  nestyurkin.nikolay
 
@@ -3707,8 +3733,9 @@
 
 2000-10-05 Thursday 17:00  ml
 
-	* h/date.h (1.104), h/log.h (1.12), make/makefile.mgw (1.4),
-	src/hptlink.c (1.17), src/log.c (1.22): hptlink update
+	* h/date.h (1.104), h/log.h (1.12), make/makefile.mgw (1.4,
+	hpt-1_2-release), src/hptlink.c (1.17), src/log.c (1.22): hptlink
+	update
 
 2000-09-30 Saturday 16:04  ml
 
@@ -3818,10 +3845,11 @@
 
 2000-09-04 Monday 09:34  ml
 
-	* h/date.h (1.88), h/fcommon.h (1.28), make/makeperl.emo (1.2),
-	make/makeperl.emx (1.2), src/fcommon.c (1.70), src/hpt.c (1.85),
-	src/hptlink.c (1.14), src/link.c (1.33), src/log.c (1.21),
-	src/recode.c (1.14), src/seenby.c (1.18): see changelog sep 04
+	* h/date.h (1.88), h/fcommon.h (1.28), make/makeperl.emo (1.2,
+	hpt-1_2-release), make/makeperl.emx (1.2, hpt-1_2-release),
+	src/fcommon.c (1.70), src/hpt.c (1.85), src/hptlink.c (1.14),
+	src/link.c (1.33), src/log.c (1.21), src/recode.c (1.14),
+	src/seenby.c (1.18): see changelog sep 04
 
 2000-09-03 Sunday 15:26  ml
 
@@ -3920,7 +3948,7 @@
 
 2000-07-24 Monday 17:56  ml
 
-	* misc/clean_outb (1.4): clean_outb cleanup
+	* misc/clean_outb (1.4, hpt-1_2-release): clean_outb cleanup
 
 2000-07-18 Tuesday 17:34  ml
 
@@ -3966,7 +3994,7 @@
 
 2000-07-04 Tuesday 23:56  tobi
 
-	* make/makefile.rxw (1.2): makefile fix
+	* make/makefile.rxw (1.2, hpt-1_2-release): makefile fix
 
 2000-07-04 Tuesday 23:54  tobi
 
@@ -3975,8 +4003,9 @@
 
 2000-07-04 Tuesday 23:54  tobi
 
-	* make/: makefile.bcd (1.2), makefile.bco (1.2), makefile.bcw
-	(1.2), makefile.djg (1.2), makefile.emx (1.2): some makefile fixes
+	* make/: makefile.bcd (1.2), makefile.bco (1.2, hpt-1_2-release),
+	makefile.bcw (1.2), makefile.djg (1.2), makefile.emx (1.2): some
+	makefile fixes
 
 2000-07-01 Saturday 15:38  nestyurkin.nikolay
 
@@ -3989,9 +4018,9 @@
 	makefile.djg (1.1), makefile.emo (1.1), makefile.emx (1.1),
 	makefile.inc (1.1), makefile.lnx (1.1), makefile.mgw (1.1),
 	makefile.mvc (1.1), makefile.osf (1.1), makefile.rxw (1.1),
-	makefile.sun (1.1), makefile.unx (1.1), makefile.wcd (1.1),
-	makefile.wco (1.1), makefile.wcw (1.1), makefile.wcx (1.1): new
-	makefiles
+	makefile.sun (1.1), makefile.unx (1.1), makefile.wcd (1.1,
+	hpt-1_2-release), makefile.wco (1.1, hpt-1_2-release), makefile.wcw
+	(1.1), makefile.wcx (1.1, hpt-1_2-release): new makefiles
 
 2000-06-13 Tuesday 19:10  tobi
 
@@ -4375,8 +4404,9 @@
 
 1999-09-23 Thursday 21:20  mt
 
-	* CREDITS (1.14, hpt-0_9_7d-release, hpt-0_9_7c-release,
-	hpt-0_9_7b-release, hpt-0_9_7a-release): ready for release
+	* CREDITS (1.14, hpt-1_2-release, hpt-0_9_7d-release,
+	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release): ready
+	for release
 
 1999-09-15 Wednesday 19:39  mt
 
@@ -5188,21 +5218,23 @@
 1998-10-26 Monday 15:56  mt
 
 	* CREDITS (1.3), h/fcommon.h (1.5), h/toss.h (1.4),
-	misc/areafix.hlp (1.1), misc/fidom2iso (1.1, hpt-0_9_7d-release,
+	misc/areafix.hlp (1.1), misc/fidom2iso (1.1, hpt-1_2-release,
+	hpt-0_9_7d-release, hpt-0_9_7c-release, hpt-0_9_7b-release,
+	hpt-0_9_7a-release, hpt-0_26), misc/ibmpc-latin1 (1.1,
+	hpt-1_2-release, hpt-0_9_7d-release, hpt-0_9_7c-release,
+	hpt-0_9_7b-release, hpt-0_9_7a-release, hpt-0_26), misc/iso2fidom
+	(1.1, hpt-1_2-release, hpt-0_9_7d-release, hpt-0_9_7c-release,
+	hpt-0_9_7b-release, hpt-0_9_7a-release, hpt-0_26),
+	misc/latin1-ibmpc (1.1, hpt-1_2-release, hpt-0_9_7d-release,
 	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release,
-	hpt-0_26), misc/ibmpc-latin1 (1.1, hpt-0_9_7d-release,
-	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release,
-	hpt-0_26), misc/iso2fidom (1.1, hpt-0_9_7d-release,
-	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release,
-	hpt-0_26), misc/latin1-ibmpc (1.1, hpt-0_9_7d-release,
-	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release,
-	hpt-0_26), misc/outaltkoi8 (1.1, hpt-0_9_7d-release,
-	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release,
-	hpt-0_26), misc/outkoi8alt (1.1, hpt-0_9_7d-release,
-	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release,
-	hpt-0_26), src/areafix.c (1.1), src/fcommon.c (1.6), src/scan.c
-	(1.20), src/scanarea.c (1.12), src/toss.c (1.26): incorporated
-	patches by max for areafix, autoCreateDefaults, arcmail
+	hpt-0_26), misc/outaltkoi8 (1.1, hpt-1_2-release,
+	hpt-0_9_7d-release, hpt-0_9_7c-release, hpt-0_9_7b-release,
+	hpt-0_9_7a-release, hpt-0_26), misc/outkoi8alt (1.1,
+	hpt-1_2-release, hpt-0_9_7d-release, hpt-0_9_7c-release,
+	hpt-0_9_7b-release, hpt-0_9_7a-release, hpt-0_26), src/areafix.c
+	(1.1), src/fcommon.c (1.6), src/scan.c (1.20), src/scanarea.c
+	(1.12), src/toss.c (1.26): incorporated patches by max for areafix,
+	autoCreateDefaults, arcmail
 
 1998-10-22 Thursday 07:47  mt
 
