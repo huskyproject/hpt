@@ -1,3 +1,7 @@
+2003-02-01 Saturday 21:30  stas_degteff
+
+	* make/makefile.cyg (1.9): Allow build dll version of hpt/mingw
+
 2003-01-31 Friday 18:29  mche
 
 	* src/areafix.c (1.383): New command 'afix!' in addition to 'afix'
