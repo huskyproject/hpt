@@ -145,6 +145,8 @@ void start_help(void) {
   fprintf(stdout,"   hpt pack -f <filename> - packing netmail from alternative echotoss file\n");
   fprintf(stdout,"   hpt link [areamask] - links messages\n");
   fprintf(stdout,"   hpt afix [<addr> command] - process areafix\n");
+  fprintf(stdout,"   hpt qupd - update queue file and do some areafix jobs\n");
+  fprintf(stdout,"   hpt qrep - make report based on information from queue file\n");
   fprintf(stdout,"   hpt relink <addr> - refresh area subsription\n");
   fprintf(stdout,"   hpt pause - set pause for links who don't poll our system\n");
   fprintf(stdout,"   hpt -q [options] - quiet mode (no screen output)\n");
@@ -200,9 +202,9 @@ int processCommandLine(int argc, char **argv)
          ++i; post(argc, &i, argv);
       } else if (stricmp(argv[i], "relink") == 0) {
          i++; relink(argv[i]);
-      } else if (stricmp(argv[i], "qupdate") == 0) {
+      } else if (stricmp(argv[i], "qupd") == 0) {
           cmQueue |= 2;
-      } else if (stricmp(argv[i], "qreport") == 0) {
+      } else if (stricmp(argv[i], "qrep") == 0) {
           cmQueue |= 4;
       } else if (stricmp(argv[i], "-c") == 0) {
 		  i++;
