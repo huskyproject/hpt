@@ -1,3 +1,8 @@
+2001-07-02 Monday 18:12  pavel.gulchouck
+
+	* misc/filter.pl (1.5): perl route(): process messages with
+	hold/direct/crash/imm attributes
+
 2001-06-26 Tuesday 09:31  mhaase
 
 	* src/areafix.c (1.217): undo changes I made yesterday (rescan
