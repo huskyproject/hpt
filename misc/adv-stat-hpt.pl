@@ -656,7 +656,7 @@ advhptstat ver.$VERSION, (c)opyright 2002-03, by val khokhlov
   Usage: advhptstat [options] [stat file(s)...]
   Options are:
     -c <config>, --conf=<config>           specifies config file name
-    -d, --del                              delete sucessfully processed logs
+    -d, --del                              delete successfully processed logs
     -m <layout>, --move=<layout>           archive successfully processed logs
     -z, --gz                               force use gzip'ed binary stat logs
   Instead of one or more stat files you can use archive for a period:
