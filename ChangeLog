@@ -1,3 +1,44 @@
+2002-10-25 Friday 13:21  mche
+
+	* src/areafix.c (1.357): fix cygwin warning
+
+2002-10-25 Friday 12:04  stas_degteff
+
+	* doc/hpt.texi (1.86): small doc update
+
+2002-10-25 Friday 12:00  stas_degteff
+
+	* src/areafix.c (1.356): Modify areafix pause message: remove words
+	about fileareas
+
+2002-10-25 Friday 11:07  mche
+
+	* src/link.c (1.64): don't link all areas when importlog-file
+	defined but does not exist.  use 'hpt link * ' to link all areas
+
+2002-10-25 Friday 06:17  mche
+
+	* src/scan.c (1.178): undo previos patch
+
+2002-10-24 Thursday 13:33  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.45): Add question/answer about old
+	-current; change address for Serguei Revtov
+
+2002-10-24 Thursday 11:49  mche
+
+	* hpt.dsp (1.1): Microsoft Developer Studio Project Files added
+
+2002-10-24 Thursday 09:13  mche
+
+	* src/scan.c (1.177): hpt attach processing patch by [val khokhlov 
+	 2:550/180]
+
+2002-10-24 Thursday 06:32  stas_degteff
+
+	* src/areafix.c (1.355): Cosmetic fix, thanjs to dmitry a. frolov,
+	2:5030/4441
+
 2002-10-23 Wednesday 11:55  mche
 
 	* h/areafix.h (1.34), src/areafix.c (1.354): fix ERROR redefinition
