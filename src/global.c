@@ -39,7 +39,7 @@ int initSMAPI = -1;
 
 /* basic version number */
 const int   VER_MAJOR   = 1;
-const int   VER_MINOR   = 1;
+const int   VER_MINOR   = 3;
 const int   VER_PATCH   = 0;
 
 
