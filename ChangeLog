@@ -1,3 +1,15 @@
+2002-07-22 Monday 23:00  stas
+
+	* src/toss.c (1.427): Fix remap bug: synchronise INTL kludge
+
+2002-07-22 Monday 18:07  mche
+
+	* TODO (1.194): no message
+
+2002-07-22 Monday 14:35  stas
+
+	* src/scan.c (1.169): Change log messages (debug)
+
 2002-07-21 Sunday 21:01  stas
 
 	* src/scan.c (1.168): Add (debug-levels) log output
