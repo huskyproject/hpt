@@ -44,6 +44,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <ctype.h>
+#include <errno.h>
 
 #include <pkt.h>
 #include <global.h>
@@ -82,6 +83,8 @@ char *strtolower(char *string) {
 char *createDupeFileName(s_area *area) {
     char *name=NULL, *ptr, *retname=NULL;
 
+//    w_log(LL_FUNC,"dupe.c::createDupeFileName()");
+
     if (!area->DOSFile) {
 	if (area->fileName) xstrcat(&name, (ptr = strrchr(area->fileName,PATH_DELIM))
 				    ? ptr+1 : area->fileName);
@@ -113,7 +116,8 @@ char *createDupeFileName(s_area *area) {
 
     xstrscat(&retname, config->dupeHistoryDir, name, NULL);
     nfree(name);
-    
+
+//    w_log(LL_FUNC,"dupe.c::createDupeFileName() OK (return '%s')",retname);
     return retname;
 }
 
@@ -367,13 +371,14 @@ s_dupeMemory *readDupeFile(s_area *area) {
    }
 
    f = fopen(fileName, "rb");
-   if (f != NULL) {
+   if (f != NULL) { w_log(LL_FILE,"dupe.c:readDupeFile(): opened %s (\"rb\" mode)",fileName);
        // readFile
        doReading(f, dupeMemory);
        fclose(f);
    } else {
        if (fexist(fileName)) w_log('2', "Error reading dupes");
-       else w_log('2', "Dupe base not found");
+       else if( errno != ENOENT)
+         w_log('2', "Dupe base read error: %s", strerror(errno) );
    }
 
    nfree(fileName);
@@ -385,9 +390,11 @@ s_dupeMemory *readDupeFile(s_area *area) {
 int createDupeFile(s_area *area, char *name, s_dupeMemory DupeEntries) {
    FILE *f;
 
+//   w_log(LL_SRCLINE,"dupe.c:%u:createDupeFile() name='%s'", __LINE__, name);
+
    f = fopen(name, "wb");
    if (f!= NULL) {
-      
+       w_log(LL_FILE,"dupe.c:createDupeFile(): opened %s (\"wb\" mode)",name);
        if (config->typeDupeBase!=commonDupeBase)
           maxTimeLifeDupesInArea=area->dupeHistory*86400;    
        else
