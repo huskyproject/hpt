@@ -165,6 +165,10 @@ void correctEMAddr(s_message *msg)
 void correctNMAddr(s_message *msg, s_pktHeader *header)
 {
    char *start, *copy, *text=NULL, buffer[35]; //FIXME: static buffer
+   int valid_intl_kludge = 0;
+   int zonegated = 0;
+   s_addr intl_from, intl_to;
+   int i;
 
    copy = buffer;
    start = strstr(msg->text, "FMPT");
@@ -199,30 +203,89 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
       msg->destAddr.point = 0;
    } /* endif */
 
-   /* INTL Kludge processing */
-   copy = buffer;
-   start = strstr(msg->text, "INTL");
+   /* Parse the INTL Kludge */
+
+   start = strstr(msg->text, "INTL ");
    if (start) {
+      
       start += 6;                 // skip "INTL "
-      while (isdigit(*start)) {   // copy all data until ':'
-         *copy = *start;
-         copy++;
-         start++;
-      } /* endwhile */
-      *copy = '\0';
-      msg->destAddr.zone = atoi(buffer);
 
-      while (!isspace(*start)) start++; // walk to next zone info
+      while(1)
+      {
+          while (*start && isspace(*start)) start++;
+          if (!*start) break;
 
-      copy = buffer; start++;
-      while (isdigit(*start)) {     // copy all data until ':'
-         *copy = *start;
-         copy++;
-         start++;
-      } /* endwhile */
-      *copy = '\0';
-      msg->origAddr.zone = atoi(buffer);
+          copy = buffer;
+          while (*start && !isspace(*start)) *copy++ = *start++;
+          *copy='\0';
+          if (strchr(start,':')==NULL || strchr(start,'/')==NULL) break;
+          string2addr(buffer, &intl_to);
+          
+          while (*start && isspace(*start)) start++;
+          if (!*start) break;
+
+          copy = buffer;
+          while (*start && !isspace(*start)) *copy++ = *start++;
+          *copy='\0';
+          if (strchr(start,':')==NULL || strchr(start,'/')==NULL) break;
+          string2addr(buffer, &intl_from);
+
+          intl_from.point = msg->origAddr.point;
+          intl_to.point = msg->destAddr.point;
+
+          valid_intl_kludge = 1;
+      }
+   }
+
+   /* now interpret the INTL kludge */
+
+   if (valid_intl_kludge)
+   {
+      /* the from part is easy - we can always use it */
+
+      msg->origAddr.zone = intl_from.zone;
+      msg->origAddr.net  = intl_from.net;
+      msg->origAddr.node = intl_from.node;
+
+      /* the to part is more complicated */
+
+      zonegated = 0;
+
+      if (msg->destAddr.net == intl_from.zone &&
+          msg->destAddr.node == intl_to.zone)
+      {
+         zonegated = 1;
+
+         /* we want to ignore the zone gating if we are the zone gate */
+
+         for (i = 0; i < config->addrCount; i++)
+         {
+            if (config->addr[i].zone == msg->destAddr.net &&
+                config->addr[i].net == msg->destAddr.net &&
+                config->addr[i].node == msg->destAddr.node &&
+                config->addr[i].point == 0)
+            {
+               zonegated = 0;
+            }
+         }
+      }
+
+      if (zonegated)
+      {
+         msg->destAddr.zone = intl_from.zone;
+         msg->destAddr.net  = intl_from.zone;
+         msg->destAddr.node = intl_to.zone;
+      }
+      else
+      {
+         msg->destAddr.zone = intl_to.zone;
+         msg->destAddr.net  = intl_to.net;
+         msg->destAddr.node = intl_to.node;
+      }
+
    } else {
+      
+      /* no INTL kludge */
 
       msg->destAddr.zone = header->destAddr.zone;
       msg->origAddr.zone = header->origAddr.zone;
