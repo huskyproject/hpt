@@ -1,3 +1,25 @@
+2003-02-16 Sunday 17:59  stas_degteff
+
+	* README (1.17), h/version.h (1.12): Fix type erors; add link to
+	homepage
+
+2003-02-16 Sunday 17:55  stas_degteff
+
+	* INSTALL (1.13): Update build documentation
+
+2003-02-16 Sunday 09:22  stas_degteff
+
+	* doc/perlwin32.rus (1.8): Fix typo
+
+2003-02-16 Sunday 09:14  stas_degteff
+
+	* doc/: perlwin32.rus (1.7), perlwin32.txt (1.6): Fix typo; remove
+	obsolete phrase
+
+2003-02-15 Saturday 22:13  i_zkh
+
+	* doc/: perlwin32.rus (1.6), perlwin32.txt (1.5): Fixed spelling
+
 2003-02-14 Friday 10:32  pgul
 
 	* src/fcommon.c (1.162): Fixed amiga-style lo-files names when all
