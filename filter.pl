@@ -56,6 +56,10 @@ sub route
 {
 # $addr = dest addr
 # $from = orig addr
+# $fromname = from user name
+# $toname = to user name
+# $date = message date and time
+# $subj = subject line
 # $text = message text
 # $attr = message attributes
 # $route = default route address (by config rules)

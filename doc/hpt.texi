@@ -3454,6 +3454,10 @@ The following Perl hooks are supported:
   availble:
   $addr - message destination address,
   $from - message originating address,
+  $toname - destination user name,
+  $fromname - originating user name,
+  $subject - message subject line,
+  $date - message date and time,
   $text - message text,
   $route - default route for this message(derermined via @code{Route} statements in 
   config file (may be empty, this means that either no route at all for this message

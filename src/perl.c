@@ -694,6 +694,7 @@ s_route *perlroute(s_message *msg, s_route *defroute)
      return NULL;
    pid = handleperlerr(&saveerr);
    { SV *svaddr, *svattr, *svflv, *svfrom, *svret, *svroute;
+     SV *svfromname, *svtoname, *svsubj, *svtext, *svdate;
      char *routeaddr;
      STRLEN n_a;
      static s_route route;
@@ -703,8 +704,18 @@ s_route *perlroute(s_message *msg, s_route *defroute)
      svroute = perl_get_sv("route",   TRUE);
      svflv   = perl_get_sv("flavour", TRUE);
      svattr  = perl_get_sv("attr",    TRUE);
-     sv_setpv(svaddr, aka2str(msg->destAddr));
-     sv_setpv(svfrom, aka2str(msg->origAddr));
+     svsubj  = perl_get_sv("subj",    TRUE);
+     svtext  = perl_get_sv("text",    TRUE);
+     svdate  = perl_get_sv("date",    TRUE);
+     svtoname= perl_get_sv("toname",  TRUE);
+     svfromname = perl_get_sv("fromname", TRUE);
+     sv_setpv(svaddr,     aka2str(msg->destAddr));
+     sv_setpv(svfrom,     aka2str(msg->origAddr));
+     sv_setpv(svfromname, msg->fromUserName);
+     sv_setpv(svtoname,   msg->toUserName);
+     sv_setpv(svdate,     msg->datetime);
+     sv_setpv(svsubj,     msg->subjectLine);
+     sv_setpv(svtext,     msg->text);
      if (defroute)
      {
 	if (defroute->target)
