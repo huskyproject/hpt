@@ -106,7 +106,6 @@ void post(int c, unsigned int *n, char *params[])
    char *area = NULL, *tearl = NULL, *origin = NULL;
    FILE *text = NULL;
    s_area *echo = NULL;
-//   FILE *f = NULL;
    long attr;
    struct _minf m;
 
@@ -318,7 +317,18 @@ void post(int c, unsigned int *n, char *params[])
 		  }
       }
 
-   };
+      if ((config->echotosslog) && (!export)) {
+        FILE *f=fopen(config->echotosslog, "a");
+        if (f==NULL)
+          w_log(LL_ERROR, "Could not open or create EchoTossLogFile.");
+        else {
+          fprintf(f, "%s\n", echo->areaName);
+          fclose(f);
+        }
+      }
+
+   }
+
 
    if (textBuffer == NULL && !quit) {
        w_log(LL_CRIT, "post: no input source specified");

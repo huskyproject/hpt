@@ -1271,9 +1271,9 @@ This statement cannot be repeated.
 @end table
 
 This statement specifies the file which is filled by a message editor
-with the names of the areas where new echomails have been entered.
-A tosser will only scan those areas which leads to a great speed-up.
-After scanning the tosser will remove the file.
+or "hpt post" with the names of the areas where new echomails have been
+entered. A tosser will only scan those areas which leads to a great
+speed-up. After scanning the tosser will remove the file.
 @strong{Netmail areas will be packed too.}
 
 This statement cannot be repeated.
