@@ -78,7 +78,7 @@ s_message* MessForCC(s_message *msg)
     xstrcat(&(CCmsg->subjectLine), msg->subjectLine);
     xstrcat(&(CCmsg->text), msg->text);
     
-    strcpy(CCmsg->datetime,msg->datetime);
+    strcpy( (char*)CCmsg->datetime, (char*)msg->datetime );
     CCmsg->attributes = msg->attributes;
     CCmsg->textLength = msg->textLength;
     CCmsg->netMail    = msg->netMail;
