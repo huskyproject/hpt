@@ -153,7 +153,7 @@ void addViaToMsg(s_message *msg, s_addr ourAka) {
 	 * idea to add the \r.
         */
         buf[0] = buf[1] = 0;
-        if (msg->text)
+        if (msg->text && msg->text[0])
         {
           if (msg->text[strlen(msg->text)-1] != '\r')
              buf[0] = '\r';

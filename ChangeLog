@@ -1,3 +1,9 @@
+2002-06-06 Thursday 23:14  og
+
+	* src/scan.c: addViaToMsg() - fix a possible crash when adding a via
+	line to a message without body and without *ANY* kludges (should never
+	happen, but nobody knows :-) )
+
 2002-06-06 Thursday 10:20  og
 
 	* src/scan.c: addViaToMsg() appends \r to Msg if needed before adding
