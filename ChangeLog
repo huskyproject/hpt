@@ -1,3 +1,23 @@
+2002-08-21 Wednesday 12:41  mche
+
+	* src/: seenby.c (1.24), toss.c (1.435): reduce cygwin warnings
+
+2002-08-21 Wednesday 12:21  mche
+
+	* make/makefile.cyg (1.3): makefiles for cygwin updated to suit
+	current release of Cygwin
+
+2002-08-21 Wednesday 11:57  mche
+
+	* src/pktread.c (1.89), src/scanarea.c (1.87), src/seenby.c (1.23),
+	src/toss.c (1.434), h/scanarea.h (1.6), h/seenby.h (1.9), h/toss.h
+	(1.49): feature: - reduces Seen-BYs (fsc-0093)
+
+2002-08-21 Wednesday 10:08  mche
+
+	* src/link.c (1.57): limit on max linked messages [10000] removed. 
+	cause if it's limit was reached msgbase may become broken
+
 2002-08-18 Sunday 19:02  d_sergienko
 
 	* src/areafix.c (1.339): changed subj of replies on %pause and
