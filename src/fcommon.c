@@ -185,7 +185,6 @@ void cleanEmptyBundles(char *pathName, int npos)
    struct dirent  *file;
    struct stat stbuf;
    unsigned pathlen;
-   time_t tr;
 
    if( npos >= strlen(pathName) )
    { w_log( LL_CRIT, "fcommon.c:cleanEmptyBundles(): 'npos' too big! Can't work." );
@@ -212,21 +211,15 @@ void cleanEmptyBundles(char *pathName, int npos)
    ptr[0]='*';
    ptr[1]='\0';
 
-   tr = time(NULL);
-
    while ((file = readdir(dir)) != NULL) {
 
 	   if ( patimat(file->d_name, pattern) == 1 ) {
 
 		   strcpy(tmpfile+npos, file->d_name);
 
-		   if ( stat(tmpfile, &stbuf) == 0) {
-
-               if (tr - stbuf.st_mtime >= 60*60*24 && stbuf.st_size == 0 ) {
+		   if (stat(tmpfile, &stbuf) == 0 && stbuf.st_size == 0) {
 
 				   remove (tmpfile); // old empty bundle
-
-               }
 		   }
 	   }
    }
