@@ -1,8 +1,12 @@
-# include Husky-Makefile-Config
-include ../../huskymak.cfg
-
 HASHDUPE = 0
-CC       = gcc 
+DEBUG    = 0
+CC       = gcc
+INCDIR   = /usr/local/include
+LIBDIR   = /usr/local/lib
+BINDIR   = /usr/local/bin
+MANDIR   = /usr/local/man
+IBOPT    = -s
+IMOPT    = -s
 
 OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o crc.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o xstr.o
 SRC_DIR = ../src/
