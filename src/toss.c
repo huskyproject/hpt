@@ -1276,6 +1276,12 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 	   } else {
 	     if (dupeDetection(echo, *msg)==1) {
 			 // nodupe
+
+			 // if only one downlink, we've got the mail from him
+			 if (echo->downlinkCount > 1) {
+				 forwardMsgToLinks(echo, msg, pktOrigAddr);
+				 statToss.exported++;
+			 }
 			 statToss.echoMail++;
 			 echo->imported++;  // area has got new messages
 			 if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
@@ -1286,11 +1292,6 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 				 rc = 1; //passthrough does always work
 			 }
 
-			 // if only one downlink, we've got the mail from him
-			 if (echo->downlinkCount > 1) {
-				 forwardMsgToLinks(echo, msg, pktOrigAddr);
-				 statToss.exported++;
-			 }
 	     } else {
 	       // msg is dupe
 	       if (echo->dupeCheck == dcMove) 
