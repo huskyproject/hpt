@@ -127,6 +127,7 @@ static int l_dist_raw(char *str1, char *str2, int len1, int len2);
 
 static PerlInterpreter *perl = NULL;
 static int  do_perl=1;
+static int  perl_vars_invalid = 1;      /* val: to update perl vars */
 int skip_addvia = 0;			/* val: skip via adding */
 int perl_subs   = -1;			/* val: defined subs */
 #ifdef _MSC_VER
@@ -1052,6 +1053,8 @@ static void restoreperlerr(int saveerr, int pid)
 #endif
 #endif /* _MSC_VER */
 }
+/* mark current config as invalid in order to setup a new one */
+void perl_invalidate(void) { perl_vars_invalid = 1; }
 /* set %config, %links */
 void perl_setvars(void) {
    UINT i, j;
@@ -1225,6 +1228,8 @@ void perl_setvars(void) {
       VK_ADD_HASH_str(hv, sv, config->group[i].name, config->group[i].desc);
    }
    SvREADONLY_on(hv);
+
+   perl_vars_invalid = 0;
 }
 
 int PerlStart(void)
@@ -1338,6 +1343,14 @@ int PerlStart(void)
    return 0;
 }
 
+#define VK_START_HOOK(name, code, ret)                           \
+   if (do_perl && perl == NULL)                                  \
+     if (PerlStart()) return ret;                                \
+   if (!perl || !do_##name || (perl_subs & code) == 0)           \
+     return ret;                                                 \
+   w_log(LL_SRCLINE, "%s:%d starting Perl hook "#name, __FILE__, __LINE__); \
+   if (perl_vars_invalid) perl_setvars();
+
 int perlscanmsg(char *area, s_message *msg)
 {
    static int do_perlscan = 1;
@@ -1351,10 +1364,7 @@ int perlscanmsg(char *area, s_message *msg)
    STRLEN n_a;
    int result = 0;
 
-   if (do_perl && perl == NULL)
-     PerlStart();
-   if (!perl || !do_perlscan || (perl_subs & SUB_SCAN) == 0)
-     return 0;
+   VK_START_HOOK(perlscan, SUB_SCAN, 0)
 
    pid = handleperlerr(&saveerr);
    { dSP;
@@ -1491,10 +1501,8 @@ s_route *perlroute(s_message *msg, s_route *defroute)
    static int do_perlroute = 1;
    int pid, saveerr;
 
-   if (do_perl && perl==NULL)
-     PerlStart();
-   if (!perl || !do_perlroute || !(perl_subs & SUB_ROUTE))
-     return NULL;
+   VK_START_HOOK(perlroute, SUB_ROUTE, NULL)
+
    pid = handleperlerr(&saveerr);
    { SV *svaddr, *svattr, *svflv, *svfrom, *svret, *svroute;
      SV *svfromname, *svtoname, *svsubj, *svtext, *svdate;
@@ -1682,11 +1690,7 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
    int pid, saveerr;
    char *sorig;
 
-   if (do_perl && perl==NULL)
-     if (PerlStart())
-       return 0;
-   if (!perl || !do_perlfilter || !(perl_subs & SUB_FILTER))
-     return 0;                
+   VK_START_HOOK(perlfilter, SUB_FILTER, 0)
 
    pid = handleperlerr(&saveerr);
    if (msg->netMail != 1) {
@@ -1851,11 +1855,8 @@ int perlpkt(const char *fname, int secure)
    SV *svpktname, *svsecure, *svret;
    int pid, saveerr;
 
-   if (do_perl && perl==NULL)
-     if (PerlStart())
-       return 0;
-   if (!perl || !do_perlpkt || !(perl_subs & SUB_PROCESS_PKT))
-     return 0;
+   VK_START_HOOK(perlpkt, SUB_PROCESS_PKT, 0)
+
    pid = handleperlerr(&saveerr);
    svpktname = perl_get_sv("pktname", TRUE);
    svsecure  = perl_get_sv("secure",  TRUE);
@@ -1903,11 +1904,8 @@ void perlpktdone(const char *fname, int rc)
    SV *svpktname, *svrc, *svres;
    int pid, saveerr;
 
-   if (do_perl && perl==NULL)
-     if (PerlStart())
-       return;
-   if (!perl || !do_perlpktdone || !(perl_subs & SUB_PKT_DONE))
-     return;
+   VK_START_HOOK(perlpktdone, SUB_PKT_DONE, )
+
    pid = handleperlerr(&saveerr);
    { dSP;
      svpktname = perl_get_sv("pktname", TRUE);
@@ -1943,11 +1941,8 @@ void perlafterunp(void)
    STRLEN n_a;
    int pid, saveerr;
 
-   if (do_perl && perl==NULL)
-     if (PerlStart())
-       return;
-   if (!perl || !do_perlafterunp || !(perl_subs & SUB_AFTER_UNPACK))
-     return;
+   VK_START_HOOK(perlafterunp, SUB_AFTER_UNPACK, )
+
    pid = handleperlerr(&saveerr);
    { dSP;
      ENTER;
@@ -1974,11 +1969,8 @@ void perlbeforepack(void)
    STRLEN n_a;
    int pid, saveerr;
 
-   if (do_perl && perl==NULL)
-     if (PerlStart())
-       return;
-   if (!perl || !do_perlbeforepack || !(perl_subs & SUB_BEFORE_PACK))
-     return;
+   VK_START_HOOK(perlbeforepack, SUB_BEFORE_PACK, )
+
    pid = handleperlerr(&saveerr);
    { dSP;
      ENTER;
@@ -2011,11 +2003,7 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
    static int do_perltossbad=1;
    int pid, saveerr;
 
-   if (do_perl && perl==NULL)
-     if (PerlStart())
-       return 0;
-   if (!perl || !do_perltossbad || !(perl_subs & SUB_TOSSBAD))
-     return 0;
+   VK_START_HOOK(perltossbad, SUB_TOSSBAD, 0)
 
    pid = handleperlerr(&saveerr);
    { dSP;
@@ -2148,11 +2136,7 @@ int perl_echolist(char **report, s_listype type, ps_arealist al, char *aka)
    static int do_perlecholist = 1;
    int pid, saveerr;
 
-   if (do_perl && perl==NULL)
-     if (PerlStart())
-       return 0;
-   if (!perl || !do_perlecholist || !(perl_subs & SUB_ON_ECHOLIST))
-     return 0;
+   VK_START_HOOK(perlecholist, SUB_ON_ECHOLIST, 0)
 
    pid = handleperlerr(&saveerr);
    { dSP;
@@ -2211,11 +2195,7 @@ int perl_afixcmd(char **report, int cmd, char *aka, char *line)
    static int do_perlafixcmd = 1;
    int pid, saveerr;
 
-   if (do_perl && perl==NULL)
-     if (PerlStart())
-       return 0;
-   if (!perl || !do_perlafixcmd || !(perl_subs & SUB_ON_AFIXCMD))
-     return 0;
+   VK_START_HOOK(perlafixcmd, SUB_ON_AFIXCMD, 0)
 
    pid = handleperlerr(&saveerr);
    { dSP;
@@ -2263,11 +2243,7 @@ int perl_afixreq(s_message *msg, hs_addr pktOrigAddr)
    static int do_perlafixreq=1;
    int pid, saveerr;
 
-   if (do_perl && perl==NULL)
-     if (PerlStart())
-       return 0;
-   if (!perl || !do_perlafixreq || !(perl_subs & SUB_ON_AFIXREQ))
-     return 0;                
+   VK_START_HOOK(perlafixreq, SUB_ON_AFIXREQ, 0)
 
    pid = handleperlerr(&saveerr);
    { dSP;
@@ -2343,11 +2319,7 @@ int perl_putmsg(s_area *echo, s_message *msg)
    static int do_perlputmsg=1;
    int pid, saveerr;
 
-   if (do_perl && perl==NULL)
-     if (PerlStart())
-       return 1;
-   if (!perl || !do_perlputmsg || !(perl_subs & SUB_PUTMSG))
-     return 1;
+   VK_START_HOOK(perlputmsg, SUB_PUTMSG, 1)
 
    pid = handleperlerr(&saveerr);
    { dSP;
@@ -2458,11 +2430,7 @@ int perl_export(s_area *echo, s_link *link, s_message *msg)
    static int do_perlexport=1;
    int pid, saveerr;
 
-   if (do_perl && perl==NULL)
-     if (PerlStart())
-       return 1;
-   if (!perl || !do_perlexport || !(perl_subs & SUB_EXPORT))
-     return 1;
+   VK_START_HOOK(perlexport, SUB_EXPORT, 1)
 
    pid = handleperlerr(&saveerr);
    { dSP;

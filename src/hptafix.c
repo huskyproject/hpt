@@ -169,10 +169,8 @@ void autoPassive()
                                         " to AreaFix containing the %RESUME command.");
                                   xscatprintf(&msg->text, "\r\r--- %s autopause\r", versionStr);
                                   msg->textLength = strlen(msg->text);
-                                  processNMMsg(msg, NULL,
-                                               getRobotsArea(config),
-                               0, MSGLOCAL);
-                  writeEchoTossLogEntry(getRobotsArea(config)->areaName);
+                                  processNMMsg(msg, NULL, getRobotsArea(config), 0, MSGLOCAL);
+                                  writeEchoTossLogEntry(getRobotsArea(config)->areaName);
                                   closeOpenedPkt();
                                   freeMsgBuffers(msg);
                                   nfree(msg);
@@ -191,7 +189,7 @@ void autoPassive()
                                       rc += pauseAreas(0,config->links[i],NULL);
 #ifdef DO_PERL
                                   /* update perl vars */
-                                  perl_setvars();
+                                  perl_invalidate();
 #endif
                               } /*  end changepause */
                               nfree(line);
@@ -236,7 +234,7 @@ int init_hptafix(void) {
   hook_onDeleteArea = &afDeleteArea;
   hook_onRescanArea = &afRescanArea;
 #ifdef DO_PERL
-  hook_onConfigChange = &perl_setvars;
+  hook_onConfigChange = &perl_invalidate;
   hook_echolist       = &perl_echolist;
   hook_afixcmd        = &perl_afixcmd;
   hook_afixreq        = &perl_afixreq;
