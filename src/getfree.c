@@ -160,6 +160,11 @@ unsigned long getfree (char *path)
 #ifndef _SYS_STATFS_H
 #define _SYS_STATFS_H
 #endif
+#elif defined(__linux__)
+#include <sys/statvfs.h>
+#ifndef _SYS_STATVFS_H
+#define _SYS_STATVFS_H
+#endif
 #else
   /* we are not on any BSD-like OS */
 #ifndef __BEOS__ /* list other UNIX os'es without getfree mechanism here */
