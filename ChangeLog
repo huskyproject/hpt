@@ -1,3 +1,12 @@
+2001-08-19 Sunday 13:35  ml
+
+	* TODO (1.170), doc/hpt-FAQ.russian (1.5): Russian FAQ update
+
+2001-08-19 Sunday 13:10  ml
+
+	* src/toss.c (1.358): print pkt file name to echoarea debug file
+	(-debug)
+
 2001-08-18 Saturday 05:40  ml
 
 	* src/post.c (1.57): fixed typos in post.c
