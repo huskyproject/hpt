@@ -1,3 +1,13 @@
+2001-07-08 Sunday 21:28  joerg.jaspert
+
+	* debian/: README.Debian (1.2), changelog (1.7), control (1.5),
+	docs (1.2): Enabled Perl for Debian Packages.  Rebuild with new
+	fidoconf
+
+2001-07-08 Sunday 21:05  joerg.jaspert
+
+	* debian/huskymak.cfg (1.7): Enabled Perl for Debian Packages
+
 2001-07-03 Tuesday 15:41  ml
 
 	* doc/hpt.texi (1.31), src/perl.c (1.13), src/toss.c (1.353):
