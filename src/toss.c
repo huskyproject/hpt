@@ -895,26 +895,25 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
    msgbDir=(creatingLink->msgBaseDir) ? creatingLink->msgBaseDir : config->msgBaseDir;
 
-   if (stricmp(msgbDir, "passthrough")!=0) {
+   if (stricmp(msgbDir,"passthrough")!=0 && NULL==hpt_stristr(newAC,"passthrough")) {
 #ifndef MSDOS
 	   if (hpt_stristr(newAC, "-dosfile")==NULL)
-		   xscatprintf(&buff, "EchoArea %s %s%s -a %s%s", c_area,
-					   msgbDir, squishFileName, myaddr,
-					   (msgbtype) ? "" : " -b Squish");
+		   xscatprintf(&buff, "EchoArea %s %s%s%s", c_area, msgbDir,
+					   squishFileName, (msgbtype) ? "" : " -b Squish");
 	   else {
 		   sleep(1); // to prevent time from creating equal numbers
-		   xscatprintf(&buff,"EchoArea %s %s%8lx -a %s%s", c_area,
-					   msgbDir, (long)time(NULL), myaddr,
-					   (msgbtype) ? "" : " -b Squish");
+		   xscatprintf(&buff,"EchoArea %s %s%8lx%s", c_area, msgbDir,
+					   (long)time(NULL), (msgbtype) ? "" : " -b Squish");
 	   }
 #else
 	   sleep(1); // to prevent time from creating equal numbers
-	   xscatprintf(&buff,"EchoArea %s %s%8lx -a %s%s", c_area,
-				   msgbDir, (long)time(NULL), myaddr,
-				   (msgbtype) ? "" : " -b Squish");
+	   xscatprintf(&buff,"EchoArea %s %s%8lx%s", c_area, msgbDir,
+				   (long)time(NULL), (msgbtype) ? "" : " -b Squish");
 #endif
    } else {
-	   xscatprintf(&buff, "EchoArea %s passthrough -a %s", c_area, myaddr);
+	   xscatprintf(&buff, "EchoArea %s passthrough", c_area);
+
+	   del_tok(&newAC, "passthrough");
 
 	   del_tok(&newAC, "-b "); // del "-b msgbtype" from autocreate defaults
 	   del_tok(&newAC, "-$m "); // del "-$m xxx" from autocreate defaults
@@ -929,6 +928,9 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    }
    
    nfree(squishFileName);
+
+   // add "-a ourAka" to echoarea
+   xstrscat(&buff, " -a ", myaddr, NULL);
 
    if (creatingLink->LinkGrp) {
 	   if (hpt_stristr(newAC, " -g ")==NULL)

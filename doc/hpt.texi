@@ -1773,7 +1773,8 @@ This statement can only be repeated for different links.
 @code{autoareacreatedefaults -$m 200 -dupecheck move}
 @end table
 
-Set defaults to autocreated echoareas.
+Set defaults to autocreated echoareas. To create PASSTHROUGH areas you
+can add "passthrough" to @code{AutoAreaCreateDefaults}.
 
 This statement can only be repeated for different links.
 

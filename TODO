@@ -3,7 +3,6 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- AutoAreaCreateDefaults passthrough ...
 - "/" -> "_", etc... (dosfile)
 - make switch for advisory lock
 - areafix definition
