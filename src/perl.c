@@ -514,6 +514,7 @@ perl_fork:
 #endif
    return pid;
 #endif 
+   return 0;
 }
 
 static void restoreperlerr(int saveerr, int pid)
