@@ -42,6 +42,7 @@ install: build
 	-cp misc/areafix.hlp $(CURDIR)/debian/hpt/etc/husky
 	-cp misc/* $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc
 	-cp misc/hpt_ro/* $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/hpt_ro
+	-cp misc/makeavl/* $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/makeavl
 	rm -f $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/*.hlp
 	cd doc ; \
 	make all install DESTDIR=$(CURDIR)/debian/hpt 
