@@ -1,3 +1,8 @@
+2002-08-15 Thursday 23:59  mche
+
+	* src/: dupe.c (1.65), toss.c (1.433): free() function changed to
+	macro nfree()
+
 2002-08-03 Saturday 11:45  mche
 
 	* src/areafix.c (1.337): fix if statment that brakes areafix
