@@ -40,6 +40,7 @@
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
+#include <fidoconf/afixcmd.h>
 
 #include <pkt.h>
 #include <scan.h>
