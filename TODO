@@ -20,6 +20,7 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - templates
 - speedup getArea by using b-tree
 - change uplinks from command line
+- remote change areafixpwd, pktpwd, ticpwd,filefixpwd and paáker by links
 
 Category 3: Will only be included if volunteers send patches
 ============================================================
