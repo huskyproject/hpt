@@ -25,6 +25,7 @@ OBJS    = pktinfo.obj \
 	  dupe.obj \
           tree.obj \
 	  crc.obj \
+	  xstr.obj \
 	  hptlink.obj
 
 SRC_DIR = ..\src

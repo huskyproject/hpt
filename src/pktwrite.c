@@ -34,8 +34,10 @@
 #include <malloc.h>
 #endif
 #include <string.h>
+#include <unistd.h>
 
 #include <fidoconfig.h>
+#include <xstr.h>
 #include <common.h>
 
 #include <pkt.h>
@@ -187,25 +189,29 @@ FILE *openPktForAppending(char *fileName, s_pktHeader *header)
  * Imho it is not necessary to create better msgid for this purpose.
  */
 
-void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_addr *destAka) {
+char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAka) {
    
-   *buff = 0;
-   if (area) sprintf(buff + strlen(buff), "AREA:%s\r", area);
+   char *buff = NULL;
+	
+   if (area) xscatprintf(&buff, "AREA:%s\r", area);
    else {
-	   sprintf(buff + strlen(buff), "\1INTL %u:%u/%u %u:%u/%u\r",
+	   xscatprintf(&buff, "\1INTL %u:%u/%u %u:%u/%u\r",
 			   destAka->zone, destAka->net, destAka->node,
 			   ourAka->zone,  ourAka->net,  ourAka->node);
-      if (ourAka->point) sprintf(buff+strlen(buff), "\1FMPT %d\r", ourAka->point);
-      if (destAka->point) sprintf(buff+strlen(buff), "\1TOPT %d\r", destAka->point);
+      if (ourAka->point) xscatprintf(&buff, "\1FMPT %d\r", ourAka->point);
+      if (destAka->point) xscatprintf(&buff, "\1TOPT %d\r", destAka->point);
    }
 
+   sleep(1);
    if (ourAka->point)
-      sprintf(buff + strlen(buff),"\1MSGID: %u:%u/%u.%u %08lx\r",
+      xscatprintf(&buff, "\1MSGID: %u:%u/%u.%u %08lx\r",
               ourAka->zone,ourAka->net,ourAka->node,ourAka->point,time(NULL));
    else
-      sprintf(buff + strlen(buff),"\1MSGID: %u:%u/%u %08lx\r",
+      xscatprintf(&buff, "\1MSGID: %u:%u/%u %08lx\r",
               ourAka->zone,ourAka->net,ourAka->node,time(NULL));
 
-   sprintf(buff + strlen(buff), "\1PID: %s\r", versionStr);
-   strcat(buff, "\1FLAGS NPD\r");
+   xscatprintf(&buff, "\1PID: %s\r", versionStr);
+   xstrcat(&buff, "\1FLAGS NPD\r");
+
+   return buff;
 }

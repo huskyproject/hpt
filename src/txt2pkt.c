@@ -12,6 +12,7 @@
 #include <common.h>
 #include <version.h>
 #include <pkt.h>
+#include <xstr.h>
 #include <recode.h>
 
 int main(int argc, char *argv[])
@@ -176,21 +177,19 @@ int main(int argc, char *argv[])
 		 header.origAddr.net,header.origAddr.node);
          strcat(textBuffer, tmp);
       }
-      msg.textLength=strlen(textBuffer);
-      msg.text = (CHAR *) malloc(msg.textLength + 1 + 512);
       strcpy(versionStr,"txt2pkt");
-      createKludges(msg.text, area, &msg.origAddr, &msg.destAddr);
-      strcat(msg.text, textBuffer);
+      msg.text = createKludges(area, &msg.origAddr, &msg.destAddr);
+      xstrcat(&(msg.text), textBuffer);
       if (area == NULL) {
          time(&t);
          tm = gmtime(&t);
-         sprintf(tmp, "\001Via %u:%u/%u.%u @%04u%02u%02u.%02u%02u%02u.UTC %s\r",
+         xscatprintf(&(msg.text), "\001Via %u:%u/%u.%u @%04u%02u%02u.%02u%02u%02u.UTC %s\r",
                  header.origAddr.zone, header.origAddr.net, header.origAddr.node, header.origAddr.point,
                  tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, versionStr);
-         strcat(msg.text, tmp);
       }
       
       free(textBuffer);
+      msg.textLength=strlen(textBuffer);
 
       if (config->outtab != NULL) {
          // load recoding tables

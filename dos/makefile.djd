@@ -3,7 +3,7 @@ include ../../huskymak.cfg
 
 CC      = gcc 
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o crc.o
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o crc.o xstr.o
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)

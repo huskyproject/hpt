@@ -42,6 +42,7 @@
 #endif
 #include <common.h>
 
+#include <xstr.h>
 #include <version.h>
 #include <toss.h>
 #include <post.h>
@@ -170,17 +171,12 @@ void post(int c, unsigned int *n, char *params[])
       /*FIXME*/
       if (msg.netMail) echo=&(config->netMailAreas[0]);
 
-      /* reserve mem for the real text */
-      /* !!! warning - I suppose that 512 bytes will be enough
-      for kludges and tearline + origin */
-      msg.text = (char *) malloc(msg.textLength + 1 + 512);
-      createKludges(msg.text, area, &msg.origAddr, &msg.destAddr);
-
-      strcat(msg.text, textBuffer);
+      msg.text = createKludges(area, &msg.origAddr, &msg.destAddr);
+      xstrcat(&(msg.text), textBuffer);
       
       free(textBuffer);
 
-      sprintf(msg.text + strlen(msg.text), "\r--- %s\r * Origin: %s (%s)",
+      xscatprintf(&msg.text, "\r--- %s\r * Origin: %s (%s)",
               versionStr, config->name, aka2str(msg.origAddr));
 
       msg.textLength = strlen(msg.text);

@@ -2,6 +2,22 @@ hpt 0.9.5
 ---------
 
 ----- cvs ci ------
+Thu Jan  6 19:51:30 NOVT 2000                                                   
+max (patch from Kolya):
+- added string functions xstralloc, xstrcat, xstrscat, xscatprintf to
+ make text handling code more simple and reliable (uses vsnprintf and
+ vasprintf if possible).
+- changed lot of code to use this new xfunctions. Be prepared !!!
+- made some changes in arcmail and find_old_arcmail functions
+- fix in scanNMArea to display area name
+- fix in createKludges to generate different MSGID's
+- memory leak fix in hpt.c
+- functions in fcommon.c use PATHDELIM as delimiter now
+max:
+* corrected tossFromBadArea
+! there is some bugs in code: we try to fix them, but...
+
+----- cvs ci ------
 Mon Jan  3 17:45:54 NOVT 2000                                                   
 max:
 * added correctDateTime()

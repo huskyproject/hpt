@@ -2,10 +2,10 @@ DEBUG   = 0
 CC      = wcc386
 LINK    = WLINK
 
-OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj post.obj areafix.obj dupe.obj recode.obj tree.obj seenby.obj strsep.obj link.obj crc.obj
+OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj post.obj areafix.obj dupe.obj recode.obj tree.obj seenby.obj strsep.obj link.obj crc.obj xstr.obj
 SRC_DIR = ..\src
 
-CFLAGS = -zq -wx -bt=nt -i=..\..\fidoconfig;..\..\smapi;..\h; -oneatx -5 -DHASHDUPE -DHAS_JUNK_AFTER_SEEK
+CFLAGS = -zq -wx -bt=nt zp=1 -i=..\..\fidoconfig;..\..\smapi;..\h; -oneatx -5 -DHASHDUPE -DHAS_JUNK_AFTER_SEEK
 all: $(OBJS) pktinfo.exe tlog.exe hpt.exe hptlink.exe
 
 $(OBJS): $(SRC_DIR)\*.c

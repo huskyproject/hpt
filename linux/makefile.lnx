@@ -4,13 +4,13 @@ include ../../huskymak.cfg
 HASHDUPE = 0
 CC       = gcc 
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o crc.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o crc.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o xstr.o
 SRC_DIR = ../src/
 
 ifeq ($(HASHDUPE), 1)
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -ggdb -O3 -DUNIX -DHASHDUPE -DHAS_POPEN
+  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -ggdb -O3 -DUNIX -DHASHDUPE -DHAS_POPEN 
   LFLAGS  = -L$(LIBDIR)
 else
   CFLAGS  = -c -I../h -I$(INCDIR) -Wall -O3 -s -DUNIX -DHASHDUPE -DHAS_POPEN
@@ -20,7 +20,7 @@ endif
 else
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -ggdb -O6 -DUNIX -DHAS_POPEN
+  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -ggdb -O6 -DUNIX -DHAS_POPEN 
   LFLAGS  = -L$(LIBDIR)
 else
   CFLAGS  = -c -I../h -I$(INCDIR) -Wall -O3 -s -DUNIX -DHAS_POPEN
@@ -45,13 +45,13 @@ pktinfo: pktinfo.o $(OBJS)
 	$(CC) $(LFLAGS) -o pktinfo log.o recode.o pktinfo.o pktread.o fcommon.o global.o -lsmapilnx -lfidoconfig
 
 tlog: tlog.o log.o
-	$(CC) $(LFLAGS) -o tlog tlog.o log.o
+	$(CC) $(LFLAGS) -o tlog tlog.o log.o 
 
 tpkt: tpkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o 
-	$(CC) $(LFLAGS) -o tpkt log.o tpkt.o fcommon.o pktread.o recode.o pktwrite.o global.o -lsmapilnx  -lfidoconfig
+	$(CC) $(LFLAGS) -o tpkt log.o tpkt.o fcommon.o pktread.o recode.o pktwrite.o global.o xstr.o -lsmapilnx  -lfidoconfig 
 
 txt2pkt: txt2pkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o 
-	$(CC) $(LFLAGS) -o txt2pkt log.o txt2pkt.o fcommon.o pktread.o recode.o pktwrite.o global.o -lsmapilnx  -lfidoconfig
+	$(CC) $(LFLAGS) -o txt2pkt log.o txt2pkt.o fcommon.o pktread.o recode.o pktwrite.o global.o xstr.o -lsmapilnx  -lfidoconfig
 
 hptlink: hptlink.o
 	$(CC) $(LFLAGS) -o hptlink hptlink.o -lsmapilnx -lfidoconfig

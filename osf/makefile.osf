@@ -6,7 +6,7 @@ CC      = cc
 # include Husky-Makefile-Config
 include ../../huskymak.cfg
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o strsep.o link.o crc.o
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o strsep.o link.o crc.o xstr.o
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)

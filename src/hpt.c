@@ -287,7 +287,10 @@ int main(int argc, char **argv)
    
    msgToSysop = (s_message**)calloc(config->addrCount, sizeof(s_message*));
    for (i = 0; i < config->addrCount; i++) {
-       msgToSysop[i] = (s_message*)malloc(sizeof(s_message));
+	   
+       /* Some results of wrong patching ? A memleak anyway
+	* msgToSysop[i] = (s_message*)malloc(sizeof(s_message));
+	*/
        msgToSysop[i] = NULL;
    }
 

@@ -145,11 +145,7 @@ int createTempPktFileName(s_link *link)
    time_t aTime = time(NULL);  // get actual time
    int counter = 0;
    char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
-#ifdef UNIX
-   char limiter='/';
-#else
-   char limiter='\\';
-#endif
+   char limiter=PATH_DELIM;
    char zoneSuffix[6] = "\0";
 
    char *zoneOutbound; // this contains the correct outbound directory including zones
@@ -239,11 +235,7 @@ int createDirectoryTree(const char *pathName) {
    struct stat buf;
    char *start, *slash;
 
-#ifdef UNIX
-   char limiter='/';
-#else
-   char limiter='\\';
-#endif
+   char limiter=PATH_DELIM;
 
    int i;
 
@@ -299,11 +291,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    char name[13], bsyname[13], zoneSuffix[6], pntDir[14];
    char	*sepDir, sepname[13];
 
-#ifdef UNIX
-   char limiter='/';
-#else
-   char limiter='\\';
-#endif
+   char limiter=PATH_DELIM;
 
    if (link->hisAka.point != 0) {
       sprintf(pntDir, "%04x%04x.pnt%c", link->hisAka.net, link->hisAka.node, limiter);

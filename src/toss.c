@@ -45,8 +45,9 @@
 
 #include <fidoconfig.h>
 #include <common.h>
-
 #include <dirlayer.h>
+
+#include <xstr.h>
 #include <pkt.h>
 #include <scan.h>
 #include <toss.h>
@@ -141,7 +142,8 @@ int to_us(const s_addr destAddr)
    return !0;
 }
 
-XMSG createXMSG(s_message *msg, const s_pktHeader *header, UINT16 forceattr) {
+XMSG createXMSG(s_message *msg, const s_pktHeader *header, UINT16 forceattr) 
+{
 	XMSG  msgHeader;
 	struct tm *date;
 	time_t    currentTime;
@@ -180,17 +182,14 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, UINT16 forceattr) {
              break;
              }
 
-      if (remapit)
-         {
+      if (remapit) {
          msg->destAddr.zone=config->remaps[i].newaddr.zone;              
          msg->destAddr.net=config->remaps[i].newaddr.net;
          msg->destAddr.node=config->remaps[i].newaddr.node;   
          msg->destAddr.point=config->remaps[i].newaddr.point;             
          }                                                               
 
-   }
-   else
-     {
+   } else {
        msgHeader.attr = msg->attributes;
        msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD | MSGFRQ | MSGSCANNED | MSGLOCKED); // kill these flags
      }
@@ -841,7 +840,8 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    return 0;
 }
 
-int processExternal (s_area *echo, s_message *msg,s_carbon carbon) { 
+int processExternal (s_area *echo, s_message *msg,s_carbon carbon) 
+{ 
 	FILE *msgfp;
 	char *fname = NULL;
 	char *progname, *execstr, *p;
@@ -972,7 +972,9 @@ int carbonCopy(s_message *msg, s_area *echo)
 		area = config->carbons[i].area;
 		
 		// dont CC to the echo the mail comes from
-		if (!stricmp(echo->areaName,area->areaName)) continue;
+		if (!stricmp(echo->areaName,area->areaName) &&
+		// fix for carbonDelete
+		    config->carbons[i].areaName != NULL) continue;
 		
 		switch (config->carbons[i].type) {
 			
@@ -1067,7 +1069,6 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 void makeMsgToSysop(char *areaName, s_addr fromAddr)
 {
     s_area *echo;
-    char buff[81];
     int i;
     
     if (!config->ReportTo) return;
@@ -1081,25 +1082,19 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr)
 	    if (msgToSysop[i] == NULL) {
 		if (stricmp(config->ReportTo, "netmail")==0) {
 		    msgToSysop[i] = makeMessage(echo->useAka, echo->useAka, versionStr, config->sysop, "Created new areas", 1);
-		    msgToSysop[i]->text = (char *)calloc(300, sizeof(char));
-		    createKludges(msgToSysop[i]->text, NULL, echo->useAka, echo->useAka);
+		    msgToSysop[i]->text = createKludges(NULL, echo->useAka, echo->useAka);
 		} else {
 		    msgToSysop[i] = makeMessage(echo->useAka, echo->useAka, versionStr, "All", "Created new areas", 0);
-		    msgToSysop[i]->text = (char *)calloc(300, sizeof(char));
-		    createKludges(msgToSysop[i]->text, config->ReportTo, echo->useAka, echo->useAka);
+		    msgToSysop[i]->text = createKludges(config->ReportTo, echo->useAka, echo->useAka);
 		} /* endif */
 
-		strcat(msgToSysop[i]->text, "Action   Name");
-		strcat(msgToSysop[i]->text, print_ch(49, ' '));
-		strcat(msgToSysop[i]->text, "By\r");
-		strcat(msgToSysop[i]->text, print_ch(79, '-'));
-		strcat(msgToSysop[i]->text, "\r");
+		xstrscat(&(msgToSysop[i]->text), "Action   Name", 
+			print_ch(49, ' '), "By\r", NULL);
+		// Shitty static variables ....
+		xstrscat(&(msgToSysop[i]->text), print_ch(79, '-'), "\r", NULL);
 	    }
-	    sprintf(buff, "Created  %s", echo->areaName);
-	    sprintf(buff+strlen(buff), "%s", print_ch(sizeof(buff)-1-strlen(buff), ' '));
-	    sprintf(buff+62, "%s\r", aka2str(fromAddr));
-	    msgToSysop[i]->text = (char*)realloc(msgToSysop[i]->text, strlen(msgToSysop[i]->text)+strlen(buff)+1);
-	    strcat(msgToSysop[i]->text, buff);
+	    xscatprintf(&(msgToSysop[i]->text), "Created  %-53s%s\r", 
+	    	 echo->areaName, aka2str(fromAddr));
 	    break;
 	}
     }
@@ -1108,7 +1103,7 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr)
 
 void writeMsgToSysop()
 {
-    char	tmp[81], *ptr, *seenByPath;
+    char	*ptr, *seenByPath;
     s_area	*echo;
     int		i, ccrc = 0;
     s_seenBy	*seenBys;
@@ -1117,16 +1112,17 @@ void writeMsgToSysop()
     
     for (i = 0; i < config->addrCount; i++) {
 	if (msgToSysop[i]) {
-	    sprintf(tmp, " \r--- %s\r * Origin: %s (%s)\r", versionStr, config->name, aka2str(msgToSysop[i]->origAddr));
-	    msgToSysop[i]->text = (char*)realloc(msgToSysop[i]->text, strlen(tmp)+strlen(msgToSysop[i]->text)+1);
-	    strcat(msgToSysop[i]->text, tmp);
+	    xscatprintf(&(msgToSysop[i]->text), " \r--- %s\r * Origin: %s (%s)\r", 
+			versionStr, config->name, aka2str(msgToSysop[i]->origAddr));
 	    msgToSysop[i]->textLength = strlen(msgToSysop[i]->text);
-	    if (msgToSysop[i]->netMail == 1) processNMMsg(msgToSysop[i], NULL, NULL, 1);
+	    
+	    if (msgToSysop[i]->netMail == 1) 
+		    processNMMsg(msgToSysop[i], NULL, NULL, 1);
 	    else {
+		// get echoarea  for this msg    
 		ptr = strchr(msgToSysop[i]->text, '\r');
-		strncpy(tmp, msgToSysop[i]->text+5, (ptr-msgToSysop[i]->text)-5);
-		tmp[ptr-msgToSysop[i]->text-5]=0;
-		echo = getArea(config, tmp);
+		*ptr = '\0'; echo = getArea(config, msgToSysop[i]->text + 5); *ptr = '\r';
+		
 		if (echo != &(config->badArea)) {
 		    if (config->carbonCount != 0) ccrc = carbonCopy(msgToSysop[i], echo);
 		    if (echo->msgbType != MSGTYPE_PASSTHROUGH && ccrc <= 1) {
@@ -1144,17 +1140,9 @@ void writeMsgToSysop()
    
 		    // path line
 		    // only include node-akas in path
-		    if (echo->useAka->point == 0) {
-			sprintf(tmp, "%u/%u", echo->useAka->net, echo->useAka->node);
-			seenByPath = (char *) realloc(seenByPath, strlen(seenByPath)+strlen(tmp)+1+8); // 8 == strlen("\001PATH: \r")
-			strcat(seenByPath, "\001PATH: ");
-			strcat(seenByPath, tmp);
-			strcat(seenByPath, "\r");
-		    }
-		    msgToSysop[i]->text = (char*)realloc(msgToSysop[i]->text,
-							 strlen(msgToSysop[i]->text)+
-							 strlen(seenByPath)+1);
-		    strcat(msgToSysop[i]->text, seenByPath);
+		    if (echo->useAka->point == 0) 
+   			xscatprintf(&seenByPath, "\001PATH: %u/%u\r", echo->useAka->net, echo->useAka->node);
+		    xstrcat(&(msgToSysop[i]->text), seenByPath);
 		    free(seenByPath);
 		    if (echo->downlinkCount > 0)
 			forwardMsgToLinks(echo, msgToSysop[i], msgToSysop[i]->origAddr);
@@ -1713,45 +1701,43 @@ void writeTossStatsToLog(void) {
 			config->localAreas[i].areaName, config->localAreas[i].imported);
 }
 
-int find_old_arcmail(s_link *link, FILE *flo) {
-	FILE *f;
-	char *line, *tmp=NULL, bundle[256]="";
-	char *wdays[7]={ ".su", ".mo", ".tu", ".we", ".th", ".fr", ".sa" };
+int find_old_arcmail(s_link *link, FILE *flo)
+{
+	char *line, *bundle=NULL;
 	long len;
-	unsigned i, as=500;
+	unsigned i, as;
 
 	while ((line = readLine(flo)) != NULL) {
 #ifndef UNIX
 		line = trimLine(line);
 #endif
-		
-		for (i=0; (i<7) && (tmp==NULL); i++) {
-			if (strstr(line,wdays[i])!=NULL) {tmp=line; break;}
+ 	     	for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
+	            if (patimat(line, validExt[i]) == 1) {
+			if (bundle != NULL) free(bundle);
+			bundle = strdup(line + 1); // One char for first symbol in flo file
+			break;
 		}
-		
-		if (tmp!=NULL) {tmp++; sprintf(bundle,"%s",tmp); tmp=NULL;}
 		free(line);
 	}
-		
-	if (bundle[0]!='\000') {
-		f=fopen(bundle,"rb");
-		if (f!=NULL) {
-			fseek(f, 0L, SEEK_END);
-			len = ftell(f);
-			fclose(f);
-			if (link->arcmailSize!=0) as=link->arcmailSize;
-			else {
-				if (config->defarcmailSize!=0) as=config->defarcmailSize;
-			}
-			// default 500 kb max
-			if ((int)len < as*1024) {
+	if (bundle == NULL) return 0;
+	if (*bundle != '\000') {
+		len = fsize(bundle);
+		if (len != -1L) {
+			if (link->arcmailSize!=0) 
+				as = link->arcmailSize;
+			else if (config->defarcmailSize!=0) 
+				as = config->defarcmailSize;
+			else
+				as = 500; // default 500 kb max
+			if (len < as * 1024L) {
 				link->packFile=(char*)realloc(link->packFile,strlen(bundle)+1);
 				strcpy(link->packFile,bundle);
+				free(bundle);
 				return 1;
 			}
 		}
 	}
-	
+	free(bundle);
 	return 0;
 }
 
@@ -1955,8 +1941,8 @@ void tossTempOutbound(char *directory)
 
    while ((file = readdir(dir)) != NULL) {
 	   l = strlen(file->d_name);
-	   if (l > 3 && (stricmp(file->d_name + l - 3, "pkt") == 0 ||
-	                 stricmp(file->d_name + l - 3, "qqq") == 0))
+	   if (l > 4 && (stricmp(file->d_name + l - 4, ".pkt") == 0 ||
+	                 stricmp(file->d_name + l - 4, ".qqq") == 0))
 	   {
                    dummy = (char *) malloc(strlen(directory)+l+1);
                    strcpy(dummy, directory);
@@ -2154,7 +2140,7 @@ void tossFromBadArea()
    HAREA area;
    HMSG  hmsg;
    XMSG  xmsg;
-   dword highestMsg, i;
+   dword highestMsg, currentMsg, i;
    int   delmsg;
    
    // load recoding tables
@@ -2164,11 +2150,12 @@ void tossFromBadArea()
    if (area != NULL) {
 //      statScan.areas++;
       writeLogEntry(hpt_log, '1', "Scanning area: %s", config->badArea.areaName);
-      i = MsgGetHighWater(area);
-      highestMsg    = MsgGetHighMsg(area);
+//      hw = MsgGetHighWater(area);
+      highestMsg = MsgGetHighMsg(area);
+      currentMsg = MsgGetCurMsg(area);
 
-      while (i <= highestMsg) {
-         hmsg = MsgOpenMsg(area, MOPEN_RW, i++);
+      for (i=currentMsg; i<=highestMsg; i++) {
+         hmsg = MsgOpenMsg(area, MOPEN_RW, i);
          if (hmsg == NULL) continue;      // msg# does not exist
 //         statScan.msgs++;
          MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
@@ -2177,13 +2164,13 @@ void tossFromBadArea()
          MsgCloseMsg(hmsg);
 	 
 	 if (delmsg == 0) {
-	     MsgKillMsg(area, i-1);
-	     i--;
+	     MsgKillMsg(area, i);
 //	     statScan.exported++;
 	 }
       }
       
-      MsgSetHighWater(area, i);
+      highestMsg = MsgGetHighMsg(area);
+      MsgSetHighWater(area, highestMsg + 1);
 
       MsgCloseArea(area);
       

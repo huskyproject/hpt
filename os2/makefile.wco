@@ -5,7 +5,7 @@ HASHDUPE = 0
 CC      = wcc386
 LINK    = WLINK
 
-OBJS    = hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, seenby.obj, dupe.obj, tree.obj, recode.obj, areafix.obj, post.obj, link.obj, strsep.obj, crc.obj
+OBJS    = hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, seenby.obj, dupe.obj, tree.obj, recode.obj, areafix.obj, post.obj, link.obj, strsep.obj, crc.obj xstr.obj
 SRC_DIR = ..\src
 
 !IF $(HASHDUPE) == 1

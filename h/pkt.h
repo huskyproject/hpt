@@ -155,7 +155,7 @@ char        *getKludge(s_message msg, char *what);
           If the kludge does not exist it returns NULL
 */
   
-void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_addr *destAka);
+char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAka);
 /*DOC
    Taken from the areafix.c
    Input:  a s_addr struct

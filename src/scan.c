@@ -37,6 +37,7 @@
 #include <fidoconfig.h>
 #include <common.h>
 
+#include <xstr.h>
 #include <fcommon.h>
 #include <pkt.h>
 #include <patmat.h>
@@ -94,7 +95,7 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
 
 void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
 {
-   char    *kludgeLines, viaLine[100];
+   char    *kludgeLines;
    UCHAR   *ctrlBuff;
    UINT32  ctrlLen;
    time_t  tm;
@@ -113,21 +114,21 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
 
    time(&tm);
    dt = gmtime(&tm);
-   sprintf(viaLine, "\001Via %u:%u/%u.%u @%04u%02u%02u.%02u%02u%02u.UTC %s\r",
+
+   msg->text = NULL;
+   xstrcat(&(msg->text), kludgeLines);
+   // FIXME: make a switch in config file
+   //xscatprintf(&(msg->text), "\001TID: %s\r", versionStr);
+   
+   ctrlLen = strlen(msg->text);
+   xstralloc(&(msg->text), msg->textLength + ctrlLen);
+
+   MsgReadMsg(SQmsg, NULL, 0, msg->textLength, (unsigned char *) msg->text+ctrlLen, 0, NULL);
+   msg->text[msg->textLength + ctrlLen] = '\0'; /* MsgReadMsg doesn't do zero termination */
+
+   xscatprintf(&(msg->text), "\001Via %u:%u/%u.%u @%04u%02u%02u.%02u%02u%02u.UTC %s\r",
            ourAka.zone, ourAka.net, ourAka.node, ourAka.point,
            dt->tm_year + 1900, dt->tm_mon + 1, dt->tm_mday, dt->tm_hour, dt->tm_min, dt->tm_sec, versionStr);
-
-   msg->text = (char *) calloc(1, msg->textLength+strlen(kludgeLines)+strlen(viaLine)+1);
-
-
-   strcpy(msg->text, kludgeLines);
-//   strcat(msg->text, "\001TID: ");
-//   strcat(msg->text, versionStr);
-//   strcat(msg->text, "\r");
-
-   MsgReadMsg(SQmsg, NULL, 0, msg->textLength, (unsigned char *) msg->text+strlen(msg->text), 0, NULL);
-
-   strcat(msg->text, viaLine);
 
    // recoding text to TransportCharSet
    if (config->outtab != NULL) recodeToTransportCharset((CHAR*)msg->text);
@@ -497,7 +498,7 @@ void scanNMArea(s_area *area)
 
       MsgCloseArea(netmail);
    } else {
-      writeLogEntry(hpt_log, '9', "Could not open NetmailArea");
+      writeLogEntry(hpt_log, '9', "Could not open NetmailArea %s", area -> areaName);
    } /* endif */
 }
 

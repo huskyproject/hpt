@@ -4,7 +4,7 @@ CC       = gcc
 INSTDIR  = /usr/local/bin
 MANDIR   = /usr/local/man
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o crc.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o crc.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o xstr.o
 SRC_DIR = ../src/
 
 ifeq ($(HASHDUPE), 1)

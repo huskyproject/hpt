@@ -35,6 +35,7 @@
 #include <fidoconfig.h>
 #include <common.h>
 
+#include <xstr.h>
 #include <pkt.h>
 #include <scan.h>
 #include <seenby.h>
@@ -56,13 +57,14 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    // action == 0 - scan area
    // action == 1 - rescan area
    // action == 2 - rescan badarea
-   char   *kludgeLines, *seenByPath = NULL, addr2d[12];
+   char   *kludgeLines, *seenByPath = NULL;
    UCHAR  *ctrlBuff;
    UINT32 ctrlLen;
    int    i, seenByCount;
    s_seenBy *seenBys;
    
    // convert Header
+//   convertMsgHeader(xmsg, msg);
    msg->origAddr.zone  = xmsg.orig.zone;
    msg->origAddr.net   = xmsg.orig.net;
    msg->origAddr.node  = xmsg.orig.node;
@@ -93,11 +95,10 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    ctrlBuff = (UCHAR *) malloc(ctrlLen+1+6+strlen(versionStr)+1); // 6 == "\001TID: " // 1 == "\r"
    MsgReadMsg(hmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
    ctrlBuff[ctrlLen] = '\0'; /* MsgReadMsg does not do zero termination! */
-   if (action == 0) {
-       strcat(ctrlBuff, "\001TID: ");
-       strcat(ctrlBuff, versionStr);
-   }
-   kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
+   if (action == 0)
+       xscatprintf((char **) &(ctrlBuff), "\001TID: %s", versionStr);
+       // add '\r' after each kludge
+       kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
    
    free(ctrlBuff);
 
@@ -125,40 +126,23 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    
        // path line
        // only include node-akas in path
-       if (echo->useAka->point == 0) {
-          sprintf(addr2d, "%u/%u", echo->useAka->net, echo->useAka->node);
-          seenByPath = (char *) realloc(seenByPath, strlen(seenByPath)+strlen(addr2d)+1+8); // 8 == strlen("\001PATH: \r")
-          strcat(seenByPath, "\001PATH: ");
-          strcat(seenByPath, addr2d);
-          strcat(seenByPath, "\r");
-       }
+       if (echo->useAka->point == 0) 
+          xscatprintf(&seenByPath, "\001PATH: %u/%u\r", echo->useAka->net, echo->useAka->node);
    }
    
    // create text
    msg->textLength = MsgGetTextLen(hmsg);
-   switch (action) {
-   case 0:
-      msg->text = (char *)calloc(msg->textLength+strlen(seenByPath)+strlen(kludgeLines)+strlen(echo->areaName)+strlen("AREA:\r")+1+1, sizeof(char));
-      break;
-   case 1:
-      msg->text = (char *)calloc(msg->textLength+strlen(kludgeLines)+strlen(echo->areaName)+strlen("AREA:\r")+1+1, sizeof(char));
-      break;
-   default: 
-      msg->text = (char *)calloc(msg->textLength+strlen(kludgeLines)+1, sizeof(char)); 
-     break;
-   } /* endswitch */
-   if (action != 2) {
-       strcpy(msg->text, "AREA:");
-       strcat(msg->text, strUpper(echo->areaName));
-       strcat(msg->text, "\r");
-   } 
-   strcat(msg->text, kludgeLines);
+   msg->text=NULL;
+   if (action != 2) 
+       xscatprintf(&(msg->text), "AREA:%s\r", strUpper(echo->areaName));
+   xstrcat(&(msg->text), kludgeLines);
+   xstralloc(&(msg->text), strlen(msg->text) + msg->textLength);
    MsgReadMsg(hmsg, NULL, (dword) 0, (dword) msg->textLength,
               (byte *)(msg->text+strlen(msg->text)), (dword) 0, (byte *)NULL);
    if (msg->text[strlen(msg->text)-1] != '\r')  // if origin has no ending \r add it
-      strcat(msg->text, "\r");
+      xstrcat(&(msg->text), "\r");
    free(kludgeLines);
-   if (action == 0) strcat(msg->text, seenByPath);
+   if (action == 0) xstrcat(&(msg->text), seenByPath);
    
    // recoding from internal to transport charSet
    if (config->outtab != NULL && action != 2) {
@@ -177,6 +161,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
    UINT32       i,j=0;
    s_pktHeader  header;
    FILE         *pkt;
+   s_link	*link;
    makeMsg(hmsg, xmsg, &msg, echo, 0);
 
    //translating name of the area to uppercase
@@ -185,14 +170,15 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
    // scan msg to downlinks
    
    for (i = 0; i<echo->downlinkCount; i++) {
+       link = echo->downlinks[i]->link;
        // link is passive?
-       if (echo->downlinks[i]->link->Pause && !echo->noPause) continue;
+       if (link->Pause && !echo->noPause) continue;
        // check access read for link
-       if (readCheck(echo, echo->downlinks[i]->link)) continue;
-	  if (echo->downlinks[i]->link->pktFile == NULL) {
+       if (readCheck(echo, link)) continue;
+	  if (link->pktFile == NULL) {
 		   
 		  // pktFile does not exist
-		  if ( createTempPktFileName(echo->downlinks[i]->link) ) {
+		  if ( createTempPktFileName(link) ) {
 			  writeLogEntry(hpt_log, '9', "Could not create new pkt.");
 			  fprintf(stderr, "Could not create new pkt.\n");
 			  disposeConfig(config);
@@ -203,11 +189,11 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 	  } /* endif */
 		   
       makePktHeader(NULL, &header);
-      header.origAddr = *(echo->downlinks[i]->link->ourAka);
-      header.destAddr = echo->downlinks[i]->link->hisAka;
-      if (echo->downlinks[i]->link->pktPwd != NULL)
-      strcpy(header.pktPassword, echo->downlinks[i]->link->pktPwd);
-      pkt = openPktForAppending(echo->downlinks[i]->link->pktFile, &header);
+      header.origAddr = *(link->ourAka);
+      header.destAddr = link->hisAka;
+      if (link->pktPwd != NULL)
+      strcpy(header.pktPassword, link->pktPwd);
+      pkt = openPktForAppending(link->pktFile, &header);
 
       // an echomail messages must be adressed to the link
       msg.destAddr = header.destAddr;

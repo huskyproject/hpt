@@ -7,7 +7,7 @@
  *
  * Fido:     2:5000/117
  * Internet: sackett@mail.ru
- * Novosibirsk, Russia
+ * Novosibirsk, West Siberia, Russia
  *
  * Big thanks to:
  *
@@ -46,6 +46,7 @@
 
 #include <common.h>
 #include <fcommon.h>
+#include <xstr.h>
 #include <global.h>
 #include <pkt.h>
 #include <version.h>
@@ -227,28 +228,29 @@ int addstring(FILE *f, char *aka) {
 
 void addlink(s_link *link, s_area *area) {
     char *test = NULL;
+    s_arealink *arealink;
     
     area->downlinks = realloc(area->downlinks, sizeof(s_arealink*)*(area->downlinkCount+1));
-    area->downlinks[area->downlinkCount] = (s_arealink*)calloc(1, sizeof(s_arealink));
-    area->downlinks[area->downlinkCount]->link = link;
+    arealink = area->downlinks[area->downlinkCount] = (s_arealink*)calloc(1, sizeof(s_arealink));
+    arealink->link = link;
     
     if (link->optGrp) test = strchr(link->optGrp, area->group);
-    area->downlinks[area->downlinkCount]->export = 1;
-    area->downlinks[area->downlinkCount]->import = 1;
-    area->downlinks[area->downlinkCount]->mandatory = 0;
+    arealink->export = 1;
+    arealink->import = 1;
+    arealink->mandatory = 0;
     if (link->export) if (*link->export==0) {
 	    if (link->optGrp == NULL || (link->optGrp && test)) {
-		area->downlinks[area->downlinkCount]->export = 0;
+		arealink->export = 0;
 	    }
 	} 
     if (link->import) if (*link->import==0) {
 	    if (link->optGrp == NULL ||  (link->optGrp && test)) {
-		area->downlinks[area->downlinkCount]->import = 0;
+		arealink->import = 0;
 	    }
 	} 
     if (link->mandatory) if (*link->mandatory==1) {
 	    if (link->optGrp == NULL || (link->optGrp && test)) {
-		area->downlinks[area->downlinkCount]->mandatory = 1;
+		arealink->mandatory = 1;
 	    }
 	} 
     area->downlinkCount++;
@@ -316,8 +318,7 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
 char *list(s_message *msg, s_link *link) {
 	
 	int i, active, avail, rc, desclen, *areaslen, maxlen = 0;
-	unsigned long reportlen;
-	char *report, addline[256];
+	char *report = NULL;
 	s_area area;
 
 	areaslen = malloc(config->echoAreaCount * sizeof(int));
@@ -327,22 +328,19 @@ char *list(s_message *msg, s_link *link) {
 	   if (areaslen[i]>maxlen) maxlen = areaslen[i];
 	}
 	
-	sprintf(addline, "Available areas for %s\r\r", aka2str(link->hisAka));
-
-	report=(char*)calloc(strlen(addline)+1,sizeof(char));
-	strcpy(report, addline);
-	reportlen=strlen(report);
+	xscatprintf(&report, "Available areas for %s\r\r", aka2str(link->hisAka));
 
 	for (i=active=avail=0; i< config->echoAreaCount; i++) {
 		
-		area = config->echoAreas[i];
+	    area = config->echoAreas[i];
 
 	    rc=subscribeCheck(area, msg, link);
 	    if (rc < 2) { /* add line */
 			if (area.description) desclen=strlen(config->echoAreas[i].description);
 			else desclen=0;
 
-			sprintf(addline, "%s %s%s%s%s%s\r",
+			
+			xscatprintf(&report, "%s %s%s%s%s%s\r",
 					(rc) ? " " : "*",
 					area.areaName,
 					(desclen) ? " " : "",
@@ -352,30 +350,14 @@ char *list(s_message *msg, s_link *link) {
 			 
 			if (rc==0) active++; avail++;
 
-			reportlen += strlen(addline);
-			report=(char*) realloc(report,reportlen+1);
-			
-			if (report) strcat(report, addline);
-			else { /* low memory */
-				writeLogEntry(hpt_log, '9', "areafix: not enough memory for %list");
-				exit(1);
-			} /* end low memory*/
-
 	    } /* end add line */
 
 	} /* end for */
 	
-	sprintf(addline,"\r'*' = area active for %s\r%i areas available, %i areas active\r", aka2str(link->hisAka), avail, active);
-	reportlen += strlen(addline);
-	report=(char*) realloc(report,reportlen+1);
-	if (report) strcat(report, addline);
-	else { /* low memory */
-		writeLogEntry(hpt_log, '9', "areafix: not enough memory for %list");
-		exit(1);
-	}
-
-	writeLogEntry(hpt_log, '8', "AreaFix: list sent to %s", aka2str(link->hisAka));
+	xscatprintf(&report, "\r'*' = area active for %s\r%i areas available, %i areas active\r", 
+			aka2str(link->hisAka), avail, active);
 	
+	writeLogEntry(hpt_log, '8', "AreaFix: list sent to %s", aka2str(link->hisAka));
 	free(areaslen);
 
 	return report;
@@ -384,53 +366,37 @@ char *list(s_message *msg, s_link *link) {
 char *linked(s_message *msg, s_link *link)
 {
     int i, n, rc;
-    char *report, addline[256];
+    char *report = NULL;
 
-    if (link->Pause) 
-        sprintf(addline, "\rPassive areas on %s\r\r", aka2str(link->hisAka));
-    else
-	sprintf(addline, "\rActive areas on %s\r\r", aka2str(link->hisAka));
+    xscatprintf(&report, "\r%s areas on %s\r\r", 
+		    link->Pause ? "Passive" : "Active", aka2str(link->hisAka));
 							
-    report=(char*)calloc(strlen(addline)+1, sizeof(char));
-    strcpy(report, addline);
-    
     for (i=n=0; i<config->echoAreaCount; i++) {
 	rc=subscribeCheck(config->echoAreas[i], msg, link);
 	if (rc==0) {
-	    report=(char*)realloc(report, strlen(report)+
-			    strlen(config->echoAreas[i].areaName)+3);
-	    strcat(report, " ");
-	    strcat(report, config->echoAreas[i].areaName);
-	    strcat(report, "\r");
+	    xscatprintf(&report, " %s\r", config->echoAreas[i].areaName);
 	    n++;
 	}
     }
-    sprintf(addline, "\r%u areas linked\r", n);
-    report=(char*)realloc(report, strlen(report)+strlen(addline)+1);
-    strcat(report, addline);
+    xscatprintf(&report, "\r%u areas linked\r", n);
     return report;
 }
 
 char *unlinked(s_message *msg, s_link *link)
 {
     int i, rc;
-    char *report, addline[256];
+    char *report = NULL;
     s_area *EchoAreas;
     
     EchoAreas=config->echoAreas;
     
-    sprintf(addline, "Unlinked areas to %s\r\r", aka2str(link->hisAka));
-    report=(char*)calloc(strlen(addline)+1, sizeof(char));
-    strcpy(report, addline);
+    xscatprintf(&report, "Unlinked areas to %s\r\r", 
+		    aka2str(link->hisAka));
     
     for (i=0; i<config->echoAreaCount; i++) {
 	rc=subscribeCheck(EchoAreas[i], msg, link);
 	if (rc == 1) {
-	    report=(char*)realloc(report, strlen(report)+
-				strlen(EchoAreas[i].areaName)+3);
-	    strcat(report, " ");
-	    strcat(report, EchoAreas[i].areaName);
-	    strcat(report, "\r");
+	    xscatprintf(&report, " %s\r", EchoAreas[i].areaName);
 	}
     }
     writeLogEntry(hpt_log, '8', "AreaFix: unlinked areas list sent to %s", aka2str(link->hisAka));
@@ -475,11 +441,10 @@ char *help(s_link *link) {
 char *available(s_link *link) {
 	FILE *f;
 	int i=0,j=0;
-	char *avail=NULL, *report, addline[256], linkAka[24];
+	char *report = NULL, *avail, linkAka[25];
 	long endpos;
 	s_link *uplink=NULL;
 
-	report=calloc((size_t) 1,sizeof(char));
 
     for (j = 0; j < config->linkCount; j++) {
 		uplink = &(config->links[j]);
@@ -493,28 +458,20 @@ char *available(s_link *link) {
 					return report;
 				}
 
-			sprintf(addline,"Available Area List from %s:\r", aka2str(uplink->hisAka));
-			report=(char*) realloc(report,strlen(report)+strlen(addline)+1);
-			if (strlen(report)==0) strcpy(report,addline); else strcat(report,addline);
+		   	xscatprintf(&report, "Available Area List from %s:\r", aka2str(uplink->hisAka));
 
 			fseek(f,0l,SEEK_END);
 			endpos=ftell(f);
 			
-			avail=(char*) calloc((size_t) endpos + 1, sizeof(char));
-			
 			fseek(f,0l,SEEK_SET);
-			fread(avail,1,(size_t) endpos,f);
+			fread(avail = xstralloc(&report, endpos + 1), 1, (size_t) endpos,f);
 			for (i=0; i<endpos; i++) if (avail[i]=='\n') avail[i]='\r';
+			avail[endpos] = '\0';
 			
 			fclose(f);
-
-			report=(char*) realloc(report,strlen(report)+strlen(avail)+1);
-			strcat (report,avail);
-			free(avail);
-
-			sprintf(addline," %s\r\r",print_ch(77,'-'));
-			report=(char*) realloc(report,strlen(report)+strlen(addline)+1);
-			strcat (report,addline);
+			
+			
+			xscatprintf(&report, " %s\r\r",print_ch(77,'-'));
 
 			// warning! do not ever use aka2str twice at once!
 			sprintf(linkAka, "%s", aka2str(link->hisAka));
@@ -553,20 +510,17 @@ int delConfigLine(FILE *f, char *fileName) {
 // subscribe if (act==0),  unsubscribe if (act!=0)
 int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act) {
     s_message *msg;
-    char *base, pass[]="passthrough";
+    char *base, pass[]="passthrough", action = '!';
 
 	if (uplink->msg == NULL) {
 
 	    msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop, uplink->RemoteRobotName ? uplink->RemoteRobotName : "Areafix", uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1);
 
-	    msg->text = (char *) malloc(sizeof(char)*100);
-	    createKludges(msg->text, NULL, uplink->ourAka, &(uplink->hisAka));
+	    msg->text = createKludges(NULL, uplink->ourAka, &(uplink->hisAka));
 		
 	    uplink->msg = msg;
 	    
 	} else msg = uplink->msg;
-	
-	msg->text = realloc (msg->text, strlen(msg->text)+1+strlen(areatag)+1+1);
 	
 	if (act==0) {
 	    if (getArea(config, areatag) == &(config->badArea)) {
@@ -576,10 +530,9 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 		autoCreate(areatag, uplink->hisAka, &(dwlink->hisAka));
 		config->msgBaseDir = base;
 	    }
-	    strcat(msg->text,"+");
-	} else strcat(msg->text,"-");
-	strcat(msg->text,areatag);
-	strcat(msg->text,"\r");
+	    action = '+';
+	} else action = '-';
+	xscatprintf(&(msg->text), "%c%s\r", action, areatag);
 	
 	return 0;	
 }
@@ -710,14 +663,12 @@ int forwardRequest(char *areatag, s_link *dwlink) {
 
 char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	int i, rc=4;
-	char *line, *report, addline[256];
+	char *line, *report = NULL;
 	s_area *area;
 
 	line = cmd;
 	
 	if (line[0]=='+') line++;
-	
-	report=(char*)calloc(1, sizeof(char));
 	
 	for (i=0; i<config->echoAreaCount; i++) {
 	    rc=subscribeAreaCheck(&(config->echoAreas[i]),msg,line, link);
@@ -727,7 +678,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		
 		switch (rc) {
 		case 0: 
-			sprintf(addline,"%s Already linked\r", area->areaName);
+			xscatprintf(&report, "%s Already linked\r", area->areaName);
 			writeLogEntry(hpt_log, '8', "areafix: %s already linked to %s",
 					aka2str(link->hisAka), area->areaName);
 		    if (strstr(line, "*") == NULL) i = config->echoAreaCount;
@@ -735,7 +686,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		case 1: 
 			changeconfig (getConfigFileName(), area, link, 0);
 			addlink(link, area);
-			sprintf(addline,"%s Added\r",area->areaName);
+			xscatprintf(&report, "%s Added\r",area->areaName);
 			writeLogEntry(hpt_log, '8', "areafix: %s subscribed to %s",
 							  aka2str(link->hisAka),area->areaName);
 			if (strstr(line, "*") == NULL) i = config->echoAreaCount;
@@ -746,40 +697,34 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			continue;
 //		break;
 		}
-	    report=(char*)realloc(report, strlen(report)+strlen(addline)+1);
-	    strcat(report, addline);
 	}
 	
 	if ((rc==4) && (strstr(line,"*") == NULL)) {
 	    if (link->fReqFromUpLink) {
 		// try to forward request
 		if (forwardRequest(line, link)!=0)
-			sprintf(addline,"%s no uplinks to forward\r",line);
+			xscatprintf(&report, "%s no uplinks to forward\r",line);
 		else {
-			sprintf(addline,"%s request forwarded\r",line);
+			xscatprintf(&report, "%s request forwarded\r",line);
 			writeLogEntry(hpt_log, '8', "areafix: %s subscribed to area %s",
 							  aka2str(link->hisAka),line);
 			area = getArea(config, line);
 			changeconfig (getConfigFileName(), area, link, 3);
 			addlink(link, area);
 		}
-		report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
-		strcat(report, addline);
 	    }
 	}
 	
-	if (*report == 0) {
-	    sprintf(addline,"%s Not found\r",line);
-		 writeLogEntry(hpt_log, '8', "areafix: area %s is not found",line);
-	    report=(char*)realloc(report, strlen(addline)+1);
-	    strcpy(report, addline);
+	if (report == NULL) {
+	    xscatprintf(&report,"%s Not found\r",line);
+	    writeLogEntry(hpt_log, '8', "areafix: area %s is not found",line);
 	}
 	return report;
 }
 
 char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 	int i, c, rc = 2;
-	char *line, addline[256];
+	char *line;
 	char *report=NULL;
 	s_area *area;
 	
@@ -787,8 +732,6 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 	
 	if (line[1]=='-') return NULL;
 	line++;
-	
-	report=(char*)calloc(1, sizeof(char));
 	
 	for (i = 0; i< config->echoAreaCount; i++) {
 		rc=subscribeAreaCheck(&(config->echoAreas[i]),msg,line, link);
@@ -808,15 +751,15 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		switch (rc) {
 		case 0: removelink(link, area);
 			changeconfig (getConfigFileName(),  area, link, 1);
-			sprintf(addline,"%s Unlinked\r",area->areaName);
+			xscatprintf(&report, "%s Unlinked\r",area->areaName);
 			writeLogEntry(hpt_log, '8', "areafix: %s unlinked from %s",aka2str(link->hisAka),area->areaName);
 			break;
 		case 1: if (strstr(line, "*")) continue;
-			sprintf(addline,"%s Not linked\r",line);
+			xscatprintf(&report, "%s Not linked\r",line);
 			writeLogEntry(hpt_log, '8', "areafix: area %s is not linked to %s",
 					area->areaName, aka2str(link->hisAka));
 			break;
-		case 5: sprintf(addline,"%s Unlink is not possible\r", area->areaName);
+		case 5: xscatprintf(&report, "%s Unlink is not possible\r", area->areaName);
 			writeLogEntry(hpt_log, '8', "areafix: area %s -- unlink is not possible for %s",
 					area->areaName, aka2str(link->hisAka));
 			break;
@@ -825,15 +768,10 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 			continue;
 //			break;
 		}
-		
-		report=(char*)realloc(report, strlen(report)+strlen(addline)+1);
-		strcat(report, addline);
 	}
-	if (*report == 0) {
-		sprintf(addline,"%s Not found\r",line);
+	if (report == NULL) {
+		xscatprintf(&report, "%s Not found\r",line);
 		writeLogEntry(hpt_log, '8', "areafix: area %s is not found", line);
-		report=(char*)realloc(report, strlen(addline)+1);
-		strcpy(report, addline);
 	}
 	return report;
 }
@@ -935,13 +873,12 @@ char *pause_link(s_message *msg, s_link *link)
 	if (changepause(getConfigFileName(), link, 0) == 0) return NULL;    
     }
 
-    report = linked(msg, link);
-    tmp = (char*)calloc(80, sizeof(char));
-    strcpy(tmp, " System switched to passive\r");
-    tmp = (char*)realloc(tmp, strlen(report)+strlen(tmp)+1);
-    strcat(tmp, report);
-    free(report);
-    return tmp;
+    xstrcat(&report, " System switched to passive\r");
+    tmp = linked(msg, link);
+    xstrcat(&report, tmp);
+    free(tmp);
+
+    return report;
 }
 
 int changeresume(char *confName, s_link *link)
@@ -1053,51 +990,37 @@ char *resume_link(s_message *msg, s_link *link)
 		if (changeresume(getConfigFileName(), link) == 0) return NULL;
     }
 	
-    report = linked(msg, link);
-    tmp = (char*)calloc(80, sizeof(char));
-    strcpy(tmp, " System switched to active\r");
-    tmp = (char*)realloc(tmp, strlen(report)+strlen(tmp)+1);
-    strcat(tmp, report);
-    free(report);
-    return tmp;
+    xstrcat(&report, " System switched to active\r");
+    tmp = linked(msg, link);
+    xstrcat(&report, tmp);
+    free(tmp);
+
+    return report;
 }
 
 char *info_link(s_message *msg, s_link *link)
 {
-    char buff[256], *report, *ptr, linkAka[25];
+    char *report, *ptr, linkAka[25];
     char hisAddr[]="Your address: ";
     char ourAddr[]="AKA used here: ";
     char Arch[]="Compression: ";
     int i;
     
-	sprintf(linkAka,aka2str(link->hisAka));
-    sprintf(buff, "Here is some information about our link:\r\r %s%s\r%s%s\r  %s", hisAddr, linkAka, ourAddr, aka2str(*link->ourAka), Arch);
-	
-    report = (char*)calloc(strlen(buff)+1, sizeof(char));
-    strcpy(report, buff);
+    sprintf(linkAka,aka2str(link->hisAka));
+    xscatprintf(&report, "Here is some information about our link:\r\r %s%s\r%s%s\r  %s", 
+		    hisAddr, linkAka, ourAddr, aka2str(*link->ourAka), Arch);
     
-    if (link->packerDef==NULL) sprintf(buff, "No packer (");
-    else sprintf(buff, "%s (", link->packerDef->packer);
+    if (link->packerDef==NULL) 
+	    xscatprintf(&report, "No packer (");
+    else 
+	    xscatprintf(&report, "%s (", link->packerDef->packer);
     
-    report = (char*)realloc(report, strlen(report)+strlen(buff)+1);
-    strcat(report, buff);
+    for (i=0; i < config->packCount; i++)
+	xscatprintf(&report, "%s, ", config->pack[i].packer);
     
-    for (i=0; i < config->packCount; i++) {
-        report = (char*)realloc(report, strlen(report)+strlen(config->pack[i].packer)+3);
-        strcat(report, config->pack[i].packer);
-        strcat(report, ", ");
-    }
-    
-    report[strlen(report)-2] = ')';
-    report[strlen(report)-1] = '\r';
-	
-    if (link->Pause) sprintf(buff, "\rYour system is passive\r");
-    else sprintf(buff, "\rYour system is active\r");
-    
+    xscatprintf(&report, ")\r\rYour system is %s\r", link->Pause ? "passive" : "active");
     ptr = linked(msg, link);
-    report = (char*)realloc(report, strlen(report)+strlen(ptr)+strlen(buff)+1);
-    strcat(report, buff);
-    strcat(report, ptr);
+    xstrcat(&report, ptr);
     free(ptr);
     writeLogEntry(hpt_log, '8', "areafix: link information sent to %s", aka2str(link->hisAka));
     return report;
@@ -1191,10 +1114,9 @@ void rescanEMArea(s_area *echo, s_link *link, long rescanCount)
 
 char *errorRQ(char *line)
 {
-   char *report, err[] = "Error line";
+   char *report = NULL;
 
-   report = (char*)calloc(strlen(line)+strlen(err)+3, sizeof(char));
-   sprintf(report, "%s %s\r", line, err);
+   xscatprintf(&report, "%s %s\r", line, "Error line");
 
    return report;
 }
@@ -1203,7 +1125,7 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 {
     int i, c, rc = 0;
     long rescanCount = -1;
-    char *report, *line, *countstr, addline[256];
+    char *report = NULL, *line, *countstr;
     s_area *area, **areas=NULL;
     
     line = cmd+strlen("%rescan");
@@ -1228,8 +1150,6 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
     
     if (*line == 0) return errorRQ(cmd);
 
-    report = (char*)calloc(1, sizeof(char));
-    
     for (i=c=0; i<config->echoAreaCount; i++) {
 		rc=subscribeAreaCheck(&(config->echoAreas[i]),msg,line, link);
 		if (rc == 4) continue;
@@ -1239,17 +1159,17 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 		switch (rc) {
 		case 0: 
 			if (area->msgbType == MSGTYPE_PASSTHROUGH) {
-				sprintf(addline,"%s No rescan possible\r", area->areaName);
+				xscatprintf(&report,"%s No rescan possible\r", area->areaName);
 				writeLogEntry(hpt_log, '8', "areafix: %s area no rescan possible to %s",
 						area->areaName, aka2str(link->hisAka));
 			} else {
 			  if (rescanCount == -1) {
-				sprintf(addline,"%s Rescanned\r", area->areaName);
+				xscatprintf(&report,"%s Rescanned\r", area->areaName);
 				writeLogEntry(hpt_log, '8', "areafix: %s rescan area to %s",
 						area->areaName, aka2str(link->hisAka));
 			  }
 			  else {
-			    sprintf(addline,"%s Rescanned %lu mails\r", area->areaName, rescanCount);
+			    xscatprintf(&report,"%s Rescanned %lu mails\r", area->areaName, rescanCount);
 			    writeLogEntry(hpt_log, '8', "areafix: %s rescan %lu mails in area to %s",
 					  area->areaName, rescanCount, aka2str(link->hisAka));
 			  }
@@ -1261,23 +1181,19 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 		case 1: if (strstr(line, "*")) continue;
 			writeLogEntry(hpt_log, '8', "areafix: %s area not linked for rescan to %s",
 					area->areaName, aka2str(link->hisAka));
-			sprintf(addline,"%s Not linked for rescan\r", area->areaName);
+			xscatprintf(&report, "%s Not linked for rescan\r", area->areaName);
 			break;
 		default: writeLogEntry(hpt_log, '8', "areafix: %s area not access for %s",
 						 area->areaName, aka2str(link->hisAka));
 			continue;
 //		break;
 		}
-		report=(char*)realloc(report, strlen(report)+strlen(addline)+1);
-		strcat(report, addline);
 	}
-    if (*report == 0) {
-		sprintf(addline,"%s Not linked for rescan\r", line);
+    if (report == NULL) {
+		xscatprintf(&report,"%s Not linked for rescan\r", line);
 //        sprintf(addline,"%s Not found for rescan\r",line);
 //        sprintf(logmsg,"areafix: %s area not linked for rescan", line);
 //        writeLogEntry(hpt_log, '8', logmsg);
-		report=(char*)realloc(report, strlen(addline)+1);
-		strcpy(report, addline);
     }
     if (c) {
 		for (i = 0; i < c; i++) rescanEMArea(areas[i], link, rescanCount);
@@ -1370,6 +1286,7 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 
 char *areastatus(char *preport, char *text)
 {
+	// FIXME !!
     char *pth, *ptmp, *tmp, *report, tmpBuff[256];
     pth = (char*)calloc(1, sizeof(char));
     tmp = preport;
@@ -1399,33 +1316,29 @@ char *areastatus(char *preport, char *text)
 
 void preprocText(char *preport, s_message *msg)
 {
-    char *text, tmp[80], kludge[100];
+    char *text = NULL, *kludge;
 	
-    sprintf(tmp, " \r--- %s areafix\r", versionStr);
-    createKludges(kludge, NULL, &msg->origAddr, &msg->destAddr);
-    text=(char*) malloc(strlen(kludge)+strlen(preport)+strlen(tmp)+1);
-    strcpy(text, kludge);
-    strcat(text, preport);
-    strcat(text, tmp);
+    xscatprintf(&preport, " \r--- %s areafix\r", versionStr);
+    kludge = createKludges(NULL, &msg->origAddr, &msg->destAddr);
+    xstrscat(&text, kludge, preport, NULL);
     msg->textLength=(int)strlen(text);
     msg->text=text;
+    free(kludge);
 }
 
 char *textHead()
 {
-    char *text_head, tmpBuff[256];
+    char *text_head = NULL;
     
-    sprintf(tmpBuff, " Area%sStatus\r",	print_ch(48,' '));
-	sprintf(tmpBuff+strlen(tmpBuff)," %s  -------------------------\r",print_ch(50, '-')); 
-    text_head=(char*)calloc(strlen(tmpBuff)+1, sizeof(char));
-    strcpy(text_head, tmpBuff);
+    xscatprintf(&text_head, " Area%sStatus\r",	print_ch(48,' '));
+    xscatprintf(&text_head, " %s  -------------------------\r",print_ch(50, '-')); 
     return text_head;
 }
 
 void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 {
     char *tab = config->intab, *text, *split, *p, *newsubj;
-    char splitted[]=" > message splitted...", strpartnum[10];
+    char splitted[]=" > message splitted...";
 	char *splitStr = config->areafixSplitStr;
     int len, msgsize = config->areafixMsgSize * 1024, partnum=0;
     s_message *tmpmsg;
@@ -1455,10 +1368,7 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 		}
 
 		if (partnum){
-			sprintf(strpartnum, " (%d)", partnum);
-			newsubj = (char*) malloc(strlen(subj)+strlen(strpartnum)+1);
-			strcpy(newsubj, subj);
-			strcat(newsubj, strpartnum);
+			xscatprintf(&newsubj, "%s (%d)", subj, partnum);
 		} else newsubj = subj;
 
 		tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
@@ -1487,7 +1397,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	s_link *tmplink = NULL;
 	s_message *linkmsg;
 	s_pktHeader header;
-	char tmp[80], *token, *textBuff, *report=NULL, *preport;
+	char *token, *textBuff, *report=NULL, *preport = NULL;
 	
 	// load recoding tables
 	if (config->outtab != NULL) getctab(outtab, (unsigned char*) config->outtab);
@@ -1594,24 +1504,21 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		
 		switch (security) {
 		case 1:
-			sprintf(tmp, " \r different pkt and msg addresses\r");
+			xscatprintf(&report, " \r different pkt and msg addresses\r");
 			break;
 		case 2:
-			sprintf(tmp, " \r areafix is turned off\r");
+			xscatprintf(&report, " \r areafix is turned off\r");
 			break;
 		case 3:
-			sprintf(tmp, " \r password error\r");
+			xscatprintf(&report, " \r password error\r");
 			break;
 		case 4:
-			sprintf(tmp, " \r your system is unknown\r");
+			xscatprintf(&report, " \r your system is unknown\r");
 			break;
 		default:
-			sprintf(tmp, " \r unknown error. mail to sysop.\r");
+			xscatprintf(&report, " \r unknown error. mail to sysop.\r");
 			break;
 		}
-		
-		report=(char*) malloc(strlen(tmp)+1);
-		strcpy(report,tmp);
 		
 		RetMsg(msg, link, report, "security violation");
 		free(report);
@@ -1625,8 +1532,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 
 	if ( report != NULL ) {
 		preport=linked(msg, link);
-		report=(char*)realloc(report, strlen(report)+strlen(preport)+1);
-		strcat(report, preport);
+		xstrcat(&report, preport);
 		free(preport);
 		RetMsg(msg, link, report, "node change request");
 		free(report);
@@ -1640,10 +1546,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		link = &(config->links[i]);
 		linkmsg = link->msg;
 		
-		sprintf(tmp, " \r--- %s areafix\r", versionStr);
-		linkmsg->text=(char*) realloc(linkmsg->text,strlen(linkmsg->text)+strlen(tmp)+1);
-		strcat(linkmsg->text, tmp);
-		linkmsg->textLength = strlen(linkmsg->text);
+		linkmsg->textLength += xscatprintf(&(linkmsg->text), " \r--- %s areafix\r", versionStr);
 		
 		makePktHeader(NULL, &header);
 		header.origAddr = *(link->ourAka);
@@ -1756,7 +1659,6 @@ void autoPassive()
    struct   stat stat_file;
    s_message *msg;
    FILE *f;
-   char buf[256];
    char *line, *path;
    int i;
 
@@ -1777,10 +1679,8 @@ void autoPassive()
                            if (config->links[i].Pause == 0) {
                               if (changepause(getConfigFileName(), &(config->links[i]), 1)) {    
 			         msg = makeMessage(config->links[i].ourAka, &(config->links[i].hisAka), versionStr, config->links[i].name, "AutoPassive", 1);
-                                 sprintf(buf, "\r System switched to passive\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the %%RESUME command.\r\r--- %s autopause\r", versionStr);
-				 msg->text = (char*)calloc(strlen(buf)+100, sizeof(char));
-                                 createKludges(msg->text, NULL, config->links[i].ourAka, &(config->links[i].hisAka));
-                                 strcat(msg->text, buf);
+				 msg->text = createKludges(NULL, config->links[i].ourAka, &(config->links[i].hisAka));
+                                 xscatprintf(&(msg->text), "\r System switched to passive\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the %%RESUME command.\r\r--- %s autopause\r", versionStr);
                                  msg->textLength = strlen(msg->text);
                                  processNMMsg(msg, NULL, NULL, 0);
                                  freeMsgBuffers(msg);
