@@ -5,6 +5,7 @@ hpt 0.9.8 (development version)
 Mon Apr  9 13:12:20 NOVST 2001
 max:
 * fixed sbadd after processing echomail from/to different zone
+* strip spaces from end of lines in echotoss.log
 patch from Alex Bronin:
 * use spawnvp() instead of spawnv()
 

@@ -662,6 +662,7 @@ void scanExport(int type, char *str) {
          if (line != NULL) {
 	    if (*line && line[strlen(line)-1] == '\r')
 	       line[strlen(line)-1] = '\0';  /* fix for DOSish echotoss.log */
+	    striptwhite(line);
     	    scanByName(line);
             nfree(line);
          }
