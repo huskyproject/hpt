@@ -1,7 +1,15 @@
 ----- cvs ci ------
+Mon Jun 21 17:36:45 NOVST 1999
+max:
+* small changes in (5) code // little optimization
+
+----- cvs ci ------
 Sun Jun 20  21:24:20
 Fedor:
 * bugfix 5 for OS/2 (problem with "\r\n" in end line)
+
+reply from max:
+* this bugfix is for win32 also
 
 ----- cvs ci ------
 Thu Jun 17 00:08:15 NOVST 1999

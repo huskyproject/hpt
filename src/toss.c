@@ -1468,57 +1468,51 @@ void writeTossStatsToLog(void) {
    writeLogEntry(hpt_log, logchar, buff);
 }
 
-int find_old_arcmail(s_link *link) {
-	FILE *flo,*f;
+int find_old_arcmail(s_link *link, FILE *flo) {
+	FILE *f;
 	char *line, *tmp=NULL, bundle[256]="";
 	char *wdays[7]={ ".su", ".mo", ".tu", ".we", ".th", ".fr", ".sa" };
 	long len;
 	unsigned i, as=500;
 
-	flo = fopen(link->floFile, "rb");
-	if (flo != NULL) {
+	while ((line = readLine(flo)) != NULL) {
+#ifndef UNIX
+		line = trimLine(line);
+#endif
 		
-		while ((line = readLine(flo)) != NULL) {
-                        line = trimLine(line);
-//			fprintf(stdout,"%s\n",line);
-			
-			for (i=0; (i<7) && (tmp==NULL); i++) {
-				if (strstr(line,wdays[i])!=NULL) {tmp=line; break;}
-			}
-			
-			if (tmp!=NULL) {tmp++; sprintf(bundle,"%s",tmp); tmp=NULL;}
-			free(line);
+		for (i=0; (i<7) && (tmp==NULL); i++) {
+			if (strstr(line,wdays[i])!=NULL) {tmp=line; break;}
 		}
 		
-		fclose(flo);
-		if (bundle[0]!='\000') {
-//			fprintf(stdout,"'%s'\n",bundle);
-			f=fopen(bundle,"rb");
-			if (f!=NULL) {
-				fseek(f, 0L, SEEK_END);
-				len = ftell(f);
-//				printf("%i\n",(int)len);
-				fclose(f);
-				if (link->arcmailSize!=0) as=link->arcmailSize;
-				else {
-					if (config->defarcmailSize!=0) as=config->defarcmailSize;
-				}
-				// default 500 kb max
-				if ((int)len < as*1024) {
-					link->packFile=(char*)realloc(link->packFile,strlen(bundle)+1);
-					strcpy(link->packFile,bundle);
-					return 1;
-				}
+		if (tmp!=NULL) {tmp++; sprintf(bundle,"%s",tmp); tmp=NULL;}
+		free(line);
+	}
+		
+	if (bundle[0]!='\000') {
+		f=fopen(bundle,"rb");
+		if (f!=NULL) {
+			fseek(f, 0L, SEEK_END);
+			len = ftell(f);
+			fclose(f);
+			if (link->arcmailSize!=0) as=link->arcmailSize;
+			else {
+				if (config->defarcmailSize!=0) as=config->defarcmailSize;
+			}
+			// default 500 kb max
+			if ((int)len < as*1024) {
+				link->packFile=(char*)realloc(link->packFile,strlen(bundle)+1);
+				strcpy(link->packFile,bundle);
+				return 1;
 			}
 		}
 	}
 	
-return 0;
+	return 0;
 }
 
 void arcmail() {
    char logmsg[256], cmd[256], *pkt, *lastPathDelim, saveChar, sepDir[14], *buff;
-   int i, cmdexit, addfname;
+   int i, cmdexit;
    FILE *flo;
    s_link *link;
    
@@ -1534,9 +1528,7 @@ void arcmail() {
 					     cvtFlavour2Prio(link->echoMailFlavour),
 					     FLOFILE) == 0) {
 
-			 addfname = find_old_arcmail(link);
-
-			 flo = fopen(link->floFile, "a");
+			 flo = fopen(link->floFile, "a+");
 			 
 			 if (flo == NULL) {
 			   buff = (char *) malloc(strlen(config->links[i].floFile)+ 1 + 21);
@@ -1549,7 +1541,9 @@ void arcmail() {
 			 if (link->packerDef != NULL) {
 				 // there is a packer defined -> put packFile into flo
 				 // if we are creating new arcmail bundle  ->  -//-//-
-				 if (addfname==0) fprintf(flo, "^%s\n", link->packFile);
+				 fseek(flo, 0L, SEEK_SET);
+				 if ( find_old_arcmail(link, flo) == 0 )
+					 fprintf(flo, "^%s\n", link->packFile);
 			 }
 			 else {
 				 // there is no packer defined -> put pktFile into flo
