@@ -1,6 +1,7 @@
 
                          Highly Portable Tosser FAQ
-                    (версия от 20.10.2002 для hpt-current)
+
+Версия от $Date$ для hpt-1.3-current.
 
 Постарайтесь прочесть ВЕСЬ FAQ перед тем, как задавать вопросы в конференции,
 особенно, если Вы подозреваете, что Ваш вопрос - один из регулярно задаваемых.
@@ -19,7 +20,7 @@
 >Q2.  А где можно стянуть исходники?
  Q3.  Что означают буквы в скобках в начале ответа?
  Q4.  Кому присылать патчи?
- Q5.  Я скачал *-current-(дата).tar.gz, а там баг! (архив ~месячной давности)
+>Q5.  Я скачал *-current-(дата).tar.gz, а там баг! (архив ~месячной давности)
 >Q6.  Кому прислать и как правильно оформить багрепорт?
  Q7.  В чем заключается поддержка перла и как его использовать?
  Q8.  Как пpописать флаги для совместной pаботы golded & hpt?
@@ -54,41 +55,38 @@
 
 /---------------------------------------------------------------------/
 
->[1] Q: Где взять свежие версии?
+[1] Q: Где взять свежие версии?
 
 A: (ML, SR, SD)
 
-1. http://sourceforge.net/projects/husky, страничка "Файлы" (самые свежие
-   выставлены на главной)
-   Исходники: http://husky.sourceforge.net/cvs2/stable
-   или на CVS, инструкция тут: http://husky.sourceforge.net/cvs.html
-   Debian packages: http://husky.sourceforge.net/debian
+1. Официальные дистрибутивы.
 
-2. husky пакет под BeOS - BeFTN - живет на http://walther.sourceforge.net/,
-   http://www.qube.ru и http://www.bebits.com (Собирает Paul Galashin),
+1.1. Бинарники и исходники релизов: http://sourceforge.net/projects/husky,
+     страничка "Файлы" (самые свежие выставлены на первой). Ссылка есть
+     на сайте проекта http://husky.sf.net == http://husky.sourceforge.net.
 
-3. Бинарники для win32 - в файлэхе NFTN, архив на Демосе:
-   ftp://ddt.demos.su/pub/fileecho/NFTN/
+1.2. Исходники: http://husky.sourceforge.net/cvs2/stable
+     или на CVS, инструкция тут: http://husky.sourceforge.net/cvs.html
 
-4. Бинаpники DPMI, OS/2, Win32, Win32-dll-Perl:
-   http://hpt-bin.boom.ru/ (собирает Andy U. Luk'yanov 2:5001/7)
+1.3. Debian packages: http://husky.sourceforge.net/debian
 
-5. Для Perl версии может понадобиться файл MSVCRT.DLL
-   Взять его можно тут: ftp://ftp.microsoft.com/softlib/mslfiles/msvcrt.exe
+1.4. Бинарники для win32 - в файлэхе NFTN, архив на Демосе:
+     ftp://ddt.demos.su/pub/fileecho/NFTN/
 
-Старые:
-1. Бинарники: http://husky.physcip.uni-stuttgart.de:8080/fidosoft.husky/
-   Сайт:      http://husky.physcip.uni-stuttgart.de/
-2. Hа www.chat.ru/~sirevtov/files/ или http://sirevtov.narod.ru (win32 current)
-   SR: Все-таки этот narod.ru не нравится, если chat.ru вернется к нормальному
-   SR: режиму работы, буду класть только там.
-3. Бинари под Linux можно найти на http://fidolinux.com.ua/download.html
-   (собирает "Maxim A. Mokry" <aks@idea.donetsk.ua> под названием
-   squish-tosser)
+2. Персональные сборки (часто согласованы с официальными):
+
+2.2. husky пакет под BeOS - BeFTN - живет на http://walther.sourceforge.net/,
+     http://www.qube.ru и http://www.bebits.com (Собирает Paul Galashin),
+
+2.3. Бинаpники DOS-DPMI, OS/2, Win32, Win32-dll-Perl:
+     http://hpt-bin.boom.ru/ (собирает Andy U. Luk'yanov 2:5001/7)
+
+3. Для Perl версии может понадобиться файл MSVCRT.DLL, взять его можно
+   с сервера Microsoft: ftp://ftp.microsoft.com/softlib/mslfiles/msvcrt.exe
 
 /------/
 
->[2] Q: А где можно стянуть исходники?
+[2] Q: А где можно стянуть исходники?
 
 A: (ML,SD)
 
@@ -96,8 +94,8 @@ A: (ML,SD)
 2. stable за несколько дней: http://husky.sourceforge.net/cvs2/stable
 3. На любой момент - с CVS, инструкция: http://husky.sourceforge.net/cvs.html
    и https://sourceforge.net/cvs/?group_id=1332
-4. ftp://ddt.demos.su/pub/fileecho/HUSKY/ - файлэха HUSKY. Сорцы раз в два
-   месяца, diff'ы постоянно.
+4. Файлэха HUSKY, архив на ftp://ddt.demos.su/pub/fileecho/HUSKY/
+   Сорцы раз в два месяца, diff'ы постоянно.
 
 /------/
 
@@ -969,8 +967,9 @@ A: (SD)
    2. Найти разработчика нужного модуля на страничке HUSKY TEAM:
       http://husky.sf.net/team.html
    3. Вот нынешние участники проекта c http://sourceforge.net/projects/husky/
-      (данные на октябрь 2002):
+      (данные на конец октября 2002):
 
+Andy U. Luk'yanov  Packager            andr_lukyanov at users.sourceforge.net
 Andrew Sagulin     Developer           andrews42 at users.sourceforge.net
 Dmitry Sergienko   Project Manager     d_sergienko at users.sourceforge.net
 Georgi Fofanov     Developer           georgi at users.sourceforge.net
