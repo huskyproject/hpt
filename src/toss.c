@@ -969,7 +969,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     char *fileName, *msgbFileName=NULL, *acDef;
     char *buff=NULL, *hisaddr=NULL;
     char *msgbtype, *newAC=NULL, *desc, *msgbDir;
-    char *cp;                    /* temp. usage */
+    char *cp; /* temp. usage */
     s_link *creatingLink;
     s_area *area;
 
@@ -999,7 +999,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     fileName = creatingLink->autoAreaCreateFile;
     if (fileName == NULL) fileName = cfgFile ? cfgFile : getConfigFileName();
 
-    f = fopen(fileName, "a");
+    f = fopen(fileName, "a+");
     if (f == NULL) {
 	fprintf(stderr,"autocreate: cannot open config file\n");
 	return 9;
@@ -1098,6 +1098,13 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     if ( isLinkOfArea(creatingLink,area)==0 ) {
 	xscatprintf(&buff, " %s", hisaddr);
 	addlink(creatingLink, area);
+    }
+
+    // fix if dummys del \n from the end of file
+    fseek (f, -1L, SEEK_END);
+    if (getc(f) != '\n') {
+	fseek (f, 0L, SEEK_END);  // not neccesary, but looks better ;)
+	putc ( '\n', f);
     }
 
     fprintf(f, "%s\n", buff); // add line to config
