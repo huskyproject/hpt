@@ -3,7 +3,9 @@ hpt 0.9.8 (development version)
 
 ----- cvs ci ------
 Sun Sep  3 19:37:46 NOVST 2000
-max (patch from Pavel Gulchouck):
+max:
+* tearline & origin support in post
+patch from Pavel Gulchouck:
 * "hpt link" link msg areas
 
 ----- cvs ci ------

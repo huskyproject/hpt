@@ -78,6 +78,12 @@ void print_help(void) {
    fprintf(stdout,"              -e \"echo area\"\n");
    fprintf(stdout,"                 area to  post  echomail  message  into,  if  not\n");
    fprintf(stdout,"                 included message is posted to netmail\n\n");
+   fprintf(stdout,"              -z \"tearline\"\n");
+   fprintf(stdout,"                 tearline, if not included then assumed to be\n");
+   fprintf(stdout,"                 empty line\n\n");
+   fprintf(stdout,"              -o \"origin\"\n");
+   fprintf(stdout,"                 origin, if not included then assumed to be name\n");
+   fprintf(stdout,"                 of station in config-file\n\n");
    fprintf(stdout,"              -f \"flags\"\n");
    fprintf(stdout,"                 flags  to  set  to the posted msg. possible ones\n");
    fprintf(stdout,"                 are: pvt, crash, read, sent, att,  fwd,  orphan,\n");
@@ -91,7 +97,7 @@ void print_help(void) {
 
 void post(int c, unsigned int *n, char *params[])
 {
-   char *area = NULL;
+   char *area = NULL, *tearl = NULL, *origin = NULL;
    FILE *text = NULL;
    s_area *echo = NULL;
    FILE *f = NULL;
@@ -166,16 +172,24 @@ void post(int c, unsigned int *n, char *params[])
                CharToOem(msg.subjectLine, msg.subjectLine);
 #endif
                break;
-            case 'x':    // export message
-               export=1;
-               break;
-            case 'd':    // erase input file after posting
-               erasef=1;
-               break;
-	    default:
-               fprintf(stderr, "hpt post: unknown switch %s\n", params[*n]);
-               quit = 1;
-               break;
+		 case 'x':    // export message
+			 export=1;
+			 break;
+		 case 'd':    // erase input file after posting
+			 erasef=1;
+			 break;
+		 case 'z':
+			 tearl = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
+			 strcpy(tearl, params[*n]);
+			 break;
+		 case 'o':
+			 origin = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
+			 strcpy(origin, params[*n]);
+			 break;
+		 default:
+			 fprintf(stderr, "hpt post: unknown switch %s\n", params[*n]);
+			 quit = 1;
+			 break;
          };
       } else if (textBuffer == NULL) {
 	 if (strcmp(params[*n], "-"))
@@ -237,44 +251,56 @@ void post(int c, unsigned int *n, char *params[])
       free(textBuffer);
 
       xscatprintf(&msg.text, "\r--- %s\r * Origin: %s (%s)\r",
-              (config->tearline) ? config->tearline : "",
-	      (config->origin) ? config->origin : config->name,
-	      aka2str(msg.origAddr));
+				  (tearl) ? tearl : (config->tearline) ? config->tearline : "",
+				  (origin) ? origin : (config->origin) ? config->origin : config->name,
+				  aka2str(msg.origAddr));
+
+	  nfree(tearl); nfree(origin);
 
       msg.textLength = strlen(msg.text);
 
       writeLogEntry (hpt_log, '1', "Start posting...");
 
-      writeLogEntry (hpt_log, '5', "Posting msg from %u:%u/%u.%u -> %u:%u/%u.%u in area: %s",
-        msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point,
-	msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point,
-	(area) ? area : echo->areaName);
+	  if ((msg.destAddr.zone + msg.destAddr.net +
+		   msg.destAddr.node + msg.destAddr.point)==0)
+		  writeLogEntry (hpt_log, '5',
+						 "Posting msg from %u:%u/%u.%u -> %s in area: %s",
+						 msg.origAddr.zone, msg.origAddr.net,
+						 msg.origAddr.node, msg.origAddr.point,
+						 msg.toUserName,
+						 (area) ? area : echo->areaName);
+	  else writeLogEntry (hpt_log, '5',
+						  "Posting msg from %u:%u/%u.%u -> %u:%u/%u.%u in area: %s",
+						  msg.origAddr.zone, msg.origAddr.net,
+						  msg.origAddr.node, msg.origAddr.point,
+						  msg.destAddr.zone, msg.destAddr.net,
+						  msg.destAddr.node, msg.destAddr.point,
+						  (area) ? area : echo->areaName);
 
       if (!export && echo->fileName) {
           msg.recode |= (REC_HDR|REC_TXT); // msg already in internal Charset
           putMsgInArea(echo, &msg, 1, msg.attributes);
       }
       else {
-	// recoding from internal to transport charSet
-	if (config->outtab != NULL) {
-//	    getctab(outtab, (UCHAR *) config->outtab);
-	    recodeToTransportCharset((CHAR*)msg.fromUserName);
-	    recodeToTransportCharset((CHAR*)msg.toUserName);
-	    recodeToTransportCharset((CHAR*)msg.subjectLine);
-	    recodeToTransportCharset((CHAR*)msg.text);
-	}
-        if (msg.netMail) {
-	  processNMMsg(&msg, NULL, NULL, 0, MSGLOCAL);
-	  cmPack = 1;
-	}
-        else {
-	  msg.attributes = 0;
-          xscatprintf(&msg.text, "SEEN-BY: %u/%u\r\001PATH: %u/%u\r",
-	      echo->useAka->net, echo->useAka->node,
-	      echo->useAka->net, echo->useAka->node);
-          msg.textLength = strlen(msg.text);
-          processEMMsg(&msg, msg.origAddr, 1, (MSGSCANNED|MSGSENT|MSGLOCAL));
-        }
+		  // recoding from internal to transport charSet
+		  if (config->outtab != NULL) {
+			  recodeToTransportCharset((CHAR*)msg.fromUserName);
+			  recodeToTransportCharset((CHAR*)msg.toUserName);
+			  recodeToTransportCharset((CHAR*)msg.subjectLine);
+			  recodeToTransportCharset((CHAR*)msg.text);
+		  }
+		  if (msg.netMail) {
+			  processNMMsg(&msg, NULL, NULL, 0, MSGLOCAL);
+			  cmPack = 1;
+		  }
+		  else {
+			  msg.attributes = 0;
+			  xscatprintf(&msg.text, "SEEN-BY: %u/%u\r\001PATH: %u/%u\r",
+						  echo->useAka->net, echo->useAka->node,
+						  echo->useAka->net, echo->useAka->node);
+			  msg.textLength = strlen(msg.text);
+			  processEMMsg(&msg, msg.origAddr, 1, (MSGSCANNED|MSGSENT|MSGLOCAL));
+		  }
       }
 
       if ((config->echotosslog) && (!export)) {
