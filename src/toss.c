@@ -1666,9 +1666,10 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
 {
     int rc;
-
+    w_log(LL_FUNC,"toss.c::processMsg()");
     statToss.msgs++;
 #ifdef DO_PERL
+    w_log(LL_SRCLINE, "toss.c:%u:processMsg() #ifdef DO_PERL", __LINE__);
     if ((rc = perlfilter(msg, pktHeader->origAddr, secure)) == 1)
 	return putMsgInBadArea(msg, pktHeader->origAddr, 5);
     else if (rc == 2)
@@ -1686,6 +1687,7 @@ int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
     } else {
 	rc = processEMMsg(msg, pktHeader->origAddr, 0, 0);
     } /* endif */
+    w_log(LL_FUNC,"toss.c::processMsg() rc=%d", rc);
     return rc;
 }
 
@@ -1706,6 +1708,8 @@ int processPkt(char *fileName, e_tossSecurity sec)
     // processIt = 2, process only Netmail
     // processIt = 0, do not process pkt
    
+    w_log(LL_FUNC,"toss.c::processPkt()");
+
     if ((pktlen = fsize(fileName)) > 60) {
 
 	statToss.inBytes += pktlen;
@@ -1737,7 +1741,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 		link = getLinkFromAddr(config, header->origAddr);
 		if ((link!=NULL) && (link->pktPwd==NULL) && (header->pktPassword[0]!='\000'))
 		    w_log('9', "Unexpected Password %s.", header->pktPassword);
-	   
+
 		switch (sec) {
 		case secLocalInbound:
 		    processIt = 1;
@@ -1802,7 +1806,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 		    break;
 	     
 		}
-	   
+
 		if (processIt != 0) {
 		    realtime = time(NULL);
 		    while ((msgrc = readMsgFromPkt(pkt, header, &msg)) == 1) {
@@ -1867,7 +1871,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 #ifdef DO_PERL
     perlpktdone(fileName, rc);
 #endif
-
+    w_log(LL_FUNC,"toss.c::processPkt() OK");
     return rc;
 }
 
