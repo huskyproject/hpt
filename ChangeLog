@@ -1,3 +1,8 @@
+2002-03-31 Sunday 08:16  ml
+
+	* BUGS (1.18), doc/hpt.texi (1.60), src/scan.c (1.150):
+	packNetMailOnScan token; memory leak in scan.c [patch by sir]
+
 2002-03-28 Thursday 10:20  mche
 
 	* src/areafix.c (1.276): fixed bug with autounsubscribing
