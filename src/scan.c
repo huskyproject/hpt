@@ -259,9 +259,9 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 void processAttachs(s_link *link, s_message *msg)
 {
    FILE *flo;
-   char *p, *running, *token, *flags=NULL;
+   char *p, *running, *token, *flags;
    char *newSubjectLine = NULL;
-   
+
    flo = fopen(link->floFile, "a");
 
    running = msg->subjectLine;
@@ -321,12 +321,13 @@ void processRequests(s_link *link, s_message *msg)
 int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 {
    FILE        *pkt;
-   e_prio      prio;
+   e_prio      prio = NORMAL;
    s_message   msg;
    s_pktHeader header;
    s_route     *route;
    s_link      *link, *virtualLink;
    char        freeVirtualLink = 0;
+   char        *flags;
 
    memset(&msg,'\0',sizeof(s_message));
    convertMsgHeader(*xmsg, &msg);
@@ -350,19 +351,31 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
       strcpy(virtualLink->name, msg.toUserName);
       freeVirtualLink = 1;  //virtualLink is a temporary link, please free it..
    }
+
+   // calculate prio
+   if ((xmsg->attr & MSGCRASH)==MSGCRASH) prio = CRASH; 
+   if ((xmsg->attr & MSGHOLD)==MSGHOLD) prio = HOLD;
+   if ((xmsg->attr & MSGXX2)==MSGXX2 ||
+	   ((xmsg->attr & MSGHOLD)==MSGHOLD &&
+		(xmsg->attr & MSGCRASH)==MSGCRASH)) prio = DIRECT; // XX2 or Crash+Hold
+   if (msg.text) flags = (char *) GetCtrlToken(msg.text,(byte *)"FLAGS");
+   if (flags) {
+	   if (strstr(flags,"DIR")) prio = DIRECT;
+	   if (strstr(flags,"IMM")) prio = IMMEDIATE; // most priority
+	   nfree(flags);
+   }
+
    if ((xmsg->attr & MSGFILE) == MSGFILE) {
 	   // file attach
-	   prio = NORMAL;
-	   if ((xmsg->attr & MSGCRASH)==MSGCRASH) prio = CRASH; 
-	   if ((xmsg->attr & MSGHOLD)==MSGHOLD) prio = HOLD;
 	   
 	   // we need route mail
 	   if (prio==NORMAL) {
 		   route = findRouteForNetmail(msg);
 		   link = getLinkForRoute(route, &msg);
 		   if ((route != NULL) && (link != NULL)) {
-			   prio = cvtFlavour2Prio(route->flavour);
-			   if (createOutboundFileName(link, prio, FLOFILE) == 0) {
+			   if (createOutboundFileName(link,
+										  cvtFlavour2Prio(route->flavour),
+										  FLOFILE) == 0) {
 				   processAttachs(link, &msg);
 				   remove(link->bsyFile);
 				   nfree(link->bsyFile);
@@ -387,9 +400,6 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    } /* endif file attach */
 
    if ((xmsg->attr & MSGFRQ) == MSGFRQ) {
-	   prio = NORMAL;
-	   if ((xmsg->attr & MSGCRASH)==MSGCRASH) prio = CRASH; 
-	   if ((xmsg->attr & MSGHOLD)==MSGHOLD) prio = HOLD;
 	   
 	   if (prio!=NORMAL) {
 		   // if msg has request flag then put the subjectline into request file.
@@ -407,7 +417,28 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   }
 	   }
    } /* endif */
-   
+
+   if (prio!=NORMAL) {
+	   // direct, crash, immediate, hold messages
+	   if (createOutboundFileName(virtualLink, prio, PKT) == 0) {
+		   addViaToMsg(&msg, msg.origAddr);
+		   makePktHeader(virtualLink, &header);
+		   pkt = openPktForAppending(virtualLink->floFile, &header);
+		   writeMsgToPkt(pkt, msg);
+		   closeCreatedPkt(pkt);
+		   if (prio==CRASH) writeLogEntry(hpt_log, '7', "Crash-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   else if (prio==HOLD) writeLogEntry(hpt_log, '7', "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   else if (prio==DIRECT) writeLogEntry(hpt_log, '7', "Direct-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   else if (prio==IMMEDIATE) writeLogEntry(hpt_log, '7', "Immediate-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   remove(virtualLink->bsyFile);
+		   nfree(virtualLink->bsyFile);
+		   // mark Mail as sent
+		   xmsg->attr |= MSGSENT;
+		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+		   nfree(virtualLink->floFile);
+	   }
+   } else 
+/*   remove after Nov 17 (2000)
    if ((xmsg->attr & MSGCRASH) == MSGCRASH) {
 	   // crash-msg -> make CUT
 	   if (createOutboundFileName(virtualLink, CRASH, PKT) == 0) {
@@ -444,9 +475,8 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 		   nfree(virtualLink->floFile);
 	   }
-   } else {
-      
-	   // no crash, no hold flag -> route netmail
+   } else */ {
+       // no crash, no hold flag -> route netmail
 	   route = findRouteForNetmail(msg);
 	   link = getLinkForRoute(route, &msg);
 	   

@@ -1659,6 +1659,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		token = strseparate (&textBuff, "\n\r");
 		while(token != NULL) {
 			while ((*token == ' ') || (*token == '\t')) token++;
+			while(isspace(token[strlen(token)-1])) token[strlen(token)-1]='\0';
 			preport = processcmd( link, msg, token, tellcmd (token) );
 			if (preport != NULL) {
 				switch (RetFix) {

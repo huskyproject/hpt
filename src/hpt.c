@@ -244,9 +244,12 @@ void processConfig()
 
    // lock...
    if (config->lockfile!=NULL && fexist(config->lockfile)) {
-      f = fopen(config->lockfile, "rt");
-      fscanf(f, "%lu\n", &pid);
-      fclose(f);
+	   if ((f = fopen(config->lockfile, "rt"))==NULL) {
+		   fprintf(stderr,"Can't open file: %s\n",config->lockfile);
+		   exit_hpt("Can't open lock-file",0);
+	   }
+	   fscanf(f, "%lu\n", &pid);
+	   fclose(f);
       /* Checking process PID */
 #ifdef __OS2__
       if (DosKillProcess(DKP_PROCESSTREE, pid) == ERROR_NOT_DESCENDANT) {

@@ -2,6 +2,13 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Tue Oct 17 14:51:55 NOVST 2000
+max:
+* checking return values of fopen
+* areafix - strip spaces at the end of command
+* DIR, IMM mails packed well
+
+----- cvs ci ------
 Mon Oct 16 12:06:41 NOVST 2000
 max:
 * new writeMsgToPkt -- write msg to pkt as one piece
