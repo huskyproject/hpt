@@ -1,3 +1,17 @@
+2001-06-14 Thursday 16:21  pavel.gulchouck
+
+	* filter.pl (1.5): Added descriptions of $route, $flavour and $attr
+	in route() hook
+
+2001-06-14 Thursday 16:15  pavel.gulchouck
+
+	* misc/filter.pl (1.3): Added processing list reply from uplink
+
+2001-06-14 Thursday 16:00  pavel.gulchouck
+
+	* filter.pl (1.4), misc/filter.pl (1.2): Adapted to current perl
+	API
+
 2001-06-12 Tuesday 07:30  ml
 
 	* src/: areafix.c (1.214), toss.c (1.352): fixed areafix replying
