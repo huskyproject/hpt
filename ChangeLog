@@ -1,3 +1,12 @@
+2003-02-10 Monday 13:54  stas_degteff
+
+	* doc/hpt.texi (1.107): Fix spell; thanks to Igor Zakharoff and
+	Dmitry Sergienko
+
+2003-02-10 Monday 13:14  stas_degteff
+
+	* doc/hpt.texi (1.105): Fix AreaGroup description
+
 2003-02-09 Sunday 15:31  d_sergienko
 
 	* doc/hpt.texi (1.104): added info about AreaGroup &
@@ -5,8 +14,7 @@
 
 2003-02-06 Thursday 22:43  d_sergienko
 
-	* doc/hpt-FAQ.russian (1.76, hpt-1_4-stable): fixed location of
-	texi2html
+	* doc/hpt-FAQ.russian (1.76): fixed location of texi2html
 
 2003-02-06 Thursday 12:07  sfpavel
 
