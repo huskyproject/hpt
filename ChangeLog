@@ -1,3 +1,10 @@
+2003-02-06 Thursday 12:07  sfpavel
+
+	* Makefile (1.12), debian/changelog (1.19), debian/control (1.14),
+	debian/copyright (1.5), debian/dirs (1.5), debian/docs (1.8),
+	debian/huskymak.cfg (1.12), debian/rules (1.13), doc/Makefile
+	(1.7): New debian package
+
 2003-02-05 Wednesday 18:19  stas_degteff
 
 	* doc/hpt.texi (1.103): Add warning about shell's i/o redirecting
