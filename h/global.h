@@ -69,4 +69,6 @@ extern char *afixCmd;
 
 extern int lock_fd;
 
+extern unsigned long getfree (char *path);
+
 #endif

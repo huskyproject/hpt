@@ -31,6 +31,8 @@
 #ifndef HPT_H
 #define HPT_H
 
+#define LogFileName "hpt.log"
+
 int processCommandLine(int argc, char **argv);
 
 void processConfig(void);

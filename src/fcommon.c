@@ -99,19 +99,22 @@ void writeDupeFiles(void)
 }
 
 void exit_hpt(char *logstr, int print) {
+    char *_lockfile;
 
+    w_log(LL_FUNC,"exit_hpt()");
+    w_log(LL_CRIT, logstr);
+    _lockfile = config->lockfile;
     if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
 
     writeDupeFiles();
-    if (config->lockfile) {
-	close(lock_fd);
-	remove(config->lockfile);
-    }
-    w_log('9', logstr);
-    w_log('1', "End");
-    closeLog();
     disposeConfig(config);
     doneCharsets();
+    w_log(LL_STOP, "Exit");
+    closeLog();
+    if (_lockfile) {
+        close(lock_fd);
+        remove(_lockfile);
+    }
     exit(EX_SOFTWARE);
 }
 
@@ -119,10 +122,11 @@ int createLockFile(char *lockfile) {
         int fd;
         char *pidstr = NULL;
 
+        w_log(LL_FUNC,"createLockFile()");
         if ( (fd=open(lockfile, O_CREAT | O_RDWR | O_EXCL, S_IREAD | S_IWRITE)) < 0 )
            {
                    fprintf(stderr,"createLockFile: cannot create lock file\"%s\"\n",lockfile);
-                   w_log('9', "createLockFile: cannot create lock file \"%s\"m", lockfile);
+                   w_log(LL_ERR, "createLockFile: cannot create lock file \"%s\"m", lockfile);
                    return 1;
            }
 
@@ -131,6 +135,7 @@ int createLockFile(char *lockfile) {
 
         close(fd);
 	nfree(pidstr);
+        w_log(LL_FUNC,"createLockFile() OK");
         return 0;
 }
 
@@ -143,8 +148,10 @@ int truncate(const char *fileName, long length)
           lseek(fd, length, SEEK_SET);
           chsize(fd, tell(fd));
           close(fd);
+          w_log(LL_TRUNC,"Can't truncate %s: %s", fileName, strerr(errno));
           return 1;
    };
+   w_log(LL_TRUNC,"%s truncated", fileName);
    return 0;
 }
 

@@ -80,8 +80,6 @@ char *scanParmA;
 char *scanParmF;
 char force = 0;
 
-extern unsigned long getfree (char *path);
-
 /* kn: I've really tried not to break it. 
    FIXME: if there is pack and scan options on cmd line - one set 
    of options are lost */
@@ -274,7 +272,7 @@ void processConfig()
    config = readConfig(cfgFile);
    if (NULL == config) {
        nfree(cfgFile);
-       printf("Config not found\n");
+       fprintf(stderr,"Config not found\n");
        exit(EX_UNAVAILABLE);
    }
 
@@ -340,14 +338,13 @@ void processConfig()
 
    // open Logfile
    if (config->logFileDir) {
-	xstrscat(&buff, config->logFileDir, "hpt.log", NULL);
+	xstrscat(&buff, config->logFileDir, LogFileName, NULL);
 	hpt_log = openLog(buff, versionStr, config);
 	if (hpt_log && quiet) hpt_log->logEcho=0; /* Don't display messages */
 	nfree(buff);
-   } else printf("logFileDir not defined, there will be no log created!\n");
+   } else 
+     fprintf(stderr,"logFileDir not defined, there will be no log created!\n");
    
-   w_log('1', "Start");
-
    if (config->addrCount == 0) exit_hpt("at least one addr must be defined",1);
    if (config->linkCount == 0) exit_hpt("at least one link must be specified",1);
    if (config->outbound == NULL) exit_hpt("you must set outbound in fidoconfig first",1);
@@ -427,6 +424,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 //   if (quiet==0) fprintf(stdout, "Highly Portable Tosser %s\n", version);
 
    if (config==NULL) processConfig();
+   w_log(LL_START, "Start");
 
 #if defined ( __NT__ )
    if (config->setConsoleTitle) {
@@ -512,7 +510,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    // deinit SMAPI
    MsgCloseApi();
 
-   w_log('1', "End");
+   w_log(LL_STOP, "End");
    closeLog();
    doneCharsets();
    nfree(versionStr);
