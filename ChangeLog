@@ -1,3 +1,12 @@
+2002-11-08 Friday 08:46  mche
+
+	* hpt.dsp (1.2): carbon.c added
+
+2002-11-08 Friday 08:40  mche
+
+	* src/toss.c (1.462): fix tosing when carbons not defined thanks to
+	[Alexander Reznikov   2:4600/220]
+
 2002-11-07 Thursday 11:17  pgul
 
 	* src/pktread.c (1.91): Fixed segfault on incorrect pkt
