@@ -1,3 +1,11 @@
+2002-02-11 Monday 17:55  mche
+
+	* src/query.c (1.18): - added log messages
+
+2002-02-11 Monday 16:34  mche
+
+	* src/query.c (1.17): - fixed: query file saving
+
 2002-02-09 Saturday 09:18  ml
 
 	* misc/cut-hptlog.pl (1.2): update
