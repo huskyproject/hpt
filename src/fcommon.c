@@ -35,9 +35,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>
-#ifndef UNIX
-#  include <process.h>
-#endif
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/types.h>
@@ -45,6 +42,10 @@
 
 
 #include <smapi/compiler.h>
+
+#ifdef HAS_PROCESS_H
+#  include <process.h>
+#endif
 
 #ifdef HAS_UNISTD_H
 #   include <unistd.h>

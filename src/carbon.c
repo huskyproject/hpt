@@ -27,11 +27,12 @@
 
 #include <stdlib.h>
 #include <string.h>
-#ifndef UNIX
-#  include <process.h>
-#endif
 
 #include <smapi/compiler.h>
+
+#ifdef HAS_PROCESS_H
+#  include <process.h>
+#endif
 
 #ifdef HAS_IO_H
 #include <io.h>

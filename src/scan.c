@@ -37,14 +37,15 @@
 #include <string.h>
 #include <time.h>
 #include <errno.h>
-#ifndef UNIX
-#  include <process.h>
-#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 
 /* compiler.h */
 #include <smapi/compiler.h>
+
+#ifdef HAS_PROCESS_H
+#  include <process.h>
+#endif
 
 #ifdef HAS_UNISTD_H
 #include <unistd.h>

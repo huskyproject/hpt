@@ -29,7 +29,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include <strings.h>
 
 #include <smapi/compiler.h>
 
