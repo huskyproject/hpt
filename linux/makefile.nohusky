@@ -10,7 +10,7 @@ SRC_DIR = ../src/
 ifeq ($(HASHDUPE), 1)
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../fidoconfig -I../h -I../../smapi -Wall -ggdb -O3 -DUNIX -DHASHDUPE -DHAS_POPEN
+  CFLAGS  = -c -I../h -I../../fidoconfig -I../h -I../../smapi -Wall -ggdb -DUNIX -DHASHDUPE -DHAS_POPEN
   LFLAGS  =
 else
   CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -O3 -s -DUNIX -DHASHDUPE -DHAS_POPEN
@@ -35,6 +35,7 @@ all: $(OBJS) \
      tpkt \
      txt2pkt \
      hptlink \
+     hpttree \
      hpt \
      purgeDupes 
 
@@ -47,14 +48,17 @@ pktinfo: pktinfo.o $(OBJS)
 tlog: tlog.o log.o
 	$(CC) $(LFLAGS) -o tlog tlog.o log.o
 
-tpkt: tpkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o 
-	$(CC) $(LFLAGS) -o tpkt log.o tpkt.o fcommon.o pktread.o recode.o pktwrite.o global.o -lsmapilnx  -lfidoconfig
+tpkt: tpkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o
+	$(CC) $(LFLAGS) -o tpkt log.o tpkt.o fcommon.o pktread.o recode.o pktwrite.o global.o xstr.o -lsmapilnx -lfidoconfig
 
 txt2pkt: txt2pkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o 
-	$(CC) $(LFLAGS) -o txt2pkt log.o txt2pkt.o fcommon.o pktread.o recode.o pktwrite.o global.o -lsmapilnx  -lfidoconfig
+	$(CC) $(LFLAGS) -o txt2pkt log.o txt2pkt.o fcommon.o pktread.o recode.o pktwrite.o global.o xstr.o -lsmapilnx -lfidoconfig
 
 hptlink: hptlink.o
 	$(CC) $(LFLAGS) -o hptlink hptlink.o -lsmapilnx -lfidoconfig
+
+hpttree: hpttree.o
+	$(CC) $(LFLAGS) -o hpttree hpttree.o -lsmapilnx -lfidoconfig
 
 hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) -lsmapilnx -lfidoconfig 
@@ -68,12 +72,13 @@ clean:
 	-rm core
 
 distclean: clean
-	-rm tpkt txt2pkt pktinfo hpt purgeDupes tlog hptlink
+	-rm tpkt txt2pkt pktinfo hpt purgeDupes tlog hptlink hpttree
 	-rm *.1.gz
 
 install:
 	gzip -c ../man/hpt.1 > hpt.1.gz
 	gzip -c ../man/purgeDupes.1 > purgeDupes.1.gz
 	gzip -c ../man/hptlink.1 > hptlink.1.gz
-	install -s hpt pktinfo purgeDupes txt2pkt hptlink $(INSTDIR)
-	install hpt.1.gz purgeDupes.1.gz hptlink.1.gz $(MANDIR)/man1
+	gzip -c ../man/hpttree.1 > hpttree.1.gz
+	install -s hpt pktinfo purgeDupes txt2pkt hptlink hpttree $(INSTDIR)
+	install hpt.1.gz purgeDupes.1.gz hptlink.1.gz hpttree.1.gz $(MANDIR)/man1

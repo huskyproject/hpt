@@ -26,7 +26,8 @@ all: $(OBJS) \
      tpkt \
      hpt \
      purgeDupes \
-     hptlink
+     hptlink \
+     hpttree
 #     install
 
 %.o: $(SRC_DIR)%.c
@@ -50,12 +51,15 @@ purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o log.o recode.o
 hptlink: hptlink.o
 	$(CC) $(LFLAGS) -o hptlink hptlink.o $(FIDOCONFIG) $(SMAPI)
 
+hpttree: hpttree.o
+	$(CC) $(LFLAGS) -o hpttree hpttree.o $(FIDOCONFIG) $(SMAPI)
+
 clean:
 	-rm -f *.o
 	-rm *~
 
 distclean: clean
-	-rm purgeDupes hpt tpkt tlog pktinfo hptlink
+	-rm purgeDupes hpt tpkt tlog pktinfo hptlink hpttree
 
 install: hpt pktinfo purgeDupes
 	cp hpt pktinfo purgeDupes $(BINDIR)

@@ -42,7 +42,8 @@ all: $(OBJS) \
      tpkt.exe \
      txt2pkt.exe \
      hpt.exe \
-     hptlink.exe
+     hptlink.exe \
+     hpttree.exe
 
 !ENDIF
 
@@ -50,7 +51,7 @@ $(OBJS): $(SRC_DIR)\$*.c
   @echo compiling $*.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
-pktinfo.obj tlog.obj purgedupes.obj tpkt.obj txt2pkt.obj hptlink.obj: $(SRC_DIR)\$*.c
+pktinfo.obj tlog.obj purgedupes.obj tpkt.obj txt2pkt.obj hptlink.obj hpttree.obj: $(SRC_DIR)\$*.c
   @echo compiling $*.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
@@ -80,6 +81,10 @@ hptlink.exe: hptlink.obj
   @echo linking hptlink
   $(LINK) $(LFLAGS) FILE hptlink.obj LIBRARY $(LIBDIR)\smapiwco, $(LIBDIR)\fidoconfig NAME hptlink.exe
 
+hpttree.exe: hpttree.obj
+  @echo linking hpttree
+  $(LINK) $(LFLAGS) FILE hpttree.obj LIBRARY $(LIBDIR)\smapiwco, $(LIBDIR)\fidoconfig NAME hpttree.exe
+
 hpt.exe: $(OBJS)
   @echo linking hpt
   $(LINK) $(LFLAGS) FILE $(OBJS) Library $(LIBDIR)\smapiwco, $(LIBDIR)\fidoconfig.lib NAME hpt.exe
@@ -90,11 +95,12 @@ clean:
 distclean: clean
 	del *.exe
 
-install: hpt.exe purged.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe
+install: hpt.exe purged.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe hpttree.exe
 	copy hpt.exe $(BINDIR)
 	copy purged.exe $(BINDIR)
 	copy pktinfo.exe $(BINDIR)
 	copy tpkt.exe $(BINDIR)
 	copy tlog.exe $(BINDIR)
 	copy hptlink.exe $(BINDIR)
+	copy hpttree.exe $(BINDIR)
 

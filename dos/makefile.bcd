@@ -26,7 +26,8 @@ OBJS    = pktinfo.obj \
           tree.obj \
 	  crc.obj \
 	  xstr.obj \
-	  hptlink.obj
+	  hptlink.obj \
+          hpttree.obj
 
 SRC_DIR = ..\src
 
@@ -43,8 +44,9 @@ all: $(OBJS) \
      tlog.exe \
      tpkt.exe \
      hpt.exe \
-     purged.exe
-     hptlink.exe
+     purged.exe \
+     hptlink.exe \
+     hpttree.exe
 
 pktinfo.exe: pktinfo.obj $(OBJS)
 	$(CC) $(LFLAGS) @&&!
@@ -114,6 +116,14 @@ hptlink.obj
 fidoconf.lib
 smapibcd.lib
 ! 
+
+hpttree.exe: hpttree.obj
+	$(CC) $(LFLAGS) @&&!
+hpttree.obj
+fidoconf.lib
+smapibcd.lib
+! 
+
 .c.obj:
 	$(CC) $(CFLAGS) -c $<
 
@@ -123,10 +133,11 @@ clean:
 distclean: clean
 	del *.exe
 
-install: hpt.exe purged.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe
+install: hpt.exe purged.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe hpttree.exe
 	copy hpt.exe $(BINDIR)
 	copy purged.exe $(BINDIR)
 	copy hptlink.exe $(BINDIR)
+	copy hpttree.exe $(BINDIR)
 	copy pktinfo.exe $(BINDIR)
 	copy tpkt.exe $(BINDIR)
 	copy tlog.exe $(BINDIR)

@@ -3,7 +3,7 @@ CC      = gcc
 INSTDIR = /usr/local/bin
 MANDIR  = /usr/local/man
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o areafix.o log.o global.o recode.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o link.o post.o strsep.o crc.o
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o areafix.o log.o global.o recode.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o link.o post.o strsep.o crc.o xstr.o
 SRC_DIR = ../src/
 
 FIDOCONFIG = ../../fidoconfig/libfidoconfig.a
@@ -23,7 +23,8 @@ all: $(OBJS) \
      tpkt \
      hpt \
      purgeDupes \
-     hptlink
+     hptlink \
+     hpttree
 
 %.o: $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
@@ -35,24 +36,28 @@ tlog: tlog.o log.o
 	$(CC) $(LFLAGS) -o tlog tlog.o log.o
 
 tpkt: tpkt.o pktwrite.o fcommon.o pktread.o
-	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o log.o pktread.o pktwrite.o global.o $(FIDOCONFIG) $(SMAPI)
+	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o log.o pktread.o pktwrite.o global.o xstr.o $(FIDOCONFIG) $(SMAPI)
 
 hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) $(FIDOCONFIG) $(SMAPI) 
 
 purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o log.o
-	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o log.o $(FIDOCONFIG) $(SMAPI)
+	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o log.o xstr.o $(FIDOCONFIG) $(SMAPI)
 
 hptlink: hptlink.o
-	$(CC) $(LFLAGS) -o hptlink hptlink.o $(FIDOCONFIG) $(SMAPI)
+	$(CC) $(LFLAGS) -o hptlink hptlink.o xstr.o $(FIDOCONFIG) $(SMAPI)
+
+hpttree: hpttree.o
+	$(CC) $(LFLAGS) -o hpttree hpttree.o xstr.o $(FIDOCONFIG) $(SMAPI)
 
 clean:
 	-rm -f *.o
 	-rm *~
 
 install:
-	install -s hpt pktinfo purgeDupes hptlink $(INSTDIR)
+	install -s hpt pktinfo purgeDupes hptlink hprtree $(INSTDIR)
 	gzip -c ../man/hpt.1 > hpt.1.gz
 	gzip -c ../man/purgeDupes.1 > purgeDupes.1.gz
 	gzip -c ../man/hptlink.1 > hptlink.1.gz
-	install hpt.1.gz purgeDupes.1.gz hptlink.1.gz $(MANDIR)/man1
+	gzip -c ../man/hpttree.1 > hpttree.1.gz
+	install hpt.1.gz purgeDupes.1.gz hptlink.1.gz hpttree.1.gz $(MANDIR)/man1

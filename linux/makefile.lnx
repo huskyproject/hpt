@@ -35,6 +35,7 @@ all: $(OBJS) \
      tpkt \
      txt2pkt \
      hptlink \
+     hpttree \
      hpt \
      purgeDupes 
 
@@ -56,6 +57,9 @@ txt2pkt: txt2pkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o
 hptlink: hptlink.o
 	$(CC) $(LFLAGS) -o hptlink hptlink.o -lsmapilnx -lfidoconfig
 
+hpttree: hpttree.o
+	$(CC) $(LFLAGS) -o hpttree hpttree.o -lsmapilnx -lfidoconfig
+
 hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) -lsmapilnx -lfidoconfig 
 
@@ -68,12 +72,13 @@ clean:
 	-rm core
 
 distclean: clean
-	-rm tpkt txt2pkt pktinfo hpt purgeDupes tlog hptlink
+	-rm tpkt txt2pkt pktinfo hpt purgeDupes tlog hptlink hpttree
 	-rm *.1.gz
 
 install:
 	gzip -c ../man/hpt.1 > hpt.1.gz
 	gzip -c ../man/purgeDupes.1 > purgeDupes.1.gz
 	gzip -c ../man/hptlink.1 > hptlink.1.gz
-	install $(IBOPT) hpt pktinfo purgeDupes txt2pkt hptlink $(BINDIR)
-	install $(IMOPT) hpt.1.gz purgeDupes.1.gz hptlink.1.gz $(MANDIR)/man1
+	gzip -c ../man/hpttree.1 > hpttree.1.gz
+	install $(IBOPT) hpt pktinfo purgeDupes txt2pkt hptlink hpttree $(BINDIR)
+	install $(IMOPT) hpt.1.gz purgeDupes.1.gz hptlink.1.gz hpttree.1.gz $(MANDIR)/man1
