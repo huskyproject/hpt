@@ -251,12 +251,12 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
         
         area = cb->area;
         
-        if(!cb->rule&CC_AND)
+        if(!cb->rule&CC_AND)  /* not AND & not AND-NOT */
         {
             if (!cb->extspawn && /*  fix for extspawn */
                 cb->areaName != NULL && /*  fix for carbonDelete */
                 /*  dont CC to the echo the mail comes from */
-                !stricmp(echo->areaName,area->areaName)
+                !sstricmp(echo->areaName,area->areaName)
                 ) 
                 continue;
         }    
@@ -281,7 +281,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
             /* cb->str is substring, so pattern must be "*str*" */
             pattern=safe_malloc(strlen(cb->str)+3);
             *pattern='*';
-            strcpy(pattern+1, cb->str);
+            sstrcpy(pattern+1, cb->str);
             strcat(pattern, "*");
             result=0;
             
@@ -330,10 +330,10 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
             }
             break;
         }
-        
+
         if(cb->rule&CC_NOT) /* NOT on/off */
             result=!result;
-        
+
         switch(cb->rule&CC_AND){ /* what operation with next result */
         case CC_OR: /* OR */
             if (result && area && cb->move!=2 && !config->carbonAndQuit) {
@@ -368,11 +368,11 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
                         }
             }
             break;
-        case CC_AND: /* AND */
+        case CC_AND: /* AND & AND-NOT */
             if(!result){
                 /* following expressions can be skipped until OR */
                 for (++i,++cb; i<config->carbonCount; i++,++cb)
-                    if(!cb->rule&CC_AND)
+                    if(!cb->rule&CC_AND)  /* AND & AND-NOT */
                         break; /* this is the last in the AND expr. chain */
             }
             /* else result==TRUE, so continue with next expr. */
