@@ -2,6 +2,12 @@ hpt 0.29
 --------
 
 ----- cvs ci ------
+Sat Sep 11 13:00:16 NOVST 1999
+max:
+* added carbonReason (patch from Serguei Revtov)
+* carbonCopy code cleanup
+	
+----- cvs ci ------
 Tue Sep  7  18:28:00
 Fedor:
 * fixed buf with HighWaters position

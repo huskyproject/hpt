@@ -852,11 +852,11 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    return 0;
 }
 
-void processCarbonCopy (s_area *area, s_area *echo, s_message *msg, int export) {
+void processCarbonCopy (s_area *area, s_area *echo, s_message *msg,	s_carbon carbon) {
 /* area - area to carbon messages, echo - original echo area */
-	char *p,*old_text;
-	int i,old_textLength;
-	
+	char *p, *old_text, *reason = carbon.reason;
+	int i, old_textLength, reasonLen = 0, export = carbon.export;
+
 	old_textLength = msg->textLength;
 	old_text = msg->text;
 	
@@ -864,15 +864,21 @@ void processCarbonCopy (s_area *area, s_area *echo, s_message *msg, int export) 
 	if ((!config->carbonKeepSb) && (!area->keepsb)) {
 		if (NULL != (p = strstr(old_text,"SEEN-BY:"))) i -= strlen (p);
 	}
+	if (reason) reasonLen = strlen(reason)+1;  /* +1 for \r */
+
 	msg->text = malloc(i+strlen("AREA:\r * Forwarded from area ''\r\r\1")
-					   +strlen(area->areaName)+strlen(echo->areaName)+1);
+					   +strlen(area->areaName)+strlen(echo->areaName)+reasonLen+1);
 	
 	//create new area-line
-	if (export) sprintf(msg->text, "AREA:%s\r * Forwarded from area '%s'\r\r\1",
-						area->areaName,echo->areaName);
-	else sprintf(msg->text, " * Forwarded from area '%s'\r\r\1",echo->areaName);
-	strncat(msg->text,old_text,i); // copy rest of msg (assumes old AREA:
-	msg->textLength = strlen(msg->text); // is at the very beginning
+	sprintf(msg->text, "%s%s%s * Forwarded from area '%s'\r%s%s\r\1",
+			(export) ? "AREA:" : "",
+			(export) ? area->areaName : "",
+			(export) ? "\r" : "", echo->areaName,
+			(reason) ? reason : "",
+			(reason) ? "\r" : "");
+
+	strncat(msg->text,old_text,i); // copy rest of msg
+	msg->textLength = strlen(msg->text);
 	
 	if (!export) putMsgInArea(area,msg,0,0);	  
 	else processEMMsg(msg, *area->useAka, 1);
@@ -885,7 +891,7 @@ void processCarbonCopy (s_area *area, s_area *echo, s_message *msg, int export) 
 int carbonCopy(s_message *msg, s_area *echo)
 {
 	int i;
-	char *kludge;
+	char *kludge, *str=NULL;
 	s_area *area;
 	
 	if (echo->ccoff==1) return 1;
@@ -899,41 +905,28 @@ int carbonCopy(s_message *msg, s_area *echo)
 		
 		switch (config->carbons[i].type) {
 			
-		case 0:
-			if (stristr(msg->toUserName, config->carbons[i].str)) {
-				processCarbonCopy(area,echo,msg,config->carbons[i].export);
-				if (config->carbonAndQuit) return 0;
-			}
+		case 0:	str=stristr(msg->toUserName,config->carbons[i].str);
 			break;
-		case 1:
-			if (stristr(msg->fromUserName, config->carbons[i].str)) {
-				processCarbonCopy(area,echo,msg,config->carbons[i].export);
-				if (config->carbonAndQuit) return 0;
-			}
+		case 1:	str=stristr(msg->fromUserName,config->carbons[i].str);
 			break;
 		case 2:
 			kludge=getKludge(*msg, config->carbons[i].str);
-			if (kludge!=NULL) {
-				processCarbonCopy(area,echo,msg,config->carbons[i].export);
-				free(kludge);
-				if (config->carbonAndQuit) return 0;
-			}
+			str=kludge; if (kludge) free(kludge);
 			break;
-		case 3:
-			if (stristr(msg->subjectLine, config->carbons[i].str)) {
-				processCarbonCopy(area,echo,msg,config->carbons[i].export);
-				if (config->carbonAndQuit) return 0;
-			}
+		case 3:	str=stristr(msg->subjectLine,config->carbons[i].str);
 			break;
-		case 4:
-			if (stristr(msg->text, config->carbons[i].str)) {
-				processCarbonCopy(area,echo,msg,config->carbons[i].export);
-				if (config->carbonAndQuit) return 0;
-			}
+		case 4:	str=stristr(msg->text+strlen(area->areaName)+6,config->carbons[i].str);
 			break;
-		default: break;
+
+		} /* end switch*/
+			
+		if (str) {
+			processCarbonCopy(area,echo,msg,config->carbons[i]);
+			if (config->carbonAndQuit) return 0;
+			str = NULL;
 		}
-	}
+		
+	} /* end for */
 	
 	return 1;
 }
@@ -1508,7 +1501,7 @@ void processDir(char *directory, e_tossSecurity sec)
       if (!(pktFile = patimat(file->d_name, "*.pkt") == 1)) 
          for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
             if (patimat(file->d_name, validExt[i]) == 1
-#ifndef UNIX
+#if !defined(UNIX) && !defined(__EMX__)
 		&& !(file->d_attr & _A_HIDDEN)
 #endif
 					    )

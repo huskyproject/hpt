@@ -180,9 +180,9 @@ void post(int c, unsigned int *n, char *params[])
           processEMMsg(&msg, msg.origAddr, 1);
       }
       
-      /* Don't work very well... some code in putMsgInArea rewrite msg.destAddr */
-      sprintf (buffer,"Posting msg. from %s -> %s in area: %s",
-                      aka2str(msg.origAddr), aka2str(msg.destAddr), area);
+      sprintf (buffer,"Posting msg. from %u:%u/%u.%u -> %s in area: %s",
+                  msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node,
+                  msg.origAddr.point, aka2str(msg.destAddr), area);
       writeLogEntry (hpt_log, '2', buffer);
       
       if ((config->echotosslog) && (!export)) {
