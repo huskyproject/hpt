@@ -763,7 +763,10 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
             nRet = DEL_OK;
           }
           // add all links
-          token = strstr(cfgline, aka2str(area->downlinks[0]->link->hisAka));
+          token = NULL;
+          token = strrchr(cfgline, '\"');
+          if(!token) token = cfgline;
+          token = strstr(token, aka2str(area->downlinks[0]->link->hisAka));
           if(!testAddr(token,area->downlinks[0]->link->hisAka))
             token = strstr(token+1, aka2str(area->downlinks[0]->link->hisAka));
 
