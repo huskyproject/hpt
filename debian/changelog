@@ -1,3 +1,12 @@
+hpt (1.4.0+rc2-2) unstable; urgency=low
+
+  * New stable version
+  * Update Standarts to 3.6.1
+  * Add debian/compat
+  * Build-Depends for libsmapi-dev now
+
+ -- Pavel Andreew <sfpavel@users.sourceforge.net>  Mon,  7 Jun 2004 17:18:45 +0600
+
 hpt (1.4.0+rc2-1) unstable; urgency=low
 
   * New stable version
