@@ -372,21 +372,20 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
    area = strtok(textBuff, "\r");
    area += 5;
 
-   echo = getArea(*config, area);
+   echo = getArea(config, area);
 
-   if (stricmp(echo->areaName,"BadArea") == 0)
-   {
+   if (echo == &(config->badArea)) {
       // checking for autocreate option
       link = getLinkFromAddr(*config, pktOrigAddr);
       if ((link != NULL) && (link->autoAreaCreate != 0)) {
          autoCreate(area, pktOrigAddr);
-         echo = getArea(*config, area);
+         echo = getArea(config, area);
       } else
          // no autoareaCreate -> msg to bad
          putMsgInArea(echo, msg);
    }
 
-   if (stricmp(echo->areaName, "BadArea") != 0) {
+   if (echo != &(config->badArea)) {
       if (dupeDetection(echo, *msg)==1) {
          // no dupe
 
