@@ -544,7 +544,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 
    getc(pkt); getc(pkt);                // read unused cost fields (2bytes)
 
-   fgetsUntil0 (msg->datetime, 22, pkt);
+   fgetsUntil0 (msg->datetime, 22, pkt, NULL);
    parse_ftsc_date(&tm, msg->datetime);
    make_ftsc_date(msg->datetime, &tm);
 
@@ -552,15 +552,15 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
        globalBuffer = (UCHAR *) safe_malloc(BUFFERSIZE+1); // 128K (32K in MS-DOS)
    }
 
-   len = fgetsUntil0 ((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt);
+   len = fgetsUntil0 ((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
    if (len > XMSG_TO_SIZE+1) badmsg=1;
    else xstrcat(&msg->toUserName, (char *) globalBuffer);
 
-   fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt);
+   fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
    if (len > XMSG_FROM_SIZE+1) badmsg=1;
    else xstrcat(&msg->fromUserName, (char *) globalBuffer);
 
-   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt);
+   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
    if (len > XMSG_SUBJ_SIZE+1) badmsg=1;
    else xstrcat(&msg->subjectLine, (char *) globalBuffer);
 
@@ -573,17 +573,17 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 
 #if !defined(__DOS__) && !defined(__MSDOS__)
    do {
-	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt);
+	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
 	   xstrcat(&msg->text, globalBuffer);
 	   msg->textLength+=len-1; // trailing \0 is not the text
    } while (len == BUFFERSIZE+1);
 #else
-   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt);
+   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
    xstrcat(&msg->text, globalBuffer);
    msg->textLength+=len-1; // trailing \0 is not the text
    while (len == BUFFERSIZE+1) {
 	   // skip msg text
-	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt);
+	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
    }
    // add origin, seen-by's & path
    origin = strrstr(globalBuffer, " * Origin");
