@@ -12,6 +12,7 @@ Category 1: Will certainly be implemented until next release
 - autoAreaCreateMask
 - areafix from cmd line (like hpt afix <addr> %command)
 - del pass areas after unsubscribing
+- del "-$m 200 -dosfile -keepsb" from autocreatedefaults when create passthrough
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

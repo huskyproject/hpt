@@ -271,7 +271,7 @@ int createTempPktFileName(s_link *link)
     /* temp name of the arcmail bundle */
     char  *tmpPFileName = (char *) safe_malloc(strlen(config->outbound)+13+13+12+1);
     time_t aTime = time(NULL);  /* get actual time */
-    int counter = 0;
+    int counter, minFreeExt;
     char limiter=PATH_DELIM;
     char zoneSuffix[6] = "\0";
 
@@ -369,6 +369,7 @@ int createTempPktFileName(s_link *link)
 	switch ( bundleNameStyle ) {
 
 	case eAddrDiff:
+	case eAddrDiffAlways:
 
 		if ( link->hisAka.point == 0 && config->addr[0].point == 0) {
 			sprintf (ptr, "%04hx%04hx.",
@@ -383,6 +384,7 @@ int createTempPktFileName(s_link *link)
 	        cleanEmptyBundles(tmpPFileName, ptr-tmpPFileName);
 
 		counter = 0;
+		minFreeExt = -1;
 		for (i=0; i<numExt; i++) {
 
 			sprintf(pfileName, "%s%s%c", tmpPFileName, wday, ext3[i]);
@@ -392,7 +394,7 @@ int createTempPktFileName(s_link *link)
 				if (tr - stbuf.st_mtime < 60*60*24) {
 					// today's bundle
 					counter = i+1;
-					if (stbuf.st_size==0 && counter<numExt) remove (pfileName);
+					if (stbuf.st_size==0 && (counter<numExt || bundleNameStyle==eAddrDiffAlways)) remove (pfileName);
 				} else {
 					// old bundle
 					if (stbuf.st_size == 0)
@@ -400,18 +402,25 @@ int createTempPktFileName(s_link *link)
 					else
 						counter = i+1;
 				}
+			} else {
+				if (minFreeExt <0) minFreeExt = i;
 			}
 		}
-		if (counter >= numExt) {
-			writeLogEntry(hpt_log,'7',"Can't use more than %d extensions for bundle names",numExt);
-			nfree(fileName);
-			nfree(pfileName);
-			nfree(tmpPFileName);
 
-			// Switch link to TimeStamp style
-			link->linkBundleNameStyle = eTimeStamp;
-			i = createTempPktFileName(link);
-			return i;
+		if (counter >= numExt) {
+			if (bundleNameStyle==eAddrDiffAlways && minFreeExt>=0) {
+				counter = minFreeExt;
+			} else {
+				writeLogEntry(hpt_log,'7',"Can't use more than %d extensions for bundle names",numExt);
+				nfree(fileName);
+				nfree(pfileName);
+				nfree(tmpPFileName);
+
+				// Switch link to TimeStamp style
+				link->linkBundleNameStyle = eTimeStamp;
+				i = createTempPktFileName(link);
+				return i;
+			}
 		}
 		
 		sprintf(pfileName, "%s%s%c", tmpPFileName, wday, ext3[counter]);

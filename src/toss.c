@@ -2113,15 +2113,15 @@ void arcmail(s_link *tolink) {
 					 //writeLogEntry(hpt_log, '6', "cmd: %s",cmd);
 					 if (cmdexit==0) {
 						 if (foa==0) {
-                            if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
-                            else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
-                            else bundleNameStyle=eTimeStamp;
+							 if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
+							 else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
+							 else bundleNameStyle=eTimeStamp;
 
-
-						    if (bundleNameStyle == eAddrDiff)
-                                                       fprintf(flo, "#%s\n", link->packFile);
-						    else
-                                                       fprintf(flo, "^%s\n", link->packFile);
+							 if (bundleNameStyle == eAddrDiff ||
+								 bundleNameStyle == eAddrDiffAlways)
+								 fprintf(flo, "#%s\n", link->packFile);
+							 else
+								 fprintf(flo, "^%s\n", link->packFile);
 						 }
 						 remove(link->pktFile);
 					 } else

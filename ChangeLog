@@ -3,6 +3,11 @@ hpt 0.9.8 (development version)
 
 
 ----- cvs ci ------
+Tue Sep 26 00:25:41 NOVST 2000
+max (patch from Serguei Revtov):
+* addrDiffAlways value for BundleNameStyle & linkBundleNameStyle
+
+----- cvs ci ------
 Sat Sep 23 17:52:53 NOVST 2000
 max (patch from Serguei Revtov):
 * token linkBundleNameStyle
