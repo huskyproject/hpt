@@ -975,10 +975,10 @@ void fixRules (s_link *link, s_area *area) {
     if (area->fileName) {
 	fn = area->fileName;
 	for (fn1 = fn; *fn1; fn1++) if (*fn1=='/' || *fn1=='\\') fn = fn1+1;
-	xscatprintf(&fileName, "%s%c%s.rul", config->rulesDir, PATH_DELIM, fn);
+	xscatprintf(&fileName, "%s%s.rul", config->rulesDir, fn);
     } else {
 	fn = makeMsgbFileName(config, area->areaName);
-	xscatprintf(&fileName, "%s%c%s.rul", config->rulesDir, PATH_DELIM, fn);
+	xscatprintf(&fileName, "%s%s.rul", config->rulesDir, fn);
 	nfree (fn); // allocated by makeMsgbFileName()
     }
 
@@ -2041,7 +2041,7 @@ void RetRules (s_message *msg, s_link *link, char *areaName)
 	RetMsg(msg, link, text, subj);
 
 	nfree (subj);
-	nfree (text);
+	//nfree (text); don't free text because RetMsg() free it
 
 	fileName[strlen(fileName)-1] = nrul+'1';
     }
