@@ -1588,7 +1588,7 @@ void writeTossStatsToLog(void) {
 	  statToss.msgs, statToss.bad, statToss.saved, statToss.empty);
     w_log(logchar, "   Input: % 8.2f mails/sec        Output: % 8.2f mails/sec", inMailsec, outMailsec);
     w_log(logchar, "          % 8.2f kb/sec", inKBsec);
-    w_log(logchar, "          % 8.2f kb total, processed in %lu milliseconds", ((float) statToss.inBytes / 1024), statToss.realTime);
+    w_log(logchar, "          % 8.2f kb total, processed in %8.3f seconds", ((float) statToss.inBytes / 1024), (float)statToss.realTime / 1000);
 
     /* write personal mail statistic logfile */
     writeStatLog();
