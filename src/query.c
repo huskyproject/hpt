@@ -196,7 +196,7 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
     s_link *creatingLink;
     s_area *area;
     s_query_areas* areaNode=NULL;
-    size_t i;
+    size_t i=0;
     unsigned int j;
     char pass[] = "passthrough";
     char CR; 
