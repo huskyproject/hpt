@@ -57,7 +57,9 @@ EXEFLAGS = /link /nodefaultlib /opt:nowin98
 EXENAMEFLAG=-Fe
 
 # List of HUSKY libraries required to build binary file(s)
-LIBS	= ..\..\fidoconf\make\fconfmvc.lib ..\..\smapi\make\smapimvc.lib \
+LIBS	= ..\..\areafix\make\areafix.lib \
+	  ..\..\fidoconf\make\fconfmvc.lib \
+	  ..\..\smapi\make\smapimvc.lib \
 	  ..\..\huskylib\make\huskymvc.lib $(HPTZIPL) \
 	  USER32.LIB msvcrt.lib Kernel32.lib $(PERLL)
 	  

@@ -93,6 +93,8 @@
 #include <huskylib/temp.h>
 #include <huskylib/recode.h>
 #include <fidoconf/stat.h>
+#include <areafix/areafix.h>
+#include <areafix/query.h>
 
 #if defined(A_HIDDEN) && !defined(_A_HIDDEN)
 #define _A_HIDDEN A_HIDDEN
@@ -109,7 +111,6 @@
 #include <global.h>
 #include <seenby.h>
 #include <dupe.h>
-#include <areafix.h>
 #include <version.h>
 #include <scanarea.h>
 #include <fcommon.h>
@@ -803,41 +804,6 @@ void writeMsgToSysop()
 
 }
 
-s_arealink *getAreaLink(s_area *area, hs_addr aka)
-{
-    UINT i;
-
-    for (i = 0; i <area->downlinkCount; i++) {
-        if (addrComp(aka, area->downlinks[i]->link->hisAka)==0) return area->downlinks[i];
-    }
-
-    return NULL;
-}
-
-/*  import: type == 0, export: type != 0 */
-/*  return value: 0 if access ok, 3 if import/export off, 4 if not linked, */
-/*  15 if area is paused */
-int checkAreaLink(s_area *area, hs_addr aka, int type)
-{
-    s_arealink *arealink = NULL;
-    int writeAccess = 0;
-
-    arealink = getAreaLink(area, aka);
-    if (arealink) {
-	if (type==0) {
-	    if (!arealink->import) writeAccess = BM_DENY_IMPORT;
-	} else {
-	    if (!arealink->export) writeAccess = BM_DENY_IMPORT;
-	}
-    } else {
-	if (addrComp(aka, *area->useAka)!=0) writeAccess = BM_NOT_LINKED;
-    }
-
-    if (writeAccess==0 && area->paused) writeAccess = BM_AREA_IS_PAUSED;
-	
-    return writeAccess;
-}
-
 int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forceattr)
 {
     char   *area=NULL, *p = NULL, *q = NULL;
@@ -865,7 +831,7 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
         /*  check if we should not refuse this area */
         /*  checking for autocreate option */
         if ((link != NULL) && (link->autoAreaCreate != 0)) {
-            if (0 == (writeAccess = autoCreate(area, pktOrigAddr, NULL)))
+            if (0 == (writeAccess = autoCreate(area, NULL, pktOrigAddr, NULL)))
                 echo = getArea(config, area);
             else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
         } /*  can't create echoarea - put msg in BadArea */
@@ -2266,7 +2232,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
     if (echo == &(config->badArea)) {
 	link = getLinkFromAddr(config, pktOrigAddr);
 	if (link && link->autoAreaCreate!=0 && area) {
-	    if (0 == autoCreate(area, pktOrigAddr, NULL))
+	    if (0 == autoCreate(area, NULL, pktOrigAddr, NULL))
 		echo = getArea(config, area);
 	}
     }

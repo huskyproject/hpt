@@ -56,13 +56,13 @@ tearline generation added
 #include <huskylib/xstr.h>
 #include <fidoconf/afixcmd.h>
 #include <huskylib/recode.h>
+#include <areafix/areafix.h>
 
 #include <version.h>
 #include <toss.h>
 #include <post.h>
 #include <global.h>
 #include <version.h>
-#include <areafix.h>
 #include <hpt.h>
 #include <scanarea.h>
 #include <scan.h>

@@ -66,8 +66,9 @@ be cleared.
 #include <huskylib/crc.h>
 #include <huskylib/log.h>
 
-#include <global.h>
-#include <fcommon.h>
+#include "global.h"
+#include "fcommon.h"
+#include "hptafix.h"
 
 #define MAX_INCORE	10000UL	/*  if more messages, do not link incore */
 

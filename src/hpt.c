@@ -70,6 +70,8 @@
 #include <huskylib/recode.h>
 #include <fidoconf/version.h>
 #include <fidoconf/stat.h>
+#include <areafix/areafix.h>
+#include <areafix/query.h>
 
 #ifdef USE_HPTZIP
 #   include <hptzip/hptzip.h>
@@ -80,13 +82,12 @@
 #include "pkt.h"
 #include "global.h"
 #include "hpt.h"
+#include "hptafix.h"
 #include "toss.h"
 #include "scan.h"
 #include "fcommon.h"
 #include "post.h"
 #include "link.h"
-#include "areafix.h"
-#include "query.h"
 
 #ifdef DO_PERL
 #include "hptperl.h"
@@ -518,6 +519,9 @@ int main(int argc, char **argv)
 			   isFreeSpace(config->links[i]->msgBaseDir);
 	   }
    }
+
+   /* init areafix */
+   if ( !init_hptafix() ) exit_hpt("Can't init Areafix library", 1);
 
    if ( initSMAPI == -1 ) {
        /*  init SMAPI */

@@ -9,7 +9,7 @@ include makefile.inc
 
 DEBUG=0
 
-USE_PERL = 0
+USE_PERL = 1
 
 !if $(USE_PERL) == 1
 PERL_DIR = c:\programs\Perl
@@ -48,7 +48,7 @@ _PDB	= .pdb
 
 ## program options ##
 CFLAGS=-nologo -Zp1
-CINCL= -I$(H_DIR) -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib $(HPTZIPI) $(PERLI)
+CINCL= -I$(H_DIR) -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib -I..\..\areafix $(HPTZIPI) $(PERLI)
 LFLAGS=
 CDEFS =-D__NT__ -D_CONSOLE $(HPTZIPD) $(PERLD)
 COPT	= -Ob2
@@ -56,7 +56,9 @@ COPT	= -Ob2
 EXENAMEFLAG=-Fe
 
 # List of HUSKY libraries required to build binary file(s)
-LIBS	= ..\..\fidoconf\make\fconfmvc.lib ..\..\smapi\make\smapimvc.lib \
+LIBS	= ..\..\areafix\make\areafix.lib \
+	  ..\..\fidoconf\make\fconfmvc.lib \
+	  ..\..\smapi\make\smapimvc.lib \
 	  ..\..\huskylib\make\huskymvc.lib \
 	  USER32.LIB $(HPTZIPL) $(PERLL)
 

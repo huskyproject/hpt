@@ -17,9 +17,9 @@ else
 endif
 
 ifeq ($(SHORTNAME), 1)
-  LIBS=-L$(LIBDIR) -lfidoconf -lsmapi -lhusky
+  LIBS=-L$(LIBDIR) -lareafix -lfidoconf -lsmapi -lhusky
 else
-  LIBS=-L$(LIBDIR) -lfidoconfig -lsmapi -lhusky
+  LIBS=-L$(LIBDIR) -lareafix -lfidoconfig -lsmapi -lhusky
 endif
 
 ifeq ($(USE_HPTZIP), 1)

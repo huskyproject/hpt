@@ -40,28 +40,6 @@
 #include <fidoconf/fidoconf.h>
 
 
-/* Badmail reason (area write access) numbers */
-typedef enum{
- BM_DENY_CREATE=0,
- BM_NOT_IN_GROUP=1,
- BM_LOW_WRITE_LEVEL=2,
- BM_DENY_IMPORT=3,
- BM_NOT_LINKED=4,
- BM_DENY_BY_FILTER=5,
- BM_MSGAPI_ERROR=6,
- BM_ILLEGAL_CHARS=7,
- BM_SENDER_NOT_FOUND=8,
- BM_CANT_OPEN_CONFIG=9,
- BM_NO_LINKS=10,
- BM_AREATAG_TOO_LONG=11,
- BM_AREA_KILLED=12,
- BM_DENY_NEWAREAREFUSEFILE=13,
- BM_WRONG_LINK_TO_AUTOCREATE=14,
- BM_AREA_IS_PAUSED=15,
- BM_MAXERROR=15       /* Set to max value, equivalence of last element */
-}e_BadmailReasons;
-
-
 /* common functions */
 void writeDupeFiles(void);
 
