@@ -107,7 +107,7 @@ char force = 0;
 /* kn: I've really tried not to break it.
    FIXME: if there is pack and scan options on cmd line - one set
    of options are lost */
-int  processExportOptions(unsigned int *i, int argc, char **argv)
+int  processExportOptions(int *i, int argc, char **argv)
 {
   int rc = 0;
   while ((*i) < argc-1) {
@@ -167,7 +167,7 @@ void start_help(void) {
 
 int processCommandLine(int argc, char **argv)
 {
-   unsigned int i = 0;
+   int i = 0;
 
    if (argc == 1) start_help();
 
@@ -468,7 +468,7 @@ int main(int argc, char **argv)
    unsigned int i, rc;
 #if defined ( __NT__ )
    #define TITLESIZE 256
-   char *title, oldtitle[ TITLESIZE ];
+   char *title=NULL, oldtitle[ TITLESIZE ];
 #endif
 
    versionStr = GenVersionStr( "hpt", VER_MAJOR, VER_MINOR, VER_PATCH,
