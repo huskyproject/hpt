@@ -1,3 +1,16 @@
+2001-12-24 Monday 22:16  pavel.gulchouck
+
+	* src/perl.c (1.16): $kill and $change make sense whith any
+	filter() retcode
+
+2001-12-24 Monday 07:53  ml
+
+	* doc/hpt.texi (1.48): small fixes for compiling
+
+2001-12-24 Monday 07:42  ml
+
+	* src/fcommon.c (1.106): uncomment config->notValidFNChars
+
 2001-12-23 Sunday 23:16  pavel.gulchouck
 
 	* doc/hpt.texi (1.47): added arcNetmail
