@@ -245,8 +245,8 @@ void scanNMArea(void)
    HMSG            msg;
    unsigned long   highMsg, i, j;
    XMSG            xmsg;
-   s_addr          dest;
-   int             for_us;
+   s_addr          dest, orig;
+   int             for_us, from_us;
 
    netmail = MsgOpenArea((unsigned char *) config->netMailArea.fileName, MSGAREA_NORMAL, config->netMailArea.msgbType);
    if (netmail != NULL) {
@@ -275,6 +275,13 @@ void scanNMArea(void)
          }
 
          MsgCloseMsg(msg);
+
+         cvtAddr(xmsg.orig, &orig);
+         from_us = 0;
+         for (j=0; j < config->addrCount; j++)
+            if (addrComp(orig, config->addr[j])==0) {from_us = 1; break;}
+         
+         if ((!for_us) && (!from_us)) MsgKillMsg(netmail, i);
 
          // kill/sent flag
          if ((xmsg.attr & MSGKILL) == MSGKILL) MsgKillMsg(netmail, i);
