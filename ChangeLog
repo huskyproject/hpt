@@ -1,5 +1,11 @@
 hpt 0.30
 --------
+
+----- cvs ci -----
+Mon Dec  6 18:55:17 mez 1999
+tobi:
+* Month number in PKT header was interpreted wrong, fixed. 
+  (Patch by Eduard Dulich).
 	
 ----- cvs ci -----
 Thu Dec  2 11:32:02 CET 1999 
@@ -537,8 +543,7 @@ Max (areafix updates):
 + new areafix.hlp
 + forward of Requests
 + kill reports if "areafixKillReports" defined in config
-+ code cleanup
-- do not kill attributes in transit netmail
++ code clE  (?)@ 3Ål√&ÇaÅE¿m	a	+®LMØG¯n transit netmail
 
 areafix is more stable now
 
@@ -601,7 +606,7 @@ Mon Mar  1 22:00
   * LogLevels <string>                                               
     You can specify all Loglevels you want in your log               
     Default is 123456789, use 23456789 if you don't want all the IDLE
-    sessions in your logfile (eg when you start hpt once a minute)   
+    sessions in your logfile (eg wheE  (?+@ 3Åj√&ÇaÅE¿m	a	+®LMØj0 
   + Major Changes in log.c & log.h were necessary to supress unwanted
     log file entries in IDLE only hpt sessions (like regularily scanning
     the netmail area without something happening worth logging)

@@ -49,7 +49,7 @@ time_t readPktTime(FILE *pkt)
   struct tm time;
 
   time.tm_year  = getUINT16(pkt) - 1900; /* years since 1900 */
-  time.tm_mon   = getUINT16(pkt);
+  time.tm_mon   = getUINT16(pkt) - 1;
   time.tm_mday  = getUINT16(pkt);
   time.tm_hour  = getUINT16(pkt);
   time.tm_min   = getUINT16(pkt);
