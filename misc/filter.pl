@@ -485,7 +485,7 @@ EOF
       return "Loop";
     }
     if (isattr("arq", $attr))
-    { arqcpt($fromaddr, $toaddr, $fromname, $toname, $subject, $date, $attr);
+    { arqcpt($fromaddr, $toaddr, $fromname, $toname, $subject, $date, $attr, $text);
     }
   }
   $newnet = 1;
@@ -594,12 +594,12 @@ sub route
 # set $flavour to hold|normal|crash|direct|immediate
 # return route addr or "" for default routing
 
-  return _route($toaddr, $attr);
+  return _route($toaddr, $attr, $text);
 }
 
 sub _route
 {
-  my ($toaddr, $attr) = @_;
+  my ($toaddr, $attr, $text) = @_;
 
   my @routemail = (
 "crash  17:1800/94  17:.*",
@@ -620,7 +620,7 @@ sub _route
 "crash  2:463/94    2:(46/0|465/50|465/70)",
 "hold   noroute     .*"
 );
-  my (@route, $dest, $patt, $boss);
+  my (@route, $dest, $patt, $boss, $flags);
 
   compileNL() unless $nltied;
 
@@ -630,6 +630,26 @@ sub _route
   { @route = @routemail;
   }
   $addr =~ s/\.0$//;
+
+  $flags = $1 if $text =~ /^(.*\r\n?)?\x01FLAGS\s+(\S[^\r]*\S)\s*\r/;
+  $flags =~ tr/A-Z/a-z/;
+  foreach $flavour ("hld", "dir", "crash", "imm")
+  { if (str2attr($flavour) != -1)
+    { if ($attr & str2attr($flavour))
+      {
+        $flavour = "hold" if $flavour eq "hld";
+        return $addr;
+      }
+    } else
+    {
+      if (index($flags, $flavour) >= 0)
+      {
+        $flavour = "immediate" if $flavour = "imm";
+        return $addr;
+      }
+    }
+  }
+
   foreach (@route)
   { ($flavour, $dest, $patt) = split(/\s+/, $_);
     $boss = $addr;
@@ -964,9 +984,9 @@ sub putlist
 
 sub arqcpt
 {
-  my($fromaddr, $toaddr, $fromname, $toname, $subject, $date, $attr) = @_;
+  my($fromaddr, $toaddr, $fromname, $toname, $subject, $date, $attr, $origtext) = @_;
   my($text, $route);
-  $route = _route($toaddr, $attr);
+  $route = _route($toaddr, $attr, $origtext);
   $route = "internet gate" if $route eq "2:46/128";
   $text = <<EOF;
     Hello $fromname!
