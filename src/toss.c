@@ -1450,12 +1450,12 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 		     (addrComp(pktOrigAddr,*echo->useAka)==0)))
 		    forwardMsgToLinks(echo, msg, pktOrigAddr);
 
-                w_log( LL_SRCLINE, "%s::processEMMsg():%s", __FILE__, __LINE__);
+                w_log( LL_SRCLINE, "%s::processEMMsg():%d", __FILE__, __LINE__);
 
 		if ((config->carbonCount!=0)&&(!dontdocc))
 		    ccrc=carbonCopy(msg, NULL, echo);
 
-                w_log( LL_SRCLINE, "%s::processEMMsg():%s", __FILE__, __LINE__);
+                w_log( LL_SRCLINE, "%s::processEMMsg():%d", __FILE__, __LINE__);
 
 		if (ccrc <= 1) {
 		    echo->imported++;  // area has got new messages
