@@ -539,28 +539,33 @@ void closeOpenedPkt(void) {
 	}
     for (i=0; i<config->echoAreaCount; i++)
 	if (config->echoAreas[i].harea) {
+        w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,config->echoAreas[i].fileName);
 	    MsgCloseArea(config->echoAreas[i].harea);
 	    config->echoAreas[i].harea = NULL;
 	    nopenpkt-=3;
 	}
     for (i=0; i<config->netMailAreaCount; i++)
 	if (config->netMailAreas[i].harea) {
+        w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,config->echoAreas[i].fileName);
 	    MsgCloseArea(config->netMailAreas[i].harea);
 	    config->netMailAreas[i].harea = NULL;
 	    nopenpkt-=3;
 	}
     for (i=0; i<config->localAreaCount; i++)
 	if (config->localAreas[i].harea) {
+        w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,config->echoAreas[i].fileName);
 	    MsgCloseArea(config->localAreas[i].harea);
 	    config->localAreas[i].harea = NULL;
 	    nopenpkt-=3;
 	}
     if (config->badArea.harea) {
+    w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,config->echoAreas[i].fileName);
 	MsgCloseArea(config->badArea.harea);
 	config->badArea.harea = NULL;
 	nopenpkt-=3;
     }
     if (config->dupeArea.harea) {
+    w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,config->echoAreas[i].fileName);
 	MsgCloseArea(config->dupeArea.harea);
 	config->dupeArea.harea = NULL;
 	nopenpkt-=3;
@@ -1400,6 +1405,8 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
     s_link *link = NULL;
     int    writeAccess = 0, rc = 0, ccrc = 0;
 
+    w_log(LL_FUNC, "%s::processEMMsg() begin", __FILE__);
+
     p = strchr(msg->text,'\r');
     if (p) {
 	*p='\0';
@@ -1443,8 +1450,12 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 		     (addrComp(pktOrigAddr,*echo->useAka)==0)))
 		    forwardMsgToLinks(echo, msg, pktOrigAddr);
 
+                w_log( LL_SRCLINE, "%s::processEMMsg():%s", __FILE__, __LINE__);
+
 		if ((config->carbonCount!=0)&&(!dontdocc))
 		    ccrc=carbonCopy(msg, NULL, echo);
+
+                w_log( LL_SRCLINE, "%s::processEMMsg():%s", __FILE__, __LINE__);
 
 		if (ccrc <= 1) {
 		    echo->imported++;  // area has got new messages
@@ -1477,6 +1488,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 	    }
 	}
     }
+    w_log(LL_FUNC, "%s::processEMMsg() rc=%d", __FILE__, rc);
     return rc;
 }
 
