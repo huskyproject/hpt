@@ -236,7 +236,7 @@ void linkAreas(void)
 	       linkArea(area,1);
 	    } else {
                area = getArea(config, line);
-               if ((area->dupeCheck != dcOff) && (area->areaName != config->badArea.areaName)) linkArea(area,0);
+               if /*(area->dupeCheck != dcOff) && */ (area->areaName != config->badArea.areaName) linkArea(area,0);
                free(line);
             }
          }
