@@ -137,10 +137,11 @@ smapibcd.lib
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	del *.obj *.bak
+	-del *.obj 
+	-del *.bak
 
 distclean: clean
-	del *.exe
+	-del *.exe
 
 
 
