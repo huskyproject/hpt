@@ -915,7 +915,7 @@ void fixRules (s_link *link, char *area) {
     if (!config->rulesDir) return;
     if (link->noRules) return;
 
-    xscatprintf(&fileName, "%s%s.rul", config->rulesDir, makeMsgbFileName(config, area));
+    xscatprintf(&fileName, "%s%s.rul", config->rulesDir, strLower(makeMsgbFileName(config, area)));
 
     if (fexist(fileName)) {
         rulesCount++;
@@ -1820,13 +1820,13 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 
 void RetRules (s_message *msg, s_link *link, char *areaName)
 {
-    FILE *f;
+    FILE *f=NULL;
     char *fileName = NULL;
-    char *text, *subj=NULL;
-    long len;
-    int nrul;
+    char *text=NULL, *subj=NULL;
+    long len=0;
+    int nrul=0;
 
-	xscatprintf(&fileName, "%s%s.rul", config->rulesDir, makeMsgbFileName(config, areaName));
+    xscatprintf(&fileName, "%s%s.rul", config->rulesDir, strLower(makeMsgbFileName(config, areaName)));
 
     for (nrul=0; nrul<=9 && (f = fopen (fileName, "rb")); nrul++) {
 
