@@ -834,7 +834,7 @@ A:
 if "[module]"=="hpt"
   RobotsArea tossermail
   Origin MyStation
-elif "[module]"=="htick"
+elseif "[module]"=="htick"
   RobotsArea tickermail
   Origin FREQ allowed at 00:00-04:00
 else
