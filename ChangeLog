@@ -1,3 +1,13 @@
+2002-11-19 Tuesday 13:34  stas_degteff
+
+	* HISTORY (hpt-1_2-stable.7): Remove obsoleted info about sendrules
+	token
+
+2002-11-19 Tuesday 12:47  stas_degteff
+
+	* src/hpt.c, HISTORY (hpt-1_2-stable.[3,6]): Check netmailarea
+	presence in config
+
 2002-11-14 Thursday 08:42  stas_degteff
 
 	* HISTORY (hpt-1_2-stable.5): Update bugfix list
