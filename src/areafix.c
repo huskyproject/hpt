@@ -611,9 +611,9 @@ static int compare_links_priority(const void *a, const void *b) {
 }
 
 int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
-    unsigned int i, rc = 1;
-    s_link *uplink;
-    int *Indexes;
+    unsigned int i=0, rc = 1;
+    s_link *uplink=NULL;
+    int *Indexes=NULL;
     unsigned int Requestable = 0;
 
     /* From Lev Serebryakov -- sort Links by priority */

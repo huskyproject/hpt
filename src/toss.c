@@ -1080,7 +1080,6 @@ int processPkt(char *fileName, e_tossSecurity sec)
     s_link      *link = NULL;
     int         rc = 0, msgrc = 0;
     long	pktlen;
-    hs_time     timer;
 
     /* +AS+ */
     char        *extcmd = NULL;

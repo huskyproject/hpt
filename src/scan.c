@@ -832,7 +832,7 @@ void scanExport(int type, char *str) {
     char *tmplogname = NULL;
     char *line = NULL;
     struct stat st;
-    int processed;
+    int processed=0;
 
     if ( !config->tempDir )
     {
