@@ -251,7 +251,7 @@ s_message *readMsgFromPkt(FILE *pkt,UINT16 def_zone)
    msg->destAddr.node   = getUINT16(pkt);
    msg->origAddr.net    = getUINT16(pkt);
    msg->destAddr.net    = getUINT16(pkt);
-   msg->attributes      = getUINT16(pkt);
+   msg->attributes      = getUINT16(pkt) | MSGFWD;
    msg->origAddr.domain = NULL;
    msg->destAddr.domain = NULL;
 
@@ -275,16 +275,6 @@ s_message *readMsgFromPkt(FILE *pkt,UINT16 def_zone)
 
    textBuffer = (CHAR *) malloc(TEXTBUFFERSIZE+1); /* reserve 512kb + 1 (or 32kb+1) text Buffer */
    msg->textLength = fgetsUntil0(textBuffer, TEXTBUFFERSIZE+1 , pkt);
-
-   {
-     int i;
-     for (i = 0; i < 100 && i < msg->textLength; i++)
-       {
-	 fprintf (stderr, "%c", textBuffer[i] >32 ? textBuffer[i] : '#');
-       }
-     fprintf (stderr, "\n");
-   }
-     
 
    msg->text = (CHAR *) malloc(msg->textLength); /* reserve mem for the real text */
    strcpy(msg->text, textBuffer);
