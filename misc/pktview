@@ -1,0 +1,181 @@
+#!/usr/bin/perl
+sub getattr($) {
+    my($attr)=@_;
+    my(@attr);
+    push @attr,'Pvt' if($attr&0x0001);
+    push @attr,'Cra' if($attr&0x0002);
+    push @attr,'Rcd' if($attr&0x0004);
+    push @attr,'Snt' if($attr&0x0008);
+    push @attr,'Att' if($attr&0x0010);
+    push @attr,'Trs' if($attr&0x0020);
+    push @attr,'Orp' if($attr&0x0040);
+    push @attr,'K/s' if($attr&0x0080);
+    push @attr,'Loc' if($attr&0x0100);
+    push @attr,'Hld' if($attr&0x0200);
+    push @attr,'???' if($attr&0x0400);
+    push @attr,'Req' if($attr&0x0800);
+    push @attr,'RRq' if($attr&0x1000);
+    push @attr,'RRd' if($attr&0x2000);
+    push @attr,'Aud' if($attr&0x4000);
+    push @attr,'Upd' if($attr&0x8000);
+    return @attr;
+}
+$verbose=0;
+$noseenby=1;
+$norfc=1;
+$nopid=1;
+foreach(@ARGV) {
+    $verbose=1  if(/^-.*v/);
+    $noseenby=0 if(/^-.*s/);
+    $norfc=0    if(/^-.*r/);
+    $nopid=0    if(/^-.*p/);
+}
+while(1) {
+    die "Broken packet - invalid header size.\n"
+        if(read(STDIN,$pkthdr,0x3a) != 0x3a);
+    ($origNode,$destNode,$year,$month,$day,$hour,$minute,$seconds,
+     $baud,$type,$origNet,$destNet,
+     # Follows Type2+ packet fields...
+     $ProductCode,$RevMaj,$Password,$QMOrigZone,$QMDestZone,$AuxNet,
+$CapValidate,
+     $PCodeHi,$RevMin,$Cap,$origZone,$destZone,$origPoint,$destPoint,
+$appdata)=
+        unpack('S2S3S3 S2S2 C2A8S2S2 C2SS4I',$pkthdr);
+    # print "QMOrigZone:$QMOrigZone, QMDestZone:$QMDestZone,AuxNet:$AuxNet\n";
+    die "Unknown packet header type $type!\n" if($type != 2);
+    if($Cap == 0x0001 && $CapValidate == 0x0100 ) {
+        print "Version:2+\n";
+        print "From: $origZone:$origNet/$origNode.$origPoint\t\t",$day+1,"/",
+$month+1,"/$year $hour:$minute:$seconds\n";
+        print "To  : $destZone:$destNet/$destNode.$destPoint\n";
+        print "Pid : ",$ProductCode+$PCodeHi*256," ($RevMaj.$RevMin)\n";
+        print "Pwd : `$Password'\n";
+    } else {
+        print "Version:2\n";
+        print "From: $origNet/$origNode\t\t$day/$month/$year
+$hour:$minute:$seconds\n";
+        print "To  : $destNet/$destNode\n";
+        print "Pid : $ProductCode\n";
+        print "[ May be 2+ $origZone:$origNet/$origNode.$origPoint ->
+$destZone:$destNet/$destNode.$destPoint ]\n";
+    }
+    $div="---------------------------------------------------------------------
+--------\n";
+    print $div;
+    while(read(STDIN,$version,2)==2&&($pktver=unpack('S',$version))==2) {
+        die "Broken packet - invalid message header"
+            if(read(STDIN,$hdr,12)!=12);
+        ($origNode,$destNode,$origNet,$destNet,$attr,$cost)=unpack('S6',$hdr);
+        $/="\0";
+        $dateTime=<STDIN>;
+        chop $dateTime;
+        $ToName=<STDIN>;
+        chop $ToName;
+        $FromName=<STDIN>;
+        chop $FromName;
+        $Subj=<STDIN>;
+        chop $Subj;
+        $Text=<STDIN>;
+        chop $Text;
+        $/="\n";
+        if(length($dateTime)>19||
+           length($ToName)>35||
+           length($FromName)>35||
+           length($Subj)>71) {
+            print "Warning: Bad field(s) length (too long)\n";
+        }
+        $Text=~s/\r\n?/\n/gs;
+        $Text.="\n" unless($Text=~/\n$/s);
+        undef $area;
+        if($Text=~/^AREA:\s*(\S+)\n/m) {
+            undef $area if(($area=$1) eq 'NETMAIL');
+            substr($Text,length($`),length($&))='' unless ($verbose);
+        }
+        if($area) {
+            undef $origAddr;
+            undef $destAddr;
+        } else {
+            $origAddr="$origNet/$origNode";
+            $destAddr="$destNet/$destNode";
+            if($Text=~/^\x01INTL:?[ ]+(\d+:\d+\/\d+)[ ]+(\d+:\d+\/\d+)[ ]*\n/m)
+{
+                $destAddr=$1;
+                $origAddr=$2;
+                substr($Text,length($`),length($&))='' unless ($verbose);
+            }
+            if($Text=~/^\x01FMPT:?[ ]+(\d+)[ ]*\n/m) {
+                $origAddr.=".$1";
+                substr($Text,length($`),length($&))='' unless ($verbose);
+            }
+            if($Text=~/^\x01TOPT:?[ ]+(\d+)[ ]*\n/m) {
+                $destAddr.=".$1";
+                substr($Text,length($`),length($&))='' unless ($verbose);
+            }
+        }
+        if(!$origAddr &&
+           $Text=~/^ \* Origin:[^\(\n]*\([^0-9\n\)]*(\d+:\d+\/\d+(\.\d+)?)(\@[^\)\n]+)?\)\n/m) {
+           # (\@[^\)\n])?\)\n/m) {
+               $origAddr=$1;
+           }
+        undef $msgid_addr,$msgid_crc;
+        if($Text=~/^\x01MSGID:[ ]*(\S+)[ ]+([0-9a-fA-F]{1,8})[ ]*\n/m) {
+            $pos=length($`);
+            $len=length($&);
+            $msgid_addr=$1;
+            $msgid_crc=hex("0x$2");
+            # print "Found MSGID:$1|$2|$&|\n";
+            if($msgid_addr=~m|^(\d+:)?\d+/\d+(\.\d+)?(\@.*$)?|) {
+                $domain=$3;
+                $ldomain=length($domain);
+                substr($msgid_addr,-$ldomain,$ldomain)=''
+                        if($domain=~/^\@fidonet(\.org)?$/);
+            } else {
+                $msgid_addr.="($origAddr)" if($origAddr);
+            }
+            $origAddr=$msgid_addr;
+            substr($Text,$pos,$len)='' unless($verbose);
+        }
+        if($noseenby) {
+            $Text=~s/^SEEN-BY:[^\n]*\n//mg;
+            $Text=~s/^\x01PATH:[^\n]*\n//mg;
+            $Text=~s/^\x01PTH:[^\n]*\n//mg;
+        }
+        if($norfc) {
+            $Text=~s/^\x01RFC-[^\n]*\n//mg;
+        }
+        if($nopid) {
+            $Text=~s/^\x01PID:[^\n]*\n//mg;
+            $Text=~s/^\x01TID:[^\n]*\n//mg;
+        }
+        $Text=~s/^\x01/\@/gm;
+        print "From: $FromName, $origAddr\t$dateTime\n";
+        if($area) {
+            print "To  : $ToName\n";
+        } else {
+            print "To  : $ToName, $destAddr\n";
+        }
+        print "Subj: $Subj\n";
+        if($verbose) {
+            $attr_str=sprintf("0x%04x-",$attr);
+        } else {
+            $attr_str='';
+        }
+        $attr_str.=join(' ',getattr($attr));
+        $div_attr=$div;
+        substr($div_attr,2,length($attr_str))=$attr_str;
+        substr($div_attr,-5-length($area),length($area)+2)="\[$area\]";
+        print $div_attr;
+        print $Text;
+        print $div;
+    }
+    if($pktversion==0) {
+        print "-------========================Packet Done
+normally===================-------\n";
+        exit 0 if(eof(STDIN));
+    } else {
+        print "-------===========================Broken
+packet=======================-------\n";
+        exit 1;
+    }
+};
+__END__
