@@ -1,3 +1,20 @@
+2002-01-03 Thursday 14:17  ml
+
+	* VERSION (1.3), doc/hpt.texi (1.52), src/global.c (1.39): change
+	version number
+
+2002-01-03 Thursday 13:21  ml
+
+	* VERSION (1.2), doc/hpt.texi (1.51), man/hpt.1 (1.14),
+	src/global.c (1.38), src/hpt.c (1.121): prerelease changes
+
+2002-01-03 Thursday 10:20  ml
+
+	* TODO (1.182), src/areafix.c (1.232), src/fcommon.c (1.108),
+	src/pktread.c (1.81), src/scan.c (1.137): print different error
+	when scan local area, print error and rename pkt if there is data
+	after last msg
+
 2002-01-02 Wednesday 20:36  mche
 
 	* src/: hptlink.c (1.31), hpttree.c (1.20): build with smapimvc.dll
