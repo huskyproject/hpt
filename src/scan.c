@@ -274,6 +274,7 @@ void scan(void)
    
    scanNMArea();
    for (i = 0; i< config->echoAreaCount; i++) {
-      scanEMArea(&(config->echoAreas[i]));
+      if ((config->echoAreas[i].msgbType & MSGTYPE_PASSTHROUGH) != MSGTYPE_PASSTHROUGH)
+         scanEMArea(&(config->echoAreas[i]));
    }
 }

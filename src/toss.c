@@ -321,7 +321,9 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 
    echo = getArea(*config, area);
 
-   putMsgInArea(echo, msg);
+   if ((echo->msgbType & MSGTYPE_PASSTHROUGH) != MSGTYPE_PASSTHROUGH) {
+      putMsgInArea(echo, msg);
+   }
    if (echo->downlinkCount > 1)     // if only one downlink, we've got the mail from him
      forwardMsgToLinks(echo, msg, pktOrigAddr);
 
