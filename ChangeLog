@@ -1,3 +1,8 @@
+2003-03-14 Friday 13:48  stas_degteff
+
+	* doc/hpt.texi (1.113): Fix Echoareadefaults description. Thanks to
+	Dmitry Lebus 2:5023/12.5
+
 2003-03-12 Wednesday 05:06  stas_degteff
 
 	* VERSION (1.6): Add huskylib into 'require' list
