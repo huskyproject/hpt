@@ -833,7 +833,7 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
     if (echo == &(config->badArea)) {
         /*  check if we should not refuse this area */
         /*  checking for autocreate option */
-        if ((link != NULL) && (link->autoAreaCreate != 0)) {
+        if ((link != NULL) && (link->areafix.autoCreate != 0)) {
             if (0 == (writeAccess = autoCreate(area, NULL, pktOrigAddr, NULL)))
                 echo = getArea(config, area);
             else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
@@ -2247,7 +2247,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
 
     if (echo == &(config->badArea)) {
 	link = getLinkFromAddr(config, pktOrigAddr);
-	if (link && link->autoAreaCreate!=0 && area) {
+	if (link && link->areafix.autoCreate && area) {
 	    if (0 == autoCreate(area, NULL, pktOrigAddr, NULL))
 		echo = getArea(config, area);
 	}
