@@ -3459,8 +3459,8 @@ The following Perl hooks are supported:
  scan - called while scanning messages(hpt scan or hpt pack).
     
 @end table
-@subsection perlSupport
-@findex perlSupport
+@subsection PerlSupport
+@findex PerlSupport
 
 This statement enables/disables perl support in win32 hpt's version 
 wich was compiled with perl support.

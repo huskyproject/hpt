@@ -156,7 +156,7 @@ static int l_dist_raw(char *str1, char *str2, int len1, int len2)
 {
    register int i, j;
    unsigned int dist_im1[MAX_LDIST_LEN+1];
-   unsigned int dist_i_j, dist_i_jm1, dist_j0;
+   unsigned int dist_i_j=0, dist_i_jm1, dist_j0;
    char *p1, *p2;
    for (i=1, dist_im1[0]=0; i<=MAX_LDIST_LEN; i++)
       dist_im1[i] = dist_im1[i-1] + ADDITION;
@@ -449,7 +449,7 @@ static void perlthread(ULONG arg)
 {
   FILE *f;
   char str[256], *p;
-  if ((f=fopen((int)arg, "r")) == NULL)
+  if ((f=fdopen((int)arg, "r")) == NULL)
     return;
   while (fgets(str, sizeof(str), f))
   { if ((p = strchr(str, '\n')) != NULL)
@@ -479,7 +479,7 @@ perl_fork:
    { FILE *f;
      char str[256];
      close(perlpipe[1]);
-     f=fopen(perlpipe[0], "r");
+     f=fdopen(perlpipe[0], "r");
      while (fgets(str, sizeof(str), f))
      { char *p = strchr(str, '\n');
        if (p) *p = '\0';
