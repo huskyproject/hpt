@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Oct  8 21:00:25 MEZ 2000
+tobi:
+* when appending to a zero-length pkt file, write a pkt header first
+
+----- cvs ci ------
 Sat Oct  7 13:53:49 NOVST 2000
 max:
 * fixed bug in relink with squish area

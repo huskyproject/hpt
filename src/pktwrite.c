@@ -177,13 +177,19 @@ int closeCreatedPkt(FILE *pkt)
 
 FILE *openPktForAppending(char *fileName, s_pktHeader *header)
 {
-   FILE *pkt;
+   FILE *pkt = NULL;
    
    if (fexist(fileName)) {
       pkt = fopen(fileName, "r+b");
       openPkt(pkt);
       fseek(pkt, -2, SEEK_END);        // go to \0\0 to add a new msg.
-   } else {
+      if (ftell(pkt) <= 0) {    /* this was a zero length file ... */
+         fclose(pkt);
+         pkt = NULL;
+      }
+   }
+
+   if (pkt == NULL) {
       pkt = createPkt(fileName, header);
    } /* endif */
 
