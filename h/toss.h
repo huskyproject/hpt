@@ -66,7 +66,7 @@ int readCheck(s_area *echo, s_link *link);
 // '\x0003' no access export
 // '\x0004' not linked
 
-int writeCheck(s_area *echo, s_link *link);
+int writeCheck(s_area *echo, s_addr *aka);
 // '\x0000' access o'k
 // '\x0001' no access group
 // '\x0002' no access level

@@ -435,7 +435,7 @@ int readCheck(s_area *echo, s_link *link) {
     return 0;
 }
 
-int writeCheck(s_area *echo, s_link *link) {
+int writeCheck(s_area *echo, s_addr *aka) {
 
     // rc == '\x0000' access o'k
     // rc == '\x0001' no access group
@@ -444,6 +444,13 @@ int writeCheck(s_area *echo, s_link *link) {
     // rc == '\x0004' not linked
 
     int i;
+
+    s_link *link;
+    
+    if (!addrComp(*aka,*echo->useAka)) return 0;
+    
+    link = getLinkFromAddr (*config,*aka);
+    if (link == NULL) return 4;
     
     for (i=0; i<echo->downlinkCount; i++) {
 	if (link == echo->downlinks[i]->link) break;
@@ -1037,17 +1044,20 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr)
    statToss.echoMail++;
 
    if (echo == &(config->badArea)) writeAccess = 0;
-   else writeAccess = writeCheck(echo, link);
+   else writeAccess = writeCheck(echo, &pktOrigAddr);
    if (writeAccess!=0) echo = &(config->badArea);
 
    if (echo != &(config->badArea)) {
       if (dupeDetection(echo, *msg)==1) {
          // no dupe
 
-         if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
-            forwardMsgToLinks(echo, msg, pktOrigAddr);
-            statToss.exported++;
-         }
+         if ((echo->downlinkCount > 1) ||
+	     // if only one downlink, we've got the mail from him
+	     ((echo->downlinkCount > 0) && (!addrComp(pktOrigAddr,*echo->useAka))))   // or it's our own
+	   {  
+	     forwardMsgToLinks(echo, msg, pktOrigAddr);
+	     statToss.exported++;
+	   }
 
          if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
             rc = putMsgInArea(echo, msg,1);
@@ -1078,7 +1088,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr)
       if ((link != NULL) && (link->autoAreaCreate != 0) && (writeAccess == 0)) {
          autoCreate(area, pktOrigAddr, NULL);
          echo = getArea(config, area);
-	 writeAccess = writeCheck(echo, link);
+	 writeAccess = writeCheck(echo, &pktOrigAddr);
 	 if (writeAccess) {
 	     putMsgInBadArea(msg, pktOrigAddr, writeAccess);
 	 } else {
@@ -1655,6 +1665,7 @@ void tossTempOutbound(char *directory)
 		   fix_qqq(dummy);
 
                    pkt = fopen(dummy, "rb");
+		   if (pkt==NULL) continue;
 
 		   header = openPkt(pkt);
 		   if (header != NULL) {

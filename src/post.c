@@ -48,6 +48,7 @@
 #include <post.h>
 #include <global.h>
 #include <version.h>
+#include <areafix.h>
 
 /* Warning : the code is totaly untested */
 
@@ -97,8 +98,7 @@ void post(int c, unsigned int *n, char *params[])
                      break;
                }; break;
             case 'f':    // flags
-               msg.attributes = atoi(params[++(*n)]) | 0x0100;
-               // Always set bit for LOCAL
+               msg.attributes = atoi(params[++(*n)]);
                break;
             case 'e':    // echo name
                area = params[++(*n)];
@@ -130,6 +130,8 @@ void post(int c, unsigned int *n, char *params[])
          };
       };  
    };
+   // msg.attributes |= MSGLOCAL; // Always set bit for LOCAL
+   // won't be set in the msgbase, because the mail is processed if it were received
    (*n)--; tm = gmtime(&t);
    strftime(msg.datetime, 21, "%d %b %y  %T", tm);
    if ((msg.destAddr.zone != 0) && (textBuffer != NULL)) { 
@@ -154,11 +156,10 @@ void post(int c, unsigned int *n, char *params[])
       
       free(textBuffer);
 
-      sprintf(msg.text + strlen(msg.text), "--- %s\r * Origin: %s (%d:%d/%d.%d@%s)",
-              versionStr, "", config->addr[0].zone, config->addr[0].net,
-              config->addr[0].node, config->addr[0].point, config->addr[0].domain);
-      msg.textLength = strlen(msg.text);
+      sprintf(msg.text + strlen(msg.text), "--- %s\r * Origin: %s (%s)",
+              versionStr, config->name, aka2str(msg.origAddr));
 
+      msg.textLength = strlen(msg.text);
 
       if (msg.netMail)
          processNMMsg(&msg, NULL);

@@ -2,6 +2,12 @@ hpt 0.28
 --------
 
 ----- cvs ci ------
+Tue Jun  1 18:07:24 CEST 1999 
+mtt:
+* post works now for our own aka too (patch bei eike)
+* messages without kludge are never treated as dupe. F*ck that old software
+
+----- cvs ci ------
 Wed May 26 08:51:13 CEST 1999
 mtt:
 * bugfix for post, af and at parameterers are swapped.

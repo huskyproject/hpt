@@ -127,7 +127,7 @@ int compareEntries(const void *e1, const void *e2) {
    rc = strcmp(a->from, b->from);
    if (rc == 0) rc = strcmp(a->to, b->to);
    if (rc == 0) rc = strcmp(a->subject, b->subject);
-   if ((rc == 0) && (a->msgid != NULL && b->msgid != NULL)) rc = strcmp(a->msgid, b->msgid);
+   if ((rc == 0) && (a->msgid != NULL) && (b->msgid != NULL)) rc = strcmp(a->msgid, b->msgid);
 
    return rc;
 }
@@ -363,6 +363,7 @@ int dupeDetection(s_area *area, const s_message msg) {
    char         *str;
 
    if (area->dupeCheck == dcOff) return 1; // no dupeCheck return 1 "no dupe"
+   if (getKludge(msg, "MSGID:")==NULL) return 1; // msgs without MSGID are no dupes!
 
    // test if dupeDatabase is already read
    if (area->dupes == NULL) {
