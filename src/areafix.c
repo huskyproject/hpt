@@ -260,7 +260,7 @@ void changeHeader(s_message *msg, s_link *link) {
 	
 	ourAka=link->ourAka;
 	
-	msg->destAddr.zone =  link->hisAka.zone;
+	msg->destAddr.zone = link->hisAka.zone;
 	msg->destAddr.net = link->hisAka.net;
 	msg->destAddr.node = link->hisAka.node;
 	msg->destAddr.point = link->hisAka.point;
@@ -295,8 +295,7 @@ char *subscribe(s_link *link, s_message *msg, char *line) {
         report=(char*) malloc(strlen(header)+strlen(line)+1+1);
         strcpy(report, header);
         strcat(report, line);
-        report[strlen(report)] = '\r';
-
+        strcat(report,"\r");
 	
 	for (i = 0; i< config->echoAreaCount; i++) {
 		rc=subscribeAreaCheck(&(config->echoAreas[i]),msg,line);
@@ -328,7 +327,7 @@ char *subscribe(s_link *link, s_message *msg, char *line) {
 
 char *unsubscribe(s_link *link, s_message *msg, char *line) {
 	int i, rc = 2;
-        char *report, addline[256], logmsg[256], *header = "Result of your query: ";
+	char *report, addline[256], logmsg[256], *header = "Result of your query: ";
 	s_area *area;
 
 	if (line[1]=='-') return NULL;
@@ -337,8 +336,8 @@ char *unsubscribe(s_link *link, s_message *msg, char *line) {
         report=(char*) malloc(strlen(header)+strlen(line)+1+1);
         strcpy(report, header);
         strcat(report, line);
-        report[strlen(report)] = '\r';
-        
+        strcat(report, "\r");
+
 	for (i = 0; i< config->echoAreaCount; i++) {
 		rc=subscribeAreaCheck(&(config->echoAreas[i]),msg,line);
 		if ( rc==2 ) continue;
@@ -434,9 +433,9 @@ int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
 	INT32 textlength;
 
 	// 1st security check
-	security=addrComp(msg->origAddr, *pktOrigAddr);
+        security=addrComp(msg->origAddr, *pktOrigAddr);
 		
-        // find link
+	// find link
         link=getLinkFromAddr(*config, msg->origAddr);
 
 	//this is for me?
@@ -462,6 +461,7 @@ int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
 	report=(char*) calloc(strlen(tmp)+1,sizeof(char*));
 	strcpy(report,tmp);
 	
+
 	if (!security) {
 		
 		textBuff=(char *) calloc(strlen(msg->text),sizeof(char*));

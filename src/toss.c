@@ -393,7 +393,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       pathCount++;
    }
 
-   for (i=0; i< pathCount;i++) printf("%u/%u ", path[i].net, path[i].node);
+//   for (i=0; i< pathCount;i++) printf("%u/%u ", path[i].net, path[i].node);
    //exit(2);
 
 

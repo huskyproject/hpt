@@ -85,9 +85,9 @@ int main()
 
       msg.netMail = 1;
       msg.text = (char *) malloc(300);
-      strcpy(msg.text, "\001TOPT 29\r+LinUxasd*");
+      strcpy(msg.text, "\001INTL 2:2432/601 2:2432/601\r\001TOPT 29\r+LinUxasd*");
       msg.toUserName = (char *) malloc(15);
-      strcpy(msg.toUserName, "areafix");
+      strcpy(msg.toUserName, "Matthias Tichy");
       msg.fromUserName = (char *) malloc(10);
       strcpy(msg.fromUserName, "Hpt Test");
       msg.subjectLine = (char *) malloc(5);
