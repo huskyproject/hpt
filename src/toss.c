@@ -1643,7 +1643,8 @@ int find_old_arcmail(s_link *link, FILE *flo)
 
 void arcmail(s_link *tolink) {
     char cmd[256], *pkt=NULL, *lastPathDelim = NULL, saveChar;
-    int i, cmdexit, foa = 0;
+    UINT i;
+    int cmdexit, foa = 0;
     FILE *flo = NULL;
     s_link *link = NULL;
     hs_addr *aka;
