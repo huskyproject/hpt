@@ -41,8 +41,6 @@
 #include <sys/stat.h>
 
 #include <huskylib/compiler.h>
-#include <huskylib/huskylib.h>
-#include <huskylib/cvtdate.h>
 
 #ifdef HAS_PROCESS_H
 #  include <process.h>
@@ -75,12 +73,15 @@
 
 #endif
 
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
+#include <huskylib/huskylib.h>
+#include <huskylib/cvtdate.h>
 #include <huskylib/xstr.h>
 #include <huskylib/dirlayer.h>
 #include <huskylib/recode.h>
 #include <huskylib/crc.h>
+
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
 
 #include <global.h>
 #include <fcommon.h>

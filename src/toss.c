@@ -47,9 +47,6 @@
 
 /* compiler.h */
 #include <huskylib/compiler.h>
-/* huskylib */
-#include <huskylib/huskylib.h>
-#include <huskylib/cvtdate.h>
 
 
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
@@ -78,6 +75,11 @@
 /* we can't include windows.h for several reasons ... */
 #define GetFileAttributes GetFileAttributesA
 #endif
+
+/* huskylib */
+#include <huskylib/huskylib.h>
+#include <huskylib/cvtdate.h>
+#include <huskylib/dirlayer.h>
 
 /* smapi */
 #include <smapi/msgapi.h>
