@@ -536,7 +536,11 @@ void af_QueueReport()
       return;
     }
 
+    w_log(LL_DEBUGU, __FILE__ ":%u:af_QueueReport()", __LINE__);
+
     reportFlg = af_GetQFlagName();
+
+    w_log(LL_DEBUGU, __FILE__ ":%u:af_QueueReport()", __LINE__);
 
     if(!fexist(reportFlg))
     {
@@ -544,11 +548,20 @@ void af_QueueReport()
         nfree(reportFlg);
         return;
     }
+
+    w_log(LL_DEBUGU, __FILE__":%u:af_QueueReport()", __LINE__);
+
     if( !queryAreasHead ) af_OpenQuery();
 
     tmpNode = queryAreasHead;
+
+    w_log(LL_DEBUGU, __FILE__":%u:af_QueueReport() tmpNode=%X", __LINE__, tmpNode);
+
     while(tmpNode->next)
     {
+
+    w_log(LL_DEBUGU, __FILE__":%u:af_QueueReport() tmpNode=%X", __LINE__, tmpNode);
+
         tmpNode = tmpNode->next;
         strcpy(link1,aka2str(tmpNode->downlinks[0]));
         strcpy(type,tmpNode->type);
