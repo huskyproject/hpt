@@ -84,10 +84,12 @@ void print_help(void) {
    fprintf(stdout,"              -o \"origin\"\n");
    fprintf(stdout,"                 origin, if not included then assumed to be name\n");
    fprintf(stdout,"                 of station in config-file\n\n");
-   fprintf(stdout,"              -f \"flags\"\n");
+   fprintf(stdout,"              -f flags(s)\n");
    fprintf(stdout,"                 flags  to  set  to the posted msg. possible ones\n");
    fprintf(stdout,"                 are: pvt, crash, read, sent, att,  fwd,  orphan,\n");
-   fprintf(stdout,"                 k/s, loc, hld, xx2,  frq, rrq, cpt, arq, urq\n\n");
+   fprintf(stdout,"                 k/s, loc, hld, xx2,  frq, rrq, cpt, arq, urq;\n
+                                    use it without trailing brackets like this:  pvt\n
+                                    loc k/s\n\n");
    fprintf(stdout,"              -x export message to echo links\n\n");
    fprintf(stdout,"              -d erase input file after posting\n\n");
    fprintf(stdout,"              -h get help\n\n");
@@ -166,10 +168,11 @@ void post(int c, unsigned int *n, char *params[])
                      break;
                }; break;
             case 'f':    // flags
-               for ((*n)++; params[*n] != NULL &&
-                    (attr = str2attr(params[*n])) != -1L; (*n)++)
-		       msg.attributes |= attr;
-	       (*n)--;
+		for ((*n)++; params[*n]!=NULL && (attr=str2attr(params[*n]))!=-1L;) {
+		    msg.attributes |= attr;
+		    (*n)++;
+		}
+		(*n)--;
                break;
             case 'e':    // echo name
                area = params[++(*n)];

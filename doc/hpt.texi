@@ -190,7 +190,7 @@ So here are my addresses if you want to get in contact with me:
 Max Levenkov @ 2:5000/117
 
 @item e-mail:
-sackett@@chat.ru
+sackett@@mail.ru
 
 @end itemize
 
@@ -2072,7 +2072,11 @@ By default "forwardRequests off". "On" allow forward requests to this
 link from other links. If no @code{forwardRequestFile} or
 @code{forwardRequestMask} defined, then forwardRequests unconditional.
 
+@code{LinkGrp} can deny access to some links...
+
 This statement can only be repeated for different links.
+
+@xref{LinkGrp}.
 
 @node FileBox, Import, ForwardRequests, Link Keywords
 @subsection FileBox

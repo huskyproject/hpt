@@ -6,7 +6,7 @@
  * Max Levenkov
  *
  * Fido:     2:5000/117
- * Internet: sackett@chat.ru
+ * Internet: sackett@mail.ru
  * Novosibirsk, West Siberia, Russia
  *
  * Big thanks to:
