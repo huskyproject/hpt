@@ -1,3 +1,22 @@
+2002-06-09 Sunday 15:34  mche
+
+	* src/: areafix.c (1.310), dupe.c (1.62), getfree.c (1.19), hpt.c
+	(1.152), hptlink.c (1.35), link.c (1.53), pktinfo.c (1.16),
+	pktread.c (1.85), pktwrite.c (1.36), scan.c (1.163), toss.c
+	(1.414): fix cygwin warnings
+
+2002-06-09 Sunday 15:29  mche
+
+	* h/pkt.h (1.27): removed commented code
+
+2002-06-09 Sunday 15:28  mche
+
+	* make/makefile.cyg (1.2): increase warnings level
+
+2002-06-09 Sunday 12:05  mche
+
+	* src/scanarea.c (1.82): afixcmd.h included
+
 2002-06-08 Saturday 15:53  mche
 
 	* src/areafix.c (1.309), src/query.c (1.49), h/areafix.h (1.30):
