@@ -717,13 +717,7 @@ void scanExport(int type, char *str) {
        {
            f = fopen(config->echotosslog, "r");
            if (f != NULL && config->packNetMailOnScan == 0) {
-#if !defined(MSDOS)
-               tmplogname = (char *) smalloc(strlen(config->echotosslog)+7);
-               // assuming we have max. 5 digits pid + '.' and '\0'
-               sprintf(tmplogname, "%s.%u", config->echotosslog, getpid());
-#else
-               tmplogname = makeUniqueDosFileName(config->logDirectory, "tmp", config);
-#endif
+               tmplogname = makeUniqueDosFileName(config->logFileDir, "tmp", config);
                ftmp = fopen(tmplogname, "w");
                if (ftmp == NULL) {
                    w_log('9', "Can't open file %s for writing : %s", tmplogname, strerror(errno));
@@ -734,13 +728,7 @@ void scanExport(int type, char *str) {
        }
    }
    if (type & SCN_FILE) {
-#if !defined(MSDOS)
-       tmplogname = (char *) smalloc(strlen(str)+7);
-       // assuming we have max. 5 digits pid + '.' and '\0'
-       sprintf(tmplogname, "%s.%u", str, getpid());
-#else
-       tmplogname = makeUniqueDosFileName(config->logDirectory, "tmp", config);
-#endif
+       tmplogname = makeUniqueDosFileName(config->logFileDir, "tmp", config);
        f = fopen(str, "r");
        if (f != NULL) {
            ftmp = fopen(tmplogname, "w");
