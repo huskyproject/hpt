@@ -200,15 +200,10 @@ int processCommandLine(int argc, char **argv)
          ++i; post(argc, &i, argv);
       } else if (stricmp(argv[i], "relink") == 0) {
          i++; relink(argv[i]);
-      } else if (stricmp(argv[i], "queue") == 0) {
-          if (i < argc-1) {
-              i++;
-              if (stricmp(argv[i], "update") == 0)
-                  cmQueue = 1;
-              if (stricmp(argv[i], "report") == 0)
-                  cmQueue = 2;
-          }    
-          continue;
+      } else if (stricmp(argv[i], "qupdate") == 0) {
+          cmQueue = 1;
+      } else if (stricmp(argv[i], "qreport") == 0) {
+          cmQueue = 2;
       } else if (stricmp(argv[i], "-c") == 0) {
 		  i++;
 		  if (argv[i]!=NULL) xstrcat(&cfgFile, argv[i]);
