@@ -1,1 +1,2 @@
 1. win32 watcom version: can't post files from stdin.
+2. Remap doesn't change INTL and TOPT kludges
