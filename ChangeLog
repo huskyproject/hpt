@@ -1,3 +1,24 @@
+2002-10-30 Wednesday 10:28  nssoft
+
+	* doc/hpt-FAQ.russian (1.50): Small correction
+
+2002-10-30 Wednesday 09:21  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.49): Update FAQ-current
+
+2002-10-30 Wednesday 08:52  mche
+
+	* src/toss.c (1.459): syntax of changeFileSuffix is expanded
+
+2002-10-30 Wednesday 05:47  mche
+
+	* doc/hpt.texi (1.87): correect Unpack statment
+
+2002-10-30 Wednesday 05:35  nssoft
+
+	* doc/hpt-FAQ.russian (1.48): Update info about BeFTN - Husky
+	project on BeOS
+
 2002-10-29 Tuesday 14:11  mche
 
 	* src/query.c (1.71): fix area autocreation
