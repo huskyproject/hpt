@@ -1,3 +1,13 @@
+2004-06-07 Monday 11:21  sfpavel
+
+	* debian/compat (1.1): file compat was initially added on branch
+	hpt-1_4-stable.
+
+2004-06-07 Monday 11:21  sfpavel
+
+	* debian/: changelog, compat, control, rules
+	(hpt-1_4-stable.[7,1,4,2]): New debian version
+
 2004-05-31 Monday 19:26  d_sergienko
 
 	* src/carbon.c (hpt-1_4-stable.4): fix CarbonRules AND & AND_NOT
