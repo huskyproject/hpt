@@ -48,12 +48,24 @@
 #endif
 
 #include <global.h>
+#include <recode.h>
 #include <fidoconfig/fidoconfig.h>
 
 #include <smapi/typedefs.h>
 #include <smapi/compiler.h>
 #include <smapi/stamp.h>
 #include <smapi/progprot.h>
+
+void exit_hpt(char *logstr, int print) {
+    if (config->lockfile != NULL) remove(config->lockfile);
+    if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
+    writeLogEntry(hpt_log, '9', logstr);
+    writeLogEntry(hpt_log, '1', "End");
+    closeLog(hpt_log);
+    disposeConfig(config);
+    doneCharsets();
+    exit(1);
+}
 
 int createLockFile(char *lockfile) {
         FILE *f;
@@ -384,15 +396,10 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
                                    free(link->bsyFile);
                                    link->bsyFile=NULL;
                            }
-                           writeLogEntry(hpt_log, '9', "cannot create *.bsy file");
-                           writeLogEntry(hpt_log, '1', "End");
-                           closeLog(hpt_log);
-                           disposeConfig(config);
-                           exit(1);
+                           exit_hpt("cannot create *.bsy file!",0);
                    }
            fclose(f);
    }
 
    return 0;
 }
-

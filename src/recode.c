@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <recode.h>
+#include <log.h>
+#include <global.h>
 
 CHAR *intab  = NULL;
 
@@ -106,5 +108,7 @@ INT in,on,count;
 		}
 	}
 	fclose(fp);
+	
+	writeLogEntry(hpt_log,'9',"read recoding table from %s", charMapFileName);
 	return ;
 }

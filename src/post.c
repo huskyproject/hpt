@@ -55,6 +55,38 @@
 #include <scanarea.h>
 #include <xstr.h>
 
+void print_help() {
+   fprintf(stdout,"\n       Post a message to area:\n");
+   fprintf(stdout,"              hpt post [options] file\n\n");
+   fprintf(stdout,"              options are:\n\n");
+   fprintf(stdout,"              -nf \"name from\"\n");
+   fprintf(stdout,"                 message sender's name, if not included post  use\n");
+   fprintf(stdout,"                 sysop name (see fidoconfig)\n\n");
+   fprintf(stdout,"              -nt \"name to\"\n");
+   fprintf(stdout,"                 message  receiver's  name,  if not included post\n");
+   fprintf(stdout,"                 use \"All\"\n\n");
+   fprintf(stdout,"              -af \"address from\"\n");
+   fprintf(stdout,"                 message sender's address, if not  included  post\n");
+   fprintf(stdout,"                 use first system address (see fidoconfig)\n\n");
+   fprintf(stdout,"              -at \"address to\"\n");
+   fprintf(stdout,"                 message receiver's address, *MUST BE PRESENT*\n\n");
+   fprintf(stdout,"              -s \"subject\"\n");
+   fprintf(stdout,"                 subject line, if not included then assumed to be\n");
+   fprintf(stdout,"                 empty\n\n");
+   fprintf(stdout,"              -e \"echo area\"\n");
+   fprintf(stdout,"                 area to  post  echomail  message  into,  if  not\n");
+   fprintf(stdout,"                 included message is posted to netmail\n\n");
+   fprintf(stdout,"              -f \"flags\"\n");
+   fprintf(stdout,"                 flags  to  set  to the posted msg. possible ones\n");
+   fprintf(stdout,"                 are: pvt, crash, read, sent, att,  fwd,  orphan,\n");
+   fprintf(stdout,"                 k/s, loc, hld, xx2,  frq, rrq, cpt, arq, urq\n\n");
+   fprintf(stdout,"              -x export message to echo links\n\n");
+   fprintf(stdout,"              -d erase input file after posting\n\n");
+   fprintf(stdout,"              -h get help\n\n");
+   fprintf(stdout,"              file - text file to post into echo or \"-\" for stdin\n\n");
+   exit(0);
+}
+
 void post(int c, unsigned int *n, char *params[])
 {
    char *area = NULL;
@@ -73,6 +105,8 @@ void post(int c, unsigned int *n, char *params[])
 
    time_t t = time (NULL);
    struct tm *tm;
+
+   if (params[*n]!='\0' && params[*n][1]=='h') print_help();
 
    if (config==NULL) processConfig();
 
@@ -136,37 +170,6 @@ void post(int c, unsigned int *n, char *params[])
             case 'd':    // erase input file after posting
                erasef=1;
                break;
-	    case 'h':	// print help
-	       fprintf(stdout,"\n       Post a message to area:\n");
-	       fprintf(stdout,"              hpt post [options] file\n\n");
-	       fprintf(stdout,"              options are:\n\n");
-	       fprintf(stdout,"              -nf \"name from\"\n");
-	       fprintf(stdout,"                 message sender's name, if not included post  use\n");
-	       fprintf(stdout,"                 sysop name (see fidoconfig)\n\n");
-	       fprintf(stdout,"              -nt \"name to\"\n");
-	       fprintf(stdout,"                 message  receiver's  name,  if not included post\n");
-	       fprintf(stdout,"                 use \"All\"\n\n");
-	       fprintf(stdout,"              -af \"address from\"\n");
-	       fprintf(stdout,"                 message sender's address, if not  included  post\n");
-	       fprintf(stdout,"                 use first system address (see fidoconfig)\n\n");
-	       fprintf(stdout,"              -at \"address to\"\n");
-	       fprintf(stdout,"                 message receiver's address, *MUST BE PRESENT*\n\n");
-	       fprintf(stdout,"              -s \"subject\"\n");
-	       fprintf(stdout,"                 subject line, if not included then assumed to be\n");
-	       fprintf(stdout,"                 empty\n\n");
-	       fprintf(stdout,"              -e \"echo area\"\n");
-	       fprintf(stdout,"                 area to  post  echomail  message  into,  if  not\n");
-	       fprintf(stdout,"                 included message is posted to netmail\n\n");
-	       fprintf(stdout,"              -f \"flags\"\n");
-	       fprintf(stdout,"                 flags  to  set  to the posted msg. possible ones\n");
-	       fprintf(stdout,"                 are: pvt, crash, read, sent, att,  fwd,  orphan,\n");
-	       fprintf(stdout,"                 k/s, loc, hld, xx2,  frq, rrq, cpt, arq, urq\n\n");
-	       fprintf(stdout,"              -x export message to echo links\n\n");
-	       fprintf(stdout,"              -d erase input file after posting\n\n");
-	       fprintf(stdout,"              -h get help\n\n");
-	       fprintf(stdout,"              file - text file to post into echo or \"-\" for stdin\n\n");
-	       quit = 1;
-	       break;
 	    default:
                fprintf(stderr, "hpt post: unknown switch %s\n", params[*n]);
                quit = 1;
@@ -242,7 +245,7 @@ void post(int c, unsigned int *n, char *params[])
       else {
 	// recoding from internal to transport charSet
 	if (config->outtab != NULL) {
-	    getctab(outtab, (UCHAR *) config->outtab);
+//	    getctab(outtab, (UCHAR *) config->outtab);
 	    recodeToTransportCharset((CHAR*)msg.fromUserName);
 	    recodeToTransportCharset((CHAR*)msg.toUserName);
 	    recodeToTransportCharset((CHAR*)msg.subjectLine);

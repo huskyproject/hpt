@@ -61,6 +61,7 @@
 #include <recode.h>
 #include <areafix.h>
 #include <scanarea.h>
+#include <hpt.h>
 
 unsigned char RetFix;
 
@@ -1036,7 +1037,8 @@ void repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
    UINT32       j=0;
    s_pktHeader  header;
    FILE         *pkt;
-   
+   long         len;
+
    makeMsg(hmsg, xmsg, &msg, echo, 1);
 
    //translating name of the area to uppercase
@@ -1046,19 +1048,25 @@ void repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
    if (link->Pause && !echo->noPause) return;
    // check access read for link
    if (readCheck(echo, link)) return;
-      if (link->pktFile == NULL) {
-		   
-	  // pktFile does not exist
-	  if ( createTempPktFileName(link) ) {
-		  writeLogEntry(hpt_log, '9', "Could not create new pkt.");
-		  printf("Could not create new pkt.\n");
-		  disposeConfig(config);
-		  closeLog(hpt_log);
-		  exit(1);
-	  }
-		   
-      } /* endif */
-		   
+
+   if (link->pktFile != NULL && link->pktSize != 0) { // check packet size
+	   len = fsize(link->pktFile);
+	   if (len >= link->pktSize * 1024L) { // Stop writing to pkt
+		   free(link->pktFile);
+		   link->pktFile=NULL;
+		   free(link->packFile);
+	   }
+   }
+   
+   if (link->pktFile == NULL) {
+	   
+	   // pktFile does not exist
+	   if ( createTempPktFileName(link) ) {
+		   exit_hpt("Could not create new pkt!",1);
+	   }
+	   
+   } /* endif */
+   
    makePktHeader(NULL, &header);
    header.origAddr = *(link->ourAka);
    header.destAddr = link->hisAka;
@@ -1180,8 +1188,8 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 			      an, print_ch(49-strlen(an), '.'), rescanCount);
 			  writeLogEntry(hpt_log,'8',"areafix: %s rescanned %lu mails to %s",
 			      area->areaName, rescanCount, aka2str(link->hisAka));
-			  arcmail(NULL);
-
+//			  arcmail(link);
+			  tossTempOutbound(config->tempOutbound);
 			}
 			break;
 		case 1: if (strstr(line, "*")) continue;
@@ -1390,7 +1398,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	char *token, *textBuff, *report=NULL, *preport = NULL;
 	
 	// load recoding tables
-	if (config->outtab != NULL) getctab(outtab, (unsigned char*) config->outtab);
+//	if (config->outtab != NULL) getctab(outtab, (unsigned char*) config->outtab);
 
 	// 1st security check
 	if (pktHeader) security=addrComp(msg->origAddr, pktHeader->origAddr);

@@ -2,6 +2,24 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+
+max:
+* recoding msgToSysop
+* writing log line when reading recoding table
+* read recoding tables once
+* do not print "Start..." with LogEchoToScreen when "hpt post -h" running
+* exit_hpt() removed to fcommon.c
+* fixed attach code
+* now hpt can route files
+* fixed pktsize bug
+* add pktsize check to %rescan in areafix
+
+----- cvs ci ------
+Mon Mar 31 18:24:10 NOVST 2000
+max (patch from Serguei Revtov):
+* new areas autocreation report
+
+----- cvs ci ------
 Thu Mar 30 15:09:34 NOVST 2000
 max:
 * clear MSGLOCAL flag on transit netmail

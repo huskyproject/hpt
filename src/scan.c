@@ -167,7 +167,7 @@ s_route *findRouteForNetmail(s_message msg)
       // if msg has file attached
       for (i=0; i < config->routeFileCount; i++) {
          if (patmat(addrStr, config->routeFile[i].pattern))
-            return &(config->routeMail[i]);
+            return &(config->routeFile[i]);
       }
    } else {
       // if msg has no file attached
@@ -236,6 +236,10 @@ void processAttachs(s_link *link, s_message *msg)
    char *newSubjectLine = (char *) calloc(strlen(msg->subjectLine)+1, 1);
    
    flo = fopen(link->floFile, "a");
+
+#if defined(UNIX) || defined(__linux__)
+   msg->subjectLine = strLower (msg->subjectLine);
+#endif
   
    running = msg->subjectLine;
    //token = strtok_r(msg->subjectLine, " \t", &running);
@@ -315,36 +319,61 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
    // note: link->floFile used for create 12345678.?ut mail packets & ...
 
    if ((xmsg->attr & MSGFRQ) == MSGFRQ) {
-      // if msg has request flag then put the subjectline into request file.
-      if (createOutboundFileName(virtualLink, NORMAL, REQUEST) == 0) {
-
-         processRequests(virtualLink, &msg);
-         
-         remove(virtualLink->bsyFile);
-         free(virtualLink->bsyFile);
-         // mark Mail as sent
-         xmsg->attr |= MSGSENT;
-         MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-         free(virtualLink->floFile);
-      }
+	   prio = NORMAL;
+	   if ((xmsg->attr & MSGCRASH)==MSGCRASH) prio = CRASH; 
+	   if ((xmsg->attr & MSGHOLD)==MSGHOLD) prio = HOLD;
+	   
+	   if (prio!=NORMAL) {
+		   // if msg has request flag then put the subjectline into request file.
+		   if (createOutboundFileName(virtualLink, NORMAL, REQUEST) == 0) {
+			   
+			   processRequests(virtualLink, &msg);
+			   
+			   remove(virtualLink->bsyFile);
+			   free(virtualLink->bsyFile);
+			   // mark Mail as sent
+			   xmsg->attr |= MSGSENT;
+			   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+			   free(virtualLink->floFile);
+			   writeLogEntry(hpt_log, '7', "Request %s from %u:%u/%u.%u", msg.subjectLine, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   }
+	   }
    } /* endif */
    if ((xmsg->attr & MSGFILE) == MSGFILE) {
-	// file attach
-	route = findRouteForNetmail(msg);
-	link = getLinkForRoute(route, &msg);
-
-	if ((route != NULL) && (link != NULL)) {
-	    prio = cvtFlavour2Prio(route->flavour);
-	    if (createOutboundFileName(link, prio, FLOFILE) == 0) {
-        	processAttachs(link, &msg);
-        	remove(link->bsyFile);
-        	free(link->bsyFile);
-                // mark Mail as sent
-                xmsg->attr |= MSGSENT;
-                MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-                free(link->floFile);
-	    }
-	} /* endif check routing */
+	   // file attach
+	   prio = NORMAL;
+	   if ((xmsg->attr & MSGCRASH)==MSGCRASH) prio = CRASH; 
+	   if ((xmsg->attr & MSGHOLD)==MSGHOLD) prio = HOLD;
+	   
+	   // we need route mail
+	   if (prio==NORMAL) {
+		   route = findRouteForNetmail(msg);
+		   link = getLinkForRoute(route, &msg);
+		   if ((route != NULL) && (link != NULL)) {
+			   prio = cvtFlavour2Prio(route->flavour);
+			   if (createOutboundFileName(link, prio, FLOFILE) == 0) {
+				   processAttachs(link, &msg);
+				   remove(link->bsyFile);
+				   free(link->bsyFile);
+				   // mark Mail as sent
+				   xmsg->attr |= MSGSENT;
+				   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+				   free(link->floFile);
+				   writeLogEntry(hpt_log, '7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
+			   }
+			   
+		   }
+	   }
+	   else if (createOutboundFileName(virtualLink, prio, FLOFILE) == 0) {
+		   processAttachs(virtualLink, &msg);
+		   remove(virtualLink->bsyFile);
+		   free(virtualLink->bsyFile);
+		   // mark Mail as sent
+		   xmsg->attr |= MSGSENT;
+		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+		   free(virtualLink->floFile);
+		   writeLogEntry(hpt_log, '7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+	   }
    } /* endif */
    
    if ((xmsg->attr & MSGCRASH) == MSGCRASH) {
@@ -543,7 +572,7 @@ void scanExport(int type, char *str) {
    char *line;
    
    // load recoding tables
-   if (config->outtab != NULL) getctab(outtab, (unsigned char *)config->outtab);
+//   if (config->outtab != NULL) getctab(outtab, (unsigned char *)config->outtab);
    
    // zero statScan   
    memset(&statScan, 0, sizeof(s_statScan));
@@ -602,7 +631,8 @@ void scanExport(int type, char *str) {
       if (type & SCN_ALL) remove(config->echotosslog);
    };
 
-   if (type & SCN_ECHOMAIL) arcmail(NULL);
+//   if (type & SCN_ECHOMAIL) arcmail(NULL);
+   if (type & SCN_ECHOMAIL) tossTempOutbound(config->tempOutbound);
    
    writeScanStatToLog();
 }

@@ -161,15 +161,6 @@ int processCommandLine(int argc, char **argv)
    return argc;
 }
 
-void exit_hpt(char *logstr) {
-    if (config->lockfile != NULL) remove(config->lockfile);
-    writeLogEntry(hpt_log, '9', logstr);
-    writeLogEntry(hpt_log, '1', "End");
-    closeLog(hpt_log);
-    disposeConfig(config);
-    exit(1);
-}
-
 void processConfig()
 {
 #if !defined(__OS2__) && !defined(UNIX)
@@ -230,14 +221,19 @@ void processConfig()
    writeLogEntry(hpt_log, '1', "Start");
    free(buff);
 
-   if (config->addrCount == 0) exit_hpt("at least one addr must be defined");
-   if (config->linkCount == 0) exit_hpt("at least one link must be specified");
-   if (config->tempOutbound == NULL) exit_hpt("you must set tempOutbound in fidoconfig first");
-   if (config->inbound == NULL) exit_hpt("you must set Inbound in fidoconfig first");
-   if (config->tempInbound == NULL) exit_hpt("you must set tempInbound in fidoconfig first");
-   if (strcmp(config->inbound,config->tempInbound)==0) exit_hpt("Inbound & tempInbound must be differ");
-   if (config->protInbound && (strcmp(config->protInbound,config->tempInbound)==0)) exit_hpt("protInbound & tempInbound must be differ");
-   if (config->localInbound && (strcmp(config->localInbound,config->tempInbound)==0)) exit_hpt("localInbound & tempInbound must be differ");
+   if (config->addrCount == 0) exit_hpt("at least one addr must be defined",1);
+   if (config->linkCount == 0) exit_hpt("at least one link must be specified",1);
+   if (config->tempOutbound == NULL) exit_hpt("you must set tempOutbound in fidoconfig first",1);
+   if (config->inbound == NULL) exit_hpt("you must set Inbound in fidoconfig first",1);
+   if (config->tempInbound == NULL) exit_hpt("you must set tempInbound in fidoconfig first",1);
+   if (strcmp(config->inbound,config->tempInbound)==0) exit_hpt("Inbound & tempInbound must be differ",1);
+   if (config->protInbound && (strcmp(config->protInbound,config->tempInbound)==0)) exit_hpt("protInbound & tempInbound must be differ",1);
+   if (config->localInbound && (strcmp(config->localInbound,config->tempInbound)==0)) exit_hpt("localInbound & tempInbound must be differ",1);
+
+   // load recoding tables
+   initCharsets();
+   if (config->outtab) getctab(outtab, (unsigned char*) config->outtab);
+   if (config->intab) getctab(intab, (unsigned char*) config->intab);
 }
 
 int main(int argc, char **argv)
@@ -274,20 +270,16 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
 #endif
    xscatprintf(&versionStr,"hpt %s", version);
    free(version);
-   initCharsets();
 
    if (processCommandLine(argc, argv)==1) exit(0);
+
    if (config==NULL) processConfig();
 
    // init SMAPI
    m.req_version = 0;
    m.def_zone = config->addr[0].zone;
    if (MsgOpenApi(&m) != 0) {
-      writeLogEntry(hpt_log, '9', "MsgApiOpen Error");
-          if (config->lockfile != NULL) remove(config->lockfile);
-      closeLog(hpt_log);
-      disposeConfig(config);
-      exit(1);
+      exit_hpt("MsgApiOpen Error",1);
    } /*endif */
    
    msgToSysop = (s_message**)calloc(config->addrCount, sizeof(s_message*));

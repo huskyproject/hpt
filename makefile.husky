@@ -1,7 +1,7 @@
 # include Husky-Makefile-Config
 include ../huskymak.cfg
 
-OBJS    = hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) log$(OBJ) \
+OBJS    = fcommon$(OBJ) hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) log$(OBJ) \
           global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) seenby$(OBJ) \
           crc$(OBJ) dupe$(OBJ) tree$(OBJ) recode$(OBJ) areafix$(OBJ) \
           post$(OBJ) link$(OBJ) strsep$(OBJ) xstr$(OBJ)

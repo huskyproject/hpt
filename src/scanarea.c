@@ -51,6 +51,7 @@
 #include <smapi/compiler.h>
 #include <smapi/progprot.h>
 #include <toss.h>
+#include <hpt.h>
 
 // create seen-by's & path
 char *createSeenByPath(s_area *echo) {
@@ -188,7 +189,10 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
           if (link->pktFile != NULL && link->pktSize != 0) { // check packet size
              len = fsize(link->pktFile);
              if (len >= link->pktSize * 1024L) { // Stop writing to pkt
-                arcmail(link);
+//                arcmail(link);
+				 free(link->pktFile);
+				 link->pktFile=NULL;
+				 free(link->packFile);
              }
           }
 
@@ -196,11 +200,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 		   
 		  // pktFile does not exist
 		  if ( createTempPktFileName(link) ) {
-			  writeLogEntry(hpt_log, '9', "Could not create new pkt.");
-			  fprintf(stderr, "Could not create new pkt.\n");
-			  disposeConfig(config);
-			  closeLog(hpt_log);
-			  exit(1);
+		      exit_hpt("Could not create new pkt.",1);
 		  }
 		   
 	  } /* endif */

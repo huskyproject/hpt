@@ -60,6 +60,7 @@
 #include <areafix.h>
 #include <version.h>
 #include <scanarea.h>
+#include <hpt.h>
 
 #include <smapi/msgapi.h>
 #include <smapi/stamp.h>
@@ -76,7 +77,7 @@ extern s_message **msgToSysop;
 s_statToss statToss;
 int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec);
 void processDir(char *directory, e_tossSecurity sec);
-void makeMsgToSysop(char *areaName, s_addr fromAddr);
+void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr);
 
 /*
  * Find the first occurrence of find in s ignoring case
@@ -669,18 +670,18 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       if (newLinks[i]->link->pktFile != NULL && newLinks[i]->link->pktSize != 0) { // check packet size
          len = fsize(newLinks[i]->link->pktFile);
          if (len >= (newLinks[i]->link->pktSize * 1024L)) { // Stop writing to pkt
-            arcmail(newLinks[i]->link);
+//            arcmail(newLinks[i]->link);
+			 free(newLinks[i]->link->pktFile);
+			 newLinks[i]->link->pktFile=NULL;
+			 free(newLinks[i]->link->packFile);
          }
       }
 
       // create pktfile if necessary
       if (newLinks[i]->link->pktFile == NULL) {
          // pktFile does not exist
-         if ( createTempPktFileName(newLinks[i]->link) ) {
-            writeLogEntry(hpt_log, '9', "Could not create new pkt!\n");
-            printf("Could not create new pkt!\n");
-            exit(1);
-         }
+         if ( createTempPktFileName(newLinks[i]->link) )
+            exit_hpt("Could not create new pkt!",1);
       } /* endif */
 
       makePktHeader(NULL, &header);
@@ -857,8 +858,8 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
    writeLogEntry(hpt_log, '8', "Area '%s' autocreated by %s", c_area, hisaddr);
    
-   if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr);
-   else makeMsgToSysop(c_area, *forwardAddr);
+   if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr, NULL);
+   else makeMsgToSysop(c_area, *forwardAddr, &pktOrigAddr);
    
    free(squishFileName);
    free(myaddr);
@@ -1097,10 +1098,12 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
     return putMsgInArea(&(config->badArea), msg, 0, 0);
 }
 
-void makeMsgToSysop(char *areaName, s_addr fromAddr)
+void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
 {
     s_area *echo;
     int i, netmail=0;
+    char *buff=NULL;
+    char *strbeg=NULL;
     
     if (config->ReportTo) {
 	if (stricmp(config->ReportTo,"netmail")==0) netmail=1;
@@ -1122,11 +1125,46 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr)
 			print_ch(49, ' '), "By\r", NULL);
 		// Shitty static variables ....
 		xstrscat(&(msgToSysop[i]->text), print_ch(79, '-'), "\r", NULL);
-		
+		msgToSysop[i]->recode |= (REC_HDR|REC_TXT);
 //		writeLogEntry(hpt_log,'8',"Created msg to sysop");
 	    }
-	    xscatprintf(&(msgToSysop[i]->text), "Created  %-53s%s\r", 
-	    	 echo->areaName, aka2str(fromAddr));
+
+//          New report generation
+            xstrcat(&buff, aka2str(fromAddr));
+            if (uplinkAddr != NULL) { // autocreation with forward request
+               xstrcat(&buff, " from ");
+               xstrcat(&buff, aka2str(*uplinkAddr));
+            }
+            xstrscat(&strbeg, "Created  ", echo->areaName, NULL);
+
+            if (echo->description) {
+               if (strlen(strbeg) + strlen(echo->description) >=77) {
+                  xstrscat(&(msgToSysop[i]->text), strbeg, "\r", NULL);
+                  free(strbeg);
+                  strbeg = NULL;
+                  xstrcat(&strbeg, print_ch(9, ' '));
+               } else {
+                  xstrcat(&strbeg, " ");
+               }
+               xstrscat(&strbeg, "\"", echo->description, "\"", NULL);
+            }
+
+            xstrcat(&(msgToSysop[i]->text), strbeg);
+
+            if (strlen(strbeg) + strlen(buff) >= 79) {
+               xstrscat(&(msgToSysop[i]->text), "\r", print_ch(79-strlen(buff), ' '), buff, "\r", NULL);
+            } else if (strlen(strbeg) <62 && strlen(buff) < 79-62) { // most beautiful
+              xstrscat(&(msgToSysop[i]->text), print_ch(62-strlen(strbeg), ' '), buff, "\r", NULL);
+            } else { 
+              xstrscat(&(msgToSysop[i]->text), print_ch(79-strlen(strbeg)-strlen(buff), ' '), buff, "\r", NULL);
+            }
+            free(buff);
+            free(strbeg);
+
+//          Old report generation
+//	    xscatprintf(&(msgToSysop[i]->text), "Created  %-53s%s\r", 
+//	         echo->areaName, aka2str(fromAddr));
+
 	    break;
 	}
     }
@@ -1176,8 +1214,17 @@ void writeMsgToSysop()
 		    xstrcat(&(msgToSysop[i]->text), seenByPath);
 		    free(seenByPath);
 		    if (echo->downlinkCount > 0) {
+			// recoding from internal to transport charSet
+			if (config->outtab) {
+//			    getctab(outtab, (unsigned char*) config->outtab);
+			    recodeToTransportCharset((CHAR*)msgToSysop[i]->fromUserName);
+		    	    recodeToTransportCharset((CHAR*)msgToSysop[i]->toUserName);
+		    	    recodeToTransportCharset((CHAR*)msgToSysop[i]->subjectLine);
+			    recodeToTransportCharset((CHAR*)msgToSysop[i]->text);
+			}
 			forwardMsgToLinks(echo, msgToSysop[i], msgToSysop[i]->origAddr);
-			arcmail(NULL);
+//			arcmail(NULL);
+			tossTempOutbound(config->tempOutbound);
 		    }
 		} else {
 		    putMsgInBadArea(msgToSysop[i], msgToSysop[i]->origAddr, 0);
@@ -2054,7 +2101,7 @@ void tossTempOutbound(char *directory)
 			   link->pktFile = dummy;
 
 			   fclose(pkt);
-			   arcmail(NULL);
+			   arcmail(link);
 		   } else {
  			   free(dummy);
 			   writeLogEntry(hpt_log, '9', "found non packed mail without matching link in tempOutbound");
@@ -2081,7 +2128,7 @@ void toss()
 */
 
    // load recoding tables if needed
-   if (config->intab != NULL) getctab(intab, (UCHAR*) config->intab);
+//   if (config->intab != NULL) getctab(intab, (UCHAR*) config->intab);
    
    // set stats to 0
    memset(&statToss, 0, sizeof(s_statToss));
@@ -2132,7 +2179,8 @@ void toss()
 
    // write statToss to Log
    writeTossStatsToLog();
-   arcmail(NULL);
+//   arcmail(NULL);
+   tossTempOutbound(config->tempOutbound);
 }
 
 int packBadArea(HMSG hmsg, XMSG xmsg)
@@ -2190,7 +2238,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
          } else statToss.passthrough++;
 
 	 // recoding from internal to transport charSet
-	 if (config->outtab != NULL) {
+	 if (config->outtab) {
 	     recodeToTransportCharset((CHAR*)msg.fromUserName);
 	     recodeToTransportCharset((CHAR*)msg.toUserName);
 	     recodeToTransportCharset((CHAR*)msg.subjectLine);
@@ -2228,7 +2276,7 @@ void tossFromBadArea()
    int   delmsg;
    
    // load recoding tables
-   if (config->outtab != NULL) getctab(outtab, (UCHAR *) config->outtab);
+//   if (config->outtab != NULL) getctab(outtab, (UCHAR *) config->outtab);
 
    area = MsgOpenArea((UCHAR *) config->badArea.fileName, MSGAREA_NORMAL, config->badArea.msgbType | MSGTYPE_ECHO);
    if (area != NULL) {
@@ -2258,7 +2306,8 @@ void tossFromBadArea()
 
       MsgCloseArea(area);
       
-      arcmail(NULL);
+//      arcmail(NULL);
+      tossTempOutbound(config->tempOutbound);
       
    } else 
       writeLogEntry(hpt_log, '9', "Could not open %s", config->badArea.fileName);
