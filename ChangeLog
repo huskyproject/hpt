@@ -1,3 +1,8 @@
+2002-09-27 Friday 04:15  stas_degteff
+
+	* TODO, src/hptlink.c (hpt-1_2-stable.[1,2]): change log file name
+	to hptlink.log and change TODO
+
 2002-09-25 Wednesday 22:23  pgul
 
 	* src/toss.c (hpt-1_2-stable.2): security fix
