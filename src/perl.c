@@ -150,7 +150,10 @@ static XS(perl_putMsgInArea)
     string2addr(toaddr, &(msg.destAddr));
   if (!date || !*date)
   { time_t t = time(NULL);
-    strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", localtime(&t));
+    if (m.smapi_subversion < 0x203)
+      strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", localtime(&t));
+    else
+      fts_time((char *)msg.datetime, localtime(&t));
   }
   else
   { strncpy(msg.datetime, date, sizeof(msg.datetime));

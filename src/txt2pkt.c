@@ -206,7 +206,10 @@ int main(int argc, char *argv[])
 
       t = time (NULL);
       tm = localtime(&t);
-      strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", tm);
+      if (m.smapi_subversion < 0x203)
+        strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", tm);
+      else
+        fts_time((char *)msg.datetime, tm);
 
       msg.netMail = 1;
 

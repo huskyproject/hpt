@@ -338,7 +338,10 @@ s_message *makeMessage (s_addr *origAddr, s_addr *destAddr,
     }
     if (config->areafixKillReports) msg->attributes |= MSGKILL;
 
-    strftime((char*)msg->datetime, 21, "%d %b %y  %H:%M:%S", localtime(&time_cur));
+    if (m.smapi_subversion < 0x203)
+      strftime((char*)msg->datetime, 21, "%d %b %y  %H:%M:%S", localtime(&time_cur));
+    else
+      fts_time((char*)msg->datetime, localtime(&time_cur));
 
     return msg;
 }
@@ -952,7 +955,7 @@ static char *do_delete(s_link *link, s_area *area) {
 
     /* delete msgbase and dupebase for the area */
     if (area->msgbType!=MSGTYPE_PASSTHROUGH)
-	MsgDeleteBase(area->fileName, area->msgbType);
+	MsgDeleteBase(area->fileName, (word) area->msgbType);
     if (area->dupeCheck != dcOff) {
 	char *dupename = createDupeFileName(area);
 	if (dupename) {
