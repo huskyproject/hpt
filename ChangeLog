@@ -1,3 +1,7 @@
+2003-02-20 Thursday 12:22  stas_degteff
+
+	* HISTORY (hpt-1_4-stable.2): Add sections for 1.2-stable
+
 2003-02-19 Wednesday 18:35  stas_degteff
 
 	* misc/pktview (1.3): Change 'Pid' to 'Prodcode', 'Pwd' to
