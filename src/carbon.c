@@ -128,8 +128,10 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
     {
       /* Execute external program */
       fclose(msgfp);
-      execstr = safe_malloc(strlen(progname)+strlen(fname)+2);
-      sprintf(execstr, "%s %s", progname, fname);
+      execstr = safe_malloc(strlen(progname)+strlen(fname)+3);
+      if (*progname == '|')
+              sprintf(execstr, "%s < %s", progname+1, fname);
+      else    sprintf(execstr, "%s %s", progname, fname);
 #ifdef __NT__
       CharToOem(execstr, execstr); /*  this is really need? */
 #endif
@@ -140,7 +142,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
     }
 /*    if (rc == -1 || rc == 127) */
     if (rc)  /* system() return exit status returned by shell */
-	w_log(LL_ERR, "Execution of external process failed. Cmd is: %s", execstr);
+	w_log(LL_ERR, "Execution of external program failed. Cmd is: %s", execstr);
     return 0;
 
 }
