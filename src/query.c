@@ -40,6 +40,30 @@ extern s_query_areas *queryAreasHead;
 extern s_message **msgToSysop;
 extern char       *versionStr;
 
+
+int checkRefuse(char *areaName)
+{
+    FILE *fp;
+    char *line;
+
+    if (config->newAreaRefuseFile == NULL)
+        return 0;
+
+    fp = fopen(config->newAreaRefuseFile, "r+b");
+    if (fp == NULL) w_log(LL_ERR, "Can't open newAreaRefuseFile \"%s\" : %d\n",
+                          config->newAreaRefuseFile, strerror(errno));
+    while((line = readLine(fp)) != NULL)
+    {
+        line = trimLine(line);
+        if (patimat(areaName, line)) {
+            fclose(fp);
+            return 1;
+        }
+    }
+    fclose(fp);
+    return 0;
+}
+
 void del_tok(char **ac, char *tok) {
     char *p, *q;
 
@@ -178,6 +202,13 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
        w_log( LL_FUNC, "%s::autoCreate() rc=7", __FILE__ );
        return 7;
     }
+
+    if (checkRefuse(c_area))
+    {
+        w_log(LL_WARN, "Can't create area %s : refused by NewAreaRefuseFile\n", c_area);
+        return 11;
+    } 
+
 
     creatingLink = getLinkFromAddr(config, pktOrigAddr);
 
