@@ -1,3 +1,29 @@
+2003-05-11 Sunday 17:41  mche
+
+	* src/: areafix.c (1.413), fcommon.c (1.169), hpt.c (1.178), perl.c
+	(1.64), toss.c (1.514): fix reallocation array of links
+
+2003-05-11 Sunday 16:44  mche
+
+	* misc/pktview (1.4): patch by Alexander Reznikov
+
+2003-05-11 Sunday 00:31  d_sergienko
+
+	* HISTORY (1.32): update
+
+2003-05-11 Sunday 00:21  d_sergienko
+
+	* src/scan.c (1.192): keepTrsMail now works
+
+2003-05-11 Sunday 00:19  d_sergienko
+
+	* src/toss.c (1.513): revert val's patch - set correct flags on
+	tossed message
+
+2003-05-11 Sunday 00:12  d_sergienko
+
+	* src/txt2pkt.c (1.52): fix crash when no file specified
+
 2003-05-08 Thursday 23:27  d_sergienko
 
 	* HISTORY (1.31), doc/hpt.texi (1.122), h/query.h (1.18),
