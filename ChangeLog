@@ -1,3 +1,46 @@
+2002-11-19 Tuesday 12:50  stas_degteff
+
+	* HISTORY (1.13): Check netmailarea presence in config
+
+2002-11-19 Tuesday 12:15  stas_degteff
+
+	* src/hpt.c (1.159): Check netmailarea presence in config
+
+2002-11-18 Monday 15:03  stas_degteff
+
+	* src/: fcommon.c (1.148), toss.c (1.474): Use spawnvp() for DJGPP
+	build
+
+2002-11-18 Monday 10:42  stas_degteff
+
+	* src/fcommon.c (1.147): mk_lst() and cmdcall(): check NULL & debug
+	messages
+
+2002-11-18 Monday 10:03  stas_degteff
+
+	* src/fcommon.c (1.146): Fix spawnvp() call
+
+2002-11-18 Monday 06:47  pgul
+
+	* h/fcommon.h (1.48), src/fcommon.c (1.145): Fix compiler warnings
+
+2002-11-17 Sunday 01:52  stas_degteff
+
+	* h/fcommon.h (1.47), src/fcommon.c (1.144): cosmetic
+
+2002-11-17 Sunday 01:39  stas_degteff
+
+	* h/dupe.h (1.20), h/fcommon.h (1.46), h/hpt.h (1.8), h/pkt.h
+	(1.29), h/post.h (1.5), h/query.h (1.16), h/scan.h (1.16),
+	h/version.h (1.9), misc/hptlogstat.pl (1.4), misc/pretty.pl (1.3),
+	src/carbon.c (1.9), src/fcommon.c (1.143), src/global.c (1.45),
+	src/tlog.c (1.13), src/toss.c (1.473), src/tpkt.c (1.28): Use
+	spawnvp() instead system() always if possible
+
+2002-11-17 Sunday 01:37  stas_degteff
+
+	* make/makefile.cyg (1.7): Remove -luser32: this library default
+
 2002-11-15 Friday 17:30  pgul
 
 	* src/query.c (1.74): Check write to config result when creating an
