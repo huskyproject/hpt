@@ -1,3 +1,26 @@
+2003-02-26 Wednesday 09:55  stas_degteff
+
+	* src/txt2pkt.c (hpt-1_4-stable.2): String '(none)' don't
+	substitute instead empty subject now
+
+2003-02-26 Wednesday 09:04  stas_degteff
+
+	* src/post.c (1.106): Fix 'hpt post' help message ('to' address
+	can't need for echomail)
+
+2003-02-26 Wednesday 08:18  stas_degteff
+
+	* misc/extrules.pl (1.1): Extracting rules from echoareas: perl
+	hook by Rostislav Podgorniy 2:4635/83
+
+2003-02-26 Wednesday 06:40  stas_degteff
+
+	* INSTALL (1.14): Fix typo error
+
+2003-02-26 Wednesday 06:24  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.82): Update texi2html URLs
+
 2003-02-25 Tuesday 14:41  stas_degteff
 
 	* doc/hpt.texi (hpt-1_4-stable.4): MFC: Add section 'Using config'
