@@ -414,8 +414,9 @@ void af_QueueReport()
     char link2[17]="";
     char* report = NULL;
     char* header = NULL;
-
+    
     int netmail=0;
+    w_log('1', "Start generating queue report");
     if( !queryAreasHead ) af_OpenQuery();
 
     tmpNode = queryAreasHead;
@@ -522,6 +523,7 @@ void af_QueueReport()
     writeMsgToSysop();
     freeMsgBuffers(msgToSysop[0]);
     nfree(msgToSysop[0]);
+    w_log('1', "End generating queue report");
 }
 
 void af_QueueUpdate()
@@ -531,7 +533,7 @@ void af_QueueUpdate()
     s_link *dwlink;
 //    unsigned i;
 //    s_message *linkmsg;
-    
+    w_log('1', "Start updating queue file");    
     if( !queryAreasHead ) af_OpenQuery();
 
     tmpNode = queryAreasHead;
@@ -544,11 +546,16 @@ void af_QueueUpdate()
         {
             lastRlink = getLinkFromAddr(config,tmpNode->downlinks[0]);
             dwlink    = getLinkFromAddr(config,tmpNode->downlinks[1]);
+            forwardRequestToLink(tmpNode->name, lastRlink, NULL, 2);
+            w_log( LL_AREAFIX, "areafix: request for %s is canceled for node %s",
+                tmpNode->name, aka2str(lastRlink->hisAka));
             if(dwlink && !forwardRequest(tmpNode->name, dwlink, &lastRlink))
             {
                 tmpNode->downlinks[0] = lastRlink->hisAka; 
                 tmpNode->bTime = tnow;
                 tmpNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
+                w_log( LL_AREAFIX, "areafix: request for %s is going to node %s",
+                    tmpNode->name, aka2str(lastRlink->hisAka));
             }
             else
             {
@@ -585,6 +592,7 @@ void af_QueueUpdate()
     }
     // send msg to the links (forward requests to areafix)
     sendAreafixMessages();
+    w_log('1', "End updating queue file");    
 }
 
 int af_OpenQuery()
