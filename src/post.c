@@ -287,7 +287,7 @@ void post(int c, unsigned int *n, char *params[])
                     }
                     fname = GetFilenameFromPathname(params[*n]);
                     /* Write the 'begin' line, giving it a mode of 0600 */
-                    fprintf (tmpfile, "begin 600 %s\n", fname);
+                    fprintf (tmpfile, "begin 644 %s\n", fname);
                     do
                     {
                         
