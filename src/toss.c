@@ -442,17 +442,18 @@ int readCheck(s_area *echo, s_link *link) {
 
     // pause
     if (link->Pause) return 3;
-    
-    if (echo->group && echo->group != '\060') {
-	if (link->AccessGrp) {
-	    if (config->PublicGroup) {
-		if (strchr(link->AccessGrp, echo->group) == NULL &&
-		    strchr(config->PublicGroup, echo->group) == NULL) return 1;
-	    } else if (strchr(link->AccessGrp, echo->group) == NULL) return 1;
-	} else if (config->PublicGroup) {
-		   if (strchr(config->PublicGroup, echo->group) == NULL) return 1;
-	       } else return 1;
-    }
+
+// Do not check groups here, too much checking, use groups only for areafix
+//    if (echo->group && echo->group != '\060') {
+//	if (link->AccessGrp) {
+//	    if (config->PublicGroup) {
+//		if (strchr(link->AccessGrp, echo->group) == NULL &&
+//		    strchr(config->PublicGroup, echo->group) == NULL) return 1;
+//	    } else if (strchr(link->AccessGrp, echo->group) == NULL) return 1;
+//	} else if (config->PublicGroup) {
+//		   if (strchr(config->PublicGroup, echo->group) == NULL) return 1;
+//	       } else return 1;
+//    }
     
     if (echo->levelread > link->level) return 2;
     
@@ -485,16 +486,17 @@ int writeCheck(s_area *echo, s_addr *aka) {
     }
     if (i == echo->downlinkCount) return 4;
     
-    if (echo->group != '\060') {
-	if (link->AccessGrp) {
-	    if (config->PublicGroup) {
-		if (strchr(link->AccessGrp, echo->group) == NULL &&
-		    strchr(config->PublicGroup, echo->group) == NULL) return 1;
-	    } else if (strchr(link->AccessGrp, echo->group) == NULL) return 1;
-	} else if (config->PublicGroup) {
-		   if (strchr(config->PublicGroup, echo->group) == NULL) return 1;
-	       } else return 1;
-    }
+// Do not check groups here, too much checking, use groups only for areafix
+//    if (echo->group != '\060') {
+//	if (link->AccessGrp) {
+//	    if (config->PublicGroup) {
+//		if (strchr(link->AccessGrp, echo->group) == NULL &&
+//		    strchr(config->PublicGroup, echo->group) == NULL) return 1;
+//	    } else if (strchr(link->AccessGrp, echo->group) == NULL) return 1;
+//	} else if (config->PublicGroup) {
+//		   if (strchr(config->PublicGroup, echo->group) == NULL) return 1;
+//	       } else return 1;
+//    }
     
     if (echo->levelwrite > link->level) return 2;
     
