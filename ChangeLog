@@ -1,3 +1,17 @@
+2002-09-04 Wednesday 14:10  mche
+
+	* src/post.c (1.89): removed usless scan function in posting
+	procedure
+
+2002-09-04 Wednesday 12:00  d_sergienko
+
+	* src/scanarea.c (1.88): if TIDs found in scanned message they will
+	be replaced with hpt's one @TID kludge
+
+2002-09-04 Wednesday 09:59  d_sergienko
+
+	* src/post.c (1.88): fixed "out of memory" during post
+
 2002-09-03 Tuesday 14:33  mche
 
 	* src/toss.c (1.439): fix RSB generation
