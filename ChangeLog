@@ -1,3 +1,13 @@
+2003-10-27 Monday 12:12  stas_degteff
+
+	* src/: areafix.c (1.428), scan.c (1.199), toss.c (1.529): Remove
+	unused variables. Fix uninitialised variables. (Thanks to Any
+	Luk'anov <andy@cbr-kem.ru>)
+
+2003-10-27 Monday 05:00  andr_lukyanov
+
+	* src/fcommon.c (1.171): Fixed CR-LF -> LF, fixed end of file
+
 2003-10-24 Friday 15:09  val_khokhlov
 
 	* src/perl.c (1.71): better readonly processing for perl vars
