@@ -816,7 +816,7 @@ s_route *perlroute(s_message *msg, s_route *defroute)
 
 int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
 {
-   char *area = NULL, *prc;
+   char *area = NULL, *prc, *sorig;
    int rc = 0;
    SV *svfromname, *svfromaddr, *svtoname, *svtoaddr, *svpktfrom, *svkill;
    SV *svdate, *svtext, *svarea, *svsubj, *svsecure, *svret; 
@@ -903,15 +903,17 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      svkill = perl_get_sv("kill", FALSE);
      if (svkill && SvTRUE(svkill))
      { // kill
+       sorig = safe_strdup(aka2str(msg->origAddr));
        if (area)
          w_log(LL_PERL, "PerlFilter: Area %s from %s %s killed%s%s",
-                       area, msg->fromUserName, aka2str(msg->origAddr),
+                       area, msg->fromUserName, sorig,
                        prc ? ": " : "", prc ? prc : "");
        else
          w_log(LL_PERL, "PerlFilter: NetMail from %s %s to %s %s killed%s%s",
-                       msg->fromUserName, aka2str(msg->origAddr),
+                       msg->fromUserName, sorig,
                        msg->toUserName, aka2str(msg->destAddr),
                        prc ? ": " : "", prc ? prc : "");
+       free(sorig);
        if (prc) free(prc);
        if (area) free(area);
        return 2;
@@ -942,14 +944,16 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      }
      if (prc)
      {
+       sorig = safe_strdup(aka2str(msg->origAddr));
        if (area)
          w_log(LL_PERL, "PerlFilter: Area %s from %s %s: %s",
-                       area, msg->fromUserName, aka2str(msg->origAddr), prc);
+                       area, msg->fromUserName, sorig, prc);
        else
          w_log(LL_PERL, "PerlFilter: NetMail from %s %s to %s %s: %s",
-                       msg->fromUserName, aka2str(msg->origAddr),
+                       msg->fromUserName, sorig,
                        msg->toUserName, aka2str(msg->destAddr), prc);
        rc = 1;
+       free(sorig);
        free(prc);
      }
    }
@@ -1181,13 +1185,15 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
      }
      if (prc)
      { // kill
+       sorig = safe_strdup(aka2str(msg->origAddr));
        if (areaName)
          w_log(LL_PERL, "PerlFilter: Area %s from %s %s killed: %s",
-                      areaName, msg->fromUserName, aka2str(msg->origAddr), prc);
+                      areaName, msg->fromUserName, sorig, prc);
        else
          w_log(LL_PERL, "PerlFilter: NetMail from %s %s to %s %s killed: %s",
-                      msg->fromUserName, aka2str(msg->origAddr),
+                      msg->fromUserName, sorig,
                       msg->toUserName, aka2str(msg->destAddr), prc);
+       free(sorig);
        free(prc);
        return 1;
      }
