@@ -105,9 +105,19 @@ sub scan
 # $subject, $text, $date, $attr
 # return "" or reason for dont packing to downlinks
 # set $change to update $text, $subject, $fromaddr, $toaddr,
-#     $fromname, $toname, $attr
+#     $fromname, $toname, $attr, $date
 # set $kill to 1 to delete message after processing (even if it's not sent)
 # set $addvia to 0 not to add via string when packing
+  return "";
+}
+
+sub export
+{
+# predefined variables:
+# $area, $fromname, $toname, $subject, $text, $date, $attr,
+# $toaddr (address of link to export this message to),
+# return "" or reason for dont exporting message to this link
+# set $change to update $text, $subject, $fromname, $toname, $attr, $date
   return "";
 }
 

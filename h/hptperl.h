@@ -62,6 +62,6 @@ int perl_echolist(char **report, s_listype type, ps_arealist al, char *aka);
 int perl_afixcmd(char **report, int cmd, char *aka, char *line);
 int perl_afixreq(s_message *msg, hs_addr pktOrigAddr);
 int perl_putmsg(s_area *echo, s_message *msg);
-int perl_export(char *area, hs_addr link, s_message *msg);
+int perl_export(s_area *echo, s_link *link, s_message *msg);
 
 #endif

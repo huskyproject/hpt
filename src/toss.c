@@ -469,7 +469,9 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 
         /*  no link at this index -> break; */
         if (newLinks[i] == NULL) break;
-
+#ifdef DO_PERL
+        if ( !perl_export(echo, newLinks[i]->link, msg) ) continue;
+#endif
         /*  check packet size */
         if (newLinks[i]->link->pktFile != NULL && newLinks[i]->link->pktSize != 0) {
             len = newLinks[i]->link->pkt ? ftell(newLinks[i]->link->pkt) : fsize(newLinks[i]->link->pktFile);

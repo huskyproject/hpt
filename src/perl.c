@@ -2372,8 +2372,118 @@ int perl_putmsg(s_area *echo, s_message *msg)
    return rc;
 }
 
-int perl_export(char *area, hs_addr link, s_message *msg)
+int perl_export(s_area *echo, s_link *link, s_message *msg)
 {
+   char *prc;
+   unsigned long attr;
+   time_t date;
+   SV *svfromname, *svtoname, *svtoaddr, *svsubj, *svattr, *svdate, *svtext;
+   SV *svarea, *svchange, *svret;
+   STRLEN n_a;
+   static int do_perlexport=1;
+   int pid, saveerr;
+
+   if (do_perl && perl==NULL)
+     if (PerlStart())
+       return 1;
+   if (!perl || !do_perlexport || !(perl_subs & SUB_EXPORT))
+     return 1;
+
+   pid = handleperlerr(&saveerr);
+   { dSP;
+     svtoaddr   = perl_get_sv("toaddr",   TRUE);
+     svfromname = perl_get_sv("fromname", TRUE);
+     svtoname   = perl_get_sv("toname",   TRUE);
+     svdate     = perl_get_sv("date",     TRUE);
+     svsubj     = perl_get_sv("subject",  TRUE);
+     svtext     = perl_get_sv("text",     TRUE);
+     svchange   = perl_get_sv("change",   TRUE);
+     svarea     = perl_get_sv("area",     TRUE);
+     svattr     = perl_get_sv("attr",     TRUE);
+     sv_setpv(svtoaddr,   aka2str(link->hisAka));
+     sv_setpv(svfromname, msg->fromUserName);
+     sv_setpv(svtoname,   msg->toUserName);
+
+     sv_setuv(svdate,     (unsigned long)fts2unix(msg->datetime, NULL) );
+     sv_setpv(svdate,     msg->datetime);
+     SvIOK_on(svdate);
+
+     sv_setpv(svsubj,     msg->subjectLine);
+     sv_setpv(svtext,     msg->text);
+     sv_setsv(svchange,   &sv_undef);
+     sv_setpv(svarea,     echo->areaName);
+     sv_setuv(svattr,     msg->attributes | parse_flags(msg->text));
+
+     ENTER;
+     SAVETMPS;
+     PUSHMARK(SP);
+     PUTBACK;
+     perl_call_pv(PERLEXPORT, G_EVAL|G_SCALAR);
+     SPAGAIN;
+     svret=POPs;
+     if (SvTRUE(svret))
+       prc = safe_strdup(SvPV(svret, n_a));
+     else
+       prc = NULL;
+     PUTBACK;
+     FREETMPS;
+     LEAVE;
+     restoreperlerr(saveerr, pid);
+     if (SvTRUE(ERRSV))
+     {
+       w_log(LL_ERR, "Perl export eval error: %s\n", SvPV(ERRSV, n_a));
+       do_perlexport = 0;
+       return 1;
+     }
+
+     if (prc)
+     {
+       w_log(LL_PERL, "PerlExport: Area %s, link %s: %s",
+                     echo->areaName, aka2str(link->hisAka), prc);
+       return 0;
+     }
+
+     svchange = perl_get_sv("change", FALSE);
+     if (svchange && SvTRUE(svchange))
+     { /*  change */
+       char *ptr;
+       freeMsgBuffers(msg);
+       ptr = SvPV(perl_get_sv("text", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->text = safe_strdup(ptr);
+       msg->textLength = strlen(msg->text);
+       ptr = SvPV(perl_get_sv("toname", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->toUserName = safe_strdup(ptr);
+       ptr = SvPV(perl_get_sv("fromname", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->fromUserName = safe_strdup(ptr);
+       ptr = SvPV(perl_get_sv("subject", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->subjectLine = safe_strdup(ptr);
+       /* process flags, update message if needed */
+       attr = SvUV(perl_get_sv("attr", FALSE));
+       msg->attributes = attr & 0xffff;
+       if (msg->netMail)
+         if ((ptr = update_flags(msg->text, attr, MODE_REPLACE)) != NULL) {
+             if (ptr != msg->text) { free(msg->text); msg->text = ptr; }
+             msg->textLength = strlen(msg->text);
+         }
+       /* process date */
+       svdate = perl_get_sv("date", FALSE);
+       if ( (SvIOK(svdate)) && (SvUV(svdate) > 0) ) {
+              date = SvUV(svdate);
+              make_ftsc_date(msg->datetime, localtime(&date));
+       }
+       else if ( SvPOK(svdate) ) {
+              ptr = SvPV(svdate, n_a); if (n_a == 0) ptr = "";
+              if (fts2unix(ptr, NULL) > 0) {
+                  strncpy(msg->datetime, ptr, sizeof(msg->datetime));
+                  msg->datetime[sizeof(msg->datetime)-1] = '\0';
+              }
+       }
+     }
+   }
    return 1;
 }
 
