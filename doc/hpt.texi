@@ -376,6 +376,7 @@ define links and areas before any carbon definitions
 * PublicGroup::                 this is a list of groups for public echo acess
 * RecodeMsgBase::               allow recoding of message base
 * Remap::                       remap mail to other address
+* ReportRequester::             allow reporting link who requested area on autocreate
 * ReportTo::                    set area or netmail for autocreate reports
 * Route::                       routing of netmails
 * RouteFile::                   routing of netmails with file attached
@@ -1317,7 +1318,7 @@ configs/other local files in local one.
 
 This statement cannot be repeated.
 
-@node Remap, ReportTo, RecodeMsgBase, Keywords
+@node Remap, ReportRequester, RecodeMsgBase, Keywords
 @subsection Remap
 @findex Remap
 @table @asis
@@ -1338,7 +1339,24 @@ value of ToName or ToAddress. Two asterisks can't be defined together.
 
 This statement can be repeated.
 
-@node ReportTo, Route, Remap, Keywords
+@node ReportRequester, ReportTo, Remap, Keywords
+@subsection ReportRequester
+@findex ReportRequester
+@table @asis
+@item Syntax:
+@code{reportRequester <bool>}
+@item Example:
+@code{reportRequester off}
+@item Defaults:
+@code{reportRequester on}
+@end table
+
+By default, the link who requested an area is displayed in the auto-create
+report. This keyword disables showing it.
+
+This statement cannot be repeated.
+
+@node ReportTo, Route, ReportRequester, Keywords
 @subsection ReportTo
 @findex ReportTo
 @table @asis
