@@ -1,3 +1,12 @@
+2005-01-13 Thursday 20:17  val_khokhlov
+
+	* doc/hpt.texi (1.155): description for dailyBundles token
+
+2005-01-13 Thursday 20:16  val_khokhlov
+
+	* src/toss.c (1.541): start packing into a new arcmail bundle each
+	day (see token dailyBundles)
+
 2005-01-09 Sunday 17:30  val_khokhlov
 
 	* src/: hpt.c (1.193), perl.c (1.86): use baseDir from s_link_robot
