@@ -47,6 +47,7 @@
 #include <version.h>
 #include <global.h>
 
+#ifndef HASHDUPE
 int processArea(s_area *echo) {
    time_t currentTime = time(NULL);
    char *dupeFileName = createDupeFileName(echo),
@@ -185,3 +186,12 @@ int main() {
 
    return 0;
 }
+#else
+int main() {
+
+   printf("purgeDupes v%d.%02d\n\n", VER_MAJOR, VER_MINOR);
+   printf("HASHDUPE is used. purgeDupes not needed.\n\n");
+
+   return 0;
+}
+#endif

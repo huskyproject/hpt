@@ -1,8 +1,8 @@
-# include Husky-Makefile-Config
-include ../../huskymak.cfg
-
 HASHDUPE = 0
+DEBUG    = 1
 CC       = gcc 
+INSTDIR  = /usr/local/bin
+MANDIR   = /usr/local/man
 
 OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o crc.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o
 SRC_DIR = ../src/
@@ -10,21 +10,21 @@ SRC_DIR = ../src/
 ifeq ($(HASHDUPE), 1)
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -ggdb -O3 -DUNIX -DHASHDUPE -DHAS_POPEN
-  LFLAGS  = -L$(LIBDIR)
+  CFLAGS  = -c -I../h -I../../fidoconfig -I../h -I../../smapi -Wall -ggdb -O3 -DUNIX -DHASHDUPE -DHAS_POPEN
+  LFLAGS  =
 else
-  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -O3 -s -DUNIX -DHASHDUPE -DHAS_POPEN
-  LFLAGS  = -L$(LIBDIR)
+  CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -O3 -s -DUNIX -DHASHDUPE -DHAS_POPEN
+  LFLAGS  =  
 endif
 
 else
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -ggdb -O6 -DUNIX -DHAS_POPEN
-  LFLAGS  = -L$(LIBDIR)
+  CFLAGS  = -c -I../h -I../../fidoconfig -I../h -I../../smapi -Wall -ggdb -O6 -DUNIX -DHAS_POPEN
+  LFLAGS  =
 else
-  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -O3 -s -DUNIX -DHAS_POPEN
-  LFLAGS  = -L$(LIBDIR)
+  CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -O3 -s -DUNIX -DHAS_POPEN
+  LFLAGS  =  
 endif
 
 endif
@@ -75,5 +75,5 @@ install:
 	gzip -c ../man/hpt.1 > hpt.1.gz
 	gzip -c ../man/purgeDupes.1 > purgeDupes.1.gz
 	gzip -c ../man/hptlink.1 > hptlink.1.gz
-	install $(IBOPT) hpt pktinfo purgeDupes txt2pkt hptlink $(BINDIR)
-	install $(IMOPT) hpt.1.gz purgeDupes.1.gz hptlink.1.gz $(MANDIR)/man1
+	install -s hpt pktinfo purgeDupes txt2pkt hptlink $(INSTDIR)
+	install hpt.1.gz purgeDupes.1.gz hptlink.1.gz $(MANDIR)/man1

@@ -63,7 +63,6 @@ FILE *fDupe;
 
 FILE *SQHf;
 UINT32 MaxEntryN, MaxAge, MaxDupes;
-
 unsigned long strcrc32(char *, unsigned long);
 #endif
 
