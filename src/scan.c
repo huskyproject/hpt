@@ -209,9 +209,7 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 
       tempLink.hisAka = msg->destAddr;
       tempLink.ourAka = &(config->addr[0]);
-//      tempLink.name   = (char *) safe_malloc(1);
-//      tempLink.name[0] = '\0';
-       
+
       switch (route->routeVia) {
 
 	  case route_zero:
@@ -236,6 +234,7 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 		  tempLink.hisAka.node -= (tempLink.hisAka.node % 100);
 		  tempLink.hisAka.point = 0;
 		  break;
+
 	  case route_extern:
 		  string2addr(route->viaStr, &tempLink.hisAka);
 		  break;

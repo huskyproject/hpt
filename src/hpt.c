@@ -113,14 +113,14 @@ int  processExportOptions(unsigned int *i, int argc, char **argv)
 void start_help(void) {
   fprintf(stdout,"%s",versionStr);
   fprintf(stdout,"\nUsage: hpt [-c config] [options]\n");
-  fprintf(stdout,"   hpt toss       - tossing mail\n");
+  fprintf(stdout,"   hpt toss - tossing mail\n");
   fprintf(stdout,"   hpt toss -b[f] - tossing mail from badarea [force]\n");
-  fprintf(stdout,"   hpt scan    - scanning echomail\n");
+  fprintf(stdout,"   hpt scan - scanning echomail\n");
   fprintf(stdout,"   hpt scan -w - scanning echomail without highwaters\n");
   fprintf(stdout,"   hpt scan -a <areaname> - scanning echomail from <areaname> area\n");
   fprintf(stdout,"   hpt scan -f <filename> - scanning echomail from alternative echotoss file\n");
   fprintf(stdout,"   hpt post [options] file - posting a mail (for details run \"hpt post -h\")\n");
-  fprintf(stdout,"   hpt pack    - packing netmail\n");
+  fprintf(stdout,"   hpt pack - packing netmail\n");
   fprintf(stdout,"   hpt link [areaname] - links messages\n");
   fprintf(stdout,"   hpt afix [<addr> command] - process areafix\n");
   fprintf(stdout,"   hpt relink <addr> - refresh area subsription\n");
