@@ -6,7 +6,7 @@ OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.o
 SRC_DIR = ..\src
 
 CFLAGS = -zq -wx -bt=nt -i=..\..;..\h; -oneatx -5
-all: $(OBJS) pktinfo.exe hpt.exe hptlink.exe hpttree.exe
+all: $(OBJS) pktinfo.exe hptlink.exe hpttree.exe hpt.exe
 
 $(OBJS): $(SRC_DIR)\*.c
   @echo compiling *.c
@@ -16,9 +16,9 @@ pktinfo.obj: $(SRC_DIR)\*.c
   @echo compiling $*.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
-pktinfo.exe: pktinfo.obj fcommon.obj pktread.obj
+pktinfo.exe: pktinfo.obj fcommon.obj pktread.obj recode.obj
   @echo linking pktinfo
-  $(LINK) $(LFLAGS) FILE pktinfo.obj, log.obj, pktread.obj, global.obj, dupe.obj, tree.obj, crc.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconf\fconfwcw.lib NAME pktinfo.exe
+  $(LINK) $(LFLAGS) FILE pktinfo.obj, fcommon.obj, recode.obj, log.obj, pktread.obj, global.obj, dupe.obj, tree.obj, crc.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconf\fconfwcw.lib NAME pktinfo.exe
 
 hptlink.exe:
   $(CC) $(CFLAGS) $(SRC_DIR)\hptlink.c

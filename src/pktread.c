@@ -42,7 +42,7 @@
 
 #include <log.h>
 #include <global.h>
-
+#include <fcommon.h>
 #include <pkt.h>
 
 typedef unsigned long flag_t;  /* for at least 32 bit flags */

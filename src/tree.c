@@ -31,7 +31,7 @@
 #define		MSG(msg)
 #endif
 
-unsigned long count;
+unsigned long tr_count;
 
 void tree_init(ppr_tree)
 tree	**ppr_tree;
@@ -484,15 +484,15 @@ void tree_mung(tree **ppr_tree, int (*pfi_uar)(char *))
 int countEach(char *pc_data)
 {
    ENTER("count")
-   count++;
+   tr_count++;
    EXIT(TRUE)
 }
 
 unsigned long tree_count(tree **ppr_tree)
 {
-   count = 0;
+   tr_count = 0;
    tree_trav(ppr_tree, countEach);
-   return count;
+   return tr_count;
 }
 
 int tree_srchall(tree **ppr_tree, int (*pfi_compare)(char *, char *), char *pc_user)
