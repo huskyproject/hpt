@@ -1,3 +1,19 @@
+2003-04-21 Monday 10:30  nssoft
+
+	* misc/pretty.pl (1.5): Bugfix
+
+2003-04-21 Monday 09:06  pgul
+
+	* src/toss.c (1.511): CRLF -> LF
+
+2003-04-21 Monday 08:40  mche
+
+	* make/hpt.vcproj (1.2), make/hptz.vcproj (1.1), src/pktread.c
+	(1.101), src/toss.c (1.510): Now it is possible using internal zip
+	compression to switch it on define this packer
+	
+	pack zip zipInternal unpack zipInternal 0 504b0304
+
 2003-04-19 Saturday 10:03  mche
 
 	* misc/extrules.pl (1.2): CR LF --> LF
