@@ -499,9 +499,9 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 
 #ifdef DO_PERL
    r = perlscanmsg(area->areaName, &msg);
-   if (r & 0x80) xmsg->attr |= MSGKILL;
+   if (r & 0x80) xmsg->attr |= (MSGKILL | MSGSENT);
    if (r & 0x0f) {
-	//xmsg->attr |= MSGSENT;
+	/* val:? xmsg->attr |= MSGSENT; */
 	freeMsgBuffers(&msg);
         w_log( LL_FUNC, "packMsg() end: perl hook proceed");
 	return 0;
