@@ -72,6 +72,27 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec);
 void processDir(char *directory, e_tossSecurity sec);
 void makeMsgToSysop(char *areaName, s_addr fromAddr);
 
+/*
+ * Find the first occurrence of find in s ignoring case
+ */
+char *stristr(char *str, char *find)
+{
+	char ch, sc, *str1, *find1;
+	
+	if ((ch = *find++) != 0) {
+		do {
+			do {
+				if ((sc = *str++) == 0) return (NULL);
+			} while (tolower((unsigned char) sc) != tolower((unsigned char) ch));
+			
+			for(str1=str,find1=find; *find1 && *str1 && tolower(*find1)==tolower(*str1); str1++,find1++);
+			
+		} while (*find1);
+		str--;
+	}
+	return ((char *)str);
+}
+
 void changeFileSuffix(char *fileName, char *newSuffix) {
 
    int   i = 1;
@@ -803,74 +824,87 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    return 0;
 }
 
-void processCarbonCopy (s_area *area, s_message *msg, int export)
-{
-   if (!export)
-      putMsgInArea(area,msg,0);
-   else {
-      char *p,*old_text;
-      int i,old_textLength;
-
-      old_textLength = msg->textLength;
-      old_text = msg->text;
-
-      i = strlen(old_text);
-      if (NULL != (p = strstr(old_text,"SEEN-BY:"))) i -= strlen (p);
-      msg->text = malloc(i+strlen("AREA:\r\1")+strlen(area->areaName)+1);
-
-      sprintf(msg->text,"AREA:%s\r\1",area->areaName); // create new area-line
-      strncat(msg->text,old_text,i);                 // copy rest of msg (assumes old AREA:
-      msg->textLength = strlen(msg->text);             // is at the very beginning
-
-      processEMMsg(msg, *area->useAka, 1);
-
-      free (msg->text);
-      msg->textLength = old_textLength;
-      msg->text = old_text;
-   }
+void processCarbonCopy (s_area *area, s_area *echo, s_message *msg, int export) {
+/* area - area to carbon messages, echo - original echo area */
+	char *p,*old_text;
+	int i,old_textLength;
+	
+	old_textLength = msg->textLength;
+	old_text = msg->text;
+	
+	i = strlen(old_text);
+	if (NULL != (p = strstr(old_text,"SEEN-BY:"))) i -= strlen (p);
+	msg->text = malloc(i+strlen("AREA:\r * Forwarded from area ''\r\r\1")
+					   +strlen(area->areaName)+strlen(echo->areaName)+1);
+	
+	//create new area-line
+	sprintf(msg->text, "AREA:%s\r * Forwarded from area '%s'\r\r\1",
+			area->areaName,echo->areaName);
+	strncat(msg->text,old_text,i); // copy rest of msg (assumes old AREA:
+	msg->textLength = strlen(msg->text); // is at the very beginning
+	
+	if (!export) putMsgInArea(area,msg,0);	  
+	else processEMMsg(msg, *area->useAka, 1);
+	
+	free (msg->text);
+	msg->textLength = old_textLength;
+	msg->text = old_text;
 }
 
 int carbonCopy(s_message *msg, s_area *echo)
 {
-        int i;
-        char *kludge;
-        s_area *area;
-
-        if (echo->ccoff==1) return 1;
-
-        for (i=0; i<config->carbonCount; i++) {
-
-                area = config->carbons[i].area;
-
-                if (!stricmp(echo->areaName,area->areaName)) continue; // dont CC to the echo the mail comes from
-
-                switch (config->carbons[i].type) {
-
-                case 0:
-                        if (stricmp(msg->toUserName, config->carbons[i].str)==0) {
-                                processCarbonCopy(area,msg,config->carbons[i].export);
-                                return 0;
-                        }
-                        break;
-                case 1:
-                        if (stricmp(msg->fromUserName, config->carbons[i].str)==0) {
-                                processCarbonCopy(area,msg,config->carbons[i].export);
-                                return 0;
-                        }
-                        break;
-                case 2:
-                        kludge=getKludge(*msg, config->carbons[i].str);
-                        if (kludge!=NULL) {
-                                processCarbonCopy(area,msg,config->carbons[i].export);
-                                free(kludge);
-                                return 0;
-                        }
-                        break;
-                default: break;
-                }
-        }
-
-        return 1;
+	int i;
+	char *kludge;
+	s_area *area;
+	
+	if (echo->ccoff==1) return 1;
+	
+	for (i=0; i<config->carbonCount; i++) {
+		
+		area = config->carbons[i].area;
+		
+		// dont CC to the echo the mail comes from
+		if (!stricmp(echo->areaName,area->areaName)) continue;
+		
+		switch (config->carbons[i].type) {
+			
+		case 0:
+			if (stristr(msg->toUserName, config->carbons[i].str)) {
+				processCarbonCopy(area,echo,msg,config->carbons[i].export);
+				if (config->carbonAndQuit) return 0;
+			}
+			break;
+		case 1:
+			if (stristr(msg->fromUserName, config->carbons[i].str)) {
+				processCarbonCopy(area,echo,msg,config->carbons[i].export);
+				if (config->carbonAndQuit) return 0;
+			}
+			break;
+		case 2:
+			kludge=getKludge(*msg, config->carbons[i].str);
+			if (kludge!=NULL) {
+				processCarbonCopy(area,echo,msg,config->carbons[i].export);
+				free(kludge);
+				if (config->carbonAndQuit) return 0;
+			}
+			break;
+		case 3:
+			if (stristr(msg->subjectLine, config->carbons[i].str)) {
+				processCarbonCopy(area,echo,msg,config->carbons[i].export);
+				if (config->carbonAndQuit) return 0;
+			}
+			break;
+		case 4:
+			if (stristr(msg->text, config->carbons[i].str)) {
+				processCarbonCopy(area,echo,msg,config->carbons[i].export);
+				if (config->carbonAndQuit) return 0;
+			}
+			break;
+		default: break;
+		}
+	}
+	
+	return 1;
 }
 
 void putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)

@@ -2,6 +2,12 @@ hpt 0.29
 --------
 
 ----- cvs ci ------
+Wed Aug 11 02:20:37 NOVST 1999
+max:
++ added stricmp function (thanx to Serguei Revtov)
+* changes in carbonCopy
+
+----- cvs ci ------
 Mon Aug  9 15:34:24 NOVST 1999
 max:
 + added HASHDUPES code by Oleg Zrozhevsky
