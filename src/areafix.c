@@ -1659,7 +1659,7 @@ int tellcmd(char *cmd) {
 
 char *processcmd(s_link *link, char *line, int cmd) {
 
-    char *report;
+    char *report = NULL;
 
     w_log(LL_FUNC, __FILE__ "::processcmd()");
 #ifdef DO_PERL
