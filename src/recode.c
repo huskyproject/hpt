@@ -46,22 +46,32 @@ VOID recodeToInternalCharset(CHAR *string)
 {
 INT c;
 
+    if (string != NULL) {
+
 	for( ; *string != '\000'; string++ )
 	    {
 	    c=((INT)*string)&0xFF;
         *string = intab[c];
         }
+
+    }
+
 }
 
 VOID recodeToTransportCharset(CHAR *string)
 {
 INT c;
 
+    if (string != NULL) {
+
 	for( ; *string != '\000'; string++ )
 	    {
 	    c=((INT)*string)&0xFF;
         *string = outtab[c];
         }
+
+    }
+
 }
 
 
