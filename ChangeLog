@@ -1,3 +1,30 @@
+2002-03-05 Tuesday 19:36  d.sergienko
+
+	* src/hpt.c (1.135): added info to usage() about post -a & post -f
+	commands
+
+2002-03-05 Tuesday 19:13  d.sergienko
+
+	* src/: hpt.c (1.134), scan.c (1.144): scan processes only echomail
+	from echotoss.log, pack processes only netmail. The rest lines
+	throw out.
+
+2002-03-05 Tuesday 14:13  joerg.jaspert
+
+	* debian/: changelog (1.10), control (1.8): Added Recommends for
+	hptkill
+
+2002-03-05 Tuesday 10:17  mche
+
+	* src/post.c (1.68): chahged params for uue posting -u[size]
+	uue-multipart posting
+
+2002-03-05 Tuesday 01:27  joerg.jaspert
+
+	* debian/: README.Debian (1.3), changelog (1.9), control (1.7),
+	docs (1.3), huskymak.cfg (1.9), rules (1.7): New Debian Package
+	built
+
 2002-03-04 Monday 18:54  pavel.gulchouck
 
 	* src/link.c (1.48): Fixed compile error under cygwin
