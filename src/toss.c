@@ -397,10 +397,10 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
             putMsgInArea(echo, msg);
 	    statToss.saved++;
          } else statToss.passthrough++;
-         if (echo->downlinkCount > 1)     // if only one downlink, we've got the mail from him
+         if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
             forwardMsgToLinks(echo, msg, pktOrigAddr);
-	    statToss.exported++;
-      
+            statToss.exported++;
+         }
       } else {
          // msg is dupe
          if (echo->dupeCheck == move) {

@@ -214,7 +214,7 @@ void packMsg(HMSG SQmsg, XMSG xmsg)
       makePktHeader(NULL, &header);
       header.destAddr = link->hisAka;
       header.origAddr = *(link->ourAka);
-      strcpy(&(header.pktPassword[0]), link->pktPwd);
+      if (link->pktPwd != NULL) strcpy(&(header.pktPassword[0]), link->pktPwd);
       pkt = openPktForAppending(fileName, &header);
       writeMsgToPkt(pkt, msg);
       closeCreatedPkt(pkt);

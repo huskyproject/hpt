@@ -140,6 +140,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
       makePktHeader(NULL, &header);
       header.origAddr = *(echo->downlinks[i]->ourAka);
       header.destAddr = echo->downlinks[i]->hisAka;
+      if (echo->downlinks[i]->pktPwd != NULL)
       strcpy(header.pktPassword, echo->downlinks[i]->pktPwd);
       pkt = openPktForAppending(echo->downlinks[i]->pktFile, &header);
 
