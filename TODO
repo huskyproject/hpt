@@ -33,6 +33,9 @@ Category 3: Will only be included if volunteers send patches
   areafix
 - nodelist access
 - real hub-routing
+- area-deletion etc. via areafix
+- scan uplink-responses (from forwarded requests) and send info to 
+  requesting downlink
 
 Category 4: Will not be implemented
 ===================================
