@@ -2,6 +2,11 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat May 27 10:21:30 NOVST 2000
+max:
+* set default dupebase type to hashDupesWmsgid (read documentation)
+
+----- cvs ci ------
 Fri May 26 14:37:15 NOVST 2000
 max:
 * fixed "link -mn" check in area option (thanx to Kirill Belokurov)
