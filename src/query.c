@@ -460,6 +460,7 @@ int af_CloseQuery()
     queryAreasHead = NULL;
     if(writeChanges)  {
         fclose(queryFile);
+        w_log(LL_FILE,"query.c::af_CloseQuery(): created '%s' ",tmpFileName);
         queryFile = fopen(tmpFileName,"r");
         resQF     = fopen(config->areafixQueueFile,"w");
     if ( !queryFile && !resQF ) {
@@ -471,7 +472,11 @@ int af_CloseQuery()
         fclose(queryFile); fclose(resQF); 
     }
     }
-    if(writeChanges) remove(tmpFileName);
+    if(writeChanges) 
+    {   
+        remove(tmpFileName);
+        w_log(LL_FILE,"query.c::af_CloseQuery(): deleted '%s' ",tmpFileName);
+    }
     return 0;
 }
 
