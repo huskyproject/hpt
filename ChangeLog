@@ -1,3 +1,19 @@
+2002-02-04 Monday 18:43  stas
+
+	* src/dupe.c (1.53): Fix log message: remove message 'Dupe base not
+	found' in readDupeFile, add message 'Can't open dupebase' if dupe
+	history file exist and fopen return NULL.  Add log messages with
+	level LL_FILE & other.
+
+2002-02-04 Monday 18:36  stas
+
+	* src/toss.c (1.389): Add log messages on file open events (level
+	LL_FILE). Add $Id$ RCS tag.
+
+2002-02-04 Monday 09:32  ml
+
+	* src/toss.c (1.388): compiling under msvc6 and logical fix
+
 2002-02-01 Friday 15:10  stas
 
 	* src/txt2pkt.c (1.33): Bugfix: clean string buffer before
