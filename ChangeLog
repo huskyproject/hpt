@@ -1,3 +1,7 @@
+2002-02-09 Saturday 09:18  ml
+
+	* misc/cut-hptlog.pl (1.2): update
+
 2002-02-08 Friday 18:22  mche
 
 	* src/toss.c (1.390): - removed win32 specific code
