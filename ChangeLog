@@ -1,3 +1,12 @@
+2003-04-13 Sunday 20:38  d_sergienko
+
+	* HISTORY (1.25): sync updates
+
+2003-04-13 Sunday 20:36  d_sergienko
+
+	* src/toss.c (1.508): retry pack pkt into bundle if append to
+	archive failed
+
 2003-04-12 Saturday 13:54  mche
 
 	* hpt.vcproj (1.4), make/hpt.vcproj (1.1): change location
