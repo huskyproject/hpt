@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <errno.h>
 
 #if !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
@@ -451,7 +452,13 @@ void af_QueueReport()
     int netmail=0;
     char *reportFlg = NULL;
     
-w_log(LL_FUNC, "af_QueueReport(): begin");
+    w_log(LL_FUNC, "af_QueueReport(): begin");
+
+    if( !config->areafixQueueFile ){
+      w_log(LL_WARN, "areafixQueueFile not defined in config");
+      w_log(LL_FUNC, "af_QueueReport(): end");
+      return;
+    }
 
     reportFlg = af_GetQFlagName();
     
@@ -668,8 +675,16 @@ int af_OpenQuery()
 
     queryAreasHead = af_AddAreaListNode("","");
 
-    if ((queryFile = fopen(config->areafixQueueFile,"r")) == NULL) // empty query file
+    if( !config->areafixQueueFile ) /* Queue File not defined in config */
+    {
+        w_log(LL_WARN, "areafixQueueFile not defined in config");
         return 0;
+    }
+    if ( !(queryFile = fopen(config->areafixQueueFile,"r")) ) /* can't open query file */
+    {
+       w_log(LL_ERR, "Can't open areafixQueueFile %s: %s", config->areafixQueueFile, strerror(errno) );
+       return 0;
+    }
 
     while ((line = readLine(queryFile)) != NULL)
     {
