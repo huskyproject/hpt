@@ -476,24 +476,35 @@ char* af_GetQFlagName()
     char *chanagedflag = NULL;
     char *logdir       = NULL;
 
+#ifdef DEBUG_HPT
 w_log(LL_FUNC, "af_GetQFlagName(): begin");
-
-    if (config->echotosslog)
-    {  chanagedflag = safe_strdup(config->echotosslog);
-       logdir       = strrchr(chanagedflag, PATH_DELIM);
-    }
-
-    if(logdir)
+#endif
+    if (config->lockfile)
     {
-        logdir[1] = '\0';
-        xstrcat(&chanagedflag,(char*)czChangFlg);
+       logdir = dirname(config->lockfile);  /* slash-trailed */
+       xstrscat(&chanagedflag,logdir,(char*)czChangFlg);
+       nfree(logdir);
+    }
+    else if (config->echotosslog)
+    {
+       logdir = dirname(config->echotosslog);  /* slash-trailed */
+       xstrscat(&chanagedflag,logdir,(char*)czChangFlg);
+       nfree(logdir);
+    }
+    else if (config->semaDir)
+    {
+       logdir = dirname(config->echotosslog);  /* slash-trailed */
+       xstrscat(&chanagedflag,logdir,(char*)czChangFlg);
+       nfree(logdir);
     }
     else
     {
-        nfree(chanagedflag);
         chanagedflag = safe_strdup(czChangFlg);
     }
+
+#ifdef DEBUG_HPT
 w_log(LL_FUNC, "af_GetQFlagName(): end");
+#endif
     return chanagedflag;
 }
 
