@@ -734,8 +734,10 @@ void scanExport(int type, char *str) {
          if (line != NULL) {
 	    if (*line && line[strlen(line)-1] == '\r')
 	       line[strlen(line)-1] = '\0';  /* fix for DOSish echotoss.log */
-	    striptwhite(line);
-    	    scanByName(line);
+            striptwhite(line);
+            /* exclude NetmailAreas in echoTossLogFile */
+            if (getNetMailArea(config, line) == NULL)
+                scanByName(line);
             nfree(line);
          }
       }
