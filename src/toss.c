@@ -1647,21 +1647,34 @@ int find_old_arcmail(s_link *link, FILE *flo)
     }
     if (bundle == NULL) return 0;
     if (*bundle != '\000') {
-	len = fsize(bundle);
-	if (len != -1L) {
-	    if (link->arcmailSize!=0)
-		as = link->arcmailSize;
-	    else if (config->defarcmailSize!=0)
-		as = config->defarcmailSize;
-	    else
-		as = 500; /*  default 500 kb max */
-	    if (len < as * 1024L) {
-		link->packFile=(char*) safe_realloc(link->packFile,strlen(bundle)+1);
-		strcpy(link->packFile,bundle);
-		nfree(bundle);
-		return 1;
+        int ok = 0;
+        len = fsize(bundle);
+        if (len != -1L) {
+            time_t t = fmtime(bundle);
+            if (link->arcmailSize != 0)
+                as = link->arcmailSize;
+            else if (config->defarcmailSize != 0)
+                as = config->defarcmailSize;
+            else
+                as = 500; /*  default 500 kb max */
+            /* check size */
+            ok = (len < as * 1024L);
+            /* check mtime */
+            if (ok && t != -1L && link->dailyBundles) {
+                time_t t0, cur = time(NULL);
+                struct tm *tcur = localtime(&cur);
+                tcur->tm_sec = tcur->tm_min = tcur->tm_hour = 0;
+                t0 = mktime(tcur);
+                if (t < t0) ok = 0;
+            }
+            /* use the bundle */
+            if (ok) {
+                link->packFile = (char*)safe_realloc(link->packFile, strlen(bundle)+1);
+                strcpy(link->packFile,bundle);
+                nfree(bundle);
+                return 1;
+            }
 	    }
-	}
     }
     nfree(bundle);
     return 0;
