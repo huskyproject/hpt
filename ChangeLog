@@ -1,3 +1,7 @@
+2001-08-21 Tuesday 18:48  georgi
+
+	* src/txt2pkt.c (1.26): Fixed recoding in txt2pkt
+
 2001-08-19 Sunday 13:35  ml
 
 	* TODO (1.170), doc/hpt-FAQ.russian (1.5): Russian FAQ update
