@@ -1,5 +1,9 @@
 hpt 0.9.8 (development version)
 ---------	
+----- cvs ci ------
+Wed Dec 13 18:42:21 UTC 2000
+sms:
+* removed length limit for area descriptions in autocreate
 
 ----- cvs ci ------
 Tue Dec 12 22:39:34 NOVT 2000
