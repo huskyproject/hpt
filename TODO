@@ -17,6 +17,7 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - areafix file with forwarded echo areas
 - advanced fileboxes
 - templates
+- speedup getArea by using b-tree
 
 Category 3: Will only be included if volunteers send patches
 ============================================================
