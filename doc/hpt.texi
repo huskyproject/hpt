@@ -655,27 +655,27 @@ This statement cannot be repeated.
 @code{bundleNameStyle timeStamp}
 @end table
 
-This statament sets rule for creating names of arcmail bundles.
+This statement sets rule for creating names of arcmail bundles:
 
 @table @asis
-@item timeStamp
+@item @code{timeStamp}
 some kind of random names (current time + some counter).
-@item addrDiff
+@item @code{addrDiff}
 create name from difference of source and destination addreses. Always
 the same filename for every pair of links. Automatically  switched to
 @code{timeStamp} when all alowed extensions were used.
-@item addrsCRC32
+@item @code{addrsCRC32}
 create name from CRC32 of string composed from "hpt", source and destination
 addreses. Always the same filename for every pair of links, very unique.
 Automatically switched to @code{timeStamp} when all alowed extensions were
 used.
-@item addrDiffAlways
+@item @code{addrDiffAlways}
 the same as addrDiff but tryes to use lower free numbers of extension in
 case when all higher numbers are already busy.
-@item addrsCRC32Always
+@item @code{addrsCRC32Always}
 the same as addrsCRC32 but tryes to use lower free numbers of extension in
 case when all higher numbers are already busy.
-@item Amiga
+@item @code{Amiga)}
 Amiga Style Outbound (ASO). Bundles creates in @code{Outbound} directory
 like this:
 @example
@@ -684,13 +684,15 @@ like this:
 @end example
 If @code{SeparateBundles on} and @code{Packer} not defined pkt moves to
 @code{2.5000.117.1.sep} directory.
-@end table
 
 Extensions & prefixes in flo files creates as in @code{addrDiffAlways} algorythm.
+@end table
 
-@xref{LinkBundleNameStyle}.
+Default value is @code{timeStamp}
 
 This statement cannot be repeated.
+
+See also @xref{LinkBundleNameStyle}.
 
 @node CreateAreasCase, CreateFwdNonPass, BundleNameStyle, Keywords
 @subsection CreateAreasCase
@@ -2590,7 +2592,7 @@ This statement can be repeated.
 @code{linkbundleNameStyle addrDiff}
 @end table
 
-This statament sets rule for creating names of arcmail bundles for link.
+This statement sets rule for creating names of arcmail bundles for link.
 It is similar @code{BundleNameStyle} keyword.
 
 @xref{BundleNameStyle}.
@@ -2673,7 +2675,7 @@ This statement can only be repeated for different links.
 
 By default "mandatory off".
 
-This statament do not allow the link to unsubscribe areas via areafix.
+This statement do not allow the link to unsubscribe areas via areafix.
 
 This statement can only be repeated for different links.
 
@@ -2689,7 +2691,7 @@ This statement can only be repeated for different links.
 
 By default "manual off".
 
-This statament do not allow the link to subscribe areas via areafix.
+This statement do not allow the link to subscribe areas via areafix.
 
 This statement can only be repeated for different links.
 
@@ -2705,7 +2707,7 @@ This statement can only be repeated for different links.
 
 By default "norules off" i.e. send rules.
 
-This statament points to areafix to not send area rules to link when
+This statement points to areafix to not send area rules to link when
 link is subscribed to area and corresponding file is found in
 @code{RulesDir}.
 
