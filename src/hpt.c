@@ -156,7 +156,7 @@ void start_help(void) {
   fprintf(stdout,"   hpt afix [<addr> command] - process areafix\n");
   fprintf(stdout,"   hpt qupd - update queue file and do some areafix jobs\n");
   fprintf(stdout,"   hpt qrep - make report based on information from queue file\n");
-  fprintf(stdout,"   hpt relink <addr> - refresh area subsription\n");
+  fprintf(stdout,"   hpt relink <addr> - refresh area subscription\n");
   fprintf(stdout,"   hpt pause - set pause for links who don't poll our system\n");
   fprintf(stdout,"   hpt -q [options] - quiet mode (no screen output)\n");
 }
