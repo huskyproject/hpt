@@ -1899,27 +1899,24 @@ void autoPassive()
 							   time_cur = time(NULL);
 							   time_test = (time_cur - stat_file.st_mtime)/3600;
 							   if (time_test >= (config->links[i].autoPause*24)) {
-								   if (config->links[i].Pause == 0) {
-									   if (changepause(getConfigFileName(), &(config->links[i]), 1)) {    
-										   msg = makeMessage(config->links[i].ourAka,
-															 &(config->links[i].hisAka),
-															 versionStr,config->links[i].name,
-															 "AutoPassive", 1);
-										   msg->text = createKludges(NULL,
-																	 config->links[i].ourAka,
-																	 &(config->links[i].hisAka));
-										   xscatprintf(&(msg->text), "\r System switched to passive\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the %%RESUME command.\r\r--- %s autopause\r", versionStr);
-										   msg->textLength = strlen(msg->text);
-										   processNMMsg(msg, NULL, NULL, 0, MSGLOCAL);
-										   freeMsgBuffers(msg);
-										   nfree(msg);
-									   }
-									   nfree(line);
-									   fclose(f);
-									   break;
+								   if (changepause(getConfigFileName(), &(config->links[i]), 1)) {    
+									   msg = makeMessage(config->links[i].ourAka,
+														 &(config->links[i].hisAka),
+														 versionStr,config->links[i].name,
+														 "AutoPassive", 1);
+									   msg->text = createKludges(NULL,
+																 config->links[i].ourAka,
+																 &(config->links[i].hisAka));
+									   xscatprintf(&(msg->text), "\r System switched to passive\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the %%RESUME command.\r\r--- %s autopause\r", versionStr);
+									   msg->textLength = strlen(msg->text);
+									   processNMMsg(msg, NULL, NULL, 0, MSGLOCAL);
+									   freeMsgBuffers(msg);
+									   nfree(msg);
 								   }
-							   } else {
-							   } /* endif */
+								   nfree(line);
+								   fclose(f);
+								   break;
+							   }
 						   } /* endif */
 					   } /* endif */
 					   nfree(line);
@@ -1932,8 +1929,7 @@ void autoPassive()
 		   }
 		   nfree(config->links[i].pktFile);
 		   nfree(config->links[i].packFile);
-	   } else {
-	   } /* endif */
+	   }
    } /* endfor */
 }
 
