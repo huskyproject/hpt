@@ -485,10 +485,11 @@ void post(int c, unsigned int *n, char *params[])
 
         if (export) 
         {
-            scanExport(SCN_NAME, (area) ? area : echo->areaName);
+            closeOpenedPkt();
+            tossTempOutbound(config->tempOutbound);
+            writeDupeFiles();
         }
 
-        closeOpenedPkt();
         nfree(tearl); nfree(origin);
         if( uuepost )
         {
