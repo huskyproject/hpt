@@ -1427,7 +1427,7 @@ This statement can be repeated.
 
 @menu
 * AdvisoryLock::                set lock file "advisory"
-* AdvStatisticsFile::           binary statistic file   
+* AdvStatisticsFile::           binary statistic file
 * AreafixHelp::                 file with help for areafix reports
 * AreafixQueueFile::		    idle requests queue file for areafix
 * AreasMaxDupeAge::             max age for dupes in CommonDupeBase
@@ -1468,8 +1468,8 @@ This statement can be repeated.
 If value @code{AdvisoryLock} > 0, then @value{HPT} checks if
 @code{LockFile} is locked by another session of @value{HPT} or not.
 Program will not be terminated if the original process which created
-@code{LockFile} is running. Second instance of hpt will check @code{LockFile} 
-for locking number of times defined by @code{AdvisoryLock} with period 
+@code{LockFile} is running. Second instance of hpt will check @code{LockFile}
+for locking number of times defined by @code{AdvisoryLock} with period
 of 1 second. And if the file exists, but not locked
 (stale), @value{HPT} will be running...
 If @code{AdvisoryLock} = 0, advisorylock is off.
@@ -3000,7 +3000,7 @@ do not keep unread msgs in area on purging (*) if echoareadefaults set @code{-ke
 @item -kill
 kill messagebase of area when setting it to passthrough
 @item -nokill
-do not kill messagebase when setting area to passthrough
+do not kill messagebase when setting area to passthrough if echoareadefaults set @code{-kill};
 @item -a <addr>
 aka to use (first address from config if not defined)
 @item -b <msgbase type>
@@ -3056,7 +3056,7 @@ add seen-by(s) at tossing time;
 ignore seen-by(s) and toss mail to link(s).
 @end table
 
-(*) - this tokens remove from @code{AutoAreaCreateDefaults} when
+(*) - these tokens to be removed from @code{AutoAreaCreateDefaults} when
 creating passthrough areas.
 
 LinkOptions:
@@ -3200,7 +3200,7 @@ This statement can be repeated.
 This statement set link(s) to readonly for specified ares(s).
 If you write node address do it *without* trailing .0!
 
-If areaMask begins with '!' symbol it means that links won't be set 
+If areaMask begins with '!' symbol it means that links won't be set
 readonly for areas that match areaMask
 
 @example
@@ -3209,8 +3209,8 @@ readonly for areas that match areaMask
 	ReadOnly 2:5021/19.2 !tver.sysop.talks
 @end example
 
-It means that all points if 2:5021/19 set r/o for tver.sysop* 
-areas except 2:5021/19.1 for all areas and 2:5021/19.2 can write 
+It means that all points if 2:5021/19 set r/o for tver.sysop*
+areas except 2:5021/19.1 for all areas and 2:5021/19.2 can write
 only to tver.sysop.talks from tver.sysop* areagroup
 
 This statement can be repeated.
