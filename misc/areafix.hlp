@@ -6,7 +6,7 @@ Example:
  From : Your Name                          2:5020/960.1    13 Feb 99  19:51:12
  To   : AreaFix                            2:5020/960      15 Feb 99  21:57:42
  Subj : PASSWORD              <- Your password
--------------------------------------------------------------------------------
+------------------------------------------------------------------------------
  RA_UTIL                      <- Add (link) area
  +DFUE.GER                    <- same
  -SYSOPS.024                  <- Remove (unlink) area
@@ -44,6 +44,10 @@ Example:
  %RESCAN                      <- turn on rescanning of following subscription
  NSK.SYSOP /r			<- subscribe & rescan area
  NSK.PARTY /r=100		<- subscribe & rescan the last 100 mails
-%PACKER              <- ask for list of packers   
-%PACKER  zip         <- switch current packer for 'zip' 
-%PACKER  none        <- switch off packing your mail
+%PACKER                       <- ask for list of packers   
+%PACKER  zip                  <- switch current packer for 'zip' 
+%PACKER  none                 <- switch off packing your mail
+%RSB on                       <- turn on reduced SEEN-BY mode (FSC-0093)
+%RSB 1                        <- the same as above
+%RSB off                      <- turn off reduced SEEN-BY mode (FSC-0093)
+%RSB 0                        <- the same as above

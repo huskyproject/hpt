@@ -1352,10 +1352,14 @@ char *info_link(s_link *link)
     char hisAddr[]="Your address: ";
     char ourAddr[]="AKA used here: ";
     char Arch[]="Compression: ";
-	unsigned int i;
+    char Rsb[]="Reduced SEEN-BY: ";
+    unsigned int i;
 
     sprintf(linkAka,aka2str(link->hisAka));
-    xscatprintf(&report, "Here is some information about our link:\r\r %s%s\r%s%s\r  %s", hisAddr, linkAka, ourAddr, aka2str(*link->ourAka), Arch);
+    xscatprintf(&report, "Here is some information about our link:\r\r");
+    xscatprintf(&report, "%20s%s\r%20s%s\r%20s%s\r%20s",
+                hisAddr, linkAka, ourAddr, aka2str(*link->ourAka),
+                Rsb, link->reducedSeenBy?"on":"off", Arch);
 
     if (link->packerDef==NULL)
 	xscatprintf(&report, "No packer (");
@@ -1365,8 +1369,8 @@ char *info_link(s_link *link)
     for (i=0; i < config->packCount; i++)
 	xscatprintf(&report, "%s%s", config->pack[i].packer,
 		    (i+1 == config->packCount) ? "" : ", ");
-
-    xscatprintf(&report, ")\r\rYour system is %s\r", ((link->Pause & EPAUSE) == EPAUSE)?"passive":"active");
+    xscatprintf(&report, ")\r\r");
+    xscatprintf(&report, "Your system is %s\r", ((link->Pause & EPAUSE) == EPAUSE)?"passive":"active");
     ptr = linked (link);
     xstrcat(&report, ptr);
     nfree(ptr);
@@ -1523,7 +1527,7 @@ char *packer(s_link *link, char *cmdline) {
         nfree(packerString);
     }
 
-    xstrcat(  &report, "Here is some information about current & availables packers:\r\r"); 
+    xstrcat(  &report, "Here is some information about current & available packers:\r\r");
     xstrcat(  &report,       "Compression: ");
     if (link->packerDef==NULL)
         xscatprintf(&report, "none (");
@@ -1541,6 +1545,57 @@ char *packer(s_link *link, char *cmdline) {
     return report;
 }
 
+char *rsb(s_link *link, char *cmdline)
+{
+    int mode; // 1 = RSB on, 0 - RSB off.
+    char *param=NULL; // RSB value.
+    char *report=NULL;
+    char *confName = NULL;
+    long  strbeg=0;
+    long  strend=0;
+
+    param = getPatternFromLine(cmdline, &mode); // extract rsb value (on or off)
+    if (param == NULL)
+    {
+        xscatprintf(&report, "Invalid request: %s\rPlease read help.\r\r", cmdline);
+        return report;
+    }
+
+    param = trimLine(param);
+
+    if ((!strcmp(param, "0")) || (!strcasecmp(param, "off")))
+        mode = 0;
+    else
+    {
+        if ((!strcmp(param, "1")) || (!strcasecmp(param, "on")))
+            mode = 1;
+        else
+        {
+            xscatprintf(&report, "Unknown parameter for areafix %rsb command: %s\r. Please read help.\r\r",
+                        param);
+            nfree(param);
+            return report;
+        }
+    }
+    nfree(param);
+    if (link->reducedSeenBy == mode)
+    {
+        xscatprintf(&report, "Redused SEEN-BYs had not been changed.\rCurrent value is '%s'\r\r",
+                    mode?"on":"off");
+        return report;
+    }
+    xstrcat(&confName,(cfgFile) ? cfgFile : getConfigFileName());
+    FindTokenPos4Link(&confName, "reducedSeenBy", link, &strbeg, &strend);
+    xscatprintf(&param, "reducedSeenBy %s", mode?"on":"off");
+    if( InsertCfgLine(confName, param, strbeg, strend) )
+    {
+        xscatprintf(&report, "Redused SEEN-BYs is turned %s now\r\r", mode?"on":"off");
+        link->reducedSeenBy = mode;
+    }
+    nfree(param);
+    nfree(confName);
+    return report;
+}
 
 int tellcmd(char *cmd) {
     char *line;
@@ -1565,6 +1620,7 @@ int tellcmd(char *cmd) {
         if (strncasecmp(line,"resume",6)==0) return RESUME;
         if (strncasecmp(line,"info",4)==0) return INFO;
         if (strncasecmp(line,"packer",6)==0) return PACKER;
+        if (strncasecmp(line,"rsb",3)==0) return RSB;
         if (strncasecmp(line,"rescan", 6)==0) {
             if (line[6] == '\0') {
                 rescanMode=1;
@@ -1636,6 +1692,9 @@ char *processcmd(s_link *link, char *line, int cmd) {
         break;
     case PACKER: report = packer (link, line);
         RetFix=PACKER;
+        break;
+    case RSB: report = rsb (link, line);
+        RetFix=RSB;
         break;
     case INFO: report = info_link(link);
         RetFix=INFO;
@@ -1942,6 +2001,9 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 		    break;
 		case PACKER:
 		    RetMsg(msg, link, preport, "areafix reply: packer change request");
+		    break;
+		case RSB:
+		    RetMsg(msg, link, preport, "areafix reply: redused seen-by change request");
 		    break;
 		case STAT:
 		    report = areaStatus(report, preport);
