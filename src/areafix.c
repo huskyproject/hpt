@@ -171,7 +171,6 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 	fseek(f, curpos+linelen, SEEK_SET);
 	len = fread(buff, sizeof(char), (size_t) len, f);
  	fseek(f, curpos, SEEK_SET);
-//	fputs(buff, f);
 	fwrite(buff, sizeof(char), (size_t) len, f);
 #ifdef __WATCOMC__
 	fflush( f );
@@ -190,14 +189,7 @@ int addstring(FILE *f, char *aka) {
 	char *cfg, c;
 	long areapos,endpos,cfglen,len;
 
-
-	//current position
-//#ifndef UNIX
-//	/* in dos and win32 by default \n translates into 2 chars */
-//	fseek(f,-2,SEEK_CUR);
-//#else                                                   
-//	fseek(f,-1,SEEK_CUR);
-//#endif
+	/* in dos and win32 by default \n translates into 2 chars */
 	fseek(f,-2,SEEK_CUR);
 	c=fgetc(f);
 	if (c==0x0D) fseek(f,-1,SEEK_CUR);
@@ -218,7 +210,6 @@ int addstring(FILE *f, char *aka) {
 	fseek(f,-cfglen,SEEK_END);
 	fputs(" ",f);
 	fputs(aka,f);
-//	fputs(cfg,f);
 	fwrite(cfg,sizeof(char),(size_t) len,f);
 	fflush(f);
 	
@@ -338,7 +329,6 @@ char *list(s_message *msg, s_link *link) {
 	    if (rc < 2) { /* add line */
 			if (area.description) desclen=strlen(config->echoAreas[i].description);
 			else desclen=0;
-
 			
 			xscatprintf(&report, "%s %s%s%s%s%s\r",
 					(rc) ? " " : "*",
@@ -357,7 +347,7 @@ char *list(s_message *msg, s_link *link) {
 	xscatprintf(&report, "\r'*' = area active for %s\r%i areas available, %i areas active\r", 
 			aka2str(link->hisAka), avail, active);
 	
-	writeLogEntry(hpt_log, '8', "AreaFix: list sent to %s", aka2str(link->hisAka));
+	writeLogEntry(hpt_log, '8', "areafix: list sent to %s", aka2str(link->hisAka));
 	free(areaslen);
 
 	return report;
@@ -399,7 +389,7 @@ char *unlinked(s_message *msg, s_link *link)
 	    xscatprintf(&report, " %s\r", EchoAreas[i].areaName);
 	}
     }
-    writeLogEntry(hpt_log, '8', "AreaFix: unlinked areas list sent to %s", aka2str(link->hisAka));
+    writeLogEntry(hpt_log, '8', "areafix: unlinked areas list sent to %s", aka2str(link->hisAka));
 
     return report;
 }
@@ -482,31 +472,6 @@ char *available(s_link *link) {
 	return report;
 }                                                                               
 
-/*
-int delConfigLine(FILE *f, char *fileName) {
-    long curpos, endpos, linelen, len;
-    char *buff;
-	
-    curpos = ftell(f);
-    buff = readLine(f);
-    linelen = strlen(buff)+1;
-	
-	fseek(f, 0L, SEEK_END);
-	endpos = ftell(f);
-	len = endpos-(curpos+linelen);
-	buff = (char*)realloc(buff, len+1);
-	memset(buff, 0, len+1);
-	fseek(f, curpos+linelen, SEEK_SET);
-	
-	fread(buff, len, sizeof(char), f);
- 	fseek(f, curpos, SEEK_SET);
-	fputs(buff, f);
-	truncate(fileName, endpos-linelen);
-	
-    free(buff);
-    return 0;
-}
-*/
 // subscribe if (act==0),  unsubscribe if (act!=0)
 int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act) {
     s_message *msg;
@@ -514,7 +479,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 
 	if (uplink->msg == NULL) {
 
-	    msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop, uplink->RemoteRobotName ? uplink->RemoteRobotName : "Areafix", uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1);
+	    msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop, uplink->RemoteRobotName ? uplink->RemoteRobotName : "areafix", uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1);
 
 	    msg->text = createKludges(NULL, uplink->ourAka, &(uplink->hisAka));
 		
@@ -546,7 +511,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 
 	if ((f=fopen(fileName,"r+")) == NULL)
 		{
-			fprintf(stderr,"AreaFix: cannot open config file %s \n", fileName);
+			fprintf(stderr,"areafix: cannot open config file %s \n", fileName);
 			return 1;
 		}
 	
@@ -586,7 +551,6 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 					    forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 1);
 					}
 					delLinkFromArea(f, fileName, aka2str(link->hisAka));
-/*					delstring(f,fileName,straka,1);*/
 					break;
 				    case 2:
 //					makepass(f, fileName, areaName);
@@ -663,7 +627,7 @@ int forwardRequest(char *areatag, s_link *dwlink) {
 
 char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	int i, rc=4;
-	char *line, *report = NULL;
+	char *line, *an, *report = NULL;
 	s_area *area;
 
 	line = cmd;
@@ -675,10 +639,11 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	    if (rc == 4) continue;
 		
 	    area = &(config->echoAreas[i]);
-		
+	    an = area->areaName;
+
 		switch (rc) {
 		case 0: 
-			xscatprintf(&report, "%s Already linked\r", area->areaName);
+			xscatprintf(&report, " %s %s  already linked\r", an, print_ch(49-strlen(an), '.'));
 			writeLogEntry(hpt_log, '8', "areafix: %s already linked to %s",
 					aka2str(link->hisAka), area->areaName);
 		    if (strstr(line, "*") == NULL) i = config->echoAreaCount;
@@ -686,7 +651,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		case 1: 
 			changeconfig (getConfigFileName(), area, link, 0);
 			addlink(link, area);
-			xscatprintf(&report, "%s Added\r",area->areaName);
+			xscatprintf(&report, " %s %s  added\r", an, print_ch(49-strlen(an), '.'));
 			writeLogEntry(hpt_log, '8', "areafix: %s subscribed to %s",
 							  aka2str(link->hisAka),area->areaName);
 			if (strstr(line, "*") == NULL) i = config->echoAreaCount;
@@ -695,7 +660,6 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			writeLogEntry(hpt_log, '8', "areafix: area %s -- no access for %s",
 					area->areaName, aka2str(link->hisAka));
 			continue;
-//		break;
 		}
 	}
 	
@@ -703,9 +667,9 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	    if (link->fReqFromUpLink) {
 		// try to forward request
 		if (forwardRequest(line, link)!=0)
-			xscatprintf(&report, "%s no uplinks to forward\r",line);
+			xscatprintf(&report, " %s %s  no uplinks to forward\r", line, print_ch(49-strlen(line), '.'));
 		else {
-			xscatprintf(&report, "%s request forwarded\r",line);
+			xscatprintf(&report, " %s %s  request forwarded\r", line, print_ch(49-strlen(line), '.'));
 			writeLogEntry(hpt_log, '8', "areafix: %s subscribed to area %s",
 							  aka2str(link->hisAka),line);
 			area = getArea(config, line);
@@ -716,7 +680,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	}
 	
 	if (report == NULL) {
-	    xscatprintf(&report,"%s Not found\r",line);
+	    xscatprintf(&report," %s %s  Not found\r", line, print_ch(49-strlen(line), '.'));
 	    writeLogEntry(hpt_log, '8', "areafix: area %s is not found",line);
 	}
 	return report;
@@ -724,8 +688,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 
 char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 	int i, c, rc = 2;
-	char *line;
-	char *report=NULL;
+	char *line, *an, *report = NULL;
 	s_area *area;
 	
 	line = cmd;
@@ -738,6 +701,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		if ( rc==4 ) continue;
 	
 		area = &(config->echoAreas[i]);
+		an = area->areaName;
 		
 		for (c = 0; c<area->downlinkCount; c++) {
 		    if (link == area->downlinks[c]->link) {
@@ -747,30 +711,28 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		}
 		if (area->mandatory) rc=5;
 		
-		
 		switch (rc) {
 		case 0: removelink(link, area);
 			changeconfig (getConfigFileName(),  area, link, 1);
-			xscatprintf(&report, "%s Unlinked\r",area->areaName);
+			xscatprintf(&report, " %s %s  unlinked\r", an, print_ch(49-strlen(an), '.'));
 			writeLogEntry(hpt_log, '8', "areafix: %s unlinked from %s",aka2str(link->hisAka),area->areaName);
 			break;
 		case 1: if (strstr(line, "*")) continue;
-			xscatprintf(&report, "%s Not linked\r",line);
+			xscatprintf(&report, " %s %s  not linked\r", an, print_ch(49-strlen(an), '.'));
 			writeLogEntry(hpt_log, '8', "areafix: area %s is not linked to %s",
 					area->areaName, aka2str(link->hisAka));
 			break;
-		case 5: xscatprintf(&report, "%s Unlink is not possible\r", area->areaName);
+		case 5: xscatprintf(&report, " %s %s  unlink is not possible\r", an, print_ch(49-strlen(an), '.'));
 			writeLogEntry(hpt_log, '8', "areafix: area %s -- unlink is not possible for %s",
 					area->areaName, aka2str(link->hisAka));
 			break;
 		default: writeLogEntry(hpt_log, '8', "areafix: area %s -- no access for %s",
 						 area->areaName, aka2str(link->hisAka));
 			continue;
-//			break;
 		}
 	}
 	if (report == NULL) {
-		xscatprintf(&report, "%s Not found\r",line);
+		xscatprintf(&report, " %s %s  not found\r", line, print_ch(49-strlen(line), '.'));
 		writeLogEntry(hpt_log, '8', "areafix: area %s is not found", line);
 	}
 	return report;
@@ -839,8 +801,6 @@ int changepause(char *confName, s_link *link, int opt)
 				
 				fseek(f_conf, 0L, SEEK_END);
 				endpos = ftell(f_conf);
-				
-
 
 				cfglen=endpos-curpos;
 				
@@ -866,8 +826,7 @@ int changepause(char *confName, s_link *link, int opt)
 
 char *pause_link(s_message *msg, s_link *link)
 {
-    char *tmp;
-    char *report=NULL;
+    char *tmp, *report = NULL;
     
     if (link->Pause == 0) {
 	if (changepause(getConfigFileName(), link, 0) == 0) return NULL;    
@@ -984,7 +943,7 @@ int changeresume(char *confName, s_link *link)
 
 char *resume_link(s_message *msg, s_link *link)
 {
-    char *tmp, *report=NULL;
+    char *tmp, *report = NULL;
     
     if (link->Pause) {
 		if (changeresume(getConfigFileName(), link) == 0) return NULL;
@@ -1000,7 +959,7 @@ char *resume_link(s_message *msg, s_link *link)
 
 char *info_link(s_message *msg, s_link *link)
 {
-    char *report, *ptr, linkAka[25];
+    char *report=NULL, *ptr, linkAka[25];
     char hisAddr[]="Your address: ";
     char ourAddr[]="AKA used here: ";
     char Arch[]="Compression: ";
@@ -1116,7 +1075,7 @@ char *errorRQ(char *line)
 {
    char *report = NULL;
 
-   xscatprintf(&report, "%s %s\r", line, "Error line");
+   xscatprintf(&report, " %s %s  error line\r", line, print_ch(49-strlen(line), '.'));
 
    return report;
 }
@@ -1125,7 +1084,7 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 {
     int i, c, rc = 0;
     long rescanCount = -1;
-    char *report = NULL, *line, *countstr;
+    char *report = NULL, *line, *countstr, *an;
     s_area *area, **areas=NULL;
     
     line = cmd+strlen("%rescan");
@@ -1155,21 +1114,22 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 		if (rc == 4) continue;
 	    
 		area = &(config->echoAreas[i]);
+		an = area->areaName;
 		
 		switch (rc) {
 		case 0: 
 			if (area->msgbType == MSGTYPE_PASSTHROUGH) {
-				xscatprintf(&report,"%s No rescan possible\r", area->areaName);
+				xscatprintf(&report," %s %s  no rescan possible\r", an, print_ch(49-strlen(an), '.'));
 				writeLogEntry(hpt_log, '8', "areafix: %s area no rescan possible to %s",
 						area->areaName, aka2str(link->hisAka));
 			} else {
 			  if (rescanCount == -1) {
-				xscatprintf(&report,"%s Rescanned\r", area->areaName);
+				xscatprintf(&report," %s %s  rescanned\r", an, print_ch(49-strlen(an), '.'));
 				writeLogEntry(hpt_log, '8', "areafix: %s rescan area to %s",
 						area->areaName, aka2str(link->hisAka));
 			  }
 			  else {
-			    xscatprintf(&report,"%s Rescanned %lu mails\r", area->areaName, rescanCount);
+			    xscatprintf(&report," %s %s  rescanned %lu mails\r", an, print_ch(49-strlen(an), '.'), rescanCount);
 			    writeLogEntry(hpt_log, '8', "areafix: %s rescan %lu mails in area to %s",
 					  area->areaName, rescanCount, aka2str(link->hisAka));
 			  }
@@ -1181,23 +1141,20 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 		case 1: if (strstr(line, "*")) continue;
 			writeLogEntry(hpt_log, '8', "areafix: %s area not linked for rescan to %s",
 					area->areaName, aka2str(link->hisAka));
-			xscatprintf(&report, "%s Not linked for rescan\r", area->areaName);
+			xscatprintf(&report, " %s %s  not linked for rescan\r", an, print_ch(49-strlen(an), '.'));
 			break;
 		default: writeLogEntry(hpt_log, '8', "areafix: %s area not access for %s",
 						 area->areaName, aka2str(link->hisAka));
 			continue;
-//		break;
 		}
 	}
     if (report == NULL) {
-		xscatprintf(&report,"%s Not linked for rescan\r", line);
-//        sprintf(addline,"%s Not found for rescan\r",line);
-//        sprintf(logmsg,"areafix: %s area not linked for rescan", line);
-//        writeLogEntry(hpt_log, '8', logmsg);
+	xscatprintf(&report," %s %s  not linked for rescan\r", line, print_ch(49-strlen(line), '.'));
+	writeLogEntry(hpt_log, '8', "areafix: %s area not linked for rescan", line);
     }
     if (c) {
-		for (i = 0; i < c; i++) rescanEMArea(areas[i], link, rescanCount);
-		arcmail();
+	for (i = 0; i < c; i++) rescanEMArea(areas[i], link, rescanCount);
+	arcmail();
     }
     free(areas);
     return report;
@@ -1284,36 +1241,6 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 	return report;
 }
 
-char *areastatus(char *preport, char *text)
-{
-	// FIXME !!
-    char *pth, *ptmp, *tmp, *report, tmpBuff[256];
-    pth = (char*)calloc(1, sizeof(char));
-    tmp = preport;
-    ptmp = strchr(tmp, '\r');
-    while (ptmp) {
-		*ptmp=0;
-		ptmp++;
-        report=strchr(tmp, ' ');
-		*report=0;
-		report++;
-        if (strlen(tmp) > 50) tmp[50] = 0;
-		if (50-strlen(tmp) == 0) sprintf(tmpBuff, " %s  %s\r", tmp, report);
-        else if (50-strlen(tmp) == 1) sprintf(tmpBuff, " %s   %s\r", tmp, report);
-		else sprintf(tmpBuff, " %s %s  %s\r", tmp, print_ch(50-strlen(tmp)-1, '.'), report);
-        pth=(char*)realloc(pth, strlen(tmpBuff)+strlen(pth)+1);
-		strcat(pth, tmpBuff);
-		tmp=ptmp;
-		ptmp = strchr(tmp, '\r');
-    }
-    tmp = (char*)calloc(strlen(pth)+strlen(text)+1, sizeof(char));
-    strcpy(tmp, text);
-    strcat(tmp, pth);
-    free(text);
-    free(pth);
-    return tmp;
-}
-
 void preprocText(char *split, s_message *msg)
 {
     msg->text = createKludges(NULL, &msg->origAddr, &msg->destAddr);
@@ -1332,6 +1259,15 @@ char *textHead()
     return text_head;
 }
 
+char *areaStatus(char *report, char *preport)
+{
+    if (report == NULL) report = textHead();
+    xstrcat(&report, preport);
+    free(preport);
+    return report;
+}
+
+/* report already free() after this function */
 void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 {
     char *tab = config->intab, *text, *split, *p, *newsubj = NULL;
@@ -1392,7 +1328,6 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 
 int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 {
@@ -1455,14 +1390,10 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 					RetMsg(msg, link, preport, "help request");
 					break;
 				case ADD:
-					if (report == NULL) report = textHead();
-					report = areastatus(preport, report);
-					free(preport);
+					report = areaStatus(report, preport);
 					break;
 				case DEL:
-					if (report == NULL) report = textHead();
-					report = areastatus(preport, report);
-					free(preport);
+					report = areaStatus(report, preport);
 					break;
 				case AVAIL:
 					RetMsg(msg, link, preport, "available areas");
@@ -1480,14 +1411,10 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 					RetMsg(msg, link, preport, "link information");
 					break;
 				case RESCAN:
-					if (report == NULL) report=textHead();
- 					report=areastatus(preport, report);
-					free(preport);
+ 					report=areaStatus(report, preport);
  					break;
 				case ERROR:
-					if (report == NULL) report = textHead();
-					report = areastatus(preport, report);
-					free(preport);
+					report = areaStatus(report, preport);
 					break;
 				default: break;
 				} /* end switch */
@@ -1529,10 +1456,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		}
 		
 		RetMsg(msg, link, report, "security violation");
-		free(report);
-		
 		writeLogEntry(hpt_log, '8', "areafix: security violation from %s", aka2str(link->hisAka));
-		
 		free(tmplink);
 		
 		return 0;
@@ -1543,7 +1467,6 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		xstrcat(&report, preport);
 		free(preport);
 		RetMsg(msg, link, report, "node change request");
-		free(report);
 	}
 	
 	writeLogEntry(hpt_log, '8', "areafix: sucessfully done for %s",aka2str(link->hisAka));
@@ -1716,4 +1639,3 @@ void autoPassive()
       } /* endif */
    } /* endfor */
 }
-
