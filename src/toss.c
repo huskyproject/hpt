@@ -2171,7 +2171,7 @@ void processDir(char *directory, e_tossSecurity sec)
 
    dirNameLen = strlen(directory);
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || (defined(__WATCOMC__) && (__WATCOMC__ < 1100))
    directory[dirNameLen-1]='\0';
 #endif
 
@@ -2180,7 +2180,7 @@ void processDir(char *directory, e_tossSecurity sec)
 	return;
    }
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || (defined(__WATCOMC__) && (__WATCOMC__ < 1100))
    directory[dirNameLen-1]='\\';
 #endif
 

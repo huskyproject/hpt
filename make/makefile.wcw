@@ -1,7 +1,4 @@
 # Makefile for Watcom C (Win32)
-# 
-# tested with Watcom C 11.0 
-# problems with opendir() in Watcom C 10.0
 
 DEBUG=0
 CC=wcl386

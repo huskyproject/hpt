@@ -482,7 +482,10 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 			   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 			   nfree(link->floFile);
 		   }
-	   } else w_log('7', "no route found or no-pack for %s - leave mail untouched", aka2str(msg.destAddr));
+	   } else {
+		if ((xmsg->attr & MSGFILE) == MSGFILE) w_log('7', "no fileroute found or no-pack for %s - leave mail untouched", aka2str(msg.destAddr));
+		else w_log('7', "no route found or no-pack for %s - leave mail untouched", aka2str(msg.destAddr));
+	   }
    }
 
    // process carbon copy
