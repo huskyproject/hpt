@@ -39,6 +39,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <ctype.h>
 
 /* compiler.h */
 #include <smapi/compiler.h>
@@ -82,6 +83,87 @@
 #endif
 
 s_statScan statScan;
+
+int parseINTL(char *msgtxt, hs_addr *from, hs_addr *to)
+{
+   char *start, *copy, buffer[35]; /* FIXME: static buffer */
+   hs_addr intl_from, intl_to;
+
+   copy = buffer;
+   start = strstr(msgtxt, "FMPT");
+   if (start) {
+      start += 6;                  /* skip "FMPT " */
+      while (isdigit(*start)) {     /* copy all digit data */
+         *copy = *start;
+         copy++;
+         start++;
+      } /* endwhile */
+      *copy = '\0';                /* don't forget to close the string with 0 */
+
+      from->point = atoi(buffer);
+   } else {
+      from->point = 0;
+   } /* endif */
+
+   /* and the same for TOPT */
+   copy = buffer;
+   start = strstr(msgtxt, "TOPT");
+   if (start) {
+      start += 6;                  /* skip "TOPT " */
+      while (isdigit(*start)) {     /* copy all digit data */
+         *copy = *start;
+         copy++;
+         start++;
+      } /* endwhile */
+      *copy = '\0';                /* don't forget to close the string with 0 */
+
+      to->point = atoi(buffer);
+   } else {
+      to->point = 0;
+   } /* endif */
+
+   /* Parse the INTL Kludge */
+
+   start = strstr(msgtxt, "INTL ");
+   if (start)
+   {
+      start += 6;                 /*  skip "INTL " */
+      while(1)
+      {
+          while (*start && isspace(*start)) start++;
+          if (!*start) break;
+
+          copy = buffer;
+          while (*start && !isspace(*start)) *copy++ = *start++;
+          *copy='\0';
+          if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
+          string2addr(buffer, &intl_to);
+          
+          while (*start && isspace(*start)) start++;
+          if (!*start) break;
+
+          copy = buffer;
+          while (*start && !isspace(*start)) *copy++ = *start++;
+          *copy='\0';
+          if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
+          string2addr(buffer, &intl_from);
+
+          /* INTL is valid, copy parsed data to output */
+          from->zone = intl_from.zone;
+          from->net = intl_from.net;
+          from->node = intl_from.node;
+
+          to->zone = intl_to.zone;
+          to->net = intl_to.net;
+          to->node = intl_to.node;
+          return 1;
+          break;
+      }
+   } else
+       w_log(LL_DEBUGB, "Warning: no INTL kludge found in message");
+
+   return 0;
+}
 
 void cvtAddr(const NETADDR aka1, hs_addr *aka2)
 {
@@ -576,102 +658,137 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 
 void scanNMArea(s_area *area)
 {
-   HAREA           netmail;
-   HMSG            msg;
-   dword           highestMsg, i, j;
-   XMSG            xmsg;
-   hs_addr         dest, orig;
-   int             for_us, from_us;
-   FILE            *f = NULL;
+    HAREA           netmail;
+    HMSG            msg;
+    dword           highestMsg, i, j;
+    XMSG            xmsg;
+    hs_addr         dest, orig;
+    hs_addr         intl_dest, intl_orig;
+    char            *ctl;
+    int             ctllen;
+    int             for_us, from_us;
+    FILE            *f = NULL;
 
-   /*  do not scan one area twice */
-   if (area->scn) return;
+    /*  do not scan one area twice */
+    if (area->scn) return;
 
-   if (config->routeCount == 0) {
-       w_log(LL_ROUTE, "No routing -> Scanning stop");
-       /*  create flag for netmail trackers */
-       if (config->netmailFlag) {
-	   if (NULL == (f = fopen(config->netmailFlag,"a")))
-	       w_log(LL_ERR, "Could not create netmail flag: %s", config->netmailFlag);
-	   else {
-	       w_log(LL_FLAG, "Created netmail flag: %s", config->netmailFlag);
-	       fclose(f);
-	   }
-       }
-       return;
-   }
+    if (config->routeCount == 0) {
+        w_log(LL_ROUTE, "No routing -> Scanning stop");
+        /*  create flag for netmail trackers */
+        if (config->netmailFlag) {
+            if (NULL == (f = fopen(config->netmailFlag,"a")))
+                w_log(LL_ERR, "Could not create netmail flag: %s", config->netmailFlag);
+            else {
+                w_log(LL_FLAG, "Created netmail flag: %s", config->netmailFlag);
+                fclose(f);
+            }
+        }
+        return;
+    }
 
-   netmail = MsgOpenArea((unsigned char *) area -> fileName, MSGAREA_NORMAL,
-			 /* config->netMailArea.fperm,
-			    config->netMailArea.uid,
-			    config->netMailArea.gid, */
-			 (word)area -> msgbType);
-   if (netmail != NULL) {
+    netmail = MsgOpenArea((unsigned char *) area -> fileName, MSGAREA_NORMAL,
+                          /* config->netMailArea.fperm,
+                           config->netMailArea.uid,
+                           config->netMailArea.gid, */
+                          (word)area -> msgbType);
+    if (netmail != NULL) {
 
-       statScan.areas++;
-       area->scn++;
-       w_log(LL_START, "Scanning NetmailArea %s", area -> areaName);
+        statScan.areas++;
+        area->scn++;
+        w_log(LL_START, "Scanning NetmailArea %s", area -> areaName);
 
-       if (area->msgbType == MSGTYPE_SDM) noHighWaters = 1;
-       i = (noHighWaters) ? 0 : MsgGetHighWater(netmail);
-       highestMsg = MsgGetNumMsg(netmail);
+        if (area->msgbType == MSGTYPE_SDM) noHighWaters = 1;
+        i = (noHighWaters) ? 0 : MsgGetHighWater(netmail);
+        highestMsg = MsgGetNumMsg(netmail);
 
-       /*  scan all Messages and test if they are already sent. */
-       while (i < highestMsg) {
-	   msg = MsgOpenMsg(netmail, MOPEN_RW, ++i);
+        /*  scan all Messages and test if they are already sent. */
+        while (i < highestMsg) {
+            msg = MsgOpenMsg(netmail, MOPEN_RW, ++i);
 
-	   /*  msg does not exist */
-	   if (msg == NULL) continue;
-	   statScan.msgs++;
+            /*  msg does not exist */
+            if (msg == NULL) continue;
+            statScan.msgs++;
 
-	   MsgReadMsg(msg, &xmsg, 0, 0, NULL, 0, NULL);
-           w_log( LL_DEBUGB, "%s::%u Msg from %u:%u/%u.%u to %u:%u/%u.%u",__FILE__,__LINE__,
-                  xmsg.orig.zone, xmsg.orig.net, xmsg.orig.node, xmsg.orig.point,
-                  xmsg.dest.zone, xmsg.dest.net, xmsg.dest.node, xmsg.dest.point);
-	   cvtAddr(xmsg.dest, &dest);
-	   for_us = 0;
-       for (j=0; j < config->addrCount; j++)
-       {
-           if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
-       }
-       /*  if not sent and not for us -> pack it */
-       if (((xmsg.attr & MSGSENT) != MSGSENT) &&
-           ((xmsg.attr & MSGLOCKED) != MSGLOCKED) &&
-           (for_us==0))
-       {
-           if (packMsg(msg, &xmsg, area) == 0) {
-               statScan.exported++;
-               area->scn++;
-           }
-       }
+            ctllen = MsgGetCtrlLen(msg);
+            ctl = (char *) safe_malloc(ctllen+1);
+            ctl[ctllen] = '\0';
 
-	   MsgCloseMsg(msg);
+            MsgReadMsg(msg, &xmsg, 0, 0, NULL, ctllen, (byte *)ctl);
+            cvtAddr(xmsg.dest, &dest);
+            cvtAddr(xmsg.orig, &orig);
+            memset(&intl_orig, 0, sizeof(hs_addr));
+            memset(&intl_dest, 0, sizeof(hs_addr));
+            /*
+             * if @INTL and optionally @TOPT/@FMPT found, take address
+             * from there
+             */
+            if (parseINTL(ctl, &intl_orig, &intl_dest))
+            {
+                if (addrComp(orig, intl_orig)) /* addresses are differ */
+                {
+                    orig.zone = xmsg.orig.zone = intl_orig.zone;
+                    orig.net = xmsg.orig.net = intl_orig.net;
+                    orig.node = xmsg.orig.node = intl_orig.node;
+                    orig.point = xmsg.orig.point = intl_orig.point;
+                }
+                if (addrComp(dest, intl_dest)) /* addresses are differ */
+                {
+                    dest.zone = xmsg.dest.zone = intl_dest.zone;
+                    dest.net = xmsg.dest.net = intl_dest.net;
+                    dest.node = xmsg.dest.node = intl_dest.node;
+                    dest.point = xmsg.dest.point = intl_dest.point;
+                }
+            }
 
-	   cvtAddr(xmsg.orig, &orig);
-	   from_us = 0;
-	   for (j=0; j < config->addrCount; j++)
-	       if (addrComp(orig, config->addr[j])==0) {from_us = 1; break;}
+            nfree(ctl);
 
-	   /*   non transit messages without k/s flag not killed */
-	   if (!(xmsg.attr & MSGKILL) && !(xmsg.attr & MSGFWD)) from_us = 1;
+            ctl = safe_strdup(aka2str(dest)); /* use this just as temp buffer */
+            w_log( LL_DEBUGB, "%s::%u Msg from %s to %s",__FILE__,__LINE__,
+                  aka2str(orig), ctl);
+            nfree(ctl);
 
-	   /*  transit messages from us will be killed */
-	   if (from_us && (xmsg.attr & MSGFWD)) from_us = 0;
+            for_us = 0;
+            for (j=0; j < config->addrCount; j++)
+            {
+                if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
+            }
+            /*  if not sent and not for us -> pack it */
+            if (((xmsg.attr & MSGSENT) != MSGSENT) &&
+                ((xmsg.attr & MSGLOCKED) != MSGLOCKED) &&
+                (for_us==0))
+            {
+                if (packMsg(msg, &xmsg, area) == 0) {
+                    statScan.exported++;
+                    area->scn++;
+                }
+            }
 
-           if ((!config->keepTrsMail) && ((!for_us && !from_us) ||
-                        (xmsg.attr&MSGKILL)) && (xmsg.attr&MSGSENT)) {
-	       MsgKillMsg(netmail, i);
-	       i--;
-	   }
+            MsgCloseMsg(msg);
 
-       } /* endfor */
+            from_us = 0;
+            for (j=0; j < config->addrCount; j++)
+                if (addrComp(orig, config->addr[j])==0) {from_us = 1; break;}
 
-       if (noHighWaters==0) MsgSetHighWater(netmail, i);
-       MsgCloseArea(netmail);
-       closeOpenedPkt();
-   } else {
-       w_log(LL_ERR, "Could not open NetmailArea %s", area -> areaName);
-   } /* endif */
+            /*   non transit messages without k/s flag not killed */
+            if (!(xmsg.attr & MSGKILL) && !(xmsg.attr & MSGFWD)) from_us = 1;
+
+            /*  transit messages from us will be killed */
+            if (from_us && (xmsg.attr & MSGFWD)) from_us = 0;
+
+            if ((!config->keepTrsMail) && ((!for_us && !from_us) ||
+                                           (xmsg.attr&MSGKILL)) && (xmsg.attr&MSGSENT)) {
+                MsgKillMsg(netmail, i);
+                i--;
+            }
+
+        } /* endfor */
+
+        if (noHighWaters==0) MsgSetHighWater(netmail, i);
+        MsgCloseArea(netmail);
+        closeOpenedPkt();
+    } else {
+        w_log(LL_ERR, "Could not open NetmailArea %s", area -> areaName);
+    } /* endif */
 }
 
 void writeScanStatToLog(void) {
