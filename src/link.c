@@ -45,6 +45,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef OS2
+#define INCL_DOSFILEMSG /* for DosSetMaxFH() */
+#include <os2.h>
+#endif
+
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/typesize.h>
@@ -136,6 +141,14 @@ int linkArea(s_area *area, int netMail)
 	      MsgCloseArea(harea);
 	      return 0;
       };
+#ifdef OS2
+      if (area->msgbType & MSGTYPE_SDM)
+#if defined(__WATCOMC__)
+              _grow_handles(msgsNum+20);
+#else /* EMX */
+              DosSetMaxFH(msgsNum+20);
+#endif
+#endif
 
       hashNums = msgsNum + msgsNum / 10 + 10;
       msgs = safe_malloc(hashNums * sizeof(s_msginfo));
@@ -147,7 +160,7 @@ int linkArea(s_area *area, int netMail)
       /* Pass 1st : read all message information in memory */
 
       for (i = 1; i <= msgsNum; i++) {
-         hmsg  = MsgOpenMsg(harea, MOPEN_READ, i);
+         hmsg  = MsgOpenMsg(harea, MOPEN_READ|MOPEN_WRITE, i);
 	 if (hmsg == NULL) {
 		continue;
 	 }

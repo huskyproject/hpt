@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Sep  3 19:37:46 NOVST 2000
+max (patch from Pavel Gulchouck):
+* "hpt link" link msg areas
+
+----- cvs ci ------
 Sat Sep  2 20:48:59 NOVST 2000
 max (patch from Michael Kulinich):
 * token keepTrsMail
