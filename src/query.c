@@ -43,7 +43,7 @@ extern char       *versionStr;
 void del_tok(char **ac, char *tok) {
     char *p, *q;
 
-    q = hpt_stristr(*ac,tok);
+    q = fc_stristr(*ac,tok);
     if (q) {
 	p = q+strlen(tok);
 	while (*p && !isspace(*p)) p++;
@@ -74,7 +74,7 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
     acDef = creatingLink->autoAreaCreateDefaults;
     xscatprintf(&newAC, "%s%s", (acDef) ? " " : "", (acDef) ? acDef : "");
 
-    msgbtype = hpt_stristr(newAC, "-b ");
+    msgbtype = fc_stristr(newAC, "-b ");
 
     if(!msgbDir)
         msgbDir=(creatingLink->msgBaseDir) ?
@@ -82,13 +82,13 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
 
     quote_areaname = strchr(TRUE_COMMENT "\"", *c_area) ? "\"" : "";
 
-    if (stricmp(msgbDir, "passthrough")!=0 && NULL==hpt_stristr(newAC,"passthrough"))
+    if (stricmp(msgbDir, "passthrough")!=0 && NULL==fc_stristr(newAC,"passthrough"))
     {
         // we have to find a file name
         int need_dos_file;
 
 #ifndef MSDOS
-        need_dos_file = hpt_stristr(newAC, "-dosfile")!=NULL;
+        need_dos_file = fc_stristr(newAC, "-dosfile")!=NULL;
 #else
         need_dos_file = 1;
 #endif
@@ -138,12 +138,12 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
 
     nfree(msgbFileName);
     if (creatingLink->LinkGrp) {
-        if (hpt_stristr(newAC, " -g ")==NULL)
+        if (fc_stristr(newAC, " -g ")==NULL)
             xscatprintf(&newAC, " -g %s", creatingLink->LinkGrp);
     }
     if (IsAreaAvailable(c_area,creatingLink->forwardRequestFile,&desc,1)==1) {
         if (desc) {
-            if (hpt_stristr(newAC, " -d ")==NULL)
+            if (fc_stristr(newAC, " -d ")==NULL)
                 xscatprintf(&newAC, " -d \"%s\"", desc);
             nfree(desc);
         }

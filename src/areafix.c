@@ -760,7 +760,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         nRet = DEL_OK;
         break;
     case 5: // subscribe us to  passthrough
-        if ( hpt_stristr(area->downlinks[0]->link->autoAreaCreateDefaults,
+        if ( fc_stristr(area->downlinks[0]->link->autoAreaCreateDefaults,
             "passthrough") )  {
             nRet = O_ERR;
             break;
@@ -1463,7 +1463,7 @@ char *add_rescan(s_link *link, char *line) {
 
     if (*line=='+') line++; while (*line==' ') line++;
 
-    p = hpt_stristr(line, " /R");
+    p = fc_stristr(line, " /R");
     *p = '\0';
 
     report = subscribe (link, line);
@@ -1583,7 +1583,7 @@ int tellcmd(char *cmd) {
     case '+':
         if (line[1]=='\000') return ERROR;
     default:
-        if (hpt_stristr(line, " /R")!=NULL) return ADD_RSC; // add & rescan
+        if (fc_stristr(line, " /R")!=NULL) return ADD_RSC; // add & rescan
         return ADD;
     }
     return 0;// - Unreachable
@@ -2106,7 +2106,7 @@ void afix(s_addr addr, char *cmd)
                     ((stricmp((char*)xmsg.to, "areafix")==0) ||
                     (stricmp((char*)xmsg.to, "areamgr")==0) ||
                     (stricmp((char*)xmsg.to, "hpt")==0) ||
-                    hpt_stristr(config->areafixNames,(char*)xmsg.to)))
+                    fc_stristr(config->areafixNames,(char*)xmsg.to)))
                 {
                     memset(&msg,'\0',sizeof(s_message));
                     MsgToStruct(SQmsg, xmsg, &msg);

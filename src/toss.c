@@ -146,28 +146,6 @@ static char *get_filename(char *pathname)
     return ptr;
 }
 
-/*
- * Find the first occurrence of find in s ignoring case
- */
-char *hpt_stristr(char *str, char *find)
-{
-    char ch, sc, *str1 = NULL, *find1 = NULL;
-
-    find++;
-    if ((ch = *(find-1)) != 0) {
-	do {
-	    do {
-		str++;
-		if ((sc = *(str-1)) == 0) return (NULL);
-	    } while (tolower((unsigned char) sc) != tolower((unsigned char) ch));
-			
-	    for(str1=str,find1=find; *find1 && *str1 && tolower(*find1)==tolower(*str1); str1++,find1++);
-			
-	} while (*find1);
-	str--;
-    }
-    return ((char *)str);
-}
 
 /* return value: 1 if success, 0 if fail */
 int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
@@ -1037,7 +1015,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
 		/* cb->str for example Fido,xxx,.. */
                 testptr=cb->str;
                 do{
-                    if(NULL==(testptr=hpt_stristr(echo->group,testptr)))
+                    if(NULL==(testptr=fc_stristr(echo->group,testptr)))
                         break;
                     testptr+=strlen(echo->group);
                     result=(*testptr==',' || *testptr==' ' || !*testptr);
@@ -1672,7 +1650,7 @@ int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
 	    (stricmp(msg->toUserName,"areafix")==0 ||
 	     stricmp(msg->toUserName,"areamgr")==0 ||
 	     stricmp(msg->toUserName,"hpt")==0 ||
-	     hpt_stristr(config->areafixNames,msg->toUserName))) {
+	     fc_stristr(config->areafixNames,msg->toUserName))) {
 	    rc = processAreaFix(msg, pktHeader, 0);
 	} else
 	    rc = processNMMsg(msg, pktHeader, NULL, 0, 0);
@@ -1930,7 +1908,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
     // unpack bundle
     if (found) {
 	fillCmdStatement(cmd,config->unpack[i-1].call,fileName,"",config->tempInbound);
-	if( hpt_stristr(config->unpack[i-1].call, "zipInternal") )
+	if( fc_stristr(config->unpack[i-1].call, "zipInternal") )
 	    {
                 w_log(LL_BUNDLE, "bundle %s: unpacking with zlib", fileName);
 #ifdef USE_HPT_ZLIB
