@@ -258,13 +258,13 @@
 
 2003-02-12 Wednesday 18:13  sfpavel
 
-	* UPGRADE (hpt-1_4-stable.1): Create instruction about upgrade for
-	new version
+	* UPGRADE (1.1): file UPGRADE was initially added on branch
+	hpt-1_4-stable.
 
 2003-02-12 Wednesday 18:13  sfpavel
 
-	* UPGRADE (1.1): file UPGRADE was initially added on branch
-	hpt-1_4-stable.
+	* UPGRADE (hpt-1_4-stable.1): Create instruction about upgrade for
+	new version
 
 2003-02-11 Tuesday 13:21  stas_degteff
 
