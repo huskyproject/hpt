@@ -92,6 +92,10 @@ SOURCE=.\src\areafix.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\carbon.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\dupe.c
 # End Source File
 # Begin Source File
