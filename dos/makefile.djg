@@ -3,7 +3,7 @@ CC      = gcc
 INSTDIR = /usr/local/bin
 MANDIR  = /usr/local/man
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o cline.o
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
@@ -16,8 +16,7 @@ else
 #  LFLAGS  =  
 endif
 
-all: cline.exe \
-     $(OBJS) \
+all: $(OBJS) \
      pktinfo.exe \
      tlog.exe \
      tpkt.exe \
@@ -42,21 +41,11 @@ hpt.exe: $(OBJS)
 purgeDupes.exe: purgeDupes.o global.o dupe.o tree.o pktread.o log.o recode.o
 	$(CC) $(LFLAGS) -o purgeDupes.exe purgeDupes.o tree.o pktread.o recode.o dupe.o global.o log.o -lfidoconfig -lsmapidjg
 
-cline.exe: $(SRC_DIR)cline.c
-	$(CC) $(CFLAGS) $(LFLAGS) -o cline.exe $(SRC_DIR)cline.c -DTEST
 
 clean:
 	-del *.o
 	-del *~
-	-del core
 
 distclean: clean
 	-del *.exe
-	-del *.1.gz
 	-del *.log
-
-install:
-	install -s hpt pktinfo purgeDupes $(INSTDIR)
-	gzip -c hpt.1 > hpt.1.gz
-	gzip -c purgeDupes.1 > purgeDupes.1.gz
-	install hpt.1.gz purgeDupes.1.gz $(MANDIR)/man1

@@ -1,5 +1,12 @@
 hpt 0.29
 --------
+	
+----- cvs ci ------
+Tue Jun 29 10:45:07 CEST 1999
+mtt:
+* the first echomail in a autocreated area is now also
+  recorded in the dupe-database.
++ hopefully fixed makefile.djg
 
 ----- cvs ci ------
 Mon Jun 28  16:47:00

@@ -1086,6 +1086,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 
    if (echo == &(config->badArea)) {
       if ((config->carbonCount != 0) && (!dontdocc)) carbonCopy(msg, echo);
+
       // checking for autocreate option
       link = getLinkFromAddr(*config, pktOrigAddr);
       if ((link != NULL) && (link->autoAreaCreate != 0) && (writeAccess == 0)) {
@@ -1095,12 +1096,20 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 	 if (writeAccess) {
 	     putMsgInBadArea(msg, pktOrigAddr, writeAccess);
 	 } else {
+	   if (dupeDetection(echo, *msg)==1) {
+	     // nodupe
              if (echo->msgbType != MSGTYPE_PASSTHROUGH)
         	rc = putMsgInArea(echo, msg, 1);
              if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
         	forwardMsgToLinks(echo, msg, pktOrigAddr);
         	statToss.exported++;
              }
+	   } else {
+	     // msg is dupe
+	     if (echo->dupeCheck == dcMove) 
+	       rc = putMsgInArea(&(config->dupeArea), msg, 0);
+	     statToss.dupes++;
+	   }
 	 }
 
       } else putMsgInBadArea(msg, pktOrigAddr, writeAccess);
