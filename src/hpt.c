@@ -110,7 +110,6 @@ extern PfnDliHook
 
 s_log         *hpt_log = NULL;
 s_message    **msgToSysop = NULL;
-s_query_areas *queryAreasHead = NULL;
 char *scanParmA;
 char *scanParmF;
 char force = 0;

@@ -48,7 +48,7 @@ _PDB	= .pdb
 
 ## program options ##
 CFLAGS=-nologo -MD -Zp1
-CINCL= -I$(H_DIR) -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib $(HPTZIPI) $(PERLI)
+CINCL= -I$(H_DIR) -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib -I..\..\areafix $(HPTZIPI) $(PERLI)
 LFLAGS=
 CDEFS =-D__NT__ -D_CONSOLE -D_MAKE_DLL $(HPTZIPD) $(PERLD)
 COPT	= -Ob2

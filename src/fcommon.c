@@ -633,16 +633,6 @@ char *safe_strdup(const char *src)
     return ptr;
 }
 
-int isValidConference(const char *s) {
-    /*  according to FSC-0074 with lowercase symbols */
-    /*  lowercase symbols only for internal use */
-    while (*s) {
-	if ( !(*s >= 33 && *s <= 126) ) return 0;
-	s++;
-    }
-    return 1;
-}
-
 void writeEchoTossLogEntry(char *areaName)
 {
     if (config->echotosslog) {

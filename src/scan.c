@@ -84,14 +84,6 @@
 
 s_statScan statScan;
 
-void cvtAddr(const NETADDR aka1, hs_addr *aka2)
-{
-  aka2->zone = aka1.zone;
-  aka2->net  = aka1.net;
-  aka2->node = aka1.node;
-  aka2->point = aka1.point;
-}
-
 void convertMsgHeader(XMSG xmsg, s_message *msg)
 {
    /*  convert header */
