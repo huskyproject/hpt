@@ -3207,11 +3207,41 @@ advanced concepts in @value{HPT} that deserve special attention, like
 how to use several netmail areas and similar. 
 
 @menu
+* Exit::        hpt exit codes
+* Suffixes::    renaming suffixes for pkt files
 * Netmail::     defining several netmail areas for several users
 * ZoneGating::  how zonegating works for echomail
 @end menu
 
-@node Netmail, ZoneGating, Advanced Concepts, Advanced Concepts
+@node Exit, Suffixes, Advanced Concepts, Advanced Concepts
+@section HPT Exit Codes
+
+@table @asis
+@item 0 - successful termination
+@item 64 - command line usage error
+@item 66 - cannot open input (file)
+@item 69 - service unavailable [config file not found]
+@item 70 - internal software error [not enough memory, etc.]
+@item 73 - can't create (user) output file [lockfile]
+@item 74 - input/output error
+@item 75 - temp failure; user is invited to retry [lockfile used by second copy of hpt]
+@item 78 - configuration error
+@end table
+
+@node Suffixes, Netmail, Exit, Advanced Concepts
+@section Renaming Suffixes For Pkt Files
+
+@table @asis
+@item .tos - hpt crashes on this pkt, report to developers!
+@item .sec - a) pktpwd problem or link not found; b) bundles in unsecure inbound
+@item .acs - could not open pkt
+@item .bad - a) not/wrong pkt; b) bundle unpacking problems
+@item .ntu - not to us
+@item .err - msg tossing problem (couldn't open badArea/couldn't write msg)
+@item .flt - perl filter (process_pkt()) returns bad retcode
+@end table
+
+@node Netmail, ZoneGating, Suffixes, Advanced Concepts
 @section Defining Several Netmail Areas For Several Users
 
 If you want receive netmail for one address in first netmail area, and
