@@ -257,10 +257,12 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, UINT16 forceattr)
       *slash = PATH_DELIM;
    }
    
-   msg->destAddr.zone  = echo->useAka->zone;
-   msg->destAddr.net   = echo->useAka->net;
-   msg->destAddr.node  = echo->useAka->node;
-   msg->destAddr.point = echo->useAka->point;
+   if (!msg->netMail) {
+       msg->destAddr.zone  = echo->useAka->zone;
+       msg->destAddr.net   = echo->useAka->net;
+       msg->destAddr.node  = echo->useAka->node;
+       msg->destAddr.point = echo->useAka->point;
+   }
 
    harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, 
 /*							  echo->fperm, echo->uid, echo->gid,*/
@@ -565,8 +567,13 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    s_pktHeader header;
    s_link   **newLinks;  // links who does not have their aka in seenBys and thus have not got the echomail.
 
-   createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
-   createPathArrayFromMsg(msg, &path, &pathCount);
+   if (!echo->tinySB) {
+          createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
+          createPathArrayFromMsg(msg, &path, &pathCount);
+   } else {
+          seenByCount = 0;
+          pathCount = 0;
+   };
 
    createNewLinkArray(seenBys, seenByCount, echo, &newLinks, pktOrigAddr);
 
