@@ -329,10 +329,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 
    memset(&msg,'\0',sizeof(s_message));
    convertMsgHeader(*xmsg, &msg);
-<<<<<<< scan.c
-=======
    convertMsgText(SQmsg, &msg);
->>>>>>> 1.103
 
    // prepare virtual link...
    virtualLink = getLinkFromAddr(*config, msg.destAddr);  //maybe the link is in config?
@@ -373,27 +370,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    if ((xmsg->attr & MSGCRASH) == MSGCRASH) {
 	   // crash-msg -> make CUT
 	   if (createOutboundFileName(virtualLink, CRASH, PKT) == 0) {
-<<<<<<< scan.c
-		   convertMsgText(SQmsg, &msg, msg.origAddr);
-=======
 		   addViaToMsg(&msg, msg.origAddr);
-#ifdef DO_PERL
-		   if (perlscanmsg(area->areaName, &msg)) {
-perlscanexit:
-			if (virtualLink->bsyFile) {
-			    remove(virtualLink->bsyFile);
-			    nfree(virtualLink->bsyFile);
-			}
-			xmsg->attr |= MSGSENT;
-			freeMsgBuffers(&msg);
-			if (freeVirtualLink==1) {
-				nfree(virtualLink->name);
-				nfree(virtualLink);
-			}
-			return 0;
-		   }
-#endif
->>>>>>> 1.103
 		   makePktHeader(virtualLink, &header);
 		   pkt = openPktForAppending(virtualLink->floFile, &header);
 		   writeMsgToPkt(pkt, msg);
@@ -412,15 +389,7 @@ perlscanexit:
    if ((xmsg->attr & MSGHOLD) == MSGHOLD) {
 	   // hold-msg -> make HUT
 	   if (createOutboundFileName(virtualLink, HOLD, PKT) == 0) {
-<<<<<<< scan.c
-		   convertMsgText(SQmsg, &msg, msg.origAddr);
-=======
 		   addViaToMsg(&msg, msg.origAddr);
-#ifdef DO_PERL
-		   if (perlscanmsg(area->areaName, &msg))
-			goto perlscanexit;
-#endif
->>>>>>> 1.103
 		   makePktHeader(virtualLink, &header);
 		   pkt = openPktForAppending(virtualLink->floFile, &header);
 		   writeMsgToPkt(pkt, msg);
@@ -443,17 +412,7 @@ perlscanexit:
 	   if ((route != NULL) && (link != NULL) && (route->routeVia != nopack)) {
 		   prio = cvtFlavour2Prio(route->flavour);
 		   if (createOutboundFileName(link, prio, PKT) == 0) {
-<<<<<<< scan.c
-			   convertMsgText(SQmsg, &msg, *(link->ourAka));
-=======
 			   addViaToMsg(&msg, *(link->ourAka));
-#ifdef DO_PERL
-			   if (perlscanmsg(area->areaName, &msg)) {
-				virtualLink = link;
-				goto perlscanexit;
-			   }
-#endif
->>>>>>> 1.103
 			   makePktHeader(NULL, &header);
 			   header.destAddr = link->hisAka;
 			   header.origAddr = *(link->ourAka);
