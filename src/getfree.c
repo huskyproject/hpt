@@ -238,7 +238,7 @@ unsigned long getfree (char *path)
 #else
 unsigned long getfree (char *path)
 {
-  w_log (LL_WARN, "warning: free space doesn't checked in %s",path);
+  w_log (LL_WARN, "warning: free space wasn't checked in %s",path);
   return ULONG_MAX;
 }
 
@@ -247,7 +247,7 @@ unsigned long getfree (char *path)
 #elif defined(__DOS__)
 unsigned long getfree (char *path)
 {
-  w_log (LL_WARN, "warning: free space doesn't checked in %s",path);
+  w_log (LL_WARN, "warning: free space wasn't checked in %s",path);
   return ULONG_MAX;
 }
 #else

@@ -180,7 +180,7 @@ void autoPassive()
                                             config->links[i]->ourAka,
                                             &(config->links[i]->hisAka),
                                             versionStr);
-                                  xstrcat(&msg->text, "\r System switched to passive, your subscription are paused.\r\r"
+                                  xstrcat(&msg->text, "\r System switched to passive, your subscription is paused.\r\r"
                                         " You are being unsubscribed from echo areas with no downlinks besides you!\r\r"
                                         " When you wish to continue receiving echomail, please send requests\r"
                                         " to AreaFix containing the %RESUME command.");

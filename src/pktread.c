@@ -581,7 +581,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
         unread = ftell(pkt) - unread; /*  unread bytes */
         
         if (unread) {
-            w_log(LL_ERR,"There is %d bytes of unknown data at the end of pkt file!",
+            w_log(LL_ERR,"There are %d bytes of unknown data at the end of pkt file!",
                 unread);
             return 2; /*  rename to bad */
         }
@@ -610,7 +610,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
     len = fgetsUntil0 ((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
     if (len > XMSG_TO_SIZE) {
         if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
-        w_log(LL_ERR, "wrong msg header: toUserName (%s) longer than %d bytes.",
+        w_log(LL_ERR, "wrong msg header: toUserName (%s) is longer than %d bytes.",
             globalBuffer, XMSG_TO_SIZE-1);
         if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
         globalBuffer[XMSG_TO_SIZE-1]='\0';
@@ -621,7 +621,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
     fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
     if (len > XMSG_FROM_SIZE) {
         if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
-        w_log(LL_ERR, "wrong msg header: fromUserName (%s) longer than %d bytes.",
+        w_log(LL_ERR, "wrong msg header: fromUserName (%s) is longer than %d bytes.",
             globalBuffer, XMSG_FROM_SIZE-1);
         if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
         globalBuffer[XMSG_FROM_SIZE-1]='\0';
@@ -632,7 +632,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
     len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
     if (len > XMSG_SUBJ_SIZE) {
         if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
-        w_log(LL_ERR, "wrong msg header: subectLine (%s) longer than %d bytes.",
+        w_log(LL_ERR, "wrong msg header: subjectLine (%s) is longer than %d bytes.",
             globalBuffer, XMSG_SUBJ_SIZE-1);
         if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
         globalBuffer[XMSG_SUBJ_SIZE-1]='\0';
@@ -667,7 +667,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
     
     if( (len == BUFFERSIZE+1) ) {
         badmsg++;
-        xstrscat(&msg->text, "\r* Mesage too big, truncated by ", versionStr, "\r",NULL);
+        xstrscat(&msg->text, "\r* Message too big, truncated by ", versionStr, "\r",NULL);
         do {
             char *origin;
             
@@ -678,7 +678,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
             }
         } while (len == BUFFERSIZE+1);
         strncpy( globalBuffer, aka2str(msg->destAddr), BUFFERSIZE );
-        w_log(LL_ERR, "Message from %s to %s too big!", aka2str(msg->origAddr),
+        w_log(LL_ERR, "Message from %s to %s is too big!", aka2str(msg->origAddr),
             globalBuffer);
     }
 #endif

@@ -1008,12 +1008,12 @@ void scanExport(int type, char *str) {
         }
     } else if (f == NULL) {
         if (type & SCN_FILE) {
-            w_log(LL_START, "EchoTossLogFile not found -> Scanning stop");
+            w_log(LL_START, "EchoTossLogFile not found -> Scanning stopped");
             nfree(tmplogname);
             return;
         }
         /*  if echotoss file does not exist scan all areas */
-        w_log(LL_START, "EchoTossLogFile not found -> Scanning all areas.");
+        w_log(LL_START, "EchoTossLogFile not found -> Scanning all areas");
         scanAllAreas(type);
     } else {
         /*  else scan only those areas which are listed in the file */

@@ -83,39 +83,38 @@ void print_help(void) {
     fprintf(stdout,"        hpt post [options] file\n\n");
     fprintf(stdout,"        options are:\n\n");
     fprintf(stdout,"        -nf \"name from\"\n");
-    fprintf(stdout,"            message sender's name, if not included post  use\n");
+    fprintf(stdout,"            message sender's name, if not defined post uses\n");
     fprintf(stdout,"            sysop name (see fidoconfig)\n\n");
     fprintf(stdout,"        -nt \"name to\"\n");
-    fprintf(stdout,"            message  receiver's  name,  if not included post use \"All\"\n\n");
+    fprintf(stdout,"            message receiver's name, if not defined post uses \"All\"\n\n");
     fprintf(stdout,"        -af \"address from\"\n");
-    fprintf(stdout,"            message sender's address, if not  included  post\n");
-    fprintf(stdout,"            use first system address (see fidoconfig)\n\n");
+    fprintf(stdout,"            message sender's address, if not defined post\n");
+    fprintf(stdout,"            uses first system address (see fidoconfig)\n\n");
     fprintf(stdout,"        -at \"address to\"\n");
     fprintf(stdout,"            message receiver's address, *MUST BE PRESENT FOR NETMAIL*\n\n");
     fprintf(stdout,"         -s \"subject\"\n");
-    fprintf(stdout,"            subject line, if not included then assumed to be empty\n\n");
+    fprintf(stdout,"            subject line, if not dfined then assumed to be empty\n\n");
     fprintf(stdout,"         -e \"echo area\"\n");
-    fprintf(stdout,"            area to  post  echomail  message  into,  if  not\n");
-    fprintf(stdout,"            included message is posted to netmail\n\n");
+    fprintf(stdout,"            area to post echomail message into, if not\n");
+    fprintf(stdout,"            defined message is posted to netmail\n\n");
     fprintf(stdout,"         -z \"tearline\"\n");
-    fprintf(stdout,"            tearline, if not included then assumed to be\n");
+    fprintf(stdout,"            tearline, if not defined then assumed to be\n");
     fprintf(stdout,"            no tearline at all. Use -z \"\" to post with empty tearline\n\n");
     fprintf(stdout,"         -o \"origin\"\n");
-    fprintf(stdout,"            origin, if not included then assumed to be name\n");
+    fprintf(stdout,"            origin, if not defined then assumed to be name\n");
     fprintf(stdout,"            of station in config-file\n\n");
     fprintf(stdout,"         -f flags(s)\n");
-    fprintf(stdout,"            flags  to  set  to the posted msg. possible ones\n");
-    fprintf(stdout,"            are: pvt, crash, read, sent, att,  fwd,  orphan,\n");
-    fprintf(stdout,"            k/s, loc, hld, xx2,  frq, rrq, cpt, arq, urq,\n");
+    fprintf(stdout,"            flags to set to the posted msg. possible ones\n");
+    fprintf(stdout,"            are: pvt, crash, read, sent, att, fwd, orphan,\n");
+    fprintf(stdout,"            k/s, loc, hld, xx2, frq, rrq, cpt, arq, urq,\n");
     fprintf(stdout,"            kfs, tfs, dir, imm, cfm, npd;\n");
-    fprintf(stdout,"            use it without trailing brackets like this:  pvt\n");
-    fprintf(stdout,"            loc k/s\n\n");
+    fprintf(stdout,"            use it without trailing brackets like this: pvt loc k/s\n\n");
     fprintf(stdout,"         -x export message to echo links\n\n");
     fprintf(stdout,"         -d erase input file after posting\n\n");
     fprintf(stdout,"         -u[size] uue-multipart posting\n");
-    fprintf(stdout,"            size - number of lines per section(150 for default)\n\n");
+    fprintf(stdout,"            size - number of lines per section (150 by default)\n\n");
     fprintf(stdout,"         -h get help\n\n");
-    fprintf(stdout,"         file - text file to post into echo or \"-\" for stdin\n\n");
+    fprintf(stdout,"         file - text file to be posted or \"-\" for stdin\n\n");
     exit(EX_OK);
 }
 
@@ -378,7 +377,7 @@ void post(int c, unsigned int *n, char *params[])
                 quit = 1;
             }
         } else {
-            w_log(LL_ERROR, "post: several input files on cmd line");
+            w_log(LL_ERROR, "post: several input files in cmd line");
             quit = 1;
         }
     }
@@ -530,7 +529,7 @@ void post(int c, unsigned int *n, char *params[])
         /* exit(EX_NOINPUT); */
     }
     else if (msg.destAddr.zone == 0 && !quit) {
-        w_log(LL_CRIT,"post: attempt to post netmail msg without specifyng dest address");
+        w_log(LL_CRIT,"post: attempt to post netmail msg without specifying dest. address");
         /* exit(EX_USAGE); */
     }
     nfree(textBuffer);

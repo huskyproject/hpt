@@ -262,7 +262,7 @@ int linkArea(s_area *area, int netMail)
                 msgId   = GetKludgeText(ctl, "MSGID");
             }
             if (msgId == NULL) {
-                w_log(LL_WARN, "msg %ld haven't got any MSGID, replying is not possible", i);
+                w_log(LL_WARN, "msg %ld hasn't got any MSGID, replying is not possible", i);
                 if (!jam)
                     MsgCloseMsg(hmsg);
                 continue;
@@ -270,7 +270,7 @@ int linkArea(s_area *area, int netMail)
             curr = findMsgId(msgs, hash, hashNums, msgId, i,
                 (jam && linkJamByCRC) ? Jam_GetHdr(harea, i)->MsgIdCRC : 0);
             if (curr == NULL) {
-                w_log(LL_ERR, "hash table overflow. Tell it to the developers !"); 
+                w_log(LL_ERR, "hash table overflow. Tell developers about it!"); 
                 /*  try to free as much as possible */
                 /*  FIXME : remove blocks themselves */
                 nfree(msgId);

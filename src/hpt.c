@@ -411,7 +411,7 @@ void processConfig()
 
    if (config->addrCount == 0) exit_hpt("at least one addr must be defined",1);
    if (config->linkCount == 0) exit_hpt("at least one link must be specified",1);
-   if (config->outbound == NULL) exit_hpt("you must set outbound in fidoconfig first",1);
+   if (config->outbound == NULL) exit_hpt("you must set Outbound in fidoconfig first",1);
    if (config->tempOutbound == NULL) exit_hpt("you must set tempOutbound in fidoconfig first",1);
    if (config->inbound == NULL && config->protInbound == NULL)
 	   exit_hpt("you must set Inbound or protInbound in fidoconfig first",1);

@@ -388,7 +388,7 @@ int main(int argc, char **argv) {
    cfg = readConfig(NULL);
 
    if (!cfg) {
-      fprintf(outlog, "Could not read fido config\n");
+      fprintf(outlog, "Could not read fidoconfig\n");
       return (1);
    }
 

@@ -151,7 +151,7 @@ char *(BadmailReasonString[BM_MAXERROR+1]) = {
 /* 8*/"Sender not found in config file",
 /* 9*/"Can't open config file",
 /*10*/"No downlinks for passthrough area",
-/*11*/"lenght of CONFERENCE name is more than 60 symbols",
+/*11*/"length of CONFERENCE name is more than 60 symbols",
 /*12*/"Area killed (unsubscribed)",
 /*13*/"New area refused by NewAreaRefuseFile",
 /*14*/"Wrong link to autocreate from (area requested from other link)",
@@ -876,7 +876,7 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
                 else if (config->areafixReportsFlags)
                     xstrscat(&(tmpmsg->text), "\001FLAGS ", config->areafixReportsFlags, "\r",NULL);
 
-                xstrcat(&tmpmsg->text, "\r Your message was moved to badmail with the next reason:\r\r");
+                xstrcat(&tmpmsg->text, "\r Your message was moved to badmail with the following reason:\r\r");
                 xscatprintf(&tmpmsg->text, " %s\r\r", reason);
                 xstrcat(&tmpmsg->text, " Header of original message:\r\r");
                 xscatprintf(&tmpmsg->text, "      Area: %s\r", echo->areaName);
@@ -1258,7 +1258,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 
                     /* PKT is not for us - try to forward it to our links */
 
-                    w_log(LL_ERR, "pkt: %s addressed to %d:%d/%d.%d but not for us",
+                    w_log(LL_ERR, "pkt: %s addressed to %d:%d/%d.%d but not to us",
                         fileName, header->destAddr.zone, header->destAddr.net,
                         header->destAddr.node, header->destAddr.point);
 
@@ -1912,7 +1912,7 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 	    }
 	    else
 		{
-		    w_log(LL_ERR, "Failure moving %s to %s (%s)", fileName,
+		    w_log(LL_ERR, "Failed moving %s to %s (%s)", fileName,
 			  newfn, strerror(errno));
 		    nfree(newfn);
 		    return 4;
@@ -1921,7 +1921,7 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 	}
     }
 
-    w_log(LL_ERR, "Packet %s is not to us or our links",fileName);
+    w_log(LL_ERR, "Packet %s is not for us or our links",fileName);
 
     return 4;       /* PKT is not for us and we did not find a link to
 		       forward the pkt file to */
@@ -1956,7 +1956,7 @@ void fix_qqq(char *filename)
 			    fclose(f);
 			}
         } else
-		    w_log(LL_ERR, "Failure moving %s to %s (%s)", newname,
+		    w_log(LL_ERR, "Failed moving %s to %s (%s)", newname,
 			  filename, strerror(errno));
 	    nfree(newname);
 	}
