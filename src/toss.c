@@ -1553,6 +1553,19 @@ int  processArc(char *fileName, e_tossSecurity sec)
    return 0;
 }
 
+
+typedef struct fileInDir {
+   char *fileName;
+   time_t fileTime;
+} s_fileInDir;
+ 
+int filesComparer(s_fileInDir *elem1, s_fileInDir *elem2) {
+   // File times comparer for qsort
+   if ( elem1 -> fileTime < elem2 -> fileTime) return -1;
+   if ( elem1 -> fileTime == elem2 -> fileTime) return 0;
+   return 1;
+}
+
 char *validExt[] = {"*.MO?", "*.TU?", "*.TH?", "*.WE?", "*.FR?", "*.SA?", "*.SU?"};
 
 void processDir(char *directory, e_tossSecurity sec)
@@ -1563,9 +1576,16 @@ void processDir(char *directory, e_tossSecurity sec)
    int            rc, i;
    int            pktFile,
                   arcFile;
+   s_fileInDir *files = NULL;
+   int nfiles=0;
+   struct stat st;
+   int dirNameLen;
+   int filenum;
 
 
    if (directory==NULL) return;
+
+   dirNameLen = strlen(directory);
 
    dir = opendir(directory);
 
@@ -1574,23 +1594,42 @@ void processDir(char *directory, e_tossSecurity sec)
       printf("testing %s\n", file->d_name);
 #endif
 
-      arcFile = pktFile = 0;
-
-      dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
-      strcpy(dummy, directory);
-      strcat(dummy, file->d_name);
-
-      if (!(pktFile = patimat(file->d_name, "*.pkt") == 1)) 
-         for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
-            if (patimat(file->d_name, validExt[i]) == 1
 #if !defined(UNIX)
-		&& !(file->d_attr & _A_HIDDEN)
+      if( !(file->d_attr & _A_HIDDEN) )
 #endif
-					    )
+      {
+	 nfiles++;
+	 files = (s_fileInDir *) realloc ( files, nfiles * sizeof(s_fileInDir));
+	 (files[nfiles-1]).fileName = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
+
+         strcpy((files[nfiles-1]).fileName, directory);
+         strcat((files[nfiles-1]).fileName, file->d_name);
+         if(stat((files[nfiles-1]).fileName, &st)==0) {
+            (files[nfiles-1]).fileTime = st.st_mtime;
+         } else {
+            (files[nfiles-1]).fileTime = 0L; // FixMe - don't know what to set :(
+         }
+
+      }
+   }
+   closedir(dir);
+
+   qsort (files, nfiles, sizeof(s_fileInDir), filesComparer);
+
+   for ( filenum=0; filenum < nfiles; filenum++) {
+      arcFile = pktFile = 0;
+      dummy = (files[filenum]).fileName;
+#ifdef DEBUG_HPT
+      printf("testing sorted %s\n", dummy);
+#endif
+      if (!(pktFile = patimat(dummy+dirNameLen, "*.pkt") == 1))
+         for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
+            if (patimat(dummy+dirNameLen, validExt[i]) == 1)
                arcFile = 1;
 
       if (pktFile || arcFile) {
 
+         rc = 3; // nonsence, but compiler warns
          if (pktFile)
             rc = processPkt(dummy, sec);
          else if (arcFile)
@@ -1608,10 +1647,10 @@ void processDir(char *directory, e_tossSecurity sec)
                break;
             case 4:  // not to us
                changeFileSuffix(dummy, "ntu");
-	       break;
+               break;
             case 5:  // tossing problem
                changeFileSuffix(dummy, "err");
-	       break;
+               break;
             default:
                remove (dummy);
                break;
@@ -1619,7 +1658,7 @@ void processDir(char *directory, e_tossSecurity sec)
       };
       free(dummy);
    }
-   closedir(dir);
+   free (files);
 }
 
 void writeTossStatsToLog(void) {

@@ -2,6 +2,11 @@ hpt 0.30
 --------
 
 ----- cvs ci ------
+Tue Dec 14 19:30:14 NOVT 1999                                                   
+max (patch from Serguei Revtov):
+* sorting inbound mail by time
+
+----- cvs ci ------
 Sat Dec 11 13:08:47 NOVT 1999
 max (patch from Serguei Revtov):
 * added alternative tool hptlink
