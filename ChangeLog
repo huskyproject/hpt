@@ -1,3 +1,7 @@
+2002-04-09 Tuesday 18:21  mche
+
+	* h/tree.h (1.7), h/vixie.h (1.7), src/tree.c (1.11): no message
+
 2002-04-08 Monday 13:27  mche
 
 	* src/dupe.c (1.57): speedup dupe search (need to check)
