@@ -328,7 +328,8 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
                 queryAreasHead->linksCount = strlen( areatag );
             af_AddLink( areaNode, uplink );
             af_AddLink( areaNode, dwlink );
-            tmpNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
+            areaNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
+            tmpNode =areaNode;
         }
         break;
     case ADDIDLE:
@@ -568,12 +569,18 @@ void af_QueueUpdate()
         }
         if( stricmp(tmpNode->type,czIdleArea) == 0 )
         {
+            ps_area delarea;
             queryAreasHead->nFlag = 1; // query was changed
             strcpy(tmpNode->type, czKillArea);
             tmpNode->bTime = tnow;
             tmpNode->eTime = tnow + config->killedRequestTimeout*secInDay;
+            tmpNode->linksCount = 1;
             w_log( LL_AREAFIX, "areafix: request for %s is going to be killed",tmpNode->name);
-            do_delete(NULL, getArea(config, tmpNode->name));
+            delarea = getArea(config, tmpNode->name);
+            if (delarea != &(config->badArea))
+            {
+                do_delete(NULL, delarea);
+            }
         }
     }
     // send msg to the links (forward requests to areafix)
