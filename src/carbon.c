@@ -190,8 +190,9 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
     }
     if (strncmp(line, "AREA:", 5) == 0) {
         /*  jump over AREA:xxxxx\r */
-        while (*(line) != '\r') line++;
-        line++;
+        line+=5;
+        while (*line && *line != '\r') line++;
+        if (*line) line++;
     }
 
     while(*line == '\001')
