@@ -223,7 +223,7 @@ void scanEMArea(s_area *echo)
        w_log('1', "Scanning area: %s", echo->areaName);
 
        i = (noHighWaters) ? 0 : MsgGetHighWater(area);
-       highestMsg = MsgGetHighMsg(area);
+       highestMsg = MsgGetNumMsg(area);
 
        while (i < highestMsg) {
 	   hmsg = MsgOpenMsg(area, MOPEN_RW, ++i);

@@ -568,7 +568,7 @@ void scanNMArea(s_area *area)
 
        if (area->msgbType == MSGTYPE_SDM) noHighWaters = 1;
        i = (noHighWaters) ? 0 : MsgGetHighWater(netmail);
-       highestMsg = MsgGetHighMsg(netmail);
+       highestMsg = MsgGetNumMsg(netmail);
 
        // scan all Messages and test if they are already sent.
        while (i < highestMsg) {
