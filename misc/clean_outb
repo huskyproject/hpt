@@ -34,17 +34,7 @@ for adir in `ls -d $OUTB_DIR/*.pnt ; echo $OUTB_DIR` ; do
     fi
 done
 
-for adir in `ls -d $OUTB_DIR/*.sep` ; do
-    ls $adir/* 1>/dev/null 2>/dev/null
-    RC=$?
-    if [ x$RC != x0 ] ; then
-        date +"%H:%M:%S %d %b"
-        echo " Removed empty dir: $adir"
-        rmdir $adir
-    fi
-done
-
-for adir in `ls -d $OUTB_DIR/*.pnt/*.sep` ; do
+for adir in `ls -d $OUTB_DIR/*.sep ; ls -d $OUTB_DIR/*.pnt/*.sep` ; do
     ls $adir/* 1>/dev/null 2>/dev/null
     RC=$?
     if [ x$RC != x0 ] ; then
