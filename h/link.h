@@ -30,5 +30,7 @@
 #ifndef __LINK_H
 #define __LINK_H
 
+extern int linkJamByCRC;
+
 void linkAreas(char *name);
 #endif
