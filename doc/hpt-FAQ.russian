@@ -653,7 +653,7 @@ wmake -f makefile.wcw, tmake -f makefile.bcw или make -f makefile.cyg.
 5. Чтобы получить html-документацию, нужен makeinfo (напрмер из Cygwin):
 с октября 2002 года именно он используется в makefile, либо интерпретатор PERL
 (напр. www.activestate.com, www.perl.com) и скрипт Texi2Html
-(http://www.mathematik.uni-kl.de/~obachman/Texi2Html/Distrib)
+(http://www.mathematik.uni-kl.de/~obachman/Texi2html)
 
 /------/
 
