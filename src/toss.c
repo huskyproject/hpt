@@ -97,6 +97,24 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec);
 void processDir(char *directory, e_tossSecurity sec);
 void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr);
 
+static char *get_filename(char *pathname)
+{
+    char *ptr;
+
+    if (pathname == NULL || !(*pathname))
+        return pathname;
+
+    ptr = pathname + strlen(pathname) - 1;
+
+    while (*ptr != '/' && *ptr != '\\' && *ptr != ':' && ptr != pathname)
+        ptr--;
+
+    if (*ptr == '/' || *ptr == '\\' || *ptr == ':')
+        ptr++;
+
+    return ptr;
+}   
+
 /*
  * Find the first occurrence of find in s ignoring case
  */
@@ -816,6 +834,8 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		if (f) {
 			if (rc) fputs(" failed: ",f);
 			fputs(aka2str(header.destAddr),f);
+			fputc('>',f);
+			fputs(get_filename(newLinks[i]->link->pktFile),f);
 			fputc(' ',f);
 		}
 		if (rc==0) statToss.exported++;
@@ -2434,24 +2454,6 @@ int find_old_arcmail(s_link *link, FILE *flo)
 	nfree(bundle);
 	return 0;
 }
-
-static char *get_filename(char *pathname)
-{
-    char *ptr;
-
-    if (pathname == NULL || !(*pathname))
-        return pathname;
-
-    ptr = pathname + strlen(pathname) - 1;
-
-    while (*ptr != '/' && *ptr != '\\' && *ptr != ':' && ptr != pathname)
-        ptr--;
-
-    if (*ptr == '/' || *ptr == '\\' || *ptr == ':')
-        ptr++;
-
-    return ptr;
-}   
 
 void arcmail(s_link *tolink) {
    char cmd[256], *pkt=NULL, *lastPathDelim, saveChar;
