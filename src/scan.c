@@ -216,8 +216,8 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 
       tempLink.hisAka = msg->destAddr;
       tempLink.ourAka = &(config->addr[0]);
-      tempLink.name   = (char *) safe_malloc(1);
-      tempLink.name[0] = '\0';
+//      tempLink.name   = (char *) safe_malloc(1);
+//      tempLink.name[0] = '\0';
        
       switch (route->routeVia) {
 
