@@ -549,9 +549,6 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 
     createNewLinkArray(seenBys, seenByCount, echo, &newLinks, &zoneLinks, &otherLinks, pktOrigAddr);
 
-    if(otherLinks)
-        forwardToLinks(msg, echo, otherLinks, &path, &pathCount, &path, &pathCount);
-
     if(newLinks)
         forwardToLinks(msg, echo, newLinks, &seenBys, &seenByCount, &path, &pathCount);
 
@@ -559,6 +556,10 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
         if (echo->useAka->zone != pktOrigAddr.zone) seenByCount = 0;
         forwardToLinks(msg, echo, zoneLinks, &seenBys, &seenByCount, &path, &pathCount);
     }
+
+    if(otherLinks)
+        forwardToLinks(msg, echo, otherLinks, &path, &pathCount, &path, &pathCount);
+
 
     nfree(seenBys);
     nfree(path);
