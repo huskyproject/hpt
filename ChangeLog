@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Mon Oct 23 18:09:53 MET 2000
+  Michael Haase:
++ added statlog for hpt
+
+----- cvs ci ------
 Mon Oct 23 14:46:29 NOVST 2000
 max:
 * when scanning netmail for file attach, creates .req + .?ut (normal msg
