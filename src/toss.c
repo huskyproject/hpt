@@ -960,9 +960,10 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 		*(msg->text) = '\0';
 	strncat(msg->text,old_text,i); // copy rest of msg
 	msg->textLength = strlen(msg->text);
-	
+
 	if (!export) {
-		rc = putMsgInArea(area,msg,0,0);
+		if (msg->netMail) rc = putMsgInArea(area,msg,0,MSGSENT|MSGLOCAL);
+		else rc = putMsgInArea(area,msg,0,0);
 		area->imported++;  // area has got new messages
 	}
 	else if (!msg->netMail) {
@@ -1282,16 +1283,6 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
    s_link *link;
    int    writeAccess = 0, rc = 0, ccrc = 0;
 
-/* remove after Sep 26
-   textBuff = (char *) safe_malloc(strlen(msg->text)+1);
-   strcpy(textBuff, msg->text);
-
-   area = strtok(textBuff, "\r");
-   area += 5;
-   while (*area == ' ') area++;
-
-   echo = getArea(config, area);
-*/
    p = strchr(msg->text,'\r');
    if (p) {
 	   *p='\0';
@@ -1359,93 +1350,6 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 	   }
    }
  
-/* will be removed after 13-09-00
-
-   if (echo == &(config->badArea)) writeAccess = 0;
-   else writeAccess = checkAreaLink(echo, pktOrigAddr, 0);
-   if (writeAccess!=0) echo = &(config->badArea);
-
-   if (echo != &(config->badArea)) {
-	  if (dupeDetection(echo, *msg)==1) {
-		  // no dupe
-		  statToss.echoMail++;
-
-		  // if only one downlink, we've got the mail from him
-		  if ((echo->downlinkCount > 1) ||
-			  ((echo->downlinkCount > 0) && 
-			   // mail from us
-			   (addrComp(pktOrigAddr,*echo->useAka)==0)))
-			  forwardMsgToLinks(echo, msg, pktOrigAddr);
-			  
-		  if ((config->carbonCount != 0) && (!dontdocc)) ccrc = carbonCopy(msg, echo);
-
-		  if (ccrc <= 1) {
-			  echo->imported++;  // area has got new messages
-			  if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-				  rc = putMsgInArea(echo, msg, 1, forceattr);
-				  statToss.saved++;
-			  } 
-			  else {
-				  statToss.passthrough++;
-				  rc = 1; //passthrough does always work
-			  }
-		  } else rc = 1; // normal exit for carbon move & delete
-
-      } else {
-		 // msg is dupe
-		 if (echo->dupeCheck == dcMove) {
-			rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
-         } else rc = 1;
-         statToss.dupes++;
-      }
-
-   }
-
-   if (echo == &(config->badArea)) {
-      if ((config->carbonCount != 0) && (!dontdocc)) ccrc = carbonCopy(msg, echo);
-
-      if (ccrc <= 1) {
-        // checking for autocreate option
-        link = getLinkFromAddr(*config, pktOrigAddr);
-        if ((link != NULL) && (link->autoAreaCreate != 0) && (writeAccess == 0)) {
-           autoCreate(area, pktOrigAddr, NULL);
-           echo = getArea(config, area);
-		   writeAccess = checkAreaLink(echo, pktOrigAddr, 0);
-	   if (writeAccess) {
-	       rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
-	   } else {
-	     if (dupeDetection(echo, *msg)==1) {
-			 // nodupe
-
-			 // if only one downlink, we've got the mail from him
-			 if (echo->downlinkCount > 1) {
-			     forwardMsgToLinks(echo, msg, pktOrigAddr);
-			     statToss.exported++;
-			 }
-			 statToss.echoMail++;
-			 echo->imported++;  // area has got new messages
-			 if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-				 rc = putMsgInArea(echo, msg, 1, forceattr);
-				 statToss.saved++;
-			 } else {
-				 statToss.passthrough++;
-				 rc = 1; //passthrough does always work
-			 }
-	     } else {
-	       // msg is dupe
-	       if (echo->dupeCheck == dcMove) 
-	         rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
-	       else 
-	         rc = 1;
-	       statToss.dupes++;
-	     }
-	   }
-        } else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
-      }
-   }
-will be removed after 13-09-00 */
-
-//   nfree(textBuff);
    return rc;
 }
 
@@ -1473,8 +1377,8 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 	   return rc;
    }
 
-   if (config->carbonCount != 0) ccrc = carbonCopy(msg, area);
-   if (ccrc > 1) return 1;
+   if ((config->carbonCount!=0)&&(!dontdocc)) ccrc = carbonCopy(msg, area);
+   if (ccrc > 1) return 1; // carbon del or move
 
    // create Directory Tree if necessary
    if (area -> msgbType == MSGTYPE_SDM)
@@ -1501,16 +1405,16 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 
          // recode from TransportCharset to internal Charset
          if (config->intab != NULL) {
-            if ((msg->recode & REC_HDR)==0) {
-		recodeToInternalCharset((CHAR*)msg->fromUserName);
-                recodeToInternalCharset((CHAR*)msg->toUserName);
-                recodeToInternalCharset((CHAR*)msg->subjectLine);
-	        msg->recode |= REC_HDR;
-            }
-	    if ((msg->recode & REC_TXT)==0) {
-		recodeToInternalCharset((CHAR*)msg->text);
-		msg->recode |= REC_TXT;
-	    }
+			 if ((msg->recode & REC_HDR)==0) {
+				 recodeToInternalCharset((CHAR*)msg->fromUserName);
+				 recodeToInternalCharset((CHAR*)msg->toUserName);
+				 recodeToInternalCharset((CHAR*)msg->subjectLine);
+				 msg->recode |= REC_HDR;
+			 }
+			 if ((msg->recode & REC_TXT)==0) {
+				 recodeToInternalCharset((CHAR*)msg->text);
+				 msg->recode |= REC_TXT;
+			 }
          }
 
          msgHeader = createXMSG(msg, pktHeader, forceattr);
@@ -1520,19 +1424,19 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
          MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *) bodyStart, len, len, strlen(ctrlBuf)+1, (UCHAR *) ctrlBuf);
          nfree(ctrlBuf);
          MsgCloseMsg(msgHandle);
-	 rc = 1;
+		 rc = 1;
 
          writeLogEntry(hpt_log, '7', "Wrote Netmail: %u:%u/%u.%u -> %u:%u/%u.%u", msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
                          msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
          statToss.netMail++;
       } else {
-         writeLogEntry(hpt_log, '9', "Could not write message to NetmailArea %s", area -> areaName);
+		  writeLogEntry(hpt_log, '9', "Could not write message to NetmailArea %s", area -> areaName);
       } /* endif */
 
       MsgCloseArea(netmail);
    } else {
-      fprintf(stderr, "msgapierr - %u\n", msgapierr);
-      writeLogEntry(hpt_log, '9', "Could not open NetmailArea %s", area -> areaName);
+	   fprintf(stderr, "msgapierr - %u\n", msgapierr);
+	   writeLogEntry(hpt_log, '9', "Could not open NetmailArea %s", area -> areaName);
    } /* endif */
    return rc;
 }

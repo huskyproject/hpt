@@ -2,6 +2,13 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Oct  7 13:53:49 NOVST 2000
+max:
+* fixed bug in relink with squish area
+* don't carbon relink msg
+* fixed carbon of netmail msgs
+
+----- cvs ci ------
 Thu Oct  5 18:26:32 MSD 2000
 max (patch from Serguei Revtov):
 * adapt hptlink.c for xmreply1st and xmreplynext as replies[0,1]

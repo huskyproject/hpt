@@ -1951,9 +1951,19 @@ int relink (char *straddr) {
 	s_link          *researchLink = NULL;
 	unsigned int    count, areasArraySize;
 	s_area          **areasIndexArray = NULL;
-	
+	static struct _minf m;
+
 	// parse config
 	if (config==NULL) processConfig();
+	if ( initSMAPI == -1 ) {
+		// init SMAPI
+		initSMAPI = 0;
+		m.req_version = 0;
+		m.def_zone = (UINT16) config->addr[0].zone;
+		if (MsgOpenApi(&m) != 0) {
+			exit_hpt("MsgApiOpen Error",1);
+		}
+	}
 
 	writeLogEntry(hpt_log, '1', "Start relink...");
 
@@ -2022,7 +2032,7 @@ int relink (char *straddr) {
 		writeLogEntry(hpt_log, '8', "'Refresh' message created to `AreaFix`");
 		processNMMsg(msg, NULL,
 					 getNetMailArea(config,config->robotsArea),
-					 0, MSGLOCAL);
+					 1, MSGLOCAL);
 		freeMsgBuffers(msg);
 		nfree(msg);
 		writeLogEntry(hpt_log, '8', "Total request relink %i area(s)",areasArraySize);
