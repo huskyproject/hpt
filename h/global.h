@@ -72,6 +72,6 @@ extern char *afixCmd;
 
 extern int lock_fd;
 extern char *_lockfile;
-
+extern char *versionStr;
 
 #endif

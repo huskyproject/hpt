@@ -57,6 +57,7 @@
 #include <global.h>
 #include <fcommon.h>
 #include <pkt.h>
+#include <global.h>
 
 typedef unsigned long flag_t;  /* for at least 32 bit flags */
 #define FTSC_FLAWY  1           /* FTSC field has correctable errors */
@@ -686,29 +687,19 @@ w_log(LL_DEBUG, "DOS-16");
    xstrcat(&msg->text, globalBuffer);
    msg->textLength+=len-1; /*  trailing \0 is not the text */
 
-   if(strrstr(msg->text, " * Origin"))
-   {  /* Read rest of kludges SEEN-BY & PATH */
-      len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
-      xstrcat(&msg->text, (char*)globalBuffer);
-      msg->textLength+=len-1; /*  trailing \0 is not the text */
-   }
-   else
-   { badmsg++;
+   if( (len == BUFFERSIZE+1) ) {
+     badmsg++;
+     xstrscat(&msg->text, "\r* Mesage too big, truncated by ", versionStr, "\r");
+     do {
+       len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
+       /* add kludges to end of striped text */
+       if((origin=strstr(globalBuffer, " * Origin"))) {
+         xstrcat(&msg->text, origin);
+       }
+     } while (len == BUFFERSIZE+1);
      strncpy( globalBuffer, aka2str(msg->destAddr), BUFFERSIZE );
      w_log(LL_ERR, "Message from %s to %s too big!", aka2str(msg->origAddr),
                                                      globalBuffer);
-     /*  Message too big, skip msg text */
-     for (len=-1; len == BUFFERSIZE+1; ) {
-	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
-     }
-     if(len>=0)
-     { /*  add origin, seen-by's & path */
-       origin = strrstr(globalBuffer, " * Origin");
-       if (origin) {
-	   xstrscat(&msg->text, "\r", origin, NULL);
-	   msg->textLength+=strlen(origin);
-       }
-     }
    }
 #endif
 
