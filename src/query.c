@@ -692,7 +692,7 @@ int af_OpenQuery()
 
     if( !config->areafixQueueFile ) /* Queue File not defined in config */
     {
-        w_log(LL_WARN, "areafixQueueFile not defined in config");
+        w_log(LL_ERR, "areafixQueueFile not defined in config");
         return 0;
     }
     if ( !(queryFile = fopen(config->areafixQueueFile,"r")) ) /* can't open query file */

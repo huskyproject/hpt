@@ -216,7 +216,7 @@ int linkArea(s_area *area, int netMail)
 		  ctlen = MsgGetCtrlLen(hmsg);
 		  if (ctlen == 0 ) {
 			  MsgCloseMsg(hmsg);
-			  w_log(LL_LINKING, "msg %ld has no control information: trown from reply chain", i);
+			  w_log(LL_WARN, "msg %ld has no control information: trown from reply chain", i);
 			  continue;
 		  }
 
@@ -230,7 +230,7 @@ int linkArea(s_area *area, int netMail)
 		  msgId   = GetKludgeText(ctl, "MSGID");
 	    }
 	    if (msgId == NULL) {
-		  w_log(LL_LINKING, "msg %ld haven't got any MSGID, replying is not possible", i);
+		  w_log(LL_WARN, "msg %ld haven't got any MSGID, replying is not possible", i);
 		  if (!jam)
 			MsgCloseMsg(hmsg);
 		  continue;
@@ -238,7 +238,7 @@ int linkArea(s_area *area, int netMail)
 	    curr = findMsgId(msgs, hash, hashNums, msgId, i,
 	                     jam ? Jam_GetHdr(harea, i)->MsgIdCRC : 0);
 	    if (curr == NULL) {
-		  w_log(LL_LINKING, "hash table overflow. Tell it to the developers !"); 
+		  w_log(LL_ERR, "hash table overflow. Tell it to the developers !"); 
 		  // try to free as much as possible
 		  // FIXME : remove blocks themselves
 		  nfree(msgId);
@@ -250,7 +250,7 @@ int linkArea(s_area *area, int netMail)
 		  return 0;
 	    };
 	    if (curr -> msgId != NULL) {
-		  w_log(LL_LINKING, "msg %ld has dupes in msgbase :" \
+		  w_log(LL_WARN, "msg %ld has dupes in msgbase :" \
 					" trown from reply chain", i);
 		  if (!jam) {
 			MsgCloseMsg(hmsg);
@@ -291,7 +291,7 @@ int linkArea(s_area *area, int netMail)
 		curr -> replies[curr -> freeReply - 1] = curr -> replies[curr -> freeReply];
 	   }
 	   if (curr -> freeReply >= MAX_REPLY) {
-		w_log(LL_LINKING, "msg %ld: replies count for msg %ld exceeds %d, rest of the replies won't be linked", i+1, curr-msgs+1, MAX_REPLY);
+		w_log(LL_WARN, "msg %ld: replies count for msg %ld exceeds %d, rest of the replies won't be linked", i+1, curr-msgs+1, MAX_REPLY);
 		continue;
 	   }
 	   curr -> replies[curr -> freeReply] = i;
