@@ -1445,7 +1445,7 @@ int checkRefuse(char *areaName)
     if (config->newAreaRefuseFile == NULL)
         return 0;
 
-    fp = fopen(config->newAreaRefuseFile, "rt");
+    fp = fopen(config->newAreaRefuseFile, "r+b");
     if (fp == NULL) w_log(LL_ERR, "Can't open newAreaRefuseFile \"%s\" : %d\n",
                           config->newAreaRefuseFile, strerror(errno));
     while((line = readLine(fp)) != NULL)
@@ -1484,8 +1484,8 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
         // check if we should not refuse this area
         if (checkRefuse(area))
         {
-            // write msg to sysop
-            w_log(LL_WARN, "Can't create area %s because it was refused by NewAreaRefuseFile\n", area);
+            // write msg to log file
+            w_log(LL_WARN, "Can't create area %s : refused by NewAreaRefuseFile\n", area);
         } else
         {
             // checking for autocreate option
