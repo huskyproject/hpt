@@ -2322,7 +2322,7 @@ int relink (char *straddr) {
 			  versionStr,
 			  researchLink->RemoteRobotName ?
 			  researchLink->RemoteRobotName : "areafix",
-			  researchLink->areaFixPwd, 1);
+			  researchLink->areaFixPwd ? researchLink->areaFixPwd : "", 1);
 
 	msg->text = createKludges( NULL,researchLink->ourAka,&researchLink->hisAka);
 
