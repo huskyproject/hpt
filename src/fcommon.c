@@ -104,7 +104,7 @@ e_prio cvtFlavour2Prio(e_flavour flavour)
 }
 
 int fileNameAlreadyUsed(char *pktName, char *packName) {
-   int i, j;
+   int i;
 
    for (i=0; i < config->linkCount; i++) {
       if ((config->links[i].pktFile != NULL) && (pktName != NULL))

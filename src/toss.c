@@ -58,6 +58,8 @@
 #include <progprot.h>
 
 s_statToss statToss;
+int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec);
+void processDir(char *directory, e_tossSecurity sec);
 
 void changeFileSuffix(char *fileName, char *newSuffix) {
 
@@ -993,9 +995,6 @@ void fillCmdStatement(char *cmd, const char *call, const char *archiv, const cha
    };
    strcat(cmd, tmp);
 }
-
-int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec);
-void processDir(char *directory, e_tossSecurity sec);
 
 int  processArc(char *fileName, e_tossSecurity sec)
 {

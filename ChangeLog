@@ -1,5 +1,12 @@
 hpt 0.26
 --------
+
+Thu Feb 25 17:52:04 MET 1999
+  Gabriel Plutzar:
+* Changed Makefile so that fidoconfig Header Files are included
+  before smapi Header Files are included -> patimat declared implicitly
+  warning fixed
+* Unused variable warning in fcommon.c fixed
 	
 Sat Feb 20 20:48:03 MET 1999
   Tobias Ernst:
