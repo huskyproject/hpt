@@ -1,3 +1,7 @@
+2002-07-15 Monday 22:47  stas
+
+	* src/hpt.c (1.153.2.1): Fix compiler warning (perldone())
+
 2002-07-07 Sunday 23:46  stas
 
 	* HISTORY (1.1.2.1): Add changes log for user's attention
