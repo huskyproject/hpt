@@ -1,3 +1,8 @@
+2003-06-10 Tuesday 11:27  val_khokhlov
+
+	* misc/adv-stat-hpt.pl (1.9): adv. stats generator v0.91 - correct
+	sorting by address
+
 2003-06-07 Saturday 07:04  d_sergienko
 
 	* src/: areafix.c (1.416), toss.c (1.519): add patch by Andrey
