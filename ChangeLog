@@ -6,7 +6,7 @@ Sat Oct  7 13:53:49 NOVST 2000
 max:
 * fixed bug in relink with squish area
 * don't carbon relink msg
-* fixed carbon of netmail msgs
+* fixed carbon of netmail msgs (don't export again)
 
 ----- cvs ci ------
 Thu Oct  5 18:26:32 MSD 2000
