@@ -81,7 +81,7 @@ ifeq ($(SHORTNAMES), 0)
 	-$(RM) *.1.gz
 endif
 
-install:
+install: hpt$(EXE) pktinfo$(EXE) txt2pkt$(EXE) hptlink$(EXE) hpttree$(EXE)
 ifeq ($(SHORTNAMES), 1)
 	$(INSTALL) $(IMOPT) man/hpt.1 $(MANDIR)/man1
         $(INSTALL) $(IMOPT) man/hptlink.1 $(MANDIR)/man1
