@@ -1,3 +1,7 @@
+2002-07-29 Monday 17:48  pavel.gulchouck
+
+	* src/toss.c (1.430): Minor fix bundle sort method
+
 2002-07-27 Saturday 12:13  d.sergienko
 
 	* HISTORY (1.5): added info about NewAreaRefuseFile
