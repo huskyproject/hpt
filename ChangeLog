@@ -1,3 +1,7 @@
+2005-01-28 Friday 20:08  i_zkh
+
+	* doc/hpt.texi (1.156): Minor fix (made it compilable)
+
 2005-01-13 Thursday 20:17  val_khokhlov
 
 	* doc/hpt.texi (1.155): description for dailyBundles token
