@@ -24,6 +24,7 @@
 static  time_t  when;
 const   long    secInDay = 3600*24;
 const char czFreqArea[] = "freq";
+const char czIdleArea[] = "idle";
 const char czKillArea[] = "kill";
 const int  cnDaysToKeepFreq = 5;
 
@@ -274,9 +275,9 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 }
 
 
-s_query_areas* af_MakeAreaListNode();
-void           af_DelAreaListNode(s_query_areas* node);
-void           af_AddLink(s_query_areas* node, s_addr *link);
+s_query_areas*  af_AddAreaListNode(char *areatag, const char *type);
+void            af_DelAreaListNode(s_query_areas* node);
+void            af_AddLink(s_query_areas* node, s_addr *link);
 
 s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink, e_query_action act)
 {
@@ -315,26 +316,20 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
                 af_AddLink( tmpNode, dwlink );
             }
         } else { // area not found, so add it
-            areaNode = af_MakeAreaListNode();
-            areaNode->name = safe_strdup(areatag);
-            if(strlen( areaNode->name ) > queryAreasHead->linksCount) //max areanane lenght
-                queryAreasHead->linksCount = strlen( areaNode->name );
-            strncpy( areaNode->type ,czFreqArea, 4);
+            areaNode = af_AddAreaListNode( areatag, czFreqArea );
+            if(strlen( areatag ) > queryAreasHead->linksCount) //max areanane lenght
+                queryAreasHead->linksCount = strlen( areatag );
             af_AddLink( areaNode, uplink );
             af_AddLink( areaNode, dwlink );
-            tmpNode->next = areaNode;
         }
         break;
     case ADDDELETED:
         if( bFind ) {
         } else {
-            areaNode = af_MakeAreaListNode();
-            areaNode->name = safe_strdup(areatag);
-            if(strlen( areaNode->name ) > queryAreasHead->linksCount)
-                queryAreasHead->linksCount = strlen( areaNode->name );
-            strncpy( areaNode->type ,czKillArea, 4);
+            areaNode = af_AddAreaListNode( areatag, czKillArea );
+            if(strlen( areatag ) > queryAreasHead->linksCount)
+                queryAreasHead->linksCount = strlen( areatag );
             af_AddLink( areaNode, uplink );
-            tmpNode->next = areaNode;
         }
         break;
     }
@@ -351,7 +346,16 @@ void af_UpdateQuery()
     while(tmpNode->next)
     {
         tmpNode = tmpNode->next;
-        tmpNode->theTime;
+
+        if( stricmp(tmpNode->type,czKillArea) == 0 )
+        {
+            queryAreasHead->nFlag = 1; // query was changed
+            tmpNode->type[0] = '\0';  // mark as deleted
+            continue;
+        }
+        if( stricmp(tmpNode->type,czFreqArea) == 0 )
+        {
+        }
     }
 }
 */
@@ -364,7 +368,6 @@ int af_OpenQuery()
     struct  tm tr;
     char seps[]   = " \t\n";
     s_query_areas *areaNode = NULL;
-    s_query_areas *tmpNode  = NULL;
 
     if( queryAreasHead )  // list already exists
         return 0;
@@ -372,19 +375,17 @@ int af_OpenQuery()
     time( &ltime );
     when = ltime + cnDaysToKeepFreq*secInDay;
 
-    queryAreasHead = af_MakeAreaListNode();
+    queryAreasHead = af_AddAreaListNode("","");
 
     if ((queryFile = fopen(config->areafixQueueFile,"r")) == NULL) // empty query file
         return 0;
 
-    tmpNode = queryAreasHead;
     while ((line = readLine(queryFile)) != NULL)
     {
         token = strtok( line, seps );
         if( token != NULL )
         {
-            areaNode = af_MakeAreaListNode();
-            areaNode->name = safe_strdup(token);
+            areaNode = af_AddAreaListNode(token, "");
             if(strlen( areaNode->name ) > queryAreasHead->linksCount)
                 queryAreasHead->linksCount = strlen( areaNode->name );
             token = strtok( NULL, seps );
@@ -419,8 +420,6 @@ int af_OpenQuery()
                             &(areaNode->downlinks[areaNode->linksCount-1]));
                 token = strtok( NULL, seps );
             }
-            tmpNode->next = areaNode;
-            tmpNode = areaNode;
         }
         nfree(line);
     }
@@ -439,7 +438,7 @@ int af_CloseQuery()
     char *tmpFileName=NULL;
     
     FILE *queryFile=NULL, *resQF;
-    s_query_areas *areaNode = NULL;
+    s_query_areas *delNode = NULL;
     s_query_areas *tmpNode  = NULL;
     
     if( !queryAreasHead ) {  // list does not exist
@@ -477,9 +476,9 @@ int af_CloseQuery()
             fputs( buf , queryFile );
             p = buf+nSpace;
         }
-        areaNode = tmpNode;
-        tmpNode  = tmpNode->next;
-        af_DelAreaListNode(areaNode);
+        delNode = tmpNode;
+        tmpNode = tmpNode->next;
+        af_DelAreaListNode(delNode);
     }
     af_DelAreaListNode(queryAreasHead);
     queryAreasHead = NULL;
@@ -513,12 +512,47 @@ s_query_areas* af_MakeAreaListNode()
     return areaNode;
 }
 
+s_query_areas* af_AddAreaListNode(char *areatag, const char *type)
+{
+    s_query_areas *tmpNode      = NULL;
+    s_query_areas *tmpPrevNode  = NULL;
+    s_query_areas *newNode  = af_MakeAreaListNode();
+    
+    newNode->name = safe_strdup(areatag);
+    strcpy( newNode->type ,type);
+    
+    tmpPrevNode = tmpNode = queryAreasHead;
+
+    while(tmpNode)
+    {
+        if( tmpNode->name && strlen(tmpNode->name) > 0 )
+            if( stricmp(areatag,tmpNode->name) < 0 )
+                break;
+        tmpPrevNode = tmpNode;
+        tmpNode = tmpNode->next;
+    }
+    if(tmpPrevNode)
+    {
+        tmpPrevNode->next = newNode;
+        newNode->next     = tmpNode;
+    }
+    return newNode;
+}
+
 void af_DelAreaListNode(s_query_areas* node)
 {
-    if(node)
+    s_query_areas* tmpNode = queryAreasHead;
+
+    while(tmpNode->next && tmpNode->next != node)
     {
+        tmpNode = tmpNode->next;   
+    }
+    if(tmpNode->next)
+    {
+        tmpNode->next = node->next;
         nfree(node->name);
         nfree(node->downlinks);
+        nfree(node->report);
         nfree(node);
     }
 }
