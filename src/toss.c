@@ -1041,7 +1041,7 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
                     netmail,
                     config->areafixKillReports);
                 msgToSysop[i]->text = createKludges(
-                    config->disableTID,
+                    config->disablePID,
                     netmail ? NULL : config->ReportTo,
                     echo->useAka, echo->useAka,
                     versionStr);

@@ -557,7 +557,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
         uplink->RemoteRobotName ? uplink->RemoteRobotName : "areafix",
         uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1,
         config->areafixKillReports);
-	msg->text = createKludges(config->disableTID,NULL, uplink->ourAka, &(uplink->hisAka),
+	msg->text = createKludges(config->disablePID, NULL, uplink->ourAka, &(uplink->hisAka),
                               versionStr);
         xstrcat(&(msg->text), "\001FLAGS DIR\r");
 	uplink->msg = msg;
@@ -1721,7 +1721,7 @@ void preprocText(char *split, s_message *msg)
 {
     char *orig = (config->areafixOrigin) ? config->areafixOrigin : config->origin;
     
-    msg->text = createKludges(config->disableTID,NULL, &msg->origAddr,
+    msg->text = createKludges(config->disablePID, NULL, &msg->origAddr,
         &msg->destAddr, versionStr);
     xstrcat(&(msg->text), "\001FLAGS NPD DIR\r");
     xscatprintf(&split, "\r--- %s areafix\r", versionStr);
@@ -2291,15 +2291,15 @@ void autoPassive()
 					      &(config->links[i]), 1,
 					      config->links[i].Pause^(EPAUSE|FPAUSE))) {
 				  msg = makeMessage(config->links[i].ourAka,
-						    &(config->links[i].hisAka),
-						    versionStr,config->links[i].name,
-						    "AutoPassive", 1,
-                            config->areafixKillReports);
+					    &(config->links[i].hisAka),
+					    versionStr,config->links[i].name,
+					    "AutoPassive", 1,
+					    config->areafixKillReports);
 				  msg->text = createKludges(
-                                config->disableTID,NULL,
-							    config->links[i].ourAka,
-							    &(config->links[i].hisAka)
-                                ,versionStr);
+					    config->disablePID, NULL,
+					    config->links[i].ourAka,
+					    &(config->links[i].hisAka),
+					    versionStr);
 				  xstrcat(&(msg->text), "\001FLAGS DIR\r");
 				  xstrcat(&msg->text, "\r System switched to passive\r\r You are being unsubscribed from echo and fileecho areas with no downlinks besides you!\r\r When you wish to continue receiving arcmail and fileechoes, please send requests to AreaFix and FileFix\r containing the \r %RESUME command.");
 				  xscatprintf(&msg->text, "\r\r--- %s autopause\r", versionStr);
@@ -2387,7 +2387,7 @@ int relink (char *straddr) {
 			  researchLink->areaFixPwd ? researchLink->areaFixPwd : "", 1,
               config->areafixKillReports);
 
-	msg->text = createKludges(config->disableTID,NULL,researchLink->ourAka,
+	msg->text = createKludges(config->disablePID,NULL,researchLink->ourAka,
                               &researchLink->hisAka,versionStr);
 	xstrcat(&(msg->text), "\001FLAGS DIR\r");
 

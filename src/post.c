@@ -401,14 +401,12 @@ void post(int c, unsigned int *n, char *params[])
             
             if(!msg.netMail) memset(&msg.destAddr, '\0', sizeof(s_addr));
 
-            msg.text = createKludges(1,  /* we can't put ^ATID when posting */
+            msg.text = createKludges(config->disablePID,
                                      (area == NULL) ? NULL : strUpper(area),
                                      &msg.origAddr,
                                      &msg.destAddr,
                                      versionStr);
 
-            if (!config->disablePID)
-                xscatprintf(&msg.text, "\001PID %s\r", versionStr);
             if (flags) xscatprintf(&msg.text, "\001FLAGS%s\r", flags);
 
             if( uuepost )

@@ -590,7 +590,7 @@ void af_QueueReport()
                                 netmail,
                                 config->areafixKillReports);
     msgToSysop[0]->text = createKludges(
-                                config->disableTID,
+                                config->disablePID,
                                 netmail ? NULL : config->ReportTo,
                                 &(config->addr[0]), &(config->addr[0]),
                                 versionStr);
