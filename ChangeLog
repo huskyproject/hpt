@@ -1,3 +1,8 @@
+2002-08-17 Saturday 07:04  sfpavel
+
+	* debian/: changelog, postinst (hpt-1_2-stable.[4,2]): New debian
+	package
+
 2002-08-01 Thursday 06:27  stas
 
 	* debian/: changelog, control, copyright, docs
