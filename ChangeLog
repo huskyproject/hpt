@@ -1,3 +1,8 @@
+2001-08-31 Friday 10:21  ml
+
+	* doc/hpt.texi (1.36), src/fcommon.c (1.92): Use/create filebox
+	names with trailing .h for links with hold [patch by SR]
+
 2001-08-30 Thursday 17:51  ml
 
 	* doc/hpt.texi (1.35), h/fcommon.h (1.31), src/fcommon.c (1.91),
