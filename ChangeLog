@@ -1,3 +1,9 @@
+2001-05-07 Monday 17:56  ml
+
+	* BUGS (1.13), h/date.h (1.177), src/hpt.c (1.110), src/scan.c
+	(1.126): bugfix. don't scan echomail from echotosslog file if
+	packing netmail
+
 2001-05-05 Saturday 22:28  tobi
 
 	* doc/hpt.texi (1.25), src/toss.c (1.343): Implemented the
