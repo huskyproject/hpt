@@ -1,3 +1,7 @@
+2002-01-04 Friday 11:24  pavel.gulchouck
+
+	* src/getfree.c (1.9): getfree() on linux fix
+
 2002-01-03 Thursday 14:17  ml
 
 	* VERSION (1.3), doc/hpt.texi (1.52), src/global.c (1.39): change
