@@ -1,5 +1,10 @@
 hpt 0.30
 --------
+
+----- cvs ci ------
+Thu Oct 21 22:44:42 NOVST 1999
+max:
+* areafix: areatags converted to uppercase (forwardRequests)
 	
 ----- cvs ci ------	
 Tue Oct 19 20:22:22 CEST 1999 

@@ -566,6 +566,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 	    if (getArea(config, areatag) == &(config->badArea)) {
 		base = config->msgBaseDir;
 		config->msgBaseDir = pass;
+		strUpper(areatag);
 		autoCreate(areatag, uplink->hisAka, &(dwlink->hisAka));
 		config->msgBaseDir = base;
 	    }
