@@ -1,3 +1,11 @@
+2002-03-03 Sunday 21:17  pavel.gulchouck
+
+	* src/link.c (1.47): Jam link speedup
+
+2002-03-03 Sunday 14:35  mche
+
+	* src/post.c (1.65): added: -u uue-multipart posting
+
 2002-03-01 Friday 14:15  mche
 
 	* make/: makefile.mvcdll (1.3), makeperl.mvcdll (1.3): makefile
