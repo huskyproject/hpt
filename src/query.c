@@ -197,7 +197,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	return 9;
     }
     // setting up msgbase dir
-    if (config->createFwdNonPass==0)
+    if (config->createFwdNonPass == 0 && forwardAddr)
         msgbDir = pass;
     else
         msgbDir = creatingLink->msgBaseDir;
