@@ -477,14 +477,14 @@ int processPkt(char *fileName, int onlyNetmail)
             // if passwords aren't the same don't process pkt
             // if pkt is from a System we don't have a link (incl. pwd) with
             // we process it.
-            if (stricmp(link->pktPwd, header->pktPassword) != 0) pwdOK = 0;
-         if (pwdOK != 0) {
-            while ((msg = readMsgFromPkt(pkt,config->addr[0].zone)) != NULL) {
-               if ((onlyNetmail == 0) || (msg->netMail == 1))
-                  processMsg(msg, header->origAddr);
-               freeMsgBuffers(msg);
-            } /* endwhile */
-         } /* endif */
+            if ((link->pktPwd != NULL) && (stricmp(link->pktPwd, header->pktPassword) != 0)) pwdOK = 0;
+            if (pwdOK != 0) {
+               while ((msg = readMsgFromPkt(pkt,config->addr[0].zone)) != NULL) {
+                  if ((onlyNetmail == 0) || (msg->netMail == 1))
+                     processMsg(msg, header->origAddr);
+                  freeMsgBuffers(msg);
+               } /* endwhile */
+            } /* endif */
          else rc = 1;
       } /*endif */
    } else rc = 3;
