@@ -1,3 +1,9 @@
+2002-09-24 Tuesday 13:52  pgul
+
+	* src/: areafix.c (1.349), perl.c (1.40), post.c (1.92), query.c
+	(1.64), toss.c (1.442), txt2pkt.c (1.38): disableTID usage changed
+	to disablePID for created messages
+
 2002-09-22 Sunday 15:05  pgul
 
 	* src/pktinfo.c (1.17): Dont print garbage zone/point missing in
