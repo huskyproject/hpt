@@ -1357,7 +1357,14 @@ void tossTempOutbound(char *directory)
 
                    pkt = fopen(dummy, "rb");
 
-                   header = openPkt(pkt);
+		   header = openPkt(pkt);
+		   if (header != NULL) {
+		      link = getLinkFromAddr (*config, header->destAddr);
+		   } else {
+	              link = NULL;
+	           }
+		             
+		   
                    link = getLinkFromAddr (*config, header->destAddr);
 
 		   if (link != NULL) {
