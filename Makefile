@@ -77,13 +77,14 @@ uninstall:
 	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpt.1
 	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hptlink.1
 	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpttree.1
+	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)txt2pkt.1
 	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpt.1.gz 
 	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hptlink.1.gz
 	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpttree.1.gz
+	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)txt2pkt.1.gz
 	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)hpt$(EXE)
 	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)pktinfo$(EXE)
 	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)txt2pkt$(EXE)
 	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)hptlink$(EXE)
 	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)hpttree$(EXE)
-
 
