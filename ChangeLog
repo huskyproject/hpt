@@ -1,5 +1,5 @@
-hpt 0.9.7a
-==========
+hpt 0.9.7a-stable
+=================
 (released on Sun Sep 17 18:58:45 MEST 2000)
 
 
@@ -75,8 +75,8 @@ tobi (patch from max):
 * small memory leak fix
 
 
-hpt 0.9.7
-=========
+hpt 0.9.7-stable
+================
 (released on Tue Jul 18 23:33:57 MEST 2000)
 
 
