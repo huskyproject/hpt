@@ -171,7 +171,7 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
     } else { // Jam, maybe something else?
 
         if(srepl -> replyToPos) {
-           w_log( LL_WARN, "Thread linking broken because of dupes\n");
+           w_log( LL_WARN, "Thread linking broken because of dupes");
            links_ignored++;
            return;
         }
@@ -192,7 +192,7 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
             while (replmap[linkTo].replyNxt) {
 		linkTo = MsgUidToMsgn(harea, replmap[linkTo].replyNxt, UID_EXACT) - 1;
 		if(linkTo == -1) {
-		    w_log( LL_WARN, "Thread linking broken. MsgUidToMsgn() returned -1\n");
+		    w_log( LL_WARN, "Thread linking broken. MsgUidToMsgn() returned -1");
 		    links_ignored++;
 		    return;
 		}
@@ -279,13 +279,13 @@ void linkArea(s_area *area)
 	   highMsg = MsgGetHighMsg(harea);
 
 	   if ( highMsg < 2 ) {
-	      w_log( LL_LINKING, "nothing to link (%ld messages)\n", (long)highMsg);
+	      w_log( LL_LINKING, "nothing to link (%ld messages)", (long)highMsg);
 	      MsgCloseArea(harea);
 	      return;
 	   }
 
 	   if ( (replmap = (s_msginfo *) scalloc (highMsg, sizeof(s_msginfo))) == NULL){
-	      w_log( LL_CRIT,"Out of memory. Want %ld bytes\n",  (long) sizeof(s_msginfo)*highMsg);
+	      w_log( LL_CRIT,"Out of memory. Want %ld bytes",  (long) sizeof(s_msginfo)*highMsg);
 	      MsgCloseArea(harea);
 	      closeLog();
               disposeConfig(cfg);
@@ -293,7 +293,7 @@ void linkArea(s_area *area)
 	   }
 
 	   if ( (links = (s_origlinks *) scalloc (highMsg, sizeof(s_origlinks))) == NULL){
-	      w_log( LL_CRIT, "Out of memory: can't get %ld bytes\n",  (long) sizeof(s_origlinks)*highMsg);
+	      w_log( LL_CRIT, "Out of memory: can't get %ld bytes",  (long) sizeof(s_origlinks)*highMsg);
 	      MsgCloseArea(harea);
 	      closeLog();
               disposeConfig(cfg);
@@ -301,7 +301,7 @@ void linkArea(s_area *area)
 	   }
 
 	   /* Pass 1: read all message information in memory */
-	   w_log( LL_LINKING, "\nPass 1 - reading\n");
+	   w_log( LL_LINKING, "\nPass 1 - reading");
 
 	   for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++) {
 	      hmsg  = MsgOpenMsg(harea, MOPEN_READ, i);
@@ -309,7 +309,7 @@ void linkArea(s_area *area)
 		 ctlen = MsgGetCtrlLen(hmsg);
 		 if( ctlen == 0 )
 		 {
-		    w_log( LL_WARN, "msg %ld has no control information\n", (long) i);
+		    w_log( LL_WARN, "msg %ld has no control information", (long) i);
 		    MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
 
 		 } else {
@@ -317,7 +317,7 @@ void linkArea(s_area *area)
 
 		      ctl = (byte *) srealloc(ctl, ctlen + 1);
 		      if (ctl == NULL) {
-			w_log( LL_CRIT,"out of memory while linking on msg %ld\n", (long) i);
+			w_log( LL_CRIT,"out of memory while linking on msg %ld", (long) i);
 			MsgCloseArea(harea);
                         closeLog();
                         disposeConfig(cfg);
@@ -382,7 +382,7 @@ void linkArea(s_area *area)
 	   /* Pass 2: building relations tree, & filling tree IDs */
 	   if ( loglevel >= 11 ) {
               if (linkNew)
-                 w_log(LL_LINKING, "Pass 2: building relations for %ld messages, new from %ld\n", (long) i-1, (long) newStart);
+                 w_log(LL_LINKING, "Pass 2: building relations for %ld messages, new from %ld", (long) i-1, (long) newStart);
               else
                  w_log(LL_LINKING, "Pass 2: building relations for %ld messages", (long) i-1);
            }
@@ -505,7 +505,7 @@ void linkArea(s_area *area)
 	   /* Pass 3: finding unlinked messages with filled tree IDs, and link
 	    * them to the tree where possible
 	    */
-	   w_log(LL_LINKING, "Pass 3: buildng relations by treeIds\n");
+	   w_log(LL_LINKING, "Pass 3: buildng relations by treeIds");
 
 	   for (i = 1, crepl=replmap; i <= highMsg && treeLinks; i++, crepl++) {
 	      if ( crepl->replyToPos == 0 && crepl->freeReply == 0 &&
@@ -539,7 +539,7 @@ void linkArea(s_area *area)
 
 
 	   /* Pass 4: write information back to msgbase */
-	   w_log(LL_LINKING, "Pass 4: writing\n");
+	   w_log(LL_LINKING, "Pass 4: writing");
 
 	   for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++) {
 
@@ -705,7 +705,7 @@ int main(int argc, char **argv) {
    m.req_version = 0;
    m.def_zone = (UINT16) cfg->addr[0].zone;
    if (MsgOpenApi(&m)!= 0) {
-      w_log(LL_CRIT, "MsgOpenApi Error.\n");
+      w_log(LL_CRIT, "MsgOpenApi Error.");
       closeLog();
       disposeConfig(cfg);
       exit(EX_SOFTWARE);
@@ -816,7 +816,7 @@ int main(int argc, char **argv) {
 		   }
 	       }
 
-	       w_log(LL_ERR, "Couldn't find area \"%s\"\n", line);
+	       w_log(LL_ERR, "Couldn't find area \"%s\"", line);
 	       nfree(line);
 	    }
 
@@ -825,7 +825,7 @@ int main(int argc, char **argv) {
 	 if (cfg->LinkWithImportlog == lwiKill) remove(cfg->importlog);
       } else {
 	 // importlog does not exist link all areas
-	 w_log(LL_INFO, "No ImportLog file, linking all Areas\n");
+	 w_log(LL_INFO, "No ImportLog file, linking all Areas");
 
 	 // NetMails
 	 for (i = 0; i < cfg -> netMailAreaCount; i++)
@@ -839,13 +839,13 @@ int main(int argc, char **argv) {
       }
    }
 
-   w_log(LL_STAT, "Linked by msgid/reply: %ld, replid: %ld, subj: %ld, revmsgid: %ld\n", (long)links_msgid, (long)links_replid, (long)links_subj, (long)links_revmsgid);
+   w_log(LL_STAT, "Linked by msgid/reply: %ld, replid: %ld, subj: %ld, revmsgid: %ld", (long)links_msgid, (long)links_replid, (long)links_subj, (long)links_revmsgid);
    if (links_ignored)
-      w_log(LL_SUMMARY, "Linked total: %ld, Ignored: %ld\n\n", (long) links_total, (long) links_ignored);
+      w_log(LL_SUMMARY, "Linked total: %ld, Ignored: %ld", (long) links_total, (long) links_ignored);
    else
       w_log(LL_SUMMARY, "Linked total: %ld", (long) links_total);
 
-   w_log(LL_STOP, "Done\n");
+   w_log(LL_STOP, "Done");
 
    closeLog();
    disposeConfig(cfg);

@@ -25,7 +25,7 @@
 
 #else
 
-#  include <fidoconf/log.h> */
+#  include <fidoconf/log.h>
 
 #endif
 
