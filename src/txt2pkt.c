@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef __TURBOC__
 #include <unistd.h>
+#else
+#include <dos.h>
+#endif
 
 #if !defined(MSDOS) || defined(__DJGPP__)
 #include <fidoconf/fidoconf.h>
@@ -16,6 +20,11 @@
 #include <pkt.h>
 #include <xstr.h>
 #include <recode.h>
+
+#if defined(__EMX__) && defined(__NT__)
+/* we can't include windows.h for several reasons ... */
+#define CharToOem CharToOemA
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -127,18 +136,23 @@ int main(int argc, char *argv[])
       } else {
          if ((text = fopen(argv[n], "rt")) != NULL) {
             /* reserve 512kb + 1 (or 32kb+1) text Buffer */
-            textBuffer = (CHAR *) malloc(TEXTBUFFERSIZE+1);
+            textBuffer = (CHAR *) malloc((size_t)(TEXTBUFFERSIZE+1));
             for (msg.textLength = 0; msg.textLength < (long) TEXTBUFFERSIZE; msg.textLength++) {
-               if ((textBuffer[msg.textLength] = getc(text)) == 0)
-                  break;
-               if (feof(text)) {
-                  textBuffer[++msg.textLength] = 0;
-                  break;
-               }; /* endif */
-               if ('\r' == textBuffer[msg.textLength])
-                  msg.textLength--;
-               if ('\n' == textBuffer[msg.textLength])
-                  textBuffer[msg.textLength] = '\r';
+                int c = getc(text);
+                if (c == EOF) {
+                    textBuffer[msg.textLength] = 0;
+                    break;
+                }
+                if ((textBuffer[msg.textLength] = (char)c) == 0)
+                    break;
+                if (feof(text)) {
+                    textBuffer[++msg.textLength] = 0;
+                    break;
+                }; /* endif */
+                if ('\r' == textBuffer[msg.textLength])
+                    msg.textLength--;
+                if ('\n' == textBuffer[msg.textLength])
+                    textBuffer[msg.textLength] = '\r';
             }; /* endfor */
             textBuffer[msg.textLength-1] = 0;
             fclose(text);
@@ -178,12 +192,12 @@ int main(int argc, char *argv[])
 
       t = time (NULL);
       tm = localtime(&t);
-      strftime(msg.datetime, 21, "%d %b %y  %T", tm);
+      strftime((char *)msg.datetime, 21, "%d %b %y  %T", tm);
 
       msg.netMail = 1;
 
       sprintf(tmp, "--- %s\r", tearl);
-      strcat(textBuffer, tmp);
+      strcat((char *)textBuffer, (char *)tmp);
       if (area != NULL) {
          sprintf(tmp, " * Origin: %s (%d:%d/%d.%d)\r",
                  orig, msg.origAddr.zone, msg.origAddr.net,

@@ -55,6 +55,11 @@
 #include <scanarea.h>
 #include <xstr.h>
 
+#if defined(__EMX__) && defined(__NT__)
+/* we can't include windows.h for several reasons ... */
+#define CharToOem CharToOemA
+#endif
+
 void print_help(void) {
    fprintf(stdout,"\n       Post a message to area:\n");
    fprintf(stdout,"              hpt post [options] file\n\n");
@@ -229,7 +234,7 @@ void post(int c, unsigned int *n, char *params[])
       if (msg.netMail) echo=&(config->netMailAreas[0]);
 
       msg.text = createKludges(area, &msg.origAddr, &msg.destAddr);
-      xstrcat(&(msg.text), (char *)textBuffer);
+      xstrcat((char **)(&(msg.text)), (char *)textBuffer);
       
       free(textBuffer);
 
