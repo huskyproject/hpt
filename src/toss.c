@@ -1344,7 +1344,7 @@ int carbonCopy(s_message *msg, s_area *echo)
 
         case ct_group:
             if(echo->group!=NULL){
-				/* cb->str for example Fido,xxx,.. */
+		/* cb->str for example Fido,xxx,.. */
                 testptr=cb->str;
                 do{
                     if(NULL==(testptr=hpt_stristr(echo->group,testptr)))

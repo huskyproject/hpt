@@ -454,7 +454,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 		   exit_hpt("MsgApiOpen Error",1);
 	   }
    }
-   
+
    msgToSysop = (s_message**) safe_malloc(config->addrCount * sizeof(s_message*));
    for (i = 0; i < config->addrCount; i++) {
 	   
@@ -479,7 +479,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    if (cmPack == 1) scanExport(SCN_NETMAIL, NULL);
    if (cmPack &  2) scanExport(SCN_FILE | SCN_NETMAIL, scanParmF);
    if (cmPack &  4) scanExport(SCN_NAME | SCN_NETMAIL, scanParmA);
-   
+
    if (cmLink == 1) {
 	   if (linkName && (strstr(linkName,"*")||strstr(linkName,"?"))) {
 		   for (i=0; i < config->echoAreaCount; i++) 
@@ -494,9 +494,9 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 	   } else linkAreas(linkName);
    }
    nfree(linkName);
-   
+
    writeMsgToSysop();
-   
+
    for (i = 0; i < config->addrCount; i++) {
        if (msgToSysop[i]) freeMsgBuffers(msgToSysop[i]);
        nfree(msgToSysop[i]);
@@ -507,7 +507,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 
    // deinit SMAPI
    MsgCloseApi();
-   
+
    w_log('1', "End");
    closeLog(hpt_log);
    doneCharsets();

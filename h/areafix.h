@@ -29,7 +29,7 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
 int areaIsAvailable(char *areaName, char *fileName, char **desc, int retd);
 int relink (char *straddr);
 void addlink(s_link *link, s_area *area);
-char *rescan(s_link *link, s_message *msg, char *cmd);
+char *rescan(s_link *link, char *cmd);
 char *errorRQ(char *line);
 
 #endif

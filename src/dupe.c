@@ -85,6 +85,7 @@ char *createDupeFileName(s_area *area) {
 	
 	if (!area->DOSFile) {
 		xstrcat(&name, area->areaName);
+		// FIXME: there may be forbidden symbols in areaName
 	} else {
 		if (area->fileName)
 			xstrcat(&name,(afname=strrchr(area->fileName,PATH_DELIM))

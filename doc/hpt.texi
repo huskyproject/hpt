@@ -2758,7 +2758,7 @@ This statement can be repeated.
 
 By default one message can be processed by Carbon Copy several times.
 For example: you set CarbonTo "max" to echoarea MY.MAIL and CarbonSubj
-"beer" to echoarea MY.PLEASURE :-) And message to "max" and with this
+"beer" to echoarea MY.PLEASURE :-) And message to "max" with this
 subject line carbons to each @code{EchoArea}.
 
 If you turn on @code{CarbonAndQuit} message will be copyed to MY.MAIL
