@@ -5,7 +5,7 @@ hpt (1.2.1-1) stable; urgency=low
   * Add misc/hpt_ro to package
   * Add bugreport form
 
- -- Pavel Andreew <pavel@collage.etel.ru>  Fri, 18 Oct 2002 11:29:11 +0600
+ -- Pavel Andreew <pavel@collage.etel.ru>  Sun, 10 Nov 2002 13:52:33 +0500
 
 hpt (1.2.0-20020918-1) stable; urgency=low
 
