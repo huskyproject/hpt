@@ -77,6 +77,7 @@
 #include "link.h"
 #include "areafix.h"
 #include "query.h"
+#include "stat.h"
 
 #ifdef DO_PERL
 #include "hptperl.h"
@@ -588,6 +589,10 @@ int main(int argc, char **argv)
    /*  save forward requests info */
    af_CloseQuery();
    nfree(msgToSysop);
+
+#ifdef ADV_STAT
+   if (config->advStatisticsFile != NULL) upd_stat(config->advStatisticsFile);
+#endif
 
    /*  deinit SMAPI */
    MsgCloseApi();

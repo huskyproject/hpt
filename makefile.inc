@@ -14,7 +14,7 @@ EXENAMEFLAG=-o
 OBJS	= $(PERLOBJ) fcommon$(OBJ) hpt$(OBJ) pktread$(OBJ) \
 	global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) seenby$(OBJ) \
 	dupe$(OBJ) query$(OBJ) areafix$(OBJ) post$(OBJ) \
-	link$(OBJ) pktwrite$(OBJ) carbon$(OBJ)
+	link$(OBJ) pktwrite$(OBJ) carbon$(OBJ) stat$(OBJ)
 
 commonall: $(OBJS) \
      pktinfo$(EXE) \

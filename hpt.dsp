@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /Ob2 /I ".." /I ".\h" /I "e:\GVN\Perl\lib\core" /D "NDEBUG" /D "_MBCS" /D "__NT__" /D "NO_STRICT" /D "HAVE_DES_FCRYPT" /D "PERL_IMPLICIT_CONTEXT" /D "PERL_IMPLICIT_SYS" /D "_MAKE_DLL" /D "WINNT" /D "WIN32" /D "_CONSOLE" /D "USE_STAT_MACROS" /D "INTEL" /FR /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /Ob2 /I ".." /I ".\h" /I "D:\compilation\perl\lib\CORE" /D "NDEBUG" /D "_MBCS" /D "__NT__" /D "NO_STRICT" /D "HAVE_DES_FCRYPT" /D "PERL_IMPLICIT_CONTEXT" /D "PERL_IMPLICIT_SYS" /D "_MAKE_DLL" /D "WINNT" /D "WIN32" /D "_CONSOLE" /D "USE_STAT_MACROS" /D "INTEL" /FR /FD /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x419 /d "NDEBUG"
 # ADD RSC /l 0x419 /d "NDEBUG"
@@ -51,7 +51,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 fconfmvc.lib smapimvc.lib Kernel32.lib user32.lib delayimp.lib perl56.lib OLDNAMES.lib msvcrt.lib /nologo /subsystem:console /pdb:"..\nd_r\obj\hpt/hpt.pdb" /machine:I386 /nodefaultlib /libpath:"..\nd_r\lib" /libpath:"e:\GVN\Perl\lib\core"
+# ADD LINK32 fconfmvc.lib smapimvc.lib Kernel32.lib user32.lib delayimp.lib perl56.lib OLDNAMES.lib msvcrt.lib /nologo /subsystem:console /pdb:"..\nd_r\obj\hpt/hpt.pdb" /machine:I386 /nodefaultlib /libpath:"..\nd_r\lib" /libpath:"D:\compilation\perl\lib\CORE"
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "hpt - Win32 Debug"
@@ -68,7 +68,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /Zi /Od /I ".." /I ".\h" /I "e:\GVN\Perl\lib\core" /D "DO_PERL" /D "PERL_MSVCRT_READFIX" /D "NO_STRICT" /D "HAVE_DES_FCRYPT" /D "PERL_IMPLICIT_CONTEXT" /D "PERL_IMPLICIT_SYS" /D "_MAKE_DLL" /D "__NT__" /D "WINNT" /D "WIN32" /D "_CONSOLE" /D "USE_STAT_MACROS" /D "INTEL" /FR /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /Zi /Od /I ".." /I ".\h" /I "D:\compilation\perl\lib\CORE" /D "DO_PERL" /D "PERL_MSVCRT_READFIX" /D "NO_STRICT" /D "HAVE_DES_FCRYPT" /D "PERL_IMPLICIT_CONTEXT" /D "PERL_IMPLICIT_SYS" /D "_MAKE_DLL" /D "__NT__" /D "WINNT" /D "WIN32" /D "_CONSOLE" /D "USE_STAT_MACROS" /D "INTEL" /FR /FD /GZ /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x419 /d "_DEBUG"
 # ADD RSC /l 0x419 /d "_DEBUG"
@@ -77,7 +77,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo /o"..\nd_d\obj\hpt/hpt.bsc"
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 msvcrtd.lib fconfmvc.lib smapimvc.lib Kernel32.lib user32.lib delayimp.lib perl56.lib OLDNAMES.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib /libpath:"..\nd_d\lib" /libpath:"e:\GVN\Perl\lib\core" /delayload:perl56.dll
+# ADD LINK32 msvcrtd.lib fconfmvc.lib smapimvc.lib Kernel32.lib user32.lib delayimp.lib perl56.lib OLDNAMES.lib /nologo /subsystem:console /debug /machine:I386 /nodefaultlib /libpath:"..\nd_d\lib" /libpath:"D:\compilation\perl\lib\CORE" /delayload:perl56.dll
 # SUBTRACT LINK32 /verbose /profile /force
 
 !ENDIF 

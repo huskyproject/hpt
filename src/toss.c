@@ -103,6 +103,7 @@
 #include <scanarea.h>
 #include <fcommon.h>
 #include <hpt.h>
+#include "stat.h"
 #ifdef DO_PERL
 #include <hptperl.h>
 #endif
@@ -506,6 +507,9 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
         }
         if (rc==0) statToss.exported++;
         else rc=0;
+#ifdef ADV_STAT
+        if (config->advStatisticsFile != NULL) put_stat(echo, &(header.destAddr), stOUT, msg->textLength);
+#endif
     }
 
     if (f) fclose(f);
@@ -877,8 +881,15 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
 
         /*  cheking access of this link */
         writeAccess = checkAreaLink(echo, pktOrigAddr, 0);
-        if (writeAccess) rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
-        else { /*  access ok - process msg */
+        if (writeAccess)
+        {
+            rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
+#ifdef ADV_STAT
+            if (config->advStatisticsFile != NULL) put_stat(echo, &pktOrigAddr, stBAD, 0);
+#endif
+        }
+        else 
+        { /*  access ok - process msg */
 
             if (dupeDetection(echo, *msg)==1) {
                 /*  no dupe */
@@ -906,6 +917,9 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
 #endif
                 if (ccrc <= 1) {
                     echo->imported++;  /*  area has got new messages */
+#ifdef ADV_STAT
+                    if (config->advStatisticsFile != NULL) put_stat(echo, &pktOrigAddr, stNORM, msg->textLength);
+#endif
                     if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
                         if(messCC)
                             rc = putMsgInArea(echo, messCC, 1, forceattr);
@@ -935,6 +949,9 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
                     rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
                 } else rc = 1;
                 statToss.dupes++;
+#ifdef ADV_STAT
+                if (config->advStatisticsFile != NULL) put_stat(echo, &pktOrigAddr, stDUPE, 0);
+#endif
                 if (rc) config->dupeArea.imported++;
             }
         }
@@ -2204,6 +2221,9 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
 	    if (config->carbonCount != 0) carbonCopy(&msg, NULL, echo);
 		
 	    echo->imported++;  /*  area has got new messages */
+#ifdef ADV_STAT
+            if (config->advStatisticsFile != NULL) put_stat(echo, &pktOrigAddr, stNORM, msg.textLength);
+#endif
 	    if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
 		rc = putMsgInArea(echo, &msg,1, 0);
 		statToss.saved += rc;
@@ -2238,6 +2258,9 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
 		rc = putMsgInArea(&(config->dupeArea), &msg, 0, 0);
 	    } else rc = 1; /*  dupeCheck del */
 	    if (rc) config->dupeArea.imported++;
+#ifdef ADV_STAT
+            if (config->advStatisticsFile != NULL) put_stat(echo, &pktOrigAddr, stDUPE, 0);
+#endif
 	}
 
     } else rc = 0;

@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <stat.h>
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/log.h>
+
+#include "stat.h"
 
 #define REV_MIN 1            /* min revision we can read */
 #define REV_CUR 1            /* revision we write */
@@ -25,7 +26,7 @@
 
 /* internal address record */
 typedef struct st_addr {
-  short zone, net, node, point;
+  unsigned int zone, net, node, point;
 };
 
 /* link stats data */
@@ -53,8 +54,6 @@ typedef struct stat_echo {
 /* prototypes */
 int acmp(hs_addr *a1, struct st_addr *a2);
 int acmp2(struct st_addr *a1, struct st_addr *a2);
-void put_stat(s_area *echo, hs_addr *link, st_type type, long len);
-void upd_stat(char *file);
 int write_echo(FILE *F, struct stat_echo *e);
 struct stat_echo *read_echo(FILE *F);
 void free_echo(struct stat_echo *e);
@@ -81,7 +80,7 @@ int acmp2(struct st_addr *a1, struct st_addr *a2) {
 void put_stat(s_area *echo, hs_addr *link, st_type type, long len) {
 struct stat_echo *cur = stat, *prev = NULL, *me;
 struct chain_link *curl, *prevl;
-int res, i;
+int res;
 
   if (!do_stat) return;
   /* find pos and insert echo */
@@ -157,7 +156,8 @@ struct {
   if (OLD != NULL) {
     fread(&ohdr, sizeof(ohdr), 1, OLD); 
     if (ohdr.rev < REV_MIN || ohdr.rev > REV_MAX) {
-      msg2("Incompatible stat base", oldf); fclose(OLD); do_stat = 0; return; 
+      msg2("Incompatible stat base", oldf); fclose(OLD); 
+	  OLD = NULL; /*do_stat = 0; return;*/ 
     }
   }
   /* make new base: hpt.st$ */
