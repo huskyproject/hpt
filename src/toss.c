@@ -863,15 +863,16 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 
 /* area - area to carbon messages, echo - original echo area */
 int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carbon) {
-    char *p, *text, *old_text, *reason = carbon.reason;
+    char *line, *p, *text, *old_text, *reason = carbon.reason;
     int i, old_textLength, export = carbon.export, rc = 0;
 
     statToss.CC++;
 
     old_textLength = msg->textLength;
     old_text = msg->text;
+    i = old_textLength;
 
-    // recoding from internal to transport charSet if needed
+    /* recoding from internal to transport charSet if needed */
     if (config->outtab) {
 	if (msg->recode & REC_TXT) {
 	    recodeToTransportCharset((CHAR*)msg->text);
@@ -886,7 +887,29 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	if (reason) recodeToTransportCharset((CHAR*)reason);
     }
 	
-    i = old_textLength;
+    msg->text = NULL;
+    msg->textLength = 0;
+
+    line = old_text;
+    if (strncmp(line, "AREA:", 5) == 0) {
+        /*  jump over AREA:xxxxx\r */
+        while ((line-old_text<old_textLength) && (*(line) != '\r')) line++;
+        if(line-old_text<old_textLength) line++;
+    }
+
+    while(*line == '\001')
+    {
+        p = strchr(line, '\r');
+        if(!p)
+            break;
+        /* Temporary make it \0 terminated string */
+        *p = '\0';
+        xstrcat(&msg->text,line);
+        *p = '\r';
+        line = p+1;
+    }
+
+    text = line; /* may be old_text or old_text w/o begining kluges */
 
     if (!msg->netMail) {
 	if ((!config->carbonKeepSb) && (!area->keepsb)) {
@@ -894,13 +917,8 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	    if (NULL != (p = strstr(text ? text : old_text,"\rSEEN-BY:")))
 		i = (size_t) (p - old_text) + 1;
 	}
-    }
-
-    msg->text = NULL;
-    msg->textLength = 0;
-
-    if (!msg->netMail) {
 	xstrscat(&msg->text,
+		 "\r",
 		 (export) ? "AREA:" : "",
 		 (export) ? area->areaName : "",
 		 (export) ? "\r" : "",
@@ -909,13 +927,12 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 		 (config->carbonExcludeFwdFrom) ? "" : "'\r",
 		 (reason) ? reason : "",
 		 (reason) ? "\r" : "",
-		 //(!config->carbonExcludeFwdFrom || reason) ? "\r" : "",
-		 "\r\1", NULL);
+		 NULL );
 	msg->textLength = strlen(msg->text);
     }
 
-    xstralloc(&msg->text,i); // add i bytes
-    strncat(msg->text,old_text,i); // copy rest of msg
+    xstralloc(&msg->text,i);   /* add i bytes */
+    strncat(msg->text,text,i); /*  copy rest of msg */
     msg->textLength += i;
     
     if (!export) {
