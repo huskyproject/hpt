@@ -1,3 +1,8 @@
+2002-05-27 Monday 22:43  pavel.gulchouck
+
+	* src/hpt.c (1.121.2.4): deleting lock file if post failed [patch
+	by Andrew Sagulin 2:6037/1]
+
 2002-05-20 Monday 15:21  pavel.gulchouck
 
 	* src/hpt.c (1.121.2.3): fix spelling
