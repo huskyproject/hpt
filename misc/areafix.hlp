@@ -20,9 +20,9 @@ Example:
  %LIST DN.*                   <- List available areas that match pattern
  %LIST ! DN.*                 <- List all available areas except 
                                  areas that match pattern
- %QUERY			      <- List of areas to which you are currently
- 				 linked
- %LINKED		      <- same as %QUERY
+ %QUERY			              <- List of areas to which you are currently
+                                      linked
+ %LINKED		              <- same as %QUERY
  %UNLINKED                    <- List available areas to which
                                  you are currently not linked
  %AVAIL                       <- List all areas that are available at
@@ -42,13 +42,20 @@ Example:
  %RESCAN OS2.*                <- same
  %RESCAN linux.develop.ger 200  <- rescan the last 200 mails
  %RESCAN                      <- turn on rescanning of following subscription
- NSK.SYSOP /r			<- subscribe & rescan area
- NSK.PARTY /r=100		<- subscribe & rescan the last 100 mails
+ NSK.SYSOP /r                 <- subscribe & rescan area
+ NSK.PARTY /r=100		      <- subscribe & rescan the last 100 mails
 %COMPRESS                     <- ask for list of packers   
 %COMPRESS zip                 <- switch current packer for 'zip' 
 %COMPRESS none                <- switch off packing your mail
 %PACKER <packer>              <- same as %compress
 %RSB on                       <- turn on reduced SEEN-BY mode (FSC-0093)
-%RSB 1                        <- the same as above
 %RSB off                      <- turn off reduced SEEN-BY mode (FSC-0093)
-%RSB 0                        <- the same as above
+%RULES on                     <- start sending rules of any subscribed echo
+%RULES off                    <- stop sending rules of any subscribed echo
+%PKTSIZE NNN                  <- set max. packet (*.pkt) size to NNN kb
+%PKTSIZE 0                    <- set max. packet (*.pkt) size to unlimited
+%ARCMAILSIZE NNN              <- set max. bundle size to NNN kb
+%ARCMAILSIZE 0                <- set max. bundle size to unlimited
+
+  Note: you may also specify 1/0 as the aliases for on/off.
+        Ex.: "%RSB 1" acts the same as "%RSB on".

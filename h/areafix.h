@@ -5,25 +5,28 @@
 
 #include <fcommon.h>
 
-#define NOTHING  0
-#define LIST     1
-#define HELP     2
-#define ADD      3
-#define DEL      4
-#define AVAIL    5
-#define QUERY    6
-#define UNLINKED 7
-#define PAUSE    8
-#define RESUME   9
-#define INFO     10
-#define RESCAN   11
-#define REMOVE   12
-#define ADD_RSC  13
-#define PACKER   14
-#define RSB      15
-#define DONE     100
-#define STAT     101
-#define AFERROR  255
+#define NOTHING     0
+#define LIST        1
+#define HELP        2
+#define ADD         3
+#define DEL         4
+#define AVAIL       5
+#define QUERY       6
+#define UNLINKED    7
+#define PAUSE       8
+#define RESUME      9
+#define INFO        10
+#define RESCAN      11
+#define REMOVE      12
+#define ADD_RSC     13
+#define PACKER      14
+#define RSB         15
+#define RULES       16
+#define PKTSIZE     17
+#define ARCMAILSIZE 18
+#define DONE        100
+#define STAT        101
+#define AFERROR     255
 
 typedef enum { lt_all, lt_linked, lt_unlinked } s_listype;
 

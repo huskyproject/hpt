@@ -1151,17 +1151,22 @@ char *resume_link(s_link *link)
 char *info_link(s_link *link)
 {
     char *report=NULL, *ptr, linkAka[SIZE_aka2str];
-    char hisAddr[]="Your address: ";
-    char ourAddr[]="AKA used here: ";
-    char Arch[]="Compression: ";
-    char Rsb[]="Reduced SEEN-BY: ";
     unsigned int i;
 
     sprintf(linkAka,aka2str(link->hisAka));
     xscatprintf(&report, "Here is some information about our link:\r\r");
-    xscatprintf(&report, "%20s%s\r%20s%s\r%20s%s\r%20s",
-                hisAddr, linkAka, ourAddr, aka2str(*link->ourAka),
-                Rsb, link->reducedSeenBy?"on":"off", Arch);
+    xscatprintf(&report, "            Your address: %s\r", linkAka);
+    xscatprintf(&report, "           AKA used here: %s\r", aka2str(*link->ourAka));
+    xscatprintf(&report, "         Reduced SEEN-BY: %s\r", link->reducedSeenBy ? "on" : "off");
+    xscatprintf(&report, " Send rules on subscribe: %s\r", link->noRules ? "off" : "on");
+    if (link->pktSize)
+    xscatprintf(&report, "             Packet size: %u kbytes\r", link->pktSize);
+    else
+    xscatprintf(&report, "             Packet size: unlimited\r");
+    xscatprintf(&report, "     Arcmail bundle size: %u kbytes\r", link->arcmailSize!=0 ? link->arcmailSize :
+                      (config->defarcmailSize ? config->defarcmailSize : 500));
+    xscatprintf(&report, " Forward requests access: %s\r", link->denyFRA ? "off" : "on");
+    xscatprintf(&report, "Compression: ");
 
     if (link->packerDef==NULL)
 	xscatprintf(&report, "No packer (");
@@ -1288,6 +1293,102 @@ char *add_rescan(s_link *link, char *line) {
     return report;
 }
 
+char *pktsize (s_link *link, char *cmdline) {
+
+    char *report = NULL;
+    char *pattern = NULL;
+    int reversed;
+    char *error = NULL;
+    unsigned long num = 0;
+
+    pattern = safe_strdup(getPatternFromLine(cmdline, &reversed));
+
+    if (pattern == NULL) {
+        xscatprintf(&report, "Invalid request :%s\rPlease, read help!\r\r", cmdline);
+        return report;
+    }
+
+    pattern = trimLine(pattern);
+
+    num = strtoul(pattern, &error, 10);
+    if ( ((error != NULL) && (*error != '\0')) || num == unsigned_long_max ) {
+        xscatprintf(&report, "'%s' is not a valid number!\r", pattern);
+        nfree(error);
+        return report;
+    } else {
+
+        char *confName = NULL;
+        char *pktSizeString = NULL;
+        long strbeg = 0;
+        long strend = 0;
+
+        if (link->pktSize == num) {
+            xscatprintf(&report, "Pkt size is already set to %u kbytes. No changes were made.\r", num);
+            return report;
+        }
+
+        xstrcat(&confName,(cfgFile) ? cfgFile : getConfigFileName());
+        FindTokenPos4Link(&confName, "pktSize", link, &strbeg, &strend);
+        xscatprintf(&pktSizeString,"pktSize %u",num);
+        if( InsertCfgLine(confName, pktSizeString, strbeg, strend) ) {
+            link->pktSize = num;
+            xscatprintf(&report, "Pkt size is set to %u kbytes.\r", num);
+        }
+
+        nfree(confName);
+        nfree(pktSizeString);
+        return report;
+    }
+}
+
+char *arcmailsize (s_link *link, char *cmdline) {
+
+    char *report = NULL;
+    char *pattern = NULL;
+    int reversed;
+    char *error = NULL;
+    unsigned long num = 0;
+
+    pattern = safe_strdup(getPatternFromLine(cmdline, &reversed));
+
+    if (pattern == NULL) {
+        xscatprintf(&report, "Invalid request :%s\rPlease, read help!\r\r", cmdline);
+        return report;
+    }
+
+    pattern = trimLine(pattern);
+
+    num = strtoul(pattern, &error, 10);
+    if ( ((error != NULL) && (*error != '\0')) || num == unsigned_long_max ) {
+        xscatprintf(&report, "'%s' is not a valid number!\r", pattern);
+        nfree(error);
+        return report;
+    } else {
+
+        char *confName = NULL;
+        char *arcmailSizeString = NULL;
+        long strbeg = 0;
+        long strend = 0;
+
+        if (link->arcmailSize == num) {
+            xscatprintf(&report, "Arcmail size is already set to %u kbytes. No changes were made.\r", num);
+            return report;
+        }
+
+        xstrcat(&confName,(cfgFile) ? cfgFile : getConfigFileName());
+        FindTokenPos4Link(&confName, "arcmailSize", link, &strbeg, &strend);
+        xscatprintf(&arcmailSizeString,"arcmailSize %u",num);
+        if( InsertCfgLine(confName, arcmailSizeString, strbeg, strend) ) {
+            link->arcmailSize = num;
+            xscatprintf(&report, "Arcmail size is set to %u kbytes.\r", num);
+        }
+
+        nfree(confName);
+        nfree(arcmailSizeString);
+        return report;
+    }
+}
+
 char *packer(s_link *link, char *cmdline) {
     char *report=NULL;
     char *was=NULL;
@@ -1402,6 +1503,60 @@ char *rsb(s_link *link, char *cmdline)
     return report;
 }
 
+char *rules(s_link *link, char *cmdline)
+{
+    int mode; /*  1 = RULES on (noRules off), 0 - RULES off (noRules on). */
+              /*  !!! Use inversed values for noRules keyword. !!! */
+
+    char *param=NULL; /*  RULES value. */
+    char *report=NULL;
+    char *confName = NULL;
+    long  strbeg=0;
+    long  strend=0;
+
+    param = getPatternFromLine(cmdline, &mode); /*  extract rules value (on or off) */
+    if (param == NULL)
+    {
+        xscatprintf(&report, "Invalid request: %s\rPlease read help.\r\r", cmdline);
+        return report;
+    }
+
+    param = trimLine(param);
+
+    if ((!strcmp(param, "0")) || (!strcasecmp(param, "off")))
+        mode = 0;
+    else
+    {
+        if ((!strcmp(param, "1")) || (!strcasecmp(param, "on")))
+            mode = 1;
+        else
+        {
+            xscatprintf(&report, "Unknown parameter for areafix %rules command: %s\r. Please read help.\r\r",
+                        param);
+            nfree(param);
+            return report;
+        }
+    }
+    nfree(param);
+    if (link->noRules != (UINT)mode)
+    {
+        xscatprintf(&report, "Send rules mode had not been changed.\rCurrent value is '%s'\r\r",
+                    mode?"on":"off");
+        return report;
+    }
+    xstrcat(&confName,(cfgFile) ? cfgFile : getConfigFileName());
+    FindTokenPos4Link(&confName, "noRules", link, &strbeg, &strend);
+    xscatprintf(&param, "noRules %s", mode?"off":"on");
+    if( InsertCfgLine(confName, param, strbeg, strend) )
+    {
+        xscatprintf(&report, "Send rules mode is turned %s now\r\r", mode?"off":"on");
+        link->noRules = (mode ? 0 : 1);
+    }
+    nfree(param);
+    nfree(confName);
+    return report;
+}
+
 int tellcmd(char *cmd) {
     char *line;
 
@@ -1427,6 +1582,9 @@ int tellcmd(char *cmd) {
         if (strncasecmp(line,"packer",6)==0) return PACKER;
         if (strncasecmp(line,"compress",8)==0) return PACKER;
         if (strncasecmp(line,"rsb",3)==0) return RSB;
+        if (strncasecmp(line,"rules",5)==0) return RULES;
+        if (strncasecmp(line,"pktsize",7)==0) return PKTSIZE;
+        if (strncasecmp(line,"arcmailsize",11)==0) return ARCMAILSIZE;
         if (strncasecmp(line,"rescan", 6)==0) {
             if (line[6] == '\0') {
                 rescanMode=1;
@@ -1510,6 +1668,15 @@ char *processcmd(s_link *link, char *line, int cmd) {
         break;
     case RSB: report = rsb (link, line);
         RetFix=RSB;
+        break;
+    case RULES: report = rules (link, line);
+        RetFix=RULES;
+        break;
+    case PKTSIZE: report = pktsize (link, line);
+        RetFix=PKTSIZE;
+        break;
+    case ARCMAILSIZE: report = arcmailsize (link, line);
+        RetFix=ARCMAILSIZE;
         break;
     case INFO: report = info_link(link);
         RetFix=INFO;
@@ -1858,6 +2025,15 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 		    break;
 		case RSB:
 		    RetMsg(msg, link, preport, "Areafix reply: reduced seen-by change request");
+		    break;
+		case RULES:
+		    RetMsg(msg, link, preport, "Areafix reply: send rules change request");
+		    break;
+		case PKTSIZE:
+		    RetMsg(msg, link, preport, "Areafix reply: pkt size change request");
+		    break;
+		case ARCMAILSIZE:
+		    RetMsg(msg, link, preport, "Areafix reply: arcmail size change request");
 		    break;
 		case STAT:
 		    report = areaStatus(report, preport);

@@ -1057,7 +1057,11 @@ void perl_setvars(void) {
       hv_store(_hv, _name, strlen(_name), _sv, 0);                       \
     }
 #define VK_ADD_HASH_int(_hv,_sv,_name,_value)                            \
-    if (_value) { VK_ADD_HASH_intz(_hv,_sv,_name,_value) }
+    if (_value) {                                                        \
+      VK_ADD_HASH_intz(_hv,_sv,_name,_value)                             \
+    } else {                                                             \
+      VK_ADD_HASH_intz(_hv,_sv,_name,0)                                  \
+    }
 
    if ((sv = get_sv("hpt_ver", TRUE)) != NULL) {
      char *vers = NULL;
@@ -1139,6 +1143,10 @@ void perl_setvars(void) {
       VK_ADD_HASH_int(hv2, sv, "forwreqsPrio", config->links[i]->forwardAreaPriority);
       VK_ADD_HASH_int(hv2, sv, "reducedSeenBy", config->links[i]->reducedSeenBy);
       VK_ADD_HASH_int(hv2, sv, "noRules", config->links[i]->noRules);
+      VK_ADD_HASH_int(hv2, sv, "pktSize", config->links[i]->pktSize);
+      VK_ADD_HASH_int(hv2, sv, "arcmailSize", (config->links[i]->arcmailSize ?
+                                                 config->links[i]->arcmailSize :
+                                                 (config->defarcmailSize ? config->defarcmailSize : 500) ));
       if (config->links[i]->packerDef) VK_ADD_HASH_str(hv2, sv, "packer", config->links[i]->packerDef->packer);
       if (config->links[i]->AccessGrp) {
         char *grplist = NULL;
