@@ -10,6 +10,9 @@ max:
 * carbonAddr
 * carbons when scan
 * support for "route flavour nopack ..."
+Nestyurkin Nikolay:
+* added txt2pkt to makefile.wcw
+* renamed tree.c::count to tree.c::tr_count
 
 ----- cvs ci ------
 Sat Jun  3 23:25:14 NOVST 2000

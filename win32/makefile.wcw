@@ -2,23 +2,23 @@ DEBUG   = 0
 CC      = wcc386
 LINK    = WLINK
 
-OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj post.obj areafix.obj arealist.obj dupe.obj recode.obj tree.obj seenby.obj strsep.obj link.obj crc.obj
+OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj post.obj areafix.obj arealist.obj dupe.obj recode.obj tree.obj seenby.obj strsep.obj link.obj crc.obj pktinfo.obj txt2pkt.obj
 SRC_DIR = ..\src
 
 CFLAGS = -zq -wx -bt=nt -i=..\..;..\h; -oneatx -5
-all: $(OBJS) pktinfo.exe hptlink.exe hpttree.exe hpt.exe
+all: $(OBJS) pktinfo.exe hptlink.exe hpttree.exe txt2pkt.exe hpt.exe
 
 $(OBJS): $(SRC_DIR)\*.c
   @echo compiling *.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
-pktinfo.obj: $(SRC_DIR)\*.c
-  @echo compiling $*.c
-  $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
-
-pktinfo.exe: pktinfo.obj fcommon.obj pktread.obj recode.obj
+pktinfo.exe:
   @echo linking pktinfo
   $(LINK) $(LFLAGS) FILE pktinfo.obj, fcommon.obj, recode.obj, log.obj, pktread.obj, global.obj, dupe.obj, tree.obj, crc.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconf\fconfwcw.lib NAME pktinfo.exe
+
+txt2pkt.exe:
+  @echo linking txt2pkt
+  $(LINK) $(LFLAGS) FILE txt2pkt.obj, log.obj, fcommon.obj, pktread.obj, recode.obj, pktwrite.obj, global.obj, dupe.obj, tree.obj, crc.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconf\fconfwcw.lib NAME txt2pkt.exe
 
 hptlink.exe:
   $(CC) $(CFLAGS) $(SRC_DIR)\hptlink.c

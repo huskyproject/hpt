@@ -16,6 +16,10 @@
 #include <pkt.h>
 #include <recode.h>
 
+#if (defined (__WATCOMC__) && defined (__NT__)) || defined(__TURBOC__)
+#include <dos.h>
+#endif
+
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
 /* we can't include windows.h for several reasons ... */
 #ifdef __MINGW32__
