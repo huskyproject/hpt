@@ -111,7 +111,7 @@ int addAka(FILE *f, s_link *link) {
 	return 0;
 }
 
-int delAka(FILE *f, s_link *link) {
+int delAka(FILE *f, char *fileName, s_link *link) {
 	int al,i=1;
     char straka[20], *cfg, c, j='\40';
 	long areapos,endpos,cfglen;
@@ -149,7 +149,7 @@ int delAka(FILE *f, s_link *link) {
 	fseek(f,-cfglen-al-2,SEEK_END);
 	fputs(cfg,f);
 
-	truncate(getConfigFileName(),endpos-al-1);
+	truncate(fileName,endpos-al-1);
 	
 	free(cfg);
 	return 0;
@@ -238,9 +238,7 @@ char *help(s_link *link) {
 
 int changeconfig(char *fileName, char *areaName, s_link *link, int action) {
 	FILE *f;
-        char *cfgline;
-        char *token;
-        char *running;
+        char *cfgline, *token, *running;
 	
 	if ((f=fopen(fileName,"r+")) == NULL)
 		{
@@ -256,22 +254,13 @@ int changeconfig(char *fileName, char *areaName, s_link *link, int action) {
                    token = strsep(&running, " \t");
                    
                    if (stricmp(token, "include")==0)
-                      changeconfig(strsep(&running, " \t"), areaName, link, action);
+                   	changeconfig(strsep(&running, " \t"), areaName, link, action);
 
-                   else
-                      
-                      token = strsep(&running, " \t");
-                      if (stricmp(token, areaName)==0)
-                         if (action) delAka(f, link); else addAka(f, link);
-
-                   /*			cfgline+=9;
-                    if (!strncasecmp(cfgline,line,strlen(line))) {
-                    cfgline-=9;
-                    free(cfgline);
-                    if (i) delAka(f,link); else addAka(f,link);
-                    }
-                    */
-
+                   else {
+                   	token = strsep(&running, " \t");
+                      	if (stricmp(token, areaName)==0)
+                        	if (action) delAka(f, fileName, link); else addAka(f, link);
+		   }
 
                 }
                 free(cfgline);
