@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Thu Sep  7 16:00:38 NOVST 2000
+max:
+* misc/filter.pl from Pavel Gulchouck
+
+----- cvs ci ------
 Wed Sep  6 17:36:17 NOVST 2000
 max (patches from Serguei Revtov):
 * hptlink JAM enable, linking by subj in spite of control info found
