@@ -69,6 +69,7 @@ int __stdcall CharToOemA(char *, char *);
 #include <fidoconf/dirlayer.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/afixcmd.h>
+#include <fidoconf/temp.h>
 
 #include <pkt.h>
 #include <scan.h>
@@ -588,10 +589,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 	msgfp = popen(progname + 1, "w");
     } else
 #endif
-	{
-	    fname = tmpnam(NULL);
-	    msgfp = fopen(fname, "wt");
-	};
+	msgfp = createTempTextFile(config, &fname);
 	
     if (!msgfp) {
 	w_log(LL_ERR, "external process %s: cannot create file", progname);
@@ -627,6 +625,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 	    rc = system(execstr);
 	    nfree(execstr);
 	    unlink(fname);
+	    nfree(fname);
 	};
     if (rc == -1 || rc == 127) {
 	w_log(LL_ERR, "excution of external process %s failed", progname);
