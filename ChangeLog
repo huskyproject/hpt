@@ -1,3 +1,13 @@
+2002-06-19 Wednesday 21:17  stas
+
+	* src/: getfree.c (1.22), hptlink.c (1.37): Fixes: remove unmatched
+	closing comment; remove \òn from log messages.
+
+2002-06-19 Wednesday 09:31  stas
+
+	* doc/hpt.texi (1.66): Loglevels description sinchronized with
+	fidoconfig doc.
+
 2002-06-17 Monday 17:08  mche
 
 	* src/scan.c (1.165): fix deleting of nonexisting file
