@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# hptstat ver.0.5, (c)opyright 2002-03, by val khokhlov
+# hptstat ver.0.73, (c)opyright 2002-03, by val khokhlov
 %areas;                       # areas found in stat (tag=>id), id=1,2,3,...
 @area_tag;                    # ...reverse array (id=>tag)
 %links;                       # links found in stat
@@ -9,8 +9,12 @@
 $INB = $OUTB = 0;             # total input and output bytes
 %config_areas, @config_links; # parsed hpt config
 
-parse_config($ENV{FIDOCONFIG} or "/home/val/fido/hpt/hpt.conf");
-parse_stat($stat_file or "d:/fido/log/hpt.stat.bin");
+# ====================================================================
+# MODIFY THE SECTION BELOW TO CUSTOMIZE REPORT
+# -->---
+
+# init(<default binary stat log>[, <default config file>])
+init("/home/val/fido/log/hpt.sta", "/home/val/fido/hpt/hpt.conf");
 # header
 print center("hpt statistics"), 
       center(localtime($stat1)." - ".localtime($stat2)), "\n";
@@ -33,46 +37,69 @@ print center("Zero traffic areas"), "\n",
 print center("Bad and duplicate messages"), "\n",
       join("\n", make_baddupe(['Dupe', ' Bad'], 2, [7,8], [7,8])), "\n\n";
 
+# --<---
+# END OF CUSTOMIZATION SECTION
+# ====================================================================
+
 # --------------------------------------------------------------------
 # center a line
 sub center { return sprintf '%'.(39-length($_[0])/2)."s%s\n", ' ', $_[0]; }
 # --------------------------------------------------------------------
 # parse stat file into @stat
 sub parse_stat {
-  my ($name) = @_;
-  die "Please specify statfile in parse_stat() or advStatisticsFile config keyword\n" unless defined $name;
+  my $gz;
+  my ($name, $warn) = @_;
+  print STDERR " * processing ".($GZ ? "gzip'ed " : "")."stat file: $name\n" if $DBG;
+eval {
   open F, $name or die "Can't open stat file $name\n"; binmode F;
-  read F, $_, 16;
+  if (!$GZ && $name !~ /\.[Gg][Zz]$/o) { read F, $_, 16; }
+  else {
+    die "Compess::Zlib perl module required for gzip'ed files processing\n" unless eval { require Compress::Zlib; import Compress::Zlib; 1; };
+    $gz = gzopen(\*F, "r") or die "gzopen() error: $gzerrno\n";
+    $gz->gzread($_, 16);
+  }
   my ($rev, $t0) = unpack 'x2 S1 L1', $_;
   # check revision
-  if ($rev != 1) { close F; die "Stat file $name revision $rev, expected 1\n"; }
+  if ($rev != 1) {
+    $gz->gzclose if $gz;
+    close F;
+    die "Stat file $name revision $rev, expected 1\n"; 
+  }
   # set times
-  $stat1 = $t0; $stat2 = (stat F)[9];
+  $stat1 = $t0 if !defined $stat1 || $stat1 > $t0; 
+  $stat2 = (stat F)[9] if $stat2 < (stat F)[9];
   # read file
-  while (!eof F) {
-    read F, $_, 4;
+  while ( $gz ? $gz->gzread($_, 4) > 0 : !eof F ) {
+    read F, $_, 4 unless $gz;
     my ($lc, $tl, $tag, $id) = unpack 'S2', $_;
     # area tag
-    read F, $tag, $tl;
+    !$gz ? read F, $tag, $tl : $gz->gzread($tag, $tl);
     $id = $areas{$tag};
     if (!defined $id) { $areas{$tag} = $id = keys(%areas)+1; $area_tag[$id] = $tag; }
     # links data
     for (my $i = 0; $i < $lc; $i++) {
-      read F, $_, 32;
+      !$gz ? read F, $_, 32 : $gz->gzread($_, 32);
       push @stat, [$id, unpack('S4 L6', $_)];
       my ($z,$n,$f,$p) = unpack 'S4', $_;
       $links{$p ? "$z:$n/$f.$p" : "$z:$n/$f"} = 1;
       $INB += $stat[-1][9]; $OUTB += $stat[-1][10];
     }
   }
+  $gz->gzclose if $gz;
   close F;
+};
+  if ($@) {
+    if ($warn) { print STDERR " * error processing, skipped\n" if $DBG; }
+    else { die $@; }
+  }
 }
 # --------------------------------------------------------------------
 # parse hpt config
 sub parse_config {
   my $in_link;
+  local *F;
   my ($name) = @_;
-  die "Please define FIDOCONFIG variable or specify husky config name\n" unless length $name > 0;
+  print STDERR " * processing config file: $name\n" if $DBG;
   open F, $name or die "Can't open husky config file $name\n";
   while (<F>) {
     chomp $_; study $_;
@@ -83,7 +110,8 @@ sub parse_config {
     # parse stat file
     if (/^\s*advStatisticsFile\s+/i) {
       ($stat_file) = /^\s*\S+\s+(\S+)/;
-      $stat_file =~ s/\[([^\]]+)\]/$ENV{$1}/eg;
+      $stat_file =~ s/\[([^\]]+)\]/$SET{$1} or $ENV{$1}/eg;
+      print STDERR " * found advStatisticsFile: $stat_file\n" if $DBG;
     }
     # parse area
     elsif (/^\s*echoarea\s+/i) {
@@ -104,6 +132,19 @@ sub parse_config {
       my ($aka) = /^\s*\S+\s+(\S+)/;
       $aka =~ s/\.0+$//;
       push @config_links, $aka;
+    }
+    # parse set
+    elsif (/^\s*set\s+/i) {
+      my ($s1, $s2) = /^\s*\S+\s+(\S+)[^=]*=\s*(.*?)\s*$/o;
+      $s2 =~ s/\[([^\]]+)\]/$SET{$1} or $ENV{$1}/eg;
+      print STDERR " * found set: $s1=$s2\n" if $DBG;
+      $SET{$s1} = $s2;
+    }
+    # parse include
+    elsif (/^\s*include\s+/i) {
+      my ($s) = /^\s*\S+\s+(\S+)/o;
+      $s =~ s/\[([^\]]+)\]/$SET{$1} or $ENV{$1}/eg;
+      parse_config($s) if -r $s;
     }
   }
   close F;
@@ -269,7 +310,7 @@ sub make_summary {
                $s, 
                ($v->[1] || '-'), perc2str($v->[1], $tot[1]), 
                ($v->[2] || '-'), perc2str($v->[2], $tot[2]), 
-               ($v->[3] || '-'), ($v->[4] || '-'),
+               ($v->[4] || '-'), ($v->[3] || '-'),
                traf2str($v->[5]), perc2str($v->[5], $tot[5]), 
                traf2str($v->[6]), perc2str($v->[6], $tot[6]));
   }
@@ -279,7 +320,7 @@ sub make_summary {
              "Total ".@arr." ".lc($type)."(s)", 
              ($tot[1] || '-'), perc2str($tot[1], $tot[1]), 
              ($tot[2] || '-'), perc2str($tot[2], $tot[2]), 
-             ($tot[3] || '-'), ($tot[4] || '-'),
+             ($tot[4] || '-'), ($tot[3] || '-'),
              traf2str($tot[5]), perc2str($tot[5], $tot[5]), 
              traf2str($tot[6]), perc2str($tot[6], $tot[6])) if @arr > 0;
   return @out;
@@ -369,4 +410,135 @@ sub debug_stat {
   for my $arr ($sort ? @sorted : @stat) {
     printf "%-30s %d:%d/%d.%d\t%3d %3d %3d %3d  %5d %5d\n", $area_tag[$arr->[0]], @$arr[1..$#$arr];
   }
+}
+# --------------------------------------------------------------------
+# convert string to datetime: str2time($s[, $base])
+sub str2time {
+  die "POSIX perl module is required for archive processing\n" unless eval { require POSIX; 1; };
+  my ($s, $base) = @_;
+  $base = time if !defined $base;
+  my ($h, $d, $m, $y, $w) = (localtime $base)[2..6];
+  $w = 7 if $w == 0;
+  $h = 0 unless $s =~ /[Hh]/o;
+  while (length $s > 0) {
+    my @a = $s =~ /^([+-]?)(\d+)([hHdDwWmMyY])?/o or return undef;
+    substr $s, 0, length(join '', @a), '';
+    $a[2] = 'd' if !defined $a[2];
+    if (lc $a[2] eq 'y') { 
+      if ($a[0] eq '-') { $y -= $a[1]; }
+      elsif ($a[0] eq '+') { $y += $a[1]; }
+      elsif ($a[1] < 1900) { $y = $a[1]+100; }
+      else { $y = $a[1]-1900; }
+    }
+    elsif (lc $a[2] eq 'm') { $m = $a[0] eq '-' ? $m-$a[1] : $a[1]-1; 
+      if ($a[0] eq '-') { $m -= $a[1]; }
+      elsif ($a[0] eq '+') { $m += $a[1]; }
+      else { $m = $a[1] - 1; }
+    }
+    elsif (lc $a[2] eq 'w') { 
+      if ($a[0] eq '-') { $d -= $w+7*$a[1]-1; $w = 1; }
+      elsif ($a[0] eq '+') { $d += 7*$a[1]-$w+1; $w = 1; }
+      else { return undef; }
+    }
+    elsif (lc $a[2] eq 'd') {
+      if ($a[0] eq '-') { $d -= $a[1]; }
+      elsif ($a[0] eq '+') { $d += $a[1]; }
+      else { $d = $a[1]; }
+    }
+    elsif (lc $a[2] eq 'h') { 
+      if ($a[0] eq '-') { $h -= $a[1]; }
+      elsif ($a[0] eq '+') { $h += $a[1]; }
+      else { $h = $a[1]; }
+    }
+  }
+  return POSIX::mktime(0, 0, $h, $d, $m, $y, $w);
+}
+# --------------------------------------------------------------------
+# command line parser
+sub parse_cmdline {
+  my $i;
+  for ($i = 0; $i < @ARGV; $i++) {
+    if ($ARGV[$i] eq '-c') {
+      die "Use: -c <config file>\n" if $i+1 >= @ARGV;
+      $conf_file = $ARGV[$i+1]; $i++;
+    }
+    elsif ($ARGV[$i] =~ /^--conf/io) {
+      ($conf_file) = $ARGV[$i] =~ /^--conf=(.+)$/io or die "Use: --conf=<conf-file>\n";
+    }
+    elsif ($ARGV[$i] =~ /^(?:-z|--[Gg][Zz])$/) { $GZ = 1; }
+    elsif (lc $ARGV[$i] eq '-a') {
+      die "Use: -a <archive layout> <start date> <period>\n" if $i+3 >= @ARGV;
+      $archive = $ARGV[$i+1]; 
+      $dt1 = str2time($ARGV[$i+2]) or die "Bad date format: ".$ARGV[$i+2]."\n";
+      $dt2 = str2time($ARGV[$i+3], $dt1) or die "Bad date format: ".$ARGV[$i+3]."\n";
+      $i += 3;
+    }
+    elsif ($ARGV[$i] =~ /^--arch/io) {
+      my ($s1, $s2);
+      ($archive, $s1, $s2) = $ARGV[$i] =~ /^--arch=([^,]+),([^,]+),([^,]+)$/io or die "use: --arch=<archive-layout>,<start-date>,<period>\n";
+      $dt1 = str2time($s1) or die "Bad date format: $s1\n";
+      $dt2 = str2time($s2, $dt1) or die "Bad date format: $s2\n";
+    }
+    elsif ($ARGV[$i] =~ /^(?:-h|-\?|--[Hh][Ee][Ll][Pp])$/o) { print USAGE(); exit; }
+    elsif ($ARGV[$i] =~ /^(?:-D|--[Dd][Ee][Bb][Uu][Gg])$/o) { $DBG = 1; }
+    elsif (-f $ARGV[$i]) { push @stat_file, $ARGV[$i]; last; }
+    else { die "Unknown parameter or missing stat file: $ARGV[$i]\n"; }
+  }
+  for (; $i < @ARGV; $i++) {
+    if (-f $ARGV[$i]) { push @stat_file, $ARGV[$i]; last; }
+    else { die "Missing stat file: $ARGV[$i]\n"; }
+  }
+}
+# --------------------------------------------------------------------
+# init
+sub init {
+  $GZ = 0;
+  parse_cmdline;
+  # parse config _only_ if we know its name
+  $conf_file = $ENV{FIDOCONFIG} || $_[1] unless defined $conf_file;
+  parse_config($conf_file) if defined $conf_file;
+  # parse stat archive
+  if (defined $archive) {
+    print STDERR " * period: ".localtime($dt1)."-".localtime($dt2)."\n * archive layout: $archive\n" if $DBG;
+    for (my $i = $dt1; $i < $dt2; $i += 3600*24) {
+      #print STDERR " * strftime=".POSIX::strftime($archive, (localtime($i))[0..5])." for date ".localtime($i)."\n" if $DBG;
+      parse_stat( POSIX::strftime($archive, (localtime($i))[0..5]), 1 );
+    }
+  }
+  # parse several stat files
+  elsif (@stat_file > 0) {
+    for $stat_file (@stat_file) { parse_stat($stat_file); }
+  }
+  # parse one stat file only
+  else {
+    $stat_file = $_[0] unless defined $stat_file;
+    die "Please specify statfile in cmdline, parse_stat() or advStatisticsFile keyword\n" unless defined $stat_file;
+    parse_stat($stat_file);
+  }
+}
+
+sub USAGE () { return <<EOF
+advhptstat ver.0.6, (c)opyright 2002-03, by val khokhlov
+
+  Usage: advhptstat [options] [stat file...]
+  Options are:
+    -c <config>, --conf=<config>           specifies config file name
+    -z, --gz                               force use gzip'ed binary stat logs
+  Instead of one or more stat files you can use archive for a period:
+    -a <layout> <start> <end>, --arch=<layout>,<start>,<end>
+       <layout> - full filename of a stat log for a day if strftime() format
+       <start>  - start date of period (see below for format)
+       <end>    - end date of period (actually, *not* inclusive)
+
+  date <start>, <end> consists of token(s): [+-]<NN>[hdwmy]
+       use 15x to set value to 15 (h - hour, d - day, m - month, y - year)
+       use +2d to advance day forward by 2, -6d to advance day backward by 6
+       use -1w to set date to Monday of previous week, +1w - next week
+       (if letter [hdwmy] is omitted 'd' is assumed)
+
+  Examples (assume now is 17 Jan 2003):
+     advhptstat hpt.stat.bin               -- simply use hpt.stat.bin
+     advhptstat -a "/home/fido/log/%Y/%m/%d/hpt.sta.gz" -7 +7
+       -- will use files: /home/fido/log/2003/01/##/hpt.sta.gz, ##=10..16
+EOF
 }
