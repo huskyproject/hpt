@@ -26,10 +26,10 @@ typedef struct query_areas
 enum  query_action{ FIND, ADDFREQ, ADDDEL };
 typedef enum query_action e_query_action;
 
-enum  changeConfigRet{ I_ERR, // reed config error
-                       O_ERR, // reed config error
-                       ADD_OK,// link successfully added
-                       DEL_OK
+enum  changeConfigRet{ I_ERR=-2, // read config error
+                       O_ERR=-1, // write config error
+                       ADD_OK,   // link successfully added
+                       DEL_OK    // link removed
 };
 typedef enum changeConfigRet e_changeConfigRet;
 
