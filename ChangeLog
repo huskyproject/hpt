@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Aug 27 19:31:04 NOVST 2000
+* excludePassthroughCarbon
+* processEMMsg optimization
+
+----- cvs ci ------
 Fri Aug 25 12:37:46 NOVST 2000
 max (patch from Serguei Revtov):
 * token BundleNameStyle

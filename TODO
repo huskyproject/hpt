@@ -3,8 +3,6 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- excludePassthroughCarbon
-- add pkt from to dupe messages
 - msgbasedir for each link
 - -sbadd(<addr>,<addr>,...) -sbdel(<addr>,<addr>,...)
 - reduces Seen-BYs (fsc-0093)

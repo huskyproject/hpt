@@ -345,6 +345,24 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
    return rc;
 }
 
+/*
+int putMsgInDupeArea(s_addr addr, s_message *msg, dword forceattr)
+{
+	char *textBuff=NULL, *from=NULL;
+	
+	xscatprintf(&from, "FROM: %s\r", aka2str(addr));
+	xstrscat(&textBuff, from, msg->text, NULL);
+
+	msg->textLength += strlen(from);
+	nfree(from);
+	
+	nfree(msg->text);
+	msg->text = textBuff;
+
+	return putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
+}
+*/
+
 void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount)
 {
    char *seenByText, *start, *token;
@@ -952,6 +970,8 @@ int carbonCopy(s_message *msg, s_area *echo)
 	s_area *area;
 	
 	if (echo->ccoff==1) return 0;
+	if (echo->msgbType==MSGTYPE_PASSTHROUGH && config->exclPassCC)
+		return 0;
 
 	for (i=0; i<config->carbonCount; i++) {
 
@@ -1239,11 +1259,12 @@ int checkAreaLink(s_area *area, s_addr aka, int type)
 
 int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceattr)
 {
-   char   *area, *textBuff;
-   s_area *echo;
+   char   *area, *p;
+   s_area *echo=&(config->badArea);
    s_link *link;
    int    writeAccess = 0, rc = 0, ccrc = 0;
 
+/* remove after Sep 26
    textBuff = (char *) safe_malloc(strlen(msg->text)+1);
    strcpy(textBuff, msg->text);
 
@@ -1252,6 +1273,15 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
    while (*area == ' ') area++;
 
    echo = getArea(config, area);
+*/
+   p = strchr(msg->text,'\r');
+   if (p) {
+	   *p='\0';
+	   area = msg->text+5;
+	   while (*area == ' ') area++;
+	   echo = getArea(config, area);
+	   *p='\r';
+   }
 
    // no area found -- trying to autocreate echoarea
    if (echo == &(config->badArea)) {
@@ -1300,6 +1330,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 		   } else {
 			   // msg is dupe
 			   if (echo->dupeCheck == dcMove) {
+//				   rc = putMsgInDupeArea(pktOrigAddr, msg, forceattr);
 				   rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
 			   } else rc = 1;
 			   statToss.dupes++;
@@ -1393,7 +1424,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
    }
 will be removed after 13-09-00 */
 
-   nfree(textBuff);
+//   nfree(textBuff);
    return rc;
 }
 
