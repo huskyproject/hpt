@@ -6,7 +6,7 @@ Sat May  7 13:30:43 MSD 2000
 max (patch from Serguei Revtov):
 * fixed coredump in area autocreation
 * changing of pkt & bundle files extension while tossing (prevents of
-  tossing the same bad packet many times)
+  tossing the same bad packet many times). rtfm 'bout tossingExt token.
 * fixed memory leak in changeFileSuffix()
 
 ----- cvs ci ------

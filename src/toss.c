@@ -1680,7 +1680,8 @@ void processDir(char *directory, e_tossSecurity sec)
       if (pktFile || (arcFile && !config->noProcessBundles)) {
 
          rc = 3; // nonsence, but compiler warns
-         if ((newFileName=changeFileSuffix(dummy, "tos")) != NULL){
+         if (config->tossingExt != NULL &&
+             (newFileName=changeFileSuffix(dummy, config->tossingExt)) != NULL){
             free(dummy);
             dummy = newFileName;
             newFileName=NULL;
