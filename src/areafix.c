@@ -1394,7 +1394,13 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	if (security) security=1;
 	
 	// find link
-	link=getLinkFromAddr(*config, pktHeader->origAddr);
+	link=getLinkFromAddr(*config, msg->origAddr);
+
+	// if keyword allowPktAddrDiffer for this link is on,
+	// we allow the addresses in PKT and MSG header differ
+	if (link!=NULL)
+		if (link->allowPktAddrDiffer == pdOn)
+			security = 0;
 	
 	// this is for me?
 	if (link!=NULL)	notforme=addrComp(msg->destAddr, *link->ourAka);
