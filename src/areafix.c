@@ -893,9 +893,9 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
 	if (config->links[i].forwardRequests) Indexes[Requestable++] = i;
     }
     qsort(Indexes,Requestable,sizeof(Indexes[0]),compare_links_priority);
-
+    i = 0;
     if(lastRlink) { // try to find next requestable uplink
-        for (i = 0; i < Requestable; i++) {
+        for (; i < Requestable; i++) {
             uplink = &(config->links[Indexes[i]]);
             if( addrComp(uplink->hisAka, (*lastRlink)->hisAka) == 0)
             {   // we found lastRequestedlink
