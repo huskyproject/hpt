@@ -229,7 +229,7 @@ static char *GetCtrlValue (char *ctl, char *kludge)
 
    if ((end - value) <= 0) return (NULL);
 
-   out = (char *) malloc((size_t) (end - value) + 1 );
+   out = (char *) smalloc((size_t) (end - value) + 1 );
    if (out == NULL) return (NULL);
 
    memcpy(out, value, (size_t) (end - value));
@@ -293,13 +293,13 @@ void linkArea(s_area *area)
 	      return;
 	   }
 
-	   if ( (replmap = (s_msginfo *) calloc (highMsg, sizeof(s_msginfo))) == NULL){
+	   if ( (replmap = (s_msginfo *) scalloc (highMsg, sizeof(s_msginfo))) == NULL){
 	      if (loglevel>0) fprintf(outlog,"Out of memory. Want %ld bytes\n",  (long) sizeof(s_msginfo)*highMsg);
 	      MsgCloseArea(harea);
 	      exit(EX_SOFTWARE);
 	   }
 
-	   if ( (links = (s_origlinks *) calloc (highMsg, sizeof(s_origlinks))) == NULL){
+	   if ( (links = (s_origlinks *) scalloc (highMsg, sizeof(s_origlinks))) == NULL){
 	      if (loglevel>0) fprintf(outlog,"Can't get %ld bytes\n",  (long) sizeof(s_origlinks)*highMsg);
 	      MsgCloseArea(harea);
 	      exit(EX_SOFTWARE);
@@ -320,7 +320,7 @@ void linkArea(s_area *area)
 		 } else {
 		   if( ctl==NULL || ctlen_curr < ctlen + 1) {
 
-		      ctl = (byte *) realloc(ctl, ctlen + 1);
+		      ctl = (byte *) srealloc(ctl, ctlen + 1);
 		      if (ctl == NULL) {
 			if ( loglevel > 0) fprintf(outlog,"out of memory while linking on msg %ld\n", (long) i);
 			MsgCloseArea(harea);
@@ -579,9 +579,9 @@ void linkArea(s_area *area)
                  }
 	      }
 
-	      if(crepl -> replyId) free(crepl -> replyId);
+	      if(crepl -> replyId) nfree(crepl -> replyId);
 	      if(crepl -> subject) free(crepl -> subject);
-	      if(crepl -> msgId  ) free(crepl -> msgId  );
+	      if(crepl -> msgId  ) nfree(crepl -> msgId  );
 	   }
 
 	   MsgCloseArea(harea);
@@ -674,7 +674,7 @@ int main(int argc, char **argv) {
      } else {
        // AreaName(s) specified by args
        nareas++;
-       argareas = (char **)realloc ( argareas, nareas*sizeof(char *));
+       argareas = (char **)srealloc ( argareas, nareas*sizeof(char *));
        argareas[nareas-1] = argv[i];
      }
    }

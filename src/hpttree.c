@@ -100,7 +100,7 @@ void  printTree (int level, int nodeNum)
 
    if ( linksInArray <= level ) { // Allocate place for link counter in current level
       linksInArray = level + 1;
-      linksOnLevel = realloc ( linksOnLevel, sizeof(int) * linksInArray);
+      linksOnLevel = srealloc ( linksOnLevel, sizeof(int) * linksInArray);
    }
 
    linksOnLevel[level] = 0;
@@ -214,7 +214,7 @@ void buildAreaTree(s_area *area)
 
 
 		   textLength = MsgGetTextLen(hmsg);
-		   text = (char *) calloc(textLength+1,sizeof(char));
+		   text = (char *) scalloc(textLength+1,sizeof(char));
 		   if (text == NULL) return;
 
                    ttime = mktime(&tmTime);
@@ -284,7 +284,7 @@ void buildAreaTree(s_area *area)
 			    if (!found) {
 			       nodeCount++;
 			       i = nodeCount;
-			       allNodes = (s_nodepath *) realloc (allNodes, sizeof(s_nodepath) * nodeCount);
+			       allNodes = (s_nodepath *) srealloc (allNodes, sizeof(s_nodepath) * nodeCount);
 			       cnode = &allNodes[i-1];
 			       *cnode = node;
 			    }
@@ -381,7 +381,7 @@ int main(int argc, char **argv) {
      } else {
        // AreaName(s) specified by args
        nareas++;
-       argareas = (char **)realloc ( argareas, nareas*sizeof(char *));
+       argareas = (char **)srealloc ( argareas, nareas*sizeof(char *));
        argareas[nareas-1] = argv[i];
      }
    }
