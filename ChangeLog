@@ -1,3 +1,8 @@
+2003-01-05 Sunday 08:35  sfpavel
+
+	* src/perl.c (tags: hpt-1_2_2-release) (hpt-1_2-stable.4): Fix
+	compilation problem with makeperl.mvcdll
+
 2002-12-31 Tuesday 08:41  stas_degteff
 
 	* misc/areafix.866 (tags: hpt-1_2_2-release) (hpt-1_2-stable.3):
@@ -92,8 +97,8 @@
 
 2002-11-21 Thursday 08:03  stas_degteff
 
-	* src/perl.c (tags: hpt-1_2_2-release) (hpt-1_2-stable.3): Fix
-	constants redefinition (prevent comiper warnings)
+	* src/perl.c (hpt-1_2-stable.3): Fix constants redefinition
+	(prevent comiper warnings)
 
 2002-11-20 Wednesday 11:50  stas_degteff
 
