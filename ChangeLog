@@ -1,3 +1,19 @@
+2004-01-06 Tuesday 21:27  d_sergienko
+
+	* HISTORY, src/fcommon.c (hpt-1_4-stable.[7,3]): prevent generation
+	of the same name if hpt is being run several times in the same
+	second
+
+2004-01-06 Tuesday 20:29  d_sergienko
+
+	* src/pktread.c (hpt-1_4-stable.1): fix INTL parsing while reading
+	message from pkt (patch by Alex Woick)
+
+2004-01-06 Tuesday 10:20  d_sergienko
+
+	* src/: pktwrite.c, scanarea.c, seenby.c (hpt-1_4-stable.[3,2,2]):
+	fixed crash when scanning empty SDM area.
+
 2004-01-05 Monday 05:16  d_sergienko
 
 	* src/toss.c (hpt-1_4-stable.6): fixed renaming files when files
