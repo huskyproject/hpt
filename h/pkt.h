@@ -37,7 +37,6 @@
 #include <stdio.h>
 
 #include <fidoconf/fidoconf.h>
-#include <fidoconf/typesize.h>
 #include <fcommon.h>
 
 /* note that 128K - work buffer, not the max text length */
@@ -72,8 +71,11 @@ struct pktHeader {
    char  pktPassword[9]; /* password + \0 */
 };
 
+typedef struct pktHeader s_pktHeader;
+
+/*
 struct message {
-   /*Address block */
+   //Address block 
    s_addr destAddr, origAddr;
 
 //   UINT16 attributes;
@@ -87,9 +89,8 @@ struct message {
    char   *text;
 };
 
-typedef struct pktHeader s_pktHeader;
 typedef struct message   s_message;
-
+*/
 FILE        *createPkt(char *filename, s_pktHeader *header);
 /*DOC
   Input:  filename is the name of the pkt.

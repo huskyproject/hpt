@@ -313,7 +313,7 @@ static XS(perl_putMsgInArea)
   }
   free(sattr);
   if (addkludges)
-    msg.text = createKludges(config,
+    msg.text = createKludges(config->disableTID,
                 msg.netMail ? NULL : area, 
                 &msg.origAddr, &msg.destAddr,
                 versionStr);

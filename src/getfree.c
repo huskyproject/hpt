@@ -25,7 +25,7 @@
 #define MAXPATHLEN NAME_MAX
 #endif
 #elif defined (_MSC_VER)
-#include <direct.h>
+#include <stdlib.h>
 #ifndef MAXPATHLEN
 #define MAXPATHLEN _MAX_PATH
 #endif

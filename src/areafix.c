@@ -187,7 +187,7 @@ void removelink(s_link *link, s_area *area)
 	area->downlinkCount--;
     }
 }
-
+/* moved to fidoconfig
 s_message *makeMessage (s_addr *origAddr, s_addr *destAddr,
 			char *fromName,	char *toName, char *subject, int netmail)
 {
@@ -228,7 +228,7 @@ s_message *makeMessage (s_addr *origAddr, s_addr *destAddr,
 
     return msg;
 }
-
+*/
 char *getPatternFromLine(char *line, int *reversed)
 {
 
@@ -489,8 +489,12 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
     char *base, pass[]="passthrough";
 
     if (uplink->msg == NULL) {
-	msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop, uplink->RemoteRobotName ? uplink->RemoteRobotName : "areafix", uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1);
-	msg->text = createKludges(config,NULL, uplink->ourAka, &(uplink->hisAka),versionStr);
+	msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop, 
+        uplink->RemoteRobotName ? uplink->RemoteRobotName : "areafix",
+        uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1,
+        config->areafixKillReports);
+	msg->text = createKludges(config->disableTID,NULL, uplink->ourAka, &(uplink->hisAka),
+                              versionStr);
 	uplink->msg = msg;
     } else msg = uplink->msg;
 	
@@ -1669,7 +1673,8 @@ void preprocText(char *split, s_message *msg)
 {
     char *orig = (config->areafixOrigin) ? config->areafixOrigin : config->origin;
 
-    msg->text = createKludges(config,NULL, &msg->origAddr, &msg->destAddr,versionStr);
+    msg->text = createKludges(config->disableTID,NULL, &msg->origAddr, 
+                              &msg->destAddr, versionStr);
     xscatprintf(&split, "\r--- %s areafix\r", versionStr);
     if (orig) {
 	xscatprintf(&split, " * Origin: %s (%s)\r", orig, aka2str(msg->origAddr));
@@ -1741,7 +1746,8 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 
 	tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
 			     msg->toUserName,
-			     msg->fromUserName, newsubj, 1);
+			     msg->fromUserName, newsubj, 1,
+                 config->areafixKillReports);
 
 	preprocText(split, tmpmsg);
 	processNMMsg(tmpmsg, NULL, getNetMailArea(config,config->robotsArea),
@@ -2064,7 +2070,8 @@ void afix(s_addr addr, char *cmd)
 				 link->RemoteRobotName ?
 				 link->RemoteRobotName : "Areafix",
 				 link->areaFixPwd ?
-				 link->areaFixPwd : "", 1);
+				 link->areaFixPwd : "", 1,
+                 config->areafixKillReports);
 	    tmpmsg->text = cmd;
 	    processAreaFix(tmpmsg, NULL, 1);
 	    tmpmsg->text=NULL;
@@ -2153,7 +2160,8 @@ int unsubscribeFromPausedEchoAreas(s_link *link) {
 
     if (text) {
 	tmpmsg = makeMessage(&(link->hisAka), link->ourAka, link->name,
-			     "areafix", link->areaFixPwd, 1);
+			     "areafix", link->areaFixPwd, 1,
+                 config->areafixKillReports);
 	tmpmsg->text = text;
 	processAreaFix(tmpmsg, NULL, 0);
 	freeMsgBuffers(tmpmsg);
@@ -2209,9 +2217,10 @@ void autoPassive()
 				  msg = makeMessage(config->links[i].ourAka,
 						    &(config->links[i].hisAka),
 						    versionStr,config->links[i].name,
-						    "AutoPassive", 1);
+						    "AutoPassive", 1,
+                            config->areafixKillReports);
 				  msg->text = createKludges(
-                                config,NULL,
+                                config->disableTID,NULL,
 							    config->links[i].ourAka,
 							    &(config->links[i].hisAka)
                                 ,versionStr);
@@ -2297,9 +2306,11 @@ int relink (char *straddr) {
 			  versionStr,
 			  researchLink->RemoteRobotName ?
 			  researchLink->RemoteRobotName : "areafix",
-			  researchLink->areaFixPwd ? researchLink->areaFixPwd : "", 1);
+			  researchLink->areaFixPwd ? researchLink->areaFixPwd : "", 1,
+              config->areafixKillReports);
 
-	msg->text = createKludges(config,NULL,researchLink->ourAka,&researchLink->hisAka,versionStr);
+	msg->text = createKludges(config->disableTID,NULL,researchLink->ourAka,
+                              &researchLink->hisAka,versionStr);
 
 	for ( count = 0 ; count < areasArraySize; count++ ) {
 	    if ((areasIndexArray[count]->downlinkCount  <= 1) &&

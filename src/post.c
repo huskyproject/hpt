@@ -377,7 +377,7 @@ void post(int c, unsigned int *n, char *params[])
             
             if(!msg.netMail) memset(&msg.destAddr, '\0', sizeof(s_addr));
 
-            msg.text = createKludges(config,area, &msg.origAddr, &msg.destAddr,versionStr);
+            msg.text = createKludges(config->disableTID,area, &msg.origAddr, &msg.destAddr,versionStr);
 
             if( uuepost )
             {

@@ -518,12 +518,15 @@ void af_QueueReport()
     } else netmail=1;
 
     msgToSysop[0] = makeMessage(&(config->addr[0]),&(config->addr[0]), 
-        versionStr, netmail ? config->sysop : "All", "requests report", netmail);
+                                versionStr, 
+                                netmail ? config->sysop : "All", "requests report", 
+                                netmail,
+                                config->areafixKillReports);
     msgToSysop[0]->text = createKludges(
-        config,
-        netmail ? NULL : config->ReportTo, 
-        &(config->addr[0]), &(config->addr[0]),
-        versionStr);
+                                config->disableTID,
+                                netmail ? NULL : config->ReportTo, 
+                                &(config->addr[0]), &(config->addr[0]),
+                                versionStr);
     
     msgToSysop[0]->recode |= (REC_HDR|REC_TXT);
 
