@@ -777,13 +777,14 @@ int af_CloseQuery()
     size_t i = 0;
     struct  tm t1,t2;
     int writeChanges = 0;
-
     FILE *queryFile=NULL;
     s_query_areas *delNode = NULL;
     s_query_areas *tmpNode  = NULL;
 
+    w_log(LL_FUNC, __FILE__ ":%u:af_CloseQuery() begin", __LINE__);
 
     if( !queryAreasHead ) {  // list does not exist
+        w_log(LL_FUNC, __FILE__ ":%u:af_CloseQuery() end", __LINE__);
         return 0;
     }
 
@@ -844,6 +845,7 @@ int af_CloseQuery()
     queryAreasHead = NULL;
     if(queryFile) fclose(queryFile);
 
+    w_log(LL_FUNC, __FILE__ ":%u:af_CloseQuery() end", __LINE__);
     return 0;
 }
 
