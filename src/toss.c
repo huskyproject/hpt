@@ -195,11 +195,11 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 		    // set this flags
 		    msgHeader.attr |= MSGPRIVATE;
 		} else
-		if (header!=NULL)
-		// set TRS flag, if the mail is not to us(default)
-		if ( config->keepTrsMail ) msgHeader.attr &= ~(MSGKILL | MSGFWD);
-		else msgHeader.attr |= MSGFWD;
-		
+		if (header!=NULL) {
+		    // set TRS flag, if the mail is not to us(default)
+		    if ( config->keepTrsMail ) msgHeader.attr &= ~(MSGKILL | MSGFWD);
+		    else msgHeader.attr |= MSGFWD;
+		}
    } else
    // kill these flags on echomail messages
    msgHeader.attr &= ~(MSGREAD | MSGKILL | MSGFRQ | MSGSCANNED | MSGLOCKED);
