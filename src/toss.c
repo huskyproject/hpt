@@ -2281,7 +2281,8 @@ void tossTempOutbound(char *directory)
 		   if (link != NULL) {
 
                            if (link->packFile == NULL) {
-                               createTempPktFileName(link);
+			       if ( createTempPktFileName(link) )
+				   exit_hpt("Could not create new pkt!",1);
                            }
 
 			   nfree(link->pktFile);
@@ -2477,7 +2478,7 @@ void tossFromBadArea()
    if (area != NULL) {
 	   writeLogEntry(hpt_log, '1', "Scanning area: %s", config->badArea.areaName);
 	   highestMsg = MsgGetHighMsg(area);
-	   writeLogEntry(hpt_log, '1', "hiest msg: %i", highestMsg );
+//	   writeLogEntry(hpt_log, '1', "hiest msg: %i", highestMsg );
 
 	   //FIXME: the problem in smapi... msgnum update must be identical.
 

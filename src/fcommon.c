@@ -328,8 +328,16 @@ int createTempPktFileName(s_link *link)
 			}
 		}
 		if (counter >= numExt) {
-		   writeLogEntry(hpt_log,'7',"Can't use more than %d extensions for bundle names", numExt);
-		   counter = numExt-1;
+			writeLogEntry(hpt_log,'7',"Can't use more than %d extensions for bundle names",numExt);
+			nfree(fileName);
+			nfree(pfileName);
+			nfree(tmpPFileName);
+
+			// Temporary switching to TimeStamp style
+			config->bundleNameStyle = timeStamp;
+			i = createTempPktFileName(link);
+			config->bundleNameStyle = addrDiff;
+			return i;
 		}
 		
 		sprintf(pfileName, "%s%c", tmpPFileName, ext3[counter]);

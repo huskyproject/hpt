@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Sep 10 11:33:19 NOVST 2000
+max (patch from Serguei Revtov):
+* switch to TimeStamp bundleStyle when addrDiff used 36 extentions
+
+----- cvs ci ------
 Sat Sep  9 22:00:24 NOVST 2000
 max:
 * "toss -b" fixes (squish & jam areas)
