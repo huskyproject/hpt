@@ -53,8 +53,8 @@ endif
 
 uninstall:
 	-$(RM) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpt.1
-        -$(RM) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hptlink.1
-        -$(RM) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpttree.1
+	-$(RM) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hptlink.1
+	-$(RM) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpttree.1
 	-$(RM) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpt.1.gz 
 	-$(RM) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hptlink.1.gz
 	-$(RM) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpttree.1.gz
