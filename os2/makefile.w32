@@ -2,7 +2,7 @@ DEBUG   = 0
 CC      = wcc386
 LINK    = WLINK
 
-OBJS    = hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, post.obj, areafix.obj, dupe.obj, recode.obj, tree.obj, seenby.obj, strsep.obj
+OBJS    = hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, seenby.obj, dupe.obj, tree.obj, recode.obj, areafix.obj, post.obj, link.obj, strsep.obj
 SRC_DIR = ..\src
 
 !IF $(DEBUG) == 1

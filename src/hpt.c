@@ -36,6 +36,8 @@
 #ifndef __IBMC__
 #include <unistd.h>
 #endif
+#include <sys/types.h>
+#include <signal.h>
 
 #include <msgapi.h>
 #include <progprot.h>
@@ -64,6 +66,12 @@
 
 #if defined ( __WATCOMC__ ) && defined ( __NT__ )
 int __stdcall SetConsoleTitleA( const char* lpConsoleTitle );
+#endif
+
+#ifdef __OS2__
+#define INCL_DOSPROCESS
+#define INCL_DOSERRORS
+#include <os2.h>
 #endif
 
 s_message **msgToSysop = NULL;
@@ -141,6 +149,8 @@ void processCommandLine(int argc, char **argv)
 void processConfig()
 {
    char *buff = NULL;
+   unsigned long pid;
+   FILE *f;
 
    config = readConfig();
    if (NULL == config) {
@@ -150,9 +160,24 @@ void processConfig()
 
    // lock...
    if (config->lockfile!=NULL && fexist(config->lockfile)) {
+      f = fopen(config->lockfile, "rt");
+      fscanf(f, "%lu\n", &pid);
+      fclose(f);
+      /* Checking process PID */
+#ifdef __OS2__
+      if (DosKillProcess(DKP_PROCESSTREE, pid) == ERROR_NOT_DESCENDANT) {
+#elif UNIX
+      if (kill(pid, 0) == 0) {
+#else
+      if (1) {
+#endif
            printf("lock file found! exit...\n");
            disposeConfig(config);
            exit(1);
+      } else {
+         remove(config->lockfile);
+         createLockFile(config->lockfile);
+      } /* endif */
    }
    else if (config->lockfile!=NULL) createLockFile(config->lockfile);
    
@@ -204,7 +229,7 @@ int main(int argc, char **argv)
    sprintf(versionStr, "hpt v%u.%02u/LNX", VER_MAJOR, VER_MINOR);
 #elif __freebsd__
    sprintf(versionStr, "hpt v%u.%02u/BSD", VER_MAJOR, VER_MINOR);
-#elif OS2
+#elif __OS2__
     sprintf(versionStr, "hpt v%u.%02u/OS2", VER_MAJOR, VER_MINOR);
 #elif __NT__
     sprintf(versionStr, "hpt v%u.%02u/NT", VER_MAJOR, VER_MINOR);
@@ -260,7 +285,7 @@ int main(int argc, char **argv)
 
    // deinit SMAPI
    MsgCloseApi();
-
+   
    if (config->lockfile != NULL) remove(config->lockfile);
    writeLogEntry(hpt_log, '1', "End");
    closeLog(hpt_log);

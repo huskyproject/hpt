@@ -1,4 +1,4 @@
-- hpt should delete lockfile if terminated by SIGINT/SIGTERM
+- hpt should delete lockfile if terminated by SIGINT/SIGTERM for win32 and dos
 - hpt should sort pkts in the inbound directories in order of the date/time.
   So older pkts are processed before newer ones.
 - netmailarea should be packed when found in echotoss.log

@@ -1,7 +1,11 @@
 hpt 0.28
 --------
 
+Sun May  16 20:45:02
+Fedor:
 ----- cvs ci ------
++ delete lockfile if terminated by SIGINT/SIGTERM (UNIX and OS/2).
+
 mtt:
 Tue May 11 19:13:26 CEST 1999
 * if you write to AreaFix all leading space before a command is removed.
