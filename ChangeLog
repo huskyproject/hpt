@@ -1,3 +1,8 @@
+2004-01-07 Wednesday 00:10  d_sergienko
+
+	* HISTORY, doc/hpt.texi, src/toss.c (hpt-1_4-stable.[8,7,7]):
+	changed zonegating algorythm
+
 2004-01-06 Tuesday 21:27  d_sergienko
 
 	* HISTORY, src/fcommon.c (hpt-1_4-stable.[7,3]): prevent generation
