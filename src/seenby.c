@@ -64,6 +64,8 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
 
    if (seenByCount==0) {              /* return empty control line */
       xstrcat(&text, lineHeading);
+      /* reserve one byte for \r */
+         text = (char *) safe_realloc(text, strlen(text)+2);
    } else {
        
       line = safe_malloc ((size_t) size);
