@@ -937,7 +937,7 @@ void scanExport(int type, char *str) {
 
     w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
 
-    if ((processed == 1) && (type & SCN_FILE != SCN_FILE)) {
+    if ((processed == 1) && ((type & SCN_FILE) != SCN_FILE)) {
         w_log(LL_START, "EchoTossLogFile found, but contains no areas -> processing all areas.");
         scanAllAreas(type);
     }
