@@ -1273,12 +1273,12 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 #else
    char limiter = '\\';
 #endif
-
+/*
    if (!correctDateTime(msg->datetime)) {
        writeLogEntry(hpt_log, '6', "wrong msg datetime: renaming .pkt to .err");
        return rc;
    }
-
+*/
    if (area == NULL) {
  	area = &(config->netMailAreas[0]);
    };

@@ -2,6 +2,11 @@ hpt 0.9.5
 ---------
 
 ----- cvs ci ------
+Tue Jan 25 00:43:18 NOVT 2000
+max (patch from Serguei Revtov):
+* added -d NUM switch (last NUM days) to hpttree by Vlad Pluzhnikov 2:5021/19
+
+----- cvs ci ------
 Sat Jan 22 11:16:22 NOVT 2000
 max (patch from Serguei Revtov):
 * fixed bug in areafix (core dump on %rescan)

@@ -66,7 +66,7 @@ s_nodepath *allNodes = NULL;
 int nodeCount = 0;
 
 FILE *outlog;
-char *version = "1.0";
+char *version = "1.02";
 
 int *linksOnLevel = NULL;
 int linksInArray = 0;
@@ -83,6 +83,7 @@ int charsPG = 1;
 
 char *allCharsPG[2] = { "L|+", "\300\263\303" };
 
+int  tperiod;
 
 void  printTree (int level, int nodeNum)
 {
@@ -136,6 +137,7 @@ void buildAreaTree(s_area *area)
    HAREA harea;
    dword highMsg;
    HMSG  hmsg;
+   XMSG  xmsg;
    int   i = -1;
    int nmsg;
    char *text;
@@ -151,7 +153,16 @@ void buildAreaTree(s_area *area)
    int done;
    int root = -1;
 
-   fprintf(outlog, "Distribution tree of area %s\n\n", area->areaName);
+   /* for time period */
+   struct tm tmTime;
+   time_t ttime, actualTime = time(NULL);
+
+   fprintf(outlog, "Distribution tree of area %s", area->areaName);
+
+     if (tperiod) {
+        fprintf(outlog, " for last %d %s\n\n", tperiod, tperiod ==1 ? "day" : "days");
+     }
+     else fprintf(outlog, "\n\n");
 
    if ((area->msgbType & MSGTYPE_PASSTHROUGH) == MSGTYPE_PASSTHROUGH) {
      fprintf(outlog, "PASSTHROUGH, ignoring\n");
@@ -190,10 +201,28 @@ void buildAreaTree(s_area *area)
 		    * NOTE: text would be destructed by strtoc() !!!
 		    * Do not use it for anything else
 		    */
+
+
 		   textLength = MsgGetTextLen(hmsg);
 		   text = (char *) calloc(1, textLength+1);
-		   MsgReadMsg(hmsg, NULL, 0, textLength, (unsigned char *) text, 0, NULL);
+
+
+                   ttime = mktime(&tmTime);
+              
+		   MsgReadMsg(hmsg, &xmsg, 0, textLength, (unsigned char *) text, 0, NULL);
+
+		   /* check time period */
+                   if (xmsg.attr & MSGLOCAL) {
+                      DosDate_to_TmDate(&(xmsg.date_written), &tmTime);
+                   } else {
+                      DosDate_to_TmDate(&(xmsg.date_arrived), &tmTime);
+                   }
+
 		   MsgCloseMsg(hmsg);
+
+		   /* check time period */
+                   if ( (tperiod) && ( abs(actualTime - ttime) >= ( tperiod * 24 *60 * 60)) ) 
+                     continue;
 
 		   start = text;
 		   prevNode = -1;
@@ -293,8 +322,9 @@ void buildAreaTree(s_area *area)
 void usage() {
 
    fprintf(outlog, "hptTree %s\n", version);
-   fprintf(outlog, "Usage:\n hpttree [-p] [areaname ...]\n");
+   fprintf(outlog, "Usage:\n hpttree [-p] [-d NUM] [areaname ...]\n");
    fprintf(outlog, "         -p - toggle pseudographics mode\n");
+   fprintf(outlog, "         -d NUM - for last NUM days\n");
 
 
 }
@@ -318,6 +348,20 @@ int main(int argc, char **argv) {
 	     case 'p': /* Toggle pseudographics */
 	     case 'P':
 		charsPG = (charsPG) ? 0 : 1;
+		break;
+
+	     case 'd': /* Last NUM days */
+	     case 'D':
+                i++;
+                if ( !argv[i] ) {
+                   usage();
+                   exit(-1);
+                }
+		tperiod = atoi(argv[i]);
+                if ( tperiod <=0 ) {
+                   usage();
+                   exit(-1);
+                }
 		break;
 
 	     default:
