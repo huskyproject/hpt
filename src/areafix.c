@@ -575,7 +575,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     FILE *f;
-    char *cfgline, *token, *areaName, *buff;
+    char *cfgline, *token, *areaName, *buff, *addr=NULL;
     long pos=-1, lastpos, endpos, len;
     int rc=0;
 
@@ -849,7 +849,7 @@ void fixRules (s_link *link, s_area *area) {
 char *subscribe(s_link *link, char *cmd) {
     unsigned int i, rc=4, found=0;
     char *line, *an, *report = NULL;
-    s_area *area;
+    s_area *area=NULL;
 
     line = cmd;
 	
