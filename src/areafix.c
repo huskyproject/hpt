@@ -140,13 +140,13 @@ int subscribeAreaCheck(s_area *area, s_message *msg, char *areaname, s_link *lin
 	return rc;
 }
 
-// del link from area
+// del link from area, return 0 on success, 1 on error
 int delLinkFromArea(FILE *f, char *fileName, char *str) {
     long curpos, endpos, linelen=0, len;
     char *buff, *sbuff, *ptr, *tmp, *line, *save = NULL;
 	
     curpos = ftell(f);
-    buff = readLine(f);
+    if (NULL == (buff = readLine(f))) return 1;
     buff = trimLine(buff);
     len = strlen(buff);
 
@@ -639,7 +639,9 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 			(area->downlinks[0]->link->hisAka.point == 0)) {
 		    forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 1);
 		}
-		delLinkFromArea(f, fileName, aka2str(link->hisAka));
+		if (delLinkFromArea(f, fileName, aka2str(link->hisAka)))
+			w_log('9',"areafix: can't del link %s from echo area %s",
+				  aka2str(link->hisAka), areaName);
 		break;
 	    case 2:
 //		makepass(f, fileName, areaName);
