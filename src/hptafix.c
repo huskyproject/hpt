@@ -233,6 +233,7 @@ int init_hptafix(void) {
   call_writeMsgToSysop = &afWriteMsgToSysop;
   hook_onDeleteArea = &afDeleteArea;
   hook_onRescanArea = &afRescanArea;
+  hook_onAutoCreate = &afReportAutoCreate;
 #ifdef DO_PERL
   hook_onConfigChange = &perl_invalidate;
   hook_echolist       = &perl_echolist;
