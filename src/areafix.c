@@ -1187,7 +1187,7 @@ char *unsubscribe(s_link *link, char *cmd) {
                             aka2str(link->hisAka), an);
                     } else
                         w_log(LL_AREAFIX,"areafix: %s unlinked from %s",aka2str(link->hisAka),an);
-            } else { /*  unsubscribing from own address */
+            } else { /*  unsubscribing from own address - set area passtrough */
                 if (area->downlinkCount==0)
                 {
                     return do_delete(getLinkFromAddr(config,*(area->useAka)), area);
@@ -1202,13 +1202,15 @@ char *unsubscribe(s_link *link, char *cmd) {
                     }
                 }
                 j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
+/*                if (area->msgbType!=MSGTYPE_PASSTHROUGH) */
+                if (area->fileName)
+                   MsgDeleteBase(area->fileName, (word) area->msgbType);
             }
             if (j == DEL_OK){
-                MsgDeleteBase(area->fileName, (word) area->msgbType);
                 xscatprintf(&report," %s %s  unlinked\r",an,print_ch(49-strlen(an),'.'));
             }else
                 xscatprintf(&report," %s %s  error. report to sysop!\r",
-                an, print_ch(49-strlen(an),'.') );
+                                         an, print_ch(49-strlen(an),'.') );
             break;
         case 1:
             if (isPatternLine(line)) {
