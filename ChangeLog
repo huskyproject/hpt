@@ -1,3 +1,11 @@
+2002-09-19 Thursday 16:22  mche
+
+	* make/makefile.cyg (1.4): try to build hpt with perl
+
+2002-09-19 Thursday 08:39  sfpavel
+
+	* make/makefile.djg (1.4): Fix DJGPP build
+
 2002-09-18 Wednesday 18:30  pgul
 
 	* src/toss.c (1.440): unsafe tmpnam() usage changed to
