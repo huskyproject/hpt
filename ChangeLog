@@ -1,3 +1,9 @@
+
+----- cvs ci ------
+Sat Sep  9 12:57:57 MEZ 2000
+tobi (patch from max dated Sep 08 2000)
+* fixed bug with empty arealist (%list when no areas are available)
+
 ----- cvs ci ------
 Sun Sep  3 20:04:07 MEZ 2000
 tobi (patch from Serguei Revtov via max):
