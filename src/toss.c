@@ -1643,6 +1643,7 @@ void processDir(char *directory, e_tossSecurity sec)
    int dirNameLen;
    int filenum;
    char *newFileName=NULL;
+   char *ext[]={NULL, "sec", "asc", "bad", "ntu", "err"};
 
 #ifndef UNIX
    unsigned fattrs;
@@ -1719,8 +1720,15 @@ void processDir(char *directory, e_tossSecurity sec)
          else // if (arcFile)
             rc = processArc(dummy, sec);
 
-         switch (rc) {
-            case 1:   // pktpwd problem or link not found
+        if (rc>=1 && rc<=5) {
+	    writeLogEntry(hpt_log, '9', "Renaming pkt/arc to .%s",ext[rc]);
+            newFileName=changeFileSuffix(dummy, ext[rc]);
+	} else {
+	    if (rc!=6) remove(dummy);
+	}
+
+/*         switch (rc) {
+            case 1:   // pktpwd problem or link not found 
                newFileName=changeFileSuffix(dummy, "sec");
                break;
             case 2:  // could not open pkt
@@ -1740,8 +1748,8 @@ void processDir(char *directory, e_tossSecurity sec)
             default:
                remove (dummy);
                break;
-         }
-      };
+         } */
+      }
       nfree(dummy);
       nfree(newFileName);
    }
