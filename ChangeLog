@@ -1,3 +1,8 @@
+2004-01-11 Sunday 22:42  d_sergienko
+
+	* HISTORY, src/fcommon.c (hpt-1_4-stable.[11,4]): use GenMsgId()
+	algorythm to generate pkt file names. It is fast & reliable.
+
 2004-01-11 Sunday 21:11  d_sergienko
 
 	* doc/hpt.texi, h/seenby.h, h/toss.h, src/scanarea.c, src/seenby.c,
