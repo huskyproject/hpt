@@ -3192,6 +3192,8 @@ This links are auto-mandatory. Always use slash in mask!
 Options:
 
 @table @asis
+@item -pass 
+define area as passthrough even if msgbase type or filename is defined.
 @item -lr <integer>
 required level for read access (see also @code{Level} in link options);
 @code{integer} can't be negative;
