@@ -37,7 +37,8 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
       else
          sprintf(addr2d, " %u/%u", seenBys[i].net, seenBys[i].node);
 
-      if (strlen(text)+strlen(addr2d) +1 > size) {
+      if (strlen(text)+strlen(addr2d) +1 > size-1) {
+         //if line would be greater than 80 characters, make new line 
          size += 80;
          text = (char *) realloc(text, size);
          strcat(text, "\r");
