@@ -152,7 +152,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
       recodeToTransportCharset((CHAR*)msg->toUserName);
       recodeToTransportCharset((CHAR*)msg->subjectLine);
       recodeToTransportCharset((CHAR*)msg->text);
-   }
+   } else msg->recode |= (REC_HDR|REC_TXT);
 
    if (action == 0) nfree(seenByPath);
 }

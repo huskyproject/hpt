@@ -8,7 +8,6 @@ Category 1: Will certainly be implemented until next release
 - tearline. origin tokens...
 - fix for err + dupes
 - document renaming suffixes (and log them)
-- fix toss -b & farbon bug
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

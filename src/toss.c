@@ -298,7 +298,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 
          textWithoutArea = msg->text;
 
-         if ((strncmp(msg->text, "AREA:", 5) == 0) && (strip==1)) {
+         if ((strip==1) && (strncmp(msg->text, "AREA:", 5) == 0)) {
             // jump over AREA:xxxxx\r
             while (*(textWithoutArea) != '\r') textWithoutArea++;
             textWithoutArea++;
@@ -832,13 +832,26 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 /* area - area to carbon messages, echo - original echo area */
 int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carbon) {
 	char *p, *old_text, *reason = carbon.reason;
-	int i, old_textLength, reasonLen = 0, export = carbon.export, rc = 0, recode = 0;
+	int i, old_textLength, reasonLen = 0, export = carbon.export, rc = 0;
 
 	statToss.CC++;
 
 	old_textLength = msg->textLength;
 	old_text = msg->text;
-	if (msg->recode & REC_TXT) recode = 1;
+
+	// recoding from internal to transport charSet if needed
+	if (config->outtab) {
+	    if (msg->recode & REC_TXT) {
+		recodeToTransportCharset((CHAR*)msg->text);
+		msg->recode &= ~REC_TXT;
+	    }
+	    if (msg->recode & REC_HDR) {
+		recodeToTransportCharset((CHAR*)msg->fromUserName);
+    		recodeToTransportCharset((CHAR*)msg->toUserName);
+    		recodeToTransportCharset((CHAR*)msg->subjectLine);
+		msg->recode &= ~REC_HDR;
+	    }
+	}
 	
 	i = strlen(old_text);
 
@@ -880,7 +893,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	nfree(msg->text);
 	msg->textLength = old_textLength;
 	msg->text = old_text;
-	if (recode == 0) msg->recode &= ~REC_TXT;
+	msg->recode &= ~REC_TXT; // old text is always in Transport Charset
 	
 	return rc;
 }
@@ -1124,10 +1137,16 @@ void writeMsgToSysop()
 		    if (echo->downlinkCount > 0) {
 			// recoding from internal to transport charSet
 			if (config->outtab) {
-			    recodeToTransportCharset((CHAR*)msgToSysop[i]->fromUserName);
-		    	    recodeToTransportCharset((CHAR*)msgToSysop[i]->toUserName);
-		    	    recodeToTransportCharset((CHAR*)msgToSysop[i]->subjectLine);
-			    recodeToTransportCharset((CHAR*)msgToSysop[i]->text);
+			    if (msgToSysop[i]->recode & REC_HDR) {
+				recodeToTransportCharset((CHAR*)msgToSysop[i]->fromUserName);
+		    		recodeToTransportCharset((CHAR*)msgToSysop[i]->toUserName);
+		    		recodeToTransportCharset((CHAR*)msgToSysop[i]->subjectLine);
+				msgToSysop[i]->recode &= ~REC_HDR;
+			    }
+			    if (msgToSysop[i]->recode & REC_TXT) {
+				recodeToTransportCharset((CHAR*)msgToSysop[i]->text);
+				msgToSysop[i]->recode &= ~REC_TXT;
+			    }
 			}
 			forwardMsgToLinks(echo, msgToSysop[i], msgToSysop[i]->origAddr);
 			tossTempOutbound(config->tempOutbound);
@@ -2189,7 +2208,6 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
 	   if (dupeDetection(echo, msg)==1) {
 		   // no dupe
 		   
-		   msg.recode |= (REC_HDR|REC_TXT);
 		   if (config->carbonCount != 0) carbonCopy(&msg, echo);
 		   
 		   echo->imported++;  // area has got new messages
@@ -2202,10 +2220,16 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
 
 		   // recoding from internal to transport charSet
 		   if (config->outtab) {
+		       if (msg.recode & REC_HDR) {
 			   recodeToTransportCharset((CHAR*)msg.fromUserName);
 			   recodeToTransportCharset((CHAR*)msg.toUserName);
 			   recodeToTransportCharset((CHAR*)msg.subjectLine);
+			   msg.recode &= ~REC_HDR;
+		       }
+		       if (msg.recode & REC_TXT) {
 			   recodeToTransportCharset((CHAR*)msg.text);
+			   msg.recode &= ~REC_TXT;
+		       }
 		   }
    
 		   if (echo->downlinkCount > 0) {

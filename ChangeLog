@@ -2,6 +2,11 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Thu Jun 15 16:55:36 NOVST 2000
+max:
+* fixed wrong recoding with carbons when toss from badArea
+
+----- cvs ci ------
 Wed Jun 14 23:52:05 NOVST 2000
 max:
 * write dupe indexes to dupebase after "toss -b"
