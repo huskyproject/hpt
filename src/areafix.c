@@ -1599,7 +1599,7 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
             recodeToTransportCharset((CHAR*)tmpmsg->fromUserName);
             recodeToTransportCharset((CHAR*)tmpmsg->toUserName);
             recodeToTransportCharset((CHAR*)tmpmsg->text);
-            msg->recode &= ~(REC_HDR|REC_TXT);
+            tmpmsg->recode &= ~(REC_HDR|REC_TXT);
         }
 
         nfree(reply);
