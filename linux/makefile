@@ -19,7 +19,6 @@ all: $(OBJS) \
      tlog \
      tpkt \
      hpt \
-     clean \
      install
 
 %.o: $(SRC_DIR)%.c
@@ -41,5 +40,7 @@ clean:
 	rm -f *.o
 
 install:
-	install hpt tlog pktinfo tpkt $(INSTDIR)
+	install -s hpt pktinfo $(INSTDIR)
+	gzip hpt.1
 	install hpt.1.gz $(MANDIR)
+	gunzip hpt.1.gz

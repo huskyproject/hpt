@@ -321,10 +321,50 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    free(path);
 }
 
+int autoCreate(char *c_area, s_addr pktOrigAddr)
+{
+   FILE *f;
+   char buff[160], myaddr[20], hisaddr[20];
+   int i=0,j=0;
+   
+   //translating name of the area to lowercase, much better imho.
+   while (*c_area != '\0') {*c_area=tolower(*c_area);c_area++;i++;}
+   while (i>0) {c_area--;i--;};
+   
+   f = fopen("/etc/fido/config", "a");
+   
+   // making local address and address of uplink
+   sprintf(myaddr, "%u:%u/%u",config->addr[j].zone,config->addr[j].net,
+           config->addr[j].node);
+   sprintf(hisaddr,"%u:%u/%u",pktOrigAddr.zone,pktOrigAddr.net,
+            pktOrigAddr.node);
+
+   //if you are point...
+   if (config->addr[j].point != 0)  {
+           sprintf(buff,".%u",config->addr[j].point);
+           strcat(myaddr,buff);
+   }
+
+   //write new line in config file
+   sprintf(buff,"EchoArea %s %s%s -a %s Squish %s\n",c_area,config->msgBaseDir,
+           c_area,myaddr, hisaddr);
+   fprintf(f,buff);
+   
+   fclose(f);
+
+   // add new created echo to config in memory
+   parseLine(buff,config);
+   
+   sprintf(buff, "Area '%s' autocreated by %s", c_area, hisaddr);
+   writeLogEntry(log, '8', buff);
+   return 0;
+}
+ 
 void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 {
    char   *area, *textBuff;
    s_area *echo;
+   s_link *link;
 
    textBuff = (char *) malloc(strlen(msg->text)+1);
    strcpy(textBuff, msg->text);
@@ -334,10 +374,19 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 
    echo = getArea(*config, area);
 
-   if (echo == &(config->badArea))
-      // if msg goes to bad don't do any dupeCheck
-      putMsgInArea(&(config->badArea), msg);
-   else {
+   if (stricmp(echo->areaName,"BadArea") == 0)
+   {
+      // checking for autocreate option
+      link = getLinkFromAddr(*config, pktOrigAddr);
+      if ((link != NULL) && (link->autoAreaCreate != 0)) {
+         autoCreate(area, pktOrigAddr);
+         echo = getArea(*config, area);
+      } else
+         // no autoareaCreate -> msg to bad
+         putMsgInArea(echo, msg);
+   }
+
+   if (stricmp(echo->areaName, "BadArea") != 0) {
       if (dupeDetection(echo, *msg)==1) {
          // no dupe
 
