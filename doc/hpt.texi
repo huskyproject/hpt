@@ -269,6 +269,7 @@ FIDOCONFIG about location of config file and keywords ideology.
 * AreafixOrigin::		set origin for areafix reports
 * AreafixSplitStr::             set split string for splitted areafix messages
 * AreafixQueryReports::         insert linked areas list into areafix reports
+* AreafixQueueFile::		idle requests queue file for areafix
 * AreasFileNameCase::           case of filenames of autocreated areas
 * AutoAreaCreateFlag::          create this file-flag after auto-area-create
 * AutoPassive::                 set pause for links who don't poll our system
@@ -278,10 +279,13 @@ FIDOCONFIG about location of config file and keywords ideology.
 * CreateFwdNonPass::            autocreate non-passthru echoes in fwd.req. operations
 * DefArcmailSize::		default size for arcmail bundle
 * DisableTID::			disable adding TID to messages
+* ForwardRequestTimeout::	requested from uplink echoarea traffic timeout (in days)
+* IdlePassthruTimeout:: 	timeout (in days) before unlink on uplink passthrough echo with one link (& some time later remove from config)
 * IgnoreCapWord::		ignore Capability Word in pkt files
 * IgnoreSeen::                  ignore SEEN-BYs and pack mail for link
 * KeepTrsFiles::                keep transit files
 * KeepTrsMail::                 keep transit netmail messages
+* KilledRequestTimeout::	wait time (in days) for kill echo without links
 * KludgeAreaNetmail::           how to process netmail with kludge "AREA:NETMAIL"
 * LinkWithImportLog::           list of areas only which should be linked
 * LogEchoToScreen::             set output to screen log information
@@ -463,7 +467,7 @@ This string added after splitted areafix messages.
 This statement cannot be repeated.
 
 
-@node AreafixQueryReports, AreasFileNameCase, AreafixSplitStr, Keywords
+@node AreafixQueryReports, AreafixQueueFile, AreafixSplitStr, Keywords
 @subsection AreafixQueryReports
 @findex AreafixQueryReports
 @table @asis
@@ -478,7 +482,24 @@ replies. Default: enable.
 
 This statement cannot be repeated.
 
-@node AreasFileNameCase, AutoAreaCreateFlag, AreafixQueryReports, Keywords
+
+@node AreafixQueueFile, AreasFileNameCase, AreafixQueryReports, Keywords
+@subsection AreafixQueueFile
+@findex AreafixQueueFile
+@table @asis
+@item Syntax:
+@code{AreafixQueueFile <string>}
+@item Example:
+@code{areafixQueueFile /fido/datafiles}
+@end table
+
+This command specifies your areafix delaied requests queue file. Hpt must have
+read/write rights to this file.
+For use this feature periodically (daily) run 'hpt qupd'.
+
+This statement cannot be repeated.
+
+@node AreasFileNameCase, AutoAreaCreateFlag, AreafixQueueFile, Keywords
 @subsection AreasFileNameCase
 @findex AreasFileNameCase
 @table @asis
@@ -625,7 +646,7 @@ default arcmail size in kb for all links.
 
 This statement cannot be repeated.
 
-@node DisableTID, IgnoreCapWord, DefArcmailSize, Keywords
+@node DisableTID, ForwardRequestTimeout, DefArcmailSize, Keywords
 @subsection DisableTID
 @findex DisableTID
 @table @asis
@@ -639,7 +660,47 @@ Don't add TID-line to scanned messages and PID-line to generated messages.
 
 This statement cannot be repeated.
 
-@node IgnoreCapWord, IgnoreSeen, DisableTID, Keywords
+@node ForwardRequestTimeout, IdlePassthruTimeout, DisableTID, Keywords
+@subsection ForwardRequestTimeout
+@findex ForwardRequestTimeout
+@table @asis
+@item Syntax:
+@code{ForwardRequestTimeout <number>}
+@item Example:
+@code{ForwardRequestTimeout 10}
+@end table
+
+This statement specified time wait (days) for requested from uplink echoarea.
+If echomail traffic for this echoarea is null then 'hpt qupd' unsubscribe area
+from this uplink and subscribe to it on next uplink. After KilledRequestTimeout
+days 'hpt qupd' remove this area from queue file. Run 'hpt qupd' daily for use
+this feature.
+
+Default is 10 days.
+
+This statement cannot be repeated.
+
+
+@node IdlePassthruTimeout, IgnoreCapWord, ForwardRequestTimeout, Keywords
+@subsection IdlePassthruTimeout
+@findex IdlePassthruTimeout
+@table @asis
+@item Syntax:
+@code{IdlePassthruTimeout <number>}
+@item Example:
+@code{IdlePassthruTimeout 6}
+@end table
+
+This statement specified time wait (days) before unsubscribe echoarea from
+uplink after unsubscribe last downlink (one link rest: uplink). Run 'hpt
+qupd' daily for use this feature.
+
+Default is 6 days.
+
+This statement cannot be repeated.
+
+
+@node IgnoreCapWord, IgnoreSeen, IdlePassthruTimeout, Keywords
 @subsection IgnoreCapWord
 @findex IgnoreCapWord
 @table @asis
@@ -690,7 +751,7 @@ This statement cannot be repeated.
 
 @xref{RouteFile}.
 
-@node KeepTrsMail, KludgeAreaNetmail, KeepTrsFiles, Keywords
+@node KeepTrsMail, KilledRequestTimeout, KeepTrsFiles, Keywords
 @subsection KeepTrsMail
 @findex KeepTrsMail
 @table @asis
@@ -705,7 +766,26 @@ transit messages wouldn't be kept in NetmailArea. Default is "off".
 
 This statement cannot be repeated.
 
-@node KludgeAreaNetmail, LinkWithImportLog, KeepTrsMail, Keywords
+
+@node KilledRequestTimeout, KludgeAreaNetmail, KeepTrsMail, Keywords
+@subsection KilledRequestTimeout
+@findex KilledRequestTimeout
+@table @asis
+@item Syntax:
+@code{KilledRequestTimeout <number>}
+@item Example:
+@code{KilledRequestTimeout 7}
+@end table
+
+This statement specified time wait (days) for delete from config echoarea after
+unsubscribe it from uplink (last link). Run 'hpt qupd' daily for use this feature.
+
+Default is 7 days.
+
+This statement cannot be repeated.
+
+
+@node KludgeAreaNetmail, LinkWithImportLog, KilledRequestTimeout, Keywords
 @subsection KludgeAreaNetmail
 @findex KludgeAreaNetmail
 @table @asis
@@ -1210,6 +1290,7 @@ This statement can be repeated.
 @menu
 * AdvisoryLock::                set lock file "advisory"
 * AreafixHelp::                 file with help for areafix reports
+* AreafixQueueFile::		idle requests queue file for areafix
 * AreasMaxDupeAge::             max age for dupes in CommonDupeBase
 * DupeBaseType::                type of dupe base
 * DupeHistoryDir::              path for dupe files
