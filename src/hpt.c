@@ -43,7 +43,6 @@
 
 #include <huskylib/compiler.h>
 #include <huskylib/huskylib.h>
-#include <huskylib/patmat.h>
 
 #ifdef HAS_IO_H
 #include <io.h>
@@ -378,7 +377,7 @@ void processConfig()
    if (config->logFileDir) {
         xstrscat(&buff, config->logFileDir, LogFileName, NULL);
         initLog(config->logFileDir, config->logEchoToScreen, config->loglevels, config->screenloglevels);
-	hpt_log = openLog(buff, versionStr, config);
+	hpt_log = openLog(buff, versionStr);
 	if (hpt_log && quiet) hpt_log->logEcho=0; /* Don't display messages */
 	nfree(buff);
    } else

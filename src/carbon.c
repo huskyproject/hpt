@@ -103,7 +103,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 	msgfp = popen(progname + 1, "wt");
     } else
 #endif
-	msgfp = createTempTextFile(config, &fname);
+	msgfp = createTempTextFile(config->tempDir, &fname);
 	
     if (!msgfp) {
 	w_log(LL_ERR, "external process %s: cannot create file", progname);

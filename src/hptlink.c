@@ -676,7 +676,7 @@ int main(int argc, char **argv) {
    if (config->logFileDir) {
         xstrscat(&line, config->logFileDir, LOGFILENAME, NULL);
         initLog(config->logFileDir, config->logEchoToScreen, config->loglevels, config->screenloglevels);
-	hptlink_log = openLog(line, versionStr, config);
+	hptlink_log = openLog(line, versionStr);
 	nfree(line);
    }
 

@@ -50,7 +50,6 @@
 /* huskylib */
 #include <huskylib/huskylib.h>
 #include <huskylib/cvtdate.h>
-#include <huskylib/patmat.h>
 
 
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)

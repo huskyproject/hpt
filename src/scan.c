@@ -44,7 +44,6 @@
 #include <huskylib/compiler.h>
 /* huskylib */
 #include <huskylib/huskylib.h>
-#include <huskylib/patmat.h>
 
 
 #ifdef HAS_PROCESS_H
@@ -763,7 +762,7 @@ void scanExport(int type, char *str) {
         {
             f = fopen(config->echotosslog, "r");
             if (f != NULL && config->packNetMailOnScan == 0) {
-                ftmp = createTempTextFile(config , &tmplogname); /* error diagnostic prints by createTempTextFile() */
+                ftmp = createTempTextFile(config->tempDir, &tmplogname); /* error diagnostic prints by createTempTextFile() */
                 if (ftmp == NULL) {
                     /* close file so all areas will be scanned instead of panic. */
                     fclose(f);
@@ -778,7 +777,7 @@ void scanExport(int type, char *str) {
     if (type & SCN_FILE) {
         f = fopen(str, "r");
         if (f != NULL) {
-            ftmp = createTempTextFile(config , &tmplogname); /* error diagnostic prints by createTempTextFile() */
+            ftmp = createTempTextFile(config->tempDir, &tmplogname); /* error diagnostic prints by createTempTextFile() */
             if (ftmp == NULL) {
                 /* close file so all areas will be scanned instead of panic. */
                 fclose(f);

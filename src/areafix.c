@@ -43,7 +43,6 @@
 
 
 #include <huskylib/compiler.h>
-#include <huskylib/patmat.h>
 #include <huskylib/huskylib.h>
 
 #ifdef HAS_IO_H
