@@ -1,3 +1,8 @@
+2003-08-20 Wednesday 20:44  d_sergienko
+
+	* src/query.c (hpt-1_4-stable.7): fix again description in badmail
+	when refusing autocreate by NewAreaRefuseFile
+
 2003-07-27 Sunday 15:57  d_sergienko
 
 	* src/carbon.c (hpt-1_4-stable.3): fix popen() call. now *Extern
