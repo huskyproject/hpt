@@ -2256,7 +2256,7 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 
 	    newfn = makeUniqueDosFileName(config->tempOutbound, "pkt", config);
 
-	    if (move_file(fileName, newfn) == 0) {  /* move successful ! */
+	    if (move_file(fileName, newfn, 0) == 0) {  /* save if exist */
 		
 		w_log(LL_PKT, "Forwarding %s to %s as %s",
 		      fileName, config->links[i].name, newfn + strlen(config->tempOutbound));
