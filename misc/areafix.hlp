@@ -20,47 +20,46 @@ Example:
  %LIST DN.*                   <- List available areas that match pattern
  %LIST ! DN.*                 <- List all available areas except 
                                  areas that match pattern
- %QUERY			              <- List of areas to which you are currently
-                                      linked
- %LINKED		              <- same as %QUERY
- %UNLINKED                    <- List available areas to which
-                                 you are currently not linked
+ %QUERY			      <- List of areas which you are currently
+                                 linked to
+ %LINKED		      <- same as %QUERY
+ %UNLINKED                    <- List available areas which you are not
+                                 currently linked to
  %AVAIL                       <- List all areas that are available at
                                  this system's uplinks
  %AVAIL DN.*                  <- List areas that are available at
                                  this system's uplinks and match pattern
- %AVAIL ! DN.*                <- List all areas that are available at
-                                 this system's uplinks except areas that
-                                 match pattern
- %PAUSE                       <- If you go to holiday you can
-                                 stop receiving echomail for that
-                                 time without manually removing each
-                                 area with '-AREANAME'.
+ %AVAIL ! DN.*                <- List all areas that are available at this
+                                 system's uplinks except areas that match
+                                 pattern
+ %PAUSE                       <- If you go to holiday you can stop receiving
+                                 echomail for that time without manually
+                                 removing each area with '-AREANAME'.
  %RESUME                      <- Switch echomail receiving ON again.
  %HELP                        <- AreaFix will send you this help.
  %RESCAN 541.LOCAL            <- Rescan area
  %RESCAN OS2.*                <- same
- %RESCAN linux.develop.ger 200      <- rescan the last 200 mails
- %RESCAN linux.develop.ger 30 days  <- rescan mails for last 30 days
- %RESCAN                      <- turn on rescanning of following subscription
- NSK.SYSOP /r                 <- subscribe & rescan area
- NSK.PARTY /r=100             <- subscribe & rescan the last 100 mails
- NSK.PARTY /r=30 days         <- subscribe & rescan mails for last 30 days
-%COMPRESS                     <- ask for list of packers   
-%COMPRESS zip                 <- switch current packer for 'zip' 
-%COMPRESS none                <- switch off packing your mail
+ %RESCAN linux.develop.ger 200      <- Rescan the last 200 mails
+ %RESCAN linux.develop.ger 30 days  <- Rescan mails for last 30 days
+ %RESCAN                      <- Turn on rescanning of following subscription
+ NSK.SYSOP /r                 <- Subscribe & rescan area
+ NSK.PARTY /r=100             <- Subscribe & rescan the last 100 mails
+ NSK.PARTY /r=30 days         <- Subscribe & rescan mails for last 30 days
+%COMPRESS                     <- Ask for list of packers   
+%COMPRESS zip                 <- Switch current packer to 'zip' 
+%COMPRESS none                <- Turn off packing your mail
 %PACKER <packer>              <- same as %compress
-%RSB on                       <- turn on reduced SEEN-BY mode (FSC-0093)
-%RSB off                      <- turn off reduced SEEN-BY mode (FSC-0093)
-%RULES on                     <- start sending rules of any subscribed echo
-%RULES off                    <- stop sending rules of any subscribed echo
-%PKTSIZE NNN                  <- set max. packet (*.pkt) size to NNN kb
-%PKTSIZE 0                    <- set max. packet (*.pkt) size to unlimited
-%ARCMAILSIZE NNN              <- set max. bundle size to NNN kb
-%ARCMAILSIZE 0                <- set max. bundle size to unlimited
-%AREAFIXPWD [password]        <- set new password for areafix requests,
+%RSB on                       <- Turn on reduced SEEN-BY mode (FSC-0093)
+%RSB off                      <- Turn off reduced SEEN-BY mode (FSC-0093)
+%RULES on                     <- Start sending rules of any subscribed echo
+%RULES off                    <- Stop sending rules of any subscribed echo
+%PKTSIZE NNN                  <- Set max. packet (*.pkt) size to NNN kb
+%PKTSIZE 0                    <- Set max. packet (*.pkt) size to unlimited
+%ARCMAILSIZE NNN              <- Set max. bundle size to NNN kb
+%ARCMAILSIZE 0                <- Set max. bundle size to unlimited
+%AREAFIXPWD [password]        <- Set new password for areafix requests,
                                  an empty password is allowed
-%PKTPWD [password]            <- set new password for *.pkt, maximum 8 chars,
+%PKTPWD [password]            <- Set new password for *.pkt, maximum 8 chars,
                                  an empty password is allowed
 
   Note: you may also specify 1/0 as the aliases for on/off.
