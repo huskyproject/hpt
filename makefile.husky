@@ -9,17 +9,18 @@ OBJS    = hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) log$(OBJ) \
 SRC_DIR = src/
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -Ih -I../smapi -I$(INCDIR) -Wall -ggdb -O6 -DHAS_POPEN 
+  CFLAGS = -Ih -I../smapi -I$(INCDIR) $(DEBCFLAGS) $(WARNFLAGS)
+  LFLAGS = $(DEBLFLAGS)
 else
-  CFLAGS  = -c -Ih -I../smapi -I$(INCDIR) -Wall -O3 -s -DHAS_POPEN
+  CFLAGS = -Ih -I../smapi -I$(INCDIR) $(OPTCFLAGS) $(WARNFLAGS)
+  LFLAGS = $(OPTLFLAGS)
 endif
 
 ifeq ($(SHORTNAME), 1)
-  LFLAGS  = -L$(LIBDIR) -lfidoconf -lsmapi
+  LIBS  = -L$(LIBDIR) -lfidoconf -lsmapi
 else
-  LFLAGS  = -L$(LIBDIR) -lfidoconfig -lsmapi
+  LIBS  = -L$(LIBDIR) -lfidoconfig -lsmapi
 endif
-
 
 CDEFS=-D$(OSTYPE) $(ADDCDEFS)
 
@@ -37,30 +38,31 @@ all: $(OBJS) \
 
 pktinfo$(EXE): pktinfo$(OBJ) $(OBJS)
 	$(CC) $(LFLAGS) -o pktinfo$(EXE) log$(OBJ) recode$(OBJ) pktinfo$(OBJ) \
-          pktread$(OBJ) fcommon$(OBJ) global$(OBJ) xstr$(OBJ)
+          pktread$(OBJ) fcommon$(OBJ) global$(OBJ) xstr$(OBJ) $(LIBS)
 
 tlog$(EXE): tlog$(OBJ) log$(OBJ)
-	$(CC) $(LFLAGS) -o tlog$(EXE) tlog$(OBJ) log$(OBJ) 
+	$(CC) $(LFLAGS) -o tlog$(EXE) tlog$(OBJ) log$(OBJ) $(LIBS)
 
 tpkt$(EXE): tpkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
-            recode$(OBJ) log$(OBJ) global$(OBJ) 
+              recode$(OBJ) log$(OBJ) global$(OBJ) 
 	$(CC) $(LFLAGS) -o tpkt$(EXE) log$(OBJ) tpkt$(OBJ) fcommon$(OBJ) \
-          pktread$(OBJ) recode$(OBJ) pktwrite$(OBJ) global$(OBJ) xstr$(OBJ)
+              pktread$(OBJ) recode$(OBJ) pktwrite$(OBJ) global$(OBJ) xstr$(OBJ) \
+              $(LIBS)
 
 txt2pkt$(EXE): txt2pkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
                recode$(OBJ) log$(OBJ) global$(OBJ)
 	$(CC) $(LFLAGS) -o txt2pkt$(EXE) log$(OBJ) txt2pkt$(OBJ) \
           fcommon$(OBJ) pktread$(OBJ) recode$(OBJ) pktwrite$(OBJ) \
-          global$(OBJ) xstr$(OBJ)
+          global$(OBJ) xstr$(OBJ) $(LIBS)
 
 hptlink$(EXE): hptlink$(OBJ)
-	$(CC) $(LFLAGS) -o hptlink$(EXE) hptlink$(OBJ)
+	$(CC) $(LFLAGS) -o hptlink$(EXE) hptlink$(OBJ) $(LIBS)
 
 hpttree$(EXE): hpttree$(OBJ)
-	$(CC) $(LFLAGS) -o hpttree$(EXE) hpttree$(OBJ)
+	$(CC) $(LFLAGS) -o hpttree$(EXE) hpttree$(OBJ) $(LIBS)
 
 hpt$(EXE): $(OBJS)
-	$(CC) $(LFLAGS) -o hpt$(EXE) $(OBJS)
+	$(CC) $(LFLAGS) -o hpt$(EXE) $(OBJS) $(LIBS)
 
 clean:
 	-$(RM) -f *$(OBJ)
@@ -75,13 +77,27 @@ distclean: clean
 	-$(RM) tlog$(EXE)
 	-$(RM) hptlink$(EXE)
 	-$(RM) hpttree$(EXE)
+ifeq ($(SHORTNAMES), 0)
 	-$(RM) *.1.gz
+endif
 
 install:
+ifeq ($(SHORTNAMES), 1)
+	$(INSTALL) $(IMOPT) man/hpt.1 $(MANDIR)/man1
+        $(INSTALL) $(IMOPT) man/hptlink.1 $(MANDIR)/man1
+        $(INSTALL) $(IMOPT) man/hpttree.1 $(MANDIR)/man1
+else
 	gzip -c man/hpt.1 > hpt.1.gz
 	gzip -c man/hptlink.1 > hptlink.1.gz
 	gzip -c man/hpttree.1 > hpttree.1.gz
-	$(INSTALL) $(IBOPT) hpt$(EXE) pktinfo$(EXE) \
-          txt2pkt$(EXE) hptlink$(EXE) hpttree$(EXE) $(BINDIR)
-	$(INSTALL) $(IMOPT) hpt.1.gz hptlink.1.gz hpttree.1.gz $(MANDIR)/man1
+	$(INSTALL) $(IMOPT) hpt.1.gz $(MANDIR)/man1
+	$(INSTALL) $(IMOPT) hptlink.1.gz $(MANDIR)/man1
+	$(INSTALL) $(IMOPT) hpttree.1.gz $(MANDIR)/man1
+endif
+	$(INSTALL) $(IBOPT) hpt$(EXE) $(BINDIR)
+	$(INSTALL) $(IBOPT) pktinfo$(EXE) $(BINDIR)
+	$(INSTALL) $(IBOPT) txt2pkt$(EXE) $(BINDIR)
+	$(INSTALL) $(IBOPT) hptlink$(EXE) $(BINDIR)
+	$(INSTALL) $(IBOPT) hpttree$(EXE) $(BINDIR)
+
 
