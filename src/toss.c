@@ -135,6 +135,26 @@ int processDir(char *directory, e_tossSecurity sec);
 void makeMsgToSysop(char *areaName, hs_addr fromAddr, ps_addr uplinkAddr);
 static void setmaxopen(void);
 
+char *(BadmailReasonString[BM_MAXERROR+1]) = {
+/* 0*/"System not allowed to create new area",
+/* 1*/"Sender not allowed to post in this area (access group)",
+/* 2*/"Sender not allowed to post in this area (access level)",
+/* 3*/"Sender not allowed to post in this area (access import)",
+/* 4*/"Sender not active for this area",
+/* 5*/"Rejected by perl filter",
+/* 6*/"MSGAPI error",
+/* 7*/"Can't create echoarea with forbidden symbols in areatag",
+/* 8*/"Sender not found in config file",
+/* 9*/"Can't open config file",
+/*10*/"No downlinks for passthrough area",
+/*11*/"lenght of CONFERENCE name is more than 60 symbols",
+/*12*/"Area killed (unsubscribed)",
+/*13*/"New area refused by NewAreaRefuseFile",
+/*14*/"Wrong link to autocreate from (area requested from other link)",
+/*15*/"Area is paused (unsubscribed at uplink)"
+};
+
+
 static char *get_filename(char *pathname)
 {
     char *ptr = NULL;
@@ -577,24 +597,6 @@ int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr, unsigned writeAccess)
 {
     char *tmp = NULL, *line = NULL, *textBuff=NULL, *areaName=NULL, *reason=NULL;
     char buff[128] = "";
-    char *(BadmailReasonString[BM_MAXERROR+1]) = {
-    /* 0*/"System not allowed to create new area",
-    /* 1*/"Sender not allowed to post in this area (access group)",
-    /* 2*/"Sender not allowed to post in this area (access level)",
-    /* 3*/"Sender not allowed to post in this area (access import)",
-    /* 4*/"Sender not active for this area",
-    /* 5*/"Rejected by perl filter",
-    /* 6*/"MSGAPI error",
-    /* 7*/"Can't create echoarea with forbidden symbols in areatag",
-    /* 8*/"Sender not found in config file",
-    /* 9*/"Can't open config file",
-    /*10*/"No downlinks for passthrough area",
-    /*11*/"lenght of CONFERENCE name is more than 60 symbols",
-    /*12*/"Area killed (unsubscribed)",
-    /*13*/"New area refused by NewAreaRefuseFile",
-    /*14*/"Wrong link to autocreate from (area requested from other link)",
-    /*15*/"Area is paused (unsubscribed)"
-    };
 
     w_log(LL_FUNC, "putMsgInBadArea() begin");
     statToss.bad++;
@@ -856,11 +858,12 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
 	*p='\r';
     }
 
+    link = getLinkFromAddr(config, pktOrigAddr);
+
     /*  no area found -- trying to autocreate echoarea */
     if (echo == &(config->badArea)) {
         /*  check if we should not refuse this area */
         /*  checking for autocreate option */
-        link = getLinkFromAddr(config, pktOrigAddr);
         if ((link != NULL) && (link->autoAreaCreate != 0)) {
             if (0 == (writeAccess = autoCreate(area, pktOrigAddr, NULL)))
                 echo = getArea(config, area);
@@ -882,6 +885,49 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
 #ifdef ADV_STAT
             if (config->advStatisticsFile != NULL) put_stat(echo, &pktOrigAddr, stBAD, 0);
 #endif
+            /* notify link about bad post */
+            if ((link != NULL) && (link->sendNotifyMessages)) {
+                s_message *tmpmsg;
+                char *reason = NULL;
+
+                if (writeAccess > BM_MAXERROR) {
+                    reason = "Unknown error";
+                } else {
+                    reason = BadmailReasonString[writeAccess];
+                }
+
+                tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
+                    config->areafixFromName ? config->areafixFromName : versionStr,
+                    link->name, "Notification message", 1,
+                    link->areafixReportsAttr ? link->areafixReportsAttr : config->areafixReportsAttr);
+                tmpmsg->text = createKludges(config, NULL, link->ourAka,
+                    &(link->hisAka), versionStr);
+                if (link->areafixReportsFlags)
+                    xstrscat(&(tmpmsg->text), "\001FLAGS ", link->areafixReportsFlags, "\r",NULL);
+                else if (config->areafixReportsFlags)
+                    xstrscat(&(tmpmsg->text), "\001FLAGS ", config->areafixReportsFlags, "\r",NULL);
+
+                xstrcat(&tmpmsg->text, "\r Your message was moved to badmail with the next reason:\r\r");
+                xscatprintf(&tmpmsg->text, " %s\r\r", reason);
+                xstrcat(&tmpmsg->text, " Header of original message:\r\r");
+                xscatprintf(&tmpmsg->text, "      Area: %s\r", echo->areaName);
+                xscatprintf(&tmpmsg->text, "      Date: %s\r", msg->datetime);
+                xscatprintf(&tmpmsg->text, "      From: %s, %s\r", msg->fromUserName, aka2str(msg->origAddr));
+                xscatprintf(&tmpmsg->text, "        To: %s\r", msg->toUserName);
+                xscatprintf(&tmpmsg->text, "   Subject: %s\r", msg->subjectLine);
+                xstrcat(&tmpmsg->text, "\r Please contact sysop if you think this is a mistake!\r");
+                xscatprintf(&tmpmsg->text, "\r\r--- %s areafix\r", versionStr);
+
+                tmpmsg->textLength = strlen(tmpmsg->text);
+                processNMMsg(tmpmsg, NULL, getRobotsArea(config), 0, MSGLOCAL);
+                writeEchoTossLogEntry(getRobotsArea(config)->areaName);
+                closeOpenedPkt();
+                freeMsgBuffers(tmpmsg);
+                nfree(tmpmsg);
+                nfree(reason);
+
+                w_log( LL_AREAFIX, "areafix: write notification msg for %s",aka2str(link->hisAka));
+            }
         }
         else
         { /*  access ok - process msg */
