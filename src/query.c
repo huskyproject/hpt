@@ -227,7 +227,7 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
     if (checkRefuse(c_area))
     {
         w_log(LL_WARN, "Can't create area %s : refused by NewAreaRefuseFile\n", c_area);
-        return 11;
+        return 13;
     }
 
 
