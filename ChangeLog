@@ -1,3 +1,8 @@
+2003-08-16 Saturday 17:36  d_sergienko
+
+	* src/areafix.c (1.422): added areafix debug: show processing
+	messages and results
+
 2003-08-05 Tuesday 12:42  nssoft
 
 	* src/areafix.c (1.421): Fix old bug with corrupting of first line
