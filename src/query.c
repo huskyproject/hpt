@@ -683,14 +683,13 @@ int af_OpenQuery()
     char *token = NULL;
     struct  tm tr;
     char seps[]   = " \t\n";
-    s_query_areas *areaNode = NULL;
 
     if( queryAreasHead )  // list already exists
         return 0;
 
     time( &tnow );
 
-    queryAreasHead = af_AddAreaListNode("","");
+    queryAreasHead = af_AddAreaListNode("HEAD","\0");
 
     if( !config->areafixQueueFile ) /* Queue File not defined in config */
     {
@@ -705,6 +704,7 @@ int af_OpenQuery()
 
     while ((line = readLine(queryFile)) != NULL)
     {
+        s_query_areas *areaNode = NULL;
         token = strtok( line, seps );
         if( token != NULL )
         {
@@ -845,8 +845,12 @@ int af_CloseQuery()
         tmpNode = tmpNode->next;
         af_DelAreaListNode(delNode);
     }
-    af_DelAreaListNode(queryAreasHead);
-    queryAreasHead = NULL;
+
+    nfree(queryAreasHead->name);
+    nfree(queryAreasHead->downlinks);
+    nfree(queryAreasHead->report);
+    nfree(queryAreasHead);
+    
     if(queryFile) fclose(queryFile);
 
     w_log(LL_FUNC, __FILE__ ":%u:af_CloseQuery() end", __LINE__);

@@ -1018,77 +1018,73 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
     char *strbeg=NULL;
 
     if (config->ReportTo) {
-	if (stricmp(config->ReportTo,"netmail")==0) netmail=1;
-	else if (getNetMailArea(config, config->ReportTo) != NULL) netmail=1;
+        if (stricmp(config->ReportTo,"netmail")==0) netmail=1;
+        else if (getNetMailArea(config, config->ReportTo) != NULL) netmail=1;
     } else netmail=1;
-
+    
     echo = getArea(config, areaName);
-
+    
     if (echo == &(config->badArea)) return;
 
     for (i = 0; i < config->addrCount; i++) {
-	if (echo->useAka == &(config->addr[i])) {
-	    if (msgToSysop[i] == NULL) {
-
-		msgToSysop[i] = makeMessage(echo->useAka,
-                                    echo->useAka,
-                                    versionStr,
-                                    netmail ? config->sysop : "All", "Created new areas",
-                                    netmail,
-                                    config->areafixKillReports);
-		msgToSysop[i]->text = createKludges(
-                                    config->disableTID,
-                                    netmail ? NULL : config->ReportTo,
-                                    echo->useAka, echo->useAka,
-                                    versionStr);
-
-		xstrscat(&(msgToSysop[i]->text), "\001FLAGS NPD\r",
-		         "Action   Name", print_ch(49, ' '), "By\r", NULL);
-		// Shitty static variables ....
-		xstrscat(&(msgToSysop[i]->text), print_ch(79, '-'), "\r", NULL);
-		msgToSysop[i]->recode |= (REC_HDR|REC_TXT);
-		w_log(LL_NETMAIL,"Created msg to sysop");
-	    }
-
-//          New report generation
+        if (echo->useAka == &(config->addr[i])) {
+            if (msgToSysop[i] == NULL) {
+                
+                msgToSysop[i] = makeMessage(echo->useAka,
+                    echo->useAka,
+                    versionStr,
+                    netmail ? config->sysop : "All", "Created new areas",
+                    netmail,
+                    config->areafixKillReports);
+                msgToSysop[i]->text = createKludges(
+                    config->disableTID,
+                    netmail ? NULL : config->ReportTo,
+                    echo->useAka, echo->useAka,
+                    versionStr);
+                
+                xstrscat(&(msgToSysop[i]->text), "\001FLAGS NPD\r",
+                    "Action   Name", print_ch(49, ' '), "By\r", NULL);
+                // Shitty static variables ....
+                xstrscat(&(msgToSysop[i]->text), print_ch(79, '-'), "\r", NULL);
+                msgToSysop[i]->recode |= (REC_HDR|REC_TXT);
+                w_log(LL_NETMAIL,"Created msg to sysop");
+            }
+            
+            //          New report generation
             xstrcat(&buff, aka2str(fromAddr));
             if (uplinkAddr != NULL) { // autocreation with forward request
-		xstrcat(&buff, " from ");
-		xstrcat(&buff, aka2str(*uplinkAddr));
+                xstrcat(&buff, " from ");
+                xstrcat(&buff, aka2str(*uplinkAddr));
             }
             xstrscat(&strbeg, "Created  ", echo->areaName, NULL);
-
+            
             if (echo->description) {
-		if (strlen(strbeg) + strlen(echo->description) >=77) {
-		    xstrscat(&(msgToSysop[i]->text), strbeg, "\r", NULL);
-		    nfree(strbeg);
-		    xstrcat(&strbeg, print_ch(9, ' '));
-		} else {
-		    xstrcat(&strbeg, " ");
-		}
-		xstrscat(&strbeg, "\"", echo->description, "\"", NULL);
+                if (strlen(strbeg) + strlen(echo->description) >=77) {
+                    xstrscat(&(msgToSysop[i]->text), strbeg, "\r", NULL);
+                    nfree(strbeg);
+                    xstrcat(&strbeg, print_ch(9, ' '));
+                } else {
+                    xstrcat(&strbeg, " ");
+                }
+                xstrscat(&strbeg, "\"", echo->description, "\"", NULL);
             }
-
+            
             xstrcat(&(msgToSysop[i]->text), strbeg);
-
+            
             if (strlen(strbeg) + strlen(buff) >= 79) {
-		xstrscat(&(msgToSysop[i]->text), "\r", print_ch(79-strlen(buff), ' '), buff, "\r", NULL);
+                xstrscat(&(msgToSysop[i]->text), "\r", print_ch(79-strlen(buff), ' '), buff, "\r", NULL);
             } else if (strlen(strbeg) <62 && strlen(buff) < 79-62) { // most beautiful
-		xstrscat(&(msgToSysop[i]->text), print_ch(62-strlen(strbeg), ' '), buff, "\r", NULL);
+                xstrscat(&(msgToSysop[i]->text), print_ch(62-strlen(strbeg), ' '), buff, "\r", NULL);
             } else {
-		xstrscat(&(msgToSysop[i]->text), print_ch(79-strlen(strbeg)-strlen(buff), ' '), buff, "\r", NULL);
+                xstrscat(&(msgToSysop[i]->text), print_ch(79-strlen(strbeg)-strlen(buff), ' '), buff, "\r", NULL);
             }
             nfree(buff);
             nfree(strbeg);
-
-//          Old report generation
-//	    xscatprintf(&(msgToSysop[i]->text), "Created  %-53s%s\r",
-//	         echo->areaName, aka2str(fromAddr));
-
-	    break;
-	}
+            
+            break;
+        }
     }
-
+    
 }
 
 void writeMsgToSysop()
@@ -1097,81 +1093,81 @@ void writeMsgToSysop()
     s_area	*echo = NULL;
     unsigned int i, ccrc = 0;
     s_seenBy	*seenBys = NULL;
-
+    
     for (i = 0; i < config->addrCount; i++) {
-	if (msgToSysop[i]) {
-	    xscatprintf(&(msgToSysop[i]->text), " \r--- %s\r * Origin: %s (%s)\r",
-			(config->tearline) ? config->tearline : "",
-			(config->origin) ? config->origin : config->name,
-			aka2str(msgToSysop[i]->origAddr));
-	    msgToSysop[i]->textLength = strlen(msgToSysop[i]->text);
-	
-	    if (msgToSysop[i]->netMail == 1)
-		// FIXME: should be putMsgInArea
-		processNMMsg(msgToSysop[i], NULL, config->ReportTo ?
-			     getNetMailArea(config, config->ReportTo) : NULL, 1, 0);
-	    else {
-		// get echoarea  for this msg
-		ptr = strchr(msgToSysop[i]->text, '\r');
-		*ptr = '\0'; echo = getArea(config, msgToSysop[i]->text + 5); *ptr = '\r';
-		
-		if (echo != &(config->badArea)) {
-		    if (config->carbonCount != 0)
-			ccrc = carbonCopy(msgToSysop[i], NULL, echo);
-		    if (echo->msgbType != MSGTYPE_PASSTHROUGH && ccrc <= 1) {
-        		putMsgInArea(echo, msgToSysop[i],1, (MSGSCANNED|MSGSENT|MSGLOCAL));
-        		echo->imported++;  // area has got new messages
-		    }
-
-		    seenBys = (s_seenBy*) safe_malloc(sizeof(s_seenBy)*(echo->downlinkCount+1));
-		    seenBys[0].net = (UINT16) echo->useAka->net;
-		    seenBys[0].node = (UINT16) echo->useAka->node;
-		    sortSeenBys(seenBys, 1);
-
-		    seenByPath = createControlText(seenBys, 1, "SEEN-BY: ");
-		    nfree(seenBys);
-
-		    // path line
-		    // only include node-akas in path
-		    if (echo->useAka->point == 0)
-   			xscatprintf(&seenByPath, "\001PATH: %u/%u\r", echo->useAka->net, echo->useAka->node);
-		    xstrcat(&(msgToSysop[i]->text), seenByPath);
-		    nfree(seenByPath);
-		    if (echo->downlinkCount > 0) {
-			// recoding from internal to transport charSet
-			if (config->outtab) {
-			    if (msgToSysop[i]->recode & REC_HDR) {
-				recodeToTransportCharset((CHAR*)msgToSysop[i]->fromUserName);
-		    		recodeToTransportCharset((CHAR*)msgToSysop[i]->toUserName);
-		    		recodeToTransportCharset((CHAR*)msgToSysop[i]->subjectLine);
-				msgToSysop[i]->recode &= ~REC_HDR;
-			    }
-			    if (msgToSysop[i]->recode & REC_TXT) {
-				recodeToTransportCharset((CHAR*)msgToSysop[i]->text);
-				msgToSysop[i]->recode &= ~REC_TXT;
-			    }
-			}
-			forwardMsgToLinks(echo, msgToSysop[i], msgToSysop[i]->origAddr);
-			closeOpenedPkt();
-			tossTempOutbound(config->tempOutbound);
-		    }
-		} else {
-		    putMsgInBadArea(msgToSysop[i], msgToSysop[i]->origAddr, 0);
-		}
-	    }
-	}
+        if (msgToSysop[i]) {
+            xscatprintf(&(msgToSysop[i]->text), " \r--- %s\r * Origin: %s (%s)\r",
+                (config->tearline) ? config->tearline : "",
+                (config->origin) ? config->origin : config->name,
+                aka2str(msgToSysop[i]->origAddr));
+            msgToSysop[i]->textLength = strlen(msgToSysop[i]->text);
+            
+            if (msgToSysop[i]->netMail == 1)
+                // FIXME: should be putMsgInArea
+                processNMMsg(msgToSysop[i], NULL, config->ReportTo ?
+                getNetMailArea(config, config->ReportTo) : NULL, 1, 0);
+            else {
+                // get echoarea  for this msg
+                ptr = strchr(msgToSysop[i]->text, '\r');
+                *ptr = '\0'; echo = getArea(config, msgToSysop[i]->text + 5); *ptr = '\r';
+                
+                if (echo != &(config->badArea)) {
+                    if (config->carbonCount != 0)
+                        ccrc = carbonCopy(msgToSysop[i], NULL, echo);
+                    if (echo->msgbType != MSGTYPE_PASSTHROUGH && ccrc <= 1) {
+                        putMsgInArea(echo, msgToSysop[i],1, (MSGSCANNED|MSGSENT|MSGLOCAL));
+                        echo->imported++;  // area has got new messages
+                    }
+                    
+                    seenBys = (s_seenBy*) safe_malloc(sizeof(s_seenBy)*(echo->downlinkCount+1));
+                    seenBys[0].net = (UINT16) echo->useAka->net;
+                    seenBys[0].node = (UINT16) echo->useAka->node;
+                    sortSeenBys(seenBys, 1);
+                    
+                    seenByPath = createControlText(seenBys, 1, "SEEN-BY: ");
+                    nfree(seenBys);
+                    
+                    // path line
+                    // only include node-akas in path
+                    if (echo->useAka->point == 0)
+                        xscatprintf(&seenByPath, "\001PATH: %u/%u\r", echo->useAka->net, echo->useAka->node);
+                    xstrcat(&(msgToSysop[i]->text), seenByPath);
+                    nfree(seenByPath);
+                    if (echo->downlinkCount > 0) {
+                        // recoding from internal to transport charSet
+                        if (config->outtab) {
+                            if (msgToSysop[i]->recode & REC_HDR) {
+                                recodeToTransportCharset((CHAR*)msgToSysop[i]->fromUserName);
+                                recodeToTransportCharset((CHAR*)msgToSysop[i]->toUserName);
+                                recodeToTransportCharset((CHAR*)msgToSysop[i]->subjectLine);
+                                msgToSysop[i]->recode &= ~REC_HDR;
+                            }
+                            if (msgToSysop[i]->recode & REC_TXT) {
+                                recodeToTransportCharset((CHAR*)msgToSysop[i]->text);
+                                msgToSysop[i]->recode &= ~REC_TXT;
+                            }
+                        }
+                        forwardMsgToLinks(echo, msgToSysop[i], msgToSysop[i]->origAddr);
+                        closeOpenedPkt();
+                        tossTempOutbound(config->tempOutbound);
+                    }
+                } else {
+                    putMsgInBadArea(msgToSysop[i], msgToSysop[i]->origAddr, 0);
+                }
+            }
+        }
     }
-
+    
 }
 
 s_arealink *getAreaLink(s_area *area, s_addr aka)
 {
     UINT i;
-
+    
     for (i = 0; i <area->downlinkCount; i++) {
-	if (addrComp(aka, area->downlinks[i]->link->hisAka)==0) return area->downlinks[i];
+        if (addrComp(aka, area->downlinks[i]->link->hisAka)==0) return area->downlinks[i];
     }
-	
+    
     return NULL;
 }
 
