@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Sep 16 21:31:18 NOVST 2000
+max:
+* cut "-b msgbtype" from autocreate defaults when creating passthrugh area
+
+----- cvs ci ------
 Fri Sep 15 11:34:16 NOVST 2000
 max:
 * fixed autocreate with -dosfile at the end of AutoAreaCreateDefaults

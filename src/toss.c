@@ -713,7 +713,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    FILE *f;
    char *fileName, *squishFileName=NULL, *acDef;
    char *buff=NULL, *myaddr=NULL, *hisaddr=NULL;
-   char *msgbtype, *newAC=NULL, *desc;
+   char *msgbtype, *newAC=NULL, *desc, *p;
    s_link *creatingLink;
    s_area *area;
    int i;
@@ -784,7 +784,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 				   config->msgBaseDir, (long)time(NULL), myaddr,
 				   (msgbtype) ? "" : " -b Squish");
 #endif
-   } else xscatprintf(&buff, "EchoArea %s Passthrough -a %s", c_area, myaddr);
+   } else xscatprintf(&buff, "EchoArea %s passthrough -a %s", c_area, myaddr);
    
    nfree(squishFileName);
 
@@ -801,7 +801,18 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	   }
    }
 
-   xstrcat(&buff, newAC);
+   // del "-b msgbtype " from autocreate defaults
+   if (msgbtype) {
+	   p = msgbtype + 3;
+	   while (*p && !isspace(*p)) p++;
+	   if (*p) memmove(msgbtype, p+1, strlen(p+1)+1);
+	   else {
+		   if (msgbtype>newAC) *(msgbtype-1)='\0';
+		   else *msgbtype='\0'; // "-b msgbtype" defaults
+	   }
+   }
+
+   if (*newAC) xstrcat(&buff, newAC);
    nfree(newAC);
 
    // add new created echo to config in memory
