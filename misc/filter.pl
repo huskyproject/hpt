@@ -558,7 +558,8 @@ EOF
       $curtime = time();
       if ($oldval=checkdupe($key))
       { # Dupe or Loop
-        $text =~ s/\r\n?/\n/gs;
+        $dupetext = $text;
+        $dupetext =~ s/\r\n?/\n/gs;
         ($oldtime, $oldpath, $oldpktfrom) = split(/\|/, $oldval);
         $oldtime = localtime($oldtime);
         if ($path eq $oldpath && $oldpktfrom eq $pktfrom)
@@ -566,7 +567,7 @@ EOF
            $dupetext = <<EOF;
 Pkt from: $pktfrom
 Original msg arrived: $oldtime
-$text
+$dupetext
 EOF
           putMsgInArea("NETMAILDUPES", $fromname, $toname, $fromaddr, "",
                        $subject, $date, "pvt sent read", $dupetext, 0);
