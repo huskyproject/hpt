@@ -1,3 +1,12 @@
+2002-02-19 Tuesday 11:07  ml
+
+	* src/fcommon.c (1.108.2.3): Oops! I did it again. 8-)
+
+2002-02-19 Tuesday 11:05  ml
+
+	* h/global.h (1.26.2.2), src/fcommon.c (1.108.2.2), src/global.c
+	(1.38.2.4), src/hpt.c (1.121.2.2): fixed hpt_exit() function
+
 2002-02-17 Sunday 17:16  ml
 
 	* src/hptlink.c (1.31.2.2): ignore characters case and .0 at the
