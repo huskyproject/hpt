@@ -75,12 +75,14 @@
 #define GetFileAttributes GetFileAttributesA
 #endif
 
+/* huskylib */
+#include <huskylib/huskylib.h>
+#include <huskylib/typedefs.h>
+#include <huskylib/cvtdate.h>
+#include <huskylib/patmat.h>
+
 /* smapi */
-#include <smapi/progprot.h>
-#include <smapi/typedefs.h>
 #include <smapi/msgapi.h>
-#include <smapi/stamp.h>
-#include <smapi/patmat.h>
 
 /* fidoconf */
 #include <fidoconf/fidoconf.h>

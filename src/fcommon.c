@@ -74,9 +74,9 @@
 
 #endif
 
-#include <smapi/typedefs.h>
-#include <smapi/stamp.h>
-#include <smapi/progprot.h>
+#include <huskylib/huskylib.h>
+#include <huskylib/typedefs.h>
+#include <huskylib/cvtdate.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>

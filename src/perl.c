@@ -25,7 +25,7 @@
 #  define WIN32
 #endif
 
-#include <smapi/progprot.h>
+#include <huskylib/huskylib.h>
 
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>

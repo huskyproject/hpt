@@ -44,9 +44,9 @@
 #include <unistd.h>
 #endif
 
-#include <smapi/typedefs.h>
-#include <smapi/progprot.h>
-#include <smapi/stamp.h>
+#include <huskylib/typedefs.h>
+#include <huskylib/huskylib.h>
+#include <huskylib/cvtdate.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/xstr.h>

@@ -52,12 +52,12 @@
 #include <global.h>
 
 #include <smapi/compiler.h>
-#include <smapi/unused.h>
+#include <smapi/msgapi.h>
 #include <dupe.h>
 
-#include <smapi/msgapi.h>
-#include <smapi/stamp.h>
-#include <smapi/progprot.h>
+#include <huskylib/huskylib.h>
+#include <huskylib/cvtdate.h>
+#include <huskylib/unused.h>
 
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>

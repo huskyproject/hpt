@@ -55,10 +55,12 @@
 #include <io.h>
 #endif
 
+/* huskylib */
+#include <huskylib/huskylib.h>
+#include <huskylib/patmat.h>
+
 /* smapi */
-#include <smapi/progprot.h>
 #include <smapi/msgapi.h>
-#include <smapi/patmat.h>
 
 /* fidoconf */
 #include <fidoconf/fidoconf.h>

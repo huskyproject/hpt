@@ -41,9 +41,9 @@
 #include <smapi/compiler.h>
 
 #include <smapi/msgapi.h>
-#include <smapi/stamp.h>
-#include <smapi/typedefs.h>
-#include <smapi/progprot.h>
+#include <huskylib/huskylib.h>
+#include <huskylib/cvtdate.h>
+#include <huskylib/typedefs.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>

@@ -52,8 +52,8 @@
 #include <unistd.h>
 #endif
 
-#include <smapi/patmat.h>
-#include <smapi/progprot.h>
+#include <huskylib/patmat.h>
+#include <huskylib/huskylib.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>

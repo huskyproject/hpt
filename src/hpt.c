@@ -58,9 +58,9 @@
 #include <sysexits.h>
 #endif
 
-#include <smapi/progprot.h>
+#include <huskylib/huskylib.h>
+#include <huskylib/patmat.h>
 #include <smapi/msgapi.h>
-#include <smapi/patmat.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/xstr.h>

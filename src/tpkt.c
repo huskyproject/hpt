@@ -35,7 +35,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#include <smapi/progprot.h>
+#include <huskylib/huskylib.h>
 #include <version.h>
 
 int main()

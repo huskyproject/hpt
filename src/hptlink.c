@@ -45,7 +45,6 @@
 #include <share.h>
 #endif
 
-#include <smapi/prog.h>
 #include <smapi/msgapi.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
