@@ -1,3 +1,28 @@
+2002-10-03 Thursday 15:52  d_sergienko
+
+	* doc/perlwin32.txt (1.2): fix spelling
+
+2002-10-03 Thursday 15:06  stas_degteff
+
+	* doc/perlwin32.rus (1.4): hptPerlFile usage
+
+2002-10-03 Thursday 14:50  stas_degteff
+
+	* doc/: perlwin32.rus (1.3), perlwin32.txt (1.1): HPT with Perl
+	support: Frequently Asked Questions
+
+2002-10-03 Thursday 13:34  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.34): Fix typo error
+
+2002-10-03 Thursday 13:26  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.33): Update FAQ
+
+2002-10-03 Thursday 10:16  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.32): FAQ update
+
 2002-10-02 Wednesday 19:45  d_sergienko
 
 	* doc/faqfmt.pl (1.2): replaced \r\n to \n at the end of lines
