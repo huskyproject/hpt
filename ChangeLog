@@ -1,3 +1,7 @@
+2004-10-13 Wednesday 19:09  i_zkh
+
+	* doc/hpt.texi (1.153): Fixed spelling
+
 2004-09-28 Tuesday 12:22  val_khokhlov
 
 	* src/perl.c (1.83): remove read-only on %links not to fail on
