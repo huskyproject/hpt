@@ -50,6 +50,7 @@
 #include <global.h>
 
 #include <smapi/compiler.h>
+#include <smapi/unused.h>
 #include <dupe.h>
 
 #include <smapi/msgapi.h>
@@ -396,7 +397,7 @@ int createDupeFile(s_area *area, char *name, s_dupeMemory DupeEntries) {
        DupeCountInHeader = 0;
        fwrite(&DupeCountInHeader, sizeof(UINT32), 1, f);    
        fDupe = f;
-       tree_trav(&(DupeEntries.avlTree), &writeEntry);
+       tree_trav(&(DupeEntries.avlTree), writeEntry);
        fDupe = NULL;
 
        // writeDupeFileHeader
@@ -455,7 +456,7 @@ void freeDupeMemory(s_area *area) {
       dupes = CommonDupes;
 
    if (dupes != NULL) {
-      tree_mung(&(dupes -> avlTree), &deleteEntry);
+      tree_mung(&(dupes -> avlTree), deleteEntry);
       if (config->typeDupeBase != commonDupeBase) {
          free(area -> dupes); area -> dupes = NULL;
       }
@@ -508,7 +509,7 @@ int dupeDetection(s_area *area, const s_message msg) {
            enhash->TimeStampOfDupe = time (NULL);
            free(str1);
 
-           if (tree_srchall(&(Dupes->avlTree), &compareEntries, (char *) enhash)) {
+           if (tree_srchall(&(Dupes->avlTree), compareEntries, (char *) enhash)) {
               // add to Dupes
               tree_add(&(Dupes->avlTree), compareEntriesBlank, (char *) enhash, deleteEntry);
               return 1;
@@ -534,7 +535,7 @@ int dupeDetection(s_area *area, const s_message msg) {
            enhashM->TimeStampOfDupe = time (NULL);
            free(str1);
 
-           if (tree_srchall(&(Dupes->avlTree), &compareEntries, (char *) enhashM)) {
+           if (tree_srchall(&(Dupes->avlTree), compareEntries, (char *) enhashM)) {
               tree_add(&(Dupes->avlTree), compareEntriesBlank, (char *) enhashM, deleteEntry);
               return 1;
            }
@@ -557,7 +558,7 @@ int dupeDetection(s_area *area, const s_message msg) {
            entxt->msgid   = malloc(strlen(str)+2-7); strcpy(entxt->msgid, str+7);
            free(str);
 
-           if (tree_srchall(&(Dupes->avlTree), &compareEntries, (char *) entxt)) {
+           if (tree_srchall(&(Dupes->avlTree), compareEntries, (char *) entxt)) {
               tree_add(&(Dupes->avlTree), compareEntriesBlank, (char *) entxt, deleteEntry);
               return 1;
            }
@@ -580,7 +581,7 @@ int dupeDetection(s_area *area, const s_message msg) {
            enhash->TimeStampOfDupe = time (NULL);
            free(str1);
 
-           if (tree_srchall(&(CommonDupes->avlTree), &compareEntries, (char *) enhash)) {
+           if (tree_srchall(&(CommonDupes->avlTree), compareEntries, (char *) enhash)) {
               tree_add(&(CommonDupes->avlTree), compareEntriesBlank, (char *) enhash, deleteEntry);
               return 1;
            }
