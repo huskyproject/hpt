@@ -3128,6 +3128,8 @@ size of dupecheck history file in days (7 days if not defined);
 disables reply-linking for this area (*);
 @item -link
 enables reply-linking for this area (*) if disabled in echoareadefaults;
+@item -scan listed|manual|never
+conditions to scan area: if listed in echotoss file or "-a" option; if run with "-a" option; or never
 @item -debug
 write debug info about this area to areaname.dbg (or common.dbg if "-dosfile" is used)
 @item -nodebug

@@ -300,34 +300,77 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 void processAttachs(s_link *link, s_message *msg, unsigned int attr)
 {
    FILE *flo = NULL;
+   char **outbounds[4];
    char *p = NULL, *running = NULL, *token = NULL, *flags = NULL;
    char *newSubjectLine = NULL;
-
+   int i, def = -1, replace = 0;
+   char *path = NULL;
+#ifdef __UNIX__
+   static int adcase_init = 0;
+   /* init inbound for adaptcase() */
+   if (!adcase_init) {
+       adaptcase_refresh_dir(config->protInbound);
+       adaptcase_refresh_dir(config->inbound);
+       adcase_init = 1;
+   }
+#endif
+   /* init outbounds */
+   outbounds[0] = &tossDir;
+   outbounds[1] = &config->protInbound;
+   outbounds[2] = &config->inbound;
+   outbounds[3] = NULL;
+   for (i=3; i>=0; i--) if (outbounds[i] && *outbounds[i]) { def=i; break; }
    flo = fopen(link->floFile, "a");
 
-   running = msg->subjectLine;
-   token = strseparate(&running, " \t");
+   xstrcat(&running, msg->subjectLine);
 
-   while (token != NULL) {
-#if defined(UNIX) || defined(__linux__)
-	   if (!fexist(token)) strLower(token);
+   while ((token = strseparate(&running, ", \t")) != NULL) {
+      if (newSubjectLine!=NULL) xstrcat(&newSubjectLine, " ");
+/* val: try to find file in inbounds if there are no path delimiter
+        if _there is_ a delimeter, then message is local so don't change it
+*/
+      if ((p = strrchr(token, PATH_DELIM)) == NULL) {
+    	    xstrcat(&newSubjectLine, token);
+            path = NULL;
+            for (i=0; i<4; i++) {
+		if (path != NULL) nfree(path);
+		if (outbounds[i] && *outbounds[i]) {
+                    if (def < 0) def = i;
+                    xscatprintf(&path, "%s%s", *outbounds[i], token);
+		    if (fexist(path)) break;
+#ifdef __UNIX__
+                    /*strLower(path + strlen(*outbounds[i]));*/
+		    adaptcase(path);
+		    if (fexist(path)) break;
 #endif
+                }
+    	    }
+            if (path == NULL) {
+                if (def < 0) continue; /* file not found; no outbounds */
+                else xscatprintf(&path, "%s%s", *outbounds[def], token);
+            }
+            token = path;
+      }
+      else {
+            replace = 1;
+    	    xstrcat(&newSubjectLine, p+1);
+#ifdef __UNIX__
+            /*if (!fexist(token)) strLower(token);*/
+            if (!fexist(token)) adaptcase(token);
+#endif
+      }
       if (flo != NULL) {
-		  if (msg->text) flags =
+	  if (msg->text) flags =
              (char *) GetCtrlToken((byte *)msg->text,(byte *)"FLAGS");
           if ((flags && strstr(flags, "KFS")) ||
-			  (config->keepTrsFiles==0 && (attr & MSGFWD)==MSGFWD))
-			  fprintf(flo, "^%s\n", token);
+	      (config->keepTrsFiles==0 && (attr & MSGFWD)==MSGFWD))
+	      fprintf(flo, "^%s\n", token);
           else if (flags && strstr(flags, "TFS"))
-			  fprintf(flo, "#%s\n", token);
+	      fprintf(flo, "#%s\n", token);
           else
-			  fprintf(flo, "%s\n", token);
-		  nfree(flags);
+	      fprintf(flo, "%s\n", token);
+	  nfree(flags);
       }
-	  if (newSubjectLine!=NULL) xstrcat(&newSubjectLine, " ");
-      if (NULL != (p=strrchr(token, PATH_DELIM))) xstrcat(&newSubjectLine, p+1);
-	  else xstrcat(&newSubjectLine, token);
-      token = strseparate(&running, " \t");
    }
 
    if (flo!= NULL) {
@@ -335,8 +378,11 @@ void processAttachs(s_link *link, s_message *msg, unsigned int attr)
    } else w_log(LL_ERR, "Could not open FloFile");
 
    /*  replace subjectLine */
-   nfree(msg->subjectLine);
-   msg->subjectLine = newSubjectLine;
+   if (replace) {
+      nfree(msg->subjectLine);
+      msg->subjectLine = newSubjectLine;
+   }
+   else nfree(newSubjectLine);
 }
 
 void processRequests(s_link *link, s_message *msg)
@@ -510,8 +556,10 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 	   }
    } else {
            /*  no crash, no hold flag -> route netmail */
-	   route = findRouteForNetmail(msg);
-	   link = getLinkForRoute(route, &msg);
+           if (route == NULL) {                      /* val: don't call again! */
+	   	route = findRouteForNetmail(msg);
+	   	link = getLinkForRoute(route, &msg);
+           }
 
 	   if ((route != NULL) && (link != NULL) && (route->routeVia != nopack)) {
 		   prio = route->flavour;
@@ -706,18 +754,40 @@ s_area *getLocalArea(s_fidoconfig *config, char *areaName)
 }
 
 
-int scanByName(char *name) {
+int scanByName(char *name, e_scanMode mode) {
     s_area *area = NULL;
 
     if ((area = getNetMailArea(config, name)) != NULL) {
+      /* val: scan mode check */
+      if (area->scanMode == smNever) {
+        w_log(LL_SCANNING, "Area \'%s\': packing is off -> Skipped", name);
+        return 0;
+      }
+      else if (area->scanMode == smManual && mode != smManual) {
+        w_log(LL_SCANNING, "Area \'%s\': manual packing only -> Skipped", name);
+        return 0;
+      }
+      /* /val */
+      else {
 	scanNMArea(area);
 	return 1;
+      }
     } else {
 	/*  maybe it's echo area */
 	area = getEchoArea(config, name);
 	if (area != &(config->badArea)) {
 	    if (area && area->msgbType != MSGTYPE_PASSTHROUGH &&
 		area -> downlinkCount > 0) {
+                /* val: scan mode check */
+                if (area->scanMode == smNever) {
+                  w_log(LL_SCANNING, "Area \'%s\': scanning is off -> Skipped", name);
+                  return 0;
+                }
+                else if (area->scanMode == smManual && mode != smManual) {
+                  w_log(LL_SCANNING, "Area \'%s\': manual scanning only -> Skipped", name);
+                  return 0;
+                }
+                /* /val */
 		scanEMArea(area);
 		return 1;
 	    }
@@ -789,7 +859,7 @@ void scanExport(int type, char *str) {
     w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
 
     if (type & SCN_NAME) {
-        scanByName(str);
+        scanByName(str, smManual);
     } else if (f == NULL) {
         if (type & SCN_FILE) {
             w_log(LL_START, "EchoTossLogFile not found -> Scanning stop");
@@ -801,12 +871,16 @@ void scanExport(int type, char *str) {
             w_log(LL_START, "EchoTossLogFile not found -> Scanning all areas.");
             for (i = 0; i< config->echoAreaCount; i++) {
                 if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
+                  /* val: scan only if mode is not set */
+                  if ( (config->echoAreas[i]).scanMode == smNone )
                     scanEMArea(&(config->echoAreas[i]));
                 }
             }
         };
         if (type & SCN_NETMAIL) {
             for (i = 0; i < config->netMailAreaCount; i++) {
+              /* val: scan only if mode is not set */
+              if ( (config->netMailAreas[i]).scanMode == smNone )
                 scanNMArea(&(config->netMailAreas[i]));
             }
         };
@@ -822,17 +896,17 @@ void scanExport(int type, char *str) {
                     line[strlen(line)-1] = '\0';  /* fix for DOSish echotoss.log */
                 striptwhite(line);
                 if (!ftmp) { /*  the same as if(config->packNetMailOnScan) { */
-                    scanByName(line);
+                    scanByName(line, smListed);
                 } else {
                     /* exclude NetmailAreas in echoTossLogFile */
                    if (type & SCN_ECHOMAIL) {
                        if (getNetMailArea(config, line) == NULL)
-                        scanByName(line);
+                        scanByName(line, smListed);
                        else
                            fprintf(ftmp, "%s\n", line);
                     } else {
                         if (getNetMailArea(config, line) != NULL)
-                            scanByName(line);
+                            scanByName(line, smListed);
                         else
                             fprintf(ftmp, "%s\n", line);
                     }

@@ -34,7 +34,7 @@
 #define _FCOMMON_H
 
 #ifdef __NT__
-#include <fidoconf/typesize.h>
+#include <huskylib/typesize.h>
 #endif
 #include <stdio.h>
 #include <fidoconf/fidoconf.h>
