@@ -775,7 +775,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 		   
 	   } else {
 #endif
-		   w_log('7', "link %s is busy.", link->name);
+		   w_log('7', "link %s is busy.", aka2str(link->hisAka));
 		   nfree(link->floFile);
 		   nfree(link->bsyFile);
 		   
