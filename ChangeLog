@@ -1,3 +1,8 @@
+2005-03-06 Sunday 18:16  val_khokhlov
+
+	* src/post.c (1.118): init libareafix here (fix coredumps on hpt
+	post)
+
 2005-02-24 Thursday 23:57  nick_voronin
 
 	* misc/adv-stat-hpt.pl (1.11): spelling correction
