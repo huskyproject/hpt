@@ -1522,10 +1522,16 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
    char   *ctrlBuf;               // Kludgelines
    XMSG   msgHeader;
    char   *slash;
-   int rc = 0, ccrc = 0;
+   int rc = 0, ccrc = 0, i;
 
    if (area == NULL) {
- 	area = &(config->netMailAreas[0]);
+	   area = &(config->netMailAreas[0]);
+	   for(i=0; i<config->netMailAreaCount; i++) {
+		   if(addrComp(msg->destAddr,*(config->netMailAreas[i].useAka))==0) {
+			   area = &(config->netMailAreas[i]);
+			   break;
+		   }
+	   }
    }
 
    if (dupeDetection(area, *msg)==0) {
