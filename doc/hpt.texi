@@ -377,7 +377,6 @@ define links and areas before any carbon definitions
 * RecodeMsgBase::               allow recoding of message base
 * Remap::                       remap mail to other address
 * ReportTo::                    set area or netmail for autocreate reports
-* RobotsArea::                  area for areafix scanning
 * Route::                       routing of netmails
 * RouteFile::                   routing of netmails with file attached
 * RouteMail::                   routing of netmails without file attached
@@ -1339,7 +1338,7 @@ value of ToName or ToAddress. Two asterisks can't be defined together.
 
 This statement can be repeated.
 
-@node ReportTo, RobotsArea, Remap, Keywords
+@node ReportTo, Route, Remap, Keywords
 @subsection ReportTo
 @findex ReportTo
 @table @asis
@@ -1353,22 +1352,7 @@ Set name of echoarea or netmailarea to place autocreate reports.
 
 This statement cannot be repeated.
 
-@node RobotsArea, Route, ReportTo, Keywords
-@subsection RobotsArea
-@findex RobotsArea
-@table @asis
-@item Syntax:
-@code{robotsArea <string>}
-@item Example:
-@code{robotsArea SecondNetMail}
-@end table
-
-Specifies area used for areafix scanning. Replies from areafix will be also
-stored here. @strong{RobotsArea must be NetmailArea for security purposes!}
-
-This statement cannot be repeated.
-
-@node Route, RouteFile, RobotsArea, Keywords
+@node Route, RouteFile, ReportTo, Keywords
 @subsection Route
 @findex Route
 @table @asis
