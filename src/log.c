@@ -87,15 +87,17 @@ s_log *openLog(char *fileName, char *appN, char *keys)
 
 void closeLog(s_log *log)
 {
-   if (log->open != 0) {
-      fprintf(log->logFile, "\n");
-      fclose(log->logFile);
-      log->open = 0;
-   } /* endif */
-   free(log->appName);
-   free(log->keysAllowed);
-   free(log);
-   log = NULL;
+   if (log != NULL) {
+      if (log->open != 0) {
+         fprintf(log->logFile, "\n");
+         fclose(log->logFile);
+         log->open = 0;
+      } /* endif */
+      free(log->appName);
+      free(log->keysAllowed);
+      free(log);
+      log = NULL;
+   }
 }
 
 void writeLogEntry(s_log *log, char key, char *logString)

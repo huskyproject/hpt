@@ -4,7 +4,7 @@
 
 #include <msgapi.h>
 
-#include <common.h>
+#include <fcommon.h>
 #include <pkt.h>
 #include <patmat.h>
 #include <scan.h>
@@ -97,21 +97,38 @@ void makePktHeader(s_message *msg, s_pktHeader *header)
    header->prodData        = 0;
 }
 
-s_link *findLinkForRoutedNetmail(s_addr destAddr)
+s_link *findLinkForRoutedNetmail(s_message msg)
 {
    char buff[72], addrStr[24];
    UINT i;
 
-   sprintf(addrStr, "%u:%u/%u.%u", destAddr.zone, destAddr.net, destAddr.node, destAddr.point);
-   for (i=0; i < routeCount; i++) {
-      if (patmat(addrStr, routes[i].pattern))
-         return routes[i].link;
+   sprintf(addrStr, "%u:%u/%u.%u", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+
+   if ((msg.attributes & MSGFILE) == MSGFILE) {
+      // if msg has file attached
+      for (i=0; i < config->routeFileCount; i++) {
+         if (patmat(addrStr, config->routeFile[i].pattern))
+            return config->routeMail[i].target;
+      }
+   } else {
+      // if msg has no file attached
+      for (i=0; i < config->routeMailCount; i++) {
+         if (patmat(addrStr, config->routeMail[i].pattern))
+            return config->routeMail[i].target;
+      }
    }
+
+   for (i=0; i < config->routeCount; i++) {
+      if(patmat(addrStr, config->route[i].pattern))
+         return config->route[i].target;
+   }
+
+   
    
    // if no aka is found return first link
    sprintf(buff, "No route for %s found. Using first link statement", addrStr);
    writeLogEntry(log, '8', buff);
-   return &(links[0]);
+   return &(config->links[0]);
 }
 
 void packMsg(HMSG SQmsg, XMSG xmsg)
@@ -145,7 +162,7 @@ void packMsg(HMSG SQmsg, XMSG xmsg)
       if (prio != NORMAL) {
          fileName = createOutboundFileName(msg.destAddr, prio, FLOFILE);
       } else {
-         link = findLinkForRoutedNetmail(msg.destAddr);
+         link = findLinkForRoutedNetmail(msg);
          fileName = createOutboundFileName(link->hisAka, NORMAL, FLOFILE);
       } /* endif */
       flo = fopen(fileName, "a");
@@ -186,13 +203,13 @@ void packMsg(HMSG SQmsg, XMSG xmsg)
    } else {
       
       // no crash, no hold flag -> route netmail
-      link = findLinkForRoutedNetmail(msg.destAddr);
+      link = findLinkForRoutedNetmail(msg);
       fileName = createOutboundFileName(link->hisAka, NORMAL, PKT);
-      convertMsgText(SQmsg, &msg, link->ourAka);
+      convertMsgText(SQmsg, &msg, *(link->ourAka));
       makePktHeader(NULL, &header);
       header.destAddr = link->hisAka;
-      header.origAddr = link->ourAka;
-      strcpy(&(header.pktPassword[0]), link->pwd);
+      header.origAddr = *(link->ourAka);
+      strcpy(&(header.pktPassword[0]), link->pktPwd);
       pkt = openPktForAppending(fileName, &header);
       writeMsgToPkt(pkt, msg);
       closeCreatedPkt(pkt);
@@ -218,7 +235,7 @@ void scanNMArea(void)
    s_addr          dest;
    int             for_us;
 
-   netmail = MsgOpenArea((unsigned char *) netArea.filename, MSGAREA_NORMAL, MSGTYPE_SDM);
+   netmail = MsgOpenArea((unsigned char *) config->netMailArea.fileName, MSGAREA_NORMAL, MSGTYPE_SDM);
    if (netmail != NULL) {
 
       highMsg = MsgGetHighMsg(netmail);
@@ -233,8 +250,8 @@ void scanNMArea(void)
          MsgReadMsg(msg, &xmsg, 0, 0, NULL, 0, NULL);
          cvtAddr(xmsg.dest, &dest);
          for_us = 0;
-         for (j=0; j < addrCount; j++)
-            if (addrComp(dest, addr[j])==0) {for_us = 1; break;}
+         for (j=0; j < config->addrCount; j++)
+            if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
                 
          // if not sent and not for us -> pack it
          if (((xmsg.attr & MSGSENT) != MSGSENT) && (for_us==0))
@@ -257,7 +274,7 @@ void scan(void)
    UINT i;
    
    scanNMArea();
-   for (i = 0; i< echoAreaCount; i++) {
-      scanEMArea(&echoAreas[i]);
+   for (i = 0; i< config->echoAreaCount; i++) {
+      scanEMArea(&(config->echoAreas[i]));
    }
 }

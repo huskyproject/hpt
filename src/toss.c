@@ -3,8 +3,6 @@
 #include <errno.h>
 #include <ctype.h>
 
-#include <msgapi.h>
-
 #include <dir.h>
 #include <pkt.h>
 #include <scan.h>
@@ -13,6 +11,7 @@
 #include <patmat.h>
 #include <seenby.h>
 
+#include <msgapi.h>
 #include <stamp.h>
 #include <typedefs.h>
 #include <compiler.h>
@@ -22,8 +21,8 @@ int to_us(s_pktHeader header)
 {
    int i = 0;
 
-   while (i < addrCount)
-     if (addrComp(header.destAddr, addr[i++]) == 0)
+   while (i < config->addrCount)
+     if (addrComp(header.destAddr, config->addr[i++]) == 0)
        return 0;
    return !0;
 }
@@ -64,18 +63,6 @@ XMSG createXMSG(s_message *msg)
    return msgHeader;
 }
 
-s_area *getArea(char *areaName)
-{
-   UINT i;
-
-   for (i = 0; i<echoAreaCount; i++) {
-      if (strcmp(echoAreas[i].name, areaName)==0)
-         return &(echoAreas[i]);
-   }
-   
-   return &badArea; // all fails, return badArea :-)
-}
-
 void putMsgInArea(s_area *echo, s_message *msg)
 {
    char buff[70], *ctrlBuff, *textStart;
@@ -84,7 +71,7 @@ void putMsgInArea(s_area *echo, s_message *msg)
    HMSG  hmsg;
    XMSG  xmsg;
 
-   harea = MsgOpenArea((UCHAR *) echo->filename, MSGAREA_CRIFNEC, echo->msgbType | MSGTYPE_ECHO);
+   harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, echo->msgbType | MSGTYPE_ECHO);
    if (harea != NULL) {
       hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
       if (hmsg != NULL) {
@@ -97,12 +84,12 @@ void putMsgInArea(s_area *echo, s_message *msg)
          MsgCloseMsg(hmsg);
 
       } else {
-         sprintf(buff, "Could not create new msg in %s!", echo->filename);
+         sprintf(buff, "Could not create new msg in %s!", echo->fileName);
          writeLogEntry(log, '9', buff);
       } /* endif */
       MsgCloseArea(harea);
    } else {
-      sprintf(buff, "Could not open/create EchoArea %s!", echo->filename);
+      sprintf(buff, "Could not open/create EchoArea %s!", echo->fileName);
       writeLogEntry(log, '9', buff);
    } /* endif */
 }
@@ -242,11 +229,11 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    //exit(2);
 
    createPathArrayFromMsg(msg, &path, &pathCount);
-   if (echo->useAka.point == 0) {   // only include nodes in PATH
+   if (echo->useAka->point == 0) {   // only include nodes in PATH
       // add our aka to path
       path = (s_seenBy*) realloc(path, sizeof(s_seenBy) * (pathCount)+1);
-      path[pathCount].net = echo->useAka.net;
-      path[pathCount].node = echo->useAka.node;
+      path[pathCount].net = echo->useAka->net;
+      path[pathCount].node = echo->useAka->node;
       pathCount++;
    }
 
@@ -292,7 +279,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       // create pktfile if necessary
       if (echo->downlinks[i]->pktFile == NULL) {
          // pktFile does not exist
-         name = tempnam(outboundDir, NULL);
+         name = tempnam(config->outbound, NULL);
          echo->downlinks[i]->pktFile = (char *) malloc(strlen(name)+4+1); // 4 == strlen(".pkt");
          strcpy(echo->downlinks[i]->pktFile, name);
          strcat(echo->downlinks[i]->pktFile, ".pkt");
@@ -305,7 +292,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       makePktHeader(NULL, &header);
       header.origAddr = echo->downlinks[i]->ourAka;
       header.destAddr = echo->downlinks[i]->hisAka;
-      strcpy(header.pktPassword, echo->downlinks[i]->pwd);
+      strcpy(header.pktPassword, echo->downlinks[i]->pktPwd);
       pkt = openPktForAppending(echo->downlinks[i]->pktFile, &header);
 
       writeMsgToPkt(pkt, *msg);
@@ -332,7 +319,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
    area = strtok(textBuff, "\r");
    area += 5;
 
-   echo = getArea(area);
+   echo = getArea(*config, area);
 
    putMsgInArea(echo, msg);
    if (echo->downlinkCount > 1)     // if only one downlink, we've got the mail from him
@@ -351,7 +338,7 @@ void processNMMsg(s_message *msg)
    XMSG   msgHeader;
    char   buff[36];               // buff for sprintf
 
-   netmail = MsgOpenArea((unsigned char *) netArea.filename, MSGAREA_CRIFNEC, MSGTYPE_SDM);
+   netmail = MsgOpenArea((unsigned char *) config->netMailArea.fileName, MSGAREA_CRIFNEC, MSGTYPE_SDM);
 
    if (netmail != NULL) {
       msgHandle = MsgOpenMsg(netmail, MOPEN_CREATE, 0);
@@ -388,17 +375,6 @@ void processMsg(s_message *msg, s_addr pktOrigAddr)
    } /* endif */
 }
 
-s_link *getLinkFromAddr(s_addr aka)
-{
-   int i = 0;
-   
-   while (i < linkCount) {
-      if (addrComp(aka, links[i].hisAka)==0) return &(links[i]);
-      i++;
-   }
-   return NULL;
-}
-
 void processPkt(char *fileName, int onlyNetmail)
 {
    FILE        *pkt;
@@ -416,14 +392,14 @@ void processPkt(char *fileName, int onlyNetmail)
       sprintf(buff, "pkt: %s", fileName);
       writeLogEntry(log, '6', buff);
       
-      link = getLinkFromAddr(header->origAddr);
+      link = getLinkFromAddr(*config, header->origAddr);
       if (link != NULL)
          // if passwords aren't the same don't process pkt
          // if pkt is from a System we don't have a link (incl. pwd) with
          // we process it.
-         if (stricmp(link->pwd, header->pktPassword) != 0) pwdOK = 0;
+         if (stricmp(link->pktPwd, header->pktPassword) != 0) pwdOK = 0;
       if (pwdOK != 0) {
-         while ((msg = readMsgFromPkt(pkt,addr[0].zone)) != NULL) {
+         while ((msg = readMsgFromPkt(pkt,config->addr[0].zone)) != NULL) {
             if ((onlyNetmail == 0) || (msg->netMail == 1))
                processMsg(msg, header->origAddr);
             freeMsgBuffers(msg);
@@ -443,6 +419,7 @@ void processDir(char *directory, int onlyNetmail)
    dir = opendir(directory);
 
    while ((file = readdir(dir)) != NULL) {
+//      printf("testing %s\n", file->d_name);
       if ((patmat(file->d_name, "*.pkt") == 1) || (patmat(file->d_name, "*.PKT") == 1)) {
          dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
          strcpy(dummy, directory);
@@ -458,7 +435,7 @@ void processDir(char *directory, int onlyNetmail)
 
 void toss()
 {
-   processDir(inboundDirSec, 0);
+   processDir(config->protInbound, 0);
    // only import Netmails from inboundDir
-   processDir(inboundDir, 1);
+   processDir(config->inbound, 1);
 }

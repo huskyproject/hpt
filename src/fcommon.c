@@ -12,14 +12,14 @@
 
 char *createTempPktFileName()
 {
-   char   *fileName = (char *) malloc(strlen(outboundDir)+1+12);
+   char   *fileName = (char *) malloc(strlen(config->outbound)+1+12);
    time_t aTime = time(NULL);  // get actual time
    int counter = 0;
 
    aTime %= 0xffffff;   // only last 24 bit count
 
    do {
-      sprintf(fileName, "%s%06lx%02x.pkt", outboundDir, aTime, counter);
+      sprintf(fileName, "%s%06lx%02x.pkt", config->outbound, aTime, counter);
       counter++;
    } while (fexist(fileName) && (counter<=256));
 
@@ -46,7 +46,7 @@ char *createOutboundFileName(s_addr aka, e_prio prio, e_type typ)
       sprintf(name, "%04x%04x.flo", aka.net, aka.node);
    }
 
-   if (aka.zone != addr[0].zone) {
+   if (aka.zone != config->addr[0].zone) {
       // add suffix for other zones
       sprintf(zoneSuffix, ".%03x\\", aka.zone);
 #ifdef UNIX
@@ -76,8 +76,8 @@ char *createOutboundFileName(s_addr aka, e_prio prio, e_type typ)
       } /* endswitch */
    } /* endif */
 
-   fileName = (char *) malloc(strlen(outboundDir)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
-   strcpy(fileName, outboundDir);
+   fileName = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
+   strcpy(fileName, config->outbound);
    if (zoneSuffix[0] != 0) strcpy(fileName+strlen(fileName)-1, zoneSuffix);
    strcat(fileName, pntDir);
    strcat(fileName, name);
