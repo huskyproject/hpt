@@ -1986,8 +1986,8 @@ typedef struct fileInDir {
 int filesComparer(const void *elem1, const void *elem2) {
     // File times comparer for qsort
     if (((s_fileInDir *) elem1) -> fileTime < ((s_fileInDir *) elem2) -> fileTime) return -1;
-    if (((s_fileInDir *) elem1) -> fileTime == ((s_fileInDir *) elem2) -> fileTime) return 0;
-    return 1;
+    if (((s_fileInDir *) elem1) -> fileTime > ((s_fileInDir *) elem2) -> fileTime) return 1;
+    return strcasecmp(((s_fileInDir *) elem1) -> fileName, ((s_fileInDir *) elem2) -> fileName);
 }
 
 char *validExt[] = {"*.MO?", "*.TU?", "*.TH?", "*.WE?", "*.FR?", "*.SA?", "*.SU?"};
