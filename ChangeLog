@@ -1,3 +1,26 @@
+2003-02-16 Sunday 17:59  stas_degteff
+
+	* README (1.17): Fix type erors; add link to homepage
+
+2003-02-16 Sunday 17:55  stas_degteff
+
+	* INSTALL (1.13): Update build documentation
+
+2003-02-16 Sunday 10:37  d_sergienko
+
+	* h/pkt.h, src/pktwrite.c, src/tpkt.c, src/txt2pkt.c
+	(hpt-1_4-stable.[1,1,1,1]): backporting from hpt current: write our
+	own FTSC ProdCode and ProdRev
+
+2003-02-16 Sunday 09:23  stas_degteff
+
+	* doc/perlwin32.rus (hpt-1_4-stable.2): Fix typo
+
+2003-02-16 Sunday 09:20  stas_degteff
+
+	* doc/: perlwin32.rus, perlwin32.txt (hpt-1_4-stable.[1,1]): Fix
+	typo; remove obsolete phrase
+
 2003-02-12 Wednesday 20:44  sfpavel
 
 	* debian/docs (hpt-1_4-stable.1): Add UPGRADE file to debian
