@@ -957,7 +957,7 @@ static int makealldirs(const char *basedir, const char *filename)
 #undef my_isdirsep
 
 int isValidName(char *str) {
-    const char validstr[]="._0123456789$&-'/";
+    const char validstr[]="._0123456789$&-'/!";
     
     while (*str) {
 	if (!(*str >= 'A' && *str <= 'Z') &&
@@ -1971,7 +1971,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	header = openPkt(pkt);
 	if (header != NULL) {
 	    if ((to_us(header->destAddr)==0) || (sec == secLocalInbound)) {
-		w_log('7', "pkt: %s", fileName);
+		w_log('7', "pkt: %s [%s]", fileName, aka2str(header->origAddr));
 		statToss.pkts++;
 		link = getLinkFromAddr(*config, header->origAddr);
 		if ((link!=NULL) && (link->pktPwd==NULL) && (header->pktPassword[0]!='\000'))
