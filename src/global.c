@@ -40,7 +40,7 @@ int initSMAPI = -1;
 /* basic version number */
 const int   VER_MAJOR   = 1;
 const int   VER_MINOR   = 2;
-const int   VER_PATCH   = 1;
+const int   VER_PATCH   = 2;
 
 
 /* branch is "" for CVS current, "-stable" for the release candiate branch  */
