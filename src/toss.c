@@ -2145,7 +2145,7 @@ int find_old_arcmail(s_link *link, FILE *flo)
 	line = trimLine(line);
 #endif
 	for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
-	    if (patimat(line, validExt[i]) == 1) {
+	    if (strchr("^#~", *line) && patimat(line+1, validExt[i]) == 1) {
 		if (*line!='~') {
 		    nfree(bundle);
 		    // One char for first symbol in flo file
