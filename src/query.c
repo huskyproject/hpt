@@ -9,6 +9,12 @@
 #include <query.h>
 #include <time.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#if !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
+#include <unistd.h>
+#endif
 
 #define nbufSize 2*1024
 
@@ -275,8 +281,8 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
     s_query_areas *areaNode = NULL;
     s_query_areas *tmpNode  = NULL;
 
-    const int tbSize =  22;       
-    char timebuf[22] = "";
+//    const int tbSize =  22;       
+//    char timebuf[22] = "";
 
     if( !queryAreasHead ) af_OpenQuery();
     tmpNode = queryAreasHead;
@@ -319,6 +325,8 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
             af_AddLink( areaNode, dwlink );
             tmpNode->next = areaNode;
         }
+        break;
+    case ADDDEL:
         break;
     }
     return tmpNode;
@@ -365,7 +373,7 @@ int af_OpenQuery()
             token = strtok( NULL, seps );
             strncpy( areaNode->type ,token, 4);
             token = strtok( NULL, seps );
-            if(sscanf(token, "%d-%d%-%d@%d:%d",
+            if(sscanf(token, "%d-%d-%d@%d:%d",
                           &areaNode->areaDate.year,
                           &areaNode->areaDate.month,
                           &areaNode->areaDate.day,
