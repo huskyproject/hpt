@@ -916,12 +916,12 @@ char *subscribe(s_link *link, char *cmd) {
 
 	switch (rc) {
 	case 0:         /* already linked */
-	    if (!isPatternLine(line)) {
+	    /*if (!isPatternLine(line))*/ {
 		xscatprintf(&report, " %s %s  already linked\r",
 			    an, print_ch(49-strlen(an), '.'));
 		w_log(LL_AREAFIX, "areafix: %s already linked to %s",
 		      aka2str(link->hisAka), an);
-		i = config->echoAreaCount;
+		//i = config->echoAreaCount;
 	    }
 	    break;
 	case 1:         /* not linked */
