@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Wed May  3 08:25:11 NOVST 2000
+max:
+* fixed bug with pktsize & createTempPktFileName (thanx to Lev Serebryakov)
+
+----- cvs ci ------
 Tue May  2 22:13:32 NOVST 2000
 max:
 * some changes about zone seen-by stripping

@@ -1074,6 +1074,7 @@ void repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
 		   free(link->pktFile);
 		   link->pktFile=NULL;
 		   free(link->packFile);
+		   link->packFile=NULL;
 	   }
    }
    

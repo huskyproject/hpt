@@ -191,10 +191,10 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
           if (link->pktFile != NULL && link->pktSize != 0) { // check packet size
              len = fsize(link->pktFile);
              if (len >= link->pktSize * 1024L) { // Stop writing to pkt
-//                arcmail(link);
 				 free(link->pktFile);
 				 link->pktFile=NULL;
 				 free(link->packFile);
+				 link->packFile=NULL;
              }
           }
 

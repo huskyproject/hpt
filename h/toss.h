@@ -63,12 +63,4 @@ int checkAreaLink(s_area *area, s_addr aka, int type);
 #define REC_HDR 0x0001
 #define REC_TXT 0x0002
 
-void exit_hpt(char *logstr, int print);
-/*DOC
-  exit to shell with errorlevel 1.
-  print logstr to log file
-  print logstr to stderr if print!=0
-  closed log file, removed lockfile, disposed config
-*/
-
 #endif

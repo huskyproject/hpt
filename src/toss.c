@@ -590,6 +590,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 				free(newLinks[i]->link->pktFile);
 				newLinks[i]->link->pktFile=NULL;
 				free(newLinks[i]->link->packFile);
+				newLinks[i]->link->packFile=NULL;
 			}
 		}
 		
