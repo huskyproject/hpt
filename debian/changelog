@@ -1,3 +1,16 @@
+hpt (0.9.8-8) unstable; urgency=low
+
+  * New cvs snapshot.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Sat, 21 Apr 2001 16:37:10 +0200
+
+hpt (0.9.8-7) unstable; urgency=low
+
+  * Small fix in fidoconf in cvs.
+  * Recompiled with Debug enabled.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Mon, 16 Apr 2001 15:40:36 +0200
+
 hpt (0.9.8-6) unstable; urgency=low
 
   * Recompiled against new smapi. And i hope the segfault after unpack
