@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Tue Feb 15 17:24:20 NOVT 2000
+max (patch from Serguei Revtov):
+- adding xstr.o to sun/makefile.sun & sun/makefile.nohusky
+
+----- cvs ci ------
 Sat Feb 12 23:53:44 NOVT 2000
 max:
 * compiling without warnings under win32
