@@ -1,3 +1,12 @@
+2002-03-14 Thursday 13:37  mche
+
+	* src/query.c (1.29): added: idle request feature
+
+2002-03-14 Thursday 13:32  mche
+
+	* h/areafix.h (1.25), h/query.h (1.12), src/areafix.c (1.268):
+	added: idle request feature
+
 2002-03-13 Wednesday 17:23  mche
 
 	* src/query.c (1.28): added: canceling request feature
