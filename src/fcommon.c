@@ -645,4 +645,15 @@ int isValidConference(const char *s) {
     return 1;
 }
 
-
+void writeEchoTossLogEntry(char *areaName)
+{
+    if (config->echotosslog) {
+        FILE *f=fopen(config->echotosslog, "a");
+        if (f==NULL)
+            w_log(LL_ERROR, "Could not open or create EchoTossLogFile.");
+        else {
+            fprintf(f, "%s\n", areaName);
+            fclose(f);
+        }
+    }
+}

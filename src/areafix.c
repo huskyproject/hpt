@@ -1769,6 +1769,7 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
         processNMMsg(tmpmsg, NULL, getNetMailArea(config,config->robotsArea),
             0, MSGLOCAL);
 
+        writeEchoTossLogEntry(config->robotsArea?config->robotsArea:config->netMailAreas[0].areaName);
         closeOpenedPkt();
         freeMsgBuffers(tmpmsg);
         nfree(tmpmsg);

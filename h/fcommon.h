@@ -109,3 +109,4 @@ int isValidConference(const char *s);
 
 #endif
 
+void writeEchoTossLogEntry(char *areaName);
