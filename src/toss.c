@@ -608,6 +608,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    int i=0;
    s_link *creatingLink;
    s_addr *aka;
+   char *description=NULL;
 
    //translating name of the area to lowercase, much better imho.
    while (*c_area != '\0') {
@@ -650,6 +651,55 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 #endif
    } else
 	   sprintf(buff, "EchoArea %s Passthrough -a %s", c_area, myaddr);
+           
+   if (creatingLink->forwardRequestFile!=NULL) {
+     FILE *fforw;
+     
+     if ((fforw=fopen(creatingLink->forwardRequestFile,"r")) == NULL) {
+       fprintf(stderr,"areafix: cannot open forwardRequestFile \"%s\"\n",creatingLink->forwardRequestFile);
+     }
+     else {
+       char line[256];
+       char copy[256];
+       int out=0;
+       
+       line[0]='\0'; copy[0]='\0';
+       while ((!out) && (fgets(line,sizeof(line),fforw))) {
+         line[strlen(line)-1]='\0';
+         strcpy (copy,line);
+         description=strtok(copy," \t\n");
+         if (patimat(description,c_area)==1) {
+           out=1;
+         }
+       }
+       if (out) {
+         if (((description=strtok(NULL," \t\n"))!=NULL) && (description=strstr(line,description))!=NULL) {
+           fileName=NULL;
+           if ((fileName=strstr(creatingLink->autoCreateDefaults, "-d "))==NULL) {
+               char *tmp;
+               tmp=(char *) calloc (strlen(creatingLink->autoCreateDefaults)+strlen(description)+6,sizeof(char));
+               sprintf (tmp,"%s -d \"%s\"",creatingLink->autoCreateDefaults,description);
+               free(creatingLink->autoCreateDefaults);
+               creatingLink->autoCreateDefaults=tmp;
+           }
+           if (fileName) {
+             char *tmp;
+             
+             tmp=(char *) calloc (strlen(creatingLink->autoCreateDefaults)+strlen(description)+6,sizeof(char));
+             fileName[0]='\0';
+             sprintf (tmp,"%s-d \"%s\"",creatingLink->autoCreateDefaults,description);
+             fileName++;
+             fileName=rindex(fileName,'\"')+1;
+             strcat(tmp,fileName);
+             free (creatingLink->autoCreateDefaults);
+             creatingLink->autoCreateDefaults=tmp;
+           }  
+         }
+       }
+       fclose(fforw);
+     }
+   }
+
    if ((creatingLink->autoCreateDefaults != NULL) &&
        (strlen(buff)+strlen(creatingLink->autoCreateDefaults))<255) {
            if ((fileName=strstr(creatingLink->autoCreateDefaults, "-g")) == NULL) {

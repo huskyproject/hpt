@@ -173,7 +173,19 @@ int main(int argc, char **argv)
    char title[ 256 ];
 #endif
 
-   sprintf(versionStr, "hpt v%u.%02u", VER_MAJOR, VER_MINOR);
+#ifdef __linux__
+   sprintf(versionStr, "hpt v%u.%02u/LNX", VER_MAJOR, VER_MINOR);
+#elif __freebsd__
+   sprintf(versionStr, "hpt v%u.%02u/BSD", VER_MAJOR, VER_MINOR);
+#elif OS2
+    sprintf(versionStr, "hpt v%u.%02u/OS2", VER_MAJOR, VER_MINOR);
+#elif __NT__
+    sprintf(versionStr, "hpt v%u.%02u/NT", VER_MAJOR, VER_MINOR);
+#elif __sun__
+    sprintf(versionStr, "hpt v%u.%02u/SUN", VER_MAJOR, VER_MINOR);
+#else
+    sprintf(versionStr, "hpt v%u.%02u", VER_MAJOR, VER_MINOR);
+#endif
 
    printf("Highly Portable Toss v%u.%02u\n", VER_MAJOR, VER_MINOR);
 #if defined ( __WATCOMC__ ) && defined ( __NT__ )

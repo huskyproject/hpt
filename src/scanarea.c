@@ -175,7 +175,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
    while (msg.text[j] != '\r') {msg.text[j]=toupper(msg.text[j]);j++;}
 
    // scan msg to downlinks
-
+   
    for (i = 0; i<echo->downlinkCount; i++) {
        // link is passive?
        if (echo->downlinks[i]->link->Pause && !echo->noPause) continue;
