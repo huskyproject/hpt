@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Thu Mar  9 15:31:13 NOVT 2000
+max:
+* fixed correctEMAddr: origins like (FidoNet 9:99/9.9) looks like (9:99/9.9)
+
+----- cvs ci ------
 Tue Mar  7 00:37:31 NOVT 2000
 max:
 * new dupes tested & added to source tree

@@ -3,18 +3,16 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-fix correctEMAddr like (FidoNet 2:5000/117.4) -> 0:2/117.4
 add option "run with another config"
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 
 - check dupebase filename creation - dos & passthrough areas
+- clean autoCreate code
 - do not open/close files on each msg
 - fileboxes
 - templates
-- clean autoCreate code
-- fix HASHDUPEs under non unices
 
 Category 3: Will only be included if volunteers send patches
 ============================================================

@@ -142,7 +142,6 @@ void correctEMAddr(s_message *msg)
 
    start = strrstr(msg->text, " * Origin:");
    if (NULL != start) {
-//      while (*(start++)!='\r');                       // get to end of line
       while ((*(start) !='\r') && (*(start) != '\n')) start++;  // get to end of line
 
       if (*(start-1) == ')') {                        // if there is no ')', there is no origin
@@ -151,8 +150,11 @@ void correctEMAddr(s_message *msg)
          i=0;
    
          while ((*start != ')') && (*start != '\r') && (*start != '\n') && (i < 47)) {
-            buffer[i] = *start;
-            i++; start++;
+	    if (isdigit(*start) || *start==':' || *start=='/' || *start=='.') {
+	        buffer[i] = *start;
+    		i++;
+	    }
+	    start++;
          } /* endwhile */
          buffer[i]   = '\0';
          string2addr(buffer, &(msg->origAddr));
