@@ -502,7 +502,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
             }
         }
         strbeg = get_hcfgPos();
-        w_log(LL_DEBUGF, __FILE__ ":%u:changeconfig() strbeg=%l", __LINE__, strbeg);
+        w_log(LL_DEBUGF, __FILE__ ":%u:changeconfig() strbeg=%ld", __LINE__, strbeg);
         nfree(line);
         nfree(cfgline);
     }
@@ -588,7 +588,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     default: break;
     } /*  switch (action) */
 
-    w_log(LL_DEBUGF, __FILE__ ":%u:changeconfig() call InsertCfgLine(\"%s\",<cfgline>,%l,%l)", __LINE__, fileName, strbeg, strend);
+    w_log(LL_DEBUGF, __FILE__ ":%u:changeconfig() call InsertCfgLine(\"%s\",<cfgline>,%ld,%ld)", __LINE__, fileName, strbeg, strend);
     InsertCfgLine(fileName, cfgline, strbeg, strend);
     nfree(cfgline);
     nfree(fileName);
