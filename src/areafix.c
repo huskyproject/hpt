@@ -150,7 +150,7 @@ int subscribeAreaCheck(s_area *area, char *areaname, s_link *link)
 	// 0 - already subscribed / linked
 	// 1 - need subscribe / not linked
 	// 2 - no access
-    } else rc = 4;
+    }
     // this is another area
     return rc;
 }
@@ -874,6 +874,7 @@ char *subscribe(s_link *link, char *cmd) {
 		      an, aka2str(link->hisAka));
 		xscatprintf(&report," %s %s  no access\r", an,
 			    print_ch(49-strlen(an), '.'));
+		found=1;
 	    }
 	    if (area->hide && !isPatternLine(line)) found=1;
 	    break;
