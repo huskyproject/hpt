@@ -1,3 +1,11 @@
+2003-10-20 Monday 05:28  andr_lukyanov
+
+	* make/makeperl.mvcdll (1.15): Removed old makefiles
+
+2003-10-20 Monday 05:24  andr_lukyanov
+
+	* make/makefile.mvcdll (1.12): Fix MSVC compilation
+
 2003-10-17 Friday 07:48  andr_lukyanov
 
 	* make/: makefile.cyg (1.11), makefile.djg (1.7), makefile.emx
