@@ -1,3 +1,12 @@
+2002-04-28 Sunday 21:20  pavel.gulchouck
+
+	* src/areafix.c (1.292): fix spelling
+
+2002-04-28 Sunday 20:44  pavel.gulchouck
+
+	* src/areafix.c (1.291): bugfix, unsubscribe can hangs since 1.284
+	(23 Apr)
+
 2002-04-27 Saturday 09:35  ml
 
 	* src/hpt.c (1.147): Compile HPT with Perl support on VC.Net by
