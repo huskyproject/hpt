@@ -833,12 +833,14 @@ char *subscribe(s_link *link, char *cmd) {
 	if (rc!=0 && limitCheck(link)) rc = 6;
 
 	switch (rc) {
-	case 0: 
-	    xscatprintf(&report, " %s %s  already linked\r",
-			an, print_ch(49-strlen(an), '.'));
-	    w_log('8', "areafix: %s already linked to %s",
-		  aka2str(link->hisAka), an);
-	    if (!isPatternLine(line)) i = config->echoAreaCount;
+	case 0:
+	    if (!isPatternLine(line)) {
+		xscatprintf(&report, " %s %s  already linked\r",
+			    an, print_ch(49-strlen(an), '.'));
+		w_log('8', "areafix: %s already linked to %s",
+		      aka2str(link->hisAka), an);
+		i = config->echoAreaCount;
+	    }
 	    break;
 	case 1: 
 	    if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==0) {
@@ -863,7 +865,7 @@ char *subscribe(s_link *link, char *cmd) {
 		xscatprintf(&report," %s %s  no access\r", an,
 			    print_ch(49-strlen(an), '.'));
 	    }
-	    found = 1;
+	    if (area->hide && !isPatternLine(line)) found=1;
 	    break;
 	}
     }
