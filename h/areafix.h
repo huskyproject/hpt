@@ -16,7 +16,6 @@
 #define RESCAN  10
 #define ERROR   255
 
-char *aka2str(s_addr aka);
 char *print_ch(int len, char ch);
 int processAreaFix(s_message *msg, s_pktHeader *pktHeader);
 void afix(void);
