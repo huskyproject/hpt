@@ -23,7 +23,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -40,7 +40,7 @@ int initSMAPI = -1;
 /* basic version number */
 const int   VER_MAJOR   = 1;
 const int   VER_MINOR   = 2;
-const int   VER_PATCH   = 2;
+const int   VER_PATCH   = 3;
 
 
 /* branch is "" for CVS current, "-stable" for the release candiate branch  */
@@ -49,7 +49,7 @@ const char *VER_BRANCH  = "-stable";
 /* The service version string is empty for the first release done from a    */
 /* release candidate branch.  If subsequent service releases are necessary, */
 /* single letters are used, like "a", "b", ...                              */
-const char *VER_SERVICE = "";  
+const char *VER_SERVICE = "";
 
 char       *versionStr=NULL;
 
