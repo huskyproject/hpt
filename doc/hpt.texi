@@ -2266,7 +2266,7 @@ This statement can only be repeated for different links.
 @code{advancedareafix on}
 @end table
 
-If this statement is "on" and our system wants to detele area from
+If this statement is "on" and our system wants to delete area from
 remote config then unsubscribe messages to areafix robot of this link
 looks like "~areaname". The area on the remote system will be deleted
 from config file, if our system is allowed to delete this area ("allow
