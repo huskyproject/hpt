@@ -803,6 +803,11 @@ int limitCheck(s_link *link) {
     return (n >= link->afixEchoLimit);
 }
 
+int isPatternLine(char *s) {
+    if (strchr(s,'*') || strchr(s,'?')) return 1;
+    return 0;
+}
+
 char *subscribe(s_link *link, char *cmd) {
     unsigned int i, rc=4, found=0;
     char *line, *an, *report = NULL;
@@ -833,7 +838,7 @@ char *subscribe(s_link *link, char *cmd) {
 			an, print_ch(49-strlen(an), '.'));
 	    w_log('8', "areafix: %s already linked to %s",
 		  aka2str(link->hisAka), an);
-	    if (strstr(line, "*") == NULL) i = config->echoAreaCount;
+	    if (!isPatternLine) i = config->echoAreaCount;
 	    break;
 	case 1: 
 	    if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==0) {
@@ -847,12 +852,12 @@ char *subscribe(s_link *link, char *cmd) {
 		      aka2str(link->hisAka),an);
 		w_log('9', "areafix: can't write to config file!");
 	    }
-	    if (strstr(line, "*") == NULL) i = config->echoAreaCount;
+	    if (!isPatternLine(line)) i = config->echoAreaCount;
 	    break;
 	case 6:
 	    break;
 	default : // rc = 2
-	    if (!area->hide && strstr(line,"*")==NULL) {
+	    if (!area->hide && !isPatternLine(line)) {
 		w_log('8', "areafix: area %s -- no access for %s",
 		      an, aka2str(link->hisAka));
 		xscatprintf(&report," %s %s  no access\r", an,
@@ -865,7 +870,7 @@ char *subscribe(s_link *link, char *cmd) {
 
     if (rc!=0 && limitCheck(link)) rc = 6;
 	
-    if ((rc==4) && (strstr(line,"*") == NULL) && !found) {
+    if (rc==4 && !isPatternLine(line) && !found) {
 	if (link->denyFRA==0) {
 	    // try to forward request
 	    if ((rc=forwardRequest(line, link))==2) {
@@ -1057,7 +1062,7 @@ char *unsubscribe(s_link *link, char *cmd) {
 		xscatprintf(&report," %s %s  error. report to sysop!\r",
 			    an, print_ch(49-strlen(an),'.'));
 	    break;
-	case 1: if (strstr(line, "*")) continue;
+	case 1: if (isPatternLine(line)) continue;
 	    if (area->hide) {
 		i = config->echoAreaCount;
 		break;
@@ -1078,7 +1083,7 @@ char *unsubscribe(s_link *link, char *cmd) {
 	}
     }
     if (report == NULL) {
-	if (strstr(line, "*")) {
+	if (isPatternLine(line)) {
 	    xscatprintf(&report, " %s %s  no areas to unlink\r",
 			line, print_ch(49-strlen(line), '.'));
 	    w_log('8', "areafix: no areas to unlink");
@@ -1501,7 +1506,7 @@ char *rescan(s_link *link, char *cmd) {
 		      an, rcc, aka2str(link->hisAka));
 	    }
 	    break;
-	case 1: if (strstr(line, "*")) continue;
+	case 1: if (isPatternLine(line)) continue;
 	    w_log('8', "areafix: %s area not linked for rescan to %s",
 		  area->areaName, aka2str(link->hisAka));
 	    xscatprintf(&report, " %s %s  not linked for rescan\r",

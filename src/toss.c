@@ -970,7 +970,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     int i;
 
     if (strlen(c_area)>60) return 11;
-    if (!isValidConference(c_area)) return 7;
+    if (!isValidConference(c_area) || isPatternLine(c_area)) return 7;
 
     msgbFileName = makeMsgbFileName(c_area);
 
@@ -1468,7 +1468,9 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 	    break;
 	case MERR_NOMEM: xstrcat(&textBuff,"Not enough memory for specified operation\r");
 	    break;
-	case MERR_NODS: xstrcat(&textBuff,"Maybe not enough disk space for operation\r");
+	case MERR_NODS: 
+	    xstrcat(&textBuff,"Maybe not enough disk space for operation\r");
+	    w_log('9', "Maybe not enough disk space for operation\r");
 	    break;
 	case MERR_NOENT: xstrcat(&textBuff,"File/message does not exist\r");
 	    break;

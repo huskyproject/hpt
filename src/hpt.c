@@ -311,7 +311,7 @@ void processConfig()
 	       exit(EX_CANTCREAT);
 	   } else {
 	       if (write(lock_fd," ", 1)!=1) {
-		   fprintf(stderr,"can't write lo lock file! exit...\n");
+		   fprintf(stderr,"can't write to lock file! exit...\n");
 		   disposeConfig(config);
 		   exit(EX_IOERR);
 	       }

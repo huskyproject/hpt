@@ -817,8 +817,8 @@ int isValidConference(char *s) {
 }
 
 char *makeMsgbFileName(char *s) {
-    // allowed symbols: 0..9, a..z, A..Z, ".!@#$^&()~`'-_{}"
-    static char str[]="\"*+,/:;<=>?[\\]|%"; // not allowed
+    // allowed symbols: 0..9, a..z, A..Z, ".,!@#$^()~-_{}[]"
+    static char str[]="\"*/:;<=>?\\|%`'&+"; // not allowed
     char *name=NULL;
 
     while (*s) {
