@@ -15,6 +15,9 @@
 #if !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
 #endif
+#if (defined (__WATCOMC__) && defined (__NT__)) || defined(__TURBOC__)
+#include <dos.h>
+#endif
 
 #define nbufSize 2*1024
 
