@@ -228,12 +228,6 @@ void post(int c, unsigned int *n, char *params[])
       xscatprintf(&msg.text, "\r--- %s\r * Origin: %s (%s)\r",
               versionStr, config->name, aka2str(msg.origAddr));
 
-      if (!msg.netMail) {
-          xscatprintf(&msg.text, "SEEN-BY: %u/%u\r\001PATH: %u/%u\r",
-	      echo->useAka->net, echo->useAka->node,
-	      echo->useAka->net, echo->useAka->node);
-      }
-
       msg.textLength = strlen(msg.text);
       
       writeLogEntry (hpt_log, '1', "Start posting...");
@@ -258,6 +252,10 @@ void post(int c, unsigned int *n, char *params[])
 	  processNMMsg(&msg, NULL, NULL, 0);
         else
 	  msg.attributes = 0;
+          xscatprintf(&msg.text, "SEEN-BY: %u/%u\r\001PATH: %u/%u\r",
+	      echo->useAka->net, echo->useAka->node,
+	      echo->useAka->net, echo->useAka->node);
+          msg.textLength = strlen(msg.text);
           processEMMsg(&msg, msg.origAddr, 1);
       } 
       

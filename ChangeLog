@@ -4,7 +4,8 @@ hpt 0.9.6
 ----- cvs ci ------
 Mon Mar 27 11:24:07 NOVST 2000
 max:
-* fixed error with static buffer in areafix
+* fixed error with static buffer in areafix.c
+* fixed adding path & seen-by to non passthrough area in post.c
 
 ----- cvs ci ------
 Sun Mar 26 14:00:02 NOVST 2000
