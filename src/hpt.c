@@ -155,7 +155,7 @@ void start_help(void) {
   fprintf(stdout,"   hpt toss -b[f] - tossing mail from badarea [force]\n");
   fprintf(stdout,"   hpt scan - scanning echomail\n");
   fprintf(stdout,"   hpt scan -w - scanning echomail without highwaters\n");
-  fprintf(stdout,"   hpt scan -a <areaname> - scanning echomail from <areaname> area\n");
+  fprintf(stdout,"   hpt scan -a <pattern> - scanning echomail from areas matching <pattern>\n");
   fprintf(stdout,"   hpt scan -f <filename> - scanning echomail from alternative echotoss file\n");
   fprintf(stdout,"   hpt post [options] file - posting a mail (for details run \"hpt post -h\")\n");
   fprintf(stdout,"   hpt pack - packing netmail\n");

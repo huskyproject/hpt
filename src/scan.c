@@ -861,7 +861,10 @@ void scanExport(int type, char *str) {
     w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
 
     if (type & SCN_NAME) {
-        scanByName(str, smManual);
+        for (i = 0; i< config->echoAreaCount; i++) {
+            if (patimat(config->echoAreas[i].areaName, str))
+                scanByName(config->echoAreas[i].areaName, smManual);
+        }
     } else if (f == NULL) {
         if (type & SCN_FILE) {
             w_log(LL_START, "EchoTossLogFile not found -> Scanning stop");
