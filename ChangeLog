@@ -1,3 +1,7 @@
+2004-09-20 Monday 10:43  pgul
+
+	* src/post.c (1.117): Fix typo
+
 2004-09-14 Tuesday 19:07  i_zkh
 
 	* src/: getfree.c (1.28), hpt.c (1.192), hptafix.c (1.11),
