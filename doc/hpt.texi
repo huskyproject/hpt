@@ -50,26 +50,26 @@ Tosser for OS/2, Windows, BeOS and Unix.
 @chapter An Overview on @value{HPT}
 
 @value{HPT} is a Fidonet message tosser and packer with areafix, written
-by Matthias Tichy, 2:2432/645@@fidonet. Now project supported by Max
-Levenkov, 2:5000/117@@fidonet and Husky Development Team.
+by Matthias Tichy, 2:2432/645@@fidonet. Now project is being supported by
+Max Levenkov, 2:5000/117@@fidonet and Husky Development Team.
 
 Features of @value{HPT}:
 @enumerate
 @item tossing packets of 2, 2.0 & 2+ types
-@item supporting of Msg, Squish and Jam message bases
+@item supporting Msg, Squish and Jam message bases
 @item posting to net & echo areas
 @item areafix (on the fly, from command line, limit for areas...)
 @item autocreate on the fly
 @item forward requests
 @item pause and autopause for links
-@item linking of net & echo areas
+@item linking net & echo areas
 @item carbon copy
 @item groups & levels for personal and public access to echo areas
 @item powerful dupe checker
 @item link defaults
 @end enumerate
 
-The advantages of @value{HPT} is:
+The advantages of @value{HPT} are:
 
 @enumerate
 @item Open Source (GPL)
@@ -116,7 +116,7 @@ groups for @code{EchoAreas})
 
 1. The smapi and fidoconf packages are required for hpt.
 
-2. Put the fidoconfig ans smapi packages in the directory where the
+2. Put the fidoconfig and smapi packages in the directory where the
    other packages of fido linux reside:
 
 @table @asis
@@ -186,7 +186,7 @@ protection fault, or a system lockup, or a spontaneous reboot. I do consider
 a crash untolerable. No matter how stupid things you do, you should not be
 able to crash @value{HPT}.
 
-If you are experienced user and get core dump, you can send me gdb
+If you are an experienced user and get core dump, you can send me gdb
 report. If you have a crash, locate @file{core} file that has been
 generated. Then run $ gdb hpt core, type where. @value{HPT} must be
 compiled with debug information (DEBUG=1 in @file{huskymak.cfg} file).
@@ -200,9 +200,9 @@ below.
 
 @item You want to contribute to @value{HPT}.
 If you are a programmer and have fixed a problem in @value{MSGED} on your
-own, please submit your changes to me. The preferred way for doing so is to
+own, please submit your changes to me. The preferred way for doing this is to
 send me a difference file in GNU diff format (with -c parameter). Your
-work will be highly appreceated and honored in an appropriate place. If
+work will be highly appreciated and honored in an appropriate place. If
 you want to regularly work on @value{HPT}, we also have a CVS server
 online that you can have access to if you like.
 
@@ -246,12 +246,12 @@ Thanks to:
 @item Lev Serebryakov (new %list)
 @item ... and all other people (sorry, if I've forget somebody)
 @end enumerate
-P.S. all of this people makes bug fixes, so I don't mention it.
+P.S. all this people make bug fixes, so I don't mention it.
 
 @node Configuration Reference, Advanced Concepts, Installation, Top
 @chapter @value{HPT} @value{VERSION} Configuration Reference
 
-@value{HPT} based on FIDOCONFIG library, so read documentation of
+@value{HPT} is based on FIDOCONFIG library, so read documentation of
 FIDOCONFIG about location of config file and keywords ideology.
 
 @menu
@@ -267,9 +267,9 @@ FIDOCONFIG about location of config file and keywords ideology.
 @node Using config, Keywords, Configuration Reference, Configuration Reference
 @section Using config
 
-HPT uses fidoconfig, but not all config statements references to hpt and
-hpt ignore all unused config statements. The Husky Fidonet Software project
-concepts is use one config for all fidonet programs.
+Although HPT uses fidocongig, not all config statements refer to hpt. Hpt
+ignores all unused config statements.The Husky Fidonet Software project
+concept is to use one config file for all fidonet programs.
 
 
 @subsection Predefined config variables
@@ -1752,7 +1752,7 @@ scanned, when we start "hpt pack" - the same is for netmail areas.
 If area was processed, its name is removed from echotosslog file.
 When hpt has finished processing all listed areas and this file became
 empty, it is removed, otherwise kept for futher processing (maybe by other programs).
-If this file is not found - all areas will be scaned 
+If this file is not found - all areas will be scanned 
 (depending on value of PackNetMailOnScan).
 @xref{PackNetMailOnScan}, but if '-f' command line flag specified, scanning
 will stop. Filename after -f is optional. If it is not set, value of
