@@ -625,6 +625,10 @@ int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr, int writeAccess)
 	reason = "lenght of CONFERENCE name is more than 60 symbols";
 	w_log(LL_ECHOMAIL, "Badmail reason: lenght of CONFERENCE name (areatag) is more than 60 symbols: '%s'", areaName);
 	break;
+    case 12:
+	reason = "Area killed (unsubscribed)";
+	w_log(LL_ECHOMAIL, "Badmail reason: area killed (unsubscribed): '%s'", areaName);
+	break;
     default :
 	reason = "Another error";
 	w_log(LL_ECHOMAIL, "Badmail reason: Another error");
@@ -696,7 +700,7 @@ void makeMsgToSysop(char *areaName, hs_addr fromAddr, ps_addr uplinkAddr)
                     versionStr);
 
 		if (config->areafixReportsFlags)
-		    xstrscat(&(msgToSysop[i]->text), "\001FLAGS ", 
+		    xstrscat(&(msgToSysop[i]->text), "\001FLAGS ",
 		             config->areafixReportsFlags, "\r", NULL);
                 xstrscat(&(msgToSysop[i]->text),
                     "Action   Name", print_ch(49, ' '), "By\r", NULL);
@@ -896,7 +900,7 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
             if (config->advStatisticsFile != NULL) put_stat(echo, &pktOrigAddr, stBAD, 0);
 #endif
         }
-        else 
+        else
         { /*  access ok - process msg */
 
             if (dupeDetection(echo, *msg)==1) {
@@ -1472,7 +1476,7 @@ void processDir(char *directory, e_tossSecurity sec)
 	w_log(LL_DEBUGV,"testing sorted %s\n", dummy);
 #endif
 	if (!(pktFile = patimat(dummy+dirNameLen, "*.pkt") == 1))
-	    if (isArcMail(dummy+dirNameLen)) 
+	    if (isArcMail(dummy+dirNameLen))
 		arcFile = 1;
 
 	if (pktFile || (arcFile && !config->noProcessBundles)) {
@@ -1675,9 +1679,9 @@ void arcmail(s_link *tolink) {
 
 	/*  only create floFile if we have mail for this link */
 	if (link->pktFile != NULL) {
-	    
+	
 	    aka = SelectPackAka(link);
- 
+
 	    if (needUseFileBoxForLinkAka(config,link,aka)) {
 
 		if (!link->fileBox) link->fileBox = makeFileBoxNameAka (config,link,aka);

@@ -258,7 +258,7 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
         {
             if( stricmp(areaNode->type,czKillArea) == 0 ){
                 w_log( LL_FUNC, "%s::autoCreate() rc=4", __FILE__ );
-                return 4;  /*  area already unsubscribed */
+                return 12;  /*  area already unsubscribed */
             }
             if( stricmp(areaNode->type,czFreqArea) == 0 &&
                 addrComp(pktOrigAddr, areaNode->downlinks[0])!=0)
