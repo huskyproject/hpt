@@ -1,3 +1,26 @@
+2002-04-23 Tuesday 23:48  pavel.gulchouck
+
+	* src/query.c (1.39): preserving EOL config style fix
+
+2002-04-23 Tuesday 21:35  pavel.gulchouck
+
+	* src/perl.c (1.28): avoid gcc warnings
+
+2002-04-23 Tuesday 21:33  pavel.gulchouck
+
+	* src/: areafix.c (1.285), perl.c (1.27), post.c (1.71), tpkt.c
+	(1.25), txt2pkt.c (1.34): strftime() changed to fts_time(), it's
+	not depended of locale now
+
+2002-04-23 Tuesday 17:08  d.sergienko
+
+	* src/areafix.c (1.284): fixed bug in findLinkInString() when
+	unsibscribing
+
+2002-04-23 Tuesday 12:24  mche
+
+	* src/pktwrite.c (1.33): Big Subject line bug fixed
+
 2002-04-22 Monday 14:46  mche
 
 	* src/areafix.c (1.283): report about already linked areas
