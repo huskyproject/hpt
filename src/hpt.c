@@ -156,11 +156,11 @@ void start_help(void) {
   fprintf(stdout,"   hpt scan - scanning echomail\n");
   fprintf(stdout,"   hpt scan -w - scanning echomail without highwaters\n");
   fprintf(stdout,"   hpt scan -a <pattern> - scanning echomail from areas matching <pattern>\n");
-  fprintf(stdout,"   hpt scan -f <filename> - scanning echomail from alternative echotoss file\n");
+  fprintf(stdout,"   hpt scan -f [filename] - scan only listed areas in this file.\n");
   fprintf(stdout,"   hpt post [options] file - posting a mail (for details run \"hpt post -h\")\n");
   fprintf(stdout,"   hpt pack - packing netmail\n");
-  fprintf(stdout,"   hpt pack -a <areaname> - packing netmail from <areaname> area\n");
-  fprintf(stdout,"   hpt pack -f <filename> - packing netmail from alternative echotoss file\n");
+  fprintf(stdout,"   hpt pack -a <pattern> - packing netmail from areas matching <pattern>\n");
+  fprintf(stdout,"   hpt pack -f [filename] - pack netmail only from areas listed in this file\n");
   fprintf(stdout,"   hpt link [areamask] - links messages\n");
   fprintf(stdout,"   hpt link -j [areamask] - link jam areas using CRC (more quickly)\n");
   fprintf(stdout,"   hpt afix [-f] [-s] [<addr> command] - process areafix\n");

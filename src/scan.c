@@ -847,6 +847,7 @@ void scanExport(int type, char *str) {
     w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
 
     if (type & SCN_FILE) {
+        if (str == NULL) str = config->echotosslog;
         f = fopen(str, "r");
         if (f != NULL) {
             ftmp = createTempTextFile(config->tempDir, &tmplogname); /* error diagnostic prints by createTempTextFile() */
