@@ -1,3 +1,11 @@
+2002-03-15 Friday 15:05  mche
+
+	* TODO (1.186): no message
+
+2002-03-15 Friday 09:30  mche
+
+	* src/areafix.c (1.269): fixed bug with unsubscribing
+
 2002-03-14 Thursday 13:37  mche
 
 	* src/query.c (1.29): added: idle request feature
