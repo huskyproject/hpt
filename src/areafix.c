@@ -1892,9 +1892,11 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     }
 
     if ( report != NULL ) {
-	preport=linked(msg, link);
-	xstrcat(&report, preport);
-	nfree(preport);
+	if (config->areafixQueryReports) {
+	    preport = linked(msg, link);
+	    xstrcat(&report, preport);
+	    nfree(preport);
+	}
 	RetMsg(msg, link, report, "areafix reply: node change request");
     }
 	
