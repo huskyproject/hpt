@@ -1526,6 +1526,7 @@ This statement cannot be repeated.
 * AutoAreaCreate::              right to auto create areas on your system
 * AutoAreaCreateFile::          file where autoCreated Areas by this links are going
 * AutoAreaCreateDefaults::      set defaults to autocreated echoareas
+* AutoAreaCreateSubdirs::       create structured or flat message base?
 * AutoPause::                   stop export mail for this link after xx days
 * DenyFwdFile::                 file with area list for denyed requests
 * DenyFwdMask::                 mask list for denyed requests
@@ -1760,7 +1761,7 @@ so these autocreated areas will be founded in subsequent tosser-runs.}
 
 This statement can only be repeated for different links.
 
-@node AutoAreaCreateDefaults, AutoPause, AutoAreaCreateFile, Link Keywords
+@node AutoAreaCreateDefaults, AutoAreaCreateSubdirs, AutoAreaCreateFile, Link Keywords
 @subsection AutoAreaCreateDefaults
 @findex AutoAreaCreateDefaults
 @table @asis
@@ -1774,7 +1775,31 @@ Set defaults to autocreated echoareas.
 
 This statement can only be repeated for different links.
 
-@node AutoPause, DenyFwdFile, AutoAreaCreateDefaults, Link Keywords
+@node AutoAreaCreateSubdirs, AutoPause, AutoAreaCreateDefaults, Link Keywords
+@subsection AutoAreaCreateSubdirs
+@findex AutoAreaCreateSubdirs
+@table @asis
+@item Syntax:
+@code{autoareacreatesubdirs <bool>}
+@item Example:
+@code{autoareacreatesubdirs on}
+@end table
+
+This switch is turned off by default. When turned off, hpt will create a flat
+message base. This means that a file echo @samp{FIDOSOFT.HUSKY} would be
+created in the message base directory with a base file name of
+@file{fidosoft.husky}, like in @file{/var/spool/msgbase/fidosoft.husky.sqd}
+and so on.
+
+When turned on, a structured message base will be created. Each dot in the
+echo name is treated as directory separator. Thus, @samp{FIDOSOFT.HUSKY}
+would be created with a base name of @file{husky} in the @file{fidosoft}
+directory, e.g. @file{/var/spool/msgbase/fidosoft/husky.sqd}.
+
+(Tobi April 2001: FIXME: Only implemented in htick with AutoFileCreateSubdirs, not yet implemented in
+hpt. Will do this as soon as the feature has proven stable in htick.)
+
+@node AutoPause, DenyFwdFile, AutoAreaCreateSubdirs, Link Keywords
 @subsection AutoPause
 @findex AutoPause
 @table @asis
