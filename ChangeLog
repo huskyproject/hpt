@@ -1,3 +1,8 @@
+2001-06-12 Tuesday 07:30  ml
+
+	* src/: areafix.c (1.214), toss.c (1.352): fixed areafix replying
+	to messages with empty ToUserName field
+
 2001-06-11 Monday 20:36  ml
 
 	* doc/hpt.texi (1.29), src/toss.c (1.351): carbonexcludefwdfrom
