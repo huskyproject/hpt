@@ -1,3 +1,14 @@
+2003-12-15 Monday 10:08  val_khokhlov
+
+	* Makefile (1.22), makefile.inc (1.29), h/areafix.h (1.42),
+	h/fcommon.h (1.57), h/hptafix.h (1.1), h/hptperl.h (1.15),
+	h/query.h (1.19), h/toss.h (1.55), make/makefile.inc (1.17),
+	make/makefile.mvc (1.10), make/makefile.mvcdll (1.14),
+	src/areafix.c (1.433), src/hpt.c (1.187), src/hptafix.c (1.1),
+	src/link.c (1.74), src/perl.c (1.73), src/post.c (1.112),
+	src/query.c (1.108), src/toss.c (1.532): areafix library detached
+	from hpt
+
 2003-12-12 Friday 08:07  mche
 
 	* src/areafix.c (1.432), doc/hpt.texi (1.140), doc/perlhooks.rus
