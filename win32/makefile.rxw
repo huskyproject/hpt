@@ -1,58 +1,22 @@
-# makefile for RSXNT 0.9d 
+# DJGPP makefile
+# no support for the husky build environment
 
-CC      = gcc
+DEBUG=-s
+# set to -g for debugging
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o crc.o xstr.o txt2pkt.o
-SRC_DIR = ../src/
+OBJ    =.o
+EXE    =.exe
+RM     =del
+DIRSEP =/
+CFLAGS =-I../h -I../.. -c -O3 $(DEBUG) -Zwin32
+LFLAGS =$(DEBUG) -Zwin32
+CDEFS  =-DNT -D__NT__ -DWINNT
+CC     =gcc
+EXENAMEFLAG=-o 
+SRC_DIR=../src/
+LIBS   =../../fidoconf/fconfrxw.a ../../smapi/smapirxw.a
 
-INCDIR=../..
+include ../makefile.inc
 
-ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -Zwin32 -Zsys -I../h -I$(INCDIR) -Wall -ggdb -DNT -D__NT__ -DWINNT
-  LFLAGS  = -Zcrtdll -L../../smapi -L../../fidoconfig -lwrap
-else
-  CFLAGS  = -c -fomit-frame-pointer -fstrength-reduce -Zwin32 -Zsys -I../h -I$(INCDIR) -Wall -s -DNT -D__NT__ -DWINNT -O3
-  LFLAGS  = -Zwin32 -Zsys -L../../smapi -L../../fidoconfig -lwrap
-endif
-
-all: $(OBJS) \
-     pktinfo.exe \
-     tlog.exe \
-     tpkt.exe \
-     hpt.exe \
-     hptlink.exe \
-     hpttree.exe \
-     txt2pkt.exe
-
-%.o: $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
-
-pktinfo.exe: pktinfo.o $(OBJS)
-	$(CC) $(LFLAGS) -Os -o pktinfo.exe log.o recode.o pktinfo.o pktread.o fcommon.o global.o xstr.o -lfconfrxw -lsmapirxw 
-
-tlog.exe: tlog.o log.o
-	$(CC) $(LFLAGS) -Os -o tlog.exe tlog.o log.o
-
-tpkt.exe: tpkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o xstr.o
-	$(CC) $(LFLAGS) -Os -o tpkt.exe log.o tpkt.o fcommon.o pktread.o recode.o pktwrite.o global.o xstr.o -lfconfrxw -lsmapirxw
-
-hpt.exe: $(OBJS)
-	$(CC) $(LFLAGS) -O3 -o hpt.exe hpt.o pktread.o pktwrite.o fcommon.o global.o recode.o scan.o areafix.o seenby.o toss.o link.o log.o scanarea.o dupe.o tree.o crc.o xstr.o strsep.o post.o -lfconfrxw -lsmapirxw 
-
-hptlink.exe: hptlink.o
-	$(CC) $(LFLAGS) -Os -o hptlink.exe hptlink.o -lfconfrxw -lsmapirxw
-
-hpttree.exe: hpttree.o
-	$(CC) $(LFLAGS) -Os -o hpttree.exe hpttree.o -lfconfrxw -lsmapirxw
-
-txt2pkt.exe: $(OBJS)
-	$(CC) $(LFLAGS) -Os -o txt2pkt.exe txt2pkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o xstr.o -lfconfrxw -lsmapirxw
-
-clean:
-	-cmd /c del *.o
-	-cmd /c del *.bak
-
-distclean: clean
-	-cmd /c del *.exe
 
 
