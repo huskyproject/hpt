@@ -7,11 +7,10 @@ Some this and other feature are implemented in current ("MAIN") branch.
 Category 1: Will certainly be implemented until next release
 ============================================================
 - areafixfromname
-- split posting messages
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
-- check for dublicate links if mask is used (fidoconf)
+- check for duplicate links if mask is used (fidoconf)
 - killsb for links
 - autofwdareacreatedefaults 
 - AllowEchoAreaDelete
@@ -36,3 +35,4 @@ Category 4: Will not be implemented
 - unpack all bundles before toss -> carc
 - afterUnpackBundle, afterUnpackAll -> carc
 - UnpackAllBeforeToss -> carc
+- split posting files -> any external tool
