@@ -1989,6 +1989,7 @@ This statement cannot be repeated.
 * NoRules::                     don't send area rules to link on subscription
 * OptGrp::                      groups for export/import/mandatory
 * OurAka::                      our aka for link
+* PackAka::
 * Packer::                      default packer for link
 * Password::                    links default password
 * Pause::                       don't export mail for this link
@@ -2733,7 +2734,7 @@ will be applied to @strong{all} areas.
 
 This statement can only be repeated for different links.
 
-@node OurAka, Packer, OptGrp, Link Keywords
+@node OurAka, PackAka, OptGrp, Link Keywords
 @subsection OurAka
 @findex OurAka
 @table @asis
@@ -2747,7 +2748,28 @@ This statement sets the aka which is used for this link.
 
 This statement can only be repeated for different links.
 
-@node Packer, Password, OurAka, Link Keywords
+
+@node PackAka, Packer, OurAka, Link Keywords
+@subsection PackAka
+@findex PackAka
+@table @asis
+@item Syntax:
+@code{PackAka <addr>}
+@item Example:
+@code{PackAka 2:4600/220}
+@end table
+
+This statement sets the aka to which the echomail and fileechos will be sent
+(Pack echomail and fileechos via third link). The PackAka link used only in
+BSO, fileboxes and arcmail filename creation, therefore the PackAka link may
+not present in config.
+
+This feature may be used for simple echomail routing.
+
+This statement can only be repeated for different links.
+
+
+@node Packer, Password, PackAka, Link Keywords
 @subsection Packer
 @findex Packer
 @table @asis
