@@ -4,7 +4,7 @@
   msg, else - from 1-st msg (new msg at the begin or if no new msg at all).
   Thats why you should always use EchoTossLog file!
 
-Renaming suffxies:
+Renaming suffixes:
 
 .tos - hpt crashes on this pkt, report to developers!
 .sec - pktpwd problem or link not found, bundles in unsecure inbound
