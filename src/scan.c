@@ -771,6 +771,7 @@ void scanExport(int type, char *str) {
                 w_log(LL_ERR, "Can't open file %s for writing : %s", tmplogname, strerror(errno));
                 // close file so all areas will be scanned instead of panic.
                 fclose(f);
+		f = NULL;
             }
         }
     }
