@@ -747,8 +747,6 @@ void scanExport(int type, char *str) {
    } else if (f == NULL) {
        if (type & SCN_FILE) {
            w_log('4', "EchoTossLogFile not found -> Scanning stop");
-           if (ftmp != NULL) fclose(ftmp);
-           nfree(tmplogname);
            return;
        }
        if (type & SCN_ECHOMAIL) {
@@ -802,6 +800,7 @@ void scanExport(int type, char *str) {
                remove(config->echotosslog);
                remove(tmplogname);
            } else { // we still have areas
+               remove(config->echotosslog);
                rename(tmplogname, config->echotosslog);
            }
        } else {
@@ -810,6 +809,7 @@ void scanExport(int type, char *str) {
                remove(str);
                remove(tmplogname);
            } else {
+               remove(str);
                rename(tmplogname, str);
            }
        }
