@@ -346,25 +346,41 @@ s_message *makeMessage (s_addr *origAddr, s_addr *destAddr,
     return msg;
 }
 
+char *getPatternFromLine(char *line, int *reversed)
+{
+
+    *reversed = 0;
+    if (!line) return NULL;
+    /* original string is like "%list ! *.citycat.*" or withut '!' sign*/
+    if (line[0] == '%') line++; /* exclude '%' sign */
+    while((strlen(line) > 0) && isspace(line[0])) line++; /* exclude spaces between '%' and command */
+    while((strlen(line) > 0) && !isspace(line[0])) line++; /* exclude command */
+    while((strlen(line) > 0) && isspace(line[0])) line++; /* exclude spaces between command and pattern */
+
+    if ((strlen(line) > 2) && (line[0] == '!') && (isspace(line[1])))
+    {
+        *reversed = 1;
+        line++;     /* exclude '!' sign */
+        while(isspace(line[0])) line++; /* exclude spaces between '!' and pattern */
+    }
+
+    if (strlen(line) > 0)
+        return line;
+    else
+        return NULL;
+}
 
 char *list(s_link *link, char *line) {
     int i, active, avail, rc = 0;
     char *report = NULL;
     char *list = NULL;
     char *pattern = NULL;
+    int reversed;
     ps_arealist al;
     s_area area;
 
-    if (line)
-    {
-        pattern = line;
-        if (pattern[0] == '%') pattern++;
-        while(isspace(pattern[0])) pattern++;
-        while(!isspace(pattern[0])) pattern++;
-        while(isspace(pattern[0])) pattern++;
-    }
-
-    if ((pattern) && (strlen(line)>60 || !isValidConference(pattern))) {
+    pattern = getPatternFromLine(line, &reversed);
+    if ((pattern) && (strlen(pattern)>60 || !isValidConference(pattern))) {
         w_log(LL_FUNC, "areafix::list() FAILED (error request line)");
         return errorRQ(line);
     }
@@ -381,7 +397,8 @@ char *list(s_link *link, char *line) {
         if (rc < 2 && (!area.hide || (area.hide && rc==0))) { // add line
             if (pattern)
             {
-                if (patimat(area.areaName, pattern)==1)
+                /* if matches pattern and not reversed (or vise versa) */
+                if (patimat(area.areaName, pattern)!=reversed) 
                 {
                     addAreaListItem(al,rc==0,area.areaName,area.description);
                     if (rc==0) active++; avail++;
