@@ -3,6 +3,11 @@ hpt 0.26
 --------
 
 ----- cvs ci ------
+Tue Jan 19 21:53:14 CET 1999
+- cosmetical prob if a netmail has no route, the log-msg was wrong
+- there was a bug in sven's patch
+
+----- cvs ci ------
 Tue Jan 19 10:03:19 CET 1999
 - areafix patch included, security problem.
 Mon Jan 18 17:34:18 CET 1999
@@ -21,12 +26,12 @@ Mon Jan 18 10:40:19 CET 1999
 ----- cvs ci ------
 Sun Jan 17 21:46:12 CET 1999
 - added freebsd things and a rewrite of recoding
-***** released bugfix-release hpt 0.25.2
-- fixed a bug with wrong PATH-creation
+***** released bugfix-release hpt 0.25.2 which includes the (*) fixes
+- fixed a bug with wrong PATH-creation (*)
 
 ----- cvs ci ------
 Thu Jan 14 19:24:49 CET 1999
-- fixed core dump while autocreating passthrough areas
+- fixed core dump while autocreating passthrough areas (*)
 
 ----- cvs ci ------
 Thu Jan 14 13:34:41 CET 1999

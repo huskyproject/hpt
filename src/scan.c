@@ -403,7 +403,7 @@ int packMsg(HMSG SQmsg, XMSG xmsg)
                  free(link->floFile);
               }
            } else {
-              sprintf(buff, "no route for mail to %u:%u/%u.%u found - leave mail untouched", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point);
+              sprintf(buff, "no route for mail to %u:%u/%u.%u found - leave mail untouched", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
               writeLogEntry(log, '8', buff);
            }
    }
@@ -466,7 +466,7 @@ void scanNMArea(void)
          if ((xmsg.attr & MSGKILL) == MSGKILL) MsgKillMsg(netmail, i);
          */
 
-         if (((!for_us) && (!from_us)) || (xmsg.attr & MSGKILL)) {
+         if ( (((!for_us) && (!from_us)) || (xmsg.attr & MSGKILL)) &&(xmsg.attr & MSGSENT) ){
               MsgKillMsg(netmail, i);
               i--;
          }

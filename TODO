@@ -1,4 +1,5 @@
 - include -b flag to toss from badarea
+- autocreateFile
 - divide hpt into several programs:
   tosser
   packer
