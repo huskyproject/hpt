@@ -492,7 +492,7 @@ void scanNMArea(s_area *area)
 {
    HAREA           netmail;
    HMSG            msg;
-   unsigned long   highMsg, i, j;
+   dword           highestMsg, i, j, num;
    XMSG            xmsg;
    s_addr          dest, orig;
    int             for_us, from_us;
@@ -515,12 +515,21 @@ void scanNMArea(s_area *area)
 
       statScan.areas++;
       area->scn = 1;
-      highMsg = MsgGetHighMsg(netmail);
       w_log('1', "Scanning NetmailArea %s", area -> areaName);
 
+      i = (noHighWaters) ? 0 : MsgGetHighWater(netmail);
+	  highestMsg = MsgGetHighMsg(netmail);
+
+	  //FIXME: we needs for smapi fix to equivalent work of squish, sdm and jam
+	  if (area->msgbType == MSGTYPE_JAM) {
+		  num = MsgGetNumMsg(netmail);
+		  if (highestMsg>num && i>=num) i=0;
+		  highestMsg = num;
+	  }
+
       // scan all Messages and test if they are already sent.
-      for (i=1; i<= highMsg; i++) {
-         msg = MsgOpenMsg(netmail, MOPEN_RW, i);
+	  while (i < highestMsg) {
+         msg = MsgOpenMsg(netmail, MOPEN_RW, ++i);
 
          // msg does not exist
          if (msg == NULL) continue;
@@ -543,20 +552,21 @@ void scanNMArea(s_area *area)
          from_us = 0;
          for (j=0; j < config->addrCount; j++)
             if (addrComp(orig, config->addr[j])==0) {from_us = 1; break;}
-         
-	 //  non transit messages without k/s flag not killed
-	 if (!(xmsg.attr & MSGKILL) && !(xmsg.attr & MSGFWD)) from_us = 1;
 
-	 // transit messages from us will be killed
-	 if (from_us && (xmsg.attr & MSGFWD)) from_us = 0;
-	 
-         if ( (((!for_us) && (!from_us)) || (xmsg.attr & MSGKILL)) &&(xmsg.attr & MSGSENT) ){
-              MsgKillMsg(netmail, i);
-              i--;
-         }
+		 //  non transit messages without k/s flag not killed
+		 if (!(xmsg.attr & MSGKILL) && !(xmsg.attr & MSGFWD)) from_us = 1;
+
+		 // transit messages from us will be killed
+		 if (from_us && (xmsg.attr & MSGFWD)) from_us = 0;
+
+		 if (((!for_us && !from_us) || (xmsg.attr&MSGKILL)) && (xmsg.attr&MSGSENT)) {
+			 MsgKillMsg(netmail, i);
+			 i--;
+		 }
          
       } /* endfor */
 
+	  MsgSetHighWater(netmail, i);
       MsgCloseArea(netmail);
    } else {
       w_log('9', "Could not open NetmailArea %s", area -> areaName);

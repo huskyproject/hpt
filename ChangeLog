@@ -5,6 +5,7 @@ hpt 0.9.8 (development version)
 Thu Mar 22 20:20:25 NOVT 2001
 max:
 * areafix.c cleanup (thanx to Kees Bergwerf)
+* update high waters for netmail
 
 ----- cvs ci ------
 Tue Mar 20 17:36:41 NOVT 2001

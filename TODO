@@ -3,7 +3,6 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- update hw marm for netmail
 - AutoAreaCreateDefaults passthrough ...
 - "/" -> "_", etc... (dosfile)
 - make switch for REASON: No downlinks for passthrough area (maybe warns to log)
