@@ -1,0 +1,44 @@
+DEBUG   = 0
+CC      = wcc386
+LINK    = WLINK
+
+OBJS    = hpt.obj, pkt.obj, common.obj, log.obj, config.obj, global.obj, toss.obj, patmat.obj
+SRC_DIR = ..\src
+
+!IF $(DEBUG) == 1
+CFLAGS  = -d2 -hw -i=..\h;..\..\smapi -we -zq
+LFLAGS  =
+!ELSE
+CFLAGS  = -i..\h;..\..\smapi -oneatx -we -zq
+LFLAGS  =
+!ENDIF
+
+all: $(OBJS) \
+     pktinfo.exe \
+     tlog.exe \
+     tconfig.exe \
+     hpt.exe
+
+$(OBJS): $(SRC_DIR)\$*.c
+  @echo compiling $*.c
+  $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
+
+pktinfo.obj tlog.obj tconfig.obj: $(SRC_DIR)\$*.c
+  @echo compiling $*.c
+  $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
+
+pktinfo.exe: pktinfo.obj common.obj pkt.obj
+  @echo linking pktinfo
+  $(LINK) $(LFLAGS) FILE pktinfo.obj, common.obj, pkt.obj NAME pktinfo.exe
+
+tlog.exe: tlog.obj log.obj
+  @echo linking tlog
+  $(LINK) $(LFLAGS) FILE tlog.obj, log.obj NAME tlog.exe
+
+tconfig.exe: tconfig.obj config.obj common.obj
+  @echo linking tconfig
+  $(LINK) $(LFLAGS) FILE tconfig.obj, config.obj, common.obj NAME tconfig.exe
+
+hpt.exe: $(OBJS)
+  @echo linking hpt
+  $(LINK) $(LFLAGS) FILE $(OBJS) Library ..\..\smapi\smapiwco NAME hpt.exe

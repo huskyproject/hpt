@@ -1,0 +1,464 @@
+#include <string.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <ctype.h>
+
+#include <msgapi.h>
+
+#include <dir.h>
+#include <pkt.h>
+#include <scan.h>
+#include <toss.h>
+#include <global.h>
+#include <patmat.h>
+#include <seenby.h>
+
+#include <stamp.h>
+#include <typedefs.h>
+#include <compiler.h>
+#include <progprot.h>
+
+int to_us(s_pktHeader header)
+{
+   int i = 0;
+
+   while (i < addrCount)
+     if (addrComp(header.destAddr, addr[i++]) == 0)
+       return 0;
+   return !0;
+}
+
+XMSG createXMSG(s_message *msg)
+{
+   XMSG  msgHeader;
+
+   msgHeader.attr = MSGPRIVATE;
+   strcpy((char *) msgHeader.from,msg->fromUserName);
+   strcpy((char *) msgHeader.to, msg->toUserName);
+   strcpy((char *) msgHeader.subj,msg->subjectLine);
+   msgHeader.orig.zone  = msg->origAddr.zone;
+   msgHeader.orig.node  = msg->origAddr.node;
+   msgHeader.orig.net   = msg->origAddr.net;
+   msgHeader.orig.point = msg->origAddr.point;
+   msgHeader.dest.zone  = msg->destAddr.zone;
+   msgHeader.dest.node  = msg->destAddr.node;
+   msgHeader.dest.net   = msg->destAddr.net;
+   msgHeader.dest.point = msg->destAddr.point;
+
+   memset(&(msgHeader.date_written), 0, 8);    // date to 0
+   //msgHeader.date_written = (SCOMBO) 0;
+   //msgHeader.date_arrived = (SCOMBO) 0;
+
+   // fool SMAPI to write zone info instead of time info
+   //zone = (INT32*) &(msgHeader.date_written);
+   //*zone = msg->destAddr.zone << 15 + msg->origAddr.zone;
+   //zone = (INT16*) &(msgHeader.date_arrived);
+   //*zone = msg->origAddr.zone;
+
+   msgHeader.utc_ofs = 0;
+   msgHeader.replyto = 0;
+   memset(&(msgHeader.replies), 0, 40);   // no replies
+   strcpy((char *) msgHeader.__ftsc_date, msg->datetime);
+   ASCII_Date_To_Binary(msg->datetime, &(msgHeader.date_written));
+
+   return msgHeader;
+}
+
+s_area *getArea(char *areaName)
+{
+   UINT i;
+
+   for (i = 0; i<echoAreaCount; i++) {
+      if (strcmp(echoAreas[i].name, areaName)==0)
+         return &(echoAreas[i]);
+   }
+   
+   return &badArea; // all fails, return badArea :-)
+}
+
+void putMsgInArea(s_area *echo, s_message *msg)
+{
+   char buff[70], *ctrlBuff, *textStart;
+   UINT textLength = msg->textLength;
+   HAREA harea;
+   HMSG  hmsg;
+   XMSG  xmsg;
+
+   harea = MsgOpenArea((UCHAR *) echo->filename, MSGAREA_CRIFNEC, echo->msgbType | MSGTYPE_ECHO);
+   if (harea != NULL) {
+      hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
+      if (hmsg != NULL) {
+         ctrlBuff = CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &textStart, &textLength);
+         // textStart is a pointer to the first non-kludge line
+         xmsg = createXMSG(msg);
+
+         MsgWriteMsg(hmsg, 0, &xmsg, textStart, strlen(textStart), strlen(textStart), strlen(ctrlBuff), ctrlBuff);
+
+         MsgCloseMsg(hmsg);
+
+      } else {
+         sprintf(buff, "Could not create new msg in %s!", echo->filename);
+         writeLogEntry(log, '9', buff);
+      } /* endif */
+      MsgCloseArea(harea);
+   } else {
+      sprintf(buff, "Could not open/create EchoArea %s!", echo->filename);
+      writeLogEntry(log, '9', buff);
+   } /* endif */
+}
+
+void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCount)
+{
+   char *seenByText, *start, *token, digit[6];
+   INT i;
+   
+   *seenByCount = 0;
+   start = msg->text;
+   // find beginning of seen-by lines
+   do {
+      start = strstr(start, "SEEN-BY:");
+      if (start == NULL) return;
+      start += 8; // jump over SEEN-BY:
+
+      while (*start == ' ') start++; // find first word after SEEN-BY:
+   } while (!isdigit(*start));
+
+   // now that we have the start of the SEEN-BY's we can tokenize the lines and read them in
+   seenByText = malloc(strlen(start)+1);
+   strcpy(seenByText, start);
+
+   token = strtok(seenByText, " \r\t\xfe");
+   while (token != NULL) {
+      if (strcmp(token, "\001PATH:")==0) break;
+      if (isdigit(*token)) {
+         i = 0;
+         // copy first number
+         while (isdigit(*token)) digit[i++] = *token++;
+         *seenBys = (s_seenBy*) realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount)+1);
+         if (*token++ == '/') {
+            // net/node address
+            (*seenBys)[*seenByCount].net = atoi(digit);
+            i = 0;
+            while (isdigit(*token)) digit[i++] = *token++;
+            (*seenBys)[*seenByCount].node = atoi(digit);
+         } else {
+            // only node
+            (*seenBys)[(*seenByCount)].net = (*seenBys)[(*seenByCount)-1].net;
+            (*seenBys)[*seenByCount].node = atoi(digit);
+         }
+         (*seenByCount)++;
+         memset(&digit, 0, 5);
+      }
+      token = strtok(NULL, " \r\t\xfe");
+   }
+
+   // test output for reading of seenBys...
+   //for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
+   //exit(2);
+
+   free(seenByText);
+}
+
+void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCount)
+{
+
+   // DON'T GET MESSED UP WITH THE VARIABLES NAMED SEENBY...
+   // THIS FUNCTION READS PATH!!!
+   
+   char *seenByText, *start, *token, digit[6];
+   INT i;
+   
+   *seenByCount = 0;
+   start = msg->text;
+   // find beginning of path lines
+   do {
+      start = strstr(start, "\001PATH:");
+      if (start == NULL) return;
+      start += 7; // jump over PATH:
+
+      while (*start == ' ') start++; // find first word after PATH:
+   } while (!isdigit(*start));
+
+   // now that we have the start of the PATH' so we can tokenize the lines and read them in
+   seenByText = malloc(strlen(start)+1);
+   strcpy(seenByText, start);
+
+   token = strtok(seenByText, " \r\t\xfe");
+   while (token != NULL) {
+      if (isdigit(*token)) {
+         i = 0;
+         // copy first number
+         while (isdigit(*token)) digit[i++] = *token++;
+         *seenBys = (s_seenBy*) realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount)+1);
+         if (*token++ == '/') {
+            // net/node address
+            (*seenBys)[*seenByCount].net = atoi(digit);
+            i = 0;
+            while (isdigit(*token)) digit[i++] = *token++;
+            (*seenBys)[*seenByCount].node = atoi(digit);
+         } else {
+            // only node
+            (*seenBys)[(*seenByCount)].net = (*seenBys)[(*seenByCount)-1].net;
+            (*seenBys)[*seenByCount].node = atoi(digit);
+         }
+         (*seenByCount)++;
+         memset(&digit, 0, 5);
+      }
+      token = strtok(NULL, " \r\t\xfe");
+   }
+
+   // test output for reading of paths...
+   //for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
+   //exit(2);
+
+   free(seenByText);
+}
+
+
+void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
+{
+   s_seenBy *seenBys = NULL, *path = NULL;
+   UINT     seenByCount, pathCount, i;
+   char     *start, *c, *newMsgText, *seenByText, *pathText;
+   
+   char     *name;
+   FILE     *pkt, *flo;
+   s_pktHeader header;
+
+   createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
+   // add seenBy for links
+   for (i=0; i<echo->downlinkCount; i++) {
+      if (echo->downlinks[i]->hisAka.point != 0) continue; // don't include points in SEEN-BYS
+      
+      seenBys = (s_seenBy*) realloc(seenBys, sizeof(s_seenBy) * (seenByCount)+1);
+      seenBys[seenByCount].net = echo->downlinks[i]->hisAka.net;
+      seenBys[seenByCount].node = echo->downlinks[i]->hisAka.node;
+      seenByCount++;
+   }
+
+   sortSeenBys(seenBys, seenByCount);
+
+   //for (i=0; i< seenByCount;i++) printf("%u/%u ", seenBys[i].net, seenBys[i].node);
+   //exit(2);
+
+   createPathArrayFromMsg(msg, &path, &pathCount);
+   if (echo->useAka.point == 0) {   // only include nodes in PATH
+      // add our aka to path
+      path = (s_seenBy*) realloc(path, sizeof(s_seenBy) * (pathCount)+1);
+      path[pathCount].net = echo->useAka.net;
+      path[pathCount].node = echo->useAka.node;
+      pathCount++;
+   }
+
+   //for (i=0; i< pathCount;i++) printf("%u/%u ", path[i].net, path[i].node);
+   //exit(2);
+
+
+   // find start of seenBys in Msg
+   start = strstr(msg->text, ")\rSEEN-BY: ");
+   if (start == NULL) start = strstr(msg->text, "\rSEEN-BY: ");
+   if (start != NULL) {
+      while(*start != 'S') start++; // to jump over )\r
+
+      // create new seenByText
+      seenByText = createControlText(seenBys, seenByCount, "SEEN-BY: ");
+      pathText   = createControlText(path, pathCount, "\001PATH: ");
+   
+      // reserve space for msg-body - old seenbys&path + new seenbys + new path
+      newMsgText = (char *) malloc(strlen(msg->text) - strlen(start) + strlen(seenByText) + strlen(pathText) + 1);
+   
+      // replace msg's seen-bys and path with our new generated
+      c = msg->text;
+      i = 0;
+      while (c != start) {
+         newMsgText[i] = *c;
+         c++;
+         i++;
+      }
+      newMsgText[i] = 0;
+      strcat(newMsgText, seenByText);
+      strcat(newMsgText, pathText);
+
+      free(msg->text);
+      msg->text = newMsgText;
+   }
+
+   // add msg to the pkt's of the downlinks
+   for (i = 0; i<echo->downlinkCount; i++)
+   {
+      // don't export to link who has sent the echomail to us
+      if (addrComp(pktOrigAddr, echo->downlinks[i]->hisAka)==0) continue;
+      
+      // create pktfile if necessary
+      if (echo->downlinks[i]->pktFile == NULL) {
+         // pktFile does not exist
+         name = tempnam(outboundDir, NULL);
+         echo->downlinks[i]->pktFile = (char *) malloc(strlen(name)+4+1); // 4 == strlen(".pkt");
+         strcpy(echo->downlinks[i]->pktFile, name);
+         strcat(echo->downlinks[i]->pktFile, ".pkt");
+         name = createOutboundFileName(echo->downlinks[i]->hisAka, NORMAL, FLOFILE);
+         flo = fopen(name, "a");
+         fprintf(flo, "#%s\n", echo->downlinks[i]->pktFile);
+         fclose(flo);
+      } /* endif */
+
+      makePktHeader(NULL, &header);
+      header.origAddr = echo->downlinks[i]->ourAka;
+      header.destAddr = echo->downlinks[i]->hisAka;
+      strcpy(header.pktPassword, echo->downlinks[i]->pwd);
+      pkt = openPktForAppending(echo->downlinks[i]->pktFile, &header);
+
+      writeMsgToPkt(pkt, *msg);
+
+      closeCreatedPkt(pkt);
+   }
+
+   if (start != NULL) {  // no seenBys found seenBys not changed...
+      free(seenByText);
+      free(pathText);
+   }
+   free(seenBys);
+   free(path);
+}
+
+void processEMMsg(s_message *msg, s_addr pktOrigAddr)
+{
+   char   *area, *textBuff;
+   s_area *echo;
+
+   textBuff = (char *) malloc(strlen(msg->text)+1);
+   strcpy(textBuff, msg->text);
+   
+   area = strtok(textBuff, "\r");
+   area += 5;
+
+   echo = getArea(area);
+
+   putMsgInArea(echo, msg);
+   if (echo->downlinkCount > 1)     // if only one downlink, we've got the mail from him
+     forwardMsgToLinks(echo, msg, pktOrigAddr);
+
+   free(textBuff);
+}
+
+void processNMMsg(s_message *msg)
+{
+   HAREA  netmail;
+   HMSG   msgHandle;
+   UINT   len = msg->textLength;
+   char   *bodyStart;             // msg-body without kludgelines start
+   char   *ctrlBuf;               // Kludgelines
+   XMSG   msgHeader;
+   char   buff[36];               // buff for sprintf
+
+   netmail = MsgOpenArea((unsigned char *) netArea.filename, MSGAREA_CRIFNEC, MSGTYPE_SDM);
+
+   if (netmail != NULL) {
+      msgHandle = MsgOpenMsg(netmail, MOPEN_CREATE, 0);
+
+      if (msgHandle != NULL) {
+         msgHeader = createXMSG(msg);
+         /* Create CtrlBuf for SMAPI */
+         ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
+         /* write message */
+         MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *) bodyStart, len, len, strlen(ctrlBuf)+1, (UCHAR *) ctrlBuf);
+         free(ctrlBuf);
+         MsgCloseMsg(msgHandle);
+
+         sprintf(buff, "Tossed Netmail: %u:%u/%u.%u -> %u:%u/%u.%u", msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
+                         msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
+         writeLogEntry(log, '7', buff);
+      } else {
+         writeLogEntry(log, '9', "Could not write message to NetmailArea");
+      } /* endif */
+
+      MsgCloseArea(netmail);
+   } else {
+      printf("%u\n", msgapierr);
+      writeLogEntry(log, '9', "Could not open NetmailArea");
+   } /* endif */
+}
+
+void processMsg(s_message *msg, s_addr pktOrigAddr)
+{
+   if (msg->netMail == 1) {
+      processNMMsg(msg);
+   } else {
+      processEMMsg(msg, pktOrigAddr);
+   } /* endif */
+}
+
+s_link *getLinkFromAddr(s_addr aka)
+{
+   int i = 0;
+   
+   while (i < linkCount) {
+      if (addrComp(aka, links[i].hisAka)==0) return &(links[i]);
+      i++;
+   }
+   return NULL;
+}
+
+void processPkt(char *fileName, int onlyNetmail)
+{
+   FILE        *pkt;
+   s_pktHeader *header;
+   s_message   *msg;
+   char        buff[265];
+   s_link      *link;
+   char        pwdOK = !0;
+
+   pkt = fopen(fileName, "rb");
+   if (pkt == NULL) return;
+
+   header = openPkt(pkt);
+   if ((header != NULL) && (to_us(*header)==0)){
+      sprintf(buff, "pkt: %s", fileName);
+      writeLogEntry(log, '6', buff);
+      
+      link = getLinkFromAddr(header->origAddr);
+      if (link != NULL)
+         // if passwords aren't the same don't process pkt
+         // if pkt is from a System we don't have a link (incl. pwd) with
+         // we process it.
+         if (strcmp(link->pwd, header->pktPassword) != 0) pwdOK = 0;
+      if (pwdOK != 0) {
+         while ((msg = readMsgFromPkt(pkt,addr[0].zone)) != NULL) {
+            if ((onlyNetmail == 0) || (msg->netMail == 1))
+               processMsg(msg, header->origAddr);
+            freeMsgBuffers(msg);
+         } /* endwhile */
+      } /* endif */
+   } /*endif */
+
+   fclose(pkt);
+}
+
+void processDir(char *directory, int onlyNetmail)
+{
+   DIR            *dir;
+   struct dirent  *file;
+   char           *dummy;
+
+   dir = opendir(directory);
+
+   while ((file = readdir(dir)) != NULL) {
+      if ((patmat(file->d_name, "*.pkt") == 1) || (patmat(file->d_name, "*.PKT") == 1)) {
+         dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
+         strcpy(dummy, directory);
+         strcat(dummy, file->d_name);
+         processPkt(dummy, onlyNetmail);
+
+         remove (dummy);
+         free(dummy);
+      }
+   }
+   closedir(dir);
+}
+
+void toss()
+{
+   processDir(inboundDirSec, 0);
+   // only import Netmails from inboundDir
+   processDir(inboundDir, 1);
+}
