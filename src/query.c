@@ -575,8 +575,7 @@ void af_QueueUpdate()
     s_query_areas *tmpNode  = NULL;
     s_link *lastRlink;
     s_link *dwlink;
-//    unsigned i;
-//    s_message *linkmsg;
+ 
     w_log('1', "Start updating queue file");    
     if( !queryAreasHead ) af_OpenQuery();
 
@@ -731,35 +730,35 @@ int af_CloseQuery()
     size_t i = 0;
     struct  tm t1,t2;
     int writeChanges = 0;
-    char *tmpFileName=NULL;
     
-    FILE *queryFile=NULL, *resQF;
+    FILE *queryFile=NULL;
     s_query_areas *delNode = NULL;
     s_query_areas *tmpNode  = NULL;
-
+    
     
     if( !queryAreasHead ) {  // list does not exist
         return 0;
     }
-
+    
     if(queryAreasHead->nFlag == 1) {
         writeChanges = 1;
     }
-    if((tmpFileName=tmpnam(tmpFileName)) != NULL) {
-        if (writeChanges) queryFile = fopen(tmpFileName,"w");
-    } else {
-        w_log('9',"areafix: cannot create tmp file");
-        writeChanges = 0;
-    }
-
-    if(writeChanges)
+    if (writeChanges) 
     {
-        char *chanagedflag = af_GetQFlagName();
-        FILE *QFlag        = fopen(chanagedflag,"w");
-        if(QFlag) fclose(QFlag);
-        nfree(chanagedflag);
+        if ((queryFile = fopen(config->areafixQueueFile,"w")) == NULL)
+        {
+            w_log('9',"areafix: areafixQueueFile not saved");
+            writeChanges = 0;
+        }
+        else
+        {
+            char *chanagedflag = af_GetQFlagName();
+            FILE *QFlag        = fopen(chanagedflag,"w");
+            if(QFlag) fclose(QFlag);
+            nfree(chanagedflag);
+        }
     }
-
+    
     tmpNode = queryAreasHead->next;
     nSpace = queryAreasHead->linksCount+1;
     p = buf+nSpace;
@@ -796,25 +795,8 @@ int af_CloseQuery()
     }
     af_DelAreaListNode(queryAreasHead);
     queryAreasHead = NULL;
-    if(writeChanges)  {
-        fclose(queryFile);
-        w_log(LL_FILE,"query.c::af_CloseQuery(): created '%s' ",tmpFileName);
-        queryFile = fopen(tmpFileName,"r");
-        resQF     = fopen(config->areafixQueueFile,"w");
-    if ( !queryFile && !resQF ) {
-    if (!quiet) fprintf(stderr, "areafix: cannot write to Queue File \"%s\" \n", config->areafixQueueFile);
-    w_log(LL_ERR,"areafix: cannot write to Queue File \"%s\" ", config->areafixQueueFile);
-    } else {
-        int ch;
-        while( (ch=getc(queryFile)) != EOF ) putc(ch, resQF); 
-        fclose(queryFile); fclose(resQF); 
-    }
-    }
-    if(writeChanges) 
-    {   
-        remove(tmpFileName);
-        w_log(LL_FILE,"query.c::af_CloseQuery(): deleted '%s' ",tmpFileName);
-    }
+    if(queryFile) fclose(queryFile);
+    
     return 0;
 }
 
