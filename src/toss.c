@@ -1740,7 +1740,9 @@ int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
 	return 1;
 #endif
     if (msg->netMail == 1) {
-	if (config->areafixFromPkt && strlen(msg->toUserName)>0 &&
+	if (config->areafixFromPkt &&
+	    isOurAka(config, msg->destAddr) &&
+	    strlen(msg->toUserName)>0 &&
 	    (stricmp(msg->toUserName,"areafix")==0 ||
 	     stricmp(msg->toUserName,"areamgr")==0 ||
 	     stricmp(msg->toUserName,"hpt")==0 ||
