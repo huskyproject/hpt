@@ -8,7 +8,7 @@ endif
 all: html info dvi
 
 ifdef HTMLDIR
-html: hpt_toc.html
+html: hpt.html
 else
 html:
 	@echo
@@ -28,8 +28,8 @@ info:
 	@echo
 endif
 
-hpt_toc.html: hpt.texi
-	texi2html -split_node -number -menu hpt.texi
+hpt.html: hpt.texi
+	export LC_ALL=C; makeinfo --html --no-split hpt.texi
 
 hpt.dvi: hpt.texi
 	texi2dvi hpt.texi

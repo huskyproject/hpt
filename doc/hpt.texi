@@ -5,7 +5,7 @@
 @c adopted from msged.texi, written by Tobias Ernst
 @setfilename hpt.info
 @set HPT HPT
-@set VERSION 1.1.0
+@set VERSION 1.3.0
 @settitle @value{HPT} @value{VERSION} - Highly Portable Tosser
 @setchapternewpage odd
 @c %**end of header
@@ -24,6 +24,7 @@
 @direntry
 * HPT: (hpt).               HPT is the fidonet tosser
 @end direntry
+@end ifinfo
 
 @iftex
 @parindent=0pt
@@ -44,7 +45,6 @@ Tosser for OS/2, Windows, BeOS and Unix.
 * Advanced Concepts::           Advanced features and concepts.
 * Keyword Index::               Configuration File Keywords Index
 @end menu
-@end ifinfo
 
 @node Overview, Installation, Top, Top
 @chapter An Overview on @value{HPT}
