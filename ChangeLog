@@ -1,3 +1,8 @@
+2004-06-07 Monday 11:21  sfpavel
+
+	* debian/compat (1.1): file compat was initially added on branch
+	hpt-1_4-stable.
+
 2004-05-27 Thursday 21:08  d_sergienko
 
 	* src/carbon.c (1.31): CarbonRule NOT fix from Nick Voronin,
@@ -6175,15 +6180,6 @@
 
 	* src/toss.c (1.263): seen-bys fix
 
-2000-08-06 Sunday 20:48  tobi
-
-	* beos/makefile.be (1.2): beos makefile
-
-2000-08-06 Sunday 20:35  tobi
-
-	* beos/makefile.be (1.1): file makefile.be was initially added on
-	branch hpt-0_9_7.
-
 2000-08-06 Sunday 19:56  tobi
 
 	* src/hpt.c (1.83): added BeOS version identification
@@ -6214,11 +6210,6 @@
 
 	* src/toss.c (1.258): seen-by & path bugfix
 
-2000-07-14 Friday 09:48  tobi
-
-	* os2/makefile.wco (1.12), win32/makefile.wcw (1.31): watcom
-	makefile cosmetic fixes
-
 2000-07-13 Thursday 22:55  tobi
 
 	* VERSION (1.1): file VERSION was initially added on branch
@@ -6229,44 +6220,17 @@
 	* h/version.h (1.7), src/global.c (1.27), src/hpt.c (1.81):
 	implemented versioning scheme as discussed with mtt
 
-2000-07-13 Thursday 22:07  tobi
-
-	* freebsd/makefile.bsd (1.10): bsd makefile fix
-
 2000-07-12 Wednesday 11:11  tobi
 
 	* INSTALL (1.8): merged fixes from stable
-
-2000-07-07 Friday 22:47  tobi
-
-	* dos/makefile.bcd (1.19): makefile fix
-
-2000-07-07 Friday 22:40  tobi
-
-	* aix/makefile.aix (1.11), osf/makefile.osf (1.9): removed outdated
-	makefiles
-
-2000-07-07 Friday 22:35  tobi
-
-	* os2/makefile.wco (1.11): makefile fix
 
 2000-07-07 Friday 22:18  tobi
 
 	* h/fcommon.h (1.27), src/hpt.c (1.79): more mingw32 adaptions
 
-2000-07-07 Friday 22:09  tobi
-
-	* os2/makefile.bco (1.8): makefile fixes
-
-2000-07-07 Friday 21:50  tobi
-
-	* win32/makefile.mgw (1.2): Adapted MINGW32 code to the latest
-	mingw32 version available at www.mingw.org.
-
 2000-07-07 Friday 18:43  tobi
 
-	* src/arealist.c (1.5), win32/makefile.bcw (1.9): migrated fixes
-	from stable
+	* src/arealist.c (1.5): migrated fixes from stable
 
 2000-07-07 Friday 18:35  tobi
 
@@ -6315,30 +6279,19 @@
 	arguments to open for creation of bsy files - fixes misbehaviour  
 	on OS/2 reported by D. Friedmann.
 
-2000-06-04 Sunday 21:17  tobi
-
-	* os2/: makefile.emo (1.13), makefile.emx (1.5, hpt-0_9_7d-release,
-	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release):
-	makefiles for OS/2
-
-2000-06-04 Sunday 21:15  tobi
-
-	* os2/makefile.emo (1.12): typo fix in comment
-
 2000-06-04 Sunday 16:29  nestyurkin.nikolay
 
-	* src/hpt.c (1.72), src/scan.c (1.93), win32/makefile.wcw (1.30):
-	fix
+	* src/: hpt.c (1.72), scan.c (1.93): fix
 
 2000-06-04 Sunday 15:42  nestyurkin.nikolay
 
-	* src/txt2pkt.c (1.18), win32/makefile.wcw (1.29): fix
+	* src/txt2pkt.c (1.18): fix
 
 2000-06-04 Sunday 15:15  nestyurkin.nikolay
 
 	* h/global.h (1.18, hpt-0_9_7d-release, hpt-0_9_7c-release,
 	hpt-0_9_7b-release, hpt-0_9_7a-release), src/pktread.c (1.60),
-	src/tree.c (1.7), win32/makefile.wcw (1.28): fix
+	src/tree.c (1.7): fix
 
 2000-06-04 Sunday 12:03  tobi
 
@@ -6352,10 +6305,6 @@
 
 	* src/scan.c (1.86): Only lowercase filename in flow file if the
 	file does not exist in the original spelling.
-
-2000-05-24 Wednesday 17:49  nestyurkin.nikolay
-
-	* win32/makefile.wcw (1.25): fix hpt link
 
 2000-05-22 Monday 12:54  mt
 
@@ -6389,10 +6338,6 @@
 
 	* src/toss.c (1.206): further cleanup on log file messages
 
-2000-04-16 Sunday 21:36  nestyurkin.nikolay
-
-	* win32/makefile.wcw (1.22): path fix
-
 2000-04-16 Sunday 21:31  tobi
 
 	* src/toss.c (1.205): cleaned up packet file name logging
@@ -6412,64 +6357,28 @@
 
 2000-04-16 Sunday 18:01  tobi
 
-	* src/areafix.c (1.113), src/fcommon.c (1.44), src/log.c (1.12),
-	src/post.c (1.39), src/toss.c (1.202), src/txt2pkt.c (1.13),
-	win32/makefile.mgw (1.1), win32/makefile.rxw (1.4,
-	hpt-0_9_7d-release, hpt-0_9_7c-release, hpt-0_9_7b-release,
-	hpt-0_9_7a-release), win32/readme (1.4, hpt-0_9_7d-release,
-	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release): added
-	fixes for mingw32
-
-2000-04-16 Sunday 16:55  tobi
-
-	* win32/makefile.rxw (1.3): legacy makefile fix
-
-2000-04-16 Sunday 16:34  tobi
-
-	* os2/makefile.wco (1.6), win32/makefile.wcw (1.21): legacy
-	makefile fixes
-
-2000-04-16 Sunday 16:10  tobi
-
-	* freebsd/makefile.bsd (1.8), unix/makefile.unx (1.1): legacy
-	makefile fixes
-
-2000-04-16 Sunday 16:07  tobi
-
-	* linux/makefile.lnx (1.11): legacy makefile fixes
+	* src/: areafix.c (1.113), fcommon.c (1.44), log.c (1.12), post.c
+	(1.39), toss.c (1.202), txt2pkt.c (1.13): added fixes for mingw32
 
 2000-04-16 Sunday 14:29  tobi
 
-	* os2/makefile.emo (1.11), src/hpt.c (1.59): legacy makefile fixes
-
-2000-04-16 Sunday 14:12  tobi
-
-	* win32/makefile.rxw (1.2): rsxnt makefile fixes
+	* src/hpt.c (1.59): legacy makefile fixes
 
 2000-04-16 Sunday 14:03  tobi
 
-	* dos/makefile.djg (1.6, hpt-0_9_7d-release, hpt-0_9_7c-release,
-	hpt-0_9_7b-release, hpt-0_9_7a-release), src/hpt.c (1.58),
-	src/toss.c (1.201): fixes for DJGPP
+	* src/: hpt.c (1.58), toss.c (1.201): fixes for DJGPP
 
 2000-04-16 Sunday 11:42  tobi
 
-	* makefile.husky (1.11), osf/makefile.osf (1.8): makefiles reworked
+	* makefile.husky (1.11): makefiles reworked
 
 2000-04-16 Sunday 11:36  tobi
 
-	* makefile.inc (1.1), sun/makefile.nohusky (1.9), sun/makefile.sun
-	(1.9, hpt-0_9_7d-release, hpt-0_9_7c-release, hpt-0_9_7b-release,
-	hpt-0_9_7a-release): legacy makefiles reworked
+	* makefile.inc (1.1): legacy makefiles reworked
 
 2000-04-16 Sunday 11:35  tobi
 
 	* TODO (1.73): updated todo list
-
-2000-04-15 Saturday 21:39  tobi
-
-	* dos/makefile.djd (1.7), dos/makefile.djg (1.5), os2/makefile.bco
-	(1.2): makefile things
 
 2000-04-15 Saturday 21:39  tobi
 
@@ -6478,14 +6387,12 @@
 
 2000-04-15 Saturday 21:23  tobi
 
-	* dos/makefile.bcd (1.13), src/fcommon.c (1.43): further borland c
-	fixes
+	* src/fcommon.c (1.43): further borland c fixes
 
 2000-04-15 Saturday 21:21  tobi
 
-	* dos/makefile.bcd (1.12), src/crc.c (1.2, hpt-0_9_7d-release,
-	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release),
-	win32/makefile.bcw (1.3): Fixes for Borland C
+	* src/crc.c (1.2, hpt-0_9_7d-release, hpt-0_9_7c-release,
+	hpt-0_9_7b-release, hpt-0_9_7a-release): Fixes for Borland C
 
 2000-04-15 Saturday 20:52  tobi
 
@@ -6511,34 +6418,6 @@
 
 	* src/areafix.c (1.110): areafix kill request fix
 
-2000-04-14 Friday 11:56  nestyurkin.nikolay
-
-	* win32/makefile.wcw (1.20): -zp=1 remove
-
-2000-04-12 Wednesday 22:57  tobi
-
-	* win32/makefile.rxw (1.1): Added rsxnt makefile
-
-2000-04-12 Wednesday 22:40  tobi
-
-	* os2/makefile.emo (1.10): fixed clean target
-
-2000-04-12 Wednesday 22:31  tobi
-
-	* os2/: makefile.emo (1.9), tlog.log (1.2): small fix
-
-2000-04-12 Wednesday 22:16  tobi
-
-	* os2/makefile.emo (1.8): added tparser etc
-
-2000-04-12 Wednesday 22:04  tobi
-
-	* win32/makefile.bcw (1.2): added txt2pkt
-
-2000-04-12 Wednesday 21:58  tobi
-
-	* os2/makefile.bco (1.1): added bco makefile
-
 2000-04-12 Wednesday 21:56  tobi
 
 	* makefile.husky (1.10): small fix
@@ -6560,10 +6439,6 @@
 
 	* src/fcommon.c (1.41): borland c fix
 
-2000-04-12 Wednesday 20:37  tobi
-
-	* win32/makefile.wcw (1.19): legacy makefile fixes
-
 2000-04-12 Wednesday 19:51  tobi
 
 	* src/hpt.c (1.56): Added SetConsoleTitle for Borland C
@@ -6577,10 +6452,6 @@
 	hpt-0_9_7d-release, hpt-0_9_7c-release, hpt-0_9_7b-release,
 	hpt-0_9_7a-release), toss.c (1.194), tpkt.c (1.22), tree.c (1.6):
 	Removed warnings for Borland C
-
-2000-04-12 Wednesday 16:09  tobi
-
-	* win32/: makefile.bcw (1.1), readme (1.3): Added bcw makefile.
 
 2000-04-12 Wednesday 16:08  tobi
 
@@ -6619,10 +6490,6 @@
 
 	* makefile.husky (1.7): Makefile fixes
 
-2000-03-13 Monday 22:46  sms
-
-	* sun/makefile.nohusky (1.6): updated legacy makefiles
-
 2000-03-12 Sunday 14:55  tobi
 
 	* src/hptlink.c (1.4): 64 bit bug fixes
@@ -6653,18 +6520,9 @@
 	src/tpkt.c (1.21), src/txt2pkt.c (1.8): moved smapi and fidoconfig
 	headers to INCDIR/smapi and INCDIR/fidoconfig
 
-2000-03-08 Wednesday 17:05  sms
-
-	* linux/makefile.nohusky (1.7): remove makefile.nohusky
-
 2000-03-07 Tuesday 15:37  tobi
 
 	* makefile.husky (1.4): makefile fixes
-
-2000-02-23 Wednesday 08:43  fjoe
-
-	* freebsd/makefile.bsd (1.6): xstr.o was missing when linking some
-	binaries.
 
 2000-02-22 Tuesday 08:51  edi
 
@@ -6691,11 +6549,6 @@
 	* src/: areafix.c (1.80), toss.c (1.164): changed groups from chars
 	to strings
 
-2000-01-28 Friday 13:57  sms
-
-	* linux/makefile.lnx (1.7): removed huskymak.cfg dependency from
-	makefile.lnx, created/updated makefile.husky for pascal programs
-
 2000-01-27 Thursday 18:18  mt
 
 	* src/scan.c (1.69): requets bugfix
@@ -6714,27 +6567,12 @@
 
 2000-01-23 Sunday 23:30  sms
 
-	* makefile.husky (1.1), linux/makefile.husky (1.3): move
-	makefile.husky from linux subdir to main dir
-
-2000-01-22 Saturday 23:42  sms
-
-	* linux/makefile.husky (1.2): Updated makefile.husky and
-	huskymak.cfg
-
-2000-01-22 Saturday 11:00  sms
-
-	* linux/makefile.husky (1.1): Created/Updated makefile.husky and
-	huskymak.cfg
+	* makefile.husky (1.1): move makefile.husky from linux subdir to
+	main dir
 
 2000-01-16 Sunday 13:11  sms
 
-	* INSTALL (1.6), linux/makefile.lnx (1.6): added reference to
-	husky-common-package to INSTALL
-
-2000-01-10 Monday 08:48  paul.merdin
-
-	* freebsd/makefile.bsd (1.5): little fix in bsd makefile
+	* INSTALL (1.6): added reference to husky-common-package to INSTALL
 
 2000-01-01 Saturday 21:14  tobi
 
@@ -6751,10 +6589,6 @@
 	src/pktinfo.c (1.7), src/pktread.c (1.43), src/purgeDupes.c (1.12):
 	version numbers changed changed
 
-1999-12-15 Wednesday 14:02  tobi
-
-	* osf/makefile.osf (1.4): Adapted OSF makefile
-
 1999-12-07 Tuesday 18:44  mt
 
 	* src/pktread.c (1.41): fixed the last bugfix back to original
@@ -6767,10 +6601,9 @@
 
 1999-12-06 Monday 13:53  tobi
 
-	* osf/makefile.osf (1.2), src/areafix.c (1.71), src/hpt.c (1.37),
-	src/pktread.c (1.38), src/post.c (1.18), src/recode.c (1.7),
-	src/scan.c (1.63), src/scanarea.c (1.39), src/toss.c (1.153): Fixed
-	warnings, adapted dirlayer.h, and fixed osf makefile
+	* src/: areafix.c (1.71), hpt.c (1.37), pktread.c (1.38), post.c
+	(1.18), recode.c (1.7), scan.c (1.63), scanarea.c (1.39), toss.c
+	(1.153): Fixed warnings, adapted dirlayer.h, and fixed osf makefile
 
 1999-12-02 Thursday 10:45  mt
 
@@ -6789,8 +6622,7 @@
 
 1999-11-04 Thursday 11:31  mt
 
-	* src/seenby.c (1.9), sun/makefile.sun (1.2): fixed buffer overflow
-	bug
+	* src/seenby.c (1.9): fixed buffer overflow bug
 
 1999-11-03 Wednesday 07:56  mt
 
@@ -6799,31 +6631,12 @@
 
 1999-10-19 Tuesday 19:04  mt
 
-	* linux/hpt.1 (1.15), linux/purgeDupes.1 (1.6), src/global.c
-	(1.17), src/link.c (1.15): fixed one bug and adjusted version
+	* src/: global.c (1.17), link.c (1.15): fixed one bug and adjusted
+	version
 
 1999-10-18 Monday 07:14  tobi
 
 	* src/scan.c (1.60): Recognise trailing ^M in echotoss.log
-
-1999-10-14 Thursday 16:07  sms
-
-	* aix/makefile (1.5), aix/makefile.aix (1.1), dos/makefile.djd
-	(1.1), dos/makefile.djg (1.4), dos/makefile.w16 (1.4),
-	dos/makefile.w32 (1.4), dos/makefile.wcd (1.1), dos/makefile.wcx
-	(1.1), freebsd/makefile (1.4), freebsd/makefile.bsd (1.1),
-	linux/makefile (1.45), linux/makefile.lnx (1.1), os2/makefile
-	(1.5), os2/makefile.emx (1.4), os2/makefile.w32 (1.11),
-	os2/makefile.wco (1.1), osf/makefile (1.5), osf/makefile.osf (1.1),
-	sun/makefile (1.6), sun/makefile.sun (1.1): reorganized Makefiles,
-	read husky-common/README.Makefiles \!\!\!
-
-1999-10-14 Thursday 15:40  sms
-
-	* dos/makefile.bcd (1.6), dos/w.cmd (1.2), dos/w16.cmd (1.2),
-	os2/e.cmd (1.2), os2/makefile.emo (1.3), os2/w.cmd (1.2),
-	win32/makefile.wcw (1.7): reorganized Makefiles, read
-	husky-common/README.Makefiles \!\!\!
 
 1999-10-12 Tuesday 08:43  mt
 
@@ -6842,17 +6655,8 @@
 
 	* CREDITS (1.14, hpt-1_2_4-release, hpt-1_2_3-release,
 	hpt-1_2_2-release, hpt-1_2-release, hpt-0_9_7d-release,
-	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release),
-	linux/hpt.1 (1.14), linux/makefile (1.44): ready for release
-
-1999-09-23 Thursday 03:13  sms
-
-	* linux/makefile (1.43): removed dupe -I../h from makefile
-
-1999-09-16 Thursday 18:55  sms
-
-	* linux/makefile (1.41): added fidoconfig-include for non-debug
-	version in linux/makefile
+	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release): ready
+	for release
 
 1999-09-15 Wednesday 19:39  mt
 
@@ -6860,8 +6664,7 @@
 
 1999-09-14 Tuesday 20:37  mt
 
-	* CREDITS (1.13), linux/makefile (1.40), src/post.c (1.11): applied
-	patch from sven
+	* CREDITS (1.13), src/post.c (1.11): applied patch from sven
 
 1999-09-08 Wednesday 13:40  tobi
 
@@ -6879,9 +6682,8 @@
 
 1999-08-12 Thursday 10:51  tobi
 
-	* osf/makefile (1.4), src/toss.c (1.132): Implemented the
-	"allowEmptyPktPwd" feature. Lothar never seems to get his ITrack
-	configured correctly ... ;-)
+	* src/toss.c (1.132): Implemented the "allowEmptyPktPwd" feature.
+	Lothar never seems to get his ITrack configured correctly ... ;-)
 
 1999-08-03 Tuesday 11:30  georgi
 
@@ -6917,17 +6719,13 @@
 
 1999-06-29 Tuesday 10:06  mt
 
-	* dos/makefile.djg (1.2), src/toss.c (1.128): first message in
-	autocreated area is now also in dupe-database recorded.
+	* src/toss.c (1.128): first message in autocreated area is now also
+	in dupe-database recorded.
 
 1999-06-23 Wednesday 19:05  mt
 
-	* linux/hpt.1 (1.12), linux/purgeDupes.1 (1.5), src/dupe.c (1.19),
-	src/global.c (1.15): version updated bugfix for dupe.c
-
-1999-06-23 Wednesday 11:24  georgi
-
-	* linux/makefile (1.37): adding txt2pkt
+	* src/: dupe.c (1.19), global.c (1.15): version updated bugfix for
+	dupe.c
 
 1999-06-23 Wednesday 11:23  georgi
 
@@ -6956,10 +6754,6 @@
 
 	* src/: post.c (1.6), toss.c (1.118): fixed the swapped parameters
 	at and af in post
-
-1999-05-25 Tuesday 13:18  mt
-
-	* linux/makefile (1.36): makefile fix
 
 1999-05-20 Thursday 10:27  mt
 
@@ -6993,17 +6787,15 @@
 
 1999-05-10 Monday 12:46  mt
 
-	* h/global.h (1.9), h/log.h (1.6), linux/hpt.1 (1.10),
-	linux/purgeDupes.1 (1.4), os2/makefile.emo (1.1), src/areafix.c
-	(1.42), src/dupe.c (1.16), src/fcommon.c (1.23), src/global.c
-	(1.14), src/hpt.c (1.25), src/link.c (1.12), src/pktread.c (1.25),
-	src/purgeDupes.c (1.9), src/scan.c (1.48), src/scanarea.c (1.30),
-	src/tlog.c (1.5), src/toss.c (1.111): pgcc/emx related fixes
+	* h/global.h (1.9), h/log.h (1.6), src/areafix.c (1.42), src/dupe.c
+	(1.16), src/fcommon.c (1.23), src/global.c (1.14), src/hpt.c
+	(1.25), src/link.c (1.12), src/pktread.c (1.25), src/purgeDupes.c
+	(1.9), src/scan.c (1.48), src/scanarea.c (1.30), src/tlog.c (1.5),
+	src/toss.c (1.111): pgcc/emx related fixes
 
 1999-05-09 Sunday 22:19  mt
 
-	* linux/makefile (1.35), src/link.c (1.11), src/scan.c (1.47),
-	src/toss.c (1.110): small fixes
+	* src/: link.c (1.11), scan.c (1.47), toss.c (1.110): small fixes
 
 1999-04-21 Wednesday 10:41  mt
 
@@ -7018,11 +6810,6 @@
 
 	* src/scan.c (1.46): vialine fix
 
-1999-04-15 Thursday 12:23  gabriel
-
-	* linux/config.sample (1.2):	+ Added a loglevels into
-	sample.config
-
 1999-04-09 Friday 10:19  mt
 
 	* src/toss.c (1.100): applied a fix from Antonio
@@ -7034,14 +6821,8 @@
 
 1999-04-06 Tuesday 20:38  mt
 
-	* INSTALL (1.4), linux/hpt.1 (1.9), src/global.c (1.13), src/hpt.c
-	(1.24), src/scanarea.c (1.28), src/toss.c (1.97): applied antonios
-	patches
-
-1999-03-29 Monday 16:08  fedor.lizunkov
-
-	* linux/config.sample (1.1): sample config file for linux by Fedor
-	Lizunkov
+	* INSTALL (1.4), src/global.c (1.13), src/hpt.c (1.24),
+	src/scanarea.c (1.28), src/toss.c (1.97): applied antonios patches
 
 1999-03-20 Saturday 14:24  mt
 
@@ -7096,11 +6877,11 @@
 
 1999-03-07 Sunday 18:36  ml
 
-	* CREDITS (1.11), h/areafix.h (1.4), h/toss.h (1.14),
-	linux/makefile (1.33), src/areafix.c (1.29), src/pktwrite.c (1.10),
-	src/scanarea.c (1.24), src/toss.c (1.87): - changing echo access
-	policy by Fedor Lizunkov 2:5020/960 Max: - added rescan code by
-	Fedor and other.  - areafix is in test stage, so...
+	* CREDITS (1.11), h/areafix.h (1.4), h/toss.h (1.14), src/areafix.c
+	(1.29), src/pktwrite.c (1.10), src/scanarea.c (1.24), src/toss.c
+	(1.87): - changing echo access policy by Fedor Lizunkov 2:5020/960
+	Max: - added rescan code by Fedor and other.  - areafix is in test
+	stage, so...
 
 1999-03-04 Thursday 11:43  mt
 
@@ -7132,9 +6913,9 @@
 
 1999-03-01 Monday 18:59  mt
 
-	* INSTALL (1.3), dos/makefile.djg (1.1), src/areafix.c (1.27),
-	src/hpt.c (1.18), src/link.c (1.6), src/post.c (1.5),
-	src/purgeDupes.c (1.8) (utags: hpt-0_26): djgpp port
+	* INSTALL (1.3), src/areafix.c (1.27), src/hpt.c (1.18), src/link.c
+	(1.6), src/post.c (1.5), src/purgeDupes.c (1.8) (utags: hpt-0_26):
+	djgpp port
 
 1999-02-28 Sunday 19:28  gabriel
 
@@ -7157,8 +6938,8 @@
 
 1999-02-25 Thursday 18:02  gabriel
 
-	* linux/makefile (1.32), src/fcommon.c (1.20), src/toss.c (1.83)
-	(utags: hpt-0_26): Warnings & makefile fixed
+	* src/: fcommon.c (1.20), toss.c (1.83) (utags: hpt-0_26): Warnings
+	& makefile fixed
 
 1999-02-22 Monday 10:26  tobi
 
@@ -7256,9 +7037,9 @@
 
 1999-02-01 Monday 23:21  mt
 
-	* TODO (1.12), linux/makefile (1.31), src/pktread.c (1.23),
-	src/pktwrite.c (1.9, hpt-0_26): fixed the TOPT, FMPT bug and made a
-	work-around for a memory-problem
+	* TODO (1.12), src/pktread.c (1.23), src/pktwrite.c (1.9,
+	hpt-0_26): fixed the TOPT, FMPT bug and made a work-around for a
+	memory-problem
 
 1999-02-01 Monday 19:53  mt
 
@@ -7272,8 +7053,8 @@
 
 1999-02-01 Monday 13:22  mt
 
-	* src/scanarea.c (1.22), src/toss.c (1.70), sun/makefile (1.4,
-	hpt-0_26): fixed MSGLOCAL bug in makeMsg
+	* src/: scanarea.c (1.22), toss.c (1.70): fixed MSGLOCAL bug in
+	makeMsg
 
 1999-01-31 Sunday 02:04  tobi
 
@@ -7285,27 +7066,17 @@
 	* src/pktread.c (1.20): Removed some debugging code that
 	accidentally slipped into the CVS. Sorry.
 
-1999-01-28 Thursday 23:50  fjoe
-
-	* freebsd/makefile (1.2, hpt-0_26): strsep.o was not added to the
-	list of .o files.
-
 1999-01-28 Thursday 18:26  tobi
 
-	* aix/makefile (1.3, hpt-0_26), dos/makefile.bcd (1.3, hpt-0_26),
-	dos/makefile.w16 (1.2, hpt-0_26), dos/makefile.w32 (1.2, hpt-0_26),
-	h/strsep.h (1.1, hpt-0_9_7d-release, hpt-0_9_7c-release,
-	hpt-0_9_7b-release, hpt-0_9_7a-release, hpt-0_26), linux/makefile
-	(1.30), os2/makefile (1.3, hpt-0_26), os2/makefile.emx (1.2,
-	hpt-0_26), os2/makefile.w32 (1.3, hpt-0_26), src/areafix.c (1.21),
-	src/link.c (1.4), src/pktread.c (1.19), src/scan.c (1.41),
+	* h/strsep.h (1.1, hpt-0_9_7d-release, hpt-0_9_7c-release,
+	hpt-0_9_7b-release, hpt-0_9_7a-release, hpt-0_26), src/areafix.c
+	(1.21), src/link.c (1.4), src/pktread.c (1.19), src/scan.c (1.41),
 	src/scanarea.c (1.21), src/strsep.c (1.2), src/toss.c (1.69):
 	portability fixes
 
 1999-01-27 Wednesday 18:50  mt
 
-	* TODO (1.11), linux/makefile (1.29), src/pktread.c (1.18),
-	src/purgeDupes.c (1.6): fixes
+	* TODO (1.11), src/pktread.c (1.18), src/purgeDupes.c (1.6): fixes
 
 1999-01-27 Wednesday 18:14  mt
 
@@ -7314,12 +7085,6 @@
 1999-01-27 Wednesday 12:51  tobi
 
 	* h/pkt.h (1.9, hpt-0_26): Fixed preprocessor statements
-
-1999-01-27 Wednesday 12:43  tobi
-
-	* osf/makefile (1.2): Modifications on the OSF (Ditigal Unix)
-	makefile. It finally works! (Or at least, it compiles without
-	error).
 
 1999-01-27 Wednesday 12:35  tobi
 
@@ -7368,26 +7133,21 @@
 
 1999-01-19 Tuesday 10:09  mt
 
-	* TODO (1.8), linux/makefile (1.28), src/areafix.c (1.19),
-	src/hpt.c (1.16), src/scan.c (1.37), src/toss.c (1.65):
-	security-prob in areafix fixed and, pkt's are going to pnt-dir now
+	* TODO (1.8), src/areafix.c (1.19), src/hpt.c (1.16), src/scan.c
+	(1.37), src/toss.c (1.65): security-prob in areafix fixed and,
+	pkt's are going to pnt-dir now
 
 1999-01-18 Monday 17:26  mt
 
-	* TODO (1.7), linux/makefile (1.27), src/scan.c (1.36),
-	src/scanarea.c (1.20), src/toss.c (1.64), src/tree.c (1.4,
-	hpt-0_26): fixed one bug and made some other small changes
-
-1999-01-17 Sunday 22:45  mt
-
-	* linux/makefile (1.26): makefile fix
+	* TODO (1.7), src/scan.c (1.36), src/scanarea.c (1.20), src/toss.c
+	(1.64), src/tree.c (1.4, hpt-0_26): fixed one bug and made some
+	other small changes
 
 1999-01-17 Sunday 21:52  mt
 
-	* freebsd/makefile (1.1), h/recode.h (1.3, hpt-0_26), src/pktread.c
-	(1.17), src/pktwrite.c (1.8), src/recode.c (1.3, hpt-0_26),
-	src/scan.c (1.35), src/toss.c (1.63): added makefile for bsd, and
-	made some bugfixes
+	* h/recode.h (1.3, hpt-0_26), src/pktread.c (1.17), src/pktwrite.c
+	(1.8), src/recode.c (1.3, hpt-0_26), src/scan.c (1.35), src/toss.c
+	(1.63): added makefile for bsd, and made some bugfixes
 
 1999-01-14 Thursday 19:55  mt
 
@@ -7401,11 +7161,10 @@
 1999-01-14 Thursday 13:52  mt
 
 	* TODO (1.6), h/dupe.h (1.9, hpt-0_26), h/global.h (1.7, hpt-0_26),
-	h/link.h (1.3, hpt-0_26), h/vixie.h (1.5, hpt-0_26), linux/hpt.1
-	(1.7, hpt-0_26), linux/makefile (1.25), src/areafix.c (1.18),
-	src/dupe.c (1.12), src/global.c (1.11, hpt-0_26), src/hpt.c (1.15),
-	src/link.c (1.1), src/pktread.c (1.16), src/toss.c (1.61): link
-	patch, memory bug fix from Kolya and some patches from me
+	h/link.h (1.3, hpt-0_26), h/vixie.h (1.5, hpt-0_26), src/areafix.c
+	(1.18), src/dupe.c (1.12), src/global.c (1.11, hpt-0_26), src/hpt.c
+	(1.15), src/link.c (1.1), src/pktread.c (1.16), src/toss.c (1.61):
+	link patch, memory bug fix from Kolya and some patches from me
 
 1999-01-14 Thursday 10:40  mt
 
@@ -7430,12 +7189,8 @@
 
 1999-01-08 Friday 17:19  tobi
 
-	* h/vixie.h (1.4), osf/makefile (1.1): added osf makefile. doesn't
-	work yet.  fixed vixie.h for aix
-
-1999-01-08 Friday 17:16  tobi
-
-	* aix/makefile (1.2): updated aix makefile
+	* h/vixie.h (1.4): added osf makefile. doesn't work yet.  fixed
+	vixie.h for aix
 
 1999-01-07 Thursday 23:14  mt
 
@@ -7474,8 +7229,8 @@
 
 1999-01-02 Saturday 18:27  mt
 
-	* linux/makefile (1.24), src/areafix.c (1.15): changed makefiles,
-	fixed some unpack code and done some other changes
+	* src/areafix.c (1.15): changed makefiles, fixed some unpack code
+	and done some other changes
 
 1998-12-31 Thursday 13:46  mt
 
@@ -7511,10 +7266,10 @@
 
 1998-12-27 Sunday 17:46  mt
 
-	* h/vixie.h (1.3), os2/makefile (1.2), os2/makefile.w32 (1.2),
-	src/areafix.c (1.13), src/fcommon.c (1.14), src/hpt.c (1.10),
-	src/toss.c (1.50), src/tpkt.c (1.9): done some backporting to os/2
-	for ibm and watcom compiler and one big security bug
+	* h/vixie.h (1.3), src/areafix.c (1.13), src/fcommon.c (1.14),
+	src/hpt.c (1.10), src/toss.c (1.50), src/tpkt.c (1.9): done some
+	backporting to os/2 for ibm and watcom compiler and one big
+	security bug
 
 1998-12-27 Sunday 00:41  mt
 
@@ -7530,10 +7285,7 @@
 
 1998-12-21 Monday 22:55  mt
 
-	* dos/aha.cfg (1.2), dos/hpt.cfg (1.2), dos/hpt.log (1.2),
-	dos/makefile.bcd (1.2), dos/start.bat (1.2, hpt-0_26), dos/tlog.log
-	(1.2), h/post.h (1.2, hpt-0_26), linux/aha.cfg (1.2), linux/hpt.1
-	(1.6), linux/hpt.cfg (1.4), src/dupe.c (1.9), src/hpt.c (1.9),
+	* h/post.h (1.2, hpt-0_26), src/dupe.c (1.9), src/hpt.c (1.9),
 	src/pktread.c (1.14), src/post.c (1.2), src/toss.c (1.48): fixed a
 	bug concerning pkt reading, and applied the third patch by Kolya
 	with Docu for post-feature and some minor changes
@@ -7544,14 +7296,13 @@
 
 1998-12-17 Thursday 22:51  mt
 
-	* CREDITS (1.8), dos/makefile.bcd (1.1), dos/start.bat (1.1),
-	h/fcommon.h (1.11), h/pkt.h (1.7), h/post.h (1.1), h/toss.h (1.9),
-	h/vixie.h (1.2), linux/hpt.1 (1.5), linux/makefile (1.23),
-	src/areafix.c (1.11), src/fcommon.c (1.13), src/hpt.c (1.8),
-	src/pktread.c (1.13), src/pktwrite.c (1.6), src/post.c (1.1),
-	src/purgeDupes.c (1.5), src/scan.c (1.28), src/toss.c (1.47),
-	src/tpkt.c (1.7): added fixes and patches by Kolya, post and unpack
-	feature by Kolya and backporting to dos by Kolya
+	* CREDITS (1.8), h/fcommon.h (1.11), h/pkt.h (1.7), h/post.h (1.1),
+	h/toss.h (1.9), h/vixie.h (1.2), src/areafix.c (1.11),
+	src/fcommon.c (1.13), src/hpt.c (1.8), src/pktread.c (1.13),
+	src/pktwrite.c (1.6), src/post.c (1.1), src/purgeDupes.c (1.5),
+	src/scan.c (1.28), src/toss.c (1.47), src/tpkt.c (1.7): added fixes
+	and patches by Kolya, post and unpack feature by Kolya and
+	backporting to dos by Kolya
 
 1998-12-15 Tuesday 20:25  mt
 
@@ -7560,15 +7311,13 @@
 
 1998-12-14 Monday 15:21  mtt
 
-	* h/typesize.h (1.4), sun/makefile (1.3): got it working on an
-	ultrasparc removed redundant typesize.h
+	* h/typesize.h (1.4): got it working on an ultrasparc removed
+	redundant typesize.h
 
 1998-12-14 Monday 12:09  mt
 
-	* CREDITS (1.7), linux/hpt.1 (1.4), linux/makefile (1.22),
-	linux/purgeDupes.1 (1.3, hpt-0_26), src/fcommon.c (1.12),
-	src/scan.c (1.27): zoneOutbound fix, fattach bugfix, minor doc
-	changes
+	* CREDITS (1.7), src/fcommon.c (1.12), src/scan.c (1.27):
+	zoneOutbound fix, fattach bugfix, minor doc changes
 
 1998-12-11 Friday 23:02  tobi
 
@@ -7672,8 +7421,7 @@
 
 1998-11-05 Thursday 10:23  mt
 
-	* linux/hpt.1 (1.3), linux/hpt.1.gz (1.2), linux/makefile (1.21),
-	src/toss.c (1.33), src/tpkt.c (1.3): bug fixes
+	* src/: toss.c (1.33), tpkt.c (1.3): bug fixes
 
 1998-11-03 Tuesday 22:22  mt
 
@@ -7697,11 +7445,10 @@
 
 1998-10-29 Thursday 08:50  mt
 
-	* h/fcommon.h (1.6), h/toss.h (1.5), linux/makefile (1.20),
-	src/fcommon.c (1.7), src/scan.c (1.22), src/scanarea.c (1.13),
-	src/seenby.c (1.4), src/toss.c (1.29), src/tree.c (1.3): arcmail
-	fixed echoMailFlavour implemented routing flavour fixed
-	localinbound implemented
+	* h/fcommon.h (1.6), h/toss.h (1.5), src/fcommon.c (1.7),
+	src/scan.c (1.22), src/scanarea.c (1.13), src/seenby.c (1.4),
+	src/toss.c (1.29), src/tree.c (1.3): arcmail fixed echoMailFlavour
+	implemented routing flavour fixed localinbound implemented
 
 1998-10-27 Tuesday 23:40  mt
 
@@ -7716,35 +7463,29 @@
 
 1998-10-26 Monday 20:27  mt
 
-	* linux/makefile (1.19), src/toss.c (1.27): changed typo in toss.c
-
-1998-10-26 Monday 16:04  mt
-
-	* linux/: fidom2iso (1.2), ibmpc-latin1 (1.2), iso2fidom (1.2),
-	latin1-ibmpc (1.2), outaltkoi8 (1.2), outkoi8alt (1.2): move the
-	character tables to the misc directory
+	* src/toss.c (1.27): changed typo in toss.c
 
 1998-10-26 Monday 15:56  mt
 
-	* CREDITS (1.3), h/fcommon.h (1.5), h/toss.h (1.4), linux/makefile
-	(1.18), misc/areafix.hlp (1.1), misc/fidom2iso (1.1,
-	hpt-1_2_4-release, hpt-1_2_3-release, hpt-1_2_2-release,
-	hpt-1_2-release, hpt-0_9_7d-release, hpt-0_9_7c-release,
-	hpt-0_9_7b-release, hpt-0_9_7a-release, hpt-0_26),
-	misc/ibmpc-latin1 (1.1, hpt-1_2_4-release, hpt-1_2_3-release,
-	hpt-1_2_2-release, hpt-1_2-release, hpt-0_9_7d-release,
-	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release,
-	hpt-0_26), misc/iso2fidom (1.1, hpt-1_2_4-release,
+	* CREDITS (1.3), h/fcommon.h (1.5), h/toss.h (1.4),
+	misc/areafix.hlp (1.1), misc/fidom2iso (1.1, hpt-1_2_4-release,
 	hpt-1_2_3-release, hpt-1_2_2-release, hpt-1_2-release,
 	hpt-0_9_7d-release, hpt-0_9_7c-release, hpt-0_9_7b-release,
-	hpt-0_9_7a-release, hpt-0_26), misc/latin1-ibmpc (1.1,
+	hpt-0_9_7a-release, hpt-0_26), misc/ibmpc-latin1 (1.1,
 	hpt-1_2_4-release, hpt-1_2_3-release, hpt-1_2_2-release,
 	hpt-1_2-release, hpt-0_9_7d-release, hpt-0_9_7c-release,
-	hpt-0_9_7b-release, hpt-0_9_7a-release, hpt-0_26), misc/outaltkoi8
+	hpt-0_9_7b-release, hpt-0_9_7a-release, hpt-0_26), misc/iso2fidom
 	(1.1, hpt-1_2_4-release, hpt-1_2_3-release, hpt-1_2_2-release,
 	hpt-1_2-release, hpt-0_9_7d-release, hpt-0_9_7c-release,
-	hpt-0_9_7b-release, hpt-0_9_7a-release, hpt-0_26), misc/outkoi8alt
-	(1.1, hpt-1_2_4-release, hpt-1_2_3-release, hpt-1_2_2-release,
+	hpt-0_9_7b-release, hpt-0_9_7a-release, hpt-0_26),
+	misc/latin1-ibmpc (1.1, hpt-1_2_4-release, hpt-1_2_3-release,
+	hpt-1_2_2-release, hpt-1_2-release, hpt-0_9_7d-release,
+	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release,
+	hpt-0_26), misc/outaltkoi8 (1.1, hpt-1_2_4-release,
+	hpt-1_2_3-release, hpt-1_2_2-release, hpt-1_2-release,
+	hpt-0_9_7d-release, hpt-0_9_7c-release, hpt-0_9_7b-release,
+	hpt-0_9_7a-release, hpt-0_26), misc/outkoi8alt (1.1,
+	hpt-1_2_4-release, hpt-1_2_3-release, hpt-1_2_2-release,
 	hpt-1_2-release, hpt-0_9_7d-release, hpt-0_9_7c-release,
 	hpt-0_9_7b-release, hpt-0_9_7a-release, hpt-0_26), src/areafix.c
 	(1.1), src/fcommon.c (1.6), src/scan.c (1.20), src/scanarea.c
@@ -7766,10 +7507,10 @@
 
 1998-10-19 Monday 13:19  mt
 
-	* README (1.2), h/fcommon.h (1.4), linux/makefile (1.17),
-	src/fcommon.c (1.5), src/toss.c (1.25): Added createDirectoryTree()
-	killed install target from makefile\all: used createDirectoryTree
-	in putMsgInArea/processNMArea/createOutboundFileName, so you can
+	* README (1.2), h/fcommon.h (1.4), src/fcommon.c (1.5), src/toss.c
+	(1.25): Added createDirectoryTree() killed install target from
+	makefile\all: used createDirectoryTree in
+	putMsgInArea/processNMArea/createOutboundFileName, so you can
 	always use the directories
 
 1998-10-18 Sunday 20:25  mt
@@ -7781,18 +7522,17 @@
 
 1998-10-16 Friday 13:27  mt
 
-	* linux/makefile (1.16), src/pktread.c (1.6), src/pktwrite.c (1.3),
-	src/scan.c (1.19), src/scanarea.c (1.10), src/toss.c (1.23): fixed
-	a typo in makefile rewrote recoding so not all messages are recoded
-	but only the ones the were put to msgbase or scanned from msgbase
-	rewrote recoding so no recoding is done, when no in/outtabs are
-	specified.
+	* src/: pktread.c (1.6), pktwrite.c (1.3), scan.c (1.19),
+	scanarea.c (1.10), toss.c (1.23): fixed a typo in makefile rewrote
+	recoding so not all messages are recoded but only the ones the were
+	put to msgbase or scanned from msgbase rewrote recoding so no
+	recoding is done, when no in/outtabs are specified.
 
 1998-10-16 Friday 12:25  mt
 
-	* h/recode.h (1.2), linux/makefile (1.15), src/recode.c (1.2),
-	src/scan.c (1.18), src/toss.c (1.22): fixed a bug in toss.c
-	concerning reading seenByLines
+	* h/recode.h (1.2), src/recode.c (1.2), src/scan.c (1.18),
+	src/toss.c (1.22): fixed a bug in toss.c concerning reading
+	seenByLines
 
 1998-10-16 Friday 10:00  mt
 
@@ -7801,11 +7541,11 @@
 
 1998-10-15 Thursday 09:51  mt
 
-	* h/global.h (1.4), linux/hpt.1 (1.2), linux/purgeDupes.1 (1.2),
-	src/global.c (1.6), src/hpt.c (1.5), src/scan.c (1.17),
-	src/scanarea.c (1.9): made a distinction between scan and pack.    
-	hpt pack -> packs netmail     hpt scan -> scans echomail  found a
-	bug concerning points as downlinks and scanning of echomails.
+	* h/global.h (1.4), src/global.c (1.6), src/hpt.c (1.5), src/scan.c
+	(1.17), src/scanarea.c (1.9): made a distinction between scan and
+	pack.	  hpt pack -> packs netmail	hpt scan -> scans echomail 
+	found a bug concerning points as downlinks and scanning of
+	echomails.
 
 1998-10-14 Wednesday 12:55  mt
 
@@ -7829,10 +7569,6 @@
 
 	* src/toss.c (1.20): when tossing echomails to downlinks recoding
 	do not work
-
-1998-10-12 Monday 10:23  tobi
-
-	* aix/makefile (1.1): Added AIX port
 
 1998-10-12 Monday 10:22  tobi
 
@@ -7866,10 +7602,7 @@
 
 1998-10-03 Saturday 21:59  mt
 
-	* h/recode.h (1.1), linux/fidom2iso (1.1), linux/hpt.1 (1.1),
-	linux/ibmpc-latin1 (1.1), linux/iso2fidom (1.1), linux/latin1-ibmpc
-	(1.1), linux/makefile (1.14), linux/outaltkoi8 (1.1),
-	linux/outkoi8alt (1.1), src/pktread.c (1.3), src/pktwrite.c (1.2),
+	* h/recode.h (1.1), src/pktread.c (1.3), src/pktwrite.c (1.2),
 	src/recode.c (1.1), src/scan.c (1.15), src/toss.c (1.18):
 	incorporated recoding patch from Max added character transition
 	tables / recoding source added import.log feature added
@@ -7878,20 +7611,6 @@
 1998-10-03 Saturday 09:55  mt
 
 	* src/toss.c (1.17): fixes
-
-1998-10-01 Thursday 16:36  mt
-
-	* sun/: hpt.1 (1.1), purgeDupes.1 (1.1) (utags: hpt-0_26): added
-	man-pages for sun
-
-1998-10-01 Thursday 16:35  mt
-
-	* sun/: hpt.cfg (1.2, hpt-0_26), makefile (1.2): updated sun
-	support
-
-1998-10-01 Thursday 16:24  mt
-
-	* linux/makefile (1.13): added log.o for dupePurges which is needed
 
 1998-10-01 Thursday 16:08  mt
 
@@ -7910,25 +7629,23 @@
 
 1998-09-24 Thursday 09:57  mt
 
-	* linux/makefile (1.12), src/scan.c (1.12), src/scanarea.c (1.5):
-	added statistics for scanning makefile now without profiling
-	support hopefully the problems are gone...
+	* src/: scan.c (1.12), scanarea.c (1.5): added statistics for
+	scanning makefile now without profiling support hopefully the
+	problems are gone...
 
 1998-09-21 Monday 11:27  mt
 
-	* h/dir.h (1.2), linux/makefile (1.11), src/dir.c (1.2), src/hpt.c
-	(1.4), src/purgeDupes.c (1.3): moved dir.c and dir.h (opendir etc.
-	vor ibm visualagec++) from hpt to fidoconfigfixed purgeDupes. It
-	should no work ok.  added -pg switch for profiling the debug
-	version of hpt added error message if commandline option is invalid
-	added error message and usage screen if hpt is incoked without a
-	commandline option
+	* h/dir.h (1.2), src/dir.c (1.2), src/hpt.c (1.4), src/purgeDupes.c
+	(1.3): moved dir.c and dir.h (opendir etc. vor ibm visualagec++)
+	from hpt to fidoconfigfixed purgeDupes. It should no work ok. 
+	added -pg switch for profiling the debug version of hpt added error
+	message if commandline option is invalid added error message and
+	usage screen if hpt is incoked without a commandline option
 
 1998-09-20 Sunday 21:49  mt
 
-	* h/patmat.h (1.2), linux/makefile (1.10), src/patmat.c (1.2),
-	src/scan.c (1.11), src/toss.c (1.16): moved patmat to fidoconfig
-	bugfixes
+	* h/patmat.h (1.2), src/patmat.c (1.2), src/scan.c (1.11),
+	src/toss.c (1.16): moved patmat to fidoconfig bugfixes
 
 1998-09-20 Sunday 13:26  mt
 
@@ -7946,14 +7663,13 @@
 
 1998-09-14 Monday 22:28  mt
 
-	* linux/purgeDupes.1 (1.1), src/purgeDupes.c (1.1): added purging
-	of dupeFiles
+	* src/purgeDupes.c (1.1): added purging of dupeFiles
 
 1998-09-14 Monday 22:22  mt
 
-	* h/dupe.h (1.6), h/global.h (1.3), linux/makefile (1.9),
-	src/dupe.c (1.6), src/toss.c (1.13): added dupeFile Indexes made a
-	bugfix to toss.c concerning empty passwords
+	* h/dupe.h (1.6), h/global.h (1.3), src/dupe.c (1.6), src/toss.c
+	(1.13): added dupeFile Indexes made a bugfix to toss.c concerning
+	empty passwords
 
 1998-09-08 Tuesday 20:52  mt
 
@@ -7971,14 +7687,14 @@
 
 1998-09-07 Monday 21:03  mt
 
-	* linux/makefile (1.8), src/toss.c (1.10): added autoareacreate
-	from max Levenkov and made some changes to it.	Also the makefile
-	now has an install and clean option
+	* src/toss.c (1.10): added autoareacreate from max Levenkov and
+	made some changes to it.  Also the makefile now has an install and
+	clean option
 
 1998-09-03 Thursday 14:35  mt
 
-	* linux/hpt.1.gz (1.1), linux/makefile (1.7), src/scan.c (1.8):
-	added man-page and new makefile (thnx to max levenkov)
+	* src/scan.c (1.8): added man-page and new makefile (thnx to max
+	levenkov)
 
 1998-09-02 Wednesday 10:38  mt
 
@@ -8009,11 +7725,11 @@
 
 1998-08-08 Saturday 12:37  mt
 
-	* h/dupe.h (1.4), h/pkt.h (1.3), h/tree.h (1.1), linux/makefile
-	(1.6), src/dupe.c (1.4), src/lhash.c (1.2), src/pktread.c (1.2),
-	src/scan.c (1.6), src/tree.c (1.1): changed dupe-detection from
-	hashing to avl-trees with full information about message.  changed
-	via line. (it will be changed further)
+	* h/dupe.h (1.4), h/pkt.h (1.3), h/tree.h (1.1), src/dupe.c (1.4),
+	src/lhash.c (1.2), src/pktread.c (1.2), src/scan.c (1.6),
+	src/tree.c (1.1): changed dupe-detection from hashing to avl-trees
+	with full information about message.  changed via line. (it will be
+	changed further)
 
 1998-08-08 Saturday 12:35  mt
 
@@ -8021,19 +7737,15 @@
 
 1998-07-23 Thursday 12:17  mt
 
-	* h/dupe.h (1.3), linux/makefile (1.5), src/dupe.c (1.3),
-	src/global.c (1.3), src/scan.c (1.5), src/toss.c (1.7): I updated
-	several files. Mainly dupe support added. Beware! It's slow and
-	does not find all dupes. in 3 week there will be a bugfix.
+	* h/dupe.h (1.3), src/dupe.c (1.3), src/global.c (1.3), src/scan.c
+	(1.5), src/toss.c (1.7): I updated several files. Mainly dupe
+	support added. Beware! It's slow and does not find all dupes. in 3
+	week there will be a bugfix.
 
 1998-07-21 Tuesday 20:52  mt
 
 	* h/dupe.h (1.2), src/dupe.c (1.2): bugfixes and dupe base-support
 	working
-
-1998-07-17 Friday 21:01  mt
-
-	* linux/makefile (1.4): added dupechecking to makefile
 
 1998-07-17 Friday 21:00  mt
 
@@ -8063,24 +7775,15 @@
 
 	* src/scanarea.c (1.3): finished fidoconfig support
 
-1998-06-03 Wednesday 20:50  mt
-
-	* linux/hpt.log (1.4): deleted log-file
-
 1998-06-03 Wednesday 20:49  mt
 
-	* h/global.h (1.2), h/scan.h (1.2), linux/hpt.log (1.3),
-	linux/makefile (1.3), src/scanarea.c (1.2), src/toss.c (1.4): made
-	hpt full fidoconfig able, runs and works (afaik :-)
+	* h/global.h (1.2), h/scan.h (1.2), src/scanarea.c (1.2),
+	src/toss.c (1.4): made hpt full fidoconfig able, runs and works
+	(afaik :-)
 
 1998-05-28 Thursday 16:24  mt
 
 	* h/: route.h (1.3), config.h (1.2): no more needed
-
-1998-05-28 Thursday 16:24  mt
-
-	* linux/hpt.cfg (1.3): fidoconfig style, please copy to
-	/etc/fido/config
 
 1998-05-28 Thursday 16:22  mt
 
@@ -8097,8 +7800,7 @@
 
 1998-05-21 Thursday 16:16  mt
 
-	* h/area.h (1.2), h/pkt.h (1.2), h/route.h (1.2), linux/hpt.cfg
-	(1.2), linux/hpt.log (1.2), linux/makefile (1.2), src/hpt.c (1.2):
+	* h/area.h (1.2), h/pkt.h (1.2), h/route.h (1.2), src/hpt.c (1.2):
 	made some changes
 
 1998-05-21 Thursday 16:15  mt
@@ -8129,23 +7831,15 @@
 
 1998-05-06 Wednesday 19:48  mt
 
-	* .hpt.prcs_aux (1.1), COPYING (1.1), hpt.prj (1.1), dos/aha.cfg
-	(1.1), dos/hpt.cfg (1.1), dos/hpt.log (1.1), dos/makefile.w16
-	(1.1), dos/makefile.w32 (1.1), dos/tlog.log (1.1), dos/w.cmd (1.1),
-	dos/w16.cmd (1.1), h/area.h (1.1), h/common.h (1.1), h/config.h
-	(1.1), h/dir.h (1.1), h/global.h (1.1), h/hpt.h (1.1), h/link.h
-	(1.1), h/log.h (1.1), h/patmat.h (1.1), h/pkt.h (1.1), h/route.h
-	(1.1), h/scan.h (1.1), h/seenby.h (1.1), h/toss.h (1.1),
-	h/typesize.h (1.1), h/version.h (1.1), linux/aha.cfg (1.1),
-	linux/hpt.cfg (1.1), linux/hpt.log (1.1), linux/makefile (1.1),
-	linux/tlog.log (1.1), os2/aha.cfg (1.1), os2/e.cmd (1.1),
-	os2/hpt.cfg (1.1), os2/hpt.log (1.1), os2/m.cmd (1.1), os2/makefile
-	(1.1), os2/makefile.emx (1.1), os2/makefile.w32 (1.1), os2/tlog.log
-	(1.1), os2/w.cmd (1.1), src/common.c (1.1), src/config.c (1.1),
-	src/dir.c (1.1), src/global.c (1.1), src/hpt.c (1.1), src/log.c
-	(1.1), src/patmat.c (1.1), src/pktinfo.c (1.1), src/pktread.c
-	(1.1), src/pktwrite.c (1.1), src/scan.c (1.1), src/scanarea.c
-	(1.1), src/seenby.c (1.1), src/tconfig.c (1.1), src/tlog.c (1.1),
-	src/toss.c (1.1), src/tpkt.c (1.1), sun/aha.cfg (1.1), sun/hpt.cfg
-	(1.1), sun/makefile (1.1): Initial revision
+	* .hpt.prcs_aux (1.1), COPYING (1.1), hpt.prj (1.1), h/area.h
+	(1.1), h/common.h (1.1), h/config.h (1.1), h/dir.h (1.1),
+	h/global.h (1.1), h/hpt.h (1.1), h/link.h (1.1), h/log.h (1.1),
+	h/patmat.h (1.1), h/pkt.h (1.1), h/route.h (1.1), h/scan.h (1.1),
+	h/seenby.h (1.1), h/toss.h (1.1), h/typesize.h (1.1), h/version.h
+	(1.1), src/common.c (1.1), src/config.c (1.1), src/dir.c (1.1),
+	src/global.c (1.1), src/hpt.c (1.1), src/log.c (1.1), src/patmat.c
+	(1.1), src/pktinfo.c (1.1), src/pktread.c (1.1), src/pktwrite.c
+	(1.1), src/scan.c (1.1), src/scanarea.c (1.1), src/seenby.c (1.1),
+	src/tconfig.c (1.1), src/tlog.c (1.1), src/toss.c (1.1), src/tpkt.c
+	(1.1): Initial revision
 
