@@ -876,12 +876,12 @@ char *subscribe(s_link *link, char *cmd) {
 	    if ((rc=forwardRequest(line, link))==2) {
 		xscatprintf(&report, " %s %s  no uplinks to forward\r",
 			    line, print_ch(49-strlen(line), '.'));
-		w_log('8', "areafix: %s - no uplinks to forward\r", line);
+		w_log('8', "areafix: %s - no uplinks to forward", line);
 	    }
 	    else if (rc==0) {
 		xscatprintf(&report, " %s %s  request forwarded\r",
 			    line, print_ch(49-strlen(line), '.'));
-		w_log('8', "areafix: %s - request forwarded\r", line);
+		w_log('8', "areafix: %s - request forwarded", line);
 
 		if (isOurAka(link->hisAka)==0) {
 		    area = getArea(config, line);
