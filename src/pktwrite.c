@@ -92,11 +92,13 @@ FILE *createPkt(char *filename, s_pktHeader *header)
      fputUINT16(pkt, (UINT16) header->origAddr.net);
      fputUINT16(pkt, (UINT16) header->destAddr.net);
 
-/*     fputc(header->loProductCode, pkt);   /*  put lowByte of Prod-Id */
-/*     fputc(header->majorProductRev, pkt); /*  put major version number */
-
+#if 0
+     fputc(header->loProductCode, pkt);   /*  put lowByte of Prod-Id */
+     fputc(header->majorProductRev, pkt); /*  put major version number */
+#else
      fputc(HPT_PRODCODE_LOWBYTE, pkt);   /*  put lowByte of Prod-Id */
      fputc(VER_MAJOR, pkt); /*  put major version number */
+#endif
 
      /*  write PKT pwd, if strlen(pwd) < 8, fill the rest with \0 */
      for (i=0; i < strlen((char *) header->pktPassword); i++) fputc(header->pktPassword[i], pkt);
@@ -114,11 +116,13 @@ FILE *createPkt(char *filename, s_pktHeader *header)
      dummy = (UCHAR)(header->capabilityWord % 256);
      fputc(dummy, pkt);
 
-/*     fputc(header->hiProductCode, pkt);      /*  put hiByte of Prod-Id */
-/*     fputc(header->minorProductRev, pkt);    /*  put minor version number */
-
+#if 0
+     fputc(header->hiProductCode, pkt);      /*  put hiByte of Prod-Id */
+     fputc(header->minorProductRev, pkt);    /*  put minor version number */
+#else
      fputc(HPT_PRODCODE_HIGHBYTE, pkt);      /*  put hiByte of Prod-Id */
      fputc(VER_MINOR, pkt);                  /*  put minor version number */
+#endif
 
      fputUINT16(pkt, header->capabilityWord);
 
