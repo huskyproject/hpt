@@ -2,6 +2,11 @@
 hpt 0.26
 --------
 
+Mon Feb  1 18:08:33 CET 1999
+- pktInfo now displays all pkt's which are given on the commandline
+- now correctEMAddr also understands \n as line separator
+
+----- cvs ci ------
 Mon Feb  1 13:10:49 MET 1999
 - fixed !MSGLOCAL to ~MSGLOCAL in makeMsg scanarea.c
 	
