@@ -179,14 +179,14 @@ void correctEMAddr(s_message *msg)
    start = strrstr(msg->text, " * Origin:");
 
    if (start) {
-	   while ((*start != '\r') && (*start != '\n')) start++;  /*  get to end of line */
+	   while (*start && (*start != '\r') && (*start != '\n')) start++;  /*  get to end of line */
 
 	   if (*(start-1) == ')') {         /*  if there is no ')', there is no origin */
-		   while (*(--start)!='('); /*  find beginning '(' */
+		   while (start>msg->text && *(--start)!='('); /*  find beginning '(' */
 		   start++;                     /*  and skip it */
 		   i=0;
    
-		   while ((*start!=')') && (*start!='\r') && (*start!='\n') && (i<47)) {
+		   while (*start && (*start!=')') && (*start!='\r') && (*start!='\n') && (i<47)) {
 			   if (isdigit(*start) || *start==':' || *start=='/' || *start=='.') {
 				   buffer[i] = *start;
 				   i++;
@@ -202,13 +202,13 @@ void correctEMAddr(s_message *msg)
    /*  this is really needed? */
    if (brokenOrigin) {
 	   start = strstr(msg->text, "\001PATH: ");
-	   if (start) {
+	   if (start && strlen(start) > 7) {
 		   start += 7;
 		   buffer[0] = '0';
 		   buffer[1] = ':';
 		   i = 2;
 
-		   while ((!isspace(*start)) && (*start!='\r') && (*start!='\n') && (i<47)) {
+		   while (*start && (!isspace(*start)) && (*start!='\r') && (*start!='\n') && (i<47)) {
 			   if (isdigit(*start) || *start=='/') {
 				   buffer[i] = *start;
 				   i++;
