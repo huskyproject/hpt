@@ -2174,7 +2174,7 @@ void autoPassive()
 			      w_log('8', "autopause: the file %s is %d days old", path, time_test/24);
 			      if (Changepause((cfgFile) ? cfgFile :
 					      getConfigFileName(),
-					      &(config->links[i]), 1,EPAUSE)) {    
+					      &(config->links[i]), 1,EPAUSE|FPAUSE)) {    
 				  msg = makeMessage(config->links[i].ourAka,
 						    &(config->links[i].hisAka),
 						    versionStr,config->links[i].name,
