@@ -1,3 +1,11 @@
+2003-09-30 Tuesday 19:18  i_zkh
+
+	* src/toss.c (1.526): Minor spelling fix
+
+2003-09-30 Tuesday 07:26  mche
+
+	* src/scan.c (1.198): fix compiler warning
+
 2003-09-29 Monday 17:39  d_sergienko
 
 	* src/scan.c (1.197): fixed scanning with -f - now if it is defined
