@@ -1632,6 +1632,10 @@ void processDir(char *directory, e_tossSecurity sec)
    int dirNameLen;
    int filenum;
 
+#ifndef UNIX
+   unsigned fattrs;
+#endif
+
 
    if (directory==NULL) return;
 
@@ -1644,16 +1648,25 @@ void processDir(char *directory, e_tossSecurity sec)
       printf("testing %s\n", file->d_name);
 #endif
 
-#if !defined(UNIX) && !defined(__TURBOC__)
-      if( !(file->d_attr & _A_HIDDEN) )
+      dummy = (char *)malloc(strlen(directory) + strlen(file->d_name) + 1);
+      strcpy(dummy,directory);
+      strcat(dummy,file->d_name);
+
+#if !defined(UNIX)
+#if defined(__TURBOC__)
+      _dos_getfileattr(dummy, &fattrs);
+#else
+      fattrs = file->d_attr;
+#endif
+      if(fattrs & _A_HIDDEN) {
+          free(dummy);
+      } else
 #endif
       {
 	 nfiles++;
 	 files = (s_fileInDir *) realloc ( files, nfiles * sizeof(s_fileInDir));
-	 (files[nfiles-1]).fileName = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
+	 (files[nfiles-1]).fileName = dummy;
 
-         strcpy((files[nfiles-1]).fileName, directory);
-         strcat((files[nfiles-1]).fileName, file->d_name);
          if(stat((files[nfiles-1]).fileName, &st)==0) {
             (files[nfiles-1]).fileTime = st.st_mtime;
          } else {
