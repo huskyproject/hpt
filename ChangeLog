@@ -1,6 +1,11 @@
 hpt 0.30
 --------
 
+----- cvs ci ------
+Thu Dec  9 00:03:43 NOVT 1999                                                   
+max (patch from Kolya):
+* area linking speed up!
+
 ----- cvs ci -----
 Tue Dec  7 19:31:12 CET 1999
 mtt:

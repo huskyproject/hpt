@@ -26,15 +26,20 @@
  *****************************************************************************/
 /* Revision log:
    19.12.98 - first version
+   28.11.99 - write modified chains only (by L. Lisowsky 2:5020/454.2)
  */
 
 /*
    For now reply linking is performed using the msgid/reply kludges
    TODO:
      linking flat, subject linking
-     fix log numbers
      SPEEDUP!!!!!!!!!!!
-     store only information after MSGID: and REPLY:
+   FIXME:	do better when finding if msg links need to be updated
+   		The problem with original patch by Leonid was that if msg had 
+		some reply links written in replies or replyto fields but
+		no replies were found during linkage reply&replyto fields won't
+		be cleared. I (KN) have applied some quick&dirty patch to fix this 
+		problem, but it's not enough.
 */
 
 #include <stdio.h>
@@ -63,7 +68,8 @@ struct msginfo {
    UMSGID msgPos;
    UMSGID replyToPos;
    UMSGID replies[MAX_REPLY];
-   int freeReply;
+   short freeReply;
+   char relinked;
 
    struct msginfo *prev;
 };
@@ -72,14 +78,14 @@ typedef struct msginfo s_msginfo;
 
 static int  compareEntries(const void *e1, const void *e2)
 {
-   return stricmp(((s_msginfo*) e1) -> msgId + 6,
-                     ((s_msginfo*) e2) -> msgId + 6);
+   return stricmp(((s_msginfo*) e1) -> msgId,
+                     ((s_msginfo*) e2) -> msgId);
 }
 
 static int  findEntry(const void *e1, const void *e2)
 {
-   return stricmp(((s_msginfo*) e1) -> replyId + 6,
-                     ((s_msginfo*) e2) -> msgId + 6);
+   return stricmp(((s_msginfo*) e1) -> replyId,
+                     ((s_msginfo*) e2) -> msgId);
 }
 
 
@@ -88,6 +94,19 @@ static int checkEntry(void *e)
    writeLogEntry(hpt_log, '6', "msg %ld has dupes in msgbase : trown from reply chain",
                  ((s_msginfo *) e) -> msgNum);
    return 1;
+}
+
+static char *GetKludgeText(byte *ctl, char *kludge)
+{
+   char *pKludge, *pToken;
+
+   pToken = (char *) GetCtrlToken(ctl, (byte *)kludge);
+   if (pToken) {
+      pKludge = strdup(pToken+1+strlen(kludge));
+      free(pToken);
+      return pKludge;
+   } else
+      return NULL;
 }
 
 /* linking for msgid/reply */
@@ -109,7 +128,7 @@ int linkArea(s_area *area, int netMail)
 /*							  area->fperm, area->uid, area->gid,*/
                        area->msgbType | (netMail ? 0 : MSGTYPE_ECHO));
    if (harea) {
-      writeLogEntry(hpt_log, '6', "linking area %s", area->areaName);
+      writeLogEntry(hpt_log, '2', "linking area %s", area->areaName);
       tree_init(&avlTree);
       msgsNum = MsgGetHighMsg(harea);
       /* Area linking is done in three passes */
@@ -140,60 +159,82 @@ int linkArea(s_area *area, int netMail)
 	    MsgCloseMsg(hmsg);
 	    MsgCloseArea(harea);
             return 0;
-         };
+         }
 
          curr -> prev = prv;
          MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, ctlen, ctl);
 	 ctl[ctlen] = '\0';
          curr -> msgNum = i;
-         curr -> msgId   = (char *) GetCtrlToken(ctl, (byte *) "MSGID");
-         curr -> replyId = (char *) GetCtrlToken(ctl, (byte *) "REPLY");
-         curr -> subject = strdup((char*)xmsg.subj);
+         curr -> msgId   = GetKludgeText(ctl, "MSGID");
+         curr -> replyId = GetKludgeText(ctl, "REPLY");
+         curr -> subject = strdup((char *)xmsg.subj);
          curr -> msgPos  = MsgMsgnToUid(harea, i);
+	 /* Copy old information, maybe we don't need to write this msg */
+	 curr -> replyToPos = xmsg.replyto;
+	 memcpy(curr -> replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY); 
+	 curr -> freeReply = 0;
+
+         curr -> relinked = 0;
          free(ctl);
          if (curr -> msgId != NULL)  // This msg would don't have reply links
             tree_add(&avlTree, &compareEntries, (char *) curr, &checkEntry);
 
          MsgCloseMsg(hmsg);
-      };
+      }
       /* Pass 2nd : going from the last msg to first search for reply links and
         build relations*/
       for (tail = curr; curr != NULL; curr = curr -> prev) {
-        if (curr -> replyId != NULL && (orig = (s_msginfo *) tree_srch(
-            &avlTree, &findEntry, (char *) curr)) != NULL)
-           if (orig -> freeReply >= MAX_REPLY) {
-              writeLogEntry(hpt_log, '6', "replies count for msg %ld exceeds %d, rest of the\
- replies won't be linked", orig -> msgNum, MAX_REPLY);
-           } else {
-              orig -> replies[(orig -> freeReply)++] = curr -> msgPos;
-              curr -> replyToPos = orig -> msgPos;
-           };
-      };
+	      if (curr -> replyId != NULL && (orig = (s_msginfo *) tree_srch(
+ 	           &avlTree, &findEntry, (char *) curr)) != NULL) {
+		      if (orig -> freeReply >= MAX_REPLY) {
+			      writeLogEntry(hpt_log, '6', "replies count for msg %ld exceeds %d," \
+					      "rest of the replies won't be linked", orig -> msgNum, MAX_REPLY);
+		      } else {
+			      if (orig -> replies[orig -> freeReply] != curr -> msgPos) {
+				      orig -> replies[orig -> freeReply] = curr -> msgPos;
+				      orig -> relinked = 1;
+			      }
+			      (orig -> freeReply)++;
+			      if (curr -> replyToPos != orig -> msgPos) {              
+				      curr -> replyToPos = orig -> msgPos;
+				      curr -> relinked = 1;
+			      }
+		      }
+	      }
+      }
       /* Pass 3rd : write information back to msgbase */
       for (curr = tail; curr != NULL; ) {
-         hmsg  = MsgOpenMsg(harea, MOPEN_READ, curr -> msgNum);
-	 if (hmsg != NULL) 
-	   {
+         hmsg  = MsgOpenMsg(harea, MOPEN_RW, curr -> msgNum);
+         if ((hmsg != NULL) && (curr->relinked != 0)) {
+             int need_write = 0;
 	     MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-	     memcpy(xmsg.replies, curr->replies, sizeof(UMSGID) * MAX_REPLY);
-	     xmsg.replyto = curr->replyToPos;
-	     MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+	     memset(curr->replies + curr->freeReply, 0, sizeof(UMSGID) * (MAX_REPLY - curr->freeReply));
+	     /* FIXME: need a better solution*/
+	     if (memcmp(xmsg.replies, curr->replies, sizeof(UMSGID) * MAX_REPLY)) {
+		     need_write = 1;
+		     memcpy(xmsg.replies, curr->replies, sizeof(UMSGID) * MAX_REPLY);
+	     };
+	     if	(xmsg.replyto != curr->replyToPos) {
+		     need_write = 1;
+		     xmsg.replyto = curr->replyToPos;
+	     };
+	     if (need_write) MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
 	     MsgCloseMsg(hmsg);
-	   }
+	 }
          /* free this node */
          prv = curr -> prev;
          free(curr -> msgId);
          free(curr -> replyId);
          free(curr -> subject);
          free(curr); curr = prv;
-      };
+      }
       /* close everything, free all allocated memory */
       tree_mung(&avlTree, NULL);
       MsgCloseArea(harea);
    } else {
       writeLogEntry(hpt_log, '9', "could not open area %s", area->areaName);
       return 0;
-   };
+   }
    return 1;
 }
 
