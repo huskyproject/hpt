@@ -1,3 +1,18 @@
+2001-12-28 Friday 18:22  ml
+
+	* TODO (1.180), doc/hpt-FAQ.russian (1.15), doc/hpt.texi (1.49),
+	src/areafix.c (1.231), src/toss.c (1.378): remove yesterday code
+	from pavel and fix this bug in areafix
+
+2001-12-28 Friday 10:08  mche
+
+	* src/toss.c (1.377): - unified memory (de-)allocation functions
+
+2001-12-28 Friday 09:48  mche
+
+	* src/: areafix.c (1.230), dupe.c (1.49): - unified memory
+	(de-)allocation functions
+
 2001-12-27 Thursday 20:52  pavel.gulchouck
 
 	* src/toss.c (1.376): bugfix: subscribe link requested echo via
