@@ -1,4 +1,10 @@
 ----- cvs ci ------
+Sun Sep  3 20:04:07 MEZ 2000
+tobi (patch from Serguei Revtov via max):
+* hptlink bugfix when linking with -t
+* hptlink little speedup when linking by subjects
+
+----- cvs ci ------
 Sun Sep  3 19:33:53 MEZ 2000
 tobi (patch from max dated Aug 14 2000)
 * better bsy processing
