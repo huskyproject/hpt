@@ -1644,7 +1644,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 
 		freeMsgBuffers(linkmsg);
 		free(linkmsg);
-		linkmsg = NULL;
+		link->msg = NULL;
 	}
 	
 	return 1;
