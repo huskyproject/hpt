@@ -1,3 +1,20 @@
+2002-07-01 Monday 22:15  stas
+
+	* src/hptlink.c (1.41): Fix warning message
+
+2002-07-01 Monday 22:14  stas
+
+	* TODO (1.193): Add 'ListEcho'
+
+2002-07-01 Monday 14:23  stas
+
+	* debian/postinst (1.1): file postinst was initially added on
+	branch hpt-1_2-stable.
+
+2002-07-01 Monday 12:08  mche
+
+	* src/areafix.c (1.317): fixed bug with changing config
+
 2002-06-30 Sunday 09:43  mche
 
 	* src/: scan.c (1.167), scanarea.c (1.84): fixed bug with scaning
