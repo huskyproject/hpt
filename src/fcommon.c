@@ -177,7 +177,7 @@ int fileNameAlreadyUsed(char *pktName, char *packName) {
 
 static char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
 
-void cleanEmptyBundles(char *pathName, int npos)
+void cleanEmptyBundles(char *pathName, int npos, char *wday)
 // Removing old empty bundles when bundleNameStyle == addDiff
 {
    char           *ptr, *tmpfile, *pattern, savech;
@@ -213,7 +213,8 @@ void cleanEmptyBundles(char *pathName, int npos)
 
    while ((file = readdir(dir)) != NULL) {
 
-	   if ( patimat(file->d_name, pattern) == 1 ) {
+	   if ( patimat(file->d_name, pattern) == 1 &&
+	        strncasecmp(file->d_name+(ptr-pattern), wday, 2) != 0 ) {
 
 		   strcpy(tmpfile+npos, file->d_name);
 
@@ -232,9 +233,9 @@ void cleanEmptyBundles(char *pathName, int npos)
 
 int createTempPktFileName(s_link *link)
 {
-	char *fileName=NULL; // pkt file in tempOutbound
-	char *pfileName=NULL; // name of the arcmail bundle
-	char *tmp=NULL; // temp name of the arcmail bundle
+    char *fileName=NULL; // pkt file in tempOutbound
+    char *pfileName=NULL; // name of the arcmail bundle
+    char *tmp=NULL; // temp name of the arcmail bundle
     char *tmp2=NULL;    //temp string
     time_t aTime = time(NULL);  /* get actual time */
     int counter, minFreeExt, npos;
@@ -245,11 +246,10 @@ int createTempPktFileName(s_link *link)
     time_t tr;
     char *wday;
     struct tm *tp;
-
-	int i;
-	struct stat stbuf;
-	static char *ext3 = "0123456789abcdefghijklmnopqrstuvwxyz";
-	int numExt = strlen(ext3);
+    int i;
+    struct stat stbuf;
+    static char ext3[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+    int numExt = sizeof(ext3)-1;
 
     tr=time(NULL);
     tp=localtime(&tr);
@@ -317,6 +317,8 @@ int createTempPktFileName(s_link *link)
 
     } // link->fileBox
 
+    npos = strlen(tmp);
+
     /* bundle file name */
     switch ( bundleNameStyle ) {
 
@@ -342,14 +344,13 @@ int createTempPktFileName(s_link *link)
                 w_log(LL_FILENAME, "bundle name generating: %s", tmp);
 
     case eAmiga:
-                npos = strlen(tmp);
 		if (bundleNameStyle==eAmiga) {
 			xscatprintf (&tmp, "%u.%u.%u.%u.",
 						 link->hisAka.zone, link->hisAka.net,
 						 link->hisAka.node, link->hisAka.point);
 		}
 
-		if (!needUseFileBoxForLink(config,link)) cleanEmptyBundles(tmp,npos);
+		if (!needUseFileBoxForLink(config,link)) cleanEmptyBundles(tmp,npos,wday);
 
 		counter = 0;
 		minFreeExt = -1;
@@ -360,7 +361,7 @@ int createTempPktFileName(s_link *link)
 			
 			if (stat(pfileName, &stbuf) == 0) {
 
-				if (tr - stbuf.st_mtime < 60*60*24) {
+				if (tr - stbuf.st_mtime < 60*60*48) {
 					// today's bundle
 					counter = i+1;
 					if (stbuf.st_size==0 && (counter<numExt ||
@@ -372,7 +373,7 @@ int createTempPktFileName(s_link *link)
 					if (stbuf.st_size == 0)	remove (pfileName);
 					else counter = i+1;
 				}
-			} else {
+			} else if (errno==ENOENT) {
 				if (minFreeExt <0) minFreeExt = i;
 			}
 			
