@@ -642,7 +642,7 @@ int isValidConference(const char *s) {
 }
 
 
-#if HAVE_SPAWNVP
+#if HAS_SPAWNVP
 /* make parameters list for spawnvp() */
 char **mk_lst(const char *a)
 {
@@ -675,6 +675,7 @@ int cmdcall(const char *cmd)
   cmdexit = spawnvp(P_WAIT, basename(list[0]), list);
   nfree(list[0]);
   nfree(list);
+
   return cmdexit;
 }
 #else

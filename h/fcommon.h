@@ -45,8 +45,8 @@ void writeDupeFiles(void);
 
 /*
 #if defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) || defined(__MINGW32__)
-#if !defined(HAVE_SPAWNVP)
-#define HAVE_SPAWNVP 1
+#if !defined(HAS_SPAWNVP)
+#define HAS_SPAWNVP 1
 #endif
 #endif
 */
@@ -55,7 +55,7 @@ void writeDupeFiles(void);
  * exit code by buggy shell)
  * Return exit code of the executed command.
  */
-#if HAVE_SPAWNVP
+#if HAS_SPAWNVP
 int cmdcall(const char *cmd);
 #else
 #  define cmdcall(cmd) system(cmd)
