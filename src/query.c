@@ -21,9 +21,7 @@
 static struct tm when;
 const char czFreqArea[] = "freq";
 const char czKillArea[] = "kill";
-char czTmpQueryFile[nbufSize] = "";
-char czQueryFile[nbufSize] = "";
-const int  cnDaysToKeepFreq = 3;
+const int  cnDaysToKeepFreq = 5;
 extern s_query_areas *queryAreasHead;
 extern void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr);
 
@@ -41,67 +39,6 @@ void del_tok(char **ac, char *tok) {
 	}
     }
 }
-
-// this code will be removed soon
-
-                                /* we do NOT check for a dosish ':' here
-                                   because mkdir "C:" is nonsense */
-
-
-// #define my_isdirsep(x) (((x) == '/') || ((x) == '\\'))
-
-                                /* makes sure subdirectories in the pathname
-                                   exist. the last part of the argument is only
-                                   treated as a subdir if the argument ends
-                                   with '/' (or '\\'). rv: 1=ok, 0=error
-                                   basedir is not checked, filename is
-                                   checked. basedir must end in separator. */
-
-/* this functionality implemented in smapi
-
-static int makealldirs(const char *basedir, const char *filename)
-{
-    char *buffer, *cpd;
-    const char *cps = filename;
-    size_t l;
-
-    l = strlen(basedir);
-    if (!(*filename)) return 1;
-    if ((buffer = safe_malloc(l + strlen(filename) + 1)) == NULL) return 0;
-
-    memcpy(buffer, basedir, l);
-    cpd = buffer + l;
-  
-    do
-	{
-	    while ((!my_isdirsep(*cps)) && (*cps))
-		{
-		    *cpd++ = *cps++;
-		}
-        
-	    if (my_isdirsep(*cps))
-		{
-		    if (!direxist(buffer))
-			{
-			    *cpd = '\0';
-			    mymkdir(buffer); // we can't check mkdir return code for
-					     // portability reasons, so we do this:
-			    if (!direxist(buffer))
-				{
-				    free(buffer);
-				    return 0;
-				}
-			}
-		    *cpd++ = *cps++;
-		}
-	} while (*cps);
-
-    free(buffer);
-    return 1;
-}
-    
-#undef my_isdirsep
-*/
 
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 {
@@ -176,13 +113,6 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 				    *cp = PATH_DELIM;
 				}
 			}
-/*
-		    if (!makealldirs(msgbDir,msgbFileName))
-			{
-			    w_log('9', "autoAreaCreateSubdirs: Could not create some paths for %s%s", msgbDir, msgbFileName);
-			    return 1;
-			}
-*/
 		}
 
 	    if (!need_dos_file)
@@ -334,7 +264,6 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
 
 int af_OpenQuery()
 {
-    char *slash;
     FILE *queryFile;
     char *line = NULL;
     char *token = NULL;
@@ -353,11 +282,7 @@ int af_OpenQuery()
 
     queryAreasHead = af_MakeAreaListNode();
 
-    strcpy( czQueryFile , getConfigFileName() );
-    slash = strrchr(czQueryFile, PATH_DELIM);
-    slash[1] = '\0';
-    sprintf(czQueryFile,"%shpt_%u.que",czQueryFile,config->addr[0].node);
-    if ((queryFile = fopen(czQueryFile,"r")) == NULL) // empty query file
+    if ((queryFile = fopen(config->areafixQueueFile,"r")) == NULL) // empty query file
         return 0;
 
     tmpNode = queryAreasHead;
@@ -469,8 +394,8 @@ int af_CloseQuery()
     if(writeChanges)
     {
         fclose(queryFile);
-        remove(czQueryFile);
-        rename(czTmpQueryFile,czQueryFile);
+        remove(config->areafixQueueFile);
+        rename(czTmpQueryFile,config->areafixQueueFile);
     }
     nfree(czTmpQueryFile);
     return 0;
