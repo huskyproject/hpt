@@ -181,6 +181,8 @@ void post(int c, unsigned int *n, char *params[])
             case 'e':    // echo name
                area = params[++(*n)];
                echo = getArea(config, area);
+	       strUpper(area);
+	       strUpper(echo->areaName);
                break;
             case 's':    // subject
                msg.subjectLine = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
