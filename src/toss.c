@@ -379,7 +379,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 
    sortSeenBys(seenBys, seenByCount);
 
-   for (i=0; i< seenByCount;i++) printf("%u/%u ", seenBys[i].net, seenBys[i].node);
+//   for (i=0; i< seenByCount;i++) printf("%u/%u ", seenBys[i].net, seenBys[i].node);
    //exit(2);
 
    createPathArrayFromMsg(msg, &path, &pathCount);
