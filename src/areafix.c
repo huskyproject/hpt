@@ -493,7 +493,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 	msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop,
         uplink->RemoteRobotName ? uplink->RemoteRobotName : "areafix",
         uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1,
-        config->areafixKillReports);
+        config->areafixReportsAttr);
 	msg->text = createKludges(config, NULL, uplink->ourAka, &(uplink->hisAka),
                               versionStr);
         /* xstrcat(&(msg->text), "\001FLAGS DIR\r"); */
@@ -1208,7 +1208,7 @@ char *unsubscribe(s_link *link, char *cmd) {
                 xscatprintf(&report," %s %s  unlinked\r",an,print_ch(49-strlen(an),'.'));
             }else
                 xscatprintf(&report," %s %s  error. report to sysop!\r",
-                an, print_ch(49-strlen(an),'.'));
+                an, print_ch(49-strlen(an),'.') );
             break;
         case 1:
             if (isPatternLine(line)) {
@@ -1735,12 +1735,12 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
             tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
             msg->toUserName,
             msg->fromUserName, newsubj, 1,
-            config->areafixKillReports);
+            config->areafixReportsAttr);
         else
             tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
             config->areafixFromName,
             msg->fromUserName, newsubj, 1,
-            config->areafixKillReports);
+            config->areafixReportsAttr);
 
 
         preprocText(split, tmpmsg);
@@ -2086,7 +2086,7 @@ void afix(hs_addr addr, char *cmd)
                 link->RemoteRobotName : "Areafix",
                 link->areaFixPwd ?
                 link->areaFixPwd : "", 1,
-                config->areafixKillReports);
+                config->areafixReportsAttr);
             tmpmsg->text = safe_strdup(cmd);
             processAreaFix(tmpmsg, NULL, 1);
             freeMsgBuffers(tmpmsg);
@@ -2173,7 +2173,7 @@ int unsubscribeFromPausedEchoAreas(s_link *link) {
     if (text) {
 	tmpmsg = makeMessage(&(link->hisAka), link->ourAka, link->name,
 			     "areafix", link->areaFixPwd, 1,
-                 config->areafixKillReports);
+                 config->areafixReportsAttr);
 	tmpmsg->text = text;
 	processAreaFix(tmpmsg, NULL, 0);
 	freeMsgBuffers(tmpmsg);
@@ -2231,7 +2231,7 @@ void autoPassive()
 					    &(config->links[i].hisAka),
 					    versionStr,config->links[i].name,
 					    "AutoPassive", 1,
-					    config->areafixKillReports);
+					    config->areafixReportsAttr);
 				  msg->text = createKludges(config, NULL,
 					    config->links[i].ourAka,
 					    &(config->links[i].hisAka),
@@ -2324,7 +2324,7 @@ int relink (char *straddr) {
 			  researchLink->RemoteRobotName ?
 			  researchLink->RemoteRobotName : "areafix",
 			  researchLink->areaFixPwd ? researchLink->areaFixPwd : "", 1,
-              config->areafixKillReports);
+              config->areafixReportsAttr);
 
 	msg->text = createKludges(config,NULL,researchLink->ourAka,
                               &researchLink->hisAka,versionStr);
