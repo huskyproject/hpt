@@ -1,3 +1,14 @@
+2002-06-01 Saturday 19:22  ml
+
+	* src/: perl.c (1.16.2.4), post.c (1.60.2.7), txt2pkt.c (1.28.2.3):
+	added some includes for fts_time()
+
+2002-06-01 Saturday 12:45  ml
+
+	* src/: areafix.c (1.232.2.10), perl.c (1.16.2.3), post.c
+	(1.60.2.6), txt2pkt.c (1.28.2.2): fixed compilation with
+	2.0.0-2.0.2 versions of smapi
+
 2002-05-28 Tuesday 13:50  ml
 
 	* src/: areafix.c (1.232.2.9), perl.c (1.16.2.2), post.c
