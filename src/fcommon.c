@@ -642,7 +642,7 @@ int isValidConference(const char *s) {
 }
 
 
-#if HAS_SPAWNVP
+#ifdef HAS_SPAWNVP
 /* make parameters list for spawnvp() */
 char **mk_lst(const char *a)
 {

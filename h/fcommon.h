@@ -55,7 +55,7 @@ void writeDupeFiles(void);
  * exit code by buggy shell)
  * Return exit code of the executed command.
  */
-#if HAS_SPAWNVP
+#ifdef HAS_SPAWNVP
 int cmdcall(const char *cmd);
 #else
 #  define cmdcall(cmd) system(cmd)
