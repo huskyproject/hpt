@@ -261,10 +261,10 @@ void processConfig()
 
    setvar("module", "hpt");
    config = readConfig(cfgFile);
-   nfree(cfgFile);
    if (NULL == config) {
-      printf("Config not found\n");
-      exit(1);
+       nfree(cfgFile);
+       printf("Config not found\n");
+       exit(1);
    }
 
 /*
@@ -299,32 +299,32 @@ void processConfig()
    else if (config->lockfile!=NULL) createLockFile(config->lockfile);
 */
    if (config->lockfile) {
-	   if (config->advisoryLock) {
-		   if ((lock_fd=open(config->lockfile,O_CREAT|O_RDWR,S_IREAD|S_IWRITE))<0) {
-			   fprintf(stderr,"cannot open/create lock file: %s\n",config->lockfile);
-			   disposeConfig(config);
-			   exit(1);
-		   } else {
-			   if (write(lock_fd," ", 1)!=1) {
-				   fprintf(stderr,"can't write lo lock file! exit...\n");
-				   disposeConfig(config);
-				   exit(1);
-			   }
-			   if (lock(lock_fd,0,1)<0) {
-				   fprintf(stderr,"lock file used by another process! exit...\n");
-				   disposeConfig(config);
-				   exit(1);
-			   }
-		   }
-	   } else { // normal locking
-		   if ((lock_fd=open(config->lockfile,
-							 O_CREAT|O_RDWR|O_EXCL,S_IREAD|S_IWRITE))<0) {
-			   fprintf(stderr,"cannot create new lock file: %s\n",config->lockfile);
-			   fprintf(stderr,"lock file probably used by another process! exit...\n");
-			   disposeConfig(config);
-			   exit(1);
-		   }
+       if (config->advisoryLock) {
+	   if ((lock_fd=open(config->lockfile,O_CREAT|O_RDWR,S_IREAD|S_IWRITE))<0) {
+	       fprintf(stderr,"cannot open/create lock file: %s\n",config->lockfile);
+	       disposeConfig(config);
+	       exit(1);
+	   } else {
+	       if (write(lock_fd," ", 1)!=1) {
+		   fprintf(stderr,"can't write lo lock file! exit...\n");
+		   disposeConfig(config);
+		   exit(1);
+	       }
+	       if (lock(lock_fd,0,1)<0) {
+		   fprintf(stderr,"lock file used by another process! exit...\n");
+		   disposeConfig(config);
+		   exit(1);
+	       }
 	   }
+       } else { // normal locking
+	   if ((lock_fd=open(config->lockfile,
+			     O_CREAT|O_RDWR|O_EXCL,S_IREAD|S_IWRITE))<0) {
+	       fprintf(stderr,"cannot create new lock file: %s\n",config->lockfile);
+	       fprintf(stderr,"lock file probably used by another process! exit...\n");
+	       disposeConfig(config);
+	       exit(1);
+	   }
+       }
    }   
 
    // open Logfile
@@ -458,6 +458,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    }
 
    tossTempOutbound(config->tempOutbound);
+
    if (1 == cmToss) toss();
    if (cmToss == 2) tossFromBadArea(force);
 
@@ -514,6 +515,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    if (config->setConsoleTitle) SetConsoleTitleA(oldtitle);
 #endif
    disposeConfig(config);
+   nfree(cfgFile);
 
    return 0;
 }

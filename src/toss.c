@@ -978,7 +978,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    xscatprintf(&newAC, "%s%s", (acDef) ? " " : "", (acDef) ? acDef : "");
    
    fileName = creatingLink->autoAreaCreateFile;
-   if (fileName == NULL) fileName = (cfgFile) ? cfgFile : getConfigFileName();
+   if (fileName == NULL) fileName = cfgFile ? cfgFile : getConfigFileName();
 
    f = fopen(fileName, "a");
    if (f == NULL) {
