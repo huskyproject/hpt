@@ -257,3 +257,86 @@ void scanEMArea(s_area *echo)
    } /* endif */
 }
 
+/* rescan functions taken from areafix.c */
+
+int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
+{
+   s_message    msg;
+   UINT32       j=0;
+   s_seenBy     *seenBys = NULL, *path = NULL;
+   UINT         seenByCount = 0, pathCount = 0;
+   s_arealink   **links;
+
+   links = (s_arealink **) scalloc(2, sizeof(s_arealink*));
+   if (links==NULL) exit_hpt("out of memory",1);
+   links[0] = arealink;
+
+   makeMsg(hmsg, xmsg, &msg, echo, 1);
+
+   //translating name of the area to uppercase
+   while (msg.text[j] != '\r') {msg.text[j]=(char)toupper(msg.text[j]);j++;}
+
+   if (strncmp(msg.text+j+1,"NOECHO",6)==0) {
+       freeMsgBuffers(&msg);
+       nfree(links);
+       return 0;
+   }
+
+   createSeenByArrayFromMsg(echo, &msg, &seenBys, &seenByCount);
+   createPathArrayFromMsg(&msg, &path, &pathCount);
+
+   forwardToLinks(&msg, echo, links, &seenBys, &seenByCount, &path, &pathCount);
+
+   // mark msg as sent and scanned
+   xmsg.attr |= MSGSENT;
+   xmsg.attr |= MSGSCANNED;
+   MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+
+   freeMsgBuffers(&msg);
+   nfree(links);
+   nfree(seenBys);
+   nfree(path);
+
+   return 1;
+}
+
+int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount)
+{
+   HAREA area;
+   HMSG  hmsg;
+   XMSG  xmsg;
+   dword highestMsg, i;
+   unsigned int rc=0;
+
+   area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, /*echo -> fperm,
+   echo -> uid, echo -> gid,*/ (word)(echo->msgbType | MSGTYPE_ECHO));
+   if (area != NULL) {
+       //      i = highWaterMark = MsgGetHighWater(area);
+       i = 0;
+       highestMsg    = MsgGetHighMsg(area);
+
+       // if rescanCount == -1 all mails should be rescanned
+       if ((rescanCount == -1) || (rescanCount > (long)highestMsg))
+	   rescanCount = highestMsg;
+
+       while (i <= highestMsg) {
+	   if (i > highestMsg - rescanCount) { // honour rescanCount paramater
+	       hmsg = MsgOpenMsg(area, MOPEN_RW, i);
+	       if (hmsg != NULL) {     // msg# does not exist
+		   MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+		   rc += repackEMMsg(hmsg, xmsg, echo, arealink);
+		   MsgCloseMsg(hmsg);
+	       }
+	   }
+	   i++;
+       }
+
+       MsgSetHighWater(area, i);
+
+       MsgCloseArea(area);
+       closeOpenedPkt();
+
+   } else w_log(LL_ERR, "Could not open %s: %s", echo->fileName, strerror(errno));
+
+   return rc;
+}

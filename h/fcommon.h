@@ -39,12 +39,6 @@
 #include <stdio.h>
 #include <fidoconf/fidoconf.h>
 
-// moved to fidoconfig
-//enum prio {CRASH, HOLD, NORMAL, DIRECT, IMMEDIATE};
-//enum type {PKT, REQUEST, FLOFILE};
-//typedef enum prio e_prio;
-//typedef enum type e_type;
-
 /* common functions */
 void writeDupeFiles(void);
 
@@ -54,13 +48,6 @@ void exit_hpt(char *logstr, int print);
   print logstr to log file
   print logstr to stderr if print!=0
   closed log file, removed lockfile, disposed config
-*/
-
-//e_prio cvtFlavour2Prio(e_flavour flavour);
-/*DOC
-  Input:  a fidoconfig flavour
-  Output: a hpt prio
-  FZ:     obvious
 */
 
 void addAnotherPktFile(s_link *link, char *filename);
@@ -84,16 +71,6 @@ int   createTempPktFileName(s_link *link);
           structure
 */
 
-// this function moved to smapi has name _createDirectoryTree
-//int    createDirectoryTree(const char *pathName); // moved to smapi
-/*DOC                              // can be removed from hpt later 
-  Input:  a pointer to a \0 terminated string
-  Output: 0 if successfull, 1 else
-  FZ:     pathName is a correct directory name
-          createDirectoryTree creates the directory and all parental directories
-          if they do not exist.
-*/
-  
 int    createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ);
 /*DOC
   Input:  link is the link whose OutboundFileName should be created.
@@ -115,7 +92,6 @@ long __stdcall GetConsoleTitleA( const char*, long );
 #include <io.h>
 #endif
 
-//int  createLockFile(char *lockFile); // this function has no calls
 void *safe_malloc(size_t size);
 void *safe_calloc(size_t nmemb, size_t size);
 void *safe_realloc(void *ptr, size_t size);
