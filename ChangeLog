@@ -1,3 +1,26 @@
+2003-04-27 Sunday 20:10  d_sergienko
+
+	* src/areafix.c (1.406): yet another rules sending fix
+
+2003-04-27 Sunday 01:40  d_sergienko
+
+	* doc/hpt.texi (1.121): add info about reduced seen-by
+
+2003-04-27 Sunday 00:55  d_sergienko
+
+	* HISTORY (1.28), src/link.c (1.72): fixed linking when ^AMSGID or
+	^AREPLY are in mixed case
+
+2003-04-27 Sunday 00:19  d_sergienko
+
+	* src/areafix.c (1.405): removed "Following ..." from messages with
+	rules
+
+2003-04-26 Saturday 22:14  d_sergienko
+
+	* src/areafix.c (1.404): fix sending rules (thanx to Andrew
+	Ladutsko, 2:450/210)
+
 2003-04-26 Saturday 10:01  d_sergienko
 
 	* src/carbon.c (1.27): yet another fix for carbon @AREA kludge
