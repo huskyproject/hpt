@@ -1,3 +1,13 @@
+2005-02-03 Thursday 19:01  val_khokhlov
+
+	* misc/: areafix.866 (1.8), areafix.hlp (1.23): update help files
+	to describe rescan by days feature
+
+2005-02-03 Thursday 18:55  val_khokhlov
+
+	* h/scanarea.h (1.8), src/hptafix.c (1.20), src/scanarea.c (1.102):
+	allow rescan by date
+
 2005-02-02 Wednesday 17:53  val_khokhlov
 
 	* doc/hpt.texi (1.159): description for 'rescanLimit' keyword
