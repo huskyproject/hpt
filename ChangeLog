@@ -1,3 +1,11 @@
+2003-03-02 Sunday 09:46  pgul
+
+	* misc/filter.pl (1.10): Add netmail dupe- and loop- checking
+
+2003-03-01 Saturday 22:27  i_zkh
+
+	* doc/hpt-FAQ.russian (1.83): Fixed spelling
+
 2003-02-27 Thursday 06:36  sfpavel
 
 	* config/config (1.9): Fix sample config [patch from Alex Buloichik
