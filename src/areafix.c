@@ -1888,17 +1888,15 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     token = strseparate (&tmp,"\n\r");
 
     while(token != NULL) {
-        if( strcmp(token,"---") || strncmp(token,"--- ",4) ) 
+        if( !strcmp(token,"---") || !strncmp(token,"--- ",4) ) 
             // stop on tearline ("---" or "--- text")
             break;
         if( token[0] != '\001' )
             xstrscat(&textBuff,token,"\r",NULL);
         token = strseparate (&tmp,"\n\r");
     }
-
     nfree(msg->text);
     msg->text = textBuff;   
-
     if (!security) {
 	textBuff = safe_strdup(msg->text);
         tmp = textBuff;
