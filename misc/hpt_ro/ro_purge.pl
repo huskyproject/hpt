@@ -13,8 +13,9 @@ BEGIN {
   my $wd;
   if ($^O = 'MSWin32') { ($wd = $0) =~ s/[^\\]+$//;}
   else {($wd = $0) =~ s/[^\/]+$//;}
-  $workdir = $wd;
+  $workdir = $wd ? $wd : ".";
 }
+
 use lib ($workdir);
 use Hpt_ro;
 
