@@ -17,11 +17,18 @@
 char *createDupeFileName(s_area *area) {
    char *name;
 
-   name = (char *) malloc(strlen(area->fileName)+6);
-   strcpy(name, area->fileName);
-   
-   if (area->msgbType == MSGTYPE_SDM) strcat(name, "dupes");
-   else strcat(name, ".dup");
+   if (area->msgbType == MSGTYPE_PASSTHROUGH) {
+      name = (char *) malloc(strlen(area->areaName)+5);
+      strcpy(name, area->areaName);
+      strcat(name, ".dup");
+      
+   } else {
+      name = (char *) malloc(strlen(area->fileName)+6);
+      strcpy(name, area->fileName);
+
+      if (area->msgbType == MSGTYPE_SDM) strcat(name, "dupes");
+      else strcat(name, ".dup");
+   }
 
    return name;
 }
@@ -48,7 +55,7 @@ void doReading(FILE *f, s_dupeMemory *mem) {
       
       mem->entries = realloc(mem->entries, (mem->noOfEntries + packHeader->noOfEntries) * packHeader->entrySize);
       // process all entries in a pack
-      for (j = 0; j < packHeader->noOfEntries; i++) {
+      for (j = 0; j < packHeader->noOfEntries; j++) {
          // read the entry Struct
          fread(&(mem->entries[mem->noOfEntries + j]), packHeader->entrySize, 1, f);
          
@@ -85,7 +92,7 @@ s_dupeMemory *readDupeFile(s_area *area) {
       // readFile
       doReading(f, dupeMemory);
       // sort entries for faster searching...
-      qsort(&(dupeMemory->entries),dupeMemory->noOfEntries, sizeof(s_dupeEntry), &compareEntries);
+      qsort(dupeMemory->entries,dupeMemory->noOfEntries, sizeof(s_dupeEntry), &compareEntries);
 
       fclose(f);
    } else {
@@ -165,17 +172,25 @@ int createDupeFile(char *name, s_dupeMemory newDupeEntries) {
    } else return 1;
 }
 
-int writeToDupeFile(s_area *area, s_dupeMemory newDupeEntries) {
+int writeToDupeFile(s_area *area) {
    char *fileName;
-   int  rc;
+   int  rc = 0;
+   s_dupeMemory *newDupes = area->newDupes;
 
-   fileName = createDupeFileName(area);
+   if (newDupes != NULL) {
 
-   if(fexist(fileName)) rc = appendToDupeFile(fileName,  newDupeEntries);
-   else rc = createDupeFile(fileName, newDupeEntries);
+      if (newDupes->noOfEntries > 0) {
 
-   free(fileName);
-   
+         fileName = createDupeFileName(area);
+
+         if(fexist(fileName)) rc = appendToDupeFile(fileName, *newDupes);
+         else rc = createDupeFile(fileName, *newDupes);
+
+         free(fileName);
+      }
+
+   }
+
    return rc;
 }
 
@@ -213,29 +228,35 @@ UINT32 msgHash(s_message msg) {
 }
 
 int binSearch(s_dupeMemory *mem, UINT32 hashCode, UINT32 left, UINT32 right) {
-   UINT32 middle = (right - left) / 2;
+   UINT32 middle = left + ((right - left) / 2);
    // test if middle is positiv
    if (hashCode == mem->entries[middle].hash) return 1;
    else if (left == right) return 0;
    // else recurse
-   else if (hashCode < middle) return binSearch(mem, hashCode, left, middle-1);
+   else if (hashCode < mem->entries[middle].hash) return binSearch(mem, hashCode, left, middle);
    else return binSearch(mem, hashCode, middle+1, right);
 }
 
 int isDupe(s_area area, const s_message msg) {
    UINT32 hashCode = msgHash(msg);
    s_dupeMemory *mem = area.dupes, *newMem = area.newDupes;
+   char first = 0, second = 0;
 
-   return ((binSearch(mem, hashCode, 0, mem->noOfEntries-1)==1) || (binSearch(newMem, hashCode, 0, newMem->noOfEntries-1)==1));;
+   if (mem->noOfEntries > 0) first = binSearch(mem, hashCode, 0, mem->noOfEntries-1);
+   if (newMem->noOfEntries > 0) second = binSearch(newMem, hashCode, 0, newMem->noOfEntries-1);
+   
+   return (first || second);
 }
 
 int dupeDetection(s_area *area, const s_message msg) {
    s_dupeMemory *newDupes;
+
+   if (area->dupeCheck == off) return 1; // no dupeCheck return 1 "no dupe"
    
    // test if dupeDatabase is already read
    if (area->dupes == NULL) {
       //read Dupes
-      readDupeFile(area);
+      area->dupes = readDupeFile(area);
    }
    // test if newDupes area already built up
    if (area->newDupes == NULL) {
@@ -252,6 +273,7 @@ int dupeDetection(s_area *area, const s_message msg) {
       newDupes->noOfEntries++;
       newDupes->entries = realloc(newDupes->entries, newDupes->noOfEntries * sizeof(s_dupeEntry));
       newDupes->entries[newDupes->noOfEntries-1].hash = msgHash(msg);
+      qsort(newDupes->entries, newDupes->noOfEntries, sizeof(s_dupeEntry), &compareEntries);
       return 1;
    }
    // it is a dupe do nothing but return 0

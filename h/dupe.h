@@ -40,8 +40,7 @@ struct dupeMemory {
 
 typedef struct dupeMemory s_dupeMemory;
 
-//s_dupeMemory *readDupeFile(s_area *area);
-int writeToDupeFile(s_area *area, s_dupeMemory newDupeEntries);
+int writeToDupeFile(s_area *area);
 int dupeDetection(s_area *area, const s_message msg);
 
 #endif

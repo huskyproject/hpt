@@ -10,6 +10,7 @@
 #include <global.h>
 #include <patmat.h>
 #include <seenby.h>
+#include <dupe.h>
 
 #include <msgapi.h>
 #include <stamp.h>
@@ -206,7 +207,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 {
    s_seenBy *seenBys = NULL, *path = NULL;
    UINT     seenByCount, pathCount, i;
-   char     *start, *c, *newMsgText, *seenByText, *pathText;
+   char     *start, *c, *newMsgText, *seenByText = NULL, *pathText = NULL;
    
    char     *name;
    FILE     *pkt, *flo;
@@ -321,11 +322,21 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 
    echo = getArea(*config, area);
 
-   if ((echo->msgbType & MSGTYPE_PASSTHROUGH) != MSGTYPE_PASSTHROUGH) {
-      putMsgInArea(echo, msg);
+   if (dupeDetection(echo, *msg)==1) {
+      // no dupe
+
+      if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
+         putMsgInArea(echo, msg);
+      }
+      if (echo->downlinkCount > 1)     // if only one downlink, we've got the mail from him
+         forwardMsgToLinks(echo, msg, pktOrigAddr);
+      
+   } else {
+      // msg is dupe
+      if (echo->dupeCheck == move) {
+         putMsgInArea(&(config->dupeArea), msg);
+      }
    }
-   if (echo->downlinkCount > 1)     // if only one downlink, we've got the mail from him
-     forwardMsgToLinks(echo, msg, pktOrigAddr);
 
    free(textBuff);
 }
@@ -437,7 +448,13 @@ void processDir(char *directory, int onlyNetmail)
 
 void toss()
 {
+   int i;
+
    processDir(config->protInbound, 0);
    // only import Netmails from inboundDir
    processDir(config->inbound, 1);
+
+   // write dupeFiles
+
+   for (i = 0 ; i < config->echoAreaCount; i++) writeToDupeFile(&(config->echoAreas[i]));
 }
