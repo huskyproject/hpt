@@ -1,3 +1,7 @@
+2002-05-20 Monday 15:21  pavel.gulchouck
+
+	* src/hpt.c (1.121.2.3): fix spelling
+
 2002-05-05 Sunday 20:18  ml
 
 	* VERSION (1.2.2.1): dependencies
