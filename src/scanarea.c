@@ -149,8 +149,9 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
       closeCreatedPkt(pkt);
 }
 
-   // mark msg as sent
+   // mark msg as sent and scanned
    xmsg.attr |= MSGSENT;
+   xmsg.attr |= MSGSCANNED;
    MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
 
    freeMsgBuffers(&msg);
