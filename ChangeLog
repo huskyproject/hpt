@@ -1,3 +1,16 @@
+2002-11-09 Saturday 13:47  mche
+
+	* misc/makeavl/: makeavl.pl (1.1), readlist.pm (1.1):
+	makeavl.pl&readlist.pm by Alexander Reznikov 2:4600/220@fidonet
+
+2002-11-09 Saturday 12:57  mche
+
+	* src/carbon.c (1.8): fix compilation warnings
+
+2002-11-09 Saturday 12:48  mche
+
+	* makefile.inc (1.24): fixed
+
 2002-11-08 Friday 08:46  mche
 
 	* hpt.dsp (1.2): carbon.c added
