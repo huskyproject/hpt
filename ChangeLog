@@ -1,3 +1,25 @@
+2002-08-26 Monday 14:39  d_sergienko
+
+	* TODO (1.196): syncronize TODO
+
+2002-08-26 Monday 13:28  d_sergienko
+
+	* doc/hpt.texi (1.79), src/areafix.c (1.341): areafixFromName
+	feature
+
+2002-08-26 Monday 11:53  d_sergienko
+
+	* Makefile (1.11): fixed to build txt2pkt.1.gz during installation
+
+2002-08-26 Monday 11:03  mche
+
+	* src/: query.c (1.60), toss.c (1.436): one little memoryleak fixed
+
+2002-08-26 Monday 08:25  sfpavel
+
+	* debian/: changelog (1.14), copyright (1.4), rules (1.10): Update
+	http location
+
 2002-08-25 Sunday 14:13  d_sergienko
 
 	* HISTORY (1.7): added info about %rsb areafix command
