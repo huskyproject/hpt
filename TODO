@@ -11,9 +11,6 @@ Category 1: Will certainly be implemented until next release
 - reduces Seen-BYs (fsc-0093)
 - createForwardNonPass
 - correctEMAddr: take node from path if no origin in message
-- unpack all bundles before toss ???
-- afterUnpackBundle, afterUnpackAll ???
-- UnpackAllBeforeToss ???
 - hpt -q (quiet)
 - AutoCreateSemaphore
 - autoAreaCreateMask
@@ -34,3 +31,6 @@ Category 4: Will not be implemented
 ===================================
 - nodelist access
 - real hub-routing
+- unpack all bundles before toss -> carc
+- afterUnpackBundle, afterUnpackAll -> carc
+- UnpackAllBeforeToss -> carc
