@@ -1,3 +1,35 @@
+2003-02-19 Wednesday 18:35  stas_degteff
+
+	* misc/pktview (1.3): Change 'Pid' to 'Prodcode', 'Pwd' to
+	'Password' in output
+
+2003-02-19 Wednesday 17:53  stas_degteff
+
+	* misc/adv-stat-hpt.pl (1.7): Cosmetics (create version number
+	variable)
+
+2003-02-19 Wednesday 16:38  mche
+
+	* misc/adv-stat-hpt.pl (1.6): # hptstat ver.0.8, (c)opyright
+	2002-03, by val khokhlov
+
+2003-02-19 Wednesday 13:31  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.80): Update versions info
+
+2003-02-19 Wednesday 13:15  stas_degteff
+
+	* misc/adv-stat-hpt.pl (1.5): Fix typo
+
+2003-02-19 Wednesday 13:01  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.79): Add Q46: about relative path
+
+2003-02-19 Wednesday 06:14  sfpavel
+
+	* debian/: changelog, control, rules (hpt-1_4-stable.[3,2,1]): New
+	debian version - change section to main
+
 2003-02-17 Monday 09:26  pgul
 
 	* src/fcommon.c (hpt-1_4-stable.1): Bugfix from current: ASO
@@ -45,10 +77,18 @@
 	* UPGRADE (1.1): file UPGRADE was initially added on branch
 	hpt-1_4-stable.
 
+2003-02-11 Tuesday 13:21  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.78): Update Q38 (using areafiles)
+
 2003-02-11 Tuesday 12:27  sfpavel
 
 	* debian/changelog (hpt-1_4-stable.2): Change debian version to
 	1.4.0-beta1
+
+2003-02-11 Tuesday 08:56  sfpavel
+
+	* doc/hpt-FAQ.russian (1.77): Update documentation
 
 2003-02-11 Tuesday 08:06  sfpavel
 
@@ -58,8 +98,8 @@
 
 2003-02-11 Tuesday 08:00  sfpavel
 
-	* doc/: bugreport.rus, bugreport.txt, hpt-FAQ.russian, hpt.texi
-	(hpt-1_4-stable.[1,1,1,1]): Update documentation
+	* doc/: bugreport.rus, bugreport.txt, hpt.texi
+	(hpt-1_4-stable.[1,1,1]): Update documentation
 
 2003-02-06 Thursday 22:43  d_sergienko
 
