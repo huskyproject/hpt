@@ -148,10 +148,10 @@ int truncate(const char *fileName, long length)
           lseek(fd, length, SEEK_SET);
           chsize(fd, tell(fd));
           close(fd);
-          w_log(LL_TRUNC,"Can't truncate %s: %s", fileName, strerror(errno));
+          w_log(LL_TRUNC,"%s truncated", fileName);          
           return 1;
    };
-   w_log(LL_TRUNC,"%s truncated", fileName);
+   w_log(LL_TRUNC,"Can't truncate %s: %s", fileName, strerror(errno));
    return 0;
 }
 
