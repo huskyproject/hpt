@@ -1,3 +1,17 @@
+2002-04-05 Friday 16:15  mche
+
+	* src/: areafix.c (1.278), query.c (1.37): rebuild area tree
+
+2002-04-05 Friday 12:51  ml
+
+	* src/fcommon.c (1.125): work again on wcw (case insensitive
+	CreateOutboundFileName function calls of Watcom C)
+
+2002-04-05 Friday 09:25  pavel.gulchouck
+
+	* filter.pl (1.8), doc/hpt.texi (1.61), src/perl.c (1.25): Added
+	vars $fromname, $toname, $date, $subj for route() func in filter.pl
+
 2002-04-04 Thursday 13:12  ml
 
 	* src/areafix.c (1.277): sendRules fix
