@@ -267,6 +267,8 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    xstrcat(&version, "/sun");
 #elif defined(MSDOS)
    xstrcat(&version, "/dos");
+#elif defined(__BEOS__)
+   xstrcat(&version, "/beos");
 #endif
 
 #ifndef RELEASE
