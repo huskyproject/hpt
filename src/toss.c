@@ -1981,6 +1981,56 @@ void processDir(char *directory, e_tossSecurity sec)
    nfree(files);
 }
 
+void writeStatLog(void) {
+   /* write personal mail statistic logfile if statlog is defined in config */
+   /* if the log file exists, the existing value is increased */
+
+   FILE *f;
+   char buffer[256];
+   int len, x, statNetmail, statCC;
+
+   statNetmail = statToss.netMail; /* number of just received netmails */
+   statCC = statToss.CC; /* number of just received personal echo mails */
+
+   /* if there are new personal mails */
+   if ((statNetmail > 0) || (statCC > 0)) {
+      /* and statLog is defined in config */
+      f = fopen(config->statlog, "rt");
+      if (f != NULL) {
+        /* then read last personal mail counter and add to actual counter */
+        while(fgets(buffer,sizeof(buffer),f)) {
+          len = strlen(buffer);
+          for (x=0; x!=len; x++) {
+            if (!strnicmp(buffer+x, "netmail: ",9)) {
+              /* netmail found */
+              statNetmail += atoi(buffer+9);
+            }
+
+            if (!strnicmp(buffer+x, "CC: ",4)) {
+              /* personal echomail (CC) found */
+              statCC += atoi(buffer+4);
+            }
+          }
+        }
+
+        fclose(f);
+      }
+
+      /* and write personal mail counter for netmails and echo mails */
+      f = fopen(config->statlog, "wt");
+      if (f != NULL) {
+        if (statNetmail > 0) {
+          fprintf(f, "netmail: %d\n", statNetmail);
+        }
+        if (statCC > 0) {
+          fprintf(f, "CC: %d\n", statCC);
+        }
+		 
+        fclose(f);
+      }
+   }
+}
+
 void writeTossStatsToLog(void) {
    int i;
    float inMailsec, outMailsec, inKBsec;
@@ -2008,6 +2058,10 @@ void writeTossStatsToLog(void) {
 		   statToss.msgs, statToss.bad, statToss.saved, statToss.empty);
    writeLogEntry(hpt_log, logchar, "   Input: % 8.2f mails/sec   Output: % 8.2f mails/sec", inMailsec, outMailsec);
    writeLogEntry(hpt_log, logchar, "          % 8.2f kb/sec", inKBsec);
+
+   /* write personal mail statistic logfile */
+   writeStatLog();
+
    /* Now write areas summary */
    writeLogEntry(hpt_log, logchar, "Areas summary:");
    for (i = 0; i < config->netMailAreaCount; i++)
