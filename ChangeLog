@@ -1,3 +1,7 @@
+2002-02-16 Saturday 19:51  ml
+
+	* src/post.c (1.60.2.3): cosmetic fix when printing errors
+
 2002-02-15 Friday 12:54  ml
 
 	* src/perl.c (1.16.2.1): s_addr -> hs_addr for perl.c compilation
