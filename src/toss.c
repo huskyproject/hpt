@@ -114,6 +114,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header) {
 	time_t    currentTime;
 	union stamp_combo dosdate;
 	int i,remapit;
+        char *subject;
 	
 	if (msg->netMail == 1) {
 		// attributes of netmail must be fixed
@@ -158,7 +159,18 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header) {
    
    strcpy((char *) msgHeader.from,msg->fromUserName);
    strcpy((char *) msgHeader.to, msg->toUserName);
-   strcpy((char *) msgHeader.subj,msg->subjectLine);
+   subject=msg->subjectLine;
+   if (((msgHeader.attr & MSGFILE) == MSGFILE) && (msg->netMail==1)) {
+     int size=strlen(msg->subjectLine)+strlen(config->inbound)+1;
+     if (size < XMSG_SUBJ_SIZE) {
+       subject = (char *) malloc (size);
+       sprintf (subject,"%s%s",config->inbound,msg->subjectLine);
+     }
+   }
+   strcpy((char *) msgHeader.subj,subject);
+   if (subject != msg->subjectLine)
+     free(subject);
+       
    msgHeader.orig.zone  = msg->origAddr.zone;
    msgHeader.orig.node  = msg->origAddr.node;
    msgHeader.orig.net   = msg->origAddr.net;
