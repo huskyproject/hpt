@@ -1,3 +1,10 @@
+2004-11-14 Sunday 20:58  d_sergienko
+
+	* doc/hpt.texi, h/seenby.h, h/toss.h, src/scanarea.c, src/seenby.c,
+	src/toss.c (hpt-1_4-stable.[10,3,2,4,5,11]): try to fix seen-bys
+	under win32. I have no win32 so unable to check this patch. But it
+	works ok under linux.
+
 2004-07-20 Tuesday 14:27  pgul
 
 	* Makefile (hpt-1_4-stable.2): Do not build static binaries if
