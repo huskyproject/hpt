@@ -2,7 +2,13 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Sep 30 22:59:09 NOVST 2000
+max:
+* autopause works again (fixed bug in my last "autopause bugfix")
+
+----- cvs ci ------
 Wed Sep 27 20:24:45 NOVST 2000
+max:
 * robotsArea
 
 ----- cvs ci ------
