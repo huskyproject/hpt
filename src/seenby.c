@@ -55,32 +55,36 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
    int  size = 81, i;
    char *text, addr2d[12];
 
-   if (seenByCount==0) return NULL; // don't generate empty control line
+   if (seenByCount==0) {              //return empty control line
+      text = malloc(strlen(lineHeading)+1+1);
+      strcpy(text, lineHeading);
+   } else {
        
-   sprintf(addr2d, "%u/%u", seenBys[0].net, seenBys[0].node);
-   text = (char *) malloc(size);
-   strcpy(text, lineHeading);
-   strcat(text, addr2d);
-   for (i=1; i < seenByCount; i++) {
-
-      if (seenBys[i-1].net == seenBys[i].net)
-         sprintf(addr2d, " %u", seenBys[i].node);
-      else
-         sprintf(addr2d, " %u/%u", seenBys[i].net, seenBys[i].node);
-
-      if (strlen(text)+strlen(addr2d) +1 > size-2) {
-         //if line would be greater than 79 characters, make new line
-         size += 80;
-         text = (char *) realloc(text, size);
-         strcat(text, "\r");
-         strcat(text, lineHeading);
-         // start new line with full 2d information
-         sprintf(addr2d, "%u/%u", seenBys[i].net, seenBys[i].node);
-      }
+      sprintf(addr2d, "%u/%u", seenBys[0].net, seenBys[0].node);
+      text = (char *) malloc(size);
+      strcpy(text, lineHeading);
       strcat(text, addr2d);
-   }
+      for (i=1; i < seenByCount; i++) {
 
-   text = (char *) realloc(text, strlen(text)+2); // reserve only needed space + ending \r
+         if (seenBys[i-1].net == seenBys[i].net)
+            sprintf(addr2d, " %u", seenBys[i].node);
+         else
+            sprintf(addr2d, " %u/%u", seenBys[i].net, seenBys[i].node);
+
+         if (strlen(text)+strlen(addr2d) +1 > size-2) {
+            //if line would be greater than 79 characters, make new line
+            size += 80;
+            text = (char *) realloc(text, size);
+            strcat(text, "\r");
+            strcat(text, lineHeading);
+            // start new line with full 2d information
+            sprintf(addr2d, "%u/%u", seenBys[i].net, seenBys[i].node);
+         }
+         strcat(text, addr2d);
+      }
+
+      text = (char *) realloc(text, strlen(text)+2); // reserve only needed space + ending \r
+   }
                            
    strcat(text, "\r");
 
