@@ -202,6 +202,9 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
        
       switch (route->routeVia) {
           
+         case route_zero:
+	    break;
+
          case host:
             tempLink.hisAka.node  = 0;
             tempLink.hisAka.point = 0;
