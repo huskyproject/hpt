@@ -3,66 +3,85 @@
 txt2paket \- Posts a Textfile in an Echoarea
 .SH SYNOPSIS
 .B txt2pkt
--xf "<pkt from address>" 
--xt "<pkt to address>" 
--af "<from address>" 
--at "<to address>" 
--nf "<from name>" 
--nt "<to name>" 
--e "echo name" 
--p "password" 
--t "tearline" 
--o "origin" 
--s "subject" 
--d "<directory>" 
-<text file>
-.SH "DESCRIPTION"
+.B [ -af "<from address>" ]
+.B [ -at "<to address>" ]
+.RS 7
+.B [ -xf "<pkt from address>" ]
+.B [ -xt "<pkt to address>" ]
+.br
+.B [ -af "<from address>" ]
+.B [ -at "<to address>" ]
+.br
+.B [ -nf "<from name>" ]
+.B [ -nt "<to name>" ]
+.br
+.B [ -e "echo name" ]
+.B [ -p "password" ]
+.B [ -t "tearline" ]
+.br
+.B [ -o "origin" ]
+.B [ -s "subject" ]
+.B [ -d "<directory>" ]
+.br
+.B <text file> | -
+.RE
+.SH DESCRIPTION
 .B txt2pkt
-posts a given Textfile into an EchoArea. Every Information
+posts a given Textfile into Netmail or EchoArea. Every Information
 txt2pkt needs (From, To, Origin,...) must be given to txt2pkt via
 commandline.
-.br
-.sp 2
-This manual page was written for the Debian GNU/Linux distribution
-because the original program does not have a manual page.
 .SH OPTIONS
+.TP 10
 .B -xf "<pkt from address>" 
 The FROM-Aka for the Packet.
-.br
+.TP 10
 .B -xt "<pkt to address>" 
 The TO-Aka for the Packet.
-.br
+.TP 10
 .B -af "<from address>" 
 The FROM-Aka for the Message.
-.br
+.TP 10
 .B -at "<to address>" 
 The TO-Aka for the Message.
-.br
+.TP 10
 .B -nf "<from name>" 
 The FROM-Name for the Message.
-.br
+.TP 10
 .B -nt "<to name>" 
 The TO-Name for the Message.
-.br
+.TP 10
 .B -e "echo name" 
 The EchoArea where to put the File contents.
-.br
+.TP 10
 .B -p "password" 
 The Password for the Packet.
-.br
+.TP 10
 .B -t "tearline" 
 Every Message should have one.
-.br
+.TP 10
 .B -o "origin" 
 Every Message should have one.
-.br
+.TP 10
 .B -s "subject" 
 Could be nice to have.
-.br
+.TP 10
 .B -d "<directory>" 
 Where to create the Packet.
+.TP
+.B <text file>
+The Textfile to post. Use hiphen (the '-' sign) for standard input.
+
+.SH EXAMPLE
+.LP
+txt2pkt -nf "Node manager" -af "2:5080/102" \\
 .br
-.B <text file> The Textfile to post.
+-at "2:5080/102" -s "New FileEs" -e "GRUMBLER.INFO" \\
+.br
+-o "Grumbler FIDOnet node. Ekaterinburg, Russia" \\
+.br
+-d /fido/inbound-local /fido/log/newfiles
+
+
 .SH FILES
 .br
 .nf
@@ -70,10 +89,15 @@ Where to create the Packet.
 .ta \w'/fido/etc/config   'u
 \fI/fido/etc/config\fR  Default Fidoconfig.
 .SH NOTES
+This manual page initially written for the Debian GNU/Linux distribution
+because the original program does not have a manual page.
+.br
 All Husky-Software is written by various developers. For detailed information
 about the Husky-Team take a look at 
 http://husky.physcip.uni-stuttgart.de/team.html.
-.SH AUTHOR
+.SH AUTHORS
 This manual page was written by Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>,
 for the Debian GNU/Linux system (but may be used by others).
+.br
+Modified by Stas Degteff 2:5080/102 <g@grumbler.org>, tested on the FreeBSD
 
