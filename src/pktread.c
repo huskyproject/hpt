@@ -1,4 +1,4 @@
-/*:ts=8*/
+/**:ts=8*/
 /*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
@@ -149,8 +149,6 @@ void correctEMAddr(s_message *msg)
          string2addr(buffer, &(msg->origAddr));
       }
    } 
-   msg->destAddr.zone=config->addr[0].zone;  // fix me
-   msg->destAddr.point=config->addr[0].point;// waiting for the better solution
 }
 
 void correctNMAddr(s_message *msg, UINT16 def_zone)
