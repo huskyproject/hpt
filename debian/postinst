@@ -1,0 +1,36 @@
+#! /bin/sh
+#
+# $Id$
+#
+set -e
+
+# create new ftn user and group 64000.64000
+if ! id ftn >/dev/null 2>&1; then
+  adduser --system --home /var/spool/ftn --uid 64000 --group \
+    --disabled-password --gecos Fidonet ftn
+  chsh -s /bin/bash ftn
+fi
+
+case "$1" in
+    configure)
+	#
+	# Setuid/setgid hpt binary
+	#
+	OVERRIDEN=
+	OVERRIDEN=`dpkg-statoverride --list /usr/bin/hpt` || true
+	[ "${OVERRIDEN}" = "" ] && dpkg-statoverride --update --add ftn ftn 6755 /usr/bin/hpt
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0
