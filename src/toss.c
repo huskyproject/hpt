@@ -336,22 +336,22 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 
     // create Directory Tree if necessary
 /*    if (echo->msgbType == MSGTYPE_SDM)
-	createDirectoryTree(echo->fileName);
-    else */if (echo->msgbType==MSGTYPE_PASSTHROUGH) {
-	w_log('9', "Can't put message to passthrough area %s!", echo->areaName);
-	return rc;
-    }/* else {
-	// squish or jam area
+      createDirectoryTree(echo->fileName);
+      else */if (echo->msgbType==MSGTYPE_PASSTHROUGH) {
+	  w_log('9', "Can't put message to passthrough area %s!", echo->areaName);
+	  return rc;
+      }/* else {
+	  // squish or jam area
 
-	slash = strrchr(echo->fileName, PATH_DELIM);
-	if (slash) {
-	    *slash = '\0';
-	    createDirectoryTree(echo->fileName);
-	    *slash = PATH_DELIM;
-	}
+	  slash = strrchr(echo->fileName, PATH_DELIM);
+	  if (slash) {
+	  *slash = '\0';
+	  createDirectoryTree(echo->fileName);
+	  *slash = PATH_DELIM;
+	  }
 
-    }
-*/   
+	  }
+       */   
     if (!msg->netMail) {
 	msg->destAddr.zone  = echo->useAka->zone;
 	msg->destAddr.net   = echo->useAka->net;
@@ -1056,7 +1056,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
     for (i=0; i<config->carbonCount; i++,++cb) {
         /* Dont come to use netmail on echomail and vise verse */
         if (cb->move!=2 && ((msg->netMail && !cb->netMail) ||
-            (!msg->netMail &&  cb->netMail))) continue;
+			    (!msg->netMail &&  cb->netMail))) continue;
 
         area = cb->area;
 		
@@ -1226,41 +1226,42 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 	xstrcat(&textBuff,"MSGAPIERR: ");
 
 #ifdef _MAKE_DLL_MVC_
-	switch (GetMsgapiErr()) {   
+	switch (GetMsgapiErr())
 #else
-	switch (msgapierr) {
+	switch (msgapierr)
 #endif
-	case MERR_NONE: xstrcat(&textBuff,"No error\r");
-	    break;
-	case MERR_BADH: xstrcat(&textBuff,"Invalid handle passed to function\r");
-	    break;
-	case MERR_BADF: xstrcat(&textBuff,"Invalid or corrupted file\r");
-	    break;
-	case MERR_NOMEM: xstrcat(&textBuff,"Not enough memory for specified operation\r");
-	    break;
-	case MERR_NODS: 
-	    xstrcat(&textBuff,"Maybe not enough disk space for operation\r");
-	    w_log('9', "Maybe not enough disk space for operation\r");
-	    break;
-	case MERR_NOENT: xstrcat(&textBuff,"File/message does not exist\r");
-	    break;
-	case MERR_BADA: xstrcat(&textBuff,"Bad argument passed to msgapi function\r");
-	    break;
-	case MERR_EOPEN: xstrcat(&textBuff,"Couldn't close - messages still open\r");
-	    break;
-	case MERR_NOLOCK: xstrcat(&textBuff,"Base needs to be locked to perform operation\r");
-	    break;
-	case MERR_SHARE: xstrcat(&textBuff,"Resource in use by other process\r");
-	    break;
-	case MERR_EACCES: xstrcat(&textBuff,"Access denied (can't write to read-only, etc)\r");
-	    break;
-	case MERR_BADMSG: xstrcat(&textBuff,"Bad message frame (Squish)\r");
-	    break;
-	case MERR_TOOBIG: xstrcat(&textBuff,"Too much text/ctrlinfo to fit in frame (Squish)\r");
-	    break;
-	default: xstrcat(&textBuff,"Unknown error\r");
-	    break;
-	}
+	    {
+	    case MERR_NONE: xstrcat(&textBuff,"No error\r");
+		break;
+	    case MERR_BADH: xstrcat(&textBuff,"Invalid handle passed to function\r");
+		break;
+	    case MERR_BADF: xstrcat(&textBuff,"Invalid or corrupted file\r");
+		break;
+	    case MERR_NOMEM: xstrcat(&textBuff,"Not enough memory for specified operation\r");
+		break;
+	    case MERR_NODS: 
+		xstrcat(&textBuff,"Maybe not enough disk space for operation\r");
+		w_log('9', "Maybe not enough disk space for operation\r");
+		break;
+	    case MERR_NOENT: xstrcat(&textBuff,"File/message does not exist\r");
+		break;
+	    case MERR_BADA: xstrcat(&textBuff,"Bad argument passed to msgapi function\r");
+		break;
+	    case MERR_EOPEN: xstrcat(&textBuff,"Couldn't close - messages still open\r");
+		break;
+	    case MERR_NOLOCK: xstrcat(&textBuff,"Base needs to be locked to perform operation\r");
+		break;
+	    case MERR_SHARE: xstrcat(&textBuff,"Resource in use by other process\r");
+		break;
+	    case MERR_EACCES: xstrcat(&textBuff,"Access denied (can't write to read-only, etc)\r");
+		break;
+	    case MERR_BADMSG: xstrcat(&textBuff,"Bad message frame (Squish)\r");
+		break;
+	    case MERR_TOOBIG: xstrcat(&textBuff,"Too much text/ctrlinfo to fit in frame (Squish)\r");
+		break;
+	    default: xstrcat(&textBuff,"Unknown error\r");
+		break;
+	    }
 
 	break;
     case 7:
@@ -1593,18 +1594,18 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
     if ((config->carbonCount!=0)&&(!dontdocc)) ccrc = carbonCopy(msg, NULL, area);
     if (ccrc > 1) return 1; // carbon del or move
 /*
-    // create Directory Tree if necessary
-    if (area -> msgbType == MSGTYPE_SDM)
-	createDirectoryTree(area -> fileName);
-    else {
-	// squish or jam area
-	slash = strrchr(area -> fileName, PATH_DELIM);
-	if (slash) {
-	    *slash = '\0';
-	    createDirectoryTree(area -> fileName);
-	    *slash = PATH_DELIM;
-	}
-    }
+  // create Directory Tree if necessary
+  if (area -> msgbType == MSGTYPE_SDM)
+  createDirectoryTree(area -> fileName);
+  else {
+  // squish or jam area
+  slash = strrchr(area -> fileName, PATH_DELIM);
+  if (slash) {
+  *slash = '\0';
+  createDirectoryTree(area -> fileName);
+  *slash = PATH_DELIM;
+  }
+  }
 */
     netmail = MsgOpenArea((unsigned char *) area -> fileName, MSGAREA_CRIFNEC,
 /*								 config->netMailArea.fperm, config->netMailArea.uid,
@@ -1654,9 +1655,9 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 	MsgCloseArea(netmail);
     } else {
 #ifdef _MAKE_DLL_MVC_
-    fprintf(stderr, "msgapierr - %u\n", GetMsgapiErr());
+	fprintf(stderr, "msgapierr - %u\n", GetMsgapiErr());
 #else
-    fprintf(stderr, "msgapierr - %u\n", msgapierr);
+	fprintf(stderr, "msgapierr - %u\n", msgapierr);
 #endif
 	w_log('9', "Could not open NetmailArea %s", area -> areaName);
     } /* endif */
@@ -1947,30 +1948,30 @@ int  processArc(char *fileName, e_tossSecurity sec)
     if (found) {
 	fillCmdStatement(cmd,config->unpack[i-1].call,fileName,"",config->tempInbound);
 	w_log('6', "bundle %s: unpacking with \"%s\"", fileName, cmd);
-    if( hpt_stristr(config->unpack[i-1].call, "zipInternal") )
-    {
-        cmdexit = 1;
+	if( hpt_stristr(config->unpack[i-1].call, "zipInternal") )
+	    {
+		cmdexit = 1;
 #ifdef USE_HPT_ZLIB
-        cmdexit = UnPackWithZlib(fileName, config->tempInbound);
+		cmdexit = UnPackWithZlib(fileName, config->tempInbound);
 #endif
-    }
-    else
-    {
+	    }
+	else
+	    {
 #ifdef __WATCOMC__
-        list = mk_lst(cmd);
-        cmdexit = spawnvp(P_WAIT, cmd, list);
-        free((char **)list);
-        if (cmdexit != 0) {
-            w_log('9', "exec failed: %s, return code: %d", strerror(errno), cmdexit);
-            return 3;
-        }
+		list = mk_lst(cmd);
+		cmdexit = spawnvp(P_WAIT, cmd, list);
+		free((char **)list);
+		if (cmdexit != 0) {
+		    w_log('9', "exec failed: %s, return code: %d", strerror(errno), cmdexit);
+		    return 3;
+		}
 #else
-        if ((cmdexit = system(cmd)) != 0) {
-            w_log('9', "exec failed, code %d", cmdexit);
-            return 3;
-        }
+		if ((cmdexit = system(cmd)) != 0) {
+		    w_log('9', "exec failed, code %d", cmdexit);
+		    return 3;
+		}
 #endif
-    }
+	    }
 	if (config->afterUnpack) {
 	    w_log('6', "afterUnpack: execute string \"%s\"", config->afterUnpack);
 	    if ((cmdexit = system(config->afterUnpack)) != 0) {
@@ -2304,6 +2305,8 @@ void arcmail(s_link *tolink) {
 
 		if (!link->fileBox) link->fileBox = makeFileBoxName (link);
 
+		createDirectoryTree (link->fileBox);
+
 		if (link->packerDef != NULL) {
 
 		    fillCmdStatement(cmd, link->packerDef->call,
@@ -2314,23 +2317,21 @@ void arcmail(s_link *tolink) {
 			  link->name, get_filename(link->pktFile),
 			  get_filename(link->packFile));
 		    w_log('6', "cmd: %s", cmd);
-            if( stricmp(link->packerDef->call, "zipInternal") == 0 )
-            {
-                cmdexit = 1;
+		    if( stricmp(link->packerDef->call, "zipInternal") == 0 )
+			{
+			    cmdexit = 1;
 #ifdef USE_HPT_ZLIB
-                cmdexit = PackWithZlib(link->packFile, link->pktFile);
+			    cmdexit = PackWithZlib(link->packFile, link->pktFile);
 #endif
-            }
-            else
-            {
+			} else {
 #ifdef __WATCOMC__
-		        list = mk_lst(cmd);
-		        cmdexit = spawnvp(P_WAIT, cmd, list);
-		        free((char **)list);
+			    list = mk_lst(cmd);
+			    cmdexit = spawnvp(P_WAIT, cmd, list);
+			    free((char **)list);
 #else
-		        cmdexit = system(cmd);
+			    cmdexit = system(cmd);
 #endif
-            }
+			}
 		    if (cmdexit==0) remove(link->pktFile);
 		    else w_log('9', "Error executing packer (errorlevel==%i)", cmdexit);
 
@@ -2381,23 +2382,23 @@ void arcmail(s_link *tolink) {
 			      get_filename(link->pktFile),
 			      get_filename(link->packFile));
 			w_log('6', "cmd: %s", cmd);
-            if( stricmp(link->packerDef->call, "zipInternal") == 0 )
-            {
-                cmdexit = 1;
+			if( stricmp(link->packerDef->call, "zipInternal") == 0 )
+			    {
+				cmdexit = 1;
 #ifdef USE_HPT_ZLIB
-                cmdexit = PackWithZlib(link->packFile, link->pktFile);
+				cmdexit = PackWithZlib(link->packFile, link->pktFile);
 #endif
-            }
-            else
-            {
+			    }
+			else
+			    {
 #ifdef __WATCOMC__
-			    list = mk_lst(cmd);
-			    cmdexit = spawnvp(P_WAIT, cmd, list);
-			    free((char **)list);
+				list = mk_lst(cmd);
+				cmdexit = spawnvp(P_WAIT, cmd, list);
+				free((char **)list);
 #else
-                cmdexit = system(cmd);
+				cmdexit = system(cmd);
 #endif
-            }
+			    }
 			if (cmdexit==0) {
 			    if (foa==0) {
 				if (bundleNameStyle == eAddrDiff ||
