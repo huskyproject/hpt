@@ -224,7 +224,9 @@ void processConfig()
    if (strcmp(config->inbound,config->tempInbound)==0) exit_hpt("Inbound & tempInbound must be differ",1);
    if (config->protInbound && (strcmp(config->protInbound,config->tempInbound)==0)) exit_hpt("protInbound & tempInbound must be differ",1);
    if (config->localInbound && (strcmp(config->localInbound,config->tempInbound)==0)) exit_hpt("localInbound & tempInbound must be differ",1);
-
+   if (config->msgBaseDir==NULL) exit_hpt("No msgBaseDir specified in config file!",1);
+   if (config->dupeHistoryDir==NULL) exit_hpt("No dupeHistoryDir specified in config file!",1);
+	    
    // load recoding tables
    initCharsets();
    if (config->outtab) getctab(outtab, (unsigned char*) config->outtab);

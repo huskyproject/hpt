@@ -5,6 +5,7 @@ hpt 0.9.6
 Mon May  1 17:01:13 NOVST 2000
 max:
 * clean autoCreate code
+* fixed creating dupebase file under dos (passthru)
 patch from Alex Bronin:
 * Win32: restore old console title before exit
 * -nolink option disables reply linking for area

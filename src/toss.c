@@ -2075,12 +2075,12 @@ void toss()
 
    // write dupeFiles
    for (i = 0 ; i < config->echoAreaCount; i++) {
-      writeToDupeFile(&(config->echoAreas[i]));
-      freeDupeMemory(&(config->echoAreas[i]));
+	   writeToDupeFile(&(config->echoAreas[i]));
+	   freeDupeMemory(&(config->echoAreas[i]));
    }
    for (i = 0 ; i < config->netMailAreaCount; i++) {
-      writeToDupeFile(&(config->netMailAreas[i]));
-      freeDupeMemory(&(config->netMailAreas[i]));
+	   writeToDupeFile(&(config->netMailAreas[i]));
+	   freeDupeMemory(&(config->netMailAreas[i]));
    }
 
    if (config->importlog != NULL) {

@@ -46,6 +46,7 @@
 #include <ctype.h>
 
 #include <pkt.h>
+#include <xstr.h>
 
 #include <global.h>
 
@@ -56,6 +57,8 @@
 #include <smapi/msgapi.h>
 #include <smapi/stamp.h>
 #include <smapi/progprot.h>
+
+#include <fidoconf/common.h>
 
 FILE *fDupe;
 
@@ -78,47 +81,41 @@ char *strtolower(char *string) {
 }
 
 char *createDupeFileName(s_area *area) {
-   char *aux;
-   char *name;
-   char *afname;
+	char *name=NULL, *afname, *retname=NULL;
+	
+	if (!area->DOSFile) {
+		xstrcat(&name, area->areaName);
+	} else {
+		if (area->fileName)
+			xstrcat(&name,(afname=strrchr(area->fileName,PATH_DELIM))
+					? afname+1 : area->fileName);
+		else xstrcat(&name, "passthru");
+	}
 
-#ifndef MSDOS
-  if (!area->DOSFile) {
-    name = (char *) malloc(strlen(config->dupeHistoryDir)+strlen(area->areaName)+5);
-  }
-  else {
-    name = (char *) malloc(strlen(config->dupeHistoryDir)+5+9);
-  }
-#else
-    name = (char *) malloc(strlen(config->dupeHistoryDir)+5+9);
-#endif
+	switch (config->typeDupeBase) {
+	case hashDupes:
+		xstrcat(&name,".dph");
+		break;
+	case hashDupesWmsgid:
+		xstrcat(&name,".dpd");
+		break;
+	case textDupes:
+		xstrcat(&name,".dpt");
+		break;
+	case commonDupeBase:
+		break;
+	}
 
-   strcpy(name, config->dupeHistoryDir);
+	if (config->areasFileNameCase == eUpper)
+		name = strUpper(name);
+	else 
+		name = strLower(name);
 
-   if (!area->DOSFile) {
-     strcat(name, aux=strtolower(area->areaName));
-   }
-   else {
-     strcat(name, (afname = strrchr(area->fileName, PATH_DELIM)) != NULL ? (aux=strtolower(afname + 1)) : (aux=strtolower(area->fileName)));
-   }   
-
-   free(aux);
-
-  switch (config->typeDupeBase) {
-     case hashDupes:
-          strcat(name,".dph");
- 	  break;
-     case hashDupesWmsgid:
-          strcat(name,".dpd");
- 	  break;
-     case textDupes:
-          strcat(name,".dpt");
- 	  break;
-     case commonDupeBase:
- 	  break;
-  }
-
-   return name;
+	xstrcat(&retname, config->dupeHistoryDir);
+	xstrcat(&retname, name);
+	free(name);
+	
+	return retname;
 }
 
 int compareEntriesBlank(char *e1, char *e2) {
@@ -355,20 +352,18 @@ void doReading(FILE *f, s_dupeMemory *mem) {
 
 s_dupeMemory *readDupeFile(s_area *area) {
    FILE *f;
-   char *fileName;
+   char *fileName=NULL;
    s_dupeMemory *dupeMemory;
 
    dupeMemory = malloc(sizeof(s_dupeMemory));
    tree_init(&(dupeMemory->avlTree));
- 
+   
    if (config->typeDupeBase!=commonDupeBase) {
-      fileName = createDupeFileName(area);
+	  fileName = createDupeFileName(area);
       writeLogEntry(hpt_log, '2', "Reading dupes of %s.", area->areaName);
    }
    else {
-      fileName = malloc(strlen(config->dupeHistoryDir)+15);
-      strcpy(fileName, config->dupeHistoryDir);
-      strcat(fileName, "hpt_base.dpa");
+	  xscatprintf(&fileName, config->dupeHistoryDir, "hpt_base.dpa");
       writeLogEntry(hpt_log, '2', "Reading dupes from %s.", fileName);
    }
 
@@ -426,6 +421,8 @@ int writeToDupeFile(s_area *area) {
    s_dupeMemory *dupes;
    int  rc = 0;          
 
+   if (area->dupeCheck == dcOff) return rc;
+   
    if (config->typeDupeBase!=commonDupeBase) {
       dupes = area->dupes;
       fileName = createDupeFileName(area);
@@ -451,6 +448,8 @@ int writeToDupeFile(s_area *area) {
 
 void freeDupeMemory(s_area *area) {
    s_dupeMemory *dupes;
+
+   if (area->dupeCheck == dcOff) return;
   
    if (config->typeDupeBase != commonDupeBase) 
       dupes = area -> dupes;

@@ -461,8 +461,7 @@ char *available(s_link *link) {
 		    ((uplink->LinkGrp == NULL) || (found != 0))) {
                    if ((f=fopen(uplink->forwardRequestFile,"r")) == NULL)
 				{
-					fprintf(stderr,"areafix: cannot open forwardRequestFile \"%s\"\n", uplink->forwardRequestFile);
-					writeLogEntry(hpt_log, '8', "areafix: cannot open forwardRequestFile \"%s\"\n", uplink->forwardRequestFile);
+					writeLogEntry(hpt_log, '8', "areafix: cannot open forwardRequestFile \"%s\"", uplink->forwardRequestFile);
 					return report;
 				}
 
@@ -604,8 +603,7 @@ int areaIsAvailable(char *areaName, char *fileName, char **desc, int retd) {
 	
 	if ((f=fopen(fileName,"r")) == NULL)
 		{
-			fprintf(stderr,"areafix: cannot open forwardRequestFile \"%s\"\n",fileName);
-			writeLogEntry(hpt_log,'8',"areafix: cannot open forwardRequestFile \"%s\"\n",fileName);
+			writeLogEntry(hpt_log,'8',"areafix: cannot open forwardRequestFile \"%s\"",fileName);
 			return 0;
 		}
 	
