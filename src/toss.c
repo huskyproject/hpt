@@ -1535,7 +1535,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 {
     HAREA  netmail;
     HMSG   msgHandle;
-    UINT   len = msg->textLength;
+    UINT   len = 0;
     char   *bodyStart = NULL;             // msg-body without kludgelines start
     char   *ctrlBuf = NULL;               // Kludgelines
     XMSG   msgHeader;
@@ -1591,6 +1591,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 
 	    msgHeader = createXMSG(config,msg, pktHeader, forceattr,tossDir);
 	    /* Create CtrlBuf for SMAPI */
+            len = msg->textLength;
 	    ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
 	    /* write message */
 	    if (MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *)
@@ -1632,6 +1633,8 @@ int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
 	return 1;
 #endif
     if (msg->netMail == 1) {
+        w_log(LL_NETMAIL, "Netmail from %s to %u:%u/%u.%u", aka2str(msg->origAddr),
+              msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
 	if (config->areafixFromPkt &&
 	    isOurAka(config, msg->destAddr) &&
 	    strlen(msg->toUserName)>0 &&
