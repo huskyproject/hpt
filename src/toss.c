@@ -296,19 +296,18 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 
    // create Directory Tree if necessary
    if (echo->msgbType == MSGTYPE_SDM)
-	   createDirectoryTree(echo->fileName);
+       createDirectoryTree(echo->fileName);
    else if (echo->msgbType==MSGTYPE_PASSTHROUGH) {
-	   w_log('9', "Can't put message to passthrough area %s!",
-					 echo->areaName);
-	   return rc;
+       w_log('9', "Can't put message to passthrough area %s!", echo->areaName);
+       return rc;
    } else {
-	   // squish or jam area
-	   slash = strrchr(echo->fileName, PATH_DELIM);
-	   if (slash) {
-		   *slash = '\0';
-		   createDirectoryTree(echo->fileName);
-		   *slash = PATH_DELIM;
-	   }
+       // squish or jam area
+       slash = strrchr(echo->fileName, PATH_DELIM);
+       if (slash) {
+	   *slash = '\0';
+	   createDirectoryTree(echo->fileName);
+	   *slash = PATH_DELIM;
+       }
    }
    
    if (!msg->netMail) {
@@ -319,82 +318,81 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
    }
 
    harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, 
-/*			echo->fperm, echo->uid, echo->gid,*/
-			(word)(echo->msgbType | (msg->netMail ? 0 : MSGTYPE_ECHO)));
+		       /*echo->fperm, echo->uid, echo->gid,*/
+		       (word)(echo->msgbType | (msg->netMail ? 0 : MSGTYPE_ECHO)));
    if (harea != NULL) {
-      hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
-      if (hmsg != NULL) {
+       hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
+       if (hmsg != NULL) {
 
-		  // recode from TransportCharset to internal Charset
-		  if (config->intab != NULL) {
-			  if ((msg->recode & REC_HDR)==0) {
-				  recodeToInternalCharset((CHAR*)msg->fromUserName);
-				  recodeToInternalCharset((CHAR*)msg->toUserName);
-				  recodeToInternalCharset((CHAR*)msg->subjectLine);
-				  msg->recode |= REC_HDR;
-			  }
-			  if ((msg->recode & REC_TXT)==0) {
-				  recodeToInternalCharset((CHAR*)msg->text);
-				  msg->recode |= REC_TXT;
-			  }
-		  }
+	   // recode from TransportCharset to internal Charset
+	   if (config->intab != NULL) {
+	       if ((msg->recode & REC_HDR)==0) {
+		   recodeToInternalCharset((CHAR*)msg->fromUserName);
+		   recodeToInternalCharset((CHAR*)msg->toUserName);
+		   recodeToInternalCharset((CHAR*)msg->subjectLine);
+		   msg->recode |= REC_HDR;
+	       }
+	       if ((msg->recode & REC_TXT)==0) {
+		   recodeToInternalCharset((CHAR*)msg->text);
+		   msg->recode |= REC_TXT;
+	       }
+	   }
 
-         textWithoutArea = msg->text;
+	   textWithoutArea = msg->text;
 
-         if ((strip==1) && (strncmp(msg->text, "AREA:", 5) == 0)) {
-            // jump over AREA:xxxxx\r
-            while (*(textWithoutArea) != '\r') textWithoutArea++;
-            textWithoutArea++;
-			textLength -= (size_t) (textWithoutArea - msg->text);
-         }
+	   if ((strip==1) && (strncmp(msg->text, "AREA:", 5) == 0)) {
+	       // jump over AREA:xxxxx\r
+	       while (*(textWithoutArea) != '\r') textWithoutArea++;
+	       textWithoutArea++;
+	       textLength -= (size_t) (textWithoutArea - msg->text);
+	   }
 
-		 if (echo->killSB) {
-			 tiny = strrstr(textWithoutArea, " * Origin:");
-			 if (tiny == NULL) tiny = textWithoutArea;
-			 if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) {
-				 p[1]='\0';
-				 textLength = (size_t) (p - textWithoutArea + 1);
-			 }
-		 } else if (echo->tinySB) {
-			 tiny = strrstr(textWithoutArea, " * Origin:");
-			 if (tiny == NULL) tiny = textWithoutArea;
-			 if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) {
-				 p++;
-				 if (NULL != (q = strstr(p,"\001PATH: "))) {
-//					 memmove(p,q,strlen(q)+1);
-					 memmove(p,q,textLength-(size_t)(q-textWithoutArea)+1);
-					 textLength -= (size_t) (q - p);
-				 } else {
-					 p[0]='\0';
-					 textLength = (size_t) (p - textWithoutArea);
-				 }
-			 }
-		 }
+	   if (echo->killSB) {
+	       tiny = strrstr(textWithoutArea, " * Origin:");
+	       if (tiny == NULL) tiny = textWithoutArea;
+	       if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) {
+		   p[1]='\0';
+		   textLength = (size_t) (p - textWithoutArea + 1);
+	       }
+	   } else if (echo->tinySB) {
+	       tiny = strrstr(textWithoutArea, " * Origin:");
+	       if (tiny == NULL) tiny = textWithoutArea;
+	       if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) {
+		   p++;
+		   if (NULL != (q = strstr(p,"\001PATH: "))) {
+		       // memmove(p,q,strlen(q)+1);
+		       memmove(p,q,textLength-(size_t)(q-textWithoutArea)+1);
+		       textLength -= (size_t) (q - p);
+		   } else {
+		       p[0]='\0';
+		       textLength = (size_t) (p - textWithoutArea);
+		   }
+	       }
+	   }
 
-         ctrlBuff = (char *) CopyToControlBuf((UCHAR *) textWithoutArea,
-				              (UCHAR **) &textStart,
-				              &textLength);
-         // textStart is a pointer to the first non-kludge line
-         xmsg = createXMSG(msg, NULL, forceattr);
+	   
+	   ctrlBuff = (char *) CopyToControlBuf((UCHAR *) textWithoutArea,
+						(UCHAR **) &textStart,
+						&textLength);
+	   // textStart is a pointer to the first non-kludge line
+	   xmsg = createXMSG(msg, NULL, forceattr);
 
-         if (MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword)
-						 textLength, (dword) textLength,
-						 (dword)strlen(ctrlBuff), (byte*)ctrlBuff)!=0) 
-			 w_log('9', "Could not write msg in %s!", echo->fileName);
-		 else rc = 1; // normal exit
+	   if (MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword)
+			   textLength, (dword) textLength,
+			   (dword)strlen(ctrlBuff), (byte*)ctrlBuff)!=0) 
+	       w_log('9', "Could not write msg in %s!", echo->fileName);
+	   else rc = 1; // normal exit
 
-         if (MsgCloseMsg(hmsg)!=0) {
-			 w_log('9', "Could not close msg in %s!", echo->fileName);
-			 rc = 0;
-		 }
-         nfree(ctrlBuff);
-
-      } else
-		  w_log('9', "Could not create new msg in %s!", echo->fileName);
-      /* endif */
-      MsgCloseArea(harea);
-   } else 
-      w_log('9', "Could not open/create EchoArea %s!", echo->fileName);
+	   if (MsgCloseMsg(hmsg)!=0) {
+	       w_log('9', "Could not close msg in %s!", echo->fileName);
+	       rc = 0;
+	   }
+	   nfree(ctrlBuff);
+       
+       } else w_log('9', "Could not create new msg in %s!", echo->fileName);
+       /* endif */
+       MsgCloseArea(harea);
+   } else w_log('9', "Could not open/create EchoArea %s!", echo->fileName);
    /* endif */
    return rc;
 }
@@ -1150,83 +1148,96 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 
 /* area - area to carbon messages, echo - original echo area */
 int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carbon) {
-	char *p, *text, *old_text, *reason = carbon.reason;
-	int i, old_textLength, reasonLen = 0, export = carbon.export, rc = 0;
+    char *p, *text, *old_text, *reason = carbon.reason;
+    int i, old_textLength, /*reasonLen = 0,*/ export = carbon.export, rc = 0;
 
-	statToss.CC++;
+    statToss.CC++;
 
-	old_textLength = msg->textLength;
-	old_text = msg->text;
+    old_textLength = msg->textLength;
+    old_text = msg->text;
 
-	// recoding from internal to transport charSet if needed
-	if (config->outtab) {
-	    if (msg->recode & REC_TXT) {
-			recodeToTransportCharset((CHAR*)msg->text);
-			msg->recode &= ~REC_TXT;
-	    }
-	    if (msg->recode & REC_HDR) {
-			recodeToTransportCharset((CHAR*)msg->fromUserName);
-    		recodeToTransportCharset((CHAR*)msg->toUserName);
-    		recodeToTransportCharset((CHAR*)msg->subjectLine);
-			msg->recode &= ~REC_HDR;
-	    }
+    // recoding from internal to transport charSet if needed
+    if (config->outtab) {
+	if (msg->recode & REC_TXT) {
+	    recodeToTransportCharset((CHAR*)msg->text);
+	    msg->recode &= ~REC_TXT;
 	}
-	
-	i = old_textLength;
-
-	if (!msg->netMail) {
-		if ((!config->carbonKeepSb) && (!area->keepsb)) {
-			text = strrstr(old_text, " * Origin:");
-			if (NULL != (p = strstr(text ? text : old_text,"\rSEEN-BY:")))
-				i = (size_t) (p - old_text) + 1;
-		}
+	if (msg->recode & REC_HDR) {
+	    recodeToTransportCharset((CHAR*)msg->fromUserName);
+	    recodeToTransportCharset((CHAR*)msg->toUserName);
+	    recodeToTransportCharset((CHAR*)msg->subjectLine);
+	    msg->recode &= ~REC_HDR;
 	}
+    }
 	
-	if (reason) reasonLen = strlen(reason)+1;  // +1 for \r
+    i = old_textLength;
 
-	msg->text = safe_malloc(i+strlen("AREA:\r * Forwarded from area ''\r\r\1")+strlen(area->areaName)+strlen(echo->areaName)+reasonLen+1);
+    if (!msg->netMail) {
+	if ((!config->carbonKeepSb) && (!area->keepsb)) {
+	    text = strrstr(old_text, " * Origin:");
+	    if (NULL != (p = strstr(text ? text : old_text,"\rSEEN-BY:")))
+		i = (size_t) (p - old_text) + 1;
+	}
+    }
+
+/* remove after 11-Jul-2001
+    if (reason) reasonLen = strlen(reason)+1;  // +1 for \r
+
+    msg->text = safe_malloc(i+strlen("AREA:\r * Forwarded from area ''\r\r\1")+strlen(area->areaName)+strlen(echo->areaName)+reasonLen+1);
 	
-	//create new area-line
-	if (!msg->netMail)
-		sprintf(msg->text, "%s%s%s * Forwarded from area '%s'\r%s%s\r\1",
-				(export) ? "AREA:" : "",
-				(export) ? area->areaName : "",
-				(export) ? "\r" : "", echo->areaName,
-				(reason) ? reason : "",
-				(reason) ? "\r" : "");
-	else *(msg->text) = '\0';
-/*
-	if (!msg->netMail)
-		xstrscat(&msg->text,
-				 (export) ? "AREA:" : "",
-				 (export) ? area->areaName : "",
-				 (export) ? "\r" : "",
-				 " * Forwarded from area '", echo->areaName, "'\r",
-				 (reason) ? reason : "",
-				 (reason) ? "\r" : "",
-				 "\r\1", NULL);
-	else *(msg->text) = '\0';
+    //create new area-line
+    if (!msg->netMail)
+	sprintf(msg->text, "%s%s%s * Forwarded from area '%s'\r%s%s\r\1",
+		(export) ? "AREA:" : "",
+		(export) ? area->areaName : "",
+		(export) ? "\r" : "", echo->areaName,
+		(reason) ? reason : "",
+		(reason) ? "\r" : "");
+    else *(msg->text) = '\0';
+
+    msg->textLength = strlen(msg->text);
+    strncat(msg->text,old_text,i); // copy rest of msg
+    msg->textLength += i;
 */
+
+    msg->text = NULL;
+    msg->textLength = 0;
+
+    if (!msg->netMail) {
+	xstrscat(&msg->text,
+		 (export) ? "AREA:" : "",
+		 (export) ? area->areaName : "",
+		 (export) ? "\r" : "",
+		 (config->carbonExcludeFwdFrom) ? "" : " * Forwarded from area '",
+		 (config->carbonExcludeFwdFrom) ? "" : echo->areaName,
+		 (config->carbonExcludeFwdFrom) ? "" : "'\r",
+		 (reason) ? reason : "",
+		 (reason) ? "\r" : "",
+		 //(!config->carbonExcludeFwdFrom || reason) ? "\r" : "",
+		 "\r\1", NULL);
 	msg->textLength = strlen(msg->text);
-	strncat(msg->text,old_text,i); // copy rest of msg
-	msg->textLength += i;
+    }
 
-	if (!export) {
-		if (msg->netMail) rc = putMsgInArea(area,msg,0,MSGSENT);
-		else rc = putMsgInArea(area,msg,0,0);
-		area->imported++;  // area has got new messages
-	}
-	else if (!msg->netMail) {
-		rc = processEMMsg(msg, *area->useAka, 1, 0);
-	} else
-		rc = processNMMsg(msg, NULL, area, 1, 0);
+    xstralloc(&msg->text,i); // add i bytes
+    strncat(msg->text,old_text,i); // copy rest of msg
+    msg->textLength += i;
+    
+    if (!export) {
+	if (msg->netMail) rc = putMsgInArea(area,msg,0,MSGSENT);
+	else rc = putMsgInArea(area,msg,0,0);
+	area->imported++;  // area has got new messages
+    }
+    else if (!msg->netMail) {
+	rc = processEMMsg(msg, *area->useAka, 1, 0);
+    } else
+	rc = processNMMsg(msg, NULL, area, 1, 0);
 
-	nfree(msg->text);
-	msg->textLength = old_textLength;
-	msg->text = old_text;
-	msg->recode &= ~REC_TXT; // old text is always in Transport Charset
+    nfree(msg->text);
+    msg->textLength = old_textLength;
+    msg->text = old_text;
+    msg->recode &= ~REC_TXT; // old text is always in Transport Charset
 
-	return rc;
+    return rc;
 }
 
 
@@ -1644,80 +1655,79 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 
    p = strchr(msg->text,'\r');
    if (p) {
-	   *p='\0';
-	   q = msg->text+5;
-	   while (*q == ' ') q++;
-	   xstrcat(&area, q);
-	   echo = getArea(config, area);
-	   *p='\r';
+       *p='\0';
+       q = msg->text+5;
+       while (*q == ' ') q++;
+       xstrcat(&area, q);
+       echo = getArea(config, area);
+       *p='\r';
    }
 
    // no area found -- trying to autocreate echoarea
    if (echo == &(config->badArea)) {
-	   // checking for autocreate option
-	   link = getLinkFromAddr(*config, pktOrigAddr);
-	   if ((link != NULL) && (link->autoAreaCreate != 0)) {
+       // checking for autocreate option
+       link = getLinkFromAddr(*config, pktOrigAddr);
+       if ((link != NULL) && (link->autoAreaCreate != 0)) {
            if (0 == (writeAccess = autoCreate(area, pktOrigAddr, NULL)))
-			   echo = getArea(config, area);
-		   else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
-	   } // can't create echoarea - put msg in BadArea
+	       echo = getArea(config, area);
 	   else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
+       } // can't create echoarea - put msg in BadArea
+       else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
    }
 
    nfree(area);
 
    if (echo != &(config->badArea)) {
-	   // area is autocreated!
+       // area is autocreated!
 
-	   // cheking access of this link
-	   writeAccess = checkAreaLink(echo, pktOrigAddr, 0);
-	   if (writeAccess) rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
-	   else { // access ok - process msg
+       // cheking access of this link
+       writeAccess = checkAreaLink(echo, pktOrigAddr, 0);
+       if (writeAccess) rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
+       else { // access ok - process msg
 
-		   if (dupeDetection(echo, *msg)==1) {
-			   // no dupe
-			   statToss.echoMail++;
+	   if (dupeDetection(echo, *msg)==1) {
+	       // no dupe
+	       statToss.echoMail++;
 
-			   // if only one downlink, we've got the mail from him
-			   if ((echo->downlinkCount > 1) ||
-				   ((echo->downlinkCount > 0) && 
-					// mail from us
-					(addrComp(pktOrigAddr,*echo->useAka)==0)))
-				   forwardMsgToLinks(echo, msg, pktOrigAddr);
+	       // if only one downlink, we've got the mail from him
+	       if ((echo->downlinkCount > 1) ||
+		   ((echo->downlinkCount > 0) && 
+		    // mail from us
+		    (addrComp(pktOrigAddr,*echo->useAka)==0)))
+		   forwardMsgToLinks(echo, msg, pktOrigAddr);
 
-			   if ((config->carbonCount!=0)&&(!dontdocc)) ccrc=carbonCopy(msg,echo);
+	       if ((config->carbonCount!=0)&&(!dontdocc)) ccrc=carbonCopy(msg,echo);
 
-			   if (ccrc <= 1) {
-				   echo->imported++;  // area has got new messages
-				   if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-					   rc = putMsgInArea(echo, msg, 1, forceattr);
-					   statToss.saved += rc;
-				   }
-				   else { // passthrough
-					   /*
-					   if (echo->downlinkCount==1 && dontdocc==0)
-						   rc = putMsgInBadArea(msg, pktOrigAddr, 10);
-					   else {
-						   statToss.passthrough++;
-						   rc = 1;
-					   }
-					   */
-					   statToss.passthrough++;
-					   rc = 1;
-				   }
-			   } else rc = 1; // normal exit for carbon move & delete
-
-		   } else {
-			   // msg is dupe
-			   if (echo->dupeCheck == dcMove) {
-//				   rc = putMsgInDupeArea(pktOrigAddr, msg, forceattr);
-				   rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
-			   } else rc = 1;
-			   statToss.dupes++;
+	       if (ccrc <= 1) {
+		   echo->imported++;  // area has got new messages
+		   if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
+		       rc = putMsgInArea(echo, msg, 1, forceattr);
+		       statToss.saved += rc;
 		   }
+		   else { // passthrough
+		       /*
+			 if (echo->downlinkCount==1 && dontdocc==0)
+			 rc = putMsgInBadArea(msg, pktOrigAddr, 10);
+			 else {
+			 statToss.passthrough++;
+			 rc = 1;
+			 }
+		       */
+		       statToss.passthrough++;
+		       rc = 1;
+		   }
+	       } else rc = 1; // normal exit for carbon move & delete
+
+	   } else {
+	       // msg is dupe
+	       if (echo->dupeCheck == dcMove) {
+		   // rc = putMsgInDupeArea(pktOrigAddr, msg, forceattr);
+		   rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
+	       } else rc = 1;
+	       statToss.dupes++;
 	   }
+       }
    }
- 
    return rc;
 }
 

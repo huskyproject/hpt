@@ -2612,6 +2612,7 @@ This statement can be repeated.
 * CarbonAndQuit::               carbon message only one time
 * CarbonCopy::                  specify the area where the carbon copies go into
 * CarbonDelete::                specify that the carbon msg should be deleted
+* CarbonExcludeFwdFrom::        exclude " * Forward from area " string
 * CarbonExtern::                specify the external program to pass msg text to
 * CarbonFrom::                  make carbonCopy using from-field of msg
 * CarbonFromArea::              carbon messages from area
@@ -2698,7 +2699,7 @@ carbon@{Addr|To|From|Kludge|Subj|Text@} statements.
 
 @xref{CarbonMove}.
 
-@node CarbonDelete, CarbonExtern, CarbonCopy, Carbon Copy
+@node CarbonDelete, CarbonExcludeFwdFrom, CarbonCopy, Carbon Copy
 @subsection CarbonDelete
 @findex CarbonDelete
 @table @asis
@@ -2715,7 +2716,21 @@ stored into @code{EchoArea}.
 This statement can be repeated for each different
 carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
 
-@node CarbonExtern, CarbonFrom, CarbonDelete, Carbon Copy
+@node CarbonExcludeFwdFrom, CarbonExtern, CarbonDelete, Carbon Copy
+@subsection CarbonExcludeFwdFrom
+@findex CarbonExcludeFwdFrom
+@table @asis
+@item Syntax:
+@code{CarbonExcludeFwdFrom <bool>}
+@item Example:
+@code{CarbonExcludeFwdFrom}
+@end table
+
+Don't add to begin of carbon msg text " * Forward from area <areatag>"
+
+This statement cannot be repeated.
+
+@node CarbonExtern, CarbonFrom, CarbonExcludeFwdFrom, Carbon Copy
 @subsection CarbonExtern
 @findex CarbonExtern
 @table @asis
