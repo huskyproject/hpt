@@ -3482,10 +3482,10 @@ The following Perl hooks are supported:
   example:
 
 @example
-  sub route {
+  sub route @{
     if ($from eq "2:5004/75.73") return "2:5004/75.0";
     else return "";
-  }
+  @}
 @end example
 
   if source address of message is 2:5004/75.73 then route it via 2:5004/75,
