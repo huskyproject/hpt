@@ -1,3 +1,7 @@
+2005-01-02 Sunday 16:45  val_khokhlov
+
+	* src/toss.c (1.540): move some vars from s_link into s_link_robot
+
 2004-12-30 Thursday 14:37  val_khokhlov
 
 	* src/: hptafix.c (1.16), perl.c (1.85), toss.c (1.539): move all
