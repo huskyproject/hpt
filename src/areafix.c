@@ -797,7 +797,8 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	if (*line=='+') line++; while (*line==' ') line++;
 	
 	if (strchr(line,' ') || strchr(line,'\t') || strchr(line,'\\') ||
-		strchr(line,'/') ||	strchr(line,config->CommentChar)) return errorRQ(line);
+		strchr(line,'/') ||	strchr(line,config->CommentChar) ||
+		strchr(line,':')) return errorRQ(line);
 
 	if (limitCheck(link, msg)) rc = 6;
 

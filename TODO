@@ -4,6 +4,8 @@ TODO-List for HPT
 Category 1: Will certainly be implemented until next release
 ============================================================
 - %avail without areas from denyfwdmask & denyfwdfile
+- unsubscribe from active passthrough area with one link
+- denyUncondFwdReqs
 - areafix file with forwarded echo areas
 
 Category 2: Might be implemented, but volunteers are always very welcome!

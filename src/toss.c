@@ -847,9 +847,10 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    s_area *area;
    int i;
 
-   // don't create areas with symbols space, tab, /, \, and comment symbol
+   // don't create areas with symbols space, tab, /, \, :, and comment symbol
    if (strchr(c_area,' ') || strchr(c_area,'\t') || strchr(c_area,'\\') ||
-	   strchr(c_area,'/') || strchr(c_area,config->CommentChar)) return 7;
+	   strchr(c_area,'/') || strchr(c_area,config->CommentChar) ||
+	   strchr(c_area,':')) return 7;
    
    xstrcat(&squishFileName, c_area);
 

@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Wed Feb 21 22:13:09 NOVT 2001
+max:
+* don't create areas with ':' symbol
+
+----- cvs ci ------
 Tue Feb 20 19:07:02 NOVT 2001
 max:
 * adapted cleanEmptyBundles()
