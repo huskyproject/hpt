@@ -151,6 +151,9 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 	int i;
 	char *subject;
 	
+	// attributes of netmail must be fixed
+	msgHeader.attr = msg->attributes;
+	
 	if (msg->netMail == 1) {
 		// Check if we must remap
 		for (i=0;i<config->remapCount;i++)
@@ -166,26 +169,21 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 					break;
 				}
 		
-		// attributes of netmail must be fixed
-		msgHeader.attr = msg->attributes;
-		
 		if (to_us(msg->destAddr)==0) {
 		    // kill these flags
-		    msgHeader.attr &= ~(MSGREAD | MSGKILL | MSGLOCAL | MSGFRQ | MSGSCANNED | MSGLOCKED | MSGFWD);
+		    msgHeader.attr &= ~(MSGREAD | MSGKILL | MSGFRQ | MSGSCANNED | MSGLOCKED | MSGFWD);
 		    // set this flags
 		    msgHeader.attr |= MSGPRIVATE;
 		} else
 		// set TRS flag, if the mail is not to us
 		if (header!=NULL) msgHeader.attr |= MSGFWD;
 		
-   } else {
-       msgHeader.attr = msg->attributes;
-       // kill these flags
-       msgHeader.attr &= ~(MSGREAD | MSGKILL | MSGLOCAL | MSGFRQ | MSGSCANNED | MSGLOCKED); 
-   }
+   } else
+   // kill these flags on echomail messages
+   msgHeader.attr &= ~(MSGREAD | MSGKILL | MSGFRQ | MSGSCANNED | MSGLOCKED);
    
-   // always kill crash, hold & sent flags
-   msgHeader.attr &= ~(MSGCRASH | MSGHOLD | MSGSENT);
+   // always kill crash, hold, sent & local flags on netmail & echomail
+   msgHeader.attr &= ~(MSGCRASH | MSGHOLD | MSGSENT | MSGLOCAL);
 
    /* FORCED ATTRIBUTES !!! */
    msgHeader.attr |= forceattr;
