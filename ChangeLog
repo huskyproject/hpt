@@ -1,3 +1,7 @@
+2003-09-18 Thursday 20:43  d_sergienko
+
+	* src/toss.c (1.521): added total kb of tossed mail in toss report
+
 2003-09-17 Wednesday 20:05  d_sergienko
 
 	* Makefile (1.21): add libz to linking libraries list if defined
