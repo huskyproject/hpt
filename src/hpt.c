@@ -58,7 +58,7 @@
 #include <fidoconf/xstr.h>
 #include <fidoconf/common.h>
  
-#include <log.h>
+#include <fidoconf/log.h>
 
 #include <global.h>
 #include <hpt.h>
@@ -69,11 +69,12 @@
 #include <post.h>
 #include <link.h>
 #include <areafix.h>
-#include <recode.h>
+#include <fidoconf/recode.h>
 #include <cvsdate.h>
 #include "query.h"
 
-s_message **msgToSysop = NULL;
+s_log         *hpt_log = NULL;
+s_message    **msgToSysop = NULL;
 s_query_areas *queryAreasHead = NULL;
 char *scanParmA;
 char *scanParmF;
@@ -339,10 +340,10 @@ void processConfig()
 
    // open Logfile
    if (config->logFileDir) {
-	   xstrscat(&buff, config->logFileDir, "hpt.log", NULL);
-	   hpt_log = openLog(buff, versionStr);
-	   if (hpt_log==NULL) fprintf(stderr,"Could not open logfile: %s\n", buff);
-	   nfree(buff);
+	xstrscat(&buff, config->logFileDir, "hpt.log", NULL);
+	hpt_log = openLog(buff, versionStr, config);
+	if (hpt_log && quiet) hpt_log->logEcho=0; /* Don't display messages */
+	nfree(buff);
    } else printf("logFileDir not defined, there will be no log created!\n");
    
    w_log('1', "Start");
@@ -512,7 +513,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    MsgCloseApi();
 
    w_log('1', "End");
-   closeLog(hpt_log);
+   closeLog();
    doneCharsets();
    nfree(versionStr);
    // save forvard requests info

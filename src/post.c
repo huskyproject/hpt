@@ -46,7 +46,7 @@
 #include <version.h>
 #include <areafix.h>
 #include <hpt.h>
-#include <recode.h>
+#include <fidoconf/recode.h>
 #include <scanarea.h>
 
 #include <fidoconf/fidoconf.h>

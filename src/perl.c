@@ -11,6 +11,8 @@
 
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
+#include <fidoconf/crc.h>
+
 #include <fcommon.h>
 #include <pkt.h>
 #include <global.h>
@@ -235,7 +237,6 @@ static XS(perl_nodelistDir)
   XSRETURN_PV(config->nodelistDir ? config->nodelistDir : "");
 }
 
-unsigned long memcrc32(char *str, int size, unsigned long initcrc);
 
 #ifdef _MSC_VER
 EXTERN_C void perl_crc32(pTHXo_ CV* cv)

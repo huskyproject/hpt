@@ -2,6 +2,9 @@
 /* This was taken from BinkD and modified a bit for hpt -- ml, 2001 */
 /*                                                                  */
 
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/log.h>
+
 #if defined(__NT__) || defined (NT) || defined (WINNT)
 /*--------------------------------------------------------------------*/
 /*       Copyright (c) 1997 by Fydodor Ustinov                        */
@@ -32,8 +35,6 @@
 #include <windows.h>
 #include <stdio.h>
 #include <limits.h>
-
-extern void w_log (char key, char *logString, ...);
 
 unsigned long getfree (char *path) {
 char RPN[MAXPATHLEN];	// root path
@@ -96,7 +97,6 @@ BOOL rc;
 #include <ctype.h>
 #include <limits.h>
 
-extern void w_log (char key, char *logString, ...);
 
 unsigned long getfree (char *path)
 {
@@ -178,7 +178,6 @@ unsigned long getfree (char *path)
 //#error no statfs() or statvfs() in your system!
 //#endif
 
-extern void w_log (char key, char *logString, ...);
 
 #if defined(_SYS_STATFS_H) || defined(_SYS_STATVFS_H)
 unsigned long getfree (char *path)

@@ -54,10 +54,11 @@
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/typesize.h>
+#include <fidoconf/crc.h>
 
 #include <smapi/msgapi.h>
 
-#include <log.h>
+#include <fidoconf/log.h>
 #include <global.h>
 #include <tree.h>
 #include <fcommon.h>
@@ -83,7 +84,6 @@ struct hashinfo {
 };
 
 typedef struct msginfo s_msginfo;
-unsigned long strcrc32(char *, unsigned long);
 
 static s_msginfo *findMsgId(s_msginfo *entries, struct hashinfo *hash, dword hashSize, char *msgId, int add)
 {

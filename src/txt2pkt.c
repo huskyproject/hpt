@@ -19,7 +19,7 @@
 #include <global.h>
 #include <version.h>
 #include <pkt.h>
-#include <recode.h>
+#include <fidoconf/recode.h>
 
 #if (defined (__WATCOMC__) && defined (__NT__)) || defined(__TURBOC__)
 #include <dos.h>

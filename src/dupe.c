@@ -58,11 +58,11 @@
 
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
+#include <fidoconf/crc.h>
 
 FILE *fDupe;
 
 UINT32  DupeCountInHeader, maxTimeLifeDupesInArea;
-unsigned long strcrc32(char *, unsigned long); 
 s_dupeMemory *CommonDupes=NULL;
 
 

@@ -11,12 +11,10 @@ EXENAMEFLAG=-o
 #SRC_DIR=../src/
 #LIBS   =-L$(LIBDIR) -lfidoconfig -lsmapi
 
-OBJS    = fcommon$(OBJ) getfree$(OBJ) hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) \
-	  log$(OBJ) global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) \
-	  seenby$(OBJ) crc$(OBJ) dupe$(OBJ) tree$(OBJ) recode$(OBJ) query$(OBJ) \
-	  areafix$(OBJ) arealist$(OBJ) post$(OBJ) link$(OBJ) strsep$(OBJ) \
-	  $(PERLOBJ)
-
+OBJS	= $(PERLOBJ) fcommon$(OBJ) getfree$(OBJ) hpt$(OBJ) pktread$(OBJ) \
+	global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) seenby$(OBJ) \
+	dupe$(OBJ) tree$(OBJ) query$(OBJ) areafix$(OBJ) arealist$(OBJ) \
+	post$(OBJ) link$(OBJ) pktwrite$(OBJ)
 
 commonall: $(OBJS) \
      pktinfo$(EXE) \
@@ -30,21 +28,21 @@ commonall: $(OBJS) \
 	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
 
 pktinfo$(EXE): pktinfo$(OBJ) $(OBJS)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG) pktinfo$(EXE) log$(OBJ) recode$(OBJ) pktinfo$(OBJ) \
+	$(CC) $(LFLAGS) $(EXENAMEFLAG) pktinfo$(EXE) pktinfo$(OBJ) \
           pktread$(OBJ) fcommon$(OBJ) global$(OBJ) dupe$(OBJ) tree$(OBJ) \
-	  crc$(OBJ) $(LIBS)
+	  $(LIBS)
 
 tpkt$(EXE): tpkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
-              recode$(OBJ) log$(OBJ) global$(OBJ) 
-	$(CC) $(LFLAGS) $(EXENAMEFLAG) tpkt$(EXE) log$(OBJ) tpkt$(OBJ) fcommon$(OBJ) \
-              pktread$(OBJ) recode$(OBJ) pktwrite$(OBJ) global$(OBJ) \
-              dupe$(OBJ) tree$(OBJ) crc$(OBJ) $(LIBS)
+              global$(OBJ) 
+	$(CC) $(LFLAGS) $(EXENAMEFLAG) tpkt$(EXE) tpkt$(OBJ) \
+              fcommon$(OBJ) pktread$(OBJ) pktwrite$(OBJ) global$(OBJ) \
+              dupe$(OBJ) tree$(OBJ) $(LIBS)
 
 txt2pkt$(EXE): txt2pkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
-               recode$(OBJ) log$(OBJ) global$(OBJ)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG) txt2pkt$(EXE) log$(OBJ) txt2pkt$(OBJ) \
-          fcommon$(OBJ) pktread$(OBJ) recode$(OBJ) pktwrite$(OBJ) \
-          global$(OBJ) dupe$(OBJ) tree$(OBJ) crc$(OBJ) $(LIBS)
+               global$(OBJ)
+	$(CC) $(LFLAGS) $(EXENAMEFLAG) txt2pkt$(EXE) txt2pkt$(OBJ) \
+          fcommon$(OBJ) pktread$(OBJ) pktwrite$(OBJ) \
+          global$(OBJ) dupe$(OBJ) tree$(OBJ) $(LIBS)
 
 hptlink$(EXE): hptlink$(OBJ)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) hptlink$(EXE) hptlink$(OBJ) $(LIBS)

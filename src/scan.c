@@ -42,12 +42,11 @@
 #include <fcommon.h>
 #include <pkt.h>
 #include <scan.h>
-#include <log.h>
+#include <fidoconf/log.h>
 #include <global.h>
 #include <version.h>
-#include <recode.h>
+#include <fidoconf/recode.h>
 #include <toss.h>
-#include <strsep.h>
 
 #include <smapi/msgapi.h>
 #include <smapi/progprot.h>

@@ -31,14 +31,14 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+#include <fidoconf/typesize.h>
 #include <fidoconf/fidoconf.h>
-#include <log.h>
+#include <fidoconf/log.h>
 
 extern int initSMAPI;
 
 // variables for config statements
 
-extern s_log        *hpt_log;
 extern s_fidoconfig *config;
 extern char         *cfgFile;
 

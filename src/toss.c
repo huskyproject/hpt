@@ -67,14 +67,13 @@ int __stdcall CharToOemA(char *, char *);
 #include <fidoconf/dirlayer.h>
 #include <fidoconf/xstr.h>
 
-#include <strsep.h>
 #include <pkt.h>
 #include <scan.h>
 #include <toss.h>
 #include <global.h>
 #include <seenby.h>
 #include <dupe.h>
-#include <recode.h>
+#include <fidoconf/recode.h>
 #include <areafix.h>
 #include <version.h>
 #include <scanarea.h>

@@ -32,6 +32,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdio.h>
 
 #ifdef UNIX
 #include <sysexits.h>
@@ -70,7 +71,7 @@
 
 #include <global.h>
 #include <fcommon.h>
-#include <recode.h>
+#include <fidoconf/recode.h>
 #include <dupe.h>
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
@@ -108,7 +109,7 @@ void exit_hpt(char *logstr, int print) {
     }
     w_log('9', logstr);
     w_log('1', "End");
-    closeLog(hpt_log);
+    closeLog();
     disposeConfig(config);
     doneCharsets();
     exit(EX_SOFTWARE);

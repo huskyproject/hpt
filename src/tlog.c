@@ -28,7 +28,7 @@
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *****************************************************************************/
-#include <log.h>
+#include <fidoconf/log.h>
 
 int main()
 {
@@ -40,6 +40,6 @@ int main()
    w_log('1', "this goes into the log");
    w_log('d', "and this not");
 
-   closeLog(hpt_log);
+   closeLog();
    return 0;
 }

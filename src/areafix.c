@@ -53,10 +53,9 @@
 #include <smapi/patmat.h>
 #include <ctype.h>
 #include <smapi/progprot.h>
-#include <strsep.h>
 #include <seenby.h>
 #include <scan.h>
-#include <recode.h>
+#include <fidoconf/recode.h>
 #include <areafix.h>
 #include <scanarea.h>
 #include <arealist.h>
