@@ -37,11 +37,11 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-#if defined (UNIX) || (defined (_MSC_VER) && (_MSC_VER >= 1200))
+#if defined (UNIX) 
 #include <unistd.h>
 #endif
 
-#if defined (__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__) || defined (__EMX__)
+#if defined (__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__) || defined (__EMX__) || (defined (_MSC_VER) && (_MSC_VER >= 1200))
   #include <process.h>
   #include <io.h>
 #endif
