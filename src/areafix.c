@@ -651,7 +651,6 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
             }
         }
         strbeg = get_hcfgPos();
-        nfree(tmpPtr);
         nfree(line);
     }
     nfree(line);
@@ -670,6 +669,8 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     }
     nfree(fileName);
 
+    w_log(LL_SRCLINE,"areafix.c:%u:changeconfig()", __LINE__);
+
     fseek(f_conf, 0L, SEEK_END);
     endpos = ftell(f_conf);
     cfglen = endpos - strend;
@@ -679,6 +680,8 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     line[cfglen]='\0';
     fseek(f_conf, strbeg, SEEK_SET);
     setfsize( fileno(f_conf), strbeg );
+
+    w_log(LL_SRCLINE,"areafix.c:%u:changeconfig()", __LINE__);
 
     switch (action) {
     case 0: // forward Request To Link
@@ -720,6 +723,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
             nRet = O_ERR;
             break;
         }   
+    w_log(LL_SRCLINE,"areafix.c::changeconfig():%u",__LINE__);
         // get area string
         buff = makeAreaParam(area->downlinks[0]->link , areaName, NULL );
         nRet = ADD_OK;
@@ -747,6 +751,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     fclose(f_conf);
     nfree(line);
     nfree(cfgline);
+    w_log(LL_FUNC,"areafix.c::changeconfig() rc=%i", nRet);
     return nRet;
 }
 
