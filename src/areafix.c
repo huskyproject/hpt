@@ -1477,7 +1477,8 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		link = &(config->links[i]);
 		linkmsg = link->msg;
 		
-		linkmsg->textLength += xscatprintf(&(linkmsg->text), " \r--- %s areafix\r", versionStr);
+		xscatprintf(&(linkmsg->text), " \r--- %s areafix\r", versionStr);
+		linkmsg->textLength = strlen(linkmsg->text);
 		
 		makePktHeader(NULL, &header);
 		header.origAddr = *(link->ourAka);

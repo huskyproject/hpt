@@ -2,6 +2,12 @@ hpt 0.9.5
 ---------
 
 ----- cvs ci ------
+Mon Jan 10 12:28:35 NOVT 2000
+max:
+* added hpttree.c to cvs :)
+* fixed forward requests
+
+----- cvs ci ------
 Sun Jan  9 20:22:44 NOVT 2000
 max (patch from Serguei Revtov):
 * added hpttree tool
