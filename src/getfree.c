@@ -1,13 +1,10 @@
-/*                                                                  */
-/* This was taken from BinkD and modified a bit for hpt -- ml, 2001 */
-/*                                                                  */
 /*
+ * This was taken from BinkD and modified a bit for hpt -- ml, 2001
+ *
+ *
  * $Id$
  */
 
-void w_log(char key, char *logString, ...);
-
-#if defined(__NT__) || defined (NT) || defined (WINNT)
 /*--------------------------------------------------------------------*/
 /*       Copyright (c) 1997 by Fydodor Ustinov                        */
 /*                             FIDONet 2:5020/79                      */
@@ -17,6 +14,17 @@ void w_log(char key, char *logString, ...);
 /*  published  by the  Free Software Foundation; either version 2 of  */
 /*  the License, or (at your option) any later version. See COPYING.  */
 /*--------------------------------------------------------------------*/
+
+#include <fidoconf/log.h>
+
+#if defined(__NT__) || defined (NT) || defined (WINNT)
+
+#undef CHAR
+#undef UCHAR
+#undef LONG
+#undef ULONG
+#undef INT32
+#undef UINT32
 
 #ifdef __WATCOMC__
 #include <direct.h>
@@ -85,7 +93,7 @@ BOOL rc;
   }
   rc = GetDiskFreeSpace(pRPN,&SPC,&BPS,&FC,&TNC);
   if (rc != TRUE) {
-    w_log ('9', "GetDiskFreeSpace error: return code = %lu", GetLastError());
+    w_log (LL_ERR, "GetDiskFreeSpace error: return code = %lu", GetLastError());
     return ULONG_MAX;		    /* Assume enough disk space */
   } else {
     //return (unsigned long) (BPS * SPC * FC);
@@ -124,7 +132,7 @@ unsigned long getfree (char *path)
 
   if (rc)
   {
-    w_log ('9', "DosQueryFSInfo error: return code = %u", rc);
+    w_log (LL_ERR, "DosQueryFSInfo error: return code = %u", rc);
     return ULONG_MAX;		    /* Assume enough disk space */
   }
   else
@@ -210,7 +218,7 @@ unsigned long getfree (char *path)
   if (statfs (path, &sfs) != 0)
 #endif
   {
-    w_log ('9', "cannot statfs \"%s\", assume enough space", path);
+    w_log (LL_ERR, "cannot statfs \"%s\", assume enough space", path);
     return ULONG_MAX;
   }
   else
@@ -227,7 +235,7 @@ unsigned long getfree (char *path)
 #else
 unsigned long getfree (char *path)
 {
-  w_log ('9', "warning: free space doesn't checked in %s",path);
+  w_log (LL_WARN, "warning: free space doesn't checked in %s",path);
   return ULONG_MAX;
 }
 
@@ -237,7 +245,7 @@ unsigned long getfree (char *path)
 #include <limits.h>
 unsigned long getfree (char *path)
 {
-  w_log ('9', "warning: free space doesn't checked in %s",path);
+  w_log (LL_WARN, "warning: free space doesn't checked in %s",path);
   return ULONG_MAX;
 }
 #else

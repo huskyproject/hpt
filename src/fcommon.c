@@ -382,7 +382,7 @@ int createTempPktFileName(s_link *link)
 				&& minFreeExt>=0) {
 				counter = minFreeExt;
 			} else {
-				w_log('7',"Can't use more than %d extensions for bundle names",numExt);
+				w_log(LL_ERR,"Can't use more than %d extensions for bundle names",numExt);
 				nfree(fileName);
 				nfree(pfileName);
 				nfree(tmp);
@@ -408,12 +408,12 @@ int createTempPktFileName(s_link *link)
 				 && (counter < numExt*256));
 
 		if (counter >= numExt*256)
-			w_log('7',"created %d bundles/sec!", numExt*256);
+			w_log(LL_STAT,"created %d bundles/sec!", numExt*256);
 
 		break;
 
     default:
-		w_log('9', "Unknown bundleNameStyle (non-compatible fidoconfig library?)");
+		w_log(LL_ERR, "Unknown bundleNameStyle (non-compatible fidoconfig library?)");
 		exit(EX_SOFTWARE);
 		break;
     }
@@ -429,10 +429,10 @@ int createTempPktFileName(s_link *link)
     else {
         nfree(fileName);
         nfree(pfileName);
-		w_log('7',"can't create arcmail bundles any more!");
+		w_log(LL_ERR,"can't create arcmail bundles any more!");
         return 1;
     }
-}
+}/* createTempPktFileName() */
 #endif
 
 #if 0
@@ -543,12 +543,12 @@ int createDirectoryTree(const char *pathName) {
          if (!fexist(start)) {
             // this part of the path does not exist, create it
             if (mymkdir(start) != 0) {
-               w_log('9', "Could not create directory %s", start);
+               w_log(LL_ERR, "Could not create directory %s", start);
                nfree(start);
                return 1;
             }
          } else {
-            w_log('9', "%s is a file not a directory", start);
+            w_log(LL_ERR, "%s is a file not a directory", start);
             nfree(start);
             return 1;
          }
@@ -560,7 +560,7 @@ int createDirectoryTree(const char *pathName) {
    nfree(start);
 
    return 0;
-}
+} /* createDirectoryTree() */
 #endif
 
 int createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ)

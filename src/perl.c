@@ -73,6 +73,10 @@ extern "C" {
 #define Perl___notused Perl___notused __attribute__ ((unused))
 #endif
 
+#ifndef LL_PERL
+#define LL_PERL LL_EXEC
+#endif
+
 /* for alike */
 #define MAX_LDIST_LEN      40 // max word len to compair
 #define ADDITION           1  // penality for needing to add a character
@@ -110,7 +114,7 @@ static XS(perl_log)
   STRLEN n_a;
 
   if (items != 2)
-  { w_log('9', "wrong params number to log (need 2, exist %d)", items);
+  { w_log(LL_ERR, "wrong params number to log (need 2, exist %d)", items);
     XSRETURN_EMPTY;
   }
   level = (char *)SvPV(ST(0), n_a); if (n_a == 0) level = "";
@@ -211,7 +215,7 @@ static XS(perl_alike)
   STRLEN n_a;
   if (items!=2)
   {
-    w_log('9',"wrong number of params to alike(need 2, exist %d)", items);
+    w_log(LL_ERR,"wrong number of params to alike(need 2, exist %d)", items);
     XSRETURN_EMPTY;
   }
   str1=(char *)SvPV(ST(0),n_a);if (n_a==0) str1="";
@@ -242,7 +246,7 @@ static XS(perl_putMsgInArea)
   s_message msg;
 
   if (items != 10)
-  { w_log('9', "wrong params number to putMsgInArea (need 10, exist %d)", items);
+  { w_log(LL_ERR, "wrong params number to putMsgInArea (need 10, exist %d)", items);
     XSRETURN_PV("Invalid arguments");
   }
   area     = (char *)SvPV(ST(0), n_a); if (n_a == 0) area     = "";
@@ -343,7 +347,7 @@ static XS(perl_str2attr)
   char *attr;
   STRLEN n_a;
   if (items != 1)
-  { w_log('9', "wrong params number to str2attr (need 1, exist %d)", items);
+  { w_log(LL_ERR, "wrong params number to str2attr (need 1, exist %d)", items);
     XSRETURN_IV(-1);
   }
   attr = (char *)SvPV(ST(0), n_a); if (n_a == 0) attr = "";
@@ -358,7 +362,7 @@ static XS(perl_myaddr)
   int naddr;
   dXSARGS;
   if (items != 0)
-  { w_log('9', "wrong params number to myaddr (need 0, exist %d)", items);
+  { w_log(LL_ERR, "wrong params number to myaddr (need 0, exist %d)", items);
     XSRETURN_UNDEF;
   }
   EXTEND(SP, config->addrCount);
@@ -377,7 +381,7 @@ static XS(perl_nodelistDir)
 {
   dXSARGS;
   if (items != 0)
-  { w_log('9', "wrong params number to nodelistDir (need 0, exist %d)", items);
+  { w_log(LL_ERR, "wrong params number to nodelistDir (need 0, exist %d)", items);
     XSRETURN_UNDEF;
   }
   EXTEND(SP, 1);
@@ -395,7 +399,7 @@ static XS(perl_crc32)
   STRLEN n_a;
   char *str;
   if (items != 1)
-  { w_log('9', "wrong params number to crc32 (need 1, exist %d)", items);
+  { w_log(LL_ERR, "wrong params number to crc32 (need 1, exist %d)", items);
     XSRETURN_IV(0);
   }
   str = (char *)SvPV(ST(0), n_a);
@@ -473,7 +477,7 @@ static void perlthread(ULONG arg)
   while (fgets(str, sizeof(str), f))
   { if ((p = strchr(str, '\n')) != NULL)
       *p = '\0';
-    w_log('8', "PERL: %s", str);
+    w_log(LL_PERL, "PERL: %s", str);
   }
   fclose(f);
 }
@@ -502,7 +506,7 @@ perl_fork:
      while (fgets(str, sizeof(str), f))
      { char *p = strchr(str, '\n');
        if (p) *p = '\0';
-       w_log('8', "PERL: %s", str);
+       w_log(LL_PERL, "PERL: %s", str);
      }
      fclose(f);
      fflush(stdout);
@@ -511,7 +515,7 @@ perl_fork:
    else
    { if (errno==EINTR)
        goto perl_fork;
-     w_log('9', "Can't fork(): %s!", strerror(errno));
+     w_log(LL_ERR, "Can't fork(): %s!", strerror(errno));
      close(perlpipe[1]);
      close(perlpipe[0]);
      return 0;
@@ -570,7 +574,7 @@ int PerlStart(void)
 #else
    if (access(perlfile, R_OK))
 #endif
-   { w_log('8', "Can't read %s: %s, perl filtering disabled",
+   { w_log(LL_ERR, "Can't read %s: %s, perl filtering disabled",
                    perlfile, strerror(errno));
      do_perl=0;
      return 1;
@@ -581,7 +585,7 @@ int PerlStart(void)
    rc=perl_parse(perl, xs_init, 2, perlargs, NULL);
    restoreperlerr(saveerr, pid);
    if (rc)
-   { w_log('9', "Can't parse %s, perl filtering disabled",
+   { w_log(LL_ERR, "Can't parse %s, perl filtering disabled",
                    perlfile);
      perl_destruct(perl);
      perl_free(perl);
@@ -651,7 +655,7 @@ int perlscanmsg(char *area, s_message *msg)
      restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
-       w_log('8', "Perl scan eval error: %s\n", SvPV(ERRSV, n_a));
+       w_log(LL_ERR, "Perl scan eval error: %s\n", SvPV(ERRSV, n_a));
        do_perlscan = 0;
        return 0;
      }
@@ -659,14 +663,14 @@ int perlscanmsg(char *area, s_message *msg)
      if (prc)
      {
        if (msg->netMail)
-         w_log('8', "PerlScan: NetMail from %s %u:%u/%u.%u to %s %u:%u/%u.%u: %s",
+         w_log(LL_PERL, "PerlScan: NetMail from %s %u:%u/%u.%u to %s %u:%u/%u.%u: %s",
                        msg->fromUserName,
                        msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
                        msg->toUserName,
                        msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point,
                        prc);
        else
-         w_log('8', "PerlScan: Area %s from %s %u:%u/%u.%u: %s",
+         w_log(LL_PERL, "PerlScan: Area %s from %s %u:%u/%u.%u: %s",
                        area, msg->fromUserName,
                        msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
                        prc);
@@ -767,7 +771,7 @@ s_route *perlroute(s_message *msg, s_route *defroute)
      restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
-       w_log('8', "Perl route eval error: %s\n", SvPV(ERRSV, n_a));
+       w_log(LL_ERR, "Perl route eval error: %s\n", SvPV(ERRSV, n_a));
        do_perlroute = 0;
      }
      else if (routeaddr)
@@ -800,7 +804,7 @@ s_route *perlroute(s_message *msg, s_route *defroute)
        else if (stricmp(flv, "immediate") == 0)
          route.flavour = immediate;
        else {
-         w_log('8', "Perl route unknown flavour %s, set to hold", flv);
+         w_log(LL_PERL, "Perl route unknown flavour %s, set to hold", flv);
          route.flavour = hold;
        }
        free(routeaddr);
@@ -891,7 +895,7 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
-       w_log('8', "Perl filter eval error: %s\n", SvPV(ERRSV, n_a));
+       w_log(LL_ERR, "Perl filter eval error: %s\n", SvPV(ERRSV, n_a));
        do_perlfilter = 0;
        if (area) free(area);
        return 0;
@@ -900,11 +904,11 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      if (svkill && SvTRUE(svkill))
      { // kill
        if (area)
-         w_log('8', "PerlFilter: Area %s from %s %s killed%s%s",
+         w_log(LL_PERL, "PerlFilter: Area %s from %s %s killed%s%s",
                        area, msg->fromUserName, aka2str(msg->origAddr),
                        prc ? ": " : "", prc ? prc : "");
        else
-         w_log('8', "PerlFilter: NetMail from %s %s to %s %s killed%s%s",
+         w_log(LL_PERL, "PerlFilter: NetMail from %s %s to %s %s killed%s%s",
                        msg->fromUserName, aka2str(msg->origAddr),
                        msg->toUserName, aka2str(msg->destAddr),
                        prc ? ": " : "", prc ? prc : "");
@@ -939,10 +943,10 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      if (prc)
      {
        if (area)
-         w_log('8', "PerlFilter: Area %s from %s %s: %s",
+         w_log(LL_PERL, "PerlFilter: Area %s from %s %s: %s",
                        area, msg->fromUserName, aka2str(msg->origAddr), prc);
        else
-         w_log('8', "PerlFilter: NetMail from %s %s to %s %s: %s",
+         w_log(LL_PERL, "PerlFilter: NetMail from %s %s to %s %s: %s",
                        msg->fromUserName, aka2str(msg->origAddr),
                        msg->toUserName, aka2str(msg->destAddr), prc);
        rc = 1;
@@ -990,12 +994,12 @@ int perlpkt(const char *fname, int secure)
      restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
-       w_log('8', "Perl pkt eval error: %s\n", SvPV(ERRSV, n_a));
+       w_log(LL_ERR, "Perl pkt eval error: %s\n", SvPV(ERRSV, n_a));
        do_perlpkt = 0;
      }
      else if (prc)
      {
-       w_log('8', "Packet %s rejected by perl filter: %s", fname, prc);
+       w_log(LL_PERL, "Packet %s rejected by perl filter: %s", fname, prc);
        free(prc);
        return 1;
      }
@@ -1041,7 +1045,7 @@ void perlpktdone(const char *fname, int rc)
      restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
-       w_log('8', "Perl pktdone eval error: %s\n", SvPV(ERRSV, n_a));
+       w_log(LL_ERR, "Perl pktdone eval error: %s\n", SvPV(ERRSV, n_a));
        do_perlpktdone = 0;
      }
    }
@@ -1072,7 +1076,7 @@ void perlafterunp(void)
      restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
-       w_log('8', "Perl afterunp eval error: %s\n", SvPV(ERRSV, n_a));
+       w_log(LL_ERR, "Perl afterunp eval error: %s\n", SvPV(ERRSV, n_a));
        do_perlafterunp = 0;
      }
    }
@@ -1103,7 +1107,7 @@ void perlbeforepack(void)
      restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
-       w_log('8', "Perl beforepack eval error: %s\n", SvPV(ERRSV, n_a));
+       w_log(LL_ERR, "Perl beforepack eval error: %s\n", SvPV(ERRSV, n_a));
        do_perlbeforepack = 0;
      }
    }
@@ -1171,17 +1175,17 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
      restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
-       w_log('8', "Perl tossbad eval error: %s\n", SvPV(ERRSV, n_a));
+       w_log(LL_ERR, "Perl tossbad eval error: %s\n", SvPV(ERRSV, n_a));
        do_perltossbad = 0;
        return 0;
      }
      if (prc)
      { // kill
        if (areaName)
-         w_log('8', "PerlFilter: Area %s from %s %s killed: %s",
+         w_log(LL_PERL, "PerlFilter: Area %s from %s %s killed: %s",
                       areaName, msg->fromUserName, aka2str(msg->origAddr), prc);
        else
-         w_log('8', "PerlFilter: NetMail from %s %s to %s %s killed: %s",
+         w_log(LL_PERL, "PerlFilter: NetMail from %s %s to %s %s killed: %s",
                       msg->fromUserName, aka2str(msg->origAddr),
                       msg->toUserName, aka2str(msg->destAddr), prc);
        free(prc);

@@ -303,7 +303,7 @@ char *list(s_link *link, char *cmdline) {
     xscatprintf(&report, "\r'*' = area active for %s\r%i areas available, %i areas active\r", aka2str(link->hisAka), avail, active);
     if (link->afixEchoLimit) xscatprintf(&report, "\rYour limit is %u areas for subscribe\r", link->afixEchoLimit);
 
-    w_log('8', "areafix: list sent to %s", aka2str(link->hisAka));
+    w_log(LL_AREAFIX, "areafix: list sent to %s", aka2str(link->hisAka));
 
     return report;
 }
@@ -324,7 +324,7 @@ char *linked(s_link *link) {
     }
     xscatprintf(&report, "\r%u areas linked\r", n);
     if (link->afixEchoLimit) xscatprintf(&report, "\rYour limit is %u areas for subscribe\r", link->afixEchoLimit);
-    w_log('8', "areafix: linked areas list sent to %s", aka2str(link->hisAka));
+    w_log(LL_AREAFIX, "areafix: linked areas list sent to %s", aka2str(link->hisAka));
     return report;
 }
 
@@ -342,7 +342,7 @@ char *unlinked(s_link *link) {
 	    xscatprintf(&report, " %s\r", areas[i].areaName);
 	}
     }
-    w_log('8', "areafix: unlinked areas list sent to %s", aka2str(link->hisAka));
+    w_log(LL_AREAFIX, "areafix: unlinked areas list sent to %s", aka2str(link->hisAka));
 
     return report;
 }
@@ -355,7 +355,7 @@ char *help(s_link *link) {
 
     if (config->areafixhelp!=NULL) {
 	if ((f=fopen(config->areafixhelp,"r")) == NULL) {
-	    w_log ('8', "areafix: cannot open help file \"%s\": %s",
+	    w_log (LL_ERR, "areafix: cannot open help file \"%s\": %s",
 	           config->areafixhelp, strerror(errno));
 	    if (!quiet)
 		fprintf(stderr,"areafix: cannot open help file \"%s\": %s\n", 
@@ -376,7 +376,7 @@ char *help(s_link *link) {
 
 	fclose(f);
 
-	w_log('8', "areafix: help sent to %s",link->name);
+	w_log(LL_AREAFIX, "areafix: help sent to %s",link->name);
 
 	return help;
     }
@@ -421,7 +421,7 @@ char *available(s_link *link, char *cmdline)
 	if ((uplink->forwardRequests && uplink->forwardRequestFile) &&
 	    ((uplink->LinkGrp == NULL) || (found != 0))) {
 	    if ((f=fopen(uplink->forwardRequestFile,"r")) == NULL) {
-		w_log('8', "areafix: cannot open forwardRequestFile \"%s\": %s",
+		w_log(LL_ERR, "areafix: cannot open forwardRequestFile \"%s\": %s",
 		      uplink->forwardRequestFile, strerror(errno));
 		return report;
 	    }
@@ -472,13 +472,13 @@ char *available(s_link *link, char *cmdline)
 
 	    // warning! do not ever use aka2str twice at once!
 	    sprintf(linkAka, "%s", aka2str(link->hisAka));
-	    w_log('8', "areafix: Available Area List from %s sent to %s", aka2str(uplink->hisAka), linkAka);
+	    w_log(LL_AREAFIX, "areafix: Available Area List from %s sent to %s", aka2str(uplink->hisAka), linkAka);
 	}
     }
 
     if (report==NULL) {
 	xstrcat(&report, "\r  no links for creating Available Area List\r");
-	w_log('8', "areafix: no links for creating Available Area List");
+	w_log(LL_AREAFIX, "areafix: no links for creating Available Area List");
     }
     return report;
 }                                                                               
@@ -701,7 +701,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         }
     case 7:
         if ((rc = DelLinkFromString(cfgline, link->hisAka)) == 1) {
-            w_log('9',"areafix: Unlink is not possible for %s from echo area %s",
+            w_log(LL_ERR,"areafix: Unlink is not possible for %s from echo area %s",
                 aka2str(link->hisAka), areaName);
             nRet = O_ERR;
         } else {
@@ -1124,7 +1124,7 @@ char *delete(s_link *link, char *cmd) {
     area = getArea(config, line);
     if (area == &(config->badArea)) {
 	xscatprintf(&report, " %s %s  not found\r", line, print_ch(49-strlen(line), '.'));
-	w_log('8', "areafix: area %s is not found", line);
+	w_log(LL_AREAFIX, "areafix: area %s is not found", line);
 	return report;
     }
     rc = subscribeCheck(*area, link);
@@ -1135,18 +1135,18 @@ char *delete(s_link *link, char *cmd) {
 	break;
     case 1:
 	xscatprintf(&report, " %s %s  not linked\r", an, print_ch(49-strlen(an), '.'));
-	w_log('8', "areafix: area %s is not linked to %s",
+	w_log(LL_AREAFIX, "areafix: area %s is not linked to %s",
 	      an, aka2str(link->hisAka));
 	return report;
     case 2:
 	xscatprintf(&report, " %s %s  no access\r", an, print_ch(49-strlen(an), '.'));
-	w_log('8', "areafix: area %s -- no access for %s", an, aka2str(link->hisAka));
+	w_log(LL_AREAFIX, "areafix: area %s -- no access for %s", an, aka2str(link->hisAka));
 	return report;
     }
     if (link->LinkGrp == NULL || (area->group && strcmp(link->LinkGrp, area->group))) {
 	xscatprintf(&report, " %s %s  delete not allowed\r",
 		    an, print_ch(49-strlen(an), '.'));
-	w_log('8', "areafix: area %s delete not allowed for %s",
+	w_log(LL_AREAFIX, "areafix: area %s delete not allowed for %s",
 	      an, aka2str(link->hisAka));
 	return report;
     }
@@ -1205,10 +1205,10 @@ char *unsubscribe(s_link *link, char *cmd) {
                     j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,7);
                 }
                 if (j != DEL_OK) {
-                    w_log('8', "areafix: %s doesn't unlinked from %s",
+                    w_log(LL_AREAFIX, "areafix: %s doesn't unlinked from %s",
                           aka2str(link->hisAka), an);
                 } else
-                    w_log('8',"areafix: %s unlinked from %s",aka2str(link->hisAka),an);
+                    w_log(LL_AREAFIX,"areafix: %s unlinked from %s",aka2str(link->hisAka),an);
             } else { // unsubscribing from own address
                 if ((area->downlinkCount==1) &&
                     (area->downlinks[0]->link->hisAka.point == 0)) {
@@ -1238,13 +1238,13 @@ char *unsubscribe(s_link *link, char *cmd) {
             }
             xscatprintf(&report, " %s %s  not linked\r",
                         an, print_ch(49-strlen(an), '.'));
-            w_log('8', "areafix: area %s is not linked to %s",
+            w_log(LL_AREAFIX, "areafix: area %s is not linked to %s",
                   area->areaName, aka2str(link->hisAka));
             break;
         case 5:
 	    xscatprintf(&report, " %s %s  unlink is not possible\r",
 			an, print_ch(49-strlen(an), '.'));
-	    w_log('8', "areafix: area %s -- unlink is not possible for %s",
+	    w_log(LL_AREAFIX, "areafix: area %s -- unlink is not possible for %s",
 		  area->areaName, aka2str(link->hisAka));
 	    break;
 	default:
@@ -1256,11 +1256,11 @@ char *unsubscribe(s_link *link, char *cmd) {
         if (matched) {
             xscatprintf(&report, " %s %s  no areas to unlink\r",
                 line, print_ch(49-strlen(line), '.'));
-            w_log('8', "areafix: no areas to unlink");
+            w_log(LL_AREAFIX, "areafix: no areas to unlink");
         } else {
             xscatprintf(&report, " %s %s  not found\r",
                 line, print_ch(49-strlen(line), '.'));
-            w_log('8', "areafix: area %s is not found", line);
+            w_log(LL_AREAFIX, "areafix: area %s is not found", line);
         }
     }
     return report;
@@ -1323,7 +1323,7 @@ char *info_link(s_link *link)
     ptr = linked (link);
     xstrcat(&report, ptr);
     nfree(ptr);
-    w_log('8', "areafix: link information sent to %s", aka2str(link->hisAka));
+    w_log(LL_AREAFIX, "areafix: link information sent to %s", aka2str(link->hisAka));
     return report;
 }
 
@@ -1404,7 +1404,7 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount)
        MsgCloseArea(area);
        closeOpenedPkt();
       
-   } else w_log('9', "Could not open %s: %s", echo->fileName, strerror(errno));
+   } else w_log(LL_ERR, "Could not open %s: %s", echo->fileName, strerror(errno));
 
    return rc;
 }
@@ -1454,7 +1454,7 @@ char *rescan(s_link *link, char *cmd) {
 	    if (area->msgbType == MSGTYPE_PASSTHROUGH) {
 		xscatprintf(&report," %s %s  no rescan possible\r",
 			    an, print_ch(49-strlen(an), '.'));
-		w_log('8', "areafix: %s area no rescan possible to %s",
+		w_log(LL_AREAFIX, "areafix: %s area no rescan possible to %s",
 		      an, aka2str(link->hisAka));
 	    } else {
 
@@ -1466,22 +1466,22 @@ char *rescan(s_link *link, char *cmd) {
 		    rcc = 0;
 		    xscatprintf(&report," %s %s  no access to export\r",
 				an, print_ch(49-strlen(an), '.'));
-		    w_log('8', "areafix: %s -- no access to export for %s",
+		    w_log(LL_AREAFIX, "areafix: %s -- no access to export for %s",
 			  an, aka2str(link->hisAka));
 		}
 		xscatprintf(&report," %s %s  rescanned %lu mails\r",
 			    an, print_ch(49-strlen(an), '.'), rcc);
-		w_log('8',"areafix: %s rescanned %lu mails to %s",
+		w_log(LL_AREAFIX,"areafix: %s rescanned %lu mails to %s",
 		      an, rcc, aka2str(link->hisAka));
 	    }
 	    break;
 	case 1: if (isPatternLine(line)) continue;
-	    w_log('8', "areafix: %s area not linked for rescan to %s",
+	    w_log(LL_AREAFIX, "areafix: %s area not linked for rescan to %s",
 		  area->areaName, aka2str(link->hisAka));
 	    xscatprintf(&report, " %s %s  not linked for rescan\r",
 			an, print_ch(49-strlen(an), '.'));
 	    break;
-	default: w_log('8', "areafix: %s area not access for %s",
+	default: w_log(LL_AREAFIX, "areafix: %s area not access for %s",
 		       area->areaName, aka2str(link->hisAka));
 	    break;
 	}
@@ -1489,7 +1489,7 @@ char *rescan(s_link *link, char *cmd) {
     if (report == NULL) {
 	xscatprintf(&report," %s %s  not linked for rescan\r",
 		    line, print_ch(49-strlen(line), '.'));
-	w_log('8', "areafix: %s area not linked for rescan", line);
+	w_log(LL_AREAFIX, "areafix: %s area not linked for rescan", line);
     }
     return report;
 }
@@ -1727,7 +1727,7 @@ void RetRules (s_message *msg, s_link *link, char *areaName)
 
 
     if ((area=getArea(config, areaName)) == &(config->badArea)) {
-	w_log('9', "areafix: can't find area '%s'", areaName);
+	w_log(LL_ERR, "areafix.c::RetRules(): can't find area '%s'", areaName);
 	return;
     }
 
@@ -1752,11 +1752,11 @@ void RetRules (s_message *msg, s_link *link, char *areaName)
 
 	if (nrul==0) {
 	    xscatprintf(&subj, "Rules of %s", areaName);
-	    w_log('7', "areafix: send '%s' as rules for area '%s'",
+	    w_log(LL_AREAFIX, "areafix: send '%s' as rules for area '%s'",
 		  fileName, areaName);
 	} else {
 	    xscatprintf(&subj, "Echo related text #%d of %s", nrul, areaName);
-	    w_log('7', "areafix: send '%s' as text %d for area '%s'",
+	    w_log(LL_AREAFIX, "areafix: send '%s' as text %d for area '%s'",
 		  fileName, nrul, areaName);
 	}
 
@@ -1769,7 +1769,7 @@ void RetRules (s_message *msg, s_link *link, char *areaName)
     }
 
     if (nrul==0) { // couldn't open any rules file while first one exists!
-	w_log('9', "areafix: can't open file '%s' for reading: %s", fileName, strerror(errno));
+	w_log(LL_ERR, "areafix: can't open file '%s' for reading: %s", fileName, strerror(errno));
     }
     nfree (fileName);
 
@@ -1789,7 +1789,7 @@ void sendAreafixMessages()
         xscatprintf(&(linkmsg->text), " \r--- %s areafix\r", versionStr);
         linkmsg->textLength = strlen(linkmsg->text);
         
-        w_log('8', "areafix: write netmail msg for %s", aka2str(link->hisAka));
+        w_log(LL_AREAFIX, "areafix: write netmail msg for %s", aka2str(link->hisAka));
         
         processNMMsg(linkmsg, NULL, getNetMailArea(config,config->robotsArea),
             0, MSGLOCAL);
@@ -1949,7 +1949,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 	}
 
 	RetMsg(msg, link, report, "areafix reply: security violation");
-	w_log('8', "areafix: security violation from %s", aka2str(link->hisAka));
+	w_log(LL_AREAFIX, "areafix: security violation from %s", aka2str(link->hisAka));
 	nfree(tmplink);
         w_log(LL_FUNC, "areafix.c::processAreaFix() rc=1");
 	return 1;
@@ -1972,7 +1972,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 	nfree (rulesList);
     }
 
-    w_log('8', "areafix: successfully done for %s",aka2str(link->hisAka));
+    w_log(LL_AREAFIX, "areafix: successfully done for %s",aka2str(link->hisAka));
 
     // send msg to the links (forward requests to areafix)
     sendAreafixMessages();
@@ -2174,7 +2174,7 @@ void autoPassive()
 			  }
 
 			  if (time_test >= (time_t)(config->links[i].autoPause*24)) {
-			      w_log('8', "autopause: the file %s is %d days old", path, time_test/24);
+			      w_log(LL_AREAFIX, "autopause: the file %s is %d days old", path, time_test/24);
 			      if (Changepause((cfgFile) ? cfgFile :
 					      getConfigFileName(),
 					      &(config->links[i]), 1,
@@ -2239,16 +2239,16 @@ int relink (char *straddr) {
 	}
     }
 
-    w_log('1', "Start relink...");
+    w_log(LL_START, "Start relink...");
 
     if (straddr) researchLink = getLink(config, straddr);
     else {
-	w_log('9', "No address");
+	w_log(LL_ERR, "No address");
 	return 1;
     }
 
     if ( researchLink == NULL ) {
-	w_log('9', "Unknown link address %s", straddr);
+	w_log(LL_ERR, "Unknown link address %s", straddr);
 	return 1;
     }
 
@@ -2260,7 +2260,7 @@ int relink (char *straddr) {
 	if ( isLinkOfArea(researchLink, &config->echoAreas[count])) {
 	    areasIndexArray[areasArraySize] = &config->echoAreas[count];
 	    areasArraySize++;
-	    w_log('8', "Echo %s from link %s refreshed",
+	    w_log(LL_AREAFIX, "Echo %s from link %s refreshed",
 		  config->echoAreas[count].areaName, aka2str(researchLink->hisAka));
 	}
 
@@ -2288,7 +2288,7 @@ int relink (char *straddr) {
 
 	xscatprintf(&(msg->text), " \r--- %s areafix\r", versionStr);
 	msg->textLength = strlen(msg->text);
-	w_log('8', "'Refresh' message created to `%s`",
+	w_log(LL_AREAFIX, "'Refresh' message created to `%s`",
 	      researchLink->RemoteRobotName ?
 	      researchLink->RemoteRobotName : "areafix");
 	processNMMsg(msg, NULL,
@@ -2297,7 +2297,7 @@ int relink (char *straddr) {
 	closeOpenedPkt();
 	freeMsgBuffers(msg);
 	nfree(msg);
-	w_log('8', "Total request relink %i area(s)",areasArraySize);
+	w_log(LL_AREAFIX, "Total request relink %i area(s)",areasArraySize);
     }
 
     nfree(areasIndexArray);

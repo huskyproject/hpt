@@ -173,7 +173,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     creatingLink = getLinkFromAddr(config, pktOrigAddr);
 
     if (creatingLink == NULL) {
-	w_log('9', "creatingLink == NULL !!!");
+	w_log(LL_ERR, "creatingLink == NULL !!!");
 	return 8;
     }
 
@@ -266,7 +266,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     // echoarea addresses changed by safe_reallocating of config->echoAreas[]
     carbonNames2Addr(config);
 
-    w_log('8', "Area %s autocreated by %s", c_area, hisaddr);
+    w_log(LL_AUTOCREATE, "Area %s autocreated by %s", c_area, hisaddr);
    
     if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr, NULL);
     else makeMsgToSysop(c_area, *forwardAddr, &pktOrigAddr);
@@ -276,9 +276,9 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     // create flag
     if (config->aacFlag) {
 	if (NULL == (f = fopen(config->aacFlag,"a")))
-	    w_log('9', "Could not open autoAreaCreate flag: %s", config->aacFlag);
+	    w_log(LL_ERR, "Could not open autoAreaCreate flag: %s", config->aacFlag);
 	else {
-	    w_log('0', "Created autoAreaCreate flag: %s", config->aacFlag);
+	    w_log(LL_FLAG, "Created autoAreaCreate flag: %s", config->aacFlag);
 	    fclose(f);
 	}
     }
@@ -399,12 +399,12 @@ char* af_Req2Idle(char *areatag, char* report, s_addr linkAddr)
                     strcpy(areaNode->type,czIdleArea);
                     areaNode->bTime = tnow;
                     areaNode->eTime = tnow + config->idlePassthruTimeout*secInDay;
-                    w_log('8', "areafix: make request idle for area: %s", areaNode->name);
+                    w_log(LL_AREAFIX, "areafix: make request idle for area: %s", areaNode->name);
                 }
                 xscatprintf(&report, " %s %s  request canceled\r",
                     areaNode->name, 
                     print_ch(49-strlen(areaNode->name), '.'));
-                w_log('8', "areafix: request canceled for [%s] area: %s",aka2str(linkAddr),
+                w_log(LL_AREAFIX, "areafix: request canceled for [%s] area: %s",aka2str(linkAddr),
                     areaNode->name);
             }
         }
@@ -464,7 +464,7 @@ void af_QueueReport()
     
     if(!fexist(reportFlg))
     {
-        w_log('1', "Queue file wasn't changed. Exiting...");
+        w_log(LL_STOP, "Queue file wasn't changed. Exiting...");
         nfree(reportFlg);
         return;
     }
@@ -554,7 +554,7 @@ void af_QueueReport()
     if(!report)
         return;
 
-    w_log('1', "Start generating queue report");
+    w_log(LL_START, "Start generating queue report");
     xscatprintf(&header,rmask,"Area","Act","From","By","Details");
     xscatprintf(&header,"%s\r", print_ch(79,'-'));
     xstrcat(&header, report);
@@ -580,7 +580,7 @@ void af_QueueReport()
     xstrcat( &(msgToSysop[0]->text), "\001FLAGS NPD\r");
     xstrcat( &(msgToSysop[0]->text), report );
 
-    w_log('1', "End generating queue report");
+    w_log(LL_STOP, "End generating queue report");
     
     writeMsgToSysop();
     freeMsgBuffers(msgToSysop[0]);
@@ -596,7 +596,7 @@ void af_QueueUpdate()
     s_link *lastRlink;
     s_link *dwlink;
  
-    w_log('1', "Start updating queue file");    
+    w_log(LL_START, "Start updating queue file");    
     if( !queryAreasHead ) af_OpenQuery();
 
     tmpNode = queryAreasHead;
@@ -656,7 +656,7 @@ void af_QueueUpdate()
     }
     // send msg to the links (forward requests to areafix)
     sendAreafixMessages();
-    w_log('1', "End updating queue file");    
+    w_log(LL_STOP, "End updating queue file");    
 }
 
 int af_OpenQuery()
@@ -775,7 +775,7 @@ int af_CloseQuery()
     {
         if ((queryFile = fopen(config->areafixQueueFile,"w")) == NULL)
         {
-            w_log('9',"areafix: areafixQueueFile not saved");
+            w_log(LL_ERR,"areafix: areafixQueueFile not saved");
             writeChanges = 0;
         }
         else

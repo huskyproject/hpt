@@ -426,11 +426,11 @@ FARPROC WINAPI ourhook(unsigned dliNotify,PDelayLoadInfo pdli)
   char msg[128];
   memset(msg,0,sizeof(msg));
   sprintf(msg,"Loading of %s failed - exiting ",pdli->szDll);
-  w_log('8',msg);
+  w_log(LL_CRIT,msg);
   //standart deinit sequence
   // deinit SMAPI
   MsgCloseApi();
-  w_log('1', "End");
+  w_log(LL_STOP, "End");
 
   closeLog(hpt_log);
   doneCharsets();

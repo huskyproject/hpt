@@ -96,7 +96,7 @@ s_pktHeader *openPkt(FILE *pkt)
   pktVersion = getUINT16(pkt);
   if (pktVersion != 2) {
 	  nfree(header);
-	  w_log('9',"Invalid pkt version %u!",pktVersion);
+	  w_log(LL_ERR,"Invalid pkt version %u!",pktVersion);
 	  return NULL;
   } /* endif */
 
@@ -124,7 +124,7 @@ s_pktHeader *openPkt(FILE *pkt)
 	  /* but read stone-age pkt */
 	  if (capWord!=header->capabilityWord && header->capabilityWord!=0) {
 		  nfree(header);
-		  w_log('9',"CapabilityWord error in following pkt! rtfm: IgnoreCapWord.");
+		  w_log(LL_ERR,"CapabilityWord error in following pkt! rtfm: IgnoreCapWord.");
 		  return NULL;
 	  } /* endif */
   }
@@ -347,7 +347,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
       free(msg->text);
       msg->text = text;
       
-      w_log('7', "Mail without INTL-Kludge. Assuming %i:%i/%i.%i -> %i:%i/%i.%i",
+      w_log( LL_PKT, "Mail without INTL-Kludge. Assuming %i:%i/%i.%i -> %i:%i/%i.%i",
 		    msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
 		    msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
    } /* endif */
@@ -593,7 +593,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
        unread = ftell(pkt) - unread; // unread bytes
 
        if (unread) {
-	   w_log('9',"There is %d bytes of unknown data at the end of pkt file!",
+	   w_log(LL_ERR,"There is %d bytes of unknown data at the end of pkt file!",
 		 unread);
 	   return 2; // rename to bad
        }
@@ -622,7 +622,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    len = fgetsUntil0 ((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
    if (len > XMSG_TO_SIZE) {
        if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
-       w_log('9', "wrong msg header: toUserName (%s) longer than %d bytes.",
+       w_log(LL_ERR, "wrong msg header: toUserName (%s) longer than %d bytes.",
 	     globalBuffer, XMSG_TO_SIZE-1);
        if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
        globalBuffer[XMSG_TO_SIZE-1]='\0';
@@ -633,7 +633,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
    if (len > XMSG_FROM_SIZE) {
        if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
-       w_log('9', "wrong msg header: fromUserName (%s) longer than %d bytes.",
+       w_log(LL_ERR, "wrong msg header: fromUserName (%s) longer than %d bytes.",
 	     globalBuffer, XMSG_FROM_SIZE-1);
        if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
        globalBuffer[XMSG_FROM_SIZE-1]='\0';
@@ -644,7 +644,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
    if (len > XMSG_SUBJ_SIZE) {
        if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
-       w_log('9', "wrong msg header: subectLine (%s) longer than %d bytes.",
+       w_log(LL_ERR, "wrong msg header: subectLine (%s) longer than %d bytes.",
 	     globalBuffer, XMSG_SUBJ_SIZE-1);
        if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
        globalBuffer[XMSG_SUBJ_SIZE-1]='\0';
@@ -655,7 +655,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    if (badmsg) {
        freeMsgBuffers(msg);
        *message = NULL;
-       w_log('9', "wrong msg header: renaming pkt to bad.");
+       w_log(LL_ERR, "wrong msg header: renaming pkt to bad.");
        return 2; // exit with error
    }
 

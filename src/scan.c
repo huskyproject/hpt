@@ -320,7 +320,7 @@ void processAttachs(s_link *link, s_message *msg, unsigned int attr)
    
    if (flo!= NULL) {
       fclose(flo);
-   } else w_log('9', "Could not open FloFile");
+   } else w_log(LL_ERR, "Could not open FloFile");
 
    // replace subjectLine
    nfree(msg->subjectLine);
@@ -345,7 +345,7 @@ void processRequests(s_link *link, s_message *msg)
    }
    if (flo!= NULL) {
       fclose(flo);
-   } else w_log('9', "Could not open FloFile");
+   } else w_log(LL_ERR, "Could not open FloFile");
 
 }
 
@@ -418,7 +418,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   xmsg->attr |= MSGSENT;
 		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 		   nfree(link->floFile);
-		   w_log('7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
+		   w_log(LL_FROUTE, "File %s from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
 	       }
 	   }
        }
@@ -430,7 +430,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   xmsg->attr |= MSGSENT;
 		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 		   nfree(virtualLink->floFile);
-		   w_log('7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   w_log(LL_FROUTE, "File %s from %u:%u/%u.%u -> %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 	   }
    } /* endif file attach */
 
@@ -445,7 +445,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   xmsg->attr |= MSGSENT;
 		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 		   nfree(virtualLink->floFile);
-		   w_log('7', "Request %s from %u:%u/%u.%u", msg.subjectLine, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   w_log(LL_FREQ, "Request %s from %u:%u/%u.%u", msg.subjectLine, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 	   }
    }
 
@@ -474,11 +474,11 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   pkt = openPktForAppending(arcNetmail ? virtualLink->pktFile : virtualLink->floFile, &header);
 		   writeMsgToPkt(pkt, msg);
 		   closeCreatedPkt(pkt);
-		   if (prio==crash) w_log('7', "Crash-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   else if (prio==hold) w_log('7', "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   else if (prio==direct) w_log('7', "Direct-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   else if (prio==immediate) w_log('7', "Immediate-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   else if (prio==normal) w_log('7', "Normal-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   if (prio==crash) w_log(LL_ROUTE, "Crash-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   else if (prio==hold) w_log(LL_ROUTE, "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   else if (prio==direct) w_log(LL_ROUTE, "Direct-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   else if (prio==immediate) w_log(LL_ROUTE, "Immediate-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   else if (prio==normal) w_log(LL_ROUTE, "Normal-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
                    if (!arcNetmail) {
 		         remove(virtualLink->bsyFile);
 		         nfree(virtualLink->bsyFile);
@@ -522,7 +522,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 			   pkt = openPktForAppending(arcNetmail ? link->pktFile : link->floFile, &header);
 			   writeMsgToPkt(pkt, msg);
 			   closeCreatedPkt(pkt);
-			   w_log('7', "Msg from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
+			   w_log(LL_ROUTE, "Msg from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
                            if (!arcNetmail) {
 			        remove(link->bsyFile);
 			        nfree(link->bsyFile);
@@ -533,8 +533,8 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 			   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 		   }
 	   } else {
-                if ((xmsg->attr & MSGFILE) == MSGFILE) w_log('7', "no routeFile found or no-pack for %s - leave mail untouched", aka2str(msg.destAddr));
-		else w_log('7', "no route found or no-pack for %s - leave mail untouched", aka2str(msg.destAddr));
+                if ((xmsg->attr & MSGFILE) == MSGFILE) w_log(LL_FROUTE, "no routeFile found or no-pack for %s - leave mail untouched", aka2str(msg.destAddr));
+		else w_log(LL_ROUTE, "no route found or no-pack for %s - leave mail untouched", aka2str(msg.destAddr));
 	   }
    }
 
@@ -568,13 +568,13 @@ void scanNMArea(s_area *area)
    if (area->scn) return;
 
    if (config->routeCount == 0) {
-       w_log('7', "No routing -> Scanning stop");
+       w_log(LL_ROUTE, "No routing -> Scanning stop");
        // create flag for netmail trackers
        if (config->netmailFlag) {
 	   if (NULL == (f = fopen(config->netmailFlag,"a")))
-	       w_log('9', "Could not create netmail flag: %s", config->netmailFlag);
+	       w_log(LL_ERR, "Could not create netmail flag: %s", config->netmailFlag);
 	   else {
-	       w_log('0', "Created netmail flag: %s", config->netmailFlag);
+	       w_log(LL_FLAG, "Created netmail flag: %s", config->netmailFlag);
 	       fclose(f);
 	   }
        }
@@ -590,7 +590,7 @@ void scanNMArea(s_area *area)
 
        statScan.areas++;
        area->scn++;
-       w_log('1', "Scanning NetmailArea %s", area -> areaName);
+       w_log(LL_START, "Scanning NetmailArea %s", area -> areaName);
 
        if (area->msgbType == MSGTYPE_SDM) noHighWaters = 1;
        i = (noHighWaters) ? 0 : MsgGetHighWater(netmail);
@@ -642,32 +642,26 @@ void scanNMArea(s_area *area)
        MsgCloseArea(netmail);
        closeOpenedPkt();
    } else {
-       w_log('9', "Could not open NetmailArea %s", area -> areaName);
+       w_log(LL_ERR, "Could not open NetmailArea %s", area -> areaName);
    } /* endif */
 }
 
 void writeScanStatToLog(void) {
-   char logchar;
    unsigned i;
 
-   if (statScan.exported==0)
-      logchar='1';
-     else
-      logchar='4';
-
-   w_log(logchar, "Statistics");
-   w_log(logchar, "    areas: % 4d   msgs: % 6d", statScan.areas, statScan.msgs);
-   w_log(logchar, "    exported: % 4d", statScan.exported);
+   w_log(LL_STAT, "Statistics");
+   w_log(LL_STAT, "    areas: % 4d   msgs: % 6d", statScan.areas, statScan.msgs);
+   w_log(LL_STAT, "    exported: % 4d", statScan.exported);
 
    /* Now write areas summary */
-   w_log(logchar, "Areas summary:");
+   w_log(LL_SUMMARY, "Areas summary:");
    for (i = 0; i < config->netMailAreaCount; i++)
        if (config->netMailAreas[i].scn > 1)
-	   w_log(logchar, "netmail area %s - %d msgs", 
+	   w_log(LL_SUMMARY, "netmail area %s - %d msgs", 
 		 config->netMailAreas[i].areaName, config->netMailAreas[i].scn-1);
    for (i = 0; i < config->echoAreaCount; i++)
        if (config->echoAreas[i].scn > 1)
-	   w_log(logchar, "echo area %s - %d msgs", 
+	   w_log(LL_SUMMARY, "echo area %s - %d msgs", 
 		 config->echoAreas[i].areaName, config->echoAreas[i].scn-1);
 }
 
@@ -701,9 +695,9 @@ int scanByName(char *name) {
 	    }
 	} else {
 	    if (NULL != getLocalArea(config,name))
-		w_log('4', "Area \'%s\' is local -> Skipped", name);
+		w_log(LL_SCANNING, "Area \'%s\' is local -> Skipped", name);
 	    else
-		w_log('4', "Area \'%s\' is not found -> Scanning stop", name);
+		w_log(LL_SCANNING, "Area \'%s\' is not found -> Scanning stop", name);
 	}
     }
     return 0;
@@ -722,7 +716,7 @@ void scanExport(int type, char *str) {
 
    // zero statScan   
    memset(&statScan, '\0', sizeof(s_statScan));
-   w_log('1', "Start %s%s...",
+   w_log(LL_START, "Start %s%s...",
 		   type & SCN_ECHOMAIL ? "scanning" : "packing",
 		   type & SCN_FILE ? " with -f " : 
 		   type & SCN_NAME ? " with -a " : "");
@@ -746,7 +740,7 @@ void scanExport(int type, char *str) {
            if (f != NULL && config->packNetMailOnScan == 0) {
                ftmp = fopen(tmplogname, "w");
                if (ftmp == NULL) {
-                   w_log('9', "Can't open file %s for writing : %s", tmplogname, strerror(errno));
+                   w_log(LL_ERR, "Can't open file %s for writing : %s", tmplogname, strerror(errno));
                    // close file so all areas will be scanned instead of panic.
                    fclose(f);
                }
@@ -761,7 +755,7 @@ void scanExport(int type, char *str) {
        if (f != NULL) {
            ftmp = fopen(tmplogname, "w");
            if (ftmp == NULL) {
-               w_log('9', "Can't open file %s for writing : %s", tmplogname, strerror(errno));
+               w_log(LL_ERR, "Can't open file %s for writing : %s", tmplogname, strerror(errno));
                // close file so all areas will be scanned instead of panic.
                fclose(f);
            }
@@ -774,13 +768,13 @@ void scanExport(int type, char *str) {
        scanByName(str);
    } else if (f == NULL) {
        if (type & SCN_FILE) {
-           w_log('4', "EchoTossLogFile not found -> Scanning stop");
+           w_log(LL_START, "EchoTossLogFile not found -> Scanning stop");
            nfree(tmplogname);
            return;
        }
        if (type & SCN_ECHOMAIL) {
            // if echotoss file does not exist scan all areas
-           w_log('4', "EchoTossLogFile not found -> Scanning all areas.");
+           w_log(LL_START, "EchoTossLogFile not found -> Scanning all areas.");
            for (i = 0; i< config->echoAreaCount; i++) {
                if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
                    scanEMArea(&(config->echoAreas[i]));
@@ -794,7 +788,7 @@ void scanExport(int type, char *str) {
        };
    } else {
        // else scan only those areas which are listed in the file
-       w_log('4', "EchoTossLogFile found -> Scanning only listed areas");
+       w_log(LL_START, "EchoTossLogFile found -> Scanning only listed areas");
 
        while (!feof(f)) {
            line = readLine(f);
@@ -836,11 +830,11 @@ void scanExport(int type, char *str) {
                remove(config->echotosslog);
                if (tmplogname)
                    if (remove(tmplogname) != 0)
-                       w_log('9', "Couldn't remove temporary file\"%s\"", tmplogname);
+                       w_log(LL_ERR, "Couldn't remove temporary file\"%s\"", tmplogname);
            } else { // we still have areas
                remove(config->echotosslog);
                if (rename(tmplogname, config->echotosslog) != 0)
-                   w_log('9', "Couldn't rename \"%s\" -> \"%s\"", tmplogname, config->echotosslog);
+                   w_log(LL_ERR, "Couldn't rename \"%s\" -> \"%s\"", tmplogname, config->echotosslog);
            }
        }
        else if (type & SCN_FILE) {
@@ -848,11 +842,11 @@ void scanExport(int type, char *str) {
                remove(str);
                if (tmplogname)
                    if (remove(tmplogname) != 0)
-                       w_log('9', "Couldn't remove temporary file\"%s\"", tmplogname);
+                       w_log(LL_ERR, "Couldn't remove temporary file\"%s\"", tmplogname);
            } else {
                remove(str);
                if (rename(tmplogname, str) != 0)
-                   w_log('9', "Couldn't rename \"%s\" -> \"%s\"", tmplogname, str);
+                   w_log(LL_ERR, "Couldn't rename \"%s\" -> \"%s\"", tmplogname, str);
            }
        }
    };

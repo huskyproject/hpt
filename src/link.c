@@ -373,7 +373,7 @@ int linkArea(s_area *area, int netMail)
       nfree(ctl);
       MsgCloseArea(harea);
    } else {
-      w_log('9', "could not open area %s", area->areaName);
+      w_log(LL_ERR, "could not open area %s", area->areaName);
       return 0;
    }
    return 1;
@@ -393,7 +393,7 @@ void linkAreas(char *name)
 	   } else {
 		   area = getArea(config, name);
 		   if (area->areaName != config->badArea.areaName) linkArea(area,0);
-		   else w_log('9', "area %s not found for link",name);
+		   else w_log(LL_ERR, "area %s not found for link",name);
 	   }
 	   return;
    }

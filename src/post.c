@@ -393,7 +393,7 @@ void post(int c, unsigned int *n, char *params[])
         if (msg.netMail) echo=&(config->netMailAreas[0]);
         
         
-        w_log('1', "Start posting...");
+        w_log(LL_START, "Start posting...");
         part = 0; 
         do
         {
@@ -448,13 +448,13 @@ void post(int c, unsigned int *n, char *params[])
 
             if ((msg.destAddr.zone + msg.destAddr.net +
                 msg.destAddr.node + msg.destAddr.point)==0)
-                w_log('5',
+                w_log(LL_POSTING,
                 "Posting msg from %u:%u/%u.%u -> %s in area: %s",
                 msg.origAddr.zone, msg.origAddr.net,
                 msg.origAddr.node, msg.origAddr.point,
                 msg.toUserName,
                 (area) ? area : echo->areaName);
-            else w_log('5',
+            else w_log(LL_POSTING,
                 "Posting msg from %u:%u/%u.%u -> %u:%u/%u.%u in area: %s",
                 msg.origAddr.zone, msg.origAddr.net,
                 msg.origAddr.node, msg.origAddr.point,
