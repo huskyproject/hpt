@@ -1,3 +1,13 @@
+2004-01-21 Wednesday 02:34  andr_lukyanov
+
+	* make/: makefile.mvc (1.14), makefile.mvcdll (1.18): Fix MSVC
+	compilation with perl v5.6 or v5.8
+
+2004-01-21 Wednesday 02:29  andr_lukyanov
+
+	* make/: makefile.mvc (1.13), makefile.mvcdll (1.17): Fix MSVC
+	compilation with perl v5.6 or v5.8
+
 2004-01-20 Tuesday 17:46  andrew_ladutsko
 
 	* src/perl.c (1.75): use VK_START_HOOK macro in perldone()
