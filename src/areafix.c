@@ -594,6 +594,10 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     InsertCfgLine(fileName, cfgline, strbeg, strend);
     nfree(cfgline);
     nfree(fileName);
+#ifdef DO_PERL
+    /* val: update perl structures */
+    perl_setvars();
+#endif
     w_log(LL_FUNC, __FILE__ "::changeconfig() rc=%i", nRet);
     return nRet;
 }

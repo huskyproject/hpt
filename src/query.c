@@ -38,6 +38,10 @@
 #include <areafix.h>
 #include <query.h>
 
+#ifdef DO_PERL
+#include <hptperl.h>
+#endif
+
 static  time_t  tnow;
 const   long    secInDay = 3600*24;
 const char czFreqArea[] = "freq";
@@ -362,6 +366,11 @@ e_BadmailReasons autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAd
     else makeMsgToSysop(c_area, *forwardAddr, &pktOrigAddr);
 
     nfree(hisaddr);
+
+#ifdef DO_PERL
+    /* val: update perl structures */
+    perl_setvars();
+#endif
 
     /*  create flag */
     if (config->aacFlag) {

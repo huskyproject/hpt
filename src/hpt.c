@@ -565,9 +565,6 @@ int main(int argc, char **argv)
 	   } else linkAreas(linkName);
    }
    nfree(linkName);
-#ifdef DO_PERL
-   perldone();
-#endif
 
    writeMsgToSysop();
 
@@ -584,6 +581,9 @@ int main(int argc, char **argv)
    af_CloseQuery();
    nfree(msgToSysop);
 
+#ifdef DO_PERL
+   perldone();
+#endif
 #ifdef ADV_STAT
    if (config->advStatisticsFile != NULL) upd_stat(config->advStatisticsFile);
 #endif
