@@ -708,6 +708,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         // add all links
         xstrcat( &buff, strstr(cfgline, aka2str(area->downlinks[0]->link->hisAka))-1);
         fprintf(f, "\n%s\n", buff); // add line to config
+        nRet = ADD_OK;
         break;
     }
     /* if(action == 6) // make area pass. not implemented yet*/ 
@@ -921,18 +922,34 @@ char *subscribe(s_link *link, char *cmd) {
 	    }
 	    break;
 	case 1: 
-	    if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==ADD_OK) {
-		addlink(link, area);
-		fixRules (link, area);
-		xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
-		w_log('8', "areafix: %s subscribed to %s",aka2str(link->hisAka),an);
-	    } else {
-		xscatprintf(&report," %s %s  error. report to sysop!\r",
-			    an,print_ch(49-strlen(an),'.'));
-		w_log('8', "areafix: %s not subscribed to %s",
-		      aka2str(link->hisAka),an);
-		w_log('9', "areafix: can't write to config file!");
-	    }
+        if( isOurAka(link->hisAka)) {
+            if(area->msgbType==MSGTYPE_PASSTHROUGH) {
+                int state = 
+                changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,5);
+                if( state == ADD_OK) {
+                    xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
+                    w_log('8', "areafix: %s subscribed to %s",aka2str(link->hisAka),an);
+                } else {
+                    xscatprintf(&report, " %s %s  not subscribed\r",an,print_ch(49-strlen(an), '.'));
+                    w_log('8', "areafix: %s not subscribed to %s , cause uplink",aka2str(link->hisAka),an);
+                    w_log('8', "areafix: %s has \"passthrough\" in \"autoAreaCreateDefaults\"",aka2str(area->downlinks[0]->link->hisAka),an);
+                }
+            } else {
+                xscatprintf(&report, " %s %s  already linked\r",an, print_ch(49-strlen(an), '.'));
+                w_log('8', "areafix: %s already linked to %s",aka2str(link->hisAka), an);
+            }
+        } else {
+            if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==0) {
+                addlink(link, area);
+        		fixRules (link, area);
+                xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
+                w_log('8', "areafix: %s subscribed to %s",aka2str(link->hisAka),an);
+            } else {
+                xscatprintf(&report," %s %s  error. report to sysop!\r",an,print_ch(49-strlen(an),'.'));
+                w_log('8', "areafix: %s not subscribed to %s",aka2str(link->hisAka),an);
+                w_log('9', "areafix: can't write to config file!");
+            }//if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==0)
+        }
 	    if (!isPatternLine(line)) i = config->echoAreaCount;
 	    break;
 	case 6:
@@ -957,16 +974,14 @@ char *subscribe(s_link *link, char *cmd) {
 	    if ((rc=forwardRequest(line, link))==2) {
 		xscatprintf(&report, " %s %s  no uplinks to forward\r",
 			    line, print_ch(49-strlen(line), '.'));
-		w_log('8', "areafix: %s - no uplinks to forward", line);
+		w_log( LL_AREAFIX, "areafix: %s - no uplinks to forward", line);
 	    }
 	    else if (rc==0) {
 		xscatprintf(&report, " %s %s  request forwarded\r",
 			    line, print_ch(49-strlen(line), '.'));
 		w_log('8', "areafix: %s - request forwarded", line);
-
-		if (isOurAka(link->hisAka)==0) {
-		    area = getArea(config, line);
-
+        if( !config->areafixQueueFile && isOurAka(link->hisAka)==0)
+        {
 		    if ( !isLinkOfArea(link, area) ) {
 			changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3);
 			addlink(link, area);
@@ -980,7 +995,7 @@ char *subscribe(s_link *link, char *cmd) {
     }
 
     if (rc == 6) {
-	w_log('8',"areafix: area %s -- no access (full limit) for %s",
+	w_log( LL_AREAFIX,"areafix: area %s -- no access (full limit) for %s",
 	      line, aka2str(link->hisAka));
 	xscatprintf(&report," %s %s  no access (full limit)\r",
 		    line, print_ch(49-strlen(line), '.'));
@@ -988,7 +1003,7 @@ char *subscribe(s_link *link, char *cmd) {
 
     if ((report == NULL && found==0) || (found && area->hide)) {
 	xscatprintf(&report," %s %s  not found\r",line,print_ch(49-strlen(line),'.'));
-	w_log('8', "areafix: area %s is not found",line);
+	w_log( LL_AREAFIX, "areafix: area %s is not found",line);
     }
     return report;
 }
@@ -1015,7 +1030,9 @@ static char *do_delete(s_link *link, s_area *area) {
 	    forwardRequestToLink(an, area->downlinks[i]->link, NULL, 2);
     }
     /* remove area from config-file */
-    changeconfig ((cfgFile) ? cfgFile : getConfigFileName(),  area, link, 4);
+    if( changeconfig ((cfgFile) ? cfgFile : getConfigFileName(),  area, link, 4) ) {
+       w_log( LL_AREAFIX, "areafix: can't remove area from config" );
+    }
 
     /* delete msgbase and dupebase for the area */
     if (area->msgbType!=MSGTYPE_PASSTHROUGH)
@@ -1028,7 +1045,7 @@ static char *do_delete(s_link *link, s_area *area) {
 	}
     }
 
-    w_log('8', "areafix: area %s deleted by %s",
+    w_log( LL_AREAFIX, "areafix: area %s deleted by %s",
                   an, aka2str(link->hisAka));
 
     /* delete the area from in-core config */
@@ -1125,7 +1142,7 @@ char *unsubscribe(s_link *link, char *cmd) {
 			return do_delete(link, area);
 		removelink(link, area);
 		j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,1);
-		if (j) {
+		if (j != DEL_OK) {
 		    w_log('8', "areafix: %s doesn't unlinked from %s",
 			  aka2str(link->hisAka), an);
 		} else
@@ -1137,7 +1154,7 @@ char *unsubscribe(s_link *link, char *cmd) {
 		    forwardRequestToLink(area->areaName,
 					 area->downlinks[0]->link, NULL, 1);
 	    }
-	    if (j==0)
+	    if (j == DEL_OK)
 		xscatprintf(&report," %s %s  unlinked\r",an,print_ch(49-strlen(an),'.'));
 	    else
 		xscatprintf(&report," %s %s  error. report to sysop!\r",
