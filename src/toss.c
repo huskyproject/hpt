@@ -35,7 +35,9 @@
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
- *****************************************************************************/
+ *****************************************************************************
+ * $Id$
+ */
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -699,7 +701,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		
 	if ((f=fopen(debug,"a"))==NULL) {
 	    w_log('9',"can't open file: %s",debug);
-	}
+	}else w_log(LL_FILE,"toss.c:forwardToLinks(): opened %s (\"a\" mode)",debug);
 	nfree(debug);
     }
 
@@ -918,7 +920,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
     if (!msgfp) {
 	w_log('9', "external process %s: cannot create file", progname);
 	return 1;
-    };
+    }else w_log(LL_FILE,"toss.c:processExternal() opened '%s' (\"\" mode)", fname);
     /* Output header info */
     if (!msg->netMail) fprintf(msgfp, "Area: %s\n", echo->areaName);
     fprintf(msgfp, "From: \"%s\" %s\n", msg->fromUserName, aka2str(msg->origAddr));
@@ -1732,6 +1734,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
        
 	pkt = fopen(fileName, "rb");
 	if (pkt == NULL) return 2;
+        w_log(LL_FILE,"toss.c:processPkt(): opened '%s' (\"rb\" mode)",fileName);
        
 	header = openPkt(pkt);
 	if (header != NULL) {
@@ -1937,6 +1940,8 @@ int  processArc(char *fileName, e_tossSecurity sec)
     for (i = 0, found = 0; (i < config->unpackCount) && !found; i++) {
 	bundle = fopen(fileName, "rb");
 	if (bundle == NULL) return 2;
+        w_log(LL_FILE,"toss.c:processArc(): opened '%s' (\"rb\" mode)",fileName);
+
 	// is offset is negative we look at the end
 	fseek(bundle, config->unpack[i].offset, config->unpack[i].offset >= 0 ? SEEK_SET : SEEK_END);
 	if (ferror(bundle)) { fclose(bundle); continue; };
@@ -2140,6 +2145,8 @@ void writeStatLog(void) {
     if (((statNetmail > 0) || (statCC > 0)) && (config->statlog != NULL)) {
 	f = fopen(config->statlog, "r");
 	if (f != NULL) {  /* and statLog file is readable */
+            w_log(LL_FILE,"toss.c:writeStatLog(): opened '%s' (\"r\" mode)",config->statlog);
+
 	    /* then read last personal mail counter and add to actual counter */
 	    while(fgets(buffer,sizeof(buffer),f)) {
 		len = strlen(buffer);
@@ -2162,6 +2169,7 @@ void writeStatLog(void) {
 	/* and write personal mail counter for netmails and echo mails */
 	f = fopen(config->statlog, "wt");
 	if (f != NULL) {
+            w_log(LL_FILE,"toss.c:writeStatLog(): opened '%s' (\"wt\" mode)",config->statlog);
 	    if (statNetmail > 0) {
 		fprintf(f, "netmail: %d\n", statNetmail);
 	    }
@@ -2363,6 +2371,7 @@ void arcmail(s_link *tolink) {
 		    w_log('9', "Cannot open flo file %s",
 			  config->links[i].floFile);
 		else {
+                    w_log(LL_FILE,"toss.c:arcmail(): opened '%s' (\"a+\" mode)",link->floFile);
 
 		    if (link->linkBundleNameStyle!=eUndef)
 			bundleNameStyle=link->linkBundleNameStyle;
