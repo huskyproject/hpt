@@ -1,3 +1,12 @@
+2003-02-23 Sunday 19:24  d_sergienko
+
+	* doc/hpt.texi, src/query.c (hpt-1_4-stable.[2,4]): Use
+	AreafixFromName when posting reports by hpt qrep
+
+2003-02-22 Saturday 13:43  pgul
+
+	* misc/filter.pl (1.9): Improve %list and %avail replies processing
+
 2003-02-21 Friday 21:00  stas_degteff
 
 	* src/: query.c, toss.c (hpt-1_4-stable.[3,1]): MFC: Change badmail
