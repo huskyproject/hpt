@@ -226,10 +226,10 @@ int writeMsgToPkt(FILE *pkt, s_message msg)
 
 int closeCreatedPkt(FILE *pkt)
 {
-   // FIXME: we need to check return values of fputc & fclose
-   fputc(0, pkt); fputc(0, pkt);
-   fclose(pkt);
-   return 0;
+	int rc=0;
+	rc += !fwrite("\000\000",2,1,pkt);
+	rc += fclose(pkt);
+	return rc;
 }
 
 FILE *openPktForAppending(char *fileName, s_pktHeader *header)

@@ -577,11 +577,30 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
 void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks, 
 					s_seenBy **seenBys, UINT *seenByCount,
 					s_seenBy **path, UINT *pathCount) {
-	int i;
+	int i, rc=0;
 	long len;
-	FILE *pkt;
+	FILE *pkt, *f=NULL;
 	s_pktHeader header;
 	char *start, *seenByText = NULL, *pathText = NULL;
+	char *debug=NULL;
+
+	if (newLinks[0] == NULL) return;
+
+	if (echo->debug) {
+		xstrscat(&debug, config->logFileDir,
+				 (echo->DOSFile) ? "common" : echo->areaName,
+				 ".dbg", NULL);
+		
+		if (config->areasFileNameCase == eLower) 
+			debug = strLower(debug);
+		else
+			debug = strUpper(debug);
+		
+		if ((f=fopen(debug,"a"))==NULL) {
+			writeLogEntry(hpt_log,'9',"can't open file: %s",debug);
+		}
+		nfree(debug);
+	}
 
 	// add our aka to seen-by (zonegating link must strip our aka)
 	if (*seenByCount==0 && echo->useAka->point==0) {
@@ -654,7 +673,17 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	xstrscat(&msg->text, (start) ? "" : "\r", seenByText, pathText, NULL);
 	nfree(seenByText);
 	nfree(pathText);
-	
+
+	if (echo->debug) {
+		debug = (char *) GetCtrlToken(msg->text, (byte *)"MSGID");
+		if (f && debug) {
+			fputs("\n[",f);
+			fputs(debug,f);
+			fputs("] ",f);
+		}
+		nfree(debug);
+	}
+
 	// add msg to the pkt's of the downlinks
 	for (i = 0; i<echo->downlinkCount; i++) {
 		
@@ -691,10 +720,23 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		msg->destAddr = header.destAddr;
 		// .. and must come from us
 		msg->origAddr = header.origAddr;
-		writeMsgToPkt(pkt, *msg);
-		closeCreatedPkt(pkt);
-		statToss.exported++;
+		rc += writeMsgToPkt(pkt, *msg);
+		if (rc) writeLogEntry(hpt_log,'9',"can't write msg to pkt: %s",
+							  newLinks[i]->link->pktFile);
+		rc += closeCreatedPkt(pkt);
+		if (rc) writeLogEntry(hpt_log,'9',"can't close pkt: %s",
+							  newLinks[i]->link->pktFile);
+		if (f) {
+			if (rc) fputs(" failed: ",f);
+			fputs(aka2str(header.destAddr),f);
+			fputc(' ',f);
+		}
+		if (rc==0) statToss.exported++;
+		else rc=0;
 	}
+
+	if (f) fclose(f);
+	return;
 }
 
 void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
