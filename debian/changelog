@@ -1,3 +1,11 @@
+hpt (1.4.0+rc1-1) unstable; urgency=low
+
+  * New stable version
+  * Correct unpackers at config file
+  * Change maintainers's E-mail
+
+ -- Pavel Andreew <sfpavel@users.sourceforge.net>  Wed, 21 May 2003 14:36:10 +0600
+
 hpt (1.4.0+beta2-1) unstable; urgency=low
 
   * New cvs version

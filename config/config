@@ -30,13 +30,13 @@ DupeBaseType	HashDupesWMsgId
 AreasMaxDupeAge	10
 
 ### Packers
-Unpack		"unzip -j -Loqq $a -d $p" 0 504b0304
+Unpack		"unzip -j -Loqq $a -d $p $f" 0 504b0304
 Pack		zip zip -9 -j -q $a $f
 
-Unpack  "rar e -y  $a $p"   0 52617221
+Unpack  "rar e -y  $a $p $f"   0 52617221
 #Pack  rar rar a -std -ep $a $f
 
-Unpack  "cd $p; unarj e $a" 0 60ea
+Unpack  "cd $p; unarj e $a $f" 0 60ea
 #Pack  arj arj a -+ -e -y $a $f
 
 #SeparateBundles
