@@ -70,6 +70,9 @@ int  carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo);
 s_arealink *getAreaLink(s_area *area, s_addr aka);
 void closeOpenedPkt(void);
 
+
+s_message* MessForCC(s_message *msg);
+
 #define REC_HDR 0x0001
 #define REC_TXT 0x0002
 

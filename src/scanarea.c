@@ -155,6 +155,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
 void packEMMsg(HMSG hmsg, XMSG *xmsg, s_area *echo)
 {
    s_message    msg;
+   s_message* messCC;
 
    makeMsg(hmsg, *xmsg, &msg, echo, 0);
 
@@ -168,11 +169,13 @@ void packEMMsg(HMSG hmsg, XMSG *xmsg, s_area *echo)
    }
 #endif
 
+   messCC = MessForCC(&msg); /* make copy of original message*/
+
    /*  export msg to downlinks */
    forwardMsgToLinks(echo, &msg, *echo->useAka);
    
    /*  process carbon copy */
-   if (config->carbonOut) carbonCopy(&msg, xmsg, echo);
+   if (config->carbonOut) carbonCopy(messCC, xmsg, echo);
 
    /*  mark msg as sent and scanned */
    xmsg->attr |= MSGSENT;
@@ -180,6 +183,8 @@ void packEMMsg(HMSG hmsg, XMSG *xmsg, s_area *echo)
    MsgWriteMsg(hmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 
    freeMsgBuffers(&msg);
+   freeMsgBuffers(messCC);
+   nfree(messCC);
    statScan.exported++;
    echo->scn++;
 }

@@ -91,6 +91,7 @@
 #include <smapi/progprot.h>
 #include <smapi/patmat.h>
 
+
 #if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
 #include <dos.h>
 #include <process.h>
@@ -259,25 +260,6 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
     w_log( LL_SRCLINE, "%s:%d end rc=%d", __FILE__, __LINE__,rc);
     return rc;
 }
-
-/*
-int putMsgInDupeArea(s_addr addr, s_message *msg, dword forceattr)
-{
-	char *textBuff=NULL, *from=NULL;
-	
-	xscatprintf(&from, "FROM: %s\r", aka2str(addr));
-	xstrscat(&textBuff, from, msg->text, NULL);
-
-	msg->textLength += strlen(from);
-	nfree(from);
-	
-	nfree(msg->text);
-	msg->text = textBuff;
-
-	return putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
-}
-*/
-
 
 void closeOpenedPkt(void) {
     unsigned int i;
@@ -567,303 +549,6 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
     nfree(path);
     nfree(newLinks);
     nfree(zoneLinks);
-}
-
-#if defined(UNIX) || defined(__EMX__) || defined(__DJGPP__)
-#define HAVE_POPEN
-#endif
-
-int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
-{
-    FILE *msgfp = NULL;
-    char *fname = NULL;
-    char *progname = NULL, *execstr = NULL, *p = NULL;
-    int  rc;
-
-    progname = carbon.areaName;
-#ifdef HAVE_POPEN	
-    if (*progname == '|') {
-	msgfp = popen(progname + 1, "w");
-    } else
-#endif
-	msgfp = createTempTextFile(config, &fname);
-	
-    if (!msgfp) {
-	w_log(LL_ERR, "external process %s: cannot create file", progname);
-	return 1;
-    }else w_log(LL_FILE,"toss.c:processExternal() opened '%s' (\"\" mode)", fname);
-    /* Output header info */
-    if (!msg->netMail) fprintf(msgfp, "Area: %s\n", echo->areaName);
-    fprintf(msgfp, "From: \"%s\" %s\n", msg->fromUserName, aka2str(msg->origAddr));
-    fprintf(msgfp, "To:   \"%s\" %s\n", msg->toUserName, aka2str(msg->destAddr));
-    fprintf(msgfp, "Date: \"%s\"\n", msg->datetime);
-    fprintf(msgfp, "Subject: \"%s\"\n\n", msg->subjectLine);
-    /* Output msg text */
-    for (p = msg->text; *p ; p++)
-	if (*p == '\r')
-	    fputc('\n', msgfp);
-	else
-	    fputc(*p, msgfp);
-    fputc('\n', msgfp);
-#ifdef HAVE_POPEN	
-    if (*progname == '|') {
-	pclose(msgfp);
-	rc = 0;
-    } else
-#endif
-	{
-	    /* Execute external program */
-	    fclose(msgfp);
-	    execstr = safe_malloc(strlen(progname)+strlen(fname)+2);
-	    sprintf(execstr, "%s %s", progname, fname);
-#ifdef __NT__
-	    CharToOem(execstr, execstr); /*  this is really need? */
-#endif
-	    rc = system(execstr);
-	    nfree(execstr);
-	    unlink(fname);
-	    nfree(fname);
-	};
-    if (rc == -1 || rc == 127) {
-	w_log(LL_ERR, "excution of external process %s failed", progname);
-    };
-    return 0;
-
-}
-
-/* area - area to carbon messages, echo - original echo area */
-int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carbon) {
-    char *p, *text, *old_text, *reason = carbon.reason;
-    int i, old_textLength, export = carbon.export, rc = 0;
-
-    statToss.CC++;
-
-    old_textLength = msg->textLength;
-    old_text = msg->text;
-
-    /*  recoding from internal to transport charSet if needed */
-    if (config->outtab) {
-	if (msg->recode & REC_TXT) {
-	    recodeToTransportCharset((CHAR*)msg->text);
-	    msg->recode &= ~REC_TXT;
-	}
-	if (msg->recode & REC_HDR) {
-	    recodeToTransportCharset((CHAR*)msg->fromUserName);
-	    recodeToTransportCharset((CHAR*)msg->toUserName);
-	    recodeToTransportCharset((CHAR*)msg->subjectLine);
-	    msg->recode &= ~REC_HDR;
-	}
-	if (reason) recodeToTransportCharset((CHAR*)reason);
-    }
-	
-    i = old_textLength;
-
-    if (!msg->netMail) {
-	if ((!config->carbonKeepSb) && (!area->keepsb)) {
-	    text = strrstr(old_text, " * Origin:");
-	    if (NULL != (p = strstr(text ? text : old_text,"\rSEEN-BY:")))
-		i = (size_t) (p - old_text) + 1;
-	}
-    }
-
-    msg->text = NULL;
-    msg->textLength = 0;
-
-    if (!msg->netMail) {
-	xstrscat(&msg->text,
-		 (export) ? "AREA:" : "",
-		 (export) ? area->areaName : "",
-		 (export) ? "\r" : "",
-		 (config->carbonExcludeFwdFrom) ? "" : " * Forwarded from area '",
-		 (config->carbonExcludeFwdFrom) ? "" : echo->areaName,
-		 (config->carbonExcludeFwdFrom) ? "" : "'\r",
-		 (reason) ? reason : "",
-		 (reason) ? "\r" : "",
-		 /* (!config->carbonExcludeFwdFrom || reason) ? "\r" : "", */
-		 "\r\1", NULL);
-	msg->textLength = strlen(msg->text);
-    }
-
-    xstralloc(&msg->text,i); /*  add i bytes */
-    strncat(msg->text,old_text,i); /*  copy rest of msg */
-    msg->textLength += i;
-
-    if (!export) {
-	if (msg->netMail) rc = putMsgInArea(area,msg,0,MSGSENT);
-	else rc = putMsgInArea(area,msg,0,0);
-	area->imported++;  /*  area has got new messages */
-    }
-    else if (!msg->netMail) {
-	rc = processEMMsg(msg, *area->useAka, 1, 0);
-    } else
-	rc = processNMMsg(msg, NULL, area, 1, 0);
-
-    nfree(msg->text);
-    msg->textLength = old_textLength;
-    msg->text = old_text;
-    msg->recode &= ~REC_TXT; /*  old text is always in Transport Charset */
-    if (config->intab && reason) recodeToInternalCharset((CHAR*)reason);
-
-    return rc;
-}
-
-
-/* Does carbon copying */
-/* Return value: 0 if nothing happend, 1 if there was a carbon copy,
-   > 1 if there was a carbon move or carbon delete*/
-int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
-{
-    unsigned int i, rc = 0, result=0;
-    char *testptr = NULL, *testptr2 = NULL, *pattern = NULL;
-    s_area *area = NULL;
-    s_carbon *cb=&(config->carbons[0]);
-    s_area **copiedTo = NULL;
-    int copiedToCount = 0;
-    int ncop;
-
-    if (echo->ccoff==1)
-        return 0;
-    if (echo->msgbType==MSGTYPE_PASSTHROUGH && config->exclPassCC)
-        return 0;
-
-    for (i=0; i<config->carbonCount; i++,++cb) {
-        /* Dont come to use netmail on echomail and vise verse */
-        if (cb->move!=2 && ((msg->netMail && !cb->netMail) ||
-            (!msg->netMail &&  cb->netMail))) continue;
-        
-        area = cb->area;
-        
-        if(!cb->rule&CC_AND)
-        {
-            if (!cb->extspawn && /*  fix for extspawn */
-                cb->areaName != NULL && /*  fix for carbonDelete */
-                /*  dont CC to the echo the mail comes from */
-                !stricmp(echo->areaName,area->areaName)
-                ) 
-                continue;
-        }    
-        switch (cb->ctype) {
-        case ct_to:
-            result=patimat(msg->toUserName,cb->str);
-            break;
-            
-        case ct_from:
-            result=patimat(msg->fromUserName,cb->str);
-            break;
-            
-        case ct_kludge:
-        case ct_msgtext:
-            testptr=msg->text;
-            /* skip area: kludge */
-            if (strncmp(testptr, "AREA:", 5) == 0)
-            {
-                if ((testptr = strchr(testptr, '\r')) != NULL)
-                    testptr++;
-            }
-            /* cb->str is substring, so pattern must be "*str*" */
-            pattern=safe_malloc(strlen(cb->str)+3);
-            *pattern='*';
-            strcpy(pattern+1, cb->str);
-            strcat(pattern, "*");
-            result=0;
-            
-            /* check the message line by line */
-            while (testptr) {
-                testptr2 = strchr(testptr, '\r');
-                if ((*testptr == '\001' && cb->ctype == ct_kludge) ||
-                    (*testptr != '\001' && cb->ctype == ct_msgtext)) {
-                    if (testptr2) *testptr2 = '\0';
-                    result = patimat(testptr, pattern);
-                    if (testptr2) *testptr2 = '\r';
-                    if (result) break;
-                }
-                if (testptr2)
-                    testptr = testptr2+1;
-                else
-                    break;
-            }
-            nfree(pattern);
-            break;
-            
-        case ct_subject:
-            result=patimat(msg->subjectLine,cb->str);
-            break;
-            
-        case ct_addr:
-            result=!addrComp(msg->origAddr, cb->addr);
-            break;
-            
-        case ct_fromarea:
-            result=patimat(echo->areaName,cb->str);
-            break;
-            
-        case ct_group:
-            if(echo->group!=NULL){
-                /* cb->str for example Fido,xxx,.. */
-                testptr=cb->str;
-                do{
-                    if(NULL==(testptr=fc_stristr(echo->group,testptr)))
-                        break;
-                    testptr+=strlen(echo->group);
-                    result=(*testptr==',' || *testptr==' ' || !*testptr);
-                    testptr-=strlen(echo->group);
-                    ++testptr;
-                }while(!result);
-            }
-            break;
-        }
-        
-        if(cb->rule&CC_NOT) /* NOT on/off */
-            result=!result;
-        
-        switch(cb->rule&CC_AND){ /* what operation with next result */
-        case CC_OR: /* OR */
-            if (result && area && cb->move!=2 && !config->carbonAndQuit) {
-                /* check if we've done cc to dest area already */
-                for (ncop=0; ncop < copiedToCount && result; ncop++)
-                    if (area == copiedTo[ncop]) result = 0;
-                    if (result) {
-                        copiedTo = safe_realloc (copiedTo, (copiedToCount+1) * sizeof (s_area *));
-                        copiedTo[copiedToCount] = area;
-                        copiedToCount++;
-                    }
-            }
-            
-            if(result){
-                /* make cc */
-                /* Set value: 1 if copy 3 if move */
-                rc = cb->move ? 3 : 1;
-                if(cb->extspawn)
-                    processExternal(echo,msg,*cb);
-                else
-                    if (cb->areaName && cb->move!=2)
-                    {
-                        if (!processCarbonCopy(area,echo,msg,*cb))
-                            rc &= 1;
-                    }
-                    /*  delete CarbonMove and CarbonDelete messages */
-                    if (cb->move && xmsg) xmsg->attr |= MSGKILL;
-                    if (config->carbonAndQuit)
-                        /* not skip quit or delete */
-                        if ((cb->areaName && *cb->areaName!='*') ||	cb->move==2) {
-                            return rc;
-                        }
-            }
-            break;
-        case CC_AND: /* AND */
-            if(!result){
-                /* following expressions can be skipped until OR */
-                for (++i,++cb; i<config->carbonCount; i++,++cb)
-                    if(!cb->rule&CC_AND)
-                        break; /* this is the last in the AND expr. chain */
-            }
-            /* else result==TRUE, so continue with next expr. */
-            break;
-        }
-    } /* end for() */
-    
-    if (copiedTo) nfree (copiedTo);
-    return rc;
 }
 
 /* return value: 1 if success, 0 if fail */
@@ -1224,6 +909,7 @@ int checkRefuse(char *areaName)
 int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceattr)
 {
     char   *area=NULL, *p = NULL, *q = NULL;
+    s_message* messCC = NULL;
     s_area *echo=&(config->badArea);
     s_link *link = NULL;
     int    writeAccess = 0, rc = 0, ccrc = 0;
@@ -1263,64 +949,67 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
     nfree(area);
 
     if (echo != &(config->badArea)) {
-	/*  area is autocreated! */
-
-	/*  cheking access of this link */
-	writeAccess = checkAreaLink(echo, pktOrigAddr, 0);
-	if (writeAccess) rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
-	else { /*  access ok - process msg */
-
-	    if (dupeDetection(echo, *msg)==1) {
-		/*  no dupe */
-		statToss.echoMail++;
-
-		/*  if only one downlink, we've got the mail from him */
-		if ((echo->downlinkCount > 1) ||
-		    ((echo->downlinkCount > 0) &&
-		     /*  mail from us */
-		     (addrComp(pktOrigAddr,*echo->useAka)==0)))
-		    forwardMsgToLinks(echo, msg, pktOrigAddr);
-
+        /*  area is autocreated! */
+        
+        /*  cheking access of this link */
+        writeAccess = checkAreaLink(echo, pktOrigAddr, 0);
+        if (writeAccess) rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
+        else { /*  access ok - process msg */
+            
+            if (dupeDetection(echo, *msg)==1) {
+                /*  no dupe */
+                messCC = MessForCC(msg); // make copy of original message
+                
+                statToss.echoMail++;
+                
+                /*  if only one downlink, we've got the mail from him */
+                if ((echo->downlinkCount > 1) ||
+                    ((echo->downlinkCount > 0) &&
+                    /*  mail from us */
+                    (addrComp(pktOrigAddr,*echo->useAka)==0)))
+                    forwardMsgToLinks(echo, msg, pktOrigAddr);
+                
                 w_log( LL_SRCLINE, "%s::processEMMsg():%d", __FILE__, __LINE__);
-
-		/* todo: remove TID from local-generated msgs by hpt post -x
-		 * (if (addrComp(pktOrigAddr,*echo->useAka)==0)) */
-
-		if ((config->carbonCount!=0)&&(!dontdocc))
-		    ccrc=carbonCopy(msg, NULL, echo);
-
+                
+                /* todo: remove TID from local-generated msgs by hpt post -x
+                * (if (addrComp(pktOrigAddr,*echo->useAka)==0)) */
+                
+                if (messCC && !dontdocc)
+                    ccrc=carbonCopy(messCC, NULL, echo);
+                
                 w_log( LL_SRCLINE, "%s::processEMMsg():%d", __FILE__, __LINE__);
-
-		if (ccrc <= 1) {
-		    echo->imported++;  /*  area has got new messages */
-		    if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-			rc = putMsgInArea(echo, msg, 1, forceattr);
-			statToss.saved += rc;
-		    }
-		    else { /*  passthrough */
-			/*
-			  if (echo->downlinkCount==1 && dontdocc==0)
-			  rc = putMsgInBadArea(msg, pktOrigAddr, 10);
-			  else {
-			  statToss.passthrough++;
-			  rc = 1;
-			  }
-			*/
-			statToss.passthrough++;
-			rc = 1;
-		    }
-		} else rc = 1; /*  normal exit for carbon move & delete */
-
-	    } else {
-		/*  msg is dupe */
-		if (echo->dupeCheck == dcMove) {
-		    /*  rc = putMsgInDupeArea(pktOrigAddr, msg, forceattr); */
-		    rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
-		} else rc = 1;
-		statToss.dupes++;
-		if (rc) config->dupeArea.imported++;
-	    }
-	}
+                
+                if (ccrc <= 1) {
+                    echo->imported++;  /*  area has got new messages */
+                    if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
+                        rc = putMsgInArea(echo, messCC, 1, forceattr);
+                        statToss.saved += rc;
+                    }
+                    else { /*  passthrough */
+                           /*
+                           if (echo->downlinkCount==1 && dontdocc==0)
+                           rc = putMsgInBadArea(msg, pktOrigAddr, 10);
+                           else {
+                           statToss.passthrough++;
+                           rc = 1;
+                           }
+                        */
+                        statToss.passthrough++;
+                        rc = 1;
+                    }
+                } else rc = 1; /*  normal exit for carbon move & delete */
+                freeMsgBuffers(messCC);
+                nfree(messCC);
+            } else {
+                /*  msg is dupe */
+                if (echo->dupeCheck == dcMove) {
+                    /*  rc = putMsgInDupeArea(pktOrigAddr, msg, forceattr); */
+                    rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
+                } else rc = 1;
+                statToss.dupes++;
+                if (rc) config->dupeArea.imported++;
+            }
+        }
     }
     w_log(LL_FUNC, "%s::processEMMsg() rc=%d", __FILE__, rc);
     return rc;
