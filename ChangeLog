@@ -1,3 +1,10 @@
+
+----- cvs ci ------
+Mon Jul 31 08:16:37 MSZ 2000
+tobi (patch from max):
+* small memory leak fix
+
+
 hpt 0.9.7
 ---------
 (released on Tue Jul 18 23:33:57 MEST 2000)
@@ -216,8 +223,20 @@ max:
 Tue May 23 22:36:28 NOVST 2000
 max (patch from Lev Serebryakov):
 * new areafix %list & %avail generation
+<<<<<<< ChangeLog
 
+=======
+>>>>>>> 1.296.2.7
+
+<<<<<<< ChangeLog
+hpt 0.9.7
+---------	
+(released on Mon May 22 14:58:56 CEST 2000)
+
+----- cvs ci ------	
+=======
 ----- cvs ci ------
+>>>>>>> 1.296.2.7
 Mon May 22 14:03:38 CEST 2000
 mtt:
 * changed version number to 0.9.7
