@@ -607,9 +607,8 @@ void *safe_realloc(void *ptr, size_t size)
 
 char *safe_strdup(const char *src)
 {
-    char *ptr = NULL;
-    if (src)
-      if ( !( ptr = strdup (src) ) )
+    char *ptr=NULL;
+    if ( !( ptr = sstrdup (src) ) ) /* use sstrdup() from fidoconfig library */
         exit_hpt("out of memory", 1);
     return ptr;
 }
