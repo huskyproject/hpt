@@ -1,3 +1,7 @@
+2002-07-17 Wednesday 22:58  tobi
+
+	* src/: pktread.c (1.87), pktwrite.c (1.37): Fixes for MacOS X
+
 2002-07-16 Tuesday 21:51  stas
 
 	* src/hptlink.c (1.42): replace free() to nfree(), strdup() to
