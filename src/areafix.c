@@ -1166,10 +1166,11 @@ void rescanEMArea(s_area *echo, s_link *link, long rescanCount)
       while (i <= highestMsg) {
 	if (i > highestMsg - rescanCount) { // honour rescanCount paramater
 	  hmsg = MsgOpenMsg(area, MOPEN_RW, i);
-	  if (hmsg == NULL) continue;      // msg# does not exist
-	  MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-	  repackEMMsg(hmsg, xmsg, echo, link);
-	  MsgCloseMsg(hmsg);
+	  if (hmsg != NULL) {     // msg# does not exist
+	    MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+	    repackEMMsg(hmsg, xmsg, echo, link);
+	    MsgCloseMsg(hmsg);
+	  }
 	}
 	i++;
       }

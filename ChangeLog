@@ -2,6 +2,11 @@ hpt 0.30
 --------
 	
 ----- cvs ci -----
+Thu Dec  2 11:32:02 CET 1999 
+mtt:
+* fixed a bug in my last change
+
+----- cvs ci -----
 Tue Nov 30 22:58:33 CET 1999 
 mtt:
 * new rescan for a maximum of rescanned echomails.
