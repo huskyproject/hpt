@@ -245,7 +245,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
    HAREA harea;
    HMSG  hmsg;
    XMSG  xmsg;
-   char *slash;
+   char *slash, *p;
    int rc = 0;
 
    // create Directory Tree if necessary
@@ -297,6 +297,10 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
             textWithoutArea++;
          }
 
+		 if (echo->tinySB) {
+			 if (NULL != (p = strstr(textWithoutArea,"\rSEEN-BY:"))) p[1]='\0';
+		 }
+		 
          ctrlBuff = (char *) CopyToControlBuf((UCHAR *) textWithoutArea,
 				              (UCHAR **) &textStart,
 				              &textLength);
@@ -307,7 +311,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 
          MsgCloseMsg(hmsg);
          free(ctrlBuff);
-	 rc = 1;
+		 rc = 1;
 
       } else 
          writeLogEntry(hpt_log, '9', "Could not create new msg in %s!", echo->fileName);
@@ -490,6 +494,9 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    s_arealink   **newLinks;  // links who does not have their aka in seenBys and thus have not got the echomail.
    long len;
 
+   createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
+   createPathArrayFromMsg(msg, &path, &pathCount);
+/*
    if (!echo->tinySB) {
           createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
           createPathArrayFromMsg(msg, &path, &pathCount);
@@ -497,7 +504,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
           seenByCount = 0;
           pathCount = 0;
    };
-
+*/
    createNewLinkArray(seenBys, seenByCount, echo, &newLinks, pktOrigAddr);
 
    // add seenBy for newLinks

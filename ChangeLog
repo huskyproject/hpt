@@ -7,6 +7,7 @@ max:
 * set Loc Scn Snt flags to posted message with -x parameter
 * MSGLOCAL updates (add forceattr to processEMMsg & processNMMsg)
 * disableTID
+* tinySB woks for storing msg in area only - no SEEN-BY & PATH
 
 ----- cvs ci ------
 Fri Apr 14 21:00:00 MSK 2000

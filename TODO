@@ -8,7 +8,6 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 
 - document each loglevels
-- tinysb (killsb)
 - add scanned msgs to dupebase
 - del empty .sep catalogues
 - check dupebase filename creation - dos & passthrough areas
