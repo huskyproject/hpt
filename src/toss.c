@@ -546,29 +546,31 @@ void closeOpenedPkt(void) {
 	}
     for (i=0; i<config->netMailAreaCount; i++)
 	if (config->netMailAreas[i].harea) {
-        w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,config->echoAreas[i].fileName);
+        w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,config->netMailAreas[i].fileName);
 	    MsgCloseArea(config->netMailAreas[i].harea);
 	    config->netMailAreas[i].harea = NULL;
 	    nopenpkt-=3;
-	}
+    }
     for (i=0; i<config->localAreaCount; i++)
-	if (config->localAreas[i].harea) {
-        w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,config->echoAreas[i].fileName);
-	    MsgCloseArea(config->localAreas[i].harea);
-	    config->localAreas[i].harea = NULL;
-	    nopenpkt-=3;
-	}
+    {        
+        if (config->localAreas[i].harea) {
+            w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,config->localAreas[i].fileName);
+            MsgCloseArea(config->localAreas[i].harea);
+            config->localAreas[i].harea = NULL;
+            nopenpkt-=3;
+        }
+    }
     if (config->badArea.harea) {
-    w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,config->echoAreas[i].fileName);
-	MsgCloseArea(config->badArea.harea);
-	config->badArea.harea = NULL;
-	nopenpkt-=3;
+        w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,config->badArea.fileName);
+        MsgCloseArea(config->badArea.harea);
+        config->badArea.harea = NULL;
+        nopenpkt-=3;
     }
     if (config->dupeArea.harea) {
-    w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,config->echoAreas[i].fileName);
-	MsgCloseArea(config->dupeArea.harea);
-	config->dupeArea.harea = NULL;
-	nopenpkt-=3;
+        w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,config->dupeArea.fileName);
+        MsgCloseArea(config->dupeArea.harea);
+        config->dupeArea.harea = NULL;
+        nopenpkt-=3;
     }
 }
 
