@@ -414,8 +414,16 @@ char* af_Req2Idle(char *areatag, char* report, s_addr linkAddr)
 
 char* af_GetQFlagName()
 {
-    char *chanagedflag = safe_strdup(config->echotosslog);
-    char *logdir       = strrchr(chanagedflag, PATH_DELIM);
+    char *chanagedflag = NULL;
+    char *logdir       = NULL;
+
+w_log(LL_FUNC, "af_GetQFlagName(): begin");
+
+    if (config->echotosslog)
+    {  chanagedflag = safe_strdup(config->echotosslog);
+       logdir       = strrchr(chanagedflag, PATH_DELIM);
+    }
+
     if(logdir)
     {
         logdir[1] = '\0';
@@ -426,6 +434,7 @@ char* af_GetQFlagName()
         nfree(chanagedflag);
         chanagedflag = safe_strdup(czChangFlg);
     }
+w_log(LL_FUNC, "af_GetQFlagName(): end");
     return chanagedflag;
 }
 
@@ -433,15 +442,18 @@ void af_QueueReport()
 {
     s_query_areas *tmpNode  = NULL;
     const char rmask[]="%-37.37s %-4.4s %11.11s %-16.16s %-7.7s\r";
-    char type[5]="";
-    char state[8]="";
-    char link1[17]="";
-    char link2[17]="";
+    char type[5]="\0\0\0\0";
+    char state[8]= "\0\0\0\0\0\0\0";
+    char link1[17]= {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    char link2[17]= {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     char* report = NULL;
     char* header = NULL;
     int netmail=0;
+    char *reportFlg = NULL;
     
-    char *reportFlg = af_GetQFlagName();
+w_log(LL_FUNC, "af_QueueReport(): begin");
+
+    reportFlg = af_GetQFlagName();
     
     if(!fexist(reportFlg))
     {
@@ -568,6 +580,7 @@ void af_QueueReport()
     nfree(msgToSysop[0]);
     remove(reportFlg);
     nfree(reportFlg);
+    w_log(LL_FUNC, "af_QueueReport(): end");
 }
 
 void af_QueueUpdate()
