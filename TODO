@@ -3,6 +3,7 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
+- del "\001FLAGS" from incoming mail
 - %avail without areas from denyfwdmask & denyfwdfile
 - unsubscribe from active passthrough area with one link
 - denyUncondFwdReqs
