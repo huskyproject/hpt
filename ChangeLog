@@ -2,6 +2,11 @@ hpt 0.27
 --------
 
 ----- cvs ci ------	
+Wed Mar  10 19:56:00
+Max:
+- fixed segfault when pkt password is NULL (changes in processPkt code)
+
+----- cvs ci ------	
 Wed Mar  10 15:41:00
 
 Max (areafix updates):
