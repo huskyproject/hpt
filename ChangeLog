@@ -1,3 +1,7 @@
+2002-01-26 Saturday 15:52  mche
+
+	* src/areafix.c (1.246): added code for queryfile support
+
 2002-01-25 Friday 19:21  ml
 
 	* misc/: cut-hptlog.pl (1.1), pretty.pl (1.1), purge_fileecho
@@ -112,8 +116,12 @@
 
 2002-01-19 Saturday 17:52  mche
 
-	* h/query.h (1.4), src/query.c (1.9): makeAreaParam function added
-	to make size of autoCreate smaller
+	* src/query.c (1.9): makeAreaParam function added to make size of
+	autoCreate smaller
+
+2002-01-19 Saturday 17:52  mche
+
+	* h/query.h (1.4): type of 'linksCount' variable change
 
 2002-01-19 Saturday 17:40  mche
 
