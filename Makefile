@@ -22,6 +22,10 @@ else
   LIBS=-L$(LIBDIR) -lfidoconfig -lsmapi -lhusky
 endif
 
+ifeq ($(USE_HPTZIP), 1)
+  LIBS+= -lhptzip
+endif
+
 ifeq ($(PERL), 1)
   CFLAGS += -DDO_PERL `perl -MExtUtils::Embed -e ccopts`
   PERLLIBS = `perl -MExtUtils::Embed -e ldopts`
