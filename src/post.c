@@ -204,7 +204,6 @@ void post(int c, unsigned int *n, char *params[])
                         break;
                     }; break;
                     case 'f':    // flags
-                        (*n)++;
                         for ((*n)++; params[*n]!=NULL; (*n)++) {
                             char *p;
                             if ((attr=str2attr(params[*n])) != -1L)
