@@ -1,3 +1,13 @@
+2003-02-21 Friday 21:00  stas_degteff
+
+	* src/: query.c, toss.c (hpt-1_4-stable.[3,1]): MFC: Change badmail
+	reason for messages received after area unsubscribe
+
+2003-02-21 Friday 20:10  stas_degteff
+
+	* src/query.c (hpt-1_4-stable.2): MFC: Remove '-option' and also
+	'-nooption' a switch echo to passthrough
+
 2003-02-20 Thursday 12:22  stas_degteff
 
 	* HISTORY (hpt-1_4-stable.2): Add sections for 1.2-stable
