@@ -113,7 +113,7 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
    xstrcat(&(msg->fromUserName), (char *) xmsg.from);
 
    /*  recoding subjectLine to TransportCharset */
-   if (config->outtab != NULL) {
+   if ((config->recodeMsgBase) && (config->outtab != NULL)) {
        recodeToTransportCharset((CHAR*)msg->subjectLine);
        recodeToTransportCharset((CHAR*)msg->fromUserName);
        recodeToTransportCharset((CHAR*)msg->toUserName);
@@ -149,7 +149,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg)
    msg->textLength += ctrlLen-1;
 
    /*  recoding text to TransportCharSet */
-   if (config->outtab != NULL) recodeToTransportCharset((CHAR*)msg->text);
+   if ((config->recodeMsgBase) && (config->outtab != NULL)) recodeToTransportCharset((CHAR*)msg->text);
 }
 
 void addViaToMsg(s_message *msg, hs_addr ourAka) {

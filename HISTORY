@@ -19,6 +19,7 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
       to use the link's default one
     - don't use Origin value if areafixOrigin is not defined.
     - NewAreaRefuseFile refuses also subscription to prevent forward requests
+    - recodeMsgBase - allow don't recode message base from transport charset
 
 3. IMPORTANT bugfixes:
    - attach processing was changed: now hpt will try to guess actual attached

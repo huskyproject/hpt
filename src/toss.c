@@ -1,4 +1,5 @@
 /*****************************************************************************
+/*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
  * Copyright (C) 1997-1999
@@ -200,7 +201,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 	if (hmsg != NULL) {
 
 	    /*  recode from TransportCharset to internal Charset */
-	    if (recode && config->intab != NULL) {
+	    if ((config->recodeMsgBase) && (recode && config->intab != NULL)) {
 		if ((msg->recode & REC_HDR)==0) {
 		    recodeToInternalCharset((CHAR*)msg->fromUserName);
 		    recodeToInternalCharset((CHAR*)msg->toUserName);
@@ -996,7 +997,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 	    area -> imported++; /*  area has got new messages */
 
 	    /*  recode from TransportCharset to internal Charset */
-	    if (config->intab != NULL) {
+	    if ((config->recodeMsgBase) && (config->intab != NULL)) {
 		if ((msg->recode & REC_HDR)==0) {
 		    recodeToInternalCharset((CHAR*)msg->fromUserName);
 		    recodeToInternalCharset((CHAR*)msg->toUserName);
