@@ -43,6 +43,11 @@ clean:
 	-rm -f *.o
 	-rm *~
 
+distclean: clean
+	-rm tpkt pktinfo hpt purgeDupes tlog
+	-rm *.1.gz
+	-rm *.log
+
 install:
 	install -s hpt pktinfo purgeDupes $(INSTDIR)
 	gzip -c hpt.1 > hpt.1.gz

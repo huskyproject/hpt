@@ -828,8 +828,10 @@ void arcmail() {
 			writeLogEntry(log, '7', logmsg);
                         cmdexit = system(cmd);
                         remove(config->links[i].pktFile);
-			free(config->links[i].pktFile);
-			free(config->links[i].packFile);
+                        free(config->links[i].pktFile);
+                        config->links[i].pktFile = NULL;
+                        free(config->links[i].packFile);
+                        config->links[i].packFile = NULL;
 		}
 	}
 	

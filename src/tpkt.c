@@ -54,7 +54,7 @@ int main()
 
       msg.netMail = 1;
       msg.text = (char *) malloc(300);
-      strcpy(msg.text, "\001TOPT 29\r%list");
+      strcpy(msg.text, "\001TOPT 29\r-tolkien.ger");
       msg.toUserName = (char *) malloc(15);
       strcpy(msg.toUserName, "areafix");
       msg.fromUserName = (char *) malloc(10);
