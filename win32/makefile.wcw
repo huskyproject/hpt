@@ -18,7 +18,7 @@ pktinfo.obj tlog.obj: $(SRC_DIR)\*.c
 
 pktinfo.exe: pktinfo.obj fcommon.obj pktread.obj
   @echo linking pktinfo
-  $(LINK) $(LFLAGS) FILE pktinfo.obj, log.obj, pktread.obj, global.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fidoconfig.lib NAME pktinfo.exe
+  $(LINK) $(LFLAGS) FILE pktinfo.obj, log.obj, pktread.obj, global.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fconfwcw.lib NAME pktinfo.exe
 
 tlog.exe: tlog.obj log.obj
   @echo linking tlog
@@ -27,16 +27,16 @@ tlog.exe: tlog.obj log.obj
 hptlink.exe:
   $(CC) $(CFLAGS) $(SRC_DIR)\hptlink.c
   @echo linking hptlink
-  $(LINK) $(LFLAGS) FILE hptlink.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fidoconfig.lib NAME hptlink.exe
+  $(LINK) $(LFLAGS) FILE hptlink.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fconfwcw.lib NAME hptlink.exe
 
 hpttree.exe:
   $(CC) $(CFLAGS) $(SRC_DIR)\hpttree.c
   @echo linking hpttree
-  $(LINK) $(LFLAGS) FILE hpttree.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fidoconfig.lib NAME hpttree.exe
+  $(LINK) $(LFLAGS) FILE hpttree.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fconfwcw.lib NAME hpttree.exe
 
 hpt.exe: $(OBJS)
   @echo linking hpt
-  $(LINK) $(LFLAGS) FILE hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, post.obj, areafix.obj, dupe.obj, recode.obj, tree.obj, seenby.obj, strsep.obj, link.obj, crc.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fidoconfig.lib NAME hpt.exe
+  $(LINK) $(LFLAGS) FILE hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, post.obj, areafix.obj, dupe.obj, recode.obj, tree.obj, seenby.obj, strsep.obj, link.obj, crc.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fconfwcw.lib NAME hpt.exe
 
 clean:
 	del *.obj
