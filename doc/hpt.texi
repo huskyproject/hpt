@@ -2997,6 +2997,10 @@ disable kill read msgs in area on purging (*) if echoareadefaults set @code{-kil
 keep unread msgs in area on purging (*)
 @item -nokeepUnread
 do not keep unread msgs in area on purging (*) if echoareadefaults set @code{-keepUnread};
+@item -kill
+kill messagebase of area when setting it to passthrough
+@item -nokill
+do not kill messagebase when setting area to passthrough
 @item -a <addr>
 aka to use (first address from config if not defined)
 @item -b <msgbase type>
