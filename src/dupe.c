@@ -249,22 +249,22 @@ int deleteEntry(char *entry) {
     switch (config->typeDupeBase) {
     case hashDupes:
         enhash = (s_hashDupeEntry *)entry;
-        nfree((s_hashDupeEntry*) enhash);
+        nfree(enhash);
         break;
         
     case hashDupesWmsgid:
         enhashM = (s_hashMDupeEntry *)entry;
-        nfree((s_hashMDupeEntry*)enhashM->msgid);
-        nfree((s_hashMDupeEntry*)enhashM);
+        nfree(enhashM->msgid);
+        nfree(enhashM);
         break;
         
     case textDupes:
         entxt = (s_textDupeEntry *)entry;
-        nfree((s_textDupeEntry*)entxt->to);
-        nfree((s_textDupeEntry*)entxt->from);
-        nfree((s_textDupeEntry*)entxt->subject);
-        nfree((s_textDupeEntry*)entxt->msgid);
-        nfree((s_textDupeEntry*)entxt);
+        nfree(entxt->to);
+        nfree(entxt->from);
+        nfree(entxt->subject);
+        nfree(entxt->msgid);
+        nfree(entxt);
         break;
         
     case commonDupeBase:
