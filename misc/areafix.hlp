@@ -47,6 +47,7 @@ Example:
 %PACKER                       <- ask for list of packers   
 %PACKER  zip                  <- switch current packer for 'zip' 
 %PACKER  none                 <- switch off packing your mail
+%COMPRESS <packer>            <- same as %packer
 %RSB on                       <- turn on reduced SEEN-BY mode (FSC-0093)
 %RSB 1                        <- the same as above
 %RSB off                      <- turn off reduced SEEN-BY mode (FSC-0093)

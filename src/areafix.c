@@ -1622,6 +1622,7 @@ int tellcmd(char *cmd) {
         if (strncasecmp(line,"resume",6)==0) return RESUME;
         if (strncasecmp(line,"info",4)==0) return INFO;
         if (strncasecmp(line,"packer",6)==0) return PACKER;
+        if (strncasecmp(line,"compress",8)==0) return PACKER;
         if (strncasecmp(line,"rsb",3)==0) return RSB;
         if (strncasecmp(line,"rescan", 6)==0) {
             if (line[6] == '\0') {
