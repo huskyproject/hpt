@@ -89,19 +89,22 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
             }
         }
         if (!need_dos_file)
-            xscatprintf(&buff, "EchoArea %s %s%s%s", c_area,
+            xscatprintf(&buff, "EchoArea%c%s %s%s%s",
+	    (strchr(TRUE_COMMENT, *c_area) ? '\t' : ' '), c_area,
             msgbDir, msgbFileName,
             (msgbtype) ? "" : " -b Squish");
         else {
             sleep(1); // to prevent time from creating equal numbers
-            xscatprintf(&buff,"EchoArea %s %s%8lx%s", c_area,
+            xscatprintf(&buff,"EchoArea%c%s %s%8lx%s",
+	        (strchr(TRUE_COMMENT, *c_area) ? '\t' : ' '), c_area,
                 msgbDir, (long)time(NULL),
                 (msgbtype) ? "" : " -b Squish");
         }
 
     } else {
         // passthrough
-        xscatprintf(&buff, "EchoArea %s passthrough", c_area);
+        xscatprintf(&buff, "EchoArea%c%s passthrough",
+	    (strchr(TRUE_COMMENT, *c_area) ? '\t' : ' '), c_area);
 
         del_tok(&newAC, "passthrough");
         del_tok(&newAC, "-b ");  // del "-b msgbtype" from autocreate defaults

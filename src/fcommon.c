@@ -826,7 +826,7 @@ int isValidConference(char *s) {
     // according to FSC-0074 with lowercase symbols
     // lowercase symbols only for internal use
     while (*s) {
-	if ( !(*s >= 33 && *s <= 126) || (*s == config->CommentChar) ) return 0;
+	if ( !(*s >= 33 && *s <= 126) ) return 0;
 	s++;
     }
     return 1;
