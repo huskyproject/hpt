@@ -34,6 +34,10 @@
 #include <malloc.h>
 #include <string.h>
 
+
+#include <fidoconfig.h>
+#include <common.h>
+
 #include <log.h>
 #include <global.h>
 

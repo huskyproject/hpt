@@ -33,6 +33,7 @@
 #include <string.h>
 #include <ctype.h>
 
+#include <fidoconfig.h>
 #include <common.h>
 
 #include <pkt.h>

@@ -34,6 +34,9 @@
 #include <errno.h>
 #include <ctype.h>
 
+#include <fidoconfig.h>
+#include <common.h>
+
 #include <dir.h>
 #include <pkt.h>
 #include <scan.h>

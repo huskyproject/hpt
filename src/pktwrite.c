@@ -34,6 +34,9 @@
 #include <malloc.h>
 #include <string.h>
 
+#include <fidoconfig.h>
+#include <common.h>
+
 #include <pkt.h>
 
 #include <stamp.h>

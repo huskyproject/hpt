@@ -35,6 +35,7 @@
 #include <time.h>
 #include <stdio.h>
 
+#include <fidoconfig.h>
 #include <typesize.h>
 #include <fcommon.h>
 

@@ -35,6 +35,9 @@
 
 #include <msgapi.h>
 
+#include <fidoconfig.h>
+#include <common.h>
+
 #include <fcommon.h>
 #include <pkt.h>
 #include <patmat.h>
