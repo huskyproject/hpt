@@ -326,7 +326,7 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
 
 int af_OpenQuery()
 {
-    char* slash;
+    char *slash;
     FILE *queryFile;
     char *line = NULL;
     char *token = NULL;

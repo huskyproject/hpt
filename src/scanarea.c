@@ -172,11 +172,11 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    nfree(seenByPath);
 }
 
-void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
+void packEMMsg(HMSG hmsg, XMSG *xmsg, s_area *echo)
 {
    s_message    msg;
 
-   makeMsg(hmsg, xmsg, &msg, echo, 0);
+   makeMsg(hmsg, *xmsg, &msg, echo, 0);
 
    // msg is dupe -- return
    if (dupeDetection(echo, msg)!=1) return;
@@ -192,12 +192,12 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
    forwardMsgToLinks(echo, &msg, *echo->useAka);
    
    // process carbon copy
-   if (config->carbonOut) carbonCopy(&msg, &xmsg, echo);
+   if (config->carbonOut) carbonCopy(&msg, xmsg, echo);
 
    // mark msg as sent and scanned
-   xmsg.attr |= MSGSENT;
-   xmsg.attr |= MSGSCANNED;
-   MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+   xmsg->attr |= MSGSENT;
+   xmsg->attr |= MSGSCANNED;
+   MsgWriteMsg(hmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 
    freeMsgBuffers(&msg);
    statScan.exported++;
@@ -236,13 +236,16 @@ void scanEMArea(s_area *echo)
 	   MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
 	   if (((xmsg.attr & MSGSENT) != MSGSENT) &&
 	       ((xmsg.attr & MSGLOCAL) == MSGLOCAL)) {
-	       packEMMsg(hmsg, xmsg, echo);
+	       packEMMsg(hmsg, &xmsg, echo);
 	   }
 
 	   MsgCloseMsg(hmsg);
 		 
 	   // kill msg
-	   if ((xmsg.attr & MSGKILL) == MSGKILL) MsgKillMsg(area, i--);
+	   if ((xmsg.attr & MSGKILL) == MSGKILL) {
+	       MsgKillMsg(area, i);
+	       i--;
+	   }
 
        }
        MsgSetHighWater(area, i);

@@ -12,7 +12,7 @@
  * 33098 Paderborn       40472 Duesseldorf
  * Germany               Germany
  *
- * Copyright (C) 1999-2001
+ * Copyright (C) 1999-2002
  *
  * Max Levenkov
  *
@@ -961,7 +961,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 /* area - area to carbon messages, echo - original echo area */
 int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carbon) {
     char *p, *text, *old_text, *reason = carbon.reason;
-    int i, old_textLength, /*reasonLen = 0,*/ export = carbon.export, rc = 0;
+    int i, old_textLength, export = carbon.export, rc = 0;
 
     statToss.CC++;
 
@@ -1110,8 +1110,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
             result=!addrComp(msg->origAddr, cb->addr);
             break;
 
-        case ct_fromarea: /* skip AREA: */
-            //result=!strncasecmp(msg->text+5,cb->str,strlen(cb->str));
+        case ct_fromarea:
 	    result=!strcasecmp(echo->areaName,cb->str);
             break;
 
