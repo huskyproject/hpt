@@ -1,3 +1,38 @@
+2002-09-18 Wednesday 14:31  sfpavel
+
+	* config/config, config/config.win, debian/changelog
+	(hpt-1_2-stable.[3,3,10]): Update configs & correct release date
+
+2002-09-18 Wednesday 11:48  sfpavel
+
+	* config/config, config/config.win, debian/changelog, debian/docs,
+	debian/rules (hpt-1_2-stable.[2,2,9,2,3]): Update configs
+	(hptPerlFile using)
+
+2002-09-18 Wednesday 11:35  sfpavel
+
+	* doc/perlwin32.rus (hpt-1_2-stable.1): Update documentation
+
+2002-09-18 Wednesday 10:06  sfpavel
+
+	* debian/: changelog, doc-base, huskymak.cfg
+	(hpt-1_2-stable.[8,1,1]): New debian package
+
+2002-09-18 Wednesday 09:52  sfpavel
+
+	* src/link.c (hpt-1_2-stable.2): Enabled MAX_INCORE again (with
+	bugfix) [patch from current branch 2002-09-09 19:40 pgul]
+
+2002-09-18 Wednesday 09:24  sfpavel
+
+	* src/: pktread.c, pktwrite.c (hpt-1_2-stable.[1,1]): Fixes for
+	MacOS X [patch from current 2002-07-17 20:58 tobi]
+
+2002-09-18 Wednesday 06:01  sfpavel
+
+	* Makefile, makefile.inc (hpt-1_2-stable.[1,1]): Fix make
+	clean/distclean/uninstall
+
 2002-09-17 Tuesday 19:52  stas_degteff
 
 	* doc/hpt.texi (hpt-1_2-stable.2): Correct documentation
