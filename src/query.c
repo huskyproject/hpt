@@ -540,7 +540,7 @@ void af_QueueReport()
 
     if(!fexist(reportFlg))
     {
-        w_log(LL_STOP, "Queue file wasn't changed. Exiting...");
+        w_log(LL_STOP, "Queue file hasn't been changed. Exiting...");
         nfree(reportFlg);
         return;
     }
