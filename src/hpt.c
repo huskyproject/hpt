@@ -501,9 +501,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    nfree(versionStr);
 
    if (config->lockfile) {
-//     we do not needed this imho.
-//     hpt can remove locked file from another process
-//	   close(fd);
+	   close(fd);
 	   remove(config->lockfile);
    }
 

@@ -3,8 +3,11 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
+- update hw marm for netmail
+- AutoAreaCreateDefaults passthrough ...
 - "/" -> "_", etc... (dosfile)
 - make switch for REASON: No downlinks for passthrough area
+- make switch for advisory lock
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

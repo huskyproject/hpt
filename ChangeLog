@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Mar 17 12:55:45 NOVT 2001
+max:
+* closing lockfile before remove (fix win32 trouble)
+
+----- cvs ci ------
 Tue Mar 13 22:42:10 NOVT 2001
 max (patch from Serguei Revtov):
 * trying to fix unwanted autopause (fileTime > current)
