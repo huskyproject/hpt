@@ -1,3 +1,61 @@
+2004-08-03 Tuesday 18:23  pgul
+
+	* src/link.c (1.76): Some bugs fixed
+
+2004-08-01 Sunday 20:38  pgul
+
+	* src/perl.c (1.80): Change handle perl errors method (patch from
+	Sergey Babitch)
+
+2004-07-31 Saturday 14:58  andrew_ladutsko
+
+	* HISTORY (1.42), doc/hpt.texi (1.152), src/hptafix.c (1.10): Added
+	ability to specify link rights to rescan all or several area groups
+
+2004-07-27 Tuesday 08:40  andrew_ladutsko
+
+	* doc/hpt.texi (1.151): added description of default value of
+	"sortEchoList" token to doc
+
+2004-07-26 Monday 20:29  pgul
+
+	* src/perl.c (1.79): Cleanup r/o variables usage (patch from Sergey
+	Babitch)
+
+2004-07-26 Monday 06:33  pgul
+
+	* src/perl.c (1.78): Potential bug fixed with setvars() call
+	without perl_vars_invalid (thanks to Sergey Babitch).
+
+2004-07-23 Friday 12:32  pgul
+
+	* src/scan.c (1.203): Fixed broken "hpt pack -a netmail" (patch
+	from Sergey Babitch)
+
+2004-07-23 Friday 11:29  pgul
+
+	* src/perl.c (1.77): Fix compilation warnings (patch from Sergey
+	Babitch)
+
+2004-07-21 Wednesday 15:23  pgul
+
+	* src/scan.c (1.202): Do not pack fileattaches when "nopack" set
+	(patch from Sergey Babitch)
+
+2004-07-20 Tuesday 14:21  pgul
+
+	* config/packer (1.9): Do not query password with unrar and unzip
+	for pwd-protected bundles, do not create subdirs with pkunzip.
+
+2004-07-19 Monday 22:43  i_zkh
+
+	* doc/hpt.texi (1.150): Minor changes concerning AreafixReportsAttr
+	syntax
+
+2004-07-15 Thursday 19:12  i_zkh
+
+	* doc/hpt.texi (1.149): Minor fix
+
 2004-07-07 Wednesday 13:45  stas_degteff
 
 	* doc/hpt-FAQ.russian (1.89): Add Q/A about perl modules for
@@ -12,11 +70,6 @@
 
 	* src/carbon.c (1.31): CarbonRule NOT fix from Nick Voronin,
 	2:5030/2239.4
-
-2004-05-27 Thursday 20:53  d_sergienko
-
-	* src/toss.c (1.535): fix processing of allowEmptyPktPwd. Thanks to
-	Michael Dukelsky, 2:5020/1042
 
 2004-05-14 Friday 15:32  andrew_ladutsko
 
@@ -3237,7 +3290,7 @@
 2002-07-24 Wednesday 13:48  mche
 
 	* src/areafix.c (1.325): fix core when unsubscribe from own addres
-	from area that has no links and non-passthroughtþ in this case area
+	from area that has no links and non-passthroughtÃ¾ in this case area
 	will be removed from config file
 
 2002-07-24 Wednesday 11:20  mche
@@ -3528,8 +3581,8 @@
 2002-06-19 Wednesday 19:17  stas
 
 	* src/: getfree.c (1.22), hptlink.c (1.37): Fixes: remove unmatched
-	closing comment; remove \òn from log messages.
-
+	closing comment; remove \Ã²n from log messages.
+        
 2002-06-19 Wednesday 07:31  stas
 
 	* doc/hpt.texi (1.66): Loglevels description sinchronized with
