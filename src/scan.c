@@ -309,15 +309,7 @@ void processAttachs(s_link *link, s_message *msg, unsigned int attr)
    char *newSubjectLine = NULL;
    int i, def = -1, replace = 0;
    char *path = NULL;
-#ifdef __UNIX__
-   static int adcase_init = 0;
-   /* init inbound for adaptcase() */
-   if (!adcase_init) {
-       adaptcase_refresh_dir(config->protInbound);
-       adaptcase_refresh_dir(config->inbound);
-       adcase_init = 1;
-   }
-#endif
+
    /* init outbounds */
    outbounds[0] = &tossDir;
    outbounds[1] = &config->protInbound;
