@@ -630,7 +630,7 @@ int testAddr(char *addr, s_addr hisAka)
 char* findLinkInString(char *line, s_addr addr)
 {
     char* linkpos = NULL;
-    while ( (linkpos = strstr(line, aka2str(addr))) != NULL )
+    while ( (linkpos = strrstr(line, aka2str(addr))) != NULL )
     {
         if(testAddr(linkpos,addr))
             break;
