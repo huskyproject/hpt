@@ -3,12 +3,12 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- areafix file with forwarded echo areas
 - "/" -> "_", etc... (dosfile)
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 - don't open/close on each msg when writing to pkt files (through ifdef)
+- areafix file with forwarded echo areas
 - fileboxes
 - templates
 

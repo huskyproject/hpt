@@ -581,7 +581,7 @@ int createDirectoryTree(const char *pathName) {
 
 int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 {
-   int fd; // bsy file for current link
+   int fd, save_errno; // bsy file for current link
    char *name=NULL, *sepDir=NULL, limiter=PATH_DELIM;
    e_bundleFileNameStyle bundleNameStyle = eUndef;
    
@@ -662,10 +662,12 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 
    // maybe we have session with this link?
    if ( (fd=open(link->bsyFile, O_CREAT | O_RDWR | O_EXCL, S_IREAD | S_IWRITE)) < 0 ) {
-	   
-	   if (errno != EEXIST) {
 
-		   writeLogEntry(hpt_log, '7', "cannot create *.bsy file \"%s\" for %s (errno %d)\n", link->bsyFile, link->name, (int)errno);
+	   save_errno = errno;
+	   
+	   if (save_errno != EEXIST) {
+
+		   writeLogEntry(hpt_log, '7', "cannot create *.bsy file \"%s\" for %s (errno %d)\n", link->bsyFile, link->name, (int)save_errno);
 		   exit_hpt("cannot create *.bsy file!",0);
 
 	   } else {

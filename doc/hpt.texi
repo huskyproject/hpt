@@ -294,7 +294,7 @@ FIDOCONFIG about location of config file and keywords ideology.
 @code{addToSeen 99/100 99/101}
 @end table
 
-Add aka(s) to SEEN-BYs.
+Add <addr> to SEEN-BYs. If <addr> is present or not - it is always adds.
 
 This statement can be repeated.
 

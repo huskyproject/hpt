@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Fri Mar  2 12:53:15 NOVT 2001
+max:
+* return back save_errno in .bsy checks
+
+----- cvs ci ------
 Tue Feb 27 21:31:50 NOVT 2001
 max:
 * don't move msg to BadArea when carbon to passthrough area with one link
