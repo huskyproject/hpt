@@ -550,10 +550,12 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 	msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop,
         uplink->RemoteRobotName ? uplink->RemoteRobotName : "areafix",
         uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1,
-        config->areafixReportsAttr);
+        uplink->areafixReportsAttr ? uplink->areafixReportsAttr : config->areafixReportsAttr);
 	msg->text = createKludges(config, NULL, uplink->ourAka, &(uplink->hisAka),
                               versionStr);
-	if (config->areafixReportsFlags)
+        if (uplink->areafixReportsFlags)
+            xstrscat(&(msg->text), "\001FLAGS ", uplink->areafixReportsFlags, "\r",NULL);
+        else if (config->areafixReportsFlags)
 	    xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r",NULL);
 	uplink->msg = msg;
     } else msg = uplink->msg;
@@ -1733,7 +1735,7 @@ char *processcmd(s_link *link, char *line, int cmd) {
     return report;
 }
 
-void preprocText(char *split, s_message *msg, char *reply)
+void preprocText(char *split, s_message *msg, char *reply, s_link *link)
 {
     char *orig = (config->areafixOrigin) ? config->areafixOrigin : config->origin;
 
@@ -1746,7 +1748,9 @@ void preprocText(char *split, s_message *msg, char *reply)
             xscatprintf(&(msg->text), "\001REPLY: %s\r", reply);
     }
     /* xstrcat(&(msg->text), "\001FLAGS NPD DIR\r"); */
-    if (config->areafixReportsFlags)
+    if (link->areafixReportsFlags)
+        xstrscat(&(msg->text), "\001FLAGS ", link->areafixReportsFlags, "\r",NULL);
+    else if (config->areafixReportsFlags)
         xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r",NULL);
     xscatprintf(&split, "\r--- %s areafix\r", versionStr);
     if (orig && orig[0]) {
@@ -1822,19 +1826,12 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
         if (partnum) xscatprintf(&newsubj, "%s (%d)", subj, partnum);
         else newsubj = subj;
 
-        if (config->areafixFromName == NULL)
-            tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
-            msg->toUserName,
+        tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
+            config->areafixFromName ? config->areafixFromName : msg->toUserName,
             msg->fromUserName, newsubj, 1,
-            config->areafixReportsAttr);
-        else
-            tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
-            config->areafixFromName,
-            msg->fromUserName, newsubj, 1,
-            config->areafixReportsAttr);
-
-
-        preprocText(split, tmpmsg, reply);
+            link->areafixReportsAttr ? link->areafixReportsAttr : config->areafixReportsAttr);
+  
+        preprocText(split, tmpmsg, reply, link);
         nfree(reply);
         processNMMsg(tmpmsg, NULL, getNetMailArea(config,config->robotsArea),
             0, MSGLOCAL);
@@ -2191,7 +2188,7 @@ void afix(hs_addr addr, char *cmd)
                 link->RemoteRobotName : "Areafix",
                 link->areaFixPwd ?
                 link->areaFixPwd : "", 1,
-                config->areafixReportsAttr);
+                link->areafixReportsAttr ? link->areafixReportsAttr : config->areafixReportsAttr);
             tmpmsg->text = safe_strdup(cmd);
             processAreaFix(tmpmsg, NULL, 1);
             freeMsgBuffers(tmpmsg);
@@ -2279,7 +2276,7 @@ int unsubscribeFromPausedEchoAreas(s_link *link) {
     if (text) {
 	tmpmsg = makeMessage(&(link->hisAka), link->ourAka, link->name,
 			     "areafix", link->areaFixPwd, 1,
-                 config->areafixReportsAttr);
+                             link->areafixReportsAttr ? link->areafixReportsAttr : config->areafixReportsAttr);
 	tmpmsg->text = text;
 	processAreaFix(tmpmsg, NULL, 0);
 	freeMsgBuffers(tmpmsg);
@@ -2337,12 +2334,14 @@ void autoPassive()
 					    &(config->links[i].hisAka),
 					    versionStr,config->links[i].name,
 					    "AutoPassive", 1,
-					    config->areafixReportsAttr);
+                                            config->links[i].areafixReportsAttr ? config->links[i].areafixReportsAttr : config->areafixReportsAttr);
 				  msg->text = createKludges(config, NULL,
 					    config->links[i].ourAka,
 					    &(config->links[i].hisAka),
 					    versionStr);
-				  if (config->areafixReportsFlags)
+                                  if (config->links[i].areafixReportsFlags)
+                                        xstrscat(&msg->text, "\001FLAGS ", config->links[i].areafixReportsFlags, "\r", NULL);
+                                  else if (config->areafixReportsFlags)
 					xstrscat(&msg->text, "\001FLAGS ", config->areafixReportsFlags, "\r", NULL);
 				  xstrcat(&msg->text, "\r System switched to passive, your subscription are paused.\r\r"
 					" You are being unsubscribed from echo areas with no downlinks besides you!\r\r"
@@ -2434,11 +2433,13 @@ int relink (char *straddr) {
 			  researchLink->RemoteRobotName ?
 			  researchLink->RemoteRobotName : "areafix",
 			  researchLink->areaFixPwd ? researchLink->areaFixPwd : "", 1,
-              config->areafixReportsAttr);
+                          researchLink->areafixReportsAttr ? researchLink->areafixReportsAttr : config->areafixReportsAttr);
 
 	msg->text = createKludges(config,NULL,researchLink->ourAka,
                               &researchLink->hisAka,versionStr);
-	if (config->areafixReportsFlags)
+        if (researchLink->areafixReportsFlags)
+            xstrscat(&(msg->text), "\001FLAGS ", researchLink->areafixReportsFlags, "\r",NULL);
+        else if (config->areafixReportsFlags)
 	    xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r",NULL);
 
 	for ( count = 0 ; count < areasArraySize; count++ ) {

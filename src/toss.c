@@ -1010,6 +1010,8 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 	    }
 
 	    msgHeader = createXMSG(config,msg, pktHeader, forceattr,tossDir);
+            /* val: this is temp-fix !!! */
+            msgHeader.attr = msg->attributes;
 	    /* Create CtrlBuf for SMAPI */
             len = msg->textLength;
 	    ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
