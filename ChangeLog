@@ -3,7 +3,9 @@ hpt 0.9.8 (development version)
 
 ----- cvs ci ------
 Mon Apr  9 13:12:20 NOVST 2001
-max (patch from Alex Bronin):
+max:
+* fixed sbadd after processing echomail from/to different zone
+patch from Alex Bronin:
 * use spawnvp() instead of spawnv()
 
 ----- cvs ci ------

@@ -418,22 +418,8 @@ void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, 
    char *seenByText=NULL, *start, *token;
    unsigned long temp;
    char *endptr;
-   int i;
 
    *seenByCount = 0;
-
-   for (i=0; i<config->addToSeenCount; i++) {
-	   (*seenByCount)++;
-	   (*seenBys) = (s_seenBy*) safe_realloc(*seenBys,sizeof(s_seenBy)*(*seenByCount));
-	   (*seenBys)[*seenByCount-1].net = (UINT16) config->addToSeen[i].net;
-	   (*seenBys)[*seenByCount-1].node = (UINT16) config->addToSeen[i].node;
-   }
-   for (i=0; i<area->sbaddCount; i++) {
-	   (*seenByCount)++;
-	   (*seenBys) = (s_seenBy*) safe_realloc(*seenBys,sizeof(s_seenBy)*(*seenByCount));
-	   (*seenBys)[*seenByCount-1].net = (UINT16) area->sbadd[i].net;
-	   (*seenBys)[*seenByCount-1].node = (UINT16) area->sbadd[i].node;
-   }
 
    start = strrstr(msg->text, " * Origin:"); // jump over Origin
    if (start == NULL) start = msg->text;
@@ -648,6 +634,19 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 			w_log('9',"can't open file: %s",debug);
 		}
 		nfree(debug);
+	}
+
+	for (i=0; i<config->addToSeenCount; i++) {
+	   (*seenByCount)++;
+	   (*seenBys) = (s_seenBy*) safe_realloc(*seenBys,sizeof(s_seenBy)*(*seenByCount));
+	   (*seenBys)[*seenByCount-1].net = (UINT16) config->addToSeen[i].net;
+	   (*seenBys)[*seenByCount-1].node = (UINT16) config->addToSeen[i].node;
+	}
+	for (i=0; i<echo->sbaddCount; i++) {
+	   (*seenByCount)++;
+	   (*seenBys) = (s_seenBy*) safe_realloc(*seenBys,sizeof(s_seenBy)*(*seenByCount));
+	   (*seenBys)[*seenByCount-1].net = (UINT16) echo->sbadd[i].net;
+	   (*seenBys)[*seenByCount-1].node = (UINT16) echo->sbadd[i].node;
 	}
 
 	// add our aka to seen-by (zonegating link must strip our aka)
