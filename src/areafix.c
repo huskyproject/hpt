@@ -185,7 +185,7 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 	len = fread(buff, sizeof(char), (size_t) len, f);
  	fseek(f, curpos, SEEK_SET);
 	fwrite(buff, sizeof(char), (size_t) len, f);
-#ifdef __WATCOMC__
+#if defined(__WATCOMC__) || defined(__MINGW32__)
 	fflush( f );
 	fTruncate( fileno(f), endpos-linelen );
 	fflush( f );
@@ -967,7 +967,7 @@ int changeresume(char *confName, s_link *link)
 				
 				fseek(f_conf, curpos, SEEK_SET);
 				fwrite(line, sizeof(char), (size_t) cfglen, f_conf);
-#ifdef __WATCOMC__
+#if defined(__WATCOMC__) || defined(__MINGW32__)
 				fflush( f_conf );
 				fTruncate( fileno(f_conf), endpos-(remstr-curpos) );
 				fflush( f_conf );

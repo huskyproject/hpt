@@ -1,4 +1,4 @@
-# RSXNT
+# RSXNT makefile
 # no support for the husky build environment
 
 DEBUG=-s

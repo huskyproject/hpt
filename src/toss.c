@@ -74,6 +74,13 @@
 #include <dos.h>
 #endif
 
+#if defined(__MINGW32__) && defined(__NT__)
+/* we can't include windows.h for several reasons ... */
+int __stdcall GetFileAttributesA(char *);
+#define GetFileAttributes GetFileAttributesA
+#endif
+
+
 extern s_message **msgToSysop;
 
 s_statToss statToss;
@@ -1669,6 +1676,8 @@ void processDir(char *directory, e_tossSecurity sec)
 #if !defined(UNIX)
 #if defined(__TURBOC__) || defined(__DJGPP__)
       _dos_getfileattr(dummy, &fattrs);
+#elif defined(__MINGW32__)
+      fattrs = (GetFileAttributes(dummy) & 0x2) ? _A_HIDDEN : 0;
 #else
       fattrs = file->d_attr;
 #endif

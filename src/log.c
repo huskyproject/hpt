@@ -45,6 +45,12 @@ static char *mnames[] = {
 
 static char *wdnames[] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 
+#ifdef __MINGW32__
+#ifdef open
+#undef open
+#endif
+#endif
+
 s_log *openLog(char *fileName, char *appN, char *keys, unsigned int echoLog)
 {
    s_log      *temp;
