@@ -31,7 +31,7 @@ Instructions to build hpt from sources.
                              ...some other
 
 2. Determine which makefile you need to use then compile (and install if need)
-   fidoconfig using selected makefile, as following examples:
+   hpt using selected makefile, as following examples:
    Example 1 (use common makefile (named 'Makefile'): require huskymak.cfg (see
               huskybse); unixes only):
 	$ make
