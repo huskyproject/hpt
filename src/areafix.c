@@ -466,6 +466,7 @@ char* GetWordByPos(char* str, UINT pos)
 
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     char *cfgline=NULL, *token=NULL, *tmpPtr=NULL, *line=NULL, *buff=NULL;
+    char *strbegfileName = fileName;
     long strbeg = 0, strend = -1;
     int rc=0;
 
@@ -496,12 +497,13 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
                 if (stricmp(token, areaName)==0) {
                     fileName = safe_strdup(getCurConfName());
                     strend = get_hcfgPos();
-                    if(strbeg > strend) strbeg = 0;
+                    if (strcmp(strbegfileName, fileName) != 0) strbeg = 0;
                     break;
                 }
             }
         }
         strbeg = get_hcfgPos();
+        strbegfileName = safe_strdup(getCurConfName());
         w_log(LL_DEBUGF, __FILE__ ":%u:changeconfig() strbeg=%ld", __LINE__, strbeg);
         nfree(line);
         nfree(cfgline);
