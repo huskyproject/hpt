@@ -57,7 +57,7 @@ void sortSeenBys(s_seenBy *seenBys, UINT count)
    qsort(seenBys, count, sizeof(s_seenBy), compare);
 }
 
-void cleanDupesFromSeenBys(s_seenBy **seenBys, UINT *count)
+void cleanDupesFromSeenBys(s_seenBy **seenBys, UINT16 *count)
 {
     UINT i;
     s_seenBy seenBy;
@@ -87,7 +87,7 @@ void cleanDupes_seenByZone()
     UINT i;
 
     for (i=0;i<MAX_ZONE;i++)
-        cleanDupesFromSeenBys(&(seenBysZone[i].seenByArray), (UINT *) &(seenBysZone[i].seenByCount));
+        cleanDupesFromSeenBys(&(seenBysZone[i].seenByArray), (UINT16 *) &(seenBysZone[i].seenByCount));
 }
 
 void zero_seenBysZone()
