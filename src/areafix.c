@@ -502,7 +502,7 @@ int delConfigLine(FILE *f, char *fileName) {
 }
 */
 // subscribe if (act==0),  unsubscribe if (act!=0)
-int forwardRequestToLink (char *areatag, s_link *uplink, int act) {
+int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act) {
     time_t t;
     struct tm *tm;
     s_message *msg;
@@ -550,11 +550,13 @@ int forwardRequestToLink (char *areatag, s_link *uplink, int act) {
 	msg->text = realloc (msg->text, strlen(msg->text)+1+strlen(areatag)+1+1);
 	
 	if (act==0) {
+	    if (getArea(config, areatag) == &(config->badArea)) {
+		base = config->msgBaseDir;
+		config->msgBaseDir = pass;
+		autoCreate(areatag, uplink->hisAka, &(dwlink->hisAka));
+		config->msgBaseDir = base;
+	    }
 	    strcat(msg->text,"+");
-	    base = config->msgBaseDir;
-	    config->msgBaseDir = pass;
-	    autoCreate(areatag, uplink->hisAka);
-	    config->msgBaseDir = base;
 	} else strcat(msg->text,"-");
 	strcat(msg->text,areatag);
 	strcat(msg->text,"\r");
@@ -594,13 +596,18 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 				if (stricmp(token, areaName)==0)
 					switch 	(action) {
 					case 0: 
+						if ((area->msgbType==MSGTYPE_PASSTHROUGH)
+							&& (area->downlinkCount==1) &&
+							(area->downlinks[0]->link->hisAka.point == 0)) {
+						    forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 0);
+						}
 						addstring(f,aka2str(link->hisAka));
 						break;
  					case 1:	fseek(f, pos, SEEK_SET);
 						if ((area->msgbType==MSGTYPE_PASSTHROUGH)
 							&& (area->downlinkCount==1) &&
 							(area->downlinks[0]->link->hisAka.point == 0)) {
-						    forwardRequestToLink(areaName, area->downlinks[0]->link, 1);
+						    forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 1);
 						}
 						delLinkFromArea(f, fileName, aka2str(link->hisAka));
 /*						delstring(f,fileName,straka,1);*/
@@ -650,7 +657,7 @@ int areaIsAvailable(char *areaName, char *fileName) {
 	return 0;
 }
 
-int forwardRequest(char *areatag) {
+int forwardRequest(char *areatag, s_link *dwlink) {
     int i;
     s_link *uplink;
 	
@@ -661,11 +668,11 @@ int forwardRequest(char *areatag) {
 			if (uplink->forwardRequestFile!=NULL) {
 				// first try to find the areatag in forwardRequestFile
 				if (areaIsAvailable(areatag,uplink->forwardRequestFile)!=0) {
-					forwardRequestToLink(areatag,uplink,0);
+					forwardRequestToLink(areatag,uplink,dwlink,0);
 					return 0;
 				}
 			} else {
-				forwardRequestToLink(areatag,uplink,0);
+				forwardRequestToLink(areatag,uplink,dwlink,0);
 				return 0;
 			}
 		}
@@ -722,7 +729,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	
 	if ((rc==4) && (strstr(line,"*") == NULL)) {
 		// try to forward request
-		if (forwardRequest(line)!=0)
+		if (forwardRequest(line, link)!=0)
 			sprintf(addline,"%s no uplinks to forward\r",line);
 		else {
 			sprintf(addline,"%s request forwarded\r",line);
@@ -1624,6 +1631,7 @@ void afix(void)
 
 	} /* endfor */
 
+//	writeMsgToSysop(msgToSysop);
 	MsgCloseArea(netmail);
     } else {
 		writeLogEntry(log, '9', "Could not open NetmailArea");

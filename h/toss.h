@@ -55,8 +55,9 @@ void putMsgInArea(s_area *echo, s_message *msg, int strip);
 void toss(void);
 void tossTempOutbound(char *directory); 
 void arcmail(void);
-int autoCreate(char *c_area, s_addr pktOrigAddr);
+int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr);
 void tossFromBadArea(void);
+void writeMsgToSysop();
 
 int readCheck(s_area *echo, s_link *link);
 // '\x0000' access o'k

@@ -66,6 +66,8 @@
 int __stdcall SetConsoleTitleA( const char* lpConsoleTitle );
 #endif
 
+s_message **msgToSysop = NULL;
+
 void processCommandLine(int argc, char **argv)
 {
    unsigned int i = 0;
@@ -166,6 +168,7 @@ void processConfig()
 int main(int argc, char **argv)
 {
    struct _minf m;
+   int i;
 #if defined ( __WATCOMC__ ) && defined ( __NT__ )
    char title[ 256 ];
 #endif
@@ -191,6 +194,12 @@ int main(int argc, char **argv)
       disposeConfig(config);
       exit(1);
    } /*endif */
+   
+   msgToSysop = (s_message**)calloc(config->addrCount, sizeof(s_message*));
+   for (i = 0; i < config->addrCount; i++) {
+       msgToSysop[i] = (s_message*)malloc(sizeof(s_message));
+       msgToSysop[i] = NULL;
+   }
 
    tossTempOutbound(config->tempOutbound);
    if (1 == cmToss) toss();
@@ -199,6 +208,14 @@ int main(int argc, char **argv)
    if (cmAfix == 1) afix();
    if (cmPack == 1) pack();
    if (cmLink == 1) linkAreas();
+   
+   writeMsgToSysop();
+   
+   for (i = 0; i < config->addrCount; i++) {
+       if (msgToSysop[i]) freeMsgBuffers(msgToSysop[i]);
+       free(msgToSysop[i]);
+   }
+   free(msgToSysop);
 
    // deinit SMAPI
    MsgCloseApi();

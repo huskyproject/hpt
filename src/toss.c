@@ -50,6 +50,7 @@
 
 #include <recode.h>
 #include <areafix.h>
+#include <version.h>
 #include <scanarea.h>
 
 #include <msgapi.h>
@@ -57,6 +58,8 @@
 #include <typedefs.h>
 #include <compiler.h>
 #include <progprot.h>
+
+extern s_message **msgToSysop;
 
 s_statToss statToss;
 int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec);
@@ -596,7 +599,88 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    free(path);
 }
 
-int autoCreate(char *c_area, s_addr pktOrigAddr)
+void makeMsgToSysop(char *areaName, s_addr fromAddr)
+{
+    time_t t;
+    struct tm *tm;
+    s_area *echo;
+    char buff[81];
+    int i;
+    
+    echo = getArea(config, areaName);
+    
+    if (echo == &(config->badArea)) return;
+    
+    for (i = 0; i < config->addrCount; i++) {
+	if (echo->useAka == &(config->addr[i])) {
+	    if (msgToSysop[i] == NULL) {
+		msgToSysop[i] = (s_message*)calloc(1,sizeof(s_message));
+
+		msgToSysop[i]->origAddr.zone  = echo->useAka->zone;
+		msgToSysop[i]->origAddr.net   = echo->useAka->net;
+		msgToSysop[i]->origAddr.node  = echo->useAka->node;
+		msgToSysop[i]->origAddr.point = echo->useAka->point;
+		
+		msgToSysop[i]->destAddr.zone  = echo->useAka->zone;
+		msgToSysop[i]->destAddr.net   = echo->useAka->net;
+		msgToSysop[i]->destAddr.node  = echo->useAka->node;
+		msgToSysop[i]->destAddr.point = echo->useAka->point;
+		
+		msgToSysop[i]->attributes = 1;
+	
+		t = time (NULL);
+		tm = gmtime(&t);
+		strftime(msgToSysop[i]->datetime, 21, "%d %b %y  %T", tm);
+		
+		msgToSysop[i]->netMail = 1;
+		
+		msgToSysop[i]->fromUserName = (char *)calloc(strlen(versionStr)+1, sizeof(char));
+		strcpy(msgToSysop[i]->fromUserName, versionStr);
+		
+		msgToSysop[i]->toUserName = (char *)calloc(strlen(config->sysop)+1, sizeof(char));
+		strcpy(msgToSysop[i]->toUserName, config->sysop);
+		
+		msgToSysop[i]->subjectLine = (char *)calloc(18, sizeof(char));
+		strcpy(msgToSysop[i]->subjectLine, "Created new areas");
+		
+		msgToSysop[i]->text = (char *)calloc(300, sizeof(char));
+		createKludges(msgToSysop[i]->text, NULL, echo->useAka, echo->useAka);
+	
+		strcat(msgToSysop[i]->text, "Action   Name");
+		strcat(msgToSysop[i]->text, print_ch(49, ' '));
+		strcat(msgToSysop[i]->text, "By\r");
+		strcat(msgToSysop[i]->text, print_ch(79, '-'));
+		strcat(msgToSysop[i]->text, "\r");
+	    }
+	    sprintf(buff, "Created  %s", echo->areaName);
+	    sprintf(buff+strlen(buff), "%s", print_ch(sizeof(buff)-1-strlen(buff), ' '));
+	    sprintf(buff+62, "%s\r", aka2str(fromAddr));
+	    msgToSysop[i]->text = (char*)realloc(msgToSysop[i]->text, strlen(msgToSysop[i]->text)+strlen(buff)+1);
+	    strcat(msgToSysop[i]->text, buff);
+	    break;
+	}
+    }
+    
+}
+
+void writeMsgToSysop()
+{
+    char tmp[81];
+    int i;
+    
+    for (i = 0; i < config->addrCount; i++) {
+	if (msgToSysop[i]) {
+	    sprintf(tmp, " \r--- %s\r", versionStr);
+	    msgToSysop[i]->text = (char*)realloc(msgToSysop[i]->text, strlen(tmp)+strlen(msgToSysop[i]->text)+1);
+	    strcat(msgToSysop[i]->text, tmp);
+	    msgToSysop[i]->textLength = strlen(msgToSysop[i]->text);
+	    processNMMsg(msgToSysop[i], NULL);
+	}
+    }
+    
+}
+
+int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 {
    FILE *f;
    char *fileName;
@@ -670,6 +754,11 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
 
    sprintf(buff, "Area '%s' autocreated by %s", c_area, hisaddr);
    writeLogEntry(log, '8', buff);
+   
+   if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr);
+   else makeMsgToSysop(c_area, *forwardAddr);
+   
+   
    return 0;
 }
 
@@ -821,7 +910,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
       // checking for autocreate option
       link = getLinkFromAddr(*config, pktOrigAddr);
       if ((link != NULL) && (link->autoAreaCreate != 0) && (writeAccess == 0)) {
-         autoCreate(area, pktOrigAddr);
+         autoCreate(area, pktOrigAddr, NULL);
          echo = getArea(config, area);
 	 writeAccess = writeCheck(echo, link);
 	 if (writeAccess) {
@@ -1402,7 +1491,7 @@ void toss()
 
    // load recoding tables if needed
    if (config->intab != NULL) getctab(intab, config->intab);
-
+   
    // set stats to 0
    memset(&statToss, 0, sizeof(s_statToss));
    statToss.startTossing = time(NULL);
@@ -1439,6 +1528,7 @@ void toss()
 
    // write statToss to Log
    writeTossStatsToLog();
+   
 }
 
 int packBadArea(HMSG hmsg, XMSG xmsg)

@@ -2,6 +2,12 @@ hpt 0.27
 --------
 
 ----- cvs ci ------
+Sat Mar  27 13:30
+Fedor:
+- fixed small bug in forward of request
++ report to netmail about autocreation areas
+
+----- cvs ci ------
 Thu Mar  25 12:40
 Fedor:
 ! Created area in passthrough, when created from forward of requests
