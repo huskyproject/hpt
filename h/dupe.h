@@ -53,7 +53,7 @@
 
 struct textDupeEntry {
   time_t  TimeStampOfDupe;
-  char *from, *to, *subject, *msgid;
+  char *msgid;
 };
 
 typedef struct textDupeEntry s_textDupeEntry;
