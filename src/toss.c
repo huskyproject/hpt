@@ -1100,10 +1100,12 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
     return rc;
 }
 
+/* return value: 1 if success, 0 if fail */
 int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 {
     char *tmp = NULL, *line = NULL, *textBuff=NULL, *areaName=NULL, *reason = NULL;
 
+    w_log(LL_FUNC, "putMsgInBadArea() begin");
     statToss.bad++;
 	
     // get real name area
@@ -1117,75 +1119,101 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
     switch (writeAccess) {
     case 0:
 	reason = "System not allowed to create new area";
+	w_log(LL_ECHOMAIL, "Badmail reason: System not allowed to create new area");
 	break;
     case 1:
 	reason = "Sender not allowed to post in this area (access group)";
+	w_log(LL_ECHOMAIL, "Badmail reason: Sender not allowed to post in this area (access group)");
 	break;
     case 2:
 	reason = "Sender not allowed to post in this area (access level)";
+	w_log(LL_ECHOMAIL, "Badmail reason: Sender not allowed to post in this area (access level)");
 	break;
     case 3:
 	reason = "Sender not allowed to post in this area (access import)";
+	w_log(LL_ECHOMAIL, "Badmail reason: Sender not allowed to post in this area (access import)");
 	break;
     case 4:
 	reason = "Sender not active for this area";
+	w_log(LL_ECHOMAIL, "Badmail reason: Sender not active for this area");
 	break;
     case 5:
 	reason = "Rejected by filter";
+	w_log(LL_ECHOMAIL, "Badmail reason: Rejected by filter");
 	break;
     case 6:
 	switch (msgapierr)
     {
 	    case MERR_NONE: reason = "MSGAPIERR: No error";
+		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: No error");
 		break;
 	    case MERR_BADH: reason = "MSGAPIERR: Invalid handle passed to function";
+		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Invalid handle passed to function");
 		break;
 	    case MERR_BADF: reason = "MSGAPIERR: Invalid or corrupted file";
+		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Invalid or corrupted file");
 		break;
 	    case MERR_NOMEM: reason = "MSGAPIERR: Not enough memory for specified operation";
+		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Not enough memory for specified operation");
 		break;
 	    case MERR_NODS:
 		reason = "MSGAPIERR: Maybe not enough disk space for operation";
-		w_log(LL_ERR, "Maybe not enough disk space for operation\r");
+		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Maybe not enough disk space for operation");
+		w_log(LL_ERR, "Maybe not enough disk space for operation");
 		break;
 	    case MERR_NOENT: reason = "MSGAPIERR: File/message does not exist";
+		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: File/message does not exist");
 		break;
 	    case MERR_BADA: reason = "MSGAPIERR: Bad argument passed to msgapi function";
+		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Bad argument passed to msgapi function");
 		break;
 	    case MERR_EOPEN: reason = "MSGAPIERR: Couldn't close - messages still open";
+		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Couldn't close - messages still open");
 		break;
 	    case MERR_NOLOCK: reason = "MSGAPIERR: Base needs to be locked to perform operation";
+		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Base needs to be locked to perform operation");
 		break;
 	    case MERR_SHARE: reason = "MSGAPIERR: Resource in use by other process";
+		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Resource in use by other process");
 		break;
 	    case MERR_EACCES: reason = "MSGAPIERR: Access denied (can't write to read-only, etc)";
+		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Access denied (can't write to read-only, etc)");
 		break;
 	    case MERR_BADMSG: reason = "MSGAPIERR: Bad message frame (Squish)";
+		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Bad message frame (Squish)");
 		break;
 	    case MERR_TOOBIG: reason = "MSGAPIERR: Too much text/ctrlinfo to fit in frame (Squish)";
+		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Too much text/ctrlinfo to fit in frame (Squish)");
 		break;
 	    default: reason = "MSGAPIERR: Unknown error";
+		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Unknown error");
 		break;
 	    }
 
 	break;
     case 7:
 	reason = "Can't create echoarea with forbidden symbols in areatag";
+	w_log(LL_ECHOMAIL, "Badmail reason: Can't create echoarea with forbidden symbols in areatag");
 	break;
     case 8:
 	reason = "Sender not found in config file";
+	w_log(LL_ECHOMAIL, "Badmail reason: Sender not found in config file");
 	break;
     case 9:
 	reason = "Can't open config file";
+	w_log(LL_ECHOMAIL, "Badmail reason: Can't open config file");
 	break;
     case 10:
 	reason = "No downlinks for passthrough area";
+	w_log(LL_ECHOMAIL, "Badmail reason: No downlinks for passthrough area");
 	break;
     case 11:
 	reason = "lenght of CONFERENCE name is more than 60 symbols";
+	w_log(LL_ECHOMAIL, "Badmail reason: lenght of CONFERENCE name (areatag) is more than 60 symbols");
 	break;
     default :
 	reason = "Another error";
+	w_log(LL_ECHOMAIL, "Badmail reason: Another error");
 	break;
     }
 
@@ -1193,6 +1221,7 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
     if (perltossbad(msg, areaName, pktOrigAddr, reason)) {
 	nfree(areaName);
 	nfree(msg->text);
+        w_log(LL_FUNC, "putMsgInBadArea():perltossbad OK (rc=1)");
 	return 1;
     }
 #endif
@@ -1214,8 +1243,10 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
     msg->textLength = strlen(msg->text);
     if (putMsgInArea(&(config->badArea), msg, 0, 0)) {
 	config->badArea.imported++;
+        w_log(LL_FUNC, "putMsgInBadArea() OK");
 	return 1;
     }
+    w_log(LL_FUNC, "putMsgInBadArea() failed");
     return 0;
 }
 
