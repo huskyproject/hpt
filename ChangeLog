@@ -1,3 +1,7 @@
+2002-06-22 Saturday 14:02  mche
+
+	* src/scan.c (1.166): fixed problems with deleting echotosslog
+
 2002-06-20 Thursday 16:09  stas
 
 	* src/areafix.c (1.316): Fix free shifted pointer
