@@ -1259,7 +1259,7 @@ int checkAreaLink(s_area *area, s_addr aka, int type)
 
 int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceattr)
 {
-   char   *area, *p;
+   char   *area=NULL, *p;
    s_area *echo=&(config->badArea);
    s_link *link;
    int    writeAccess = 0, rc = 0, ccrc = 0;
@@ -2092,7 +2092,12 @@ void arcmail(s_link *tolink) {
 					 cmdexit = system(cmd);
 					 //writeLogEntry(hpt_log, '6', "cmd: %s",cmd);
 					 if (cmdexit==0) {
-						 if (foa==0) fprintf(flo, "^%s\n", link->packFile);
+						 if (foa==0) {
+						    if (config->bundleNameStyle == addrDiff)
+                                                       fprintf(flo, "#%s\n", link->packFile);
+						    else
+                                                       fprintf(flo, "^%s\n", link->packFile);
+						 }
 						 remove(link->pktFile);
 					 } else
 						 writeLogEntry(hpt_log, '9',

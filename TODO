@@ -11,6 +11,8 @@ Category 1: Will certainly be implemented until next release
 - AutoCreateSemaphore
 - autoAreaCreateMask
 - areafix from cmd line (like hpt afix <addr> %command)
+- del pass areas after unsubscribing
+- pack netmail in pkt/arcmail bundles
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

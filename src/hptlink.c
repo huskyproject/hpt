@@ -79,7 +79,7 @@ int hardSearch = 0;
 int useSubj = 1;
 int useReplyId = 1;
 int loglevel = 10;
-char *version = "1.2";
+char *version = "1.3";
 HAREA harea;
 
 
@@ -191,7 +191,7 @@ void linkArea(s_area *area)
 
    int replFound;
    int replDone;
-   char *ptr1, *ptr2;
+   char *ptr;
 
 
 
@@ -268,7 +268,10 @@ void linkArea(s_area *area)
 		      crepl -> msgId = (char *) GetCtrlValue( (char *)ctl, "MSGID:");
 		   }
 
-		   if ( useSubj ) crepl -> subject = strdup((char*)xmsg.subj);
+		   if ( useSubj && xmsg.subj != NULL) {
+		      if ( (ptr=skipReSubj(xmsg.subj)) == NULL) ptr = xmsg.subj;
+		      crepl -> subject = strdup(ptr);
+		   }
 
 		   // Save data for comparing
 		   memcpy(linksptr->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
@@ -289,9 +292,6 @@ void linkArea(s_area *area)
 		  crepl -> subject
 		) {
 
-		if ( (ptr1 = skipReSubj (crepl -> subject) ) == NULL)
-		    ptr1 = crepl -> subject;
-
 		replDone = 0;
 
 		for ( j=i+1, srepl=crepl+1; j <= highMsg && !replDone; j++, srepl++ ) {
@@ -305,7 +305,13 @@ void linkArea(s_area *area)
 		       replFound++;
 		       links_msgid++;
 
-		       if ( ! crepl -> treeId ) crepl -> treeId = i;
+		       if ( ! crepl -> treeId ) { // *crepl isn't linked
+			  if (srepl -> treeId ) { // *srepl linked already
+			     crepl -> treeId = srepl -> treeId;
+			  } else {
+                             crepl -> treeId = i; // top of new tree
+			  }
+		       }
 		       srepl -> treeId = crepl -> treeId;
 
 		       if (singleRepl) {
@@ -323,26 +329,17 @@ void linkArea(s_area *area)
 
 		       replFound++;
 		       links_replid++;
-		       if ( ! crepl -> treeId ) crepl -> treeId = i;
+
+		       if ( ! crepl -> treeId ) { // *crepl isn't linked
+			  if (srepl -> treeId ) { // *srepl linked already
+			     crepl -> treeId = srepl -> treeId;
+			  } else {
+                             crepl -> treeId = i; // top of new tree
+			  }
+		       }
 		       srepl -> treeId = crepl -> treeId;
+
 		       treeLinks++;
-		     }
-		  }
-
-		  if ( !replFound &&
-		       (srepl -> treeId == 0) &&
-		       crepl -> subject && srepl -> subject ) {
-		     if ( (ptr2 = skipReSubj (srepl -> subject) ) == NULL)
-		         ptr2 = srepl -> subject;
-
-		     if ( strcmp ( ptr1, ptr2 ) == 0 ) {
-
-		       replFound++;
-		       links_subj++;
-		       if ( ! crepl -> treeId ) crepl -> treeId = i;
-		       srepl -> treeId = crepl -> treeId;
-		       treeLinks++;
-
 		     }
 		  }
 
@@ -350,16 +347,47 @@ void linkArea(s_area *area)
 		     if ( strcmp(srepl -> msgId, crepl -> replyId) == 0 ) {
 		       replFound++;
 		       links_revmsgid++;
-		       if ( ! crepl -> treeId ) crepl -> treeId = i;
+
+		       if ( ! crepl -> treeId ) { // *crepl isn't linked
+			  if (srepl -> treeId ) { // *srepl linked already
+			     crepl -> treeId = srepl -> treeId;
+			  } else {
+                             crepl -> treeId = i; // top of new tree
+			  }
+		       }
 		       srepl -> treeId = crepl -> treeId;
 
 		       if (singleRepl) {
 			  treeLinks++;
 		       } else {
-			  linkMsgs ( crepl, srepl, i, j );
+			  linkMsgs ( srepl, crepl, j, i );
 		       }
 		     }
 		  }
+
+		  if ( !replFound &&
+		       (srepl -> treeId == 0) &&
+		       crepl -> subject && srepl -> subject ) {
+
+		     if ( strcmp ( crepl -> subject, srepl -> subject ) == 0 ) {
+
+		       replFound++;
+		       links_subj++;
+
+		       if ( ! crepl -> treeId ) { // *crepl isn't linked
+			  if (srepl -> treeId ) { // *srepl linked already
+			     crepl -> treeId = srepl -> treeId;
+			  } else {
+                             crepl -> treeId = i; // top of new tree
+			  }
+		       }
+		       srepl -> treeId = crepl -> treeId;
+
+		       treeLinks++;
+
+		     }
+		  }
+
 		  if (replFound && singleRepl && !hardSearch ) replDone++;
 
 		}
@@ -367,7 +395,7 @@ void linkArea(s_area *area)
 	   }
 
 	   /* Pass 3: finding unlinked messages with filled tree IDs, and link
-	    * them to the tree possible
+	    * them to the tree where possible
 	    */
 	   if ( loglevel >= 11 ) fprintf (outlog, "Pass 3: buildng relations by teeIds\n");
 

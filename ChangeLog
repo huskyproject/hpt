@@ -2,6 +2,12 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Tue Aug 29 22:54:10 NOVST 2000
+max (patches from Serguei Revtov):
+* hptlink bugfix when linkung with -t
+* hptlink little speedup when linking by subjects
+
+----- cvs ci ------
 Sat Aug 27 19:31:04 NOVST 2000
 * excludePassthroughCarbon
 * processEMMsg optimization
