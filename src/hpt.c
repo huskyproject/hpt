@@ -582,8 +582,7 @@ int main(int argc, char **argv)
    nfree(versionStr);
 
    if (config->lockfile) {
-	close(lock_fd);
-	remove(config->lockfile);
+       FreelockFile(config->lockfile ,lock_fd);
    }
 
 #if defined ( __NT__ )
