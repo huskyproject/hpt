@@ -1203,7 +1203,7 @@ char *unsubscribe(s_link *link, char *cmd) {
         }
         removelink(link, area);
         if ((area->msgbType == MSGTYPE_PASSTHROUGH) &&
-            (area->downlinkCount < 2) &&
+            (area->downlinkCount == 1) &&
             (area->downlinks[0]->link->hisAka.point == 0) &&
             (config->areafixQueueFile)) {
             af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
