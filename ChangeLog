@@ -1,3 +1,8 @@
+2001-05-24 Thursday 17:06  ml
+
+	* doc/hpt.texi (1.27), src/fcommon.c (1.88), src/toss.c (1.345):
+	fileBoxes support
+
 2001-05-22 Tuesday 23:06  pavel.gulchouck
 
 	* h/hptperl.h (1.2), src/perl.c (1.11), src/scan.c (1.129): $route
