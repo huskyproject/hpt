@@ -1384,7 +1384,7 @@ e.g.: unpack "unzip -joLqq $a -d $p $f" 0 504b0304
 
        files packed by zip can be recognized by
          504b0304(hex) at offset 0(integer)
-       they can be unpacked by 
+       they can be unpacked by
        "unzip -joLqq <filename> -d <path> <descrption_filename>"
 
 @end example
@@ -1929,6 +1929,7 @@ This statement cannot be repeated.
 * AutoAreaCreateDefaults::      set defaults to autocreated echoareas
 * AutoAreaCreateSubdirs::       create structured or flat message base?
 * AutoPause::                   stop export mail for this link after xx days
+* AvailList::                   specify variant for reply to %avail
 * DenyFwdFile::                 file with area list for denyed requests
 * DenyFwdMask::                 mask list for denyed requests
 * DenyFwdReqAccess::            deny access to forward requests
@@ -2227,7 +2228,7 @@ Please note that this option will @emph{not} currently work if the
 @code{-dosfile} option is used to create filenames in 8.3 convention.
 @xref{EchoArea,,EchoArea}, for more information on the @code{-dosfile} option.
 
-@node AutoPause, DenyFwdFile, AutoAreaCreateSubdirs, Link Keywords
+@node AutoPause, AvailList, AutoAreaCreateSubdirs, Link Keywords
 @subsection AutoPause
 @findex AutoPause
 @table @asis
@@ -2251,7 +2252,34 @@ This statement can only be repeated for different links.
 
 @xref{AutoPassive}.
 
-@node DenyFwdFile, DenyFwdMask, AutoPause, Link Keywords
+
+@node AvailList, DenyFwdFile, AutoPause, Link Keywords
+@subsection AvailList
+@findex AvailList
+@table @asis
+@item Syntax:
+@code{AvailList (Full|Unique|UniqueOne)}
+@item Example:
+@code{AvailList Full}
+@end table
+
+This statement specify variant for reply to %avail command for current link:
+
+@multitable {* UniqueOne}{aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+@item * Full
+@tab produce full areas list for each uplink with avaiable forward subscribe for link
+@item * Unique
+@tab like @code{Full} but exclude dulicated areas for each next uplink
+@item * UniqueOne
+@tab produce one list: all areas from all uplinks without duplicates
+@end multitable
+
+Default value is @code{AvailList Full}.
+
+This statement can only be repeated for different links.
+
+
+@node DenyFwdFile, DenyFwdMask, AvailList, Link Keywords
 @subsection DenyFwdFile
 @findex DenyFwdFile
 @table @asis
