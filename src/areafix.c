@@ -2112,7 +2112,8 @@ void autoPassive()
 				  int mask = config->links[i]->areafixReportsAttr ? config->links[i]->areafixReportsAttr : config->areafixReportsAttr;
 				  msg = makeMessage(config->links[i]->ourAka,
 					    &(config->links[i]->hisAka),
-					    versionStr,config->links[i]->name,
+					    config->areafixFromName ? config->areafixFromName : versionStr,
+					    config->links[i]->name,
 					    "AutoPassive", 1,
                                             MSGPRIVATE | MSGLOCAL | (mask & (MSGKILL|MSGCPT)) );
 				  msg->text = createKludges(config, NULL,
@@ -2205,7 +2206,7 @@ int relink (char *straddr) {
 
 	msg = makeMessage(researchLink->ourAka,
 			  &researchLink->hisAka,
-			  versionStr,
+			  config->sysop,
 			  researchLink->RemoteRobotName ?
 			  researchLink->RemoteRobotName : "areafix",
 			  researchLink->areaFixPwd ? researchLink->areaFixPwd : "", 1,
