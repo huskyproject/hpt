@@ -23,6 +23,7 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
    - attach processing was changed: now hpt will try to guess actual attached
      file name on case-sensitive filesystems
    - retry pack pkt into bundle if append to archive failed
+   - Fix linking when ^AMSGID or ^REPLY are in MiXeD cAsE
 
 
 
