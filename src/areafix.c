@@ -482,6 +482,11 @@ char *available(s_link *link) {
 			writeLogEntry(hpt_log, '8', "areafix: Available Area List from %s sent to %s", aka2str(uplink->hisAka), linkAka);
 		}
 	}
+
+	if (report==NULL) {
+	    xstrcat(&report, "\r  no links for creation Available Area List\r");
+            writeLogEntry(hpt_log, '8', "areafix: no links for creation Available Area List");
+	}
 	
 	return report;
 }                                                                               

@@ -3,12 +3,14 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- tinysb (killsb)
-- add scanned msgs to dupebase
+! fix pktsize bug
+- fix attach code
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 
+- tinysb (killsb)
+- add scanned msgs to dupebase
 - del empty .sep catalogues
 - check dupebase filename creation - dos & passthrough areas
 - clean autoCreate code
