@@ -1023,12 +1023,12 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 		break;
 	case 3: 
 		xstrcat(&textBuff,"Sender not allowed to post in this area (access import)\r");
-        case 5:
-                xstrcat(&textBuff, "Rejected by filter\r");
-                break;
 		break;
 	case 4: 
 		xstrcat(&textBuff,"Sender not active for this area\r");
+		break;
+	case 5:
+		xstrcat(&textBuff, "Rejected by filter\r");
 		break;
 	default :
 		xstrcat(&textBuff,"Another error\r");

@@ -8,6 +8,7 @@ max:
 * don't read /n in message body from pkt
 * when adding seen-by & path to message without ones, adding /r first
 * search also "SEEN-BY: " after "(\rSEEN-BY: " & "\rSEEN-BY: "
+* fix in putMsgInBadArea (don't add Rejected by filter if not needed)
 
 ----- cvs ci ------
 Fri Jul 14 15:35:18 NOVST 2000
