@@ -74,7 +74,7 @@ s_pktHeader *openPkt(FILE *pkt)
   s_pktHeader *header;
   UINT16      pktVersion, capWord;
 
-  header = (s_pktHeader *) malloc(sizeof(s_pktHeader));
+  header = (s_pktHeader *) calloc(1,sizeof(s_pktHeader));
   header->origAddr.node = getUINT16(pkt);
   header->destAddr.node = getUINT16(pkt);
   header->origAddr.domain = NULL;

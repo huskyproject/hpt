@@ -38,8 +38,7 @@
    		The problem with original patch by Leonid was that if msg had 
 		some reply links written in replies or replyto fields but
 		no replies were found during linkage reply&replyto fields won't
-		be cleared. I (KN) have applied some quick&dirty patch to fix this 
-		problem, but it's not enough.
+		be cleared. 
 */
 
 #include <stdio.h>
@@ -206,19 +205,11 @@ int linkArea(s_area *area, int netMail)
       for (curr = tail; curr != NULL; ) {
          hmsg  = MsgOpenMsg(harea, MOPEN_RW, curr -> msgNum);
          if ((hmsg != NULL) && (curr->relinked != 0)) {
-             int need_write = 0;
 	     MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
 	     memset(curr->replies + curr->freeReply, 0, sizeof(UMSGID) * (MAX_REPLY - curr->freeReply));
-	     /* FIXME: need a better solution*/
-	     if (memcmp(xmsg.replies, curr->replies, sizeof(UMSGID) * MAX_REPLY)) {
-		     need_write = 1;
-		     memcpy(xmsg.replies, curr->replies, sizeof(UMSGID) * MAX_REPLY);
-	     };
-	     if	(xmsg.replyto != curr->replyToPos) {
-		     need_write = 1;
-		     xmsg.replyto = curr->replyToPos;
-	     };
-	     if (need_write) MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+	     memcpy(xmsg.replies, curr->replies, sizeof(UMSGID) * MAX_REPLY);
+	     xmsg.replyto = curr->replyToPos;
+	     MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
 	     MsgCloseMsg(hmsg);
 	 }
          /* free this node */
