@@ -2478,6 +2478,8 @@ This statement can only be repeated for different links.
 @end table
 
 File for forward requests (also for available areas and descriptions).
+If file contains area descriptions they will be used when
+autocreating areas.
 If not defined then forward requests unconditional.
 
 This statement can only be repeated for different links.
