@@ -1,3 +1,18 @@
+2002-01-06 Sunday 20:54  ml
+
+	* src/areafix.c (1.234): fixed forward requests to subscribed
+	hidden area
+
+2002-01-06 Sunday 17:50  ml
+
+	* doc/hpt.texi (1.53), src/areafix.c (1.233), src/hpt.c (1.122):
+	sending rules to link when it's subscribed (rulesDir & noRules
+	tokens)
+
+2002-01-06 Sunday 17:49  ml
+
+	* src/hptlink.c (1.32): totally ignore @domain in MSGID & REPLY
+
 2002-01-05 Saturday 09:43  ml
 
 	* src/getfree.c (1.10): getfree modifications
