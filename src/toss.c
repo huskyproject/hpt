@@ -2040,7 +2040,7 @@ void tossTempOutbound(char *directory)
                                createTempPktFileName(link);
                            }
 
-			   free(link->pktFile);
+			   if (link->pktFile!=NULL) free(link->pktFile);
 			   link->pktFile = dummy;
 
 			   fclose(pkt);

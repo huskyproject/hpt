@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Fri May  6 13:02:59 NOVST 2000
+max:
+* if no carbonArea defined msg really goes to BadArea now
+
+----- cvs ci ------
 Wed May  3 08:25:11 NOVST 2000
 max:
 * fixed bug with pktsize & createTempPktFileName (thanx to Lev Serebryakov)
