@@ -136,7 +136,7 @@ void attachTo_seenBysZone(UINT16 zone, s_seenBy **seenBys, UINT16 count)
 void addTo_seenByZone(UINT16 zone, UINT16 net, UINT16 node)
 {
     UINT16 i;
-    s_seenBy *tmp, *tmp2;
+    s_seenBy *tmp=NULL, *tmp2=NULL;
 
 #ifdef DEBUG_HPT
     w_log(LL_DEBUGS, "adding %u:%u/%u to seen-by chain", zone, net, node);
@@ -145,6 +145,7 @@ void addTo_seenByZone(UINT16 zone, UINT16 net, UINT16 node)
     if (seenBysZone[zone].seenByArray == NULL) {
         i=0;
         seenBysZone[zone].seenByArray = (s_seenBy *) safe_calloc(sizeof(s_seenBy), 1);
+        seenBysZone[zone].seenByCount++;
 #ifdef DEBUG_HPT
         w_log(LL_DEBUGS, "created seen-by array for zone %u", zone);
 #endif
@@ -197,8 +198,8 @@ void deleteFrom_seenByZone(UINT16 zone, UINT16 net, UINT16 node)
 
 char *createControlText(s_seenBy seenBys[], UINT16 seenByCount, char *lineHeading)
 {
-   #define size 81
-   #define addr2dSize 13
+#define size 81
+#define addr2dSize 13
    UINT16  i;
    char *text=NULL, *line = NULL, addr2d[addr2dSize];
 
@@ -255,7 +256,9 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT16 *seenBy
     unsigned long temp;
     char *endptr = NULL;
     UINT16 seenByAlloced;
-
+#ifdef DEBUG_HPT
+    int i;
+#endif
     *seenByCount = seenByAlloced = 0;
 
     start = strrstr(msg->text, " * Origin:"); /*  jump over Origin */

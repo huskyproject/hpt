@@ -323,6 +323,10 @@ void forwardMsgToLink(s_message *msg, s_area *echo, s_link *link,
     s_pktHeader header;
     s_seenBy *path = NULL;
     UINT16 pathCount = 0;
+#ifdef DEBUG_HPT
+    int i;
+#endif
+
     char *start = NULL, *text = NULL, *seenByText = NULL, *pathText = NULL;
 
 #ifdef DEBUG_HPT
