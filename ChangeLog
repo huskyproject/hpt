@@ -1,3 +1,8 @@
+2002-11-15 Friday 17:30  pgul
+
+	* src/query.c (1.74): Check write to config result when creating an
+	area
+
 2002-11-14 Thursday 14:25  stas_degteff
 
 	* src/toss.c (1.472): Use spanvp alwais if possible
