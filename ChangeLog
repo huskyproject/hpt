@@ -1,3 +1,16 @@
+2002-02-08 Friday 18:22  mche
+
+	* src/toss.c (1.390): - removed win32 specific code
+
+2002-02-08 Friday 10:17  mche
+
+	* h/query.h (1.6), src/query.c (1.16): - fixed: query file
+	modification and saving
+
+2002-02-08 Friday 10:11  mche
+
+	* h/areafix.h (1.24): making isOurAka available for other files
+
 2002-02-07 Thursday 10:09  ml
 
 	* make/makefile.bcd (1.3): compile without semaphores for msdos
