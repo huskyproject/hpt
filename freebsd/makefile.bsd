@@ -24,7 +24,7 @@ all: $(ALLBIN)
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
 
 pktinfo: pktinfo.o $(OBJS)
-	$(CC) $(LFLAGS) -o pktinfo log.o pktinfo.o pktread.o fcommon.o global.o recode.o $(FIDOCONFIG) $(SMAPI)
+	$(CC) $(LFLAGS) -o pktinfo log.o pktinfo.o pktread.o fcommon.o global.o recode.o xstr.o $(FIDOCONFIG) $(SMAPI)
 
 tlog: tlog.o log.o
 	$(CC) $(LFLAGS) -o tlog tlog.o log.o
@@ -36,7 +36,7 @@ hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) $(FIDOCONFIG) $(SMAPI) 
 
 purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o log.o recode.o
-	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o log.o recode.o $(FIDOCONFIG) $(SMAPI)
+	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o log.o recode.o xstr.o $(FIDOCONFIG) $(SMAPI)
 
 hptlink: hptlink.o
 	$(CC) $(LFLAGS) -o hptlink hptlink.o $(FIDOCONFIG) $(SMAPI)
