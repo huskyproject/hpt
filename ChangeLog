@@ -1,3 +1,12 @@
+2003-02-05 Wednesday 18:19  stas_degteff
+
+	* doc/hpt.texi (1.103): Add warning about shell's i/o redirecting
+	cmds
+
+2003-02-05 Wednesday 18:07  stas_degteff
+
+	* doc/hpt.texi (1.102): Update echoare aoptions documentation
+
 2003-02-04 Tuesday 21:16  d_sergienko
 
 	* doc/hpt.texi (1.101): added info about `-kill' and `-nokill'
