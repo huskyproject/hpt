@@ -2,6 +2,11 @@ hpt 0.27
 --------
 
 ----- cvs ci ------
+Sat Apr  10 22:25:12
+Max:
+removed "\*.pkt" from unpack code
+
+----- cvs ci ------
 Fri Apr  9 11:03:45 MET DST 1999
 Antonio: (applied by mtt)
 + If hpt create an area and take his description from ForwardRequestFile,

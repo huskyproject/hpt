@@ -1274,9 +1274,9 @@ int  processArc(char *fileName, e_tossSecurity sec)
    // unpack bundle
    if (found) {
 #ifdef UNIX
-      fillCmdStatement(cmd, config->unpack[i-1].call, fileName, "\\*.pkt", config->tempInbound);
+      fillCmdStatement(cmd, config->unpack[i-1].call, fileName, "", config->tempInbound);
 #else
-      fillCmdStatement(cmd, config->unpack[i-1].call, fileName, "*.pkt", config->tempInbound);
+      fillCmdStatement(cmd, config->unpack[i-1].call, fileName, "", config->tempInbound);
 #endif
       sprintf(buff, "bundle %s: unpacking with \"%s\"", fileName, cmd);
       writeLogEntry(log, '6', buff);
