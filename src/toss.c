@@ -891,6 +891,13 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
     msg->textLength = 0;
 
     line = old_text;
+
+    if (!msg->netMail) {
+        xstrscat(&msg->text,
+                 (export) ? "AREA:" : "\001AREA:",
+                 (export) ? area->areaName : echo->areaName,
+                 "\r" , NULL);
+    }
     if (strncmp(line, "AREA:", 5) == 0) {
         /*  jump over AREA:xxxxx\r */
         while ((line-old_text<old_textLength) && (*(line) != '\r')) line++;
@@ -920,9 +927,6 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	}
 	xstrscat(&msg->text,
                  msg->text ? (msg->text[strlen(msg->text)-1] == '\r' ?"":"\r") : "" ,
-		 (export) ? "AREA:" : "",
-		 (export) ? area->areaName : "",
-		 (export) ? "\r" : "",
 		 (config->carbonExcludeFwdFrom) ? "" : " * Forwarded from area '",
 		 (config->carbonExcludeFwdFrom) ? "" : echo->areaName,
 		 (config->carbonExcludeFwdFrom) ? "" : "'\r",

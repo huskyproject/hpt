@@ -46,5 +46,6 @@ This file describe changes between hpt-1.0-stable and hpt-1.2-stable
    - Check netmailarea presence in config (before: trap)
    - ImportLog will not contain passthrough areas any more.
    - Fix CarbonCopy processing
+   - Add AREA kludge to carboned messages
 
 $Id$
