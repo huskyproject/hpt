@@ -98,7 +98,6 @@ void writeDupeFiles(void)
 }
 
 void exit_hpt(char *logstr, int print) {
-    char *_lockfile;
 
     w_log('9', logstr);
     _lockfile = config->lockfile;
@@ -112,7 +111,9 @@ void exit_hpt(char *logstr, int print) {
     if (_lockfile) {
         close(lock_fd);
         remove(_lockfile);
+	nfree(_lockfile);
     }
+    exit(EX_SOFTWARE);
 }
 
 int createLockFile(char *lockfile) {

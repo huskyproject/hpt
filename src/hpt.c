@@ -307,6 +307,7 @@ void processConfig()
    else if (config->lockfile!=NULL) createLockFile(config->lockfile);
 */
    if (config->lockfile) {
+       _lockfile = safe_strdup(config->lockfile);
        if (config->advisoryLock) {
 	   if ((lock_fd=open(config->lockfile,O_CREAT|O_RDWR,S_IREAD|S_IWRITE))<0) {
 	       fprintf(stderr,"cannot open/create lock file: %s\n",config->lockfile);
@@ -523,6 +524,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 #endif
    disposeConfig(config);
    nfree(cfgFile);
+   nfree(_lockfile);
 
    return 0;
 }
