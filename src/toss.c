@@ -925,7 +925,7 @@ int carbonCopy(s_message *msg, s_area *echo)
 		// fix for carbonDelete
 		    config->carbons[i].areaName != NULL) continue;
 		
-		switch (config->carbons[i].type) {
+		switch (config->carbons[i].ctype) {
 			
 		case 0:	str=stristr(msg->toUserName,config->carbons[i].str);
 			break;

@@ -2,6 +2,12 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Sun Apr 10 16:40:00 CET 2000
+sms:
+* some changes to fidoconfig.h and affected files needed to automatically
+  convert fidoconfig.h to fidoconf.pas with h2pas
+
+----- cvs ci ------
 Mon Apr 10 20:53:39 NOVST 2000
 max:
 * netmail dupe detection
