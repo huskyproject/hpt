@@ -40,9 +40,9 @@
 #include <fcommon.h>
 
 #if !defined(__DOS__) && !defined(__MSDOS__)
-   #define TEXTBUFFERSIZE 512*1024    // for real os
+#define TEXTBUFFERSIZE 512*1024    // for real os
 #else
-   #define TEXTBUFFERSIZE 32*1024     // for Dose
+#define TEXTBUFFERSIZE 32*1024     // for Dose
 #endif
 
 struct pktHeader {
