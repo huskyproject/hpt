@@ -1,3 +1,8 @@
+2002-01-27 Sunday 14:52  ml
+
+	* src/dupe.c (1.49.2.1): don't print error reading dupes when area
+	just autocreated
+
 2002-01-24 Thursday 19:15  ml
 
 	* doc/hpt.texi (1.51.2.3): doc updates (autoareacreatefile)
