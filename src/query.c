@@ -678,7 +678,7 @@ void af_QueueReport()
     } else netmail=1;
 
     msgToSysop[0] = makeMessage(&(config->addr[0]),&(config->addr[0]),
-                                versionStr,
+                                config->areafixFromName ? config->areafixFromName : versionStr,
                                 netmail ? config->sysop : "All", "Requests report",
                                 netmail,
                                 config->areafixReportsAttr);
