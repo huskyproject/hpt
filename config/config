@@ -1,0 +1,51 @@
+  #version 0.10
+
+  # your akas
+  Address 2:7000/700.999
+
+  # system's name
+  Name Santa's Station
+
+  # location
+  Location Laplandia
+
+  # Sysop name
+  Sysop Santa Claus
+
+  # include <file> here
+include c:\fido\config\packer
+include c:\fido\config\path
+
+#AreaFixFromPkt
+#AreaFixKillReports
+logechotoscreen
+mindiskfreespace 10
+
+Link Boss
+Aka 2:7000/700
+AutoAreaCreate on
+AutoFileCreate on
+AccessGrp E,F
+AutoAreaCreateDefaults -g F -b squish -$m 100 
+AutoAreaCreateFile c:\fido\config\areas
+AutoFileCreateFile c:\fido\config\fileareas
+password	password
+packer 		zip
+
+# default routing to uplink
+route crash  2:7000/700 1:* 2:* 3:* 4:* 5:* 6:*
+
+# Main areas
+NetMailArea NetmailArea c:\fido\msgb\netmail 		-g A -b squish -d "Personal mail"
+BadArea     BadArea     c:\fido\msgb\bad 		-g B
+DupeArea    DupeArea    c:\fido\msgb\dupe	 	-g B
+
+LocalArea Carbon.Area c:\fido\msgb\carbon       -g E -b squish -d "Carbons"
+
+CarbonTo Santa Claus
+CarbonCopy Carbon.Area
+
+PublicGroup F,G,H # etc
+
+include 		c:\fido\config\areas
+include 		c:\fido\config\fileareas

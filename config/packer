@@ -1,0 +1,11 @@
+#Unpack  "unzip -joLqq $a -d $p" 0 504b0304
+#Pack 	zip zip -9jgq $a $f
+
+Unpack  "pkunzip -nojCL $a -d $p" 0 504b0304
+Pack  zip pkzip $a $f
+
+Unpack  "rar e -inul -o+ $a $p"  0 52617221
+Pack 	rar rar a -ep -md1024 -m5 -mm -inul -s $a $f
+
+Unpack  "arj e -+ -y $a $p >nul" 0 60ea
+Pack  arj arj a -+ -e -y $a $f >nul

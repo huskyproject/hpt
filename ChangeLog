@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Mar 31 16:11:07 NOVST 2001
+max:
+* sample configs
+
+----- cvs ci ------
 Fri Mar 30 15:17:24 NOVST 2001
 max (patch from Serguei Revtov):
 * win32/watcom: any non-zero unpacker code is treated as error

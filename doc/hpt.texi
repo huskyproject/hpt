@@ -2526,8 +2526,8 @@ carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
 If no @code{EchoArea} defined to copy, the carbon msgs goes to the 
 @code{BadArea}.
 
-This statement can be repeated for each different
-carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
+This statement can be placed after different
+carbon@{Addr|To|From|Kludge|Subj|Text@} statements.
 
 @xref{CarbonMove}.
 
@@ -2642,8 +2642,8 @@ the @code{BadArea}.
 
 Unlike @code{CarbonCopy} msg gets moved, not copied into this area.
 
-This statement can be repeated for each different
-carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
+This statement can be placed after different
+carbon@{Addr|To|From|Kludge|Subj|Text@} statements.
 
 @xref{CarbonCopy}.
 
