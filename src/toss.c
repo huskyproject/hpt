@@ -2172,7 +2172,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
 
    if (echo == &(config->badArea)) {
 	   link = getLinkFromAddr(*config, pktOrigAddr);
-	   if (link && link->autoAreaCreate!=0) {
+	   if (link && link->autoAreaCreate!=0 && area) {
 		   autoCreate(area, pktOrigAddr, NULL);
 		   echo = getArea(config, area);
 	   }
