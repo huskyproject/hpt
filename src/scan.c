@@ -701,7 +701,7 @@ void scanExport(int type, char *str) {
    int i;
    FILE *f = NULL;
    FILE *ftmp = NULL;
-   char *tmplogname = NULL;
+   char *tmplogname = NULL, *tmppath = NULL;
    char *line;
    struct stat st;
    
@@ -712,12 +712,18 @@ void scanExport(int type, char *str) {
 		   type & SCN_FILE ? " with -f " : 
 		   type & SCN_NAME ? " with -a " : "");
 
+   tmppath = (char *) safe_malloc(strlen(config->echotosslog)+1);
+   memset(tmppath, 0, strlen(config->echotosslog)+1);
+   strncpy(tmppath, config->echotosslog,
+           (strrchr(config->echotosslog, PATH_DELIM) - config->echotosslog));
+   tmplogname = makeUniqueDosFileName(tmppath, "tmp", config);
+   nfree(tmppath);
+
    if (type & SCN_ALL) {
        if (config->echotosslog)
        {
            f = fopen(config->echotosslog, "r");
            if (f != NULL && config->packNetMailOnScan == 0) {
-               tmplogname = makeUniqueDosFileName(config->logFileDir, "tmp", config);
                ftmp = fopen(tmplogname, "w");
                if (ftmp == NULL) {
                    w_log('9', "Can't open file %s for writing : %s", tmplogname, strerror(errno));
@@ -728,7 +734,6 @@ void scanExport(int type, char *str) {
        }
    }
    if (type & SCN_FILE) {
-       tmplogname = makeUniqueDosFileName(config->logFileDir, "tmp", config);
        f = fopen(str, "r");
        if (f != NULL) {
            ftmp = fopen(tmplogname, "w");
@@ -745,6 +750,7 @@ void scanExport(int type, char *str) {
    } else if (f == NULL) {
        if (type & SCN_FILE) {
            w_log('4', "EchoTossLogFile not found -> Scanning stop");
+           nfree(tmplogname);
            return;
        }
        if (type & SCN_ECHOMAIL) {
@@ -801,19 +807,25 @@ void scanExport(int type, char *str) {
        if (type & SCN_ALL) {
            if (st.st_size == 0) { // all entries was processed
                remove(config->echotosslog);
-               if (tmplogname) remove(tmplogname);
+               if (tmplogname)
+                   if (!remove(tmplogname))
+                       w_log('9', "Couldn't remove temporary file\"%s\"", tmplogname);
            } else { // we still have areas
                remove(config->echotosslog);
-               rename(tmplogname, config->echotosslog);
+               if (!rename(tmplogname, config->echotosslog))
+                   w_log('9', "Couldn't rename \"%s\" -> \"%s\"", tmplogname, config->echotosslog);
            }
        }
        else if (type & SCN_FILE) {
            if (st.st_size == 0) {
                remove(str);
-               if (tmplogname) remove(tmplogname);
+               if (tmplogname)
+                   if (!remove(tmplogname))
+                       w_log('9', "Couldn't remove temporary file\"%s\"", tmplogname);
            } else {
                remove(str);
-               rename(tmplogname, str);
+               if (!rename(tmplogname, str))
+                   w_log('9', "Couldn't rename \"%s\" -> \"%s\"", tmplogname, str);
            }
        }
    };
