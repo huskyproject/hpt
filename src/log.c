@@ -121,8 +121,7 @@ void writeLogEntry(s_log *hpt_log, char key, char *logString, ...)
 
         fflush(hpt_log->logFile);
 	if (hpt_log->logEcho) {
-	   fprintf(stdout, "%c %02u.%02u.%02u  %s\n", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec, logString);
- 
+	   fprintf(stdout, "%c %02u.%02u.%02u  ", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec);
 	   va_start(ap, logString);
 	   vfprintf(stdout, logString, ap);
 	   va_end(ap);
