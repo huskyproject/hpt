@@ -67,7 +67,7 @@ be cleared.
 #include <global.h>
 #include <fcommon.h>
 
-//#define MAX_INCORE	10000	// if more messages, do not link incore
+#define MAX_INCORE	10000	// if more messages, do not link incore
 
 dword Jam_Crc32(unsigned char* buff, dword len);
 char *Jam_GetKludge(HAREA jm, dword msgnum, word what);
@@ -209,8 +209,7 @@ int linkArea(s_area *area, int netMail)
             if (jam) {
                 msgId = Jam_GetKludge(harea, i, JAMSFLD_MSGID);
             } else {
-                //hmsg  = MsgOpenMsg(harea, (msgsNum >= MAX_INCORE) ? MOPEN_READ : (MOPEN_READ|MOPEN_WRITE), i);
-                hmsg  = MsgOpenMsg(harea, MOPEN_READ|MOPEN_WRITE, i);
+                hmsg  = MsgOpenMsg(harea, (msgsNum >= MAX_INCORE) ? MOPEN_READ : (MOPEN_READ|MOPEN_WRITE), i);
                 if (hmsg == NULL) {
                     continue;
                 }
@@ -271,13 +270,10 @@ int linkArea(s_area *area, int netMail)
             } else {
                 curr -> replyId = GetKludgeText(ctl, "REPLY");
                 curr -> hdr.xmsg = memdup(&xmsg, sizeof(XMSG));
-                /*
                 if (msgsNum >= MAX_INCORE)
                     MsgCloseMsg(hmsg), curr -> msgh = NULL;
                 else
                     curr -> msgh = hmsg; 
-                */
-                curr -> msgh = hmsg; 
             }
         }
         
@@ -359,7 +355,7 @@ int linkArea(s_area *area, int netMail)
                     msgs[i].hdr.xmsg->replies[msgs[i].freeReply] = 0;
                 msgs[i].hdr.xmsg->replyto = msgs[i].replyto;
                 if (msgs[i].msgh == NULL)
-                    msgs[i].msgh = MsgOpenMsg(harea, MOPEN_READ|MOPEN_WRITE, i);
+                    msgs[i].msgh = MsgOpenMsg(harea, MOPEN_READ|MOPEN_WRITE, i+1);
                 if (msgs[i].msgh)
                     MsgWriteMsg(msgs[i].msgh, 0, msgs[i].hdr.xmsg, NULL, 0, 0, 0, NULL);
             }
