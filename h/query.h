@@ -9,6 +9,7 @@ typedef struct query_areas
 {
     char *name;
     char  type[5];
+    char *report;
    
     time_t theTime;
     int nFlag;
