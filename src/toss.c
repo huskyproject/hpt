@@ -1282,6 +1282,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 	   } else {
 	     if (dupeDetection(echo, *msg)==1) {
 	       // nodupe
+               echo->imported++;  // area has got new messages
                if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
         	  rc = putMsgInArea(echo, msg, 1, 0);
 		  statToss.saved++;
