@@ -1,3 +1,35 @@
+2003-01-05 Sunday 15:49  mche
+
+	* src/query.c (1.85): fix bug : AutoAreaCreate adds wrong line feed
+	in Win32
+
+2003-01-05 Sunday 13:25  mche
+
+	* src/stat.c (1.8): fix memory leak
+
+2003-01-05 Sunday 12:10  stas_degteff
+
+	* src/stat.c (1.7): Change log messages template
+
+2003-01-05 Sunday 12:08  stas_degteff
+
+	* src/stat.c (1.6): Replace non-standard syntax 'tag[0]' with
+	string pointer
+
+2003-01-05 Sunday 11:46  stas_degteff
+
+	* src/stat.c (1.5): Fix compilation
+
+2003-01-05 Sunday 11:29  stas_degteff
+
+	* src/toss.c (1.489): Replace C++ syntax with C standard syntax in
+	variable declarations (setmaxopen()). Patch from Andr Luk'yanov
+
+2003-01-05 Sunday 08:50  stas_degteff
+
+	* doc/hpt.texi (1.94): Describe 'no' prefix for many echoarea
+	options
+
 2003-01-04 Saturday 07:41  mche
 
 	* doc/hpt.texi (1.93): update documentation for "AdvisoryLock"
