@@ -31,8 +31,10 @@
 #include <fidoconf/temp.h>
 #include <fidoconf/xstr.h>
 
-#include "global.h"
-#include "toss.h"
+#if defined (__MINGW32__) || defined (__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__) || defined (__EMX__) || (defined (_MSC_VER) && (_MSC_VER >= 1200))
+#include <process.h>
+#include <io.h>
+#endif
 
 #if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
 #include <dos.h>
@@ -43,6 +45,8 @@
 #define P_WAIT		_P_WAIT
 #endif
 
+#include "global.h"
+#include "toss.h"
 
 #if defined(UNIX) || defined(__EMX__) || defined(__DJGPP__)
 #define HAVE_POPEN
