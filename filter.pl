@@ -70,6 +70,19 @@ sub route
   return "";
 }
 
+sub tossbad
+{
+# $fromname, $fromaddr, $toname,
+# $toaddr (for netmail),
+# $area (for echomail),
+# $subject, $text, $pktfrom, $date, $attr
+# $reason
+# return non-empty string for kill the message
+# set $change to update $text, $subject, $fromaddr, $toaddr,
+#     $fromname, $toname, $attr
+  return "";
+}
+
 sub hpt_exit
 {
 }

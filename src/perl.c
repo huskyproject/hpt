@@ -1111,6 +1111,113 @@ void perlbeforepack(void)
    }
 }
 
+int perltossbad(s_message *msg, char *areaName, s_addr pktOrigAddr, char *reason)
+{
+   char *prc;
+   SV *svfromname, *svfromaddr, *svtoname, *svtoaddr, *svpktfrom;
+   SV *svdate, *svtext, *svarea, *svsubj, *svret, *svchange, *svattr;
+   STRLEN n_a;
+   static int do_perltossbad=1;
+   int pid, saveerr;
+
+   if (do_perl && perl==NULL)
+     if (PerlStart())
+       return 0;
+   if (!perl || !do_perltossbad)
+     return 0;
+
+   pid = handleperlerr(&saveerr);
+   { dSP;
+     svfromname = perl_get_sv("fromname", TRUE);
+     svfromaddr = perl_get_sv("fromaddr", TRUE);
+     svtoname   = perl_get_sv("toname",   TRUE);
+     svdate     = perl_get_sv("date",     TRUE);
+     svsubj     = perl_get_sv("subject",  TRUE);
+     svtext     = perl_get_sv("text",     TRUE);
+     svpktfrom  = perl_get_sv("pktfrom",  TRUE);
+     svchange   = perl_get_sv("change",   TRUE);
+     svarea     = perl_get_sv("area",     TRUE);
+     svtoaddr   = perl_get_sv("toaddr",   TRUE);
+     svattr     = perl_get_sv("attr",     TRUE);
+     sv_setpv(svfromname, msg->fromUserName);
+     sv_setpv(svfromaddr, aka2str(msg->origAddr));
+     sv_setpv(svtoname,   msg->toUserName);
+     sv_setpv(svdate,     msg->datetime);
+     sv_setpv(svsubj,     msg->subjectLine);
+     sv_setpv(svtext,     msg->text);
+     sv_setpv(svpktfrom,  aka2str(pktOrigAddr));
+     sv_setsv(svchange,   &sv_undef);
+     sv_setiv(svattr,     msg->attributes);
+     if (areaName)
+     { sv_setpv(svarea,   areaName);
+       sv_setsv(svtoaddr, &sv_undef);
+     }
+     else
+     { sv_setsv(svarea,   &sv_undef);
+       sv_setpv(svtoaddr, aka2str(msg->destAddr));
+     }
+     ENTER;
+     SAVETMPS;
+     PUSHMARK(SP);
+     PUTBACK;
+     perl_call_pv(PERLTOSSBAD, G_EVAL|G_SCALAR);
+     SPAGAIN;
+     svret=POPs;
+     if (SvTRUE(svret))
+       prc = safe_strdup(SvPV(svret, n_a));
+     else
+       prc = NULL;
+     PUTBACK;
+     FREETMPS;
+     LEAVE;
+     restoreperlerr(saveerr, pid);
+     if (SvTRUE(ERRSV))
+     {
+       w_log('8', "Perl tossbad eval error: %s\n", SvPV(ERRSV, n_a));
+       do_perltossbad = 0;
+       return 0;
+     }
+     if (prc)
+     { // kill
+       if (areaName)
+         w_log('8', "PerlFilter: Area %s from %s %s killed: %s",
+                      areaName, msg->fromUserName, aka2str(msg->origAddr), prc);
+       else
+         w_log('8', "PerlFilter: NetMail from %s %s to %s %s killed: %s",
+                      msg->fromUserName, aka2str(msg->origAddr),
+                      msg->toUserName, aka2str(msg->destAddr), prc);
+       free(prc);
+       return 1;
+     }
+     svchange = perl_get_sv("change", FALSE);
+     if (svchange && SvTRUE(svchange))
+     { // change
+       char *ptr;
+       freeMsgBuffers(msg);
+       ptr = SvPV(perl_get_sv("text", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->text = safe_strdup(ptr);
+       msg->textLength = strlen(msg->text);
+       ptr = SvPV(perl_get_sv("toname", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->toUserName = safe_strdup(ptr);
+       ptr = SvPV(perl_get_sv("fromname", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->fromUserName = safe_strdup(ptr);
+       ptr = SvPV(perl_get_sv("subject", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->subjectLine = safe_strdup(ptr);
+       ptr = SvPV(perl_get_sv("toaddr", FALSE), n_a);
+       if (n_a > 0) string2addr(ptr, &(msg->destAddr));
+       ptr = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
+       if (n_a > 0) string2addr(ptr, &(msg->origAddr));
+       msg->attributes = SvIV(perl_get_sv("attr", FALSE));
+     }
+   }
+   return 0;
+
+}
+
 #ifdef OS2
 char *strdup(const char *src)
 {

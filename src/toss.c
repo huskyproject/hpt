@@ -1212,16 +1212,100 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
 
 int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 {
-    char *tmp, *line, *textBuff=NULL, *areaName=NULL;
+    char *tmp, *line, *textBuff=NULL, *areaName=NULL, *reason;
     
     statToss.bad++;
 	 
     // get real name area
     line = strchr(msg->text, '\r');
-    *line = 0;
-    if (strncmp(msg->text,"AREA:",5)==0)
-	xscatprintf(&areaName, "AREANAME: %s\r\r", msg->text+5);
-    *line = '\r';
+    if (strncmp(msg->text,"AREA:",5)==0) {
+	*line = 0;
+	xstrcat(&areaName, msg->text+5);
+	*line = '\r';
+    }
+
+    switch (writeAccess) {
+    case 0: 
+	reason = "System not allowed to create new area";
+	break;
+    case 1: 
+	reason = "Sender not allowed to post in this area (access group)";
+	break; 
+    case 2: 
+	reason = "Sender not allowed to post in this area (access level)";
+	break;
+    case 3: 
+	reason = "Sender not allowed to post in this area (access import)";
+	break;
+    case 4: 
+	reason = "Sender not active for this area";
+	break;
+    case 5:
+	reason = "Rejected by filter";
+	break;
+    case 6:
+	switch (msgapierr)
+    {
+	    case MERR_NONE: reason = "MSGAPIERR: No error";
+		break;
+	    case MERR_BADH: reason = "MSGAPIERR: Invalid handle passed to function";
+		break;
+	    case MERR_BADF: reason = "MSGAPIERR: Invalid or corrupted file";
+		break;
+	    case MERR_NOMEM: reason = "MSGAPIERR: Not enough memory for specified operation";
+		break;
+	    case MERR_NODS: 
+		reason = "MSGAPIERR: Maybe not enough disk space for operation";
+		w_log('9', "Maybe not enough disk space for operation\r");
+		break;
+	    case MERR_NOENT: reason = "MSGAPIERR: File/message does not exist";
+		break;
+	    case MERR_BADA: reason = "MSGAPIERR: Bad argument passed to msgapi function";
+		break;
+	    case MERR_EOPEN: reason = "MSGAPIERR: Couldn't close - messages still open";
+		break;
+	    case MERR_NOLOCK: reason = "MSGAPIERR: Base needs to be locked to perform operation";
+		break;
+	    case MERR_SHARE: reason = "MSGAPIERR: Resource in use by other process";
+		break;
+	    case MERR_EACCES: reason = "MSGAPIERR: Access denied (can't write to read-only, etc)";
+		break;
+	    case MERR_BADMSG: reason = "MSGAPIERR: Bad message frame (Squish)";
+		break;
+	    case MERR_TOOBIG: reason = "MSGAPIERR: Too much text/ctrlinfo to fit in frame (Squish)";
+		break;
+	    default: reason = "MSGAPIERR: Unknown error";
+		break;
+	    }
+
+	break;
+    case 7:
+	reason = "Can't create echoarea with forbidden symbols in areatag";
+	break;
+    case 8:
+	reason = "Sender not found in config file";
+	break;
+    case 9:
+	reason = "Can't open config file";
+	break;
+    case 10:
+	reason = "No downlinks for passthrough area";
+	break;
+    case 11:
+	reason = "lenght of CONFERENCE name is more than 60 symbols";
+	break;
+    default :
+	reason = "Another error";
+	break;
+    }
+
+#ifdef DO_PERL
+    if (perltossbad(msg, areaName, pktOrigAddr, reason)) {
+	nfree(areaName);
+	nfree(msg->text);
+	return 1;
+    }
+#endif
 
     tmp = msg->text;
 
@@ -1230,83 +1314,9 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 	else { tmp = line+1; *line = 0; break; }
     }
 	 
-    xstrscat(&textBuff,msg->text,"\rFROM: ",aka2str(pktOrigAddr),"\rREASON: ",NULL);
-    switch (writeAccess) {
-    case 0: 
-	xstrcat(&textBuff,"System not allowed to create new area\r");
-	break;
-    case 1: 
-	xstrcat(&textBuff,"Sender not allowed to post in this area (access group)\r");
-	break; 
-    case 2: 
-	xstrcat(&textBuff,"Sender not allowed to post in this area (access level)\r");
-	break;
-    case 3: 
-	xstrcat(&textBuff,"Sender not allowed to post in this area (access import)\r");
-	break;
-    case 4: 
-	xstrcat(&textBuff,"Sender not active for this area\r");
-	break;
-    case 5:
-	xstrcat(&textBuff,"Rejected by filter\r");
-	break;
-    case 6:
-	xstrcat(&textBuff,"MSGAPIERR: ");
-	switch (msgapierr)
-    {
-	    case MERR_NONE: xstrcat(&textBuff,"No error\r");
-		break;
-	    case MERR_BADH: xstrcat(&textBuff,"Invalid handle passed to function\r");
-		break;
-	    case MERR_BADF: xstrcat(&textBuff,"Invalid or corrupted file\r");
-		break;
-	    case MERR_NOMEM: xstrcat(&textBuff,"Not enough memory for specified operation\r");
-		break;
-	    case MERR_NODS: 
-		xstrcat(&textBuff,"Maybe not enough disk space for operation\r");
-		w_log('9', "Maybe not enough disk space for operation\r");
-		break;
-	    case MERR_NOENT: xstrcat(&textBuff,"File/message does not exist\r");
-		break;
-	    case MERR_BADA: xstrcat(&textBuff,"Bad argument passed to msgapi function\r");
-		break;
-	    case MERR_EOPEN: xstrcat(&textBuff,"Couldn't close - messages still open\r");
-		break;
-	    case MERR_NOLOCK: xstrcat(&textBuff,"Base needs to be locked to perform operation\r");
-		break;
-	    case MERR_SHARE: xstrcat(&textBuff,"Resource in use by other process\r");
-		break;
-	    case MERR_EACCES: xstrcat(&textBuff,"Access denied (can't write to read-only, etc)\r");
-		break;
-	    case MERR_BADMSG: xstrcat(&textBuff,"Bad message frame (Squish)\r");
-		break;
-	    case MERR_TOOBIG: xstrcat(&textBuff,"Too much text/ctrlinfo to fit in frame (Squish)\r");
-		break;
-	    default: xstrcat(&textBuff,"Unknown error\r");
-		break;
-	    }
+    xstrscat(&textBuff, msg->text, "\rFROM: ", aka2str(pktOrigAddr), "\rREASON: ", reason, "\r", NULL);
 
-	break;
-    case 7:
-	xstrcat(&textBuff,"Can't create echoarea with forbidden symbols in areatag\r");
-	break;
-    case 8:
-	xstrcat(&textBuff,"Sender not found in config file\r");
-	break;
-    case 9:
-	xstrcat(&textBuff,"Can't open config file\r");
-	break;
-    case 10:
-	xstrcat(&textBuff,"No downlinks for passthrough area\r");
-	break;
-    case 11:
-	xstrcat(&textBuff,"lenght of CONFERENCE name is more than 60 symbols\r");
-	break;
-    default :
-	xstrcat(&textBuff,"Another error\r");
-	break;
-    }
-    if (areaName) xstrcat(&textBuff, areaName);
+    if (areaName) xscatprintf(&textBuff, "AREANAME: %s\r\r", areaName);
     xstrcat(&textBuff, tmp);
     nfree(areaName);
     nfree(msg->text);

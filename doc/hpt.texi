@@ -3434,34 +3434,47 @@ The following Perl hooks are supported:
 @item 2.
  before_pack - called before packing echomail bundle to one of links
 @item 3.
- process_pkt - called before processing pkt, the following variables avaible:
- $pktname - name of pkt,$secure - defined if this pkt from secure link
+ process_pkt - called before processing pkt, the following variables available:
+@table @asis
+@item $pktname - name of pkt,
+@item $secure - defined if this pkt from secure link
+@end table
  hook must return "" for normal pkt processing or other string to rename pkt to .flt
 @item 4.
- pkt_done - called after pkt processing, the following variables avaible:
- $pktname - name of pkt, $rc - exit code(0-ok),$res - reason(exit code in text form):
-  0 - OK ($res undefined),
-  1 - Security violation,
-  2 - Can't open pkt,
-  3 - Bad pkt format,
-  4 - Not to us,
-  5 - Msg tossing problem
+ pkt_done - called after pkt processing, the following variables available:
+@table @asis
+@item $pktname - name of pkt,
+@item $rc - exit code(0-ok),
+@item $res - reason(exit code in text form):
+@table @asis
+@item 0 - OK ($res undefined),
+@item 1 - Security violation,
+@item 2 - Can't open pkt,
+@item 3 - Bad pkt format,
+@item 4 - Not to us,
+@item 5 - Msg tossing problem
+@end table
+@end table
 @item 5.
   hpt_exit - called before hpt completely exit if any other Perl hook was called 
   during this session. 
 @item 6.
   route - called just before routing netmail message, the following variables 
   availble:
-  $addr - message destination address,
-  $from - message originating address,
-  $toname - destination user name,
-  $fromname - originating user name,
-  $subject - message subject line,
-  $date - message date and time,
-  $text - message text,
-  $route - default route for this message(derermined via @code{Route} statements in 
-  config file (may be empty, this means that either no route at all for this message
-  or it will be routed via one-to-multi routing(Route normal noroute 2:5004/73.*)).
+@table @asis
+@item $addr - message destination address,
+@item $from - message originating address,
+@item $toname - destination user name,
+@item $fromname - originating user name,
+@item $subject - message subject line,
+@item $date - message date and time,
+@item $text - message text,
+@item $attr - message attributes,
+@item $route - default route for this message (derermined
+  via @code{Route} statements in config file (may be empty, this means
+  that either no route at all for this message or it will be routed via
+  one-to-multi routing(Route normal noroute 2:5004/73.*)).
+@end table
 
   Before return you can set $flavour - to hold|normal|crash|direct|immediate
   for required flavour of message.
@@ -3469,17 +3482,71 @@ The following Perl hooks are supported:
   example:
 
 @example
-  sub route
-
+  sub route {
     if ($from eq "2:5004/75.73") return "2:5004/75.0";
     else return "";
+  }
 @end example
 
   if source address of message is 2:5004/75.73 then route it via 2:5004/75,
   otherwise route it using default routing
 @item 7.
- scan - called while scanning messages(hpt scan or hpt pack).
-    
+ scan - called while scanning messages (hpt scan or hpt pack). The following
+ variables available:
+@table @asis
+@item $fromname - originating user name,
+@item $fromaddr - message originating address,
+@item $toname - destination user name,
+@item $toaddr - message destination address (for netmail),
+@item $area - message area (for echomail),
+@item $subject - message subject line,
+@item $date - message date and time,
+@item $text - message text,
+@item $attr - message attributes.
+@end table
+  Set $change to update $text, $subject, $fromaddr, $toaddr, $fromname,
+$toname, $attr.
+  If returns non-empty string (reason), the message will not pack to downlinks.
+@item 8.
+ filter - called for processing every message while tossing.
+The following variables available:
+@table @asis
+@item $fromname - originating user name,
+@item $fromaddr - message originating address,
+@item $toname - destination user name,
+@item $toaddr - message destination address (for netmail),
+@item $area - message area (for echomail),
+@item $subject - message subject line,
+@item $date - message date and time,
+@item $text - message text,
+@item $attr - message attributes,
+@item $pktfrom - address of originating pkt,
+@item $secure - defined if the message received from secure link.
+@end table
+  Set $change to update $text, $subject, $fromaddr, $toaddr, $fromname,
+$toname, $attr.
+  Set $kill for kill message.
+  If returns non-empty string (reason), the message will be moved to badarea.
+@item 9.
+ tossbad - called when message will be put in badArea.
+The following variables available:
+@table @asis
+@item $fromname - originating user name,
+@item $fromaddr - message originating address,
+@item $toname - destination user name,
+@item $toaddr - message destination address (for netmail),
+@item $area - message area (for echomail),
+@item $subject - message subject line,
+@item $date - message date and time,
+@item $text - message text,
+@item $attr - message attributes,
+@item $pktfrom - address of originating pkt,
+@item $reason - reason, why badarea (text string).
+@end table
+  Set $change to update $text, $subject, $fromaddr, $toaddr, $fromname,
+$toname, $attr.
+  If returns non-empty string (reason) for kill the message.
+
 @end table
 @node Keyword Index,  , Advanced Concepts, Top
 @appendix Configuration File Keyword Index
