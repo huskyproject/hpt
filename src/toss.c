@@ -1633,7 +1633,7 @@ int find_old_arcmail(s_link *link, FILE *flo)
 
 void arcmail(s_link *tolink) {
     char cmd[256], *pkt=NULL, *lastPathDelim = NULL, saveChar;
-    int i, cmdexit, foa;
+    int i, cmdexit, foa = 0;
     FILE *flo = NULL;
     s_link *link = NULL;
     int startlink=0;
@@ -1728,11 +1728,16 @@ void arcmail(s_link *tolink) {
 		    else bundleNameStyle = eTimeStamp;
 
 		    if (link->packerDef != NULL) {
-
+                    pack_retry:
 			/*there is a packer defined -> put packFile into flo */
 			/*if we are creating new arcmail bundle -> put packFile into flo*/
-			fseek(flo, 0L, SEEK_SET);
-			foa = find_old_arcmail(link, flo);
+                        fseek(flo, 0L, SEEK_SET);
+                        if (!foa) /* retry pack bundle? */
+                            foa = find_old_arcmail(link, flo);
+                        else { /* try to generate new bundle name */
+                            foa = 0;
+                            link->packFile = NULL;
+                        }
 
 			if (link->packFile == NULL)
 			    if (createPackFileName(link))
@@ -1770,9 +1775,11 @@ void arcmail(s_link *tolink) {
 				    fprintf(flo, "^%s\n", link->packFile);
 			    }
 			    remove(link->pktFile);
-			} else
-			    w_log(LL_ERR, "Error executing packer (errorlevel==%i)",
-				  cmdexit);
+                        } else {
+			    w_log(LL_ERR, "Error executing packer (errorlevel==%i, %s)",
+                                  cmdexit, foa ? "retrying" : "permanent error");
+                            if (foa) goto pack_retry;
+                        }
 
 		    } /*  end packerDef */
 		    else {
