@@ -1,3 +1,8 @@
+2004-01-17 Saturday 14:45  d_sergienko
+
+	* src/scan.c (hpt-1_4-stable.5): fix scanning with echotosslog when
+	it contains invalid areas
+
 2004-01-11 Sunday 22:42  d_sergienko
 
 	* HISTORY, src/fcommon.c (hpt-1_4-stable.[11,4]): use GenMsgId()
