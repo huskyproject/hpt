@@ -243,13 +243,13 @@ int linkArea(s_area *area, int netMail)
 		      curr = findMsgId(msgs, hash, hashNums, msgs[i].replyId, 0);
 		      if (curr == NULL) continue;
 		      if (curr -> msgId == NULL) continue;
-		      if (curr -> freeReply >= MAX_REPLY &&
+		      if (curr -> freeReply >= MAX_REPLY-2 &&
 		          (area->msgbType & (MSGTYPE_JAM | MSGTYPE_SDM))) {
 				  curr -> freeReply--;
 				  curr -> replies[curr -> freeReply - 1] = curr -> replies[curr -> freeReply];
 		      }
 		      if (curr -> freeReply < MAX_REPLY) {
-				  curr -> replies[curr -> freeReply] = i;
+			      curr -> replies[curr -> freeReply] = i;
 			      if (curr -> xmsg -> replies[curr -> freeReply] != msgs[i].msgPos) {
 				      curr -> xmsg -> replies[curr -> freeReply] = msgs[i].msgPos;
 				      if ((area->msgbType & MSGTYPE_SQUISH) || curr->freeReply == 0)
@@ -288,7 +288,8 @@ int linkArea(s_area *area, int netMail)
 			if (msgs[i].freeReply<MAX_REPLY)
 				msgs[i].xmsg->replies[msgs[i].freeReply] = 0;
 			msgs[i].xmsg->replyto = msgs[i].replyto;
-			msgs[i].xmsg->xmreplynext = msgs[i].replynext;
+			if (area->msgbType & MSGTYPE_JAM)
+				msgs[i].xmsg->xmreplynext = msgs[i].replynext;
 			MsgWriteMsg(msgs[i].msgh, 0, msgs[i].xmsg, NULL, 0, 0, 0, NULL);
 		}
 	        MsgCloseMsg(msgs[i].msgh);
