@@ -751,13 +751,9 @@ void scanExport(int type, char *str) {
         {
             f = fopen(config->echotosslog, "r");
             if (f != NULL && config->packNetMailOnScan == 0) {
-                ftmp = createTempTextFile(config , &tmplogname);
+                ftmp = createTempTextFile(config , &tmplogname); /* error diagnostic prints by createTempTextFile() */
                 if (ftmp == NULL) {
-		    if (tmplogname)
-                       w_log(LL_ERR, "Can't open file %s for writing : %s", tmplogname, strerror(errno));
-		    else
-                       w_log(LL_ERR, "Can't create temp file : %s", strerror(errno));
-                    // close file so all areas will be scanned instead of panic.
+                    /* close file so all areas will be scanned instead of panic. */
                     fclose(f);
 		    f = NULL;
                 }
@@ -770,13 +766,9 @@ void scanExport(int type, char *str) {
     if (type & SCN_FILE) {
         f = fopen(str, "r");
         if (f != NULL) {
-            ftmp = createTempTextFile(config , &tmplogname);
+            ftmp = createTempTextFile(config , &tmplogname); /* error diagnostic prints by createTempTextFile() */
             if (ftmp == NULL) {
-		if (tmplogname)
-                   w_log(LL_ERR, "Can't open file %s for writing : %s", tmplogname, strerror(errno));
-		else
-                   w_log(LL_ERR, "Can't create temp file : %s", strerror(errno));
-                // close file so all areas will be scanned instead of panic.
+                /* close file so all areas will be scanned instead of panic. */
                 fclose(f);
 		f = NULL;
             }
