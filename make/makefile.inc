@@ -25,7 +25,6 @@ hpt$(EXE): hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) global$(OBJ) que
 	$(CC) $(LFLAGS) $(EXENAMEFLAG)hpt$(EXE) hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) global$(OBJ) query$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) post$(OBJ) areafix$(OBJ) dupe$(OBJ) seenby$(OBJ) link$(OBJ) getfree$(OBJ) $(PERLOBJ) $(LIBS) $(PERLLIBS)
 
 commonclean: $(SYMBOLIC)
-	-$(RM) $(RMOPT) *~
 	-$(RM) $(RMOPT) *$(OBJ)
 	-$(RM) $(RMOPT) core
 
