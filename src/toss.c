@@ -844,6 +844,8 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    // add new created echo to config in memory
    parseLine(buff,config);
 
+   carbonNames2Addr(config); // echoarea addresses changed by reallocating of config->echoAreas[]
+
    writeLogEntry(hpt_log, '8', "Area '%s' autocreated by %s", c_area, hisaddr);
    
    if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr);

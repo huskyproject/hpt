@@ -7,6 +7,11 @@ max:
 * reports from hpt in ReportTo area are local now (Loc flag)
 
 ----- cvs ci ------
+Wed Mar 22 12:45:48 MSK 2000
+max (patch from Serguei Revtov):
+* fixed coredump in carboncopy after area autocreating
+
+----- cvs ci ------
 Mon Mar 20 08:56:28 MSK 2000
 max (patch from Serguei Revtov):
 * change legacy SUN & Win makefiles to compile with new includes, simplifying
