@@ -201,26 +201,29 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
       tempLink.name[0] = '\0';
        
       switch (route->routeVia) {
-          
-         case route_zero:
-	    break;
 
-         case host:
-            tempLink.hisAka.node  = 0;
-            tempLink.hisAka.point = 0;
-            break;
+	  case route_zero:
+		  break;
 
-         case boss:
-            tempLink.hisAka.point = 0;
-            break;
+	  case host:
+		  tempLink.hisAka.node  = 0;
+		  tempLink.hisAka.point = 0;
+		  break;
 
-         case noroute:
-            break;
+	  case boss:
+		  tempLink.hisAka.point = 0;
+		  break;
 
-         case hub:
-            tempLink.hisAka.node -= (tempLink.hisAka.node % 100);
-            tempLink.hisAka.point = 0;
-            break;
+	  case noroute:
+		  break;
+
+	  case nopack:
+		  break;
+
+	  case hub:
+		  tempLink.hisAka.node -= (tempLink.hisAka.node % 100);
+		  tempLink.hisAka.point = 0;
+		  break;
       }
 
       getLink = getLinkFromAddr(*config, tempLink.hisAka);
@@ -357,14 +360,13 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
 			   if (createOutboundFileName(link, prio, FLOFILE) == 0) {
 				   processAttachs(link, &msg);
 				   remove(link->bsyFile);
-				   free(link->bsyFile);
+				   nfree(link->bsyFile);
 				   // mark Mail as sent
 				   xmsg->attr |= MSGSENT;
 				   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-				   free(link->floFile);
+				   nfree(link->floFile);
 				   writeLogEntry(hpt_log, '7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
 			   }
-			   
 		   }
 	   }
 	   else if (createOutboundFileName(virtualLink, prio, FLOFILE) == 0) {
@@ -419,32 +421,29 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
       
 	   // no crash, no hold flag -> route netmail
 	   route = findRouteForNetmail(msg);
-           link = getLinkForRoute(route, &msg);
-
-           if ((route != NULL) && (link != NULL)) {
-              prio = cvtFlavour2Prio(route->flavour);
-              if (createOutboundFileName(link, prio, PKT) == 0) {
-                 convertMsgText(SQmsg, &msg, *(link->ourAka));
-                 makePktHeader(NULL, &header);
-                 header.destAddr = link->hisAka;
-                 header.origAddr = *(link->ourAka);
-                 if (link->pktPwd != NULL)
-                    strcpy(&(header.pktPassword[0]), link->pktPwd);
-                 pkt = openPktForAppending(link->floFile, &header);
-                 writeMsgToPkt(pkt, msg);
-                 closeCreatedPkt(pkt);
-                 writeLogEntry(hpt_log, '7', "Msg from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone,
-									    link->hisAka.net, link->hisAka.node, link->hisAka.point);
-                 remove(link->bsyFile);
-                 free(link->bsyFile);
-                 // mark Mail as sent
-                 xmsg->attr |= MSGSENT;
-                 MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-                 free(link->floFile);
-              }
-           } else {
-              writeLogEntry(hpt_log, '7', "no route for mail to %u:%u/%u.%u found - leave mail untouched", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-           }
+	   link = getLinkForRoute(route, &msg);
+	   
+	   if ((route != NULL) && (link != NULL) && (route->routeVia != nopack)) {
+		   prio = cvtFlavour2Prio(route->flavour);
+		   if (createOutboundFileName(link, prio, PKT) == 0) {
+			   convertMsgText(SQmsg, &msg, *(link->ourAka));
+			   makePktHeader(NULL, &header);
+			   header.destAddr = link->hisAka;
+			   header.origAddr = *(link->ourAka);
+			   if (link->pktPwd != NULL)
+				   strcpy(&(header.pktPassword[0]), link->pktPwd);
+			   pkt = openPktForAppending(link->floFile, &header);
+			   writeMsgToPkt(pkt, msg);
+			   closeCreatedPkt(pkt);
+			   writeLogEntry(hpt_log, '7', "Msg from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
+			   remove(link->bsyFile);
+			   nfree(link->bsyFile);
+			   // mark Mail as sent
+			   xmsg->attr |= MSGSENT;
+			   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+			   nfree(link->floFile);
+		   }
+	   } else writeLogEntry(hpt_log, '7', "no route found or no-pack for %s - leave mail untouched", aka2str(msg.destAddr));
    }
 
    freeMsgBuffers(&msg);

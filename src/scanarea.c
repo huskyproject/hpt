@@ -93,31 +93,25 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    char   *kludgeLines, *seenByPath = NULL;
    UCHAR  *ctrlBuff;
    UINT32 ctrlLen;
+
+   memset(msg, '\0', sizeof(s_message));
    
-   // convert Header
-//   convertMsgHeader(xmsg, msg);
    msg->origAddr.zone  = xmsg.orig.zone;
    msg->origAddr.net   = xmsg.orig.net;
    msg->origAddr.node  = xmsg.orig.node;
    msg->origAddr.point = xmsg.orig.point;
-   msg->origAddr.domain = NULL;
 
    msg->destAddr.zone  = xmsg.dest.zone;
    msg->destAddr.net   = xmsg.dest.net;
    msg->destAddr.node  = xmsg.dest.node;
    msg->destAddr.point = xmsg.dest.point;
-   msg->destAddr.domain = NULL;
 
    msg->attributes = xmsg.attr & ~MSGLOCAL; // msg should not have MSGLOCAL bit set
-   //strcpy(msg->datetime, xmsg.__ftsc_date);
    sc_time((union stamp_combo *) &(xmsg.date_written), (char *)msg->datetime);
 
-   msg->toUserName   = (char *) malloc(strlen((char*)xmsg.to)+1);
-   strcpy(msg->toUserName, (char*)xmsg.to);
-   msg->fromUserName = (char *) malloc(strlen((char*)xmsg.from)+1);
-   strcpy(msg->fromUserName, (char*)xmsg.from);
-   msg->subjectLine  = (char *) malloc(strlen((char*)xmsg.subj)+1);
-   strcpy(msg->subjectLine, (char*)xmsg.subj);
+   xstrcat(&msg->toUserName, (char*)xmsg.to);
+   xstrcat(&msg->fromUserName, (char*)xmsg.from);
+   xstrcat(&msg->subjectLine, (char*)xmsg.subj);
 
    // make msgtext
 
@@ -167,10 +161,6 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 {
    s_message    msg;
    UINT32       j=0;
-//   s_pktHeader  header;
-//   FILE         *pkt;
-//   s_link	    *link;
-//   long len;
 
    makeMsg(hmsg, xmsg, &msg, echo, 0);
 
@@ -184,6 +174,11 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 
    // export msg to downlinks
    forwardMsgToLinks(echo, &msg, *echo->useAka);
+
+   
+   // process carbon copy
+   carbonCopy(&msg, echo);
+
 /*
    for (i = 0; i<echo->downlinkCount; i++) {
        link = echo->downlinks[i]->link;

@@ -7,12 +7,8 @@ Category 1: Will certainly be implemented until next release
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 
-- delete attaches (kfs flag)
-- carbonFromAddr addr1, addr2, ...
-- carbonCopy when scan, export
-- UnpackAllBeforeToss
-- route NoPack (ignore mails to this address, leave them in the netmail area)
 - add seen-by (-sb node in echoArea options)
+- delete attaches (kfs flag)
 - do not open/close files on each msg
 
 Category 3: Will only be included if volunteers send patches

@@ -864,9 +864,9 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 		rc = putMsgInArea(area,msg,0,0);
 		area->imported++;  // area has got new messages
 	}
-	else if (!msg->netMail)
+	else if (!msg->netMail) {
 		rc = processEMMsg(msg, *area->useAka, 1, 0);
-	else 
+	} else 
 		rc = processNMMsg(msg, NULL, area, 1, 0);
 	
 	free (msg->text);
@@ -887,21 +887,21 @@ int carbonCopy(s_message *msg, s_area *echo)
 	s_area *area;
 	
 	if (echo->ccoff==1) return 0;
-	
+
 	for (i=0; i<config->carbonCount; i++) {
-		
+
 		/* Dont come to use netmail on echomail and vise verse */
 		if (( msg->netMail && !config->carbons[i].netMail) ||
 		    (!msg->netMail &&  config->carbons[i].netMail)) 
 			continue;
-		
+
 		area = config->carbons[i].area;
 		
 		// dont CC to the echo the mail comes from
 		if (!stricmp(echo->areaName,area->areaName) &&
 		// fix for carbonDelete
 		    config->carbons[i].areaName != NULL) continue;
-		
+
 		switch (config->carbons[i].ctype) {
 			
 		case 0:	str=hpt_stristr(msg->toUserName,config->carbons[i].str);
@@ -915,6 +915,8 @@ int carbonCopy(s_message *msg, s_area *echo)
 		case 3:	str=hpt_stristr(msg->subjectLine,config->carbons[i].str);
 			break;
 		case 4:	str=hpt_stristr(msg->text+strlen(area->areaName)+6,config->carbons[i].str);
+			break;
+		case 5:	str=(char*) addrComp(msg->origAddr, config->carbons[i].addr);
 			break;
 
 		} /* end switch*/
