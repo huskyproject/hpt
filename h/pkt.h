@@ -49,48 +49,6 @@
 #define BUFFERSIZE 32*1024         // work buffer for msg text in pktread
 #endif
 
-struct pktHeader {
-   /* Address block */
-   s_addr destAddr, origAddr;
-
-   UINT16 auxNet;
-
-   /* product specific */
-   UCHAR  hiProductCode,
-          loProductCode;
-   UCHAR  majorProductRev,
-          minorProductRev;
-
-   /* date */
-   time_t pktCreated;
-
-   UINT16 capabilityWord;
-
-   UINT32 prodData;
-
-   char  pktPassword[9]; /* password + \0 */
-};
-
-typedef struct pktHeader s_pktHeader;
-
-/*
-struct message {
-   //Address block 
-   s_addr destAddr, origAddr;
-
-//   UINT16 attributes;
-   dword  attributes;
-   UCHAR  datetime[22];
-   CHAR   netMail;
-   INT32  textLength;
-   INT    recode;
-
-   char   *toUserName, *fromUserName, *subjectLine;
-   char   *text;
-};
-
-typedef struct message   s_message;
-*/
 FILE        *createPkt(char *filename, s_pktHeader *header);
 /*DOC
   Input:  filename is the name of the pkt.
@@ -155,16 +113,6 @@ void        freeMsgBuffers(s_message *msg);
   FZ:     all memory reserved by readMsgFromPkt will be freed.
 */
 
-//char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAka);
-/*DOC
-   Taken from the areafix.c
-   Input:  a s_addr struct
-   Output: createmsgid fills char space msgid with MSGID kludge
-
- * Note:
- * This is a simply msgid without any hash function...
- * Imho it is not necessary to create better msgid for this purpose.
- */
 
 int correctDateTime(char *datetime);
 

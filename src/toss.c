@@ -204,134 +204,6 @@ char *changeFileSuffix(char *fileName, char *newSuffix) {
     }
    
 }
-/*
-int to_us(const s_addr destAddr)
-{
-    int i = 0;
-
-    while (i < config->addrCount)
-	if (addrComp(destAddr, config->addr[i++]) == 0)
-	    return 0;
-    return !0;
-}
-*/
-XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr) 
-{
-    char **outbounds[4];
-    XMSG  msgHeader;
-    struct tm *date;
-    time_t    currentTime;
-    union stamp_combo dosdate;
-    unsigned int i;
-    char *subject=NULL, *newSubj=NULL, *token, *running;
-       
-    //init outbounds
-    outbounds[0] = &tossDir;
-    outbounds[1] = &config->protInbound;
-    outbounds[2] = &config->inbound;
-    outbounds[3] = NULL;
-
-    // clear msgheader
-    memset(&msgHeader, '\0', sizeof(XMSG));
-	
-    // attributes of netmail must be fixed
-    msgHeader.attr = msg->attributes;
-	
-    if (msg->netMail == 1) {
-	// Check if we must remap
-	for (i=0;i<config->remapCount;i++)
-	    if ((config->remaps[i].toname==NULL ||
-		 stricmp(config->remaps[i].toname,msg->toUserName)==0) &&
-		(config->remaps[i].oldaddr.zone==0 ||
-		 addrComp(config->remaps[i].oldaddr,msg->destAddr)==0) ) 
-		{
-		    msg->destAddr.zone=config->remaps[i].newaddr.zone;
-		    msg->destAddr.net=config->remaps[i].newaddr.net;
-		    msg->destAddr.node=config->remaps[i].newaddr.node;
-		    msg->destAddr.point=config->remaps[i].newaddr.point;
-		    break;
-		}
-		
-	//if (to_us(msg->destAddr)==0) {
-    if (isOurAka(config,msg->destAddr)) {
-	    // kill these flags
-	    msgHeader.attr &= ~(MSGREAD | MSGKILL | MSGFRQ | MSGSCANNED | MSGLOCKED | MSGFWD);
-	    // set this flags
-	    msgHeader.attr |= MSGPRIVATE;
-	} else
-	    if (header!=NULL) {
-		// set TRS flag, if the mail is not to us(default)
-		if ( config->keepTrsMail ) msgHeader.attr &= ~(MSGKILL | MSGFWD);
-		else msgHeader.attr |= MSGFWD;
-	    }
-    } else
-	// kill these flags on echomail messages
-	msgHeader.attr &= ~(MSGREAD | MSGKILL | MSGFRQ | MSGSCANNED | MSGLOCKED);
-   
-    // always kill crash, hold, sent & local flags on netmail & echomail
-    msgHeader.attr &= ~(MSGCRASH | MSGHOLD | MSGSENT | MSGLOCAL);
-
-    /* FORCED ATTRIBUTES !!! */
-    msgHeader.attr |= forceattr;
-   
-    strcpy((char *) msgHeader.from,msg->fromUserName);
-    strcpy((char *) msgHeader.to, msg->toUserName);
-
-    if (((msgHeader.attr & MSGFILE) == MSGFILE) 
-	&& (msg->netMail==1)
-	&& !strchr(msg->subjectLine, PATH_DELIM)) {
-
-	running = msg->subjectLine;
-	token = strseparate(&running, " \t");
-
-	while (token != NULL) {
-	    for (i=0;i<4;i++) {
-		nfree(subject);
-		if (outbounds[i] && *outbounds[i]) xstrcat(&subject, *outbounds[i]);
-		xstrcat (&subject, token);
-		if (fexist(subject)) break;
-#if defined(__linux__) || defined(UNIX)
-		subject = strLower(subject);
-		if (fexist(subject)) break;
-#endif
-	    }
-	    if (newSubj) xstrcat(&newSubj, " ");
-	    xstrcat (&newSubj, subject);
-	    token = strseparate(&running, " \t");
-	} // end while
-	nfree(subject);
-    }
-
-    if (newSubj) {
-	if (strlen(newSubj) < XMSG_SUBJ_SIZE)
-	    strcpy((char *) msgHeader.subj, newSubj);
-	else {
-	    strncpy((char *) msgHeader.subj, newSubj, XMSG_SUBJ_SIZE-1);
-	    w_log('9',
-		  "Long subjectLine! Some files will be not routed.");
-	}
-	nfree(newSubj);
-    } else strcpy((char *) msgHeader.subj, msg->subjectLine);
-
-    msgHeader.orig.zone  = (word) msg->origAddr.zone;
-    msgHeader.orig.node  = (word) msg->origAddr.node;
-    msgHeader.orig.net   = (word) msg->origAddr.net;
-    msgHeader.orig.point = (word) msg->origAddr.point;
-    msgHeader.dest.zone  = (word) msg->destAddr.zone;
-    msgHeader.dest.node  = (word) msg->destAddr.node;
-    msgHeader.dest.net   = (word) msg->destAddr.net;
-    msgHeader.dest.point = (word) msg->destAddr.point;
-
-    strcpy((char *) msgHeader.__ftsc_date, (char *)msg->datetime);
-    ASCII_Date_To_Binary((char *)msg->datetime, (union stamp_combo *) &(msgHeader.date_written));
-
-    currentTime = time(NULL);
-    date = localtime(&currentTime);
-    TmDate_to_DosDate(date, &dosdate);
-    msgHeader.date_arrived = dosdate.msg_st;
-
-    return msgHeader;
-}
 
 /* return value: 1 if success, 0 if fail */
 int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
@@ -419,7 +291,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 						 (UCHAR **) &textStart,
 						 &textLength);
 	    // textStart is a pointer to the first non-kludge line
-	    xmsg = createXMSG(msg, NULL, forceattr);
+	    xmsg = createXMSG(config,msg, NULL, forceattr,tossDir);
 
 	    if (MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword)
 			    textLength, (dword) textLength,
@@ -1698,7 +1570,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 		}
 	    }
 
-	    msgHeader = createXMSG(msg, pktHeader, forceattr);
+	    msgHeader = createXMSG(config,msg, pktHeader, forceattr,tossDir);
 	    /* Create CtrlBuf for SMAPI */
 	    ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
 	    /* write message */
