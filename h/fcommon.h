@@ -83,9 +83,6 @@ int    createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ);
 
 #if (defined ( __WATCOMC__ ) || defined ( __MINGW32__ )) && defined ( __NT__ )
 int __stdcall SetConsoleTitleA( const char* lpConsoleTitle );
-#ifdef __MINGW32__
-long __stdcall GetConsoleTitleA( const char*, long );
-#endif
 #endif
 
 #if defined (__EMX__)

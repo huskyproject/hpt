@@ -100,9 +100,8 @@
 #define P_WAIT		_P_WAIT
 #endif
 
-#if defined(__MINGW32__) && defined(__NT__)
+#if  defined(__NT__)
 /* we can't include windows.h for several reasons ... */
-int __stdcall GetFileAttributesA(char *);
 #define GetFileAttributes GetFileAttributesA
 #endif
 
