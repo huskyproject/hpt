@@ -1,3 +1,13 @@
+2002-11-26 Tuesday 13:45  stas_degteff
+
+	* src/link.c (hpt-1_2-stable.5): MFC: Prevent EMX compilation
+	warning 'size mismatch'
+
+2002-11-26 Tuesday 12:49  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.26): MFC: Q&A about echolist
+	and golded areas
+
 2002-11-21 Thursday 15:59  pgul
 
 	* src/toss.c (hpt-1_2-stable.9): Fixed pack mail into existing
