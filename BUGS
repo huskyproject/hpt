@@ -1,1 +1,6 @@
 1. win32 watcom version: can't post files from stdin.
+2. JAM with deleted msgs scanned without highwaters, but there is a fix in 
+   code: if the new msg in the end of message base, scanning will be started 
+   from this msg, else - from 1-st msg (new msg at the begin or if no new msg 
+   at all). That's why you should always use EchoTossLog file!
+      

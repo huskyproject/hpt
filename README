@@ -1,5 +1,8 @@
+HPT is a FidoNet tosser. It is a part of HUSKY portable fidonet software.
 
-! JAM with deleted msgs scanned without highwaters, but there is a fix in code:
-  if the new msg in the end of message base, scanning will be started from this
-  msg, else - from 1-st msg (new msg at the begin or if no new msg at all).
-  Thats why you should always use EchoTossLog file!
+See doc/hpt.* for command reference
+
+See INSTALL for installation inscructions
+
+HPT is a free software, distributed unded GPL Licence. 
+See COPYING file for copying conditions.

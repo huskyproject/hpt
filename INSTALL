@@ -1,22 +1,51 @@
 
 Please read the files (especially README.Makefiles) in the
-husky-common (huskybse) package FIRST!
+husky-common (huskybse) package FIRST! If you don't have this package you
+should download it from http://husky.sourceforge.net/
 
 
 Unix:
 -----
 
-0. the smapi and the fidoconfig package is required for the hpt package. They
+0. The smapi and the fidoconfig package is required for the hpt package. They
    must be already compiled and installed.
-   fidoconfig "current-latest" version is required.
+   These libraries must be the exactly same version as hpt.
 
 1. Put the hpt package in the directory where the other packages of fido
    linux reside:
 
-   /usr/src/packages/        -> smapi/
+   /usr/src/husky/           -> smapi/
                              -> fidoconf/
                              -> hpt/
 
-2. compile smapi, fidoconf, hpt
+2. Compile smapi, fidoconf, hpt
 
-You're ready. If you have a working config, you can now use fido under unix.
+If you use huskymak.cfg, edit it to suit your preferences and invoke:
+
+	$ make
+        (or `gmake' on some systems)
+        
+        $ su
+        # make install
+        
+otherwise type
+	
+        $ make -f makefile.XXX
+        
+        where `XXX' depends on your platform and compiler 
+        (refer to fidoconf/README)
+        
+        $ su
+        # make -f makefile.XXX install
+        
+You're ready. Now edit your config as you need and run hpt :)
+
+
+Win32, OS/2:
+------------
+
+There is a lot of win32 compilers, so refer to your compiler's manual how to
+use makefiles for compiling projects.
+
+If you already have precompiled binaries - just unpack packages, edit your
+config and run hpt :)
