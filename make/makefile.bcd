@@ -9,11 +9,11 @@ SRC_DIR=..\src\
 !IF $(DEBUG) == 1
 CFLAGS=-ml -v -w -O2 -I..\h -I..\.. -I..\..\smapi -I..\..\fidoconf -c
 LFLAGS=-ml -v -w
-CDEFS =-DMSDOS -DDEBUG_HPT
+CDEFS =-DMSDOS -DDEBUG_HPT -DNOSEMAPHORES
 !ELSE
 CFLAGS=-ml -v -w -O2 -I..\h -I..\.. -I..\..\smapi -I..\..\fidoconf -c
 LFLAGS=-ml -w
-CDEFS =-DMSDOS
+CDEFS =-DMSDOS -DNOSEMAPHORES
 !ENDIF
 
 OBJ=.obj
