@@ -1,10 +1,10 @@
 # for gcc, use this:
-# CC    = gcc -Wall
-# for xlc, use this:
-CC      = cc
-INSTDIR = $(HOME)/fido/bin
-MANDIR  = $(HOME)/fido/man
-LIBDIR  = $(HOME)/fido/lib
+#CC    = gcc -Wall -g
+# for DEC CC, use this:
+CC      = cc -g
+INSTDIR = /home/fido/bin
+MANDIR  = /home/fido/man
+LIBDIR  = /home/fido/lib
 
 OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o strsep.o link.o crc.o
 SRC_DIR = ../src/

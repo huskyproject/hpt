@@ -1278,34 +1278,65 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	     break;
 	     
 	   case secProtInbound:
-	     if ((link != NULL) && (link->pktPwd != NULL) && (stricmp(link->pktPwd, header->pktPassword)==0)) processIt = 1;
-	     else if ((link != NULL) && ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "")==0))) processIt=1;
-	     else if (link == NULL) {	
+	     if ((link != NULL) && (link->pktPwd != NULL)) {
+               if (stricmp(link->pktPwd, header->pktPassword)==0) {
+                  processIt = 1;
+               } else {
+                  if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (fSecure | fOn)) ) {
+                      sprintf(buff, "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
+                              fileName, header->origAddr.zone, header->origAddr.net,
+                              header->origAddr.node, header->origAddr.point);
+	             writeLogEntry(hpt_log, '9', buff);
+                      processIt = 1;
+                  } else {
+	            sprintf(buff, "pkt: %s Password Error for %i:%i/%i.%i",
+		    fileName, header->origAddr.zone, header->origAddr.net,
+		    header->origAddr.node, header->origAddr.point);
+                    writeLogEntry(hpt_log, '9', buff);
+                    rc = 1;
+                  }
+               }
+             } else if ((link != NULL) && ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "")==0))) {
+               processIt=1;
+	     } else /* if (link == NULL) */ {	
 	       sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
 		       fileName, header->origAddr.zone, header->origAddr.net,
 		       header->origAddr.node, header->origAddr.point);
 	       writeLogEntry(hpt_log, '9', buff);
 	       processIt = 2;
-	     } else {
-	       sprintf(buff, "pkt: %s Password Error or no link for %i:%i/%i.%i",
+	     }
+	     break;
+
+	   case secInbound:
+	     if ((link != NULL) && (link->pktPwd != NULL)) {
+               if (stricmp(link->pktPwd, header->pktPassword)==0) {
+                  processIt = 1;
+               } else {
+                  if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (fOn)) ) {
+                      sprintf(buff, "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
+                              fileName, header->origAddr.zone, header->origAddr.net,
+                              header->origAddr.node, header->origAddr.point);
+	             writeLogEntry(hpt_log, '9', buff);
+                      processIt = 1;
+                  } else {
+	            sprintf(buff, "pkt: %s Password Error for %i:%i/%i.%i",
+		    fileName, header->origAddr.zone, header->origAddr.net,
+		    header->origAddr.node, header->origAddr.point);
+                    writeLogEntry(hpt_log, '9', buff);
+                    rc = 1;
+                  }
+               }
+             } else if ((link != NULL) && ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "")==0))) {
+               processIt=1;
+	     } else /* if (link == NULL) */ {	
+	       sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
 		       fileName, header->origAddr.zone, header->origAddr.net,
 		       header->origAddr.node, header->origAddr.point);
 	       writeLogEntry(hpt_log, '9', buff);
-	       rc = 1;
+	       processIt = 2;
 	     }
 	     break;
 	     
-	   case secInbound:
-	     if ((link != NULL) && (link->pktPwd != NULL) && (stricmp(link->pktPwd, header->pktPassword)==0) ) processIt = 1;
-	     else if ((link != NULL) && ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "")==0))) processIt=1;
-	     else if (link == NULL) {
-	       sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
-		       fileName, header->origAddr.zone, header->origAddr.net,
-		       header->origAddr.node, header->origAddr.point);
-	       writeLogEntry(hpt_log, '9', buff);
-	       processIt = 2;
-	     }
-	     break;
 	   }
 	   
 	   if (processIt != 0) {
