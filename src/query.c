@@ -165,7 +165,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     fileName = creatingLink->autoAreaCreateFile;
     if (fileName == NULL) fileName = cfgFile ? cfgFile : getConfigFileName();
 
-    f = fopen(fileName, "a+");
+    f = fopen(fileName, "a+b");
     if (f == NULL) {
 	fprintf(stderr,"autocreate: cannot open config file\n");
 	return 9;
@@ -240,7 +240,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     } else {
     fseek (f, 0L, SEEK_END);
     }
-    fprintf(f, "%s\n", buff); // add line to config
+    fprintf(f, "%s%s", buff, cfgEof()); // add line to config
     fclose(f);
    
     nfree(buff);

@@ -636,16 +636,18 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 	}
 	nfree(buff);
     }
-    close_conf();
     if (pos == -1) { // impossible // error occurred
+	    close_conf();
 	    return -1;
     }
-    cfgin = fopen(fileName,"rb");
+    cfgin = get_hcfg();
     if((tmpFileName=tmpnam(tmpFileName)) != NULL)
         cfgout = fopen(tmpFileName,"wb"); // create result file
     else 
         cfgout = NULL;
-    if ( !cfgin && !cfgout ) {
+    if ( !cfgin || !cfgout ) {
+	if (cfgout) fclose(cfgout);
+	if (cfgin) close_conf();
 	if (!quiet) fprintf(stderr, "areafix: cannot open config file %s for reading and writing\n", fileName);
 	w_log(LL_ERR,"areafix: cannot open config file \"%s\" for reading and writing", fileName);
 	nRet = I_ERR; // go to end :) // error occurred
@@ -653,6 +655,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     }
     else {
         buff = (char*)safe_calloc( (size_t)pos ,sizeof(char) );
+	fseek(cfgin, 0, SEEK_SET);
         len = fread(buff, sizeof(char), (size_t)pos, cfgin);
         fwrite(buff, sizeof(char), (size_t) len, cfgout);
         cfgInline = readLine(cfgin);
@@ -673,7 +676,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
             }
         case 3: // add link to existing area
             xscatprintf(&cfgInline, " %s", aka2str(link->hisAka));
-            fprintf(cfgout, "%s\n", cfgInline); // add line to config
+            fprintf(cfgout, "%s%s", cfgInline, cfgEof()); // add line to config
             nRet = ADD_OK;
             break;
         case 1: // remove link from area
@@ -694,7 +697,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
                 rc = -1;
                 while( isspace(cfgline[rc])) { cfgline[rc] = '\0'; rc--;}
             }
-            fprintf(cfgout, "%s\n", cfgInline); // add line to config 
+            fprintf(cfgout, "%s%s", cfgInline, cfgEof()); // add line to config 
             nRet = DEL_OK;
             break;
         case 2:
@@ -707,7 +710,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
             if ( hpt_stristr(area->downlinks[0]->link->autoAreaCreateDefaults,
                 "passthrough") )  {
                 nRet = O_ERR;
-                fprintf(cfgout, "%s\n", cfgInline); // add line to config 
+                fprintf(cfgout, "%s%s", cfgInline, cfgEof()); // add line to config 
                 break;
             }   
             // get area string
@@ -725,7 +728,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
             token = strstr(token+1, aka2str(area->downlinks[0]->link->hisAka));
 
           xstrcat( &buff, token-1); 
-          fprintf(cfgout, "%s\n", buff); // add line to config
+          fprintf(cfgout, "%s%s", buff, cfgEof()); // add line to config
           break;
         default: break;
       } // switch (action)
@@ -738,14 +741,14 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
       len = fread(buff, sizeof(char), (size_t) endpos-lastpos, cfgin);
       fwrite(buff, sizeof(char), (size_t) len, cfgout);
     } // else of if (cfgline == NULL) {
-    fclose(cfgin); fclose(cfgout); 
+    close_conf(); fclose(cfgout); 
     w_log(LL_FILE,"areafix.c::changeconfig(): created '%s' ",tmpFileName);
     if (nRet==I_ERR){
         w_log(LL_FUNC,"areafix.c::changeconfig() rc=-1");
     } else {
         cfgin  = fopen(tmpFileName,"rb");
         cfgout = fopen(fileName,"wb"); // result file
-        if ( !cfgin && !cfgout ) {
+        if ( !cfgin || !cfgout ) {
             if (!quiet) fprintf(stderr, "areafix: cannot open config file %s for reading and writing\n", fileName);
             w_log(LL_ERR,"areafix: cannot open config file \"%s\" for reading and writing", fileName);
         } else {
@@ -1338,7 +1341,7 @@ linkline:
 		curpos = get_hcfgPos();
 		confName = safe_strdup(getCurConfName());
 		close_conf();
-		f_conf = fopen(confName, "r+");
+		f_conf = fopen(confName, "r+b");
 		if (f_conf == NULL) {
 		    fprintf(stderr,"%s: cannot open config file %s \n", opt ? "autopause" : "areafix", confName);
 		    nfree(confName);
@@ -1356,8 +1359,7 @@ linkline:
 		line[cfglen]='\0';
 
 		fseek(f_conf, curpos, SEEK_SET);
-		fputs("Pause\n", f_conf);
-		fputs(line, f_conf);
+		fprintf(f_conf, "Pause%s%s", cfgEof(), line);
 		fclose(f_conf);
 		nfree(line);
 		link->Pause = 1;
