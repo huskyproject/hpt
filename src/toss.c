@@ -691,7 +691,7 @@ void makeMsgToSysop(char *areaName, hs_addr fromAddr, ps_addr uplinkAddr)
                 msgToSysop[i] = makeMessage(echo->useAka,
                     echo->useAka,
                     versionStr,
-                    netmail ? config->sysop : "All", "Created new areas",
+                    netmail ? (config->sysop ? config->sysop : "Sysop") : "All", "Created new areas",
                     netmail,
                     config->areafixReportsAttr);
                 msgToSysop[i]->text = createKludges(config,
