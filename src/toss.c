@@ -2024,7 +2024,7 @@ void writeImportLog(void) {
 #define INCL_DOS
 
 static void setmaxopen(void) {
-    ULONG cur, add;
+    ULONG add;
     unsigned maxopenpkt = MAXOPEN_DEFAULT;
     unsigned cur = add = 0;
 
