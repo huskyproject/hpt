@@ -2327,6 +2327,7 @@ void arcmail(s_link *tolink) {
 				if (bundleNameStyle == eAddrDiff ||
 				    bundleNameStyle == eAddrsCRC32 ||
 				    bundleNameStyle == eAddrDiffAlways ||
+				    bundleNameStyle == eAddrsCRC32Always ||
 				    bundleNameStyle == eAmiga)
 				    fprintf(flo, "#%s\n", link->packFile);
 				else

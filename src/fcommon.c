@@ -323,9 +323,11 @@ int createTempPktFileName(s_link *link)
     switch ( bundleNameStyle ) {
 
     case eAddrsCRC32:
+    case eAddrsCRC32Always:
     case eAddrDiff:
     case eAddrDiffAlways:
-                if( bundleNameStyle == eAddrsCRC32 ) {
+                if( bundleNameStyle == eAddrsCRC32 ||
+                    bundleNameStyle == eAddrsCRC32Always ) {
                   xscatprintf( &tmp2, "hpt %s ", aka2str(config->addr[0]) );
   	          xstrcat( &tmp2, aka2str(link->hisAka) );
                   xscatprintf(&tmp,"%08x.", strcrc32(tmp2,0xFFFFFFFFUL) );
@@ -366,6 +368,7 @@ int createTempPktFileName(s_link *link)
 					counter = i+1;
 					if (stbuf.st_size==0 && (counter<numExt ||
       					    bundleNameStyle==eAddrDiffAlways ||
+      					    bundleNameStyle==eAddrsCRC32Always ||
       					    bundleNameStyle==eAmiga))
 					   remove (pfileName);
 				} else {
@@ -381,7 +384,9 @@ int createTempPktFileName(s_link *link)
 		}
 
 		if (counter >= numExt) {
-			if ((bundleNameStyle==eAddrDiffAlways || bundleNameStyle==eAmiga)
+			if ((bundleNameStyle==eAddrDiffAlways ||
+			     bundleNameStyle==eAddrsCRC32Always ||
+			     bundleNameStyle==eAmiga)
 				&& minFreeExt>=0) {
 				counter = minFreeExt;
 			} else {

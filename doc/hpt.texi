@@ -567,7 +567,7 @@ This statement cannot be repeated.
 @findex BundleNameStyle
 @table @asis
 @item Syntax:
-@code{bundleNameStyle <timeStamp | addrDiff | addrsCRC32 | addrDiffAlways | Amiga>}
+@code{bundleNameStyle <timeStamp | addrDiff | addrsCRC32 | addrDiffAlways | addrsCRC32Always | Amiga>}
 @item Example:
 @code{bundleNameStyle timeStamp}
 @end table
@@ -588,6 +588,9 @@ Automatically switched to @code{timeStamp} when all alowed extensions were
 used.
 @item addrDiffAlways
 the same as addrDiff but tryes to use lower free numbers of extension in
+case when all higher numbers are already busy.
+@item addrsCRC32Always
+the same as addrsCRC32 but tryes to use lower free numbers of extension in
 case when all higher numbers are already busy.
 @item Amiga
 Amiga Style Outbound (ASO). Bundles creates in @code{Outbound} directory
@@ -2426,7 +2429,7 @@ This statement can be repeated.
 @findex LinkBundleNameStyle
 @table @asis
 @item Syntax:
-@code{linkBundleNameStyle <timeStamp | addrDiff | addrDiffAlways | Amiga>}
+@code{linkBundleNameStyle <timeStamp | addrDiff | addrDiffAlways | addrsCRC32 | addrsCRC32Always | Amiga>}
 @item Example:
 @code{linkbundleNameStyle addrDiff}
 @end table
