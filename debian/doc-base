@@ -6,7 +6,7 @@ Abstract: This manual describes what hpt is
 Section: devel
 
 Format: HTML
-Index: /usr/share/doc/hpt/html/hpt.html
-Files: /usr/share/doc/hpt/html/*.html
+Index: /usr/share/doc/hpt/hpt.html
+Files: /usr/share/doc/hpt/*.html
 
   
