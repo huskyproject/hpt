@@ -1152,6 +1152,9 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 		fclose(msgfp);
 		execstr = safe_malloc(strlen(progname)+strlen(fname)+2);
 		sprintf(execstr, "%s %s", progname, fname);
+#ifdef __NT__
+		CharToOem(execstr, execstr); // this is really need?
+#endif
 		rc = system(execstr);
 		nfree(execstr);
 		unlink(fname);
@@ -2378,18 +2381,17 @@ void writeTossStatsToLog(void) {
    /* Now write areas summary */
    w_log(logchar, "Areas summary:");
    for (i = 0; i < config->netMailAreaCount; i++)
-	if (config->netMailAreas[i].imported > 0)
-		w_log(logchar, "netmail area %s - %d msgs", 
-			config->netMailAreas[i].areaName, config->netMailAreas[i].imported);
-
+       if (config->netMailAreas[i].imported > 0)
+	   w_log(logchar, "netmail area %s - %d msgs", 
+		 config->netMailAreas[i].areaName, config->netMailAreas[i].imported);
    for (i = 0; i < config->echoAreaCount; i++)
-	if (config->echoAreas[i].imported > 0)
-		w_log(logchar, "echo area %s - %d msgs", 
-			config->echoAreas[i].areaName, config->echoAreas[i].imported);
+       if (config->echoAreas[i].imported > 0)
+	   w_log(logchar, "echo area %s - %d msgs", 
+		 config->echoAreas[i].areaName, config->echoAreas[i].imported);
    for (i = 0; i < config->localAreaCount; i++)
-	if (config->localAreas[i].imported > 0)
-		w_log(logchar, "local area %s - %d msgs", 
-			config->localAreas[i].areaName, config->localAreas[i].imported);
+       if (config->localAreas[i].imported > 0)
+	   w_log(logchar, "local area %s - %d msgs", 
+		 config->localAreas[i].areaName, config->localAreas[i].imported);
 }
 
 int find_old_arcmail(s_link *link, FILE *flo)

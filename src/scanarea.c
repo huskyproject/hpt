@@ -198,6 +198,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 
    freeMsgBuffers(&msg);
    statScan.exported++;
+   echo->scn++;
 }
 
 void scanEMArea(s_area *echo)
@@ -211,39 +212,40 @@ void scanEMArea(s_area *echo)
    
    area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, (word)(echo->msgbType | MSGTYPE_ECHO));
    if (area != NULL) {
-      statScan.areas++;
-      echo->scn = 1;
-      w_log('1', "Scanning area: %s", echo->areaName);
+       statScan.areas++;
+       echo->scn++;
+       w_log('1', "Scanning area: %s", echo->areaName);
 
-      i = (noHighWaters) ? 0 : MsgGetHighWater(area);
-	  highestMsg = MsgGetHighMsg(area);
+       i = (noHighWaters) ? 0 : MsgGetHighWater(area);
+       highestMsg = MsgGetHighMsg(area);
 
-	  //FIXME: we needs for smapi fix to equivalent work of squish, sdm and jam
-	  if (echo->msgbType == MSGTYPE_JAM) {
-		  num = MsgGetNumMsg(area);
-		  if (highestMsg>num && i>=num) i=0;
-		  highestMsg = num;
-	  }
+       //FIXME: we needs for smapi fix to equivalent work of squish, sdm and jam
+       if (echo->msgbType == MSGTYPE_JAM) {
+	   num = MsgGetNumMsg(area);
+	   if (highestMsg>num && i>=num) i=0;
+	   highestMsg = num;
+       }
 
-      while (i < highestMsg) {
-         hmsg = MsgOpenMsg(area, MOPEN_RW, ++i);
-         if (hmsg == NULL) continue;      // msg# does not exist
-         statScan.msgs++;
-         MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-         if (((xmsg.attr & MSGSENT) != MSGSENT) && ((xmsg.attr & MSGLOCAL) == MSGLOCAL)) {
-            packEMMsg(hmsg, xmsg, echo);
-         }
+       while (i < highestMsg) {
+	   hmsg = MsgOpenMsg(area, MOPEN_RW, ++i);
+	   if (hmsg == NULL) continue;      // msg# does not exist
+	   statScan.msgs++;
+	   MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+	   if (((xmsg.attr & MSGSENT) != MSGSENT) &&
+	       ((xmsg.attr & MSGLOCAL) == MSGLOCAL)) {
+	       packEMMsg(hmsg, xmsg, echo);
+	   }
 
-         MsgCloseMsg(hmsg);
+	   MsgCloseMsg(hmsg);
 		 
-		 // kill msg
-		 if ((xmsg.attr & MSGKILL) == MSGKILL) MsgKillMsg(area, i--);
+	   // kill msg
+	   if ((xmsg.attr & MSGKILL) == MSGKILL) MsgKillMsg(area, i--);
 
-      }
-	  MsgSetHighWater(area, i);
+       }
+       MsgSetHighWater(area, i);
 	  
-      MsgCloseArea(area);
+       MsgCloseArea(area);
    } else {
-      w_log('9', "Could not open %s", echo->fileName);
+       w_log('9', "Could not open %s", echo->fileName);
    } /* endif */
 }

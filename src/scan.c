@@ -519,7 +519,7 @@ void scanNMArea(s_area *area)
    if (netmail != NULL) {
 
       statScan.areas++;
-      area->scn = 1;
+      area->scn++;
       w_log('1', "Scanning NetmailArea %s", area -> areaName);
 
       if (area->msgbType == MSGTYPE_SDM) noHighWaters = 1;
@@ -549,7 +549,10 @@ void scanNMArea(s_area *area)
                 
          // if not sent and not for us -> pack it
          if (((xmsg.attr & MSGSENT) != MSGSENT) && (for_us==0)) {
-	     if (packMsg(msg, &xmsg, area) == 0) statScan.exported++;
+	     if (packMsg(msg, &xmsg, area) == 0) {
+		 statScan.exported++;
+		 area->scn++;
+	     }
          }
 
          MsgCloseMsg(msg);
@@ -581,6 +584,7 @@ void scanNMArea(s_area *area)
 
 void writeScanStatToLog(void) {
    char logchar;
+   unsigned i;
 
    if (statScan.exported==0)
       logchar='1';
@@ -590,6 +594,17 @@ void writeScanStatToLog(void) {
    w_log(logchar, "Statistics");
    w_log(logchar, "    areas: % 4d   msgs: % 6d", statScan.areas, statScan.msgs);
    w_log(logchar, "    exported: % 4d", statScan.exported);
+
+   /* Now write areas summary */
+   w_log(logchar, "Areas summary:");
+   for (i = 0; i < config->netMailAreaCount; i++)
+       if (config->netMailAreas[i].scn > 1)
+	   w_log(logchar, "netmail area %s - %d msgs", 
+		 config->netMailAreas[i].areaName, config->netMailAreas[i].scn-1);
+   for (i = 0; i < config->echoAreaCount; i++)
+       if (config->echoAreas[i].scn > 1)
+	   w_log(logchar, "echo area %s - %d msgs", 
+		 config->echoAreas[i].areaName, config->echoAreas[i].scn-1);
 }
 
 int scanByName(char *name) {
