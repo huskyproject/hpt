@@ -2,6 +2,16 @@ hpt 0.29
 --------
 
 ----- cvs ci ------
+Wed Jun 23 09:13:20 CEST 1999
+mtt:
+* fixed the creation of dupe-bases in win32 version of hpt
+
+----- cvs ci ------
+Tue Jun 22 22:10:45 CEST 1999
+mtt:
+* version number updated
+
+----- cvs ci ------
 Wed Jun 23 23:20:11 NOVST 1999
 max:
 * bugfix for dupe.c (createDupeFileName)

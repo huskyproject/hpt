@@ -77,6 +77,8 @@ char *createDupeFileName(s_area *area) {
 #endif
 
    strcpy(name, config->dupeHistoryDir);
+
+   /*
 #ifndef MSDOS
    if (!area->DOSFile) {
      strcat(name, aux=strtolower(area->areaName));
@@ -87,6 +89,15 @@ char *createDupeFileName(s_area *area) {
 #else
    strcat(name, (afname = strrchr(area->fileName, PATH_DELIM))  != NULL ? (aux=strtolower(afname + 1)) :                 (aux=strtolower(area->fileName)));
 #endif
+   */
+
+   if (!area->DOSFile) {
+     strcat(name, aux=strtolower(area->areaName));
+   }
+   else {
+     strcat(name, (afname = strrchr(area->fileName, PATH_DELIM)) != NULL ? (aux=strtolower(afname + 1)) : (aux=strtolower(area->fileName)));
+   }
+
    free(aux);
    strcat(name, ".dup");
 
