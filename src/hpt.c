@@ -466,37 +466,14 @@ int main(int argc, char **argv)
 {
    struct _minf m;
    unsigned int i, rc;
-   char *version = NULL;
 #if defined ( __NT__ )
    #define TITLESIZE 256
-   char title[ TITLESIZE ], oldtitle[ TITLESIZE ];
+   char *title, oldtitle[ TITLESIZE ];
 #endif
 
-/*
-xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVICE, VER_BRANCH);
-
-#ifdef __linux__
-   xstrcat(&version, "/lnx");
-#elif defined(__FreeBSD__) || defined(__NetBSD__)
-   xstrcat(&version, "/bsd");
-#elif defined(__OS2__) || defined(OS2)
-   xstrcat(&version, "/os2");
-#elif defined(__NT__)
-   xstrcat(&version, "/w32");
-#elif defined(__sun__)
-   xstrcat(&version, "/sun");
-#elif defined(MSDOS)
-   xstrcat(&version, "/dos");
-#elif defined(__BEOS__)
-   xstrcat(&version, "/beos");
-#endif
-
-
-   if (strcmp(VER_BRANCH,"-stable")!=0) xscatprintf(&version, " %s", cvs_date);
-   xscatprintf(&versionStr,"hpt %s", version);
-*/
    versionStr = GenVersionStr( "hpt", VER_MAJOR, VER_MINOR, VER_PATCH,
                                VER_BRANCH, cvs_date );
+
    rc = processCommandLine(argc, argv);
    if ((rc==1 || rc==EX_USAGE) && config!=NULL)
       if (config->lockfile) {
@@ -505,21 +482,22 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
           disposeConfig(config);
           doneCharsets();
       }
-   if (rc==1){ nfree(version); nfree(versionStr); exit(EX_OK); }
-   if (rc==EX_USAGE){ nfree(version); nfree(versionStr); exit(EX_USAGE); }
-
-/*    if (quiet==0) fprintf(stdout, "Highly Portable Tosser %s\n", version); */
+   if (rc==1){ nfree(versionStr); exit(EX_OK); }
+   if (rc==EX_USAGE){ nfree(versionStr); exit(EX_USAGE); }
 
    if (config==NULL) processConfig();
 
 #if defined ( __NT__ )
    if (config->setConsoleTitle) {
-	   sprintf( title, "Highly Portable Tosser %s", version);
-	   GetConsoleTitleA( oldtitle, 256 );
-	   SetConsoleTitleA( title );
+     GetConsoleTitleA( oldtitle, TITLESIZE );
+     if( versionStr ){
+       xstrscat( &title, "Highly Portable Tosser ", versionStr+4, NULL); /* versionStr is "hpt ..." */
+       SetConsoleTitleA( title );
+       nfree(title);
+     }else
+       SetConsoleTitleA( "Highly Portable Tosser" );
    }
 #endif
-   nfree(version);
 
    /*  check for free space */
    if (config->minDiskFreeSpace) {
