@@ -27,9 +27,12 @@ int main(int argc, char *argv[])
     CHAR *textBuffer = NULL;
     char tmp[512];
 
+    memset (&header,0,sizeof(s_pktHeader));
+    memset (&msg,0,sizeof(s_message));
+
    if (argc == 1) {
       printf("\nUsage:\n");
-      printf("txt2pkt -af \"<from address>\" -at \"<to address>\" -nf \"<from name>\" -nt \"<to name>\" -e \"echo name\" -p \"password\" -t \"tearline\" -o \"origin\" -s \"subject\" -d \"<directory>\" <text file>\n");
+      printf("txt2pkt -xf \"<pkt from address>\" -xt \"<pkt to address>\" -af \"<from address>\" -at \"<to address>\" -nf \"<from name>\" -nt \"<to name>\" -e \"echo name\" -p \"password\" -t \"tearline\" -o \"origin\" -s \"subject\" -d \"<directory>\" <text file>\n");
       exit(1);
    }
 
@@ -43,6 +46,18 @@ int main(int argc, char *argv[])
       if (*argv[n] == '-') {
          switch(argv[n][1]) {
             case 'a':    // address
+               switch(argv[n][2]) {
+                  case 'f':
+                     string2addr(argv[++n], &(msg.origAddr));
+                     break;
+                  case 't':
+                     string2addr(argv[++n], &(msg.destAddr));
+                     break;
+                  default:
+                     quit = 1;
+                     break;
+               }; break;
+            case 'x':    // address
                switch(argv[n][2]) {
                   case 'f':
                      string2addr(argv[++n], &(header.origAddr));
@@ -120,7 +135,7 @@ int main(int argc, char *argv[])
    header.loProductCode  = 0xfe;
    header.majorProductRev = 0;
    header.minorProductRev = 26;
-   strcpy(header.pktPassword, passwd);
+   if (passwd!=NULL) strcpy(header.pktPassword, passwd);
    header.pktCreated = time(NULL);
 
    header.capabilityWord = 1;
@@ -134,12 +149,12 @@ int main(int argc, char *argv[])
 #endif
    sprintf(tmp + strlen(tmp),"%08lx.pkt",time(NULL));
 
+   if (header.origAddr.zone==0) header.origAddr = msg.origAddr;
+   if (header.destAddr.zone==0) header.destAddr = msg.destAddr;
+
    pkt = createPkt(tmp, &header);
 
    if (pkt != NULL) {
-
-      msg.origAddr  = header.origAddr;
-      msg.destAddr  = header.destAddr;
 
       msg.attributes = 1;
 
