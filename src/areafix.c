@@ -1741,7 +1741,7 @@ char *areaStatus(char *report, char *preport)
 /* report already nfree() after this function */
 void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 {
-    char *tab = config->intab, *text, *split, *p, *newsubj = NULL;
+    char *text, *split, *p, *newsubj = NULL;
     char splitted[]=" > message splitted...";
     char *splitStr = config->areafixSplitStr;
     int len, msgsize = config->areafixMsgSize * 1024, partnum=0;
@@ -1751,8 +1751,6 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
     /* val: silent mode - don't write messages */
     if (silent_mode) return;
 
-    /* dmitry: what is this for? */
-/*    config->intab = NULL; */
     text = report;
     reply = GetCtrlToken(msg->ctl, "MSGID");
 
@@ -2425,7 +2423,7 @@ int relink (char *straddr) {
 	if ( isLinkOfArea(researchLink, &config->echoAreas[count])) {
 	    areasIndexArray[areasArraySize] = &config->echoAreas[count];
 	    areasArraySize++;
-	    w_log(LL_AREAFIX, "Echo %s from link %s refreshed",
+	    w_log(LL_AREAFIX, "EchoArea %s from link %s is relinked",
 		  config->echoAreas[count].areaName, aka2str(researchLink->hisAka));
 	}
 
@@ -2457,7 +2455,7 @@ int relink (char *straddr) {
 
 	xscatprintf(&(msg->text), " \r--- %s areafix\r", versionStr);
 	msg->textLength = strlen(msg->text);
-	w_log(LL_AREAFIX, "'Refresh' message created to `%s`",
+	w_log(LL_AREAFIX, "'Relink' message created to `%s`",
 	      researchLink->RemoteRobotName ?
 	      researchLink->RemoteRobotName : "areafix");
 	processNMMsg(msg, NULL,
@@ -2467,10 +2465,196 @@ int relink (char *straddr) {
 	closeOpenedPkt();
 	freeMsgBuffers(msg);
 	nfree(msg);
-	w_log(LL_AREAFIX, "Total request relink %i area(s)",areasArraySize);
+	w_log(LL_AREAFIX, "Relinked %i area(s)",areasArraySize);
     }
 
     nfree(areasIndexArray);
+
+    /* deinit SMAPI */
+    MsgCloseApi();
+
+    return 0;
+}
+
+int resubscribe (char *pattern, char *strFromAddr, char *strToAddr) {
+    s_link          *fromLink = NULL;
+    s_link          *toLink = NULL;
+    unsigned int    count, fromArraySize, toArraySize;
+    s_area          **fromIndexArray = NULL;
+    s_area          **toIndexArray = NULL;
+    struct _minf    m;
+    char            *fromAddr, *toAddr;
+
+    /*  parse config */
+    if (config==NULL) processConfig();
+    if ( initSMAPI == -1 ) {
+        /*  init SMAPI */
+        initSMAPI = 0;
+        m.req_version = 0;
+        m.def_zone = (UINT16) config->addr[0].zone;
+        if (MsgOpenApi(&m) != 0) {
+            exit_hpt("MsgApiOpen Error",1);
+        }
+    }
+
+    w_log(LL_START, "Start resubscribe...");
+
+    if ( pattern == NULL ) {
+        w_log(LL_ERR, "Areas pattern is not defined");
+        return 1;
+    }
+
+    if (strFromAddr) fromLink = getLink(config, strFromAddr);
+    else {
+        w_log(LL_ERR, "No address to resubscribe from");
+        return 1;
+    }
+
+    if ( fromLink == NULL ) {
+        w_log(LL_ERR, "Unknown link address %s", strFromAddr);
+        return 1;
+    }
+
+    fromArraySize = 0;
+    fromIndexArray = (s_area **) safe_malloc
+        (sizeof(s_area *) * (config->echoAreaCount + config->localAreaCount + 1));
+
+    if (strToAddr) toLink = getLink(config, strToAddr);
+    else {
+        w_log(LL_ERR, "No address to resubscribe to");
+        return 1;
+    }
+
+    if ( toLink == NULL ) {
+        w_log(LL_ERR, "Unknown link address %s", strToAddr);
+        return 1;
+    }
+
+    toArraySize = 0;
+    toIndexArray = (s_area **) safe_malloc
+        (sizeof(s_area *) * (config->echoAreaCount + config->localAreaCount + 1));
+
+    for (count = 0; count < config->echoAreaCount; count++)
+        if (isLinkOfArea(fromLink, &config->echoAreas[count])) {
+            int rc;
+
+            if(patimat(config->echoAreas[count].areaName, pattern)==0)
+                continue;
+
+            rc = changeconfig(cfgFile?cfgFile:getConfigFileName(),
+                              &config->echoAreas[count],fromLink,1);
+
+            if (rc != DEL_OK) {
+                w_log(LL_AREAFIX, "areafix: %s can't unlink %s from area ",
+                      aka2str(fromLink->hisAka), config->echoAreas[count].areaName);
+                continue;
+            }
+
+            fromIndexArray[fromArraySize] = &config->echoAreas[count];
+            fromArraySize++;
+            RemoveLink(fromLink, &config->echoAreas[count]);
+
+            if (isLinkOfArea(toLink, &config->echoAreas[count])) {
+                w_log(LL_AREAFIX, "Link %s is already subscribed to area %s",
+                      aka2str(toLink->hisAka), config->echoAreas[count].areaName);
+                continue;
+            }
+
+            rc = changeconfig(cfgFile?cfgFile:getConfigFileName(),
+                              &config->echoAreas[count],toLink,0);
+
+            if (rc != ADD_OK) {
+                w_log(LL_AREAFIX, "areafix: %s is not subscribed to %s",
+                      aka2str(toLink->hisAka), config->echoAreas[count].areaName);
+                continue;
+            }
+
+            Addlink(config, toLink, &config->echoAreas[count]);
+            toIndexArray[toArraySize] = &config->echoAreas[count];
+            toArraySize++;
+
+            fromAddr = safe_strdup(aka2str(fromLink->hisAka));
+            toAddr   = safe_strdup(aka2str(toLink->hisAka));
+            w_log(LL_AREAFIX, "EchoArea %s resubscribed from link %s (old link was %s)",
+                  config->echoAreas[count].areaName, fromAddr, toAddr);
+            nfree(fromAddr);
+            nfree(toAddr);
+        }
+
+    if ( fromArraySize > 0 ) {
+        s_message *msg;
+
+        msg = makeMessage(fromLink->ourAka,
+                          &fromLink->hisAka,
+                          config->sysop,
+                          fromLink->RemoteRobotName ?
+                          fromLink->RemoteRobotName : "areafix",
+                          fromLink->areaFixPwd ? fromLink->areaFixPwd : "", 1,
+                          fromLink->areafixReportsAttr ? fromLink->areafixReportsAttr : config->areafixReportsAttr);
+
+        msg->text = createKludges(config,NULL,fromLink->ourAka,
+                                  &fromLink->hisAka,versionStr);
+        if (fromLink->areafixReportsFlags)
+            xstrscat(&(msg->text), "\001FLAGS ", fromLink->areafixReportsFlags, "\r",NULL);
+        else if (config->areafixReportsFlags)
+            xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r",NULL);
+
+        for ( count = 0 ; count < fromArraySize; count++ ) {
+            if (toLink!=NULL) {
+                xscatprintf(&(msg->text), "-%s\r",fromIndexArray[count]->areaName);
+            } else {
+                xscatprintf(&(msg->text), "+%s\r",fromIndexArray[count]->areaName);
+            }
+        }
+
+        xscatprintf(&(msg->text), " \r--- %s areafix\r", versionStr);
+        msg->textLength = strlen(msg->text);
+        processNMMsg(msg, NULL, getRobotsArea(config), 1, MSGLOCAL|MSGKILL);
+        writeEchoTossLogEntry(getRobotsArea(config)->areaName);
+        closeOpenedPkt();
+        freeMsgBuffers(msg);
+        nfree(msg);
+
+        w_log(LL_AREAFIX, "Unlinked %i area(s) from %s",
+              fromArraySize, aka2str(fromLink->hisAka));
+    }
+
+    nfree(fromIndexArray);
+
+    if (toArraySize > 0) {
+        s_message *msg;
+
+        msg = makeMessage(toLink->ourAka,
+                          &toLink->hisAka,
+                          config->sysop,
+                          toLink->RemoteRobotName ?
+                          toLink->RemoteRobotName : "areafix",
+                          toLink->areaFixPwd ? toLink->areaFixPwd : "", 1,
+                          toLink->areafixReportsAttr ? toLink->areafixReportsAttr : config->areafixReportsAttr);
+
+        msg->text = createKludges(config,NULL,toLink->ourAka,
+                                  &toLink->hisAka,versionStr);
+        if (toLink->areafixReportsFlags)
+            xstrscat(&(msg->text), "\001FLAGS ", toLink->areafixReportsFlags, "\r",NULL);
+        else if (config->areafixReportsFlags)
+            xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r",NULL);
+
+        for ( count = 0 ; count < toArraySize; count++ ) {
+            xscatprintf(&(msg->text), "+%s\r",toIndexArray[count]->areaName);
+        }
+
+        xscatprintf(&(msg->text), " \r--- %s areafix\r", versionStr);
+        msg->textLength = strlen(msg->text);
+        processNMMsg(msg, NULL, getRobotsArea(config), 1, MSGLOCAL|MSGKILL);
+        writeEchoTossLogEntry(getRobotsArea(config)->areaName);
+        closeOpenedPkt();
+        freeMsgBuffers(msg);
+        nfree(msg);
+        w_log(LL_AREAFIX, "Linked %i area(s) to %s",
+              toArraySize, aka2str(toLink->hisAka));
+    }
+
+    nfree(toIndexArray);
 
     /* deinit SMAPI */
     MsgCloseApi();
