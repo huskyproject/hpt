@@ -155,6 +155,9 @@ static XS(perl_putMsgInArea)
 #if (MSGAPI_SUBVERSION < 0x203)
       strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", localtime(&t));
 #else
+    if (m.smapi_subversion < 0x203)
+      strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", localtime(&t));
+    else
       fts_time((char *)msg.datetime, localtime(&t));
 #endif
   }

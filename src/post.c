@@ -259,6 +259,9 @@ void post(int c, unsigned int *n, char *params[])
 #if (MSGAPI_SUBVERSION < 0x203)
      strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", tm);
 #else
+    if (m.smapi_subversion < 0x203)
+     strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", tm);
+    else
      fts_time((char *)msg.datetime, tm);
 #endif
    if ((msg.destAddr.zone != 0 || area) && (textBuffer != NULL) && !quit) {

@@ -211,7 +211,10 @@ int main(int argc, char *argv[])
 #if (MSGAPI_SUBVERSION < 0x203)
         strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", tm);
 #else
-        fts_time((char *)msg.datetime, tm);
+	if (m.smapi_subversion < 0x203)
+	  strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", tm);
+	else
+	  fts_time((char *)msg.datetime, tm);
 #endif
       msg.netMail = 1;
 
