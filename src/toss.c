@@ -1922,7 +1922,7 @@ void arcmail(s_link *tolink) {
 								  link->pktFile, "");
 				 writeLogEntry(hpt_log, '7', "Packing mail for %s %s", aka2str(link->hisAka), link->name);
 				 cmdexit = system(cmd);
-// 				 writeLogEntry(hpt_log, '7', "cmd: %s\n",cmd);
+// 				 writeLogEntry(hpt_log, '7', "cmd: %s",cmd);
 				 if (!cmdexit) remove(link->pktFile);
 			 }
 			 remove(link->bsyFile);

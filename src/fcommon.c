@@ -153,6 +153,9 @@ e_prio cvtFlavour2Prio(e_flavour flavour)
    return NORMAL;
 }
 
+#if 0
+/* This old code will be removed once the new one proves to be reliable */
+
 int fileNameAlreadyUsed(char *pktName, char *packName) {
    int i;
 
@@ -266,6 +269,82 @@ int createTempPktFileName(s_link *link)
         free(pfileName);
         return 1;
     }
+}
+#endif
+
+int createTempPktFileName(s_link *link)
+{
+    char  *filename = NULL;     /* pkt file in tempOutbound */
+    char  *pfilename;           /* name of the arcmail bundle */
+    char   limiter = PATH_DELIM;
+    char   ext[4];              /* week-day based extension of the pack file */
+    char   zoneSuffix[6]="\0";
+    char  *zoneOutbound;        /* this contains the correct outbound directory
+                                   including zones */
+    char   uniquestring[9];     /* the unique part of filename */
+
+    time_t       tr;
+    static char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
+    struct tm   *tp;
+    
+    tr=time(NULL);
+    tp=localtime(&tr);
+    sprintf(ext,"%s0", wdays[tp->tm_wday]);
+            
+    pfilename = (char *) malloc(strlen(config->outbound)+13+13+12+1);
+
+    if (link->hisAka.zone != config->addr[0].zone) {
+        sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
+        zoneOutbound = malloc(strlen(config->outbound)-1+strlen(zoneSuffix)+1);
+        strcpy(zoneOutbound, config->outbound);
+        strcpy(zoneOutbound+strlen(zoneOutbound)-1, zoneSuffix);
+    } else
+        zoneOutbound = strdup(config->outbound);
+
+    do
+    {
+        if (filename != NULL)
+        {
+            free(filename);
+        }
+        filename = makeUniqueDosFileName(config->tempOutbound, "pkt", config);
+        memcpy(uniquestring, filename + strlen(config->tempOutbound), 8);
+        uniquestring[8] = '\0';
+	   
+        if (link->hisAka.point == 0)
+        {
+            if (config->separateBundles)
+            {
+                sprintf(pfilename,"%s%04x%04x.sep%c%s.%s",
+                        zoneOutbound, link->hisAka.net, link->hisAka.node,
+                        limiter, uniquestring, ext);
+            } else
+            {
+                sprintf(pfilename,"%s%s.%s",zoneOutbound,
+                        uniquestring, ext);
+            }
+        } else
+        {
+            if (config->separateBundles)
+            {
+                sprintf(pfilename,"%s%04x%04x.pnt%c%08x.sep%c%s.%s",
+                        zoneOutbound, link->hisAka.net, link->hisAka.node,
+                        limiter, link->hisAka.point, limiter,
+                        uniquestring, ext);
+            } else
+            {
+                sprintf(pfilename,"%s%04x%04x.pnt%c%s.%s",
+                        zoneOutbound, link->hisAka.net, link->hisAka.node,
+                        limiter, uniquestring, ext);
+            }
+        }
+    } while (fexist(filename) || fexist(pfilename));
+
+    free(zoneOutbound);
+
+    link->packFile = pfilename;
+    link->pktFile = filename;
+    return 0;
 }
 
 int createDirectoryTree(const char *pathName) {

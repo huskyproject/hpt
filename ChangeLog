@@ -2,6 +2,13 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Sun Apr 16 22:38:28 MEST 2000~
+tobi:
+* Changed the filename generation algorithm to use the functions from
+  fidoconfig. This fixes problems with multi-zone links where the
+  link could reject his second arcmail bundle due to duplicate filename.
+
+----- cvs ci ------
 Sat Apr 15 10:47:38 NOVST 2000
 max:
 * set Loc Scn Snt flags to posted message with -x parameter
