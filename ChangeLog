@@ -1,3 +1,11 @@
+2001-09-29 Saturday 05:45  ml
+
+	* doc/hpt.texi (1.41), src/fcommon.c (1.95), src/pktread.c (1.77),
+	src/post.c (1.58), src/scan.c (1.133), src/scanarea.c (1.71): don't
+	break reading msgs from pkt when header fields is too long - trying
+	to fix them; don't create echotosslog file after posting; create
+	netmailflag after scanning netmail when no routing defined
+
 2001-09-20 Thursday 07:51  ml
 
 	* doc/: hpt-FAQ.russian (1.8), hpt.texi (1.40): updating docs
