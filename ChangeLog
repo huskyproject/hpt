@@ -1,3 +1,12 @@
+2003-10-21 Tuesday 04:15  andr_lukyanov
+
+	* make/makeperl.mvc (1.18): Removed old makefiles
+
+2003-10-21 Tuesday 04:09  andr_lukyanov
+
+	* make/: makefile.mvc (1.9), makefile.mvcdll (1.13): Fix MSVC
+	compilation
+
 2003-10-20 Monday 05:28  andr_lukyanov
 
 	* make/makeperl.mvcdll (1.15): Removed old makefiles
