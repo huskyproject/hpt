@@ -1,3 +1,29 @@
+2002-11-29 Friday 14:24  stas_degteff
+
+	* src/toss.c (1.483): Try to fix EMX version (remove local variable
+	maxopenpkt, use global instaed (as for other compilers)
+
+2002-11-29 Friday 10:28  stas_degteff
+
+	* src/areafix.c (1.376): Update debug output
+
+2002-11-29 Friday 09:36  stas_degteff
+
+	* src/toss.c (1.482): Fix variable 'cur' declaration in
+	setmaxopen() for OS/2 build. (Thanks to Andr Luk'yanov 2:5001/21).
+
+2002-11-29 Friday 09:32  stas_degteff
+
+	* make/: makefile.aix (1.3), makefile.mvc (1.5), makefile.mvcdll
+	(1.7), makefile.wcd (1.2), makefile.wcw (1.4), makefile.wcx (1.2),
+	makeperl.emo (1.3), makeperl.emx (1.3), makeperl.mvc (1.12),
+	makeperl.mvcdll (1.9): Fix includes order: set module header files
+	dir first
+
+2002-11-29 Friday 09:20  stas_degteff
+
+	* src/hpt.c (1.160): Change includes order
+
 2002-11-28 Thursday 08:35  stas_degteff
 
 	* make/makefile.wco (1.3): Define __OS2__ for using with Open
