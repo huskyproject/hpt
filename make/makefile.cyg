@@ -16,7 +16,7 @@ OBJ=.o
 EXE=.exe
 RM=rm
 
-LIBS=../../fidoconf/libfidoconfigcyg.a ../../smapi/libsmapicyg.a -luser32
+LIBS=../../fidoconf/libfidoconfigcyg.a ../../smapi/libsmapicyg.a -luser32 -lmingwex
 
 default: all
 
