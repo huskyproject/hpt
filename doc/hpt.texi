@@ -722,12 +722,24 @@ This statement cannot be repeated.
 @code{autopassive}
 @end table
 
-If this statement defined, @value{HPT} will check for old bundles in
-every run. You can do it also with command line arg. "pause".
+If this statement is defined HPT will check for old bundles in every run.
+Fileboxes are not checked. Links, for which there are bundles that are 
+at least "@xref{AutoPause}" days old, will be paused. It stops exporting 
+echomail for them. If @xref{AutoPause} is not defined or is equal to 0 for a link 
+then AutoPassive is ignored for this link. If AutoPassive is not defined 
+then @xref{AutoPause} is ignored for all links.
 
-@xref{AutoPause}.
+The paused link is unsubscribed from the passthrough echo areas with no
+downlinks besides him. An unsubscribe request is sent to the uplink. Note that
+this feature is unavailable when using %PAUSE Areafix command.
+
+By using "hpt pause" command-line parameter instead of defining AutoPassive in
+the configuration file, you can do the check for old bundles and all the rest 
+of the functionality of AutoPassive only once.
 
 This statement cannot be repeated.
+
+See also @xref{AutoPause} and @xref{Pause} sections.
 
 @node BeforePack, BundleNameStyle, AutoPassive, Keywords
 @subsection BeforePack
@@ -2535,19 +2547,18 @@ Please note that this option will @emph{not} currently work if the
 @code{autopause 10}
 @end table
 
-Stop export echomail for this link after 10 days (write Pause token to
-link section). It works when founding "10 days old" file for this link
-in @code{Outbound} directory with "#" and "^" prefixes.
+AutoPause sets the number of days after which HPT will stop exporting echomail 
+for the link if he has not fetched his echomail for this period of time. 
+@xref{AutoPassive} should be defined for AutoPause to take effect.
 
-Link unsubscribed from passrhough echo areas with no downlinks besides
-him. Unsubscribe request forwards to uplink. This doesn't works with
-manual "%PAUSE" via AreaFix.
-
-AutoPause don't check FileBoxes!
+Technically, if you define "autopause 10" for a link then HPT looks for 
+10 (or more) days old files that are listed to be sent for this link in
+the .?lo files with `#' or `^' prefixes and reside in the outbound directory.
+If at least one such file exists, exporting echomail for the link is paused.
 
 This statement can only be repeated for different links.
 
-@xref{AutoPassive}.
+See also @xref{AutoPassive} and @xref{Pause} sections.
 
 @node AvailList, DailyBundles, AutoPause, Link Keywords
 @subsection AvailList
@@ -3151,6 +3162,8 @@ This statement can only be repeated for different links.
 Stop export echomail, fileechoes or both for this link.
 
 This statement can only be repeated for different links.
+
+See also @xref{AutoPause} section.
 
 @node PktSize, PktPwd, Pause, Link Keywords
 @subsection PktSize
