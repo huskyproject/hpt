@@ -227,12 +227,13 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 		   if (size < XMSG_SUBJ_SIZE) {
 			   subject = (char *) safe_malloc (size);
 			   sprintf (subject,"%s%s",(outbounds[i])?*outbounds[i]:"",msg->subjectLine);
-#if defined(__linux__) || defined(UNIX)
-			   subject = strLower(subject);
-#endif
 			   if (strchr(subject, ' ')!=NULL)
 				   subject[(long int)strchr(subject, ' ') - (long int)subject] = '\0';
+                           if (fexist(subject)) break;
+#if defined(__linux__) || defined(UNIX)
+			   subject = strLower(subject);
 			   if (fexist(subject)) break;
+#endif
 			   nfree(subject);
 		   }
 	   }

@@ -1,4 +1,9 @@
 ----- cvs ci ------
+Mo   1 Jan 2001 17:37:47 CET
+tobi:
+* file attach: try to use original file name from subject
+
+----- cvs ci ------
 Mo   1 Jan 2001 17:28:59 CET
 tobi (patch from current from max (patch from Serguei Revtov)):
 * write to log when areafix can't change config file
