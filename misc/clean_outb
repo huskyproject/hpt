@@ -1,0 +1,45 @@
+#!/bin/bash
+#
+# This script removes old bsy files, empty .sep & .pnt dirs from outbound.
+#
+# Copyright 2000 Victor Sergienko singalen@mail.ru 2:464/118 vs@balance.dp.ua
+# You're totally free to do anything with this software
+# except of bothering author for anything except thanks:
+# I dont want to hear any complains. Dont use it if it can harm you.
+# You're warned. Bye and kisses.
+#
+
+OUTB_DIR=/home/fido/out
+LOCK_DIR=/var/lock
+LOCK_FILE=LCK..ttyS0
+
+for adir in `ls -d $OUTB_DIR/*.pnt ; echo $OUTB_DIR` ; do
+    ls $adir/{*.spl,*.bsy} 1>/dev/null 2>/dev/null
+    RC=$?
+    if [ x$RC == x0 ] ; then
+        for afile in `ls $adir/{*.spl,*.bsy} 2>/dev/null` ; do
+            if [ $LOCK_DIR/$LOCK_FILE -nt $afile ] ; then
+                date +"%H:%M:%S %d %b"
+                echo " Removed stale file: $afile"
+                rm -f $afile
+            fi
+        done
+    fi
+    ls $adir/* 1>/dev/null 2>/dev/null
+    RC=$?
+    if [ x$RC != x0 ] ; then
+        date +"%H:%M:%S %d %b"
+        echo " Removed empty dir: $adir"
+        rmdir $adir
+    fi
+done
+
+for adir in `ls -d $OUTB_DIR/*.sep` ; do
+    ls $adir/* 1>/dev/null 2>/dev/null
+    RC=$?
+    if [ x$RC != x0 ] ; then
+        date +"%H:%M:%S %d %b"
+        echo " Removed empty dir: $adir"
+        rmdir $adir
+    fi
+done

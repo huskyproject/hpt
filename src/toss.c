@@ -2205,21 +2205,17 @@ void tossFromBadArea()
    HAREA area;
    HMSG  hmsg;
    XMSG  xmsg;
-   dword highestMsg, currentMsg, i;
+   dword highestMsg, i;
    int   delmsg;
    
    area = MsgOpenArea((UCHAR *) config->badArea.fileName, MSGAREA_NORMAL, (word)(config->badArea.msgbType | MSGTYPE_ECHO));
    if (area != NULL) {
-//      statScan.areas++;
       writeLogEntry(hpt_log, '1', "Scanning area: %s", config->badArea.areaName);
-//      hw = MsgGetHighWater(area);
       highestMsg = MsgGetHighMsg(area);
-      currentMsg = MsgGetCurMsg(area);
 
-      for (i=currentMsg; i<=highestMsg; i++) {
+      for (i=1; i<=highestMsg; i++) {
          hmsg = MsgOpenMsg(area, MOPEN_RW, i);
          if (hmsg == NULL) continue;      // msg# does not exist
-//         statScan.msgs++;
          MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
 	 delmsg = packBadArea(hmsg, xmsg);
 	 
@@ -2227,7 +2223,6 @@ void tossFromBadArea()
 	 
 	 if (delmsg == 0) {
 	     MsgKillMsg(area, i);
-//	     statScan.exported++;
 	 }
       }
       
@@ -2236,7 +2231,6 @@ void tossFromBadArea()
 
       MsgCloseArea(area);
       
-//      arcmail(NULL);
       tossTempOutbound(config->tempOutbound);
       
    } else 

@@ -13,7 +13,6 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - one inbound tossing
 - screenloglevels
 - add scanned msgs to dupebase
-- del empty .sep catalogues
 - use spawn() instead of system() under win32
 - do not open/close files on each msg
 - add option "run with another config"
