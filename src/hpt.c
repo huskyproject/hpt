@@ -251,7 +251,7 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
    xstrcat(&version, "/lnx");
 #elif defined(__FreeBSD__) || defined(__NetBSD__)
    xstrcat(&version, "/bsd");
-#elif defined(__OS2__)
+#elif defined(__OS2__) || defined(OS2)
    xstrcat(&version, "/os2");
 #elif defined(__NT__)
    xstrcat(&version, "/NT");
