@@ -1,3 +1,26 @@
+2002-03-04 Monday 18:54  pavel.gulchouck
+
+	* src/link.c (1.48): Fixed compile error under cygwin
+
+2002-03-04 Monday 17:33  mche
+
+	* src/hpt.c (1.133): some warnings removed, added new command
+	"requpdate"
+
+2002-03-04 Monday 17:16  mche
+
+	* h/query.h (1.9), src/query.c (1.24), src/query.c (1.25): changed
+	format of query file
+
+2002-03-04 Monday 16:24  mche
+
+	* src/post.c (1.67): added number of lines per section (150 for
+	default)
+
+2002-03-04 Monday 08:00  mche
+
+	* src/post.c (1.66): fixed bug with posting nonexisting file
+
 2002-03-03 Sunday 21:17  pavel.gulchouck
 
 	* src/link.c (1.47): Jam link speedup
