@@ -7,6 +7,9 @@ max:
 * forwardRequestMask
 * denyFwdMask
 * denyFwdFile
+* correctEMAddr: take node from path if no origin in message
+* del from autoareacreatedefaults -$m xxx, -p xxx, -killsb, -tinysb,
+  -killRead, -keepUnread, -nopack, -nolink when creating passthrough area
 
 ----- cvs ci ------
 Sat Jan 20 21:56:54 NOVT 2001

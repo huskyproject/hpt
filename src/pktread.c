@@ -160,7 +160,7 @@ s_pktHeader *openPkt(FILE *pkt)
 void correctEMAddr(s_message *msg)
 {
    char *start = NULL, buffer[48];
-   int i;
+   int i, brokenOrigin = 1;
 
    start = strrstr(msg->text, " * Origin:");
 
@@ -178,11 +178,33 @@ void correctEMAddr(s_message *msg)
 				   i++;
 			   }
 			   start++;
-		   } /* endwhile */
+		   }
+		   buffer[i]   = '\0';
+		   string2addr(buffer, &(msg->origAddr));
+		   brokenOrigin = 0;
+	   }
+   }
+
+   // this is really needed?
+   if (brokenOrigin) {
+	   start = strstr(msg->text, "\001PATH: ");
+	   if (start) {
+		   start += 7;
+		   buffer[0] = '0';
+		   buffer[1] = ':';
+		   i = 2;
+
+		   while ((!isspace(*start)) && (*start!='\r') && (*start!='\n') && (i<47)) {
+			   if (isdigit(*start) || *start=='/') {
+				   buffer[i] = *start;
+				   i++;
+			   }
+			   start++;
+		   }
 		   buffer[i]   = '\0';
 		   string2addr(buffer, &(msg->origAddr));
 	   }
-   } 
+   }
 }
 
 void correctNMAddr(s_message *msg, s_pktHeader *header)

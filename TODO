@@ -3,10 +3,7 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- correctEMAddr: take node from path if no origin in message
-- del "-$m 200 -dosfile -keepsb" from autocreatedefaults when create passthrough
 - write statistics when tossing from badArea
-- delete empty mail
 - create flag when unpacking netmail
 - AutoCreateSemaphore
 - areafix from cmd line (like hpt afix <addr> %command)

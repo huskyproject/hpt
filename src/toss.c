@@ -822,12 +822,27 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    nfree(zoneLinks);
 }
 
+void del_tok(char **ac, char *tok) {
+	char *p, *q;
+
+	q = hpt_stristr(*ac,tok);
+	if (q) {
+		p = q+strlen(tok);
+		while (*p && !isspace(*p)) p++;
+		if (*p) memmove(q, p+1, strlen(p+1)+1); // begin or middle
+		else {
+			if (q > *ac) *(q-1)='\0'; // end
+			else *q='\0'; // "-token" defaults
+		}
+	}
+}
+
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 {
    FILE *f;
    char *fileName, *squishFileName=NULL, *acDef;
    char *buff=NULL, *myaddr=NULL, *hisaddr=NULL;
-   char *msgbtype, *newAC=NULL, *desc, *p, *msgbDir;
+   char *msgbtype, *newAC=NULL, *desc, *msgbDir;
    s_link *creatingLink;
    s_area *area;
    int i;
@@ -901,19 +916,18 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 				   (msgbtype) ? "" : " -b Squish");
 #endif
    } else {
-	xscatprintf(&buff, "EchoArea %s passthrough -a %s", c_area, myaddr);
+	   xscatprintf(&buff, "EchoArea %s passthrough -a %s", c_area, myaddr);
 
-	// del "-b msgbtype " from autocreate defaults
-	if (msgbtype) {
-	   p = msgbtype + 3;
-	   while (*p && !isspace(*p)) p++;
-	   if (*p) memmove(msgbtype, p+1, strlen(p+1)+1);
-	   else {
-		   if (msgbtype>newAC) *(msgbtype-1)='\0';
-		   else *msgbtype='\0'; // "-b msgbtype" defaults
-	   }
-	}
+	   del_tok(&newAC, "-b "); // del "-b msgbtype" from autocreate defaults
+	   del_tok(&newAC, "-$m "); // del "-$m xxx" from autocreate defaults
+	   del_tok(&newAC, "-p "); // del "-p xxx" from autocreate defaults
 
+	   del_tok(&newAC, "-killsb");
+	   del_tok(&newAC, "-tinysb");
+	   del_tok(&newAC, "-nopack");
+	   del_tok(&newAC, "-nolink");
+	   del_tok(&newAC, "-killread");
+	   del_tok(&newAC, "-keepunread");
    }
    
    nfree(squishFileName);
