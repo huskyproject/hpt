@@ -1,31 +1,11 @@
 # include Husky-Makefile-Config
 !include ..\..\huskymak.cfg
 
-HASHDUPE = 0
 CC      = wcc386
 LINK    = WLINK
 
 OBJS    = hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, seenby.obj, dupe.obj, tree.obj, recode.obj, areafix.obj, post.obj, link.obj, strsep.obj, crc.obj xstr.obj
 SRC_DIR = ..\src
-
-!IF $(HASHDUPE) == 1
-
-!IF $(DEBUG) == 1
-CFLAGS  = -d2 -hw -i=..\h;$(INCDIR -oneatx -zq -5 -dHASHDUPE
-LFLAGS  = DEBUG Watcom
-!ELSE
-CFLAGS  = -i..\h;$(INCDIR) -oneatx -zq -5 -dHASHDUPE
-LFLAGS  =
-!ENDIF
-
-all: $(OBJS) \
-     pktinfo.exe \
-     tlog.exe \
-     tpkt.exe \
-     txt2pkt.exe \
-     hpt.exe
-
-!ELSE
 
 !IF $(DEBUG) == 1
 CFLAGS  = -d2 -hw -i=..\h;$(INCDIR) -oneatx -zq -5
@@ -38,20 +18,17 @@ LFLAGS  =
 all: $(OBJS) \
      pktinfo.exe \
      tlog.exe \
-     purgedup.exe \
      tpkt.exe \
      txt2pkt.exe \
      hpt.exe \
      hptlink.exe \
      hpttree.exe
 
-!ENDIF
-
 $(OBJS): $(SRC_DIR)\$*.c
   @echo compiling $*.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
-pktinfo.obj tlog.obj purgedupes.obj tpkt.obj txt2pkt.obj hptlink.obj hpttree.obj: $(SRC_DIR)\$*.c
+pktinfo.obj tlog.obj tpkt.obj txt2pkt.obj hptlink.obj hpttree.obj: $(SRC_DIR)\$*.c
   @echo compiling $*.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
@@ -71,12 +48,6 @@ txt2pkt.exe: txt2pkt.obj pktwrite.obj fcommon.obj pktread.obj recode.obj log.obj
   @echo linking txt2pkt
   $(LINK) $(LFLAGS) FILE log.obj, txt2pkt.obj, fcommon.obj, pktread.obj, recode.obj, pktwrite.obj, global.obj LIBRARY $(LIBDIR)\smapiwco, $(LIBDIR)\fidoconfig NAME txt2pkt.exe
 
-!IF $(HASJDUPE) == 0
-purgedup.exe: purgedupes.obj global.obj dupe.obj tree.obj pktread.obj log.obj recode.obj
-  @echo linking purgedup
-  $(LINK) $(LFLAGS) FILE purgedupes.obj, global.obj, dupe.obj, tree.obj, pktread.obj, log.obj, recode.obj LIBRARY $(LIBDIR)\smapiwco, $(LIBDIR)\fidoconfig NAME purgedup.exe
-!ENDIF
-
 hptlink.exe: hptlink.obj
   @echo linking hptlink
   $(LINK) $(LFLAGS) FILE hptlink.obj LIBRARY $(LIBDIR)\smapiwco, $(LIBDIR)\fidoconfig NAME hptlink.exe
@@ -95,9 +66,8 @@ clean:
 distclean: clean
 	del *.exe
 
-install: hpt.exe purged.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe hpttree.exe
+install: hpt.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe hpttree.exe
 	copy hpt.exe $(BINDIR)
-	copy purged.exe $(BINDIR)
 	copy pktinfo.exe $(BINDIR)
 	copy tpkt.exe $(BINDIR)
 	copy tlog.exe $(BINDIR)

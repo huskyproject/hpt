@@ -19,7 +19,6 @@ all: $(OBJS) \
      tlog.exe \
      tpkt.exe \
      hpt.exe \
-     purgeDupes.exe \
      hptlink.exe \
      hpttree.exe
 
@@ -38,9 +37,6 @@ tpkt.exe: tpkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o
 hpt.exe: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt.exe $(OBJS) -lsmapidjg -lfidoconfig
 
-purgeDupes.exe: purgeDupes.o global.o dupe.o tree.o pktread.o log.o recode.o
-	$(CC) $(LFLAGS) -o purgeDupes.exe purgeDupes.o tree.o pktread.o recode.o dupe.o global.o log.o -lfidoconfig -lsmapidjg
-
 hptlink.exe: hptlink.o
 	$(CC) $(LFLAGS) -o hptlink.exe hptlink.o -lfidoconfig -lsmapidjg
 
@@ -56,9 +52,8 @@ distclean: clean
 	-del *.exe
 	-del *.log
 
-install: hpt.exe purged.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe hpttree.exe
+install: hpt.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe hpttree.exe
 	copy hpt.exe $(BINDIR)
-	copy purged.exe $(BINDIR)
 	copy pktinfo.exe $(BINDIR)
 	copy tpkt.exe $(BINDIR)
 	copy tlog.exe $(BINDIR)

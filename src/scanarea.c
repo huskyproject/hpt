@@ -52,6 +52,38 @@
 #include <progprot.h>
 #include <toss.h>
 
+// create seen-by's & path
+char *createSeenByPath(s_area *echo) {
+	int i, seenByCount = 0;
+	s_seenBy *seenBys;
+	char *seenByPath = NULL;
+	
+	seenBys = (s_seenBy*) calloc(echo->downlinkCount+1,sizeof(s_seenBy));
+	for (i = 0;i < echo->downlinkCount; i++) {
+		// only include nodes in SEEN-BYS
+		if (echo->downlinks[i]->link->hisAka.point != 0) continue;
+		seenBys[seenByCount].net  = echo->downlinks[i]->link->hisAka.net;
+		seenBys[seenByCount].node = echo->downlinks[i]->link->hisAka.node;
+		seenByCount++;
+	}
+	if (echo->useAka->point == 0) {      // only include if system is node
+		seenBys[seenByCount].net = echo->useAka->net;
+		seenBys[seenByCount].node = echo->useAka->node;
+		seenByCount++;
+	}
+	sortSeenBys(seenBys, seenByCount);
+	
+	seenByPath = createControlText(seenBys, seenByCount, "SEEN-BY: ");
+	free(seenBys);
+	
+	// path line only include node-akas in path
+	if (echo->useAka->point == 0) 
+		xscatprintf(&seenByPath, "\001PATH: %u/%u\r",
+					echo->useAka->net, echo->useAka->node);
+
+	return seenByPath;
+}
+
 void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
 {
    // action == 0 - scan area
@@ -60,8 +92,8 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    char   *kludgeLines, *seenByPath = NULL;
    UCHAR  *ctrlBuff;
    UINT32 ctrlLen;
-   int    i, seenByCount;
-   s_seenBy *seenBys;
+//   int    i;//, seenByCount;
+//   s_seenBy *seenBys;
    
    // convert Header
 //   convertMsgHeader(xmsg, msg);
@@ -102,33 +134,8 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    
    free(ctrlBuff);
 
-   if (action == 0) {
-       // added SEEN-BY and PATH from scan area only
-       // create seen-by's & path
-       seenByCount = 0;
-       seenBys = (s_seenBy*) calloc(echo->downlinkCount+1,sizeof(s_seenBy));
-       for (i = 0;i < echo->downlinkCount; i++) {
-          if (echo->downlinks[i]->link->hisAka.point != 0) continue; // only include nodes in SEEN-BYS
-      
-          seenBys[seenByCount].net  = echo->downlinks[i]->link->hisAka.net;
-          seenBys[seenByCount].node = echo->downlinks[i]->link->hisAka.node;
-          seenByCount++;
-       }
-       if (echo->useAka->point == 0) {      // only include if system is node
-          seenBys[seenByCount].net = echo->useAka->net;
-          seenBys[seenByCount].node = echo->useAka->node;
-          seenByCount++;
-       }
-       sortSeenBys(seenBys, seenByCount);
-   
-       seenByPath = createControlText(seenBys, seenByCount, "SEEN-BY: ");
-       free(seenBys);
-   
-       // path line
-       // only include node-akas in path
-       if (echo->useAka->point == 0) 
-          xscatprintf(&seenByPath, "\001PATH: %u/%u\r", echo->useAka->net, echo->useAka->node);
-   }
+   // added SEEN-BY and PATH from scan area only
+   if (action == 0) seenByPath = createSeenByPath(echo);
    
    // create text
    msg->textLength = MsgGetTextLen(hmsg);
@@ -140,8 +147,8 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    MsgReadMsg(hmsg, NULL, (dword) 0, (dword) msg->textLength,
               (byte *)(msg->text+ctrlLen), (dword) 0, (byte *)NULL);
    msg->text[msg->textLength + ctrlLen]='\0';
-   if (msg->text[strlen(msg->text)-1] != '\r')  // if origin has no ending \r add it
-      xstrcat(&(msg->text), "\r");
+   // if origin has no ending \r add it
+   if (msg->text[strlen(msg->text)-1] != '\r') xstrcat(&(msg->text), "\r");
    free(kludgeLines);
    if (action == 0) xstrcat(&(msg->text), seenByPath);
    
@@ -153,7 +160,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
       recodeToTransportCharset((CHAR*)msg->text);
    }
 
-   free(seenByPath);
+   if (action == 0) free(seenByPath);
 }
 
 void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)

@@ -25,7 +25,6 @@ all: $(OBJS) \
      tlog \
      tpkt \
      hpt \
-     purgeDupes \
      hptlink \
      hpttree
 #     install
@@ -45,9 +44,6 @@ tpkt: tpkt.o pktwrite.o log.o fcommon.o pktread.o recode.o
 hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) $(FIDOCONFIG) $(SMAPI) 
 
-purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o log.o recode.o
-	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o log.o recode.o $(FIDOCONFIG) $(SMAPI)
-
 hptlink: hptlink.o
 	$(CC) $(LFLAGS) -o hptlink hptlink.o $(FIDOCONFIG) $(SMAPI)
 
@@ -59,8 +55,8 @@ clean:
 	-rm *~
 
 distclean: clean
-	-rm purgeDupes hpt tpkt tlog pktinfo hptlink hpttree
+	-rm hpt tpkt tlog pktinfo hptlink hpttree
 
-install: hpt pktinfo purgeDupes
-	cp hpt pktinfo purgeDupes $(BINDIR)
+install: hpt pktinfo
+	cp hpt pktinfo $(BINDIR)
 

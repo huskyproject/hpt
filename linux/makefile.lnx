@@ -1,4 +1,3 @@
-HASHDUPE = 0
 DEBUG    = 0
 CC       = gcc
 INCDIR   = /usr/local/include
@@ -11,26 +10,12 @@ IMOPT    = -s
 OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o crc.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o xstr.o
 SRC_DIR = ../src/
 
-ifeq ($(HASHDUPE), 1)
-
-ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I$(INCDIR) -I../../smapi -Wall -ggdb -O3 -DUNIX -DHASHDUPE -DHAS_POPEN 
-  LFLAGS  = -L$(LIBDIR)
-else
-  CFLAGS  = -c -I../h -I$(INCDIR) -I../../smapi -Wall -O3 -s -DUNIX -DHASHDUPE -DHAS_POPEN
-  LFLAGS  = -L$(LIBDIR)
-endif
-
-else
-
 ifeq ($(DEBUG), 1)
   CFLAGS  = -c -I../h -I$(INCDIR) -I../../smapi -Wall -ggdb -O6 -DUNIX -DHAS_POPEN 
   LFLAGS  = -L$(LIBDIR)
 else
   CFLAGS  = -c -I../h -I$(INCDIR) -I../../smapi -Wall -O3 -s -DUNIX -DHAS_POPEN
   LFLAGS  = -L$(LIBDIR)
-endif
-
 endif
 
 all: $(OBJS) \
@@ -40,8 +25,7 @@ all: $(OBJS) \
      txt2pkt \
      hptlink \
      hpttree \
-     hpt \
-     purgeDupes 
+     hpt
 
 %.o: $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
@@ -67,22 +51,18 @@ hpttree: hpttree.o
 hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) -lsmapilnx -lfidoconfig 
 
-purgeDupes: crc.o purgeDupes.o global.o dupe.o tree.o pktread.o log.o recode.o xstr.o
-	$(CC) $(LFLAGS) -o purgeDupes crc.o purgeDupes.o tree.o pktread.o recode.o dupe.o global.o log.o xstr.o -lfidoconfig -lsmapilnx
-
 clean:
 	-rm -f *.o
 	-rm *~
 	-rm core
 
 distclean: clean
-	-rm tpkt txt2pkt pktinfo hpt purgeDupes tlog hptlink hpttree
+	-rm tpkt txt2pkt pktinfo hpt tlog hptlink hpttree
 	-rm *.1.gz
 
 install:
 	gzip -c ../man/hpt.1 > hpt.1.gz
-	gzip -c ../man/purgeDupes.1 > purgeDupes.1.gz
 	gzip -c ../man/hptlink.1 > hptlink.1.gz
 	gzip -c ../man/hpttree.1 > hpttree.1.gz
-	install $(IBOPT) hpt pktinfo purgeDupes txt2pkt hptlink hpttree $(BINDIR)
-	install $(IMOPT) hpt.1.gz purgeDupes.1.gz hptlink.1.gz hpttree.1.gz $(MANDIR)/man1
+	install $(IBOPT) hpt pktinfo txt2pkt hptlink hpttree $(BINDIR)
+	install $(IMOPT) hpt.1.gz hptlink.1.gz hpttree.1.gz $(MANDIR)/man1

@@ -21,7 +21,6 @@ OBJS    = pktinfo.obj \
           hpt.obj \
           seenby.obj \
           strsep.obj \
-          purged~1.obj \
 	  dupe.obj \
           tree.obj \
 	  crc.obj \
@@ -44,7 +43,6 @@ all: $(OBJS) \
      tlog.exe \
      tpkt.exe \
      hpt.exe \
-     purged.exe \
      hptlink.exe \
      hpttree.exe
 
@@ -97,19 +95,6 @@ smapibcd.lib
 fidoconf.lib
 !
 
-purgeD.exe: purgeD~1.obj global.obj dupe.obj tree.obj pktread.obj log.obj recode.obj
-	$(CC) $(LFLAGS) @&&!
-purgeD~1.obj
-tree.obj
-pktread.obj
-recode.obj
-dupe.obj
-global.obj
-log.obj
-fidoconf.lib
-smapibcd.lib
-!
-
 hptlink.exe: hptlink.obj
 	$(CC) $(LFLAGS) @&&!
 hptlink.obj
@@ -133,9 +118,8 @@ clean:
 distclean: clean
 	del *.exe
 
-install: hpt.exe purged.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe hpttree.exe
+install: hpt.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe hpttree.exe
 	copy hpt.exe $(BINDIR)
-	copy purged.exe $(BINDIR)
 	copy hptlink.exe $(BINDIR)
 	copy hpttree.exe $(BINDIR)
 	copy pktinfo.exe $(BINDIR)

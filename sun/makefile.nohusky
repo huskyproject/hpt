@@ -10,10 +10,10 @@ FIDOCONFIG = ../../fidoconfig/libfidoconfig.a
 SMAPI      = ../../smapi/libsmapisun.a
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -g -O2 -s -DUNIX -D_POSIX_C_SOURCE -DNEWHASHDUPE
+  CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -g -O2 -s -DUNIX -D_POSIX_C_SOURCE
   LFLAGS  = 
 else
-  CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -O2 -DUNIX $(CADDFLAGS) -D_POSIX_X_SOURCE -DNEWHASHDUPE
+  CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -O2 -DUNIX $(CADDFLAGS) -D_POSIX_X_SOURCE
   LFLAGS  = -s
 endif
 
@@ -22,7 +22,6 @@ all: $(OBJS) \
      tlog \
      tpkt \
      hpt \
-     purgeDupes \
      hptlink \
      hpttree
 
@@ -41,9 +40,6 @@ tpkt: tpkt.o pktwrite.o fcommon.o pktread.o
 hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) $(FIDOCONFIG) $(SMAPI) 
 
-purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o log.o
-	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o log.o xstr.o crc.o $(FIDOCONFIG) $(SMAPI)
-
 hptlink: hptlink.o
 	$(CC) $(LFLAGS) -o hptlink hptlink.o xstr.o $(FIDOCONFIG) $(SMAPI)
 
@@ -55,9 +51,8 @@ clean:
 	-rm *~
 
 install:
-	install -s hpt pktinfo purgeDupes hptlink hprtree $(INSTDIR)
+	install -s hpt pktinfo hptlink hprtree $(INSTDIR)
 	gzip -c ../man/hpt.1 > hpt.1.gz
-	gzip -c ../man/purgeDupes.1 > purgeDupes.1.gz
 	gzip -c ../man/hptlink.1 > hptlink.1.gz
 	gzip -c ../man/hpttree.1 > hpttree.1.gz
-	install hpt.1.gz purgeDupes.1.gz hptlink.1.gz hpttree.1.gz $(MANDIR)/man1
+	install hpt.1.gz hptlink.1.gz hpttree.1.gz $(MANDIR)/man1

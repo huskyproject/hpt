@@ -1,8 +1,6 @@
 # include Husky-Makefile-Config
 include ../huskymak.cfg
 
-HASHDUPE = 0
-
 OBJS    = hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) log$(OBJ) \
           global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) seenby$(OBJ) \
           crc$(OBJ) dupe$(OBJ) tree$(OBJ) recode$(OBJ) areafix$(OBJ) \
@@ -10,24 +8,10 @@ OBJS    = hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) log$(OBJ) \
 
 SRC_DIR = src/
 
-ifeq ($(HASHDUPE), 1)
-
-ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -Ih -I../smapi -I$(INCDIR) -Wall -ggdb -O3 -DHASHDUPE \
-            -DHAS_POPEN 
-else
-  CFLAGS  = -c -Ih -I../smapi -I$(INCDIR) -Wall -O3 -s -DHASHDUPE \
-            -DHAS_POPEN
-endif
-
-else
-
 ifeq ($(DEBUG), 1)
   CFLAGS  = -c -Ih -I../smapi -I$(INCDIR) -Wall -ggdb -O6 -DHAS_POPEN 
 else
   CFLAGS  = -c -Ih -I../smapi -I$(INCDIR) -Wall -O3 -s -DHAS_POPEN
-endif
-
 endif
 
 ifeq ($(SHORTNAME), 1)
@@ -46,8 +30,7 @@ all: $(OBJS) \
      txt2pkt$(EXE) \
      hptlink$(EXE) \
      hpttree$(EXE) \
-     hpt$(EXE) \
-     purgeDupes$(EXE) 
+     hpt$(EXE)
 
 %$(OBJ): $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
@@ -79,12 +62,6 @@ hpttree$(EXE): hpttree$(OBJ)
 hpt$(EXE): $(OBJS)
 	$(CC) $(LFLAGS) -o hpt$(EXE) $(OBJS)
 
-purgeDupes$(EXE): crc$(OBJ) purgeDupes$(OBJ) global$(OBJ) dupe$(OBJ) \
-                  tree$(OBJ) pktread$(OBJ) log$(OBJ) recode$(OBJ)
-	$(CC) $(LFLAGS) -o purgeDupes$(EXE) crc$(OBJ) purgeDupes$(OBJ) \
-          tree$(OBJ) pktread$(OBJ) recode$(OBJ) dupe$(OBJ) global$(OBJ) \
-          log$(OBJ) xstr$(OBJ)
-
 clean:
 	-$(RM) -f *$(OBJ)
 	-$(RM) *~
@@ -95,7 +72,6 @@ distclean: clean
 	-$(RM) txt2pkt$(EXE)
 	-$(RM) pktinfo$(EXE)
 	-$(RM) hpt$(EXE)
-	-$(RM) purgeDupes$(EXE)
 	-$(RM) tlog$(EXE)
 	-$(RM) hptlink$(EXE)
 	-$(RM) hpttree$(EXE)
@@ -103,11 +79,9 @@ distclean: clean
 
 install:
 	gzip -c man/hpt.1 > hpt.1.gz
-	gzip -c man/purgeDupes.1 > purgeDupes.1.gz
 	gzip -c man/hptlink.1 > hptlink.1.gz
 	gzip -c man/hpttree.1 > hpttree.1.gz
-	$(INSTALL) $(IBOPT) hpt$(EXE) pktinfo$(EXE) purgeDupes$(EXE) \
+	$(INSTALL) $(IBOPT) hpt$(EXE) pktinfo$(EXE) \
           txt2pkt$(EXE) hptlink$(EXE) hpttree$(EXE) $(BINDIR)
-	$(INSTALL) $(IMOPT) hpt.1.gz purgeDupes.1.gz hptlink.1.gz hpttree.1.gz \
-          $(MANDIR)/man1
+	$(INSTALL) $(IMOPT) hpt.1.gz hptlink.1.gz hpttree.1.gz $(MANDIR)/man1
 
