@@ -78,10 +78,12 @@
 #include <cvsdate.h>
 #include <query.h>
 
+#ifdef DO_PERL
+#include <hptperl.h>
+#endif
 #ifdef _MSC_VER
 #ifdef DO_PERL
 #include <delayimp.h>
-#include <hptperl.h>
 // This is the failure hook, dliNotify = {dliFailLoadLib|dliFailGetProc}
 #if defined(__cplusplus)
 extern "C"
@@ -102,11 +104,11 @@ char *scanParmA;
 char *scanParmF;
 char force = 0;
 
-/* kn: I've really tried not to break it. 
-   FIXME: if there is pack and scan options on cmd line - one set 
+/* kn: I've really tried not to break it.
+   FIXME: if there is pack and scan options on cmd line - one set
    of options are lost */
 int  processExportOptions(unsigned int *i, int argc, char **argv)
-{ 
+{
   int rc = 0;
   while ((*i) < argc-1) {
      if (argv[(*i)+1][0] == '-' && (argv[(*i)+1][1] == 'w' || argv[(*i)+1][1] == 'W')) {
@@ -176,7 +178,7 @@ int processCommandLine(int argc, char **argv)
 	     if (stricmp(argv[i+1], "-b") == 0) {
                 cmToss = 2;
                 break;
-	     } else 
+	     } else
 	     if (stricmp(argv[i+1], "-bf") == 0) {
                 cmToss = 2;
 		force = 1;
@@ -278,7 +280,7 @@ void allDiff(char *nam, char *var, ...)
             }
          }
       }
-   }   
+   }
 
    nfree(diffData);
 }
@@ -365,7 +367,7 @@ void processConfig()
 	       exit(EX_CANTCREAT);
 	   }
        }
-   }   
+   }
 
    // open Logfile
    if (config->logFileDir) {
@@ -373,9 +375,9 @@ void processConfig()
 	hpt_log = openLog(buff, versionStr, config);
 	if (hpt_log && quiet) hpt_log->logEcho=0; /* Don't display messages */
 	nfree(buff);
-   } else 
+   } else
      fprintf(stderr,"logFileDir not defined, there will be no log created!\n");
-   
+
    if (config->addrCount == 0) exit_hpt("at least one addr must be defined",1);
    if (config->linkCount == 0) exit_hpt("at least one link must be specified",1);
    if (config->outbound == NULL) exit_hpt("you must set outbound in fidoconfig first",1);
@@ -397,7 +399,7 @@ void processConfig()
 			 "outbound",     config->outbound,
 			 "tempOutbound", config->tempOutbound,
 			 NULL);
-   
+
    // load recoding tables
    initCharsets();
    if (config->outtab) getctab(outtab, (unsigned char*) config->outtab);
@@ -443,9 +445,9 @@ FARPROC WINAPI ourhook(unsigned dliNotify,PDelayLoadInfo pdli)
   disposeConfig(config);
   nfree(cfgFile);
   exit(EX_UNAVAILABLE);
-   return 0; 
+   return 0;
 }
-#endif 
+#endif
 #endif
 
 int main(int argc, char **argv)
@@ -510,7 +512,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 	   if (stricmp(config->msgBaseDir,"passthrough")!=0)
 		   isFreeSpace(config->msgBaseDir);
 	   for (i=0; i<config->linkCount; i++) {
-		   if (config->links[i].msgBaseDir && 
+		   if (config->links[i].msgBaseDir &&
 			   stricmp(config->links[i].msgBaseDir,"passthrough")!=0)
 			   isFreeSpace(config->links[i].msgBaseDir);
 	   }
@@ -534,11 +536,11 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 #endif
    //attempt to start Perl
    PerlStart();
-#endif 
+#endif
 #endif
    msgToSysop = (s_message**) safe_malloc(config->addrCount * sizeof(s_message*));
    for (i = 0; i < config->addrCount; i++) {
-	   
+	
        /* Some results of wrong patching ? A memleak anyway
 	* msgToSysop[i] = (s_message*)malloc(sizeof(s_message));
 	*/
@@ -563,19 +565,19 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 
    if (cmLink == 1) {
 	   if (linkName && (strstr(linkName,"*")||strstr(linkName,"?"))) {
-		   for (i=0; i < config->echoAreaCount; i++) 
+		   for (i=0; i < config->echoAreaCount; i++)
 			   if (patimat(config->echoAreas[i].areaName, linkName))
 				   linkAreas(config->echoAreas[i].areaName);
-		   for (i=0; i < config->localAreaCount; i++) 
+		   for (i=0; i < config->localAreaCount; i++)
 			   if (patimat(config->localAreas[i].areaName, linkName))
 				   linkAreas(config->localAreas[i].areaName);
-		   for (i=0; i < config->netMailAreaCount; i++) 
+		   for (i=0; i < config->netMailAreaCount; i++)
 			   if (patimat(config->netMailAreas[i].areaName, linkName))
 				   linkAreas(config->netMailAreas[i].areaName);
 	   } else linkAreas(linkName);
    }
    nfree(linkName);
-#ifdef DO_PERL        
+#ifdef DO_PERL
    perldone();
 #endif
 
@@ -593,7 +595,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    // save forward requests info
    af_CloseQuery();
    nfree(msgToSysop);
-   
+
    // deinit SMAPI
    MsgCloseApi();
 
