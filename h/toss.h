@@ -53,6 +53,7 @@ void processMsg(s_message *msg, s_pktHeader *pktHeader);
 int  processPkt(char *fileName, e_tossSecurity sec);
 void putMsgInArea(s_area *echo, s_message *msg, int strip);
 void toss(void);
+void tossTempOutbound(char *directory); 
 void arcmail(void);
 
 #endif
