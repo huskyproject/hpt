@@ -381,8 +381,6 @@ void post(int c, unsigned int *n, char *params[])
     fts_time((char *)msg.datetime, tm);
     if ((msg.destAddr.zone != 0 || area) && (textBuffer != NULL) && !quit) {
         /*  Dumbchecks */
-        if (msg.origAddr.zone == 0) /*  maybe origaddr isn't specified ? */
-            msg.origAddr = config->addr[0];
         if (msg.fromUserName == NULL)
             msg.fromUserName = safe_strdup(config->sysop);
         if (msg.toUserName == NULL)
@@ -394,6 +392,8 @@ void post(int c, unsigned int *n, char *params[])
         /*FIXME*/
         if (msg.netMail) echo=&(config->netMailAreas[0]);
         
+        if (msg.origAddr.zone == 0) /*  maybe origaddr isn't specified ? */
+            msg.origAddr = echo->useAka[0];
         
         w_log(LL_START, "Start posting...");
         part = 0; 
