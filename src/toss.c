@@ -248,6 +248,11 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip)
       createDirectoryTree(echo->fileName);
       *slash = limiter;
    }
+   
+   msg->destAddr.zone  = echo->useAka->zone;
+   msg->destAddr.net   = echo->useAka->net;
+   msg->destAddr.node  = echo->useAka->node;
+   msg->destAddr.point = echo->useAka->point;
 
    harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, echo->msgbType | MSGTYPE_ECHO);
    if (harea != NULL) {
