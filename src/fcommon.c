@@ -43,6 +43,8 @@
 #if defined (__TURBOC__)
 #include <process.h>
 #include <dir.h>
+#include <io.h>
+#include <dos.h>
 #endif
 #ifdef __IBMC__
 #include <direct.h>
