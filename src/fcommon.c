@@ -233,9 +233,16 @@ void cleanEmptyBundles(char *pathName, size_t npos, char *wday)
 int createTempPktFileName(s_link *link)
 {
     char *fileName=NULL; /*  pkt file in tempOutbound */
-    time_t aTime = time(NULL);  /* get actual time */
+    time_t aTime;
     int counter;
 
+    /* dmitry: prevent generation of the same name if hpt is being run
+               several times in the same second */
+    if (pkt_aTime == 0) {
+        sleep(1);
+    }
+
+    aTime = time(NULL);  /* get actual time */
     counter = pkt_count;
 
     aTime %= 0xffffff;   /* only last 24 bit count */

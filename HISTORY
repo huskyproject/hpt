@@ -38,7 +38,10 @@ Changes between hpt-1.2-stable and hpt-1.4-stable
    - Fix CarbonCopy processing: add end of line after kludges
    - Fix linking when ^AMSGID or ^AREPLY are in MiXeD cAsE
    - keepTrsMail works now
-   
+   - If hpt is being run several times within the same second it could generate
+     the same pkt name and archiver will overwrite existing pkt in bundle.
+     Now before generating 1st pkt hpt make a delay in 1 second to prevent 
+     this.
 
 
 HPT 1.2.3-release
