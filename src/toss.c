@@ -1076,9 +1076,9 @@ void processDir(char *directory, e_tossSecurity sec)
 
       strUpper(file->d_name);
 
-      if (!(pktFile = patmat(file->d_name, "*.PKT") == 1))
+      if (!(pktFile = patimat(file->d_name, "*.PKT") == 1))
          for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
-            if (patmat(file->d_name, validExt[i]) == 1)
+            if (patimat(file->d_name, validExt[i]) == 1)
                arcFile = 1;
 
       if (pktFile || arcFile) {
