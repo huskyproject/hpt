@@ -2194,7 +2194,7 @@ int perl_afixcmd(char **report, int cmd, char *aka, char *line)
      }
      if (rc) {
        char *s = SvPV(perl_get_sv("report", FALSE), n_a);
-       if (n_a == 0) s = "";
+       if (n_a == 0 || s == NULL) s = "";
        *report = sstrdup(s);
        return 1;
      }
