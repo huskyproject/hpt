@@ -1121,9 +1121,11 @@ This statement can be repeated.
 
 @subsection Warning
 
-You can't use shell input-output redirection chars for DOS or Win* platforms:
-hpt implementation use workaround for command.com bug and don't run command.com
-for unpacker call. hpt call OS function instead command.com.
+You can't use shell input-output redirection chars under DOS or Win*
+platforms: hpt implementation uses workaround for command.com bug and
+doesn't run command.com to execute external commands such as
+packers/unpackers. hpt calls OS function to execute them instead of
+command.com.
 
 
 @node PackNetMailOnScan, ProcessPkt, Pack, Keywords
@@ -1431,9 +1433,11 @@ This statement can be repeated.
 
 @subsection Warning
 
-You can't use shell input-output redirection chars for DOS or Win* platforms:
-hpt implementation use workaround for command.com bug and don't run command.com
-for unpacker call. hpt call OS function instead command.com.
+You can't use shell input-output redirection chars under DOS or Win*
+platforms: hpt implementation uses workaround for command.com bug and
+doesn't run command.com to execute external commands such as
+packers/unpackers. hpt calls OS function to execute them instead of
+command.com.
 
 
 @node Files and Paths, Link Keywords, Keywords, Configuration Reference
