@@ -242,7 +242,7 @@ static XS(perl_putMsgInArea)
   int  addkludges;
   char *p;
   STRLEN n_a;
-  int narea, rc;
+  UINT narea, rc;
   s_area *echo;
   s_message msg;
 
@@ -360,7 +360,7 @@ EXTERN_C void perl_myaddr(pTHXo_ CV* cv)
 static XS(perl_myaddr)
 #endif
 {
-  int naddr;
+  UINT naddr;
   dXSARGS;
   if (items != 0)
   { w_log(LL_ERR, "wrong params number to myaddr (need 0, exist %d)", items);

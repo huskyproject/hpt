@@ -490,7 +490,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
         if (rc) w_log(LL_ERR,"can't write msg to pkt: %s",
             newLinks[i]->link->pktFile);
         if (nopenpkt >= maxopenpkt-12 || /*  std streams, in pkt, msgbase, log */
-            (newLinks[i]->link->pktSize && ftell(newLinks[i]->link->pkt)>=newLinks[i]->link->pktSize * 1024L)) {
+            (newLinks[i]->link->pktSize && ftell(newLinks[i]->link->pkt)>= (long)newLinks[i]->link->pktSize*1024L)) {
             rc += closeCreatedPkt(newLinks[i]->link->pkt);
             if (rc) w_log(LL_ERR,"can't close pkt: %s",
                 newLinks[i]->link->pktFile);
@@ -2081,7 +2081,8 @@ static void setmaxopen(void) {
 #endif
 
     {
-	int i, handles[MAXOPEN_DEFAULT];
+	int handles[MAXOPEN_DEFAULT];
+    ULONG i;
 	for (i=0; i<MAXOPEN_DEFAULT; i++)
 	    if ((handles[i]=dup(1)) == -1)
 		break;

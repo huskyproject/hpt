@@ -183,7 +183,7 @@ int fileNameAlreadyUsed(char *pktName, char *packName) {
 
 static char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
 
-void cleanEmptyBundles(char *pathName, int npos, char *wday)
+void cleanEmptyBundles(char *pathName, size_t npos, char *wday)
 /*  Removing old empty bundles when bundleNameStyle == addDiff */
 {
    char           *ptr, *tmpfile, *pattern, savech;
@@ -283,7 +283,8 @@ int createPackFileName(s_link *link)
     char *pfileName=NULL; /*  name of the arcmail bundle */
     char *tmp=NULL; /*  temp name of the arcmail bundle */
     char *tmp2=NULL;    /* temp string */
-    int  minFreeExt, npos;
+    int  minFreeExt;
+    size_t npos;
     char limiter=PATH_DELIM;
     time_t tr, aTime;
     char *wday;
