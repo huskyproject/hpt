@@ -35,10 +35,10 @@
      linking flat, subject linking
      SPEEDUP!!!!!!!!!!!
    FIXME:	do better when finding if msg links need to be updated
-   		The problem with original patch by Leonid was that if msg had 
+   		The problem with original patch by Leonid was that if msg had
 		some reply links written in replies or replyto fields but
 		no replies were found during linkage reply&replyto fields won't
-		be cleared. 
+		be cleared.
 */
 
 #include <stdio.h>
@@ -68,7 +68,7 @@ struct msginfo {
    char *replyId;
    HMSG msgh;
    XMSG *xmsg;
-   UMSGID msgPos; 
+   UMSGID msgPos;
 
    short freeReply;
    char relinked;
@@ -107,7 +107,7 @@ static s_msginfo *findMsgId(s_msginfo *entries, struct hashinfo *hash, dword has
 			return &(entries[hash[h].idx-1]);
 		} else {
 			/* Collision, resolve it */
-			h++; 
+			h++;
 			d++;
 		};
 	};
@@ -134,7 +134,7 @@ int linkArea(s_area *area, int netMail)
    HAREA harea;
    HMSG  hmsg;
    XMSG  xmsg;
-   s_msginfo *msgs;   
+   s_msginfo *msgs;
    dword msgsNum, hashNums, i, ctlen, cctlen;
    struct hashinfo *hash;
    byte *ctl;
@@ -217,7 +217,7 @@ int linkArea(s_area *area, int netMail)
 	 };
 	 curr = findMsgId(msgs, hash, hashNums, msgId, i);
 	 if (curr == NULL) {
- 		writeLogEntry(hpt_log, '6', "hash table overflow. Tell it to the developers !"); 
+ 		writeLogEntry(hpt_log, '6', "hash table overflow. Tell it to the developers !");
 		// try to free as much as possible
 		// FIXME : remove blocks themselves
 		nfree(msgId);
@@ -232,7 +232,7 @@ int linkArea(s_area *area, int netMail)
 		nfree(msgId);
 		continue;
 	 }
-	 curr -> msgId = msgId; curr -> msgh = hmsg; 
+	 curr -> msgId = msgId; curr -> msgh = hmsg;
 	 curr -> xmsg = memdup(&xmsg, sizeof(XMSG));
          curr -> replyId = GetKludgeText(ctl, "REPLY");
          curr -> msgPos  = MsgMsgnToUid(harea, i);
@@ -241,13 +241,17 @@ int linkArea(s_area *area, int netMail)
          curr -> replyto = curr -> replynext = 0;
       }
 
-      /* Pass 2nd : going from the last msg to first search for reply links and
-        build relations*/
+      /* Pass 2nd : search for reply links and build relations*/
       for (i = 0; i < msgsNum; i++) {
 	      if (msgs[i].msgId != NULL && msgs[i].replyId != NULL) {
 		      curr = findMsgId(msgs, hash, hashNums, msgs[i].replyId, 0);
 		      if (curr == NULL) continue;
 		      if (curr -> msgId == NULL) continue;
+		      if (curr -> freeReply >= MAX_REPLY2 &&
+		          (area->msgbType & (MSGTYPE_JAM | MSGTYPE_SDM))) {
+			curr -> freeReply--;
+			curr -> replies[curr -> freeReply - 1] = curr -> replies[curr -> freeReply];
+		      }
 		      if (curr -> freeReply < MAX_REPLY2) {
 		      	      curr -> replies[curr -> freeReply] = i;
 			      if (curr -> xmsg -> replies[curr -> freeReply] != msgs[i].msgPos) {
@@ -270,8 +274,8 @@ int linkArea(s_area *area, int netMail)
 				      msgs[i].relinked = 1;
 			      }
 		      } else {
-			      writeLogEntry(hpt_log, '6', "replies count for msg %ld exceeds %d," \
-					      "rest of the replies won't be linked", msgs[i].msgPos, MAX_REPLY2);
+			      writeLogEntry(hpt_log, '6', "msg %ld: replies count for msg %ld exceeds %d," \
+					      "rest of the replies won't be linked", i+1, curr-msgs+1, MAX_REPLY2);
 		      }
 	      }
       }
@@ -293,7 +297,7 @@ int linkArea(s_area *area, int netMail)
 			MsgWriteMsg(msgs[i].msgh, 0, msgs[i].xmsg, NULL, 0, 0, 0, NULL);
 		}
 	        MsgCloseMsg(msgs[i].msgh);
-	 
+
          /* free this node */
 		nfree(msgs[i].msgId);
 		nfree(msgs[i].replyId);
@@ -348,7 +352,7 @@ void linkAreas(void)
          line = readLine(f);
 
          if (line != NULL) {
-		 
+
             if ((area = getNetMailArea(config, line)) != NULL) {
 	       linkArea(area,1);
 	    } else {

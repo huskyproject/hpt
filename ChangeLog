@@ -1,3 +1,9 @@
+----- cvs ci ------
+Thu 28 Sep 2000 23:34:03 MEZ
+tobi (patch from max)
+* exceeds counter fix (hpt link)
+
+
 hpt 0.9.7a-stable
 =================
 (released on Sun Sep 17 18:58:45 MEST 2000)
