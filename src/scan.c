@@ -376,20 +376,6 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    if ((xmsg->attr & MSGFRQ) == MSGFRQ) {
 	   prio = NORMAL;
 	   if ((xmsg->attr & MSGCRASH)==MSGCRASH) prio = CRASH; 
-#ifdef DO_PERL
-		   if (perlscanmsg(area->areaName, &msg)) {
-perlscanexit:
-			remove(virtualLink->bsyFile);
-			nfree(virtualLink->bsyFile);
-			xmsg->attr |= MSGSENT;
-			freeMsgBuffers(&msg);
-			if (freeVirtualLink==1) {
-				nfree(virtualLink->name);
-				nfree(virtualLink);
-			}
-			return 0;
-		   }
-#endif
 	   if ((xmsg->attr & MSGHOLD)==MSGHOLD) prio = HOLD;
 	   
 	   if (prio!=NORMAL) {
@@ -409,13 +395,25 @@ perlscanexit:
 	   }
    } /* endif */
    
-#ifdef DO_PERL
-		   if (perlscanmsg(area->areaName, &msg))
-			goto perlscanexit;
-#endif
    if ((xmsg->attr & MSGCRASH) == MSGCRASH) {
 	   // crash-msg -> make CUT
 	   if (createOutboundFileName(virtualLink, CRASH, PKT) == 0) {
+#ifdef DO_PERL
+		   if (perlscanmsg(area->areaName, &msg)) {
+perlscanexit:
+			if (virtualLink->bsyFile) {
+			    remove(virtualLink->bsyFile);
+			    nfree(virtualLink->bsyFile);
+			}
+			xmsg->attr |= MSGSENT;
+			freeMsgBuffers(&msg);
+			if (freeVirtualLink==1) {
+				nfree(virtualLink->name);
+				nfree(virtualLink);
+			}
+			return 0;
+		   }
+#endif
 		   makePktHeader(virtualLink, &header);
 		   pkt = openPktForAppending(virtualLink->floFile, &header);
 		   writeMsgToPkt(pkt, msg);
@@ -434,12 +432,12 @@ perlscanexit:
    if ((xmsg->attr & MSGHOLD) == MSGHOLD) {
 	   // hold-msg -> make HUT
 	   if (createOutboundFileName(virtualLink, HOLD, PKT) == 0) {
+#ifdef DO_PERL
+		   if (perlscanmsg(area->areaName, &msg))
+			goto perlscanexit;
+#endif
 		   makePktHeader(virtualLink, &header);
 		   pkt = openPktForAppending(virtualLink->floFile, &header);
-#ifdef DO_PERL
-			   if (perlscanmsg(area->areaName, &msg))
-				goto perlscanexit;
-#endif
 		   writeMsgToPkt(pkt, msg);
 		   closeCreatedPkt(pkt);
 		   writeLogEntry(hpt_log, '7', "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
@@ -460,6 +458,12 @@ perlscanexit:
 	   if ((route != NULL) && (link != NULL) && (route->routeVia != nopack)) {
 		   prio = cvtFlavour2Prio(route->flavour);
 		   if (createOutboundFileName(link, prio, PKT) == 0) {
+#ifdef DO_PERL
+			   if (perlscanmsg(area->areaName, &msg)) {
+				virtualLink = link;
+				goto perlscanexit;
+			   }
+#endif
 			   makePktHeader(NULL, &header);
 			   header.destAddr = link->hisAka;
 			   header.origAddr = *(link->ourAka);
