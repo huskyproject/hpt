@@ -1,3 +1,13 @@
+2002-10-02 Wednesday 14:12  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.2): update FAQ (merge from
+	current - MFC)
+
+2002-10-02 Wednesday 11:33  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.1): update FAQ (merge from
+	current - MFC)
+
 2002-09-30 Monday 15:56  pgul
 
 	* src/link.c (hpt-1_2-stable.3): memory leak
