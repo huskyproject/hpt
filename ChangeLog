@@ -1,3 +1,7 @@
+2002-07-03 Wednesday 17:08  stas
+
+	* src/areafix.c (1.319): Add debug messages
+
 2002-07-02 Tuesday 16:36  mche
 
 	* src/toss.c (1.422): fix log messages errrors
