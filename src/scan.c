@@ -34,8 +34,8 @@
 
 #include <smapi/msgapi.h>
 
-#include <fidoconfig/fidoconfig.h>
-#include <fidoconfig/common.h>
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
 
 #include <xstr.h>
 #include <fcommon.h>

@@ -46,9 +46,9 @@
 #include <string.h>
 
 #if !defined(MSDOS) || defined(__DJGPP__)
-#include <fidoconfig/fidoconfig.h>
-#include <fidoconfig/common.h>
-#include <fidoconfig/typesize.h>
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
+#include <fidoconf/typesize.h>
 #else
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>

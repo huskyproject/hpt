@@ -47,8 +47,8 @@
 #include <pkt.h>
 
 #if !defined(MSDOS) || defined(__DJGPP__)
-#include <fidoconfig/fidoconfig.h>
-#include <fidoconfig/dirlayer.h>
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/dirlayer.h>
 #else
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/dirlayer.h>

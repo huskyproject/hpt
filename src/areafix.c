@@ -41,8 +41,8 @@
 #endif
 
 #if !defined(SHORTNAMES)
-#include <fidoconfig/fidoconfig.h>
-#include <fidoconfig/common.h>
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
 #else
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>

@@ -30,7 +30,7 @@
  *****************************************************************************/
 #ifndef SCAN_H
 #define SCAN_H
-#include <fidoconfig/fidoconfig.h>
+#include <fidoconf/fidoconf.h>
 
 struct statScan {
    int areas, msgs;

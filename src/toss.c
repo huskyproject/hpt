@@ -45,9 +45,9 @@
 #include <unistd.h>
 #endif
 
-#include <fidoconfig/fidoconfig.h>
-#include <fidoconfig/common.h>
-#include <fidoconfig/dirlayer.h>
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
+#include <fidoconf/dirlayer.h>
 
 #include <xstr.h>
 #include <pkt.h>

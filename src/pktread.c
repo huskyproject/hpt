@@ -36,8 +36,8 @@
 #include <string.h>
 #include <ctype.h>
 
-#include <fidoconfig/fidoconfig.h>
-#include <fidoconfig/common.h>
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
 
 #include <log.h>
 #include <global.h>

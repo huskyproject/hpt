@@ -41,9 +41,9 @@
 #include <unistd.h>
 #endif
 
-#include <fidoconfig/fidoconfig.h>
+#include <fidoconf/fidoconf.h>
 #include <xstr.h>
-#include <fidoconfig/common.h>
+#include <fidoconf/common.h>
 
 #include <pkt.h>
 
