@@ -60,8 +60,8 @@ e_prio cvtFlavour2Prio(e_flavour flavour)
 
 int createTempPktFileName(s_link *link)
 {
-   char   *fileName = (char *) malloc(strlen(config->outbound)+1+12);
-   char   *pfileName = (char *) malloc(strlen(config->outbound)+1+12);
+   char   *fileName = (char *) malloc(strlen(config->outbound)+1+12+13);
+   char   *pfileName = (char *) malloc(strlen(config->outbound)+1+12+13);
    time_t aTime = time(NULL);  // get actual time
    int counter = 0;
    char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
@@ -77,8 +77,23 @@ int createTempPktFileName(s_link *link)
    aTime %= 0xffffff;   // only last 24 bit count
 
    do {
-      sprintf(fileName, "%s%06lx%02x.pkt", config->outbound, aTime, counter);
-      sprintf(pfileName, "%s%06lx%02x.%s0", config->outbound, aTime, counter,wday);
+
+	  if ( link->hisAka.point == 0 ) {
+		  sprintf(fileName, "%s%06lx%02x.pkt", config->outbound, aTime, counter);
+		  sprintf(pfileName, "%s%06lx%02x.%s0", config->outbound, aTime, counter,wday);
+	  } else {
+		 sprintf(fileName, "%s%04x%04x.pnt/%06lx%02x.pkt",
+				 config->outbound, link->hisAka.net,
+				 link->hisAka.node, aTime, counter);
+		 sprintf(pfileName, "%s%04x%04x.pnt/%06lx%02x.%s0",
+				 config->outbound, link->hisAka.net,
+				 link->hisAka.node,  aTime, counter, wday);
+#ifndef UNIX
+		 // not tested!
+		 fileName[ strlen(fileName) - 14 ] = '\\';
+		 pfileName[ strlen(fileName) - 14 ] = '\\';
+#endif
+	  }
       counter++;
    } while (fexist(fileName) && (counter<=256));
 

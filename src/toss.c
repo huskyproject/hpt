@@ -145,9 +145,10 @@ void putMsgInArea(s_area *echo, s_message *msg, int strip)
       if (hmsg != NULL) {
 
          // recode from TransportCharset to internal Charset
-         if (config->intab != NULL) {
+         if (msg->recode == 0 && config->intab != NULL) {
             recodeToInternalCharset(msg->subjectLine);
             recodeToInternalCharset(msg->text);
+			msg->recode = 1;
          }
 
          textWithoutArea = msg->text;
@@ -335,7 +336,7 @@ int writeCheck(s_area *echo, s_link *link) {
 		// is this link allowed to post messages to this area?
 		for (i=0; i< strlen(echo->wgrp); i++) {
 			if ( strchr( denygrp, echo->wgrp[i]) != NULL) {
-				printf("write!\n");
+//				printf("write!\n");
 				return 0;
 			} else if ( i == strlen (echo->wgrp) - 1 ) rc++;
 		}
@@ -345,7 +346,7 @@ int writeCheck(s_area *echo, s_link *link) {
 		// maybe he have r/w acess?
 		for (i=0; i< strlen(echo->rwgrp); i++) {
 			if ( strchr( denygrp, echo->rwgrp[i]) != NULL) {
-				printf("read/write!\n");
+//				printf("read/write!\n");
 				return 0;
 			} else if ( i == strlen (echo->rwgrp) - 1 ) rc++;
 		}
@@ -353,7 +354,6 @@ int writeCheck(s_area *echo, s_link *link) {
 	
 	return rc;
 }
-
 
 void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 {
@@ -383,7 +383,9 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    //exit(2);
 
    createPathArrayFromMsg(msg, &path, &pathCount);
-   if (echo->useAka->point == 0) {   // only include nodes in PATH
+   if (echo->useAka->point == 0 &&   // only include nodes in PATH
+      path[pathCount-1].net != echo->useAka->net &&
+	  path[pathCount-1].node != echo->useAka->node ) {
       // add our aka to path
       path = (s_seenBy*) realloc(path, sizeof(s_seenBy) * (pathCount)+1);
       path[pathCount].net = echo->useAka->net;
@@ -664,14 +666,15 @@ void processNMMsg(s_message *msg,s_addr pktOrigAddr)
 
       if (msgHandle != NULL) {
          config->netMailArea.imported = 1; // area has got new messages
+
+         if (config->intab != NULL) {
+            recodeToInternalCharset(msg->text);
+            recodeToInternalCharset(msg->subjectLine);
+         }
          
          msgHeader = createXMSG(msg);
          /* Create CtrlBuf for SMAPI */
          ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
-         if (config->intab != NULL) {
-            recodeToInternalCharset(bodyStart);
-            recodeToInternalCharset(msg->subjectLine);
-         }
          /* write message */
          MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *) bodyStart, len, len, strlen(ctrlBuf)+1, (UCHAR *) ctrlBuf);
          free(ctrlBuf);

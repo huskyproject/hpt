@@ -72,6 +72,7 @@ struct message {
    CHAR   datetime[21];
    CHAR   netMail;
    INT32  textLength;
+   INT    recode;
 
    CHAR   *toUserName, *fromUserName, *subjectLine;
    CHAR   *text;
