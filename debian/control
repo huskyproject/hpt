@@ -1,0 +1,15 @@
+Source: hpt
+Section: mail
+Priority: extra
+Maintainer: Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>
+Build-Depends: debhelper (>> 3.0.0), smapi (>= 1.6.4u-1), smapi (<< 1.6.5), fidoconf (<< 0.12), fidoconf (>= 0.11-1)
+Standards-Version: 3.5.2
+
+Package: hpt
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Highly Portable (Performance ?) Toss (unstable)
+ The hpt is a full featured Tosser for FTN-Networks.
+ Part of the Husky-Project.
+ .
+ This is the UNSTABLE release.

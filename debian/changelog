@@ -1,0 +1,34 @@
+hpt (0.9.8-2) unstable; urgency=low
+
+  * Fehler in der Huskymak.cfg (CFGDIR)
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Tue, 10 Apr 2001 21:57:58 +0200
+
+hpt (0.9.8-1) unstable; urgency=low
+
+  * Unstable Version from cvs.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Tue, 10 Apr 2001 17:42:30 +0200
+hpt (0.9.7d-3) unstable; urgency=low
+
+  * Fuer die beiden Binaries txt2pkt und pktinfo die fehlenden man-pages
+    geschrieben.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Thu,  5 Apr 2001 00:53:35 +0200
+
+hpt (0.9.7d-2) unstable; urgency=low
+
+  * Kann mir einer verraten warum ich filefix.hlp bei nem Tosser
+    mitliefern will ? Dabei hab ich doch grade nich gesoffen :)
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Sat, 31 Mar 2001 01:03:02 +0200
+
+hpt (0.9.7d-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Sat, 31 Mar 2001 00:18:13 +0200
+
+Local variables:
+mode: debian-changelog
+End:
