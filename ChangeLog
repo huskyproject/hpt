@@ -1,3 +1,9 @@
+2002-06-09 Sunday 19:29  ml
+
+	* src/: areafix.c (1.232.2.11), perl.c (1.16.2.5), post.c
+	(1.60.2.8), txt2pkt.c (1.28.2.4): another fts_time fix: allow to
+	run precompiled binaries with old smapi library
+
 2002-06-01 Saturday 19:22  ml
 
 	* src/: perl.c (1.16.2.4), post.c (1.60.2.7), txt2pkt.c (1.28.2.3):
