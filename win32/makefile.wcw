@@ -1,18 +1,11 @@
-# include Husky-Makefile-Config
-!include ..\..\huskymak.cfg
-
+DEBUG   = 0
 CC      = wcc386
 LINK    = WLINK
 
 OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj post.obj areafix.obj dupe.obj recode.obj tree.obj seenby.obj strsep.obj link.obj crc.obj
 SRC_DIR = ..\src
 
-!IF $(DEBUG) == 1
-CFLAGS = -d2 -zq -wx -bt=nt -i=$(INCDIR);..\h; -oneatx -5 -DHASHDUPE -DHAS_JUNK_AFTER_SEEK
-!ELSE
-CFLAGS = -zq -wx -bt=nt -i=$(INCDIR);..\h; -oneatx -5 -DHASHDUPE -DHAS_JUNK_AFTER_SEEK
-!ENDIF
-
+CFLAGS = -zq -wx -bt=nt -i=..\..\fidoconfig;..\..\smapi;..\h; -oneatx -5 -DHASHDUPE -DHAS_JUNK_AFTER_SEEK
 all: $(OBJS) pktinfo.exe tlog.exe hpt.exe
 
 $(OBJS): $(SRC_DIR)\*.c
@@ -25,7 +18,8 @@ pktinfo.obj tlog.obj: $(SRC_DIR)\*.c
 
 pktinfo.exe: pktinfo.obj fcommon.obj pktread.obj
   @echo linking pktinfo
-  $(LINK) $(LFLAGS) FILE pktinfo.obj, log.obj, pktread.obj, global.obj LIBRARY $(LIBDIR)\smapiwcw.lib, $(LIBDIR)\fidoconfig\fidoconfig.lib NAME pktinfo.exe
+  $(LINK) $(LFLAGS) FILE pktinfo.obj, log.obj, pktread.obj, global.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fidoconfig.lib NAME pktinfo.exe
+#  $(LINK) $(LFLAGS) FILE pktinfo.obj pktread.obj log.obj global.obj LIBRARY ..\..\smapi\smapiwcw.lib ..\..\fidoconfig\fidoconfig.lib NAME pktinfo.exe
 
 tlog.exe: tlog.obj log.obj
   @echo linking tlog
@@ -33,19 +27,13 @@ tlog.exe: tlog.obj log.obj
 
 hpt.exe: $(OBJS)
   @echo linking hpt
-  $(LINK) $(LFLAGS) FILE hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, post.obj, areafix.obj, dupe.obj, recode.obj, tree.obj, seenby.obj, strsep.obj, link.obj, crc.obj LIBRARY $(LIBDIR)\smapiwcw.lib, $(LIBDIR)\fidoconfig.lib NAME hpt.exe
+  $(LINK) $(LFLAGS) FILE hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, post.obj, areafix.obj, dupe.obj, recode.obj, tree.obj, seenby.obj, strsep.obj, link.obj, crc.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fidoconfig.lib NAME hpt.exe
 
 clean:
 	del *.obj
         del *.bak
 
-distclean: clean
+distclean:
+	del *.obj
+        del *.bak
 	del *.exe
-
-install: hpt.exe purged.exe pktinfo.exe tpkt.exe tlog.exe
-	copy hpt.exe $(BINDIR)
-	copy purged.exe $(BINDIR)
-	copy pktinfo.exe $(BINDIR)
-	copy tpkt.exe $(BINDIR)
-	copy tlog.exe $(BINDIR)
-

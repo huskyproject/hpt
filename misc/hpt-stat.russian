@@ -1,0 +1,186 @@
+#!/usr/bin/perl
+############################################################################
+# çÅÎÅÒÁÔÏÒ ÓÔÁÔÉÓÔÉËÉ ÄÌÑ hpt
+# (c) Alexey Wasilyev 1999     2:5053/25
+# ôÅÓÔÉÒÏ×ÁÌÏÓØ ĞÏÄ Active Perl b519 / nt, perl 5.004_04 for i386-linux
+############################################################################
+
+use File::stat;
+use Time::Local;
+use Getopt::Long;
+
+# ĞÕÔØ Ë hpt'ÛÎÏÍÕ import.log
+$hpt_log="/var/log/fido/hpt.log";
+# ÇÄÅ ÂÕÄÅÔ ÌÅÖÁÔØ ÈÅÛ last access
+$la_hash="/var/log/fido/access";
+#ŞÅÒÅÚ ÓËÏÌØËÏ ÄÎÅÊ ÎÅÈÏÖÄÅÎÉÑ ĞÏŞÔÙ ÜÈÕ ÓŞÉÔÁÔØ ÍÅÒÔ×ÏÊ
+$la_dead_time=15;
+# ×ÙÈÏÄÎÏÊ ÓĞÉÓÏË ÍÅÒÔ×ÙÈ ÜÈ
+$la_out="/var/spool/fido/flags/dead.areas";
+# ÆÌÁÇ, ËÏÔÏÒÙÊ ×ÙÓÔÁ×ÌÑÅÔÓÑ ÅÓÌÉ ÅÓÔØ ÈÏÔØ ÏÄÎÁ ÍÅÒÔ×ÁÑ ÜÈÁ
+$la_flag="/var/spool/fido/flags/dead.area.exist";
+# ÇÄÅ ÂÕÄÅÔ ÌÅÖÁÔØ ÈÅÛ ÓÔÁÔÉÓÔÉËÉ
+$stat_hash="/var/log/fido/echostat";
+# ÆÌÁÖÏË ×ÒÅÍÅÎÉ ĞÏÓÌÅÄÎÅÇÏ ÓÂÏÒÁ ÓÔÁÔÉÓÔÉËÉ
+$stat_last="/var/spool/fido/flags/echostat.last";
+# ×ÙÈÏÄÎÏÊ ÆÁÊÌ ÓÏ ÓÔÁÔÉÓÔÉËÏÊ
+$stat_out="/var/spool/fido/flags/statistic";
+
+$sec_in_day=86400; #60*60*24
+
+format STAT_HEADER=
+¥                                               ¶              ¶              ¨
+ @||||||||||||||||||||||||||||||||||||||||||||  @|||||||||||  @||||||||||| 
+$area,$num,$proc
+°€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€Š€€€€€€€€€€€€€€Š€€€€€€€€€€€€€€œ
+.
+format STAT_BODY=
+ @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  @|||||||||||     @##.##    
+$area,$num,($num/$stat_total_num*100.0 )
+.
+format STAT_FOOTER=
+±                                               ¼              ¼              µ
+ @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  @|||||||||||     100.00    
+$area,$stat_total_num
+«                                               ¹              ¹              ®
+.
+
+sub Import {
+    my($date_access);
+    open(IN,$hpt_log) || die "Can't open $hpt_log";
+    dbmopen(%stat,$stat_hash,0666) || die "Can't open $stat_hash";
+    dbmopen(%la,$la_hash,0666) || die "Can't open $la_hash";
+    while (<IN>) {
+	if (/^----------\s+\S+\s+(\d+)\s+(\w+)\s+(\d+), hpt v0.29\/LNX$/) {
+		$date_access = timelocal(0, 0, 0, $1, $months{$2}, $3)/$sec_in_day;
+	};
+	if (/echo area (\S+) - (\d+) msgs/) {
+	        $stat{$1}+=$2;
+        	$la{$area}=$date_access
+	};
+    }
+    dbmclose(%la);
+    dbmclose(%stat);
+    close(IN);
+}
+
+sub Stat {
+    my $stat_header =<< '    EOT';
+
+               ‚€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€ƒ
+                ‘‘‘’’’  Echomail statistic  ’’’‘‘‘ 
+               „€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€…
+
+    EOT
+    $stat_total_num=0;
+    open(OUT,">".$stat_out) || die "Can't open $stat_out";
+    select OUT;
+    dbmopen(%stat,$stat_hash,0666) || die "Can't open $stat_hash";
+    print $stat_header;
+    $stat_date_start=stat($stat_last);
+    if ($stat_date_start) {
+        $stat_date_start=localtime($stat_date_start->mtime);
+    } else {
+        $stat_date_start="Earth creating";
+    }
+    print "Based on data from ".$stat_date_start."\n";
+    print "                to ".localtime()."\n";
+    $area="Area name";$num="Messages";$proc="%";
+    $~= STAT_HEADER;
+    write(OUT);
+    while (($area,$num)=each(%stat)) {
+        $stat_total_num+=$num;
+    }
+    $~= STAT_BODY;
+    foreach $area (sort (keys (%stat))) {
+        $num=$stat{$area};
+        write(OUT);
+    }
+    $~= STAT_FOOTER;
+    $area="Total:";
+    write(OUT);
+    dbmclose(%stat);
+    close(OUT);
+}
+
+sub CheckDead {
+    my($dead_found);
+    my($cur_day);
+
+    $dead_found=0;
+    $cur_day=time()/$sec_in_day;
+
+    open(out,">".$la_out) || die "can't open $la_out";
+    select out;
+    dbmopen(%la,$la_hash,0666) || die "can't open $la_hash";
+    while (($area,$la)=each(%la)) {
+        if (($cur_day-$la) >= $la_dead_time) {
+            $dead_found=1;
+            delete $la{$area};
+            print "$area\n";
+        }
+    }
+    dbmclose(%la);
+    close(out);
+    if ($dead_found and $la_flag) {
+        open(out,">".$la_flag) || die "can't creat $la_flag";
+        close(out);
+    }
+}
+
+sub Purge {
+    unlink ($stat_hash . ".dir") || die "Can't delete $stat_hash.dir";
+    unlink ($stat_hash . ".pag") || die "Can't delete $stat_hash.pag";
+    #setting timestamp :)
+    open(OUT,">".$stat_last) || die "Can't open $stat_last";
+    close(OUT);
+}
+
+my $usage = <<'EOT';
+
+Usage: stat.pl <options>
+       Options are
+        --import    - import statistic & last access time from hpt.log
+        --stat      - generate statistic
+        --checkdead - generate dead areas list
+        --purge     - purge statistic
+	--stdout    - output statistic to stdout, not files
+	--verbose   - show start and shutdown moments
+EOT
+
+
+$result = GetOptions(\%opts, "stdout\!", "verbose\!", "import", "stat", 
+		"checkdead", "purge", "help");
+#$arg=lc($ARGV[0]);
+if ($result && !$opts{"help"}) {
+	if ($opts{"stdout"}) {
+		$stat_out = $la_out = "&STDOUT";
+	};
+	# debug. íÏÖÅÔ ÉÓĞÏÌØÚÏ×ÁÔØÓÑ ĞÒÉ ĞÅÒÅÎÁĞÒÁ×ÌÅÎÉÉ ×Ù×ÏÄÁ × ÌÏÇ-ÆÁÊÌ.
+	print STDOUT "\n"."=-"x20 ."=\n".localtime() if ($opts{"verbose"});
+	if ($opts{"import"}) {
+    	    print STDOUT "\nImport start\n" if ($opts{"verbose"});
+	    Import();
+	    print STDOUT "\nImport sthutdown\n" if ($opts{"verbose"});
+	};
+	if ($opts{"stat"}) {
+	    print STDOUT "\nStat start\n" if ($opts{"verbose"});
+	    Stat();
+	    print STDOUT "\nStat shutdown\n" if ($opts{"verbose"});
+	};
+	if ($opts{"checkdead"}) {
+	    print STDOUT "\nCheckDead start\n" if ($opts{"verbose"});
+	    CheckDead();
+	    print STDOUT "\nCheckDead shutdown\n" if ($opts{"verbose"});
+	};
+	if ($opts{"purge"}) {
+	    print STDOUT "\nPurge start\n" if ($opts{"verbose"});
+	    Purge();
+	    print STDOUT "\nPurge shutdown\n" if ($opts{"verbose"});
+	};
+	if ($opts{"stat", "import", "checkdead", "purge"} == qw(0, 0, 0, 0)) {
+	    print $usage, "rerfwe";
+	};
+} else {
+	print $usage;
+};
