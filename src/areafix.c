@@ -376,6 +376,132 @@ char *available(s_link *link, char *cmdline)
     hal = NULL;
     halcnt = 0;
  
+    for (j = 0; j < config->linkCount; j++) 
+    {
+	uplink = &(config->links[j]);
+
+	found = 0;
+	for (k = 0; k < link->numAccessGrp && uplink->LinkGrp; k++)
+	    if (strcmp(link->AccessGrp[k], uplink->LinkGrp) == 0)
+		found = 1;
+
+	if ((uplink->forwardRequests && uplink->forwardRequestFile) &&
+	    ((uplink->LinkGrp == NULL) || (found != 0))) 
+	{
+	    if ((f=fopen(uplink->forwardRequestFile,"r")) == NULL) {
+		w_log(LL_ERR, "areafix: cannot open forwardRequestFile \"%s\": %s",
+		      uplink->forwardRequestFile, strerror(errno));
+ 		continue;
+	    }
+
+            if (link->availlist == AVAILLIST_UNIQUEONE)
+            {
+              if (!hal)
+                xscatprintf(&report, "Available Area List from all uplinks:\r");
+            }
+            else
+              xscatprintf(&report, "Available Area List from %s:\r",  
+                           aka2str(uplink->hisAka));    
+
+            if ((!halcnt)||(link->availlist != AVAILLIST_UNIQUEONE))
+            {
+              halcnt++;
+              hal = realloc(hal, sizeof(ps_arealist)*halcnt);
+              hal[halcnt-1] = newAreaList();
+              al = hal[halcnt-1];
+              w_log(LL_DEBUGW,  __FILE__ ":%u: New item added to hal, halcnt = %u", __LINE__, halcnt);
+            }
+
+            while ((line = readLine(f)) != NULL)
+            {
+                line = trimLine(line);
+                if (line[0] != '\0')
+                {
+                    running = line;
+                    token = strseparate(&running, " \t\r\n");
+                    rc = 0;
+
+                    if (uplink->numDfMask)
+                      rc |= tag_mask(token, uplink->dfMask, uplink->numDfMask);
+
+                    if (uplink->denyFwdFile)
+                      rc |= IsAreaAvailable(token,uplink->denyFwdFile,NULL,0);
+
+                    if (pattern)
+                    {
+                        /* if matches pattern and not reversed (or vise versa) */
+                        if ((rc==0) &&(patimat(token, pattern)!=reversed))
+                            addAreaListItem(al,0,0,token,running);
+                    } else
+                    {
+                        if (rc==0) addAreaListItem(al,0,0,token,running);
+                    }
+
+    	        }
+    	        nfree(line);
+            }
+            fclose(f);
+
+
+            /*  warning! do not ever use aka2str twice at once! */
+            sprintf(linkAka, "%s", aka2str(link->hisAka));
+            w_log(LL_AREAFIX, "areafix: Available Area List from %s sent to %s", aka2str(uplink->hisAka), linkAka);
+        }
+
+
+ 	if ((link->availlist != AVAILLIST_UNIQUEONE)||(j==(config->linkCount-1)))
+ 	{
+ 		if((hal)&&((hal[halcnt-1])->count)) {
+ 			sortAreaListNoDupes(halcnt, hal, link->availlist != AVAILLIST_FULL);
+ 			line = formatAreaList(hal[halcnt-1],78,NULL);
+ 			xstrcat(&report,"\r");
+			if (line)
+ 			  xstrcat(&report,line);
+ 			nfree(line);
+	 		xscatprintf(&report, " %s\r\r",print_ch(77,'-'));
+ 		}
+ 
+            if ((link->availlist != AVAILLIST_UNIQUE)||(j==(config->linkCount-1)))
+              if (hal)
+              {
+  	        w_log(LL_DEBUGW,  __FILE__ ":%u: hal freed, (%u items)", __LINE__, halcnt);
+                for(;halcnt>0;halcnt--)
+                  freeAreaList(hal[halcnt-1]);
+                nfree(hal);
+              }
+ 	}
+    }	
+
+    if (report==NULL) {
+	xstrcat(&report, "\r  no links for creating Available Area List\r");
+	w_log(LL_AREAFIX, "areafix: no links for creating Available Area List");
+    }
+    return report;
+}
+
+
+#if 0   /* Not fully work variant */
+char *available(s_link *link, char *cmdline)
+{
+    FILE *f;
+    unsigned int j=0, found;
+    unsigned int k, rc;
+    char *report = NULL, *line, *token, *running, linkAka[SIZE_aka2str];
+    char *pattern;
+    int reversed;
+    s_link *uplink=NULL;
+    ps_arealist al=NULL, *hal=NULL;
+    unsigned int halcnt=0;
+
+    pattern = getPatternFromLine(cmdline, &reversed);
+    if ((pattern) && (strlen(pattern)>60 || !isValidConference(pattern))) {
+        w_log(LL_FUNC, "areafix::avail() FAILED (error request line)");
+        return errorRQ(cmdline);
+    }
+
+    hal = NULL;
+    halcnt = 0;
+ 
     for (j = 0; j < config->linkCount; j++) {
 	uplink = &(config->links[j]);
 
@@ -507,6 +633,8 @@ char *available(s_link *link, char *cmdline)
     }
     return report;
 }
+
+#endif
 
 /*  subscribe if (act==0),  unsubscribe if (act==1), delete if (act==2) */
 int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act) {
