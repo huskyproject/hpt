@@ -205,14 +205,14 @@ Thanks to:
 @item Tobias Ernst (some features, stable releases, cvs & www support)
 @item Sacha M. Silbe (features, makefiles)
 @item Kolya Nesterov (unpack, post, link)
-@item Fedor Lizunkov (areafix, autocreate reports, group code, JAM code
-in SMAPI)
+@item Fedor Lizunkov (areafix, autocreate reports, group code, JAM code in SMAPI)
 @item Serguei Revtov (win32 version support, hptlink, features & good patches)
+@item Alexander Vernigora (dupe detection)
 @item Pavel Gulchouk (Perl support, JAM & link hacking)
 @item Alex Semenyaka (netmailExtern, processPkt)
 @item Alex Bronin (win32 patches)
 @item Nikolay Nestyurkin (makefiles)
-@item Lev Serebruakov (new %list)
+@item Lev Serebryakov (new %list)
 @item ... and all other people (sorry, if I've forget somebody)
 @end enumerate
 P.S. all of this people makes bug fixes, so I don't mention it.

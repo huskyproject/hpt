@@ -573,7 +573,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    s_message *msg;
    int       len, badmsg=0;
    struct tm tm;
-#if defined(__DOS__) || defined(__MSDOS__)
+#if defined(MSDOS)
    char      *origin;
 #endif
 
@@ -620,7 +620,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 	   return 2; // exit with error
    }
 
-#if !defined(__DOS__) && !defined(__MSDOS__)
+#if !defined(MSDOS)
    do {
 	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
 	   xstrcat(&msg->text, globalBuffer);
