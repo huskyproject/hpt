@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# hptstat ver.0.73, (c)opyright 2002-03, by val khokhlov
+# hptstat ver.0.73.1, (c)opyright 2002-03, by val khokhlov
 %areas;                       # areas found in stat (tag=>id), id=1,2,3,...
 @area_tag;                    # ...reverse array (id=>tag)
 %links;                       # links found in stat
@@ -54,7 +54,7 @@ eval {
   open F, $name or die "Can't open stat file $name\n"; binmode F;
   if (!$GZ && $name !~ /\.[Gg][Zz]$/o) { read F, $_, 16; }
   else {
-    die "Compess::Zlib perl module required for gzip'ed files processing\n" unless eval { require Compress::Zlib; import Compress::Zlib; 1; };
+    die "Compress::Zlib perl module required for gzip'ed files processing\n" unless eval { require Compress::Zlib; import Compress::Zlib; 1; };
     $gz = gzopen(\*F, "r") or die "gzopen() error: $gzerrno\n";
     $gz->gzread($_, 16);
   }
