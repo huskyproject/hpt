@@ -38,7 +38,17 @@ struct seenBy {
    UINT16 net, node;
 };
 
+#define MAX_ZONE 32768
+
 typedef struct seenBy s_seenBy;
+
+struct seenByZone {
+    s_seenBy *seenByArray;
+    UINT16 seenByCount;
+};
+
+typedef struct seenByZone s_seenByZone;
+extern s_seenByZone seenBysZone[MAX_ZONE];
 
 void sortSeenBys(s_seenBy *seenBys, UINT count);
 
@@ -49,19 +59,17 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy
 
 void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount);
 
-/*
-  This function puts all the links of the echoarea in the newLink
-  array who does not have got the mail, zoneLinks - the links who
-  receive msg with stripped seen-by's.
-*/
 
-void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
-			           s_area *echo,
-                       s_arealink ***newLinks,
-			           s_arealink ***zoneLinks,
-                       s_arealink ***otherLinks,
-                       hs_addr pktOrigAddr);
-
-
+void zero_seenBysZone();
+void free_seenBysZone();
+void attachTo_seenBysZone(int zone, s_seenBy **seenBys, int count);
+void addTo_seenByZone(UINT16 zone, UINT16 net, UINT16 node);
+void deleteFrom_seenByZone(UINT16 zone, UINT16 net, UINT16 node);
+void createNewLinksArray(s_area *echo, s_arealink ***newLinks,
+                         hs_addr pktOrigAddr, int rsb);
+void addLinksTo_seenByZone(s_arealink **newLinks, int count);
+void addAkasTo_seenByZone();
+void processAutoAdd_seenByZone(s_area *echo);
+void cleanDupes_seenByZone();
 
 #endif

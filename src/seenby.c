@@ -40,6 +40,8 @@
 #include <fidoconf/xstr.h>
 #include <fidoconf/common.h>
 
+s_seenByZone seenBysZone[MAX_ZONE];
+
 int compare(const void *first, const void *second)
 {
    if ( ((s_seenBy*) first)->net < ((s_seenBy*) second)->net) return -1;
@@ -53,6 +55,101 @@ int compare(const void *first, const void *second)
 void sortSeenBys(s_seenBy *seenBys, UINT count)
 {
    qsort(seenBys, count, sizeof(s_seenBy), compare);
+}
+
+void cleanDupesFromSeenBys(s_seenBy **seenBys, UINT *count)
+{
+    UINT i;
+    s_seenBy seenBy;
+
+    if (seenBys == NULL || *seenBys == NULL || count == NULL || *count < 2)
+        return;
+
+    sortSeenBys(*seenBys, *count);
+    seenBy.net = (*seenBys)[0].net;
+    seenBy.node = (*seenBys)[0].node;
+
+    for (i=1;i<*count;i++) {
+        if ((*seenBys)[i].net == seenBy.net &&
+            (*seenBys)[i].node == seenBy.node)
+        { /* seenby[i-1] == seenby[i] - overwrite it */
+            (*seenBys)[i].net = (*seenBys)[--*count].net;
+            (*seenBys)[i].node = (*seenBys)[--*count].node;
+            sortSeenBys((*seenBys), *count);
+        }
+        seenBy.net = (*seenBys)[i].net;
+        seenBy.node = (*seenBys)[i].node;
+    }
+}
+
+void cleanDupes_seenByZone()
+{
+    UINT i;
+
+    for (i=0;i<MAX_ZONE;i++)
+        cleanDupesFromSeenBys(&(seenBysZone[i].seenByArray), (UINT *) &(seenBysZone[i].seenByCount));
+}
+
+void zero_seenBysZone()
+{
+    int i;
+
+    for (i=0;i<MAX_ZONE;i++)
+    {
+        seenBysZone[i].seenByArray = NULL;
+        seenBysZone[i].seenByCount = 0;
+    }
+}
+
+void free_seenBysZone()
+{
+    int i;
+    for (i=0;i<MAX_ZONE;i++)
+        nfree(seenBysZone[i].seenByArray);
+    zero_seenBysZone();
+}
+
+void attachTo_seenBysZone(int zone, s_seenBy **seenBys, int count)
+{
+    seenBysZone[zone].seenByArray = *seenBys;
+    seenBysZone[zone].seenByCount = count;
+}
+
+void addTo_seenByZone(UINT16 zone, UINT16 net, UINT16 node)
+{
+    int i;
+
+    if (seenBysZone[zone].seenByArray == NULL) {
+        i=0;
+        seenBysZone[zone].seenByArray = (s_seenBy *) safe_calloc(sizeof(s_seenBy), 1);
+    } else {
+        for (i=0;i<seenBysZone[zone].seenByCount;i++)
+        {
+            if (seenBysZone[zone].seenByArray[i].net == net &&
+                seenBysZone[zone].seenByArray[i].node == node)
+                return; /* already found this address in sb array */
+        }
+        seenBysZone[zone].seenByArray = (s_seenBy *) safe_realloc(seenBysZone[zone].seenByArray, sizeof(s_seenBy) * seenBysZone[zone].seenByCount+1);
+    }
+    seenBysZone[zone].seenByArray[seenBysZone[zone].seenByCount].net = net;
+    seenBysZone[zone].seenByArray[seenBysZone[zone].seenByCount].node = node;
+    seenBysZone[zone].seenByCount++;
+}
+
+void deleteFrom_seenByZone(UINT16 zone, UINT16 net, UINT16 node)
+{
+    int i;
+
+    if (seenBysZone[zone].seenByArray == NULL) return;
+
+    for (i=0;i<seenBysZone[zone].seenByCount;i++)
+    {
+        if (seenBysZone[zone].seenByArray[i].net == net &&
+            seenBysZone[zone].seenByArray[i].node == node)
+            break; /* already found this address in sb array */
+    }
+    seenBysZone[zone].seenByArray[i].net = 0;
+    seenBysZone[zone].seenByArray[i].net = 0;
 }
 
 char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
@@ -263,7 +360,7 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
   */
 
 int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link,
-	      hs_addr pktOrigAddr, s_area *area)
+              s_area *echo, hs_addr pktOrigAddr)
 {
     UINT i,j;
 
@@ -272,87 +369,101 @@ int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link,
 
     if (seenBys==NULL) return 0;
 
-    /*  a point always gets the mail */
-    /*  if (link->hisAka.point != 0) return 0; */
-
-    /*  send the mail to links within our node-system */
-    if ((link->hisAka.zone == area->useAka->zone) &&
-        (link->hisAka.net  == area->useAka->net) &&
-        (link->hisAka.node == area->useAka->node))
-	return 0;
+    /* skip our address in seen-by and allow to
+       send the mail to links within our node-system */
+    for (i=0; i < config->addrCount; i++)
+        if ((link->hisAka.zone == config->addr[i].zone) &&
+            (link->hisAka.net  == config->addr[i].net) &&
+            (link->hisAka.node == config->addr[i].node))
+            return 0;
 
     for (i=0; i < seenByCount; i++) {
-	if ((link->hisAka.net==seenBys[i].net) &&
-	    (link->hisAka.node==seenBys[i].node)) {
-		
-	    for (j=0; j < config->ignoreSeenCount; j++) {
-		if (config->ignoreSeen[j].net == seenBys[i].net &&
-		    config->ignoreSeen[j].node == seenBys[i].node) {
-		    link->sb = 1; /*  fix for double seen-bys */
-		    return 0;
-		}
-	    }
-	    for (j=0; j < area->sbignCount; j++) {
-		if (area->sbign[j].net == seenBys[i].net &&
-		    area->sbign[j].node == seenBys[i].node) {
-		    link->sb = 1; /*  fix for double seen-bys */
-		    return 0;
-		}
-	    }
-
-	    return 1;
-	}
+        if ((link->hisAka.net==seenBys[i].net) &&
+            (link->hisAka.node==seenBys[i].node)) {
+            return 1;
+        }
+        for (j=0; j < config->ignoreSeenCount; j++) {
+            if (config->ignoreSeen[j].net == seenBys[i].net &&
+                config->ignoreSeen[j].node == seenBys[i].node) {
+                link->sb = 1; /*  fix for double seen-bys */
+                return 0;
+            }
+        }
+        for (j=0; j < echo->sbignCount; j++) {
+            if (echo->sbign[j].net == seenBys[i].net &&
+                echo->sbign[j].node == seenBys[i].node) {
+                link->sb = 1; /*  fix for double seen-bys */
+                return 0;
+            }
+        }
     }
     return 0;
 }
 
 /*
-  This function puts all the links of the echoarea in the newLink
-  array who does not have got the mail, zoneLinks - the links who
-  receive msg with stripped seen-by's.
-*/
+ * This function builds an array of links who is subscribed to this echo
+ * except ones listed in seenbys.
+ */
 
-void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
-			           s_area *echo,
-                       s_arealink ***newLinks,
-			           s_arealink ***zoneLinks,
-                       s_arealink ***otherLinks,
-                       hs_addr pktOrigAddr) 
+void createNewLinksArray(s_area *echo, s_arealink ***newLinks,
+                         hs_addr pktOrigAddr, int rsb)
 {
-    UINT i, lFound = 0, zFound = 0, oFound = 0;
-    
-    *newLinks =  (s_arealink **)safe_calloc(echo->downlinkCount,sizeof(s_arealink*));
-    *zoneLinks = (s_arealink **)safe_calloc(echo->downlinkCount,sizeof(s_arealink*));
-    *otherLinks =(s_arealink **)safe_calloc(echo->downlinkCount,sizeof(s_arealink*));
+    UINT i, lFound = 0;
 
-    
+    *newLinks =  (s_arealink **)safe_calloc(echo->downlinkCount,sizeof(s_arealink*));
+
     for (i=0; i < echo->downlinkCount; i++) {
-        /*  is the link in SEEN-BYs? */
-        if ( checkLink(seenBys, seenByCount, echo->downlinks[i]->link,
-            pktOrigAddr, echo)!=0) continue;
         /*  link with "export off" */
         if (echo->downlinks[i]->export == 0) continue;
-        
-        if (pktOrigAddr.zone==echo->downlinks[i]->link->hisAka.zone) {
-            /*  links with same zone */
-            if(echo->downlinks[i]->link->reducedSeenBy)
-            {
-                (*otherLinks)[oFound++] = echo->downlinks[i];
-            }
-            else
-            {
-                (*newLinks)[lFound++] = echo->downlinks[i];
-            }
-        } else {
-            /*  links in different zones */
-            (*zoneLinks)[zFound++] = echo->downlinks[i];
-        }
+        if (echo->downlinks[i]->link->reducedSeenBy != rsb) continue;
+        /* don't send to link if it is in seen-bys */
+        if (checkLink(seenBysZone[echo->downlinks[i]->link->hisAka.zone].seenByArray,
+                      seenBysZone[echo->downlinks[i]->link->hisAka.zone].seenByCount,
+                      echo->downlinks[i]->link, echo, pktOrigAddr))
+            continue;
+        (*newLinks)[lFound++] = echo->downlinks[i];
     }
+
     if(lFound == 0)
         nfree(*newLinks);
-    if(zFound == 0)
-        nfree(*zoneLinks);
-    if(oFound == 0)
-        nfree(*otherLinks);
 }
 
+void addLinksTo_seenByZone(s_arealink **newLinks, int count)
+{
+    UINT i;
+    hs_addr *addr;
+
+    if (newLinks == NULL) return;
+
+    for (i=0; i < count; i++) {
+        if (newLinks[i] == NULL) continue;
+        addr = &newLinks[i]->link->hisAka;
+        if (addr->point != 0) continue; /* don't include points */
+        addTo_seenByZone(addr->zone, addr->net, addr->node);
+    }
+}
+
+void addAkasTo_seenByZone()
+{
+    UINT i;
+    for (i=0; i < config->addrCount; i++) {
+        if (config->addr[i].point != 0) continue; /* don't include point addresses */
+        addTo_seenByZone(config->addr[i].zone, config->addr[i].net, config->addr[i].node);
+    }
+}
+
+void processAutoAdd_seenByZone(s_area *echo)
+{
+    UINT i, zone;
+
+    for (zone=0;zone<MAX_ZONE;zone++) {
+        for (i=0; i<config->addToSeenCount; i++)
+            addTo_seenByZone(zone, config->addToSeen[i].net, config->addToSeen[i].node);
+        for (i=0; i<echo->sbaddCount; i++)
+            addTo_seenByZone(zone, echo->sbadd[i].net, echo->sbadd[i].node);
+/*        for (i=0; i<config->ignoreSeenCount; i++)
+            deleteFrom_seenByZone(zone, config->ignoreSeen[i].net, config->ignoreSeen[i].node);
+        for (i=0; i<echo->sbignCount; i++)
+            deleteFrom_seenByZone(zone, echo->sbign[i].net, echo->sbign[i].node); */
+    }
+}

@@ -62,9 +62,9 @@ int  autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr);
 void tossFromBadArea(char force);
 void writeMsgToSysop(void);
 int  checkAreaLink(s_area *area, hs_addr aka, int type);
-void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
-					s_seenBy **seenBys, UINT *seenByCount,
-					s_seenBy **path, UINT *pathCount);
+void forwardMsgToLink(s_message *msg, s_area *echo, s_link *link,
+                    s_seenBy *seenBys, UINT seenByCount,
+                    s_seenBy *pathArray, UINT pathArrayCount);
 void forwardMsgToLinks(s_area *echo, s_message *msg, hs_addr pktOrigAddr);
 int  carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo);
 s_arealink *getAreaLink(s_area *area, hs_addr aka);

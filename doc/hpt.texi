@@ -3919,36 +3919,27 @@ Program algorythm:
 
 @table @asis
 @item 1.
-check pkt zone address
+initialize an array of SEEN-BY arrays (key = zone number, value = array of
+SEEN-BYs for this zone)
 @item 2.
-split links in to groups: with (pktaddr.zone == linkaddr.zone) and
-(pktaddr.zone != linkaddr.zone)
+Read SEEN-BYs & PATH from message
 @item 3.
-send msg to first group of links (their aka adding to seen-bys and
-echo->useAka too if not in seen-bys yet)
+Assign read SEEN-BYs to an array of SEEN-BY arrays with zone = pktOrigAddr.zone
 @item 4.
-seen-bys cleaned.
+Add SEEN-BYs from AddToSeen & -sbadd. @xref{AddToSeen}.
 @item 5.
-send msg to second group of links. seen-bys contain only one address - 
-address of link who receives this message.
+Build an array of downlinks for this echo. Links which present in SEEN-BYs 
+are skipped (except ones defined in IgnoreSeen or -sbign), link with 
+AKA == pktOrigAddr is also skipped. Link with zone:net/node equal to our AKA
+is not skipped (we can be point and shall send message to our boss).
 @item 6.
-store msg in msgbase keeping original seen-bys.
+Add all links to an array of SEEN-BY arrays
+@item 7.
+Add all our AKAs to an array of SEEN-BY arrays
+@item 8.
+Forward message to all links. Eacho link will have our AKA from corresponding 
+Link->ourAka in PATH. Each link will get SEEN-BYs only for his zone.
 @end table
-
-WARNING: if you have several links in one zone wich is not equal to 
-pktaddr.zone hpt will generate only one seen-by for any such link.
-This may cause dupes after you. Example:
-@example
-1---2 
-|  /
-3/
-
-We received pkt from 1 (Z2) and send message from it to 2 & 3 (Z1).
-message to 2 will contain in seen-by only 2 and message to 3 will contain
-only seen-by 3. There is a link between 2 & 3 and 2 subscribed on 3 to 
-this echo too. If there is no dupechecking at 2 & 3 dup-ring will be 
-created.
-@end example
 
 @node Perl support, , ZoneGating , Advanced Concepts
 @section Perl support in HPT
