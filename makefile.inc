@@ -54,18 +54,18 @@ hpt$(EXE): $(OBJS)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) hpt$(EXE) $(OBJS) $(LIBS) $(PERLLIBS)
 
 clean:
-	-$(RM) *$(OBJ)
-	-$(RM) *~
-	-$(RM) core
+	-$(RM) $(RMOPT) *$(OBJ)
+	-$(RM) $(RMOPT) *~
+	-$(RM) $(RMOPT) core
 
 distclean: clean
-	-$(RM) tpkt$(EXE)
-	-$(RM) txt2pkt$(EXE)
-	-$(RM) pktinfo$(EXE)
-	-$(RM) hpt$(EXE)
-	-$(RM) hptlink$(EXE)
-	-$(RM) hpttree$(EXE)
-	-$(RM) hpt.1.gz
-	-$(RM) hptlink.1.gz
-	-$(RM) hpttree.1.gz
+	-$(RM) $(RMOPT) tpkt$(EXE)
+	-$(RM) $(RMOPT) txt2pkt$(EXE)
+	-$(RM) $(RMOPT) pktinfo$(EXE)
+	-$(RM) $(RMOPT) hpt$(EXE)
+	-$(RM) $(RMOPT) hptlink$(EXE)
+	-$(RM) $(RMOPT) hpttree$(EXE)
+	-$(RM) $(RMOPT) hpt.1.gz
+	-$(RM) $(RMOPT) hptlink.1.gz
+	-$(RM) $(RMOPT) hpttree.1.gz
 
