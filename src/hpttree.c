@@ -213,9 +213,9 @@ void buildAreaTree(s_area *area)
 
 		   /* check time period */
                    if (xmsg.attr & MSGLOCAL) {
-                      DosDate_to_TmDate(&(xmsg.date_written), &tmTime);
+                      DosDate_to_TmDate((SCOMBO*)&(xmsg.date_written), &tmTime);
                    } else {
-                      DosDate_to_TmDate(&(xmsg.date_arrived), &tmTime);
+                      DosDate_to_TmDate((SCOMBO*)&(xmsg.date_arrived), &tmTime);
                    }
 
 		   MsgCloseMsg(hmsg);
