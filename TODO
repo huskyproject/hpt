@@ -37,4 +37,4 @@ Category 4: Will not be implemented
 - afterUnpackBundle, afterUnpackAll -> carc
 - UnpackAllBeforeToss -> carc
 - pack netmail in pkt/arcmail bundles -> carc
-- area-deletion etc. via areafix -> hptkill
+- area-deletion etc. via areafix -> hptkill (implemented)

@@ -14,7 +14,7 @@ OBJ=.obj
 EXE=.exe
 RM=del
 
-LIBS=..\..\fidoconf\fconfmvc.obj ..\..\smapi\smapimvc.obj USER32.LIB
+LIBS=..\..\fidoconf\fconfmvc.lib ..\..\smapi\smapimvc.lib USER32.LIB
 
 default: all
 
