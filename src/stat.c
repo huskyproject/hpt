@@ -54,7 +54,7 @@
 
 /* internal address record */
 typedef struct _st_addr {
-    unsigned int zone, net, node, point;
+    short zone, net, node, point;
 } st_addr;
 
 /* link stats data */
