@@ -1167,19 +1167,17 @@ char *unsubscribe(s_link *link, char *cmd) {
                     (area->downlinks[0]->link->hisAka.point == 0)) {
                     if(config->areafixQueueFile) {
                         af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
-                        j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
                     } else {
                         forwardRequestToLink(area->areaName,
                             area->downlinks[0]->link, NULL, 1);
                     }
-                } else {
-                    j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
                 }
-                MsgDeleteBase(area->fileName, (word) area->msgbType);                
+                j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
             }
-            if (j == DEL_OK)
+            if (j == DEL_OK){
+                MsgDeleteBase(area->fileName, (word) area->msgbType);                
                 xscatprintf(&report," %s %s  unlinked\r",an,print_ch(49-strlen(an),'.'));
-            else
+            }else
                 xscatprintf(&report," %s %s  error. report to sysop!\r",
                 an, print_ch(49-strlen(an),'.'));
             break;
