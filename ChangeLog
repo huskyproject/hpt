@@ -1,3 +1,12 @@
+2002-09-22 Sunday 15:05  pgul
+
+	* src/pktinfo.c (1.17): Dont print garbage zone/point missing in
+	packed msg header
+
+2002-09-22 Sunday 11:38  mche
+
+	* src/query.c (1.63): some improvement to "autosubscribing" feature
+
 2002-09-21 Saturday 14:15  pgul
 
 	* src/post.c (1.91): Diagnostics a bit improved
