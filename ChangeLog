@@ -7,7 +7,12 @@ max:
 Mon Oct 11 00:22:43 NOVST 1999
 max:
 * fixed some memory leak (thanx to Basile A. Sey)
-* patch from Kolya Nesterov
+* patch from Kolya Nesterov:
+- static charset tables removed from recode.c
+- syntax of writeLogEntry replaced with printf like and all calls changed
+- rewritten some portion of function packBadArea (sometimes coredumped, not
+anymore, I hope)
+- area toss statistic added (displays count of tossed msgs in log file)
 
 ----- cvs ci ------
 Sun Oct  3 19:30:57 NOVST 1999
