@@ -4,10 +4,10 @@ include ../huskymak.cfg
 SRC_DIR = src$(DIRSEP)
 
 ifeq ($(DEBUG), 1)
-  CFLAGS = -I.. -Ih -I$(INCDIR) $(DEBCFLAGS) $(WARNFLAGS)
+  CFLAGS = -Ih -I$(INCDIR) $(DEBCFLAGS) $(WARNFLAGS)
   LFLAGS = $(DEBLFLAGS)
 else
-  CFLAGS = -I.. -Ih -I$(INCDIR) $(OPTCFLAGS) $(WARNFLAGS)
+  CFLAGS = -Ih -I$(INCDIR) $(OPTCFLAGS) $(WARNFLAGS)
   LFLAGS = $(OPTLFLAGS)
 endif
 
