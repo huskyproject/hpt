@@ -1,3 +1,39 @@
+2002-07-31 Wednesday 17:04  stas
+
+	* src/: perl.c (1.38), pktread.c (1.88), toss.c (1.432): replace
+	free() calls to nfree()
+
+2002-07-31 Wednesday 15:46  stas
+
+	* src/query.c (1.59): Change syntax: C++ -> C; check for NULL
+
+2002-07-31 Wednesday 15:39  stas
+
+	* src/query.c (1.58): Add debug log messages (LL_FUNC)
+
+2002-07-31 Wednesday 15:24  stas
+
+	* src/areafix.c (1.335): Add log message 'Process command ...'
+
+2002-07-31 Wednesday 15:22  stas
+
+	* src/areafix.c (1.334): Fix unsubscribe error (illegal condition
+	for tearline)
+
+2002-07-31 Wednesday 12:15  stas
+
+	* src/areafix.c (1.333): Insert and change debug output
+
+2002-07-31 Wednesday 12:11  gerrit
+
+	* doc/Makefile (1.4): Extended clean, install and uninstall
+	sections for DVI-files.  Added distclean target.
+
+2002-07-31 Wednesday 10:48  mche
+
+	* src/query.c (1.57): fixed building config line for autocreated
+	area.  "autosubscribing" works correct now.
+
 2002-07-30 Tuesday 15:55  mche
 
 	* src/areafix.c (1.332), src/query.c (1.56), src/toss.c (1.431),
