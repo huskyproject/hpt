@@ -47,7 +47,7 @@
 #endif
 
 #include <fidoconf/fidoconf.h>
-#include <fidoconf/xstr.h>
+#include <huskylib/xstr.h>
 #include <fidoconf/common.h>
 
 #include <pkt.h>

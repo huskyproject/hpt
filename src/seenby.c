@@ -37,7 +37,7 @@
 #include <fcommon.h>
 #include <global.h>
 #include <seenby.h>
-#include <fidoconf/xstr.h>
+#include <huskylib/xstr.h>
 #include <fidoconf/common.h>
 
 int compare(const void *first, const void *second)

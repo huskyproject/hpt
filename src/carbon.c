@@ -48,9 +48,9 @@
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
-#include <fidoconf/recode.h>
-#include <fidoconf/temp.h>
-#include <fidoconf/xstr.h>
+#include <huskylib/recode.h>
+#include <huskylib/temp.h>
+#include <huskylib/xstr.h>
 
 #include "global.h"
 #include "toss.h"

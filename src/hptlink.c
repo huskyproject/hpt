@@ -47,7 +47,7 @@
 
 #include <smapi/msgapi.h>
 #include <fidoconf/common.h>
-#include <fidoconf/xstr.h>
+#include <huskylib/xstr.h>
 
 #include <version.h>
 #include <global.h>

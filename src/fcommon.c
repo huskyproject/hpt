@@ -77,10 +77,10 @@
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
-#include <fidoconf/xstr.h>
-#include <fidoconf/dirlayer.h>
-#include <fidoconf/recode.h>
-#include <fidoconf/crc.h>
+#include <huskylib/xstr.h>
+#include <huskylib/dirlayer.h>
+#include <huskylib/recode.h>
+#include <huskylib/crc.h>
 
 #include <global.h>
 #include <fcommon.h>

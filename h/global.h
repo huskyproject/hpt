@@ -33,9 +33,9 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#include <fidoconf/typesize.h>
 #include <fidoconf/fidoconf.h>
-#include <fidoconf/log.h>
+#include <huskylib/typesize.h>
+#include <huskylib/log.h>
 
 extern int initSMAPI;
 

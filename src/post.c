@@ -53,9 +53,9 @@ tearline generation added
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
-#include <fidoconf/xstr.h>
+#include <huskylib/xstr.h>
 #include <fidoconf/afixcmd.h>
-#include <fidoconf/recode.h>
+#include <huskylib/recode.h>
 
 #include <version.h>
 #include <toss.h>

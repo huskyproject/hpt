@@ -62,13 +62,12 @@
 #include <smapi/msgapi.h>
 
 #include <fidoconf/fidoconf.h>
-#include <fidoconf/xstr.h>
+#include <huskylib/xstr.h>
 #include <fidoconf/common.h>
-#include <fidoconf/dirlayer.h>
+#include <huskylib/dirlayer.h>
 #include <fidoconf/afixcmd.h>
-
-#include <fidoconf/log.h>
-#include <fidoconf/recode.h>
+#include <huskylib/log.h>
+#include <huskylib/recode.h>
 #include <fidoconf/version.h>
 
 #include "version.h"

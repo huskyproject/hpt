@@ -31,11 +31,11 @@
  * $Id$
  */
 #include <pkt.h>
-#include <fidoconf/typesize.h>
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
 #include <huskylib/huskylib.h>
+#include <huskylib/typesize.h>
 #include <version.h>
 
 int main()

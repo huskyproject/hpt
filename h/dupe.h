@@ -44,9 +44,9 @@
 #ifndef DUPE_H
 #define DUPE_H
 
-#include <fidoconf/typesize.h>
 #include <fidoconf/fidoconf.h>
-#include <fidoconf/tree.h>
+#include <huskylib/typesize.h>
+#include <huskylib/tree.h>
 #include <pkt.h>
 
 /* This header file contains the structures of the dupe file */

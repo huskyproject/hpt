@@ -28,7 +28,7 @@
 /* fidoconf */
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
-#include <fidoconf/xstr.h>
+#include <huskylib/xstr.h>
 #include <fidoconf/areatree.h>
 #include <fidoconf/afixcmd.h>
 

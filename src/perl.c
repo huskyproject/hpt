@@ -28,8 +28,8 @@
 
 
 #include <fidoconf/common.h>
-#include <fidoconf/xstr.h>
-#include <fidoconf/crc.h>
+#include <huskylib/xstr.h>
+#include <huskylib/crc.h>
 #include <fidoconf/afixcmd.h>
 
 #include <fcommon.h>

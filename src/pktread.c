@@ -40,10 +40,10 @@
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
-#include <fidoconf/xstr.h>
+#include <huskylib/xstr.h>
 #include <fidoconf/afixcmd.h>
-#include <fidoconf/log.h>
-#include <fidoconf/recode.h>
+#include <huskylib/log.h>
+#include <huskylib/recode.h>
 
 #include <global.h>
 #include <fcommon.h>

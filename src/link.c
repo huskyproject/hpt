@@ -62,10 +62,10 @@ be cleared.
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
-#include <fidoconf/typesize.h>
-#include <fidoconf/crc.h>
+#include <huskylib/typesize.h>
+#include <huskylib/crc.h>
+#include <huskylib/log.h>
 
-#include <fidoconf/log.h>
 #include <global.h>
 #include <fcommon.h>
 

@@ -32,8 +32,8 @@
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
-#include <fidoconf/xstr.h>
-#include <fidoconf/log.h>
+#include <huskylib/xstr.h>
+#include <huskylib/log.h>
 
 #include "stat.h"
 
