@@ -1,3 +1,8 @@
+2001-06-08 Friday 11:55  ml
+
+	* src/: hpttree.c (1.15), scan.c (1.130): try to work with mixed
+	PATH/SEEN-BY in hpttree [patch by Serguei Revtov]
+
 2001-06-05 Tuesday 15:11  ml
 
 	* src/hptlink.c (1.24): ignore repeating areas in hptlink [patch by
