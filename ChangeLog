@@ -1,3 +1,42 @@
+2002-11-27 Wednesday 15:14  pgul
+
+	* doc/hpt.texi (1.90), src/areafix.c (1.374), src/query.c (1.80),
+	src/toss.c (1.481): Use areafixReportsAttr instead of
+	areafixKillReports
+
+2002-11-27 Wednesday 14:56  stas_degteff
+
+	* src/areafix.c (1.373): Update previous
+
+2002-11-27 Wednesday 14:47  stas_degteff
+
+	* src/areafix.c (1.372): Bugfix unsubscribing
+
+2002-11-27 Wednesday 14:44  stas_degteff
+
+	* src/: areafix.c (1.371), query.c (1.79), toss.c (1.480): Replace
+	areafixKillReports to areafixReportsAttr
+
+2002-11-27 Wednesday 12:37  pgul
+
+	* src/post.c (1.103): extattr() moved to fidoconfig
+
+2002-11-27 Wednesday 11:54  stas_degteff
+
+	* src/: query.c (1.78), toss.c (1.479), txt2pkt.c (1.42): Prevent
+	compiler warnings: Watcom C OS/2 (bugreport from Andr Luk'yanov
+	2:5001/7)
+
+2002-11-27 Wednesday 11:39  stas_degteff
+
+	* make/makefile.wco (1.2): Fix watcom C Os/2 makefile (Patch from
+	Andr Luk'yanov 2:5001/7)
+
+2002-11-27 Wednesday 05:31  stas_degteff
+
+	* src/perl.c (1.44): Partialy revert patch: '2002-11-21 Thursday
+	07:45  stas_degteff'
+
 2002-11-26 Tuesday 13:32  stas_degteff
 
 	* doc/hpt-FAQ.russian (1.58): A&Q about current with bugs
