@@ -1427,8 +1427,9 @@ This statement can be repeated.
 
 @menu
 * AdvisoryLock::                set lock file "advisory"
+* AdvStatisticsFile::           binary statistic file   
 * AreafixHelp::                 file with help for areafix reports
-* AreafixQueueFile::		idle requests queue file for areafix
+* AreafixQueueFile::		    idle requests queue file for areafix
 * AreasMaxDupeAge::             max age for dupes in CommonDupeBase
 * DupeBaseType::                type of dupe base
 * DupeHistoryDir::              path for dupe files
@@ -1454,7 +1455,7 @@ This statement can be repeated.
 * TempOutbound::                temporary outbound path
 @end menu
 
-@node AdvisoryLock, AreafixHelp, Files and Paths, Files and Paths
+@node AdvisoryLock, AdvStatisticsFile, Files and Paths, Files and Paths
 @subsection AdvisoryLock
 @findex AdvisoryLock
 @table @asis
@@ -1479,7 +1480,20 @@ This statement cannot be repeated.
 
 @xref{LockFile}.
 
-@node AreafixHelp, AreasMaxDupeAge, AdvisoryLock, Files and Paths
+@node AdvStatisticsFile, AreafixHelp, AdvisoryLock, Files and Paths
+@subsection AdvStatisticsFile
+@findex AdvStatisticsFile
+@table @asis
+@item Syntax:
+@code{AdvStatisticsFile <filename>}
+@item Example:
+@code{AdvStatisticsFile /home/val/fido/log/hpt.sta}
+@end table
+
+Define binary statistic file for calculating links and echo trafic.
+Parsed by hpt/misc/adv-stat-hpt.pl
+
+@node AreafixHelp, AreasMaxDupeAge, AdvStatisticsFile, Files and Paths
 @subsection AreafixHelp
 @findex AreafixHelp
 @table @asis
@@ -3183,11 +3197,11 @@ If you write node address do it *without* trailing .0!
 If areaMask begins with '!' symbol it means that links won't be set 
 readonly for areas that match areaMask
 
-@item Example:
-@code{ReadOnly 2:5021/19.* tver.sysop*}
-@code{ReadOnly 2:5021/19.1 !tver.sysop*}
-@code{ReadOnly 2:5021/19.2 !tver.sysop.talks}
-@end table
+@example
+	ReadOnly 2:5021/19.* tver.sysop*
+	ReadOnly 2:5021/19.1 !tver.sysop*
+	ReadOnly 2:5021/19.2 !tver.sysop.talks
+@end example
 
 It means that all points if 2:5021/19 set r/o for tver.sysop* 
 areas except 2:5021/19.1 for all areas and 2:5021/19.2 can write 
