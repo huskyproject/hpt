@@ -1,3 +1,17 @@
+2002-03-06 Wednesday 17:38  mche
+
+	* src/areafix.c (1.266): warnings removed
+
+2002-03-06 Wednesday 16:54  mche
+
+	* src/global.c (1.42), src/hpt.c (1.136), src/query.c (1.26),
+	h/global.h (1.30), h/query.h (1.10): new command "queue" added (not
+	documented yet)
+
+2002-03-06 Wednesday 08:05  mche
+
+	* src/scan.c (1.145): fix includes for msvc
+
 2002-03-05 Tuesday 19:36  d.sergienko
 
 	* src/hpt.c (1.135): added info to usage() about post -a & post -f
