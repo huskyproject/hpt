@@ -2802,6 +2802,7 @@ void tossTempOutbound(char *directory)
 void writeImportLog(void) {
     int i;
     FILE *f;
+    struct stat buf;
 
     if (config->importlog) {
 
@@ -2829,6 +2830,12 @@ void writeImportLog(void) {
 #endif
 
 	} else w_log('9', "Could not open importlogfile");
+
+	// remove empty importlog
+	if (stat(config->importlog, &buf)==0) {
+	    if (buf.st_size==0) remove(config->importlog);
+	}
+	
     }
 }
 

@@ -734,18 +734,18 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 
    if (config->separateBundles && (bundleNameStyle!=eAmiga || (bundleNameStyle==eAmiga && link->packerDef==NULL))) {
 
-	   xstrcat(&sepDir, link->bsyFile);
-	   if (bundleNameStyle==eAmiga) 
-		   xscatprintf(&sepDir, "%u.%u.%u.%u.sep%c", 
-					   link->hisAka.zone, link->hisAka.net,
-					   link->hisAka.node ,link->hisAka.point, limiter);
-	   else if (link->hisAka.point) xscatprintf(&sepDir, "%08x.sep%c", 
-												link->hisAka.point, limiter);
-	   else xscatprintf(&sepDir, "%04x%04x.sep%c", link->hisAka.net,
-						link->hisAka.node, limiter);
-	   
-	   createDirectoryTree(sepDir);
-	   nfree(sepDir);
+       xstrcat(&sepDir, link->bsyFile);
+       if (bundleNameStyle==eAmiga) 
+	   xscatprintf(&sepDir, "%u.%u.%u.%u.sep%c", 
+		       link->hisAka.zone, link->hisAka.net,
+		       link->hisAka.node ,link->hisAka.point, limiter);
+       else if (link->hisAka.point) xscatprintf(&sepDir, "%08x.sep%c", 
+						link->hisAka.point, limiter);
+       else xscatprintf(&sepDir, "%04x%04x.sep%c", link->hisAka.net,
+			link->hisAka.node, limiter);
+
+       createDirectoryTree(sepDir);
+       nfree(sepDir);
    }
 
    // create bsyFile

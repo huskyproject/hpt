@@ -530,8 +530,11 @@ like this:
 2.5000.117.1.hut
 2.5000.117.1.mo0
 @end example
-Extensions & prefixes in flo files creates as in @code{addrDiffAlways} algorythm.
+If @code{SeparateBundles on} and @code{Packer} not defined pkt moves to 
+@code{2.5000.117.1.sep} directory.
 @end table
+
+Extensions & prefixes in flo files creates as in @code{addrDiffAlways} algorythm.
 
 @xref{LinkBundleNameStyle}.
 

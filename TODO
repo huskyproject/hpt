@@ -9,6 +9,7 @@ Category 1: Will certainly be implemented until next release
 - killsb for links
 - don't print avail list on subscribe/unsubscribe (areafixQueryReports)
 - write badmail to areas summary
+- check for dublicate links if mask is used (fidoconf)
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
