@@ -821,8 +821,8 @@ char *makeMsgbFileName(char *s) {
     static char defstr[]="\"*/:;<=>?\\|%`'&+"; // not allowed
     char *name=NULL, *str;
 
-    /* if (config->notValidFNChars) str = config->notValidFNChars;
-    else */ str = defstr;
+    if (config->notValidFNChars) str = config->notValidFNChars;
+    else str = defstr;
 
     while (*s) {
 	if (strchr(str,*s)) xscatprintf(&name,"%%%x", *s);
