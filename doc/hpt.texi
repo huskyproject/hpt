@@ -2176,6 +2176,7 @@ This statement cannot be repeated.
 * Aka::                         links adress
 * AllowEmptyPktPwd::            allow empty packet passwords
 * AllowPktAddrDiffer::          allow addresses in PKT and MSG differ for areafix req.
+* AllowRemoteControl::          allow remote control using areafix
 * ArcmailSize::         size of arcmail bundle
 * ArcNetmail::          pack netmail for this link into arcmail bundles
 * Areafix::                     areafix access for this link
@@ -2313,7 +2314,7 @@ unprotected inbound directory. It is not recommended to use this setting.
 
 This statement can only be repeated for different links.
 
-@node AllowPktAddrDiffer, ArcmailSize, AllowEmptyPktPwd, Link Keywords
+@node AllowPktAddrDiffer, AllowRemoteControl, AllowEmptyPktPwd, Link Keywords
 @subsection AllowPktAddrDiffer
 @findex AllowPktAddrDiffer
 @table @asis
@@ -2332,7 +2333,28 @@ by your areafix. The state @code{on} makes areafix ignore this error.
 
 This statement can only be repeated for different links.
 
-@node ArcmailSize, ArcNetmail, AllowPktAddrDiffer, Link Keywords
+@node AllowRemoteControl, ArcmailSize, AllowPktAddrDiffer, Link Keywords
+@subsection AllowRemoteControl
+@findex AllowRemoteControl
+@table @asis
+@item Syntax:
+@code{allowRemoteControl <bool>}
+@item Example:
+@code{allowRemoteControl on}
+@end table
+
+If this keyword is @code{on} then link can do remote control using areafix.
+Sending command "%from <addr>" (where <addr> is the address of any link,
+defined in config) he makes areafix behave as if the message came from that link.
+
+You should enable this keyword only for yourself or cosysop, as it allows
+changing other links' subscription and settings without knowing their passwords.
+
+The default state if @code{off}: remote control is disabled.
+
+This statement can only be repeated for different links.
+
+@node ArcmailSize, ArcNetmail, AllowRemoteControl, Link Keywords
 @subsection ArcmailSize
 @findex ArcmailSize
 @table @asis
