@@ -98,7 +98,7 @@ int subscribeCheck(s_area area, s_message *msg, s_link *link)
   if (strcmp(area.group, "0")) {
 	  if (link->numAccessGrp) 
 		  found = grpInArray(area.group,link->AccessGrp,link->numAccessGrp);
-	  if (config->numPublicGroup)
+	  else if (config->numPublicGroup)
 		  found = grpInArray(area.group,config->PublicGroup,config->numPublicGroup);
   } else found = 1;
 
