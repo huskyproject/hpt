@@ -21,6 +21,7 @@ Category 3: Will only be included if volunteers send patches
 ============================================================
 - remove areafix from hpt, make hptfix (areafix & filefix)
 - reduces Seen-BYs (fsc-0093)
+- include libinfozip calls to hpt source
 
 Category 4: Will not be implemented
 ===================================

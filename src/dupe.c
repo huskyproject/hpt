@@ -46,7 +46,6 @@
 #include <ctype.h>
 
 #include <pkt.h>
-
 #include <global.h>
 
 #include <smapi/compiler.h>
@@ -84,10 +83,8 @@ char *createDupeFileName(s_area *area) {
     char *name=NULL, *ptr, *retname=NULL;
 
     if (!area->DOSFile) {
-	xstrcat(&name, area->areaName);
-	// fix for passthrough areas with PATH_DELIM in AREATAG
-	if ( area->msgbType == MSGTYPE_PASSTHROUGH &&
-	     (ptr = strchr(name, PATH_DELIM)) != NULL ) *ptr = '_';
+	if (area->fileName) xstrcat(&name, area->fileName);
+	else name = makeMsgbFileName(area->areaName);
     } else {
 	if (area->fileName) xstrcat(&name, (ptr = strrchr(area->fileName,PATH_DELIM))
 				    ? ptr+1 : area->fileName);

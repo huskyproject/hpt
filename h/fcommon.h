@@ -130,5 +130,7 @@ void *safe_realloc(void *ptr, size_t size);
 char *safe_strdup(const char *src);
 int needUseFileBoxForLink (s_link *link);
 char *makeFileBoxName (s_link *link);
+int isValidConference(char *s);
+char *makeMsgbFileName(char *s);
 
 #endif

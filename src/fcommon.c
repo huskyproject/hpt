@@ -805,3 +805,27 @@ char *safe_strdup(const char *src)
     if (ptr == NULL) exit_hpt("out of memory", 1);
     return ptr;
 }
+
+int isValidConference(char *s) {
+    // according to FSC-0074 with lowercase symbols
+    // lowercase symbols only for internal use
+    while (*s) {
+	if ( !(*s >= 33 && *s <= 126) || (*s == config->CommentChar) ) return 0;
+	s++;
+    }
+    return 1;
+}
+
+char *makeMsgbFileName(char *s) {
+    // allowed symbols: 0..9, a..z, A..Z, ".!@#$^&()~`'-_{}"
+    static char str[]="\"*+,/:;<=>?[\\]|%"; // not allowed
+    char *name=NULL;
+
+    while (*s) {
+	if (strchr(str,*s)) xscatprintf(&name,"%%%x", *s);
+	else xscatprintf(&name, "%c", *s);
+	s++;
+    }
+
+    return name;
+}

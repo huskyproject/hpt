@@ -958,24 +958,10 @@ static int makealldirs(const char *basedir, const char *filename)
     
 #undef my_isdirsep
 
-int isValidName(char *str) {
-    const char validstr[]="._0123456789$&-'/!";
-    
-    while (*str) {
-	if (!(*str >= 'A' && *str <= 'Z') &&
-	    !(*str >= 'a' && *str <= 'z') &&
-	    (strchr(validstr, *str)==NULL))
-	    return 0;
-	str++;
-    }
-
-    return 1;    
-}
-
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 {
     FILE *f;
-    char *fileName, *squishFileName=NULL, *acDef;
+    char *fileName, *msgbFileName=NULL, *acDef;
     char *buff=NULL, *myaddr=NULL, *hisaddr=NULL;
     char *msgbtype, *newAC=NULL, *desc, *msgbDir;
     char *cp;                    /* temp. usage */
@@ -983,22 +969,18 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     s_area *area;
     int i;
 
-    // don't create areas with symbols space, tab, path delim, :, and
-    // comment symbol
-    //if (strchr(c_area,' ') || strchr(c_area,'\t') ||
-    //strchr(c_area,PATH_DELIM) || strchr(c_area,config->CommentChar) ||
-    //strchr(c_area,':')) return 7;
-    if (!isValidName(c_area)) return 7;
+    if (strlen(c_area)>60) return 11;
+    if (!isValidConference(c_area)) return 7;
 
-    xstrcat(&squishFileName, c_area);
+    msgbFileName = makeMsgbFileName(c_area);
 
     // translating name of the area to lowercase/uppercase
     if (config->createAreasCase == eUpper) strUpper(c_area);
     else strLower(c_area);
 
     // translating filename of the area to lowercase/uppercase
-    if (config->areasFileNameCase == eUpper) strUpper(squishFileName);
-    else strLower(squishFileName);
+    if (config->areasFileNameCase == eUpper) strUpper(msgbFileName);
+    else strLower(msgbFileName);
 
     creatingLink = getLinkFromAddr(*config, pktOrigAddr);
 
@@ -1035,18 +1017,16 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
 #ifndef MSDOS                            
 	    need_dos_file = hpt_stristr(newAC, "-dosfile")!=NULL;
-	    if (!need_dos_file) // fix for slashes in AREATAG
-		need_dos_file = strchr(squishFileName,PATH_DELIM)!=NULL;
 #else
 	    need_dos_file = 1;
-#endif       
+#endif
 
 	    if (creatingLink->autoAreaCreateSubdirs && !need_dos_file)
 		{
 		    // "subdirify" the message base path if the
 		    // user wants this. this currently does not
 		    // work with the -dosfile option
-		    for (cp = squishFileName; *cp; cp++)
+		    for (cp = msgbFileName; *cp; cp++)
 			{
 			    if (*cp == '.')
 				{
@@ -1054,16 +1034,16 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 				}
 			}
 
-		    if (!makealldirs(msgbDir,squishFileName))
+		    if (!makealldirs(msgbDir,msgbFileName))
 			{
-			    w_log('9', "autoAreaCreateSubdirs: Could not create some paths for %s%s", msgbDir, squishFileName);
+			    w_log('9', "autoAreaCreateSubdirs: Could not create some paths for %s%s", msgbDir, msgbFileName);
 			    return 1;
 			}
 		}
 
 	    if (!need_dos_file)
 		xscatprintf(&buff, "EchoArea %s %s%s%s", c_area,
-			    msgbDir, squishFileName,
+			    msgbDir, msgbFileName,
 			    (msgbtype) ? "" : " -b Squish");
 	    else {
 		sleep(1); // to prevent time from creating equal numbers
@@ -1089,7 +1069,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	    del_tok(&newAC, "-keepunread");
 	}
    
-    nfree(squishFileName);
+    nfree(msgbFileName);
 
     if (creatingLink->LinkGrp) {
 	if (hpt_stristr(newAC, " -g ")==NULL)
@@ -1523,6 +1503,9 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
     case 10:
 	xstrcat(&textBuff,"No downlinks for passthrough area\r");
 	break;
+    case 11:
+	xstrcat(&textBuff,"lenght of CONFERENCE name is more than 60 symbols\r");
+	break;
     default :
 	xstrcat(&textBuff,"Another error\r");
 	break;
@@ -1812,7 +1795,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
     char   *bodyStart;             // msg-body without kludgelines start
     char   *ctrlBuf;               // Kludgelines
     XMSG   msgHeader;
-    char   *slash;
+//    char   *slash;
     int rc = 0, ccrc = 0, i;
 
     if (area == NULL) {
