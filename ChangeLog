@@ -1,3 +1,13 @@
+2002-10-25 Friday 12:05  stas_degteff
+
+	* doc/hpt.texi (hpt-1_2-stable.3): Change 'pause' token syntax and
+	examples
+
+2002-10-25 Friday 11:59  stas_degteff
+
+	* src/areafix.c (hpt-1_2-stable.5): Modify areafix pause message:
+	remove words about fileareas
+
 2002-10-24 Thursday 13:31  stas_degteff
 
 	* doc/hpt-FAQ.russian (hpt-1_2-stable.15): Add question/answer
