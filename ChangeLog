@@ -1,4 +1,10 @@
 ----- cvs ci ------
+Thu Oct 16 13:40:00 MET DST 1999
+sms:
+- reorganized Makefiles, please read README.Makefiles in the husky-common
+  package!
+
+----- cvs ci ------
 Wed Oct 13 16:47:49 NOVST 1999
 max:
 - fixed Kolyas changes in areafix (aka2str was used twice)

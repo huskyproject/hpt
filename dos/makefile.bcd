@@ -1,5 +1,8 @@
 #you should copy this file to ../src directory and run make in it 
-DEBUG   = 0
+
+# include Husky-Makefile-Config
+include ..\..\huskymak.cfg
+
 CC      = bcc
 
 OBJS    = pktinfo.obj \
@@ -20,17 +23,17 @@ OBJS    = pktinfo.obj \
           strsep.obj \
           purged~1.obj \
 	  dupe.obj \
-          tree.obj \
+          tree.obj \
 	  crc.obj
 
 SRC_DIR = ..\src
 
 !IF $(DEBUG) == 1
-CFLAGS  = -DDEBUG_HPT -v -w -ml -I..\h -I..\..\fidoconf -I..\..\smapi -DMSDOS
-LFLAGS  = -v -w -ml -L..\..\fidoconf;..\..\smapi
+CFLAGS  = -DDEBUG_HPT -v -w -ml -I..\h -I$(INCDIR) -DMSDOS
+LFLAGS  = -v -w -ml -L$(LIBDIR)
 !ELSE
-CFLAGS  = -w -ml -I..\h -I..\..\fidoconf -I..\..\smapi -DMSDOS
-LFLAGS  = -w -ml -L..\..\fidoconf;..\..\smapi
+CFLAGS  = -w -ml -I..\h -I$(INCDIR) -DMSDOS
+LFLAGS  = -w -ml -L$(LIBDIR)
 !ENDIF
 
 all: $(OBJS) \
@@ -103,4 +106,18 @@ smapibcd.lib
 !
  
 .c.obj:
-  $(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -c $<
+
+clean:
+	del *.obj *.bak
+
+distclean: clean
+	del *.exe
+
+install: hpt.exe purged.exe pktinfo.exe tpkt.exe tlog.exe
+	copy hpt.exe $(BINDIR)
+	copy purged.exe $(BINDIR)
+	copy pktinfo.exe $(BINDIR)
+	copy tpkt.exe $(BINDIR)
+	copy tlog.exe $(BINDIR)
+

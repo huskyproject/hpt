@@ -1,1 +1,1 @@
-nmake -f makefile.w32 %1 %2 %3 %4 %5
+nmake -f makefile.wcx %1 %2 %3 %4 %5

@@ -1,1 +1,1 @@
-nmake /nologo -f makefile.w32 %1 %2 %3 %4 %5
+nmake /nologo -f makefile.wcx %1 %2 %3 %4 %5

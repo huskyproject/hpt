@@ -1,1 +1,1 @@
-nmake -f makefile.w16 %1 %2 %3 %4 %5
+nmake -f makefile.wcd %1 %2 %3 %4 %5

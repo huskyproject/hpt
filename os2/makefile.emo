@@ -1,18 +1,19 @@
 # makefile for PGCC/EMX 1.1.1
-DEBUG   = 0
-CC      = gcc 
-INSTDIR = /usr/local/bin
-MANDIR  = /usr/local/man
 
-OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj seenby.obj dupe.obj tree.obj recode.obj areafix.obj post.obj link.obj strsep.obj crc.obj
+# include Husky-Makefile-Config
+include ../../huskymak.cfg
+
+CC      = gcc
+
+OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj seenby.obj dupe.obj tree.obj recode.obj areafix.obj post.obj link.obj strsep.obj crc.obj
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -Zomf -Zcrtdll -I../h -I../../fidoconfig -I../../smapi -Wall -ggdb -s -DOS2
-  LFLAGS  = -Zomf -Zcrtdll -L../../fidoconfig -L../../smapi -I../h -I../../smapi -lwrap
+  CFLAGS  = -c -Zomf -Zcrtdll -I../h -I$(INCDIR) -Wall -ggdb -DOS2
+  LFLAGS  = -Zomf -Zcrtdll -L$(LIBDIR) -lwrap
 else
-  CFLAGS  = -c -fomit-frame-pointer -fstrength-reduce -Zomf -Zcrtdll -I../h -I../../fidoconfig -I../../smapi -Wall -mpentium -s -DOS2 -O3
-  LFLAGS  = -fomit-frame-pointer -fstrength-reduce -Zomf -Zcrtdll -L../../fidoconfig -L../../smapi -I../h -I../../smapi -lwrap
+  CFLAGS  = -c -fomit-frame-pointer -fstrength-reduce -Zomf -Zcrtdll -I../h -I$(INCDIR) -Wall -s -DOS2 -O3
+  LFLAGS  = -Zomf -Zcrtdll -L$(LIBDIR) -lwrap
 endif
 
 all: $(OBJS) \
@@ -20,7 +21,7 @@ all: $(OBJS) \
      tlog.exe \
      tpkt.exe \
      hpt.exe \
-     purgeDupes.exe 
+     purgeDupes.exe
 
 %.obj: $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
@@ -39,3 +40,17 @@ hpt.exe: $(OBJS)
 
 purgeDupes.exe: purgeDupes.obj global.obj dupe.obj tree.obj pktread.obj log.obj recode.obj
 	$(CC) $(LFLAGS) -Os -o purgeDupes.exe purgeDupes.obj tree.obj pktread.obj recode.obj dupe.obj global.obj log.obj -lfidoconfig -lsmapiemo
+
+clean:
+	-del *.obj *.bak
+
+distclean: clean
+	-del *.exe
+
+install: hpt.exe purged.exe pktinfo.exe tpkt.exe tlog.exe
+	copy hpt.exe $(BINDIR)
+	copy purged.exe $(BINDIR)
+	copy pktinfo.exe $(BINDIR)
+	copy tpkt.exe $(BINDIR)
+	copy tlog.exe $(BINDIR)
+
