@@ -1897,11 +1897,12 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 
     if (!security) {
 	textBuff = safe_strdup(msg->text);
-    tmp = textBuff;
+        tmp = textBuff;
 	token = strseparate (&tmp, "\n\r");
 	while(token != NULL) {
 	    while ((*token == ' ') || (*token == '\t')) token++;
 	    while(isspace(token[strlen(token)-1])) token[strlen(token)-1]='\0';
+            w_log(LL_AREAFIX, "Process command: %s", token);
 	    preport = processcmd( link, token, tellcmd (token) );
 	    if (preport != NULL) {
 		switch (RetFix) {
