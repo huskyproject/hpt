@@ -2,6 +2,11 @@ hpt 0.29
 --------
 
 ----- cvs ci ------
+Sun Aug 29 21:25:52 NOVST 1999
+max:
+* fixed bug when packed mail for busy links
+	
+----- cvs ci ------
 Sat Aug 28 13:47:33 NOVST 1999
 max:
 * some fixes for last bugfix :)

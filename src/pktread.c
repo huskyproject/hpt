@@ -307,7 +307,7 @@ s_message *readMsgFromPkt(FILE *pkt, s_pktHeader *header)
 
 void freeMsgBuffers(s_message *msg)
 {
-  free(msg->text);
+  if (msg->text) free(msg->text);
   free(msg->subjectLine);
   free(msg->toUserName);
   free(msg->fromUserName);

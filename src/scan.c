@@ -300,6 +300,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
    s_link      *link, *virtualLink;
    char        freeVirtualLink = 0;
 
+   memset(&msg,0,sizeof(s_message));
    convertMsgHeader(*xmsg, &msg);
 
    // prepare virtual link...
