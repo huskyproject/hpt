@@ -392,7 +392,8 @@ int main(int argc, char **argv)
    int i, rc;
    char *version = NULL;
 #if defined ( __NT__ )
-   char title[ 256 ], oldtitle[ 256 ];
+   #define TITLESIZE 256
+   char title[ TITLESIZE ], oldtitle[ TITLESIZE ];
 #endif
 
 xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVICE, VER_BRANCH);
@@ -428,7 +429,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 
 #if defined ( __NT__ )
    if (config->setConsoleTitle) {
-	   sprintf( title, "Highly Portable Tosser %s", version);
+	   snprintf( title, TITLESIZE, "Highly Portable Tosser %s", version);
 	   GetConsoleTitleA( oldtitle, 256 );
 	   SetConsoleTitleA( title );
    }

@@ -224,9 +224,15 @@ void cleanEmptyBundles(char *pathName, int npos)
    DIR            *dir;
    struct dirent  *file;
    struct stat stbuf;
+   unsigned pathlen;
    time_t tr;
 
-   tmpfile = safe_malloc(strlen(pathName) + 4);
+   if( npos >= strlen(pathName) )
+   { w_log( LL_CRIT, "fcommon.c:cleanEmptyBundles(): 'npos' too big! Can't work." );
+     return;
+   }
+   pathlen = strlen(pathName) + 4;
+   tmpfile = safe_malloc(pathlen);
 
    strcpy(tmpfile, pathName);
    savech = tmpfile[npos-1]; // there must be path delimiter
@@ -252,7 +258,7 @@ void cleanEmptyBundles(char *pathName, int npos)
 
 	   if ( patimat(file->d_name, pattern) == 1 ) {
 
-		   strcpy(tmpfile+npos, file->d_name);
+		   strncpy(tmpfile+npos, file->d_name, pathlen);
 
 		   if ( stat(tmpfile, &stbuf) == 0) {
 

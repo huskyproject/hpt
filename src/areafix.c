@@ -524,7 +524,7 @@ char *available(s_link *link) {
 	    xscatprintf(&report, " %s\r\r",print_ch(77,'-'));
 
 	    // warning! do not ever use aka2str twice at once!
-	    sprintf(linkAka, "%s", aka2str(link->hisAka));
+	    snprintf(linkAka, 25, "%s", aka2str(link->hisAka));
 	    w_log('8', "areafix: Available Area List from %s sent to %s", aka2str(uplink->hisAka), linkAka);
 	}
     }
@@ -1397,7 +1397,7 @@ char *info_link(s_link *link)
     char Arch[]="Compression: ";
     int i;
     
-    sprintf(linkAka,aka2str(link->hisAka));
+    snprintf(linkAka,25,aka2str(link->hisAka));
     xscatprintf(&report, "Here is some information about our link:\r\r %s%s\r%s%s\r  %s", hisAddr, linkAka, ourAddr, aka2str(*link->ourAka), Arch);
     
     if (link->packerDef==NULL) 

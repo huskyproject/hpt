@@ -54,20 +54,22 @@ void sortSeenBys(s_seenBy *seenBys, UINT count)
 
 char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
 {
-   int  size = 81, i;
-   char *text=NULL, *line, addr2d[13];
-   
+   #define size 81
+   #define addr2dSize 13
+   int  i;
+   char *text=NULL, *line, addr2d[addr2dSize];
+
    if (seenByCount==0) {              //return empty control line
       xstrcat(&text, lineHeading);
    } else {
        
       line = safe_malloc ((size_t) size);
 
-      sprintf(addr2d, "%u/%u", seenBys[0].net, seenBys[0].node);
+      snprintf(addr2d, addr2dSize, "%u/%u", seenBys[0].net, seenBys[0].node);
       text = (char *) safe_malloc((size_t) size);
       text[0]='\0';
-      strcpy(line, lineHeading);
-      strcat(line, addr2d);
+      strncpy(line, lineHeading, size);
+      strncat(line, addr2d, size);
       for (i=1; i < seenByCount; i++) {
 
 // fix for double seen-by's (may be after ignoreSeen)
@@ -78,18 +80,18 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
 //			 seenBys[i-1].node == seenBys[i].node) continue;
 
          if (seenBys[i-1].net == seenBys[i].net)
-            sprintf(addr2d, " %u", seenBys[i].node);
+            snprintf(addr2d, addr2dSize, " %u", seenBys[i].node);
          else
-            sprintf(addr2d, " %u/%u", seenBys[i].net, seenBys[i].node);
+            snprintf(addr2d, addr2dSize, " %u/%u", seenBys[i].net, seenBys[i].node);
 
-         if (strlen(line)+strlen(addr2d) +1 > 79) {
+         if (strlen(line)+strlen(addr2d) > size-3) {
             //if line would be greater than 79 characters, make new line
-            strcat(text,line);
-            strcat(text, "\r");
+            strcat(text, line);
+            strncat(text, "\r", size);
             text = (char *) safe_realloc(text,strlen(text)+size);
-            strcpy(line, lineHeading);
+            strncpy(line, lineHeading, size);
             // start new line with full 2d information
-            sprintf(addr2d, "%u/%u", seenBys[i].net, seenBys[i].node);
+            snprintf(addr2d, addr2dSize, "%u/%u", seenBys[i].net, seenBys[i].node);
          }
          strcat(line, addr2d);
       }
@@ -99,7 +101,7 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
 	  nfree(line);
    }
                            
-   strcat(text, "\r");
+   strncat(text, "\r", size);
 
    return text;
 }
