@@ -1,3 +1,17 @@
+2002-09-18 Wednesday 18:30  pgul
+
+	* src/toss.c (1.440): unsafe tmpnam() usage changed to
+	createTempTextFile()
+
+2002-09-18 Wednesday 18:00  pgul
+
+	* h/link.h (1.7), src/hpt.c (1.155), src/link.c (1.60): Added hpt
+	link -j switch, link jam areas by msgid/reply crc -- speedup
+
+2002-09-18 Wednesday 04:39  stas_degteff
+
+	* doc/hpt.texi (1.83): Cosmetic fix
+
 2002-09-17 Tuesday 19:53  stas_degteff
 
 	* doc/hpt.texi (1.82): Correct documentation
