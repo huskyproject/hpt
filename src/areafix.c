@@ -1458,7 +1458,7 @@ char *packer(s_link *link, char *cmdline) {
 
 char *rsb(s_link *link, char *cmdline)
 {
-    int mode; // 1 = RSB on, 0 - RSB off.
+    UINT mode; // 1 = RSB on, 0 - RSB off.
     char *param=NULL; // RSB value.
     char *report=NULL;
     char *confName = NULL;
@@ -1514,12 +1514,12 @@ int tellcmd(char *cmd) {
     if (strncmp(cmd, "* Origin:", 9) == 0) return NOTHING;
     
     line = cmd;
-    if (line && *line && (line[1]==' ' || line[1]=='\t')) return ERROR;
+    if (line && *line && (line[1]==' ' || line[1]=='\t')) return AFERROR;
     
     switch (line[0]) {
     case '%':
         line++;
-        if (*line == '\000') return ERROR;
+        if (*line == '\000') return AFERROR;
         if (strncasecmp(line,"list",4)==0) return LIST;
         if (strncasecmp(line,"help",4)==0) return HELP;
         if (strncasecmp(line,"avail",5)==0) return AVAIL;
@@ -1541,17 +1541,17 @@ int tellcmd(char *cmd) {
                 return RESCAN;
             }
         }
-        return ERROR;
+        return AFERROR;
     case '\001': return NOTHING;
     case '\000': return NOTHING;
     case '-'  :
         if (line[1]=='-' && line[2]=='-') return DONE;
-        if (line[1]=='\000') return ERROR;
-        if (strchr(line,' ') || strchr(line,'\t')) return ERROR;
+        if (line[1]=='\000') return AFERROR;
+        if (strchr(line,' ') || strchr(line,'\t')) return AFERROR;
         return DEL;
     case '~'  : return REMOVE;
     case '+':
-        if (line[1]=='\000') return ERROR;
+        if (line[1]=='\000') return AFERROR;
     default:
         if (fc_stristr(line, " /R")!=NULL) return ADD_RSC; // add & rescan
         return ADD;
@@ -1617,7 +1617,7 @@ char *processcmd(s_link *link, char *line, int cmd) {
     case ADD_RSC: report = add_rescan(link, line);
         RetFix=STAT;
         break;
-    case ERROR: report = errorRQ(line);
+    case AFERROR: report = errorRQ(line);
         RetFix=STAT;
         break;
     default: return NULL;

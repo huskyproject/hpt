@@ -23,7 +23,7 @@
 #define RSB     15
 #define DONE    100
 #define STAT    101
-#define ERROR   255
+#define AFERROR   255
 
 char *print_ch(int len, char ch);
 int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd);
