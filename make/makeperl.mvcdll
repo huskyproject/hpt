@@ -4,7 +4,7 @@
 DEBUG=0
 CC=cl
 EXENAMEFLAG=-Fe
-PERL_DIR=c:\pub\perl
+PERL_DIR=e:\GVN\Perl
 SRC_DIR=..\src\
 
 CFLAGS=-nologo -Zp1 -Ob2 -c -MD -I..\.. -I..\h -I"$(PERL_DIR)\lib\core"
@@ -16,7 +16,7 @@ EXE=.exe
 RM=del
 PERLOBJ = perl.obj
 
-LIBS= ..\..\fidoconf\fconfmvc.lib ..\..\smapi\smapimvc.lib USER32.LIB msvcrt.lib Kernel32.lib delayimp.lib $(PERL_DIR)\lib\core\perl56.lib /link /opt:nowin98
+LIBS= ..\..\fidoconf\fconfmvc.lib ..\..\smapi\smapimvc.lib USER32.LIB msvcrt.lib Kernel32.lib delayimp.lib $(PERL_DIR)\lib\core\perl56.lib /link /opt:nowin98 /delayload:perl56.dll
 
 default: all
 
