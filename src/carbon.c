@@ -97,7 +97,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
     progname = carbon.areaName;
 #ifdef HAVE_POPEN	
     if (*progname == '|') {
-	msgfp = popen(progname + 1, "w");
+	msgfp = popen(progname + 1, "wt");
     } else
 #endif
 	msgfp = createTempTextFile(config, &fname);
@@ -114,30 +114,30 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
     fprintf(msgfp, "Subject: \"%s\"\n\n", msg->subjectLine);
     /* Output msg text */
     for (p = msg->text; *p ; p++)
-	if (*p == '\r')
-	    fputc('\n', msgfp);
-	else
-	    fputc(*p, msgfp);
+      if (*p == '\r')
+        fputc('\n', msgfp);
+      else
+        fputc(*p, msgfp);
     fputc('\n', msgfp);
 #ifdef HAVE_POPEN	
     if (*progname == '|') {
-	pclose(msgfp);
-	rc = 0;
+      pclose(msgfp);
+      rc = 0;
     } else
 #endif
-	{
-	    /* Execute external program */
-	    fclose(msgfp);
-	    execstr = safe_malloc(strlen(progname)+strlen(fname)+2);
-	    sprintf(execstr, "%s %s", progname, fname);
+    {
+      /* Execute external program */
+      fclose(msgfp);
+      execstr = safe_malloc(strlen(progname)+strlen(fname)+2);
+      sprintf(execstr, "%s %s", progname, fname);
 #ifdef __NT__
-	    CharToOem(execstr, execstr); /*  this is really need? */
+      CharToOem(execstr, execstr); /*  this is really need? */
 #endif
-	    rc = system(execstr);
-	    nfree(execstr);
-	    unlink(fname);
-	    nfree(fname);
-	}
+      rc = system(execstr);
+      nfree(execstr);
+      unlink(fname);
+      nfree(fname);
+    }
 /*    if (rc == -1 || rc == 127) */
     if (rc)  /* system() return exit status returned by shell */
 	w_log(LL_ERR, "Execution of external process failed. Cmd is: %s", execstr);
