@@ -195,12 +195,14 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
     if (maxopenpkt == 0) setmaxopen();
 
     if (echo->harea == NULL) {
+    w_log( LL_SRCLINE, "%s:%d opening %s", __FILE__, __LINE__,echo->fileName);
 	echo->harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, 
 			/*echo->fperm, echo->uid, echo->gid,*/
 			(word)(echo->msgbType | (msg->netMail ? 0 : MSGTYPE_ECHO)));
 	if (echo->harea) nopenpkt+=3;
     }
     if (echo->harea != NULL) {
+    w_log( LL_SRCLINE, "%s:%d creating msg", __FILE__, __LINE__);
 	hmsg = MsgOpenMsg(echo->harea, MOPEN_CREATE, 0);
 	if (hmsg != NULL) {
 
@@ -249,20 +251,19 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 		    }
 		}
 	    }
-
-	   
 	    ctrlBuff = (char *) CopyToControlBuf((UCHAR *) textWithoutArea,
 						 (UCHAR **) &textStart,
 						 &textLength);
 	    // textStart is a pointer to the first non-kludge line
 	    xmsg = createXMSG(config,msg, NULL, forceattr,tossDir);
-
+        w_log( LL_SRCLINE, "%s:%d writing msg", __FILE__, __LINE__);
 	    if (MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword)
 			    textLength, (dword) textLength,
 			    (dword)strlen(ctrlBuff), (byte*)ctrlBuff)!=0) 
 		w_log(LL_ERR, "Could not write msg in %s!", echo->fileName);
 	    else rc = 1; // normal exit
 
+        w_log( LL_SRCLINE, "%s:%d closing msg", __FILE__, __LINE__);
 	    if (MsgCloseMsg(hmsg)!=0) {
 		w_log(LL_ERR, "Could not close msg in %s!", echo->fileName);
 		rc = 0;
@@ -272,12 +273,14 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 	} else w_log(LL_ERR, "Could not create new msg in %s!", echo->fileName);
 	/* endif */
 	if (nopenpkt>=maxopenpkt-12) {
+        w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,echo->fileName);
 	    MsgCloseArea(echo->harea);
 	    echo->harea = NULL;
 	    nopenpkt-=3;
 	}
     } else w_log(LL_ERR, "Could not open/create EchoArea %s!", echo->fileName);
     /* endif */
+    w_log( LL_SRCLINE, "%s:%d end rc=%d", __FILE__, __LINE__,rc);
     return rc;
 }
 

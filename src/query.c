@@ -560,8 +560,8 @@ void af_QueueReport()
     xstrcat(&header, report);
     report = header;
     if (config->ReportTo) {
-	if (stricmp(config->ReportTo,"netmail")==0) netmail=1;
-	else if (getNetMailArea(config, config->ReportTo) != NULL) netmail=1;
+        if (stricmp(config->ReportTo,"netmail")==0)                netmail=1;
+        else if (getNetMailArea(config, config->ReportTo) != NULL) netmail=1;
     } else netmail=1;
 
     msgToSysop[0] = makeMessage(&(config->addr[0]),&(config->addr[0]), 
