@@ -169,42 +169,6 @@ char *hpt_stristr(char *str, char *find)
     return ((char *)str);
 }
 
-char *changeFileSuffix(char *fileName, char *newSuffix) {
-
-    int   i = 1;
-    char  buff[200];
-
-    char *beginOfSuffix = strrchr(fileName, '.')+1;
-    char *newFileName;
-    int  length = strlen(fileName)-strlen(beginOfSuffix)+strlen(newSuffix);
-
-    newFileName = (char *) safe_malloc((size_t) length+1+2);
-    memset(newFileName, '\0',length+1+2);
-    strncpy(newFileName, fileName, length-strlen(newSuffix));
-    strcat(newFileName, newSuffix);
-
-#ifdef DEBUG_HPT
-    printf("old: %s      new: %s\n", fileName, newFileName);
-#endif
-
-    while (fexist(newFileName) && (i<255)) {
-	sprintf(buff, "%02x", i);
-	beginOfSuffix = strrchr(newFileName, '.')+1;
-	strncpy(beginOfSuffix+1, buff, 2);
-	i++;
-    }
-
-    if (!fexist(newFileName)) {
-	rename(fileName, newFileName);
-	return newFileName;
-    } else {
-	w_log('9', "Could not change suffix for %s. File already there and the 255 files after", fileName);
-	nfree(newFileName);
-	return NULL;
-    }
-   
-}
-
 /* return value: 1 if success, 0 if fail */
 int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 {
