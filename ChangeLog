@@ -1,3 +1,18 @@
+2002-12-02 Monday 16:19  stas_degteff
+
+	* h/version.h (1.10), src/global.c (1.47), src/hpt.c (1.161),
+	src/hptlink.c (1.46), src/pktinfo.c (1.19), src/scan.c (1.181),
+	src/txt2pkt.c (1.43): Implement unify version string generation
+	using GenVersionStr()
+
+2002-12-02 Monday 16:17  stas_degteff
+
+	* config/: config (1.8), config.win (1.3): Fix comments
+
+2002-12-02 Monday 07:32  stas_degteff
+
+	* config/: config (1.7), config.win (1.2): Add AreafixReportsAttr
+
 2002-11-29 Friday 14:24  stas_degteff
 
 	* src/toss.c (1.483): Try to fix EMX version (remove local variable
