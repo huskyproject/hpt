@@ -66,6 +66,10 @@
 # gmtoff([unixtime])
 # returns difference between local time and UTC in hours (e.g., can be +4.5)
 # if unixtime is omitted, current time used
+#
+# WARNING: Don't redefine already predefined variable via my() or local().
+# otherwise their values will not be put back into hpt.
+#
 
 sub filter
 {
