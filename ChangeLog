@@ -1,3 +1,9 @@
+2003-05-07 Wednesday 17:11  mche
+
+	* src/areafix.c (1.408):  - common areafix function moved from
+	htick & hpt to fidoconfig
+	 - process writeonly/readonly tokens for fileechos
+
 2003-05-06 Tuesday 08:25  andrews42
 
 	* misc/hpt_ro/: ro.cfg (1.5), ro_readme_eng.txt (1.2): fix typos in
