@@ -530,41 +530,70 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 
 int delLinkFromString(char **lineOut, char *line, char *linkAddr)
 {
-    char *startLink, *ptr, *tmp, *origLine;
-    unsigned int endLen=0; // length of string where link ends
+    char *startLink, *ptr, *tmp, *origLine, *comment, *eptr=NULL, *linkStr;
+    unsigned int nodeAddr=0, rc=1, endLen=0; // length of string where link ends
 
     origLine = safe_strdup(line);
     startLink = line;
     tmp = line;
-    while ( (ptr = strstr(tmp, linkAddr)) != NULL ) {
-        if (isspace(*(ptr-1)) && (strchr(ptr, '"')==NULL) &&
-            (isspace(ptr[strlen(linkAddr)]) || ptr[strlen(linkAddr)]=='\000'))
-        {
-            endLen = ptr - line + strlen(linkAddr)+1;
-            startLink = ptr;
-        }
-        tmp = ptr + 1;
+    // find comments
+    for (comment = line; (comment = strchr(comment+1, CommentChar)) != NULL;)
+	if (*(comment-1) == ' ' || *(comment-1) == '\t')
+	    break;
+    // make search string
+    linkStr = safe_malloc(strlen(linkAddr)+3);
+    strcpy(linkStr, linkAddr);
+    ptr=strchr(linkStr, '.');
+    if (ptr==NULL) {
+	nodeAddr = 1;
+	ptr=linkStr+strlen(linkStr);
     }
-    ptr = line + endLen;
+    strcpy(ptr, ".*");
 
-//    startLink --; // skip spaces
-    if (endLen) {
+    tmp = line;
+    do {
+	ptr = strstr(tmp+1, linkAddr);
+	endLen = 0;
+	if (ptr && comment && ptr>=comment) ptr=NULL;
+	if (ptr && isspace(*(ptr-1))) {
+	    eptr = ptr+strlen(linkAddr);
+	    if (isspace(*eptr) || *eptr=='\0' ||
+	        (nodeAddr && *eptr=='.' && eptr[1]=='0' && (isspace(eptr[2]) || eptr[2]=='\0'))) {
+		tmp = ptr;
+		endLen = eptr + 1 - line;
+		rc = 0; // all ok
+	    }
+	}
+	ptr = strstr(tmp+1, linkStr);
+	if (ptr && comment && ptr>=comment) ptr=NULL;
+	if (ptr && isspace(*(ptr-1))) {
+	    eptr = ptr+strlen(linkStr);
+	    if (isspace(*eptr) || *eptr=='\0') {
+		tmp = ptr;
+		endLen = eptr + 1 - line;
+		rc = 2; // found, but cannot unsubscribe
+	    }
+	}
+    } while (endLen);
+
+    if (rc == 0) {
+	eptr = tmp+strlen(linkAddr);
+	if (*eptr == '.' && eptr[1] == '0') eptr+=2;
+	if (*eptr && isspace(*eptr)) eptr++;
+	endLen = eptr - line;
+	startLink = tmp;
+	ptr = line + endLen;
         while (ptr) {
             tmp = strseparate(&ptr, " \t"); // looking for link options...
             if (tmp == NULL)  break; // nothing found
-            if (ptr == NULL) // got EOL
-            {
-                endLen = strlen(origLine);
-                break;
-            }
             if (*tmp != '-') break; // this is not option
             else { // found link option
-                if (!strncasecmp(tmp, "-r", 2) ||
+                /* if (!strncasecmp(tmp, "-r", 2) ||
                     !strncasecmp(tmp, "-w", 2) ||
                     !strncasecmp(tmp, "-mn", 3) ||
-                    !strncasecmp(tmp, "-def", 4))
+                    !strncasecmp(tmp, "-def", 4)) */
                 {
-                    endLen = ptr - line;
+                    endLen = ptr ? (ptr - line) : strlen(origLine);
                     continue;
                 }
             }
@@ -573,13 +602,11 @@ int delLinkFromString(char **lineOut, char *line, char *linkAddr)
         *lineOut = (char *) safe_calloc(strlen(line) + 1, 1);
         strncpy(*lineOut, origLine, startLink - line);
         if (endLen < strlen(origLine))
-            xscatprintf(lineOut, "%s", origLine + endLen);
-        nfree(origLine);
-        return 0; // all ok
+	    strcpy(*lineOut+(startLink-line), origLine+endLen);
     }
-    // else
     nfree(origLine);
-    return 1; // not found
+    nfree(linkStr);
+    return rc;
 }
 
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
@@ -589,8 +616,8 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     char *tmpFileName=NULL;
     int rc=0;
     e_changeConfigRet nRet = I_ERR;
-    char* areaName = area->areaName;
-    char *addr = NULL, *rewrittenLine = NULL;
+    char *areaName = area->areaName;
+    char *rewrittenLine = NULL;
 
     w_log(LL_FUNC,"areafix.c::changeconfig()");
 
@@ -674,19 +701,16 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
                 forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 1);
             }
         case 7:
-            if ((rc = delLinkFromString(&rewrittenLine, cfgInline, (char *) aka2str(link->hisAka))) == 1)
-                if (link->hisAka.point==0) { // fix for node addr with trailing .0
-                    xscatprintf(&addr,"%u:%u/%u.%u",
-                                link->hisAka.zone,link->hisAka.net,
-                                link->hisAka.node,link->hisAka.point);
-                    rc = delLinkFromString(&rewrittenLine, cfgInline, addr);
-                    nfree(addr);
-                }
-            if (rc) w_log('9',"areafix: can't del link %s from echo area %s",
+            if ((rc = delLinkFromString(&rewrittenLine, cfgInline, (char *) aka2str(link->hisAka))) == 1) {
+                    w_log('9',"areafix: can't del link %s from echo area %s",
                           aka2str(link->hisAka), areaName);
-            rewrittenLine = trimLine(rewrittenLine);
-            fprintf(cfgout, "%s%s", rewrittenLine, cfgEol()); // add line to config
-            nRet = DEL_OK;
+		    nRet = O_ERR;
+                    fprintf(cfgout, "%s%s", cfgInline, cfgEol());
+	    } else {
+                    rewrittenLine = trimLine(rewrittenLine);
+                    fprintf(cfgout, "%s%s", rewrittenLine, cfgEol()); // add line to config
+                    nRet = DEL_OK;
+	    }
             break;
         case 2:
         //makepass(f, fileName, areaName);
