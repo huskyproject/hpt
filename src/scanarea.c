@@ -300,6 +300,8 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount, long resc
    HMSG  hmsg;
    XMSG  xmsg;
    dword highestMsg, i;
+   dword *pool;              /* pool of messages to rescan */
+   int   n_pool = 0, s_pool; /* actual and allocated pool size */
    unsigned int rc=0;
 
    area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, /*echo -> fperm,
@@ -331,6 +333,8 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount, long resc
        i = MsgGetHighMsg(area);
        MsgSetHighWater(area, i);
        if (rescanCount <= 0) rescanCount = i;
+       s_pool = rescanCount > 1024 ? 1024 : rescanCount;
+       pool = safe_malloc(s_pool * sizeof(*pool));
        while (i > 0 && rescanCount > 0) {
 	       hmsg = MsgOpenMsg(area, MOPEN_RW, i--);
 	       if (hmsg != NULL) {     /*  msg# does not exist */
@@ -343,11 +347,25 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount, long resc
                  continue;
                }
              }
-             rc += repackEMMsg(hmsg, xmsg, echo, arealink);
+             /* add its number to pool of to-rescan messages */
+             if (n_pool >= s_pool) {
+               s_pool *= 2;
+               pool = safe_realloc(pool, s_pool * sizeof(*pool));
+             }
+             pool[n_pool++] = i + 1;
              rescanCount--;        /* keep track of left to rescan messages */
              MsgCloseMsg(hmsg);
 	       }
        }
+       for (i = n_pool - 1; i >= 0; i--) {
+	       hmsg = MsgOpenMsg(area, MOPEN_RW, pool[i]);
+	       if (hmsg != NULL) {     /*  msg# does not exist */
+             MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+             rc += repackEMMsg(hmsg, xmsg, echo, arealink);
+             MsgCloseMsg(hmsg);
+	       }
+       }
+       nfree(pool);
 #endif /* val: change in algorithm */
        MsgCloseArea(area);
        closeOpenedPkt();
