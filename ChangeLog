@@ -1,6 +1,12 @@
 hpt 0.27
 --------
 
+
+----- cvs ci ------
+Thu Mar  18 Some time :)
++ Changed loglevel for String "Start Areafix" from 4 to 1, in order to
+  continuosly support the loglevel feature ...
+
 ----- cvs ci ------
 Thu Mar  18 22:23
 Max:

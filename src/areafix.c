@@ -1573,7 +1573,7 @@ void afix(void)
     s_message	    msg;
     int             for_us;
 
-    writeLogEntry(log, '4', "Start AreaFix...");
+    writeLogEntry(log, '1', "Start AreaFix...");
     
     netmail = MsgOpenArea((unsigned char *) config->netMailArea.fileName, MSGAREA_NORMAL, config->netMailArea.msgbType);
     if (netmail != NULL) {
