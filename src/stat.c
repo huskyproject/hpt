@@ -73,10 +73,10 @@ typedef struct  _chain_link{
 /* echo stats internal record */
 typedef struct _stat_echo { 
     struct _stat_echo *next;
-    short	links;
-    chain_link *chain;
-    short	tag_len;
-    char  tag[0];
+    short              links;
+    chain_link        *chain;
+    short              tag_len;
+    char              *tag;
 } stat_echo;
 
 /* prototypes */
@@ -90,6 +90,8 @@ void debug_out(stat_echo *e);
 static stat_echo *statecho = NULL;  /* first echo in echoes chain */
 static int do_stat = 1;                /* drop to 0 if critical error */
 
+/* Compare addresses (fidoconfig hs_addr and local st_addr)
+ */
 int acmp(hs_addr *a1, st_addr *a2)
 {
     if (a1->zone  != a2->zone)  return (a1->zone  < a2->zone)  ? -1 : 1;
@@ -99,6 +101,8 @@ int acmp(hs_addr *a1, st_addr *a2)
     return 0;
 }
 
+/* Compare addresses (two local st_addr)
+ */
 int acmp2(st_addr *a1, st_addr *a2)
 {
     if (a1->zone  != a2->zone)  return (a1->zone  < a2->zone)  ? -1 : 1;
@@ -110,20 +114,20 @@ int acmp2(st_addr *a1, st_addr *a2)
 
 void put_stat(s_area *echo, hs_addr *link, st_type type, long len)
 {
-    
-    stat_echo *cur = statecho, *prev = NULL, *me;
+    stat_echo *cur = statecho, *prev = NULL, *me=NULL;
     chain_link *curl, *prevl;
     int res;
-    
+
+    if(!echo || !link){ msg("Parameter is NULL"); return; }
     if (!do_stat) return;
     /* find pos and insert echo */
-    while ( (res = (cur != NULL) ? strcmp(echo->areaName, cur->tag) : -1) )
+    while ( (res = (cur != NULL) ? sstricmp(echo->areaName, cur->tag) : -1) )
         if (res < 0) {
-            me = malloc(sizeof(*me)+strlen(echo->areaName)+1);
+            me = calloc(1,sizeof(*me));
             if (me == NULL) { msg("Out of memory"); do_stat = 0; return; }
             
-            me->tag_len = strlen(echo->areaName);
-            memcpy(me->tag, echo->areaName, me->tag_len+1);
+            if( (me->tag_len = sstrlen(echo->areaName)) )
+                me->tag = strdup(echo->areaName);
             me->links = 0; me->chain = NULL;
             if (prev != NULL) prev->next = me; else statecho = me;
             me->next = cur; cur = me; break;
@@ -135,7 +139,7 @@ void put_stat(s_area *echo, hs_addr *link, st_type type, long len)
         while ( (res = (curl != NULL) ? acmp(link, &(curl->link.addr)) : -1) ) {
             if (res < 0) {
                 chain_link *me;
-                me = malloc(sizeof(*me));
+                me = calloc(1,sizeof(*me));
                 if (me == NULL) { msg("Out of memory"); do_stat = 0; return; }
                 
                 cur->links++;
@@ -195,7 +199,8 @@ void upd_stat(char *file)
         }
     }
     /* make new base: hpt.st$ */
-    newf = strdup(oldf); newf[strlen(newf)-1] = '$';
+    if((newf = sstrdup(oldf))) newf[strlen(newf)-1] = '$';
+    else { msg("Out of memory"); if (OLD != NULL) fclose(OLD); return; }
     NEW = fopen(newf, "wb");
     if (NEW == NULL) {
         msg2("Can't create tmp-file", newf);
@@ -211,12 +216,12 @@ void upd_stat(char *file)
         old = read_echo(OLD);
         if (!do_stat || old == NULL) break;
         /* write new echoes with lesser names */
-        while ( cur && strcmp(cur->tag, old->tag) < 0 ) {
+        while ( cur && sstricmp(cur->tag, old->tag) < 0 ) {
             write_echo(NEW, cur);
             cur = cur->next;
         }
         /* update current echo */
-        if ( cur && strcmp(cur->tag, old->tag) == 0 ) {
+        if ( cur && sstricmp(cur->tag, old->tag) == 0 ) {
             chain_link *prevl = NULL; 
             chain_link *newl  = cur->chain; 
             chain_link *oldl  = old->chain;
@@ -321,6 +326,7 @@ void free_echo(stat_echo *e) {
     chain_link *cur, *next;
     cur = e->chain;
     while (cur != NULL) { next = cur->next; nfree(cur); cur = next; }
+    nfree(e->tag);
     nfree(e);
 }
 
