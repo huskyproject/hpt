@@ -1,4 +1,4 @@
-hpt (1.2.0-20020626-1) unstable; urgency=low
+hpt (1.2.0-20020626-1) stable; urgency=low
 
   * NMU. Joerg, big thanks for Debian packages! But we don't see you now
     :-(
