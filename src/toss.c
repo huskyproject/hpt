@@ -814,7 +814,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
              fileName[0]='\0';
              sprintf (tmp,"%s-d \"%s\"",newAutoCreate,description);
              fileName++;
-             fileName=strrchr(fileName,'\"')+1;
+             fileName=strrchr(fileName,'\"')+1; /* "/ */
              strcat(tmp,fileName);
              free (newAutoCreate);
              newAutoCreate=tmp;
@@ -842,8 +842,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
    sprintf(buff+strlen(buff), " %s", hisaddr);
    
-   fprintf(f, "%s\n", buff);
-   
+   fprintf(f, "%s\n", buff); // add line to config
    fclose(f);
    
    // add new created echo to config in memory
