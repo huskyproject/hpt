@@ -469,7 +469,7 @@ char *help(s_link *link) {
 char *available(s_link *link) {
 	FILE *f;
 	int i=0,j=0;
-	char *avail=NULL, *report, addline[256];
+	char *avail=NULL, *report, addline[256], linkAka[24];
 	long endpos;
 	s_link *uplink=NULL;
 
@@ -510,9 +510,9 @@ char *available(s_link *link) {
 			report=(char*) realloc(report,strlen(report)+strlen(addline)+1);
 			strcat (report,addline);
 
-			writeLogEntry(hpt_log, '8', "areafix: Available Area List from %s sent to %s", 
-											aka2str(uplink->hisAka), aka2str(link->hisAka));
-			
+			// warning! do not ever use aka2str twice at once!
+			sprintf(linkAka, "%s", aka2str(link->hisAka));
+			writeLogEntry(hpt_log, '8', "areafix: Available Area List from %s sent to %s", aka2str(uplink->hisAka), linkAka);
 		}
 	}
 	

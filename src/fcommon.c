@@ -122,15 +122,6 @@ e_prio cvtFlavour2Prio(e_flavour flavour)
    return NORMAL;
 }
 
-char straka[24];
-
-char *aka2str(s_addr aka) {
-    if (aka.point) sprintf(straka,"%u:%u/%u.%u",aka.zone,aka.net,aka.node,aka.point);
-    else sprintf(straka,"%u:%u/%u",aka.zone,aka.net,aka.node);
-	
-    return straka;
-}	
-
 int fileNameAlreadyUsed(char *pktName, char *packName) {
    int i;
 

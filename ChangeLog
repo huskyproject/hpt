@@ -1,4 +1,10 @@
 ----- cvs ci ------
+Wed Oct 13 16:47:49 NOVST 1999
+max:
+- fixed Kolyas changes in areafix (aka2str was used twice)
+- remove Kolyas aka2str from fcommon.c - this function in fidoconfig
+
+----- cvs ci ------
 Mon Oct 11 22:47:05 NOVST 1999
 max:
 * log.c fix: normal print to stdout
