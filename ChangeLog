@@ -1,3 +1,9 @@
+2004-01-10 Saturday 18:08  andrew_ladutsko
+
+	* HISTORY (1.40), doc/hpt.texi (1.146): added info about
+	unsubscribeOnAreaDelete token; updated info about
+	sendNotifyMessages token
+
 2004-01-09 Friday 18:40  andrew_ladutsko
 
 	* doc/hpt.texi (1.145): fix misprint
