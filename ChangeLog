@@ -1,3 +1,9 @@
+2001-11-13 Tuesday 14:58  ml
+
+	* doc/hpt-FAQ.russian (1.10), man/hpttree.1 (1.2), src/fcommon.c
+	(1.100), src/hptlink.c (1.28), src/hpttree.c (1.18), src/pktread.c
+	(1.78): exit codes for hptlink & hpttree [patch by Serguei Revtov]
+
 2001-11-08 Thursday 15:42  ml
 
 	* src/: fcommon.c (1.99), hpt.c (1.115), hpttree.c (1.17), post.c
