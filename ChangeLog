@@ -1,3 +1,8 @@
+2002-06-06 Thursday 10:20  og
+
+	* src/scan.c: addViaToMsg() appends \r to Msg if needed before adding
+	via line.
+
 2002-06-05 Wednesday 14:33  mche
 
 	* src/: hpt.c (1.151), pktread.c (1.84), scan.c (1.160): function
