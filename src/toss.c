@@ -1384,9 +1384,9 @@ int processDir(char *directory, e_tossSecurity sec)
     int            rc;
     int            pktFile,
         arcFile;
-    int pktCount = 0;
+    long pktCount = 0;
     s_fileInDir *files = NULL;
-    int nfiles=0;
+    long nfiles=0;
     struct stat st;
     int dirNameLen;
     int filenum;
