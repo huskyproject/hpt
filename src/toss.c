@@ -2541,6 +2541,8 @@ void arcmail(s_link *tolink) {
 
 		if (!link->fileBox) link->fileBox = makeFileBoxName (link);
 
+		createDirectoryTree (link->fileBox);
+
 		if (link->packerDef != NULL) {
 
 		    fillCmdStatement(cmd, link->packerDef->call,
