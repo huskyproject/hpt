@@ -592,6 +592,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 	if ((f=fopen(fileName,"r+b")) == NULL)
 		{
 			fprintf(stderr, "areafix: cannot open config file %s \n", fileName);
+			writeLogEntry(hpt_log,'9',"areafix: cannot open config file \"%s\"",fileName);
 			nfree(fileName);
 			return 1;
 		}

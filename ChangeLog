@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Tue Nov 28 22:39:14 NOVT 2000
+max (patch from Serguei Revtov):
+* write to log when areafix can't change config file
+
+----- cvs ci ------
 Sun Nov 12 13:48:07 NOVT 2000
 max:
 * fixed segfault when run "hpt -c"
