@@ -1,3 +1,8 @@
+2001-09-11 Tuesday 18:16  ml
+
+	* doc/hpt.texi (1.39), src/areafix.c (1.221): inverting
+	forwardAreaPriority. now works according to documentation.
+
 2001-09-06 Thursday 16:50  ml
 
 	* src/areafix.c (1.220): fixed bug with very long lines in areafix
