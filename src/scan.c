@@ -99,38 +99,32 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
 
 void convertMsgText(HMSG SQmsg, s_message *msg)
 {
-   char    *kludgeLines;
    UCHAR   *ctrlBuff;
    UINT32  ctrlLen;
 
    // get kludge lines
    ctrlLen = MsgGetCtrlLen(SQmsg);
-   ctrlBuff = (unsigned char *) safe_malloc(ctrlLen+1);
+//   ctrlBuff = (unsigned char *) safe_malloc(ctrlLen+1);
+   ctrlBuff = (unsigned char *) safe_malloc(ctrlLen);
    MsgReadMsg(SQmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
    /* MsgReadMsg does not do zero termination! */
-   ctrlBuff[ctrlLen] = '\0'; // now smapi do it
-   kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
+   //ctrlBuff[ctrlLen] = '\0'; // now smapi do it
+   msg->text = (char *) CvtCtrlToKludge(ctrlBuff);
    nfree(ctrlBuff);
 
    // make text
-   msg->textLength = MsgGetTextLen(SQmsg);
+   msg->textLength = MsgGetTextLen(SQmsg); // including zero termination
 
-   msg->text = NULL;
-   xstrcat(&(msg->text), kludgeLines);
-   // FIXME: make a switch in config file
-   //xscatprintf(&(msg->text), "\001TID: %s\r", versionStr);
-   
    ctrlLen = strlen(msg->text);
    xstralloc(&(msg->text), msg->textLength + ctrlLen);
 
    MsgReadMsg(SQmsg, NULL, 0, msg->textLength, (UCHAR *) msg->text+ctrlLen, 0, NULL);
    /* MsgReadMsg doesn't do zero termination */
-   msg->text[msg->textLength+ctrlLen] = '\0'; // now smapi do it
+   //msg->text[msg->textLength+ctrlLen] = '\0'; // now smapi do it
+   msg->textLength += ctrlLen-1;
 
    // recoding text to TransportCharSet
    if (config->outtab != NULL) recodeToTransportCharset((CHAR*)msg->text);
-
-   nfree(kludgeLines);
 }
 
 void addViaToMsg(s_message *msg, s_addr ourAka) {

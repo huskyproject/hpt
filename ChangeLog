@@ -2,6 +2,13 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Fri Jan 19 22:15:10 NOVT 2001
+max:
+* possible speed up (changing strlen(msg->text) to msg->textLength
+  calculation in many places). warning! possible bugs because a lot
+  of changes.
+
+----- cvs ci ------
 Tue Jan 16 18:33:40 NOVT 2001
 max:
 * send avail list if "forwardrequests on"

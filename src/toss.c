@@ -320,19 +320,19 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
       hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
       if (hmsg != NULL) {
 
-         // recode from TransportCharset to internal Charset
-         if (config->intab != NULL) {
-            if ((msg->recode & REC_HDR)==0) {
-		recodeToInternalCharset((CHAR*)msg->fromUserName);
-                recodeToInternalCharset((CHAR*)msg->toUserName);
-                recodeToInternalCharset((CHAR*)msg->subjectLine);
-	        msg->recode |= REC_HDR;
-            }
-	    if ((msg->recode & REC_TXT)==0) {
-		recodeToInternalCharset((CHAR*)msg->text);
-		msg->recode |= REC_TXT;
-	    }
-         }
+		  // recode from TransportCharset to internal Charset
+		  if (config->intab != NULL) {
+			  if ((msg->recode & REC_HDR)==0) {
+				  recodeToInternalCharset((CHAR*)msg->fromUserName);
+				  recodeToInternalCharset((CHAR*)msg->toUserName);
+				  recodeToInternalCharset((CHAR*)msg->subjectLine);
+				  msg->recode |= REC_HDR;
+			  }
+			  if ((msg->recode & REC_TXT)==0) {
+				  recodeToInternalCharset((CHAR*)msg->text);
+				  msg->recode |= REC_TXT;
+			  }
+		  }
 
          textWithoutArea = msg->text;
 
@@ -340,17 +340,29 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
             // jump over AREA:xxxxx\r
             while (*(textWithoutArea) != '\r') textWithoutArea++;
             textWithoutArea++;
+			textLength -= (size_t) (textWithoutArea - msg->text);
          }
 
-		 tiny = strrstr(textWithoutArea, " * Origin:");
-		 if (tiny == NULL) tiny = textWithoutArea;
 		 if (echo->killSB) {
-			 if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) p[1]='\0';
+			 tiny = strrstr(textWithoutArea, " * Origin:");
+			 if (tiny == NULL) tiny = textWithoutArea;
+			 if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) {
+				 p[1]='\0';
+				 textLength = (size_t) (p - textWithoutArea + 1);
+			 }
 		 } else if (echo->tinySB) {
+			 tiny = strrstr(textWithoutArea, " * Origin:");
+			 if (tiny == NULL) tiny = textWithoutArea;
 			 if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) {
 				 p++;
-				 if (NULL != (q = strstr(p,"\001PATH: "))) memmove(p,q,strlen(q)+1);
-				 else p[0]='\0';
+				 if (NULL != (q = strstr(p,"\001PATH: "))) {
+//					 memmove(p,q,strlen(q)+1);
+					 memmove(p,q,textLength-(size_t)(q-textWithoutArea)+1);
+					 textLength -= (size_t) (q - p);
+				 } else {
+					 p[0]='\0';
+					 textLength = (size_t) (p - textWithoutArea);
+				 }
 			 }
 		 }
 
@@ -360,7 +372,8 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
          // textStart is a pointer to the first non-kludge line
          xmsg = createXMSG(msg, NULL, forceattr);
 
-         MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword) strlen(textStart), (dword) strlen(textStart), (dword)strlen(ctrlBuff), (byte *)ctrlBuff);
+//         MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword) strlen(textStart), (dword) strlen(textStart), (dword)strlen(ctrlBuff), (byte *)ctrlBuff);
+         MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword) textLength, (dword) textLength, (dword)strlen(ctrlBuff), (byte *)ctrlBuff);
 
          MsgCloseMsg(hmsg);
          nfree(ctrlBuff);
@@ -396,7 +409,7 @@ int putMsgInDupeArea(s_addr addr, s_message *msg, dword forceattr)
 
 void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, UINT *seenByCount)
 {
-   char *seenByText, *start, *token;
+   char *seenByText=NULL, *start, *token;
    unsigned long temp;
    char *endptr;
    int i;
@@ -429,8 +442,7 @@ void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, 
    } while (!isdigit(*start));
 
    // now that we have the start of the SEEN-BY's we can tokenize the lines and read them in
-   seenByText = safe_malloc(strlen(start)+1);
-   strcpy(seenByText, start);
+   xstrcat(&seenByText, start);
 
    token = strtok(seenByText, " \r\t\376");
    while (token != NULL) {
@@ -478,7 +490,7 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
    // DON'T GET MESSED UP WITH THE VARIABLES NAMED SEENBY...
    // THIS FUNCTION READS PATH!!!
 
-   char *seenByText, *start, *token;
+   char *seenByText=NULL, *start, *token;
    char *endptr;
    unsigned long temp;
 #ifdef DEBUG_HPT
@@ -500,8 +512,7 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
    } while (!isdigit(*start));
 
    // now that we have the start of the PATH' so we can tokenize the lines and read them in
-   seenByText = safe_malloc(strlen(start)+1);
-   strcpy(seenByText, start);
+   xstrcat(&seenByText, start);
 
    token = strtok(seenByText, " \r\t\376");
    while (token != NULL) {
@@ -701,7 +712,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 			start = text; // broken origin
 			while(*start && *start!='\r') start++;
 		}
-		if (*start=='\r') *(start+1)='\0'; else *start='\0';
+		*start='\0';
 	} else { // no Origin founded
 		text = msg->text;
 		start = strstr(text, "\rSEEN-BY: ");
@@ -712,25 +723,13 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		if (start) *start='\0'; 
 		else start = text+strlen(text);
 	}
+	msg->textLength = (size_t) (start - msg->text);
 
-/* remove after 03-Dec-00
-	// find start of seenBys in Msg
-	start = strstr(msg->text, ")\rSEEN-BY: ");
-	if (start == NULL) start = strstr(msg->text, "\rSEEN-BY: ");
-	if (start == NULL) start = strstr(msg->text, "SEEN-BY: ");
-	if (start != NULL) {
-		while(*start != 'S') start++; // to jump over )\r
-		*start='\0';
-	} else {
-	    // find start of PATH in Msg
-	    start = strstr(msg->text, "\001PATH: ");
-	    if (start != NULL) *start='\0';
-	}
-*/
 	// create new seenByText
-	seenByText = createControlText((*seenBys), *seenByCount, "SEEN-BY: ");
-	pathText   = createControlText((*path), *pathCount, "\001PATH: ");
-	xstrscat(&msg->text, (*start=='\r') ? "" : "\r", seenByText, pathText, NULL);
+	seenByText = createControlText(*seenBys, *seenByCount, "SEEN-BY: ");
+	pathText   = createControlText(*path, *pathCount, "\001PATH: ");
+	xstrscat(&msg->text, "\r", seenByText, pathText, NULL);
+	msg->textLength += 1 + strlen(seenByText) + strlen(pathText);
 	nfree(seenByText);
 	nfree(pathText);
 
@@ -1038,44 +1037,53 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	// recoding from internal to transport charSet if needed
 	if (config->outtab) {
 	    if (msg->recode & REC_TXT) {
-		recodeToTransportCharset((CHAR*)msg->text);
-		msg->recode &= ~REC_TXT;
+			recodeToTransportCharset((CHAR*)msg->text);
+			msg->recode &= ~REC_TXT;
 	    }
 	    if (msg->recode & REC_HDR) {
-		recodeToTransportCharset((CHAR*)msg->fromUserName);
+			recodeToTransportCharset((CHAR*)msg->fromUserName);
     		recodeToTransportCharset((CHAR*)msg->toUserName);
     		recodeToTransportCharset((CHAR*)msg->subjectLine);
-		msg->recode &= ~REC_HDR;
+			msg->recode &= ~REC_HDR;
 	    }
 	}
 	
-	i = strlen(old_text);
+//	i = strlen(old_text);
+	i = old_textLength;
 
 	if (!msg->netMail) {
 		if ((!config->carbonKeepSb) && (!area->keepsb)) {
 			text = strrstr(old_text, " * Origin:");
 			if (NULL != (p = strstr(text ? text : old_text,"\rSEEN-BY:")))
-				i -= strlen (p+1);
+				i = (size_t) (p - old_text) + 1;
 		}
 	}
 	
-	if (reason) reasonLen = strlen(reason)+1;  /* +1 for \r */
+	if (reason) reasonLen = strlen(reason)+1;  // +1 for \r
 
-	msg->text = safe_malloc(i+strlen("AREA:\r * Forwarded from area ''\r\r\1")
-		   +strlen(area->areaName)+strlen(echo->areaName)+reasonLen+1);
+	msg->text = safe_malloc(i+strlen("AREA:\r * Forwarded from area ''\r\r\1")+strlen(area->areaName)+strlen(echo->areaName)+reasonLen+1);
 	
 	//create new area-line
-	if (!msg->netMail) /*FIXME: This is a dirty hack to do it.*/
-		           /* I assume that you want need this line in netmail */  
-		           /* better use some switches in cfg file */ 
-	sprintf(msg->text, "%s%s%s * Forwarded from area '%s'\r%s%s\r\1",
-			(export) ? "AREA:" : "",
-			(export) ? area->areaName : "",
-			(export) ? "\r" : "", echo->areaName,
-			(reason) ? reason : "",
-			(reason) ? "\r" : "");
-	else
-		*(msg->text) = '\0';
+	if (!msg->netMail)
+		sprintf(msg->text, "%s%s%s * Forwarded from area '%s'\r%s%s\r\1",
+				(export) ? "AREA:" : "",
+				(export) ? area->areaName : "",
+				(export) ? "\r" : "", echo->areaName,
+				(reason) ? reason : "",
+				(reason) ? "\r" : "");
+	else *(msg->text) = '\0';
+/*	
+	if (!msg->netMail)
+	xstrscat(&msg->text,
+	(export) ? "AREA:" : "",
+	(export) ? area->areaName : "",
+	(export) ? "\r" : "",
+	" * Forwarded from area '", echo->areaName, "'\r",
+	(reason) ? reason : "",
+	(reason) ? "\r" : "",
+	"\r\1", NULL);
+	else *(msg->text) = '\0';
+*/
 	strncat(msg->text,old_text,i); // copy rest of msg
 	msg->textLength = strlen(msg->text);
 
@@ -1086,14 +1094,14 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	}
 	else if (!msg->netMail) {
 		rc = processEMMsg(msg, *area->useAka, 1, 0);
-	} else 
+	} else
 		rc = processNMMsg(msg, NULL, area, 1, 0);
-	
+
 	nfree(msg->text);
 	msg->textLength = old_textLength;
 	msg->text = old_text;
 	msg->recode &= ~REC_TXT; // old text is always in Transport Charset
-	
+
 	return rc;
 }
 
@@ -1454,7 +1462,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 				   if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
 					   rc = putMsgInArea(echo, msg, 1, forceattr);
 					   statToss.saved += rc;
-				   } 
+				   }
 				   else {
 					   statToss.passthrough++;
 					   rc = 1; //passthrough does always work

@@ -314,12 +314,10 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
       msg->destAddr.zone = header->destAddr.zone;
       msg->origAddr.zone = header->origAddr.zone;
 
-      xscatprintf(&text,"\1INTL %u:%u/%u %u:%u/%u\r",msg->destAddr.zone,msg->destAddr.net,
-	      msg->destAddr.node,msg->origAddr.zone,msg->origAddr.net,msg->origAddr.node);
+      msg->textLength += xscatprintf(&text,"\1INTL %u:%u/%u %u:%u/%u\r",msg->destAddr.zone,msg->destAddr.net,msg->destAddr.node,msg->origAddr.zone,msg->origAddr.net,msg->origAddr.node);
       xstrcat(&text,msg->text);
       free(msg->text);
       msg->text = text;
-      msg->textLength=strlen(msg->text);
       
       writeLogEntry(hpt_log, '7', "Mail without INTL-Kludge. Assuming %i:%i/%i.%i -> %i:%i/%i.%i",
 		    msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,

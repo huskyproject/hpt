@@ -121,11 +121,12 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
 
    // convert kludgeLines
    ctrlLen = MsgGetCtrlLen(hmsg);
-   ctrlBuff = (UCHAR *) safe_malloc(ctrlLen+1+6+strlen(versionStr)+1); // 6 == "\001TID: " // 1 == "\r"
+   ctrlBuff = (UCHAR *) safe_malloc(ctrlLen);
    MsgReadMsg(hmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
-   ctrlBuff[ctrlLen] = '\0'; /* MsgReadMsg does not do zero termination! */
+   /* MsgReadMsg does not do zero termination! */
+   //ctrlBuff[ctrlLen] = '\0'; // now it is do it
    if (action == 0 && config->disableTID == 0)
-       xscatprintf((char **) &(ctrlBuff), "\001TID: %s", versionStr);
+       xscatprintf((char **) &ctrlBuff, "\001TID: %s", versionStr);
    // add '\r' after each kludge
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
    
@@ -133,22 +134,29 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
 
    // added SEEN-BY and PATH from scan area only
    if (action == 0)// seenByPath = createSeenByPath(echo);
-	   xstrcat(&seenByPath, "SEEN-BY: ");
+	   xstrcat(&seenByPath, "SEEN-BY: "); // 9 bytes
 
    // create text
-   msg->textLength = MsgGetTextLen(hmsg);
+   msg->textLength = MsgGetTextLen(hmsg); // with trailing \0
    msg->text=NULL;
    if (action!=2) xscatprintf(&(msg->text),"AREA:%s\r",strUpper(echo->areaName));
    xstrcat(&(msg->text), kludgeLines);
+   nfree(kludgeLines);
    ctrlLen = strlen(msg->text);
    xstralloc(&(msg->text), ctrlLen + msg->textLength);
    MsgReadMsg(hmsg, NULL, (dword) 0, (dword) msg->textLength,
               (byte *)(msg->text+ctrlLen), (dword) 0, (byte *)NULL);
-   msg->text[msg->textLength + ctrlLen]='\0';
+   //msg->text[msg->textLength + ctrlLen]='\0';
+   msg->textLength += ctrlLen-1;
    // if origin has no ending \r add it
-   if (msg->text[strlen(msg->text)-1] != '\r') xstrcat(&(msg->text), "\r");
-   nfree(kludgeLines);
-   if (action == 0) xstrcat(&(msg->text), seenByPath);
+   if (msg->text[msg->textLength-1] != '\r') {
+	   xstrcat(&(msg->text), "\r");
+	   msg->textLength++;
+   }
+   if (action == 0) {
+	   xstrcat(&(msg->text), seenByPath);
+	   msg->textLength += 9; // strlen(seenByPath)
+   }
    
    // recoding from internal to transport charSet
    if (config->outtab != NULL && action != 2) {
@@ -158,13 +166,12 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
       recodeToTransportCharset((CHAR*)msg->text);
    } else msg->recode |= (REC_HDR|REC_TXT);
 
-   if (action == 0) nfree(seenByPath);
+   nfree(seenByPath);
 }
 
 void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 {
    s_message    msg;
-   UINT32       j=0;
 
    makeMsg(hmsg, xmsg, &msg, echo, 0);
 
@@ -178,56 +185,12 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
    }
 #endif
 
-   //translating name of the area to uppercase
-   while (msg.text[j] != '\r') {
-       msg.text[j]=(char)toupper(msg.text[j]);j++;
-   }
-
    // export msg to downlinks
    forwardMsgToLinks(echo, &msg, *echo->useAka);
-
    
    // process carbon copy
    if (config->carbonOut) carbonCopy(&msg, echo);
 
-/*
-   for (i = 0; i<echo->downlinkCount; i++) {
-       link = echo->downlinks[i]->link;
-       // link is passive?
-       if (link->Pause && !echo->noPause) continue;
-       // check access read for link
-       if (checkAreaLink(echo, link->hisAka, 1)!=0) continue;
-          if (link->pktFile != NULL && link->pktSize != 0) { // check packet size
-             len = fsize(link->pktFile);
-             if (len >= link->pktSize * 1024L) { // Stop writing to pkt
-				 nfree(link->pktFile);
-				 nfree(link->packFile);
-             }
-          }
-
-	  if (link->pktFile == NULL) {
-		   
-		  // pktFile does not exist
-		  if ( createTempPktFileName(link) ) {
-		      exit_hpt("Could not create new pkt.",1);
-		  }
-		   
-	  }
-		   
-      makePktHeader(NULL, &header);
-      header.origAddr = *(link->ourAka);
-      header.destAddr = link->hisAka;
-      if (link->pktPwd != NULL)
-      strcpy(header.pktPassword, link->pktPwd);
-      pkt = openPktForAppending(link->pktFile, &header);
-
-      // an echomail messages must be adressed to the link
-      msg.destAddr = header.destAddr;
-      writeMsgToPkt(pkt, msg);
-
-      closeCreatedPkt(pkt);
-   }
-*/
    // mark msg as sent and scanned
    xmsg.attr |= MSGSENT;
    xmsg.attr |= MSGSCANNED;
