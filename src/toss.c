@@ -199,6 +199,9 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
      if (size < XMSG_SUBJ_SIZE) {
        subject = (char *) malloc (size);
        sprintf (subject,"%s%s",config->protInbound,msg->subjectLine);
+#if defined(__linux__) || defined(UNIX)
+       subject = strLower(subject);
+#endif
      }
    }
    strcpy((char *) msgHeader.subj,subject);
@@ -1270,8 +1273,10 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 	   } else {
 	     if (dupeDetection(echo, *msg)==1) {
 	       // nodupe
-               if (echo->msgbType != MSGTYPE_PASSTHROUGH)
+               if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
         	  rc = putMsgInArea(echo, msg, 1, 0);
+		  statToss.saved++;
+               }
                if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
           	  forwardMsgToLinks(echo, msg, pktOrigAddr);
         	  statToss.exported++;

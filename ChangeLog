@@ -2,6 +2,12 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+
+max:
+* fixed statistic afrer autocreate (report from Alex Belozuerov)
+* under __linux__ & UNIX attach files must be in lowercase
+
+----- cvs ci ------
 Wed Mar 22 13:31:29 NOVT 2000
 max:
 * reports from hpt in ReportTo area are local now (Loc flag)
