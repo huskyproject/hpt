@@ -86,7 +86,7 @@ int useSubj = 1;
 int useReplyId = 1;
 int loglevel = 10;
 int linkNew = 0;
-char *version = "1.9";
+char *version = "1.10";
 HAREA harea;
 int maxreply;
 
@@ -128,11 +128,10 @@ char *skipReSubj ( char *subjstr )
 
 int cmpMsgIdReply (register char *str1, register char *str2)
 {
-
     while (*str1==*str2 && *str1) {
-	if (*str1=='@') while (*str1 && *str1!=' ') str1++;
+	if (*str1=='@') while (*str1 && *str1!=' ') str1++; // skip domain
 	if (*str1) str1++;
-	if (*str2=='@') while (*str2 && *str2!=' ') str2++;
+	if (*str2=='@') while (*str2 && *str2!=' ') str2++; // skip domain
 	if (*str2) str2++;
     }
     if (*str1=='\0' && *str2=='\0') return 0;
@@ -209,7 +208,7 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
 
 static char *GetCtrlValue (char *ctl, char *kludge)
 {
-   char *value, *end, *out;
+   char *value, *end, *out, *p;
 
    if ( !ctl || !kludge ) return (NULL);
 
@@ -228,6 +227,11 @@ static char *GetCtrlValue (char *ctl, char *kludge)
 
    memcpy(out, value, (size_t) (end - value));
    out[(size_t) (end - value)] = '\0';
+
+   // fix for upper case msgids
+   strLower(out);
+   // remove .0 from node address
+   if (NULL!=(p=strstr(out,".0 "))) memmove(p,p+2,strlen(p+2)+1);
 
    return out;
 
