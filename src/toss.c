@@ -1053,7 +1053,11 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr)
             rc = putMsgInArea(echo, msg,1);
             echo->imported = 1;  // area has got new messages
             statToss.saved++;
-         } else statToss.passthrough++;
+         } 
+	 else {
+	     statToss.passthrough++;
+	     rc = 1; //passthroug does always work
+	 }
 
          if (config->carbonCount != 0) carbonCopy(msg, echo);
 
