@@ -97,6 +97,9 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    
    if (action == 0) {
        // added TID from scan area only
+       kludgeLines=(char *) realloc (kludgeLines,strlen(kludgeLines)
+                                                 +strlen("\001TID: ")
+                                                 +strlen(versionStr)+2);
        strcat(kludgeLines, "\001TID: ");
        strcat(kludgeLines, versionStr);
        strcat(kludgeLines, "\r");

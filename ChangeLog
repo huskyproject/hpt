@@ -1,6 +1,11 @@
 hpt 0.27
 --------
 
+Wed Apr  14 04:50
+Antonio:
+- fixed overrun that cause 'segmentation faults' if scan one message with a
+large kludge line. Electric Fence Power! :)
+
 ----- cvs ci ------
 Sun Apr  11 15:46
 Fedor:
