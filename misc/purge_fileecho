@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# delete old files
+find fileEchoDir -type f -mtime +600 -exec rm {} \;
+
+# rebuild filelist and file index (files.bbs)
+htick filelist
