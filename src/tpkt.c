@@ -58,7 +58,7 @@ int main()
    header.majorProductRev = 0;
    header.minorProductRev = 26;
    //header.pktPassword[0] = 0;
-   strcpy(header.pktPassword, "xxx");
+   strcpy(header.pktPassword, "hghprt");
    header.pktCreated = time(NULL);
 
    header.capabilityWord = 1;
@@ -73,7 +73,7 @@ int main()
 
       msg.destAddr.zone  = 2;
       msg.destAddr.net   = 2432;
-      msg.destAddr.node  = 605;
+      msg.destAddr.node  = 603;
       msg.destAddr.point = 14;
 
       msg.attributes = 1;
@@ -84,9 +84,9 @@ int main()
 
       msg.netMail = 1;
       msg.text = (char *) malloc(300);
-      strcpy(msg.text, "AREA:test.ger\rhallo\r---\r * Origin: kljöklj (2:2432/605.0)\r");
+      strcpy(msg.text, "\001TOPT 14hallo\r---\r * Origin: kljöklj (2:2432/605.0)\r");
       msg.toUserName = (char *) malloc(15);
-      strcpy(msg.toUserName, "areafix");
+      strcpy(msg.toUserName, "arix");
       msg.fromUserName = (char *) malloc(20);
       strcpy(msg.fromUserName, "edde");
       msg.subjectLine = (char *) malloc(5);

@@ -3,6 +3,6 @@
 
 #include <fcommon.h>
 
-int processAreaFix(s_message *msg, s_addr *pktOrigAdd);
+int processAreaFix(s_message *msg, s_pktHeader *pktHeader);
 
 #endif

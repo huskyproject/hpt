@@ -91,25 +91,34 @@ void changeFileSuffix(char *fileName, char *newSuffix) {
    }
 }
 
-int to_us(s_pktHeader header)
+int to_us(const s_addr destAddr)
 {
    int i = 0;
 
    while (i < config->addrCount)
-     if (addrComp(header.destAddr, config->addr[i++]) == 0)
+     if (addrComp(destAddr, config->addr[i++]) == 0)
        return 0;
    return !0;
 }
 
-XMSG createXMSG(s_message *msg)
+XMSG createXMSG(s_message *msg, const s_pktHeader *header)
 {
    XMSG  msgHeader;
    struct tm *date;
    time_t    currentTime;
    union stamp_combo dosdate;
 
-   msgHeader.attr = MSGPRIVATE;
-//   msgHeader.attr = msg.attributes;
+   if (msg->netMail == 1)
+   {  // attributes of netmail must be fixed
+      msgHeader.attr = msg->attributes;
+      msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD | MSGFRQ | MSGSCANNED | MSGLOCKED); // kill these flags
+      msgHeader.attr |= MSGPRIVATE; // set this flags
+      if ((header != NULL) && (to_us(msg->destAddr)!=0)) msgHeader.attr |= MSGFWD; // set intransit flag, if the mail is not to us
+      else msgHeader.attr &= ~MSGFWD;
+   }
+   else
+      msgHeader.attr = MSGPRIVATE;
+   
    strcpy((char *) msgHeader.from,msg->fromUserName);
    strcpy((char *) msgHeader.to, msg->toUserName);
    strcpy((char *) msgHeader.subj,msg->subjectLine);
@@ -187,7 +196,7 @@ void putMsgInArea(s_area *echo, s_message *msg, int strip)
 				              (UCHAR **) &textStart,
 				              &textLength);
          // textStart is a pointer to the first non-kludge line
-         xmsg = createXMSG(msg);
+         xmsg = createXMSG(msg, NULL);
 
          MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword) strlen(textStart), (dword) strlen(textStart), (dword)strlen(ctrlBuff), (byte *)ctrlBuff);
 
@@ -749,7 +758,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
    free(textBuff);
 }
 
-void processNMMsg(s_message *msg,s_addr pktOrigAddr)
+void processNMMsg(s_message *msg,s_pktHeader *pktHeader)
 {
    HAREA  netmail;
    HMSG   msgHandle;
@@ -789,7 +798,7 @@ void processNMMsg(s_message *msg,s_addr pktOrigAddr)
             recodeToInternalCharset(msg->subjectLine);
          }
 
-         msgHeader = createXMSG(msg);
+         msgHeader = createXMSG(msg, pktHeader);
          /* Create CtrlBuf for SMAPI */
          ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
          /* write message */
@@ -812,17 +821,17 @@ void processNMMsg(s_message *msg,s_addr pktOrigAddr)
    } /* endif */
 }
 
-void processMsg(s_message *msg, s_addr pktOrigAddr)
+void processMsg(s_message *msg, s_pktHeader *pktHeader)
 {
 
    statToss.msgs++;
    if (msg->netMail == 1) {
            if (stricmp(msg->toUserName,"areafix")==0) {
-                   processAreaFix(msg, &pktOrigAddr);
+                   processAreaFix(msg, pktHeader);
            } else
-                   processNMMsg(msg,pktOrigAddr);
+                   processNMMsg(msg, pktHeader);
    } else {
-           processEMMsg(msg, pktOrigAddr);
+           processEMMsg(msg, pktHeader->origAddr);
    } /* endif */
 }
 
@@ -846,7 +855,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 
    header = openPkt(pkt);
    if (header != NULL) {
-      if (to_us(*header)==0) {
+      if (to_us(header->destAddr)==0) {
          sprintf(buff, "pkt: %s", fileName);
          writeLogEntry(log, '6', buff);
          statToss.pkts++;
@@ -888,7 +897,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
             while ((msg = readMsgFromPkt(pkt, header->origAddr.zone)) != NULL) {
                if (msg != NULL) {
                   if ((processIt == 1) || ((processIt==2) && (msg->netMail==1)))
-                     processMsg(msg, header->origAddr);
+                     processMsg(msg, header);
                   freeMsgBuffers(msg);
                   free(msg);
                }

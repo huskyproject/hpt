@@ -518,7 +518,7 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
+int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 {
 	int i, security=1, forme = 0;
 	s_link *link = NULL;
@@ -526,7 +526,7 @@ int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
 	INT32 textlength;
 
 	// 1st security check
-	security=addrComp(msg->origAddr, *pktOrigAddr);
+	security=addrComp(msg->origAddr, pktHeader->origAddr);
 	
 	// find link
 	link=getLinkFromAddr(*config, msg->origAddr);
@@ -534,7 +534,7 @@ int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
 	//this is for me?
 	if (link!=NULL)	forme=addrComp(msg->destAddr, *link->ourAka);
 	if (forme || link==NULL) {
-		processNMMsg(msg, *pktOrigAddr);
+		processNMMsg(msg, pktHeader);
 		return 0;
 	}
 
@@ -551,7 +551,7 @@ int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
 	}
 	
 	tmp=(char*) calloc(128,sizeof(char*));
-	createKludges(tmp, NULL, link->ourAka, pktOrigAddr);
+	createKludges(tmp, NULL, link->ourAka, &(pktHeader->origAddr));
 	report=(char*) calloc(strlen(tmp)+1,sizeof(char*));
 	strcpy(report,tmp);
 	
@@ -598,7 +598,7 @@ int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
 		changeHeader(msg,link);
 	}
 
-	processNMMsg(msg, *pktOrigAddr);
+	processNMMsg(msg, pktHeader);
 
 	sprintf(logmsg,"areafix: sucessfully done for %s",link->name);
 	writeLogEntry(log, '8', logmsg);

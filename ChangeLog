@@ -2,8 +2,19 @@
 hpt 0.26
 --------
 
+----- cvs ci ------
+Tue Feb  9 10:13:56 CET 1999
+- fixed the things from yesterday night.
+
+Mon Feb  8 23:13:44 CET 1999
+- fixed the netmail handling. The flags like hold,crash,killsent are removed
+  and other are set like MSGPRIVATE.
+  the intransit flag is set if the netmail is not going to the node.
+
 Thu Feb  4 09:21:57 CET 1999
 - fixed two bugs in (**)
+
+----- cvs ci ------
 Wed Feb  3 23:23:06 CET 1999
 - if a link is not linked to an echomail area, all echomail will be tossed to
   bad, which come from the link and go to the area.
