@@ -1915,9 +1915,21 @@ static int isArcMail(char *fname)
 	p=strrchr(fname, PATH_DELIM);
 	if (p) p++;
 	else p=fname;
+	/* Amiga? */
 	for (i=0; i<8; i++)
-		if (!isalnum(*p++)) return 0;
-	if (*p++!='.') return 0;
+		if (!isalnum(p[i]))
+			break;
+	if (i<8) {
+		/* Amiga? */
+		for (i=0; i<4; i++) {
+			if (!isdigit(*p++)) return 0;
+			while (isdigit(*p)) p++;
+			if (*p++ != '.') return 0;
+		}
+	} else {
+		p += i;
+		if (*p++ != '.') return 0;
+	}
 	for (i=0; i<sizeof(validExt)/sizeof(validExt[0]); i++)
 		if (strncasecmp(p, validExt[i], 2) == 0)
 			break;
