@@ -1,3 +1,8 @@
+2002-09-21 Saturday 13:49  pgul
+
+	* src/areafix.c (hpt-1_2-stable.4): areafix scan bugfix (not all
+	messages processed)
+
 2002-09-19 Thursday 07:38  sfpavel
 
 	* make/makefile.djg (hpt-1_2-stable.1): Fix DJGPP build
