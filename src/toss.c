@@ -1001,10 +1001,8 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
                         rc = 1;
                     }
                 } else rc = 1; /*  normal exit for carbon move & delete */
-                if(messCC) {
-                    freeMsgBuffers(messCC);
-                    nfree(messCC);
-                }
+                freeMsgBuffers(messCC);
+                nfree(messCC);
             } else {
                 /*  msg is dupe */
                 if (echo->dupeCheck == dcMove) {
