@@ -953,6 +953,8 @@ Pseudo-code:
   
 @end example
 
+NOTE! This statement defined after "links" section.
+
 This statement can be repeated.
 
 @node RouteFile, RouteMail, Route, Keywords
@@ -1118,6 +1120,7 @@ This statement can be repeated.
 * DupeBaseType::                type of dupe base
 * DupeHistoryDir::              path for dupe files
 * EchoTossLog::                 file which contains the names of the areas to scan
+* FileBoxesDir::                directory where link fileBoxes are created
 * HptPerlFile::                 file which contains perl filter functions
 * ImportLog::                   file which contains the names of the areas tossed in
 * Inbound::                     inbound path
@@ -1227,7 +1230,7 @@ The format and the names of the dupe-files are not standardized.
 
 This statement cannot be repeated.
 
-@node EchoTossLog, HptPerlFile, DupeHistoryDir, Files and Paths
+@node EchoTossLog, FileBoxesDir, DupeHistoryDir, Files and Paths
 @subsection EchoTossLog
 @findex EchoTossLog
 @table @asis
@@ -1245,7 +1248,22 @@ After scanning the tosser will remove the file.
 
 This statement cannot be repeated.
 
-@node HptPerlFile, ImportLog, EchoTossLog, Files and Paths
+@node FileBoxesDir, HptPerlFile, EchoTossLog, Files and Paths
+@subsection FileBoxesDir
+@findex FileBoxesDir
+@table @asis
+@item Syntax:
+@code{FileBoxesDir <directory>}
+@item Example:
+@code{FileBoxesDir ../boxes}
+@end table
+
+This statement specifies directory where link file boxes are placed (and
+created if necessary).
+
+This statement cannot be repeated.
+
+@node HptPerlFile, ImportLog, FileBoxesDir, Files and Paths
 @subsection HptPerlFile
 @findex HptPerlFile
 @table @asis
@@ -1601,6 +1619,7 @@ This statement cannot be repeated.
 * ForwardRequestMask::          mask list for forwardRequests
 * ForwardRequests::             allow forward requests to this link
 * FileBox::                     filebox directory
+* FileBoxAlways::               pack to filebox even if link is not busy
 * Import::                      rules for echomail import
 * Level::                       definition of link access level
 * Link::                        adding a link to your config
@@ -2078,7 +2097,7 @@ This statement can only be repeated for different links.
 
 @xref{LinkGrp}.
 
-@node FileBox, Import, ForwardRequests, Link Keywords
+@node FileBox, FileBoxAlways, ForwardRequests, Link Keywords
 @subsection FileBox
 @findex FileBox
 @table @asis
@@ -2089,13 +2108,31 @@ This statement can only be repeated for different links.
 @end table
 
 This statement defines directory where outgoing files for link would be
-putten instead of putting them in @code{Outbound} tree.
+putten instead of putting them in @code{Outbound} tree. See also
+@code{FileBoxAlways} for details.
 
 Currently hpt can put only echomail into fileBoxes.
 
 This statement can only be repeated for different links.
 
-@node Import, Level, FileBox, Link Keywords
+@node FileBoxAlways, Import, FileBox, Link Keywords
+@subsection FileBoxAlways
+@findex FileBoxAlways
+@table @asis
+@item Syntax:
+@code{FileBoxAlways <bool>}
+@item Example:
+@code{FileBoxAlways}
+@end table
+
+Pack to link @code{FileBox} even if link is not busy. By default
+outbound is used when link is not busy.
+
+This statement can only be repeated for different links. Works only for
+links which have @code{FileBox} or when @code{FileBoxesDir} is set.
+
+
+@node Import, Level, FileBoxAlways, Link Keywords
 @subsection Import
 @findex Import
 @table @asis
@@ -2435,7 +2472,7 @@ should be the area-tag (as far as possible). if file == Passthrough then
 @code{Msg} is standard (*.msg-base). Write @code{Squish} for an
 Squish-msgbase and @code{Jam} for Jam-msgbase.
 @item linkAKA:
-aka's of up- and down links.
+aka's of up- and down links (full 4D address).
 you can use masks like: "*:*/*" - all downlinks from you config.
 This links are auto-mandatory. Always use slash in mask!
 @end table
