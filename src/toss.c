@@ -1169,6 +1169,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 
    area = strtok(textBuff, "\r");
    area += 5;
+   while (*area == ' ') area++;
 
    echo = getArea(config, area);
    statToss.echoMail++;
@@ -1183,7 +1184,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 
          if ((echo->downlinkCount > 1) ||
 	     // if only one downlink, we've got the mail from him
-	     ((echo->downlinkCount > 0) && (!addrComp(pktOrigAddr,*echo->useAka))))   // or it's our own
+	     ((echo->downlinkCount > 0) && (!addrComp(pktOrigAddr,*echo->useAka))))   // or it's our own aka
 	   {  
 	     forwardMsgToLinks(echo, msg, pktOrigAddr);
 	     statToss.exported++;
@@ -1198,7 +1199,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
            } 
 	   else {
 	       statToss.passthrough++;
-	       rc = 1; //passthroug does always work
+	       rc = 1; //passthrough does always work
 	   }
 	 };
 
@@ -1207,7 +1208,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
          // msg is dupe
          if (echo->dupeCheck == dcMove) {
             rc = putMsgInArea(&(config->dupeArea), msg, 0, 0);
-         } else rc = 1; // quick fix. not shure.
+         } else rc = 1; // quick fix. not sure.
          statToss.dupes++;
       }
 
@@ -2005,7 +2006,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
    s_message    msg;
    s_area	*echo = &(config -> badArea);
    s_addr	pktOrigAddr;
-   char 	*tmp, *ptmp, *line;
+   char 	*tmp, *ptmp, *line, *areaName;
    
    makeMsg(hmsg, xmsg, &msg, &(config->badArea), 2);
    
@@ -2028,7 +2029,9 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
 		//translating name of the area to uppercase
 		for (tmp = ptmp; *tmp != '\0'; tmp++) 
 			*tmp=toupper(*tmp);
-           	echo = getArea(config, *ptmp == '\001' ? ptmp + 4 : ptmp + 5);
+		areaName = *ptmp == '\001' ? ptmp + 4 : ptmp + 5;
+		while (*areaName == ' ') areaName++;    // if the areaname begins with a space
+           	echo = getArea(config, areaName);
 	   };
            ptmp = line+1;
        };

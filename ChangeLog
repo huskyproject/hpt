@@ -1,6 +1,12 @@
 hpt 0.30
 --------
 
+
+----- cvs ci ------
+Wed Nov  3 08:26:56 CET 1999
+mtt:
+* if the AREA: line in a message contains spaces between AREA: <NAME>, hpt deletes this spaces
+
 ----- cvs ci ------
 Sun Oct 24 16:58:04 NOVST 1999
 max (patch from Kolya Nesterov):
