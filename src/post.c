@@ -466,19 +466,20 @@ void post(int c, unsigned int *n, char *params[])
                 msg.destAddr.zone, msg.destAddr.net,
                 msg.destAddr.node, msg.destAddr.point,
                 (area) ? area : echo->areaName);
+
+            /*  recoding from internal to transport charSet */
+            if (config->outtab != NULL) {
+                recodeToTransportCharset((CHAR*)msg.fromUserName);
+                recodeToTransportCharset((CHAR*)msg.toUserName);
+                recodeToTransportCharset((CHAR*)msg.subjectLine);
+                recodeToTransportCharset((CHAR*)msg.text);
+            }
             
             if (!export && echo->fileName) {
-                msg.recode |= (REC_HDR|REC_TXT); /*  msg already in internal Charset */
+                msg.recode &= ~(REC_HDR|REC_TXT); /*  msg in transport Charset */
                 putMsgInArea(echo, &msg, 1, msg.attributes);
             }
             else {
-                /*  recoding from internal to transport charSet */
-                if (config->outtab != NULL) {
-                    recodeToTransportCharset((CHAR*)msg.fromUserName);
-                    recodeToTransportCharset((CHAR*)msg.toUserName);
-                    recodeToTransportCharset((CHAR*)msg.subjectLine);
-                    recodeToTransportCharset((CHAR*)msg.text);
-                }
                 if (msg.netMail) {
                     processNMMsg(&msg, NULL, NULL, 0, MSGLOCAL);
                 }  else {
