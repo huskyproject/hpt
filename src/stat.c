@@ -302,11 +302,15 @@ stat_echo *read_echo(FILE *F)
     tst = fread(&ol, sizeof(ol), 1, F); if (tst < 1) return NULL;
     tst = fread(&ot, sizeof(ot), 1, F); if (tst < 1) return NULL;
     
-    old = malloc(sizeof(*old)+ot+1);
+    old = calloc( 1, sizeof (stat_echo) );
     if (old == NULL) { msg("Out of memory"); do_stat = 0; return NULL; }
     
-    old->links = ol; old->tag_len = ot; old->chain = NULL;
-    tst = fread(old->tag, ot, 1, F); old->tag[ot] = 0;
+    old->links = ol; 
+    old->tag_len = ot; 
+    old->chain = NULL;
+    old->tag = calloc( 1, ot+1 );
+    tst = fread(old->tag, ot, 1, F); 
+
     if (tst < 1) { msg("Read error"); free_echo(old); do_stat = 0; return NULL; }
     /* read links */
     for (i = 0; i < ol; i++) {
