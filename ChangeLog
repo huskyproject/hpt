@@ -1,3 +1,13 @@
+2002-04-18 Thursday 10:33  mche
+
+	* src/hpt.c (1.144): deleting lock file if post failed [patch by
+	Andrew Sagulin 2:6037/1]
+
+2002-04-18 Thursday 09:03  mche
+
+	* src/post.c (1.69): translates origin & tirline to OEM-defined
+	character set (for win32)
+
 2002-04-17 Wednesday 13:24  mche
 
 	* src/areafix.c (1.280): fixed bug with unsubscribing
