@@ -9,11 +9,12 @@
 #define ADD     3
 #define DEL     4
 #define AVAIL   5
-#define UNLINK  6
-#define PAUSE   7
-#define RESUME  8
-#define INFO    9
-#define RESCAN  10
+#define QUERY   6
+#define UNLINK  7
+#define PAUSE   8
+#define RESUME  9
+#define INFO    10
+#define RESCAN  11
 #define ERROR   255
 
 char *print_ch(int len, char ch);
