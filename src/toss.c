@@ -629,6 +629,10 @@ int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr, int writeAccess)
 	reason = "Area killed (unsubscribed)";
 	w_log(LL_ECHOMAIL, "Badmail reason: area killed (unsubscribed): '%s'", areaName);
 	break;
+    case 13:
+	reason = "New area refused by NewAreaRefuseFile";
+	w_log(LL_ECHOMAIL, "Badmail reason: New area '%s' refused by NewAreaRefuseFile", areaName);
+	break;
     default :
 	reason = "Another error";
 	w_log(LL_ECHOMAIL, "Badmail reason: Another error");
