@@ -1,3 +1,5 @@
+/* $Id$ */
+
 #ifndef _HQUERY_H
 #define _HQUERY_H
 

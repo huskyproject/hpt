@@ -1,3 +1,5 @@
+/* $Id$ */
+
 #ifndef _SCANAREA_H
 #define _SCANAREA_H
 

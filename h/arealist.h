@@ -1,3 +1,5 @@
+/* $Id$ */
+
 #ifndef _AREALIST_H
 #define _AREALIST_H
 

@@ -1,3 +1,5 @@
+/* $Id$ */
+
 #ifndef _POST_H
 #define _POST_H
 

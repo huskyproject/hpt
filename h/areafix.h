@@ -1,3 +1,5 @@
+/* $Id$ */
+
 #ifndef _AREAFIX_H
 #define _AREAFIX_H
 
