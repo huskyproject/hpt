@@ -1,3 +1,9 @@
+2003-12-23 Tuesday 15:02  val_khokhlov
+
+	* h/global.h (1.42), h/hptafix.h (1.2), src/global.c (1.53),
+	src/hpt.c (1.189), src/hptafix.c (1.3): relink and resubscribe
+	moved to libareafix (patch by Andrew Ladutsko)
+
 2003-12-18 Thursday 08:14  val_khokhlov
 
 	* make/: makefile.mvc (1.11), makefile.mvcdll (1.16): delayload for
