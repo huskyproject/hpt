@@ -1,3 +1,11 @@
+2002-09-29 Sunday 19:22  pgul
+
+	* src/toss.c (hpt-1_2-stable.4): fix previous patches again
+
+2002-09-29 Sunday 15:00  pgul
+
+	* src/toss.c (hpt-1_2-stable.3): fix previous patch
+
 2002-09-27 Friday 04:15  stas_degteff
 
 	* TODO, src/hptlink.c (hpt-1_2-stable.[1,2]): change log file name
