@@ -243,6 +243,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
    return msgHeader;
 }
 
+/* return value: 1 if success, 0 if fail */
 int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 {
    char *ctrlBuff, *textStart, *textWithoutArea;
@@ -2124,12 +2125,14 @@ void toss()
 int packBadArea(HMSG hmsg, XMSG xmsg)
 {
    int		rc = 0;
-   s_message    msg;
+   s_message   msg;
    s_area	*echo = &(config -> badArea);
    s_addr	pktOrigAddr;
-   char 	*tmp, *ptmp, *line, *areaName;
+   char 	*tmp, *ptmp, *line, *areaName, *area=NULL;
+   s_link   *link;
    
    makeMsg(hmsg, xmsg, &msg, &(config->badArea), 2);
+   memset(&pktOrigAddr,'\0',sizeof(s_addr));
    
    // deleting valet string - "FROM:" and "REASON:"
    ptmp = msg.text;
@@ -2153,6 +2156,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
 		areaName = *ptmp == '\001' ? ptmp + 4 : ptmp + 5;
 		while (*areaName == ' ') areaName++;    // if the areaname begins with a space
            	echo = getArea(config, areaName);
+			xstrcat(&area, areaName);
 	   };
            ptmp = line+1;
        };
@@ -2160,8 +2164,17 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
    }
 
    if (echo == &(config->badArea)) {
+	   link = getLinkFromAddr(*config, pktOrigAddr);
+	   if (link && link->autoAreaCreate!=0) {
+		   autoCreate(area, pktOrigAddr, NULL);
+		   echo = getArea(config, area);
+	   }
+   }
+   nfree(area);
+   
+   if (echo == &(config->badArea)) {
        freeMsgBuffers(&msg);
-       return 1;
+       return rc;
    }
    
    if (checkAreaLink(echo, pktOrigAddr, 0) == 0) {
@@ -2171,7 +2184,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
 		   
 		   echo->imported++;  // area has got new messages
 		   if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-			   rc = !putMsgInArea(echo, &msg,1, 0); // FIXME: why !putMsg not putMsg?
+			   rc = putMsgInArea(echo, &msg,1, 0);
 		   } else statToss.passthrough++;
 
 		   // recoding from internal to transport charSet
@@ -2189,15 +2202,12 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
 	   } else {
 		   // msg is dupe
 		   if (echo->dupeCheck == dcMove) {
-			   rc = !putMsgInArea(&(config->dupeArea), &msg, 0, 0); // FIXME: why !putMsg not putMsg?
-		   } else {
-			   rc = 0;
-		   };
+			   rc = putMsgInArea(&(config->dupeArea), &msg, 0, 0);
+		   } else rc = 1; // dupeCheck del
 	   }
 
-   } else {
-	   rc = 1;
-   };
+   } else rc = 0;
+   
    freeMsgBuffers(&msg);
    return rc;
 }
@@ -2210,32 +2220,29 @@ void tossFromBadArea()
    dword highestMsg, i;
    int   delmsg;
    
-   area = MsgOpenArea((UCHAR *) config->badArea.fileName, MSGAREA_NORMAL, (word)(config->badArea.msgbType | MSGTYPE_ECHO));
+   area = MsgOpenArea((UCHAR *) config->badArea.fileName,
+					  MSGAREA_NORMAL, (word)(config->badArea.msgbType|MSGTYPE_ECHO));
    if (area != NULL) {
-      writeLogEntry(hpt_log, '1', "Scanning area: %s", config->badArea.areaName);
-      highestMsg = MsgGetHighMsg(area);
+	   writeLogEntry(hpt_log, '1', "Scanning area: %s", config->badArea.areaName);
+	   highestMsg = MsgGetHighMsg(area);
 
-      for (i=1; i<=highestMsg; i++) {
-         hmsg = MsgOpenMsg(area, MOPEN_RW, i);
-         if (hmsg == NULL) continue;      // msg# does not exist
-         MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-	 delmsg = packBadArea(hmsg, xmsg);
+	   for (i=1; i<=highestMsg; i++) {
+		   hmsg = MsgOpenMsg(area, MOPEN_RW, i);
+		   if (hmsg == NULL) continue;      // msg# does not exist
+		   MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+		   delmsg = packBadArea(hmsg, xmsg);
 	 
-         MsgCloseMsg(hmsg);
+		   MsgCloseMsg(hmsg);
 	 
-	 if (delmsg == 0) {
-	     MsgKillMsg(area, i);
-	 }
-      }
+		   if (delmsg) MsgKillMsg(area, i);
+	   }
       
-      highestMsg = MsgGetHighMsg(area);
-      MsgSetHighWater(area, highestMsg + 1);
+	   highestMsg = MsgGetHighMsg(area);
+	   MsgSetHighWater(area, highestMsg + 1);
 
-      MsgCloseArea(area);
+	   MsgCloseArea(area);
       
-      tossTempOutbound(config->tempOutbound);
+	   tossTempOutbound(config->tempOutbound);
       
-   } else 
-      writeLogEntry(hpt_log, '9', "Could not open %s", config->badArea.fileName);
-   /* endif */
+   } else writeLogEntry(hpt_log, '9', "Could not open %s", config->badArea.fileName);
 }

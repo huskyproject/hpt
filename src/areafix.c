@@ -1767,9 +1767,11 @@ int relink (char *straddr) {
 	s_link          *researchLink = NULL;
 	unsigned int    count, areasArraySize;
 	s_area          **areasIndexArray = NULL;
-
+	
 	// parse config
 	if (config==NULL) processConfig();
+
+	writeLogEntry(hpt_log, '1', "Start relink...");
 
 	if (straddr) researchLink = getLink(*config, straddr);
 	else {

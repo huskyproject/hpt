@@ -7,9 +7,7 @@ Category 1: Will certainly be implemented until next release
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 
-- add option "run with another config"
 - delete attaches (kfs flag)
-- autocreate from badArea
 - carbonFromAddr addr1, addr2, ...
 - carbonCopy when scan, export
 - UnpackAllBeforeToss

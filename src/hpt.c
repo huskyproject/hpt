@@ -113,7 +113,7 @@ int processCommandLine(int argc, char **argv)
    unsigned int i = 0;
 
    if (argc == 1) {
-      printf("\nUsage:\n");
+      printf("\nUsage: hpt [options] [-c config]\n");
       printf("   hpt toss    - tossing mail\n");
       printf("   hpt toss -b - tossing mail from badarea\n");
       printf("   hpt scan    - scanning echomail\n");

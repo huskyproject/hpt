@@ -6,6 +6,7 @@ Sun Jun  4 14:19:57 NOVST 2000
 max:
 * free globalBuffer after processDir(s) not after each pkt file
 * run with config from command line
+* autocreate from BadArea
 
 ----- cvs ci ------
 Sat Jun  3 23:25:14 NOVST 2000
