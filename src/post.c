@@ -132,14 +132,14 @@ void post(int c, unsigned int *n, char *params[])
             case 'n':    // name
                switch(params[*n][2]) {
                   case 't':
-                     msg.toUserName = (char *) malloc(strlen(params[++(*n)]) + 1);
+                     msg.toUserName = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
                      strcpy(msg.toUserName, params[*n]);
 #ifdef __NT__
                      CharToOem(msg.toUserName, msg.toUserName);
 #endif
                      break;
                   case 'f':
-                     msg.fromUserName = (char *) malloc(strlen(params[++(*n)]) + 1);
+                     msg.fromUserName = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
                      strcpy(msg.fromUserName, params[*n]);
 #ifdef __NT__
                      CharToOem(msg.fromUserName, msg.fromUserName);
@@ -160,7 +160,7 @@ void post(int c, unsigned int *n, char *params[])
                echo = getArea(config, area);
                break;
             case 's':    // subject
-               msg.subjectLine = (char *) malloc(strlen(params[++(*n)]) + 1);
+               msg.subjectLine = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
                strcpy(msg.subjectLine, params[*n]);
 #ifdef __NT__
                CharToOem(msg.subjectLine, msg.subjectLine);

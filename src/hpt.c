@@ -290,7 +290,7 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
       exit_hpt("MsgApiOpen Error",1);
    } /*endif */
    
-   msgToSysop = (s_message**)calloc(config->addrCount, sizeof(s_message*));
+   msgToSysop = (s_message**) safe_malloc(config->addrCount * sizeof(s_message*));
    for (i = 0; i < config->addrCount; i++) {
 	   
        /* Some results of wrong patching ? A memleak anyway

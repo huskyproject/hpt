@@ -100,7 +100,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
 
    // get kludge lines
    ctrlLen = MsgGetCtrlLen(SQmsg);
-   ctrlBuff = (unsigned char *) malloc(ctrlLen+1);
+   ctrlBuff = (unsigned char *) safe_malloc(ctrlLen+1);
    MsgReadMsg(SQmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
    ctrlBuff[ctrlLen] = '\0'; /* MsgReadMsg does not do zero termination! */
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
@@ -143,7 +143,7 @@ void makePktHeader(s_link *link, s_pktHeader *header)
    header->majorProductRev = (UCHAR)VER_MAJOR;
    header->hiProductCode   = 0;
    header->loProductCode   = 0xfe;
-   memset(header->pktPassword, 0, sizeof(header->pktPassword)); // no password
+   memset(header->pktPassword, '\0', sizeof(header->pktPassword)); // no password
    if (link != NULL && link->pktPwd != NULL) {
       if (strlen(link->pktPwd) > 8)
          strncpy(header->pktPassword, link->pktPwd, 8);
@@ -193,11 +193,11 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
    if (route==NULL) return NULL;
    
    if (route->target == NULL) {
-      memset(&tempLink, 0, sizeof(s_link));
+      memset(&tempLink, '\0', sizeof(s_link));
 
       tempLink.hisAka = msg->destAddr;
       tempLink.ourAka = &(config->addr[0]);
-      tempLink.name   = (char *) malloc(1);
+      tempLink.name   = (char *) safe_malloc(1);
       tempLink.name[0] = '\0';
        
       switch (route->routeVia) {
@@ -239,7 +239,7 @@ void processAttachs(s_link *link, s_message *msg)
    FILE *flo;
    char *running;
    char *token;
-   char *newSubjectLine = (char *) calloc(strlen(msg->subjectLine)+1, 1);
+   char *newSubjectLine = NULL;
    
    flo = fopen(link->floFile, "a");
 
@@ -261,11 +261,11 @@ void processAttachs(s_link *link, s_message *msg)
 	      fprintf(flo, "%s\n", token);
       }
       if (strrchr(token, PATH_DELIM)!= NULL)
-         strcat(newSubjectLine, strrchr(token, PATH_DELIM)+1);
+         xstrcat(&newSubjectLine, strrchr(token, PATH_DELIM)+1);
       else
-         strcat(newSubjectLine, token);
+         xstrcat(&newSubjectLine, token);
 
-      strcat(newSubjectLine, " ");
+      xstrcat(&newSubjectLine, " ");
 
       token = strseparate(&running, " \t");
       //token = strtok_r(NULL, " \t", &running);
@@ -315,16 +315,17 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
    s_link      *link, *virtualLink;
    char        freeVirtualLink = 0;
 
-   memset(&msg,0,sizeof(s_message));
+   memset(&msg,'\0',sizeof(s_message));
    convertMsgHeader(*xmsg, &msg);
 
    // prepare virtual link...
    virtualLink = getLinkFromAddr(*config, msg.destAddr);  //maybe the link is in config?
    if (virtualLink == NULL) {
-      virtualLink = calloc(1, sizeof(s_link));  // if not create new virtualLink link
+      virtualLink = safe_malloc(sizeof(s_link));  // if not create new virtualLink link
+      memset(virtualLink, '\0', sizeof(s_link));
       virtualLink->hisAka = msg.destAddr;
       virtualLink->ourAka = &(msg.origAddr);
-      virtualLink->name = (char *) malloc(strlen(msg.toUserName)+1);
+      virtualLink->name = (char *) safe_malloc(strlen(msg.toUserName)+1);
       strcpy(virtualLink->name, msg.toUserName);
       freeVirtualLink = 1;  //virtualLink is a temporary link, please free it..
    }
@@ -588,7 +589,7 @@ void scanExport(int type, char *str) {
 //   if (config->outtab != NULL) getctab(outtab, (unsigned char *)config->outtab);
    
    // zero statScan   
-   memset(&statScan, 0, sizeof(s_statScan));
+   memset(&statScan, '\0', sizeof(s_statScan));
    writeLogEntry(hpt_log, '1', "Start %s%s...",
 		   type & SCN_ECHOMAIL ? "scanning" : "packing",
 		   type & SCN_FILE ? " with -f " : 

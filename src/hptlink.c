@@ -52,7 +52,6 @@
 #include <stdlib.h>
 
 
-
 /* internal structure holding msg's related to link information */
 /* used by linkArea */
 struct msginfo {
@@ -164,7 +163,8 @@ static char *GetCtrlValue (char *ctl, char *kludge)
    if ((end - value) <= 0) return (NULL);
 
    out = (char *) malloc((size_t) (end - value) + 1 );
-
+   if (out == NULL) return (NULL);
+   
    memcpy(out, value, (size_t) (end - value));
    out[(size_t) (end - value)] = '\0';
 

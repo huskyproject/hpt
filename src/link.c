@@ -45,19 +45,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if !defined(MSDOS) || defined(__DJGPP__)
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/typesize.h>
-#else
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
-#include <fidoconf/typesize.h>
-#endif
+
 #include <smapi/msgapi.h>
+
 #include <log.h>
 #include <global.h>
 #include <tree.h>
+#include <fcommon.h>
 
 /* internal structure holding msg's related to link information */
 /* used by linkArea */
@@ -141,8 +138,9 @@ int linkArea(s_area *area, int netMail)
       };
 
       hashNums = msgsNum + msgsNum / 10 + 10;
-      msgs = calloc(hashNums, sizeof(s_msginfo));
-      ctl = (byte *) malloc(ctlen = 1); /* Some libs don't accept relloc(NULL, ..
+      msgs = safe_malloc(hashNums * sizeof(s_msginfo));
+      memset(msgs, '\0', hashNums * sizeof(s_msginfo));
+      ctl = (byte *) safe_malloc(ctlen = 1); /* Some libs don't accept relloc(NULL, ..
 					 * So let it be initalized
 					 */
       /* Area linking is done in three passes */
@@ -163,7 +161,7 @@ int linkArea(s_area *area, int netMail)
 
 	 if (cctlen > ctlen) {
 		 ctlen = cctlen;
-	         ctl   = (byte *) realloc(ctl, cctlen + 1);
+	         ctl   = (byte *) safe_realloc(ctl, cctlen + 1);
 	 };
 
 	 if (ctl == NULL) {

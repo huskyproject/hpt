@@ -59,7 +59,7 @@ char *createSeenByPath(s_area *echo) {
 	s_seenBy *seenBys;
 	char *seenByPath = NULL;
 	
-	seenBys = (s_seenBy*) calloc(echo->downlinkCount+1,sizeof(s_seenBy));
+	seenBys = (s_seenBy*) safe_malloc(sizeof(s_seenBy)*(echo->downlinkCount+1));
 	for (i = 0;i < echo->downlinkCount; i++) {
 		// only include nodes in SEEN-BYS
 		if (echo->downlinks[i]->link->hisAka.point != 0) continue;
@@ -117,7 +117,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
 
    // convert kludgeLines
    ctrlLen = MsgGetCtrlLen(hmsg);
-   ctrlBuff = (UCHAR *) malloc(ctrlLen+1+6+strlen(versionStr)+1); // 6 == "\001TID: " // 1 == "\r"
+   ctrlBuff = (UCHAR *) safe_malloc(ctrlLen+1+6+strlen(versionStr)+1); // 6 == "\001TID: " // 1 == "\r"
    MsgReadMsg(hmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
    ctrlBuff[ctrlLen] = '\0'; /* MsgReadMsg does not do zero termination! */
    if (action == 0 && config->disableTID == 0)

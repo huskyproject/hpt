@@ -68,7 +68,7 @@ int strncasesearch(char *strL, char *strR, int len)
     char *str;
     int ret;
     
-    str = (char*)calloc(strlen(strL)+1, sizeof(char));
+    str = (char*) safe_malloc(strlen(strL)+1);
     strcpy(str, strL);
     if (strlen(str) > len) str[len] = 0;
     ret = stricmp(str, strR);
@@ -180,8 +180,8 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 	fseek(f, 0L, SEEK_END);
 	endpos = ftell(f);
 	len = endpos-(curpos+linelen);
-	buff = (char*)realloc(buff, len+1);
-	memset(buff, 0, len+1);
+	buff = (char*) safe_realloc(buff, (size_t) (len+1));
+	memset(buff, '\0', (size_t) (len+1));
 	fseek(f, curpos+linelen, SEEK_SET);
 	len = fread(buff, sizeof(char), (size_t) len, f);
  	fseek(f, curpos, SEEK_SET);
@@ -216,7 +216,7 @@ int addstring(FILE *f, char *aka) {
 	cfglen=endpos-areapos;
 	
 	// storing end of file...
-	cfg = (char*) calloc((size_t) cfglen+1, sizeof(char));
+	cfg = (char*) safe_malloc((size_t) cfglen+1);
 	fseek(f,-cfglen,SEEK_END);
 	len = fread(cfg,sizeof(char),(size_t) cfglen,f);
 	
@@ -234,8 +234,9 @@ int addstring(FILE *f, char *aka) {
 void addlink(s_link *link, s_area *area) {
     s_arealink *arealink;
     
-    area->downlinks = realloc(area->downlinks, sizeof(s_arealink*)*(area->downlinkCount+1));
-    arealink = area->downlinks[area->downlinkCount] = (s_arealink*)calloc(1, sizeof(s_arealink));
+    area->downlinks = safe_realloc(area->downlinks, sizeof(s_arealink*)*(area->downlinkCount+1));
+    arealink = area->downlinks[area->downlinkCount] = (s_arealink*) safe_malloc(sizeof(s_arealink));
+    memset(arealink, '\0', sizeof(s_arealink));
     arealink->link = link;
 
 	if (link->numOptGrp > 0) {
@@ -287,7 +288,8 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
     
     time_cur = time(NULL);
     
-    msg = (s_message*) calloc(1, sizeof(s_message));
+    msg = (s_message*) safe_malloc(sizeof(s_message));
+    memset(msg, '\0', sizeof(s_message));
     
     msg->origAddr.zone = origAddr->zone;
     msg->origAddr.net = origAddr->net;
@@ -414,12 +416,13 @@ char *help(s_link *link) {
 		fseek(f,0L,SEEK_END);
 		endpos=ftell(f);
 		
-		help=(char*) calloc((size_t) endpos+1,sizeof(char));
+		help=(char*) safe_malloc((size_t) endpos+1);
 
 		fseek(f,0L,SEEK_SET);
 		fread(help,1,(size_t) endpos,f);
 		
 		for (i=0; i<endpos; i++) if (help[i]=='\n') help[i]='\r';
+		help[endpos]='\0';
 
 		fclose(f);
 
@@ -668,7 +671,7 @@ int forwardRequest(char *areatag, s_link *dwlink) {
     int Requestable = 0;
 
     /* From Lev Serebryakov -- sort Links by priority */
-	Indexes	= malloc(sizeof(int)*config->linkCount);
+    Indexes = safe_malloc(sizeof(int)*config->linkCount);
     for (i = 0; i < config->linkCount; i++) {
 		if (config->links[i].forwardRequests) Indexes[Requestable++] = i;
     }
@@ -897,9 +900,10 @@ int changepause(char *confName, s_link *link, int opt)
 
 				cfglen=endpos-curpos;
 				
-				line = (char*)calloc(cfglen+1, sizeof(char));
+				line = (char*) safe_malloc((size_t) cfglen+1);
 				fseek(f_conf, curpos, SEEK_SET);
 				fread(line, sizeof(char), cfglen, f_conf);
+				line[cfglen]='\0';
 		
 				fseek(f_conf, curpos, SEEK_SET);
 				fputs("Pause\n", f_conf);
@@ -1008,7 +1012,7 @@ int changeresume(char *confName, s_link *link)
 				
 				cfglen=endpos-remstr;
 				
-				line = (char*)calloc(cfglen+1, sizeof(char));
+				line = (char*) safe_malloc((size_t) cfglen+1);
 				fseek(f_conf, remstr, SEEK_SET);
 				cfglen = fread(line, sizeof(char), (size_t) cfglen, f_conf);
 				
@@ -1407,7 +1411,7 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 			while (*p != '\r') p--;
 			*p = '\000';
 			len = p - text;
-			split = (char*) malloc(len+strlen((splitStr) ? splitStr : splitted)+3+1);
+			split = (char*) safe_malloc(len+strlen((splitStr) ? splitStr : splitted)+3+1);
 			memcpy(split,text,len);
 			strcpy(split+len,"\r\r");
 			strcat(split, (splitStr) ? splitStr : splitted);
@@ -1546,7 +1550,8 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	} else {
 
 		if (link == NULL) {
-			tmplink = (s_link*)calloc(1, sizeof(s_link));
+			tmplink = (s_link*) safe_malloc(sizeof(s_link));
+			memset(tmplink, '\0', sizeof(s_link));
 			tmplink->ourAka = &(msg->destAddr);
 			tmplink->hisAka.zone = msg->origAddr.zone;
 			tmplink->hisAka.net = msg->origAddr.net;
@@ -1785,7 +1790,7 @@ int relink (char *straddr) {
 	}
 
 	areasArraySize = 0;
-	areasIndexArray = (s_area **) malloc 
+	areasIndexArray = (s_area **) safe_malloc
 		(sizeof(s_area *) * (config->echoAreaCount  +
 							 config->localAreaCount + 1));
 

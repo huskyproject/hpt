@@ -209,8 +209,8 @@ void buildAreaTree(s_area *area)
 
 
 		   textLength = MsgGetTextLen(hmsg);
-		   text = (char *) calloc(1, textLength+1);
-
+		   text = (char *) calloc(textLength+1,sizeof(char));
+		   if (text == NULL) return;
 
                    ttime = mktime(&tmTime);
               

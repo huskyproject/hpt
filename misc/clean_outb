@@ -1,5 +1,7 @@
 #!/bin/bash
 #
+# This script removes old bsy files, empty .sep & .pnt dirs from outbound.
+#
 # Copyright 2000 Victor Sergienko singalen@mail.ru 2:464/118 vs@balance.dp.ua
 # You're totally free to do anything with this software
 # except of bothering author for anything except thanks:

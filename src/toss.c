@@ -119,7 +119,8 @@ char *changeFileSuffix(char *fileName, char *newSuffix) {
    char *newFileName;
    int  length = strlen(fileName)-strlen(beginOfSuffix)+strlen(newSuffix);
 
-   newFileName = (char *) calloc(length+1+2, 1);
+   newFileName = (char *) safe_malloc((size_t) length+1+2);
+   memset(newFileName, '\0',length+1+2);
    strncpy(newFileName, fileName, length-strlen(newSuffix));
    strcat(newFileName, newSuffix);
 
@@ -165,7 +166,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 	char *subject;
 
 	// clear msgheader
-	memset(&msgHeader, 0, sizeof(XMSG));
+	memset(&msgHeader, '\0', sizeof(XMSG));
 	
 	// attributes of netmail must be fixed
 	msgHeader.attr = msg->attributes;
@@ -212,7 +213,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
        && !strchr(msg->subjectLine, PATH_DELIM)) {
      int size=strlen(msg->subjectLine)+strlen(tossDir)+1;
      if (size < XMSG_SUBJ_SIZE) {
-       subject = (char *) malloc (size);
+       subject = (char *) safe_malloc (size);
        sprintf (subject,"%s%s",tossDir,msg->subjectLine);
 #if defined(__linux__) || defined(UNIX)
        subject = strLower(subject);
@@ -340,7 +341,7 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
 
    for (i=0; i<config->addToSeenCount; i++) {
 	   (*seenByCount)++;
-	   (*seenBys) = (s_seenBy*) realloc(*seenBys,sizeof(s_seenBy)*(*seenByCount));
+	   (*seenBys) = (s_seenBy*) safe_realloc(*seenBys,sizeof(s_seenBy)*(*seenByCount));
 	   (*seenBys)[*seenByCount-1].net = (UINT16) config->addToSeen[i].net;
 	   (*seenBys)[*seenByCount-1].node = (UINT16) config->addToSeen[i].node;
    }
@@ -358,7 +359,7 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
    } while (!isdigit(*start));
 
    // now that we have the start of the SEEN-BY's we can tokenize the lines and read them in
-   seenByText = malloc(strlen(start)+1);
+   seenByText = safe_malloc(strlen(start)+1);
    strcpy(seenByText, start);
 
    token = strtok(seenByText, " \r\t\376");
@@ -368,7 +369,7 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
 
          // get new memory
          (*seenByCount)++;
-         (*seenBys) = (s_seenBy*) realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
+         (*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
 
          // parse token
          temp = strtoul(token, &endptr, 10);
@@ -422,14 +423,14 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
    } while (!isdigit(*start));
 
    // now that we have the start of the PATH' so we can tokenize the lines and read them in
-   seenByText = malloc(strlen(start)+1);
+   seenByText = safe_malloc(strlen(start)+1);
    strcpy(seenByText, start);
 
    token = strtok(seenByText, " \r\t\376");
    while (token != NULL) {
       if (isdigit(*token)) {
          (*seenByCount)++;
-         *seenBys = (s_seenBy*) realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
+         *seenBys = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
 
          // parse token
          temp = strtoul(token, &endptr, 10);
@@ -492,8 +493,9 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
 {
 	UINT i, j=0, k=0;
 	
-	*newLinks = (s_arealink **) calloc(echo->downlinkCount, sizeof(s_arealink*));
-	*zoneLinks = (s_arealink **) calloc(echo->downlinkCount, sizeof(s_arealink*));
+	*newLinks = (s_arealink **) calloc(echo->downlinkCount,sizeof(s_arealink*));
+	*zoneLinks = (s_arealink **) calloc(echo->downlinkCount,sizeof(s_arealink*));
+	if (*newLinks==NULL || *zoneLinks==NULL) exit_hpt("out of memory",1);
 
 	for (i=0; i < echo->downlinkCount; i++) {
 		if (seenBys!=NULL &&
@@ -523,7 +525,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 
 	// add our aka to seen-by (zonegating link must strip our aka)
 	if (*seenByCount==0 && echo->useAka->point==0) {
-		(*seenBys) = (s_seenBy*) realloc((*seenBys), sizeof(s_seenBy) * (*seenByCount+1));
+		(*seenBys) = (s_seenBy*) safe_realloc((*seenBys), sizeof(s_seenBy) * (*seenByCount+1));
 		(*seenBys)[*seenByCount].net = (UINT16) echo->useAka->net;
 		(*seenBys)[*seenByCount].node = (UINT16) echo->useAka->node;
 		(*seenByCount)++;
@@ -537,7 +539,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		// don't include points in SEEN-BYs
 		if (newLinks[i]->link->hisAka.point != 0) continue;
 		
-		(*seenBys) = (s_seenBy*) realloc((*seenBys), sizeof(s_seenBy) * (*seenByCount+1));
+		(*seenBys) = (s_seenBy*) safe_realloc((*seenBys), sizeof(s_seenBy) * (*seenByCount+1));
 		(*seenBys)[*seenByCount].net = (UINT16) newLinks[i]->link->hisAka.net;
 		(*seenBys)[*seenByCount].node = (UINT16) newLinks[i]->link->hisAka.node;
 		(*seenByCount)++;
@@ -554,14 +556,14 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		if (((*path)[*pathCount-1].net != echo->useAka->net) ||
 			((*path)[*pathCount-1].node != echo->useAka->node)) {
 			// add our aka to path
-			(*path) = (s_seenBy*) realloc((*path), sizeof(s_seenBy) * (*pathCount+1));
+			(*path) = (s_seenBy*) safe_realloc((*path), sizeof(s_seenBy) * (*pathCount+1));
 			(*path)[*pathCount].net = (UINT16) echo->useAka->net;
 			(*path)[*pathCount].node = (UINT16) echo->useAka->node;
 			(*pathCount)++;
 		}
 	} else {
 		(*pathCount) = 0;
-		(*path) = (s_seenBy*) realloc((*path),sizeof(s_seenBy) * 1);
+		(*path) = (s_seenBy*) safe_realloc((*path),sizeof(s_seenBy) * 1);
 		(*path)[*pathCount].net = (UINT16) echo->useAka->net;
 		(*path)[*pathCount].node = (UINT16) echo->useAka->node;
 		(*pathCount) = 1;
@@ -754,7 +756,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    parseLine(buff,config);
    free(buff);
 
-   // echoarea addresses changed by reallocating of config->echoAreas[]
+   // echoarea addresses changed by safe_reallocating of config->echoAreas[]
    carbonNames2Addr(config);
 
    writeLogEntry(hpt_log, '8', "Area '%s' autocreated by %s", c_area, hisaddr);
@@ -814,7 +816,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 	{
 		/* Execute external program */
 		fclose(msgfp);
-		execstr = malloc(strlen(progname)+strlen(fname)+2);
+		execstr = safe_malloc(strlen(progname)+strlen(fname)+2);
 		sprintf(execstr, "%s %s", progname, fname);
 		rc = system(execstr);
 		free(execstr);
@@ -830,12 +832,13 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 /* area - area to carbon messages, echo - original echo area */
 int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carbon) {
 	char *p, *old_text, *reason = carbon.reason;
-	int i, old_textLength, reasonLen = 0, export = carbon.export, rc = 0;
+	int i, old_textLength, reasonLen = 0, export = carbon.export, rc = 0, recode = 0;
 
 	statToss.CC++;
 
 	old_textLength = msg->textLength;
 	old_text = msg->text;
+	if (msg->recode & REC_TXT) recode = 1;
 	
 	i = strlen(old_text);
 
@@ -847,7 +850,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	
 	if (reason) reasonLen = strlen(reason)+1;  /* +1 for \r */
 
-	msg->text = malloc(i+strlen("AREA:\r * Forwarded from area ''\r\r\1")
+	msg->text = safe_malloc(i+strlen("AREA:\r * Forwarded from area ''\r\r\1")
 		   +strlen(area->areaName)+strlen(echo->areaName)+reasonLen+1);
 	
 	//create new area-line
@@ -877,7 +880,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	free (msg->text);
 	msg->textLength = old_textLength;
 	msg->text = old_text;
-	msg->recode &= ~REC_TXT;
+	if (recode == 0) msg->recode &= ~REC_TXT;
 	
 	return rc;
 }
@@ -950,15 +953,15 @@ int carbonCopy(s_message *msg, s_area *echo)
 
 int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 {
-    char *tmp, *line, *textBuff, *areaName;
+    char *tmp, *line, *textBuff=NULL, *areaName=NULL;
     
     statToss.bad++;
 	 
     // get real name area
     line = strchr(msg->text, '\r');
     *line = 0;
-    areaName = (char*)calloc(strlen(msg->text)+13, sizeof(char));
-    sprintf(areaName, "AREANAME: %s\r\r", msg->text+5);
+//    areaName = (char*) calloc(strlen(msg->text)+13, sizeof(char));
+    xscatprintf(&areaName, "AREANAME: %s\r\r", msg->text+5);
     *line = '\r';
 	 
     tmp = msg->text;
@@ -969,36 +972,36 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 	else { tmp = line+1; *line = 0; break; }
     }
 	 
-    textBuff = (char *)calloc(strlen(msg->text)+strlen(areaName)+80, sizeof(char));
+//    textBuff = (char *)calloc(strlen(msg->text)+strlen(areaName)+80, sizeof(char));
     
-    sprintf(textBuff, "%s\rFROM: %s\rREASON: ", msg->text, aka2str(pktOrigAddr));
+    xscatprintf(&textBuff, "%s\rFROM: %s\rREASON: ", msg->text, aka2str(pktOrigAddr));
     switch (writeAccess) {
 	case 0: 
-		strcat(textBuff, "System not allowed to create new area\r");
+		xstrcat(&textBuff, "System not allowed to create new area\r");
 		break;
 	case 1: 
-		strcat(textBuff, "Sender not allowed to post in this area (access group)\r");
+		xstrcat(&textBuff, "Sender not allowed to post in this area (access group)\r");
 		break; 
 	case 2: 
-		strcat(textBuff, "Sender not allowed to post in this area (access level)\r");
+		xstrcat(&textBuff, "Sender not allowed to post in this area (access level)\r");
 	        break;
 	case 3: 
-		strcat(textBuff, "Sender not allowed to post in this area (access import)\r");
+		xstrcat(&textBuff, "Sender not allowed to post in this area (access import)\r");
 	        break;
 	case 4: 
-		strcat(textBuff, "Sender not active for this area\r");
+		xstrcat(&textBuff, "Sender not active for this area\r");
 	        break;
 	default :
-		strcat(textBuff, "Another error\r");
+		xstrcat(&textBuff, "Another error\r");
 		break;
     }
-    textBuff = (char*)realloc(textBuff, strlen(areaName)+strlen(textBuff)+strlen(tmp)+1);
-    strcat(textBuff, areaName);
-    strcat(textBuff, tmp);
-    free(areaName);
-    free(msg->text);
+//    textBuff = (char*)safe_realloc(textBuff, strlen(areaName)+strlen(textBuff)+strlen(tmp)+1);
+    xstrcat(&textBuff, areaName);
+    xstrcat(&textBuff, tmp);
+    nfree(areaName);
+    nfree(msg->text);
     msg->text = textBuff;
-    msg->textLength = strlen(msg->text)+1;
+    msg->textLength = strlen(msg->text);
     return putMsgInArea(&(config->badArea), msg, 0, 0);
 }
 
@@ -1104,7 +1107,7 @@ void writeMsgToSysop()
         		echo->imported++;  // area has got new messages
 		    }
 
-		    seenBys = (s_seenBy*) calloc(echo->downlinkCount+1,sizeof(s_seenBy));
+		    seenBys = (s_seenBy*) safe_malloc(sizeof(s_seenBy)*(echo->downlinkCount+1));
 		    seenBys[0].net = (UINT16) echo->useAka->net;
 		    seenBys[0].node = (UINT16) echo->useAka->node;
 		    sortSeenBys(seenBys, 1);
@@ -1177,7 +1180,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
    s_link *link;
    int    writeAccess = 0, rc = 0, ccrc = 0;
 
-   textBuff = (char *) malloc(strlen(msg->text)+1);
+   textBuff = (char *) safe_malloc(strlen(msg->text)+1);
    strcpy(textBuff, msg->text);
 
    area = strtok(textBuff, "\r");
@@ -1400,15 +1403,12 @@ int processPkt(char *fileName, e_tossSecurity sec)
        /* +AS+ */
        if (config->processPkt)
 	 {
-	   extcmd=calloc(strlen(config->processPkt)+strlen(fileName)+2,1);
-	   if (extcmd)
-	     {
-	       sprintf(extcmd,"%s %s",config->processPkt,fileName);
-	       writeLogEntry(hpt_log, '6', "ProcessPkt: execute string \"%s\"",extcmd);
-	       if ((cmdexit = system(extcmd)) != 0)
-		 writeLogEntry(hpt_log, '9', "exec failed, code %d", cmdexit);
-	       free(extcmd);
-	     }
+	   extcmd = safe_malloc(strlen(config->processPkt)+strlen(fileName)+2);
+	   sprintf(extcmd,"%s %s",config->processPkt,fileName);
+	   writeLogEntry(hpt_log, '6', "ProcessPkt: execute string \"%s\"",extcmd);
+	   if ((cmdexit = system(extcmd)) != 0)
+	   writeLogEntry(hpt_log, '9', "exec failed, code %d", cmdexit);
+	   free(extcmd);
 	 }
        /* -AS- */
        
@@ -1660,7 +1660,7 @@ void processDir(char *directory, e_tossSecurity sec)
 #endif
       {
 	 nfiles++;
-	 files = (s_fileInDir *) realloc ( files, nfiles * sizeof(s_fileInDir));
+	 files = (s_fileInDir *) safe_realloc ( files, nfiles * sizeof(s_fileInDir));
 	 (files[nfiles-1]).fileName = dummy;
 
          if(stat((files[nfiles-1]).fileName, &st)==0) {
@@ -1802,7 +1802,7 @@ int find_old_arcmail(s_link *link, FILE *flo)
 			else
 				as = 500; // default 500 kb max
 			if (len < as * 1024L) {
-				link->packFile=(char*)realloc(link->packFile,strlen(bundle)+1);
+				link->packFile=(char*) safe_realloc(link->packFile,strlen(bundle)+1);
 				strcpy(link->packFile,bundle);
 				free(bundle);
 				return 1;
@@ -1879,7 +1879,7 @@ void arcmail(s_link *tolink) {
 			 }
 			 else {
 				 // there is no packer defined -> put pktFile into flo
-				 pkt = (char*) malloc(strlen(link->floFile)+13+1);
+				 pkt = (char*) safe_malloc(strlen(link->floFile)+13+1);
 				 lastPathDelim = strrchr(link->floFile, PATH_DELIM);
 				 
 				 // change path of file to path of flofile
@@ -2038,7 +2038,7 @@ void tossTempOutbound(char *directory)
 	   if (l > 4 && (stricmp(file->d_name + l - 4, ".pkt") == 0 ||
 	                 stricmp(file->d_name + l - 4, ".qqq") == 0))
 	   {
-                   dummy = (char *) malloc(strlen(directory)+l+1);
+                   dummy = (char *) safe_malloc(strlen(directory)+l+1);
                    strcpy(dummy, directory);
                    strcat(dummy, file->d_name);
 
@@ -2083,7 +2083,7 @@ void toss()
    FILE *f;
 
    // set stats to 0
-   memset(&statToss, 0, sizeof(s_statToss));
+   memset(&statToss, '\0', sizeof(s_statToss));
    writeLogEntry(hpt_log, '1', "Start tossing...");
    processDir(config->localInbound, secLocalInbound);
    processDir(config->protInbound, secProtInbound);
@@ -2188,12 +2188,17 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
    if (checkAreaLink(echo, pktOrigAddr, 0) == 0) {
 	   if (dupeDetection(echo, msg)==1) {
 		   // no dupe
+		   
+		   msg.recode |= (REC_HDR|REC_TXT);
 		   if (config->carbonCount != 0) carbonCopy(&msg, echo);
 		   
 		   echo->imported++;  // area has got new messages
 		   if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
 			   rc = putMsgInArea(echo, &msg,1, 0);
-		   } else statToss.passthrough++;
+		   } else {
+		       statToss.passthrough++;
+		       rc = 1; // passthrough always work
+		   }
 
 		   // recoding from internal to transport charSet
 		   if (config->outtab) {

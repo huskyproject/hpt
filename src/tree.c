@@ -24,6 +24,7 @@
 #include "vixie.h"
 #include "tree.h"
 
+#include <fcommon.h>
 
 #ifdef DEBUG
 #define		MSG(msg)	printf("DEBUG: '%s'\n", msg);
@@ -88,7 +89,7 @@ static void sprout(tree **ppr, char *pc_data, int *pi_balance,
 	 */
 	if (!*ppr) {
 		MSG("grounded. adding new node, setting h=true")
-		*ppr = (tree *) malloc(sizeof(tree));
+		*ppr = (tree *) safe_malloc(sizeof(tree));
 		(*ppr)->tree_l = NULL;
 		(*ppr)->tree_r = NULL;
 		(*ppr)->tree_b = 0;

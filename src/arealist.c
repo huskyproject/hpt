@@ -80,7 +80,7 @@ int addAreaListItem(ps_arealist al, int active, char *tag, char *desc)
     al->areas[al->count].tag = strdup(tag);
     if(desc) {
     	l = strlen(desc);
-    	al->areas[al->count].desc = malloc(l+3);
+    	al->areas[al->count].desc = safe_malloc(l+3);
     	if('"' == desc[0] && '"' == desc[l-1]) {
     		strcpy(al->areas[al->count].desc,desc);
     	} else {

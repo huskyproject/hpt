@@ -81,11 +81,10 @@ s_pktHeader *openPkt(FILE *pkt)
   s_pktHeader *header;
   UINT16      pktVersion, capWord;
 
-  header = (s_pktHeader *) calloc(1,sizeof(s_pktHeader));
+  header = (s_pktHeader *) safe_malloc(sizeof(s_pktHeader));
+  memset(header, '\0', sizeof(s_pktHeader));
   header->origAddr.node = getUINT16(pkt);
   header->destAddr.node = getUINT16(pkt);
-  header->origAddr.domain = NULL;
-  header->destAddr.domain = NULL;
   header->pktCreated = readPktTime(pkt); // 12 bytes
 
   getUINT16(pkt); /* read 2 bytes for the unused baud field */
@@ -533,16 +532,14 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 	   return 0;              /* end of pkt file */
    }
 
-   msg = (s_message*) calloc(1,sizeof(s_message));
-   if (msg==NULL) exit_hpt("out of memory", 1);
+   msg = (s_message*) safe_malloc(sizeof(s_message));
+   memset(msg, '\0', sizeof(s_message));
 
    msg->origAddr.node   = getUINT16(pkt);
    msg->destAddr.node   = getUINT16(pkt);
    msg->origAddr.net    = getUINT16(pkt);
    msg->destAddr.net    = getUINT16(pkt);
    msg->attributes      = getUINT16(pkt);
-   msg->origAddr.domain = NULL;
-   msg->destAddr.domain = NULL;
 
    getc(pkt); getc(pkt);                // read unused cost fields (2bytes)
 
@@ -551,8 +548,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    make_ftsc_date(msg->datetime, &tm);
 
    if (globalBuffer==NULL) {
-	   globalBuffer = (UCHAR *) malloc(BUFFERSIZE+1); // 128K (32K in MS-DOS)
-	   if (globalBuffer==NULL) exit_hpt("out of memory", 1);
+       globalBuffer = (UCHAR *) safe_malloc(BUFFERSIZE+1); // 128K (32K in MS-DOS)
    }
 
    len = fgetsUntil0 ((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt);

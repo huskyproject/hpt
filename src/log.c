@@ -56,7 +56,7 @@ s_log *openLog(char *fileName, char *appN)
 {
    s_log      *temp;
 
-   temp = (s_log *) malloc(sizeof(s_log));
+   temp = (s_log *) safe_malloc(sizeof(s_log));
    memset(temp, '\0', sizeof(s_log));
    temp->logFile = fopen(fileName, "a");
    if (NULL == temp->logFile) {

@@ -33,6 +33,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <fidoconf/xstr.h>
+#include <fcommon.h>
 
 int compare(const void *first, const void *second)
 {
@@ -58,10 +59,11 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
       xstrcat(&text, lineHeading);
    } else {
        
-      line = calloc (size,sizeof(char));
+      line = safe_malloc ((size_t) size);
 
       sprintf(addr2d, "%u/%u", seenBys[0].net, seenBys[0].node);
-      text = (char *) calloc(size,sizeof(char));
+      text = (char *) safe_malloc((size_t) size);
+      text[0]='\0';
       strcpy(line, lineHeading);
       strcat(line, addr2d);
       for (i=1; i < seenByCount; i++) {
@@ -75,7 +77,7 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
             //if line would be greater than 79 characters, make new line
             strcat(text,line);
             strcat(text, "\r");
-            text = (char *) realloc(text,strlen(text)+size);
+            text = (char *) safe_realloc(text,strlen(text)+size);
             strcpy(line, lineHeading);
             // start new line with full 2d information
             sprintf(addr2d, "%u/%u", seenBys[i].net, seenBys[i].node);
@@ -83,7 +85,7 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
          strcat(line, addr2d);
       }
 	  // reserve only needed space + ending \r
-          text = (char *) realloc(text, strlen(text)+strlen(line)+2);
+          text = (char *) safe_realloc(text, strlen(text)+strlen(line)+2);
 	  strcat(text,line);
 	  free(line);
    }

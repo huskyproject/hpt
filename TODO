@@ -3,8 +3,10 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
+- change lock's routine
 - carbons for exported netmail
 - fix reading long messages under ms-dos (path & seen-by)
+- tearline. origin tokens...
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

@@ -13,8 +13,8 @@ CHAR *outtab = NULL;
 VOID initCharsets(VOID)
 {
 	int i;
-	intab		= (CHAR *) malloc(sizeof(CHAR) * 256);
-	outtab	= (CHAR *) malloc(sizeof(CHAR) * 256);
+	intab	= (CHAR *) safe_malloc(sizeof(CHAR) * 256);
+	outtab	= (CHAR *) safe_malloc(sizeof(CHAR) * 256);
 	for (i = 0; i < 256; i++) intab[i] = outtab[i] = (CHAR) i;
 }
 

@@ -196,11 +196,11 @@ int fileNameAlreadyUsed(char *pktName, char *packName) {
 int createTempPktFileName(s_link *link)
 {
     /* pkt file in tempOutbound */
-    char  *fileName = (char *) malloc(strlen(config->tempOutbound)+12+1);
+    char  *fileName = (char *) safe_malloc(strlen(config->tempOutbound)+12+1);
     /* name of the arcmail bundle */
-    char  *pfileName = (char *) malloc(strlen(config->outbound)+13+13+12+1);
+    char  *pfileName = (char *) safe_malloc(strlen(config->outbound)+13+13+12+1);
     /* temp name of the arcmail bundle */
-    char  *tmpPFileName = (char *) malloc(strlen(config->outbound)+13+13+12+1);
+    char  *tmpPFileName = (char *) safe_malloc(strlen(config->outbound)+13+13+12+1);
     time_t aTime = time(NULL);  /* get actual time */
     int counter = 0;
     char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
@@ -225,7 +225,7 @@ int createTempPktFileName(s_link *link)
 
     if (link->hisAka.zone != config->addr[0].zone) {
         sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
-        zoneOutbound = malloc(strlen(config->outbound)-1+strlen(zoneSuffix)+1);
+        zoneOutbound = safe_malloc(strlen(config->outbound)-1+strlen(zoneSuffix)+1);
         strcpy(zoneOutbound, config->outbound);
         strcpy(zoneOutbound+strlen(zoneOutbound)-1, zoneSuffix);
     } else
@@ -336,11 +336,11 @@ int createTempPktFileName(s_link *link)
     tp=localtime(&tr);
     sprintf(ext,"%s0", wdays[tp->tm_wday]);
             
-    pfilename = (char *) malloc(strlen(config->outbound)+13+13+12+1);
+    pfilename = (char *) safe_malloc(strlen(config->outbound)+13+13+12+1);
 
     if (link->hisAka.zone != config->addr[0].zone) {
         sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
-        zoneOutbound = malloc(strlen(config->outbound)-1+strlen(zoneSuffix)+1);
+        zoneOutbound = safe_malloc(strlen(config->outbound)-1+strlen(zoneSuffix)+1);
         strcpy(zoneOutbound, config->outbound);
         strcpy(zoneOutbound+strlen(zoneOutbound)-1, zoneSuffix);
     } else
@@ -410,7 +410,7 @@ int createDirectoryTree(const char *pathName) {
 
    int i;
 
-   start = (char *) malloc(strlen(pathName)+2);
+   start = (char *) safe_malloc(strlen(pathName)+2);
    strcpy(start, pathName);
    i = strlen(start)-1;
    if (start[i] != limiter) {
@@ -504,8 +504,8 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    } /* endif */
 
    // create floFile
-   link->floFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
-   link->bsyFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
+   link->floFile = (char *) safe_malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
+   link->bsyFile = (char *) safe_malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
    strcpy(link->floFile, config->outbound);
    if (zoneSuffix[0] != 0) strcpy(link->floFile+strlen(link->floFile)-1, zoneSuffix);
    strcat(link->floFile, pntDir);
@@ -519,7 +519,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 	   if (link->hisAka.point != 0) sprintf(sepname, "%08x.sep", link->hisAka.point);
 	   else sprintf(sepname, "%04x%04x.sep", link->hisAka.net, link->hisAka.node);
 
-	   sepDir = (char *) malloc(strlen(link->bsyFile)+strlen(sepname)+2);
+	   sepDir = (char *) safe_malloc(strlen(link->bsyFile)+strlen(sepname)+2);
 	   sprintf(sepDir,"%s%s%c",link->bsyFile,sepname,limiter);
 
 	   createDirectoryTree(sepDir);
@@ -561,4 +561,18 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    }
 
    return 0;
+}
+
+void *safe_malloc(size_t size)
+{
+    void *ptr = malloc (size);
+    if (ptr == NULL) exit_hpt("out of memory", 1);
+    return ptr;
+}
+
+void *safe_realloc(void *ptr, size_t size)
+{
+    void *newptr = realloc (ptr, size);
+    if (newptr == NULL) exit_hpt("out of memory", 1);
+    return newptr;
 }

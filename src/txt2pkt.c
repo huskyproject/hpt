@@ -41,8 +41,8 @@ int main(int argc, char *argv[])
     CHAR *textBuffer = NULL;
     char tmp[512];
 
-    memset (&header,0,sizeof(s_pktHeader));
-    memset (&msg,0,sizeof(s_message));
+    memset (&header,'\0',sizeof(s_pktHeader));
+    memset (&msg,'\0',sizeof(s_message));
 
    if (argc == 1) {
       printf("\nUsage:\n");

@@ -73,7 +73,7 @@ char *strtolower(char *string) {
   char *tmp;
     
   l=strlen(string);
-  tmp=(char *) malloc (l+1);
+  tmp=(char *) safe_malloc (l+1);
   for (cont=0;cont<=l;cont++)
     tmp[cont]=(char)tolower(string[cont]);
   
@@ -292,16 +292,16 @@ void doReading(FILE *f, s_dupeMemory *mem) {
 
        switch (config->typeDupeBase) {
           case hashDupes:
-               enhash = (s_hashDupeEntry*) malloc(sizeof(s_hashDupeEntry));
+               enhash = (s_hashDupeEntry*) safe_malloc(sizeof(s_hashDupeEntry));
                fread(enhash, sizeof(s_hashDupeEntry), 1, f);
                tree_add(&(mem->avlTree), compareEntriesBlank, (char *) enhash, deleteEntry);
      	       break;
 
           case hashDupesWmsgid:
-               enhashM = (s_hashMDupeEntry*) malloc(sizeof(s_hashMDupeEntry));
+               enhashM = (s_hashMDupeEntry*) safe_malloc(sizeof(s_hashMDupeEntry));
                fread(enhashM, sizeof(time_t)+sizeof(UINT32), 1, f);
                if ((length = (UCHAR)getc(f)) > 0) {  /* no EOF check :-( */
-                  enhashM->msgid = malloc(length+1);
+                  enhashM->msgid = safe_malloc(length+1);
                   fread((UCHAR*)enhashM->msgid, length, 1, f);     
                   enhashM->msgid[length]='\0';
                } else enhashM->msgid = NULL;
@@ -309,28 +309,28 @@ void doReading(FILE *f, s_dupeMemory *mem) {
  	       break;
 
           case textDupes:
-               entxt = (s_textDupeEntry*) malloc(sizeof(s_textDupeEntry));
+               entxt = (s_textDupeEntry*) safe_malloc(sizeof(s_textDupeEntry));
 
                fread(&timedupe, sizeof(time_t), 1, f);     
                entxt->TimeStampOfDupe=timedupe;
 
                if ((length = (UCHAR)getc(f)) > 0) { /* no EOF check :-( */
-                  entxt->from = malloc(length+1);
+                  entxt->from = safe_malloc(length+1);
                   fread((UCHAR*)entxt->from, length, 1, f);     
                   entxt->from[length]='\0';
                } else entxt->from = NULL;
                if ((length = (UCHAR) getc(f)) > 0) { /* no EOF check :-( */
-                  entxt->to = malloc(length+1);
+                  entxt->to = safe_malloc(length+1);
                   fread((UCHAR*)entxt->to, length, 1, f);     
                   entxt->to[length]='\0';
                } else entxt->to = NULL;
                if ((length = (UCHAR)getc(f)) > 0) { /* no EOF check :-( */
-                  entxt->subject = malloc(length+1);
+                  entxt->subject = safe_malloc(length+1);
                   fread((UCHAR*)entxt->subject, length, 1, f);     
                   entxt->subject[length]='\0';
 	       } else entxt->subject = NULL;
                if ((length = (UCHAR)getc(f)) > 0) { /* no EOF check :-( */
-                  entxt->msgid = malloc(length+1);
+                  entxt->msgid = safe_malloc(length+1);
                   fread((UCHAR*)entxt->msgid, length, 1, f);     
                   entxt->msgid[length]='\0';
 	       } else entxt->msgid = NULL;
@@ -339,7 +339,7 @@ void doReading(FILE *f, s_dupeMemory *mem) {
  	       break;
 
           case commonDupeBase:
-               enhash = (s_hashDupeEntry*) malloc(sizeof(s_hashDupeEntry));
+               enhash = (s_hashDupeEntry*) safe_malloc(sizeof(s_hashDupeEntry));
                fread(enhash, sizeof(s_hashDupeEntry), 1, f);
                tree_add(&(mem->avlTree), compareEntriesBlank, (char *) enhash, deleteEntry);
                break;
@@ -354,7 +354,7 @@ s_dupeMemory *readDupeFile(s_area *area) {
    char *fileName=NULL;
    s_dupeMemory *dupeMemory;
 
-   dupeMemory = malloc(sizeof(s_dupeMemory));
+   dupeMemory = safe_malloc(sizeof(s_dupeMemory));
    tree_init(&(dupeMemory->avlTree));
    
    if (config->typeDupeBase!=commonDupeBase) {
@@ -475,7 +475,7 @@ int dupeDetection(s_area *area, const s_message msg) {
    if (area->dupeCheck == dcOff) return 1; // no dupeCheck return 1 "no dupe"
    if ((str=getKludge(msg, "MSGID:"))==NULL) { 
       if (msg.text!=NULL) {
-         str = malloc(25);                     // make pseudo MSGID from text!   
+         str = safe_malloc(25);                     // make pseudo MSGID from text!   
          sprintf (str, "MSGID: %08lx",strcrc32(msg.text, 0xFFFFFFFFL));
       }
       else {
@@ -496,8 +496,8 @@ int dupeDetection(s_area *area, const s_message msg) {
 
    switch (config->typeDupeBase) {
       case hashDupes:
-           enhash = malloc(sizeof(s_hashDupeEntry));
-           str1   = malloc(strlen(msg.fromUserName)+strlen(msg.toUserName)+strlen(msg.subjectLine)+strlen(str));
+           enhash = safe_malloc(sizeof(s_hashDupeEntry));
+           str1   = safe_malloc(strlen(msg.fromUserName)+strlen(msg.toUserName)+strlen(msg.subjectLine)+strlen(str));
            strcpy(str1, msg.fromUserName);
            strcat(str1, msg.toUserName);
            strcat(str1, msg.subjectLine);
@@ -520,13 +520,13 @@ int dupeDetection(s_area *area, const s_message msg) {
  	   break;
 
       case hashDupesWmsgid:
-           enhashM = malloc(sizeof(s_hashMDupeEntry));
-           str1    = malloc(strlen(msg.fromUserName)+strlen(msg.toUserName)+strlen(msg.subjectLine)+strlen(str));
+           enhashM = safe_malloc(sizeof(s_hashMDupeEntry));
+           str1    = safe_malloc(strlen(msg.fromUserName)+strlen(msg.toUserName)+strlen(msg.subjectLine)+strlen(str));
            strcpy(str1, msg.fromUserName);
            strcat(str1, msg.toUserName);
            strcat(str1, msg.subjectLine);
            strcat(str1, str+7);
-           enhashM->msgid = malloc(strlen(str)+1-7); 
+           enhashM->msgid = safe_malloc(strlen(str)+1-7); 
            strcpy(enhashM->msgid, str+7);
            free(str);
            enhashM->CrcOfDupe       = strcrc32(str1, 0xFFFFFFFFL);
@@ -544,16 +544,16 @@ int dupeDetection(s_area *area, const s_message msg) {
  	   break;
 
       case textDupes: 
-           entxt = malloc(sizeof(s_textDupeEntry));
+           entxt = safe_malloc(sizeof(s_textDupeEntry));
            entxt->TimeStampOfDupe = time (NULL);
            
-           entxt->from    = malloc(strlen(msg.fromUserName)+2); 
+           entxt->from    = safe_malloc(strlen(msg.fromUserName)+2); 
            if (0==strlen(msg.fromUserName)) strcpy(entxt->from," "); else strcpy(entxt->from, msg.fromUserName); 
-           entxt->to      = malloc(strlen(msg.toUserName)+2); 
+           entxt->to      = safe_malloc(strlen(msg.toUserName)+2); 
            if (0==strlen(msg.toUserName)) strcpy(entxt->to," "); else strcpy(entxt->to, msg.toUserName);
-           entxt->subject = malloc(strlen(msg.subjectLine)+2); 
+           entxt->subject = safe_malloc(strlen(msg.subjectLine)+2); 
            if (0==strlen(msg.subjectLine)) strcpy(entxt->subject," "); else strcpy(entxt->subject, msg.subjectLine);
-           entxt->msgid   = malloc(strlen(str)+2-7); strcpy(entxt->msgid, str+7);
+           entxt->msgid   = safe_malloc(strlen(str)+2-7); strcpy(entxt->msgid, str+7);
            free(str);
 
            if (tree_srchall(&(Dupes->avlTree), compareEntries, (char *) entxt)) {
@@ -567,8 +567,8 @@ int dupeDetection(s_area *area, const s_message msg) {
    	   break;
       
       case commonDupeBase:
-           enhash = malloc(sizeof(s_hashDupeEntry));
-           str1   = malloc(strlen(msg.fromUserName)+strlen(msg.toUserName)+strlen(msg.subjectLine)+strlen(area->areaName)+strlen(str)+10);
+           enhash = safe_malloc(sizeof(s_hashDupeEntry));
+           str1   = safe_malloc(strlen(msg.fromUserName)+strlen(msg.toUserName)+strlen(msg.subjectLine)+strlen(area->areaName)+strlen(str)+10);
            strcpy(str1, area->areaName);
            strcat(str1, msg.fromUserName);
            strcat(str1, msg.toUserName);
