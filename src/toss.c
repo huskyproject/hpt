@@ -482,7 +482,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    //translating name of the area to lowercase, much better imho.
    while (*c_area != '\0') {
       *c_area=tolower(*c_area);
-      if ((*c_area=='/') || *c_area=='\\')) *c_area = '_'; // convert any path delimiters to _
+      if ((*c_area=='/') || (*c_area=='\\')) *c_area = '_'; // convert any path delimiters to _
       c_area++;
       i++;
    }
