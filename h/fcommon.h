@@ -31,6 +31,9 @@
 #ifndef _FCOMMON_H
 #define _FCOMMON_H
 
+#ifdef __NT__
+#include <fidoconf/typesize.h>
+#endif
 #include <stdio.h>
 #include <fidoconf/fidoconf.h>
 

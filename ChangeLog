@@ -2,6 +2,12 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Wed Sep  6 17:36:17 NOVST 2000
+max (patches from Serguei Revtov):
+* hptlink JAM enable, linking by subj in spite of control info found
+* compiling on Win9x
+
+----- cvs ci ------
 Tue Sep  5 23:04:04 NOVST 2000
 max (patch from Pavel Gulchouck):
 * "hpt link" speed up

@@ -167,7 +167,7 @@ static char *GetCtrlValue (char *ctl, char *kludge)
 
    out = (char *) malloc((size_t) (end - value) + 1 );
    if (out == NULL) return (NULL);
-   
+
    memcpy(out, value, (size_t) (end - value));
    out[(size_t) (end - value)] = '\0';
 
@@ -202,12 +202,6 @@ void linkArea(s_area *area)
 
    if ((area->msgbType & MSGTYPE_PASSTHROUGH) == MSGTYPE_PASSTHROUGH) {
      if (loglevel>=10) fprintf(outlog, "PASSTHROUGH, ignoring\n");
-     return;
-   }
-
-   // JAM linking is not supported by smapi
-   if ((area->msgbType & MSGTYPE_JAM) == MSGTYPE_JAM) {
-     if (loglevel>=10) fprintf(outlog, "JAM, ignoring\n");
      return;
    }
 
@@ -250,6 +244,8 @@ void linkArea(s_area *area)
 		 if( ctlen == 0 )
 		 {
 		    if ( loglevel >= 15) fprintf(outlog, "msg %ld has no control information\n", (long) i);
+		    MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+
 		 } else {
 		   if( ctl==NULL || ctlen_curr < ctlen + 1) {
 
@@ -271,18 +267,19 @@ void linkArea(s_area *area)
 		      crepl -> msgId = (char *) GetCtrlValue( (char *)ctl, "MSGID:");
 		   }
 
-		   if ( useSubj && xmsg.subj != NULL) {
-		      if ( (ptr=skipReSubj(xmsg.subj)) == NULL) ptr = xmsg.subj;
-		      crepl -> subject = strdup(ptr);
-		   }
-
-		   // Save data for comparing
-		   memcpy(linksptr->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
-		   linksptr->replyToPos = xmsg.replyto;
-		   linksptr->replyNextPos = xmsg.replynext;
-
-		   MsgCloseMsg(hmsg);
 		 }
+
+		 if ( useSubj && xmsg.subj != NULL) {
+		    if ( (ptr=skipReSubj(xmsg.subj)) == NULL) ptr = xmsg.subj;
+		    crepl -> subject = strdup(ptr);
+		 }
+
+		 // Save data for comparing
+		 memcpy(linksptr->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
+		 linksptr->replyToPos = xmsg.replyto;
+		 linksptr->replyNextPos = xmsg.replynext;
+
+		 MsgCloseMsg(hmsg);
 	      }
 	   }
 
