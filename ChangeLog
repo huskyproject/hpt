@@ -2,6 +2,11 @@ hpt 0.9.5
 ---------
 
 ----- cvs ci ------
+Fri Jan 28 21:40:00 CET 2000
+sms:
+* changed groups from chars to strings
+
+----- cvs ci ------
 Thu Jan 27 19:16:42 CET 2000 
 mtt:
 - fixed my request bugfix

@@ -819,12 +819,12 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
        (strlen(buff)+strlen(newAutoCreate))<255) {
            if ((fileName=stristr(newAutoCreate, "-g")) == NULL) {
 	       if (creatingLink->LinkGrp) {
-	           sprintf(buff+strlen(buff), " -g %c", *(creatingLink->LinkGrp));
+	           sprintf(buff+strlen(buff), " -g %s", creatingLink->LinkGrp);
 	       }
 	   }
 	   sprintf(buff+strlen(buff), " %s", newAutoCreate);
    } else if (creatingLink->LinkGrp)
-	       sprintf(buff+strlen(buff), " -g %c", *(creatingLink->LinkGrp));
+	       sprintf(buff+strlen(buff), " -g %s", creatingLink->LinkGrp);
 
    free(newAutoCreate);
 

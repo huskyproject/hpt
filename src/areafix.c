@@ -85,23 +85,35 @@ char *print_ch(int len, char ch)
     return tmp;
 }
 
-int subscribeCheck(s_area area, s_message *msg, s_link *link) {
-	int i;
-	for (i = 0; i<area.downlinkCount;i++) {
-		if (addrComp(msg->origAddr, area.downlinks[i]->link->hisAka)==0) return 0;
-	}
-	if (area.group != '\060') {
-	    if (link->AccessGrp) {
-			if (config->PublicGroup) {
-				if (strchr(link->AccessGrp, area.group) == NULL &&
-					strchr(config->PublicGroup, area.group) == NULL) return 2;
-			} else if (strchr(link->AccessGrp, area.group) == NULL) return 2;
-	    } else if (config->PublicGroup) {
-			if (strchr(config->PublicGroup, area.group) == NULL) return 2;
-		} else return 2;
-        }
-	if (area.hide) return 3;
-	return 1;
+int subscribeCheck(s_area area, s_message *msg, s_link *link)
+{
+  int i;
+  int found = 0;
+
+  for (i = 0; i<area.downlinkCount;i++)
+  {
+    if (addrComp(msg->origAddr, area.downlinks[i]->link->hisAka)==0) return 0;
+  }
+
+  if (strcmp(area.group, "\060") != 0)
+  {
+    if (link->numAccessGrp > 0)
+    {
+      for (i = 0; i < link->numAccessGrp; i++)
+	if (strcmp(area.group, link->AccessGrp[i]) == 0) found = 1;
+    }
+
+    if (config->numPublicGroup > 0)
+    {
+      for (i = 0; i < config->numPublicGroup; i++)
+	if (strcmp(area.group, config->PublicGroup[i]) == 0) found = 1;
+    }
+  }
+  else found = 1;
+
+  if (found == 0) return 2;
+  if (area.hide) return 3;
+  return 1;
 }
 
 int subscribeAreaCheck(s_area *area, s_message *msg, char *areaname, s_link *link) {
@@ -225,22 +237,29 @@ void addlink(s_link *link, s_area *area) {
     arealink = area->downlinks[area->downlinkCount] = (s_arealink*)calloc(1, sizeof(s_arealink));
     arealink->link = link;
     
-    if (link->optGrp) test = strchr(link->optGrp, area->group);
+    if (link->numOptGrp > 0)
+    {
+      unsigned int i;
+
+      test = NULL;
+      for (i = 0; i < link->numOptGrp; i++)
+        if (strcmp(area->group, link->optGrp[i]) == 0) test = link->optGrp[i];
+    }
     arealink->export = 1;
     arealink->import = 1;
     arealink->mandatory = 0;
     if (link->export) if (*link->export==0) {
-	    if (link->optGrp == NULL || (link->optGrp && test)) {
+	    if (link->numOptGrp == 0 || (link->numOptGrp && test)) {
 		arealink->export = 0;
 	    }
 	} 
     if (link->import) if (*link->import==0) {
-	    if (link->optGrp == NULL ||  (link->optGrp && test)) {
+	    if (link->numOptGrp == 0 ||  (link->numOptGrp && test)) {
 		arealink->import = 0;
 	    }
 	} 
     if (link->mandatory) if (*link->mandatory==1) {
-	    if (link->optGrp == NULL || (link->optGrp && test)) {
+	    if (link->numOptGrp == 0 || (link->numOptGrp && test)) {
 		arealink->mandatory = 1;
 	    }
 	} 
@@ -431,6 +450,8 @@ char *help(s_link *link) {
 char *available(s_link *link) {
 	FILE *f;
 	int i=0,j=0;
+	unsigned int k;
+	int found;
 	char *report = NULL, *avail, linkAka[25];
 	long endpos;
 	s_link *uplink=NULL;
@@ -439,8 +460,13 @@ char *available(s_link *link) {
     for (j = 0; j < config->linkCount; j++) {
 		uplink = &(config->links[j]);
 
-		if ((uplink->forwardRequestFile!=NULL && uplink->LinkGrp == NULL) ||
-		    (uplink->forwardRequestFile!=NULL && strchr(link->AccessGrp, *(uplink->LinkGrp)))) {
+		found = 0;
+		for (k = 0; k < link->numAccessGrp; k++)
+		  if (strcmp(link->AccessGrp[k], uplink->LinkGrp) == 0)
+		    found = 1;
+
+		if ((uplink->forwardRequestFile!=NULL) &&
+		    ((uplink->LinkGrp == NULL) || (found != 0))) {
                    if ((f=fopen(uplink->forwardRequestFile,"r")) == NULL)
 				{
 					fprintf(stderr,"areafix: cannot open forwardRequestFile \"%s\"\n", uplink->forwardRequestFile);
