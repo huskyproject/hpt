@@ -1,3 +1,17 @@
+2002-01-24 Thursday 21:12  pavel.gulchouck
+
+	* src/fcommon.c (1.113): log ftnaddr instead of link name when busy
+	(linkname can be null)
+
+2002-01-24 Thursday 19:15  ml
+
+	* doc/hpt.texi (1.56): doc updates (autoareacreatefile)
+
+2002-01-24 Thursday 05:00  ml
+
+	* src/areafix.c (1.244): fixed relink bug if no link password
+	defined
+
 2002-01-23 Wednesday 15:26  pavel.gulchouck
 
 	* src/perl.c (1.19): bugfix
