@@ -111,8 +111,7 @@ char *createDupeFileName(s_area *area) {
 	else 
 		name = strLower(name);
 
-	xstrcat(&retname, config->dupeHistoryDir);
-	xstrcat(&retname, name);
+	xstrscat(&retname, config->dupeHistoryDir, name, NULL);
 	free(name);
 	
 	return retname;
@@ -363,8 +362,8 @@ s_dupeMemory *readDupeFile(s_area *area) {
       writeLogEntry(hpt_log, '2', "Reading dupes of %s.", area->areaName);
    }
    else {
-	  xscatprintf(&fileName, config->dupeHistoryDir, "hpt_base.dpa");
-      writeLogEntry(hpt_log, '2', "Reading dupes from %s.", fileName);
+	   xstrscat(&fileName, config->dupeHistoryDir, "hpt_base.dpa", NULL);
+	   writeLogEntry(hpt_log, '2', "Reading dupes from %s.", fileName);
    }
 
    f = fopen(fileName, "rb");

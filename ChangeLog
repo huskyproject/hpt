@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+
+max:
+* fixed my last changes in readDupeFile()
+
+----- cvs ci ------
 Mon May  1 17:01:13 NOVST 2000
 max:
 * clean autoCreate code

@@ -3,11 +3,11 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
+- seen-by stripping
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 
-- seen-by stripping (stripSeenBy)
 - document each loglevels
 - add scanned msgs to dupebase
 - del empty .sep catalogues
@@ -29,7 +29,6 @@ Category 3: Will only be included if volunteers send patches
   poster
   linker
   areafix
-- zone-gating
 - nodelist access
 - real hub-routing
 

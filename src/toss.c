@@ -229,11 +229,6 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
    msgHeader.dest.net   = (word) msg->destAddr.net;
    msgHeader.dest.point = (word) msg->destAddr.point;
 
-//   memset(&(msgHeader.date_written), 0, 8);    // date to 0
-
-//   msgHeader.utc_ofs = 0;
-//   msgHeader.replyto = 0;
-//   memset(msgHeader.replies, 0, MAX_REPLY * sizeof(UMSGID));   // no replies
    strcpy((char *) msgHeader.__ftsc_date, (char *)msg->datetime);
    ASCII_Date_To_Binary((char *)msg->datetime, (union stamp_combo *) &(msgHeader.date_written));
 
@@ -461,177 +456,189 @@ int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link, s_addr pktOrigA
 {
    UINT i;
 
-   if (addrComp(pktOrigAddr, link->hisAka) == 0) return 1;   // the link where we got the mail from
-   
-   if (link->hisAka.point != 0) return 0;                    // a point always gets the mail
+   // the link where we got the mail from
+   if (addrComp(pktOrigAddr, link->hisAka) == 0) return 1;
+
+   // a point always gets the mail
+   if (link->hisAka.point != 0) return 0;
 
    for (i=0; i < seenByCount; i++) {
-      if ((link->hisAka.net == seenBys[i].net) && (link->hisAka.node == seenBys[i].node)) return 1;
+	   if ((link->hisAka.net==seenBys[i].net) && (link->hisAka.node==seenBys[i].node)) return 1;
    }
 
    return 0;
 }
 
-/**
-  * This function puts all the links of the echoarea in the newLink array who does not have got the mail
-  */
+/*
+  This function puts all the links of the echoarea in the newLink
+  array who does not have got the mail, zoneLinks - the links who
+  receive msg with stripped seen-by's.
+*/
 
-void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount, s_area *echo, s_arealink ***newLinks, s_addr pktOrigAddr)
+void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
+						s_area *echo, s_arealink ***newLinks,
+						s_arealink ***zoneLinks, s_addr pktOrigAddr)
 {
-   UINT i, j=0;
+	UINT i, j=0, k=0;
+	
+	*newLinks = (s_arealink **) calloc(echo->downlinkCount, sizeof(s_arealink*));
+	*zoneLinks = (s_arealink **) calloc(echo->downlinkCount, sizeof(s_arealink*));
 
-   *newLinks = (s_arealink **) calloc(echo->downlinkCount, sizeof(s_arealink*));
+	for (i=0; i < echo->downlinkCount; i++) {
+		if (checkLink(seenBys,seenByCount,echo->downlinks[i]->link,pktOrigAddr)==0) {
+			if (pktOrigAddr.zone==echo->downlinks[i]->link->hisAka.zone) {
+				// links with same zone
+				(*newLinks)[j] = echo->downlinks[i];
+				j++;
+			} else {
+				// links in different zones
+				(*zoneLinks)[k] = echo->downlinks[i];
+				k++;
+			}
+		}
+	}
+}
 
-   for (i=0; i < echo->downlinkCount; i++) {
-      if (checkLink(seenBys, seenByCount, echo->downlinks[i]->link, pktOrigAddr)==0) {
-         (*newLinks)[j] = echo->downlinks[i];
-         j++;
-      }
-   }
+void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks, 
+					s_seenBy *seenBys[], UINT seenByCount,
+					s_seenBy *path[], UINT pathCount) {
+	int i;
+	long len;
+	FILE *pkt;
+	s_pktHeader header;
+	char *start, *seenByText = NULL, *pathText = NULL;
+
+	// add our aka to seen-by (zonegating link must strip our aka)
+	if (seenByCount==0) {
+		(*seenBys) = (s_seenBy*) realloc((*seenBys), sizeof(s_seenBy) * (seenByCount+1));
+		(*seenBys)[seenByCount].net = (UINT16) echo->useAka->net;
+		(*seenBys)[seenByCount].node = (UINT16) echo->useAka->node;
+		seenByCount++;
+	}
+	
+	// add seenBy for newLinks
+	for (i=0; i<echo->downlinkCount; i++) {
+		
+		// no link at this index -> break
+		if (newLinks[i] == NULL) break;
+		// don't include points in SEEN-BYs
+		if (newLinks[i]->link->hisAka.point != 0) continue;
+		
+		(*seenBys) = (s_seenBy*) realloc((*seenBys), sizeof(s_seenBy) * (seenByCount+1));
+		(*seenBys)[seenByCount].net = (UINT16) newLinks[i]->link->hisAka.net;
+		(*seenBys)[seenByCount].node = (UINT16) newLinks[i]->link->hisAka.node;
+		seenByCount++;
+	}
+
+	sortSeenBys((*seenBys), seenByCount);
+
+#ifdef DEBUG_HPT
+	for (i=0; i< seenByCount;i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
+#endif
+	//exit(2);
+
+	if (pathCount > 0) {
+		if (((*path)[pathCount-1].net != echo->useAka->net) ||
+			((*path)[pathCount-1].node != echo->useAka->node)) {
+			// add our aka to path
+			(*path) = (s_seenBy*) realloc((*path), sizeof(s_seenBy) * (pathCount+1));
+			(*path)[pathCount].net = (UINT16) echo->useAka->net;
+			(*path)[pathCount].node = (UINT16) echo->useAka->node;
+			pathCount++;
+		}
+	} else {
+		pathCount = 0;
+		(*path) = (s_seenBy*) realloc((*path),sizeof(s_seenBy) * 1);
+		(*path)[pathCount].net = (UINT16) echo->useAka->net;
+		(*path)[pathCount].node = (UINT16) echo->useAka->node;
+		pathCount = 1;
+	}
+	
+#ifdef DEBUG_HPT
+	for (i=0; i< pathCount;i++) printf("%u/%u ", (*path)[i].net, (*path)[i].node);
+#endif
+   //exit(2);
+	
+	// find start of seenBys in Msg
+	start = strstr(msg->text, ")\rSEEN-BY: ");
+	if (start == NULL) start = strstr(msg->text, "\rSEEN-BY: ");
+	if (start != NULL) {
+		while(*start != 'S') start++; // to jump over )\r
+		*start='\0';
+		
+		// create new seenByText
+		seenByText = createControlText((*seenBys), seenByCount, "SEEN-BY: ");
+		pathText   = createControlText((*path), pathCount, "\001PATH: ");
+		xstrscat(&msg->text, seenByText, pathText, NULL);
+		free(seenByText);
+		free(pathText);
+	}
+	
+	// add msg to the pkt's of the downlinks
+	for (i = 0; i<echo->downlinkCount; i++) {
+		
+		// no link at this index -> break;
+		if (newLinks[i] == NULL) break;
+		
+		// does the link has read access for this echo?
+		if (newLinks[i]->export == 0) continue;
+		
+		// check packet size
+		if (newLinks[i]->link->pktFile != NULL && newLinks[i]->link->pktSize != 0) {
+			len = fsize(newLinks[i]->link->pktFile);
+			if (len >= (newLinks[i]->link->pktSize * 1024L)) { // Stop writing to pkt
+				free(newLinks[i]->link->pktFile);
+				newLinks[i]->link->pktFile=NULL;
+				free(newLinks[i]->link->packFile);
+			}
+		}
+		
+		// create pktfile if necessary
+		if (newLinks[i]->link->pktFile == NULL) {
+			// pktFile does not exist
+			if ( createTempPktFileName(newLinks[i]->link) )
+				exit_hpt("Could not create new pkt!",1);
+		}
+		
+		makePktHeader(NULL, &header);
+		header.origAddr = *(newLinks[i]->link->ourAka);
+		header.destAddr = newLinks[i]->link->hisAka;
+		if (newLinks[i]->link->pktPwd != NULL)
+			strcpy(header.pktPassword, newLinks[i]->link->pktPwd);
+		pkt = openPktForAppending(newLinks[i]->link->pktFile, &header);
+		
+		// an echomail msg must be adressed to the link
+		msg->destAddr = header.destAddr;
+		// .. and must come from us
+		msg->origAddr = header.origAddr;
+		writeMsgToPkt(pkt, *msg);
+		closeCreatedPkt(pkt);
+	}
+	
 }
 
 void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 {
    s_seenBy *seenBys = NULL, *path = NULL;
-   UINT     seenByCount, pathCount, i;
-   char     *start, *c, *newMsgText, *seenByText = NULL, *pathText = NULL;
-
-   FILE     *pkt;
-   s_pktHeader header;
-   s_arealink   **newLinks;  // links who does not have their aka in seenBys and thus have not got the echomail.
-   long len;
+   UINT     seenByCount, pathCount;
+   // links who does not have their aka in seenBys and thus have not got the echomail
+   s_arealink **newLinks, **zoneLinks;
 
    createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
    createPathArrayFromMsg(msg, &path, &pathCount);
-/*
-   if (!echo->tinySB) {
-          createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
-          createPathArrayFromMsg(msg, &path, &pathCount);
-   } else {
-          seenByCount = 0;
-          pathCount = 0;
-   };
-*/
-   createNewLinkArray(seenBys, seenByCount, echo, &newLinks, pktOrigAddr);
+   
+   createNewLinkArray(seenBys, seenByCount, echo, &newLinks, &zoneLinks, pktOrigAddr);
 
-   // add seenBy for newLinks
-   for (i=0; i<echo->downlinkCount; i++) {
-
-      if (newLinks[i] == NULL) break;               // no link at this index -> break
-      if (newLinks[i]->link->hisAka.point != 0) continue; // don't include points in SEEN-BYS
-
-      seenBys = (s_seenBy*) realloc(seenBys, sizeof(s_seenBy) * (seenByCount+1));
-      seenBys[seenByCount].net = (UINT16) newLinks[i]->link->hisAka.net;
-      seenBys[seenByCount].node = (UINT16) newLinks[i]->link->hisAka.node;
-      seenByCount++;
+   forwardToLinks(msg, echo, newLinks, &seenBys, seenByCount, &path, pathCount);
+   if (zoneLinks!=NULL) {
+	   seenByCount = 0;
+	   forwardToLinks(msg, echo, zoneLinks, &seenBys, seenByCount, &path, pathCount);
    }
 
-   sortSeenBys(seenBys, seenByCount);
-
-#ifdef DEBUG_HPT
-   for (i=0; i< seenByCount;i++) printf("%u/%u ", seenBys[i].net, seenBys[i].node);
-#endif
-   //exit(2);
-
-   if (pathCount > 0) {
-      if ((path[pathCount-1].net != echo->useAka->net) || (path[pathCount-1].node != echo->useAka->node)) {
-         // add our aka to path
-         path = (s_seenBy*) realloc(path, sizeof(s_seenBy) * (pathCount+1));
-         path[pathCount].net = (UINT16) echo->useAka->net;
-         path[pathCount].node = (UINT16) echo->useAka->node;
-         pathCount++;
-      }
-   } else {
-      pathCount = 0;
-      path = (s_seenBy*) malloc(sizeof(s_seenBy) * 1);
-      path[pathCount].net = (UINT16) echo->useAka->net;
-      path[pathCount].node = (UINT16) echo->useAka->node;
-      pathCount = 1;
-   }
-
-#ifdef DEBUG_HPT
-   for (i=0; i< pathCount;i++) printf("%u/%u ", path[i].net, path[i].node);
-#endif
-   //exit(2);
-
-
-   // find start of seenBys in Msg
-   start = strstr(msg->text, ")\rSEEN-BY: ");
-   if (start == NULL) start = strstr(msg->text, "\rSEEN-BY: ");
-   if (start != NULL) {
-      while(*start != 'S') start++; // to jump over )\r
-
-      // create new seenByText
-      seenByText = createControlText(seenBys, seenByCount, "SEEN-BY: ");
-      pathText   = createControlText(path, pathCount, "\001PATH: ");
-
-      // reserve space for msg-body - old seenbys&path + new seenbys + new path
-      newMsgText = (char *) malloc(strlen(msg->text) - strlen(start) + strlen(seenByText) + strlen(pathText) + 1);
-
-      // replace msg's seen-bys and path with our new generated
-      c = msg->text;
-      i = 0;
-      while (c != start) {
-         newMsgText[i] = *c;
-         c++;
-         i++;
-      }
-      newMsgText[i] = 0;
-      strcat(newMsgText, seenByText);
-      strcat(newMsgText, pathText);
-
-      free(msg->text);
-      msg->text = newMsgText;
-   }
-
-   // add msg to the pkt's of the downlinks
-   for (i = 0; i<echo->downlinkCount; i++)
-   {
-
-      if (newLinks[i] == NULL) break;           // no link at this index -> break;
-
-      // does the link has read access for this echo?
-      if (newLinks[i]->export == 0) continue;
-
-      if (newLinks[i]->link->pktFile != NULL && newLinks[i]->link->pktSize != 0) { // check packet size
-         len = fsize(newLinks[i]->link->pktFile);
-         if (len >= (newLinks[i]->link->pktSize * 1024L)) { // Stop writing to pkt
-//            arcmail(newLinks[i]->link);
-			 free(newLinks[i]->link->pktFile);
-			 newLinks[i]->link->pktFile=NULL;
-			 free(newLinks[i]->link->packFile);
-         }
-      }
-
-      // create pktfile if necessary
-      if (newLinks[i]->link->pktFile == NULL) {
-         // pktFile does not exist
-         if ( createTempPktFileName(newLinks[i]->link) )
-            exit_hpt("Could not create new pkt!",1);
-      } /* endif */
-
-      makePktHeader(NULL, &header);
-      header.origAddr = *(newLinks[i]->link->ourAka);
-      header.destAddr = newLinks[i]->link->hisAka;
-      if (newLinks[i]->link->pktPwd != NULL)
-         strcpy(header.pktPassword, newLinks[i]->link->pktPwd);
-      pkt = openPktForAppending(newLinks[i]->link->pktFile, &header);
-
-      // an echomail msg must be adressed to the link
-      msg->destAddr = header.destAddr;
-      // .. and must come from us
-      msg->origAddr = header.origAddr;
-      writeMsgToPkt(pkt, *msg);
-      closeCreatedPkt(pkt);
-   }
-
-   if (start != NULL) {  // no seenBys found seenBys not changed...
-      free(seenByText);
-      free(pathText);
-   }
    free(seenBys);
    free(path);
    free(newLinks);
+   free(zoneLinks);
 }
 
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
@@ -2055,16 +2062,6 @@ void toss()
    int i;
    FILE *f;
 
-/*   createTempPktFileName(&config->links[0]);
-   createTempPktFileName(&config->links[1]);
-   printf("%s %s\n", config->links[0].pktFile, config->links[1].pktFile);
-   printf("%s %s\n", config->links[0].packFile, config->links[1].packFile);
-   exit(0);
-*/
-
-   // load recoding tables if needed
-//   if (config->intab != NULL) getctab(intab, (UCHAR*) config->intab);
-   
    // set stats to 0
    memset(&statToss, 0, sizeof(s_statToss));
 //   statToss.startTossing = time(NULL);
