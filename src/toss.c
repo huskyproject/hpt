@@ -2472,116 +2472,155 @@ void arcmail(s_link *tolink) {
 
    for (i = startlink ; i < endlink; i++) {
 
-	  link = &(config->links[i]);
+       link = &(config->links[i]);
 
-	  // only create floFile if we have mail for this link
-	  if (link->pktFile != NULL) {
+       // only create floFile if we have mail for this link
+       if (link->pktFile != NULL) {
+      
+		   if (link->fileBox) { // put to box independing of business of link
 
-		  // process if the link not busy, else do not create 12345678.?lo
-		  if (createOutboundFileName(link,
-					     cvtFlavour2Prio(link->echoMailFlavour),
-					     FLOFILE) == 0) {
+			   if (link->packerDef != NULL) {
 
-			 flo = fopen(link->floFile, "a+");
-
-			 if (flo == NULL)
-				 w_log('9', "Cannot open flo file %s",
-							   config->links[i].floFile);
-			 else {
-
-				 if (link->linkBundleNameStyle!=eUndef)
-					 bundleNameStyle=link->linkBundleNameStyle;
-				 else if (config->bundleNameStyle!=eUndef)
-					 bundleNameStyle=config->bundleNameStyle;
-				 else bundleNameStyle = eTimeStamp;
-
-				 if (link->packerDef != NULL) {
-
-					 // there is a packer defined -> put packFile into flo
-					 // if we are creating new arcmail bundle  ->  -//-//-
-					 fseek(flo, 0L, SEEK_SET);
-					 foa = find_old_arcmail(link, flo);
-
-					 fillCmdStatement(cmd, link->packerDef->call,
-									  link->packFile,
-									  link->pktFile, "");
-					 w_log('7', "Packing for %s %s, %s > %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile), get_filename(link->packFile));
-    					 w_log('6', "cmd: %s", cmd);
+				   fillCmdStatement(cmd, link->packerDef->call,
+									link->packFile,
+									link->pktFile, "");
+				   w_log('7', "Packing for %s %s, %s > %s",
+						 aka2str(link->hisAka),
+						 link->name, get_filename(link->pktFile),
+						 get_filename(link->packFile));
+				   w_log('6', "cmd: %s", cmd);
 #ifdef __WATCOMC__
-					 list = mk_lst(cmd);
-					 cmdexit = spawnvp(P_WAIT, cmd, list);
-					 free((char **)list);
+				   list = mk_lst(cmd);
+				   cmdexit = spawnvp(P_WAIT, cmd, list);
+				   free((char **)list);
 #else
-					 cmdexit = system(cmd);
+				   cmdexit = system(cmd);
 #endif
-					 if (cmdexit==0) {
-						 if (foa==0) {
-							 if (bundleNameStyle == eAddrDiff ||
-								 bundleNameStyle == eAddrDiffAlways ||
-								 bundleNameStyle == eAmiga)
-								 fprintf(flo, "#%s\n", link->packFile);
-							 else
-								 fprintf(flo, "^%s\n", link->packFile);
-						 }
-						 remove(link->pktFile);
-					 } else
-						 w_log('9',
-									   "Error executing packer (errorlevel==%i)",
-									   cmdexit);
-				 } // end packerDef
-				 else {
-					 // there is no packer defined -> put pktFile into flo
-					 lastPathDelim = strrchr(link->floFile, PATH_DELIM);
+				   if (cmdexit==0) remove(link->pktFile);
+				   else w_log('9', "Error executing packer (errorlevel==%i)", cmdexit);
 
-					 // change path of file to path of flofile
-					 saveChar = *(++lastPathDelim);
-					 *lastPathDelim = '\0';
-					 xstrcat(&pkt, link->floFile);
-					 *lastPathDelim = saveChar;
+	       } // end packerDef
+			   else {
+				   // there is no packer defined -> put pktFile into fileBox
+				   xstrcat(&pkt, link->fileBox);
+				   xstrcat(&pkt, link->pktFile + strlen(config->tempOutbound));
 
-					 if (config->separateBundles) {
+				   cmdexit = rename(link->pktFile, pkt);
+				   if (cmdexit==0) w_log('7', "Leave non-packed mail for %s %s, %s",
+										 aka2str(link->hisAka), link->name,
+										 get_filename(link->pktFile));
+				   else w_log('9', "error moving file for %s %s, %s->%s (errorlevel==%i)", aka2str(link->hisAka), link->name, link->pktFile, pkt, errno);
+				   nfree(pkt);
+			   }
 
-						 if (bundleNameStyle==eAmiga)
-							 xscatprintf(&pkt, "%u.%u.%u.%u.sep%c", 
-										 link->hisAka.zone, link->hisAka.net,
-										 link->hisAka.node, link->hisAka.point,
-										 PATH_DELIM);
-						 else {
-							 if (link->hisAka.point != 0)
-								 xscatprintf(&pkt,"%08x.sep%c",
-											 link->hisAka.point,PATH_DELIM);
-							 else
-								 xscatprintf(&pkt, "%04x%04x.sep%c",
-											 link->hisAka.net,
-											 link->hisAka.node, 
-											 PATH_DELIM);
-						 }
-					 }
+		   } else if (createOutboundFileName(link,
+											 cvtFlavour2Prio(link->echoMailFlavour),
+											 FLOFILE) == 0) {
+			   // process if the link not busy, else do not create 12345678.?lo
 
-					 link->pktFile += strlen(config->tempOutbound);
-					 xstrcat(&pkt, link->pktFile);
-					 link->pktFile -= strlen(config->tempOutbound);
+			   flo = fopen(link->floFile, "a+");
 
-					 cmdexit = rename(link->pktFile, pkt);
-					 if (cmdexit==0) {
-						 fprintf(flo, "^%s\n", pkt);
-						 w_log('7', "Leave non-packed mail for %s %s, %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile));
-					 } 
-					 else w_log('9', "error moving file for %s %s, %s->%s (errorlevel==%i)", aka2str(link->hisAka), link->name, link->pktFile, pkt, errno);
-					 nfree(pkt);
-				 }
+			   if (flo == NULL)
+				   w_log('9', "Cannot open flo file %s",
+						 config->links[i].floFile);
+			   else {
 
-				 fclose(flo);
-			 } // end flo
+				   if (link->linkBundleNameStyle!=eUndef)
+					   bundleNameStyle=link->linkBundleNameStyle;
+				   else if (config->bundleNameStyle!=eUndef)
+					   bundleNameStyle=config->bundleNameStyle;
+				   else bundleNameStyle = eTimeStamp;
 
-			 nfree(link->floFile);
-			 remove(link->bsyFile);
-			 nfree(link->bsyFile);
-		  } // end createOutbounfFileName
+				   if (link->packerDef != NULL) {
 
-		  nfree(link->pktFile);
-		  nfree(link->packFile);
-	  } // end pkt file
+					   // there is a packer defined -> put packFile into flo
+					   // if we are creating new arcmail bundle  ->  -//-//-
+					   fseek(flo, 0L, SEEK_SET);
+					   foa = find_old_arcmail(link, flo);
+
+					   fillCmdStatement(cmd, link->packerDef->call,
+										link->packFile,
+										link->pktFile, "");
+					   w_log('7', "Packing for %s %s, %s > %s",
+							 aka2str(link->hisAka), link->name,
+							 get_filename(link->pktFile),
+							 get_filename(link->packFile));
+					   w_log('6', "cmd: %s", cmd);
+#ifdef __WATCOMC__
+					   list = mk_lst(cmd);
+					   cmdexit = spawnvp(P_WAIT, cmd, list);
+					   free((char **)list);
+#else
+					   cmdexit = system(cmd);
+#endif
+					   if (cmdexit==0) {
+						   if (foa==0) {
+							   if (bundleNameStyle == eAddrDiff ||
+								   bundleNameStyle == eAddrDiffAlways ||
+								   bundleNameStyle == eAmiga)
+								   fprintf(flo, "#%s\n", link->packFile);
+							   else
+								   fprintf(flo, "^%s\n", link->packFile);
+						   }
+						   remove(link->pktFile);
+					   } else
+						   w_log('9', "Error executing packer (errorlevel==%i)", 
+								 cmdexit);
+
+				   } // end packerDef
+				   else {
+					   // there is no packer defined -> put pktFile into flo
+					   lastPathDelim = strrchr(link->floFile, PATH_DELIM);
+
+					   // change path of file to path of flofile
+					   saveChar = *(++lastPathDelim);
+					   *lastPathDelim = '\0';
+					   xstrcat(&pkt, link->floFile);
+					   *lastPathDelim = saveChar;
+
+					   if (config->separateBundles) {
+
+						   if (bundleNameStyle==eAmiga)
+							   xscatprintf(&pkt, "%u.%u.%u.%u.sep%c", 
+										   link->hisAka.zone, link->hisAka.net,
+										   link->hisAka.node, link->hisAka.point,
+										   PATH_DELIM);
+						   else {
+							   if (link->hisAka.point != 0)
+								   xscatprintf(&pkt,"%08x.sep%c",
+											   link->hisAka.point,PATH_DELIM);
+							   else
+								   xscatprintf(&pkt, "%04x%04x.sep%c",
+											   link->hisAka.net,
+											   link->hisAka.node, 
+											   PATH_DELIM);
+						   }
+					   }
+
+					   xstrcat(&pkt, link->pktFile + strlen(config->tempOutbound));
+
+					   cmdexit = rename(link->pktFile, pkt);
+					   if (cmdexit==0) {
+						   fprintf(flo, "^%s\n", pkt);
+						   w_log('7', "Leave non-packed mail for %s %s, %s",
+								 aka2str(link->hisAka), link->name,
+								 get_filename(link->pktFile));
+					   }
+					   else w_log('9', "error moving file for %s %s, %s->%s (errorlevel==%i)", aka2str(link->hisAka), link->name, link->pktFile, pkt, errno);
+					   nfree(pkt);
+				   }
+
+				   fclose(flo);
+			   } // end flo
+
+			   nfree(link->floFile);
+			   remove(link->bsyFile);
+			   nfree(link->bsyFile);
+		   } // end createOutbounfFileName
+
+		   nfree(link->pktFile);
+		   nfree(link->packFile);
+       } // end pkt file
 
    } // endfor
    return;

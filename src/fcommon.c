@@ -280,41 +280,46 @@ int createTempPktFileName(s_link *link)
 
     aTime %= 0xffffff;   /* only last 24 bit count */
 
-    if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
-    else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
-
-	xstrcat(&tmp, config->outbound);
-
-	// add suffix for other zones
-	if (link->hisAka.zone != config->addr[0].zone && bundleNameStyle != eAmiga) {
-		tmp[strlen(tmp)-1]='\0';
-		xscatprintf(&tmp, ".%03x%c", link->hisAka.zone, limiter);
-	}
-
-	/* Making pkt name */
-	while(1) {
+    /* Making pkt name */
+    while(1) {
 		do {
+			nfree(fileName);
 			xscatprintf(&fileName, "%s%06lx%02x.pkt",
 						config->tempOutbound, (long)aTime, counter);
 			counter++;
-
+			
 		} while ((fexist(fileName) || fileNameAlreadyUsed(fileName, NULL)) &&
 				 (counter<=255));
 
 		if (counter<=256) break;
 		else {
 			counter=0;
-			nfree(fileName);
 			if (pkt_aTime==aTime) {
-				w_log('7',"created 256 pkt's/sec!");
+				//FIXME: it can be false report about 256 pkts/sec
+				//w_log('7',"created 256 pkts/sec!");
 				sleep(1);
 				aTime = time(NULL);
 				aTime %= 0xffffff;
 			}
 		}
+    }
+    pkt_count = counter;
+    pkt_aTime = aTime;
+	
+    if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
+    else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
+	
+	// fileBoxes support
+    if (link->fileBox) 
+		xstrcat(&tmp, link->fileBox);
+    else 
+		xstrcat(&tmp, config->outbound);
+
+	// add suffix for other zones
+	if (link->hisAka.zone != config->addr[0].zone && bundleNameStyle != eAmiga) {
+		tmp[strlen(tmp)-1]='\0';
+		xscatprintf(&tmp, ".%03x%c", link->hisAka.zone, limiter);
 	}
-	pkt_count = counter;
-	pkt_aTime = aTime;
 
 	// path to bundle
 	if (bundleNameStyle!=eAmiga) {
@@ -330,14 +335,13 @@ int createTempPktFileName(s_link *link)
 							 link->hisAka.node, limiter);
 		}
 	}
-
 	npos = strlen(tmp);
 
-	/* bundle file name */
-	switch ( bundleNameStyle ) {
+    /* bundle file name */
+    switch ( bundleNameStyle ) {
 
-	case eAddrDiff:
-	case eAddrDiffAlways:
+    case eAddrDiff:
+    case eAddrDiffAlways:
 
 		if ( link->hisAka.point == 0 && config->addr[0].point == 0) {
 			xscatprintf (&tmp, "%04hx%04hx.",
@@ -349,14 +353,14 @@ int createTempPktFileName(s_link *link)
 						 config->addr[0].point- link->hisAka.point);
 		}
 
-	case eAmiga:
+    case eAmiga:
 		if (bundleNameStyle==eAmiga) {
 			xscatprintf (&tmp, "%u.%u.%u.%u.",
 						 link->hisAka.zone, link->hisAka.net,
 						 link->hisAka.node, link->hisAka.point);
 		}
 
-		cleanEmptyBundles(tmp,npos);
+		if (!link->fileBox) cleanEmptyBundles(tmp,npos);
 
 		counter = 0;
 		minFreeExt = -1;
@@ -395,23 +399,23 @@ int createTempPktFileName(s_link *link)
 				nfree(fileName);
 				nfree(pfileName);
 				nfree(tmp);
-
 				// Switch link to TimeStamp style
 				link->linkBundleNameStyle = eTimeStamp;
 				i = createTempPktFileName(link);
 				return i;
 			}
 		}
-		
+	
 		xstrscat(&pfileName, tmp, wday, NULL);
 		xscatprintf(&pfileName, "%c", ext3[counter]);
 
 		break;
 
-	case eTimeStamp:
+    case eTimeStamp:
 		xscatprintf(&tmp, "%06lx%02x.%s", (long)aTime, counter, wday);
 		counter = 0;
 		do {
+			nfree(pfileName);
 			xstrcat(&pfileName, tmp);
 			xscatprintf(&pfileName, "%c", ext3[counter]);
 			counter++;
@@ -422,12 +426,12 @@ int createTempPktFileName(s_link *link)
 
 		break;
 
-	default:
+    default:
 		w_log('9', "Unknown bundleNameStyle (non-compatible fidoconfig library?)");
 		exit(-1);
 		break;
-	}
-	nfree(tmp);
+    }
+    nfree(tmp);
 
     if ((!fexist(fileName)) && (!fexist(pfileName))) {
         nfree(link->packFile);
@@ -579,12 +583,13 @@ int createDirectoryTree(const char *pathName) {
    return 0;
 }
 
+
 int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 {
    int fd; // bsy file for current link
    char *name=NULL, *sepDir=NULL, limiter=PATH_DELIM, *tmpPtr;
    e_bundleFileNameStyle bundleNameStyle = eUndef;
-   
+
    if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
    else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
    

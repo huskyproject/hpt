@@ -1584,6 +1584,7 @@ This statement cannot be repeated.
 * ForwardRequestFile::          file for forwardRequest, AvialableAreas & descriptions
 * ForwardRequestMask::          mask list for forwardRequests
 * ForwardRequests::             allow forward requests to this link
+* FileBox::                     filebox directory
 * Import::                      rules for echomail import
 * Level::                       definition of link access level
 * Link::                        adding a link to your config
@@ -1864,6 +1865,8 @@ Link unsubscribed from passrhough echo areas with no downlinks besides
 him. Unsubscribe request forwards to uplink. This doesn't works with
 manual "%PAUSE" via AreaFix.
 
+AutoPause don't check FileBoxes!
+
 This statement can only be repeated for different links.
 
 @xref{AutoPassive}.
@@ -2039,7 +2042,7 @@ next link for forwardRrequests.
 
 This statement can only be repeated for different links.
 
-@node ForwardRequests, Import, ForwardRequestMask, Link Keywords
+@node ForwardRequests, FileBox, ForwardRequestMask, Link Keywords
 @subsection ForwardRequests
 @findex ForwardRequests
 @table @asis
@@ -2055,7 +2058,24 @@ link from other links. If no @code{forwardRequestFile} or
 
 This statement can only be repeated for different links.
 
-@node Import, Level, ForwardRequests, Link Keywords
+@node FileBox, Import, ForwardRequests, Link Keywords
+@subsection FileBox
+@findex FileBox
+@table @asis
+@item Syntax:
+@code{FileBox <directory>}
+@item Example:
+@code{FileBox boxes/2.5021.19.1}
+@end table
+
+This statement defines directory where outgoing files for link would be
+putten instead of putting them in @code{Outbound} tree.
+
+Currently hpt can put only echomail into fileBoxes.
+
+This statement can only be repeated for different links.
+
+@node Import, Level, FileBox, Link Keywords
 @subsection Import
 @findex Import
 @table @asis
