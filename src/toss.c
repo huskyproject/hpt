@@ -1479,6 +1479,7 @@ int find_old_arcmail(s_link *link) {
 	if (flo != NULL) {
 		
 		while ((line = readLine(flo)) != NULL) {
+                        line = trimLine(line);
 //			fprintf(stdout,"%s\n",line);
 			
 			for (i=0; (i<7) && (tmp==NULL); i++) {

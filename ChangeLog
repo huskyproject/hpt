@@ -1,7 +1,12 @@
 ----- cvs ci ------
+Sun Jun 20  21:24:20
+Fedor:
+* bugfix 5 for OS/2 (problem with "\r\n" in end line)
+
+----- cvs ci ------
 Thu Jun 17 00:08:15 NOVST 1999
 max:
-+ pkt's added to existing arcmail bundle (default 500kb)
++ (5) pkt's added to existing arcmail bundle (default 500kb)
 
 ----- cvs ci ------
 Fri Jun 11  18:52:30
