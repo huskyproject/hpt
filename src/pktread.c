@@ -329,13 +329,23 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
 
 void correctAddr(s_message *msg,s_pktHeader *header)
 {
-   if (strncmp(msg->text, "AREA:",5) != 0) {
-      correctNMAddr(msg,header);
-      msg->netMail = 1;
-   } else {
-      correctEMAddr(msg);
-      msg->netMail = 0;
-   } /* endif */
+	if (strncmp(msg->text, "AREA:",5) == 0) {
+
+		if (strncmp(msg->text+5, "NETMAIL\r",8) == 0) {
+			switch (config->kludgeAreaNetmail) {
+			case kanKill: // kill "AREA:NETMAIL\r"
+				memmove(msg->text, msg->text+13, msg->textLength-12);
+			case kanIgnore: // process as netmail. don't touch kludge.
+				msg->netMail = 1;
+			default: // process as echomail
+				break;
+			}
+		}
+		
+	} else msg->netMail = 1;
+	
+	if (msg->netMail) correctNMAddr(msg,header);
+	else correctEMAddr(msg);
 }
 
 /* Some toupper routines crash when they get invalid input. As this program
