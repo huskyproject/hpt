@@ -4132,11 +4132,12 @@ advanced concepts in @value{HPT} that deserve special attention, like
 how to use several netmail areas and similar.
 
 @menu
-* Exit::        hpt exit codes
-* Suffixes::    renaming suffixes for pkt files
-* Netmail::     defining several netmail areas for several users
-* ZoneGating::  how zonegating works for echomail
-* Perl support::Perl support in HPT
+* Exit::            hpt exit codes
+* Suffixes::        renaming suffixes for pkt files
+* Netmail::         defining several netmail areas for several users
+* ZoneGating::      how zonegating works for echomail
+* Perl support::    Perl support in HPT
+* Remote control::  how remote control using Areafix works
 @end menu
 
 @node Exit, Suffixes, Advanced Concepts, Advanced Concepts
@@ -4224,7 +4225,7 @@ b) msg comes from z2. forward it to z2 links. then forward to z1
 c) scan works the same: first sending to z2 links, adding to seen-by's
    z1 links and export to them.
 
-@node Perl support, , ZoneGating , Advanced Concepts
+@node Perl support, Remote control, ZoneGating, Advanced Concepts
 @section Perl support in HPT
 HPT may be compiled with support for calling Perl subs in some parts of its
 work. In this case it also provides API for such subs (Perl hooks).
@@ -4352,6 +4353,46 @@ $toname, $attr.
   If returns non-empty string (reason) for kill the message.
 
 @end table
+
+@node Remote control, , Perl support, Advanced Concepts
+@section How remote control using Areafix works
+
+You can remotely control and change other links' subscription and options
+using Areafix. Remote control will not give you full access on your system,
+but will help you (or your cosysop) with some most common tasks.
+
+Some terms first.
+
+Controlling link is a link that exercise remote control. He should be defined
+in config and should have allowRemoteControl token set to "on".
+
+Controlled link is a link whose subscription and options are controlled. He should
+be defined in config too.
+
+Controlling link is allowed to send "%from <addr>" command to Areafix, where
+<addr> is an address of controlled link. All the next commands till the end of
+message or till the next "%from" command will be executed as if the message came
+from controlled link. All the reports will be sent to controlling link. There can
+be as much "%from" commands in message as you like. If there was an error while
+processing "%from" command (for example, address was not specified in "%from"
+command), message processing will be stopped and controlling link will receive
+notification message.
+
+Example of Areafix message:
+
+@example
+%from 2:450/210.1       <-- all next actions will be made with 2:450/210.1
++ru.husky               <-- subscribe to ru.husky
+%areafixpwd testpwd     <-- change areafix password to 'testpwd'
+%from 2:450/210.5       <-- all next actions will be made with 2:450/210.5 
+-bel.sysop              <-- unsubscribe from bel.sysop
+%linked                 <-- send list of linked areas
+@end example
+
+As this function allows remote control of other links' subscription and options
+without knowing their areafix passwords, you should enable allowRemoteControl
+token only for yourself or your cosysop.
+
 @node Keyword Index,  , Advanced Concepts, Top
 @appendix Configuration File Keyword Index
 @printindex fn

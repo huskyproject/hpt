@@ -21,6 +21,8 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
       subscribed links on area delete, no matter if it was point or link;
       now unsubscribe message will be sent only if unsubscribeOnAreaDelete
       token is "on" for link.
+    - Added ability to exercise remote control using Areafix requests. See
+      "Advanced concepts" section in documentation.
 
 2. CONFIG changes:
     - new option for echoArea or netmailArea: -scan (specifies when area
