@@ -8,7 +8,6 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 
 - add seen-by (-sb node in echoArea options)
-- delete attaches (kfs flag)
 - do not open/close files on each msg
 
 Category 3: Will only be included if volunteers send patches

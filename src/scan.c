@@ -252,7 +252,14 @@ void processAttachs(s_link *link, s_message *msg)
       if (!fexist(token))
           strLower(token);
 #endif      
-      if (flo != NULL) fprintf(flo, "%s\n", token);
+      if (flo != NULL) {
+          if (msg->text && strstr(msg->text, "\001FLAGS KFS"))
+	      fprintf(flo, "^%s\n", token);
+          else if (msg->text && strstr(msg->text, "\001FLAGS TFS"))
+	      fprintf(flo, "#%s\n", token);
+          else
+	      fprintf(flo, "%s\n", token);
+      }
       if (strrchr(token, PATH_DELIM)!= NULL)
          strcat(newSubjectLine, strrchr(token, PATH_DELIM)+1);
       else
@@ -345,41 +352,6 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
 		   }
 	   }
    } /* endif */
-   if ((xmsg->attr & MSGFILE) == MSGFILE) {
-	   // file attach
-	   prio = NORMAL;
-	   if ((xmsg->attr & MSGCRASH)==MSGCRASH) prio = CRASH; 
-	   if ((xmsg->attr & MSGHOLD)==MSGHOLD) prio = HOLD;
-	   
-	   // we need route mail
-	   if (prio==NORMAL) {
-		   route = findRouteForNetmail(msg);
-		   link = getLinkForRoute(route, &msg);
-		   if ((route != NULL) && (link != NULL)) {
-			   prio = cvtFlavour2Prio(route->flavour);
-			   if (createOutboundFileName(link, prio, FLOFILE) == 0) {
-				   processAttachs(link, &msg);
-				   remove(link->bsyFile);
-				   nfree(link->bsyFile);
-				   // mark Mail as sent
-				   xmsg->attr |= MSGSENT;
-				   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-				   nfree(link->floFile);
-				   writeLogEntry(hpt_log, '7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
-			   }
-		   }
-	   }
-	   else if (createOutboundFileName(virtualLink, prio, FLOFILE) == 0) {
-		   processAttachs(virtualLink, &msg);
-		   remove(virtualLink->bsyFile);
-		   free(virtualLink->bsyFile);
-		   // mark Mail as sent
-		   xmsg->attr |= MSGSENT;
-		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-		   free(virtualLink->floFile);
-		   writeLogEntry(hpt_log, '7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-	   }
-   } /* endif */
    
    if ((xmsg->attr & MSGCRASH) == MSGCRASH) {
 	   // crash-msg -> make CUT
@@ -445,6 +417,42 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
 		   }
 	   } else writeLogEntry(hpt_log, '7', "no route found or no-pack for %s - leave mail untouched", aka2str(msg.destAddr));
    }
+
+   if ((xmsg->attr & MSGFILE) == MSGFILE) {
+	   // file attach
+	   prio = NORMAL;
+	   if ((xmsg->attr & MSGCRASH)==MSGCRASH) prio = CRASH; 
+	   if ((xmsg->attr & MSGHOLD)==MSGHOLD) prio = HOLD;
+	   
+	   // we need route mail
+	   if (prio==NORMAL) {
+		   route = findRouteForNetmail(msg);
+		   link = getLinkForRoute(route, &msg);
+		   if ((route != NULL) && (link != NULL)) {
+			   prio = cvtFlavour2Prio(route->flavour);
+			   if (createOutboundFileName(link, prio, FLOFILE) == 0) {
+				   processAttachs(link, &msg);
+				   remove(link->bsyFile);
+				   nfree(link->bsyFile);
+				   // mark Mail as sent
+				   xmsg->attr |= MSGSENT;
+				   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+				   nfree(link->floFile);
+				   writeLogEntry(hpt_log, '7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
+			   }
+		   }
+	   }
+	   else if (createOutboundFileName(virtualLink, prio, FLOFILE) == 0) {
+		   processAttachs(virtualLink, &msg);
+		   remove(virtualLink->bsyFile);
+		   free(virtualLink->bsyFile);
+		   // mark Mail as sent
+		   xmsg->attr |= MSGSENT;
+		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+		   free(virtualLink->floFile);
+		   writeLogEntry(hpt_log, '7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+	   }
+   } /* endif file attach */
 
    freeMsgBuffers(&msg);
    if (freeVirtualLink==1) {
