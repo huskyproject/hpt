@@ -1,3 +1,8 @@
+2001-09-18 Tuesday 17:01  pavel.gulchouck
+
+	* src/: fcommon.c (1.94), toss.c (1.364): stat() changed to
+	fexist/direxist
+
 2001-09-16 Sunday 15:28  ml
 
 	* src/toss.c (1.363): prevent multiply CC of one message to the
