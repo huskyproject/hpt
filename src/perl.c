@@ -1138,7 +1138,7 @@ void perl_setvars(void) {
         sv = newRV_noinc((struct sv*)hv2);
         VK_ADD_HASH_sv(hv, sv, aka2str(config->links[i]->hisAka));
      }
-     SvREADONLY_on(hv);
+     /* val: seems to cause problems: SvREADONLY_on(hv); */
    }
 
    /* set areas config */
