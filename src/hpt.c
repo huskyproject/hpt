@@ -19,16 +19,22 @@ void processCommandLine(int argc, char **argv)
 {
    int i = 0;
 
+   if (argc == 1) {
+      printf("\nUsage:\n");
+      printf("   hpt toss - tossing mail\n");
+      printf("   hpt scan - scaning mail\n");
+   }
+
    while (i < argc-1) {
       i++;
       if (0 == strcmp(argv[i], "toss")) {
          cmToss = 1;
          continue;
-      } /* endif */
-      if (strcmp(argv[i], "scan") == 0) {
+      } else if (strcmp(argv[i], "scan") == 0) {
          cmScan = 1;
          continue;
-      } /* endif */
+      } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
+      
    } /* endwhile */
 }
 

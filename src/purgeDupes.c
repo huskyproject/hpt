@@ -74,8 +74,13 @@ int processArea(s_area *echo) {
          oldindex = dupeStat.st_size;
       }
 
+      bufferSize = oldindex - ftell(dupeFile);
+      buffer = malloc(bufferSize);
 
-      if ((currentTime - dupePackHeader->packTime) < echo->dupeHistory * 24 * 60 * 60) {
+      fread(buffer, bufferSize, 1, dupeFile);
+
+
+      if ((currentTime - dupePackHeader->packTime) < (echo->dupeHistory * 24 * 60 * 60)) {
          // if pack is young enough
 
          // add index
@@ -85,15 +90,12 @@ int processArea(s_area *echo) {
          // copy it to tmpfile
          fwrite(dupePackHeader, dupeFileHeader->dupePackHeaderSize, 1, tmpFile);
          
-         bufferSize = oldindex - ftell(dupeFile);
-         buffer = malloc(bufferSize);
-         
-         fread(buffer, bufferSize, 1, dupeFile);
          fwrite(buffer, bufferSize, 1, tmpFile);
          
-         free(buffer);
          packs++;
       };
+
+      free(buffer);
    }
 
    // patch dupeFileHeader
