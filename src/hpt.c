@@ -207,13 +207,8 @@ void processConfig()
    // open Logfile
    hpt_log = NULL;
    if (config->logFileDir != NULL) {
-     buff = (char *) malloc(strlen(config->logFileDir)+7+1); /* 7 for hpt.log */
-     strcpy(buff, config->logFileDir),
-     strcat(buff, "hpt.log");
-     if (config->loglevels==NULL)                           
-        hpt_log = openLog(buff, versionStr, "123456789", config->logEchoToScreen);
-       else                                                 
-        hpt_log = openLog(buff, versionStr, config->loglevels, config->logEchoToScreen);
+     xstrscat(&buff, config->logFileDir, "hpt.log", NULL);
+	 hpt_log = openLog(buff, versionStr);
    } else printf("You have no logFileDir in your config, there will be no log created");
    if (hpt_log==NULL) printf("Could not open logfile: %s\n", buff);
    writeLogEntry(hpt_log, '1', "Start");

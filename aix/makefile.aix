@@ -22,7 +22,6 @@ SMAPI      = -l smapiunix
 
 all: $(OBJS) \
      pktinfo \
-     tlog \
      tpkt \
      hpt \
      hptlink \
@@ -34,9 +33,6 @@ all: $(OBJS) \
 
 pktinfo: pktinfo.o $(OBJS)
 	$(CC) $(LFLAGS) -o pktinfo log.o pktinfo.o pktread.o fcommon.o global.o recode.o dupe.o tree.o crc.o $(FIDOCONFIG) $(SMAPI)
-
-tlog: tlog.o log.o
-	$(CC) $(LFLAGS) -o tlog tlog.o log.o
 
 tpkt: tpkt.o pktwrite.o log.o fcommon.o pktread.o recode.o
 	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o pktread.o pktwrite.o global.o recode.o log.o dupe.o tree.o crc.o $(FIDOCONFIG) $(SMAPI)

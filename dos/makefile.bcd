@@ -11,7 +11,6 @@ OBJS    = pktinfo.obj \
           fcommon.obj \
           global.obj \
           recode.obj \
-          tlog.obj \
           tpkt.obj \
           scan.obj \
 	  scanarea.obj \
@@ -42,7 +41,6 @@ LFLAGS  = -ml -w -L..\..\smapi -L..\..\fidoconf
 
 all: $(OBJS) \
      pktinfo.exe \
-     tlog.exe \
      tpkt.exe \
      hpt.exe \
      hptlink.exe \
@@ -63,9 +61,6 @@ crc.obj
 fconfbcd.lib
 smapibcd.lib
 !
-
-tlog.exe: tlog.obj log.obj
-	$(CC) $(LFLAGS) tlog.obj log.obj
 
 tpkt.exe: tpkt.obj pktwrite.obj fcommon.obj pktread.obj recode.obj log.obj global.obj
 	$(CC) $(LFLAGS) @&&!

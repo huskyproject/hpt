@@ -9,6 +9,7 @@ max:
 * don't change task title under win32 (setConsoleTitle token)
 * scanned msgs now added to dupebase
 * moved xstr* functions to fidoconf
+* screenloglevels
 
 ----- cvs ci ------
 Thu Jun  1 11:51:34 NOVST 2000

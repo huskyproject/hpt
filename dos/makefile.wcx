@@ -17,7 +17,6 @@ LFLAGS  = LIBpath e:\watcom\lib386\dos SYSTEM dos4g
 
 all: $(OBJS) \
      pktinfo.exe \
-     tlog.exe \
      tconfig.exe \
      hpt.exe
 
@@ -25,17 +24,13 @@ $(OBJS): $(SRC_DIR)\$*.c
   @echo compiling $*.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
-pktinfo.obj tlog.obj tconfig.obj: $(SRC_DIR)\$*.c
+pktinfo.obj: $(SRC_DIR)\$*.c
   @echo compiling $*.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
 pktinfo.exe: pktinfo.obj common.obj pkt.obj
   @echo linking pktinfo
   $(LINK) $(LFLAGS) FILE pktinfo.obj, common.obj, pkt.obj, dupe.obj, tree.obj, crc.obj NAME pktinfo.exe
-
-tlog.exe: tlog.obj log.obj
-  @echo linking tlog
-  $(LINK) $(LFLAGS) FILE tlog.obj, log.obj NAME tlog.exe
 
 hptlink.exe: hptlink.obj
   @echo linking hptlink
@@ -60,10 +55,9 @@ clean:
 distclean: clean
 	del *.exe
 
-install: hpt.exe pktinfo.exe tlog.exe hptlink.exe hpttree.exe
+install: hpt.exe pktinfo.exe hptlink.exe hpttree.exe
 	copy hpt.exe $(BINDIR)
 	copy pktinfo.exe $(BINDIR)
-	copy tlog.exe $(BINDIR)
 	copy hptlink.exe $(BINDIR)
 	copy hpttree.exe $(BINDIR)
 

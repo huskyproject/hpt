@@ -52,7 +52,7 @@ static char *wdnames[] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 #endif
 #endif
 
-s_log *openLog(char *fileName, char *appN, char *keys, UINT echoLog)
+s_log *openLog(char *fileName, char *appN)
 {
    s_log      *temp;
 
@@ -68,13 +68,20 @@ s_log *openLog(char *fileName, char *appN, char *keys, UINT echoLog)
 
    /* copy all informations */
    xstrcat(&temp->appName, appN);
-   xstrcat(&temp->keysAllowed, keys);
 
-//   if (config->loglevels) return NULL;
+   if (config->loglevels != NULL) 
+	   xstrcat(&temp->keysAllowed, config->loglevels);
+   else
+	   xstrcat(&temp->keysAllowed, "123456789");
+
+   if (config->screenloglevels != NULL) 
+	   xstrcat(&temp->keysPrinted, config->screenloglevels);
+   else
+	   xstrcat(&temp->keysPrinted, "123456789");
 
    temp->firstLinePrinted=0;
 
-   temp->logEcho = echoLog;
+   temp->logEcho = config->logEchoToScreen;
 
    return temp;
 }
@@ -90,6 +97,7 @@ void closeLog(s_log *hpt_log)
       } /* endif */
       free(hpt_log->appName);
       free(hpt_log->keysAllowed);
+      free(hpt_log->keysPrinted);
       free(hpt_log);
       hpt_log = NULL;
    }
@@ -100,41 +108,43 @@ void writeLogEntry(s_log *hpt_log, char key, char *logString, ...)
 	time_t     currentTime;
 	struct tm  *locTime;
 	va_list	   ap;
+	UINT       log=0, screen=0;
 
 	if (hpt_log) {
-		if (hpt_log->open && strchr(hpt_log->keysAllowed, key)) {
-			currentTime = time(NULL);
-			locTime = localtime(&currentTime);
+		if (hpt_log->open && strchr(hpt_log->keysAllowed, key)) log=1;
+		if (hpt_log->logEcho && strchr(hpt_log->keysPrinted, key)) screen=1;
+	}
 
-			if (!hpt_log->firstLinePrinted)	{
-				/* make first line of log */
-				fprintf(hpt_log->logFile, "----------  ");
+	if (log || screen) {
+		currentTime = time(NULL);
+		locTime = localtime(&currentTime);
 
-				fprintf(hpt_log->logFile, "%3s %02u %3s %02u, %s\n",
-						wdnames[locTime->tm_wday], locTime->tm_mday,
-						mnames[locTime->tm_mon],locTime->tm_year%100,hpt_log->appName);
+		if (log && !hpt_log->firstLinePrinted)	{
+			/* make first line of log */
+			fprintf(hpt_log->logFile, "----------  ");
+			fprintf(hpt_log->logFile, "%3s %02u %3s %02u, %s\n",
+					wdnames[locTime->tm_wday], locTime->tm_mday,
+					mnames[locTime->tm_mon],locTime->tm_year%100,hpt_log->appName);
+			hpt_log->firstLinePrinted=1;
+		}
 
-				hpt_log->firstLinePrinted=1;
-			}
-
+		if (log) {
 			fprintf(hpt_log->logFile, "%c %02u.%02u.%02u  ",
 					key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec);
- 
 			va_start(ap, logString);
 			vfprintf(hpt_log->logFile, logString, ap);
 			va_end(ap);
 			fputc('\n', hpt_log->logFile); 
-
 			fflush(hpt_log->logFile);
+		}
 
-			if (hpt_log->logEcho) {
-				fprintf(stdout, "%c %02u.%02u.%02u  ",
-						key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec);
-				va_start(ap, logString);
-				vfprintf(stdout, logString, ap);
-				va_end(ap);
-				fputc('\n', stdout);
-			}
+		if (screen) {
+			fprintf(stdout, "%c %02u.%02u.%02u  ",
+					key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec);
+			va_start(ap, logString);
+			vfprintf(stdout, logString, ap);
+			va_end(ap);
+			fputc('\n', stdout);
 		}
 	}
 }
