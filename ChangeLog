@@ -6,6 +6,7 @@ Fri Jan  7 11:30:05 NOVT 2000
 max:
 * fixed bug in makeMsg
 * fixed several bugs in areafix (not all)
+* added xstr.c & xstr.h to cvs-tree :)
 
 ----- cvs ci ------
 Thu Jan  6 19:51:30 NOVT 2000                                                   
