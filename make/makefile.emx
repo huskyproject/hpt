@@ -10,7 +10,7 @@ EXENAMEFLAG=-o
 SRC_DIR=../src/
 CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
 LFLAGS=-Zcrtdll $(DEBUG)
-CDEFS =-DOS2
+CDEFS =-DOS2 -DNOSEMAPHORES
 
 OBJ=.o
 EXE=.exe

@@ -16,6 +16,8 @@ LFLAGS=-bt=os2 -l=os2
 CDEFS =
 !ENDIF
 
+CDEFS +=  -DNOSEMAPHORES
+
 OBJ=.obj
 EXE=.exe
 RM=del

@@ -16,6 +16,8 @@ LFLAGS=-bt=dos
 CDEFS =-D__DOS__
 !ENDIF
 
+CDEFS +=  -DNOSEMAPHORES
+
 OBJ=.obj
 EXE=.exe
 RM=del

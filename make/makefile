@@ -20,7 +20,7 @@ else
   LIBS  = -L$(LIBDIR) -lfidoconfig -lsmapi
 endif
 
-CDEFS=-D$(OSTYPE) $(ADDCDEFS)
+CDEFS=-D$(OSTYPE) $(ADDCDEFS) -DNOSEMAPHORES
 
 default: all
 

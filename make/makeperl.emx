@@ -10,7 +10,7 @@ OBJ    =.o
 EXE    =.exe
 RM     =cmd /c del
 CFLAGS =-I../h -I../.. -c -O3 $(DEBUG) -funsigned-char -Wall -Wno-char-subscripts\
-        -DDO_PERL -DDOSISH -DEMBED -I$(PERL)/CORE
+        -DDO_PERL -DDOSISH -DEMBED -I$(PERL)/CORE -DNOSEMAPHORES
 LFLAGS =-Zcrtdll $(DEBUG) -Zstack 4096 \
         -L$(PERL)/CORE
 CDEFS  =-DOS2

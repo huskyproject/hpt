@@ -14,7 +14,7 @@ CC=cc -qcpluscmt
 EXENAMEFLAG=-o 
 SRC_DIR=../src/
 LFLAGS=
-CDEFS =-DUNIX
+CDEFS =-DUNIX -DNOSEMAPHORES
 
 ifeq ($(DEBUG), 1)
  CFLAGS     = -c -I ../.. -I ../h -O2 -ggdb $(PERLFLAGS)
