@@ -1,3 +1,7 @@
+2001-06-10 Sunday 06:42  ml
+
+	* src/areafix.c (1.212): fixed two bugs in autopause
+
 2001-06-08 Friday 11:55  ml
 
 	* src/: hpttree.c (1.15), scan.c (1.130): try to work with mixed
