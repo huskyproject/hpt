@@ -11,6 +11,7 @@
 и ответы, не согласовывая изменения с автоpами.
 
 Ведущий FAQ - Max Levenkov, 2:5000/362.117, ml(you_know)woland.iae.nsk.su
+(в его отсутствие: Stas Degteff, 2:5080/102)
 
 Новые или измененные вопросы помечены знаком ">".
 
@@ -29,7 +30,7 @@
 13. Почему JAM временами сканируется только через "hpt scan -w"?
 14. Почему на одну и ту же эху к аплинку сфорвардилось много запросов?
 15. Как постить через pipe под win32?
-16. А как собирать latest версии под win32?
+>16. А как собирать latest версии под win32?
 17. Чем отличаются линковщики?
 >18. Как работает удаление эх через areafix?
 19. Кaк поинтам ставить на некоторые эхи Read Only?
@@ -37,7 +38,7 @@
 21. А чем фиксить базы если с ними действительно траблы?
 >22. Отсутствие доки сильно мешает! (Где взять документацию на русском?)
 23. Как разделить отчеты от areafix и filefix?
-24. Почему нельзя допаковывать почту в FileBox?
+>24. Почему нельзя допаковывать почту в FileBox?
 25. Не могу настроить winzip!
 26. А как паковать netmail?
 27. Как у hpt отрубить внутренний трекер нетмэйла?
@@ -54,28 +55,32 @@
 A: (ML, SR, SD)
 
 1. http://sourceforge.net/projects/husky, страничка "Файлы" (самые свежие
-- на главной)
+   выставлены на главной)
    Исходники: http://husky.sourceforge.net/cvs2/stable
    или на CVS, инструкция тут: http://husky.sourceforge.net/cvs.html
    Debian packages: http://husky.sourceforge.net/debian
 
+2. husky пакет под BeOS - BeFTN - живет на http://www.qube.ru (Собирает Иван
+   Матвеев) и http://www.bebits.com (Paul Galashin)
+
+3. Бинарники для win32 - в файлэхе NFTN, архив на Демосе:
+   ftp://ddt.demos.su/pub/fileecho/NFTN/
+
+4. Бинаpники DPMI, OS/2, Win32, Win32-dll-Perl:
+   http://hpt-bin.boom.ru/ (собирает Andy U. Luk'yanov 2:5001/21)
+
+5. Для Perl версии может понадобиться файл MSVCRT.DLL
+   Взять его можно тут: ftp://ftp.microsoft.com/softlib/mslfiles/msvcrt.exe
+
+Старые:
+1. Бинарники: http://husky.physcip.uni-stuttgart.de:8080/fidosoft.husky/
+   Сайт:      http://husky.physcip.uni-stuttgart.de/
 2. Hа www.chat.ru/~sirevtov/files/ или http://sirevtov.narod.ru (win32 current)
-
-SR: Все-таки этот narod.ru не нравится, если chat.ru вернется к нормальному
-SR: режиму работы, буду класть только там.
-
+   SR: Все-таки этот narod.ru не нравится, если chat.ru вернется к нормальному
+   SR: режиму работы, буду класть только там.
 3. Бинари под Linux можно найти на http://fidolinux.com.ua/download.html
-(собирает "Maxim A. Mokry" <aks@idea.donetsk.ua> под названием squish-tosser)
-4. http://hptpwelwin32.narod.ru/husky.rar - тут версия с поддержкой перла
-5. ftp://ddt.demos.su/pub/fileecho/NFTN/ (win32 current)
-6. husky пакет под BeOS живет на qube.ru и bebits.com
-
-7. Для Perl версии может понадобиться файл MSVCRT.DLL
-Взять его можно тут: ftp://ftp.microsoft.com/softlib/mslfiles/msvcrt.exe
-
-8. Бинаpники под Win32: http://hpt-bin.boom.ru/
-(собирает Andr Luk'yanov 2:5001/21)
-
+   (собирает "Maxim A. Mokry" <aks@idea.donetsk.ua> под названием
+   squish-tosser)
 
 /------/
 
@@ -85,8 +90,10 @@ A: (ML,SD)
 
 1. current: http://husky.sourceforge.net/cvs2/current
 2. stable: http://husky.sourceforge.net/cvs2/stable
-3. ftp://ddt.demos.su/pub/fileecho/HUSKY/ - файлэха HUSKY. Сорцы раз в два
-месяца, diff'ы постоянно.
+3. На любой момент - с CVS, инструкция: http://husky.sourceforge.net/cvs.html
+   и https://sourceforge.net/cvs/?group_id=1332
+4. ftp://ddt.demos.su/pub/fileecho/HUSKY/ - файлэха HUSKY. Сорцы раз в два
+   месяца, diff'ы постоянно.
 
 /------/
 
@@ -114,19 +121,25 @@ A: (ML)
 
 A: (ML,SD)
 
-Любому разработчику, лучше ведущему модуля: адреса вверху. Требования к патчам:
+Любому разработчику, лучше ведущему модуля, для hpt - Max Levelkov (адреса
+см. в ответах 3 и 33).
+Требования к патчам:
 
 1. Если добавлен новый token, нужно:
 а) добавить его в fidoconf/doc/keywords.hpt
 б) задокументировать в hpt/doc/hpt.texi (если патч к hpt, в общем случае -
-в документации к исправляемому модулю)
+   в документации к исправляемому модулю)
 
 2. Формат такой: $ diff -r -c -N hpt.orig hpt > hpt.diff
+   где hpt.orig и hpt - каталоги с исходным и переделанным hpt.
 
-3. Обязательно запаковать архиватором.
+3. Обязательно запаковать архиватором (tar+gzip, zip, rar - в порядке
+   предпочтения)
 
-4. Сделать описание вида (в одну строку):
- * new feature added [patch by Vasya Pupkin]
+4. Сделать описание вида (в одну строку, пусть даже она будет больше экрана
+   в несколько раз):
+   new feature added [patch by Vasya Pupkin]
+   и эту строку вставить в текст письма (не в файл).
 
 5. Каждому модулю (fidoconf, hpt, smapi, ...) - свой патч.
 
@@ -148,8 +161,9 @@ A: (PG)
 
 В результате можно на перле сделать, например, реальный hub-роутинг, nodelist
 checker, собственную дуполовку, разных роботов типа faqserver... Пример
-filter.pl с этими функциями есть в поставке.
-И это все практически не сказывается на скорости тоссинга, потому что сам
+filter.pl с этими функциями есть в поставке, также там есть готовый модуль
+"Advanced readonly" - hpt/misc/hpt_ro.
+Все это практически не сказывается на скорости тоссинга, потому что сам
 интерпретатор запускается и прекомпилит фильтр лишь один раз, а не при каждом
 вызове хука.
 
@@ -270,6 +284,9 @@ Perl (кроме модулей - для них нужно иметь полный установленный Perl), а также
        $pktfrom), то надо установить $change в истину (или просто 1), если
        требуется чтобы изменения были приняты.
 
+>(SD):  поскольку разработка продолжается, появляются новые функции, доступные
+из perl - лучше смотреть их описание в документации.
+
 /------/
 
 [6] Q: Как пpописать флаги для совместной pаботы golded & hpt?
@@ -324,7 +341,7 @@ A: (FL)
 Теперь представь, что от эхи мы уже отписались, и тут она сваливается с аплинка
 (ведь он мог успеть натоссить еще до нашей отписки). Так вот, если эха осталась
 прописанной в конфиге, то она прописана как пастру и никуда не пошла. Если же
-эху уже вынесли из конфига, то она создастся вновь (ведь это аплинк, скорей
+эху уже вынесли из конфига, то она создастся вновь (ведь это аплинк, скорее
 всего с него разрешен автокрейт, иначе это все бы не работало), и не факт, что
 в пастру...
 
@@ -451,6 +468,9 @@ AutoAreaCreateFile /path/file_areas.name
 
 Так вот этот file_areas.name не подключен к основному конфигу по include
 
+>(SD): Tparser должен при этом выдать ошибку:
+"AutoAreaCreateFile /path/file_areas.name has never been included in config!"
+
 /------/
 
 [15] Q: Как постить через pipe под win32?
@@ -477,9 +497,10 @@ www.winzip.com).
 2. Компилятор.  Реально под Win32  надо взять Watcom (MSVC, BCC) либо
 поставить Cygwin и запускать (n)make -f makefile.(wcw|mvc|bcw|cyg)
 
-3.  Распаковать и  собрать сначала SMAPI  - получишь smapi(wcw|mvc|bcw).lib,
-затем  fidoconf -  получишь  fidoconf(wcw|mvc|bcw).lib +  несколько утилиток
-(типа tparser). Затем любую из остальных программ.
+3.  Распаковать и  собрать сначала SMAPI  - получишь smapi(wcw|mvc|bcw).lib
+или libsmapicyg.a, затем  fidoconf -  получишь  fidoconf(wcw|mvc|bcw).lib
+или libfidoconfigcyg.a + несколько утилиток (типа tparser). 
+Затем компилируешь любую из остальных программ.
 
 4. _Все_ собираемые программы/библиотеки должны  быть  от  одной  даты (если
 smapi/fidoconf  -  latest  от 9.04.2001  то совать туда,  например,  hpt  от
@@ -536,18 +557,18 @@ request в любом случае отправляется обычная отписка, "-area".
 A: (SD)
 
    Стараниями Макса Черногора в hpt-1.2 (stable) и hpt-1.3 (current) был
-реализованн продвинутый механизм конфига от passthrough-эх с одним линком:
+реализованн продвинутый механизм подписки и отписки:
 аплинку не отсылаются повторные запросы на подписку и если в эху ничего
 не пришло за указанный период, производится подписка у следующего.
 Отписка же от аплинка производится не сразу - чтобы не было частых
 подписок-отписок; кроме того после отправки запроса на отписку эха некоторое
 время не удаляется из конфига - чтобы запоздалое письмо не создало ее снова.
-См. в документации на hpt: AreaFixQueueFile, ForwardRequestTimeout,
-IdlePassthruTimeout, KilledRequestTimeout, hpt qupd.
+Время ожидания настраивается, см. в документации на hpt: AreaFixQueueFile,
+ForwardRequestTimeout, IdlePassthruTimeout, KilledRequestTimeout, hpt qupd.
 
 /------/
 
-[19] Q: Кaк поинтам ставить на некоторые эхи Read Only?
+>[19] Q: Кaк поинтам ставить на некоторые эхи Read Only?
 
 A: (SR)
 
@@ -563,6 +584,10 @@ A: (SR)
 3. С версии 0.9.8 26-07-01 возможна такая конструкция:
 
 ReadOnly 2:5021/19.* tver.sysop*
+
+A: (SD)
+  Можно также использовать перловый модуль hpr_ro - если hpt собран
+  с поддержкой perl. Только там можно и напортачить с настройкой.
 
 /------/
 
@@ -632,7 +657,6 @@ http://www.jamnet.lgg.ru/uht/docs/uhtd.zip
 По последним данным этой доки на сайте уже нет, так что требуйте ее от автора
 по фидо или ICQ.
 
-
 A: (SD)
    Документация на русском несколько отстает от разыития тоссера, а бывает
    что и не развивается вовсе. К примеру, в июле 2002 года уже удален сайт
@@ -644,7 +668,8 @@ A: (SD)
 
    В ближайшем будущем будем выкладывать документацию на разных языках (русский
    и английский - а если будут добровольцы-переводчики - то и на других) на
-   http://sourceforge.net/projects/husky, раздел "Документация".
+   http://sourceforge.net/projects/husky, раздел "Документация"
+   (точный URL: http://sourceforge.net/docman/?group_id=1332)
 
 /------/
 
@@ -673,7 +698,7 @@ endif
 
 /------/
 
-[24] Q: Почему нельзя допаковывать почту в FileBox?
+>[24] Q: Почему нельзя допаковывать почту в FileBox?
 
 A: (PG)
 
@@ -727,7 +752,7 @@ BSOpack by Dmitry Sergienko.
 
 A: (PG)
 
-В current прописать для линка "arcNetmail", и тогда, если флейвор
+В hpt >=1.1 прописать для линка "arcNetmail", и тогда, если флейвор
 совпадает с EchoMailFlavour, netmail будет паковаться в бандлы
 всесте с echomail.
 
@@ -817,10 +842,14 @@ A: (DK)
    в этой рассылке распространяются диффы, пожатые gzip. После распаковки
    цеплять их надо с помощью patch -p0 < file.diff
    (patch.exe - GNU Patch от CygWin'а или из binutils/win32)
-   С полным перемещением на Sourceforge.Net создан списко рассылки
-   диффов текстом *удобно отслеживать изменения):
+
+A: (SD)
+   С полным перемещением на Sourceforge.Net создан список рассылки
+   диффов текстом (удобно отслеживать изменения):
    https://lists.sourceforge.net/lists/listinfo/husky-cvs
-   (а вообще есть и CVS)
+
+   Кроме того есть CVS и доступ к нему из браузера:
+   http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/husky/
 
 /------/
 
@@ -832,6 +861,32 @@ A: (PG)
    А рэдхэтовским или аспшным хаком 2.96 - никто и не обещал. Можно посмотреть
    на http://www.gnu.org/software/gcc/releases.html - нет такой версии, после
    2.95.4 сразу идет 3.0.
+
+>[33] Q: Как связаться с разработчиками
+
+A: (SD)
+   1. Страничка HUSKY TEAM: http://husky.sf.net/team.html
+   2. Участники проекта c http://sourceforge.net/projects/husky/:
+
+Andrew Sagulin     Developer           andrews42 at users.sourceforge.net
+Dmitry Sergienko   Project Manager     d_sergienko at users.sourceforge.net
+Georgi Fofanov     Developer           georgi at users.sourceforge.net
+Gerrit Kьhn        Developer           gerritkuehn at users.sourceforge.net
+Michael Haase      Developer           it-dienste at users.sourceforge.net
+Joerg Stadelhoff   Developer           joergstadelhoff at users.sourceforge.net
+Max Levenkov       Developer           max_levenkov at users.sourceforge.net
+Max Chernogor      Project Manager     mche at users.sourceforge.net
+Matthias Tichy                         mtt at users.sourceforge.net
+Nestyurkin Nikolay Developer           nikn at users.sourceforge.net
+Ivan Fedorov       Support Manager     nssoft at users.sourceforge.net
+Tobias Ernst       Project Manager     os2tobi at users.sourceforge.net
+Pavel Gulchouck    Project Manager     pgul at users.sourceforge.net
+Volker Quetschke   Developer           quetschke at users.sourceforge.net
+Sascha Silbe                           sascha_silbe at users.sourceforge.net
+Pavel Andreew      Packager (.rpm, .deb etc) sfpavel at users.sourceforge.net
+Shilov Vladimir    Packager (.rpm, .deb etc) shivn at users.sourceforge.net
+Stas Degteff       Developer           stas_degteff at users.sourceforge.net
+
 
 /--------------------------------------------------------------------------/
 
