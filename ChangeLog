@@ -1,3 +1,12 @@
+2002-10-20 Sunday 11:26  mche
+
+	* src/hpt.c (1.156): Start log-message moved to correct location
+
+2002-10-20 Sunday 09:57  mche
+
+	* make/: makefile.mvc (1.4), makefile.mvcdll (1.6), makeperl.mvc
+	(1.11), makeperl.mvcdll (1.8): Remove useless defines
+
 2002-10-19 Saturday 19:04  stas_degteff
 
 	* doc/hpt-FAQ.russian (1.44): Fix husky/BeOS maintainer info;
