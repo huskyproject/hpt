@@ -1,3 +1,15 @@
+2002-06-28 Friday 14:44  stas
+
+	* src/toss.c (1.421): w_log() format string fix
+
+2002-06-28 Friday 13:05  mche
+
+	* src/toss.c (1.420): added some traces
+
+2002-06-28 Friday 10:15  stas
+
+	* src/query.c (1.52): Add some diagnostic messages
+
 2002-06-27 Thursday 11:21  mche
 
 	* src/: query.c (1.51), toss.c (1.418): added some traces
