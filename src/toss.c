@@ -671,16 +671,16 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
       return 1;
    }
 
-   if (creatingLink->autoCreateDefaults == NULL) {
+   if (creatingLink->autoAreaCreateDefaults == NULL) {
      // make an empty autocreateDefaults
      NewAutoCreate = (char *) malloc(1);
      strcpy(NewAutoCreate, "");
    } else {
-     NewAutoCreate=(char *) calloc (strlen(creatingLink->autoCreateDefaults)+1,sizeof(char));
-     strcpy (NewAutoCreate,creatingLink->autoCreateDefaults);
+     NewAutoCreate=(char *) calloc (strlen(creatingLink->autoAreaCreateDefaults)+1,sizeof(char));
+     strcpy (NewAutoCreate,creatingLink->autoAreaCreateDefaults);
    }
    
-   fileName = creatingLink->autoCreateFile;
+   fileName = creatingLink->autoAreaCreateFile;
    if (fileName == NULL) fileName = getConfigFileName();
 
    f = fopen(fileName, "a");
