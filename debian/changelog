@@ -1,3 +1,16 @@
+hpt (0.9.8-6) unstable; urgency=low
+
+  * Recompiled against new smapi. And i hope the segfault after unpack
+    is disappeared.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Fri, 13 Apr 2001 15:11:10 +0200
+
+hpt (0.9.8-5) unstable; urgency=low
+
+  * Newest cvs version.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Fri, 13 Apr 2001 14:43:55 +0200
+
 hpt (0.9.8-4) unstable; urgency=low
 
   * Deleted most of my changes to the upstream makefiles. They are now in
