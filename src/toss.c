@@ -1917,7 +1917,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
     s_message   *msg;
     s_link      *link;
     int         rc = 0, msgrc = 0;
-    struct stat statBuff;
+    long	pktlen;
     time_t      realtime;
     /* +AS+ */
     char        *extcmd;
@@ -1927,9 +1927,9 @@ int processPkt(char *fileName, e_tossSecurity sec)
     // processIt = 2, process only Netmail
     // processIt = 0, do not process pkt
    
-    if ((stat(fileName, &statBuff) == 0) && (statBuff.st_size > 60)) {
+    if ((pktlen = fsize(fileName)) > 60) {
 
-	statToss.inBytes += statBuff.st_size;
+	statToss.inBytes += pktlen;
 
 	/* +AS+ */
 	if (config->processPkt)

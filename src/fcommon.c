@@ -645,22 +645,19 @@ int createDirectoryTree(const char *pathName) {
    while ((slash = strchr(slash, limiter)) != NULL) {
       *slash = '\0';
 
-      if (stat(start, &buf) != 0) {
-         // this part of the path does not exist, create it
-         if (mymkdir(start) != 0) {
-            w_log('9', "Could not create directory %s", start);
+      if (!direxist(start)) {
+         if (!fexist(start)) {
+            // this part of the path does not exist, create it
+            if (mymkdir(start) != 0) {
+               w_log('9', "Could not create directory %s", start);
+               nfree(start);
+               return 1;
+            }
+         } else {
+            w_log('9', "%s is a file not a directory", start);
             nfree(start);
             return 1;
          }
-/*    by AW 27.09.99    */
-#ifdef __WATCOMC__
-      } else if(!AW_S_ISDIR(buf.st_mode)) {
-#else
-      } else if(!S_ISDIR(buf.st_mode)) {
-#endif
-         w_log('9', "%s is a file not a directory", start);
-         nfree(start);
-         return 1;
       }
 
       *slash++ = limiter;
