@@ -243,7 +243,7 @@ int linkArea(s_area *area, int netMail)
 		      curr = findMsgId(msgs, hash, hashNums, msgs[i].replyId, 0);
 		      if (curr == NULL) continue;
 		      if (curr -> msgId == NULL) continue;
-		      if (curr -> freeReply >= MAX_REPLY-2 &&
+		      if (curr -> freeReply >= MAX_REPLY-4 &&
 		          (area->msgbType & (MSGTYPE_JAM | MSGTYPE_SDM))) {
 				  curr -> freeReply--;
 				  curr -> replies[curr -> freeReply - 1] = curr -> replies[curr -> freeReply];
