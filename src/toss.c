@@ -1252,7 +1252,6 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
    char   *area, *textBuff;
    s_area *echo;
    s_link *link;
-   s_arealink *arealink;
    int    writeAccess = 0, rc = 0, ccrc = 0;
 
    textBuff = (char *) malloc(strlen(msg->text)+1);
