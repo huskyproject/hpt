@@ -16,7 +16,8 @@ Example:
  -*                           <- Remove all linked areas
  ~RU.SEX                      <- Delete this area
  %INFO                        <- Ask for general information
- %LIST                        <- List available areas
+ %LIST                        <- List all available areas
+ %LIST DN.*                   <- List available areas that match pattern
  %QUERY			      <- List of areas to which you are currently
  				 linked
  %LINKED		      <- same as %QUERY

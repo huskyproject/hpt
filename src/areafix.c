@@ -347,12 +347,28 @@ s_message *makeMessage (s_addr *origAddr, s_addr *destAddr,
 }
 
 
-char *list(s_link *link) {
+char *list(s_link *link, char *line) {
     int i, active, avail, rc = 0;
     char *report = NULL;
     char *list = NULL;
+    char *pattern = NULL;
     ps_arealist al;
     s_area area;
+
+    if (line)
+    {
+        pattern = line;
+        if (pattern[0] == '%') then pattern++;
+        while(isspace(pattern[0])) pattern++;
+        while(!isspace(pattern[0])) pattern++;
+        while(isspace(pattern[0])) pattern++;
+    }
+
+    if (pattern) && (strlen(line)>60 || !isValidConference(pattern)) {
+        w_log(LL_FUNC, "areafix::list() FAILED (error request line)");
+        return errorRQ(line);
+    }
+
 
     xscatprintf(&report, "Available areas for %s\r\r", aka2str(link->hisAka));
 
@@ -362,9 +378,19 @@ char *list(s_link *link) {
 	area = config->echoAreas[i];
 	rc = subscribeCheck(area, link);
 
-	if (rc < 2 && (!area.hide || (area.hide && rc==0))) { // add line
-	    addAreaListItem(al,rc==0,area.areaName,area.description);
-	    if (rc==0) active++; avail++;
+        if (rc < 2 && (!area.hide || (area.hide && rc==0))) { // add line
+            if (pattern)
+            {
+                if (patimat(area.areaName, pattern)==1)
+                {
+                    addAreaListItem(al,rc==0,area.areaName,area.description);
+                    if (rc==0) active++; avail++;
+                }
+            } else
+            {
+                addAreaListItem(al,rc==0,area.areaName,area.description);
+                if (rc==0) active++; avail++;
+            }
 	} /* end add line */
 
     } /* end for */
@@ -1796,7 +1822,7 @@ char *processcmd(s_link *link, char *line, int cmd) {
     case DONE: RetFix=DONE;
 	return NULL;
 
-    case LIST: report = list (link);
+    case LIST: report = list (link, line);
 	RetFix=LIST;
 	break;
     case HELP: report = help (link);
@@ -1811,7 +1837,7 @@ char *processcmd(s_link *link, char *line, int cmd) {
     case REMOVE: report = delete (link, line);
 	RetFix=STAT;
 	break;
-    case AVAIL: report = available (link); 
+    case AVAIL: report = available (link);
 	RetFix=AVAIL;
 	break;
     case UNLINK: report = unlinked (link);
