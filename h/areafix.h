@@ -15,8 +15,8 @@
 #define RESCAN  10
 #define ERROR   255
 
-unsigned char RetFix;
-char straka[24];
+//unsigned char RetFix;
+//char straka[24];
 
 char *aka2str(s_addr aka);
 int processAreaFix(s_message *msg, s_pktHeader *pktHeader);

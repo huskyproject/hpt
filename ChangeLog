@@ -2,6 +2,12 @@ hpt 0.27
 --------
 
 ----- cvs ci ------
+Thu Mar  18 22:23
+Max:
+- removed old code from areafix
++ remove all warnings for win32 version (thanx to Edgar)
+	
+----- cvs ci ------
 Mon Mar  15 20:57
 Max:
 + win32 port by Edgar Chupit (chupit@mail.lv)

@@ -60,6 +60,9 @@
 #include <areafix.h>
 #include <scanarea.h>
 
+unsigned char RetFix;
+char straka[24];
+
 int strncasesearch(char *strL, char *strR, int len)
 {
     char *str;
@@ -174,10 +177,15 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 // add string to file
 int addstring(FILE *f, char *aka) {
 	char *cfg;
-	long areapos,endpos,cfglen;
-	
+	long areapos,endpos,cfglen,len;
+
 	//current position
+#ifndef UNIX
+	/* in dos and win32 by default \n translates into 2 chars */
+	fseek(f,-2,SEEK_CUR);
+#else                                                   
 	fseek(f,-1,SEEK_CUR);
+#endif
 	areapos=ftell(f);
 	
 	// end of file
@@ -188,105 +196,17 @@ int addstring(FILE *f, char *aka) {
 	// storing end of file...
 	cfg = (char*) calloc((size_t) cfglen+1, sizeof(char));
 	fseek(f,-cfglen,SEEK_END);
-	fread(cfg,sizeof(char),(size_t) cfglen,f);
+	len = fread(cfg,sizeof(char),(size_t) cfglen,f);
 	
 	// write config
 	fseek(f,-cfglen,SEEK_END);
 	fputs(" ",f);
 	fputs(aka,f);
-	fputs(cfg,f);
+//	fputs(cfg,f);
+	fwrite(cfg,sizeof(char),(size_t) len,f);
+	fflush(f);
 	
 	free(cfg);
-	return 0;
-}
-
-int delstring(FILE *f, char *fileName, char *aka, int before_str) {
-	int al,i=1;
-	char *cfg, c, j='\040';
-	long areapos,endpos,cfglen;
-
-	al=strlen(aka);
-
-	// search for the aka string
-	while ((i!=0) && ((j!='\040') || (j!='\011'))) {
-		for (i=al; i>0; i--) {
-			fseek(f,-2,SEEK_CUR);
-			c=fgetc(f);
-			if (aka[i-1]!=tolower(c)) {j = c; break;}
-		}
-	}
-	
-	//current position
-	areapos=ftell(f);
-
-	// end of file
-	fseek(f,0l,SEEK_END);
-	endpos=ftell(f);
-	cfglen=endpos-areapos-al;
-	
-	// storing end of file...
-	cfg=(char*) calloc((size_t) cfglen+1,sizeof(char));
-	fseek(f,-cfglen-1,SEEK_END);
-	fread(cfg,sizeof(char),(size_t) (cfglen+1),f);
-	
-	// write config
-	fseek(f,-cfglen-al-1-before_str,SEEK_END);
-	fputs(cfg,f);
-
-	truncate(fileName,endpos-al-before_str);
-	
-	fseek(f,areapos-1,SEEK_SET);
-
-	free(cfg);
-	return 0;
-}
-
-int removeMsgBase(char *fileName, char *ext) {
-	char *msgBase, logmsg[80];
-
-	msgBase = (char*) malloc (strlen(fileName)+strlen(ext)+1);
-	sprintf(msgBase,"%s%s",fileName,ext);
-
-	if (fexist(msgBase)) {
-		if (remove(msgBase)==0) {
-			sprintf(logmsg,"msgbase '%s' deleted",msgBase);
-			fprintf(stdout, "%s\n", logmsg);
-			writeLogEntry(log, '8', logmsg);
-		} else {
-			sprintf(logmsg,"unable to delete msgbase '%s' !!!",msgBase);
-			fprintf(stderr, "%s\n", logmsg);
-			writeLogEntry(log, '8', logmsg);
-		}
-	}
-
-	free(msgBase);
-	return 0;
-}
-
-int makepass(FILE *f, char *fileName, char *areaName) {
-	s_area *area;
-	char logmsg[80];
-
-	area = getArea(config, areaName);
-
-	if (area->msgbType == MSGTYPE_SQUISH) delstring(f, fileName, "squish", 1);
-
-	if (area->msgbType == MSGTYPE_PASSTHROUGH) {
-		sprintf(logmsg,"Area '%s' already passthrough",area->areaName);
-		fprintf(stderr, "%s\n", logmsg);
-		writeLogEntry(log, '8', logmsg);
-	} else {
-		delstring(f, fileName, area->fileName, 1);
-		addstring(f, "passthrough");
-		sprintf(logmsg,"Area '%s' moved to passthrough",area->areaName);
-		fprintf(stdout, "%s\n", logmsg);
-		writeLogEntry(log, '8', logmsg);
-
-		removeMsgBase(area->fileName,".sqd");
-		removeMsgBase(area->fileName,".sqi");
-		removeMsgBase(area->fileName,".sql");
-	}
-	
 	return 0;
 }
 
@@ -474,7 +394,7 @@ char *help(s_link *link) {
 		fseek(f,0l,SEEK_END);
 		endpos=ftell(f);
 		
-		help=(char*) calloc((size_t) endpos,sizeof(char));
+		help=(char*) calloc((size_t) endpos+1,sizeof(char));
 
 		fseek(f,0l,SEEK_SET);
 		fread(help,1,(size_t) endpos,f);
@@ -673,7 +593,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 /*						delstring(f,fileName,straka,1);*/
 						break;
 					case 2:
-						makepass(f, fileName, areaName);
+//						makepass(f, fileName, areaName);
 						break;
 					default: break;
 					}

@@ -1,30 +1,31 @@
-CC = wcl386
-CFLAGS = -zq -wx -bt=nt -j -l=nt -i=..\..\fidoconfig;..\..\smapi;..\h;
-COPT = -oneatx -5
-LIB = wlib
-LIBS = ..\..\smapi\smapiwcw.lib ..\..\fidoconfig\fidoconfig.lib
+DEBUG   = 0
+CC      = wcc386
+LINK    = WLINK
 
-OBJS = areafix.obj dupe.obj fcommon.obj global.obj log.obj pktread.obj pktwrite.obj recode.obj scan.obj scanarea.obj seenby.obj toss.obj tree.obj post.obj link.obj strsep.obj
+OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj post.obj areafix.obj dupe.obj recode.obj tree.obj seenby.obj strsep.obj link.obj
+SRC_DIR = ..\src
 
-.c.obj:
-        $(CC) $(CFLAGS) $(COPT) -c $<
+CFLAGS = -zq -wx -bt=nt -j -i=..\..\fidoconfig;..\..\smapi;..\h; -oneatx -5
 
-all:    $(OBJS) hpt.exe pktinfo.exe purgeDupes.exe tlog.exe tpkt.exe
+all: $(OBJS) pktinfo.exe tlog.exe hpt.exe
 
-hpt.exe:
-        $(CC) $(CFLAGS) $(COPT) hpt.c $(OBJS) $(LIBS)
+$(OBJS): $(SRC_DIR)\*.c
+  @echo compiling *.c
+  $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
-pktinfo.exe:
-        $(CC) $(CFLAGS) $(COPT) pktinfo.c $(OBJS) $(LIBS)
+pktinfo.obj tlog.obj: $(SRC_DIR)\*.c
+  @echo compiling $*.c
+  $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
-purgeDupes.exe:
-        $(CC) $(CFLAGS) $(COPT) purgeDupes.c $(OBJS) $(LIBS)
+pktinfo.exe: pktinfo.obj fcommon.obj pktread.obj
+  @echo linking pktinfo
+  $(LINK) $(LFLAGS) FILE pktinfo.obj, log.obj, pktread.obj, global.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fidoconfig.lib NAME pktinfo.exe
+#  $(LINK) $(LFLAGS) FILE pktinfo.obj pktread.obj log.obj global.obj LIBRARY ..\..\smapi\smapiwcw.lib ..\..\fidoconfig\fidoconfig.lib NAME pktinfo.exe
 
-tlog.exe:
-        $(CC) $(CFLAGS) $(COPT) tlog.c $(OBJS) $(LIBS)
+tlog.exe: tlog.obj log.obj
+  @echo linking tlog
+  $(LINK) $(LFLAGS) FILE tlog.obj, log.obj NAME tlog.exe
 
-tpkt.exe:
-        $(CC) $(CFLAGS) $(COPT) tpkt.c $(OBJS) $(LIBS)
-
-clean:
-        del *.exe *.obj *.bak *.lib
+hpt.exe: $(OBJS)
+  @echo linking hpt
+  $(LINK) $(LFLAGS) FILE hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, post.obj, areafix.obj, dupe.obj, recode.obj, tree.obj, seenby.obj, strsep.obj, link.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fidoconfig.lib NAME hpt.exe
