@@ -1027,7 +1027,6 @@ int changeresume(char *confName, s_link *link)
 				cfglen = fread(line, sizeof(char), (size_t) cfglen, f_conf);
 				
 				fseek(f_conf, curpos, SEEK_SET);
-//				fputs(line, f_conf);
 				fwrite(line, sizeof(char), (size_t) cfglen, f_conf);
 #ifdef __WATCOMC__
 				fflush( f_conf );
@@ -1411,10 +1410,11 @@ char *textHead()
 
 void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 {
-    char *tab = config->intab, *text, *split, *p;
-	char splitted[]="\r\r * message splitted...\r";
+    char *tab = config->intab, *text, *split, *p, *newsubj;
+    char splitted[]=" > message splitted...", strpartnum[10];
+	char *splitStr = config->areafixSplitStr;
+    int len, msgsize = config->areafixMsgSize * 1024, partnum=0;
     s_message *tmpmsg;
-	int len, msgsize = config->areafixmsgSize * 1024;
 
     if (RetFix == AVAIL || RetFix == LIST) config->intab = NULL;
 	text = report;
@@ -1425,29 +1425,41 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 		if (msgsize == 0 || len <= msgsize) {
 			split = text;
 			text = NULL;
+			if (partnum) partnum++;
 		} else {
 			p = text + msgsize;
 			while (*p != '\r') p--;
 			*p = '\000';
 			len = p - text;
-			split = (char*) malloc(len+strlen(splitted)+1);
+			split = (char*) malloc(len+strlen((splitStr) ? splitStr : splitted)+3+1);
 			memcpy(split,text,len);
-			strcat(split,splitted);
+			strcpy(split+len,"\r\r");
+			strcat(split, (splitStr) ? splitStr : splitted);
+			strcat(split,"\r");
 			text = p+1;
+			partnum++;
 		}
-		
+
+		if (partnum){
+			sprintf(strpartnum, " (%d)", partnum);
+			newsubj = (char*) malloc(strlen(subj)+strlen(strpartnum)+1);
+			strcpy(newsubj, subj);
+			strcat(newsubj, strpartnum);
+		} else newsubj = subj;
+
 		tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
-							 msg->toUserName,
-							 msg->fromUserName, subj, 1);
+				     msg->toUserName,
+				     msg->fromUserName, newsubj, 1);
 
 		preprocText(split, tmpmsg);
 		processNMMsg(tmpmsg, NULL);
-		
+
 		freeMsgBuffers(tmpmsg);
 		free(tmpmsg);
 		if (text) free(split);
+		if (partnum) free(newsubj);
 	}
-	
+
     config->intab = tab;
 }
 

@@ -589,7 +589,7 @@ void scanF(char *filename)
 {
    FILE *f;
    char *line, buff[80];
-   s_area *area;
+   s_area *area = NULL;
 
    // load recoding tables
    if (config->outtab != NULL) getctab(outtab, config->outtab);

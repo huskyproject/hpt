@@ -2,6 +2,11 @@ hpt 0.29
 --------
 
 ----- cvs ci ------
+Fri Aug 20 14:42:16 NOVST 1999
+max:
++ changes in areafix.c (patch from Serguei Revtov)
+
+----- cvs ci ------
 Mon Aug 16 12:33:46 NOVST 1999
 max:
 * do not scan one area several times (if found in echotoss.log)
