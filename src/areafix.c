@@ -1640,9 +1640,9 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
         }
 
         nfree(reply);
-        processNMMsg(tmpmsg, NULL, getNetMailArea(config,config->robotsArea),
+        processNMMsg(tmpmsg, NULL, getRobotsArea(config),
             0, MSGLOCAL);
-
+        writeEchoTossLogEntry(getRobotsArea(config)->areaName);
         closeOpenedPkt();
         freeMsgBuffers(tmpmsg);
         nfree(tmpmsg);
@@ -1718,9 +1718,9 @@ void sendAreafixMessages()
 
         w_log(LL_AREAFIX, "areafix: write netmail msg for %s", aka2str(link->hisAka));
 
-        processNMMsg(linkmsg, NULL, getNetMailArea(config,config->robotsArea),
+        processNMMsg(linkmsg, NULL, getRobotsArea(config),
             0, MSGLOCAL);
-
+        writeEchoTossLogEntry(getRobotsArea(config)->areaName);
         closeOpenedPkt();
         freeMsgBuffers(linkmsg);
         nfree(linkmsg);
@@ -2179,8 +2179,9 @@ void autoPassive()
 				  xscatprintf(&msg->text, "\r\r--- %s autopause\r", versionStr);
 				  msg->textLength = strlen(msg->text);
 				  processNMMsg(msg, NULL,
-					       getNetMailArea(config,config->robotsArea),
-					       0, MSGLOCAL);
+					       getRobotsArea(config),
+                               0, MSGLOCAL);
+                  writeEchoTossLogEntry(getRobotsArea(config)->areaName);
 				  closeOpenedPkt();
 				  freeMsgBuffers(msg);
 				  nfree(msg);
@@ -2285,8 +2286,9 @@ int relink (char *straddr) {
 	      researchLink->RemoteRobotName ?
 	      researchLink->RemoteRobotName : "areafix");
 	processNMMsg(msg, NULL,
-		     getNetMailArea(config,config->robotsArea),
-		     1, MSGLOCAL|MSGKILL);
+		     getRobotsArea(config),
+                 1, MSGLOCAL|MSGKILL);
+    writeEchoTossLogEntry(getRobotsArea(config)->areaName);
 	closeOpenedPkt();
 	freeMsgBuffers(msg);
 	nfree(msg);
