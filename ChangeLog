@@ -1,3 +1,13 @@
+2004-12-25 Saturday 22:06  val_khokhlov
+
+	* src/hptafix.c (1.14): init robot var for hpt itself
+
+2004-12-25 Saturday 21:48  val_khokhlov
+
+	* h/global.h (1.43), make/makefile.mvc (1.15), src/global.c (1.54),
+	src/hptafix.c (1.13), src/perl.c (1.84), src/toss.c (1.538):
+	multi-robot support, global config parameters only
+
 2004-12-08 Wednesday 04:53  andr_lukyanov
 
 	* src/seenby.c (1.31): Fix reserve one byte for \r. (patch by Nick
