@@ -231,7 +231,11 @@ void processConfig()
    if (config->localInbound && (strcmp(config->localInbound,config->tempInbound)==0)) exit_hpt("localInbound & tempInbound must be differ",1);
    if (config->msgBaseDir==NULL) exit_hpt("No msgBaseDir specified in config file!",1);
    if (config->dupeHistoryDir==NULL) exit_hpt("No dupeHistoryDir specified in config file!",1);
-	    
+   if (config->dupeArea.areaName==NULL) exit_hpt("you must define DupeArea!",1);
+   if (config->dupeArea.fileName==NULL) exit_hpt("DupeArea can not be passthrough!",1);
+   if (config->badArea.areaName==NULL) exit_hpt("you must define BadArea!",1);
+   if (config->badArea.fileName==NULL) exit_hpt("BadArea can not be passthrough!",1);
+
    // load recoding tables
    initCharsets();
    if (config->outtab) getctab(outtab, (unsigned char*) config->outtab);
