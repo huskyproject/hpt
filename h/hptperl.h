@@ -44,10 +44,11 @@
 #define SUB_TOSSBAD             0x0200
 #define SUB_ON_ECHOLIST         0x0400
 #define SUB_ON_AFIXCMD          0x0800
-#define SUB_ON_AFIXREQ		0x1000
-#define SUB_PUTMSG		0x2000
-#define SUB_EXPORT		0x4000
+#define SUB_ON_AFIXREQ			0x1000
+#define SUB_PUTMSG				0x2000
+#define SUB_EXPORT				0x4000
 #define SUB_FILTER2             0x8000
+#define SUB_ON_ROBOTMSG         0x10000
 
 #define PERLFILE        "filter.pl"
 #define PERLFILT        "filter"
@@ -66,6 +67,7 @@
 #define PERLPUTMSG      "put_msg"
 #define PERLEXPORT      "export"
 #define PERLFILT2       "filter2"
+#define PERLROBOTMSG    "on_robotmsg"
 
 extern int skip_addvia;
 
@@ -88,5 +90,6 @@ int perl_afixcmd(char **report, int cmd, char *aka, char *line);
 int perl_afixreq(s_message *msg, hs_addr pktOrigAddr);
 int perl_putmsg(s_area *echo, s_message *msg);
 int perl_export(s_area *echo, s_link *link, s_message *msg);
+int perl_robotmsg(s_message *msg, char *type);
 
 #endif
