@@ -29,7 +29,6 @@ This file describe changes between hpt-1.0-stable and hpt-1.2-stable
    - the 'pause' keyword syntax expanded: on, off, 1, 0, earea or farea
      possible ('pause earea': echoes paused, 'pause farea': fileareas paused)
    - change loglevels (see fidoconf & hpt documentation)
-   - new token: sendRules
    - add sample configs to distribution
 
 3. IMPORTANT bugfixes:
