@@ -1,3 +1,7 @@
+2002-01-05 Saturday 09:43  ml
+
+	* src/getfree.c (1.10): getfree modifications
+
 2002-01-04 Friday 11:24  pavel.gulchouck
 
 	* src/getfree.c (1.9): getfree() on linux fix
