@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Oct 22 16:01:25 NOVST 2000
+max:
+* when scanning netmail for file attach, creates only .req (no mail packets)
+
+----- cvs ci ------
 Sat Oct 21 19:41:45 NOVST 2000
 max:
 * add ourAka to SEEN-BYs if not exist

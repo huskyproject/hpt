@@ -399,26 +399,23 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 	   }
    } /* endif file attach */
 
+   // file requests always direct
    if ((xmsg->attr & MSGFRQ) == MSGFRQ) {
-	   
-	   if (prio!=NORMAL) {
-		   // if msg has request flag then put the subjectline into request file.
-		   if (createOutboundFileName(virtualLink, NORMAL, REQUEST) == 0) {
-			   
-			   processRequests(virtualLink, &msg);
-			   
-			   remove(virtualLink->bsyFile);
-			   nfree(virtualLink->bsyFile);
-			   // mark Mail as sent
-			   xmsg->attr |= MSGSENT;
-			   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-			   nfree(virtualLink->floFile);
-			   writeLogEntry(hpt_log, '7', "Request %s from %u:%u/%u.%u", msg.subjectLine, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   }
+	   // if msg has request flag then put the subjectline into request file.
+	   if (createOutboundFileName(virtualLink, NORMAL, REQUEST) == 0) {
+		   processRequests(virtualLink, &msg);
+		   remove(virtualLink->bsyFile);
+		   nfree(virtualLink->bsyFile);
+		   // mark Mail as sent
+		   xmsg->attr |= MSGSENT;
+		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+		   nfree(virtualLink->floFile);
+		   writeLogEntry(hpt_log, '7', "Request %s from %u:%u/%u.%u", msg.subjectLine, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 	   }
-   } /* endif */
+   }
 
-   if (prio!=NORMAL) {
+   // no route, don't create .?ut packets for FileReq's
+   if (prio!=NORMAL && (xmsg->attr & MSGFRQ) != MSGFRQ) {
 	   // direct, crash, immediate, hold messages
 	   if (createOutboundFileName(virtualLink, prio, PKT) == 0) {
 		   addViaToMsg(&msg, msg.origAddr);
@@ -437,7 +434,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 		   nfree(virtualLink->floFile);
 	   }
-   } else 
+   } else if ((xmsg->attr & MSGFRQ) != MSGFRQ)
 /*   remove after Nov 17 (2000)
    if ((xmsg->attr & MSGCRASH) == MSGCRASH) {
 	   // crash-msg -> make CUT
