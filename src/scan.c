@@ -732,11 +732,13 @@ void scanExport(int type, char *str) {
        // assuming we have max. 5 digits pid + '.' and '\0'
        sprintf(tmplogname, "%s.%d", str, getpid());
        f = fopen(str, "r");
-       ftmp = fopen(tmplogname, "w");
-       if (ftmp == NULL) {
-           w_log('9', "Can't open file %s for writing : %s", tmplogname, strerror(errno));
-           // close file so all areas will be scanned instead of panic.
-           if (f != NULL) fclose(f); 
+       if (f != NULL) {
+           ftmp = fopen(tmplogname, "w");
+           if (ftmp == NULL) {
+               w_log('9', "Can't open file %s for writing : %s", tmplogname, strerror(errno));
+               // close file so all areas will be scanned instead of panic.
+               fclose(f);
+           }
        }
    }
 
