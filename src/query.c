@@ -73,7 +73,10 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
 
     if (creatingLink->LinkGrp && creatingLink->autoAreaCreateDefaults) {
         if (fc_stristr(creatingLink->autoAreaCreateDefaults, " -g ")==NULL)
-            xscatprintf(&creatingLink->autoAreaCreateDefaults, " -g %s", creatingLink->LinkGrp);
+            buff = safe_strdup(creatingLink->autoAreaCreateDefaults);
+            nfree(creatingLink->autoAreaCreateDefaults);
+            xscatprintf(&creatingLink->autoAreaCreateDefaults, "-g %s %s", creatingLink->LinkGrp, buff);
+            nfree(buff);
     }
 
     acDef = creatingLink->autoAreaCreateDefaults;
@@ -113,13 +116,13 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
         }
         if (!need_dos_file)
             xscatprintf(&buff, "EchoArea %s%s%s %s%s%s",
-	    quote_areaname, c_area, quote_areaname,
+            quote_areaname, c_area, quote_areaname,
             msgbDir, msgbFileName,
             (msgbtype) ? "" : " -b Squish");
         else {
             sleep(1); // to prevent time from creating equal numbers
             xscatprintf(&buff,"EchoArea %s%s%s %s%8lx%s",
-	        quote_areaname, c_area, quote_areaname,
+                quote_areaname, c_area, quote_areaname,
                 msgbDir, (long)time(NULL),
                 (msgbtype) ? "" : " -b Squish");
         }
