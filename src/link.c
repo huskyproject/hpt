@@ -240,7 +240,7 @@ int linkArea(s_area *area, int netMail)
                 ctlen = MsgGetCtrlLen(hmsg);
                 if (ctlen == 0 ) {
                     MsgCloseMsg(hmsg);
-                    w_log(LL_WARN, "msg %ld has no control information: trown from reply chain", i);
+                    w_log(LL_WARN, "msg %ld has no control information: thrown from reply chain", i);
                     continue;
                 }
                 
