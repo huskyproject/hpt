@@ -41,6 +41,7 @@
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
+#include <fidoconf/afixcmd.h>
 
 #include <fidoconf/log.h>
 #include <global.h>
@@ -692,7 +693,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    *message = msg;
    return 1;
 }
-
+/*
 void freeMsgBuffers(s_message *msg)
 {
   nfree(msg->text);
@@ -703,3 +704,4 @@ void freeMsgBuffers(s_message *msg)
   // do not free the domains of the adresses of the message, because they
   // come from fidoconfig structures and are needed more than once.
 }
+*/

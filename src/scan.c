@@ -51,6 +51,7 @@
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
+#include <fidoconf/afixcmd.h>
 
 #include <fcommon.h>
 #include <pkt.h>
@@ -697,7 +698,7 @@ int scanByName(char *name) {
 
 void scanExport(int type, char *str) {
 	
-   int i = 0;
+   unsigned int i = 0;
    FILE *f = NULL;
    FILE *ftmp = NULL;
    char *tmplogname = NULL, *tmppath = NULL;

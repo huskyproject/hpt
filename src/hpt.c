@@ -61,7 +61,8 @@
 #include <fidoconf/dirlayer.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/common.h>
- 
+#include <fidoconf/afixcmd.h>
+
 #include <fidoconf/log.h>
 
 #include <global.h>
