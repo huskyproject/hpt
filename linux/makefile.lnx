@@ -10,21 +10,9 @@ SRC_DIR=../src/
 CFLAGS=-I../h -c -O3 $(DEBUG)
 LFLAGS=$(DEBUG)
 CDEFS =-DUNIX
-
 OBJ=.o
 RM=rm
 
 LIBS=../../fidoconf/libfidoconfiglnx.a ../../smapi/libsmapilnx.a
 
-default: all
-
-%$(OBJ): $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
-
-include makefile.inc
-
-all: commonprogs
-
-clean: commonclean
-
-distclean: commondistclean
+include ../makefile.inc

@@ -1846,7 +1846,6 @@ int relink (char *straddr) {
 		freeMsgBuffers(msg);
 		nfree(msg);
 		writeLogEntry(hpt_log, '8', "Total request relink %i area(s)",areasArraySize);
-//		cmPack = 1;
 	}
 
 	nfree(areasIndexArray);
