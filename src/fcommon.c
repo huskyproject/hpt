@@ -44,6 +44,7 @@
 #endif
 #ifdef __WATCOMC__
 #include <fcntl.h>
+#define AW_S_ISDIR(a) (((a) & S_IFDIR) != 0)
 #endif
 
 #include <global.h>
@@ -278,7 +279,12 @@ int createDirectoryTree(const char *pathName) {
             free(start);
             return 1;
          }
+/*    by AW 27.09.99    */
+#ifdef __WATCOMC__
+      } else if(!AW_S_ISDIR(buf.st_mode)) {
+#else
       } else if(!S_ISDIR(buf.st_mode)) {
+#endif
          buff = (char *) malloc(strlen(start)+30);
          sprintf(buff, "%s is a file not a directory", start);
          writeLogEntry(hpt_log, '5', buff);

@@ -73,7 +73,7 @@ void post(int c, unsigned int *n, char *params[])
    memset(&msg, 0, sizeof(s_message));
 
    for (quit = 0;*n < c && !quit; (*n)++) {
-      if (*params[*n] == '-') {
+      if (*params[*n] == '-' && params[*n][1] != '\0') {
          switch(params[*n][1]) {
             case 'a':    // address
                switch(params[*n][2]) {
@@ -116,11 +116,16 @@ void post(int c, unsigned int *n, char *params[])
                export=1; (*n)++;
                break;
 	    default:
+               fprintf(stderr, "hpt post: unknown switch %s\n", params[*n]);
                quit = 1;
                break;
          };
-      } else {
-         if ((text = fopen(params[*n], "rt")) != NULL) {
+      } else if (textBuffer == NULL) {
+	 if (strcmp(params[*n], "-"))
+            text = fopen(params[*n], "rt");
+         else
+            text = stdin;
+         if (text != NULL) {
             /* reserve 512kb + 1 (or 32kb+1) text Buffer */
             textBuffer = (UCHAR *) malloc(TEXTBUFFERSIZE+1); 
             for (msg.textLength = 0; msg.textLength < (long) TEXTBUFFERSIZE; msg.textLength++) {
@@ -135,14 +140,19 @@ void post(int c, unsigned int *n, char *params[])
             }; /* endfor */
             textBuffer[msg.textLength-1] = 0;
             fclose(text);
-         };
+         } else {
+            fprintf(stderr, "hpt post: failed to open input file %s\n", params[*n]);
+        };
+      } else {
+         fprintf(stderr, "hpt post: several input files on cmd line\n");
+         quit = 1;
       };  
    };
    // msg.attributes |= MSGLOCAL; // Always set bit for LOCAL
    // won't be set in the msgbase, because the mail is processed if it were received
    (*n)--; tm = gmtime(&t);
    strftime(msg.datetime, 21, "%d %b %y  %T", tm);
-   if ((msg.destAddr.zone != 0) && (textBuffer != NULL)) { 
+   if ((msg.destAddr.zone != 0 || area) && (textBuffer != NULL) && !quit) {
       // Dumbchecks
       if (msg.origAddr.zone == 0) // maybe origaddr isn't specified ?
          msg.origAddr = config->addr[0];
@@ -166,7 +176,7 @@ void post(int c, unsigned int *n, char *params[])
       
       free(textBuffer);
 
-      sprintf(msg.text + strlen(msg.text), "--- %s\r * Origin: %s (%s)",
+      sprintf(msg.text + strlen(msg.text), "\r--- %s\r * Origin: %s (%s)",
               versionStr, config->name, aka2str(msg.origAddr));
 
       msg.textLength = strlen(msg.text);
@@ -176,12 +186,17 @@ void post(int c, unsigned int *n, char *params[])
       if (!export)
         putMsgInArea(echo, &msg, 1, msg.attributes);
       else {
-        if (msg.netMail)
-          processNMMsg(&msg, NULL);
+        if (msg.netMail) 
+	  processNMMsg(&msg, NULL);
         else
           processEMMsg(&msg, msg.origAddr, 1);
-      }
-      
+      } 
+    if (textBuffer == NULL) {
+       fprintf(stderr, "hpt post: no input source specified\n");
+    }
+    if (msg.destAddr.zone == 0) {
+       fprintf(stderr, "hpt post: attempt to post netmail msg without specifyng dest address\n");
+    }
       sprintf (buffer,"Posting msg. from %u:%u/%u.%u -> %s in area: %s",
                   msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node,
                   msg.origAddr.point, aka2str(msg.destAddr), area);
