@@ -1,3 +1,11 @@
+2002-01-23 Wednesday 15:26  pavel.gulchouck
+
+	* src/perl.c (1.19): bugfix
+
+2002-01-23 Wednesday 14:59  pavel.gulchouck
+
+	* src/perl.c (1.18): fix compile error
+
 2002-01-22 Tuesday 18:48  mche
 
 	* src/areafix.c (1.243): added some changes to function
