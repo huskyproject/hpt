@@ -737,7 +737,7 @@ Don't add PID-line to generated messages.
 
 This statement cannot be repeated.
 
-@node ForwardRequestTimeout, IdlePassthruTimeout, DisableTID, Keywords
+@node ForwardRequestTimeout, IdlePassthruTimeout, DisablePID, Keywords
 @subsection ForwardRequestTimeout
 @findex ForwardRequestTimeout
 @table @asis
