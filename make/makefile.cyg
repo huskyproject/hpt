@@ -3,31 +3,83 @@
 # tested with Mingw32 CPD on Linux
 
 # Uncomment this for compile info for gdb and display more compiler warnings
-#DEBUG	= -g -pedantic
+DEBUG	= -g -pedantic
 
 # Uncomment this for strip all simbols from binaries to reduce file sizes
 #STRIP	= -s
 
 PERL=0
+PERL_DIR=
+
 ifeq (~$(PERL)~, ~1~)
-PERLFLAGS =`perl -MExtUtils::Embed -e ccopts`
+PERLFLAGS =`$(PERL_DIR)perl -MExtUtils::Embed -e ccopts`
 PERLDEFS  =-DDO_PERL
-PERLLIBS  =`perl -MExtUtils::Embed -e ldopts`
+PERLLIBS  =`$(PERL_DIR)perl -MExtUtils::Embed -e ldopts`
 PERLOBJ   = perl$(OBJ)
 endif
 
-CC=gcc
-EXENAMEFLAG=-o
 SRC_DIR=../src/
-CFLAGS=-I../h -I../.. -c -O3 -Wall -pedantic -mno-cygwin $(DEBUG)
-LFLAGS=$(DEBUG) -mno-cygwin
-CDEFS = -D__NT__ $(PERLDEFS)
 
-OBJ=.o
-EXE=.exe
-RM=rm
+## programs ##
 
-LIBS=../../fidoconf/libfidoconfigcyg.a ../../smapi/libsmapicyg.a
+#use this line if you are using MINGW32 on a Windows box
+CC	= gcc
+AR	= ar
+RANLIB	= ranlib
+
+#use this line if you are using MINGW32 CPD on a Unix box as cross compiler
+#CC	= i386-mingw32-gcc
+#AR	= i386-mingw32-ar
+#RANLIB	= i386-mingw32-ranlib
+RM	= rm
+
+## file suffixes ("extensions") ##
+
+C	= .c
+OBJ	= .o
+LIB	= .a
+EXE	= .exe
+DLL	= .dll
+
+# Prefix to construct static library name
+LIBPREFIX=lib
+# Prefix to construct dll name
+DLLPREFIX=
+# Suffix to construct library name
+LIBSUFFIX=cyg
+# Suffix to construct dll name
+DLLSUFFIX=
+
+## program options ##
+
+# compiler defines
+override CDEFS	+= $(PERLDEFS)
+# common compiler options
+override CFLAGS	+= -I../h -I../.. -Wall -mno-cygwin -O3
+# common linker options
+override LFLAGS	+= -mno-cygwin
+# options for compile only (link is off)
+OBJOPT	= -c
+# options for build static library
+override LIBOPT	+= -static
+# options for build dll
+override DLLOPT	+= -shared
+# option for specify output file name
+NAMEOPT	= -o
+# options for $(AR) program
+override AROPTS	+= rs
+
+# husky libraries:
+# static versions of husky libraries to build this module
+STATICLIBS	+=../../fidoconf/$(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(LIB)
+STATICLIBS	+=../../smapi/$(LIBPREFIX)smapi$(LIBSUFFIX)$(LIB)
+
+# DLL versions of husky libraries need to build this module
+DLL_LIBS	+=../../fidoconf/$(DLLPREFIX)fidoconf$(DLLSUFFIX)$(DLL)
+DLL_LIBS	+=../../smapi/$(DLLPREFIX)smapi$(DLLSUFFIX)$(DLL)
+
+# libraries need to build binary file
+LIBS	?=
 
 ## other ##
 CYGWIN_VERSION	= $(shell uname -r)
@@ -41,19 +93,38 @@ endif
 endif
 endif
 
+
+override CFLAGS	+= $(DEBUG)
+override LFLAGS	+= $(DEBUG)
+
 ###########
 
-default: all
+EXENAMEFLAG	= $(NAMEOPT)
+
+PROGRAMS	= commonprogs
+
+.PHONY:	distclean clean all static dll programs default dllprograms
+
+default:
+	@echo Run 'make dll' to build dll version of programs
+	@echo Run 'make static' to build static version of programs
+#	@echo Run 'make all' to build all above
 
 %$(OBJ): $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(CDEFS) $^
+	$(CC) $(CFLAGS) $(CDEFS) $(OBJOPT) $^
 
 $(PERLOBJ): $(SRC_DIR)perl.c
-	$(CC) $(CFLAGS) $(PERLFLAGS) $(CDEFS) $^
+	$(CC) $(CFLAGS) $(PERLFLAGS) $(OBJOPT) $(CDEFS) $^
 
 include makefile.inc
 
-all: commonprogs
+all: default
+
+static:
+	$(MAKE) -f makefile.cyg $(PROGRAMS) LIBS="$< $(STATICLIBS)"
+
+dll:
+	$(MAKE) -f makefile.cyg $(PROGRAMS) LIBS="$< $(DLL_LIBS)"
 
 clean: commonclean
 
