@@ -5,6 +5,7 @@ hpt 0.9.8 (development version)
 Sat Dec  9 20:35:07 NOVT 2000
 max:
 * fixed "AREA:NETMAIL" bug
+* descriptions longer than 80 chars don't added in autocreate 
 
 ----- cvs ci ------
 Thu Dec  7 00:13:18 NOVT 2000

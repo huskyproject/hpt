@@ -913,8 +913,8 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
    if (areaIsAvailable(c_area,creatingLink->forwardRequestFile,&desc,1)==1) {
 	   if (desc) {
-		   if (hpt_stristr(newAC, " -d ")==NULL)
-			   xscatprintf(&newAC, " -d \"%s\"", desc);
+		   if (hpt_stristr(newAC, " -d ")==NULL && strlen(desc)<=80)
+			xscatprintf(&newAC, " -d \"%s\"", desc);
 		   nfree(desc);
 	   }
    }
