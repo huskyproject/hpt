@@ -268,9 +268,11 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
 
    fprintf(stdout, "Highly Portable Toss %s\n", version);
 #if defined ( __NT__ )
-   sprintf( title, "Highly Portable Toss %s", version);
-   GetConsoleTitleA( oldtitle, 256 );
-   SetConsoleTitleA( title );
+   if (config->setConsoleTitle) {
+	   sprintf( title, "Highly Portable Toss %s", version);
+	   GetConsoleTitleA( oldtitle, 256 );
+	   SetConsoleTitleA( title );
+   }
 #endif
    xscatprintf(&versionStr,"hpt %s", version);
    free(version);
@@ -330,7 +332,7 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
    doneCharsets();
    free(versionStr);
 #if defined ( __NT__ )
-   SetConsoleTitleA( oldtitle );
+   if (config->setConsoleTitle) SetConsoleTitleA(oldtitle);
 #endif
    return 0;
 }

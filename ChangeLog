@@ -7,6 +7,8 @@ Fri Jun  2 17:39:35 NOVST 2000
 max:
 * zone seen-by stripping works again
 * changed export messages code for scanning
+* don't change task title under win32 (setConsoleTitle token)
+* scanned msgs now added to dupebase
 
 ----- cvs ci ------
 Thu Jun  1 11:51:34 NOVST 2000

@@ -640,6 +640,7 @@ void scanExport(int type, char *str) {
 //   if (type & SCN_ECHOMAIL) arcmail(NULL);
    if (type & SCN_ECHOMAIL) tossTempOutbound(config->tempOutbound);
    
+   writeDupeFiles();
    writeScanStatToLog();
 }
    

@@ -2113,7 +2113,6 @@ void toss()
 
    // write statToss to Log
    writeTossStatsToLog();
-//   arcmail(NULL);
    tossTempOutbound(config->tempOutbound);
 }
 
@@ -2168,7 +2167,6 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
 		   echo->imported++;  // area has got new messages
 		   if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
 			   rc = !putMsgInArea(echo, &msg,1, 0); // FIXME: why !putMsg not putMsg?
-//            statToss.saved++;
 		   } else statToss.passthrough++;
 
 		   // recoding from internal to transport charSet
@@ -2181,7 +2179,6 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
    
 		   if (echo->downlinkCount > 0) {
 			   forwardMsgToLinks(echo, &msg, pktOrigAddr);
-//            statToss.exported++;
 		   }
 
 	   } else {
@@ -2191,7 +2188,6 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
 		   } else {
 			   rc = 0;
 		   };
-//         statToss.dupes++;
 	   }
 
    } else {

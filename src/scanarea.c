@@ -43,15 +43,15 @@
 #include <global.h>
 #include <version.h>
 #include <recode.h>
+#include <toss.h>
+#include <hpt.h>
+#include <dupe.h>
 
 #include <smapi/msgapi.h>
-
 #include <smapi/stamp.h>
 #include <smapi/typedefs.h>
 #include <smapi/compiler.h>
 #include <smapi/progprot.h>
-#include <toss.h>
-#include <hpt.h>
 
 // create seen-by's & path
 char *createSeenByPath(s_area *echo) {
@@ -93,8 +93,6 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    char   *kludgeLines, *seenByPath = NULL;
    UCHAR  *ctrlBuff;
    UINT32 ctrlLen;
-//   int    i;//, seenByCount;
-//   s_seenBy *seenBys;
    
    // convert Header
 //   convertMsgHeader(xmsg, msg);
@@ -137,7 +135,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
 
    // added SEEN-BY and PATH from scan area only
    if (action == 0)// seenByPath = createSeenByPath(echo);
-	   seenByPath = createControlText(NULL, 0, "SEEN-BY: ");
+	   xstrcat(&seenByPath, "SEEN-BY: ");
 
    // create text
    msg->textLength = MsgGetTextLen(hmsg);
@@ -175,6 +173,9 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 //   long len;
 
    makeMsg(hmsg, xmsg, &msg, echo, 0);
+
+   // msg is dupe -- return
+   if (dupeDetection(echo, msg)!=1) return;
 
    //translating name of the area to uppercase
    while (msg.text[j] != '\r') {
@@ -227,6 +228,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
    MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
 
    freeMsgBuffers(&msg);
+   statScan.exported++;
 }
 
 void scanEMArea(s_area *echo)
@@ -254,7 +256,6 @@ void scanEMArea(s_area *echo)
          MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
          if (((xmsg.attr & MSGSENT) != MSGSENT) && ((xmsg.attr & MSGLOCAL) == MSGLOCAL)) {
             packEMMsg(hmsg, xmsg, echo);
-            statScan.exported++;
          }
 
          MsgCloseMsg(hmsg);
