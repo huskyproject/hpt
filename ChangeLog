@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Sat Feb 19 17:44:32 NOVT 2000
+max:
+* my last fix really works now :)
+
+----- cvs ci ------
 Wed Feb 16 00:56:19 NOVT 2000
 max:
 * small fix with scanByName - prints correct number of scanned areas

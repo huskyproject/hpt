@@ -450,6 +450,7 @@ void scanNMArea(s_area *area)
 								 area -> msgbType);
    if (netmail != NULL) {
 
+      statScan.areas++;
       highMsg = MsgGetHighMsg(netmail);
       writeLogEntry(hpt_log, '1', "Scanning NetmailArea %s", area -> areaName);
 
@@ -517,7 +518,6 @@ int scanByName(char *name) {
     
     if ((area = getNetMailArea(config, name)) != NULL) {
        scanNMArea(area); 
-       statScan.areas++;
        return 1;
     } else {
        // maybe it's echo area    
@@ -528,7 +528,6 @@ int scanByName(char *name) {
 	  /* scan and mark scanned */
 		  scanEMArea(area);
 		  area->scn = 1;
-		  statScan.areas++;
 		  return 1;
 	  }; 
        } else {
@@ -575,14 +574,12 @@ void scanExport(int type, char *str) {
          for (i = 0; i< config->echoAreaCount; i++) {
             if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
                scanEMArea(&(config->echoAreas[i]));
-               statScan.areas++;
             }
          }
       };
       if (type & SCN_NETMAIL) {
          for (i = 0; i < config->netMailAreaCount; i++) {
             scanNMArea(&(config->netMailAreas[i]));
-            statScan.areas++;
          }
       };
    } else {
