@@ -1,3 +1,12 @@
+2003-05-06 Tuesday 08:25  andrews42
+
+	* misc/hpt_ro/: ro.cfg (1.5), ro_readme_eng.txt (1.2): fix typos in
+	readme and comments
+
+2003-05-06 Tuesday 04:31  andrews42
+
+	* src/perl.c (1.63): perltossbad() fix $reason bug
+
 2003-05-05 Monday 11:06  val_khokhlov
 
 	* src/perl.c (1.62): gmtoff() fix
