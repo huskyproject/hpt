@@ -283,7 +283,7 @@ char *linked(s_link *link) {
     char *report = NULL;
 
     xscatprintf(&report, "\r%s areas on %s\r\r",
-		((link->Pause & EPAUSE) == EPAUSE) ? "Passive" : "Active", aka2str(link->hisAka));
+		((link->Pause & ECHOAREA) == ECHOAREA) ? "Passive" : "Active", aka2str(link->hisAka));
 							
     for (i=n=0; i<config->echoAreaCount; i++) {
 	rc=subscribeCheck(config->echoAreas[i], link);
@@ -940,7 +940,7 @@ char *subscribe(s_link *link, char *cmd) {
            }
         } else {
             if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==ADD_OK) {
-                Addlink(link, area, NULL);
+                Addlink(config, link, area);
                 fixRules (link, area->areaName);
                 af_CheckAreaInQuery(an, NULL, NULL, DELIDLE);
                 xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
@@ -989,7 +989,7 @@ char *subscribe(s_link *link, char *cmd) {
             area = getArea(config, line);
             if ( !isLinkOfArea(link, area) ) {
                 if(changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==ADD_OK) {
-                    Addlink(link, area, NULL);
+                    Addlink(config, link, area);
                     fixRules (link, area->areaName);
                     w_log( LL_AREAFIX, "areafix: %s subscribed to area %s",
                         aka2str(link->hisAka),line);
@@ -1176,7 +1176,7 @@ char *unsubscribe(s_link *link, char *cmd) {
                     if (addrComp(link->hisAka, area->downlinks[k]->link->hisAka)==0 &&
                         area->downlinks[k]->defLink)
                         return do_delete(link, area);
-                    RemoveLink(link, area, NULL);
+                    RemoveLink(link, area);
                     if ((area->msgbType == MSGTYPE_PASSTHROUGH) &&
                         (area->downlinkCount == 1) &&
                         (area->downlinks[0]->link->hisAka.point == 0))
@@ -1273,8 +1273,8 @@ char *pause_link(s_link *link)
 {
    char *tmp, *report = NULL;
 
-   if ((link->Pause & EPAUSE) != EPAUSE) {
-      if (Changepause((cfgFile) ? cfgFile : getConfigFileName(), link, 0,EPAUSE) == 0)
+   if ((link->Pause & ECHOAREA) != ECHOAREA) {
+      if (Changepause((cfgFile) ? cfgFile : getConfigFileName(), link, 0,ECHOAREA) == 0)
          return NULL;
    }
    xstrcat(&report, " System switched to passive\r");
@@ -1288,8 +1288,8 @@ char *resume_link(s_link *link)
 {
     char *tmp, *report = NULL;
 
-    if ((link->Pause & EPAUSE) == EPAUSE) {
-	if (Changepause((cfgFile) ? cfgFile : getConfigFileName(), link,0,EPAUSE) == 0)
+    if ((link->Pause & ECHOAREA) == ECHOAREA) {
+	if (Changepause((cfgFile) ? cfgFile : getConfigFileName(), link,0,ECHOAREA) == 0)
 	    return NULL;
     }
 
@@ -1325,7 +1325,7 @@ char *info_link(s_link *link)
 	xscatprintf(&report, "%s%s", config->pack[i].packer,
 		    (i+1 == config->packCount) ? "" : ", ");
     xscatprintf(&report, ")\r\r");
-    xscatprintf(&report, "Your system is %s\r", ((link->Pause & EPAUSE) == EPAUSE)?"passive":"active");
+    xscatprintf(&report, "Your system is %s\r", ((link->Pause & ECHOAREA) == ECHOAREA)?"passive":"active");
     ptr = linked (link);
     xstrcat(&report, ptr);
     nfree(ptr);
@@ -2220,7 +2220,7 @@ void autoPassive()
 
   for (i = 0; i < config->linkCount; i++) {
 
-      if (config->links[i].autoPause==0 || (config->links[i].Pause == (EPAUSE|FPAUSE))
+      if (config->links[i].autoPause==0 || (config->links[i].Pause == (ECHOAREA|FILEAREA))
          ) continue;
 
       if (createOutboundFileName(&(config->links[i]),
@@ -2252,7 +2252,7 @@ void autoPassive()
 			      if (Changepause((cfgFile) ? cfgFile :
 					      getConfigFileName(),
 					      &(config->links[i]), 1,
-					      config->links[i].Pause^(EPAUSE|FPAUSE))) {
+					      config->links[i].Pause^(ECHOAREA|FILEAREA))) {
 				  msg = makeMessage(config->links[i].ourAka,
 					    &(config->links[i].hisAka),
 					    versionStr,config->links[i].name,
