@@ -613,7 +613,7 @@ char *safe_strdup(const char *src)
     return ptr;
 }
 
-int isValidConference(char *s) {
+int isValidConference(const char *s) {
     // according to FSC-0074 with lowercase symbols
     // lowercase symbols only for internal use
     while (*s) {
