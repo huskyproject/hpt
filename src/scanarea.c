@@ -218,9 +218,12 @@ void scanEMArea(s_area *echo)
    XMSG  xmsg;
    dword highWaterMark, highestMsg, i;
    
+   if (echo->scn) return;
+   
    area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, echo->msgbType | MSGTYPE_ECHO);
    if (area != NULL) {
       statScan.areas++;
+      echo->scn = 1;
       writeLogEntry(hpt_log, '1', "Scanning area: %s", echo->areaName);
       if (noHighWaters) i = highWaterMark = 0;
       else i = highWaterMark = MsgGetHighWater(area);

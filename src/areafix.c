@@ -1008,7 +1008,8 @@ char *info_link(s_message *msg, s_link *link)
 	    xscatprintf(&report, "%s (", link->packerDef->packer);
     
     for (i=0; i < config->packCount; i++)
-	xscatprintf(&report, "%s, ", config->pack[i].packer);
+	xscatprintf(&report, "%s%s", config->pack[i].packer,
+	    (i+1 == config->packCount) ? "" : ", ");
     
     xscatprintf(&report, ")\r\rYour system is %s\r", link->Pause ? "passive" : "active");
     ptr = linked(msg, link);

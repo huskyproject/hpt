@@ -437,6 +437,9 @@ void scanNMArea(s_area *area)
    s_addr          dest, orig;
    int             for_us, from_us;
 
+   // do not scan one area twice
+   if (area->scn) return;
+
    // FixMe: workaround for not netmail packing when there's no any routing
    if (config->routeFileCount == 0 && config->routeMailCount == 0 && config->routeCount == 0) {
       writeLogEntry(hpt_log, '8', "no route at all - leave mail untouched");
@@ -451,6 +454,7 @@ void scanNMArea(s_area *area)
    if (netmail != NULL) {
 
       statScan.areas++;
+      area->scn = 1;
       highMsg = MsgGetHighMsg(netmail);
       writeLogEntry(hpt_log, '1', "Scanning NetmailArea %s", area -> areaName);
 
@@ -524,10 +528,8 @@ int scanByName(char *name) {
        area = getEchoArea(config, name);
        if (area != &(config->badArea)) {
           if (area && area->msgbType != MSGTYPE_PASSTHROUGH && 
-              area -> downlinkCount > 0 && !area->scn) { 
-	  /* scan and mark scanned */
+              area -> downlinkCount > 0) { 
 		  scanEMArea(area);
-		  area->scn = 1;
 		  return 1;
 	  }; 
        } else {

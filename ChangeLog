@@ -5,6 +5,8 @@ hpt 0.9.6
 Sat Feb 19 17:44:32 NOVT 2000
 max:
 * my last fix really works now :)
+* netmail areas didn't scanned twice too
+* cosmetical changes in areafix
 
 ----- cvs ci ------
 Wed Feb 16 00:56:19 NOVT 2000
