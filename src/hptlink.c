@@ -257,7 +257,7 @@ void linkArea(s_area *area)
      return;
    }
 
-   if (area->msgbType & MSGTYPE_JAM) {
+   if (area->msgbType & MSGTYPE_JAM || area->msgbType & MSGTYPE_SDM) {
       maxreply = 2;
    } else {
       maxreply = MAX_REPLY;
@@ -330,7 +330,7 @@ void linkArea(s_area *area)
                  crepl->msgPos = MsgMsgnToUid(harea, i);
 
 		 // Save data for comparing
-                 if (area->msgbType & MSGTYPE_JAM) {
+                 if (area->msgbType & MSGTYPE_JAM || area->msgbType & MSGTYPE_SDM) {
                     linksptr->reply1st = xmsg.xmreply1st;
                     linksptr->replyNxt = xmsg.xmreplynext;
                  } else {
@@ -339,7 +339,7 @@ void linkArea(s_area *area)
 		 linksptr->replyToPos = xmsg.replyto;
 
                  if (linkNew) {
-                    if (area->msgbType & MSGTYPE_JAM) {
+                    if (area->msgbType & MSGTYPE_JAM || area->msgbType & MSGTYPE_SDM) {
                        if (xmsg.replyto || xmsg.xmreply1st || xmsg.xmreplynext) {
                           newStart = i+1;
                           crepl->replyToPos = xmsg.replyto;
