@@ -1044,23 +1044,18 @@ char *do_delete(s_link *link, s_area *area) {
                   an, aka2str(link->hisAka));
 
     /* delete the area from in-core config */
-    for (i=0; i<area->downlinkCount; i++)
-	nfree(area->downlinks[i]);
-    nfree(area->downlinks);
-    area->downlinkCount = 0;
     for (i=0; i<config->echoAreaCount; i++)
-	if (stricmp(config->echoAreas[i].areaName, an)==0)
-	    break;
+    {
+        if (stricmp(config->echoAreas[i].areaName, an)==0)
+            break;
+    }
     if (i<config->echoAreaCount && area==&(config->echoAreas[i])) {
-	nfree(area->areaName);
-	nfree(area->fileName);
-	nfree(area->description);
-	nfree(area->group);
-	for (; i<config->echoAreaCount-1; i++)
-	    memcpy(&(config->echoAreas[i]), &(config->echoAreas[i+1]),
-	           sizeof(s_area));
-	config->echoAreaCount--;
-    RebuildEchoAreaTree(config);
+        fc_freeEchoArea(area);
+        for (; i<config->echoAreaCount-1; i++)
+            memcpy(&(config->echoAreas[i]), &(config->echoAreas[i+1]),
+            sizeof(s_area));
+        config->echoAreaCount--;
+        RebuildEchoAreaTree(config);
     }
     return report;
 }
