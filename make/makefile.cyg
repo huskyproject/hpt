@@ -14,7 +14,7 @@ PERLOBJ   = perl$(OBJ)
 endif
 
 CC=gcc
-EXENAMEFLAG=-o 
+EXENAMEFLAG=-o
 SRC_DIR=../src/
 CFLAGS=-I../h -I../.. -c -O3 -Wall -pedantic -mno-cygwin $(DEBUG)
 LFLAGS=$(DEBUG) -mno-cygwin
@@ -24,7 +24,7 @@ OBJ=.o
 EXE=.exe
 RM=rm
 
-LIBS=../../fidoconf/libfidoconfigcyg.a ../../smapi/libsmapicyg.a -luser32 -lmingwex
+LIBS=../../fidoconf/libfidoconfigcyg.a ../../smapi/libsmapicyg.a -lmingwex
 
 default: all
 
