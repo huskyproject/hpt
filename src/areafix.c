@@ -1259,6 +1259,7 @@ char *unsubscribe(s_link *link, char *cmd) {
                     (area->downlinks[0]->link->hisAka.point == 0)) {
                     if(config->areafixQueueFile) {
                         af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
+                        j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
                     } else {
                         forwardRequestToLink(area->areaName,
                             area->downlinks[0]->link, NULL, 1);
