@@ -43,7 +43,7 @@ void del_tok(char **ac, char *tok) {
 char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
 {
     char *msgbFileName=NULL, *acDef;
-    char *msgbtype, *newAC=NULL, *desc;
+    char *msgbtype, *newAC=NULL, *desc, *quote_areaname;
     char *cp, *buff=NULL;                    /* temp. usage */
 
     msgbFileName = makeMsgbFileName(c_area);
@@ -65,6 +65,8 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
         msgbDir=(creatingLink->msgBaseDir) ? 
         creatingLink->msgBaseDir : config->msgBaseDir;
 
+    quote_areaname = strchr(TRUE_COMMENT "\"", *c_area) ? "\"" : "";
+
     if (stricmp(msgbDir, "passthrough")!=0 && NULL==hpt_stristr(newAC,"passthrough"))
     {
         // we have to find a file name
@@ -74,7 +76,7 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
         need_dos_file = hpt_stristr(newAC, "-dosfile")!=NULL;
 #else
         need_dos_file = 1;
-#endif       
+#endif
         if (creatingLink->autoAreaCreateSubdirs && !need_dos_file)
         {
              //"subdirify" the message base path if the
@@ -89,22 +91,22 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
             }
         }
         if (!need_dos_file)
-            xscatprintf(&buff, "EchoArea%c%s %s%s%s",
-	    (strchr(TRUE_COMMENT, *c_area) ? '\t' : ' '), c_area,
+            xscatprintf(&buff, "EchoArea %s%s%s %s%s%s",
+	    quote_areaname, c_area, quote_areaname,
             msgbDir, msgbFileName,
             (msgbtype) ? "" : " -b Squish");
         else {
             sleep(1); // to prevent time from creating equal numbers
-            xscatprintf(&buff,"EchoArea%c%s %s%8lx%s",
-	        (strchr(TRUE_COMMENT, *c_area) ? '\t' : ' '), c_area,
+            xscatprintf(&buff,"EchoArea %s%s%s %s%8lx%s",
+	        quote_areaname, c_area, quote_areaname,
                 msgbDir, (long)time(NULL),
                 (msgbtype) ? "" : " -b Squish");
         }
 
     } else {
         // passthrough
-        xscatprintf(&buff, "EchoArea%c%s passthrough",
-	    (strchr(TRUE_COMMENT, *c_area) ? '\t' : ' '), c_area);
+        xscatprintf(&buff, "EchoArea %s%s%s passthrough",
+	    quote_areaname, c_area, quote_areaname);
 
         del_tok(&newAC, "passthrough");
         del_tok(&newAC, "-b ");  // del "-b msgbtype" from autocreate defaults
