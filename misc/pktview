@@ -36,31 +36,25 @@ while(1) {
     ($origNode,$destNode,$year,$month,$day,$hour,$minute,$seconds,
      $baud,$type,$origNet,$destNet,
      # Follows Type2+ packet fields...
-     $ProductCode,$RevMaj,$Password,$QMOrigZone,$QMDestZone,$AuxNet,
-$CapValidate,
-     $PCodeHi,$RevMin,$Cap,$origZone,$destZone,$origPoint,$destPoint,
-$appdata)=
+     $ProductCode,$RevMaj,$Password,$QMOrigZone,$QMDestZone,$AuxNet,$CapValidate,
+     $PCodeHi,$RevMin,$Cap,$origZone,$destZone,$origPoint,$destPoint,$appdata)=
         unpack('S2S3S3 S2S2 C2A8S2S2 C2SS4I',$pkthdr);
     # print "QMOrigZone:$QMOrigZone, QMDestZone:$QMDestZone,AuxNet:$AuxNet\n";
     die "Unknown packet header type $type!\n" if($type != 2);
     if($Cap == 0x0001 && $CapValidate == 0x0100 ) {
         print "Version:2+\n";
-        print "From: $origZone:$origNet/$origNode.$origPoint\t\t",$day+1,"/",
-$month+1,"/$year $hour:$minute:$seconds\n";
+        print "From: $origZone:$origNet/$origNode.$origPoint\t\t",$day+1,"/", $month+1,"/$year $hour:$minute:$seconds\n";
         print "To  : $destZone:$destNet/$destNode.$destPoint\n";
         print "Prodcode : ",$ProductCode+$PCodeHi*256," ($RevMaj.$RevMin)\n";
         print "Password : `$Password'\n";
     } else {
         print "Version:2\n";
-        print "From: $origNet/$origNode\t\t$day/$month/$year
-$hour:$minute:$seconds\n";
+        print "From: $origNet/$origNode\t\t$day/$month/$year $hour:$minute:$seconds\n";
         print "To  : $destNet/$destNode\n";
         print "Prodcode : $ProductCode\n";
-        print "[ May be 2+ $origZone:$origNet/$origNode.$origPoint ->
-$destZone:$destNet/$destNode.$destPoint ]\n";
+        print "[ May be 2+ $origZone:$origNet/$origNode.$origPoint -> $destZone:$destNet/$destNode.$destPoint ]\n";
     }
-    $div="---------------------------------------------------------------------
---------\n";
+    $div="-----------------------------------------------------------------------------\n";
     print $div;
     while(read(STDIN,$version,2)==2&&($pktver=unpack('S',$version))==2) {
         die "Broken packet - invalid message header"
@@ -97,8 +91,7 @@ $destZone:$destNet/$destNode.$destPoint ]\n";
         } else {
             $origAddr="$origNet/$origNode";
             $destAddr="$destNet/$destNode";
-            if($Text=~/^\x01INTL:?[ ]+(\d+:\d+\/\d+)[ ]+(\d+:\d+\/\d+)[ ]*\n/m)
-{
+            if($Text=~/^\x01INTL:?[ ]+(\d+:\d+\/\d+)[ ]+(\d+:\d+\/\d+)[ ]*\n/m) {
                 $destAddr=$1;
                 $origAddr=$2;
                 substr($Text,length($`),length($&))='' unless ($verbose);
@@ -169,12 +162,10 @@ $destZone:$destNet/$destNode.$destPoint ]\n";
         print $div;
     }
     if($pktversion==0) {
-        print "-------========================Packet Done
-normally===================-------\n";
+        print "-------========================Packet Done normally===================-------\n";
         exit 0 if(eof(STDIN));
     } else {
-        print "-------===========================Broken
-packet=======================-------\n";
+        print "-------===========================Broken packet=======================-------\n";
         exit 1;
     }
 };
