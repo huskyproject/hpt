@@ -7,7 +7,7 @@ EXENAMEFLAG=-Fe
 PERL_DIR=c:\programs\Perl
 SRC_DIR=..\src\
 
-CFLAGS= -nologo -Zp1 -O2 -c -I..\h -I..\.. -I..\..\smapi -I..\..\huskylib -I"$(PERL_DIR)\lib\core"
+CFLAGS= -nologo -Zp1 -O2 -c -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib -I"$(PERL_DIR)\lib\core"
 LFLAGS=
 CDEFS = -DDO_PERL -D__NT__ -DWIN32 -D_CONSOLE -DNDEBUG -DNO_STRICT -DHAVE_DES_FCRYPT -DPERL_IMPLICIT_CONTEXT -DPERL_IMPLICIT_SYS -DPERL_MSVCRT_READFIX
   

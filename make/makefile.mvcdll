@@ -6,7 +6,7 @@ CC=cl
 EXENAMEFLAG=-Fe
 SRC_DIR=..\src\
 
-CFLAGS=-nologo -MD -Zp1 -Ob2 -I..\h -I..\.. -c
+CFLAGS=-nologo -MD -Zp1 -Ob2 -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib -c
 LFLAGS=
 CDEFS =-D__NT__ -D_CONSOLE -D_MAKE_DLL
 
@@ -14,7 +14,7 @@ OBJ=.obj
 EXE=.exe
 RM=del
 
-LIBS=..\..\fidoconf\fconfmvc.lib ..\..\smapi\smapimvc.lib USER32.LIB msvcrt.lib Kernel32.lib /link /nodefaultlib /opt:nowin98
+LIBS=..\..\fidoconf\fconfmvc.lib ..\..\smapi\make\smapimvc.lib ..\..\huskylib\huskymvc.lib USER32.LIB msvcrt.lib Kernel32.lib /link /nodefaultlib /opt:nowin98
 
 default: all
 
