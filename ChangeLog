@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Wed Apr  4 23:29:55 NOVST 2001
+max:
+* fixed packing to empty bundles with ~ prefix in ?lo.
+
+----- cvs ci ------
 Sat Mar 31 16:11:07 NOVST 2001
 max:
 * sample configs

@@ -2238,7 +2238,8 @@ int find_old_arcmail(s_link *link, FILE *flo)
  	     	for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
 	            if (patimat(line, validExt[i]) == 1) {
 			nfree(bundle);
-			bundle = safe_strdup(line + 1); // One char for first symbol in flo file
+			// One char for first symbol in flo file
+			if (*line!='~') bundle = safe_strdup(line + 1);
 			break;
 		}
 		nfree(line);
