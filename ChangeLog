@@ -1,3 +1,15 @@
+2002-10-11 Friday 07:32  pgul
+
+	* src/toss.c (1.452): Remove redundrant #ifdef
+
+2002-10-11 Friday 07:28  pgul
+
+	* src/scan.c (1.176): Remove redundrant #ifdef
+
+2002-10-11 Friday 05:12  sfpavel
+
+	* src/scan.c (1.175): Fix OS/2 build (patch from Andy Luk'yanov)
+
 2002-10-10 Thursday 08:46  mche
 
 	* src/query.c (1.69): fix bug with autocreation
