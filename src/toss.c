@@ -369,79 +369,65 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
 }
 
 int readCheck(s_area *echo, s_link *link) {
-        int i, rc=0;
-        char *denygrp;
 
-        // read for all
-        if (echo->rgrp==NULL) return 0;
-
-        denygrp = link->DenyGrp;
-
-        if (echo->rgrp!=NULL && denygrp!=NULL) {
-                // is this link allowed to read messages from this area?
-                for (i=0; i< strlen(echo->rgrp); i++) {
-                        if ( strchr( denygrp, echo->rgrp[i]) != NULL) {
-#ifdef DEBUG_HPT
-                                printf("read!\n");
-#endif
-                                return 0;
-                        } else if ( i == strlen (echo->rgrp) - 1 ) rc++;
-                }
-        } else rc++;
-
-        if (echo->rwgrp!=NULL && denygrp!=NULL) {
-                // maybe he have r/w acess?
-                for (i=0; i< strlen(echo->rwgrp); i++) {
-                        if ( strchr( denygrp, echo->rwgrp[i]) != NULL) {
-#ifdef DEBUG_HPT
-                                printf("read/write!\n");
-#endif
-                                return 0;
-                        } else if ( i == strlen (echo->rwgrp) - 1 ) rc++;
-                }
-        } else rc++;
-
-        return rc;
+    // rc == '\x0000' access o'k
+    // rc == '\x0001' no access group
+    // rc == '\x0002' no access level
+    // rc == '\x0004' no access export
+    // rc == '\x0008' not linked
+    
+    int i, rc=0;
+    
+    if (echo->group && echo->group != '\060') {
+	if (link->AccessGrp) {
+	    if (config->PublicGroup) {
+		if (strchr(link->AccessGrp, echo->group) == NULL &&
+		    strchr(config->PublicGroup, echo->group) == NULL) rc|=1;
+	    } else if (strchr(link->AccessGrp, echo->group) == NULL) rc|=1;
+	} else rc|=1;
+    }
+    if (echo->levelread > link->level) rc|=2;
+    else {
+	for (i=0; i<echo->downlinkCount; i++) {
+	    if (link == echo->downlinks[i]->link) {
+		if (echo->downlinks[i]->export == 0) rc|=4;
+		break;
+	    }
+	}
+	if (i == echo->downlinkCount) rc|=8;
+    }
+    return rc;
 }
 
 int writeCheck(s_area *echo, s_link *link) {
-        int i, rc=0;
-        char *denygrp;
 
-        // test if the link is linked to the area
-        // if not all should be tossed to bad
-        if (!isLinkOfArea(link, echo) && (echo != &(config->badArea))) return 1;
+    // rc == '\x0000' access o'k
+    // rc == '\x0001' no access group
+    // rc == '\x0002' no access level
+    // rc == '\x0004' no access import
+    // rc == '\x0008' not linked
 
-        // read/write for all
-        if ((echo->wgrp==NULL) && (echo->rwgrp==NULL)) return 0;
-
-        denygrp = link->DenyGrp;
-
-        if (echo->wgrp!=NULL && denygrp!=NULL) {
-                // is this link allowed to post messages to this area?
-                for (i=0; i< strlen(echo->wgrp); i++) {
-                        if ( strchr( denygrp, echo->wgrp[i]) != NULL) {
-#ifdef DEBUG_HPT
-                                printf("write!\n");
-#endif
-                                return 0;
-                        } else if ( i == strlen (echo->wgrp) - 1 ) rc++;
-                }
-        } else rc++;
-
-        if (echo->rwgrp!=NULL && denygrp!=NULL) {
-                // maybe he have r/w acess?
-                for (i=0; i< strlen(echo->rwgrp); i++) {
-                        if ( strchr( denygrp, echo->rwgrp[i]) != NULL) {
-#ifdef DEBUG_HPT
-                                printf("read/write!\n");
-#endif
-                                return 0;
-                        } else if ( i == strlen (echo->rwgrp) - 1 ) rc++;
-                }
-        } else rc++;
-
-        return rc;
+    int i, rc=0;
+    
+    if (echo->group && echo->group != '\060') {
+	if (link->AccessGrp) {
+	    if (config->PublicGroup) {
+		if (strchr(link->AccessGrp, echo->group) == NULL &&
+		    strchr(config->PublicGroup, echo->group) == NULL) rc|=1;
+	    } else if (strchr(link->AccessGrp, echo->group) == NULL) rc|=1;
+	} else rc|=1;
+    }
+    if (echo->levelwrite > link->level) rc|=2;
+    else {
+	for (i=0; i<echo->downlinkCount; i++) {
+	    if (link == echo->downlinks[i]->link) {
+		if (echo->downlinks[i]->import == 0) rc|=4;
+		break;
+	    }
+	}
+	if (i == echo->downlinkCount) rc|=8;
+    }
+    return rc;
 }
 
 /**
@@ -474,8 +460,8 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount, s_area *echo, s_lin
    *newLinks = (s_link **) calloc(echo->downlinkCount, sizeof(s_link*));
 
    for (i=0; i < echo->downlinkCount; i++) {
-      if (checkLink(seenBys, seenByCount, echo->downlinks[i], pktOrigAddr)==0) {
-         (*newLinks)[j] = echo->downlinks[i];
+      if (checkLink(seenBys, seenByCount, echo->downlinks[i]->link, pktOrigAddr)==0) {
+         (*newLinks)[j] = echo->downlinks[i]->link;
          j++;
       }
    }
@@ -665,19 +651,26 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    //write new line in config file
    if (stricmp(config->msgBaseDir, "passthrough")!=0) {
 #ifndef MSDOS
-	   sprintf(buff, "EchoArea %s %s%s -a %s Squish %s ", c_area, config->msgBaseDir, c_area, myaddr, hisaddr);
+	   sprintf(buff, "EchoArea %s %s%s -a %s Squish ", c_area, config->msgBaseDir, c_area, myaddr);
 #else
 	   sleep(1); // to prevent time from creating equal numbers
-	   sprintf(buff,"EchoArea %s %s%8lx -a %s Squish %s ", c_area, config->msgBaseDir, time(NULL), myaddr, hisaddr);
+	   sprintf(buff,"EchoArea %s %s%8lx -a %s Squish ", c_area, config->msgBaseDir, time(NULL), myaddr);
 #endif
    } else
-	   sprintf(buff, "EchoArea %s Passthrough -a %s %s ", c_area, myaddr, hisaddr);
+	   sprintf(buff, "EchoArea %s Passthrough -a %s ", c_area, myaddr);
    if ((creatingLink->autoCreateDefaults != NULL) &&
        (strlen(buff)+strlen(creatingLink->autoCreateDefaults))<255) {
 	   strcat(buff, creatingLink->autoCreateDefaults);
    }
-   fprintf(f, buff);
-   fprintf(f, "\n");
+   sprintf(buff+strlen(buff), " %s", hisaddr);
+   if (creatingLink->export)
+       if (*creatingLink->export == 0) strcat(buff, " -w");
+   if (creatingLink->import)
+       if (*creatingLink->import == 0) strcat(buff, " -r");
+   if (creatingLink->mandatory)
+       if (*creatingLink->mandatory == 1) strcat(buff, " -m");
+   fprintf(f, "%s\n", buff);
+//   fprintf(f, "\n");
    
    fclose(f);
    
@@ -732,7 +725,7 @@ int carbonCopy(s_message *msg, s_area *echo)
 
 void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 {
-   char   *area, *textBuff;
+   char   *tmp, *area, *textBuff;
    s_area *echo;
    s_link *link;
    int    writeAccess;
@@ -748,7 +741,8 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
    echo = getArea(config, area);
    statToss.echoMail++;
 
-   writeAccess = writeCheck(echo, link);
+   if (echo == &(config->badArea)) writeAccess = 0;
+   else writeAccess = writeCheck(echo, link);
    if (writeAccess!=0) echo = &(config->badArea);
 
    if (echo != &(config->badArea)) {
@@ -781,7 +775,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
       if (config->carbonCount != 0) carbonCopy(msg, echo);
       // checking for autocreate option
       link = getLinkFromAddr(*config, pktOrigAddr);
-      if ((link != NULL) && (link->autoAreaCreate != 0) &&(writeAccess == 0)) {
+      if ((link != NULL) && (link->autoAreaCreate != 0) && (writeAccess == 0)) {
          autoCreate(area, pktOrigAddr);
          echo = getArea(config, area);
          if (echo->msgbType != MSGTYPE_PASSTHROUGH)
@@ -794,7 +788,42 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
       } else {
          // no autoareaCreate -> msg to bad
          statToss.bad++;
-
+	 
+	 tmp = msg->text;
+	 
+	 while ((area = strchr(tmp, '\r'))) {
+	     if (*(area+1) == '\x01') tmp = area+1;
+	     else { tmp = area+1; break; }
+	 }
+	 
+	 memset(textBuff, 0, tmp+1-msg->text);
+	 
+	 strncpy(textBuff, msg->text, tmp-msg->text);
+	 
+	 sprintf(textBuff+strlen(textBuff), "FROM: %u:%u/%u.%u\rREASON: ",
+	                                    pktOrigAddr.zone,
+	                                    pktOrigAddr.net,
+					    pktOrigAddr.node,
+					    pktOrigAddr.point);
+	 switch (writeAccess) {
+	     case 0: strcat(textBuff, "System not allowed to create new area\r");
+	         break;
+	     case 1: strcat(textBuff, "Sender not active for this area\r");
+	         break; 
+	     case 2: strcat(textBuff, "Sender not allowed to post in this area\r");
+	         break;
+	     case 4: strcat(textBuff, "Sender not allowed to post in this area\r");
+	         break;
+	     case 8: strcat(textBuff, "Sender not active for this area\r");
+	         break;
+	     default :
+	         break;
+	 }							
+	 textBuff = (char*)realloc(textBuff, strlen(textBuff)+strlen(tmp)+1);
+	 strcat(textBuff, tmp);
+	 tmp = msg->text;
+	 msg->text = textBuff;
+	 textBuff = tmp;
          putMsgInArea(&(config->badArea), msg, 0);
       }
    }

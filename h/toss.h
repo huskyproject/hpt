@@ -57,4 +57,18 @@ void tossTempOutbound(char *directory);
 void arcmail(void);
 int autoCreate(char *c_area, s_addr pktOrigAddr);
 
+int readCheck(s_area *echo, s_link *link);
+// '\x0000' access o'k
+// '\x0001' no access group
+// '\x0002' no access level
+// '\x0004' no access export
+// '\x0008' not linked
+
+int writeCheck(s_area *echo, s_link *link);
+// '\x0000' access o'k
+// '\x0001' no access group
+// '\x0002' no access level
+// '\x0004' no access import
+// '\x0008' not linked
+
 #endif

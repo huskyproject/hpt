@@ -12,6 +12,7 @@
 #define PAUSE   7
 #define RESUME  8
 #define INFO    9
+#define RESCAN  10
 #define ERROR   255
 
 unsigned char RetFix;

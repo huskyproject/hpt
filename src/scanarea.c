@@ -50,6 +50,7 @@
 #include <typedefs.h>
 #include <compiler.h>
 #include <progprot.h>
+#include <toss.h>
 
 void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
 {
@@ -99,10 +100,10 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
    seenByCount = 0;
    seenBys = (s_seenBy*) calloc(echo->downlinkCount+1,sizeof(s_seenBy));
    for (i = 0;i < echo->downlinkCount; i++) {
-      if (echo->downlinks[i]->hisAka.point != 0) continue; // only include nodes in SEEN-BYS
+      if (echo->downlinks[i]->link->hisAka.point != 0) continue; // only include nodes in SEEN-BYS
       
-      seenBys[i].net  = echo->downlinks[i]->hisAka.net;
-      seenBys[i].node = echo->downlinks[i]->hisAka.node;
+      seenBys[i].net  = echo->downlinks[i]->link->hisAka.net;
+      seenBys[i].node = echo->downlinks[i]->link->hisAka.node;
       seenByCount++;
    }
    if (echo->useAka->point == 0) {      // only include if system is node
@@ -163,10 +164,14 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
    // scan msg to downlinks
 
    for (i = 0; i<echo->downlinkCount; i++) {
-	  if (echo->downlinks[i]->pktFile == NULL) {
+       // link is passive?
+       if (echo->downlinks[i]->link->Pause && !echo->noPause) continue;
+       // check access read for link
+       if (readCheck(echo, echo->downlinks[i]->link)) continue;
+	  if (echo->downlinks[i]->link->pktFile == NULL) {
 		   
 		  // pktFile does not exist
-		  if ( createTempPktFileName(echo->downlinks[i]) ) {
+		  if ( createTempPktFileName(echo->downlinks[i]->link) ) {
 			  writeLogEntry(log, '9', "Could not create new pkt.");
 			  printf("Could not create new pkt.\n");
 			  disposeConfig(config);
@@ -177,11 +182,11 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 	  } /* endif */
 		   
       makePktHeader(NULL, &header);
-      header.origAddr = *(echo->downlinks[i]->ourAka);
-      header.destAddr = echo->downlinks[i]->hisAka;
-      if (echo->downlinks[i]->pktPwd != NULL)
-      strcpy(header.pktPassword, echo->downlinks[i]->pktPwd);
-      pkt = openPktForAppending(echo->downlinks[i]->pktFile, &header);
+      header.origAddr = *(echo->downlinks[i]->link->ourAka);
+      header.destAddr = echo->downlinks[i]->link->hisAka;
+      if (echo->downlinks[i]->link->pktPwd != NULL)
+      strcpy(header.pktPassword, echo->downlinks[i]->link->pktPwd);
+      pkt = openPktForAppending(echo->downlinks[i]->link->pktFile, &header);
 
       // an echomail messages must be adressed to the link
       msg.destAddr = header.destAddr;
