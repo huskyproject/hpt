@@ -6,19 +6,19 @@ DEBUG=
 # set to -g for debugging, NEVER use -s !!!
 
 PERL=0
-include makeperl.inc
-
 ifeq (~$(PERL)~, ~1~)
-PERLFLAGS+= -I/usr/include
+PERLFLAGS =`perl -MExtUtils::Embed -e ccopts`
+PERLDEFS  =-DDO_PERL
+PERLLIBS  =`perl -MExtUtils::Embed -e ldopts`
+PERLOBJ   = perl$(OBJ)
 endif
-
 
 CC=gcc
 EXENAMEFLAG=-o 
 SRC_DIR=../src/
-CFLAGS=-I../h -I../.. -c -O3 -Wall -pedantic -mno-cygwin $(DEBUG) $(PERLFLAGS) 
+CFLAGS=-I../h -I../.. -c -O3 -Wall -pedantic -mno-cygwin $(DEBUG)
 LFLAGS=$(DEBUG) -mno-cygwin
-CDEFS =-DNT -D__NT__ -DWINNT -D__CYG__
+CDEFS =-DNT -D__NT__ -DWINNT -D__CYG__ $(PERLDEFS)
 
 OBJ=.o
 EXE=.exe
@@ -30,6 +30,9 @@ default: all
 
 %$(OBJ): $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+
+$(PERLOBJ): $(SRC_DIR)perl.c
+	$(CC) $(CFLAGS) $(PERLFLAGS) $(CDEFS) $(SRC_DIR)perl.c
 
 include makefile.inc
 
