@@ -1191,7 +1191,6 @@ int processPkt(char *fileName, e_tossSecurity sec)
                 }
 
                 if (processIt != 0) {
-                    realtime = time(NULL);
                     while ((msgrc = readMsgFromPkt(pkt, header, &msg)) == 1) {
                         if (msg != NULL) {
                             if ((processIt == 1) || ((processIt==2) && (msg->netMail==1))) {
@@ -1208,11 +1207,9 @@ int processPkt(char *fileName, e_tossSecurity sec)
                     }
                     if (msgrc==2) rc = 3; /*  rename to .bad (wrong msg format) */
                     /*  real time of process pkt & msg without external programs */
-                    statToss.realTime += time(NULL) - realtime;
                 }
 
             } else {
-                realtime = time(NULL);
                 while ((msgrc = readMsgFromPkt(pkt, header, &msg)) == 1) {
                     if (msg != NULL) {
                         if (msg->netMail==1)
@@ -1254,7 +1251,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 #ifdef DO_PERL
     perlpktdone(fileName, rc);
 #endif
-    closeOpenedPkt();
+//    closeOpenedPkt();
     w_log(LL_FUNC,"toss.c::processPkt() OK");
     return rc;
 }
@@ -1553,7 +1550,6 @@ void writeStatLog(void) {
 void writeTossStatsToLog(void) {
     unsigned int i;
     float inMailsec, outMailsec, inKBsec;
-    time_t diff = statToss.realTime;
     char logchar;
 
     if (statToss.pkts==0 && statToss.msgs==0)
@@ -1561,11 +1557,11 @@ void writeTossStatsToLog(void) {
     else
 	logchar='4';
 
-    if (diff == 0) diff = 1;
+    if (statToss.realTime == 0) statToss.realTime = 1;
 
-    inMailsec = ((float)(statToss.msgs)) / diff;
-    outMailsec = ((float)(statToss.exported)) / diff;
-    inKBsec = ((float)(statToss.inBytes)) / diff / 1024;
+    inMailsec = ((float)(statToss.msgs)) * 1000 / statToss.realTime;
+    outMailsec = ((float)(statToss.exported)) * 1000 / statToss.realTime;
+    inKBsec = ((float)(statToss.inBytes)) * 1000 / statToss.realTime / 1024;
 
     w_log(logchar, "Statistics:");
     w_log(logchar, "     arc: % 5d   netMail: % 4d   echoMail: % 5d         CC: % 5d",
@@ -1576,7 +1572,7 @@ void writeTossStatsToLog(void) {
 	  statToss.msgs, statToss.bad, statToss.saved, statToss.empty);
     w_log(logchar, "   Input: % 8.2f mails/sec        Output: % 8.2f mails/sec", inMailsec, outMailsec);
     w_log(logchar, "          % 8.2f kb/sec", inKBsec);
-    w_log(logchar, "          % 8.2f kb total", ((float) statToss.inBytes / 1024));
+    w_log(logchar, "          % 8.2f kb total, processed in %lu miliseconds", ((float) statToss.inBytes / 1024), statToss.realTime);
 
     /* write personal mail statistic logfile */
     writeStatLog();
@@ -1955,6 +1951,7 @@ void tossTempOutbound(char *directory)
     directory[dirNameLen-1]='\0';
 #endif
 
+    closeOpenedPkt();
     if (NULL == (dir = husky_opendir(directory))) {
         printf("Can't open dir: %s!\n",directory);
 	return;
@@ -2126,10 +2123,12 @@ static void setmaxopen(void) {
 void toss()
 {
     FILE *f = NULL;
+    hs_time timer;
 
     /*  set stats to 0 */
     memset(&statToss, '\0', sizeof(s_statToss));
     w_log(LL_START, "Start tossing...");
+    husky_SetTimer(&timer);
     while (processDir(config->localInbound, secLocalInbound));
     while (processDir(config->protInbound, secProtInbound));
     while (processDir(config->inbound, secInbound));
@@ -2143,6 +2142,8 @@ void toss()
 	forwardedPkts = 0;
     }
 
+
+    statToss.realTime = husky_GetTimer(&timer);
     /*  write statToss to Log */
     writeTossStatsToLog();
     tossTempOutbound(config->tempOutbound);
