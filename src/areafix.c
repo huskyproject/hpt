@@ -1484,13 +1484,15 @@ linkliner:
 				
 	fseek(f_conf, curpos, SEEK_SET);
 	fwrite(line, sizeof(char), (size_t) cfglen, f_conf);
-#if defined(__WATCOMC__) || defined(__MINGW32__)
-	fflush( f_conf );
-	fTruncate( fileno(f_conf), endpos-(remstr-curpos) );
-	fflush( f_conf );
-#else
-	truncate(confName, endpos-(remstr-curpos));
-#endif
+// remove after 15-03-2002
+//#if defined(__WATCOMC__) || defined(__MINGW32__)
+//	fflush( f_conf );
+//	fTruncate( fileno(f_conf), endpos-(remstr-curpos) );
+//	fflush( f_conf );
+//#else
+//	truncate(confName, endpos-(remstr-curpos));
+//#endif
+	setfsize( fileno(f_conf), endpos-(remstr-curpos) );
 	nfree(line);
 	nfree(confName);
 	link->Pause = 0;
