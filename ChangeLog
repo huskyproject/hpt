@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Sun Mar 26 14:00:02 NOVST 2000
+max:
+* fixed static buffers in autoCreate()
+
+----- cvs ci ------
 Sat Mar 25 10:59:40 NOVT 2000
 max:
 * fixed origAddr.zone calculation in correctNMAddr()
