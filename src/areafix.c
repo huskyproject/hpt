@@ -1411,24 +1411,44 @@ char *textHead()
 
 void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 {
-    char *tab;
+    char *tab = config->intab, *text, *split, *p;
+	char splitted[]="\r\r * message splitted...\r";
     s_message *tmpmsg;
-    
-    tmpmsg = makeMessage(link->ourAka, &(link->hisAka), msg->toUserName, msg->fromUserName, subj, 1);
-    preprocText(report, tmpmsg);
-    
-    tab = config->intab;
-    
-    if (RetFix == AVAIL || RetFix == LIST) {
-	config->intab = NULL;
-    }
-    
-    processNMMsg(tmpmsg, NULL);
-    
+	int len, msgsize = config->areafixmsgSize * 1024;
+
+    if (RetFix == AVAIL || RetFix == LIST) config->intab = NULL;
+	text = report;
+
+	while (text) {
+
+		len = strlen(text);
+		if (msgsize == 0 || len <= msgsize) {
+			split = text;
+			text = NULL;
+		} else {
+			p = text + msgsize;
+			while (*p != '\r') p--;
+			*p = '\000';
+			len = p - text;
+			split = (char*) malloc(len+strlen(splitted)+1);
+			memcpy(split,text,len);
+			strcat(split,splitted);
+			text = p+1;
+		}
+		
+		tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
+							 msg->toUserName,
+							 msg->fromUserName, subj, 1);
+
+		preprocText(split, tmpmsg);
+		processNMMsg(tmpmsg, NULL);
+		
+		freeMsgBuffers(tmpmsg);
+		free(tmpmsg);
+		if (text) free(split);
+	}
+	
     config->intab = tab;
-    
-    freeMsgBuffers(tmpmsg);
-    free(tmpmsg);
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

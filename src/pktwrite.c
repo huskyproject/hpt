@@ -189,7 +189,7 @@ FILE *openPktForAppending(char *fileName, s_pktHeader *header)
  */
 
 void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_addr *destAka) {
-
+   
    *buff = 0;
    if (area != NULL)
       sprintf(buff + strlen(buff), "AREA:%s\r", area);

@@ -2,6 +2,11 @@ hpt 0.29
 --------
 
 ----- cvs ci ------
+Sat Aug 14 23:34:49 NOVST 1999
+max:
+* areafix can split messages (areafixmsgSize)
+
+----- cvs ci ------
 Fri Aug 13 13:30:54 NOVST 1999
 max:
 changes in carbon copy:
