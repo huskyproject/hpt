@@ -1,3 +1,8 @@
+2002-04-19 Friday 16:20  mche
+
+	* src/: areafix.c (1.281), hpt.c (1.145): pause statement expanded
+	to: Pause ON Pause OFF Pause FAREA Pause EAREA
+
 2002-04-18 Thursday 10:33  mche
 
 	* src/hpt.c (1.144): deleting lock file if post failed [patch by
