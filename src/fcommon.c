@@ -54,6 +54,7 @@
 #include <dos.h>
 #endif
 #include <fcntl.h>
+#include <errno.h>
 
 #include <global.h>
 #include <recode.h>
@@ -70,7 +71,7 @@
 void writeDupeFiles(void)
 {
 	unsigned i;
-	
+
 	// write dupeFiles
 	for (i = 0 ; i < config->echoAreaCount; i++) {
 		writeToDupeFile(&(config->echoAreas[i]));
@@ -100,7 +101,7 @@ int createLockFile(char *lockfile) {
         int fd;
         char *pidstr = NULL;
 
-        if ( (fd=open(lockfile, O_CREAT | O_EXCL | O_WRONLY, S_IREAD | S_IWRITE)) < 0 )
+        if ( (fd=open(lockfile, O_CREAT | O_RDWR | O_EXCL, S_IREAD | S_IWRITE)) < 0 )
            {
                    fprintf(stderr,"createLockFile: cannot create lock file\"%s\"\n",lockfile);
                    writeLogEntry(hpt_log, '9', "createLockFile: cannot create lock file \"%s\"m", lockfile);
@@ -151,7 +152,7 @@ int fTruncate( int fd, long length )
    return 0;
 }
 
-#endif       
+#endif
 
 #ifdef __MINGW32__
 int fTruncate (int fd, long length)
@@ -208,21 +209,21 @@ int createTempPktFileName(s_link *link)
     char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
     char limiter=PATH_DELIM;
     char zoneSuffix[6] = "\0";
-    
+
     char *zoneOutbound;         /* this contains the correct outbound directory
                                    including zones */
 
     time_t tr;
     char *wday;
     struct tm *tp;
-    
+
 
     tr=time(NULL);
     tp=localtime(&tr);
     counter = count;
-    
+
     wday=wdays[tp->tm_wday];
-    
+
     aTime %= 0xffffff;   /* only last 24 bit count */
 
     if (link->hisAka.zone != config->addr[0].zone) {
@@ -269,9 +270,9 @@ int createTempPktFileName(s_link *link)
 							limiter, (long)aTime, counter, wday);
 				}
 			}
-	   
+
 			counter++;
-	   
+
 		} while ((fexist(fileName) || fileNameAlreadyUsed(fileName, NULL)) &&
 				 (counter<=255));
 
@@ -296,7 +297,7 @@ int createTempPktFileName(s_link *link)
 	nfree(tmpPFileName);
 
 	if (counter > 15) writeLogEntry(hpt_log,'7',"created 16 bundles/sec!");
-    
+
     if ((!fexist(fileName)) && (!fexist(pfileName))) {
         nfree(link->packFile);
         nfree(link->pktFile);
@@ -329,12 +330,12 @@ int createTempPktFileName(s_link *link)
     time_t       tr;
     static char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
     struct tm   *tp;
-    
+
     tr=time(NULL);
     tp=localtime(&tr);
     sprintf(ext,"%s0", wdays[tp->tm_wday]);
-            
-    pfilename = (char *) safe_malloc(strlen(config->outbound)+13+13+12+1);
+
+    pfilename = (char *) malloc(strlen(config->outbound)+13+13+12+1);
 
     if (link->hisAka.zone != config->addr[0].zone) {
         sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
@@ -350,7 +351,7 @@ int createTempPktFileName(s_link *link)
         filename = makeUniqueDosFileName(config->tempOutbound, "pkt", config);
         memcpy(uniquestring, filename + strlen(config->tempOutbound), 8);
         uniquestring[8] = '\0';
-	   
+
         if (link->hisAka.point == 0)
         {
             if (config->separateBundles)
@@ -450,6 +451,7 @@ int createDirectoryTree(const char *pathName) {
 int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 {
    int fd; // bsy file for current link
+   int save_errno;
    char name[13], bsyname[13], zoneSuffix[6], pntDir[14];
    char	*sepDir, sepname[13];
 
@@ -533,10 +535,12 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 
    } else {
 
-           if ( (fd=open(link->bsyFile, O_CREAT | O_EXCL | O_WRONLY, S_IREAD | S_IWRITE)) < 0 ) {
+           if ( (fd=open(link->bsyFile, O_CREAT | O_RDWR | O_EXCL, S_IREAD | S_IWRITE)) < 0 ) {
+              save_errno = errno;
+
               if (!fexist(link->bsyFile)) {
 
-                 fprintf(stderr,"cannot create *.bsy file for %s\n",link->name);
+                 writeLogEntry(hpt_log, '7', "cannot create *.bsy file \"%s\" for %s (errno %d)\n", link->bsyFile, link->name, (int)save_errno);
                  exit_hpt("cannot create *.bsy file!",0);
 
               } else {

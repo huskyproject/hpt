@@ -2,6 +2,14 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Tue Jun 13 21:04:54 MEZ 2000
+tobi:
+* Fix: netmail area tag is now added to echotoss.log for "hpt post", instead
+  of an empty string or even "(null)". Fixes bug reported by M. Haase.
+* Fixed arguments to open for creation of bsy files - fixes misbehaviour
+  on OS/2 reported by D. Friedmann.
+
+----- cvs ci ------
 Sun Jun 11 18:25:29 NOVST 2000
 max:
 * areafix strip " bla bla bla" after "%command bla bla bla"

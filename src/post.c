@@ -19,13 +19,13 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *****************************************************************************/
 /* Revision log:
-   16.12.98 - first version, written at ~1:30, in the middle of doing 
+   16.12.98 - first version, written at ~1:30, in the middle of doing
               calculation homework on Theoretical Electrics, you understood ;)
    18.12.98 - woops forgot copyright notice, minor fixes
 	      tearline generation added
@@ -96,7 +96,7 @@ void post(int c, unsigned int *n, char *params[])
    s_area *echo = NULL;
    FILE *f = NULL;
    long attr;
-   
+
    s_message msg;
 
    CHAR *textBuffer = NULL;
@@ -153,7 +153,7 @@ void post(int c, unsigned int *n, char *params[])
                for ((*n)++; params[*n] != NULL &&
                     (attr = str2attr(params[*n])) != -1L; (*n)++)
 		       msg.attributes |= attr;
-	       (*n)--;		       
+	       (*n)--;
                break;
             case 'e':    // echo name
                area = params[++(*n)];
@@ -210,7 +210,7 @@ void post(int c, unsigned int *n, char *params[])
       } else {
          fprintf(stderr, "hpt post: several input files on cmd line\n");
          quit = 1;
-      };  
+      };
    };
    // won't be set in the msgbase, because the mail is processed if it were received
    (*n)--; tm = localtime(&t);
@@ -232,14 +232,13 @@ void post(int c, unsigned int *n, char *params[])
 
       msg.text = createKludges(area, &msg.origAddr, &msg.destAddr);
       xstrcat((char **)(&(msg.text)), (char *)textBuffer);
-      
       nfree(textBuffer);
 
       xscatprintf(&msg.text, "\r--- %s\r * Origin: %s (%s)\r",
               versionStr, config->name, aka2str(msg.origAddr));
 
       msg.textLength = strlen(msg.text);
-      
+
       writeLogEntry (hpt_log, '1', "Start posting...");
 
       writeLogEntry (hpt_log, '5', "Posting msg from %u:%u/%u.%u -> %u:%u/%u.%u in area: %s",
@@ -272,14 +271,14 @@ void post(int c, unsigned int *n, char *params[])
           msg.textLength = strlen(msg.text);
           processEMMsg(&msg, msg.origAddr, 1, (MSGSCANNED|MSGSENT|MSGLOCAL));
         }
-      } 
-      
+      }
+
       if ((config->echotosslog) && (!export)) {
         f=fopen(config->echotosslog, "a");
         if (f==NULL)
           writeLogEntry (hpt_log, '9', "Could not open or create EchoTossLogFile.");
         else {
-          fprintf(f,"%s\n",area);
+          fprintf(f,"%s\n", (area) ? area : echo->areaName);
           fclose(f);
         }
       }
@@ -293,6 +292,6 @@ void post(int c, unsigned int *n, char *params[])
    if (msg.destAddr.zone == 0 && !quit) {
      fprintf(stderr, "hpt post: attempt to post netmail msg without specifyng dest address\n");
    }
-   
+
    freeMsgBuffers(&msg);
 }
