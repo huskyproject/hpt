@@ -1,3 +1,16 @@
+2002-11-05 Tuesday 15:40  stas_degteff
+
+	* h/global.h (1.33), h/pkt.h (1.28), h/query.h (1.15), h/scanarea.h
+	(1.7), h/toss.h (1.50), src/areafix.c (1.360), src/dupe.c (1.68),
+	src/fcommon.c (1.140), src/getfree.c (1.24), src/hpt.c (1.158),
+	src/hptlink.c (1.45), src/hpttree.c (1.24), src/link.c (1.66),
+	src/perl.c (1.42), src/pktinfo.c (1.18), src/pktread.c (1.90),
+	src/pktwrite.c (1.38), src/post.c (1.99), src/query.c (1.72),
+	src/scan.c (1.179), src/scanarea.c (1.95), src/seenby.c (1.25),
+	src/toss.c (1.460), src/tpkt.c (1.27), src/txt2pkt.c (1.41):
+	Convert C++ comments into pure C comments to prevent compilation
+	warnings/errors
+
 2002-11-04 Monday 13:15  stas_degteff
 
 	* doc/hpt.texi (1.88): Fix describe mandatory for link; add manual
