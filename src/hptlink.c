@@ -82,7 +82,7 @@ struct origlinks {
 };
 typedef struct origlinks s_origlinks;
 
-#define LOGFILENAME "hpt.log"
+#define LOGFILENAME "hptlink.log"
 
 s_log        *hptlink_log = NULL;
 s_fidoconfig *cfg;
