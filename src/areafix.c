@@ -547,16 +547,17 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 	
 	if (act==0) {
 	    if (getArea(config, areatag) == &(config->badArea)) {
-		base = config->msgBaseDir;
-		if (config->createFwdNonPass==0) config->msgBaseDir = pass;
-                for (j = 0; j < config->addrCount; j++)
-                    if (addrComp(dwlink->hisAka, config->addr[j])==0) {
-                       config->msgBaseDir = base;
-                       break;
-                    }
-		strUpper(areatag);
-		autoCreate(areatag, uplink->hisAka, &(dwlink->hisAka));
-		config->msgBaseDir = base;
+			base = uplink->msgBaseDir;
+			if (config->createFwdNonPass==0) uplink->msgBaseDir = pass;
+			// create from own address
+			for (j = 0; j < config->addrCount; j++)
+				if (addrComp(dwlink->hisAka, config->addr[j])==0) {
+					uplink->msgBaseDir = base;
+					break;
+				}
+			strUpper(areatag);
+			autoCreate(areatag, uplink->hisAka, &(dwlink->hisAka));
+			uplink->msgBaseDir = base;
 	    }
 	    xscatprintf(&(msg->text), "+%s\r", areatag);
 	} else if (act==1) {

@@ -479,7 +479,8 @@ void linkArea(s_area *area)
 	   if ( loglevel >= 11 ) fprintf (outlog, "Pass 3: buildng relations by treeIds\n");
 
 	   for (i = 1, crepl=replmap; i <= highMsg && treeLinks; i++, crepl++) {
-	      if ( crepl -> replyToPos == 0 && crepl -> treeId && i != crepl -> treeId ) {
+	      if ( crepl->replyToPos == 0 && crepl->freeReply == 0 &&
+                   crepl->treeId && i != crepl->treeId ) {
 		 // Link unlinked message
 
 		 linkTo = (replmap[crepl -> treeId -1 ]).treeId;

@@ -8,6 +8,7 @@ Category 1: Will certainly be implemented until next release
 - make switch for REASON: No downlinks for passthrough area (maybe warns to log)
 - make switch for advisory lock
 - areafix definition
+- optimize packing (several files)
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

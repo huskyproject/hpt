@@ -2,6 +2,13 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Tue Mar 27 21:23:16 NOVST 2001
+max:
+* fix autocreate bug when creates non-passthrough area if linkmsgbasedir used
+patch from Serguei Revtov:
+* hptlink: bugly twice linking of 2 msgs with reverse order when -t set
+
+----- cvs ci ------
 Mon Mar 26 13:17:50 NOVST 2001
 max:
 * removing lock file when exit "out of memory"

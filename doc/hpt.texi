@@ -2105,7 +2105,7 @@ This statement can only be repeated for different links.
 @end table
 
 Same as @code{MsgBaseDir}, but you can set it for different links.
-@strong{Do not use it with} @xref{LinkDefaults}.
+@strong{Do not use it with} @code{LinkDefaults}!
 
 @xref{MsgBaseDir}.
 
