@@ -1,3 +1,19 @@
+2003-12-16 Tuesday 20:57  i_zkh
+
+	* doc/hpt.texi (1.141): Minor fix
+
+2003-12-16 Tuesday 13:10  val_khokhlov
+
+	* src/hptafix.c (1.2): %uckin' diff didn't apply my patches
+	correclty, hpt used to crash, fixed
+
+2003-12-16 Tuesday 08:24  val_khokhlov
+
+	* h/fcommon.h (1.58), h/scan.h (1.18), make/makefile.mvcdll (1.15),
+	src/fcommon.c (1.172), src/hpt.c (1.188), src/scan.c (1.200):
+	libareafix finally detached from hpt completely, some functions
+	moved out
+
 2003-12-15 Monday 10:08  val_khokhlov
 
 	* Makefile (1.22), makefile.inc (1.29), h/areafix.h (1.42),
