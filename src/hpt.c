@@ -71,7 +71,6 @@ s_message **msgToSysop = NULL;
 char *scanParmA;
 char *scanParmF;
 char force = 0;
-int fd;
 
 extern unsigned long getfree (char *path);
 
@@ -301,20 +300,20 @@ void processConfig()
 */
    if (config->lockfile) {
 #ifndef __BEOS__
-	   if ( (fd=open(config->lockfile, O_CREAT|O_RDWR,S_IREAD|S_IWRITE)) < 0 ) {
+	   if ( (lock_fd=open(config->lockfile, O_CREAT|O_RDWR,S_IREAD|S_IWRITE)) < 0 ) {
 #else
-	   if ((fd=open(config->lockfile,O_CREAT|O_RDWR|O_EXCL,S_IREAD|S_IWRITE))<0) {
+	   if ((lock_fd=open(config->lockfile,O_CREAT|O_RDWR|O_EXCL,S_IREAD|S_IWRITE))<0) {
 #endif
 		   fprintf(stderr,"cannot create lock file: %s\n",config->lockfile);
 		   disposeConfig(config);
            exit(1);
 	   } else {
-		   if (write(fd," ", 1)!=1) {
+		   if (write(lock_fd," ", 1)!=1) {
 			   fprintf(stderr,"can't write lo lock file! exit...\n");
 			   disposeConfig(config);
 			   exit(1);
 		   }
-		   if (lock(fd,0,1)<0) {
+		   if (lock(lock_fd,0,1)<0) {
 			   fprintf(stderr,"lock file used by another process! exit...\n");
 			   disposeConfig(config);
 			   exit(1);
@@ -501,7 +500,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    nfree(versionStr);
 
    if (config->lockfile) {
-	   close(fd);
+	   close(lock_fd);
 	   remove(config->lockfile);
    }
 

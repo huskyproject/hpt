@@ -66,4 +66,6 @@ extern int	 quiet;
 extern s_addr afixAddr;
 extern char *afixCmd;
 
+extern int lock_fd;
+
 #endif

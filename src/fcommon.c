@@ -96,7 +96,10 @@ void exit_hpt(char *logstr, int print) {
     if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
 
     writeDupeFiles();
-    if (config->lockfile != NULL) remove(config->lockfile);
+    if (config->lockfile) {
+	close(lock_fd);
+	remove(config->lockfile);
+    }
     w_log('9', logstr);
     w_log('1', "End");
     closeLog(hpt_log);

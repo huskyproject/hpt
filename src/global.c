@@ -70,3 +70,5 @@ int	  quiet = 0;
 
 s_addr afixAddr = {0,0,0,0};
 char *afixCmd = NULL;
+
+int lock_fd;
