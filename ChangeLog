@@ -1,3 +1,7 @@
+2003-05-13 Tuesday 06:54  mche
+
+	* src/link.c (1.73): correct log message "linking area"
+
 2003-05-11 Sunday 17:41  mche
 
 	* src/: areafix.c (1.413), fcommon.c (1.169), hpt.c (1.178), perl.c
