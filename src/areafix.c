@@ -185,16 +185,21 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 
 // add string to file
 int addstring(FILE *f, char *aka) {
-	char *cfg;
+	char *cfg, c;
 	long areapos,endpos,cfglen,len;
 
+
 	//current position
-#ifndef UNIX
-	/* in dos and win32 by default \n translates into 2 chars */
+//#ifndef UNIX
+//	/* in dos and win32 by default \n translates into 2 chars */
+//	fseek(f,-2,SEEK_CUR);
+//#else                                                   
+//	fseek(f,-1,SEEK_CUR);
+//#endif
 	fseek(f,-2,SEEK_CUR);
-#else                                                   
-	fseek(f,-1,SEEK_CUR);
-#endif
+	c=fgetc(f);
+	if (c==0x0D) fseek(f,-1,SEEK_CUR);
+
 	areapos=ftell(f);
 	
 	// end of file

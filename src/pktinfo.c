@@ -72,9 +72,11 @@ int displayPkt(char *name, int showHeader, int showText)
       /* Fix this \r's FIXME: and how does it do on non-*nix systems ? */
       for (p = msg->text; (p = strchr(p, '\r')) != NULL; )
 	      *p = '\n';
-      if (showHeader) 
+      if (showHeader) {
+	 printf("Written at %s\n", msg->datetime);
          printf("From:    %s\nTo:      %s\nSubject: %s\n", msg->fromUserName, 
-   			 msg->toUserName, msg->subjectLine);
+			 msg->toUserName, msg->subjectLine);
+      };
       if (showText) 
 	 printf("--Text----\n%s\n", msg->text);
       freeMsgBuffers(msg);

@@ -50,6 +50,7 @@
 #else
 #include <fidoconf.h>
 #endif
+#include <common.h>
 #include <typesize.h>
 #include <msgapi.h>
 #include <log.h>
@@ -61,38 +62,35 @@
 struct msginfo {
    char *msgId;
    char *replyId;
-   char *subject;
+   HMSG msgh;
+   XMSG *xmsg;
+   UMSGID msgPos; 
 
-   dword msgNum;
-   UMSGID msgPos;
-   UMSGID replyToPos;
-   UMSGID replies[MAX_REPLY];
    short freeReply;
    char relinked;
-
-   struct msginfo *prev;
 };
 
 typedef struct msginfo s_msginfo;
+unsigned long strcrc32(char *, unsigned long);
 
-static int  compareEntries(const void *e1, const void *e2)
+static s_msginfo *findMsgId(s_msginfo *entries, dword msgsNum, char *msgId)
 {
-   return stricmp(((s_msginfo*) e1) -> msgId,
-                     ((s_msginfo*) e2) -> msgId);
-}
-
-static int  findEntry(const void *e1, const void *e2)
-{
-   return stricmp(((s_msginfo*) e1) -> replyId,
-                     ((s_msginfo*) e2) -> msgId);
-}
-
-
-static int checkEntry(void *e)
-{
-   writeLogEntry(hpt_log, '6', "msg %ld has dupes in msgbase : trown from reply chain",
-                 ((s_msginfo *) e) -> msgNum);
-   return 1;
+	unsigned long h, d = 1;
+	h = strcrc32(msgId, 0xFFFFFFFFL); /* TODO: Maybe find a better hashing function */
+	while (d < msgsNum) {
+		h %= msgsNum;
+		if (entries[h].msgId == NULL)
+			/* Found free entry */
+			return &(entries[h]);
+		if (!strcmp(entries[h].msgId, msgId)) {
+			/* Found it ! */
+			return &(entries[h]);
+		} else {
+			/* Collision, resolve it */
+			h += d; 
+		};
+	};
+	return NULL;
 }
 
 static char *GetKludgeText(byte *ctl, char *kludge)
@@ -115,11 +113,12 @@ int linkArea(s_area *area, int netMail)
    HAREA harea;
    HMSG  hmsg;
    XMSG  xmsg;
-   dword msgsNum, i, ctlen;
+   s_msginfo *msgs;   
+   dword msgsNum, hashNums, i, ctlen, cctlen;
    byte *ctl;
+   char *msgId;
 
-   s_msginfo  *prv, *curr, *tail, *orig;
-   tree *avlTree;
+   s_msginfo *curr;
 
    if (area->msgbType == MSGTYPE_PASSTHROUGH) return 0;
 
@@ -128,99 +127,119 @@ int linkArea(s_area *area, int netMail)
                        area->msgbType | (netMail ? 0 : MSGTYPE_ECHO));
    if (harea) {
       writeLogEntry(hpt_log, '2', "linking area %s", area->areaName);
-      tree_init(&avlTree);
       msgsNum = MsgGetHighMsg(harea);
+      if (msgsNum < 2) { /* Really nothing to link */
+	      MsgCloseArea(harea);
+	      return 0;
+      };
+
+      hashNums = msgsNum + msgsNum / 10 + 10;
+      msgs = calloc(hashNums, sizeof(s_msginfo));
+      ctl = (byte *) malloc(ctlen = 1); /* Some libs don't accept relloc(NULL, ..
+					 * So let it be initalized
+					 */
       /* Area linking is done in three passes */
       /* Pass 1st : read all message information in memory */
 
-      for (i = 1, curr = prv = NULL; i <= msgsNum; i++, prv = curr) {
+      for (i = 1; i <= msgsNum; i++) {
          hmsg  = MsgOpenMsg(harea, MOPEN_READ, i);
 	 if (hmsg == NULL) {
-            curr = prv;
-	    continue;
+		continue;
 	 }
-         ctlen = MsgGetCtrlLen(hmsg);
+         cctlen = MsgGetCtrlLen(hmsg);
          if( ctlen == 0 )
          {
-             MsgCloseMsg(hmsg);
-             writeLogEntry(hpt_log, '6', "msg %ld has no control information: trown from reply chain", i);
-             continue;
+		MsgCloseMsg(hmsg);
+		writeLogEntry(hpt_log, '6', "msg %ld has no control information: trown from reply chain", i);
+		continue;
          }
 
-         ctl   = (byte *) malloc(ctlen + 1);
-         curr  = calloc(1, sizeof(s_msginfo));
+	 if (cctlen > ctlen) {
+		 ctlen = cctlen;
+	         ctl   = (byte *) realloc(ctl, cctlen + 1);
+	 };
 
-	 if (ctl == NULL || curr == NULL) {
-	    writeLogEntry(hpt_log, '9', "out of memory while linking on msg %ld", i);
-	    // try to free as much as possible
-	    // FIXME : remove blocks themselves
-	    tree_mung(&avlTree, NULL);
-	    MsgCloseMsg(hmsg);
-	    MsgCloseArea(harea);
-            return 0;
+	 if (ctl == NULL) {
+		writeLogEntry(hpt_log, '9', "out of memory while linking on msg %ld", i);
+		// try to free as much as possible
+		// FIXME : remove blocks themselves
+		free(ctl);
+		MsgCloseMsg(hmsg);
+		MsgCloseArea(harea);
+		return 0;
          }
 
-         curr -> prev = prv;
          MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, ctlen, ctl);
 	 ctl[ctlen] = '\0';
-         curr -> msgNum = i;
-         curr -> msgId   = GetKludgeText(ctl, "MSGID");
+         msgId   = GetKludgeText(ctl, "MSGID");
+	 if (msgId == NULL) {
+ 		writeLogEntry(hpt_log, '6', "msg %ld haven't got any MSGID, replying is not possible", i);
+		MsgCloseMsg(hmsg);
+		continue;
+	 };
+	 curr = findMsgId(msgs, hashNums, msgId);
+	 if (curr == NULL) {
+ 		writeLogEntry(hpt_log, '6', "hash table overflow. Tell it to the developers !"); 
+		// try to free as much as possible
+		// FIXME : remove blocks themselves
+		free(msgId);
+		MsgCloseMsg(hmsg);
+		MsgCloseArea(harea);
+		return 0;
+	 };
+	 if (curr -> msgId != NULL) {
+ 		writeLogEntry(hpt_log, '6', "msg %ld has dupes in msgbase :" \
+			" trown from reply chain", i);
+		MsgCloseMsg(hmsg);
+		free(msgId);
+		continue;
+	 }
+	 curr -> msgId = msgId; curr -> msgh = hmsg; 
+	 curr -> xmsg = memdup(&xmsg, sizeof(XMSG));
          curr -> replyId = GetKludgeText(ctl, "REPLY");
-         curr -> subject = strdup((char *)xmsg.subj);
          curr -> msgPos  = MsgMsgnToUid(harea, i);
-	 /* Copy old information, maybe we don't need to write this msg */
-	 curr -> replyToPos = xmsg.replyto;
-	 memcpy(curr -> replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY); 
 	 curr -> freeReply = 0;
-
          curr -> relinked = 0;
-         free(ctl);
-         if (curr -> msgId != NULL)  // This msg would don't have reply links
-            tree_add(&avlTree, &compareEntries, (char *) curr, &checkEntry);
-
-         MsgCloseMsg(hmsg);
       }
       /* Pass 2nd : going from the last msg to first search for reply links and
         build relations*/
-      for (tail = curr; curr != NULL; curr = curr -> prev) {
-	      if (curr -> replyId != NULL && (orig = (s_msginfo *) tree_srch(
- 	           &avlTree, &findEntry, (char *) curr)) != NULL) {
-		      if (orig -> freeReply >= MAX_REPLY) {
-			      writeLogEntry(hpt_log, '6', "replies count for msg %ld exceeds %d," \
-					      "rest of the replies won't be linked", orig -> msgNum, MAX_REPLY);
-		      } else {
-			      if (orig -> replies[orig -> freeReply] != curr -> msgPos) {
-				      orig -> replies[orig -> freeReply] = curr -> msgPos;
-				      orig -> relinked = 1;
-			      }
-			      (orig -> freeReply)++;
-			      if (curr -> replyToPos != orig -> msgPos) {              
-				      curr -> replyToPos = orig -> msgPos;
+      for (i = 0; i < hashNums; i++) {
+	      if (msgs[i].msgId != NULL && msgs[i].replyId != NULL) {
+		      curr = findMsgId(msgs, hashNums, msgs[i].replyId);
+		      if (curr -> msgId == NULL) continue;
+		      if (curr -> freeReply < MAX_REPLY) {
+			      if (curr -> xmsg -> replies[curr -> freeReply] != msgs[i].msgPos) {
+				      curr -> xmsg -> replies[curr -> freeReply] = msgs[i].msgPos;
 				      curr -> relinked = 1;
 			      }
+			      (curr -> freeReply)++;
+			      if (msgs[i].xmsg -> replyto != curr -> msgPos) {
+				      msgs[i].xmsg -> replyto = curr -> msgPos;
+				      msgs[i].relinked = 1;
+			      }
+		      } else {
+			      writeLogEntry(hpt_log, '6', "replies count for msg %ld exceeds %d," \
+					      "rest of the replies won't be linked", msgs[i].msgPos, MAX_REPLY);
 		      }
 	      }
       }
       /* Pass 3rd : write information back to msgbase */
-      for (curr = tail; curr != NULL; ) {
-         hmsg  = MsgOpenMsg(harea, MOPEN_RW, curr -> msgNum);
-         if ((hmsg != NULL) && (curr->relinked != 0)) {
-	     MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-	     memset(curr->replies + curr->freeReply, 0, sizeof(UMSGID) * (MAX_REPLY - curr->freeReply));
-	     memcpy(xmsg.replies, curr->replies, sizeof(UMSGID) * MAX_REPLY);
-	     xmsg.replyto = curr->replyToPos;
-	     MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
-	     MsgCloseMsg(hmsg);
-	 }
+      for (i = 0; i < hashNums; i++) {
+	if (msgs[i].msgId != NULL) {
+		if (msgs[i].relinked != 0) {
+			MsgWriteMsg(msgs[i].msgh, 0, msgs[i].xmsg, NULL, 0, 0, 0, NULL);
+		}
+	        MsgCloseMsg(msgs[i].msgh);
+	 
          /* free this node */
-         prv = curr -> prev;
-         free(curr -> msgId);
-         free(curr -> replyId);
-         free(curr -> subject);
-         free(curr); curr = prv;
+		free(msgs[i].msgId);
+		free(msgs[i].replyId);
+		free(msgs[i].xmsg);
+	};
       }
       /* close everything, free all allocated memory */
-      tree_mung(&avlTree, NULL);
+      free(msgs);
+      free(ctl);
       MsgCloseArea(harea);
    } else {
       writeLogEntry(hpt_log, '9', "could not open area %s", area->areaName);
@@ -250,7 +269,6 @@ void linkAreas(void)
 
       /* link all echomail areas */
       for (i = 0; i < config -> echoAreaCount; i++)
-//         if (config -> echoAreas[i].dupeCheck != dcOff)
             linkArea(&(config -> echoAreas[i]), 0);
       /* link NetMailAreas */
       for (i = 0; i < config -> netMailAreaCount; i++)

@@ -1835,9 +1835,8 @@ void arcmail() {
 								  link->pktFile, "");
 				 writeLogEntry(hpt_log, '7', "Packing mail for %s %s", aka2str(link->hisAka), link->name);
 				 cmdexit = system(cmd);
-//				 sprintf(logmsg,"cmd: %s\n",cmd);
-// 				 writeLogEntry(hpt_log, '7', logmsg);
-				 remove(link->pktFile);
+// 				 writeLogEntry(hpt_log, '7', "cmd: %s\n",cmd);
+				 if (!cmdexit) remove(link->pktFile);
 			 }
 			 remove(link->bsyFile);
 			 free(link->bsyFile); link->bsyFile=NULL;

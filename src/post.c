@@ -50,15 +50,14 @@
 #include <areafix.h>
 #include <hpt.h>
 
-/* Warning : the code is totaly untested */
-
 void post(int c, unsigned int *n, char *params[])
 {
    char *area = NULL;
    FILE *text = NULL;
    s_area *echo = NULL;
    FILE *f = NULL;
-
+   long attr;
+   
    s_message msg;
 
    UCHAR *textBuffer = NULL;
@@ -103,8 +102,9 @@ void post(int c, unsigned int *n, char *params[])
                      break;
                }; break;
             case 'f':    // flags
-               msg.attributes = atoi(params[++(*n)]);
-               if (stricmp(params[(*n)],"local")==0) msg.attributes |= MSGLOCAL;
+	       while ((attr = str2attr(params[++(*n)])) != -1L) 
+		       msg.attributes |= attr;
+	       (*n)--;		       
                break;
             case 'e':    // echo name
                area = params[++(*n)];

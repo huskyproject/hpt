@@ -1,6 +1,18 @@
 hpt 0.9.5
 ---------
 
+----- cvs ci ------
+Sat Dec 25 19:27:26 NOVT 1999
+max:
+* del packet pkt's if cmdexit==0
+* fix trouble with 0x0D when subscribing to area under UNIXes
+
+patch from Kolya Nesterov:
+* linking speedup (?) especially for systems with poor IO caching
+* hashes used instead of trees in linkArea
+* flags in post command are now specified with human readable notation
+  ex: -f pvt loc
+* manual pages update for hpt
 
 ----- cvs ci ------
 Wed Dec 22 14:10:55 CET 1999
