@@ -84,6 +84,7 @@ log.obj
 scanarea.obj
 dupe.obj
 tree.obj
+crc.obj
 smapibcd.lib
 fidoconf.lib
 !
