@@ -291,7 +291,6 @@ void processRequests(s_link *link, s_message *msg)
 int packMsg(HMSG SQmsg, XMSG *xmsg)
 {
    FILE        *pkt;
-   char        buff[90];
    e_prio      prio;
    s_message   msg;
    s_pktHeader header;
@@ -363,8 +362,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
 		   pkt = openPktForAppending(virtualLink->floFile, &header);
 		   writeMsgToPkt(pkt, msg);
 		   closeCreatedPkt(pkt);
-		   sprintf(buff, "Crash-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   writeLogEntry(hpt_log, '7', buff);
+		   writeLogEntry(hpt_log, '7', "Crash-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 
 		   remove(virtualLink->bsyFile);
 		   free(virtualLink->bsyFile);
@@ -383,8 +381,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
 		   pkt = openPktForAppending(virtualLink->floFile, &header);
 		   writeMsgToPkt(pkt, msg);
 		   closeCreatedPkt(pkt);
-		   sprintf(buff, "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   writeLogEntry(hpt_log, '7', buff);
+		   writeLogEntry(hpt_log, '7', "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 		   
 		   remove(virtualLink->bsyFile);
 		   free(virtualLink->bsyFile);
@@ -411,11 +408,8 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
                  pkt = openPktForAppending(link->floFile, &header);
                  writeMsgToPkt(pkt, msg);
                  closeCreatedPkt(pkt);
-                 sprintf(buff, "Msg from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone
-
-
-, link->hisAka.net, link->hisAka.node, link->hisAka.point);
-                 writeLogEntry(hpt_log, '7', buff);
+                 writeLogEntry(hpt_log, '7', "Msg from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone,
+									    link->hisAka.net, link->hisAka.node, link->hisAka.point);
                  remove(link->bsyFile);
                  free(link->bsyFile);
                  // mark Mail as sent
@@ -424,8 +418,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
                  free(link->floFile);
               }
            } else {
-              sprintf(buff, "no route for mail to %u:%u/%u.%u found - leave mail untouched", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-              writeLogEntry(hpt_log, '8', buff);
+              writeLogEntry(hpt_log, '8', "no route for mail to %u:%u/%u.%u found - leave mail untouched", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
            }
    }
 
@@ -451,7 +444,11 @@ void scanNMArea(void)
    s_addr          dest, orig;
    int             for_us, from_us;
 
-   netmail = MsgOpenArea((unsigned char *) config->netMailArea.fileName, MSGAREA_NORMAL, config->netMailArea.msgbType);
+   netmail = MsgOpenArea((unsigned char *) config->netMailArea.fileName, MSGAREA_NORMAL, 
+/*								 config->netMailArea.fperm, 
+								 config->netMailArea.uid, 
+								 config->netMailArea.gid, */
+								 config->netMailArea.msgbType);
    if (netmail != NULL) {
 
       highMsg = MsgGetHighMsg(netmail);
@@ -503,7 +500,6 @@ void scanNMArea(void)
 }
 
 void writeScanStatToLog(void) {
-   char buff[100];
    char logchar;
 
    if (statScan.exported==0)
@@ -512,10 +508,8 @@ void writeScanStatToLog(void) {
       logchar='4';
 
    writeLogEntry(hpt_log, logchar, "Statistics");
-   sprintf(buff, "    areas: % 4d   msgs: % 6d", statScan.areas, statScan.msgs);
-   writeLogEntry(hpt_log, logchar, buff);
-   sprintf(buff, "    exported: % 4d", statScan.exported);
-   writeLogEntry(hpt_log, logchar, buff);
+   writeLogEntry(hpt_log, logchar, "    areas: % 4d   msgs: % 6d", statScan.areas, statScan.msgs);
+   writeLogEntry(hpt_log, logchar, "    exported: % 4d", statScan.exported);
 }
 
 void pack(void) {
@@ -533,7 +527,7 @@ void scan(void)
 {
    UINT i;
    FILE *f = NULL;
-   char *line, buff[80];
+   char *line;
    s_area *area = NULL;
 
    // load recoding tables
@@ -567,8 +561,7 @@ void scan(void)
 			if (stricmp(config->netMailArea.areaName,line)==0) cmPack=1;
             else area = getArea(config, line);
             if (area == &(config->badArea)) {
-               sprintf(buff, "Area \'%s\' is not found -> Scanning stop.", line);
-               writeLogEntry(hpt_log, '3', buff);
+               writeLogEntry(hpt_log, '3', "Area \'%s\' is not found -> Scanning stop.", line);
             } else {
                if (area && !area->scn) { scanEMArea(area); area->scn=1; }
             } /* endif */
@@ -588,7 +581,7 @@ void scan(void)
 void scanF(char *filename)
 {
    FILE *f;
-   char *line, buff[80];
+   char *line;
    s_area *area = NULL;
 
    // load recoding tables
@@ -615,8 +608,7 @@ void scanF(char *filename)
 			if (stricmp(config->netMailArea.areaName,line)==0) cmPack=1;
             else area = getArea(config, line);
             if (area == &(config->badArea)) {
-               sprintf(buff, "Area \'%s\' is not found -> Scanning stop.", line);
-               writeLogEntry(hpt_log, '3', buff);
+               writeLogEntry(hpt_log, '3', "Area \'%s\' is not found -> Scanning stop.", line);
             } else {
                if (area && !area->scn) { scanEMArea(area); area->scn=1; }
             } /* endif */
@@ -636,7 +628,6 @@ void scanF(char *filename)
 void scanA(char *areaname)
 {
    s_area *area;
-   char    buff[80];
 
    // load recoding tables
    if (config->outtab != NULL) getctab(outtab, config->outtab);
@@ -647,14 +638,12 @@ void scanA(char *areaname)
 
    area = getArea(config, areaname);
    if (area == &(config->badArea)) {
-      sprintf(buff, "Area \'%s\' is not found -> Scanning stop.", areaname);
-      writeLogEntry(hpt_log, '3', buff);
+      writeLogEntry(hpt_log, '3', "Area \'%s\' is not found -> Scanning stop.", areaname);
    } else {
       if (area->msgbType != MSGTYPE_PASSTHROUGH) {
 	  if (area->downlinkCount > 0) scanEMArea(area);
       } else {
-          sprintf(buff, "Area \'%s\' is passthrough -> Scanning stop.", area->areaName);
-	  writeLogEntry(hpt_log, '3', buff);
+          writeLogEntry(hpt_log, '3', "Area \'%s\' is passthrough -> Scanning stop.", area->areaName);
       }
    } /* endif */
 

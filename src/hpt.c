@@ -65,6 +65,7 @@
 #include <post.h>
 #include <link.h>
 #include <areafix.h>
+#include <recode.h>
 
 #if defined ( __WATCOMC__ ) && defined ( __NT__ )
 int __stdcall SetConsoleTitleA( const char* lpConsoleTitle );
@@ -257,6 +258,7 @@ int main(int argc, char **argv)
    sprintf( title, "Highly Portable Toss v%u.%02u", VER_MAJOR, VER_MINOR);
    SetConsoleTitleA( title );
 #endif
+   initCharsets();
 
    processConfig();
    processCommandLine(argc, argv);
@@ -305,5 +307,6 @@ int main(int argc, char **argv)
    writeLogEntry(hpt_log, '1', "End");
    closeLog(hpt_log);
    disposeConfig(config);
+   doneCharsets();
    return 0;
 }

@@ -96,6 +96,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    ctrlBuff[ctrlLen] = '\0'; /* MsgReadMsg does not do zero termination! */
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
    
+#if 0   
    if (action == 0) {
        // added TID from scan area only
        kludgeLines=(char *) realloc (kludgeLines,strlen(kludgeLines)
@@ -105,6 +106,8 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
        strcat(kludgeLines, versionStr);
        strcat(kludgeLines, "\r");
    }
+#endif
+
    free(ctrlBuff);
 
    if (action == 0) {
@@ -201,7 +204,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 		  // pktFile does not exist
 		  if ( createTempPktFileName(echo->downlinks[i]->link) ) {
 			  writeLogEntry(hpt_log, '9', "Could not create new pkt.");
-			  printf("Could not create new pkt.\n");
+			  fprintf(stderr, "Could not create new pkt.\n");
 			  disposeConfig(config);
 			  closeLog(hpt_log);
 			  exit(1);
@@ -236,14 +239,12 @@ void scanEMArea(s_area *echo)
    HAREA area;
    HMSG  hmsg;
    XMSG  xmsg;
-   char  buff[50];
    dword highWaterMark, highestMsg, i;
    
    area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, echo->msgbType | MSGTYPE_ECHO);
    if (area != NULL) {
       statScan.areas++;
-      sprintf(buff, "Scanning area: %s", echo->areaName);
-      writeLogEntry(hpt_log, '1', buff);
+      writeLogEntry(hpt_log, '1', "Scanning area: %s", echo->areaName);
       if (noHighWaters) i = highWaterMark = 0;
       else i = highWaterMark = MsgGetHighWater(area);
       highestMsg    = MsgGetHighMsg(area);
@@ -265,7 +266,6 @@ void scanEMArea(s_area *echo)
 
       MsgCloseArea(area);
    } else {
-      sprintf(buff, "Could not open %s", echo->fileName);
-      writeLogEntry(hpt_log, '9', buff);
+      writeLogEntry(hpt_log, '9', "Could not open %s", echo->fileName);
    } /* endif */
 }

@@ -1,4 +1,10 @@
 ----- cvs ci ------
+Mon Oct 11 00:22:43 NOVST 1999
+max:
+* fixed some memory leak (thanx to Basile A. Sey)
+* patch from Kolya Nesterov
+
+----- cvs ci ------
 Sun Oct  3 19:30:57 NOVST 1999
 max:
 * fixed problem with createDirectoryTree() under WinNT (Alexey Vasilyev)

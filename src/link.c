@@ -86,17 +86,14 @@ static int  findEntry(const void *e1, const void *e2)
 
 static int checkEntry(void *e)
 {
-   char buff[256];
-   sprintf(buff, "msg %ld has dupes in msgbase : trown from reply chain",
+   writeLogEntry(hpt_log, '6', "msg %ld has dupes in msgbase : trown from reply chain",
                  ((s_msginfo *) e) -> msgNum);
-   writeLogEntry(hpt_log, '6', buff);
    return 1;
 }
 
 /* linking for msgid/reply */
 int linkArea(s_area *area, int netMail)
 {
-   char buff[256];
 
    HAREA harea;
    HMSG  hmsg;
@@ -110,10 +107,10 @@ int linkArea(s_area *area, int netMail)
    if (area->msgbType == MSGTYPE_PASSTHROUGH) return 0;
 
    harea = MsgOpenArea((UCHAR *) area->fileName, MSGAREA_NORMAL,
+/*							  area->fperm, area->uid, area->gid,*/
                        area->msgbType | (netMail ? 0 : MSGTYPE_ECHO));
    if (harea) {
-      sprintf(buff, "linking area %s", area->areaName);
-      writeLogEntry(hpt_log, '6', buff);
+      writeLogEntry(hpt_log, '6', "linking area %s", area->areaName);
       tree_init(&avlTree);
       msgsNum = MsgGetHighMsg(harea);
       /* Area linking is done in three passes */
@@ -129,8 +126,7 @@ int linkArea(s_area *area, int netMail)
          if( ctlen == 0 )
          {
              MsgCloseMsg(hmsg);
-             sprintf(buff, "msg %ld has no control information: trown from reply chain", i);
-             writeLogEntry(hpt_log, '6', buff);
+             writeLogEntry(hpt_log, '6', "msg %ld has no control information: trown from reply chain", i);
              continue;
          }
 
@@ -138,8 +134,7 @@ int linkArea(s_area *area, int netMail)
          curr  = calloc(1, sizeof(s_msginfo));
 
 	 if (ctl == NULL || curr == NULL) {
-	    sprintf(buff, "out of memory while linking on msg %ld", i);
-	    writeLogEntry(hpt_log, '9', buff);
+	    writeLogEntry(hpt_log, '9', "out of memory while linking on msg %ld", i);
 	    // try to free as much as possible
 	    // FIXME : remove blocks themselves
 	    tree_mung(&avlTree, NULL);
@@ -168,9 +163,8 @@ int linkArea(s_area *area, int netMail)
         if (curr -> replyId != NULL && (orig = (s_msginfo *) tree_srch(
             &avlTree, &findEntry, (char *) curr)) != NULL)
            if (orig -> freeReply >= MAX_REPLY) {
-              sprintf(buff, "replies count for msg %ld exceeds %d, rest of the\
+              writeLogEntry(hpt_log, '6', "replies count for msg %ld exceeds %d, rest of the\
  replies won't be linked", orig -> msgNum, MAX_REPLY);
-              writeLogEntry(hpt_log, '6', buff);
            } else {
               orig -> replies[(orig -> freeReply)++] = curr -> msgPos;
               curr -> replyToPos = orig -> msgPos;
@@ -195,8 +189,7 @@ int linkArea(s_area *area, int netMail)
       tree_mung(&avlTree, NULL);
       MsgCloseArea(harea);
    } else {
-      sprintf(buff, "could not open area %s", area->areaName);
-      writeLogEntry(hpt_log, '9', buff);
+      writeLogEntry(hpt_log, '9', "could not open area %s", area->areaName);
       return 0;
    };
    return 1;

@@ -32,6 +32,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include <log.h>
 #include <global.h>
@@ -87,10 +88,11 @@ void closeLog(s_log *hpt_log)
    }
 }
 
-void writeLogEntry(s_log *hpt_log, char key, char *logString)
+void writeLogEntry(s_log *hpt_log, char key, char *logString, ...)
 {
    time_t     currentTime;
    struct tm  *locTime;
+	va_list	  ap;
 
    if (hpt_log) {
      if (hpt_log->open && strchr(hpt_log->keysAllowed, key)) 
@@ -110,10 +112,22 @@ void writeLogEntry(s_log *hpt_log, char key, char *logString)
            hpt_log->firstLinePrinted=1;
            }
 
-        fprintf(hpt_log->logFile, "%c %02u.%02u.%02u  %s\n", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec, logString);
+        fprintf(hpt_log->logFile, "%c %02u.%02u.%02u  ", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec);
+ 
+	va_start(ap, logString);
+	vfprintf(hpt_log->logFile, logString, ap);
+	va_end(ap);
+	fputc('\n', hpt_log->logFile); 
+
         fflush(hpt_log->logFile);
-	if (hpt_log->logEcho)
+	if (hpt_log->logEcho) {
 	   fprintf(stdout, "%c %02u.%02u.%02u  %s\n", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec, logString);
+ 
+	   va_start(ap, logString);
+	   vfprintf(stdout, logString, ap);
+	   va_end(ap);
+	   fputc('\n', stdout);
+	};
      }
    }
 }

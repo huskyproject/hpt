@@ -61,7 +61,7 @@ int createLockFile(char *lockfile) {
         if ((f=fopen(lockfile,"a")) == NULL)
            {
                    fprintf(stderr,"createLockFile: cannot create lock file\"%s\"\n",lockfile);
-                   writeLogEntry(hpt_log, '9', "createLockFile: cannot create lock file");
+                   writeLogEntry(hpt_log, '9', "createLockFile: cannot create lock file \"%s\"m", lockfile);
                    return 1;
            }
 
@@ -121,6 +121,15 @@ e_prio cvtFlavour2Prio(e_flavour flavour)
    }
    return NORMAL;
 }
+
+char straka[24];
+
+char *aka2str(s_addr aka) {
+    if (aka.point) sprintf(straka,"%u:%u/%u.%u",aka.zone,aka.net,aka.node,aka.point);
+    else sprintf(straka,"%u:%u/%u",aka.zone,aka.net,aka.node);
+	
+    return straka;
+}	
 
 int fileNameAlreadyUsed(char *pktName, char *packName) {
    int i;
@@ -239,7 +248,6 @@ int createDirectoryTree(const char *pathName) {
 
    struct stat buf;
    char *start, *slash;
-   char *buff;
 
 #ifdef UNIX
    char limiter='/';
@@ -272,10 +280,7 @@ int createDirectoryTree(const char *pathName) {
       if (stat(start, &buf) != 0) {
          // this part of the path does not exist, create it
          if (mymkdir(start) != 0) {
-            buff = (char *) malloc(strlen(start)+30);
-            sprintf(buff, "Could not create directory %s", start);
-            writeLogEntry(hpt_log, '5', buff);
-            free(buff);
+            writeLogEntry(hpt_log, '5', "Could not create directory %s", start);
             free(start);
             return 1;
          }
@@ -285,10 +290,7 @@ int createDirectoryTree(const char *pathName) {
 #else
       } else if(!S_ISDIR(buf.st_mode)) {
 #endif
-         buff = (char *) malloc(strlen(start)+30);
-         sprintf(buff, "%s is a file not a directory", start);
-         writeLogEntry(hpt_log, '5', buff);
-         free(buff);
+         writeLogEntry(hpt_log, '5', "%s is a file not a directory", start);
          free(start);
          return 1;
       }
@@ -304,7 +306,7 @@ int createDirectoryTree(const char *pathName) {
 int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 {
    FILE *f; // bsy file for current link
-   char name[13], bsyname[13], zoneSuffix[6], pntDir[14], *tolog;
+   char name[13], bsyname[13], zoneSuffix[6], pntDir[14];
    char	*sepDir, sepname[13];
 
 #ifdef UNIX
@@ -383,13 +385,9 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    // maybe we have session with this link?
    if (fexist(link->bsyFile)) {
 
-           tolog = (char*) malloc (strlen(link->name)+40+1);
-           sprintf(tolog,"link %s is busy.", link->name);
-
-           writeLogEntry(hpt_log, '7', tolog);
+           writeLogEntry(hpt_log, '7', "link %s is busy.", link->name);
            free (link->floFile); link->floFile = NULL;
            free (link->bsyFile); link->bsyFile = NULL;
-           free (tolog);
 
            return 1;
 
