@@ -1,3 +1,7 @@
+2003-01-04 Saturday 07:41  mche
+
+	* doc/hpt.texi (1.93): update documentation for "AdvisoryLock"
+
 2002-12-31 Tuesday 09:29  stas_degteff
 
 	* h/fcommon.h (1.49), src/fcommon.c (1.154), src/toss.c (1.488):
