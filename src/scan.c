@@ -13,6 +13,7 @@
 #include <version.h>
 
 #include <recode.h>
+#include <toss.h>
 
 s_statScan statScan;
 
@@ -351,6 +352,6 @@ void scan(void)
    }
 
    
-
+   arcmail();
    writeScanStatToLog();
 }

@@ -1,14 +1,14 @@
 DEBUG   = 1
-CC      = gcc
-INSTDIR = /usr/local/bin
+CC      = gcc 
+INSTDIR = $(HOME)/fido
 MANDIR  = /usr/local/man
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
   CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -g -O2 -s -DUNIX
-  LFLAGS  =
+  LFLAGS  = 
 else
   CFLAGS  = -c -I../h -I../../smapi -Wall -O2 -s -DUNIX
   LFLAGS  =  

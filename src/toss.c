@@ -13,6 +13,7 @@
 #include <dupe.h>
 
 #include <recode.h>
+#include <areafix.h>
 
 #include <msgapi.h>
 #include <stamp.h>
@@ -127,11 +128,11 @@ void putMsgInArea(s_area *echo, s_message *msg)
          ctrlBuff = CopyToControlBuf((UCHAR *) textWithoutArea, (UCHAR **) &textStart, &textLength);
          // textStart is a pointer to the first non-kludge line
          xmsg = createXMSG(msg);
-
+		 
          MsgWriteMsg(hmsg, 0, &xmsg, textStart, strlen(textStart), strlen(textStart), strlen(ctrlBuff), ctrlBuff);
-
+		 
          MsgCloseMsg(hmsg);
-
+		 
       } else {
          sprintf(buff, "Could not create new msg in %s!", echo->fileName);
          writeLogEntry(log, '9', buff);
@@ -335,13 +336,11 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       // create pktfile if necessary
       if (echo->downlinks[i]->pktFile == NULL) {
          // pktFile does not exist
-         name = createTempPktFileName();
-         echo->downlinks[i]->pktFile = (char *) malloc(strlen(name)+1);
-         strcpy(echo->downlinks[i]->pktFile, name);
+		 createTempPktFileName(echo->downlinks[i]);
          name = createOutboundFileName(echo->downlinks[i]->hisAka, NORMAL, FLOFILE);
          flo = fopen(name, "a");
-         fprintf(flo, "#%s\n", echo->downlinks[i]->pktFile);
-         fclose(flo);
+         fprintf(flo, "^%s\n", echo->downlinks[i]->packFile);
+		 fclose(flo);
       } /* endif */
 
       makePktHeader(NULL, &header);
@@ -352,7 +351,6 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       pkt = openPktForAppending(echo->downlinks[i]->pktFile, &header);
 
       writeMsgToPkt(pkt, *msg);
-
       closeCreatedPkt(pkt);
    }
 
@@ -374,23 +372,36 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    while (*c_area != '\0') {*c_area=tolower(*c_area);c_area++;i++;}
    while (i>0) {c_area--;i--;};
    
-   f = fopen("/etc/fido/config", "a");
+   if ((f=fopen(getConfigFileName(),"a")) == NULL)
+	   {
+		   fprintf(stderr,"autocreate: cannot open config file\n");
+		   return 1;
+	   }
    
    // making local address and address of uplink
    sprintf(myaddr, "%u:%u/%u",config->addr[j].zone,config->addr[j].net,
            config->addr[j].node);
    sprintf(hisaddr,"%u:%u/%u",pktOrigAddr.zone,pktOrigAddr.net,
             pktOrigAddr.node);
-
+   
    //if you are point...
    if (config->addr[j].point != 0)  {
-           sprintf(buff,".%u",config->addr[j].point);
-           strcat(myaddr,buff);
+	   sprintf(buff,".%u",config->addr[j].point);
+	   strcat(myaddr,buff);
    }
-
+   
+   //autocreating from point...
+   if (pktOrigAddr.point != 0)  {
+	   sprintf(buff,".%u",pktOrigAddr.point);
+	   strcat(hisaddr,buff);
+   }
+   
    //write new line in config file
-   sprintf(buff,"EchoArea %s %s%s -a %s Squish %s -dupeCheck move",c_area,config->msgBaseDir,
-           c_area,myaddr, hisaddr);
+   sprintf(buff,"EchoArea %s %s%s -a %s Squish %s ", c_area, config->msgBaseDir, c_area, myaddr, hisaddr);
+   if ((config->autoCreateDefaults != NULL) &&
+       (strlen(buff)+strlen(config->autoCreatedDefaults))<255) {
+      strcat(buff, config->autoCreateDefaults);
+   }
    fprintf(f, buff);
    fprintf(f, "\n");
    
@@ -519,11 +530,15 @@ void processNMMsg(s_message *msg)
 
 void processMsg(s_message *msg, s_addr pktOrigAddr)
 {
+
    statToss.msgs++;
    if (msg->netMail == 1) {
-      processNMMsg(msg);
+	   if (stricmp(msg->toUserName,"areafix")==0) {
+		   processAreaFix(msg, &pktOrigAddr);
+	   } else
+		   processNMMsg(msg);
    } else {
-      processEMMsg(msg, pktOrigAddr);
+	   processEMMsg(msg, pktOrigAddr);
    } /* endif */
 }
 
@@ -617,6 +632,28 @@ void writeTossStatsToLog() {
    writeLogEntry(log, '4', buff);
 }
 
+void arcmail() {
+	int i;
+	char cmd[256], logmsg[256];
+	int cmdexit;
+	
+	// packing mail
+	for (i = 0 ; i < config->linkCount; i++) {
+		
+		if (config->links[i].pktFile != NULL) {
+			sprintf(cmd,config->pack[0].call,config->links[i].packFile,
+					config->links[i].pktFile);
+			sprintf(logmsg,"Packing mail for %s",config->links[i].name);
+			writeLogEntry(log, '7', logmsg);
+			cmdexit = system(cmd);
+			free(config->links[i].pktFile);
+			free(config->links[i].packFile);
+		}
+	}
+	
+	return;
+}
+
 void toss()
 {
    int i;
@@ -629,6 +666,7 @@ void toss()
    memset(&statToss, sizeof(s_statToss), 0);
    writeLogEntry(log, '4', "Start tossing...");
    processDir(config->protInbound, 0);
+   arcmail();
    // only import Netmails from inboundDir
    processDir(config->inbound, 1);
 

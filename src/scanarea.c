@@ -117,11 +117,14 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 {
    s_message    msg;
    char         *name;
-   UINT32       i;
+   UINT32       i,j=0;
    s_pktHeader  header;
    FILE         *pkt, *flo;
    
    makeMsg(hmsg, xmsg, &msg, echo);
+
+   //translating name of the area to uppercase
+   while (msg.text[j] != '\r') {msg.text[j]=toupper(msg.text[j]);j++;}
 
    // scan msg to donwlinks
 
@@ -130,17 +133,15 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
       if (echo->downlinks[i]->pktFile == NULL) {
 
          // pktFile does not exist
-         name = createTempPktFileName();
-         if (name == NULL) {
+         if ( createTempPktFileName(echo->downlinks[i]) ) {
             writeLogEntry(log, '9', "Could not create new pkt.");
             printf("Could not create new pkt.\n");
             exit(1);
          }
-         echo->downlinks[i]->pktFile = name;
          
          name = createOutboundFileName(echo->downlinks[i]->hisAka, NORMAL, FLOFILE);
          flo = fopen(name, "a");
-         fprintf(flo, "#%s\n", echo->downlinks[i]->pktFile);
+         fprintf(flo, "^%s\n", echo->downlinks[i]->packFile);
          fclose(flo);
       } /* endif */
 

@@ -7,29 +7,46 @@
 #include <unistd.h>
 
 #include <global.h>
+#include <fidoconfig.h>
 
 #include <typedefs.h>
 #include <compiler.h>
 #include <stamp.h>
 #include <progprot.h>
 
-char *createTempPktFileName()
+int createTempPktFileName(s_link *link)
 {
    char   *fileName = (char *) malloc(strlen(config->outbound)+1+12);
+   char   *pfileName = (char *) malloc(strlen(config->outbound)+1+12);
    time_t aTime = time(NULL);  // get actual time
    int counter = 0;
+   char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
+
+   time_t tr;
+   char *wday;
+   struct tm *tp;
+   tr=time(NULL);
+   tp=localtime(&tr);
+   
+   wday=wdays[tp->tm_wday];
 
    aTime %= 0xffffff;   // only last 24 bit count
 
    do {
       sprintf(fileName, "%s%06lx%02x.pkt", config->outbound, aTime, counter);
+      sprintf(pfileName, "%s%06lx%02x.%s0", config->outbound, aTime, counter,wday);
       counter++;
    } while (fexist(fileName) && (counter<=256));
 
-   if (!fexist(fileName)) return fileName;
+   if (!fexist(fileName)) {
+	   link->packFile = pfileName;
+	   link->pktFile = fileName;
+	   return 0;
+   }
    else {
       free(fileName);
-      return NULL;
+      free(pfileName);
+      return 1;
    }
 }
 

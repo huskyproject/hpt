@@ -3,5 +3,6 @@ Credits:
 
 - the most part of the code is written by Matthias Tichy <mtt@tichy.de>
 - there were patches from Max Levenkov <ml@nsk.uland.com>
+- areafix by Max Levenkov (ml@nsk.uland.com)
 - some code was taken from ifmail by Eugene G. Crosser <crosser@pccross.msk.su>
 - some inspiration on createDirectoryTree was taken from the GNU Fileutils.

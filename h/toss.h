@@ -16,5 +16,6 @@ void processNMMsg(s_message *msg);
 void processMsg(s_message *msg, s_addr pktOrigAddr);
 int  processPkt(char *fileName, int onlyNetmail);
 void toss(void);
+void arcmail(void);
 
 #endif
