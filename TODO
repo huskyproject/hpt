@@ -8,6 +8,7 @@ Category 1: Will certainly be implemented until next release
 - check dupebase filename creation - dos & passthrough areas
 - fix file route
 - fix HASHDUPEs under non unices
+- check group access
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
