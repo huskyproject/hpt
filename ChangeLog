@@ -1,3 +1,17 @@
+2002-10-07 Monday 12:32  stas_degteff
+
+	* doc/: perlwin32.rus, perlwin32.txt (hpt-1_2-stable.[3,2]): MFC:
+	Fix "Q:" - multiline
+
+2002-10-07 Monday 12:23  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.7): Spell fix
+
+2002-10-07 Monday 12:15  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.6): MFC: Update FAQ - add
+	question about mktemp() unsafety warning
+
 2002-10-04 Friday 04:56  stas_degteff
 
 	* doc/hpt-FAQ.russian (hpt-1_2-stable.5): MFC: Fix about hptsqfix
