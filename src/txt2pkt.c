@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     FILE *text = NULL;
     int quit=0, n = 1;
     CHAR *textBuffer = NULL;
-    char tmp[512];
+    char *tmp=NULL;
 
     memset (&header,'\0',sizeof(s_pktHeader));
     memset (&msg,'\0',sizeof(s_message));
@@ -178,6 +178,7 @@ int main(int argc, char *argv[])
             text = stdin;
          else
             text = fopen(argv[n], "rt");
+
          if (text != NULL) {
             int cursize = TEXTBUFFERSIZE, c;
             /* reserve 512kb + 1 (or 32kb+1) text Buffer */
@@ -213,6 +214,7 @@ int main(int argc, char *argv[])
       exit(EX_UNAVAILABLE);
    }
 
+
    header.hiProductCode  = 0;
    header.loProductCode  = 0xfe;
    header.majorProductRev = 0;
@@ -223,13 +225,14 @@ int main(int argc, char *argv[])
    header.capabilityWord = 1;
    header.prodData = 0;
 
-   strcpy(tmp, (dir) ? dir : "./");
 #ifdef UNIX
-   if (tmp[strlen(tmp)-1] != '/') strcat(tmp,"/");
+   xstrcat(&tmp, (dir) ? dir : "./");
+   if (tmp[strlen(tmp)-1] != '/') xstrcat(&tmp,"/");
 #else
-   if (tmp[strlen(tmp)-1] != '\\')  strcat(tmp,"\\");
+   xstrcat(&tmp, (dir) ? dir : ".\\");
+   if (tmp[strlen(tmp)-1] != '\\')  xstrcat(&tmp,"\\");
 #endif
-   sprintf(tmp + strlen(tmp),"%08lx.pkt",(long)time(NULL));
+   xscatprintf(&tmp,"%08lx.pkt",(long)time(NULL));
 
    if (header.origAddr.zone==0) header.origAddr = msg.origAddr;
    if (header.destAddr.zone==0) header.destAddr = msg.destAddr;
@@ -247,8 +250,8 @@ int main(int argc, char *argv[])
       msg.netMail = 1;
 
       if (tearl || config->tearline) {
-         sprintf(tmp, "\r--- %s\r", (tearl) ? tearl : config->tearline);
-         strcat((char *)textBuffer, (char *)tmp);
+         xscatprintf(&tmp, "\r--- %s\r", (tearl) ? tearl : config->tearline);
+         xstrcat(&textBuffer, tmp);
       }
 
       if (msg.origAddr.zone==0 && msg.origAddr.net==0 && 
@@ -257,15 +260,15 @@ int main(int argc, char *argv[])
 
       if (area != NULL) {
          strUpper(area);
-         sprintf(tmp, " * Origin: %s (%d:%d/%d.%d)\r",
+         xscatprintf(&tmp, " * Origin: %s (%d:%d/%d.%d)\r",
                  (orig) ? orig : (config->origin) ? config->origin : "",
 		 msg.origAddr.zone, msg.origAddr.net,
                  msg.origAddr.node, msg.origAddr.point);
-         strcat(textBuffer, tmp);
-         sprintf(tmp,"SEEN-BY: %d/%d\r\1PATH: %d/%d\r",
+         xstrcat(&textBuffer, tmp);
+         xscatprintf(&tmp,"SEEN-BY: %d/%d\r\1PATH: %d/%d\r",
 	         header.origAddr.net,header.origAddr.node,
 		 header.origAddr.net,header.origAddr.node);
-         strcat(textBuffer, tmp);
+         xstrcat(&textBuffer, tmp);
       }
       xstrcat(&versionStr,"txt2pkt");
       msg.text = createKludges(area, &msg.origAddr, &msg.destAddr);
