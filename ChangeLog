@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Fri Sep 15 11:34:16 NOVST 2000
+max:
+* fixed autocreate with -dosfile at the end of AutoAreaCreateDefaults
+
+----- cvs ci ------
 Wed Sep 14 15:44:37 NOVST 2000
 max (patch from Serguei Revtov):
 * change in bundle names generation algorithm (bundleStyle addrDiff)
