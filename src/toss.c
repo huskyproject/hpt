@@ -1131,72 +1131,125 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	return rc;
 }
 
+
 /* Does carbon copying */
 /* Return value: 0 if nothing happend, 1 if there was a carbon copy, 
    > 1 if there was a carbon move or carbon delete*/
 int carbonCopy(s_message *msg, s_area *echo)
 {
-	int i, rc = 0, cmp = 0;
-	char *kludge, *str=NULL;
-	s_area *area;
-	
-	if (echo->ccoff==1) return 0;
-	if (echo->msgbType==MSGTYPE_PASSTHROUGH && config->exclPassCC)
-		return 0;
+    int i, rc = 0, result=0;
+    char *testptr, *testptr2, *kludge;
+    s_area *area;
+    s_carbon *cb=&(config->carbons[0]);
 
-	for (i=0; i<config->carbonCount; i++) {
+    if (echo->ccoff==1)
+        return 0;
+    if (echo->msgbType==MSGTYPE_PASSTHROUGH && config->exclPassCC)
+        return 0;
 
-		/* Dont come to use netmail on echomail and vise verse */
-		if (( msg->netMail && !config->carbons[i].netMail) ||
-		    (!msg->netMail &&  config->carbons[i].netMail)) 
-			continue;
+    for (i=0; i<config->carbonCount; i++,++cb) {
+        /* Dont come to use netmail on echomail and vise verse */
+        if (( msg->netMail && !cb->netMail) ||
+            (!msg->netMail &&  cb->netMail))
+            continue;
 
-		area = config->carbons[i].area;
+        area = cb->area;
 		
-		// dont CC to the echo the mail comes from
-		if (!config->carbons[i].extspawn && // fix for extspawn
-		    !stricmp(echo->areaName,area->areaName) &&
-		    // fix for carbonDelete
-		    config->carbons[i].areaName != NULL) continue;
+	// dont CC to the echo the mail comes from
+        if(!cb->rule)
+            if (!cb->extspawn &&
+             // fix for extspawn
+            !stricmp(echo->areaName,area->areaName)
+            // fix for carbonDelete
+            && cb->areaName != NULL)
+                    continue;
 
-		switch (config->carbons[i].ctype) {
-			
-		case 0:	str=hpt_stristr(msg->toUserName,config->carbons[i].str);
-			break;
-		case 1:	str=hpt_stristr(msg->fromUserName,config->carbons[i].str);
-			break;
-		case 2:
-			kludge=getKludge(*msg, config->carbons[i].str);
-			str=kludge; if (kludge) nfree(kludge);
-			break;
-		case 3:	str=hpt_stristr(msg->subjectLine,config->carbons[i].str);
-			break;
-		case 4:	str=hpt_stristr(msg->text+strlen(echo->areaName)+6,config->carbons[i].str);
-			break;
-		case 5:	if (addrComp(msg->origAddr, config->carbons[i].addr)==0) cmp = 1;
+        switch (cb->ctype) {
+        case ct_to:
+            result=!stricmp(msg->toUserName,cb->str);
+            break;
+
+        case ct_from:
+            result=!stricmp(msg->fromUserName,cb->str);
+            break;
+
+        case ct_kludge:
+			kludge = (char *) GetCtrlToken(msg->text, (byte *)cb->str);
+			result = (kludge!=NULL);
+			nfree(kludge);
 			break;
 
-		} /* end switch*/
-			
-		if (str || cmp) {
-			/* Set value: 1 if copy 3 if move */
-			rc |= config->carbons[i].move ? 3 : 1;
-			
-			if (config->carbons[i].extspawn) {
-				processExternal(echo,msg,config->carbons[i]); 
-			} else { 
-			    if (config->carbons[i].areaName && config->carbons[i].move!=2) {
-				if (!processCarbonCopy(area,echo,msg,config->carbons[i]))
-				    rc &= 1;
-			    }
-			}
-			if (config->carbonAndQuit) return rc;
-			str = NULL; cmp = 0;
-		}
-		
-	} /* end for */
-	
-	return rc;
+        case ct_subject:
+            result=!stricmp(msg->subjectLine,cb->str);
+            break;
+
+        case ct_msgtext:
+			/* skip area: kludge */
+            testptr=msg->text+6+strlen(echo->areaName);
+            while(testptr!=NULL){
+                testptr=hpt_stristr(testptr,cb->str);
+                if(testptr!=NULL){
+                    /* look back: a '\1' after a LF        */
+                    /* means that it is a kludge           */
+                    testptr2=testptr;   /* remind position */
+                    while(*--testptr!='\12'); /* not LF    */
+					/* (skipped) area: kludge prevents going back too far :) */
+                    if(*++testptr=='\1') /* was a kludge   */
+                        testptr=testptr2+strlen(cb->str);
+                    else
+                        break;
+                }
+            }
+            result=(NULL!=testptr);
+            break;
+
+        case ct_addr:
+            result=!addrComp(msg->origAddr, cb->addr);
+            break;
+
+        case ct_fromarea: /* skip AREA: */
+            result=!strncasecmp(msg->text+5, cb->str,strlen(cb->str));
+            break;
+
+        case ct_group:
+            if(echo->group!=NULL)
+				/* cb->str for example Fido,xxx,.. */
+                result=(NULL!=hpt_stristr(echo->group,cb->str));
+            break;
+
+        }
+
+        if(cb->rule&CC_NOT) /* 2nd bit for NOT on/off */
+            result=!result;
+
+        switch(cb->rule){ /* what operation with next result */
+        case CC_OR: /* OR */
+            if(result){
+                /* make cc */
+                /* Set value: 1 if copy 3 if move */
+                rc = cb->move ? 3 : 1;
+                if(cb->extspawn)
+                    processExternal(echo,msg,*cb);
+                else
+                    if (cb->areaName && cb->move!=2)
+                        if (!processCarbonCopy(area,echo,msg,*cb))
+                            rc &= 1;
+                if (config->carbonAndQuit) return rc;
+            }
+            break;
+        case CC_AND: /* AND */
+            if(!result){
+                /* following expressions can be skipped until OR */
+                for (++i,++cb; i<config->carbonCount; i++,++cb)
+                    if(!cb->rule)
+                        break; /* this is the last in the AND expr. chain */
+            }
+            /* else result==TRUE, so continue with next expr. */
+            break;
+        }
+    } /* end for() */
+
+    return rc;
 }
 
 int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)

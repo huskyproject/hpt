@@ -473,14 +473,9 @@ int dupeDetection(s_area *area, const s_message msg) {
    char             *str, *str1;
 
    if (area->dupeCheck == dcOff) return 1; // no dupeCheck return 1 "no dupe"
-   if ((str=getKludge(msg, "MSGID:"))==NULL) { 
-      if (msg.text!=NULL) {
-         str = safe_malloc(25);                     // make pseudo MSGID from text!   
-         sprintf (str, "MSGID: %08lx",strcrc32(msg.text, 0xFFFFFFFFL));
-      }
-      else {
-         return 1;         // without msg.text - message is empty, no dupeCheck
-      }
+   if ((str=(char*)GetCtrlToken(msg.text, (byte*)"MSGID:"))==NULL) {
+      if (msg.text) xscatprintf (&str, "MSGID: %08lx",strcrc32(msg.text, 0xFFFFFFFFL));
+      else return 1; // without msg.text - message is empty, no dupeCheck
    }
 
    // test if dupeDatabase is already read

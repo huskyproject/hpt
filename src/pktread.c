@@ -666,39 +666,3 @@ void freeMsgBuffers(s_message *msg)
   // do not free the domains of the adresses of the message, because they
   // come from fidoconfig structures and are needed more than once.
 }
-
-char *getKludge(s_message msg, char *what) {
-
-    // taken from smapi
-   
-    char *end, *found, *out, *where = msg.text;
-
-    found = NULL;
-
-    if (where != NULL)
-    {
-        found = (char *) strstr((char *) where, (char *) what);
-    }
-
-    if (where != NULL && found != NULL && found[-1] == '\001')
-    {
-        end = (char *) strchr((char *) found, '\r');
-
-        if (!end)
-        {
-            end = found + strlen((char *) found);
-        }
-
-        out = malloc((size_t) (end - found) + 1);
-        if (out == NULL)
-        {
-            return NULL;
-        }
-
-        memmove(out, found, (size_t) (end - found));
-        out[(size_t) (end - found)] = '\0';
-        return out;
-    }
-
-    return NULL;
-}

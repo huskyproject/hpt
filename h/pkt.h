@@ -152,14 +152,6 @@ void        freeMsgBuffers(s_message *msg);
   FZ:     all memory reserved by readMsgFromPkt will be freed.
 */
 
-char        *getKludge(s_message msg, char *what);
-/*DOC
-  Input:  a s_message struct
-          the kludge which is searched for
-  Output: getKludge returns a pointer to the text which followed the kludge
-          If the kludge does not exist it returns NULL
-*/
-  
 char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAka);
 /*DOC
    Taken from the areafix.c

@@ -2,6 +2,12 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Thu Apr 12 12:12:34 NOVST 2001
+max (patch from kees):
+* added CarbonRule, CarbonGroups, CarbonFromArea
+* changed CarbonText: skip kludges
+
+----- cvs ci ------
 Mon Apr  9 13:12:20 NOVST 2001
 max:
 * fixed sbadd after processing echomail from/to different zone
