@@ -1,3 +1,11 @@
+2002-06-11 Tuesday 18:36  mche
+
+	* src/arealist.c (1.7), h/arealist.h (1.4): no message
+
+2002-06-11 Tuesday 18:36  mche
+
+	* src/areafix.c (1.313): do not send rules of not created areas
+
 2002-06-10 Monday 15:59  mche
 
 	* src/areafix.c (1.312): arealist.* moved to fidoconfig from hpt
