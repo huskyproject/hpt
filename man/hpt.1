@@ -37,6 +37,8 @@ hpt link [areamask]
 .TP
 .B Process areafix
 hpt afix [<addr> command]
+hpt qupd - update queue file and do some areafix jobs
+hpt qrep - make report based on information from queue file
 .br
 .TP
 .B Post a message to area
@@ -77,6 +79,9 @@ use it without trailing brackets like this: pvt loc k/s
 \fB \ \ \ \ \ \ -x\fP export message to echo links
 .TP 1i
 \fB \ \ \ \ \ \ -d\fP erase input file after posting
+.TP 1i
+\fB \ \ \ \ \ \ -u[size] uue-multipart posting
+size - number of lines per section(150 for default)
 .TP 1i
 \fB \ \ \ \ \ \ -h\fP get help
 .TP 1i
