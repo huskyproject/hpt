@@ -136,9 +136,9 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 {
     FILE *f;
-    char *fileName, *msgbFileName=NULL;
+    char *fileName;
     char *buff=NULL, *hisaddr=NULL;
-    char *newAC=NULL, *msgbDir=NULL;
+    char *msgbDir=NULL;
     s_link *creatingLink;
 //    s_area *area; 
     s_query_areas* areaNode=NULL;
