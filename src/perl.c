@@ -225,7 +225,7 @@ static void xs_init(void)
   dXSUB_SYS;
 #endif
   newXS("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);
-  newXS("log", perl_log, file);
+  newXS("w_log", perl_log, file);
   newXS("putMsgInArea",  perl_putMsgInArea,  file);
   newXS("str2attr",      perl_str2attr,      file);
   newXS("myaddr",        perl_myaddr,        file);

@@ -2,7 +2,7 @@
 #
 # str2attr(attr);
 #
-# log(level, str);
+# w_log(level, str);
 # no printf() format, use sprintf()!
 #
 # crc32(str)
