@@ -1,6 +1,13 @@
 hpt 0.9.6
 ---------
 
+
+----- cvs ci ------
+Sat Feb 12 20:50:26 NOVT 2000
+max:
+* areafixKillRequests works now
+* fix sending available areas list under NT,OS/2... (Basile A. Sey)
+
 ----- cvs ci ------
 Fri Feb 11 22:17:03 NOVT 2000
 max:

@@ -463,7 +463,7 @@ char *available(s_link *link) {
 			endpos=ftell(f);
 			
 			fseek(f,0l,SEEK_SET);
-			fread(avail = xstralloc(&report, endpos + 1), 1, (size_t) endpos,f);
+			endpos=fread(avail = xstralloc(&report, endpos + 1), 1, (size_t) endpos,f);
 			for (i=0; i<endpos; i++) if (avail[i]=='\n') avail[i]='\r';
 			avail[endpos] = '\0';
 			
@@ -1599,8 +1599,12 @@ void afix(void)
 		    memset(&msg,0,sizeof(s_message));
 		    MsgToStruct(SQmsg, xmsg, &msg);
 		    processAreaFix(&msg, NULL);
-		    xmsg.attr |= MSGREAD;
-		    MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+			if (config->areafixKillRequests) {
+				MsgKillMsg(netmail, i);
+			} else {
+				xmsg.attr |= MSGREAD;
+				MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+			}
 		    freeMsgBuffers(&msg);
 	    }
 
