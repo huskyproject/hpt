@@ -1049,8 +1049,8 @@ char *subscribe(s_link *link, char *cmd) {
 
     if (matched) {
 	if (report == NULL)
-	    w_log (LL_AREAFIX, "areafix: all areas matched %s are already linked", line);
-	xscatprintf(&report, "All %sareas matched %s are already linked\r", report ? "other " : "", line);
+	    w_log (LL_AREAFIX, "areafix: all areas matching %s are already linked", line);
+	xscatprintf(&report, "All %sareas matching %s are already linked\r", report ? "other " : "", line);
     }
     else if ((report == NULL && found==0) || (found && area->hide)) {
 	xscatprintf(&report," %s %s  not found\r",line,print_ch(49-strlen(line),'.'));
