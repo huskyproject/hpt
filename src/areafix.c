@@ -189,11 +189,11 @@ int subscribeAreaCheck(s_area *area, char *areaname, s_link *link)
     }
     if (patimat(area->areaName,areaname)==1) {
 	rc=subscribeCheck(*area, link);
-	// 0 - already subscribed / linked
-	// 1 - need subscribe / not linked
-	// 2 - no access
+	/*  0 - already subscribed / linked */
+	/*  1 - need subscribe / not linked */
+	/*  2 - no access */
     }
-    // else: this is another area
+    /*  else: this is another area */
     w_log( LL_SRCLINE, "%s::subscribeAreaCheck() end rc=%d", __FILE__, rc );
     return rc;
 }
@@ -245,7 +245,7 @@ char *list(s_link *link, char *cmdline) {
 	area = config->echoAreas[i];
 	rc = subscribeCheck(area, link);
 
-        if (rc < 2 && (!area.hide || (area.hide && rc==0))) { // add line
+        if (rc < 2 && (!area.hide || (area.hide && rc==0))) { /*  add line */
             if (pattern)
             {
                 /* if matches pattern and not reversed (or vise versa) */
@@ -442,7 +442,7 @@ char *available(s_link *link, char *cmdline)
 
 	    xscatprintf(&report, " %s\r\r",print_ch(77,'-'));
 
-	    // warning! do not ever use aka2str twice at once!
+	    /*  warning! do not ever use aka2str twice at once! */
 	    sprintf(linkAka, "%s", aka2str(link->hisAka));
 	    w_log(LL_AREAFIX, "areafix: Available Area List from %s sent to %s", aka2str(uplink->hisAka), linkAka);
 	}
@@ -455,7 +455,7 @@ char *available(s_link *link, char *cmdline)
     return report;
 }
 
-// subscribe if (act==0),  unsubscribe if (act==1), delete if (act==2)
+/*  subscribe if (act==0),  unsubscribe if (act==1), delete if (act==2) */
 int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act) {
     s_message *msg;
     char *base, pass[]="passthrough";
@@ -479,7 +479,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
         else {
             base = uplink->msgBaseDir;
             if (config->createFwdNonPass==0) uplink->msgBaseDir = pass;
-            // create from own address
+            /*  create from own address */
             if (isOurAka(config,dwlink->hisAka)) {
                 uplink->msgBaseDir = base;
             }
@@ -492,7 +492,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
     } else if (act==1) {
         xscatprintf(&(msg->text), "-%s\r", areatag);
     } else {
-        // delete area
+        /*  delete area */
         if (uplink->advancedAreafix)
             xscatprintf(&(msg->text), "~%s\r", areatag);
         else
@@ -501,20 +501,20 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
     return 0;
 }
 
-/*
+#if 0
 int delLinkFromString(char **lineOut, char *line, char *linkAddr)
 {
     char *startLink, *ptr, *tmp, *origLine, *comment, *eptr=NULL, *linkStr;
-    unsigned int nodeAddr=0, rc=1, endLen=0; // length of string where link ends
+    unsigned int nodeAddr=0, rc=1, endLen=0; /*  length of string where link ends */
 
     origLine = safe_strdup(line);
     startLink = line;
     tmp = line;
-    // find comments
+    /*  find comments */
     for (comment = line; (comment = strchr(comment+1, CommentChar)) != NULL;)
 	if (*(comment-1) == ' ' || *(comment-1) == '\t')
 	    break;
-    // make search string
+    /*  make search string */
     linkStr = safe_malloc(strlen(linkAddr)+3);
     strcpy(linkStr, linkAddr);
     ptr=strchr(linkStr, '.');
@@ -536,7 +536,7 @@ int delLinkFromString(char **lineOut, char *line, char *linkAddr)
                 (nodeAddr && *eptr=='.' && eptr[1]=='0' && (isspace(eptr[2]) || eptr[2]=='\0'))) {
                 startLink = ptr;
 		endLen = eptr + 1 - line;
-		rc = 0; // all ok
+		rc = 0; /*  all ok */
 	    }
 	}
 	ptr = strstr(tmp+1, linkStr);
@@ -547,7 +547,7 @@ int delLinkFromString(char **lineOut, char *line, char *linkAddr)
             if (isspace(*eptr) || *eptr=='\0') {
                 startLink = ptr;
 		endLen = eptr + 1 - line;
-		rc = 2; // found, but cannot unsubscribe
+		rc = 2; /*  found, but cannot unsubscribe */
 	    }
 	}
     } while (!endLen && tmp);
@@ -559,14 +559,14 @@ int delLinkFromString(char **lineOut, char *line, char *linkAddr)
 	endLen = eptr - line;
 	ptr = line + endLen;
         while (ptr) {
-            tmp = strseparate(&ptr, " \t"); // looking for link options...
-            if (tmp == NULL)  break; // nothing found
-            if (*tmp != '-') break; // this is not option
-            else { // found link option
-                // if (!strncasecmp(tmp, "-r", 2) ||
-                //    !strncasecmp(tmp, "-w", 2) ||
-                //    !strncasecmp(tmp, "-mn", 3) ||
-                //   !strncasecmp(tmp, "-def", 4))
+            tmp = strseparate(&ptr, " \t"); /*  looking for link options... */
+            if (tmp == NULL)  break; /*  nothing found */
+            if (*tmp != '-') break; /*  this is not option */
+            else { /*  found link option */
+                /*  if (!strncasecmp(tmp, "-r", 2) || */
+                /*     !strncasecmp(tmp, "-w", 2) || */
+                /*     !strncasecmp(tmp, "-mn", 3) || */
+                /*    !strncasecmp(tmp, "-def", 4)) */
                 {
                     endLen = ptr ? (ptr - line) : strlen(origLine);
                     continue;
@@ -583,7 +583,8 @@ int delLinkFromString(char **lineOut, char *line, char *linkAddr)
     nfree(linkStr);
     return rc;
 }
-*/
+#endif
+
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     char *cfgline=NULL, *token=NULL, *tmpPtr=NULL, *line=NULL, *buff=0;
     long strbeg = 0, strend = -1;
@@ -627,7 +628,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     }
     close_conf();
     nfree(line);
-    if (strend == -1) { // impossible // error occurred
+    if (strend == -1) { /*  impossible   error occurred */
         nfree(cfgline);
         nfree(fileName);
         return -1;
@@ -635,7 +636,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     w_log(LL_SRCLINE, __FILE__ ":%u:changeconfig()", __LINE__);
 
     switch (action) {
-    case 0: // forward Request To Link
+    case 0: /*  forward Request To Link */
         if ((area->msgbType==MSGTYPE_PASSTHROUGH) &&
             (!config->areafixQueueFile) &&
             (area->downlinkCount==1) &&
@@ -643,11 +644,11 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         {
             forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 0);
         }
-    case 3: // add link to existing area
+    case 3: /*  add link to existing area */
         xscatprintf(&cfgline, " %s", aka2str(link->hisAka));
         nRet = ADD_OK;
         break;
-    case 1: // remove link from area
+    case 1: /*  remove link from area */
         if ((area->msgbType==MSGTYPE_PASSTHROUGH)
             && (area->downlinkCount==1) &&
             (area->downlinks[0]->link->hisAka.point == 0)) {
@@ -663,28 +664,28 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         }
         break;
     case 2:
-        //makepass(f, fileName, areaName);
-    case 4: // delete area
+        /* makepass(f, fileName, areaName); */
+    case 4: /*  delete area */
         nfree(cfgline);
         nRet = DEL_OK;
         break;
-    case 5: // subscribe us to  passthrough
+    case 5: /*  subscribe us to  passthrough */
         if ( fc_stristr(area->downlinks[0]->link->autoAreaCreateDefaults,
             "passthrough") )  {
             nRet = O_ERR;
             break;
         }
         w_log(LL_SRCLINE, __FILE__ "::changeconfig():%u",__LINE__);
-        // get area string
+        /*  get area string */
         buff = makeAreaParam(area->downlinks[0]->link , areaName, NULL );
         nRet = ADD_OK;
-    case 6: // make area pass.
+    case 6: /*  make area pass. */
 
         if(action == 6) {
             buff = makeAreaParam(area->downlinks[0]->link , areaName, "passthrough" );
             nRet = DEL_OK;
         }
-        // add all links
+        /*  add all links */
         token = NULL;
         token = strrchr(cfgline, '\"');
         if(!token) token = cfgline;
@@ -697,7 +698,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         cfgline = buff;
         break;
     default: break;
-    } // switch (action)
+    } /*  switch (action) */
 
     w_log(LL_SRCLINE, __FILE__ ":%u:changeconfig()", __LINE__);
     InsertCfgLine(fileName, cfgline, strbeg, strend);
@@ -728,12 +729,12 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
     }
     qsort(Indexes,Requestable,sizeof(Indexes[0]),compare_links_priority);
     i = 0;
-    if(lastRlink) { // try to find next requestable uplink
+    if(lastRlink) { /*  try to find next requestable uplink */
         for (; i < Requestable; i++) {
             uplink = &(config->links[Indexes[i]]);
             if( addrComp(uplink->hisAka, (*lastRlink)->hisAka) == 0)
-            {   // we found lastRequestedlink
-                i++;   // let's try next link
+            {   /*  we found lastRequestedlink */
+                i++;   /*  let's try next link */
                 break;
             }
         }
@@ -759,7 +760,7 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
             continue;
         }
         if (uplink->forwardRequestFile!=NULL) {
-            // first try to find the areatag in forwardRequestFile
+            /*  first try to find the areatag in forwardRequestFile */
             if (tag_mask(areatag, uplink->frMask, uplink->numFrMask) ||
                 IsAreaAvailable(areatag,uplink->forwardRequestFile,NULL,0))
             {
@@ -767,29 +768,29 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
                 rc = 0;
             }
             else
-            { rc = 2; }// found link with freqfile, but there is no areatag
+            { rc = 2; }/*  found link with freqfile, but there is no areatag */
         } else {
             rc = 0;
-            if (uplink->numFrMask) // found mask
+            if (uplink->numFrMask) /*  found mask */
             {
                 if (tag_mask(areatag, uplink->frMask, uplink->numFrMask))
                     forwardRequestToLink(areatag,uplink,dwlink,0);
                 else rc = 2;
-            } else { // unconditional forward request
+            } else { /*  unconditional forward request */
                 if (dwlink->denyUFRA==0)
                     forwardRequestToLink(areatag,uplink,dwlink,0);
                 else rc = 2;
             }
-        }//(uplink->forwardRequestFile!=NULL)
-        if (rc==0) { // ?
+        }/* (uplink->forwardRequestFile!=NULL) */
+        if (rc==0) { /*  ? */
             nfree(Indexes);
             return rc;
         }
 
-    }// if (uplink->forwardRequests && (uplink->LinkGrp) ?
-    }// for (i = 0; i < Requestable; i++) {
+    }/*  if (uplink->forwardRequests && (uplink->LinkGrp) ? */
+    }/*  for (i = 0; i < Requestable; i++) { */
 
-    // link with "forwardRequests on" not found
+    /*  link with "forwardRequests on" not found */
     nfree(Indexes);
     return rc;
 }
@@ -829,8 +830,8 @@ void fixRules (s_link *link, char *area) {
         rulesCount++;
         rulesList = safe_realloc (rulesList, rulesCount * sizeof (char*));
         rulesList[rulesCount-1] = safe_strdup (area);
-        // don't simply copy pointer because area may be
-        // removed while processing other commands
+        /*  don't simply copy pointer because area may be */
+        /*  removed while processing other commands */
     }
     nfree (fileName);
 }
@@ -893,8 +894,8 @@ char *subscribe(s_link *link, char *cmd) {
                                     an, aka2str(area->downlinks[0]->link->hisAka));
               }
            } else {  /* ??? (not passthrou echo) */
-                     //  non-passthrough area for our aka means
-                     //  that we already linked to this area
+                     /*   non-passthrough area for our aka means */
+                     /*   that we already linked to this area */
                xscatprintf(&report, " %s %s  already linked\r",an, print_ch(49-strlen(an), '.'));
                w_log(LL_AREAFIX, "areafix: %s already linked to %s",aka2str(link->hisAka), an);
            }
@@ -909,13 +910,13 @@ char *subscribe(s_link *link, char *cmd) {
                 xscatprintf(&report," %s %s  error. report to sysop!\r",an,print_ch(49-strlen(an),'.'));
                 w_log(LL_AREAFIX, "areafix: %s not subscribed to %s",aka2str(link->hisAka),an);
                 w_log(LL_ERR, "areafix: can't write to config file: %s!", strerror(errno));
-            }//if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==0)
+            }/* if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==0) */
         }
 	    if (!isPatternLine(line)) i = config->echoAreaCount;
 	    break;
 	case 6:         /* areas limit exceed for link */
 	    break;
-	default : // rc = 2 /* not access */
+	default : /*  rc = 2  not access */
 	    if (!area->hide && !isPatternLine(line)) {
 		w_log(LL_AREAFIX, "areafix: area %s -- no access for %s",
 		      an, aka2str(link->hisAka));
@@ -932,7 +933,7 @@ char *subscribe(s_link *link, char *cmd) {
 
     if (rc==4 && !isPatternLine(line) && !found) { /* rc not equal 4 there! */
 	if (link->denyFRA==0) {
-	    // try to forward request
+	    /*  try to forward request */
 	    if ((rc=forwardRequest(line, link, NULL))==2) {
 		xscatprintf(&report, " %s %s  no uplinks to forward\r",
 			    line, print_ch(49-strlen(line), '.'));
@@ -1158,7 +1159,7 @@ char *unsubscribe(s_link *link, char *cmd) {
                             aka2str(link->hisAka), an);
                     } else
                         w_log(LL_AREAFIX,"areafix: %s unlinked from %s",aka2str(link->hisAka),an);
-            } else { // unsubscribing from own address
+            } else { /*  unsubscribing from own address */
                 if (area->downlinkCount==0)
                 {
                     return do_delete(getLinkFromAddr(config,*(area->useAka)), area);
@@ -1305,7 +1306,7 @@ char *rescan(s_link *link, char *cmd) {
     if (*line == 0) return errorRQ(cmd);
 
     countstr = line;
-    while (*countstr && (!isspace(*countstr))) countstr++; // skip areatag
+    while (*countstr && (!isspace(*countstr))) countstr++; /*  skip areatag */
     while (*countstr && (*countstr == ' ' || *countstr == '\t')) countstr++;
     if (strncasecmp(countstr, "/R",2)==0) {
 	countstr += 2;
@@ -1457,14 +1458,14 @@ char *packer(s_link *link, char *cmdline) {
 
 char *rsb(s_link *link, char *cmdline)
 {
-    int mode; // 1 = RSB on, 0 - RSB off.
-    char *param=NULL; // RSB value.
+    int mode; /*  1 = RSB on, 0 - RSB off. */
+    char *param=NULL; /*  RSB value. */
     char *report=NULL;
     char *confName = NULL;
     long  strbeg=0;
     long  strend=0;
 
-    param = getPatternFromLine(cmdline, &mode); // extract rsb value (on or off)
+    param = getPatternFromLine(cmdline, &mode); /*  extract rsb value (on or off) */
     if (param == NULL)
     {
         xscatprintf(&report, "Invalid request: %s\rPlease read help.\r\r", cmdline);
@@ -1552,10 +1553,10 @@ int tellcmd(char *cmd) {
     case '+':
         if (line[1]=='\000') return AFERROR;
     default:
-        if (fc_stristr(line, " /R")!=NULL) return ADD_RSC; // add & rescan
+        if (fc_stristr(line, " /R")!=NULL) return ADD_RSC; /*  add & rescan */
         return ADD;
     }
-    return 0;// - Unreachable
+    return 0;/*  - Unreachable */
 }
 
 char *processcmd(s_link *link, char *line, int cmd) {
@@ -1760,12 +1761,12 @@ void RetRules (s_message *msg, s_link *link, char *areaName)
 	RetMsg(msg, link, text, subj);
 
 	nfree (subj);
-	//nfree (text); don't free text because RetMsg() free it
+	/* nfree (text); don't free text because RetMsg() free it */
 
 	fileName[strlen(fileName)-1] = nrul+'1';
     }
 
-    if (nrul==0) { // couldn't open any rules file while first one exists!
+    if (nrul==0) { /*  couldn't open any rules file while first one exists! */
 	w_log(LL_ERR, "areafix: can't open file '%s' for reading: %s", fileName, strerror(errno));
     }
     nfree (fileName);
@@ -1798,14 +1799,14 @@ void sendAreafixMessages()
     }
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 {
     unsigned int security=1, notforme = 0;
     s_link *link = NULL;
     s_link *tmplink = NULL;
-    //s_message *linkmsg;
+    /* s_message *linkmsg; */
     s_pktHeader header;
     char *token, *report=NULL, *preport = NULL;
     char *textBuff = NULL,*tmp;
@@ -1815,7 +1816,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 
     RetFix = NOTHING;
 
-    // 1st security check
+    /*  1st security check */
     if (pktHeader) security=addrComp(msg->origAddr, pktHeader->origAddr);
     else {
 	makePktHeader(NULL, &header);
@@ -1827,23 +1828,23 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 
     if (security) security=1; /* different pkt and msg addresses */
 
-    // find link
+    /*  find link */
     link=getLinkFromAddr(config, msg->origAddr);
 
-    // if keyword allowPktAddrDiffer for this link is on,
-    // we allow the addresses in PKT and MSG header differ
+    /*  if keyword allowPktAddrDiffer for this link is on, */
+    /*  we allow the addresses in PKT and MSG header differ */
     if (link!=NULL)
 	if (link->allowPktAddrDiffer == pdOn)
 	    security = 0;  /* OK */
 
-    // is this for me?
+    /*  is this for me? */
     if (link!=NULL)	notforme=addrComp(msg->destAddr, *link->ourAka);
-    else if (!security) security=4; // link == NULL; /* unknown system */
+    else if (!security) security=4; /*  link == NULL; unknown system */
 	
-    if (notforme && !security) security=5; // message to wrong AKA
+    if (notforme && !security) security=5; /*  message to wrong AKA */
 
-#if 0 // we're process only our messages here
-    // ignore msg for other link (maybe this is transit...)
+#if 0 /*  we're process only our messages here */
+    /*  ignore msg for other link (maybe this is transit...) */
     if (notforme || (link==NULL && security==1)) {
         w_log(LL_FUNC, __FILE__ "::processAreaFix() call processNMMsg() and return");
 	nr = processNMMsg(msg, pktHeader, NULL, 0, 0);
@@ -1852,7 +1853,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     }
 #endif
 
-    // 2nd security check. link, areafixing & password.
+    /*  2nd security check. link, areafixing & password. */
     if (!security && !force_pwd) {
         if (link->AreaFix==1) {
             if (link->areaFixPwd!=NULL) {
@@ -1861,13 +1862,13 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
             }
         } else security=2; /* areafix is turned off */
     }
-    // remove kluges
+    /*  remove kluges */
     tmp = msg->text;
     token = strseparate (&tmp,"\n\r");
 
     while(token != NULL) {
         if( !strcmp(token,"---") || !strncmp(token,"--- ",4) ) 
-            // stop on tearline ("---" or "--- text")
+            /*  stop on tearline ("---" or "--- text") */
             break;
         if( token[0] != '\001' )
             xstrscat(&textBuff,token,"\r",NULL);
@@ -1947,7 +1948,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 	    tmplink->hisAka.point = msg->origAddr.point;
 	    link = tmplink;
 	}
-	// security problem
+	/*  security problem */
 		
 	switch (security) {
 	case 1:
@@ -1996,7 +1997,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 
     w_log(LL_AREAFIX, "Areafix: successfully done for %s",aka2str(link->hisAka));
 
-    // send msg to the links (forward requests to areafix)
+    /*  send msg to the links (forward requests to areafix) */
     sendAreafixMessages();
     w_log(LL_FUNC, __FILE__ "::processAreaFix() end (rc=1)");
     return 1;
@@ -2004,7 +2005,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 
 void MsgToStruct(HMSG SQmsg, XMSG xmsg, s_message *msg)
 {
-    // convert header
+    /*  convert header */
     msg->attributes  = xmsg.attr;
 
     msg->origAddr.zone  = xmsg.orig.zone;
@@ -2078,17 +2079,17 @@ void afix(s_addr addr, char *cmd)
             highmsg = MsgGetHighMsg(netmail);
             w_log(LL_INFO,"Scanning %s",config->netMailAreas[k].areaName);
 
-            // scan all Messages and test if they are already sent.
+            /*  scan all Messages and test if they are already sent. */
             for (i=1; i<= highmsg; i++) {
                 SQmsg = MsgOpenMsg(netmail, MOPEN_RW, i);
 
-                // msg does not exist
+                /*  msg does not exist */
                 if (SQmsg == NULL) continue;
 
                 MsgReadMsg(SQmsg, &xmsg, 0, 0, NULL, 0, NULL);
                 cvtAddr(xmsg.dest, &dest);
 
-                // if not read and for us -> process AreaFix
+                /*  if not read and for us -> process AreaFix */
                 striptwhite((char*)xmsg.to);
                 if (((xmsg.attr & MSGREAD) != MSGREAD) &&
                     (isOurAka(config,dest)) && (strlen((char*)xmsg.to)>0) &&
@@ -2130,12 +2131,12 @@ int unsubscribeFromPausedEchoAreas(s_link *link) {
 
 	if ((area->msgbType & MSGTYPE_PASSTHROUGH) && isLinkOfArea(link,area)) {
 
-	    // unsubscribe only if uplink & auto-paused downlink presents
+	    /*  unsubscribe only if uplink & auto-paused downlink presents */
 	    if (area->downlinkCount==2) {
 		if ((j = isAreaLink(link->hisAka, area)) != -1) {
-		    // don't touch mandatory links
+		    /*  don't touch mandatory links */
 		    if (area->downlinks[j]->mandatory) continue;
-		    // add area for unsubscribe
+		    /*  add area for unsubscribe */
 		    xstrscat(&text,"-",area->areaName,"\r",NULL);
 		}
 	    }
@@ -2183,13 +2184,13 @@ void autoPassive()
 		  }
 		  if (*path && (*path == '^' || *path == '#')) {
 		      path++;
-		      // set Pause if files stored only in outbound
+		      /*  set Pause if files stored only in outbound */
 		      if (*path && strncmp(config->outbound,path,strlen(config->outbound)-1)==0 && stat(path, &stat_file) != -1) {
 
 			  time_cur = time(NULL);
 			  if (time_cur > stat_file.st_mtime) {
 			      time_test = (time_cur - stat_file.st_mtime)/3600;
-			  } else { // buggly time on file, anyway don't autopause on it
+			  } else { /*  buggly time on file, anyway don't autopause on it */
 			      time_test = 0;
 			  }
 
@@ -2222,11 +2223,11 @@ void autoPassive()
 				  freeMsgBuffers(msg);
 				  nfree(msg);
 
-				  // unsubscribe link from areas without non-paused links
+				  /*  unsubscribe link from areas without non-paused links */
 				  unsubscribeFromPausedEchoAreas(&(config->links[i]));
-			      } // end changepause
+			      } /*  end changepause */
 			      nfree(line);
-			      //fclose(f); file closed after endwhile
+			      /* fclose(f); file closed after endwhile */
 			      break;
 			  }
 		      } /* endif */
@@ -2250,10 +2251,10 @@ int relink (char *straddr) {
     s_area          **areasIndexArray = NULL;
     struct _minf m;
 
-    // parse config
+    /*  parse config */
     if (config==NULL) processConfig();
     if ( initSMAPI == -1 ) {
-	// init SMAPI
+	/*  init SMAPI */
 	initSMAPI = 0;
 	m.req_version = 0;
 	m.def_zone = (UINT16) config->addr[0].zone;

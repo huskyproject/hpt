@@ -41,12 +41,12 @@
 
 /* note that 128K - work buffer, not the max text length */
 #if !defined(__DOS__) && !defined(__MSDOS__)
-#define TEXTBUFFERSIZE 512*1024    // for real os
-#define BUFFERSIZE 128*1024        // work buffer for msg text in pktread
+#define TEXTBUFFERSIZE 512*1024    /*  for real os */
+#define BUFFERSIZE 128*1024        /*  work buffer for msg text in pktread */
 #else
 /* under ms-dos  message will be stripped to 32K */
-#define TEXTBUFFERSIZE 32*1024     // for Dose
-#define BUFFERSIZE 32*1024         // work buffer for msg text in pktread
+#define TEXTBUFFERSIZE 32*1024     /*  for Dose */
+#define BUFFERSIZE 32*1024         /*  work buffer for msg text in pktread */
 #endif
 
 FILE        *createPkt(char *filename, s_pktHeader *header);

@@ -156,7 +156,7 @@ void post(int c, unsigned int *n, char *params[])
     
     if (config==NULL) processConfig();
     if ( initSMAPI == -1 ) {
-        // init SMAPI
+        /*  init SMAPI */
         initSMAPI = 0;
         m.req_version = 0;
         m.def_zone = (UINT16) config->addr[0].zone;
@@ -170,7 +170,7 @@ void post(int c, unsigned int *n, char *params[])
     for (quit = 0;*n < (unsigned int)c && !quit; (*n)++) {
         if (*params[*n] == '-' && params[*n][1] != '\0') {
             switch(params[*n][1]) {
-            case 'a':    // address
+            case 'a':    /*  address */
                 switch(params[*n][2]) {
                 case 't':
                     string2addr(params[++(*n)], &(msg.destAddr));
@@ -182,7 +182,7 @@ void post(int c, unsigned int *n, char *params[])
                     quit = 1;
                     break;
                 }; break;
-                case 'n':    // name
+                case 'n':    /*  name */
                     switch(params[*n][2]) {
                     case 't':
                         msg.toUserName = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
@@ -202,7 +202,7 @@ void post(int c, unsigned int *n, char *params[])
                         quit = 1;
                         break;
                     }; break;
-                    case 'f':    // flags
+                    case 'f':    /*  flags */
                         for ((*n)++; params[*n]!=NULL; (*n)++) {
                             char *p;
                             if ((attr=str2attr(params[*n])) != -1L)
@@ -214,7 +214,7 @@ void post(int c, unsigned int *n, char *params[])
                         }
                         (*n)--;
                         break;
-                    case 'e':    // echo name
+                    case 'e':    /*  echo name */
                         area = params[++(*n)];
                         echo = getArea(config, area);
                         if (echo == &(config->badArea)) {
@@ -223,20 +223,20 @@ void post(int c, unsigned int *n, char *params[])
                             quit = 1;
                         }
                         break;
-                    case 's':    // subject
+                    case 's':    /*  subject */
                         msg.subjectLine = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
                         strcpy(msg.subjectLine, params[*n]);
 #ifdef __NT__
                         CharToOem(msg.subjectLine, msg.subjectLine);
 #endif
                         break;
-                    case 'x':    // export message
+                    case 'x':    /*  export message */
                         export=1;
                         break;
-                    case 'd':    // erase input file after posting
+                    case 'd':    /*  erase input file after posting */
                         erasef=1;
                         break;
-                    case 'u':    // uue-multipart posting
+                    case 'u':    /*  uue-multipart posting */
                         uuepost=1;
                         linesPerSec = atoi(params[(*n)]+2);
                         if(linesPerSec<10)
@@ -370,12 +370,12 @@ void post(int c, unsigned int *n, char *params[])
             quit = 1;
         }
     }
-    // won't be set in the msgbase, because the mail is processed if it were received
+    /*  won't be set in the msgbase, because the mail is processed if it were received */
     (*n)--; tm = localtime(&t);
     fts_time((char *)msg.datetime, tm);
     if ((msg.destAddr.zone != 0 || area) && (textBuffer != NULL) && !quit) {
-        // Dumbchecks
-        if (msg.origAddr.zone == 0) // maybe origaddr isn't specified ?
+        /*  Dumbchecks */
+        if (msg.origAddr.zone == 0) /*  maybe origaddr isn't specified ? */
             msg.origAddr = config->addr[0];
         if (msg.fromUserName == NULL)
             msg.fromUserName = safe_strdup(config->sysop);
@@ -409,7 +409,7 @@ void post(int c, unsigned int *n, char *params[])
 
             if( uuepost )
             {
-                //char *res;
+                /* char *res; */
                 int i; 
                 xscatprintf(&msg.text, "\rsection %d of %d of file %s < %s >\r\r",
                             part+1,sections,fname,versionStr);
@@ -462,11 +462,11 @@ void post(int c, unsigned int *n, char *params[])
                 (area) ? area : echo->areaName);
             
             if (!export && echo->fileName) {
-                msg.recode |= (REC_HDR|REC_TXT); // msg already in internal Charset
+                msg.recode |= (REC_HDR|REC_TXT); /*  msg already in internal Charset */
                 putMsgInArea(echo, &msg, 1, msg.attributes);
             }
             else {
-                // recoding from internal to transport charSet
+                /*  recoding from internal to transport charSet */
                 if (config->outtab != NULL) {
                     recodeToTransportCharset((CHAR*)msg.fromUserName);
                     recodeToTransportCharset((CHAR*)msg.toUserName);

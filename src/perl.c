@@ -78,10 +78,10 @@ extern "C" {
 #endif
 
 /* for alike */
-#define MAX_LDIST_LEN      40 // max word len to compair
-#define ADDITION           1  // penality for needing to add a character
-#define CHANGE             1  // penality for needing to modify a character
-#define DELETION           1  // penality for needing to delete a character
+#define MAX_LDIST_LEN      40 /*  max word len to compair */
+#define ADDITION           1  /*  penality for needing to add a character */
+#define CHANGE             1  /*  penality for needing to modify a character */
+#define DELETION           1  /*  penality for needing to delete a character */
 #define ALIKE              1
 #define NOT_ALIKE          0
 #define LENGTH_MISMATCH    32767
@@ -141,22 +141,22 @@ int l_dist_list(char *key,
       len = min(len, MAX_LDIST_LEN);
       if (abs(key_len-len) <= *threshold)
       {
-         // calculate the distance
+         /*  calculate the distance */
          l_dist = l_dist_raw(key, list[k], key_len, len);
-         // is this acceptable?
-         if (l_dist <= *threshold)        // is it in range to consider
+         /*  is this acceptable? */
+         if (l_dist <= *threshold)        /*  is it in range to consider */
          {
-            // search the list to see where we should insert this result
+            /*  search the list to see where we should insert this result */
             for (i=j=0; i<num && !j; )
                if (l_dist < dist[i])
                   j = 1;
                else
-                  i++;        // do not increment when we find a match
-            // i points to the next higher valued result if j=1, otherwise
-            // i points to the end of the list, insert at i if in range
-            // found a higher valued (worse) result or list not full
+                  i++;        /*  do not increment when we find a match */
+            /*  i points to the next higher valued result if j=1, otherwise */
+            /*  i points to the end of the list, insert at i if in range */
+            /*  found a higher valued (worse) result or list not full */
             if (j || i < match_limit-1)
-            {                             // insert in front of higher results
+            {                             /*  insert in front of higher results */
                for (j=min(match_limit-2,num-1); j>=i; j--)
                {
                   match[j+1] = match[j];
@@ -166,9 +166,9 @@ int l_dist_list(char *key,
                dist[i]  = l_dist;
                if (num < match_limit) num++;
             }
-         }  // if l_dist <= threshold
-      }  // if len diff <= threshold
-   }  // for k
+         }  /*  if l_dist <= threshold */
+      }  /*  if len diff <= threshold */
+   }  /*  for k */
    return(num);
 }
 #define SMALLEST_OF(x,y,z)       ( (x<y) ? min(x,z) : min(y,z) )
@@ -678,7 +678,7 @@ int perlscanmsg(char *area, s_message *msg)
        return 1;
      }
      else if (svchange && SvTRUE(svchange))
-     { // change
+     { /*  change */
        freeMsgBuffers(msg);
        prc = SvPV(perl_get_sv("text", FALSE), n_a);
        if (n_a == 0) prc = "";
@@ -903,7 +903,7 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      }
      svkill = perl_get_sv("kill", FALSE);
      if (svkill && SvTRUE(svkill))
-     { // kill
+     { /*  kill */
        sorig = aka2str5d(msg->origAddr);
        if (area)
          w_log(LL_PERL, "PerlFilter: Area %s from %s %s killed%s%s",
@@ -921,7 +921,7 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      }
      svchange = perl_get_sv("change", FALSE);
      if (svchange && SvTRUE(svchange))
-     { // change
+     { /*  change */
        char *ptr;
        freeMsgBuffers(msg);
        ptr = SvPV(perl_get_sv("text", FALSE), n_a);
@@ -1185,7 +1185,7 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
        return 0;
      }
      if (prc)
-     { // kill
+     { /*  kill */
        sorig = aka2str5d(msg->origAddr);
        if (areaName)
          w_log(LL_PERL, "PerlFilter: Area %s from %s %s killed: %s",
@@ -1200,7 +1200,7 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
      }
      svchange = perl_get_sv("change", FALSE);
      if (svchange && SvTRUE(svchange))
-     { // change
+     { /*  change */
        char *ptr;
        freeMsgBuffers(msg);
        ptr = SvPV(perl_get_sv("text", FALSE), n_a);

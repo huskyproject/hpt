@@ -33,15 +33,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-// changed by tobi: malloc.h is completely nonstandard and should not be
-// necessary if stdlib.h is there. if your compiler needs malloc.h, then
-// please include it by doing a #ifdef YOURCOMPILER, and don't do it like
-// below. E.g., we want to list the compilers that NEED malloc.h, not to 
-// list those that do NOT need it!
-//
-// #if !defined(__FreeBSD__) 
-// #include <malloc.h>
-// #endif
+/*  changed by tobi: malloc.h is completely nonstandard and should not be */
+/*  necessary if stdlib.h is there. if your compiler needs malloc.h, then */
+/*  please include it by doing a #ifdef YOURCOMPILER, and don't do it like */
+/*  below. E.g., we want to list the compilers that NEED malloc.h, not to  */
+/*  list those that do NOT need it! */
+/*  */
+/*  #if !defined(__FreeBSD__)  */
+/*  #include <malloc.h> */
+/*  #endif */
 
 #include <string.h>
 #include <ctype.h>
@@ -97,7 +97,7 @@ s_pktHeader *openPkt(FILE *pkt)
   memset(header, '\0', sizeof(s_pktHeader));
   header->origAddr.node = getUINT16(pkt);
   header->destAddr.node = getUINT16(pkt);
-  header->pktCreated = readPktTime(pkt); // 12 bytes
+  header->pktCreated = readPktTime(pkt); /*  12 bytes */
 
   getUINT16(pkt); /* read 2 bytes for the unused baud field */
 
@@ -114,7 +114,7 @@ s_pktHeader *openPkt(FILE *pkt)
   header->loProductCode = (UCHAR) getc(pkt);
   header->majorProductRev = (UCHAR) getc(pkt);
 
-  readPktPassword(pkt, (UCHAR *)header->pktPassword); // 8 bytes
+  readPktPassword(pkt, (UCHAR *)header->pktPassword); /*  8 bytes */
 
   header->origAddr.zone = getUINT16(pkt);
   header->destAddr.zone = getUINT16(pkt);
@@ -146,7 +146,7 @@ s_pktHeader *openPkt(FILE *pkt)
 
   if (header->origAddr.net == 65535) {
 	  if (header->origAddr.point) header->origAddr.net = header->auxNet;
-	  else header->origAddr.net = header->destAddr.net; // not in FSC !
+	  else header->origAddr.net = header->destAddr.net; /*  not in FSC ! */
   }
 
   if (header->origAddr.zone == 0) {
@@ -179,11 +179,11 @@ void correctEMAddr(s_message *msg)
    start = strrstr(msg->text, " * Origin:");
 
    if (start) {
-	   while ((*start != '\r') && (*start != '\n')) start++;  // get to end of line
+	   while ((*start != '\r') && (*start != '\n')) start++;  /*  get to end of line */
 
-	   if (*(start-1) == ')') {         // if there is no ')', there is no origin
-		   while (*(--start)!='('); // find beginning '('
-		   start++;                     // and skip it
+	   if (*(start-1) == ')') {         /*  if there is no ')', there is no origin */
+		   while (*(--start)!='('); /*  find beginning '(' */
+		   start++;                     /*  and skip it */
 		   i=0;
    
 		   while ((*start!=')') && (*start!='\r') && (*start!='\n') && (i<47)) {
@@ -199,7 +199,7 @@ void correctEMAddr(s_message *msg)
 	   }
    }
 
-   // this is really needed?
+   /*  this is really needed? */
    if (brokenOrigin) {
 	   start = strstr(msg->text, "\001PATH: ");
 	   if (start) {
@@ -223,7 +223,7 @@ void correctEMAddr(s_message *msg)
 
 void correctNMAddr(s_message *msg, s_pktHeader *header)
 {
-   char *start, *copy, *text=NULL, buffer[35]; //FIXME: static buffer
+   char *start, *copy, *text=NULL, buffer[35]; /* FIXME: static buffer */
    int valid_intl_kludge = 0;
    int zonegated = 0;
    s_addr intl_from, intl_to;
@@ -267,7 +267,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
    start = strstr(msg->text, "INTL ");
    if (start) {
       
-      start += 6;                 // skip "INTL "
+      start += 6;                 /*  skip "INTL " */
 
       while(1)
       {
@@ -367,11 +367,11 @@ void correctAddr(s_message *msg,s_pktHeader *header)
 
 		if (strncmp(msg->text+5, "NETMAIL\r",8) == 0) {
 			switch (config->kludgeAreaNetmail) {
-			case kanKill: // kill "AREA:NETMAIL\r"
+			case kanKill: /*  kill "AREA:NETMAIL\r" */
 				memmove(msg->text, msg->text+13, msg->textLength-12);
-			case kanIgnore: // process as netmail. don't touch kludge.
+			case kanIgnore: /*  process as netmail. don't touch kludge. */
 				msg->netMail = 1;
-			default: // process as echomail
+			default: /*  process as echomail */
 				break;
 			}
 		}
@@ -598,14 +598,14 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 
        unread = ftell(pkt);
        fseek(pkt, 0L, SEEK_END);
-       unread = ftell(pkt) - unread; // unread bytes
+       unread = ftell(pkt) - unread; /*  unread bytes */
 
        if (unread) {
 	   w_log(LL_ERR,"There is %d bytes of unknown data at the end of pkt file!",
 		 unread);
-	   return 2; // rename to bad
+	   return 2; /*  rename to bad */
        }
-       else return 0; // end of pkt file
+       else return 0; /*  end of pkt file */
    }
 
    msg = (s_message*) safe_malloc(sizeof(s_message));
@@ -617,14 +617,14 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    msg->destAddr.net    = getUINT16(pkt);
    msg->attributes      = getUINT16(pkt);
 
-   getc(pkt); getc(pkt);                // read unused cost fields (2bytes)
+   getc(pkt); getc(pkt);                /*  read unused cost fields (2bytes) */
 
    fgetsUntil0 (msg->datetime, 22, pkt, NULL);
    parse_ftsc_date(&tm, (char*)msg->datetime);
    make_ftsc_date((char*)msg->datetime, &tm);
 
    if (globalBuffer==NULL) {
-       globalBuffer = (UCHAR *) safe_malloc(BUFFERSIZE+1); // 128K (32K in MS-DOS)
+       globalBuffer = (UCHAR *) safe_malloc(BUFFERSIZE+1); /*  128K (32K in MS-DOS) */
    }
 
    len = fgetsUntil0 ((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
@@ -664,24 +664,24 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
        freeMsgBuffers(msg);
        *message = NULL;
        w_log(LL_ERR, "wrong msg header: renaming pkt to bad.");
-       return 2; // exit with error
+       return 2; /*  exit with error */
    }
 
 #if !defined(MSDOS)
    do {
 	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
 	   xstrcat(&msg->text, (char*)globalBuffer);
-	   msg->textLength+=len-1; // trailing \0 is not the text
+	   msg->textLength+=len-1; /*  trailing \0 is not the text */
    } while (len == BUFFERSIZE+1);
 #else
    len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
    xstrcat(&msg->text, globalBuffer);
-   msg->textLength+=len-1; // trailing \0 is not the text
+   msg->textLength+=len-1; /*  trailing \0 is not the text */
    while (len == BUFFERSIZE+1) {
-	   // skip msg text
+	   /*  skip msg text */
 	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
    }
-   // add origin, seen-by's & path
+   /*  add origin, seen-by's & path */
    origin = strrstr(globalBuffer, " * Origin");
    if (origin) {
 	   xstrscat(&msg->text, "\r", origin, NULL);
@@ -691,7 +691,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 
    correctAddr(msg, header);
    
-   // del "\001FLAGS" from message text
+   /*  del "\001FLAGS" from message text */
    if (NULL != (p=strstr(msg->text,"\001FLAGS"))) {
 	   for (q=p; *q && *q!='\r'; q++);
 	   memmove(p,q+1,msg->textLength-(q-msg->text));

@@ -84,7 +84,7 @@
 #ifdef _MSC_VER
 #ifdef DO_PERL
 #include <delayimp.h>
-// This is the failure hook, dliNotify = {dliFailLoadLib|dliFailGetProc}
+/*  This is the failure hook, dliNotify = {dliFailLoadLib|dliFailGetProc} */
 #if defined(__cplusplus)
 extern "C"
 #endif
@@ -260,7 +260,7 @@ void allDiff(char *nam, char *var, ...)
    int	ncmp, i, j;
 
    for (va_start(ap, var), ncmp = 1; va_arg(ap, char *) != NULL; ) {
-      ptr = va_arg(ap, char *); // variable may be set ti NULL
+      ptr = va_arg(ap, char *); /*  variable may be set ti NULL */
       ncmp++;
    }
 
@@ -294,12 +294,12 @@ void allDiff(char *nam, char *var, ...)
 void processConfig()
 {
    char *buff = NULL;
-//#if !defined(__OS2__) && !defined(UNIX)
-//   time_t   time_cur, locklife = 0;
-//   struct   stat stat_file;
-//#endif
-//   unsigned long pid;
-//   FILE *f;
+/* #if !defined(__OS2__) && !defined(UNIX) */
+/*    time_t   time_cur, locklife = 0; */
+/*    struct   stat stat_file; */
+/* #endif */
+/*    unsigned long pid; */
+/*    FILE *f; */
 
    setvar("module", "hpt");
    xscatprintf(&buff, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
@@ -313,8 +313,8 @@ void processConfig()
        exit(EX_UNAVAILABLE);
    }
 
-/*
-   // lock...
+#if 0
+   /*  lock... */
    if (config->lockfile!=NULL && fexist(config->lockfile)) {
 	   if ((f = fopen(config->lockfile, "rt"))==NULL) {
 		   fprintf(stderr,"Can't open file: \"%s\"\n",config->lockfile);
@@ -322,7 +322,7 @@ void processConfig()
 	   }
 	   fscanf(f, "%lu\n", &pid);
 	   fclose(f);
-	   // Checking process PID
+	   /*  Checking process PID */
 #ifdef __OS2__
       if (DosKillProcess(DKP_PROCESSTREE, pid) == ERROR_NOT_DESCENDANT) {
 #elif UNIX
@@ -343,7 +343,8 @@ void processConfig()
       }
    }
    else if (config->lockfile!=NULL) createLockFile(config->lockfile);
-*/
+#endif
+
    if (config->lockfile) {
        _lockfile = safe_strdup(config->lockfile);
        if (config->advisoryLock) {
@@ -363,7 +364,7 @@ void processConfig()
 		   exit(EX_TEMPFAIL);
 	       }
 	   }
-       } else { // normal locking
+       } else { /*  normal locking */
 	   if ((lock_fd=open(config->lockfile,
 			     O_CREAT|O_RDWR|O_EXCL,S_IREAD|S_IWRITE))<0) {
 	       fprintf(stderr,"cannot create new lock file: %s\n",config->lockfile);
@@ -374,7 +375,7 @@ void processConfig()
        }
    }
 
-   // open Logfile
+   /*  open Logfile */
    if (config->logFileDir) {
 	xstrscat(&buff, config->logFileDir, LogFileName, NULL);
 	hpt_log = openLog(buff, versionStr, config);
@@ -405,7 +406,7 @@ void processConfig()
 			 "tempOutbound", config->tempOutbound,
 			 NULL);
 
-   // load recoding tables
+   /*  load recoding tables */
    initCharsets();
    if (config->outtab) getctab(outtab, (unsigned char*) config->outtab);
    if (config->intab) getctab(intab, (unsigned char*) config->intab);
@@ -430,13 +431,13 @@ int isFreeSpace(char *path) {
 #ifdef DO_PERL
 FARPROC WINAPI ourhook(unsigned dliNotify,PDelayLoadInfo pdli)
 {
-  //print error message and exit
+  /* print error message and exit */
   char msg[128];
   memset(msg,0,sizeof(msg));
   sprintf(msg,"Loading of %s failed - exiting ",pdli->szDll);
   w_log(LL_CRIT,msg);
-  //standart deinit sequence
-  // deinit SMAPI
+  /* standart deinit sequence */
+  /*  deinit SMAPI */
   MsgCloseApi();
   w_log(LL_STOP, "End");
 
@@ -498,7 +499,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    if (rc==1){ nfree(version); nfree(versionStr); exit(EX_OK); }
    if (rc==EX_USAGE){ nfree(version); nfree(versionStr); exit(EX_USAGE); }
 
-//   if (quiet==0) fprintf(stdout, "Highly Portable Tosser %s\n", version);
+/*    if (quiet==0) fprintf(stdout, "Highly Portable Tosser %s\n", version); */
 
    if (config==NULL) processConfig();
 
@@ -511,7 +512,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 #endif
    nfree(version);
 
-   // check for free space
+   /*  check for free space */
    if (config->minDiskFreeSpace) {
 	   isFreeSpace(config->tempInbound);
 	   if (stricmp(config->msgBaseDir,"passthrough")!=0)
@@ -524,7 +525,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    }
 
    if ( initSMAPI == -1 ) {
-       // init SMAPI
+       /*  init SMAPI */
        initSMAPI = 0;
        m.req_version = 2;
        m.def_zone = (UINT16) config->addr[0].zone;
@@ -539,7 +540,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 #else
    __pfnDliFailureHook=ourhook;
 #endif
-   //attempt to start Perl
+   /* attempt to start Perl */
    PerlStart();
 #endif
 #endif
@@ -597,11 +598,11 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    if (cmQueue &  2) af_QueueUpdate();
    if (cmQueue &  4) af_QueueReport();
 
-   // save forward requests info
+   /*  save forward requests info */
    af_CloseQuery();
    nfree(msgToSysop);
 
-   // deinit SMAPI
+   /*  deinit SMAPI */
    MsgCloseApi();
 
    w_log(LL_STOP, "End");

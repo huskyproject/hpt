@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
    for (; n < argc; n++) {
       if (*argv[n] == '-' && argv[n][1]) {
          switch(argv[n][1]) {
-            case 'a':    // address
+            case 'a':    /*  address */
                switch(argv[n][2]) {
                   case 'f':
                      string2addr(argv[++n], &(msg.origAddr));
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
                      break;
                } 
                break;
-            case 'x':    // address
+            case 'x':    /*  address */
                switch(argv[n][2]) {
                   case 'f':
                      string2addr(argv[++n], &(header.origAddr));
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
                      break;
                } 
                break;
-            case 'n':    // name
+            case 'n':    /*  name */
                switch(argv[n][2]) {
                   case 't':
                      msg.toUserName = (char *) safe_malloc(strlen(argv[++n]) + 1);
@@ -136,28 +136,28 @@ int main(int argc, char *argv[])
                      break;
                }
                break;
-            case 'e':    // echo name
+            case 'e':    /*  echo name */
                area = argv[++n];
                break;
-            case 'p':    // password
+            case 'p':    /*  password */
                passwd = argv[++n];
                break;
-            case 't':    // tearline
+            case 't':    /*  tearline */
                tearl = argv[++n];
 #ifdef __NT__
                CharToOem(tearl, tearl);
 #endif
                break;
-            case 'o':    // origin
+            case 'o':    /*  origin */
                orig = argv[++n];
 #ifdef __NT__
                CharToOem(orig, orig);
 #endif
                break;
-            case 'd':    // directory
+            case 'd':    /*  directory */
                dir = argv[++n];
                break;
-            case 's':    // subject
+            case 's':    /*  subject */
                msg.subjectLine = (char *) safe_malloc(strlen(argv[++n]) + 1);
                strcpy(msg.subjectLine, argv[n]);
 #ifdef __NT__
@@ -298,13 +298,13 @@ int main(int argc, char *argv[])
       if (msg.toUserName==NULL)  xstrcat(&msg.toUserName, "All");
       if (msg.subjectLine==NULL) xstrcat(&msg.subjectLine, "(none)");
 
-      // load recoding tables
+      /*  load recoding tables */
       initCharsets();
       if (config->outtab) getctab(outtab, (unsigned char*) config->outtab);
       if (config->intab) getctab(intab, (unsigned char*) config->intab);
 
       if (config->outtab != NULL) {
-         // recoding text to TransportCharSet
+         /*  recoding text to TransportCharSet */
          recodeToTransportCharset((CHAR*)msg.text);
          recodeToTransportCharset((CHAR*)msg.subjectLine);
          recodeToTransportCharset((CHAR*)msg.fromUserName);

@@ -101,7 +101,7 @@ void  printTree (int level, int nodeNum)
 
    cnode = &allNodes [nodeNum];
 
-   if ( linksInArray <= level ) { // Allocate place for link counter in current level
+   if ( linksInArray <= level ) { /*  Allocate place for link counter in current level */
       linksInArray = level + 1;
       linksOnLevel = srealloc ( linksOnLevel, sizeof(int) * linksInArray);
    }
@@ -113,7 +113,7 @@ void  printTree (int level, int nodeNum)
       }
    }
 
-   if ( level > 0 ) linksOnLevel[level-1]--; // current node is already printed
+   if ( level > 0 ) linksOnLevel[level-1]--; /*  current node is already printed */
 
    for (i=0; i<level; i++) {
       linech = ' ';
@@ -129,7 +129,7 @@ void  printTree (int level, int nodeNum)
      printf("WARNING: Loop at %d:%d/%d, escaping thread\n", cnode->zone, cnode->net, cnode->node);
      return;
    }
-   cnode->printed = 1; // for checking for lost nodes
+   cnode->printed = 1; /*  for checking for lost nodes */
 
    for (i=0; i < nodeCount; i++) {
       if ((allNodes[i]).exportto == nodeNum) {
@@ -236,40 +236,40 @@ void buildAreaTree(s_area *area)
 		   node.printed = 0;
 		   done = 0;
 
-		   // find beginning of path lines
+		   /*  find beginning of path lines */
 		   do {
 		      start = strstr(start, "\001PATH: ");
 		      if (start == NULL) done++;
 
 		      if (!done) {
-			 start += 7; // jump over PATH:
-			 while (*start == ' ') start++; // find first word after PATH:
+			 start += 7; /*  jump over PATH: */
+			 while (*start == ' ') start++; /*  find first word after PATH: */
 		      }
 		   } while (!done && !isdigit( (int) *start));
 		   if (!done) {
 		      token = strtok(start, " \r\t\376");
 		      while (token != NULL && !done) {
 			 if (isdigit( (int) *token)) {
-			    // parse token
+			    /*  parse token */
 			    temp = strtoul(token, &endptr, 10);
 
-			    if ((*endptr) == ':') { // zone
+			    if ((*endptr) == ':') { /*  zone */
 			       node.zone = temp;
 			       endptr++;
 			       temp = strtoul(endptr, &endptr, 10);
 			    }
 
-			    if ((*endptr) == '/') { // net
+			    if ((*endptr) == '/') { /*  net */
 			       node.net = temp;
 			       endptr++;
 			       temp = strtoul(endptr, &endptr, 10);
 			    }
 			    if (*endptr) fprintf (outlog, "POINT or bad address in PATH: in message %d\n", nmsg);
 
-			    // only node aka
+			    /*  only node aka */
 			    node.node = temp;
 
-			    // find if there where that node in array
+			    /*  find if there where that node in array */
 			    for ( found=0, i=0, cnode=allNodes; i < nodeCount && !found; i++, cnode++) {
 			      if ( cnode->node == node.node &&
 				   cnode->net  == node.net  &&
@@ -285,12 +285,12 @@ void buildAreaTree(s_area *area)
 			       *cnode = node;
 			    }
 
-			    i--; // was incremented in 'for' & in prev. 'if'
+			    i--; /*  was incremented in 'for' & in prev. 'if' */
 
 			    if (prevNode >= 0 && prevNode != i) (allNodes[prevNode]).exportto = i;
 			    prevNode = i;
 			 } else
-			     if (strchr(" \r\t\376", *token)==NULL && strncmp(token, "\001PATH:", 6)!=0) done++; // something's wrong
+			     if (strchr(" \r\t\376", *token)==NULL && strncmp(token, "\001PATH:", 6)!=0) done++; /*  something's wrong */
 			 token = strtok(NULL, " \r\t\376");
 		      }
 		      if (root < 0) root = i;
@@ -303,7 +303,7 @@ void buildAreaTree(s_area *area)
 	   MsgCloseArea(harea);
 
 
-	   // printing tree
+	   /*  printing tree */
 	   if (nodeCount > 0)
 	      printTree (0, root);
 	   else
@@ -375,7 +375,7 @@ int main(int argc, char **argv) {
 		exit(EX_USAGE);
 	  }
      } else {
-       // AreaName(s) specified by args
+       /*  AreaName(s) specified by args */
        nareas++;
        argareas = (char **)srealloc ( argareas, nareas*sizeof(char *));
        argareas[nareas-1] = argv[i];
@@ -398,13 +398,13 @@ int main(int argc, char **argv) {
 
    if ( argareas )
    {
-     // link only specified areas
+     /*  link only specified areas */
 
      for ( j=0; j<nareas; j++) {
 
 	found=0;
 
-	// EchoAreas
+	/*  EchoAreas */
 	for (i=0; i < cfg->echoAreaCount && !found; i++) {
 	   if (stricmp(cfg->echoAreas[i].areaName, argareas[j])==0){
 	      buildAreaTree(&(cfg->echoAreas[i]));
@@ -417,7 +417,7 @@ int main(int argc, char **argv) {
 
    } else {
 
-	 // EchoAreas
+	 /*  EchoAreas */
 	 for (i=0; i < cfg->echoAreaCount; i++) buildAreaTree(&(cfg->echoAreas[i]));
 
    }

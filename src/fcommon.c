@@ -92,7 +92,7 @@ void writeDupeFiles(void)
 {
 	unsigned i;
 
-	// write dupeFiles
+	/*  write dupeFiles */
 	for (i = 0 ; i < config->echoAreaCount; i++) {
 		writeToDupeFile(&(config->echoAreas[i]));
 		freeDupeMemory(&(config->echoAreas[i]));
@@ -178,7 +178,7 @@ int fileNameAlreadyUsed(char *pktName, char *packName) {
 static char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
 
 void cleanEmptyBundles(char *pathName, int npos, char *wday)
-// Removing old empty bundles when bundleNameStyle == addDiff
+/*  Removing old empty bundles when bundleNameStyle == addDiff */
 {
    char           *ptr, *tmpfile, *pattern, savech;
    DIR            *dir;
@@ -194,10 +194,10 @@ void cleanEmptyBundles(char *pathName, int npos, char *wday)
    tmpfile = safe_malloc(pathlen);
 
    strcpy(tmpfile, pathName);
-   savech = tmpfile[npos-1]; // there must be path delimiter
+   savech = tmpfile[npos-1]; /*  there must be path delimiter */
    tmpfile[npos-1] = '\0';
 
-   if(!(dir = opendir(tmpfile))) { // nothing to clean
+   if(!(dir = opendir(tmpfile))) { /*  nothing to clean */
       nfree(tmpfile);
       return;
    }
@@ -220,7 +220,7 @@ void cleanEmptyBundles(char *pathName, int npos, char *wday)
 
 		   if (stat(tmpfile, &stbuf) == 0 && stbuf.st_size == 0) {
 
-				   remove (tmpfile); // old empty bundle
+				   remove (tmpfile); /*  old empty bundle */
 		   }
 	   }
    }
@@ -233,10 +233,10 @@ void cleanEmptyBundles(char *pathName, int npos, char *wday)
 
 int createTempPktFileName(s_link *link)
 {
-    char *fileName=NULL; // pkt file in tempOutbound
-    char *pfileName=NULL; // name of the arcmail bundle
-    char *tmp=NULL; // temp name of the arcmail bundle
-    char *tmp2=NULL;    //temp string
+    char *fileName=NULL; /*  pkt file in tempOutbound */
+    char *pfileName=NULL; /*  name of the arcmail bundle */
+    char *tmp=NULL; /*  temp name of the arcmail bundle */
+    char *tmp2=NULL;    /* temp string */
     time_t aTime = time(NULL);  /* get actual time */
     int counter, minFreeExt, npos;
     char limiter=PATH_DELIM;
@@ -286,7 +286,7 @@ int createTempPktFileName(s_link *link)
     if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
     else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
 	
-    // fileBoxes support
+    /*  fileBoxes support */
     if (needUseFileBoxForLink(config,link)) {
 	if (!link->fileBox) link->fileBox = makeFileBoxName (config,link);
 	xstrcat(&tmp, link->fileBox);
@@ -294,19 +294,19 @@ int createTempPktFileName(s_link *link)
     } else {
 	xstrcat(&tmp, config->outbound);
 
-	// add suffix for other zones
+	/*  add suffix for other zones */
 	if (link->hisAka.zone != config->addr[0].zone && bundleNameStyle != eAmiga) {
 		tmp[strlen(tmp)-1]='\0';
 		xscatprintf(&tmp, ".%03x%c", link->hisAka.zone, limiter);
 	}
 
-	// path to bundle
+	/*  path to bundle */
 	if (bundleNameStyle!=eAmiga) {
 		if (link->hisAka.point)
 			xscatprintf(&tmp, "%04x%04x.pnt%c",
 						link->hisAka.net, link->hisAka.node, limiter);
 
-		// separate bundles
+		/*  separate bundles */
 		if (config->separateBundles) {
 			if (link->hisAka.point) xscatprintf(&tmp, "%08x.sep%c",
 							link->hisAka.point, limiter);
@@ -315,7 +315,7 @@ int createTempPktFileName(s_link *link)
 		}
 	}
 
-    } // link->fileBox
+    } /*  link->fileBox */
 
     npos = strlen(tmp);
 
@@ -364,7 +364,7 @@ int createTempPktFileName(s_link *link)
 			if (stat(pfileName, &stbuf) == 0) {
 
 				if (tr - stbuf.st_mtime < 60*60*48) {
-					// today's bundle
+					/*  today's bundle */
 					counter = i+1;
 					if (stbuf.st_size==0 && (counter<numExt ||
       					    bundleNameStyle==eAddrDiffAlways ||
@@ -372,7 +372,7 @@ int createTempPktFileName(s_link *link)
       					    bundleNameStyle==eAmiga))
 					   remove (pfileName);
 				} else {
-					// old bundle
+					/*  old bundle */
 					if (stbuf.st_size == 0)	remove (pfileName);
 					else counter = i+1;
 				}
@@ -394,7 +394,7 @@ int createTempPktFileName(s_link *link)
 				nfree(fileName);
 				nfree(pfileName);
 				nfree(tmp);
-				// Switch link to TimeStamp style
+				/*  Switch link to TimeStamp style */
 				link->linkBundleNameStyle = eTimeStamp;
 				i = createTempPktFileName(link);
 				return i;
@@ -523,7 +523,7 @@ int createTempPktFileName(s_link *link)
     link->pktFile = filename;
     return 0;
 }
-// this function moved to smapi has name _createDirectoryTree
+/*  this function moved to smapi has name _createDirectoryTree */
 int createDirectoryTree(const char *pathName) {
    char *start, *slash;
 
@@ -541,11 +541,11 @@ int createDirectoryTree(const char *pathName) {
    slash = start;
 
 #ifndef UNIX
-   // if there is a drivename, jump over it
+   /*  if there is a drivename, jump over it */
    if (slash[1] == ':') slash += 2;
 #endif
 
-   // jump over first limiter
+   /*  jump over first limiter */
    slash++;
 
    while ((slash = strchr(slash, limiter)) != NULL) {
@@ -553,7 +553,7 @@ int createDirectoryTree(const char *pathName) {
 
       if (!direxist(start)) {
          if (!fexist(start)) {
-            // this part of the path does not exist, create it
+            /*  this part of the path does not exist, create it */
             if (mymkdir(start) != 0) {
                w_log(LL_ERR, "Could not create directory %s", start);
                nfree(start);
@@ -614,8 +614,8 @@ char *safe_strdup(const char *src)
 }
 
 int isValidConference(const char *s) {
-    // according to FSC-0074 with lowercase symbols
-    // lowercase symbols only for internal use
+    /*  according to FSC-0074 with lowercase symbols */
+    /*  lowercase symbols only for internal use */
     while (*s) {
 	if ( !(*s >= 33 && *s <= 126) ) return 0;
 	s++;

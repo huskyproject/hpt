@@ -84,7 +84,7 @@ void cvtAddr(const NETADDR aka1, s_addr *aka2)
 
 void convertMsgHeader(XMSG xmsg, s_message *msg)
 {
-   // convert header
+   /*  convert header */
    msg->attributes  = xmsg.attr;
 
    msg->origAddr.zone  = xmsg.orig.zone;
@@ -102,14 +102,14 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
    xstrcat(&(msg->toUserName), (char *) xmsg.to);
    xstrcat(&(msg->fromUserName), (char *) xmsg.from);
 
-   // recoding subjectLine to TransportCharset
+   /*  recoding subjectLine to TransportCharset */
    if (config->outtab != NULL) {
        recodeToTransportCharset((CHAR*)msg->subjectLine);
        recodeToTransportCharset((CHAR*)msg->fromUserName);
        recodeToTransportCharset((CHAR*)msg->toUserName);
    }
 
-   // set netmail flag
+   /*  set netmail flag */
    msg->netMail = 1;
 }
 
@@ -118,7 +118,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg)
    UCHAR   *ctrlBuff;
    UINT32  ctrlLen;
 
-   // get kludge lines
+   /*  get kludge lines */
    ctrlLen = MsgGetCtrlLen(SQmsg);
    ctrlBuff = (unsigned char *) safe_malloc(ctrlLen+1);
    MsgReadMsg(SQmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
@@ -127,8 +127,8 @@ void convertMsgText(HMSG SQmsg, s_message *msg)
    msg->text = (char *) CvtCtrlToKludge(ctrlBuff);
    nfree(ctrlBuff);
 
-   // make text
-   msg->textLength = MsgGetTextLen(SQmsg); // including zero termination???
+   /*  make text */
+   msg->textLength = MsgGetTextLen(SQmsg); /*  including zero termination??? */
 
    ctrlLen = strlen(msg->text);
    xstralloc(&(msg->text), msg->textLength + ctrlLen);
@@ -138,7 +138,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg)
    msg->text[msg->textLength+ctrlLen] = '\0';
    msg->textLength += ctrlLen-1;
 
-   // recoding text to TransportCharSet
+   /*  recoding text to TransportCharSet */
    if (config->outtab != NULL) recodeToTransportCharset((CHAR*)msg->text);
 }
 
@@ -183,7 +183,7 @@ void makePktHeader(s_link *link, s_pktHeader *header)
    header->majorProductRev = (UCHAR)VER_MAJOR;
    header->hiProductCode   = 0;
    header->loProductCode   = 0xfe;
-   memset(header->pktPassword, '\0', sizeof(header->pktPassword)); // no password
+   memset(header->pktPassword, '\0', sizeof(header->pktPassword)); /*  no password */
    if (link != NULL && link->pktPwd != NULL) {
       if (strlen(link->pktPwd) > 8)
          strncpy(header->pktPassword, link->pktPwd, 8);
@@ -205,12 +205,12 @@ static s_route *findSelfRouteForNetmail(s_message msg)
 		msg.destAddr.node, msg.destAddr.point);
 
     for (i=0; i < config->routeCount; i++) {
-	if ((msg.attributes & MSGFILE) == MSGFILE) { // routeFile
+	if ((msg.attributes & MSGFILE) == MSGFILE) { /*  routeFile */
 	    if (config->route[i].id == id_routeFile)
 		if (patmat(addrStr, config->route[i].pattern))
 		    break;
 	} else {
-	    if (config->route[i].id != id_routeFile) // route & routeMail
+	    if (config->route[i].id != id_routeFile) /*  route & routeMail */
 		if (patmat(addrStr, config->route[i].pattern))
 		    break;
 	}
@@ -324,7 +324,7 @@ void processAttachs(s_link *link, s_message *msg, unsigned int attr)
       fclose(flo);
    } else w_log(LL_ERR, "Could not open FloFile");
 
-   // replace subjectLine
+   /*  replace subjectLine */
    nfree(msg->subjectLine);
    msg->subjectLine = newSubjectLine;
 }
@@ -341,7 +341,7 @@ void processRequests(s_link *link, s_message *msg)
    token = strseparate(&running, " \t");
 
    while (token != NULL) {
-     if (flo != NULL) fprintf(flo, "%s\015\012", token); // #13#10 to create dos LFCR which ends a line
+     if (flo != NULL) fprintf(flo, "%s\015\012", token); /*  #13#10 to create dos LFCR which ends a line */
 
       token = strseparate(&running, " \t");
    }
@@ -379,40 +379,40 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 	return 0;
    }
 #endif
-   // clear trs, local & k/s flags
+   /*  clear trs, local & k/s flags */
    msg.attributes &= ~(MSGFWD|MSGLOCAL|MSGKILL);
 
-   // prepare virtual link...
-   virtualLink = getLinkFromAddr(config, msg.destAddr);  //maybe the link is in config?
+   /*  prepare virtual link... */
+   virtualLink = getLinkFromAddr(config, msg.destAddr);  /* maybe the link is in config? */
    if (virtualLink == NULL) {
-      virtualLink = safe_malloc(sizeof(s_link));  // if not create new virtualLink link
+      virtualLink = safe_malloc(sizeof(s_link));  /*  if not create new virtualLink link */
       memset(virtualLink, '\0', sizeof(s_link));
       virtualLink->hisAka = msg.destAddr;
       virtualLink->ourAka = &(msg.origAddr);
       virtualLink->name = (char *) safe_malloc(strlen(msg.toUserName)+1);
       strcpy(virtualLink->name, msg.toUserName);
-      freeVirtualLink = 1;  //virtualLink is a temporary link, please free it..
+      freeVirtualLink = 1;  /* virtualLink is a temporary link, please free it.. */
    }
 
-   // calculate prio
+   /*  calculate prio */
    if ((xmsg->attr & MSGCRASH)==MSGCRASH) prio = crash;
    if ((xmsg->attr & MSGHOLD)==MSGHOLD) prio = hold;
    if ((xmsg->attr & MSGXX2)==MSGXX2 ||
 	   ((xmsg->attr & MSGHOLD)==MSGHOLD &&
-		(xmsg->attr & MSGCRASH)==MSGCRASH)) prio = direct; // XX2 or Crash+Hold
+		(xmsg->attr & MSGCRASH)==MSGCRASH)) prio = direct; /*  XX2 or Crash+Hold */
    if (msg.text) {
 	   flags = (char *) GetCtrlToken((byte *)msg.text,(byte *)"FLAGS");
 	   if (flags) {
 		   if (strstr(flags,"DIR")!=NULL) prio = direct;
-		   if (strstr(flags,"IMM")!=NULL) prio = immediate; // most priority
+		   if (strstr(flags,"IMM")!=NULL) prio = immediate; /*  most priority */
 		   nfree(flags);
 	   }
    }
 
    if ((xmsg->attr & MSGFILE) == MSGFILE) {
-       // file attach
+       /*  file attach */
 	
-       // we need route mail
+       /*  we need route mail */
        if (prio==normal) {
 	   route = findRouteForNetmail(msg);
 	   link = getLinkForRoute(route, &msg);
@@ -422,7 +422,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   processAttachs(link, &msg, xmsg->attr);
 		   remove(link->bsyFile);
 		   nfree(link->bsyFile);
-		   // mark Mail as sent
+		   /*  mark Mail as sent */
 		   xmsg->attr |= MSGSENT;
 		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 		   nfree(link->floFile);
@@ -434,7 +434,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   processAttachs(virtualLink, &msg, xmsg->attr);
 		   remove(virtualLink->bsyFile);
 		   nfree(virtualLink->bsyFile);
-		   // mark Mail as sent
+		   /*  mark Mail as sent */
 		   xmsg->attr |= MSGSENT;
 		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 		   nfree(virtualLink->floFile);
@@ -442,14 +442,14 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 	   }
    } /* endif file attach */
 
-   // file requests always direct
+   /*  file requests always direct */
    if ((xmsg->attr & MSGFRQ) == MSGFRQ) {
-	   // if msg has request flag then put the subjectline into request file.
+	   /*  if msg has request flag then put the subjectline into request file. */
 	   if (createOutboundFileName(virtualLink, normal, REQUEST) == 0) {
 		   processRequests(virtualLink, &msg);
 		   remove(virtualLink->bsyFile);
 		   nfree(virtualLink->bsyFile);
-		   // mark Mail as sent
+		   /*  mark Mail as sent */
 		   xmsg->attr |= MSGSENT;
 		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 		   nfree(virtualLink->floFile);
@@ -459,9 +459,9 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 
    w_log(LL_DEBUGB, "%s::%u Msg from %u:%u/%u.%u to %u:%u/%u.%u",__FILE__,__LINE__, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point );
 
-   // no route
+   /*  no route */
    if (prio!=normal || (xmsg->attr & MSGFRQ)==MSGFRQ) {
-	   // direct, crash, immediate, hold messages
+	   /*  direct, crash, immediate, hold messages */
            if (virtualLink->arcNetmail &&
                prio == virtualLink->echoMailFlavour) {
                    arcNetmail = 1;
@@ -494,12 +494,12 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		         nfree(virtualLink->bsyFile);
 		         nfree(virtualLink->floFile);
                    }
-		   // mark Mail as sent
+		   /*  mark Mail as sent */
 		   xmsg->attr |= MSGSENT;
 		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 	   }
    } else {
-           // no crash, no hold flag -> route netmail
+           /*  no crash, no hold flag -> route netmail */
 	   route = findRouteForNetmail(msg);
 	   link = getLinkForRoute(route, &msg);
 
@@ -538,7 +538,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 			        nfree(link->bsyFile);
 			        nfree(link->floFile);
                            }
-			   // mark Mail as sent
+			   /*  mark Mail as sent */
 			   xmsg->attr |= MSGSENT;
 			   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 		   }
@@ -548,7 +548,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 	   }
    }
 
-   // process carbon copy
+   /*  process carbon copy */
    if (config->carbonOut) carbonCopy(&msg, xmsg, area);
 
    freeMsgBuffers(&msg);
@@ -575,12 +575,12 @@ void scanNMArea(s_area *area)
    int             for_us, from_us;
    FILE            *f = NULL;
 
-   // do not scan one area twice
+   /*  do not scan one area twice */
    if (area->scn) return;
 
    if (config->routeCount == 0) {
        w_log(LL_ROUTE, "No routing -> Scanning stop");
-       // create flag for netmail trackers
+       /*  create flag for netmail trackers */
        if (config->netmailFlag) {
 	   if (NULL == (f = fopen(config->netmailFlag,"a")))
 	       w_log(LL_ERR, "Could not create netmail flag: %s", config->netmailFlag);
@@ -607,11 +607,11 @@ void scanNMArea(s_area *area)
        i = (noHighWaters) ? 0 : MsgGetHighWater(netmail);
        highestMsg = MsgGetNumMsg(netmail);
 
-       // scan all Messages and test if they are already sent.
+       /*  scan all Messages and test if they are already sent. */
        while (i < highestMsg) {
 	   msg = MsgOpenMsg(netmail, MOPEN_RW, ++i);
 
-	   // msg does not exist
+	   /*  msg does not exist */
 	   if (msg == NULL) continue;
 	   statScan.msgs++;
 
@@ -625,7 +625,7 @@ void scanNMArea(s_area *area)
        {
            if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
        }
-       // if not sent and not for us -> pack it
+       /*  if not sent and not for us -> pack it */
        if (((xmsg.attr & MSGSENT) != MSGSENT) &&
            ((xmsg.attr & MSGLOCKED) != MSGLOCKED) &&
            (for_us==0))
@@ -643,10 +643,10 @@ void scanNMArea(s_area *area)
 	   for (j=0; j < config->addrCount; j++)
 	       if (addrComp(orig, config->addr[j])==0) {from_us = 1; break;}
 
-	   //  non transit messages without k/s flag not killed
+	   /*   non transit messages without k/s flag not killed */
 	   if (!(xmsg.attr & MSGKILL) && !(xmsg.attr & MSGFWD)) from_us = 1;
 
-	   // transit messages from us will be killed
+	   /*  transit messages from us will be killed */
 	   if (from_us && (xmsg.attr & MSGFWD)) from_us = 0;
 
 	   if (((!for_us && !from_us) || (xmsg.attr&MSGKILL)) && (xmsg.attr&MSGSENT)) {
@@ -703,7 +703,7 @@ int scanByName(char *name) {
 	scanNMArea(area);
 	return 1;
     } else {
-	// maybe it's echo area
+	/*  maybe it's echo area */
 	area = getEchoArea(config, name);
 	if (area != &(config->badArea)) {
 	    if (area && area->msgbType != MSGTYPE_PASSTHROUGH &&
@@ -737,7 +737,7 @@ void scanExport(int type, char *str) {
 
     w_log( LL_FUNC, "scanExport() begin" );
 
-    // zero statScan
+    /*  zero statScan */
     memset(&statScan, '\0', sizeof(s_statScan));
     w_log(LL_START, "Start %s%s...",
         type & SCN_ECHOMAIL ? "scanning" : "packing",
@@ -787,7 +787,7 @@ void scanExport(int type, char *str) {
             return;
         }
         if (type & SCN_ECHOMAIL) {
-            // if echotoss file does not exist scan all areas
+            /*  if echotoss file does not exist scan all areas */
             w_log(LL_START, "EchoTossLogFile not found -> Scanning all areas.");
             for (i = 0; i< config->echoAreaCount; i++) {
                 if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
@@ -801,7 +801,7 @@ void scanExport(int type, char *str) {
             }
         };
     } else {
-        // else scan only those areas which are listed in the file
+        /*  else scan only those areas which are listed in the file */
         w_log(LL_START, "EchoTossLogFile found -> Scanning only listed areas");
 
         while (!feof(f)) {
@@ -811,7 +811,7 @@ void scanExport(int type, char *str) {
                 if (*line && line[strlen(line)-1] == '\r')
                     line[strlen(line)-1] = '\0';  /* fix for DOSish echotoss.log */
                 striptwhite(line);
-                if (!ftmp) { // the same as if(config->packNetMailOnScan) {
+                if (!ftmp) { /*  the same as if(config->packNetMailOnScan) { */
                     scanByName(line);
                 } else {
                     /* exclude NetmailAreas in echoTossLogFile */
@@ -842,11 +842,11 @@ void scanExport(int type, char *str) {
             memset(&st, 0, sizeof(st));
             stat(tmplogname, &st);
             if (type & SCN_ALL) {
-                if (st.st_size == 0) { // all entries was processed
+                if (st.st_size == 0) { /*  all entries was processed */
                     remove(config->echotosslog);
                     if (remove(tmplogname) != 0)
                         w_log(LL_ERR, "Couldn't remove temporary file\"%s\"", tmplogname);
-                } else { // we still have areas
+                } else { /*  we still have areas */
                     remove(config->echotosslog);
                     if (rename(tmplogname, config->echotosslog) != 0)
                         w_log(LL_ERR, "Couldn't rename \"%s\" -> \"%s\"", tmplogname, config->echotosslog);

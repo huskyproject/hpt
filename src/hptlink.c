@@ -137,9 +137,9 @@ char *skipReSubj ( char *subjstr )
 int cmpMsgIdReply (register char *str1, register char *str2)
 {
     while (*str1==*str2 && *str1) {
-	if (*str1=='@') while (*str1 && *str1!=' ') str1++; // skip domain
+	if (*str1=='@') while (*str1 && *str1!=' ') str1++; /*  skip domain */
 	if (*str1) str1++;
-	if (*str2=='@') while (*str2 && *str2!=' ') str2++; // skip domain
+	if (*str2=='@') while (*str2 && *str2!=' ') str2++; /*  skip domain */
 	if (*str2) str2++;
     }
     if (*str1=='\0' && *str2=='\0') return 0;
@@ -157,7 +157,7 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
         return;
     }
 
-    if (maxreply == MAX_REPLY) { // Squish
+    if (maxreply == MAX_REPLY) { /*  Squish */
       if (crepl -> freeReply >= maxreply)
       {
         w_log( LL_WARN, "replies count for msg %ld exceeds %d, rest of the replies won't be linked", (long)j, maxreply);
@@ -168,7 +168,7 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
           srepl -> replyToPos = crepl->msgPos;
       }
 
-    } else { // Jam, maybe something else?
+    } else { /*  Jam, maybe something else? */
 
         if(srepl -> replyToPos) {
            w_log( LL_WARN, "Thread linking broken because of dupes");
@@ -225,9 +225,9 @@ static char *GetCtrlValue (char *ctl, char *kludge)
    memcpy(out, value, (size_t) (end - value));
    out[(size_t) (end - value)] = '\0';
 
-   // fix for upper case msgids
+   /*  fix for upper case msgids */
    strLower(out);
-   // remove .0 from node address
+   /*  remove .0 from node address */
    if (NULL!=(p=strstr(out,".0 "))) memmove(p,p+2,strlen(p+2)+1);
 
    return out;
@@ -345,7 +345,7 @@ void linkArea(s_area *area)
 
                  crepl->msgPos = MsgMsgnToUid(harea, i);
 
-		 // Save data for comparing
+		 /*  Save data for comparing */
                  if (area->msgbType & MSGTYPE_JAM || area->msgbType & MSGTYPE_SDM) {
                     linksptr->reply1st = xmsg.xmreply1st;
                     linksptr->replyNxt = xmsg.xmreplynext;
@@ -413,11 +413,11 @@ void linkArea(s_area *area)
 		       replFound++;
 		       links_msgid++;
 
-		       if ( ! crepl -> treeId ) { // *crepl isn't linked
-			  if (srepl -> treeId ) { // *srepl linked already
+		       if ( ! crepl -> treeId ) { /*  *crepl isn't linked */
+			  if (srepl -> treeId ) { /*  *srepl linked already */
 			     crepl -> treeId = srepl -> treeId;
 			  } else {
-                             crepl -> treeId = i; // top of new tree
+                             crepl -> treeId = i; /*  top of new tree */
 			  }
 		       }
 		       srepl -> treeId = crepl -> treeId;
@@ -438,11 +438,11 @@ void linkArea(s_area *area)
 			  replFound++;
 			  links_replid++;
 
-			  if ( ! crepl -> treeId ) { // *crepl isn't linked
-			      if (srepl -> treeId ) { // *srepl linked already
+			  if ( ! crepl -> treeId ) { /*  *crepl isn't linked */
+			      if (srepl -> treeId ) { /*  *srepl linked already */
 				  crepl -> treeId = srepl -> treeId;
 			      } else {
-				  crepl -> treeId = i; // top of new tree
+				  crepl -> treeId = i; /*  top of new tree */
 			      }
 			  }
 			  srepl -> treeId = crepl -> treeId;
@@ -456,11 +456,11 @@ void linkArea(s_area *area)
 			  replFound++;
 			  links_revmsgid++;
 
-		       if ( ! crepl -> treeId ) { // *crepl isn't linked
-			  if (srepl -> treeId ) { // *srepl linked already
+		       if ( ! crepl -> treeId ) { /*  *crepl isn't linked */
+			  if (srepl -> treeId ) { /*  *srepl linked already */
 			     crepl -> treeId = srepl -> treeId;
 			  } else {
-                             crepl -> treeId = i; // top of new tree
+                             crepl -> treeId = i; /*  top of new tree */
 			  }
 		       }
 		       srepl -> treeId = crepl -> treeId;
@@ -482,11 +482,11 @@ void linkArea(s_area *area)
 		       replFound++;
 		       links_subj++;
 
-		       if ( ! crepl -> treeId ) { // *crepl isn't linked
-			  if (srepl -> treeId ) { // *srepl linked already
+		       if ( ! crepl -> treeId ) { /*  *crepl isn't linked */
+			  if (srepl -> treeId ) { /*  *srepl linked already */
 			     crepl -> treeId = srepl -> treeId;
 			  } else {
-                             crepl -> treeId = i; // top of new tree
+                             crepl -> treeId = i; /*  top of new tree */
 			  }
 		       }
 		       srepl -> treeId = crepl -> treeId;
@@ -510,7 +510,7 @@ void linkArea(s_area *area)
 	   for (i = 1, crepl=replmap; i <= highMsg && treeLinks; i++, crepl++) {
 	      if ( crepl->replyToPos == 0 && crepl->freeReply == 0 &&
                    crepl->treeId && i != crepl->treeId ) {
-		 // Link unlinked message
+		 /*  Link unlinked message */
 
 		 linkTo = (replmap[crepl -> treeId -1 ]).treeId;
 		 if (linkTo > highMsg || linkTo <= 0 ) {
@@ -520,7 +520,7 @@ void linkArea(s_area *area)
 		    exit(EX_SOFTWARE);
 		 }
 
-                 if (maxreply == MAX_REPLY) { // Find place to put link for Squish
+                 if (maxreply == MAX_REPLY) { /*  Find place to put link for Squish */
                     while ( (replmap[linkTo-1]).freeReply >= maxreply) {
                        linkTo = MsgUidToMsgn(harea,(replmap[linkTo-1]).replies[0], UID_EXACT );
                        if (linkTo > highMsg || linkTo <= 0 ) {
@@ -532,7 +532,7 @@ void linkArea(s_area *area)
                     }
                  }
 		 linkMsgs ( &(replmap[linkTo-1]), crepl, linkTo, i , replmap );
-		 (replmap[crepl -> treeId - 1]).treeId = i; // where to link next message
+		 (replmap[crepl -> treeId - 1]).treeId = i; /*  where to link next message */
 		 treeLinks--;
 	      }
 	   }
@@ -562,7 +562,7 @@ void linkArea(s_area *area)
 		    }
                  }
 
-              } else { // Not Jam
+              } else { /*  Not Jam */
 
                  if ((linksptr->replyToPos != crepl->replyToPos) ||
                      memcmp(linksptr->replies, crepl->replies, sizeof(UMSGID) * maxreply)) {
@@ -680,7 +680,7 @@ int main(int argc, char **argv) {
 		exit(EX_USAGE);
 	  }
      } else {
-       // AreaName(s) specified by args
+       /*  AreaName(s) specified by args */
        nareas++;
        argareas = (char **)srealloc ( argareas, nareas*sizeof(char *));
        argareas[nareas-1] = argv[i];
@@ -713,14 +713,14 @@ int main(int argc, char **argv) {
 
    if ( argareas )
    {
-     // link only specified areas
+     /*  link only specified areas */
      w_log(LL_LINKING, "Link areas specified by args");
 
      for ( j=0; j<nareas; j++) {
 
 	found=0;
 
-	// EchoAreas
+	/*  EchoAreas */
 	for (i=0, area=cfg->echoAreas;
 	     i < cfg->echoAreaCount && !found;
 	     i++, area++) {
@@ -733,7 +733,7 @@ int main(int argc, char **argv) {
 	    }
 	}
 
-	// Local Areas
+	/*  Local Areas */
 	for (i=0, area=cfg->localAreas;
 	     i < cfg->localAreaCount && !found;
 	     i++, area++) {
@@ -746,7 +746,7 @@ int main(int argc, char **argv) {
 	    }
 	}
 
-	// NetMail areas
+	/*  NetMail areas */
 	for (i=0, area=cfg->netMailAreas;
 	     i < cfg->netMailAreaCount && !found;
 	     i++, area++) {
@@ -778,7 +778,7 @@ int main(int argc, char **argv) {
 	    if (line) {
 
 	       found=0;
-	       // EchoAreas
+	       /*  EchoAreas */
 	       for (i=0, area=cfg->echoAreas;
 		    i < cfg->echoAreaCount && !found;
 		    i++, area++) {
@@ -790,7 +790,7 @@ int main(int argc, char **argv) {
 		       found++;
 		   }
 	       }
-	       // Local Areas
+	       /*  Local Areas */
 	       for (i=0, area=cfg->localAreas;
 		    i < cfg->localAreaCount && !found;
 		    i++, area++) {
@@ -803,7 +803,7 @@ int main(int argc, char **argv) {
 		   }
 	       }
 
-	       // NetMail areas
+	       /*  NetMail areas */
 	       for (i=0, area=cfg->netMailAreas;
 		    i < cfg->netMailAreaCount && !found;
 		    i++, area++) {
@@ -824,17 +824,17 @@ int main(int argc, char **argv) {
 	 fclose(f);
 	 if (cfg->LinkWithImportlog == lwiKill) remove(cfg->importlog);
       } else {
-	 // importlog does not exist link all areas
+	 /*  importlog does not exist link all areas */
 	 w_log(LL_INFO, "No ImportLog file, linking all Areas");
 
-	 // NetMails
+	 /*  NetMails */
 	 for (i = 0; i < cfg -> netMailAreaCount; i++)
 	    linkArea (&(cfg->netMailAreas[i]));
 
-	 // EchoAreas
+	 /*  EchoAreas */
 	 for (i=0; i < cfg->echoAreaCount; i++) linkArea(&(cfg->echoAreas[i]));
 
-	 // Local Areas
+	 /*  Local Areas */
 	 for (i=0; i < cfg->localAreaCount; i++) linkArea(&(cfg->localAreas[i]));
       }
    }

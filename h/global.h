@@ -39,21 +39,21 @@
 
 extern int initSMAPI;
 
-// variables for config statements
+/*  variables for config statements */
 
 extern s_fidoconfig *config;
 extern char         *cfgFile;
 
-// vriable for current tossing dir
+/*  vriable for current tossing dir */
 extern char *tossDir;
 
-// var for linkAreas() argument
+/*  var for linkAreas() argument */
 extern char *linkName;
 
-// buffer for msg->text
+/*  buffer for msg->text */
 extern UCHAR *globalBuffer;
 
-// variables for commandline statements
+/*  variables for commandline statements */
 
 extern int       cmToss;
 extern int       cmScan;
@@ -63,7 +63,7 @@ extern int       cmAfix;
 extern int       cmPause;
 extern int       cmQueue;
 extern int       noHighWaters;
-extern int       pkt_count; // pkt counter
+extern int       pkt_count; /*  pkt counter */
 extern int       pkt_aTime;
 extern int   	  quiet;
 

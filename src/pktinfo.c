@@ -99,7 +99,7 @@ int displayPkt(char *name, int showHeader, int showText)
       
       nfree(msg);
    } /* endwhile */
-   nfree(globalBuffer); // free msg->text global buffer
+   nfree(globalBuffer); /*  free msg->text global buffer */
 
    nfree(header);
    fclose(pkt);

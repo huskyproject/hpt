@@ -67,7 +67,7 @@ be cleared.
 #include <global.h>
 #include <fcommon.h>
 
-#define MAX_INCORE	10000	// if more messages, do not link incore
+#define MAX_INCORE	10000	/*  if more messages, do not link incore */
 
 dword Jam_Crc32(unsigned char* buff, dword len);
 char *Jam_GetKludge(HAREA jm, dword msgnum, word what);
@@ -260,8 +260,8 @@ int linkArea(s_area *area, int netMail)
                 jam ? Jam_GetHdr(harea, i)->MsgIdCRC : 0);
             if (curr == NULL) {
                 w_log(LL_ERR, "hash table overflow. Tell it to the developers !"); 
-                // try to free as much as possible
-                // FIXME : remove blocks themselves
+                /*  try to free as much as possible */
+                /*  FIXME : remove blocks themselves */
                 nfree(msgId);
                 if (!jam) {
                     nfree(ctl);
@@ -413,7 +413,7 @@ void linkAreas(char *name)
     s_area *area;
     unsigned int i;
     
-    // link only one area
+    /*  link only one area */
     if (name != NULL) {
         if ((area = getNetMailArea(config, name)) != NULL) {
             linkArea(area,1);
@@ -425,7 +425,7 @@ void linkAreas(char *name)
         return;
     }
     
-    // open importlog file
+    /*  open importlog file */
     if (config->LinkWithImportlog != lwiNo) {
         f = fopen(config->importlog, "r");
     } else {
@@ -439,7 +439,7 @@ void linkAreas(char *name)
             w_log(LL_CRIT, "Nothing to link. Use \"hpt link *\" to perform linking all areas");
             return;
         }
-        // if importlog does not exist link all areas
+        /*  if importlog does not exist link all areas */
         w_log(LL_LINKING, "Linking all Areas.");
         
         /* link all echomail areas */

@@ -59,7 +59,7 @@ int main()
    header.loProductCode  = 0xfe;
    header.majorProductRev = 0;
    header.minorProductRev = 26;
-   //header.pktPassword[0] = 0;
+   /* header.pktPassword[0] = 0; */
    strcpy(header.pktPassword, "xxx");
    header.pktCreated = time(NULL);
 

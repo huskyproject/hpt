@@ -47,10 +47,10 @@ void del_tok(char **ac, char *tok) {
     if (q) {
 	p = q+strlen(tok);
 	while (*p && !isspace(*p)) p++;
-	if (*p) memmove(q, p+1, strlen(p+1)+1); // begin or middle
+	if (*p) memmove(q, p+1, strlen(p+1)+1); /*  begin or middle */
 	else {
-	    if (q > *ac) *(q-1)='\0'; // end
-	    else *q='\0'; // "-token" defaults
+	    if (q > *ac) *(q-1)='\0'; /*  end */
+	    else *q='\0'; /*  "-token" defaults */
 	}
     }
 }
@@ -63,11 +63,11 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
 
     msgbFileName = makeMsgbFileName(config, c_area);
 
-    // translating name of the area to lowercase/uppercase
+    /*  translating name of the area to lowercase/uppercase */
     if (config->createAreasCase == eUpper) strUpper(c_area);
     else strLower(c_area);
 
-    // translating filename of the area to lowercase/uppercase
+    /*  translating filename of the area to lowercase/uppercase */
     if (config->areasFileNameCase == eUpper) strUpper(msgbFileName);
     else strLower(msgbFileName);
 
@@ -85,7 +85,7 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
 
     if (stricmp(msgbDir, "passthrough")!=0 && NULL==fc_stristr(newAC,"passthrough"))
     {
-        // we have to find a file name
+        /*  we have to find a file name */
         int need_dos_file;
 
 #ifndef MSDOS
@@ -95,9 +95,9 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
 #endif
         if (creatingLink->autoAreaCreateSubdirs && !need_dos_file)
         {
-             //"subdirify" the message base path if the
-             //user wants this. this currently does not
-             //work with the -dosfile option
+             /* "subdirify" the message base path if the */
+             /* user wants this. this currently does not */
+             /* work with the -dosfile option */
             for (cp = msgbFileName; *cp; cp++)
             {
                 if (*cp == '.')
@@ -112,7 +112,7 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
             msgbDir, msgbFileName,
             (msgbtype) ? "" : " -b Squish");
         else {
-            sleep(1); // to prevent time from creating equal numbers
+            sleep(1); /*  to prevent time from creating equal numbers */
             xscatprintf(&buff,"EchoArea %s%s%s %s%8lx%s",
                 quote_areaname, c_area, quote_areaname,
                 msgbDir, (long)time(NULL),
@@ -120,14 +120,14 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
         }
 
     } else {
-        // passthrough
+        /*  passthrough */
         xscatprintf(&buff, "EchoArea %s%s%s passthrough",
 	    quote_areaname, c_area, quote_areaname);
 
         del_tok(&newAC, "passthrough");
-        del_tok(&newAC, "-b ");  // del "-b msgbtype" from autocreate defaults
-        del_tok(&newAC, "-$m "); // del "-$m xxx" from autocreate defaults
-        del_tok(&newAC, "-p ");  // del "-p xxx" from autocreate defaults
+        del_tok(&newAC, "-b ");  /*  del "-b msgbtype" from autocreate defaults */
+        del_tok(&newAC, "-$m "); /*  del "-$m xxx" from autocreate defaults */
+        del_tok(&newAC, "-p ");  /*  del "-p xxx" from autocreate defaults */
 
         del_tok(&newAC, "-killsb");
         del_tok(&newAC, "-tinysb");
@@ -196,7 +196,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
         w_log( LL_FUNC, "%s::autoCreate() rc=9", __FILE__ );
 	return 9;
     }
-    // setting up msgbase dir
+    /*  setting up msgbase dir */
     if (config->createFwdNonPass == 0 && forwardAddr)
         msgbDir = pass;
     else
@@ -205,28 +205,28 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     if(config->areafixQueueFile)
     {
         areaNode = af_CheckAreaInQuery(c_area, &pktOrigAddr, NULL, FIND);
-        if( areaNode ) // if area in query
+        if( areaNode ) /*  if area in query */
         {
             if( stricmp(areaNode->type,czKillArea) == 0 ){
                 w_log( LL_FUNC, "%s::autoCreate() rc=4", __FILE__ );
-                return 4;  // area already unsubscribed
+                return 4;  /*  area already unsubscribed */
             }
             if( stricmp(areaNode->type,czFreqArea) == 0 &&
                 addrComp(pktOrigAddr, areaNode->downlinks[0])!=0)
             {
                 w_log( LL_FUNC, "%s::autoCreate() rc=4", __FILE__ );
-                return 4;  // wrong link to autocreate from
+                return 4;  /*  wrong link to autocreate from */
             }
             if( stricmp(areaNode->type,czFreqArea) == 0 )
             {
-                // removinq area from query. it is autocreated now
-                queryAreasHead->nFlag = 1; // query was changed
-                areaNode->type[0] = '\0';  // mark as deleted
+                /*  removinq area from query. it is autocreated now */
+                queryAreasHead->nFlag = 1; /*  query was changed */
+                areaNode->type[0] = '\0';  /*  mark as deleted */
             }
             if (config->createFwdNonPass == 0)
                msgbDir = pass;
-            // try to find our aka in links of queried area
-            // if not foun area will be passthrough
+            /*  try to find our aka in links of queried area */
+            /*  if not foun area will be passthrough */
             for (i = 1; i < areaNode->linksCount; i++)
                 for(j = 0; j < config->addrCount; j++)
                     if (addrComp(areaNode->downlinks[i],config->addr[j])==0)
@@ -236,26 +236,26 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
         }
     }
 
-    // making address of uplink
+    /*  making address of uplink */
     xstrcat(&hisaddr, aka2str(pktOrigAddr));
 
     buff = makeAreaParam(creatingLink , c_area, msgbDir);
 
-    // add new created echo to config in memory
+    /*  add new created echo to config in memory */
     parseLine(buff, config);
     RebuildEchoAreaTree(config);
 
-    // subscribe uplink if he is not subscribed
+    /*  subscribe uplink if he is not subscribed */
     area = &(config->echoAreas[config->echoAreaCount-1]);
     if ( !isLinkOfArea(creatingLink,area) ) {
 	xscatprintf(&buff, " %s", hisaddr);
 	Addlink(creatingLink, area, NULL);
     }
 
-    // subscribe downlinks if present
-    if(areaNode) { // areaNode == NULL if areafixQueueFile isn't used
-        // prevent subscribing of defuault links
-        // or not existing links
+    /*  subscribe downlinks if present */
+    if(areaNode) { /*  areaNode == NULL if areafixQueueFile isn't used */
+        /*  prevent subscribing of defuault links */
+        /*  or not existing links */
         for(i = 1; i < areaNode->linksCount; i++) {
             if( ( isAreaLink( areaNode->downlinks[i],area ) == -1 ) &&
                 ( getLinkFromAddr(config,areaNode->downlinks[i])) &&
@@ -268,20 +268,20 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
         }
     }
 
-    // fix if dummys del \n from the end of file
+    /*  fix if dummys del \n from the end of file */
     fseek (f, -1L, SEEK_END);
     if (getc(f) != '\n') {
-	fseek (f, 0L, SEEK_END);  // not neccesary, but looks better ;)
+	fseek (f, 0L, SEEK_END);  /*  not neccesary, but looks better ;) */
 	fputs (cfgEol(), f);
     } else {
     fseek (f, 0L, SEEK_END);
     }
-    fprintf(f, "%s%s", buff, cfgEol()); // add line to config
+    fprintf(f, "%s%s", buff, cfgEol()); /*  add line to config */
     fclose(f);
 
     nfree(buff);
 
-    // echoarea addresses changed by safe_reallocating of config->echoAreas[]
+    /*  echoarea addresses changed by safe_reallocating of config->echoAreas[] */
     carbonNames2Addr(config);
 
     w_log(LL_AUTOCREATE, "Area %s autocreated by %s", c_area, hisaddr);
@@ -291,7 +291,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
     nfree(hisaddr);
 
-    // create flag
+    /*  create flag */
     if (config->aacFlag) {
 	if (NULL == (f = fopen(config->aacFlag,"a")))
 	    w_log(LL_ERR, "Could not open autoAreaCreate flag: %s", config->aacFlag);
@@ -340,19 +340,19 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
                 while( i < tmpNode->linksCount && addrComp(*dwlink, tmpNode->downlinks[i])!=0)
                     i++;
                 if(i == tmpNode->linksCount) {
-                    af_AddLink( tmpNode, dwlink ); // add link to queried area
+                    af_AddLink( tmpNode, dwlink ); /*  add link to queried area */
                     tmpNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
                 } else {
-                    tmpNode = NULL;  // link already in query
+                    tmpNode = NULL;  /*  link already in query */
                 }
             } else {
-                strcpy(tmpNode->type,czFreqArea); // change state to @freq"
+                strcpy(tmpNode->type,czFreqArea); /*  change state to @freq" */
                 af_AddLink( tmpNode, dwlink );
                 tmpNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
             }
-        } else { // area not found, so add it
+        } else { /*  area not found, so add it */
             areaNode = af_AddAreaListNode( areatag, czFreqArea );
-            if(strlen( areatag ) > queryAreasHead->linksCount) //max areanane lenght
+            if(strlen( areatag ) > queryAreasHead->linksCount) /* max areanane lenght */
                 queryAreasHead->linksCount = strlen( areatag );
             af_AddLink( areaNode, uplink );
             af_AddLink( areaNode, dwlink );
@@ -412,7 +412,7 @@ char* af_Req2Idle(char *areatag, char* report, s_addr linkAddr)
                     memmove(&(areaNode->downlinks[i]),&(areaNode->downlinks[i+1]),
                     sizeof(s_addr)*(areaNode->linksCount-i));
                 areaNode->linksCount--;
-                queryAreasHead->nFlag = 1; // query was changed
+                queryAreasHead->nFlag = 1; /*  query was changed */
                 if(areaNode->linksCount == 1)
                 {
                     strcpy(areaNode->type,czIdleArea);
@@ -646,7 +646,7 @@ void af_QueueUpdate()
                 tmpNode->linksCount = 1;
                 w_log( LL_AREAFIX, "areafix: request for %s is going to be killed",tmpNode->name);
             }
-            queryAreasHead->nFlag = 1; // query was changed
+            queryAreasHead->nFlag = 1; /*  query was changed */
             continue;
         }
         if( stricmp(tmpNode->type,czKillArea) == 0 )
@@ -659,7 +659,7 @@ void af_QueueUpdate()
         if( stricmp(tmpNode->type,czIdleArea) == 0 )
         {
             ps_area delarea;
-            queryAreasHead->nFlag = 1; // query was changed
+            queryAreasHead->nFlag = 1; /*  query was changed */
             strcpy(tmpNode->type, czKillArea);
             tmpNode->bTime = tnow;
             tmpNode->eTime = tnow + config->killedRequestTimeout*secInDay;
@@ -672,7 +672,7 @@ void af_QueueUpdate()
             }
         }
     }
-    // send msg to the links (forward requests to areafix)
+    /*  send msg to the links (forward requests to areafix) */
     sendAreafixMessages();
     w_log(LL_STOP, "End updating queue file");
 }
@@ -685,7 +685,7 @@ int af_OpenQuery()
     struct  tm tr;
     char seps[]   = " \t\n";
 
-    if( queryAreasHead )  // list already exists
+    if( queryAreasHead )  /*  list already exists */
         return 0;
 
     time( &tnow );
@@ -786,7 +786,7 @@ int af_CloseQuery()
 
     w_log(LL_FUNC, __FILE__ ":%u:af_CloseQuery() begin", __LINE__);
 
-    if( !queryAreasHead ) {  // list does not exist
+    if( !queryAreasHead ) {  /*  list does not exist */
         w_log(LL_FUNC, __FILE__ ":%u:af_CloseQuery() end", __LINE__);
         return 0;
     }
@@ -918,5 +918,5 @@ void af_AddLink(s_query_areas* node, s_addr *link)
         safe_realloc( node->downlinks, sizeof(s_addr)*node->linksCount );
     memcpy( &(node->downlinks[node->linksCount-1]) ,link, sizeof(s_addr) );
     node->bTime = tnow;
-    queryAreasHead->nFlag = 1; // query was changed
+    queryAreasHead->nFlag = 1; /*  query was changed */
 }

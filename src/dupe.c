@@ -72,7 +72,7 @@ s_dupeMemory *CommonDupes=NULL;
 char *createDupeFileName(s_area *area) {
     char *name=NULL, *ptr, *retname=NULL;
 
-//    w_log(LL_FUNC,"dupe.c::createDupeFileName()");
+/*     w_log(LL_FUNC,"dupe.c::createDupeFileName()"); */
 
     if (!area->DOSFile) {/*
 	if (area->fileName) xstrcat(&name, (ptr = strrchr(area->fileName,PATH_DELIM))
@@ -82,7 +82,7 @@ char *createDupeFileName(s_area *area) {
     } else {
 	if (area->fileName) xstrcat(&name, (ptr = strrchr(area->fileName,PATH_DELIM))
 				    ? ptr+1 : area->fileName);
-//	else xstrcat(&name, "passthru");
+/* 	else xstrcat(&name, "passthru"); */
 	else xscatprintf(&name, "%X", strcrc32(area->areaName,0xFFFFFFFFUL) );
     }
 
@@ -108,7 +108,7 @@ char *createDupeFileName(s_area *area) {
     xstrscat(&retname, config->dupeHistoryDir, name, NULL);
     nfree(name);
 
-//    w_log(LL_FUNC,"dupe.c::createDupeFileName() OK (return '%s')",retname);
+/*     w_log(LL_FUNC,"dupe.c::createDupeFileName() OK (return '%s')",retname); */
     return retname;
 }
 /*
@@ -284,10 +284,10 @@ void doReading(FILE *f, s_dupeMemory *mem) {
    UINT32 i;
    time_t timedupe;
 
-   // read Number Of Dupes from dupefile
+   /*  read Number Of Dupes from dupefile */
    fread(&DupeCountInHeader, sizeof(UINT32), 1, f);
 
-   // process all dupes
+   /*  process all dupes */
    for (i = 0; i < DupeCountInHeader; i++) {
        if (feof(f)) break;
 
@@ -369,7 +369,7 @@ s_dupeMemory *readDupeFile(s_area *area) {
 
    f = fopen(fileName, "rb");
    if (f != NULL) { w_log(LL_FILE,"dupe.c:readDupeFile(): opened %s (\"rb\" mode)",fileName);
-       // readFile
+       /*  readFile */
        doReading(f, dupeMemory);
        fclose(f);
    } else {
@@ -387,7 +387,7 @@ s_dupeMemory *readDupeFile(s_area *area) {
 int createDupeFile(s_area *area, char *name, s_dupeMemory DupeEntries) {
    FILE *f;
 
-//   w_log(LL_SRCLINE,"dupe.c:%u:createDupeFile() name='%s'", __LINE__, name);
+/*    w_log(LL_SRCLINE,"dupe.c:%u:createDupeFile() name='%s'", __LINE__, name); */
 
    f = fopen(name, "wb");
    if (f!= NULL) {
@@ -403,12 +403,12 @@ int createDupeFile(s_area *area, char *name, s_dupeMemory DupeEntries) {
        tree_trav(&(DupeEntries.avlTree), writeEntry);
        fDupe = NULL;
 
-       // writeDupeFileHeader
+       /*  writeDupeFileHeader */
        if (DupeCountInHeader>0) {
           fseek(f, 0, SEEK_SET);
           fwrite(&DupeCountInHeader, sizeof(UINT32), 1, f);    
           fclose(f);
-       // for 1 save commonDupeBase
+       /*  for 1 save commonDupeBase */
        if (config->typeDupeBase==commonDupeBase)
           freeDupeMemory(area);
        }
@@ -482,21 +482,21 @@ int dupeDetection(s_area *area, const s_message msg) {
 
     w_log(LL_FUNC,"dupe.c::dupeDetection() begin");
     
-    if (area->dupeCheck == dcOff) return 1; // no dupeCheck return 1 "no dupe"
+    if (area->dupeCheck == dcOff) return 1; /*  no dupeCheck return 1 "no dupe" */
     if ((str=(char*)GetCtrlToken((byte*)msg.text, (byte*)"MSGID:"))==NULL) {
         if (msg.text) xscatprintf (&str, "MSGID: %08lx",strcrc32(msg.text, 0xFFFFFFFFL));
-        else return 1; // without msg.text - message is empty, no dupeCheck
+        else return 1; /*  without msg.text - message is empty, no dupeCheck */
     }
     
-    // test if dupeDatabase is already read
+    /*  test if dupeDatabase is already read */
     if (config->typeDupeBase != commonDupeBase) {
         if (area->dupes == NULL) {
-            Dupes = area->dupes = readDupeFile(area); //read Dupes
+            Dupes = area->dupes = readDupeFile(area); /* read Dupes */
         }
     }
     else {
         if (CommonDupes == NULL)
-            CommonDupes = readDupeFile(area); //read Dupes
+            CommonDupes = readDupeFile(area); /* read Dupes */
     }
     
     switch (config->typeDupeBase) {

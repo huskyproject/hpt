@@ -66,9 +66,9 @@
 
 void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
 {
-   // action == 0 - scan area
-   // action == 1 - rescan area
-   // action == 2 - rescan badarea
+   /*  action == 0 - scan area */
+   /*  action == 1 - rescan area */
+   /*  action == 2 - rescan badarea */
     char   *kludgeLines = NULL, *seenByPath = NULL;
    UCHAR  *msgtid = NULL;
    UCHAR  *ctrlBuff = NULL;
@@ -87,16 +87,16 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    msg->destAddr.node  = xmsg.dest.node;
    msg->destAddr.point = xmsg.dest.point;
 
-   msg->attributes = xmsg.attr & ~MSGLOCAL; // msg should not have MSGLOCAL bit set
+   msg->attributes = xmsg.attr & ~MSGLOCAL; /*  msg should not have MSGLOCAL bit set */
    sc_time((union stamp_combo *) &(xmsg.date_written), (char *)msg->datetime);
 
    xstrcat(&msg->toUserName, (char*)xmsg.to);
    xstrcat(&msg->fromUserName, (char*)xmsg.from);
    xstrcat(&msg->subjectLine, (char*)xmsg.subj);
 
-   // make msgtext
+   /*  make msgtext */
 
-   // convert kludgeLines
+   /*  convert kludgeLines */
    ctrlLen = MsgGetCtrlLen(hmsg);
    ctrlBuff = (UCHAR *) safe_malloc(ctrlLen+1);
    MsgReadMsg(hmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
@@ -108,16 +108,16 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
            MsgRemoveToken(ctrlBuff, tid);
        xstrscat((char **) &ctrlBuff, "\001TID: ", versionStr, NULL);
    }
-   // add '\r' after each kludge
+   /*  add '\r' after each kludge */
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
    
    nfree(ctrlBuff);
 
    if (action == 0)
-	   xstrcat(&seenByPath, "SEEN-BY: "); // 9 bytes
+	   xstrcat(&seenByPath, "SEEN-BY: "); /*  9 bytes */
 
-   // create text
-   msg->textLength = MsgGetTextLen(hmsg); // with trailing \0
+   /*  create text */
+   msg->textLength = MsgGetTextLen(hmsg); /*  with trailing \0 */
    msg->text=NULL;
    if (action!=2) {
 	xscatprintf(&(msg->text),"AREA:%s\r",echo->areaName);
@@ -131,17 +131,17 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
               (byte *)(msg->text+ctrlLen), (dword) 0, (byte *)NULL);
    msg->text[msg->textLength + ctrlLen]='\0';
    msg->textLength += ctrlLen-1;
-   // if origin has no ending \r add it
+   /*  if origin has no ending \r add it */
    if (msg->text[msg->textLength-1] != '\r') {
 	   xstrcat(&(msg->text), "\r");
 	   msg->textLength++;
    }
    if (action == 0) {
 	   xstrcat(&(msg->text), seenByPath);
-	   msg->textLength += 9; // strlen(seenByPath)
+	   msg->textLength += 9; /*  strlen(seenByPath) */
    }
    
-   // recoding from internal to transport charSet
+   /*  recoding from internal to transport charSet */
    if (config->outtab != NULL && action != 2) {
       recodeToTransportCharset((CHAR*)msg->fromUserName);
       recodeToTransportCharset((CHAR*)msg->toUserName);
@@ -158,7 +158,7 @@ void packEMMsg(HMSG hmsg, XMSG *xmsg, s_area *echo)
 
    makeMsg(hmsg, *xmsg, &msg, echo, 0);
 
-   // msg is dupe -- return
+   /*  msg is dupe -- return */
    if (dupeDetection(echo, msg)!=1) return;
 
 #ifdef DO_PERL
@@ -168,13 +168,13 @@ void packEMMsg(HMSG hmsg, XMSG *xmsg, s_area *echo)
    }
 #endif
 
-   // export msg to downlinks
+   /*  export msg to downlinks */
    forwardMsgToLinks(echo, &msg, *echo->useAka);
    
-   // process carbon copy
+   /*  process carbon copy */
    if (config->carbonOut) carbonCopy(&msg, xmsg, echo);
 
-   // mark msg as sent and scanned
+   /*  mark msg as sent and scanned */
    xmsg->attr |= MSGSENT;
    xmsg->attr |= MSGSCANNED;
    MsgWriteMsg(hmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
@@ -204,7 +204,7 @@ void scanEMArea(s_area *echo)
 
        while (i < highestMsg) {
 	   hmsg = MsgOpenMsg(area, MOPEN_RW, ++i);
-	   if (hmsg == NULL) continue;      // msg# does not exist
+	   if (hmsg == NULL) continue;      /*  msg# does not exist */
 	   statScan.msgs++;
 	   MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
 	   if (((xmsg.attr & MSGSENT) != MSGSENT) &&
@@ -215,7 +215,7 @@ void scanEMArea(s_area *echo)
 
 	   MsgCloseMsg(hmsg);
 		 
-	   // kill msg
+	   /*  kill msg */
 	   if ((xmsg.attr & MSGKILL) == MSGKILL) {
 	       MsgKillMsg(area, i);
 	       i--;
@@ -248,7 +248,7 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
 
    makeMsg(hmsg, xmsg, &msg, echo, 1);
 
-   //translating name of the area to uppercase
+   /* translating name of the area to uppercase */
    while (msg.text[j] != '\r') {msg.text[j]=(char)toupper(msg.text[j]);j++;}
 
    if (strncmp(msg.text+j+1,"NOECHO",6)==0) {
@@ -273,12 +273,12 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
    createPathArrayFromMsg(&msg, &path, &pathCount);
 
    forwardToLinks(&msg, echo, links, &seenBys, &seenByCount, &path, &pathCount);
-/*
-   // mark msg as sent and scanned
+#if 0
+   /*  mark msg as sent and scanned */
    xmsg.attr |= MSGSENT;
    xmsg.attr |= MSGSCANNED;
    MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
-*/
+#endif
    freeMsgBuffers(&msg);
    nfree(links);
    nfree(seenBys);
@@ -298,18 +298,18 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount)
    area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, /*echo -> fperm,
    echo -> uid, echo -> gid,*/ (word)(echo->msgbType | MSGTYPE_ECHO));
    if (area != NULL) {
-       //      i = highWaterMark = MsgGetHighWater(area);
+       /*       i = highWaterMark = MsgGetHighWater(area); */
        i = 0;
        highestMsg    = MsgGetHighMsg(area);
 
-       // if rescanCount == -1 all mails should be rescanned
+       /*  if rescanCount == -1 all mails should be rescanned */
        if ((rescanCount == -1) || (rescanCount > (long)highestMsg))
 	   rescanCount = highestMsg;
 
        while (i <= highestMsg) {
-	   if (i > highestMsg - rescanCount) { // honour rescanCount paramater
+	   if (i > highestMsg - rescanCount) { /*  honour rescanCount paramater */
 	       hmsg = MsgOpenMsg(area, MOPEN_RW, i);
-	       if (hmsg != NULL) {     // msg# does not exist
+	       if (hmsg != NULL) {     /*  msg# does not exist */
 		   MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
 		   rc += repackEMMsg(hmsg, xmsg, echo, arealink);
 		   MsgCloseMsg(hmsg);

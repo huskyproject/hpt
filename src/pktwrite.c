@@ -33,10 +33,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-// see pktread.c for a comment on malloc.h!
-//#if !defined(__FreeBSD__)
-//#include <malloc.h>
-//#endif
+/*  see pktread.c for a comment on malloc.h! */
+/* #if !defined(__FreeBSD__) */
+/* #include <malloc.h> */
+/* #endif */
 
 #if (defined (__WATCOMC__) && defined (__NT__)) || defined(__TURBOC__)
 #include <dos.h>
@@ -74,48 +74,48 @@ FILE *createPkt(char *filename, s_pktHeader *header)
      fputUINT16(pkt, (UINT16)header->origAddr.node);
      fputUINT16(pkt, (UINT16)header->destAddr.node);
 
-     // create pkt time
+     /*  create pkt time */
      pktTime = localtime(&(header->pktCreated));
 
-     // write time
-     fputUINT16(pkt, (UINT16)(pktTime->tm_year + 1900));  // struct tm stores the years since 1900
+     /*  write time */
+     fputUINT16(pkt, (UINT16)(pktTime->tm_year + 1900));  /*  struct tm stores the years since 1900 */
      fputUINT16(pkt, (UINT16) pktTime->tm_mon);
      fputUINT16(pkt, (UINT16) pktTime->tm_mday);
      fputUINT16(pkt, (UINT16) pktTime->tm_hour);
      fputUINT16(pkt, (UINT16) pktTime->tm_min);
      fputUINT16(pkt, (UINT16) pktTime->tm_sec);
 
-     // write unused baud field
+     /*  write unused baud field */
      fputUINT16(pkt, 0);
 
-     // write pktver == 2
+     /*  write pktver == 2 */
      fputUINT16(pkt, 2);
 
-     // write net info
+     /*  write net info */
      fputUINT16(pkt, (UINT16) header->origAddr.net);
      fputUINT16(pkt, (UINT16) header->destAddr.net);
 
-     fputc(header->loProductCode, pkt);   // put lowByte of Prod-Id
-     fputc(header->majorProductRev, pkt); // put major version number
+     fputc(header->loProductCode, pkt);   /*  put lowByte of Prod-Id */
+     fputc(header->majorProductRev, pkt); /*  put major version number */
 
-     // write PKT pwd, if strlen(pwd) < 8, fill the rest with \0
+     /*  write PKT pwd, if strlen(pwd) < 8, fill the rest with \0 */
      for (i=0; i < strlen((char *) header->pktPassword); i++) fputc(header->pktPassword[i], pkt);
      for (i=strlen((char *) header->pktPassword); i<8; i++) fputc(0, pkt);
 
-     // write qzone info
+     /*  write qzone info */
      fputUINT16(pkt, (UINT16) header->origAddr.zone);
      fputUINT16(pkt, (UINT16) header->destAddr.zone);
 
-     fputUINT16(pkt, 0); // filler
+     fputUINT16(pkt, 0); /*  filler */
 
-     // write byte swapped capability Word
+     /*  write byte swapped capability Word */
      dummy = (UCHAR)(header->capabilityWord / 256);
      fputc(dummy, pkt);
      dummy = (UCHAR)(header->capabilityWord % 256);
      fputc(dummy, pkt);
 
-     fputc(header->hiProductCode, pkt);      // put hiByte of Prod-Id
-     fputc(header->minorProductRev, pkt);    // put minor version number
+     fputc(header->hiProductCode, pkt);      /*  put hiByte of Prod-Id */
+     fputc(header->minorProductRev, pkt);    /*  put minor version number */
 
      fputUINT16(pkt, header->capabilityWord);
 
@@ -125,35 +125,36 @@ FILE *createPkt(char *filename, s_pktHeader *header)
      fputUINT16(pkt, (UINT16) header->origAddr.point);
      fputUINT16(pkt, (UINT16) header->destAddr.point);
 
-     fputUINT16(pkt, 0); fputUINT16(pkt, 0); // write prodData
+     fputUINT16(pkt, 0); fputUINT16(pkt, 0); /*  write prodData */
 
      return pkt;
   }
   return NULL;
 }
-/*
+
+#if 0
 int writeMsgToPkt(FILE *pkt, s_message msg)
 {
-  // write type 2 msg
+  /*  write type 2 msg */
   fputc(2, pkt);
   fputc(0, pkt);
 
-  // write net/node info
+  /*  write net/node info */
   fputUINT16(pkt, (UINT16) msg.origAddr.node);
   fputUINT16(pkt, (UINT16) msg.destAddr.node);
   fputUINT16(pkt, (UINT16) msg.origAddr.net);
   fputUINT16(pkt, (UINT16) msg.destAddr.net);
 
-  // write attribute info
+  /*  write attribute info */
   fputUINT16(pkt, (UINT16) msg.attributes);
 
-  // write cost info
+  /*  write cost info */
   fputUINT16(pkt, 0);
 
-  // write date...info
+  /*  write date...info */
   fwrite(msg.datetime, 20, 1, pkt);
 
-  // write userNames (max 36 bytes)
+  /*  write userNames (max 36 bytes) */
   if (strlen(msg.toUserName) >= 36) fwrite(msg.toUserName, 35, 1, pkt);
   else fputs(msg.toUserName, pkt);
   fputc(0, pkt);
@@ -162,18 +163,18 @@ int writeMsgToPkt(FILE *pkt, s_message msg)
   else fputs(msg.fromUserName, pkt);
   fputc(0, pkt);
 
-  // write subject
+  /*  write subject */
   if (strlen(msg.subjectLine) >= 72) fwrite(msg.subjectLine, 71, 1, pkt);
   else fputs(msg. subjectLine, pkt);
   fputc(0, pkt);
 
-  // write text
+  /*  write text */
   fputs(msg.text, pkt);
   fputc(0, pkt);
 
   return 0;
 }
-*/
+#endif
 
 int writeMsgToPkt(FILE *pkt, s_message msg)
 {
@@ -194,37 +195,37 @@ int writeMsgToPkt(FILE *pkt, s_message msg)
   buf = (byte*)safe_malloc(38+x+y+z+textLen);
   pbuf = buf;
   
-  // type (2 bytes)
+  /*  type (2 bytes) */
   pbuf[0]='\002'; pbuf[1]='\000'; pbuf+=2;
 
-  // net/node info (8 bytes)
+  /*  net/node info (8 bytes) */
   put_word(pbuf,(UINT16)msg.origAddr.node); pbuf+=2;
   put_word(pbuf,(UINT16)msg.destAddr.node); pbuf+=2;
   put_word(pbuf,(UINT16)msg.origAddr.net);  pbuf+=2;
   put_word(pbuf,(UINT16)msg.destAddr.net);  pbuf+=2;
 
-  // attribute info (2 bytes)
+  /*  attribute info (2 bytes) */
   put_word(pbuf,(UINT16)msg.attributes); pbuf+=2;
 
-  // cost info (2 bytes)
+  /*  cost info (2 bytes) */
   put_word(pbuf, 0); pbuf+=2;
 
-  // date info (20 bytes)
+  /*  date info (20 bytes) */
   memmove(pbuf, msg.datetime, 20); pbuf+=20;
 
-  // write userNames
+  /*  write userNames */
   memmove(pbuf,msg.toUserName,x); pbuf+=x;
-  pbuf[0]='\0'; pbuf++; // 1 byte
+  pbuf[0]='\0'; pbuf++; /*  1 byte */
   memmove(pbuf,msg.fromUserName,y); pbuf+=y;
-  pbuf[0]='\0'; pbuf++; // 1 byte
+  pbuf[0]='\0'; pbuf++; /*  1 byte */
 
-  // write subject
+  /*  write subject */
   memmove(pbuf,msg.subjectLine,z); pbuf+=z;
-  pbuf[0]='\0'; pbuf++; // 1 byte
+  pbuf[0]='\0'; pbuf++; /*  1 byte */
 
-  // write text
+  /*  write text */
   memmove(pbuf,msg.text,textLen); pbuf+=textLen;
-  pbuf[0]='\0'; pbuf++; // 1 byte
+  pbuf[0]='\0'; pbuf++; /*  1 byte */
 
   rc = fwrite(buf, pbuf-buf, 1, pkt);
   nfree(buf);
@@ -250,7 +251,7 @@ FILE *openPktForAppending(char *fileName, s_pktHeader *header)
 		   exit_hpt("can't open pkt for appending",0);
 	   }
 	   openPkt(pkt);
-	   fseek(pkt, -2, SEEK_END);        // go to \0\0 to add a new msg.
+	   fseek(pkt, -2, SEEK_END);        /*  go to \0\0 to add a new msg. */
 	   if (ftell(pkt) <= 0) {    /* this was a zero length file ... */
 		   fclose(pkt);
 		   pkt = NULL;
