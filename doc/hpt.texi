@@ -2196,6 +2196,7 @@ This statement cannot be repeated.
 * DenyFwdFile::                 file with area list for denyed requests
 * DenyFwdMask::                 mask list for denyed requests
 * DenyFwdReqAccess::            deny access to forward requests
+* DenyRescan::                  deny rescan of areas
 * DenyUncondFwdReqAccess::      deny access to unconditional forward requests
 * EchoMailFlavour::             flavour for outgoing echomail
 * Export::                      rules for echomail export
@@ -2228,6 +2229,7 @@ This statement cannot be repeated.
 * PktPwd::                      pktpassword for this link
 * ReducedSeenBY::               reduced seen-by mode (FSC-0093)
 * RemoteRobotName::             remote "areafix" name
+* RescanGrp::                   groups that @code{denyRescan} token applies to
 * SendNotifyMessages::          send messages about query changes, bad posts and so on
 * UnsubscribeOnAreaDelete::     send unsubscribe request when subscribed area is deleted
 @end menu
@@ -2598,7 +2600,7 @@ Don't forward this requests.
 
 This statement can only be repeated for different links.
 
-@node DenyFwdReqAccess, DenyUncondFwdReqAccess, DenyFwdMask, Link Keywords
+@node DenyFwdReqAccess, DenyRescan, DenyFwdMask, Link Keywords
 @subsection DenyFwdReqAccess
 @findex DenyFwdReqAccess
 @table @asis
@@ -2613,7 +2615,24 @@ links.
 
 This statement can only be repeated for different links.
 
-@node DenyUncondFwdReqAccess, EchoMailFlavour, DenyFwdReqAccess, Link Keywords
+@node DenyRescan, DenyUncondFwdReqAccess, DenyFwdReqAccess, Link Keywords
+@subsection DenyRescan
+@findex DenyRescan
+@table @asis
+@item Syntax:
+@code{denyRescan <bool>}
+@item Example:
+@code{denyRescan}
+@end table
+
+Don't allow to rescan areas (via areafix) to your links.
+
+This token can be applied to one or several area groups (see @code{RescanGrp}
+token for details).
+
+This statement can only be repeated for different links.
+
+@node DenyUncondFwdReqAccess, EchoMailFlavour, DenyRescan, Link Keywords
 @subsection DenyUncondFwdReqAccess
 @findex DenyUncondFwdReqAccess
 @table @asis
@@ -3168,7 +3187,7 @@ RSB algorithm
 
 This statement can only be repeated for different links.
 
-@node RemoteRobotName, SendNotifyMessages, ReducedSeenBY, Link Keywords
+@node RemoteRobotName, RescanGrp, ReducedSeenBY, Link Keywords
 @subsection RemoteRobotName
 @findex RemoteRobotName
 @table @asis
@@ -3183,7 +3202,39 @@ to subscribing/unsubscribing of new areas forwarded to this link.
 
 This statement can only be repeated for different links.
 
-@node SendNotifyMessages, UnsubscribeOnAreaDelete, RemoteRobotName, Link Keywords
+@node RescanGrp, SendNotifyMessages, RemoteRobotName, Link Keywords
+@subsection RescanGrp
+@findex RescanGrp
+@table @asis
+@item Syntax:
+@code{RescanGrp <string>[,<string>...]}
+@item Example:
+@code{RescanGrp A,B,C,Local}
+@end table
+
+If defined, @code{denyRescan} token applies to specified area groups only,
+while other area groups are applied with the opposite value.
+
+Example:
+
+There are areas with the groups A, B, C and D in config. The following table
+demonstrates how combination of options allows you to specify different
+rights for link.
+
+@table @asis
+@item denyRescan off
+All area groups are allowed to rescan.
+@item denyRescan on
+All area groups are denied to rescan.
+@item denyRescan off, rescanGrp A,B
+Area groups A and B are allowed to rescan, while C and D are denied.
+@item denyRescan on, rescanGrp A,B
+Area groups A and B are denied to rescan, while C and D are allowed.
+@end table
+
+This statement can only be repeated for different links.
+
+@node SendNotifyMessages, UnsubscribeOnAreaDelete, RescanGrp, Link Keywords
 @subsection SendNotifyMessages
 @findex SendNotifyMessages
 @table @asis

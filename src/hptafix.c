@@ -81,14 +81,15 @@ int afRescanArea(char **report, s_link *link, s_area *area, long rescanCount) {
   s_arealink *arealink;
   long rcc;
 
-            if (area->msgbType == MSGTYPE_PASSTHROUGH) {
+            arealink = getAreaLink(area, link->hisAka);
+
+            if ((area->msgbType == MSGTYPE_PASSTHROUGH) || (!arealink->rescan)) {
                 xscatprintf(report," %s %s  no rescan possible\r",
                             an, print_ch(49-strlen(an), '.'));
                 w_log(LL_AREAFIX, "areafix: %s area no rescan possible to %s",
                       an, aka2str(link->hisAka));
             } else {
 
-                arealink = getAreaLink(area, link->hisAka);
                 if (arealink->export) {
                     rcc = rescanEMArea(area, arealink, rescanCount);
                     tossTempOutbound(config->tempOutbound);

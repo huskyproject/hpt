@@ -23,6 +23,8 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
       token is "on" for link.
     - Added ability to exercise remote control using Areafix requests. See
       "Advanced concepts" section in documentation.
+    - Added ability to specify link rights to rescan all or several area groups
+      (see description of "denyRescan" and "rescanGrp" tokens).
 
 2. CONFIG changes:
     - new option for echoArea or netmailArea: -scan (specifies when area
