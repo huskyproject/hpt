@@ -615,7 +615,13 @@ static XS(perl_putMsgInArea)
       free(sattr);
   }
 
-  for (p = text; *p; p++) if (*p == '\n') *p = '\r';
+  if ( !strstr(text, "\r\n") ) for (p = text; (p = strchr(p, '\n')); *p = '\r');
+  else {
+    int len = strlen(p = text);
+    while ( (p = strchr(p, '\n')) )
+      if (p > text && *(p-1) == '\r') memmove(p, p+1, (len--)-(p-text));
+      else *p = '\r';
+  }
   if (addkludges == MODE_UPDATE) {
     char *text2 = (attr != -1) ? update_flags(text, attr, MODE_REPLACE) : NULL;
     msg.text = (text2 != NULL) ? text2 : text;
@@ -2266,7 +2272,6 @@ int perl_putmsg(s_area *echo, s_message *msg)
    STRLEN n_a;
    static int do_perlputmsg=1;
    int pid, saveerr;
-   char *sorig;
 
    if (do_perl && perl==NULL)
      if (PerlStart())
