@@ -1,3 +1,15 @@
+2002-03-27 Wednesday 15:10  mche
+
+	* src/fcommon.c (1.124), src/toss.c (1.398), h/fcommon.h (1.39):
+	functions needUseFileBoxForLink,makeFileBoxName moved to fidoconfig
+	for common usage in htick and hpt
+
+2002-03-27 Wednesday 11:22  mche
+
+	* src/areafix.c (1.275), src/fcommon.c (1.123), src/scan.c (1.149),
+	src/toss.c (1.397), h/fcommon.h (1.38): function
+	createOutboundFileName moved to fidoconfig
+
 2002-03-21 Thursday 16:18  mche
 
 	* src/fcommon.c (1.122), h/fcommon.h (1.37): createLockFile
