@@ -208,5 +208,5 @@ void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_a
               ourAka->zone,ourAka->net,ourAka->node,time(NULL));
 
    sprintf(buff + strlen(buff), "\1PID: %s\r", versionStr);
-   strcat(buff, "\1NPD\r");
+   strcat(buff, "\1FLAGS NPD\r");
 }
