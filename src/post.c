@@ -229,7 +229,7 @@ void post(int c, unsigned int *n, char *params[])
       if (msg.netMail) echo=&(config->netMailAreas[0]);
 
       msg.text = createKludges(area, &msg.origAddr, &msg.destAddr);
-      xstrcat((char *)msg.text, (char *)textBuffer);
+      xstrcat(&(msg.text), (char *)textBuffer);
       
       free(textBuffer);
 

@@ -153,6 +153,9 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 	union stamp_combo dosdate;
 	int i;
 	char *subject;
+
+	// clear msgheader
+	memset(&msgHeader, 0, sizeof(XMSG));
 	
 	// attributes of netmail must be fixed
 	msgHeader.attr = msg->attributes;
@@ -222,11 +225,11 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
    msgHeader.dest.net   = (word) msg->destAddr.net;
    msgHeader.dest.point = (word) msg->destAddr.point;
 
-   memset(&(msgHeader.date_written), 0, 8);    // date to 0
+//   memset(&(msgHeader.date_written), 0, 8);    // date to 0
 
-   msgHeader.utc_ofs = 0;
-   msgHeader.replyto = 0;
-   memset(msgHeader.replies, 0, MAX_REPLY * sizeof(UMSGID));   // no replies
+//   msgHeader.utc_ofs = 0;
+//   msgHeader.replyto = 0;
+//   memset(msgHeader.replies, 0, MAX_REPLY * sizeof(UMSGID));   // no replies
    strcpy((char *) msgHeader.__ftsc_date, (char *)msg->datetime);
    ASCII_Date_To_Binary((char *)msg->datetime, (union stamp_combo *) &(msgHeader.date_written));
 
