@@ -625,54 +625,61 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
             }
         }
     }
+
     for (; i < Requestable; i++) {
-	uplink = config->links[Indexes[i]];
+        uplink = config->links[Indexes[i]];
 
-    if(lastRlink) *lastRlink = uplink;
+        if(lastRlink) *lastRlink = uplink;
 
-    if (uplink->forwardRequests && (uplink->LinkGrp) ?
-        grpInArray(uplink->LinkGrp,dwlink->AccessGrp,dwlink->numAccessGrp) : 1)
-    {
-        if ( (uplink->numDfMask) &&
-            (tag_mask(areatag, uplink->dfMask, uplink->numDfMask)))
+        if (uplink->forwardRequests && (uplink->LinkGrp) ?
+            grpInArray(uplink->LinkGrp,dwlink->AccessGrp,dwlink->numAccessGrp) : 1)
         {
-            rc = 2;
-            continue;
-        }
-        if ( (uplink->denyFwdFile!=NULL) &&
-            (IsAreaAvailable(areatag,uplink->denyFwdFile,NULL,0)))
-        {
-            rc = 2;
-            continue;
-        }
-	rc = 0;
-        if (uplink->forwardRequestFile!=NULL) {
-            /*  first try to find the areatag in forwardRequestFile */
-            if (tag_mask(areatag, uplink->frMask, uplink->numFrMask) ||
-                IsAreaAvailable(areatag,uplink->forwardRequestFile,NULL,0))
+            /* skip downlink from list of uplinks */
+            if(addrComp(uplink->hisAka, dwlink->hisAka) == 0)
             {
-		break;
+                rc = 2;
+                continue;
             }
-            else
-            { rc = 2; }/*  found link with freqfile, but there is no areatag */
-        } else {
-            if (uplink->numFrMask) /*  found mask */
+            if ( (uplink->numDfMask) &&
+                 (tag_mask(areatag, uplink->dfMask, uplink->numDfMask)))
             {
-                if (tag_mask(areatag, uplink->frMask, uplink->numFrMask))
-		    break;
-                else rc = 2;
-            } else { /*  unconditional forward request */
-                if (dwlink->denyUFRA==0)
-		    break;
-                else rc = 2;
+                rc = 2;
+                continue;
             }
-        }/* (uplink->forwardRequestFile!=NULL) */
+            if ( (uplink->denyFwdFile!=NULL) &&
+                 (IsAreaAvailable(areatag,uplink->denyFwdFile,NULL,0)))
+            {
+                rc = 2;
+                continue;
+            }
+            rc = 0;
+            if (uplink->forwardRequestFile!=NULL) {
+                /*  first try to find the areatag in forwardRequestFile */
+                if (tag_mask(areatag, uplink->frMask, uplink->numFrMask) ||
+                    IsAreaAvailable(areatag,uplink->forwardRequestFile,NULL,0))
+                {
+                    break;
+                }
+                else
+                { rc = 2; }/*  found link with freqfile, but there is no areatag */
+            } else {
+                if (uplink->numFrMask) /*  found mask */
+                {
+                    if (tag_mask(areatag, uplink->frMask, uplink->numFrMask))
+                        break;
+                    else rc = 2;
+                } else { /*  unconditional forward request */
+                    if (dwlink->denyUFRA==0)
+                        break;
+                    else rc = 2;
+                }
+            }/* (uplink->forwardRequestFile!=NULL) */
 
-    }/*  if (uplink->forwardRequests && (uplink->LinkGrp) ? */
+        }/*  if (uplink->forwardRequests && (uplink->LinkGrp) ? */
     }/*  for (i = 0; i < Requestable; i++) { */
 
     if(rc == 0)
-	forwardRequestToLink(areatag, uplink, dwlink, 0);
+        forwardRequestToLink(areatag, uplink, dwlink, 0);
 
     nfree(Indexes);
     return rc;
