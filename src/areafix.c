@@ -1026,8 +1026,12 @@ char *do_delete(s_link *link, s_area *area) {
     }
 
     /* delete msgbase and dupebase for the area */
+    
+    /*
     if (area->msgbType!=MSGTYPE_PASSTHROUGH)
 	MsgDeleteBase(area->fileName, (word) area->msgbType);
+    */
+
     if (area->dupeCheck != dcOff && config->typeDupeBase != commonDupeBase) {
 	char *dupename = createDupeFileName(area);
 	if (dupename) {
@@ -1176,6 +1180,7 @@ char *unsubscribe(s_link *link, char *cmd) {
                 } else {
                     j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
                 }
+                MsgDeleteBase(area->fileName, (word) area->msgbType);                
             }
             if (j == DEL_OK)
                 xscatprintf(&report," %s %s  unlinked\r",an,print_ch(49-strlen(an),'.'));
