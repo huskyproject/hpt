@@ -204,7 +204,7 @@ void post(int c, unsigned int *n, char *params[])
 			 strcpy(origin, params[*n]);
 			 break;
 		 default:
-			 fprintf(stderr, "hpt post: unknown switch %s\n", params[*n]);
+			 w_log('9', "post: unknown switch %s", params[*n]);
 			 quit = 1;
 			 break;
          };
@@ -238,10 +238,11 @@ void post(int c, unsigned int *n, char *params[])
             if (strcmp(params[*n], "-")&&erasef==1)
                remove(params[*n]);
          } else {
-            fprintf(stderr, "hpt post: failed to open input file %s\n", params[*n]);
+            w_log('9', "post: failed to open input file %s", params[*n]);
+	    quit = 1;
         }
       } else {
-         fprintf(stderr, "hpt post: several input files on cmd line\n");
+         w_log('9', "post: several input files on cmd line");
          quit = 1;
       }
    }
@@ -315,25 +316,13 @@ void post(int c, unsigned int *n, char *params[])
 		  }
       }
 
-// remove after 23-Nov-01
-//      if ((config->echotosslog) && (!export)) {
-//        f=fopen(config->echotosslog, "a");
-//        if (f==NULL)
-//          w_log('9', "Could not open or create EchoTossLogFile.");
-//        else {
-//          fprintf(f,"%s\n", echo->areaName);
-//          fclose(f);
-//        }
-//      }
-
    };
 
    if (textBuffer == NULL && !quit) {
-     fprintf(stderr, "hpt post: no input source specified\n");
+       w_log('9', "post: no input source specified");
    }
-
-   if (msg.destAddr.zone == 0 && !quit) {
-     fprintf(stderr, "hpt post: attempt to post netmail msg without specifyng dest address\n");
+   else if (msg.destAddr.zone == 0 && !quit) {
+       w_log('9', "post: attempt to post netmail msg without specifyng dest address");
    }
 
    freeMsgBuffers(&msg);
