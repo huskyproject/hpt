@@ -953,11 +953,11 @@ void scanExport(int type, char *str) {
 
     /*  zero statScan */
     memset(&statScan, '\0', sizeof(s_statScan));
-    w_log(LL_START, "Start %s%s...",
+    w_log(LL_START, "Start %s%s%s...",
         type & SCN_ECHOMAIL ? "scanning" : "packing",
         type & SCN_FILE ? " with -f " :
-    type & SCN_NAME ? " with -a " : "");
-
+        type & SCN_NAME ? " with -a " : "",
+        str == NULL ? "" : str);
 
     w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
 
@@ -994,9 +994,17 @@ void scanExport(int type, char *str) {
     w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
 
     if (type & SCN_NAME) {
-        for (i = 0; i< config->echoAreaCount; i++) {
-            if (patimat(config->echoAreas[i].areaName, str))
-                scanByName(config->echoAreas[i].areaName, smManual);
+        if (type & SCN_NETMAIL) {
+            for (i = 0; i< config->netMailAreaCount; i++) {
+                if (patimat(config->netMailAreas[i].areaName, str))
+                    scanByName(config->netMailAreas[i].areaName,
+                                                              smManual);
+            }
+        } else {
+            for (i = 0; i< config->echoAreaCount; i++) {
+                if (patimat(config->echoAreas[i].areaName, str))
+                    scanByName(config->echoAreas[i].areaName, smManual);
+            }
         }
     } else if (f == NULL) {
         if (type & SCN_FILE) {
