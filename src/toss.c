@@ -1616,7 +1616,7 @@ int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
 	(stricmp(msg->toUserName,"areafix")==0 ||
 	 stricmp(msg->toUserName,"areamgr")==0 ||
 	 stricmp(msg->toUserName,"hpt")==0)) {
-      rc = processAreaFix(msg, pktHeader);
+      rc = processAreaFix(msg, pktHeader, 0);
     } else
       rc = processNMMsg(msg, pktHeader, NULL, 0, 0);
   } else {
