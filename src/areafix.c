@@ -1356,6 +1356,9 @@ char *rescan(s_link *link, char *cmd) {
 	countstr += 2;
 	if (*countstr == '=') countstr++;
     }
+    if (strncasecmp(countstr, "R=",2)==0) {
+	countstr += 2;
+    }
 	
     if (*countstr != '\0') {
 	rescanCount = strtol(countstr, NULL, 10);
@@ -1425,6 +1428,9 @@ char *add_rescan(s_link *link, char *line) {
     if (*line=='+') line++; while (*line==' ') line++;
 
     p = fc_stristr(line, " /R");
+    *p = '\0';
+
+    p = fc_stristr(line, " R=");
     *p = '\0';
 
     report = subscribe (link, line);
@@ -1598,6 +1604,7 @@ int tellcmd(char *cmd) {
         if (line[1]=='\000') return AFERROR;
     default:
         if (fc_stristr(line, " /R")!=NULL) return ADD_RSC; /*  add & rescan */
+        if (fc_stristr(line, " R=")!=NULL) return ADD_RSC; /*  add & rescan */
         return ADD;
     }
     return 0;/*  - Unreachable */
