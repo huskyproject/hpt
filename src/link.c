@@ -158,7 +158,7 @@ int linkArea(s_area *area, int netMail)
             &avlTree, &findEntry, (char *) curr)) != NULL)
            if (orig -> freeReply >= MAX_REPLY) {
               sprintf(buff, "replies count for msg %ld exceeds %d, rest of the\
-replies won't be linked", orig -> msgNum, MAX_REPLY);
+ replies won't be linked", orig -> msgNum, MAX_REPLY);
               writeLogEntry(log, '6', buff);
            } else {
               orig -> replies[(orig -> freeReply)++] = curr -> msgPos;
