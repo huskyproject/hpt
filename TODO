@@ -3,7 +3,6 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- areafixfromname
 - split posting messages
 
 Category 2: Might be implemented, but volunteers are always very welcome!
@@ -16,17 +15,15 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - advanced fileboxes
 - templates
 - change uplinks from command line
-- remote change areafixpwd, pktpwd, ticpwd, filefixpwd and packer by links
+- remote change areafixpwd, pktpwd, ticpwd, filefixpwd by links
 - change CHRS kludge when recode message
 - add areafix %users command which sends list of links, subscribed to echo
 - EchoAreaGroupDefaults
-- Implement NewAreaRefuse sqafix feature
 - ListEcho sorted | unsorted | grouped - for areafix list reports
 
 Category 3: Will only be included if volunteers send patches
 ============================================================
 - remove areafix from hpt, make hptfix (areafix & filefix)
-- reduces Seen-BYs (fsc-0093)
 - include libinfozip calls to hpt source
 
 Category 4: Will not be implemented
