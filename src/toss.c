@@ -426,7 +426,7 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount, s_area *echo, s_lin
    *newLinks = (s_link **) calloc(echo->downlinkCount, sizeof(s_link*));
 
    for (i=0; i < echo->downlinkCount; i++) {
-      if (checkLink(seenBys, seenByCount, echo->downlinks[i])==0) {
+      if (checkLink(seenBys, seenByCount, echo->downlinks[i], pktOrigAddr)==0) {
          (*newLinks)[j] = echo->downlinks[i];
          j++;
       }
@@ -446,7 +446,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
    createPathArrayFromMsg(msg, &path, &pathCount);
 
-   createNewLinkArray(seenBys, seenByCount, echo, &newLinks);
+   createNewLinkArray(seenBys, seenByCount, echo, &newLinks, pktOrigAddr);
 
    // add seenBy for newLinks
    for (i=0; i<echo->downlinkCount; i++) {
