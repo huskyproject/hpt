@@ -684,7 +684,7 @@ int cmdcall(const char *cmd)
 
   if( (list = mk_lst(cmd)) ) {
     w_log(LL_DEBUGV, "spawnvp(P_WAIT, %s, ...)", list[0] );
-    cmdexit = spawnvp(P_WAIT, list[0], list);
+    cmdexit = spawnvp(P_WAIT, list[0], (const char * const *)list);
     nfree(list[0]);
     nfree(list);
   }
