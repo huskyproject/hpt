@@ -62,33 +62,33 @@ extern s_statToss statToss;
 s_message* MessForCC(s_message *msg)
 {
     s_message* CCmsg;
-    
+
     if(config->carbonCount == 0)
         return NULL;
-    
+
     CCmsg = (s_message*) safe_calloc(1,sizeof(s_message));
-    
+
     CCmsg->origAddr.zone  = msg->origAddr.zone;
     CCmsg->origAddr.net   = msg->origAddr.net;
     CCmsg->origAddr.node  = msg->origAddr.node;
     CCmsg->origAddr.point = msg->origAddr.point;
-    
+
     CCmsg->destAddr.zone  = msg->destAddr.zone;
     CCmsg->destAddr.net   = msg->destAddr.net ;
     CCmsg->destAddr.node  = msg->destAddr.node;
     CCmsg->destAddr.point = msg->destAddr.point;
-    
+
     xstrcat(&(CCmsg->fromUserName), msg->fromUserName);
     xstrcat(&(CCmsg->toUserName), msg->toUserName);
     xstrcat(&(CCmsg->subjectLine), msg->subjectLine);
     xstrcat(&(CCmsg->text), msg->text);
-    
+
     strcpy( (char*)CCmsg->datetime, (char*)msg->datetime );
     CCmsg->attributes = msg->attributes;
     CCmsg->textLength = msg->textLength;
     CCmsg->netMail    = msg->netMail;
     CCmsg->recode     = msg->recode;
-    
+
     return CCmsg;
 }
 
@@ -140,7 +140,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 #ifdef __NT__
       CharToOem(execstr, execstr); /*  this is really need? */
 #endif
-      rc = system(execstr);
+      rc = cmdcall(execstr);
       nfree(execstr);
       unlink(fname);
       nfree(fname);
@@ -253,27 +253,27 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
         /* Dont come to use netmail on echomail and vise verse */
         if (cb->move!=2 && ((msg->netMail && !cb->netMail) ||
             (!msg->netMail &&  cb->netMail))) continue;
-        
+
         area = cb->area;
-        
+
         if(!cb->rule&CC_AND)  /* not AND & not AND-NOT */
         {
             if (!cb->extspawn && /*  fix for extspawn */
                 cb->areaName != NULL && /*  fix for carbonDelete */
                 /*  dont CC to the echo the mail comes from */
                 !sstricmp(echo->areaName,area->areaName)
-                ) 
+                )
                 continue;
-        }    
+        }
         switch (cb->ctype) {
         case ct_to:
             result=patimat(msg->toUserName,cb->str);
             break;
-            
+
         case ct_from:
             result=patimat(msg->fromUserName,cb->str);
             break;
-            
+
         case ct_kludge:
         case ct_msgtext:
             testptr=msg->text;
@@ -289,7 +289,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
             sstrcpy(pattern+1, cb->str);
             strcat(pattern, "*");
             result=0;
-            
+
             /* check the message line by line */
             while (testptr) {
                 testptr2 = strchr(testptr, '\r');
@@ -307,19 +307,19 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
             }
             nfree(pattern);
             break;
-            
+
         case ct_subject:
             result=patimat(msg->subjectLine,cb->str);
             break;
-            
+
         case ct_addr:
             result=!addrComp(msg->origAddr, cb->addr);
             break;
-            
+
         case ct_fromarea:
             result=patimat(echo->areaName,cb->str);
             break;
-            
+
         case ct_group:
             if(echo->group!=NULL){
                 /* cb->str for example Fido,xxx,.. */
@@ -351,7 +351,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
                         copiedToCount++;
                     }
             }
-            
+
             if(result){
                 /* make cc */
                 /* Set value: 1 if copy 3 if move */
@@ -384,7 +384,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
             break;
         }
     } /* end for() */
-    
+
     if (copiedTo) nfree (copiedTo);
     return rc;
 }

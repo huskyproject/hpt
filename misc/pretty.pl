@@ -3,6 +3,9 @@
 # $Id$
 #
 # $Log$
+# Revision 1.2  2002/01/27 14:38:17  stas
+# Add the '-c' option (copy mode) and change temp & old file names.
+#
 #
 
 $stopat = 5;

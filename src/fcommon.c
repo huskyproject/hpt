@@ -65,13 +65,22 @@
 
 #include <io.h>
 #include <fcntl.h>
+
 #include <process.h>
+#ifndef P_WAIT
+#define P_WAIT		_P_WAIT
+#endif
 
 #if !defined(S_ISDIR)
 #define S_ISDIR(a) (((a) & S_IFDIR) != 0)
 #endif
 
 #endif
+
+#if defined(__MINGW32__)
+# include <process.h>
+#endif
+
 
 #include <global.h>
 #include <fcommon.h>
@@ -632,3 +641,45 @@ int isValidConference(const char *s) {
     return 1;
 }
 
+
+#if HAVE_SPAWNVP
+/* make parameters list for spawnvp() */
+char **mk_lst(const char *a)
+{
+    char *p, *q, *t, **list=NULL, end=0, num=0;
+
+    p=q=t=sstrdup(a);
+    while (*p && !end) {
+	while (*q && !isspace(*q)) q++;
+	if (*q=='\0') end=1;
+	*q ='\0';
+	list = (char **) safe_realloc(list, ++num*sizeof(char*));
+	list[num-1]=(char*)p;
+	if (!end) {
+	    p=q+1;
+	    while(isspace(*p)) p++;
+	}
+	q=p;
+    }
+    list = (char **) safe_realloc(list, (++num)*sizeof(char*));
+    list[num-1]=NULL;
+
+    return list;
+}
+
+int cmdcall(const char *cmd)
+{ int cmdexit=0;
+  char **list;
+
+  list = mk_lst(cmd);
+  cmdexit = spawnvp(P_WAIT, basename(list[0]), list);
+  nfree(list[0]);
+  nfree(list);
+  return cmdexit;
+}
+#else
+/*
+int cmdcall(const char *cmd)
+{ return system(cmd); }
+*/
+#endif

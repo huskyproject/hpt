@@ -25,7 +25,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -39,8 +39,27 @@
 #include <stdio.h>
 #include <fidoconf/fidoconf.h>
 
+
 /* common functions */
 void writeDupeFiles(void);
+
+/*
+#if defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) || defined(__MINGW32__)
+#if !defined(HAVE_SPAWNVP)
+#define HAVE_SPAWNVP 1
+#endif
+#endif
+*/
+/* cmdcall()
+ * Call external command (using spawnvp() if possible to prevent drop command
+ * exit code by buggy shell)
+ * Return exit code of the executed command.
+ */
+#if HAVE_SPAWNVP
+int cmdcall(const char *cmd);
+#else
+#  define cmdcall(cmd) system(cmd)
+#endif
 
 void exit_hpt(char *logstr, int print);
 /*DOC
@@ -57,7 +76,7 @@ void addAnotherPktFile(s_link *link, char *filename);
           pktfiles for the specified link. No checks are performed. The
           string is duplicated internally.
 */
-  
+
 int   createTempPktFileName(s_link *link);
 /*DOC
   Input:  a pointer to a link structure
@@ -69,7 +88,7 @@ int   createTempPktFileName(s_link *link);
           in a second and have the same timestamp only every 291 days.
           The pktFileName is stored in the link structure
 */
-  
+
 int   createPackFileName(s_link *link);
 /*DOC
   Input:  a pointer to a link structure
@@ -105,3 +124,4 @@ char *safe_strdup(const char *src);
 int isValidConference(const char *s);
 
 #endif
+

@@ -12,13 +12,13 @@ typedef struct query_areas
     char *name;
     char  type[5];
     char *report;
-    
+
     time_t bTime;
     time_t eTime;
-    
+
     int nFlag;
     ps_addr downlinks;
-    size_t linksCount;        
+    size_t linksCount;
     struct query_areas *next;
 /*     struct query_areas *prev; */
 } s_query_areas;

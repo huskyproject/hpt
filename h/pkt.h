@@ -1,5 +1,4 @@
 /* $Id$ */
-
 /*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
@@ -25,7 +24,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -100,7 +99,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message);
           readMsgFromPkt will read from the current position of the filepointer
           header, when in a netmail no intl kludge is found, header will be used
           to assume intl kludge
-		  message from pkt reading into *message structure, NULL if no msg 
+		  message from pkt reading into *message structure, NULL if no msg
   Output: number of msg was read (1 or 0), or 2 if error while reading
   FZ:     readMsgFromPkt reads a message out of the pkt and transforms the data
           to the struct.
