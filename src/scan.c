@@ -459,7 +459,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    } /* endif file attach */
 
    // process carbon copy
-   carbonCopy(&msg, area);
+   if (config->carbonOut) carbonCopy(&msg, area);
    
    freeMsgBuffers(&msg);
    if (freeVirtualLink==1) {

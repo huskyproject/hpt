@@ -177,7 +177,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 
    
    // process carbon copy
-   carbonCopy(&msg, echo);
+   if (config->carbonOut) carbonCopy(&msg, echo);
 
 /*
    for (i = 0; i<echo->downlinkCount; i++) {
