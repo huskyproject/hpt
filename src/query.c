@@ -491,10 +491,10 @@ char* af_Req2Idle(char *areatag, char* report, hs_addr linkAddr)
                     areaNode->eTime = tnow + config->idlePassthruTimeout*secInDay;
                     w_log(LL_AREAFIX, "areafix: make request idle for area: %s", areaNode->name);
                 }
-                xscatprintf(&report, " %s %s  request canceled\r",
+                xscatprintf(&report, " %s %s  request cancelled\r",
                     areaNode->name,
                     print_ch(49-strlen(areaNode->name), '.'));
-                w_log(LL_AREAFIX, "areafix: request canceled for [%s] area: %s",aka2str(linkAddr),
+                w_log(LL_AREAFIX, "areafix: request cancelled for [%s] area: %s",aka2str(linkAddr),
                     areaNode->name);
             }
         }
@@ -721,12 +721,13 @@ void af_QueueUpdate()
         tmpNode = tmpNode->next;
         if( tmpNode->eTime > tnow )
             continue;
+
         if( stricmp(tmpNode->type,czFreqArea) == 0 )
         {
             lastRlink = getLinkFromAddr(config,tmpNode->downlinks[0]);
             dwlink    = getLinkFromAddr(config,tmpNode->downlinks[1]);
-            forwardRequestToLink(tmpNode->name, lastRlink, NULL, 2);
-            w_log( LL_AREAFIX, "areafix: request for %s is canceled for node %s",
+            forwardRequestToLink(tmpNode->name, lastRlink, NULL, 1);
+            w_log( LL_AREAFIX, "areafix: request for %s is cancelled for node %s",
                 tmpNode->name, aka2str(lastRlink->hisAka));
             if(dwlink && !forwardRequest(tmpNode->name, dwlink, &lastRlink))
             {
@@ -768,6 +769,9 @@ void af_QueueUpdate()
             {
                 do_delete(NULL, delarea);
             }
+            /* send unsubscribe message to uplink when moving from idle to kill */
+            lastRlink = getLinkFromAddr(config,tmpNode->downlinks[0]);
+            if (lastRlink) forwardRequestToLink(tmpNode->name, lastRlink, NULL, 1);
         }
     }
     /*  send msg to the links (forward requests to areafix) */
