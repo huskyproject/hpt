@@ -1,3 +1,8 @@
+2002-11-23 Saturday 22:09  stas_degteff
+
+	* doc/hpt.texi (1.89), HISTORY (1.14): AvailList token are
+	ocumented now
+
 2002-11-23 Saturday 21:37  stas_degteff
 
 	* src/areafix.c (1.369): Final avaiable() variant with three
