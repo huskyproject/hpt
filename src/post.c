@@ -56,6 +56,7 @@ tearline generation added
 #include <areafix.h>
 #include <hpt.h>
 #include <scanarea.h>
+#include <scan.h>
 
 
 #include <smapi/progprot.h>
@@ -334,8 +335,8 @@ void post(int c, unsigned int *n, char *params[])
                     textBuffer = safe_malloc(cursize);
                     for (msg.textLength = 0;; msg.textLength++) {
                         if (msg.textLength >= cursize)
-                            textBuffer = safe_realloc(textBuffer, 
-                            cursize += TEXTBUFFERSIZE);
+                            textBuffer = safe_realloc(textBuffer,
+                                                      cursize += TEXTBUFFERSIZE);
                         c = getc(text);
                         if (c == EOF || c == 0) {
                             textBuffer[msg.textLength] = 0;
@@ -460,10 +461,13 @@ void post(int c, unsigned int *n, char *params[])
                 }
                 if (msg.netMail) {
                     processNMMsg(&msg, NULL, NULL, 0, MSGLOCAL);
-                    cmPack = 1;
+                    if (export)
+                        scanExport((SCN_NAME & SCN_NETMAIL), (area) ? area : echo->areaName);
                 }
                 else {
                     processEMMsg(&msg, msg.origAddr, 1, (MSGSCANNED|MSGSENT|MSGLOCAL));
+                    if (export)
+                        scanExport((SCN_NAME & SCN_ECHOMAIL), (area) ? area : echo->areaName);
                 }
             }
             nfree(msg.text);
