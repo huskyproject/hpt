@@ -1,3 +1,25 @@
+2002-05-06 Monday 18:15  pavel.gulchouck
+
+	* src/toss.c (1.404), TODO (1.188): speedup: do not reopen pkt for
+	writing each message
+
+2002-05-06 Monday 14:44  pavel.gulchouck
+
+	* src/post.c (1.76): added flags dir, imm, kfs, tfs, cfm, npd
+
+2002-05-06 Monday 14:04  pavel.gulchouck
+
+	* src/: areafix.c (1.299), query.c (1.43), toss.c (1.403): add
+	kludge "FLAGS NPD" when it needed
+
+2002-05-06 Monday 13:39  pavel.gulchouck
+
+	* src/post.c (1.75): Do not autoadd tearline & origin in netmail
+
+2002-05-06 Monday 12:24  pavel.gulchouck
+
+	* src/areafix.c (1.298): delLinkFromString changed
+
 2002-05-04 Saturday 23:17  d.sergienko
 
 	* src/areafix.c (1.297): 
