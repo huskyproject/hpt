@@ -42,6 +42,12 @@ tearline generation added
 #include <sysexits.h>
 #endif
 
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
+#include <fidoconf/xstr.h>
+#include <fidoconf/afixcmd.h>
+#include <fidoconf/recode.h>
+
 #include <version.h>
 #include <toss.h>
 #include <post.h>
@@ -49,12 +55,9 @@ tearline generation added
 #include <version.h>
 #include <areafix.h>
 #include <hpt.h>
-#include <fidoconf/recode.h>
 #include <scanarea.h>
 
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
-#include <fidoconf/xstr.h>
+
 #include <smapi/progprot.h>
 
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
@@ -374,7 +377,7 @@ void post(int c, unsigned int *n, char *params[])
             
             if(!msg.netMail) memset(&msg.destAddr, '\0', sizeof(s_addr));
 
-            msg.text = createKludges(area, &msg.origAddr, &msg.destAddr);
+            msg.text = createKludges(config,area, &msg.origAddr, &msg.destAddr,versionStr);
 
             if( uuepost )
             {

@@ -490,7 +490,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 
     if (uplink->msg == NULL) {
 	msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop, uplink->RemoteRobotName ? uplink->RemoteRobotName : "areafix", uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1);
-	msg->text = createKludges(NULL, uplink->ourAka, &(uplink->hisAka));
+	msg->text = createKludges(config,NULL, uplink->ourAka, &(uplink->hisAka),versionStr);
 	uplink->msg = msg;
     } else msg = uplink->msg;
 	
@@ -1669,7 +1669,7 @@ void preprocText(char *split, s_message *msg)
 {
     char *orig = (config->areafixOrigin) ? config->areafixOrigin : config->origin;
 
-    msg->text = createKludges(NULL, &msg->origAddr, &msg->destAddr);
+    msg->text = createKludges(config,NULL, &msg->origAddr, &msg->destAddr,versionStr);
     xscatprintf(&split, "\r--- %s areafix\r", versionStr);
     if (orig) {
 	xscatprintf(&split, " * Origin: %s (%s)\r", orig, aka2str(msg->origAddr));
@@ -2210,9 +2210,11 @@ void autoPassive()
 						    &(config->links[i].hisAka),
 						    versionStr,config->links[i].name,
 						    "AutoPassive", 1);
-				  msg->text = createKludges(NULL,
+				  msg->text = createKludges(
+                                config,NULL,
 							    config->links[i].ourAka,
-							    &(config->links[i].hisAka));
+							    &(config->links[i].hisAka)
+                                ,versionStr);
 				  xstrcat(&msg->text, "\r System switched to passive\r\r You are being unsubscribed from echo areas with no downlinks besides you!\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the \r %RESUME command.");
 				  xscatprintf(&msg->text, "\r\r--- %s autopause\r", versionStr);
 				  msg->textLength = strlen(msg->text);
@@ -2297,7 +2299,7 @@ int relink (char *straddr) {
 			  researchLink->RemoteRobotName : "areafix",
 			  researchLink->areaFixPwd ? researchLink->areaFixPwd : "", 1);
 
-	msg->text = createKludges( NULL,researchLink->ourAka,&researchLink->hisAka);
+	msg->text = createKludges(config,NULL,researchLink->ourAka,&researchLink->hisAka,versionStr);
 
 	for ( count = 0 ; count < areasArraySize; count++ ) {
 	    if ((areasIndexArray[count]->downlinkCount  <= 1) &&

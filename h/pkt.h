@@ -154,7 +154,7 @@ void        freeMsgBuffers(s_message *msg);
   FZ:     all memory reserved by readMsgFromPkt will be freed.
 */
 
-char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAka);
+//char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAka);
 /*DOC
    Taken from the areafix.c
    Input:  a s_addr struct

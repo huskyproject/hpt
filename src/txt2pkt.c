@@ -41,6 +41,7 @@
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
+#include <fidoconf/afixcmd.h>
 
 #include <global.h>
 #include <version.h>
@@ -276,7 +277,7 @@ int main(int argc, char *argv[])
          xstrcat(&textBuffer, tmp);
       }
       xstrcat(&versionStr,"txt2pkt");
-      msg.text = createKludges(area, &msg.origAddr, &msg.destAddr);
+      msg.text = createKludges(config,area, &msg.origAddr, &msg.destAddr,versionStr);
       xstrcat(&(msg.text), textBuffer);
       if (area == NULL) {
          time(&t);

@@ -68,6 +68,7 @@ int __stdcall CharToOemA(char *, char *);
 #include <fidoconf/common.h>
 #include <fidoconf/dirlayer.h>
 #include <fidoconf/xstr.h>
+#include <fidoconf/afixcmd.h>
 
 #include <pkt.h>
 #include <scan.h>
@@ -1305,7 +1306,11 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
 	    if (msgToSysop[i] == NULL) {
 
 		msgToSysop[i] = makeMessage(echo->useAka, echo->useAka, versionStr, netmail ? config->sysop : "All", "Created new areas", netmail);
-		msgToSysop[i]->text = createKludges(netmail ? NULL : config->ReportTo, echo->useAka, echo->useAka);
+		msgToSysop[i]->text = createKludges(
+            config,
+            netmail ? NULL : config->ReportTo, 
+            echo->useAka, echo->useAka,
+            versionStr);
 
 		xstrscat(&(msgToSysop[i]->text), "Action   Name", 
 			 print_ch(49, ' '), "By\r", NULL);

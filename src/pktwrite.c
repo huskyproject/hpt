@@ -269,7 +269,7 @@ FILE *openPktForAppending(char *fileName, s_pktHeader *header)
  * This is a simply msgid without any hash function...
  * Imho it is not necessary to create better msgid for this purpose.
  */
-
+/*
 char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAka) {
    
    char *buff = NULL;
@@ -296,3 +296,4 @@ char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAk
 
    return buff;
 }
+*/

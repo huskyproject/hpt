@@ -23,10 +23,12 @@
 #include <fidoconf/xstr.h>
 #include <fidoconf/crc.h>
 #include <smapi/progprot.h>
+#include <fidoconf/afixcmd.h>
 
 #include <fcommon.h>
 #include <pkt.h>
 #include <global.h>
+#include <version.h>
 #include <toss.h>
 #include <hptperl.h>
 
@@ -311,7 +313,10 @@ static XS(perl_putMsgInArea)
   }
   free(sattr);
   if (addkludges)
-    msg.text = createKludges(msg.netMail ? NULL : area, &msg.origAddr, &msg.destAddr);
+    msg.text = createKludges(config,
+                msg.netMail ? NULL : area, 
+                &msg.origAddr, &msg.destAddr,
+                versionStr);
   text = safe_strdup(text);
   if (strchr(text, '\r') == NULL)
     for (p=text; *p; p++)
