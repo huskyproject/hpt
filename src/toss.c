@@ -528,7 +528,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
         if (rc==0) statToss.exported++;
         else rc=0;
 #ifdef ADV_STAT
-        if (config->advStatisticsFile != NULL) put_stat(echo, &(header.destAddr), stOUT, strlen(msg->text));
+        if (config->advStatisticsFile != NULL) put_stat(echo, &(header.destAddr), stOUT, msg->textLength+strlen(msg->text+msg->textLength));
 #endif
     }
 
