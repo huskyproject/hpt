@@ -555,7 +555,6 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 {
     char *tmp = NULL, *line = NULL, *textBuff=NULL, *areaName=NULL, *reason = NULL;
-    char buff[256];
 
     w_log(LL_FUNC, "putMsgInBadArea() begin");
     statToss.bad++;
@@ -593,12 +592,8 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 	reason = "Rejected by filter";
 	w_log(LL_ECHOMAIL, "Badmail reason: Rejected by filter");
 	break;
-    case 6:
-	strcpy(buff, "MSGAPIERR: ");
-	strncat(buff, strmerr(msgapierr), sizeof(buff)-strlen(buff));
-	buff[sizeof(buff)-1] = '\0';
-	reason = buff;
-	w_log(LL_ECHOMAIL, "Badmail reason: %s", reason);
+    case 6:   /* MSGAPI error */
+	w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: %s", strmerr(msgapierr));
 	break;
     case 7:
 	reason = "Can't create echoarea with forbidden symbols in areatag";
