@@ -1,3 +1,9 @@
+2003-09-04 Thursday 07:56  val_khokhlov
+
+	* doc/perlhooks.rus (1.5), src/perl.c (1.69): new parameters in
+	perl: $config{packers}, %links: packer, noRules, reducedSeenBy
+	(thanks to Andrew Ladutsko, 2:450/210)
+
 2003-09-02 Tuesday 12:08  val_khokhlov
 
 	* src/: areafix.c (1.423), hpt.c (1.181), perl.c (1.68), query.c
