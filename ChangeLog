@@ -1,3 +1,8 @@
+2002-01-13 Sunday 19:57  ml
+
+	* src/areafix.c (1.232.2.3): removing trailing \r from the end of
+	line 'request forwarded' (log message)
+
 2002-01-12 Saturday 09:29  ml
 
 	* src/toss.c (1.380.2.3): bugfix in filebox autocreation
