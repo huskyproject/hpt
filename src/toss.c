@@ -234,6 +234,8 @@ void putMsgInArea(s_area *echo, s_message *msg, int strip)
          if (msg->recode == 0 && config->intab != NULL) {
             recodeToInternalCharset(msg->subjectLine);
             recodeToInternalCharset(msg->text);
+            recodeToInternalCharset(msg->toUserName);
+            recodeToInternalCharset(msg->fromUserName);
                         msg->recode = 1;
          }
 

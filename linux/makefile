@@ -36,7 +36,7 @@ tpkt: tpkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o
 	$(CC) $(LFLAGS) -o tpkt log.o tpkt.o fcommon.o pktread.o recode.o pktwrite.o global.o -lsmapilnx  -lfidoconfig
 
 hpt: $(OBJS)
-	$(CC) $(LFLAGS) -o hpt $(OBJS) -lsmapilnx -lfidoconfig
+	$(CC) $(LFLAGS) -o hpt $(OBJS) -lsmapilnx -lfidoconfig 
 
 purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o log.o recode.o
 	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o recode.o dupe.o global.o log.o -lfidoconfig -lsmapilnx

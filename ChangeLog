@@ -1,5 +1,21 @@
-hpt 0.27
+hpt 0.28
 --------
+
+----- cvs ci ------
+Sun May  9 21:06:02 CEST 1999
+mtt:
++ applied patch by John Zaitsev (2:5037/24)
+  so also toName and fromName are encode
+
+
+hpt 0.27
+(released on Wed Apr 21 18:44:22 CEST 1999)
+--------
+
+----- cvs ci ------
+Wed Apr 21 18:44:22 CEST 1999
+mtt:
++ changed two strcasecmp to stricmp
 
 ----- cvs ci ------
 Wed Apr 21 11:23:59 MET DST 1999

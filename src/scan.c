@@ -87,6 +87,8 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
 
    // recoding subjectLine to TransportCharset
    if (config->outtab != NULL) recodeToTransportCharset(msg->subjectLine);
+   if (config->outtab != NULL) recodeToTransportCharset(msg->fromUserName);
+   if (config->outtab != NULL) recodeToTransportCharset(msg->toUserName);
 }
 
 void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)

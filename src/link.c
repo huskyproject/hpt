@@ -73,13 +73,13 @@ typedef struct msginfo s_msginfo;
 
 static int  compareEntries(const void *e1, const void *e2)
 {
-   return strcasecmp(((s_msginfo*) e1) -> msgId + 6,
+   return stricmp(((s_msginfo*) e1) -> msgId + 6,
                      ((s_msginfo*) e2) -> msgId + 6);
 }
 
 static int  findEntry(const void *e1, const void *e2)
 {
-   return strcasecmp(((s_msginfo*) e1) -> replyId + 6,
+   return stricmp(((s_msginfo*) e1) -> replyId + 6,
                      ((s_msginfo*) e2) -> msgId + 6);
 }
 
