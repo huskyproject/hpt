@@ -138,7 +138,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    if (action == 0 && config->disableTID == 0)
    {
        while(msgtid = GetCtrlToken(ctrlBuff, "TID"))
-           RemoveFromCtrl(ctrlBuff, "TID");
+           MsgRemoveToken(ctrlBuff, "TID");
        xstrscat((char **) &ctrlBuff, "\001TID: ", versionStr, NULL);
    }
    // add '\r' after each kludge
