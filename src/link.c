@@ -250,8 +250,7 @@ int linkArea(s_area *area, int netMail)
                 return 0;
             };
             if (curr -> msgId != NULL) {
-                w_log(LL_WARN, "msg %ld has dupes in msgbase :" \
-                    " trown from reply chain", i);
+                w_log(LL_WARN, "msg %ld has dupes in msgbase: thrown out from reply chain", i);
                 if (!jam) {
                     MsgCloseMsg(hmsg);
                     nfree(msgId);
