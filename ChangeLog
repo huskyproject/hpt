@@ -1,3 +1,19 @@
+2003-06-07 Saturday 07:04  d_sergienko
+
+	* src/: areafix.c (1.416), toss.c (1.519): add patch by Andrey
+	Ladutsko, 2:450/210: use AreaFixFromName when autocreate/autopause
+	in areafix messages.
+
+2003-06-05 Thursday 04:47  d_sergienko
+
+	* HISTORY (1.34), src/query.c (1.101): don't place -b <msgtype>
+	into autocreated area definition if it is not in
+	AutoAreaCreateDefaults
+
+2003-06-03 Tuesday 07:45  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.85): Add URL for fastlink
+
 2003-05-31 Saturday 12:04  mche
 
 	* src/perl.c (1.67): fix compilation warnings
