@@ -1,3 +1,12 @@
+2003-02-12 Wednesday 22:04  d_sergienko
+
+	* HISTORY (1.18): added info about AreaGroup*
+
+2003-02-12 Wednesday 18:13  sfpavel
+
+	* UPGRADE (1.1): file UPGRADE was initially added on branch
+	hpt-1_4-stable.
+
 2003-02-11 Tuesday 13:21  stas_degteff
 
 	* doc/hpt-FAQ.russian (1.78): Update Q38 (using areafiles)
