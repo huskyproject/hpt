@@ -1,8 +1,10 @@
 hpt 0.9.6
 ---------
 
-
-
+----- cvs ci ------
+Mon Jan 31 01:32:43 NOVT 2000
+max:
+* fixed %avail coredump in areafix (broken by sms)
 
 hpt 0.9.5
 ---------
@@ -20,6 +22,7 @@ max:
 * correct printing to log and stderr in post.c
 * post options printed through "hpt post -h"
 * documented -x option in post
+* updated man page for hpt
 
 ----- cvs ci ------
 Fri Jan 28 21:40:00 CET 2000

@@ -461,7 +461,7 @@ char *available(s_link *link) {
 		uplink = &(config->links[j]);
 
 		found = 0;
-		for (k = 0; k < link->numAccessGrp; k++)
+		for (k = 0; k < link->numAccessGrp && uplink->LinkGrp; k++)
 		  if (strcmp(link->AccessGrp[k], uplink->LinkGrp) == 0)
 		    found = 1;
 
