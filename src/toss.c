@@ -105,6 +105,12 @@ int __stdcall GetFileAttributesA(char *);
 #define NOSLASHES
 #endif
 
+
+#ifdef USE_HPT_ZLIB
+#   include "hpt_zlib/hptzip.h"
+#endif
+
+
 extern s_message **msgToSysop;
 int save_err;
 
@@ -647,8 +653,8 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
 			s_arealink ***zoneLinks, s_addr pktOrigAddr) {
     UINT i, j=0, k=0;
 	
-    *newLinks = (s_arealink **) calloc(echo->downlinkCount,sizeof(s_arealink*));
-    *zoneLinks = (s_arealink **) calloc(echo->downlinkCount,sizeof(s_arealink*));
+    *newLinks = (s_arealink **) scalloc(echo->downlinkCount,sizeof(s_arealink*));
+    *zoneLinks = (s_arealink **) scalloc(echo->downlinkCount,sizeof(s_arealink*));
     if (*newLinks==NULL || *zoneLinks==NULL) exit_hpt("out of memory",1);
 
     for (i=0; i < echo->downlinkCount; i++) {
@@ -1471,8 +1477,12 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 	break;
     case 6:
 	xstrcat(&textBuff,"MSGAPIERR: ");
-		
+
+#ifdef _MAKE_DLL_MVC_
+	switch (GetMsgapiErr()) {   
+#else
 	switch (msgapierr) {
+#endif
 	case MERR_NONE: xstrcat(&textBuff,"No error\r");
 	    break;
 	case MERR_BADH: xstrcat(&textBuff,"Invalid handle passed to function\r");
@@ -1896,7 +1906,11 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 
 	MsgCloseArea(netmail);
     } else {
-	fprintf(stderr, "msgapierr - %u\n", msgapierr);
+#ifdef _MAKE_DLL_MVC_
+    fprintf(stderr, "msgapierr - %u\n", GetMsgapiErr());
+#else
+    fprintf(stderr, "msgapierr - %u\n", msgapierr);
+#endif
 	w_log('9', "Could not open NetmailArea %s", area -> areaName);
     } /* endif */
     return rc;
@@ -2186,20 +2200,30 @@ int  processArc(char *fileName, e_tossSecurity sec)
     if (found) {
 	fillCmdStatement(cmd,config->unpack[i-1].call,fileName,"",config->tempInbound);
 	w_log('6', "bundle %s: unpacking with \"%s\"", fileName, cmd);
-#ifdef __WATCOMC__
-	list = mk_lst(cmd);
-	cmdexit = spawnvp(P_WAIT, cmd, list);
-	free((char **)list);
-	if (cmdexit != 0) {
-	    w_log('9', "exec failed: %s, return code: %d", strerror(errno), cmdexit);
-	    return 3;
-	}
-#else
-	if ((cmdexit = system(cmd)) != 0) {
-	    w_log('9', "exec failed, code %d", cmdexit);
-	    return 3;
-	}
+    if( hpt_stristr(config->unpack[i-1].call, "zipInternal") )
+    {
+        cmdexit = 1;
+#ifdef USE_HPT_ZLIB
+        cmdexit = UnPackWithZlib(fileName, config->tempInbound);
 #endif
+    }
+    else
+    {
+#ifdef __WATCOMC__
+        list = mk_lst(cmd);
+        cmdexit = spawnvp(P_WAIT, cmd, list);
+        free((char **)list);
+        if (cmdexit != 0) {
+            w_log('9', "exec failed: %s, return code: %d", strerror(errno), cmdexit);
+            return 3;
+        }
+#else
+        if ((cmdexit = system(cmd)) != 0) {
+            w_log('9', "exec failed, code %d", cmdexit);
+            return 3;
+        }
+#endif
+    }
 	if (config->afterUnpack) {
 	    w_log('6', "afterUnpack: execute string \"%s\"", config->afterUnpack);
 	    if ((cmdexit = system(config->afterUnpack)) != 0) {
@@ -2543,13 +2567,23 @@ void arcmail(s_link *tolink) {
 			  link->name, get_filename(link->pktFile),
 			  get_filename(link->packFile));
 		    w_log('6', "cmd: %s", cmd);
-#ifdef __WATCOMC__
-		    list = mk_lst(cmd);
-		    cmdexit = spawnvp(P_WAIT, cmd, list);
-		    free((char **)list);
-#else
-		    cmdexit = system(cmd);
+            if( stricmp(link->packerDef->call, "zipInternal") == 0 )
+            {
+                cmdexit = 1;
+#ifdef USE_HPT_ZLIB
+                cmdexit = PackWithZlib(link->packFile, link->pktFile);
 #endif
+            }
+            else
+            {
+#ifdef __WATCOMC__
+		        list = mk_lst(cmd);
+		        cmdexit = spawnvp(P_WAIT, cmd, list);
+		        free((char **)list);
+#else
+		        cmdexit = system(cmd);
+#endif
+            }
 		    if (cmdexit==0) remove(link->pktFile);
 		    else w_log('9', "Error executing packer (errorlevel==%i)", cmdexit);
 
@@ -2600,13 +2634,23 @@ void arcmail(s_link *tolink) {
 			      get_filename(link->pktFile),
 			      get_filename(link->packFile));
 			w_log('6', "cmd: %s", cmd);
-#ifdef __WATCOMC__
-			list = mk_lst(cmd);
-			cmdexit = spawnvp(P_WAIT, cmd, list);
-			free((char **)list);
-#else
-			cmdexit = system(cmd);
+            if( stricmp(link->packerDef->call, "zipInternal") == 0 )
+            {
+                cmdexit = 1;
+#ifdef USE_HPT_ZLIB
+                cmdexit = PackWithZlib(link->packFile, link->pktFile);
 #endif
+            }
+            else
+            {
+#ifdef __WATCOMC__
+			    list = mk_lst(cmd);
+			    cmdexit = spawnvp(P_WAIT, cmd, list);
+			    free((char **)list);
+#else
+                cmdexit = system(cmd);
+#endif
+            }
 			if (cmdexit==0) {
 			    if (foa==0) {
 				if (bundleNameStyle == eAddrDiff ||
