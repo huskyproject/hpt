@@ -13,24 +13,27 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\nd_r\bin"
-			IntermediateDirectory=".\..\nd_r\obj\hpt"
+			OutputDirectory="..\..\nd_r\bin"
+			IntermediateDirectory="..\..\nd_r\obj\hpt"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			CharacterSet="2"
+			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="1"
+				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..;.\h;..\fidoconf;..\huskylib;..\smapi;f:\compilation\perl\lib\core"
+				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;f:\compilation\perl\lib\core"
 				PreprocessorDefinitions="NDEBUG;NO_STRICT;DO_PERL;PERL_MSVCRT_READFIX;NO_STRICT;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_MAKE_DLL;__NT__;WIN32;_CONSOLE"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
-				PrecompiledHeaderFile=".\..\nd_r\obj\hpt/hpt.pch"
-				AssemblerListingLocation=".\..\nd_r\obj\hpt/"
-				ObjectFile=".\..\nd_r\obj\hpt/"
-				ProgramDataBaseFileName=".\..\nd_r\obj\hpt/"
+				PrecompiledHeaderFile=""
+				AssemblerListingLocation=""
+				ObjectFile="..\..\nd_r\obj\hpt/"
+				ProgramDataBaseFileName="..\..\nd_r\obj\hpt/"
 				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
@@ -41,13 +44,13 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="fidoconf.lib smapi.lib huskylib.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib msvcrt.lib"
-				OutputFile=".\..\nd_r\bin/hpt.exe"
+				OutputFile="..\..\nd_r\bin/hpt.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\nd_r\lib,F:\compilation\perl\lib\CORE"
+				AdditionalLibraryDirectories="..\..\nd_r\lib,F:\compilation\perl\lib\CORE"
 				IgnoreAllDefaultLibraries="TRUE"
 				DelayLoadDLLs="perl56.dll"
-				ProgramDatabaseFile="..\nd_r\obj\hpt/hpt.pdb"
+				ProgramDatabaseFile="..\..\nd_r\obj\hpt/hpt.pdb"
 				SubSystem="1"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -69,22 +72,22 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\nd_d\bin"
-			IntermediateDirectory=".\..\nd_d\obj\hpt"
+			OutputDirectory="..\..\nd_d\bin"
+			IntermediateDirectory="..\..\nd_d\obj\hpt"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..;.\h;..\fidoconf;..\huskylib;..\smapi;f:\compilation\perl\lib\core"
+				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;f:\compilation\perl\lib\core"
 				PreprocessorDefinitions="DO_PERL;PERL_MSVCRT_READFIX;NO_STRICT;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_MAKE_DLL;__NT__;WIN32;_CONSOLE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\..\nd_d\obj\hpt/hpt.pch"
-				AssemblerListingLocation=".\..\nd_d\obj\hpt/"
-				ObjectFile=".\..\nd_d\obj\hpt/"
-				ProgramDataBaseFileName=".\..\nd_d\obj\hpt/"
+				PrecompiledHeaderFile=""
+				AssemblerListingLocation=""
+				ObjectFile="..\..\nd_d\obj\hpt/"
+				ProgramDataBaseFileName="..\..\nd_d\obj\hpt/"
 				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
@@ -96,14 +99,14 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="msvcrtd.lib huskylib.lib fidoconf.lib smapi.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib"
-				OutputFile=".\..\nd_d\bin/hpt.exe"
+				OutputFile="..\..\nd_d\bin/hpt.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\nd_d\lib,F:\compilation\perl\lib\CORE"
+				AdditionalLibraryDirectories="..\..\nd_d\lib,F:\compilation\perl\lib\CORE"
 				IgnoreAllDefaultLibraries="TRUE"
 				DelayLoadDLLs="perl56.dll"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\..\nd_d\bin/hpt.pdb"
+				ProgramDatabaseFile="..\..\nd_d\bin/hpt.pdb"
 				SubSystem="1"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -126,111 +129,115 @@
 	</Configurations>
 	<Files>
 		<Filter
-			Name="Header Files"
+			Name="headerz"
 			Filter="">
 			<File
-				RelativePath=".\h\areafix.h">
+				RelativePath="..\h\areafix.h">
 			</File>
 			<File
-				RelativePath=".\h\cvsdate.h">
+				RelativePath="..\h\cvsdate.h">
 			</File>
 			<File
-				RelativePath=".\h\dupe.h">
+				RelativePath="..\h\dupe.h">
 			</File>
 			<File
-				RelativePath=".\h\fcommon.h">
+				RelativePath="..\h\fcommon.h">
 			</File>
 			<File
-				RelativePath=".\h\global.h">
+				RelativePath="..\h\global.h">
 			</File>
 			<File
-				RelativePath=".\h\hpt.h">
+				RelativePath="..\h\hpt.h">
 			</File>
 			<File
-				RelativePath=".\h\hptperl.h">
+				RelativePath="..\h\hptperl.h">
 			</File>
 			<File
-				RelativePath=".\h\link.h">
+				RelativePath="..\h\link.h">
 			</File>
 			<File
-				RelativePath=".\h\pkt.h">
+				RelativePath="..\h\pkt.h">
 			</File>
 			<File
-				RelativePath=".\h\post.h">
+				RelativePath="..\h\post.h">
 			</File>
 			<File
-				RelativePath=".\h\query.h">
+				RelativePath="..\h\query.h">
 			</File>
 			<File
-				RelativePath=".\h\scan.h">
+				RelativePath="..\h\scan.h">
 			</File>
 			<File
-				RelativePath=".\h\scanarea.h">
+				RelativePath="..\h\scanarea.h">
 			</File>
 			<File
-				RelativePath=".\h\seenby.h">
+				RelativePath="..\h\seenby.h">
 			</File>
 			<File
-				RelativePath=".\h\stat.h">
+				RelativePath="..\h\stat.h">
 			</File>
 			<File
-				RelativePath=".\h\toss.h">
+				RelativePath="..\h\toss.h">
 			</File>
 			<File
-				RelativePath=".\h\version.h">
+				RelativePath="..\h\version.h">
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\src\areafix.c">
-		</File>
-		<File
-			RelativePath=".\src\carbon.c">
-		</File>
-		<File
-			RelativePath=".\src\dupe.c">
-		</File>
-		<File
-			RelativePath=".\src\fcommon.c">
-		</File>
-		<File
-			RelativePath=".\src\global.c">
-		</File>
-		<File
-			RelativePath=".\src\hpt.c">
-		</File>
-		<File
-			RelativePath=".\src\link.c">
-		</File>
-		<File
-			RelativePath=".\src\perl.c">
-		</File>
-		<File
-			RelativePath=".\src\pktread.c">
-		</File>
-		<File
-			RelativePath=".\src\pktwrite.c">
-		</File>
-		<File
-			RelativePath=".\src\post.c">
-		</File>
-		<File
-			RelativePath=".\src\query.c">
-		</File>
-		<File
-			RelativePath=".\src\scan.c">
-		</File>
-		<File
-			RelativePath=".\src\scanarea.c">
-		</File>
-		<File
-			RelativePath=".\src\seenby.c">
-		</File>
-		<File
-			RelativePath=".\src\stat.c">
-		</File>
-		<File
-			RelativePath=".\src\toss.c">
-		</File>
+		<Filter
+			Name="src"
+			Filter="">
+			<File
+				RelativePath="..\src\areafix.c">
+			</File>
+			<File
+				RelativePath="..\src\carbon.c">
+			</File>
+			<File
+				RelativePath="..\src\dupe.c">
+			</File>
+			<File
+				RelativePath="..\src\fcommon.c">
+			</File>
+			<File
+				RelativePath="..\src\global.c">
+			</File>
+			<File
+				RelativePath="..\src\hpt.c">
+			</File>
+			<File
+				RelativePath="..\src\link.c">
+			</File>
+			<File
+				RelativePath="..\src\perl.c">
+			</File>
+			<File
+				RelativePath="..\src\pktread.c">
+			</File>
+			<File
+				RelativePath="..\src\pktwrite.c">
+			</File>
+			<File
+				RelativePath="..\src\post.c">
+			</File>
+			<File
+				RelativePath="..\src\query.c">
+			</File>
+			<File
+				RelativePath="..\src\scan.c">
+			</File>
+			<File
+				RelativePath="..\src\scanarea.c">
+			</File>
+			<File
+				RelativePath="..\src\seenby.c">
+			</File>
+			<File
+				RelativePath="..\src\stat.c">
+			</File>
+			<File
+				RelativePath="..\src\toss.c">
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
