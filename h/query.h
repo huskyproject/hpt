@@ -9,14 +9,9 @@ typedef struct query_areas
 {
     char *name;
     char  type[5];
-    struct FD
-    {
-      int day, month, year;
-    } areaDate;
-    struct FT
-    {
-      int hour, min;
-    } areaTime;
+   
+    time_t theTime;
+    int nFlag;
     ps_addr downlinks;
     size_t linksCount;        
     struct query_areas *next;
