@@ -818,8 +818,11 @@ int isValidConference(char *s) {
 
 char *makeMsgbFileName(char *s) {
     // allowed symbols: 0..9, a..z, A..Z, ".,!@#$^()~-_{}[]"
-    static char str[]="\"*/:;<=>?\\|%`'&+"; // not allowed
-    char *name=NULL;
+    static char defstr[]="\"*/:;<=>?\\|%`'&+"; // not allowed
+    char *name=NULL, *str;
+
+    if (config->notValidFNChars) str = config->notValidFNChars;
+    else str = defstr;
 
     while (*s) {
 	if (strchr(str,*s)) xscatprintf(&name,"%%%x", *s);

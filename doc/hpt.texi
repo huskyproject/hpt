@@ -1139,6 +1139,7 @@ This statement can be repeated.
 * LogFileDir::                  path for log files
 * MinDiskFreeSpace::            minimum free space on the drive
 * MsgBaseDir::                  base directory of areas
+* NotValidFileNameChars::       chars that will be converted to hex values
 * Outbound::                    outbound path
 * Outtab::                      file for recoding outgoing msgs
 * ProtInbound::                 protected inbound
@@ -1424,7 +1425,7 @@ The following directories are checked: @code{TempInbound},
 
 This statement cannot be repeated.
 
-@node MsgBaseDir, Outbound, MinDiskFreeSpace, Files and Paths
+@node MsgBaseDir, NotValidFileNameChars, MinDiskFreeSpace, Files and Paths
 @subsection MsgBaseDir
 @findex MsgBaseDir
 @table @asis
@@ -1450,7 +1451,22 @@ This statement cannot be repeated.
 
 @xref{LinkMsgBaseDir}.
 
-@node Outbound, Outtab, MsgBaseDir, Files and Paths
+@node NotValidFileNameChars, Outbound, MsgBaseDir, Files and Paths
+@subsection NotValidFileNameChars
+@findex NotValidFileNameChars
+@table @asis
+@item Syntax:
+@code{NotValidFileNameChars <string>}
+@item Example:
+@code{NotValidFileNameChars :;<>=*?\/}
+@end table
+
+This characters from paths of EchoAreas will be replaced with %hex
+analogs. If not defined, default string used: "*/:;<=>?\|%`'&+
+
+This statement cannot be repeated.
+
+@node Outbound, Outtab, NotValidFileNameChars, Files and Paths
 @subsection Outbound
 @findex Outbound
 @table @asis
