@@ -1,3 +1,13 @@
+2001-07-11 Wednesday 22:52  pavel.gulchouck
+
+	* filter.pl (1.7), src/perl.c (1.14): log() changed to w_log() -
+	log() is natural logarithm in perl
+
+2001-07-11 Wednesday 21:22  pavel.gulchouck
+
+	* filter.pl (1.6): writeLogEntry() changed to log() according to
+	perl.c
+
 2001-07-09 Monday 09:20  mhaase
 
 	* src/scan.c (1.131): changed 'fileroute' to 'routeFile' (right
