@@ -414,6 +414,7 @@ int createPackFileName(s_link *link)
 				/*  Switch link to TimeStamp style */
 				link->linkBundleNameStyle = eTimeStamp;
 				i = createPackFileName(link);
+				link->linkBundleNameStyle = bundleNameStyle;
 				return i;
 			}
 		}
