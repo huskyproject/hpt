@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Aug 19 18:39:28 NOVST 2000
+max:
+* bundle added to flo file if it is really packed
+
+----- cvs ci ------
 Mon Aug 14 12:07:14 NOVST 2000
 max:
 * if no uplinks with "forwardRequests on" then areafix wrote "not found"

@@ -2006,7 +2006,7 @@ static char *get_filename(char *pathname)
 
 void arcmail(s_link *tolink) {
    char cmd[256], *pkt, *lastPathDelim, saveChar, sepDir[14];
-   int i, cmdexit;
+   int i, cmdexit, foa;
    FILE *flo;
    s_link *link;
    int startlink=0;
@@ -2016,7 +2016,7 @@ void arcmail(s_link *tolink) {
       startlink = tolink - config->links;
       endlink = startlink + 1;
    }
-   
+
    if (config->beforePack) {
 	   writeLogEntry(hpt_log, '6', "beforePack: execute string \"%s\"", config->beforePack);
 	   if ((cmdexit = system(config->beforePack)) != 0) {
@@ -2026,88 +2026,94 @@ void arcmail(s_link *tolink) {
 #ifdef DO_PERL
    perlbeforepack();
 #endif
-   
+
    for (i = startlink ; i < endlink; i++) {
-	   
+
 	  link = &(config->links[i]);
-	  
+
 	  // only create floFile if we have mail for this link
 	  if (link->pktFile != NULL) {
-		  
+
 		  // process if the link not busy, else do not create 12345678.?lo
 		  if (createOutboundFileName(link,
 					     cvtFlavour2Prio(link->echoMailFlavour),
 					     FLOFILE) == 0) {
 
 			 flo = fopen(link->floFile, "a+");
-			 
-			 if (flo == NULL) {
-			   writeLogEntry(hpt_log, '9', "Cannot open flo file %s", config->links[i].floFile);
-			   return;
-			 }
 
-			 if (link->packerDef != NULL) {
-				 // there is a packer defined -> put packFile into flo
-				 // if we are creating new arcmail bundle  ->  -//-//-
-				 fseek(flo, 0L, SEEK_SET);
-				 if ( find_old_arcmail(link, flo) == 0 )
-					 fprintf(flo, "^%s\n", link->packFile);
-			 }
+			 if (flo == NULL)
+				 writeLogEntry(hpt_log, '9', "Cannot open flo file %s",
+							   config->links[i].floFile);
 			 else {
-				 // there is no packer defined -> put pktFile into flo
-				 pkt = (char*) safe_malloc(strlen(link->floFile)+13+1);
-				 lastPathDelim = strrchr(link->floFile, PATH_DELIM);
-				 
-				 // change path of file to path of flofile
-				 saveChar = *(++lastPathDelim);
-				 *lastPathDelim = '\0';
-				 strcpy(pkt, link->floFile);
-				 *lastPathDelim = saveChar;
-				   
-				 link->pktFile += strlen(config->tempOutbound);
-				 
-				 if (config->separateBundles) {
 
-					 if (link->hisAka.point != 0)
-						 sprintf (sepDir,"%08x.sep%c", link->hisAka.point, PATH_DELIM);
-					 else
-						 sprintf (sepDir, "%04x%04x.sep%c",
-								 link->hisAka.net,
-								 link->hisAka.node, 
-								 PATH_DELIM);
+				 if (link->packerDef != NULL) {
+					 // there is a packer defined -> put packFile into flo
+					 // if we are creating new arcmail bundle  ->  -//-//-
+					 fseek(flo, 0L, SEEK_SET);
+					 foa = find_old_arcmail(link, flo);
 
-					 strcat (pkt, sepDir);
+					 fillCmdStatement(cmd,	  link->packerDef->call,
+									  link->packFile,
+									  link->pktFile, "");
+					 writeLogEntry(hpt_log, '7', "Packing for %s %s, %s > %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile), get_filename(link->packFile));
+					 cmdexit = system(cmd);
+					 //writeLogEntry(hpt_log, '6', "cmd: %s",cmd);
+					 if (cmdexit==0) {
+						 if (foa==0) fprintf(flo, "^%s\n", link->packFile);
+						 remove(link->pktFile);
+					 } else
+						 writeLogEntry(hpt_log, '9',
+									   "Error executing packer (errorlevel==%i",
+									   cmdexit);
+				 } // end packerDef
+				 else {
+					 // there is no packer defined -> put pktFile into flo
+					 pkt = (char*) safe_malloc(strlen(link->floFile)+13+1);
+					 lastPathDelim = strrchr(link->floFile, PATH_DELIM);
+
+					 // change path of file to path of flofile
+					 saveChar = *(++lastPathDelim);
+					 *lastPathDelim = '\0';
+					 strcpy(pkt, link->floFile);
+					 *lastPathDelim = saveChar;
+
+					 link->pktFile += strlen(config->tempOutbound);
+
+					 if (config->separateBundles) {
+
+						 if (link->hisAka.point != 0)
+							 sprintf(sepDir,"%08x.sep%c",
+									 link->hisAka.point,PATH_DELIM);
+						 else
+							 sprintf (sepDir, "%04x%04x.sep%c",
+									  link->hisAka.net,
+									  link->hisAka.node, 
+									  PATH_DELIM);
+
+						 strcat (pkt, sepDir);
+					 }
+
+					 strcat(pkt, link->pktFile);
+					 link->pktFile -= strlen(config->tempOutbound);
+
+					 fprintf(flo, "^%s\n", pkt);
+					 rename(link->pktFile, pkt);
+					 nfree(pkt);
 				 }
-				   
-				 strcat(pkt, link->pktFile);
-				 link->pktFile -= strlen(config->tempOutbound);
-				   
-				 fprintf(flo, "^%s\n", pkt);
-				 rename(link->pktFile, pkt);
-				 nfree(pkt);
-				 
-			 }
-			 fclose(flo);
+
+				 fclose(flo);
+			 } // end flo
+
 			 nfree(link->floFile);
-			 
-			 // pack mail
-			 if (link->packerDef != NULL) {
-                                 
-                                 fillCmdStatement(cmd,	  link->packerDef->call,
-							  link->packFile,
-							  link->pktFile, "");
-				 writeLogEntry(hpt_log, '7', "Packing for %s %s, %s > %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile), get_filename(link->packFile));
-				 cmdexit = system(cmd);
-// 				 writeLogEntry(hpt_log, '6', "cmd: %s",cmd);
-				 if (!cmdexit) remove(link->pktFile);
-			 }
 			 remove(link->bsyFile);
 			 nfree(link->bsyFile);
-		  }
-	  }
-	  nfree(link->pktFile);
-	  nfree(link->packFile);
-   }
+		  } // end createOutbounfFileName
+
+		  nfree(link->pktFile);
+		  nfree(link->packFile);
+	  } // end pkt file
+
+   } // endfor
    return;
 }
 
