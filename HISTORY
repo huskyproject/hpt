@@ -36,5 +36,7 @@ This file describe changes between hpt-1.0-stable and hpt-1.2-stable
    - HighWaterMark fix where scan jam area with deleted messages
    - hptlink: ignore characters case and .0 at the end of node address
      in msgid/reply fields
+   - Fix remap (replace INTL kludge)
+
 
 $Id$
