@@ -560,7 +560,8 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, hs_addr pktOrigAddr)
 }
 
 /* return value: 1 if success, 0 if fail */
-int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr, int writeAccess)
+/* writeAccess MUST BE unsigned !!! */
+int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr, unsigned writeAccess)
 {
     char *tmp = NULL, *line = NULL, *textBuff=NULL, *areaName=NULL, *reason=NULL;
     char buff[128] = "";
@@ -576,64 +577,14 @@ int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr, int writeAccess)
 	*line = '\r';
     }
 
-    switch (writeAccess) {
-    case 0:
-	reason = "System not allowed to create new area";
-	w_log(LL_ECHOMAIL, "Badmail reason: System not allowed to create new area (%s)", areaName);
-	break;
-    case 1:
-	reason = "Sender not allowed to post in this area (access group)";
-	w_log(LL_ECHOMAIL, "Badmail reason: Sender not allowed to post in area %s (access group)", areaName);
-	break;
-    case 2:
-	reason = "Sender not allowed to post in this area (access level)";
-	w_log(LL_ECHOMAIL, "Badmail reason: Sender not allowed to post in area %s (access level)", areaName);
-	break;
-    case 3:
-	reason = "Sender not allowed to post in this area (access import)";
-	w_log(LL_ECHOMAIL, "Badmail reason: Sender not allowed to post in area %s (access import)", areaName);
-	break;
-    case 4:
-	reason = "Sender not active for this area";
-	w_log(LL_ECHOMAIL, "Badmail reason: Sender not active for area %s", areaName);
-	break;
-    case 5:
-	reason = "Rejected by filter";
-	w_log(LL_ECHOMAIL, "Badmail reason: Rejected by filter");
-	break;
-    case 6:   /* MSGAPI error */
+    if(writeAccess>BM_MAXERROR){
+        reason = "Another error";
+    }else if(writeAccess==BM_MSGAPI_ERROR){
 	reason = strncat( strcpy(buff,"MSGAPIERR: "), strmerr(msgapierr), sizeof(buff)-sizeof("MSGAPIERR: ") );
-	w_log(LL_ECHOMAIL, "Badmail reason: %s", reason);
-	break;
-    case 7:
-	reason = "Can't create echoarea with forbidden symbols in areatag";
-	w_log(LL_ECHOMAIL, "Badmail reason: Can't create echoarea with forbidden symbols in areatag: '%s'", areaName);
-	break;
-    case 8:
-	reason = "Sender not found in config file";
-	w_log(LL_ECHOMAIL, "Badmail reason: Sender not found in config file");
-	break;
-    case 9:
-	reason = "Can't open config file";
-	w_log(LL_ECHOMAIL, "Badmail reason: Can't open config file");
-	break;
-    case 10:
-	reason = "No downlinks for passthrough area";
-	w_log(LL_ECHOMAIL, "Badmail reason: No downlinks for passthrough area '%s'", areaName);
-	break;
-    case 11:
-	reason = "lenght of CONFERENCE name is more than 60 symbols";
-	w_log(LL_ECHOMAIL, "Badmail reason: lenght of CONFERENCE name (areatag) is more than 60 symbols: '%s'", areaName);
-	break;
-    case 12:
-	reason = "Area killed (unsubscribed)";
-	w_log(LL_ECHOMAIL, "Badmail reason: area killed (unsubscribed): '%s'", areaName);
-	break;
-    default :
-	reason = "Another error";
-	w_log(LL_ECHOMAIL, "Badmail reason: Another error");
-	break;
+    }else{
+        reason = BadmailReasonString[writeAccess];
     }
+    w_log(LL_ECHOMAIL, "Badmail reason: %s (AREA: %s)", reason, areaName);
 
 #ifdef DO_PERL
     if (perltossbad(msg, areaName, pktOrigAddr, reason)) {
