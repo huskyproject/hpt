@@ -123,7 +123,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    ctrlLen = MsgGetCtrlLen(hmsg);
    ctrlBuff = (UCHAR *) safe_malloc(ctrlLen+1);
    MsgReadMsg(hmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
-   /* MsgReadMsg does not do zero termination for kludges! */
+   /* MsgReadMsg does not do zero termination! */
    ctrlBuff[ctrlLen] = '\0';
    if (action == 0 && config->disableTID == 0)
        xstrscat((char **) &ctrlBuff, "\001TID: ", versionStr, NULL);
@@ -146,7 +146,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    xstralloc(&(msg->text), ctrlLen + msg->textLength);
    MsgReadMsg(hmsg, NULL, (dword) 0, (dword) msg->textLength,
               (byte *)(msg->text+ctrlLen), (dword) 0, (byte *)NULL);
-   //msg->text[msg->textLength + ctrlLen]='\0';
+   msg->text[msg->textLength + ctrlLen]='\0';
    msg->textLength += ctrlLen-1;
    // if origin has no ending \r add it
    if (msg->text[msg->textLength-1] != '\r') {

@@ -6,12 +6,16 @@ Sun Feb 18 14:34:41 NOVT 2001
 max:
 * fixed file attachs deleting
 * keepTrsFiles
+* [link]BundleNameStyle Amiga
+* createOutboundFileName() & createTempPktFileName() code clanup
+* change bsy checking procedure: always using open()
+* fixed msg->text zero termination in rescan
 
 ----- cvs ci ------
 Sun Feb 18 00:19:33 NOVT 2001
 max:
 * fixed recoding in some other reports
-* fixed kludges zero termination in scan, rescan & toss from badarea
+* fixed kludges zero termination in rescan
 
 ----- cvs ci ------
 Mon Feb 12 23:47:14 NOVT 2001

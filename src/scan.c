@@ -106,7 +106,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg)
    ctrlLen = MsgGetCtrlLen(SQmsg);
    ctrlBuff = (unsigned char *) safe_malloc(ctrlLen+1);
    MsgReadMsg(SQmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
-   /* MsgReadMsg does not do zero termination for kludges! */
+   /* MsgReadMsg does not do zero termination! */
    ctrlBuff[ctrlLen] = '\0';
    msg->text = (char *) CvtCtrlToKludge(ctrlBuff);
    nfree(ctrlBuff);
@@ -118,8 +118,8 @@ void convertMsgText(HMSG SQmsg, s_message *msg)
    xstralloc(&(msg->text), msg->textLength + ctrlLen);
 
    MsgReadMsg(SQmsg, NULL, 0, msg->textLength, (UCHAR *) msg->text+ctrlLen, 0, NULL);
-   /* MsgReadMsg doesn't do zero termination */
-   //msg->text[msg->textLength+ctrlLen] = '\0'; // only for kludges
+   /* MsgReadMsg doesn't do zero termination! */
+   msg->text[msg->textLength+ctrlLen] = '\0';
    msg->textLength += ctrlLen-1;
 
    // recoding text to TransportCharSet

@@ -260,31 +260,24 @@ void cleanEmptyBundles(char *pathName, int npos)
 
 int createTempPktFileName(s_link *link)
 {
-    /* pkt file in tempOutbound */
-    char  *fileName = (char *) safe_malloc(strlen(config->tempOutbound)+12+1);
-    /* name of the arcmail bundle */
-    char  *pfileName = (char *) safe_malloc(strlen(config->outbound)+13+13+12+1);
-    /* temp name of the arcmail bundle */
-    char  *tmpPFileName = (char *) safe_malloc(strlen(config->outbound)+13+13+12+1);
+	char *fileName=NULL; // pkt file in tempOutbound
+	char *pfileName=NULL; // name of the arcmail bundle
+	char *tmp=NULL; // temp name of the arcmail bundle
     time_t aTime = time(NULL);  /* get actual time */
     int counter, minFreeExt;
     char limiter=PATH_DELIM;
-    char zoneSuffix[6] = "\0";
-
-    char *zoneOutbound;         /* this contains the correct outbound directory
-                                   including zones */
-    e_bundleFileNameStyle bundleNameStyle;
+	
+    e_bundleFileNameStyle bundleNameStyle = eTimeStamp;
 
     time_t tr;
     char *wday;
     struct tm *tp;
-	char *ptr;
+	//char *ptr;
 
-	int i;
+	int i;//, npos;
 	struct stat stbuf;
 	static char *ext3 = "0123456789abcdefghijklmnopqrstuvwxyz";
 	int numExt = strlen(ext3);
-
 
     tr=time(NULL);
     tp=localtime(&tr);
@@ -294,14 +287,16 @@ int createTempPktFileName(s_link *link)
 
     aTime %= 0xffffff;   /* only last 24 bit count */
 
-    if (link->hisAka.zone != config->addr[0].zone) {
-        sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
-        zoneOutbound = safe_malloc(strlen(config->outbound)-1+strlen(zoneSuffix)+1);
-        strcpy(zoneOutbound, config->outbound);
-        strcpy(zoneOutbound+strlen(zoneOutbound)-1, zoneSuffix);
-    } else
-        zoneOutbound = safe_strdup(config->outbound);
+    if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
+    else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
 
+	xstrcat(&tmp, config->outbound);
+
+	// add suffix for other zones
+	if (link->hisAka.zone != config->addr[0].zone && bundleNameStyle != eAmiga) {
+		tmp[strlen(tmp)-1]='\0';
+		xscatprintf(&tmp, ".%03x%c", link->hisAka.zone, limiter);
+	}
 
    /* There is a problem here: Since we use the tmpOutbound fileName for
     duplicate checking, links with different zones who does not have problems
@@ -313,9 +308,8 @@ int createTempPktFileName(s_link *link)
 	/* Making pkt name */
 	while(1) {
 		do {
-			sprintf(fileName, "%s%06lx%02x.pkt",
-					config->tempOutbound, (long)aTime, counter);
-
+			xscatprintf(&fileName, "%s%06lx%02x.pkt",
+						config->tempOutbound, (long)aTime, counter);
 			counter++;
 
 		} while ((fexist(fileName) || fileNameAlreadyUsed(fileName, NULL)) &&
@@ -330,87 +324,87 @@ int createTempPktFileName(s_link *link)
 			counter=0;
 		}
 	}
-
-	/* Making path to bundle */
-	if ( link->hisAka.point == 0 ) {
-
-		if (config->separateBundles) {
-			sprintf(tmpPFileName,"%s%04x%04x.sep%c",
-					zoneOutbound, link->hisAka.net, link->hisAka.node, limiter);
-		} else {
-			strcpy(tmpPFileName,zoneOutbound);
-		}
-	} else {
-	
-		if (config->separateBundles) {
-			sprintf(tmpPFileName,"%s%04x%04x.pnt%c%08x.sep%c",
-					zoneOutbound, link->hisAka.net,	link->hisAka.node,
-					limiter,link->hisAka.point, limiter);
-		} else {
-			sprintf(tmpPFileName,"%s%04x%04x.pnt%c",
-					zoneOutbound, link->hisAka.net,	link->hisAka.node,limiter);
-		}
-	}
-	nfree(zoneOutbound);
 	count = counter;
 
-	for (ptr=tmpPFileName; *ptr; ptr++); // where to add filename
+	// path to bundle
+	if (bundleNameStyle!=eAmiga) {
+		if (link->hisAka.point)
+			xscatprintf(&tmp, "%04x%04x.pnt%c",
+						link->hisAka.net, link->hisAka.node, limiter);
 
+		// separate bundles
+		if (config->separateBundles) {
+			if (link->hisAka.point) xscatprintf(&tmp, "%08x.sep%c", 
+												link->hisAka.point, limiter);
+			else xscatprintf(&tmp, "%04x%04x.sep%c", link->hisAka.net,
+							 link->hisAka.node, limiter);
+		}
+	}
+	
+	//npos = strlen(tmp); // for cleanEmptyBundles()
+	
 	/* bundle file name */
-
-    if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
-    else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
-    else bundleNameStyle=eTimeStamp;
-
 	switch ( bundleNameStyle ) {
 
 	case eAddrDiff:
 	case eAddrDiffAlways:
 
 		if ( link->hisAka.point == 0 && config->addr[0].point == 0) {
-			sprintf (ptr, "%04hx%04hx.",
-					 config->addr[0].net - link->hisAka.net,
-					 config->addr[0].node - link->hisAka.node);
+			xscatprintf (&tmp, "%04hx%04hx.",
+						 config->addr[0].net - link->hisAka.net,
+						 config->addr[0].node - link->hisAka.node);
 		} else {
-			sprintf (ptr, "%04hx%04hx.",
-					 config->addr[0].node - link->hisAka.node,
-					 config->addr[0].point- link->hisAka.point);
+			xscatprintf (&tmp, "%04hx%04hx.",
+						 config->addr[0].node - link->hisAka.node,
+						 config->addr[0].point- link->hisAka.point);
 		}
 
-	        cleanEmptyBundles(tmpPFileName, ptr-tmpPFileName);
+	case eAmiga:
+		if (bundleNameStyle==eAmiga) {
+			xscatprintf (&tmp, "%u.%u.%u.%u.",
+						 link->hisAka.zone, link->hisAka.net,
+						 link->hisAka.node, link->hisAka.point);
+		}
+
+		//cleanEmptyBundles(tmp, npos);
 
 		counter = 0;
 		minFreeExt = -1;
 		for (i=0; i<numExt; i++) {
 
-			sprintf(pfileName, "%s%s%c", tmpPFileName, wday, ext3[i]);
-
+			xstrscat(&pfileName, tmp, wday, NULL);
+			xscatprintf(&pfileName, "%c", ext3[i]);
+			
 			if (stat(pfileName, &stbuf) == 0) {
 
 				if (tr - stbuf.st_mtime < 60*60*24) {
 					// today's bundle
 					counter = i+1;
-					if (stbuf.st_size==0 && (counter<numExt || bundleNameStyle==eAddrDiffAlways)) remove (pfileName);
+					if (stbuf.st_size==0 && (counter<numExt ||
+											 bundleNameStyle==eAddrDiffAlways ||
+											 bundleNameStyle==eAmiga))
+						remove (pfileName);
 				} else {
 					// old bundle
-					if (stbuf.st_size == 0)
-						remove (pfileName);
-					else
-						counter = i+1;
+					if (stbuf.st_size == 0)	remove (pfileName);
+					else counter = i+1;
 				}
 			} else {
 				if (minFreeExt <0) minFreeExt = i;
 			}
+			
+			nfree(pfileName);
 		}
 
 		if (counter >= numExt) {
-			if (bundleNameStyle==eAddrDiffAlways && minFreeExt>=0) {
+			if ((bundleNameStyle==eAddrDiffAlways || bundleNameStyle==eAmiga)
+				&& minFreeExt>=0) {
 				counter = minFreeExt;
 			} else {
 				writeLogEntry(hpt_log,'7',"Can't use more than %d extensions for bundle names",numExt);
 				nfree(fileName);
 				nfree(pfileName);
-				nfree(tmpPFileName);
+				nfree(tmp);
 
 				// Switch link to TimeStamp style
 				link->linkBundleNameStyle = eTimeStamp;
@@ -419,15 +413,17 @@ int createTempPktFileName(s_link *link)
 			}
 		}
 		
-		sprintf(pfileName, "%s%s%c", tmpPFileName, wday, ext3[counter]);
+		xstrscat(&pfileName, tmp, wday, NULL);
+		xscatprintf(&pfileName, "%c", ext3[counter]);
 
 		break;
 
 	case eTimeStamp:
-		sprintf(ptr, "%06lx%02x.%s", (long)aTime, counter, wday);
+		xscatprintf(&tmp, "%06lx%02x.%s", (long)aTime, counter, wday);
 		counter = 0;
 		do {
-			sprintf(pfileName, "%s%c", tmpPFileName, ext3[counter]);
+			xstrcat(&pfileName, tmp);
+			xscatprintf(&pfileName, "%c", ext3[counter]);
 			counter++;
 		} while ((fexist(pfileName) || fileNameAlreadyUsed(NULL, pfileName))
 				 && (counter < numExt));
@@ -441,7 +437,7 @@ int createTempPktFileName(s_link *link)
 		exit(-1);
 		break;
 	}
-	nfree(tmpPFileName);
+	nfree(tmp);
 
     if ((!fexist(fileName)) && (!fexist(pfileName))) {
         nfree(link->packFile);
@@ -596,109 +592,101 @@ int createDirectoryTree(const char *pathName) {
 int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 {
    int fd; // bsy file for current link
-   int save_errno;
-   char name[13], bsyname[13], zoneSuffix[6], pntDir[14];
-   char	*sepDir, sepname[13];
-
-   char limiter=PATH_DELIM;
-
-   if (link->hisAka.point != 0) {
-      sprintf(pntDir, "%04x%04x.pnt%c", link->hisAka.net, link->hisAka.node, limiter);
-      sprintf(name, "%08x.flo", link->hisAka.point);
+   char *name=NULL, *sepDir=NULL, limiter=PATH_DELIM;
+   e_bundleFileNameStyle bundleNameStyle = eUndef;
+   
+   if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
+   else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
+   
+   if (bundleNameStyle != eAmiga) {
+	   if (link->hisAka.point) xscatprintf(&name, "%08x.", link->hisAka.point);
+	   else xscatprintf(&name, "%04x%04x.", link->hisAka.net, link->hisAka.node);
    } else {
-      pntDir[0] = 0;
-      sprintf(name, "%04x%04x.flo", link->hisAka.net, link->hisAka.node);
+	   xscatprintf(&name, "%u.%u.%u.%u.", link->hisAka.zone,
+				   link->hisAka.net, link->hisAka.node, link->hisAka.point);
    }
-
-   if (link->hisAka.zone != config->addr[0].zone) {
-      // add suffix for other zones
-      sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, limiter);
-   } else {
-      zoneSuffix[0] = 0;
-   }
-
-   switch (typ) {
-      case PKT:
-         name[9] = 'o'; name[10] = 'u'; name[11] = 't';
-         break;
-      case REQUEST:
-         name[9] = 'r'; name[10] = 'e'; name[11] = 'q';
-         break;
-      case FLOFILE: break;
-   } /* endswitch */
 
    if (typ != REQUEST) {
-      switch (prio) {
-         case CRASH :    name[9] = 'c';
-                         break;
-         case HOLD  :    name[9] = 'h';
-                         break;
-	 case DIRECT:    name[9] = 'd';
-	                 break;
-	 case IMMEDIATE: name[9] = 'i';
-	                 break;
-         case NORMAL:    break;
-      } /* endswitch */
-   } /* endif */
+	   switch (prio) {
+	   case CRASH :     xstrcat(&name, "c");
+		   break;
+	   case HOLD :      xstrcat(&name, "h");
+		   break;
+	   case DIRECT :    xstrcat(&name, "d");
+		   break;
+	   case IMMEDIATE : xstrcat(&name, "i");
+		   break;
+	   case NORMAL :    xstrcat(&name, (typ==PKT) ? "o" : "f");
+		   break;
+	   }
+   } else xstrcat(&name, "req");
+
+   switch (typ) {
+   case PKT :     xstrcat(&name, "ut");
+	   break;
+   case FLOFILE : xstrcat(&name, "lo");
+	   break;
+   case REQUEST :
+	   break;
+   }
 
    // create floFile
-   link->floFile = (char *) safe_malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
-   link->bsyFile = (char *) safe_malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
-   strcpy(link->floFile, config->outbound);
-   if (zoneSuffix[0] != 0) strcpy(link->floFile+strlen(link->floFile)-1, zoneSuffix);
-   strcat(link->floFile, pntDir);
+   xstrcat(&link->floFile, config->outbound);
+
+   // add suffix for other zones
+   if (link->hisAka.zone != config->addr[0].zone && bundleNameStyle != eAmiga) {
+	   link->floFile[strlen(link->floFile)-1]='\0';
+	   xscatprintf(&link->floFile, ".%03x%c", link->hisAka.zone, limiter);
+   }
+
+   if (link->hisAka.point && bundleNameStyle != eAmiga)
+	   xscatprintf(&link->floFile, "%04x%04x.pnt%c",
+				   link->hisAka.net, link->hisAka.node, limiter);
+   
    createDirectoryTree(link->floFile); // create directoryTree if necessary
-   strcpy(link->bsyFile, link->floFile);
-   strcat(link->floFile, name);
+   xstrcat(&link->bsyFile, link->floFile);
+   xstrcat(&link->floFile, name);
 
    // separate bundles
-   if (config->separateBundles) {
 
-	   if (link->hisAka.point != 0) sprintf(sepname, "%08x.sep", link->hisAka.point);
-	   else sprintf(sepname, "%04x%04x.sep", link->hisAka.net, link->hisAka.node);
+   if (config->separateBundles && (bundleNameStyle!=eAmiga || (bundleNameStyle==eAmiga && link->packerDef==NULL))) {
 
-	   sepDir = (char *) safe_malloc(strlen(link->bsyFile)+strlen(sepname)+2);
-	   sprintf(sepDir,"%s%s%c",link->bsyFile,sepname,limiter);
-
+	   xstrcat(&sepDir, link->bsyFile);
+	   if (bundleNameStyle==eAmiga) 
+		   xscatprintf(&sepDir, "%u.%u.%u.%u.sep%c", 
+					   link->hisAka.zone, link->hisAka.net,
+					   link->hisAka.node ,link->hisAka.point, limiter);
+	   else if (link->hisAka.point) xscatprintf(&sepDir, "%08x.sep%c", 
+												link->hisAka.point, limiter);
+	   else xscatprintf(&sepDir, "%04x%04x.sep%c", link->hisAka.net,
+						link->hisAka.node, limiter);
+	   
 	   createDirectoryTree(sepDir);
 	   nfree(sepDir);
    }
 
    // create bsyFile
-   strcpy(bsyname, name);
-   strcpy(&bsyname[9], "bsy");
-   strcat(link->bsyFile, bsyname);
+   name[strrchr(name, '.')-name]='\0';
+   xstrscat(&link->bsyFile, name, ".bsy", NULL);
+   nfree(name);
 
    // maybe we have session with this link?
-   if (fexist(link->bsyFile)) {
+   if ( (fd=open(link->bsyFile, O_CREAT | O_RDWR | O_EXCL, S_IREAD | S_IWRITE)) < 0 ) {
+	   
+	   if (errno != EEXIST) {
 
-           writeLogEntry(hpt_log, '7', "link %s is busy.", link->name);
-           nfree(link->floFile);
-           nfree(link->bsyFile);
+		   writeLogEntry(hpt_log, '7', "cannot create *.bsy file \"%s\" for %s (errno %d)\n", link->bsyFile, link->name, (int)errno);
+		   exit_hpt("cannot create *.bsy file!",0);
 
-           return 1;
+	   } else {
 
-   } else {
-
-           if ( (fd=open(link->bsyFile, O_CREAT | O_RDWR | O_EXCL, S_IREAD | S_IWRITE)) < 0 ) {
-              save_errno = errno;
-
-              if (!fexist(link->bsyFile) && save_errno != EEXIST) {
-
-                 writeLogEntry(hpt_log, '7', "cannot create *.bsy file \"%s\" for %s (errno %d)\n", link->bsyFile, link->name, (int)save_errno);
-                 exit_hpt("cannot create *.bsy file!",0);
-
-              } else {
-
-                 writeLogEntry(hpt_log, '7', "link %s is busy (2nd check).", link->name);
-                 nfree(link->floFile);
-                 nfree(link->bsyFile);
-
-                 return 1;
-              }
-
-           } else close(fd);
-   }
+		   writeLogEntry(hpt_log, '7', "link %s is busy.", link->name);
+		   nfree(link->floFile);
+		   nfree(link->bsyFile);
+		   
+		   return 1;
+	   }
+   } else close(fd);
 
    return 0;
 }

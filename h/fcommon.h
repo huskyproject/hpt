@@ -94,7 +94,7 @@ int    createDirectoryTree(const char *pathName);
 int    createOutboundFileName(s_link *link, e_prio prio, e_type typ);
 /*DOC
   Input:  link is the link whose OutboundFileName should be created.
-          prio is some kind of CRASH, HOLD, NORMAL
+          prio is some kind of CRASH, HOLD, NORMAL, DIRECT, IMMEDIATE
           typ is some kind of PKT, REQUEST, FLOFILE
   Output: a pointer to a char is returned.
   FZ:     1 is returned if link is busy

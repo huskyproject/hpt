@@ -486,7 +486,7 @@ This statement cannot be repeated.
 @findex BundleNameStyle
 @table @asis
 @item Syntax:
-@code{bundleNameStyle <timeStamp | addrDiff | addrDiffAlways>}
+@code{bundleNameStyle <timeStamp | addrDiff | addrDiffAlways | Amiga>}
 @item Example:
 @code{bundleNameStyle timeStamp}
 @end table
@@ -503,9 +503,17 @@ the same filename for every pair of links. Automatically  switched to
 @item addrDiffAlways
 the same as addrDiff but tryes to use lower free numbers of extension in
 case when all higher numbers are already busy.
+@item Amiga
+Amiga Style Outbound (ASO). Bundles creates in @code{Outbound} directory 
+like this:
+@example
+2.5000.117.1.hut
+2.5000.117.1.mo0
+@end example
+Extensions & prefixes in flo files creates as in @code{addrDiffAlways} algorythm.
 @end table
 
-See also @code{LinkBundleNameStyle}.
+@xref{LinkBundleNameStyle}.
 
 This statement cannot be repeated.
 
@@ -1991,13 +1999,15 @@ This statement can be repeated.
 @findex LinkBundleNameStyle
 @table @asis
 @item Syntax:
-@code{linkBundleNameStyle <timeStamp | addrDiff | addrDiffAlways>}
+@code{linkBundleNameStyle <timeStamp | addrDiff | addrDiffAlways | Amiga>}
 @item Example:
 @code{linkbundleNameStyle addrDiff}
 @end table
 
 This statament sets rule for creating names of arcmail bundles for link.
-For more details: @xref{BundleNameStyle}.
+It is similar @code{BundleNameStyle} keyword.
+
+@xref{BundleNameStyle}.
 
 This statement can only be repeated for different links.
 

@@ -2235,13 +2235,13 @@ static char *get_filename(char *pathname)
 }   
 
 void arcmail(s_link *tolink) {
-   char cmd[256], *pkt, *lastPathDelim, saveChar, sepDir[14];
+   char cmd[256], *pkt=NULL, *lastPathDelim, saveChar;
    int i, cmdexit, foa;
    FILE *flo;
    s_link *link;
    int startlink=0;
    int endlink = config->linkCount;
-   e_bundleFileNameStyle bundleNameStyle;
+   e_bundleFileNameStyle bundleNameStyle = eTimeStamp;
 
    if (tolink != NULL) {
       startlink = tolink - config->links;
@@ -2277,13 +2277,19 @@ void arcmail(s_link *tolink) {
 							   config->links[i].floFile);
 			 else {
 
+				 if (link->linkBundleNameStyle!=eUndef)
+					 bundleNameStyle=link->linkBundleNameStyle;
+				 else if (config->bundleNameStyle!=eUndef)
+					 bundleNameStyle=config->bundleNameStyle;
+
 				 if (link->packerDef != NULL) {
+
 					 // there is a packer defined -> put packFile into flo
 					 // if we are creating new arcmail bundle  ->  -//-//-
 					 fseek(flo, 0L, SEEK_SET);
 					 foa = find_old_arcmail(link, flo);
 
-					 fillCmdStatement(cmd,	  link->packerDef->call,
+					 fillCmdStatement(cmd, link->packerDef->call,
 									  link->packFile,
 									  link->pktFile, "");
 					 writeLogEntry(hpt_log, '7', "Packing for %s %s, %s > %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile), get_filename(link->packFile));
@@ -2291,12 +2297,9 @@ void arcmail(s_link *tolink) {
 					 //writeLogEntry(hpt_log, '6', "cmd: %s",cmd);
 					 if (cmdexit==0) {
 						 if (foa==0) {
-							 if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
-							 else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
-							 else bundleNameStyle=eTimeStamp;
-
 							 if (bundleNameStyle == eAddrDiff ||
-								 bundleNameStyle == eAddrDiffAlways)
+								 bundleNameStyle == eAddrDiffAlways ||
+								 bundleNameStyle == eAmiga)
 								 fprintf(flo, "#%s\n", link->packFile);
 							 else
 								 fprintf(flo, "^%s\n", link->packFile);
@@ -2304,43 +2307,49 @@ void arcmail(s_link *tolink) {
 						 remove(link->pktFile);
 					 } else
 						 writeLogEntry(hpt_log, '9',
-									   "Error executing packer (errorlevel==%i",
+									   "Error executing packer (errorlevel==%i)",
 									   cmdexit);
 				 } // end packerDef
 				 else {
 					 // there is no packer defined -> put pktFile into flo
-					 pkt = (char*) safe_malloc(strlen(link->floFile)+13+1);
 					 lastPathDelim = strrchr(link->floFile, PATH_DELIM);
 
 					 // change path of file to path of flofile
 					 saveChar = *(++lastPathDelim);
 					 *lastPathDelim = '\0';
-					 strcpy(pkt, link->floFile);
+					 xstrcat(&pkt, link->floFile);
 					 *lastPathDelim = saveChar;
-
-					 link->pktFile += strlen(config->tempOutbound);
 
 					 if (config->separateBundles) {
 
-						 if (link->hisAka.point != 0)
-							 sprintf(sepDir,"%08x.sep%c",
-									 link->hisAka.point,PATH_DELIM);
-						 else
-							 sprintf (sepDir, "%04x%04x.sep%c",
-									  link->hisAka.net,
-									  link->hisAka.node, 
-									  PATH_DELIM);
-
-						 strcat (pkt, sepDir);
+						 if (bundleNameStyle==eAmiga)
+							 xscatprintf(&pkt, "%u.%u.%u.%u.sep%c", 
+										 link->hisAka.zone, link->hisAka.net,
+										 link->hisAka.node, link->hisAka.point,
+										 PATH_DELIM);
+						 else {
+							 if (link->hisAka.point != 0)
+								 xscatprintf(&pkt,"%08x.sep%c",
+											 link->hisAka.point,PATH_DELIM);
+							 else
+								 xscatprintf(&pkt, "%04x%04x.sep%c",
+											 link->hisAka.net,
+											 link->hisAka.node, 
+											 PATH_DELIM);
+						 }
 					 }
 
-					 strcat(pkt, link->pktFile);
+					 link->pktFile += strlen(config->tempOutbound);
+					 xstrcat(&pkt, link->pktFile);
 					 link->pktFile -= strlen(config->tempOutbound);
 
-					 fprintf(flo, "^%s\n", pkt);
-					 rename(link->pktFile, pkt);
+					 cmdexit = rename(link->pktFile, pkt);
+					 if (cmdexit==0) {
+						 fprintf(flo, "^%s\n", pkt);
+						 writeLogEntry(hpt_log, '7', "Leave non-packed mail for %s %s, %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile));
+					 } 
+					 else writeLogEntry(hpt_log, '9', "error moving file for %s %s, %s->%s (errorlevel==%i)", aka2str(link->hisAka), link->name, link->pktFile, pkt, errno);
 					 nfree(pkt);
-					 writeLogEntry(hpt_log, '7', "Leave non-packed mail for %s %s, %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile));
 				 }
 
 				 fclose(flo);
