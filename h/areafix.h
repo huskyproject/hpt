@@ -34,5 +34,7 @@ char *errorRQ(char *line);
 int isPatternLine(char *s);
 int isAreaLink(s_addr link, s_area *area);
 int isOurAka(s_addr link);
+void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr);
+char *do_delete(s_link *link, s_area *area);
 
 #endif

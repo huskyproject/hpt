@@ -33,7 +33,6 @@ const int  cnDaysToKeepFreq = 5;
 extern s_query_areas *queryAreasHead;
 extern s_message **msgToSysop;
 extern char       *versionStr;
-extern void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr);
 
 void del_tok(char **ac, char *tok) {
     char *p, *q;
@@ -330,7 +329,7 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
             af_AddLink( areaNode, uplink );
             af_AddLink( areaNode, dwlink );
         }
-        break;
+        break;/*
     case ADDDELETED:
         if( bFind ) {
         } else {
@@ -339,7 +338,27 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
                 queryAreasHead->linksCount = strlen( areatag );
             af_AddLink( areaNode, uplink );
         }
+        break;*/
+    case ADDIDLE:
+        if( bFind ) {
+        } else {
+            areaNode = af_AddAreaListNode( areatag, czIdleArea );
+            if(strlen( areatag ) > queryAreasHead->linksCount)
+                queryAreasHead->linksCount = strlen( areatag );
+            af_AddLink( areaNode, uplink );
+            w_log(LL_AREAFIX, "areafix: make request idle for area: %s", areaNode->name);
+
+        }
         break;
+    case DELIDLE:
+        if( bFind && stricmp(tmpNode->type,czIdleArea) == 0 )
+        {
+            queryAreasHead->nFlag = 1;
+            tmpNode->type[0] = '\0';
+            w_log( LL_AREAFIX, "areafix: idle request for %s removed from queue file",tmpNode->name);
+        }
+        break;
+
     }
     return tmpNode;
 }
@@ -485,7 +504,6 @@ void af_QueueReport()
                 link1,"",
                 state);
         }
-
     }
     if(!report)
         return;
@@ -528,21 +546,23 @@ void af_QueueUpdate()
         {
             queryAreasHead->nFlag = 1; // query was changed
             strcpy(tmpNode->type, czKillArea);
-            w_log( LL_AREAFIX, "Request for %s removed is going to be killed",tmpNode->name);
+            w_log( LL_AREAFIX, "areafix: request for %s is going to be killed",tmpNode->name);
             continue;
         }
         if( stricmp(tmpNode->type,czKillArea) == 0 )
         {
             queryAreasHead->nFlag = 1;
             tmpNode->type[0] = '\0';
-            w_log( LL_AREAFIX, "Request for %s removed from queue file",tmpNode->name);
+            w_log( LL_AREAFIX, "areafix: request for %s removed from queue file",tmpNode->name);
+
             continue;
         }
         if( stricmp(tmpNode->type,czIdleArea) == 0 )
         {
             queryAreasHead->nFlag = 1; // query was changed
             strcpy(tmpNode->type, czKillArea);
-            w_log( LL_AREAFIX, "Request for %s removed is going to be killed",tmpNode->name);
+            w_log( LL_AREAFIX, "areafix: request for %s is going to be killed",tmpNode->name);
+            do_delete(NULL, getArea(config, tmpNode->name));
         }
     }
 }
@@ -702,8 +722,8 @@ int af_CloseQuery()
         queryFile = fopen(tmpFileName,"r");
         resQF     = fopen(config->areafixQueueFile,"w");
     if ( !queryFile && !resQF ) {
-	if (!quiet) fprintf(stderr, "areafix: cannot write to Queue File \"%s\" \n", config->areafixQueueFile);
-	w_log(LL_ERR,"areafix: cannot write to Queue File \"%s\" ", config->areafixQueueFile);
+    if (!quiet) fprintf(stderr, "areafix: cannot write to Queue File \"%s\" \n", config->areafixQueueFile);
+    w_log(LL_ERR,"areafix: cannot write to Queue File \"%s\" ", config->areafixQueueFile);
     } else {
         int ch;
         while( (ch=getc(queryFile)) != EOF ) putc(ch, resQF); 

@@ -1042,6 +1042,7 @@ char *subscribe(s_link *link, char *cmd) {
               int state = 
                   changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,5);
               if( state == ADD_OK) {
+                  af_CheckAreaInQuery(an, NULL, NULL, DELIDLE);
                   xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
                   w_log(LL_AREAFIX, "areafix: %s subscribed to %s",aka2str(link->hisAka),an);
               } else {
@@ -1059,7 +1060,8 @@ char *subscribe(s_link *link, char *cmd) {
         } else {
             if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==ADD_OK) {
                 addlink(link, area);
-        	fixRules (link, area);
+                fixRules (link, area);
+                af_CheckAreaInQuery(an, NULL, NULL, DELIDLE);
                 xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
                 w_log(LL_AREAFIX, "areafix: %s subscribed to %s",aka2str(link->hisAka),an);
             } else {
@@ -1149,16 +1151,20 @@ char *errorRQ(char *line) {
     return report;
 }
 
-static char *do_delete(s_link *link, s_area *area) {
+char *do_delete(s_link *link, s_area *area) {
     char *report = NULL, *an = area->areaName;
     unsigned int i;
 
-    if(config->areafixQueueFile) { // add deleted area to queue file
-        af_CheckAreaInQuery( area->areaName, 
-            &(area->downlinks[0]->link->hisAka), 
-            NULL, ADDDELETED);
+    if(!link) 
+    {
+        link = getLinkFromAddr(config, *area->useAka);
+        while( !link && i < config->addrCount )
+        {
+            link = getLinkFromAddr( config, config->addr[i] );
+            i++;
+        }
+        if(!link) return NULL;
     }
-        
     /* unsubscribe from downlinks */
     xscatprintf(&report, " %s %s  deleted\r", an, print_ch(49-strlen(an), '.'));
     for (i=0; i<area->downlinkCount; i++) {
@@ -1284,7 +1290,7 @@ char *unsubscribe(s_link *link, char *cmd) {
             (area->downlinkCount < 3) &&
             (area->downlinks[0]->link->hisAka.point == 0) &&
             (config->areafixQueueFile)) {
-            return do_delete(link, area);
+            af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
         }    
         removelink(link, area);
 		j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,1);
@@ -1294,18 +1300,16 @@ char *unsubscribe(s_link *link, char *cmd) {
 		} else
 		    w_log('8',"areafix: %s unlinked from %s",aka2str(link->hisAka),an);
         } else { // unsubscribing from own address
-		    j=DEL_OK; // always success
-		    if ((area->downlinkCount==1) &&
+            if ((area->downlinkCount==1) &&
                 (area->downlinks[0]->link->hisAka.point == 0)) {
                 if(config->areafixQueueFile) {
-                    return do_delete(link, area);
+                    af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
                 } else {
                     forwardRequestToLink(area->areaName,
                         area->downlinks[0]->link, NULL, 1);
                 }
-            }  else {
-               j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
             }
+            j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
         }
 	    if (j == DEL_OK)
 		xscatprintf(&report," %s %s  unlinked\r",an,print_ch(49-strlen(an),'.'));
