@@ -50,7 +50,7 @@ tpkt$(EXE): tpkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
               $(LIBS)
 
 txt2pkt$(EXE): txt2pkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
-               recode$(OBJ) log$(OBJ) global$(OBJ)
+               recode$(OBJ) log$(OBJ) global$(OBJ) xstr$(OBJ)
 	$(CC) $(LFLAGS) -o txt2pkt$(EXE) log$(OBJ) txt2pkt$(OBJ) \
           fcommon$(OBJ) pktread$(OBJ) recode$(OBJ) pktwrite$(OBJ) \
           global$(OBJ) xstr$(OBJ) $(LIBS)
