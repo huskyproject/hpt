@@ -46,6 +46,14 @@ extern "C" {
 #  endif
 #endif
 
+/* Hack:
+   #define s_addr at winsock.h (included from win32iop.h above) break
+   compilation :-(
+   Note: this problem fixed at next releases
+ */
+#ifdef _MSC_VER
+#undef s_addr 
+#endif
 
 /* smapi includes */
 #include <smapi/progprot.h>
