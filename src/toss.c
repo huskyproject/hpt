@@ -2837,34 +2837,18 @@ void tossFromBadArea(char force)
 		       MSGAREA_NORMAL, (word)(config->badArea.msgbType|MSGTYPE_ECHO));
     if (area != NULL) {
 	w_log('1', "Scanning area: %s", config->badArea.areaName);
-	highestMsg = MsgGetHighMsg(area);
+	highestMsg = MsgGetNumMsg(area);
 
-	if (config->badArea.msgbType==MSGTYPE_SDM) {
-	
-	    for (i=1; i<=highestMsg; i++) {
-		hmsg = MsgOpenMsg(area, MOPEN_RW, i);
-		if (hmsg == NULL) continue;      // msg# does not exist
-		MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-		delmsg = packBadArea(hmsg, xmsg, force);
+	for (i=1; i<=highestMsg; highestMsg--) {
+	    hmsg = MsgOpenMsg(area, MOPEN_RW, i);
+	    if (hmsg == NULL) continue;      // msg# does not exist
+	    MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+	    delmsg = packBadArea(hmsg, xmsg, force);
 	 
-		MsgCloseMsg(hmsg);
+	    MsgCloseMsg(hmsg);
 	 
-		if (delmsg) MsgKillMsg(area, i);
-	    }
-		   
-	} else { // squish & jam. FIXME: hihest msg doesn't updates in JAM.
-
-	    for (i=1; i<=highestMsg; highestMsg--) {
-		hmsg = MsgOpenMsg(area, MOPEN_RW, i);
-		if (hmsg == NULL) continue;      // msg# does not exist
-		MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-		delmsg = packBadArea(hmsg, xmsg, force);
-	 
-		MsgCloseMsg(hmsg);
-	 
-		if (delmsg) MsgKillMsg(area, i);
-		else { i++; highestMsg++; }
-	    }
+	    if (delmsg) MsgKillMsg(area, i);
+	    else { i++; highestMsg++; }
 	}
 	   
 	MsgCloseArea(area);
