@@ -17,7 +17,9 @@ include c:\fido\config\packer
 include c:\fido\config\path
 
 #AreaFixFromPkt
-#AreaFixKillReports
+#AreaFixKillReports /* obsoleted & deleted */
+AreafixReportsAttr loc pvt npd dir # k/s - uncomment for don't keep arefix reports
+
 logechotoscreen
 mindiskfreespace 10
 
