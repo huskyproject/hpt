@@ -404,7 +404,7 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCo
          // get new memory
          (*seenByCount)++;
          (*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
-
+		parsetok:
          // parse token
          temp = strtoul(token, &endptr, 10);
          if ((*endptr) == '\0') {
@@ -415,6 +415,11 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCo
          } else {
             // net and node aka
             (*seenBys)[*seenByCount-1].net = (UINT16) temp;
+			if (*endptr==':') {
+				endptr++;
+				token = endptr;
+				goto parsetok;
+			}
             // eat up '/'
             endptr++;
             (*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
@@ -2280,10 +2285,10 @@ void tossTempOutbound(char *directory)
 		             
 		   if (link != NULL) {
 
-                           if (link->packFile == NULL) {
+			   if (link->packFile == NULL) {
 			       if ( createTempPktFileName(link) )
-				   exit_hpt("Could not create new pkt!",1);
-                           }
+					   exit_hpt("Could not create new bundle!",1);
+			   }
 
 			   nfree(link->pktFile);
 			   link->pktFile = dummy;
