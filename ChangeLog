@@ -1,3 +1,8 @@
+2003-12-18 Thursday 08:14  val_khokhlov
+
+	* make/: makefile.mvc (1.11), makefile.mvcdll (1.16): delayload for
+	perl56.dll enabled again
+
 2003-12-16 Tuesday 20:57  i_zkh
 
 	* doc/hpt.texi (1.141): Minor fix
