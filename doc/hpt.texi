@@ -255,6 +255,7 @@ P.S. all of this people makes bug fixes, so I don't mention it.
 FIDOCONFIG about location of config file and keywords ideology.
 
 @menu
+* Using config::                Notes about fidoconfig usage in hpt
 * Keywords::                    This chapter describes keywords
 * Files and Paths::             File & Path keywords
 * Link Keywords::               Links configuration
@@ -263,7 +264,66 @@ FIDOCONFIG about location of config file and keywords ideology.
 * Carbon Copy::                 Carbon Copy keywords
 @end menu
 
-@node Keywords, Files and Paths, Configuration Reference, Configuration Reference
+@node Using config, Keywords, Configuration Reference, Configuration Reference
+@section Using config
+
+HPT uses fidoconfig, but not all config statements references to hpt and
+hpt ignore all unused config statements. The Husky Fidonet Software project
+concepts is use one config for all fidonet programs.
+
+
+@subsection Predefined config variables
+
+In some cases need use different values for one statement in hpt, htick
+and/or other husky programs (called @dfn{modules}). It solve using config
+variable @code{module}: hpt define the @code{module} variable with value
+@code{hpt} and you may use if-elseif-else-endif conditions statements
+sequence like as:
+
+@example
+if "[module]"=="hpt"
+  Origin   High Portable Tosser at my node
+elseif "[module]"=="htick"
+  Origin   High Portable Ticker at my node
+else
+  Origin   My node
+endif
+@end example
+
+HPT define config variable @code{version} with value set to hpt version
+like @code{MAJOR.MINOR.PATHLEVEL}, i.e. @code{@value{VERSION}.0} or
+@code{1.4.1}.
+You may use this variable too for make common config for several hpt versions.
+
+To test config for hpt only you may call tparser tool with parameters
+@code{-Dmodule=hpt} and (if need) @code{-Dversion=@value{VERSION}.0}
+(tparser included into fidoconfig package) like this:
+
+@example
+tparser -Dmodule=hpt
+tparser -Dmodule=hpt -Dversion=@value{VERSION}.0
+@end example
+
+
+@subsection Statements order
+
+Common rule for config statements order is:
+@strong{Define object before ise it!}.
+
+Examples:
+@itemize
+@item
+define addresses before any link, area and carbone definitions
+@item
+define packers before any link definitions
+@item
+define links before any area and route definitions
+@item
+define links and areas before any carbone definitions
+@end itemize
+
+
+@node Keywords, Files and Paths, Using config, Configuration Reference
 @section General Keywords
 
 
