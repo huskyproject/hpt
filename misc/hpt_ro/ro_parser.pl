@@ -13,7 +13,7 @@ BEGIN {
   my $wd;
   if ($^O = 'MSWin32') { ($wd = $0) =~ s/[^\\]+$//;}
   else {($wd = $0) =~ s/[^\/]+$//;}
-  $workdir = $wd;
+  $workdir = $wd ? $wd : ".";
 }
 
 use lib ($workdir);
@@ -22,34 +22,41 @@ use Hpt_ro;
 my @acl = Hpt_ro::readroconf($Hpt_ro::ro_conf);
 my @echoes = Hpt_ro::readhptconf($Hpt_ro::hptconf);
 
-#Hpt_ro::getdata(\@acl,\@echoes);
-
 my $curtime = time;
 
-print "Expired rules:\n";
-{
-  my ($d,$m,$y) = (localtime())[3..5];
-  my $curtime = sprintf("%02d%02d%02d",$y % 100, $m + 1, $d);
+my $denyonly = (@ARGV && lc($ARGV[0]) eq 'denyonly') ? 1 : 0;
 
-  foreach(@acl) {
-    next unless $_->{date};
-    if ($_->{date} lt $curtime) {
-      print "  $_->{cfgline}\n";
-      $_ =undef;
+# print expired rules if they exist
+{
+  my @exrules;
+  {
+    my ($d,$m,$y) = (localtime())[3..5];
+    my $curtime = sprintf("%02d%02d%02d",$y % 100, $m + 1, $d);
+
+    foreach(@acl) {
+      next unless $_->{date};
+      if ($_->{date} lt $curtime) {
+        push @exrules,$_->{cfgline};
+        $_ = undef;
+      }
     }
+  }
+  if (@exrules) {
+    print "== Expired rules ==\n\n";
+    print "$_\n" foreach(@exrules);
+    print "\n";
   }
 }
 
-print "\nEchoes:\n\n";
+print "== Echoes ==\n\n";
 
 foreach(@echoes) {
   my $echo = $_;
   my $echotag = $echo->{echotag};
   my $echogroup = $echo->{group} ? $echo->{group} : "";
-  print "$echotag";
-  print $echogroup ? " -g $echogroup\n" : "\n";
+  my @links;
+  my $header = $echotag . ($echogroup ? " -g $echogroup" : "") . "\nLinks:\n";
   $echogroup = "-" . $echogroup if $echogroup;
-  print "Links:\n";
 
   # temporary @acl (exclude rules no matched with echotag)
   my @tacl = @acl;
@@ -57,7 +64,6 @@ foreach(@echoes) {
 FORLINKS:
   foreach(@{$echo->{links}}) {
     my $link = $_;
-    print "  $link, ";
 FORACL:
     foreach(@tacl) {
       my $acl = $_;
@@ -84,11 +90,15 @@ FORACL:
       }
       next FORACL unless $matched;
 
-      print $acl->{deny} ? "deny" : "allow", " - $acl->{cfgline}\n";
+      push @links,"$link, " . ($acl->{deny} ? "deny" : "allow") . " - $acl->{cfgline}" if $acl->{deny} || ! $denyonly;
       next FORLINKS;
 
-    }
-    print "deny - no rule matched\n";
+    } # foreach(@tacl)
+    push @links,"$link, deny - no rule matched";
+  } # foreach(@{$echo->{links}})
+  if (@links) {
+    print $header;
+    print "  $_\n" foreach(@links);
+    print "\n";
   }
-  print "\n";
 }
