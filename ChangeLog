@@ -1,3 +1,18 @@
+2004-05-09 Sunday 19:58  d_sergienko
+
+	* src/post.c (1.115): Added section numbers in subject while post
+	(patch by Max Levenkov. Glad to see you again :)
+
+2004-05-09 Sunday 19:47  andrew_ladutsko
+
+	* src/txt2pkt.c (1.55): fixed versionStr generation (noticed by
+	Andr Luk'yanov)
+
+2004-05-09 Sunday 19:42  andrew_ladutsko
+
+	* src/txt2pkt.c (1.54): txt2pkt: use filename generation algorythm
+	based on sequencer when SegDir is set
+
 2004-05-07 Friday 18:45  andrew_ladutsko
 
 	* h/hptperl.h (1.17), src/hptafix.c (1.8), src/perl.c (1.76):
