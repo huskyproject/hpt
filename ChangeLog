@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Fri Sep  8 10:25:40 NOVST 2000
+max:
+* fixed bug with empty arealist (%list when no areas is available)
+
+----- cvs ci ------
 Thu Sep  7 16:00:38 NOVST 2000
 max:
 * misc/filter.pl from Pavel Gulchouck

@@ -355,8 +355,8 @@ char *list(s_message *msg, s_link *link) {
 	} /* end for */
 	sortAreaList(al);
 	list = formatAreaList(al,78," *");
-	xstrcat(&report,list);
-	free(list);
+	if (list) xstrcat(&report,list);
+	nfree(list);
 	freeAreaList(al);
 	
 	xscatprintf(&report, "\r'*' = area active for %s\r%i areas available, %i areas active\r", 
