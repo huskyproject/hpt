@@ -497,7 +497,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 	msg->text = createKludges(config, NULL, uplink->ourAka, &(uplink->hisAka),
                               versionStr);
 	if (config->areafixReportsFlags)
-	    xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r");
+	    xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r",NULL);
 	uplink->msg = msg;
     } else msg = uplink->msg;
 	
@@ -2333,7 +2333,7 @@ int relink (char *straddr) {
 	msg->text = createKludges(config,NULL,researchLink->ourAka,
                               &researchLink->hisAka,versionStr);
 	if (config->areafixReportsFlags)
-	    xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r");
+	    xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r",NULL);
 
 	for ( count = 0 ; count < areasArraySize; count++ ) {
 	    if ((areasIndexArray[count]->downlinkCount  <= 1) &&

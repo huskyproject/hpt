@@ -586,132 +586,131 @@ static void make_ftsc_date(char *pdate, const struct tm *ptm)
 
 int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 {
-   s_message *msg;
-   int len, badmsg=0;
-   struct tm tm;
-   char *p, *q;
-   long unread;
-#if defined(MSDOS) && !defined(__FLAT__) || !defined(__DJGPP__)
-   char *origin;
-#endif
-
-   if (2 != getUINT16(pkt)) {
-       *message = NULL;
-
-       unread = ftell(pkt);
-       fseek(pkt, 0L, SEEK_END);
-       unread = ftell(pkt) - unread; /*  unread bytes */
-
-       if (unread) {
-	   w_log(LL_ERR,"There is %d bytes of unknown data at the end of pkt file!",
-		 unread);
-	   return 2; /*  rename to bad */
-       }
-       else return 0; /*  end of pkt file */
-   }
-
-   msg = (s_message*) safe_malloc(sizeof(s_message));
-   memset(msg, '\0', sizeof(s_message));
-
-   msg->origAddr.node   = getUINT16(pkt);
-   msg->destAddr.node   = getUINT16(pkt);
-   msg->origAddr.net    = getUINT16(pkt);
-   msg->destAddr.net    = getUINT16(pkt);
-   msg->attributes      = getUINT16(pkt);
-
-   getc(pkt); getc(pkt);                /*  read unused cost fields (2bytes) */
-
-   fgetsUntil0 (msg->datetime, 22, pkt, NULL);
-   parse_ftsc_date(&tm, (char*)msg->datetime);
-   make_ftsc_date((char*)msg->datetime, &tm);
-
-   if (globalBuffer==NULL) {
-       globalBuffer = (UCHAR *) safe_malloc(BUFFERSIZE+1); /*  128K (32K in MS-DOS) */
-   }
-
-   len = fgetsUntil0 ((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
-   if (len > XMSG_TO_SIZE) {
-       if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
-       w_log(LL_ERR, "wrong msg header: toUserName (%s) longer than %d bytes.",
-	     globalBuffer, XMSG_TO_SIZE-1);
-       if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
-       globalBuffer[XMSG_TO_SIZE-1]='\0';
-       badmsg++;
-   }
-   xstrcat(&msg->toUserName, (char *) globalBuffer);
-
-   fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
-   if (len > XMSG_FROM_SIZE) {
-       if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
-       w_log(LL_ERR, "wrong msg header: fromUserName (%s) longer than %d bytes.",
-	     globalBuffer, XMSG_FROM_SIZE-1);
-       if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
-       globalBuffer[XMSG_FROM_SIZE-1]='\0';
-       badmsg++;
-   }
-   xstrcat(&msg->fromUserName, (char *) globalBuffer);
-
-   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
-   if (len > XMSG_SUBJ_SIZE) {
-       if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
-       w_log(LL_ERR, "wrong msg header: subectLine (%s) longer than %d bytes.",
-	     globalBuffer, XMSG_SUBJ_SIZE-1);
-       if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
-       globalBuffer[XMSG_SUBJ_SIZE-1]='\0';
-       badmsg++;
-   }
-   xstrcat(&msg->subjectLine, (char *) globalBuffer);
-
-   if (badmsg) {
-       freeMsgBuffers(msg);
-       *message = NULL;
-       w_log(LL_ERR, "wrong msg header: renaming pkt to bad.");
-       return 2; /*  exit with error */
-   }
-
+    s_message *msg;
+    int len, badmsg=0;
+    struct tm tm;
+    char *p, *q;
+    long unread;
+    
+    if (2 != getUINT16(pkt)) {
+        *message = NULL;
+        
+        unread = ftell(pkt);
+        fseek(pkt, 0L, SEEK_END);
+        unread = ftell(pkt) - unread; /*  unread bytes */
+        
+        if (unread) {
+            w_log(LL_ERR,"There is %d bytes of unknown data at the end of pkt file!",
+                unread);
+            return 2; /*  rename to bad */
+        }
+        else return 0; /*  end of pkt file */
+    }
+    
+    msg = (s_message*) safe_malloc(sizeof(s_message));
+    memset(msg, '\0', sizeof(s_message));
+    
+    msg->origAddr.node   = getUINT16(pkt);
+    msg->destAddr.node   = getUINT16(pkt);
+    msg->origAddr.net    = getUINT16(pkt);
+    msg->destAddr.net    = getUINT16(pkt);
+    msg->attributes      = getUINT16(pkt);
+    
+    getc(pkt); getc(pkt);                /*  read unused cost fields (2bytes) */
+    
+    fgetsUntil0 (msg->datetime, 22, pkt, NULL);
+    parse_ftsc_date(&tm, (char*)msg->datetime);
+    make_ftsc_date((char*)msg->datetime, &tm);
+    
+    if (globalBuffer==NULL) {
+        globalBuffer = (UCHAR *) safe_malloc(BUFFERSIZE+1); /*  128K (32K in MS-DOS) */
+    }
+    
+    len = fgetsUntil0 ((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
+    if (len > XMSG_TO_SIZE) {
+        if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
+        w_log(LL_ERR, "wrong msg header: toUserName (%s) longer than %d bytes.",
+            globalBuffer, XMSG_TO_SIZE-1);
+        if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
+        globalBuffer[XMSG_TO_SIZE-1]='\0';
+        badmsg++;
+    }
+    xstrcat(&msg->toUserName, (char *) globalBuffer);
+    
+    fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
+    if (len > XMSG_FROM_SIZE) {
+        if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
+        w_log(LL_ERR, "wrong msg header: fromUserName (%s) longer than %d bytes.",
+            globalBuffer, XMSG_FROM_SIZE-1);
+        if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
+        globalBuffer[XMSG_FROM_SIZE-1]='\0';
+        badmsg++;
+    }
+    xstrcat(&msg->fromUserName, (char *) globalBuffer);
+    
+    len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
+    if (len > XMSG_SUBJ_SIZE) {
+        if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
+        w_log(LL_ERR, "wrong msg header: subectLine (%s) longer than %d bytes.",
+            globalBuffer, XMSG_SUBJ_SIZE-1);
+        if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
+        globalBuffer[XMSG_SUBJ_SIZE-1]='\0';
+        badmsg++;
+    }
+    xstrcat(&msg->subjectLine, (char *) globalBuffer);
+    
+    if (badmsg) {
+        freeMsgBuffers(msg);
+        *message = NULL;
+        w_log(LL_ERR, "wrong msg header: renaming pkt to bad.");
+        return 2; /*  exit with error */
+    }
+    
 #if !defined(MSDOS) || defined(__FLAT__) || defined(__DJGPP__)
 #ifdef DEBUG_HPT
-w_log(LL_DEBUG, "32bit");
+    w_log(LL_DEBUG, "32bit");
 #endif
-   do {
-	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
-	   xstrcat(&msg->text, (char*)globalBuffer);
-	   msg->textLength+=len-1; /*  trailing \0 is not the text */
-   } while (len == BUFFERSIZE+1);
+    do {
+        len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
+        xstrcat(&msg->text, (char*)globalBuffer);
+        msg->textLength+=len-1; /*  trailing \0 is not the text */
+    } while (len == BUFFERSIZE+1);
 #else
 #ifdef DEBUG_HPT
-w_log(LL_DEBUG, "DOS-16");
+    w_log(LL_DEBUG, "DOS-16");
 #endif
-   /* DOS: read only one segment of message */
-   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
-   xstrcat(&msg->text, globalBuffer);
-   msg->textLength+=len-1; /*  trailing \0 is not the text */
-
-   if( (len == BUFFERSIZE+1) ) {
-     badmsg++;
-     xstrscat(&msg->text, "\r* Mesage too big, truncated by ", versionStr, "\r");
-     do {
-       len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
-       /* add kludges to end of striped text */
-       if((origin=strstr(globalBuffer, " * Origin"))) {
-         xstrcat(&msg->text, origin);
-       }
-     } while (len == BUFFERSIZE+1);
-     strncpy( globalBuffer, aka2str(msg->destAddr), BUFFERSIZE );
-     w_log(LL_ERR, "Message from %s to %s too big!", aka2str(msg->origAddr),
-                                                     globalBuffer);
-   }
+    /* DOS: read only one segment of message */
+    len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
+    xstrcat(&msg->text, globalBuffer);
+    msg->textLength+=len-1; /*  trailing \0 is not the text */
+    
+    if( (len == BUFFERSIZE+1) ) {
+        badmsg++;
+        xstrscat(&msg->text, "\r* Mesage too big, truncated by ", versionStr, "\r",NULL);
+        do {
+            char *origin;
+            
+            len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
+            /* add kludges to end of striped text */
+            if((origin=strstr(globalBuffer, " * Origin"))) {
+                xstrcat(&msg->text, origin);
+            }
+        } while (len == BUFFERSIZE+1);
+        strncpy( globalBuffer, aka2str(msg->destAddr), BUFFERSIZE );
+        w_log(LL_ERR, "Message from %s to %s too big!", aka2str(msg->origAddr),
+            globalBuffer);
+    }
 #endif
-
-   correctAddr(msg, header);
-   
-   /*  del "\001FLAGS" from message text */
-   if (NULL != (p=strstr(msg->text,"\001FLAGS"))) {
-	   for (q=p; *q && *q!='\r'; q++);
-	   memmove(p,q+1,msg->textLength-(q-msg->text));
-	   msg->textLength -= (q-p+1);
-   }
-
-   *message = msg;
-   return 1;
+    
+    correctAddr(msg, header);
+    
+    /*  del "\001FLAGS" from message text */
+    if (NULL != (p=strstr(msg->text,"\001FLAGS"))) {
+        for (q=p; *q && *q!='\r'; q++);
+        memmove(p,q+1,msg->textLength-(q-msg->text));
+        msg->textLength -= (q-p+1);
+    }
+    
+    *message = msg;
+    return 1;
 }
