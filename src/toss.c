@@ -609,7 +609,13 @@ int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link,
     if (seenBys==NULL) return 0;
 
     // a point always gets the mail
-    if (link->hisAka.point != 0) return 0;
+    // if (link->hisAka.point != 0) return 0;
+
+    // send the mail to links within our node-system
+    if ((link->hisAka.zone == area->useAka->zone) &&
+        (link->hisAka.net  == area->useAka->net) &&
+        (link->hisAka.node == area->useAka->node))
+	return 0;
 
     for (i=0; i < seenByCount; i++) {
 	if ((link->hisAka.net==seenBys[i].net) &&
