@@ -1,3 +1,8 @@
+2004-02-03 Tuesday 08:52  andr_lukyanov
+
+	* make/: makeperl.mvc, makeperl.mvcdll (hpt-1_4-stable.[2,2]):
+	Small fix MSVC compilation. RERL_VER to PERL_VER
+
 2004-01-23 Friday 04:29  andr_lukyanov
 
 	* src/: hptlink.c, hpttree.c, pktinfo.c, tpkt.c, txt2pkt.c
