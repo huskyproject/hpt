@@ -240,15 +240,15 @@ void processAttachs(s_link *link, s_message *msg)
    
    flo = fopen(link->floFile, "a");
 
-#if defined(UNIX) || defined(__linux__)
-   msg->subjectLine = strLower (msg->subjectLine);
-#endif
-  
    running = msg->subjectLine;
    //token = strtok_r(msg->subjectLine, " \t", &running);
    token = strseparate(&running, " \t");
 
    while (token != NULL) {
+#if defined(UNIX) || defined(__linux__)
+      if (!fexist(token))
+          strLower(token);
+#endif      
       if (flo != NULL) fprintf(flo, "%s\n", token);
       if (strrchr(token, PATH_DELIM)!= NULL)
          strcat(newSubjectLine, strrchr(token, PATH_DELIM)+1);
