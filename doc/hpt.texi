@@ -1451,7 +1451,7 @@ This statement cannot be repeated.
 @code{SeparateBundles}
 @end table
 
-Move echomail for all links to his own directorys.
+Move echomail for all links to their own directories.
 
 This statement cannot be repeated.
 
