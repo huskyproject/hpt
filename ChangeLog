@@ -2,6 +2,12 @@ hpt 0.29
 --------
 
 ----- cvs ci ------
+Sat Sep 18 21:53:03 NOVST 1999                                                  
+max:
+* fixed bug when pkt with dupes renames to .err if "dupecheck move"
+* autoCreate fixing
+
+----- cvs ci ------
 Tue Sep 14 22:24:52 CEST 1999 
 mtt:
 * applied patch from sven to fix the bug in post.c

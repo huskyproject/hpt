@@ -1,4 +1,4 @@
-HASHDUPE = 0
+HASHDUPE = 1
 DEBUG    = 1
 CC       = gcc 
 INSTDIR  = /usr/local/bin

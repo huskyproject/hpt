@@ -235,21 +235,16 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, UINT16 forceattr)
    XMSG  xmsg;
    char *slash;
    int rc = 0;
-#ifdef UNIX
-   char limiter = '/';
-#else
-   char limiter = '\\';
-#endif
 
    // create Directory Tree if necessary
    if (echo->msgbType == MSGTYPE_SDM)
       createDirectoryTree(echo->fileName);
    else {
-      // squish area
-      slash = strrchr(echo->fileName, limiter);
+      // squish or jam area
+      slash = strrchr(echo->fileName, PATH_DELIM);
       *slash = '\0';
       createDirectoryTree(echo->fileName);
-      *slash = limiter;
+      *slash = PATH_DELIM;
    }
    
    msg->destAddr.zone  = echo->useAka->zone;
@@ -673,13 +668,12 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 {
    FILE *f;
-   char *fileName, *squishFileName;
+   char *fileName, *squishFileName, *acDef;
    char buff[255], myaddr[25], hisaddr[25];
-   char msgbtype[7];
+   char *msgbtype;
    s_link *creatingLink;
    s_addr *aka;
-   char *description=NULL;
-   char *NewAutoCreate=NULL;
+   char *description=NULL, *newAutoCreate=NULL;
 
    squishFileName = (char *) malloc(strlen(c_area)+1);
    strcpy(squishFileName, c_area);
@@ -693,7 +687,6 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
       fileName++;
    }
 
-
    creatingLink = getLinkFromAddr(*config, pktOrigAddr);
 
    if (creatingLink == NULL) {
@@ -701,26 +694,17 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
       return 1;
    }
 
-   if (creatingLink->autoAreaCreateDefaults == NULL) {
-     // make an empty autocreateDefaults
-     NewAutoCreate = (char *) malloc(1);
-     strcpy(NewAutoCreate, "");
-   } else {
-     NewAutoCreate=(char *) calloc (strlen(creatingLink->autoAreaCreateDefaults)+1,sizeof(char));
-     strcpy (NewAutoCreate,creatingLink->autoAreaCreateDefaults);
-   }
+   acDef = creatingLink->autoAreaCreateDefaults;
+   newAutoCreate = (char *) calloc((acDef) ? strlen(acDef)+1 : 1, sizeof(char));
+   if (acDef) strcpy (newAutoCreate, acDef);
    
    fileName = creatingLink->autoAreaCreateFile;
    if (fileName == NULL) fileName = getConfigFileName();
 
    f = fopen(fileName, "a");
    if (f == NULL) {
-      f = fopen(getConfigFileName(), "a");
-      if (f == NULL)
-	 {
-	    fprintf(stderr,"autocreate: cannot open config file\n");
-	    return 1;
-	 }
+	   fprintf(stderr,"autocreate: cannot open config file\n");
+	   return 1;
    }
 
    aka = creatingLink->ourAka;
@@ -730,36 +714,25 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    sprintf(hisaddr, aka2str(pktOrigAddr));
 
    //write new line in config file
-   if ((fileName=strstr(NewAutoCreate, "-b "))==NULL) {
-     strcpy (msgbtype, "Squish");
-   }
-   else {
-     char *tmp, *tmp1;
-
-     if ((tmp1=strtok(fileName+3," \t"))==NULL)
-       strcpy (msgbtype, "Squish");
-     else
-       strncpy(msgbtype, tmp1, 6);
-     tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(tmp1+4)+1,sizeof(char));
-     fileName[0]='\0';
-     strcpy (tmp,NewAutoCreate);
-     tmp1=tmp1+4;
-     strcat(tmp,tmp1);
-     free (NewAutoCreate);
-     NewAutoCreate=tmp;
-   }  
+   msgbtype = stristr(newAutoCreate, "-b ");
 
    if (stricmp(config->msgBaseDir, "passthrough")!=0) {
 #ifndef MSDOS
-   if ((fileName=strstr(NewAutoCreate, "-dosfile "))==NULL)
-     sprintf(buff, "EchoArea %s %s%s -a %s -b %s", c_area, config->msgBaseDir, squishFileName, myaddr, msgbtype);
+   if ((fileName=stristr(newAutoCreate, "-dosfile "))==NULL)
+     sprintf(buff, "EchoArea %s %s%s -a %s%s", c_area,
+			 config->msgBaseDir, squishFileName, myaddr,
+			 (msgbtype) ? "" : " -b Squish");
    else {
      sleep(1); // to prevent time from creating equal numbers
-     sprintf(buff,"EchoArea %s %s%8lx -a %s -b %s", c_area, config->msgBaseDir, time(NULL), myaddr, msgbtype);
+     sprintf(buff,"EchoArea %s %s%8lx -a %s%s", c_area,
+			 config->msgBaseDir, time(NULL), myaddr,
+			 (msgbtype) ? "" : " -b Squish");
    }
 #else
 	   sleep(1); // to prevent time from creating equal numbers
-	   sprintf(buff,"EchoArea %s %s%8lx -a %s -b %s", c_area, config->msgBaseDir, time(NULL), myaddr, msgbtype);
+	   sprintf(buff,"EchoArea %s %s%8lx -a %s%s", c_area,
+			   config->msgBaseDir, time(NULL), myaddr,
+			   (msgbtype) ? "" : " -b Squish");
 #endif
    } else
 	   sprintf(buff, "EchoArea %s Passthrough -a %s", c_area, myaddr);
@@ -791,24 +764,24 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
        if (out) {
          if (((description=strtok(NULL," \t"))!=NULL) && (description=strstr(copy,description))!=NULL) {
            fileName=NULL;
-           if ((fileName=strstr(NewAutoCreate, "-d "))==NULL) {
+           if ((fileName=stristr(newAutoCreate, "-d "))==NULL) {
                char *tmp;
-               tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(description)+7,sizeof(char));
-               sprintf (tmp,"%s -d \"%s\"",NewAutoCreate,description);
-               free(NewAutoCreate);
-               NewAutoCreate=tmp;
+               tmp=(char *) calloc (strlen(newAutoCreate)+strlen(description)+7,sizeof(char));
+               sprintf (tmp,"%s -d \"%s\"",newAutoCreate,description);
+               free(newAutoCreate);
+               newAutoCreate=tmp;
            }
            else {
              char *tmp;
              
-             tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(description)+7,sizeof(char));
+             tmp=(char *) calloc (strlen(newAutoCreate)+strlen(description)+7,sizeof(char));
              fileName[0]='\0';
-             sprintf (tmp,"%s-d \"%s\"",NewAutoCreate,description);
+             sprintf (tmp,"%s-d \"%s\"",newAutoCreate,description);
              fileName++;
              fileName=strrchr(fileName,'\"')+1;
              strcat(tmp,fileName);
-             free (NewAutoCreate);
-             NewAutoCreate=tmp;
+             free (newAutoCreate);
+             newAutoCreate=tmp;
            }  
          }
 	 free(line);
@@ -818,23 +791,22 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
      }
    }
 
-   if ((NewAutoCreate != NULL) &&
-       (strlen(buff)+strlen(NewAutoCreate))<255) {
-           if ((fileName=strstr(NewAutoCreate, "-g")) == NULL) {
+   if ((newAutoCreate != NULL) &&
+       (strlen(buff)+strlen(newAutoCreate))<255) {
+           if ((fileName=stristr(newAutoCreate, "-g")) == NULL) {
 	       if (creatingLink->LinkGrp) {
 	           sprintf(buff+strlen(buff), " -g %c", *(creatingLink->LinkGrp));
 	       }
 	   }
-	   sprintf(buff+strlen(buff), " %s", NewAutoCreate);
+	   sprintf(buff+strlen(buff), " %s", newAutoCreate);
    } else if (creatingLink->LinkGrp)
 	       sprintf(buff+strlen(buff), " -g %c", *(creatingLink->LinkGrp));
 
-   free(NewAutoCreate);
+   free(newAutoCreate);
 
    sprintf(buff+strlen(buff), " %s", hisaddr);
    
    fprintf(f, "%s\n", buff);
-//   fprintf(f, "\n");
    
    fclose(f);
    
@@ -1138,7 +1110,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
          // msg is dupe
          if (echo->dupeCheck == dcMove) {
             rc = putMsgInArea(&(config->dupeArea), msg, 0, 0);
-         }
+         } else rc = 1; // quick fix. not shure.
          statToss.dupes++;
       }
 
