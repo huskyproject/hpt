@@ -1,3 +1,11 @@
+2003-12-12 Friday 08:07  mche
+
+	* src/areafix.c (1.432), doc/hpt.texi (1.140), doc/perlhooks.rus
+	(1.6), h/areafix.h (1.41), src/perl.c (1.72), src/query.c (1.107):
+	bugfixes for areafix
+	
+	patch by Andrew Ladutsko 2:450/210
+
 2003-12-05 Friday 15:28  mche
 
 	* src/areafix.c (1.431): added ability to automatically pause area
