@@ -86,7 +86,7 @@ int useSubj = 1;
 int useReplyId = 1;
 int loglevel = 10;
 int linkNew = 0;
-char *version = "1.6";
+char *version = "1.7";
 HAREA harea;
 int maxreply;
 
@@ -171,8 +171,22 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
             (crepl -> freeReply)++;
         } else {
             linkTo = MsgUidToMsgn(harea, crepl->reply1st, UID_EXACT) - 1;
+	    if(linkTo == -1) {
+		if (loglevel >= 15)
+		    fprintf(outlog, "Thread linking broken. MsgUidToMsgn() returned -1\n");
+		links_ignored++;
+		return;
+	    }
 
-            while (replmap[linkTo].replyNxt) linkTo = MsgUidToMsgn(harea, replmap[linkTo].replyNxt, UID_EXACT) - 1;
+            while (replmap[linkTo].replyNxt) {
+		linkTo = MsgUidToMsgn(harea, replmap[linkTo].replyNxt, UID_EXACT) - 1;
+		if(linkTo == -1) {
+		    if (loglevel >= 15)
+			fprintf(outlog, "Thread linking broken. MsgUidToMsgn() returned -1\n");
+		    links_ignored++;
+		    return;
+		}
+	    }
             replmap[linkTo].replyNxt = srepl->msgPos;
             replmap[linkTo].freeReply++;
 

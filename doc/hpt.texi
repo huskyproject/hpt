@@ -2428,7 +2428,7 @@ required level for write access
 @item -mandatory
 forbid to subscibe/unsubscribe from this echo
 @item -p <integer>
-purge after n days (*)
+purge after n days: used by purging utilities like sqpack (*)
 @item -$m <integer>
 leave max n messages after purge in area (*)
 @item -nopack
