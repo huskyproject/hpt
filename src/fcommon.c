@@ -582,7 +582,7 @@ int createDirectoryTree(const char *pathName) {
 int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 {
    int fd, save_errno; // bsy file for current link
-   char *name=NULL, *sepDir=NULL, limiter=PATH_DELIM;
+   char *name=NULL, *sepDir=NULL, limiter=PATH_DELIM, *tmpPtr;
    e_bundleFileNameStyle bundleNameStyle = eUndef;
    
    if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
@@ -656,7 +656,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    }
 
    // create bsyFile
-   name[strrchr(name, '.')-name]='\0';
+   if ((tmpPtr=strrchr(name, '.')) != NULL) *tmpPtr = '\0';
    xstrscat(&link->bsyFile, name, ".bsy", NULL);
    nfree(name);
 
