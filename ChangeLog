@@ -1,3 +1,8 @@
+2004-01-21 Wednesday 01:58  andr_lukyanov
+
+	* make/: makeperl.mvc, makeperl.mvcdll (hpt-1_4-stable.[1,1]): Fix
+	MSVC compilation with perl v5.6 or v5.8
+
 2004-01-18 Sunday 21:29  d_sergienko
 
 	* src/toss.c (hpt-1_4-stable.9): fix bug with message clipping
