@@ -1,3 +1,12 @@
+2002-01-24 Thursday 19:15  ml
+
+	* doc/hpt.texi (1.51.2.3): doc updates (autoareacreatefile)
+
+2002-01-24 Thursday 05:01  ml
+
+	* src/areafix.c (1.232.2.6): fixed relink bug if no link password
+	defined
+
 2002-01-21 Monday 20:15  ml
 
 	* src/fcommon.c (1.108.2.1): Close log file before lockfile
