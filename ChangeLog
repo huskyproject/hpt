@@ -2,6 +2,13 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Jun 17 22:14:27 NOVST 2000
+max:
+* hpt relink sets local flag on the messages
+* add origin, seen-by's & path to long messages under MS-DOS
+* carbons for exported netmail
+
+----- cvs ci ------
 Thu Jun 15 16:55:36 NOVST 2000
 max:
 * fixed wrong recoding with carbons when toss from badArea

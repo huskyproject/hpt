@@ -88,6 +88,9 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
        recodeToTransportCharset((CHAR*)msg->fromUserName);
        recodeToTransportCharset((CHAR*)msg->toUserName);
    }
+   
+   // set netmail flag
+   msg->netMail = 1;
 }
 
 void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
@@ -305,7 +308,7 @@ void processRequests(s_link *link, s_message *msg)
 }
 
 
-int packMsg(HMSG SQmsg, XMSG *xmsg)
+int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 {
    FILE        *pkt;
    e_prio      prio;
@@ -455,6 +458,9 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
 	   }
    } /* endif file attach */
 
+   // process carbon copy
+   carbonCopy(&msg, area);
+   
    freeMsgBuffers(&msg);
    if (freeVirtualLink==1) {
       nfree(virtualLink->name);
@@ -514,7 +520,7 @@ void scanNMArea(s_area *area)
                 
          // if not sent and not for us -> pack it
          if (((xmsg.attr & MSGSENT) != MSGSENT) && (for_us==0)) {
-			 if (packMsg(msg, &xmsg) == 0) statScan.exported++;
+			 if (packMsg(msg, &xmsg, area) == 0) statScan.exported++;
          }
 
          MsgCloseMsg(msg);

@@ -3,8 +3,6 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- carbons for exported netmail
-- fix reading long messages under ms-dos (path & seen-by)
 - tearline. origin tokens...
 - fix for err + dupes
 - document renaming suffixes

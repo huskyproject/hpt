@@ -524,6 +524,9 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    s_message *msg;
    int       len, badmsg=0;
    struct tm tm;
+#if defined(__DOS__) || defined(__MSDOS__)
+   char      *origin;
+#endif
 
    if (2 != getUINT16(pkt)) {
 	   *message = NULL;
@@ -581,6 +584,12 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    while (len == BUFFERSIZE+1) {
 	   // skip msg text
 	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt);
+   }
+   // add origin, seen-by's & path
+   origin = strrstr(globalBuffer, " * Origin");
+   if (origin) {
+	   xstrscat(&msg->text, "\r", origin, NULL);
+	   msg->textLength+=strlen(origin);
    }
 #endif
 

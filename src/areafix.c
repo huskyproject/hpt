@@ -307,7 +307,7 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
     xstrcat(&(msg->toUserName), toName);
     xstrcat(&(msg->subjectLine), subject);
 
-    msg->attributes = MSGLOCAL;
+    msg->attributes |= MSGLOCAL;
     if (netmail) {
        msg->attributes |= MSGPRIVATE;
        msg->netMail = 1;
@@ -1840,7 +1840,7 @@ int relink (char *straddr) {
 		xscatprintf(&(msg->text), " \r--- %s areafix\r", versionStr);
 		msg->textLength = strlen(msg->text);
 		writeLogEntry(hpt_log, '8', "'Refresh' message created to `AreaFix`");
-		processNMMsg(msg, NULL, NULL, 0, 0);
+		processNMMsg(msg, NULL, NULL, 0, MSGLOCAL);
 		freeMsgBuffers(msg);
 		nfree(msg);
 		writeLogEntry(hpt_log, '8', "Total request relink %i area(s)",areasArraySize);
