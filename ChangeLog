@@ -1,3 +1,27 @@
+2002-01-10 Thursday 17:52  mche
+
+	* make/makefile.inc (1.5): - new : areafixQueryRequests fiture
+	under construction
+
+2002-01-10 Thursday 17:50  ml
+
+	* src/toss.c (1.382): fixed recoding of carbonreason
+
+2002-01-10 Thursday 17:44  mche
+
+	* src/: hpt.c (1.123), query.c (1.2), toss.c (1.381): function
+	autoCreate moved from toss.c to query.c
+
+2002-01-10 Thursday 17:16  mche
+
+	* h/query.h (1.1), src/query.c (1.1): - new : areafixQueryRequests
+	fiture under construction
+
+2002-01-10 Thursday 17:10  ml
+
+	* TODO (1.183), doc/hpt-FAQ.russian (1.16), doc/hpt.texi (1.54),
+	src/areafix.c (1.235): multiply rules files (by sir)
+
 2002-01-06 Sunday 20:54  ml
 
 	* src/areafix.c (1.234): fixed forward requests to subscribed
