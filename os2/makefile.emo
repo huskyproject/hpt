@@ -8,7 +8,7 @@ SRC_DIR = ../src/
 INCDIR=../..
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -Zomf -Zcrtdll -I../h -I$(INCDIR) -Wall -ggdb -DOS2
+  CFLAGS  = -c -Zomf -Zsys -I../h -I$(INCDIR) -Wall -ggdb -DOS2
   LFLAGS  = -Zomf -Zsys -L../../smapi -L../../fidoconfig -lwrap
 else
   CFLAGS  = -c -fomit-frame-pointer -fstrength-reduce -Zomf -Zsys -I../h -I$(INCDIR) -Wall -s -DOS2 -O3
