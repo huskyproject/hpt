@@ -6,6 +6,7 @@ Sat Sep 11 13:00:16 NOVST 1999
 max:
 * added carbonReason (patch from Serguei Revtov)
 * carbonCopy code cleanup
+* areafix.c %list - code cleanup & bugfixing (may be) :-)
 	
 ----- cvs ci ------
 Tue Sep  7  18:28:00

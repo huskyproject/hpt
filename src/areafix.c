@@ -310,15 +310,14 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
 
 
 char *list(s_message *msg, s_link *link) {
-
-	int i,j,active,avail,rc,desclen,len;
-	int *areaslen;
-	int maxlen;
-	char *report, addline[256];
 	
+	int i, active, avail, rc, desclen, *areaslen, maxlen = 0;
+	unsigned long reportlen;
+	char *report, addline[256];
+	s_area area;
+
 	areaslen = malloc(config->echoAreaCount * sizeof(int));
 
-	maxlen = 0;
 	for (i=0; i< config->echoAreaCount; i++) {
 	   areaslen[i]=strlen(config->echoAreas[i].areaName);
 	   if (areaslen[i]>maxlen) maxlen = areaslen[i];
@@ -328,43 +327,48 @@ char *list(s_message *msg, s_link *link) {
 
 	report=(char*)calloc(strlen(addline)+1,sizeof(char));
 	strcpy(report, addline);
+	reportlen=strlen(report);
 
 	for (i=active=avail=0; i< config->echoAreaCount; i++) {
+		
+		area = config->echoAreas[i];
 
-	    rc=subscribeCheck(config->echoAreas[i],msg, link);
-	    if (rc < 2) {
-			if (config->echoAreas[i].description!=NULL)
-			       desclen=strlen(config->echoAreas[i].description);
-			else
-			       desclen=0;
+	    rc=subscribeCheck(area, msg, link);
+	    if (rc < 2) { /* add line */
+			if (area.description) desclen=strlen(config->echoAreas[i].description);
+			else desclen=0;
 
-			len=strlen(report)+areaslen[i]+(maxlen-areaslen[i])+desclen+6;
+			sprintf(addline, "%s %s%s%s%s%s\r",
+					(rc) ? " " : "*",
+					area.areaName,
+					(desclen) ? " " : "",
+					(desclen) ? print_ch(maxlen-areaslen[i],'.') : "",
+					(desclen) ? " " : "",
+					(desclen) ? area.description : "");
+			 
+			if (rc==0) active++; avail++;
 
-			report=(char*) realloc(report, len);
-				
-			if (rc==0) {
-				strcat(report,"* ");
-				active++;
-				avail++;
-			} else {
-				strcat(report,"  ");
-				avail++;
-			}
-			strcat(report, config->echoAreas[i].areaName);
-			if (desclen!=0)
-			{
-			       strcat(report," ");
-			       for (j=0;j<(maxlen)-areaslen[i];j++) strcat(report,".");
-                               strcat(report," ");
-                               strcat(report,config->echoAreas[i].description);
-			}
-			strcat(report,"\r");
-	    }
-	}
+			reportlen += strlen(addline);
+			report=(char*) realloc(report,reportlen+1);
+			
+			if (report) strcat(report, addline);
+			else { /* low memory */
+				writeLogEntry(hpt_log, '9', "areafix: not enough memory for %list");
+				exit(1);
+			} /* end low memory*/
+
+	    } /* end add line */
+
+	} /* end for */
 	
 	sprintf(addline,"\r'*' = area active for %s\r%i areas available, %i areas active\r", aka2str(link->hisAka), avail, active);
-	report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
-	strcat(report, addline);
+	reportlen += strlen(addline);
+	report=(char*) realloc(report,reportlen+1);
+	if (report) strcat(report, addline);
+	else { /* low memory */
+		writeLogEntry(hpt_log, '9', "areafix: not enough memory for %list");
+		exit(1);
+	}
 
 	sprintf(addline,"AreaFix: list sent to %s", aka2str(link->hisAka));
 	writeLogEntry(hpt_log, '8', addline);
