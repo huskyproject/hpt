@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Sun Apr  9 17:23:17 CET 2000
+hjk:
+* removed check of groupaccess on import and export of messages
+
+----- cvs ci ------
 Fri Apr  7 14:09:52 NOVST 2000
 max:
 * clear MSGLOCAL flag on transit netmail bugfix

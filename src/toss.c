@@ -458,7 +458,8 @@ int readCheck(s_area *echo, s_link *link) {
     // pause
     if (link->Pause) return 3;
 
-    if (strcmp(echo->group,"0")) {
+// Do not check for groupaccess here, use groups only (!) for Areafix
+/*    if (strcmp(echo->group,"0")) {
 		if (link->numAccessGrp) {
 			if (config->numPublicGroup) {
 				if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
@@ -468,7 +469,7 @@ int readCheck(s_area *echo, s_link *link) {
 		} else if (config->numPublicGroup) {
 			if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) return 1;
 		} else return 1;
-    }
+    }*/
     
     if (echo->levelread > link->level) return 2;
     
@@ -501,20 +502,9 @@ int writeCheck(s_area *echo, s_addr *aka) {
     }
     if (i == echo->downlinkCount) return 4;
     
-// Do not check groups here, too much checking, use groups only for areafix
-//    if (echo->group != '\060') {
-//	if (link->AccessGrp) {
-//	    if (config->PublicGroup) {
-//		if (strchr(link->AccessGrp, echo->group) == NULL &&
-//		    strchr(config->PublicGroup, echo->group) == NULL) return 1;
-//	    } else if (strchr(link->AccessGrp, echo->group) == NULL) return 1;
-//	} else if (config->PublicGroup) {
-//		   if (strchr(config->PublicGroup, echo->group) == NULL) return 1;
-//	       } else return 1;
-//    }
-    
-    if (strcmp(echo->group,"0")) {
-		if (link->numAccessGrp) {
+// Do not check for groupaccess here, use groups only (!) for Areafix
+/*    if (strcmp(echo->group,"0")) {
+        if (link->numAccessGrp) {
 			if (config->numPublicGroup) {
 				if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
 					!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup))
@@ -523,7 +513,7 @@ int writeCheck(s_area *echo, s_addr *aka) {
 		} else if (config->numPublicGroup) {
 			if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) return 1;
 		} else return 1;
-    }
+    }*/
 
     if (echo->levelwrite > link->level) return 2;
     
@@ -1276,19 +1266,10 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
    statToss.echoMail++;
 
    if (echo == &(config->badArea)) writeAccess = 0;
-// else writeAccess = writeCheck(echo, &pktOrigAddr);
-// this is faster than writeCheck imho
-   else {   
-	   arealink = getAreaLink(echo, pktOrigAddr);
-	   if (arealink) {
-		   if (arealink->import) writeAccess = 0; else writeAccess = 3;
-	   } else {
-		   if (addrComp(pktOrigAddr,*echo->useAka)==0) writeAccess = 0;
-		   else writeAccess = 4;
-	   }
-   }
+   else writeAccess = writeCheck(echo, &pktOrigAddr);
+
    if (writeAccess!=0) echo = &(config->badArea);
-		
+
    if (echo != &(config->badArea)) {
       if (dupeDetection(echo, *msg)==1) {
          // no dupe
@@ -1312,9 +1293,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 	       statToss.passthrough++;
 	       rc = 1; //passthrough does always work
 	   }
-	 };
-
-
+	 }
       } else {
          // msg is dupe
          if (echo->dupeCheck == dcMove) {
@@ -1359,7 +1338,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 	     }
 	   }
         } else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
-      };
+      }
    }
 
    free(textBuff);
