@@ -1,7 +1,7 @@
 #!/usr/bin/perl
-# hptstat ver.0.4, (c)opyright 2002-03, by val khokhlov
-$areas = 0;                   # areas count
-@area_tag;                    # array of area tags ($tag -> $name)
+# hptstat ver.0.5, (c)opyright 2002-03, by val khokhlov
+%areas;                       # areas found in stat (tag=>id), id=1,2,3,...
+@area_tag;                    # ...reverse array (id=>tag)
 %links;                       # links found in stat
 @stat;                        # array ($tag, @addr, @msgs, @bytes)
                               # idx: 0  1 2 3 4 5  6   7    8   9   10
@@ -37,16 +37,7 @@ print center("Bad and duplicate messages"), "\n",
 # center a line
 sub center { return sprintf '%'.(39-length($_[0])/2)."s%s\n", ' ', $_[0]; }
 # --------------------------------------------------------------------
-# find area number by tag
-sub find_area {
-  my ($tag, $add) = @_;
-  for (my $i = 0; $i < $areas; $i++) {
-    return $i if ($tag eq $area_tag[$i]);
-  }
-  if ($add) { push @area_tag, $tag; return $areas++; } else { return undef; }
-}
-# --------------------------------------------------------------------
-# parse stat file into $areas
+# parse stat file into @stat
 sub parse_stat {
   my ($name) = @_;
   die "Please specify statfile in parse_stat() or advStatisticsFile config keyword\n" unless defined $name;
@@ -60,10 +51,11 @@ sub parse_stat {
   # read file
   while (!eof F) {
     read F, $_, 4;
-    my ($lc, $tl, $tag) = unpack 'S2', $_;
+    my ($lc, $tl, $tag, $id) = unpack 'S2', $_;
     # area tag
     read F, $tag, $tl;
-    my $id = find_area($tag, 1);
+    $id = $areas{$tag};
+    if (!defined $id) { $areas{$tag} = $id = keys(%areas)+1; $area_tag[$id] = $tag; }
     # links data
     for (my $i = 0; $i < $lc; $i++) {
       read F, $_, 32;
@@ -91,6 +83,7 @@ sub parse_config {
     # parse stat file
     if (/^\s*advStatisticsFile\s+/i) {
       ($stat_file) = /^\s*\S+\s+(\S+)/;
+      $stat_file =~ s/\[([^\]]+)\]/$ENV{$1}/eg;
     }
     # parse area
     elsif (/^\s*echoarea\s+/i) {
@@ -257,7 +250,7 @@ sub make_summary {
   if ($empty) {
     ##parse_config() unless defined %config_areas || defined @config_links;
     if ($type eq 'Area') {
-      for my $v (keys %config_areas) { push @arr, [$v] if !defined find_area($v); }
+      for my $v (keys %config_areas) { push @arr, [$v] if !$areas{$v}; }
     } elsif ($type eq 'Link') {
       for my $v (@config_links) { push @arr, [$v] if !$links{$v}; }
     }
@@ -297,14 +290,14 @@ sub make_notraf {
   my ($maxlen, @out, $len) = (16);
   ##parse_config() unless defined %config_areas;
   for my $tag (keys %config_areas) {
-    next if find_area($tag);
+    next if $areas{$tag};
     if (length $tag > $maxlen) { $maxlen = length $tag; }
   }
   $len = 78 - 18 - $maxlen;
   push @out, sprintf("%-${maxlen}s", 'Area').'      Uplink      Links';
   push @out, ('Ä'x$maxlen).' '.('Ä'x16).' '.('Ä'x$len);
   for my $tag (sort keys %config_areas) {
-    next if find_area($tag);
+    next if $areas{$tag};
     my $s = join(' ', @{$config_areas{$tag}{'links'}});
     if (length $s > $len) { substr $s, $len-3, length($s)-$len+3, '...'; }
     push @out, sprintf "%-${maxlen}s %16s %s", $tag, 
@@ -317,11 +310,12 @@ sub make_notraf {
 # --------------------------------------------------------------------
 # links and areas with bad or dupe messages
 sub make_baddupe {
-  my (@out, @arr, @tot, $len, $s);
+  my (@out, @arr, @tot, $len, $s, $i);
+  my (%was_area, %was_link);
   my ($titles, $sf, $tosum, $toout) = @_;
   for my $v (@stat) {
-    for (my $i = 0; $i <= @$toout; $i++) { last if $v->[$i] > 0; }
-    next if ($i == @toout);
+    for ($i = 0; $i <= @$toout; $i++) { last if $v->[$toout->[$i]] > 0; }
+    next if ($i == @$toout);
     my $tag = $area_tag[$v->[0]];
     # sum - sort field
     my $sum = 0;
@@ -331,6 +325,9 @@ sub make_baddupe {
     my @rec = ($tag, $link, $sum);
     for my $i (@$toout) { push @rec, $v->[$i]; $tot[$i] += $v->[$i]; }
     push @arr, \@rec;
+    # calc totals
+    $was_area{ $v->[0] } = 1;
+    $was_link{ $link } = 1;
   }
   # sort
   if ($sf > 2) { @arr = sort { $b->[$sf] <=> $a->[$sf] } @arr; }
@@ -347,7 +344,7 @@ sub make_baddupe {
     my $ss = $rec->[0];
     if (length $ss > $len) { substr $ss, $len-3, length($ss)-$len+3, '...'; }
     $s = sprintf "%-${len}s %16s", $ss, $rec->[1];
-    for ($i = 0; $i < @$toout; $i++) { $s .= sprintf "%-4s", $rec->[$i+3] || '-'; }
+    for ($i = 0; $i < @$toout; $i++) { $s .= ' '.sprintf "%4s", $rec->[$i+3] || '-'; }
     push @out, $s;
   }
   push @out, "      No records" unless @arr > 0;
@@ -355,8 +352,8 @@ sub make_baddupe {
   for (my $i = 0; $i < @$toout; $i++) { $s .= ' '.('Ä'x4); }
   push @out, $s;
   if (@arr > 0) {
-    $s = sprintf "%${len}s %16s", 'Total '.$areas.' area(s)', $links.' link(s)';
-    for my $i (@$toout) { $s .= sprintf "%-4s", $tot->[$i] || '-'; }
+    $s = sprintf "%${len}s %16s", 'Total '.keys(%was_area).' area(s)', keys(%was_link).' link(s)';
+    for my $i (@$toout) { $s .= ' '.sprintf "%4s", $tot[$i] || '-'; }
     push @out, $s;
   }
   return @out;
