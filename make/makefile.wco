@@ -1,4 +1,8 @@
+# $Id$
 # Makefile for Watcom C (OS/2)
+# Re-written by Andr Luk'yanov 2:5001/7
+#
+# Predefined macroses: __OS2__, __WATCOMC__, ...
 #
 
 DEBUG=0
@@ -8,12 +12,12 @@ SRC_DIR=..\src\
 
 !IF $(DEBUG) == 1
 CFLAGS=-zq -wx -i=..\..;..\h -oneatx -5 -d2 -hw -c
-LFLAGS=-bt=os2 -l=os2 /"DEBUG Watcom"
-CDEFS =-DDEBUG_HPT
+LFLAGS=-bt=os2v2 -l=os2v2 /"DEBUG Watcom"
+CDEFS =-DOS2 -DDEBUG_HPT
 !ELSE
 CFLAGS=-zq -wx -i=..\..;..\h -oneatx -5 -c
-LFLAGS=-bt=os2 -l=os2
-CDEFS =
+LFLAGS=-bt=os2v2 -l=os2v2
+CDEFS =-DOS2
 !ENDIF
 
 OBJ=.obj
