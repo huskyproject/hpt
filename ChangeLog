@@ -1,5 +1,11 @@
 hpt 0.28
 --------
+
+----- cvs ci ------
+Wed May 19 19:25:59 CEST 1999 
+mtt:
+* pkt's which are only 60 byte long (empty packets) are not processed, 
+  but deleted.
 	
 ----- cvs ci ------
 Tue May 18 19:27:56 CEST 1999
