@@ -1148,7 +1148,7 @@ char *errorRQ(char *line) {
 
 char *do_delete(s_link *link, s_area *area) {
     char *report = NULL, *an = area->areaName;
-    unsigned int i;
+    unsigned int i=0;
 
     if(!link) 
     {
