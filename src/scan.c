@@ -517,6 +517,7 @@ int scanByName(char *name) {
     
     if ((area = getNetMailArea(config, name)) != NULL) {
        scanNMArea(area); 
+       statScan.areas++;
        return 1;
     } else {
        // maybe it's echo area    
@@ -525,7 +526,9 @@ int scanByName(char *name) {
           if (area && area->msgbType != MSGTYPE_PASSTHROUGH && 
               area -> downlinkCount > 0 && !area->scn) { 
 	  /* scan and mark scanned */
-		  scanEMArea(area); area->scn=1; 
+		  scanEMArea(area);
+		  area->scn = 1;
+		  statScan.areas++;
 		  return 1;
 	  }; 
        } else {
@@ -560,7 +563,6 @@ void scanExport(int type, char *str) {
 
    if (type & SCN_NAME) {
       scanByName(str);   
-      statScan.areas++;
    } else if (f == NULL) {
 	   
       if (type & SCN_FILE) {
@@ -593,8 +595,7 @@ void scanExport(int type, char *str) {
          if (line != NULL) {
 	    if (*line && line[strlen(line)-1] == '\r')
 	       line[strlen(line)-1] = '\0';  /* fix for DOSish echotoss.log */
-            if (scanByName(line))
-	       statScan.areas++;
+    	    scanByName(line);
             free(line);
          }
       }
