@@ -2416,7 +2416,7 @@ void autoPassive()
       if (config->links[i].autoPause==0 || config->links[i].Pause) continue;
 
       if (createOutboundFileName(&(config->links[i]),
-				 cvtFlavour2Prio(config->links[i].echoMailFlavour),
+				 config->links[i].echoMailFlavour,
 				 FLOFILE) == 0) {
 	  f = fopen(config->links[i].floFile, "rt");
 	  if (f) {

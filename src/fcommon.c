@@ -110,9 +110,9 @@ void exit_hpt(char *logstr, int print) {
     w_log(LL_STOP, "Exit");
     closeLog();
     if (_lockfile) {
-        close(lock_fd);
-        remove(_lockfile);
-	nfree(_lockfile);
+       close(lock_fd);
+       remove(_lockfile);
+       nfree(_lockfile);
     }
     exit(EX_SOFTWARE);
 }
@@ -183,7 +183,7 @@ int fTruncate (int fd, long length)
 }
 #endif
 #endif // ifdef 0
-
+/*
 e_prio cvtFlavour2Prio(e_flavour flavour)
 {
    switch (flavour) {
@@ -196,7 +196,7 @@ e_prio cvtFlavour2Prio(e_flavour flavour)
    }
    return NORMAL;
 }
-
+*/
 #if 1
 /* This old code will be removed once the new one proves to be reliable */
 
@@ -685,112 +685,14 @@ int createDirectoryTree(const char *pathName) {
 }
 #endif
 
-
-int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
+int createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ)
 {
-   int fd; // bsy file for current link
-   char *name=NULL, *sepDir=NULL, limiter=PATH_DELIM, *tmpPtr;
-   e_bundleFileNameStyle bundleNameStyle = eUndef;
-
-   if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
-   else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
-   
-   if (bundleNameStyle != eAmiga) {
-	   if (link->hisAka.point) xscatprintf(&name, "%08x.", link->hisAka.point);
-	   else xscatprintf(&name, "%04x%04x.", link->hisAka.net, link->hisAka.node);
-   } else {
-	   xscatprintf(&name, "%u.%u.%u.%u.", link->hisAka.zone,
-				   link->hisAka.net, link->hisAka.node, link->hisAka.point);
-   }
-
-   if (typ != REQUEST) {
-	   switch (prio) {
-	   case CRASH :     xstrcat(&name, "c");
-		   break;
-	   case HOLD :      xstrcat(&name, "h");
-		   break;
-	   case DIRECT :    xstrcat(&name, "d");
-		   break;
-	   case IMMEDIATE : xstrcat(&name, "i");
-		   break;
-	   case NORMAL :    xstrcat(&name, (typ==PKT) ? "o" : "f");
-		   break;
-	   }
-   } else xstrcat(&name, "req");
-
-   switch (typ) {
-   case PKT :     xstrcat(&name, "ut");
-	   break;
-   case FLOFILE : xstrcat(&name, "lo");
-	   break;
-   case REQUEST :
-	   break;
-   }
-
-   // create floFile
-   xstrcat(&link->floFile, config->outbound);
-
-   // add suffix for other zones
-   if (link->hisAka.zone != config->addr[0].zone && bundleNameStyle != eAmiga) {
-	   link->floFile[strlen(link->floFile)-1]='\0';
-	   xscatprintf(&link->floFile, ".%03x%c", link->hisAka.zone, limiter);
-   }
-
-   if (link->hisAka.point && bundleNameStyle != eAmiga)
-	   xscatprintf(&link->floFile, "%04x%04x.pnt%c",
-				   link->hisAka.net, link->hisAka.node, limiter);
-   
-   _createDirectoryTree(link->floFile); // create directoryTree if necessary
-   xstrcat(&link->bsyFile, link->floFile);
-   xstrcat(&link->floFile, name);
-
-   // separate bundles
-
-   if (config->separateBundles && (bundleNameStyle!=eAmiga || (bundleNameStyle==eAmiga && link->packerDef==NULL))) {
-
-       xstrcat(&sepDir, link->bsyFile);
-       if (bundleNameStyle==eAmiga) 
-	   xscatprintf(&sepDir, "%u.%u.%u.%u.sep%c", 
-		       link->hisAka.zone, link->hisAka.net,
-		       link->hisAka.node ,link->hisAka.point, limiter);
-       else if (link->hisAka.point) xscatprintf(&sepDir, "%08x.sep%c", 
-						link->hisAka.point, limiter);
-       else xscatprintf(&sepDir, "%04x%04x.sep%c", link->hisAka.net,
-			link->hisAka.node, limiter);
-
-       _createDirectoryTree(sepDir);
-       nfree(sepDir);
-   }
-
-   // create bsyFile
-   if ((tmpPtr=strrchr(name, '.')) != NULL) *tmpPtr = '\0';
-   xstrscat(&link->bsyFile, name, ".bsy", NULL);
-   nfree(name);
-
-   // maybe we have session with this link?
-   if ( (fd=open(link->bsyFile, O_CREAT | O_RDWR | O_EXCL, S_IREAD | S_IWRITE)) < 0 ) {
-
-#if !defined(__WATCOMC__)	   
-	   int save_errno = errno;
-	   
-	   if (save_errno != EEXIST) {
-		   w_log('7', "cannot create *.bsy file \"%s\" for %s (errno %d)\n", link->bsyFile, link->name, (int)save_errno);
-		   exit_hpt("cannot create *.bsy file!",0);
-		   
-	   } else {
-#endif
-		   w_log('7', "link %s is busy.", aka2str(link->hisAka));
-		   nfree(link->floFile);
-		   nfree(link->bsyFile);
-		   
-		   return 1;
-#if !defined(__WATCOMC__)	   
-	   }
-#endif
-   } else close(fd);
-
-   return 0;
+   int nRet = CreateOutboundFileName(config,link,prio,typ);
+   if(nRet == -1) 
+      exit_hpt("cannot create *.bsy file!",0);
+   return nRet;
 }
+
 
 void *safe_malloc(size_t size)
 {

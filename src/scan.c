@@ -338,7 +338,7 @@ void processRequests(s_link *link, s_message *msg)
 int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 {
    FILE        *pkt;
-   e_prio      prio = NORMAL;
+   e_flavour   prio = normal;
    s_message   msg;
    s_pktHeader header;
    s_route     *route;
@@ -371,16 +371,16 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    }
 
    // calculate prio
-   if ((xmsg->attr & MSGCRASH)==MSGCRASH) prio = CRASH; 
-   if ((xmsg->attr & MSGHOLD)==MSGHOLD) prio = HOLD;
+   if ((xmsg->attr & MSGCRASH)==MSGCRASH) prio = crash; 
+   if ((xmsg->attr & MSGHOLD)==MSGHOLD) prio = hold;
    if ((xmsg->attr & MSGXX2)==MSGXX2 ||
 	   ((xmsg->attr & MSGHOLD)==MSGHOLD &&
-		(xmsg->attr & MSGCRASH)==MSGCRASH)) prio = DIRECT; // XX2 or Crash+Hold
+		(xmsg->attr & MSGCRASH)==MSGCRASH)) prio = direct; // XX2 or Crash+Hold
    if (msg.text) {
 	   flags = (char *) GetCtrlToken(msg.text,(byte *)"FLAGS");
 	   if (flags) {
-		   if (strstr(flags,"DIR")!=NULL) prio = DIRECT;
-		   if (strstr(flags,"IMM")!=NULL) prio = IMMEDIATE; // most priority
+		   if (strstr(flags,"DIR")!=NULL) prio = direct;
+		   if (strstr(flags,"IMM")!=NULL) prio = immediate; // most priority
 		   nfree(flags);
 	   }
    }
@@ -389,12 +389,11 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
        // file attach
 	   
        // we need route mail
-       if (prio==NORMAL) {
+       if (prio==normal) {
 	   route = findRouteForNetmail(msg);
 	   link = getLinkForRoute(route, &msg);
 	   if ((route != NULL) && (link != NULL)) {
-	       if (createOutboundFileName(link,
-					  cvtFlavour2Prio(route->flavour),
+	       if (createOutboundFileName(link,route->flavour,
 					  FLOFILE) == 0) {
 		   processAttachs(link, &msg, xmsg->attr);
 		   remove(link->bsyFile);
@@ -422,7 +421,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    // file requests always direct
    if ((xmsg->attr & MSGFRQ) == MSGFRQ) {
 	   // if msg has request flag then put the subjectline into request file.
-	   if (createOutboundFileName(virtualLink, NORMAL, REQUEST) == 0) {
+	   if (createOutboundFileName(virtualLink, normal, REQUEST) == 0) {
 		   processRequests(virtualLink, &msg);
 		   remove(virtualLink->bsyFile);
 		   nfree(virtualLink->bsyFile);
@@ -435,10 +434,10 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    }
 
    // no route
-   if (prio!=NORMAL || (xmsg->attr & MSGFRQ)==MSGFRQ) {
+   if (prio!=normal || (xmsg->attr & MSGFRQ)==MSGFRQ) {
 	   // direct, crash, immediate, hold messages
            if (virtualLink->arcNetmail &&
-               prio == cvtFlavour2Prio(virtualLink->echoMailFlavour)) {
+               prio == virtualLink->echoMailFlavour) {
                    arcNetmail = 1;
                    if (virtualLink->pktFile && virtualLink->pktSize)
                         if (fsize(virtualLink->pktFile) >= virtualLink->pktSize * 1024L) {
@@ -459,11 +458,11 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   pkt = openPktForAppending(arcNetmail ? virtualLink->pktFile : virtualLink->floFile, &header);
 		   writeMsgToPkt(pkt, msg);
 		   closeCreatedPkt(pkt);
-		   if (prio==CRASH) w_log('7', "Crash-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   else if (prio==HOLD) w_log('7', "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   else if (prio==DIRECT) w_log('7', "Direct-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   else if (prio==IMMEDIATE) w_log('7', "Immediate-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   else if (prio==NORMAL) w_log('7', "Normal-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   if (prio==crash) w_log('7', "Crash-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   else if (prio==hold) w_log('7', "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   else if (prio==direct) w_log('7', "Direct-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   else if (prio==immediate) w_log('7', "Immediate-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   else if (prio==normal) w_log('7', "Normal-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
                    if (!arcNetmail) {
 		         remove(virtualLink->bsyFile);
 		         nfree(virtualLink->bsyFile);
@@ -479,7 +478,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 	   link = getLinkForRoute(route, &msg);
 
 	   if ((route != NULL) && (link != NULL) && (route->routeVia != nopack)) {
-		   prio = cvtFlavour2Prio(route->flavour);
+		   prio = route->flavour;
                    if (link->arcNetmail &&
                        route->flavour == link->echoMailFlavour) {
                            arcNetmail = 1;

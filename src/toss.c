@@ -2332,9 +2332,7 @@ void arcmail(s_link *tolink) {
 		    nfree(pkt);
 		}
     
-	    } else if (createOutboundFileName(link,
-					      cvtFlavour2Prio(link->echoMailFlavour),
-					      FLOFILE) == 0) {
+	    } else if (createOutboundFileName(link,link->echoMailFlavour, FLOFILE) == 0) {
 		// process if the link not busy, else do not create 12345678.?lo
 
 		flo = fopen(link->floFile, "a+");
