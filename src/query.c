@@ -84,8 +84,8 @@ static int makealldirs(const char *basedir, const char *filename)
 		    if (!direxist(buffer))
 			{
 			    *cpd = '\0';
-			    mymkdir(buffer); /* we can't check mkdir return code for
-						portability reasons, so we do this: 
+			    mymkdir(buffer); // we can't check mkdir return code for
+					     // portability reasons, so we do this:
 			    if (!direxist(buffer))
 				{
 				    free(buffer);

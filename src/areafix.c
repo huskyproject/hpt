@@ -220,7 +220,7 @@ int delLinkFromArea(FILE *f, char *fileName, char *str)
 #endif
     }
     nfree(buff);
-    return 0;
+    return (save ? 0 : 1);
 }
 
 // add string to file
@@ -577,6 +577,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     FILE *f;
     char *cfgline, *token, *areaName, *buff;
     long pos=-1, lastpos, endpos, len;
+    int rc=0;
 
     areaName = area->areaName;
 
@@ -640,9 +641,18 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 	    (area->downlinks[0]->link->hisAka.point == 0)) {
 	    forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 1);
 	}
-	if (delLinkFromArea(f, fileName, aka2str(link->hisAka)))
-	    w_log('9',"areafix: can't del link %s from echo area %s",
-		  aka2str(link->hisAka), areaName);
+	if ((rc = delLinkFromArea(f, fileName, aka2str(link->hisAka))) == 1) {
+	    if (link->hisAka.point==0) { // fix for node addr with trailing .0
+		xscatprintf(&addr,"%u:%u/%u.%u",
+			    link->hisAka.zone,link->hisAka.net,
+			    link->hisAka.node,link->hisAka.point);
+		fseek(f, pos, SEEK_SET);
+		rc = delLinkFromArea(f, fileName, addr);
+		nfree(addr);
+	    }
+	}
+	if (rc) w_log('9',"areafix: can't del link %s from echo area %s",
+		      aka2str(link->hisAka), areaName);
 	break;
     case 2:
 	//makepass(f, fileName, areaName);
@@ -671,7 +681,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     nfree(cfgline);
     nfree(fileName);
     fclose(f);
-    return 0;
+    return rc;
 }
 
 int areaIsAvailable(char *areaName, char *fileName, char **desc, int retd) {
@@ -1078,7 +1088,6 @@ char *unsubscribe(s_link *link, char *cmd) {
 		if (j) {
 		    w_log('8', "areafix: %s doesn't unlinked from %s",
 			  aka2str(link->hisAka), an);
-		    w_log('9',"areafix: can't write to config file!");
 		} else
 		    w_log('8',"areafix: %s unlinked from %s",aka2str(link->hisAka),an);
 	    } else {

@@ -10,7 +10,7 @@ include makeperl.inc
 CC=gcc
 EXENAMEFLAG=-o 
 SRC_DIR=../src/
-CFLAGS=-I../h -I../.. -c -O3 $(DEBUG) $(PERLFLAGS)
+CFLAGS=-I../h -I../.. -c -O3 -Wall $(DEBUG) $(PERLFLAGS)
 LFLAGS=$(DEBUG)
 CDEFS =-DUNIX
 
