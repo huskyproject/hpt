@@ -1041,7 +1041,9 @@ char *subscribe(s_link *link, char *cmd) {
                 aka2str(link->hisAka), line );
             
         } else {
-            fixRules (link, area);
+            // fixRules (link, line); there is no functionality  to send rules of area
+            //                        that  not exist in config.
+            //                        Patches are welcome!
         }
         }
 	}
