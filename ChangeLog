@@ -1,3 +1,21 @@
+2002-11-12 Tuesday 11:00  pgul
+
+	* src/seenby.c (1.26): Bugfix: hang on corrupted pkt
+
+2002-11-12 Tuesday 07:12  mche
+
+	* src/: query.c (1.73), toss.c (1.465): fix checking
+	newAreaRefuseFile
+
+2002-11-12 Tuesday 06:58  mche
+
+	* src/areafix.c (1.363): fix coredump in areafix tanks to Alexander
+	Reznikov [2:4600/220]
+
+2002-11-12 Tuesday 06:04  mche
+
+	* src/areafix.c (1.362): delete msgbase when ulink from own address
+
 2002-11-11 Monday 11:58  pgul
 
 	* src/fcommon.c (1.142): Fix previous patch
