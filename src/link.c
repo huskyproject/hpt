@@ -126,6 +126,14 @@ int linkArea(s_area *area, int netMail)
 	    continue;
 	 }
          ctlen = MsgGetCtrlLen(hmsg);
+         if( ctlen == 0 )
+         {
+             MsgCloseMsg(hmsg);
+             sprintf(buff, "msg %ld has no control information: trown from reply chain", i);
+             writeLogEntry(log, '6', buff);
+             continue;
+         }
+
          ctl   = (byte *) malloc(ctlen);
          curr  = calloc(1, sizeof(s_msginfo));
 
