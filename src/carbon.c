@@ -110,7 +110,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 	w_log(LL_ERR, "external process %s: cannot create file", progname);
 	return 1;
     } else
-        w_log(LL_FILE,"toss.c:processExternal() opened %s", fname?fname:"pipe");
+        w_log(LL_FILE,"toss.c:processExternal() opened %s %s", fname?"file":"pipe", fname?fname:progname);
     /* Output header info */
     if (!msg->netMail) fprintf(msgfp, "Area: %s\n", echo->areaName);
     fprintf(msgfp, "From: \"%s\" %s\n", msg->fromUserName, aka2str(msg->origAddr));

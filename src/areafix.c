@@ -404,6 +404,8 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
     s_message *msg;
     char *base, pass[]="passthrough";
 
+    if (!uplink) return -1;
+
     if (uplink->msg == NULL) {
 	msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop,
         uplink->RemoteRobotName ? uplink->RemoteRobotName : "areafix",
