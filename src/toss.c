@@ -993,6 +993,10 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    return 0;
 }
 
+#if defined(UNIX) || defined(__EMX__) || defined(__DJGPP__)
+#define HAVE_POPEN
+#endif
+
 int processExternal (s_area *echo, s_message *msg,s_carbon carbon) 
 { 
 	FILE *msgfp;
@@ -1001,7 +1005,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 	int  rc;
 
 	progname = carbon.areaName;
-#ifdef HAS_POPEN	
+#ifdef HAVE_POPEN	
 	if (*progname == '|') {
 		msgfp = popen(progname + 1, "w");
 	} else
@@ -1028,7 +1032,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 		else
 			fputc(*p, msgfp);
 	fputc('\n', msgfp);
-#ifdef HAS_POPEN	
+#ifdef HAVE_POPEN	
 	if (*progname == '|') {
 		pclose(msgfp);
 		rc = 0;

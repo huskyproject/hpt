@@ -25,6 +25,10 @@
 #endif
 #endif
 
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 255
+#endif
+
 #include <windows.h>
 #include <stdio.h>
 #include <limits.h>

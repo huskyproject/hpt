@@ -2,6 +2,12 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Thu Apr 26 20:21:33 NOVST 2001
+max:
+* HAVE_POPEN definition
+* MAXPATHLEN definition if not defined
+
+----- cvs ci ------
 Wed Apr 25 00:17:41 NOVST 2001
 max:
 * don't add .0 in @Via address
