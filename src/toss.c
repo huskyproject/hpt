@@ -1920,7 +1920,7 @@ void arcmail(s_link *tolink) {
 								  link->packerDef->call,
 								  link->packFile,
 								  link->pktFile, "");
-				 writeLogEntry(hpt_log, '7', "Packing mail for %s %s", aka2str(link->hisAka), link->name);
+				 writeLogEntry(hpt_log, '7', "Packing mail for %s %s [%s -> %s]", aka2str(link->hisAka), link->name, link->pktFile, link->packFile);
 				 cmdexit = system(cmd);
 // 				 writeLogEntry(hpt_log, '7', "cmd: %s",cmd);
 				 if (!cmdexit) remove(link->pktFile);
