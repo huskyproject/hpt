@@ -1,3 +1,17 @@
+2002-06-04 Tuesday 18:42  pavel.gulchouck
+
+	* h/fcommon.h (1.41), src/fcommon.c (1.129): removed commented out
+	Truncate
+
+2002-06-04 Tuesday 18:30  pavel.gulchouck
+
+	* doc/hpt-FAQ.russian (1.23): Added info about JamSMAPIHighwater
+
+2002-06-04 Tuesday 15:36  stas
+
+	* src/query.c (1.48): Add diagnostic messages ("areafixQueueFile
+	not defined" & etc.)
+
 2002-06-03 Monday 07:57  mche
 
 	* src/areafix.c (1.308): fix rules sending
