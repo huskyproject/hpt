@@ -332,6 +332,7 @@ void forwardMsgToLink(s_message *msg, s_area *echo, s_link *link,
 #ifdef DEBUG_HPT
     text = createControlText(seenBys, seenByCount, "SEEN-BY: ");
     w_log(LL_DEBUGS, "forwardMsgToLink:%u: %s", __LINE__, text);
+    nfree(text);
     text   = createControlText(pathArray, pathArrayCount, "PATH: ");
     w_log(LL_DEBUGS, "forwardMsgToLink:%u: %s", __LINE__, text);
     nfree(text);

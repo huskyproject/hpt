@@ -204,11 +204,11 @@ char *createControlText(s_seenBy seenBys[], UINT16 seenByCount, char *lineHeadin
    char *text=NULL, *line = NULL, addr2d[addr2dSize];
 
    if (seenByCount==0) {              /* return empty control line */
-      xstrcat(&text, lineHeading);
+       xstrcat(&text, lineHeading);
+       /* reserve one byte for \r */
+       text = (char *) safe_realloc(text, strlen(text)+2);
    } else {
-       
       line = safe_malloc ((size_t) size);
-
       sprintf(addr2d, "%u/%u", seenBys[0].net, seenBys[0].node);
       text = (char *) safe_malloc((size_t) size);
       text[0]='\0';
