@@ -1,3 +1,8 @@
+2003-07-27 Sunday 15:57  d_sergienko
+
+	* src/carbon.c (hpt-1_4-stable.3): fix popen() call. now *Extern
+	will work under UNIX
+
 2003-06-21 Saturday 08:52  stas_degteff
 
 	* doc/hpt-FAQ.russian (hpt-1_4-stable.1): Add Q/A about lockfile
