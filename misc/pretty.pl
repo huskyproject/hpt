@@ -3,6 +3,9 @@
 # $Id$
 #
 # $Log$
+# Revision 1.5  2003/04/21 10:30:02  nssoft
+# Bugfix
+#
 # Revision 1.4  2003/03/30 15:42:24  nssoft
 # Add "-pl" option, which move passthrough areas at the end of file.
 #
@@ -130,7 +133,7 @@ foreach $line (<LIST>) {
       &max(3, $file);
       &max(4, $rest);
       &max(5, $desc);
-      if ($pl and $file eq "passthrough") {
+      if ($pl and $file=~/passthrough/i) {
         $plines[$pln] = [ (1, $type, $name, $file, $rest, $desc, $links) ];
         print ".";
         $pln++;
@@ -147,7 +150,7 @@ foreach $line (<LIST>) {
 }
 print "\n";
 
-if ($pl) {for ($i=0;$i<$pln;$i++) {$lines[$ln] = $plines[$i]; $ln++;} }
+if ($pl) {for ($i=0;$i<$pln;$i++) {$lines[$ln+1] = $plines[$i]; $ln++;} }
 
 sub max() {
         my ($i, $s);
