@@ -68,26 +68,6 @@ static int rescanMode = 0;
 static int rulesCount = 0;
 static char **rulesList = NULL;
 
-int isOurAka(s_addr link)
-{
-    unsigned int i;
-    for (i = 0; i < config->addrCount; i++) {
-        if (addrComp(link, config->addr[i])==0) return 1;
-    }
-    return 0;
-}
-
-int isAreaLink(s_addr link, s_area *area)
-{
-    unsigned int i;
-    for (i = 0; i < area->downlinkCount; i++) {
-        if (addrComp(link, area->downlinks[i]->link->hisAka)==0) {
-            return i; // return index of link
-        }
-    }
-    return -1;
-}
-
 char *print_ch(int len, char ch)
 {
     static char tmp[256];
@@ -617,7 +597,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
             base = uplink->msgBaseDir;
             if (config->createFwdNonPass==0) uplink->msgBaseDir = pass;
             // create from own address
-            if (isOurAka(dwlink->hisAka)) {
+            if (isOurAka(config,dwlink->hisAka)) {
                 uplink->msgBaseDir = base;
             }
             strUpper(areatag);
@@ -1049,7 +1029,7 @@ char *subscribe(s_link *link, char *cmd) {
 	    }
 	    break;
 	case 1:         /* not linked */
-        if( isOurAka(link->hisAka)) { 
+        if( isOurAka(config,link->hisAka)) { 
            if(area->msgbType==MSGTYPE_PASSTHROUGH) {
               int state = 
                   changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,5);
@@ -1113,7 +1093,7 @@ char *subscribe(s_link *link, char *cmd) {
 		xscatprintf(&report, " %s %s  request forwarded\r",
 			    line, print_ch(49-strlen(line), '.'));
 		w_log( LL_AREAFIX, "areafix: %s - request forwarded", line);
-        if( !config->areafixQueueFile && isOurAka(link->hisAka)==0)
+        if( !config->areafixQueueFile && isOurAka(config,link->hisAka)==0)
         {
             area = getArea(config, line);
             if ( !isLinkOfArea(link, area) ) {
@@ -1284,7 +1264,7 @@ char *unsubscribe(s_link *link, char *cmd) {
 	if (rc==4) continue;
 	if (rc==0 && mandatoryCheck(*area,link)) rc = 5;
 
-	if (isOurAka(link->hisAka))
+	if (isOurAka(config,link->hisAka))
     { 
         from_us = 1;
         rc = area->msgbType == MSGTYPE_PASSTHROUGH ? 1 : 0 ;
@@ -2355,7 +2335,7 @@ void afix(s_addr addr, char *cmd)
 		// if not read and for us -> process AreaFix
 		striptwhite((char*)xmsg.to);
 		if (((xmsg.attr & MSGREAD) != MSGREAD) && 
-		    (isOurAka(dest)) && (strlen(xmsg.to)>0) &&
+		    (isOurAka(config,dest)) && (strlen(xmsg.to)>0) &&
 		    ((stricmp((char*)xmsg.to, "areafix")==0) ||
 		     (stricmp((char*)xmsg.to, "areamgr")==0) ||
 		     (stricmp((char*)xmsg.to, "hpt")==0) ||

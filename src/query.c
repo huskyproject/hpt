@@ -220,7 +220,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
     // subscribe uplink if he is not subscribed
     area = &(config->echoAreas[config->echoAreaCount-1]);
-    if ( isAreaLink(creatingLink->hisAka,area)==-1 ) {
+    if ( !isLinkOfArea(creatingLink,area) ) {
 	xscatprintf(&buff, " %s", hisaddr);
 	addlink(creatingLink, area);
     }
@@ -232,7 +232,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
         for(i = 1; i < areaNode->linksCount; i++) {
             if( ( isAreaLink( areaNode->downlinks[i],area ) == -1 ) &&
                 ( getLinkFromAddr(config,areaNode->downlinks[i])) &&
-                ( !isOurAka(areaNode->downlinks[i]) )
+                ( !isOurAka(config,areaNode->downlinks[i]) )
             ) {
             xstrcat( &buff, " " );
             xstrcat( &buff, aka2str(areaNode->downlinks[i]) );
