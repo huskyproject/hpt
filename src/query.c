@@ -780,6 +780,8 @@ int af_CloseQuery()
     FILE *queryFile=NULL;
     s_query_areas *delNode = NULL;
     s_query_areas *tmpNode  = NULL;
+    char *chanagedflag = NULL;
+    FILE *QFlag        = NULL;
 
     w_log(LL_FUNC, __FILE__ ":%u:af_CloseQuery() begin", __LINE__);
 
@@ -800,10 +802,12 @@ int af_CloseQuery()
         }
         else
         {
-            char *chanagedflag = af_GetQFlagName();
-            FILE *QFlag        = fopen(chanagedflag,"w");
-            if(QFlag) fclose(QFlag);
-            nfree(chanagedflag);
+            if( (chanagedflag = af_GetQFlagName()) )
+            {
+              if( (QFlag = fopen(chanagedflag,"w")) )
+                fclose(QFlag);
+              nfree(chanagedflag);
+            }
         }
     }
 
