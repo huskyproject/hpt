@@ -1771,7 +1771,7 @@ by your areafix. The state @code{on} makes areafix ignore this error.
 
 This statement can only be repeated for different links.
 
-@node ArcmailSize, ArcNetmail, AllowEmptyPktPwd, Link Keywords
+@node ArcmailSize, ArcNetmail, AllowPktAddrDiffer, Link Keywords
 @subsection ArcmailSize
 @findex ArcmailSize
 @table @asis
@@ -1804,7 +1804,7 @@ to ut-file (i.e. *.?ut) and will not compressed.
 
 This statement can only be repeated for different links.
 
-@node Areafix, AreafixEchoLimit, ArcmailSize, Link Keywords
+@node Areafix, AreafixEchoLimit, ArcNetmail, Link Keywords
 @subsection Areafix
 @findex Areafix
 @table @asis
