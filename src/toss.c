@@ -1012,7 +1012,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
       sprintf(buff, "bundle %s: unpacking with \"%s\"", fileName, cmd);
       writeLogEntry(log, '6', buff);
       if ((cmdexit = system(cmd)) != 0) {
-         sprintf(buff, "exec of %s failed, code %d", cmd, errno);
+         sprintf(buff, "exec of %s failed, code %d", cmd, cmdexit);
          writeLogEntry(log, '6', buff);
          return 3;
       };
@@ -1134,8 +1134,9 @@ void arcmail() {
                                         strcat(pkt, config->links[i].pktFile);
                                         config->links[i].pktFile -= strlen(config->tempOutbound);
                                         fprintf(flo, "^%s\n", pkt);
-                                        sprintf(cmd,"mv %s %s",config->links[i].pktFile,config->outbound);
-                                        cmdexit = system(cmd);
+//                                        sprintf(cmd,"mv %s %s",config->links[i].pktFile,config->outbound);
+//                                        cmdexit = system(cmd);
+                                        rename(config->links[i].pktFile, config->outbound);
                                         free(pkt);
                                 }
                                 fclose(flo);
