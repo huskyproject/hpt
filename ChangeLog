@@ -2,6 +2,12 @@
 hpt 0.26
 --------
 
+Tue Feb  2 11:41:09 CET 1999
+- a message with crash or hold flag is now packed using the link table in
+  the config. That means if a message with crash or hold flag is adressed to a
+  known link it will contain the pktPassword.
+- it was no workaround, it was a bug-fix.
+
 ----- cvs ci ------
 Mon Feb  1 23:07:56 CET 1999
 - work around for a memory bug which is floating around the source, see

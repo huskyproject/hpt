@@ -296,10 +296,8 @@ void freeMsgBuffers(s_message *msg)
   free(msg->subjectLine);
   free(msg->toUserName);
   free(msg->fromUserName);
-// THERE IS A MEMORY BUG, WHEN FREEING THE DOMAIN ADRESS.
-// It should be 0x0 all the time :-(
-//  free(msg->origAddr.domain);
-//  free(msg->destAddr.domain);
+  // do not free the domains of the adresses of the message, because they
+  // come from fidoconfig structures and are needed more than once.
 }
 
 char *getKludge(s_message msg, char *what) {

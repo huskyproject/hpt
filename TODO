@@ -1,5 +1,4 @@
 - remove old config code
-- if a netmail has crash or hold flag, the pkt-password is not used...
 - toss echomails from a link who is not subscribed to an area to bad
 - include -b flag to toss from badarea
 - autocreateFile

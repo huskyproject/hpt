@@ -131,17 +131,18 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
    free(kludgeLines);
 }
 
-void makePktHeader(s_message *msg, s_pktHeader *header)
+void makePktHeader(s_link *link, s_pktHeader *header)
 {
-   if (msg != NULL) {
-      header->origAddr = msg->origAddr;
-      header->destAddr = msg->destAddr;
+   if (link != NULL) {
+      header->origAddr = *(link->ourAka);
+      header->destAddr = link->hisAka;
    }
    header->minorProductRev = VER_MINOR;
    header->majorProductRev = VER_MAJOR;
    header->hiProductCode   = 0;
    header->loProductCode   = 0xfe;
    memset(header->pktPassword, 0, sizeof(header->pktPassword)); // no password
+   if (link->pktPwd != NULL) strncpy(header->pktPassword, link->pktPwd, 8);
    time(&(header->pktCreated));
    header->capabilityWord  = 1;
    header->prodData        = 0;
@@ -292,14 +293,20 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
    s_pktHeader header;
    s_route     *route;
    s_link      *link, *virtualLink;
+   char        freeVirtualLink = 0;
 
    convertMsgHeader(*xmsg, &msg);
 
    // prepare virtual link...
-   virtualLink = calloc(1, sizeof(s_link));
-   virtualLink->hisAka = msg.destAddr;
-   virtualLink->name = (char *) malloc(strlen(msg.toUserName)+1);
-   strcpy(virtualLink->name, msg.toUserName);
+   virtualLink = getLinkFromAddr(*config, msg.destAddr);  //maybe the link is in config?
+   if (virtualLink == NULL) {
+      virtualLink = calloc(1, sizeof(s_link));  // if not create new virtualLink link
+      virtualLink->hisAka = msg.destAddr;
+      virtualLink->ourAka = &(msg.origAddr);
+      virtualLink->name = (char *) malloc(strlen(msg.toUserName)+1);
+      strcpy(virtualLink->name, msg.toUserName);
+      freeVirtualLink = 1;  //virtualLink is a temporary link, please free it..
+   }
 
    // note: link->floFile used for create 12345678.?ut mail packets & ...
 
@@ -347,7 +354,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
 	   // crash-msg -> make CUT
 	   if (createOutboundFileName(virtualLink, CRASH, PKT) == 0) {
 		   convertMsgText(SQmsg, &msg, msg.origAddr);
-		   makePktHeader(&msg, &header);
+		   makePktHeader(virtualLink, &header);
 		   pkt = openPktForAppending(virtualLink->floFile, &header);
 		   writeMsgToPkt(pkt, msg);
 		   closeCreatedPkt(pkt);
@@ -367,7 +374,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
 	   // hold-msg -> make HUT
 	   if (createOutboundFileName(virtualLink, HOLD, PKT) == 0) {
 		   convertMsgText(SQmsg, &msg, msg.origAddr);
-		   makePktHeader(&msg, &header);
+		   makePktHeader(virtualLink, &header);
 		   pkt = openPktForAppending(virtualLink->floFile, &header);
 		   writeMsgToPkt(pkt, msg);
 		   closeCreatedPkt(pkt);
@@ -415,8 +422,10 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
    }
 
    freeMsgBuffers(&msg);
-   free(virtualLink->name);
-   free(virtualLink);
+   if (freeVirtualLink==1) {
+      free(virtualLink->name);
+      free(virtualLink);
+   }
 
    if ((xmsg->attr & MSGSENT) == MSGSENT) {
 	   return 0;
