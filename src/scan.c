@@ -39,6 +39,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <ctype.h>
 
 /* compiler.h */
 #include <huskylib/compiler.h>
@@ -83,6 +84,87 @@
 #endif
 
 s_statScan statScan;
+
+int parseINTL(char *msgtxt, hs_addr *from, hs_addr *to)
+{
+   char *start, *copy, buffer[35]; /* FIXME: static buffer */
+   hs_addr intl_from, intl_to;
+
+   copy = buffer;
+   start = strstr(msgtxt, "FMPT");
+   if (start) {
+      start += 6;                  /* skip "FMPT " */
+      while (isdigit(*start)) {     /* copy all digit data */
+         *copy = *start;
+         copy++;
+         start++;
+      } /* endwhile */
+      *copy = '\0';                /* don't forget to close the string with 0 */
+
+      from->point = atoi(buffer);
+   } else {
+      from->point = 0;
+   } /* endif */
+
+   /* and the same for TOPT */
+   copy = buffer;
+   start = strstr(msgtxt, "TOPT");
+   if (start) {
+      start += 6;                  /* skip "TOPT " */
+      while (isdigit(*start)) {     /* copy all digit data */
+         *copy = *start;
+         copy++;
+         start++;
+      } /* endwhile */
+      *copy = '\0';                /* don't forget to close the string with 0 */
+
+      to->point = atoi(buffer);
+   } else {
+      to->point = 0;
+   } /* endif */
+
+   /* Parse the INTL Kludge */
+
+   start = strstr(msgtxt, "INTL ");
+   if (start)
+   {
+      start += 6;                 /*  skip "INTL " */
+      while(1)
+      {
+          while (*start && isspace(*start)) start++;
+          if (!*start) break;
+
+          copy = buffer;
+          while (*start && !isspace(*start)) *copy++ = *start++;
+          *copy='\0';
+          if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
+          string2addr(buffer, &intl_to);
+          
+          while (*start && isspace(*start)) start++;
+          if (!*start) break;
+
+          copy = buffer;
+          while (*start && !isspace(*start)) *copy++ = *start++;
+          *copy='\0';
+          if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
+          string2addr(buffer, &intl_from);
+
+          /* INTL is valid, copy parsed data to output */
+          from->zone = intl_from.zone;
+          from->net = intl_from.net;
+          from->node = intl_from.node;
+
+          to->zone = intl_to.zone;
+          to->net = intl_to.net;
+          to->node = intl_to.node;
+          return 1;
+          break;
+      }
+   } else
+       w_log(LL_DEBUGB, "Warning: no INTL kludge found in message");
+
+   return 0;
+}
 
 void convertMsgHeader(XMSG xmsg, s_message *msg)
 {
@@ -620,6 +702,9 @@ void scanNMArea(s_area *area)
    dword           highestMsg, i, j;
    XMSG            xmsg;
    hs_addr         dest, orig;
+    hs_addr         intl_dest, intl_orig;
+    char            *ctl;
+    int             ctllen;
    int             for_us, from_us;
    FILE            *f = NULL;
 
@@ -666,12 +751,45 @@ void scanNMArea(s_area *area)
 	   if (msg == NULL) continue;
 	   statScan.msgs++;
 
-	   MsgReadMsg(msg, &xmsg, 0, 0, NULL, 0, NULL);
-           w_log( LL_DEBUGB, "%s::%u Msg from %u:%u/%u.%u to %u:%u/%u.%u",__FILE__,__LINE__,
-                  xmsg.orig.zone, xmsg.orig.net, xmsg.orig.node, xmsg.orig.point,
-                  xmsg.dest.zone, xmsg.dest.net, xmsg.dest.node, xmsg.dest.point);
-	   cvtAddr(xmsg.dest, &dest);
-	   for_us = 0;
+       ctllen = MsgGetCtrlLen(msg);
+       ctl = (char *) safe_malloc(ctllen+1);
+       ctl[ctllen] = '\0';
+
+       MsgReadMsg(msg, &xmsg, 0, 0, NULL, ctllen, (byte *)ctl);
+       cvtAddr(xmsg.dest, &dest);
+       cvtAddr(xmsg.orig, &orig);
+       memset(&intl_orig, 0, sizeof(hs_addr));
+       memset(&intl_dest, 0, sizeof(hs_addr));
+       /*
+        * if @INTL and optionally @TOPT/@FMPT found, take address
+        * from there
+        */
+       if (parseINTL(ctl, &intl_orig, &intl_dest))
+       {
+           if (addrComp(orig, intl_orig)) /* addresses are differ */
+           {
+               orig.zone = xmsg.orig.zone = intl_orig.zone;
+               orig.net = xmsg.orig.net = intl_orig.net;
+               orig.node = xmsg.orig.node = intl_orig.node;
+               orig.point = xmsg.orig.point = intl_orig.point;
+           }
+           if (addrComp(dest, intl_dest)) /* addresses are differ */
+           {
+               dest.zone = xmsg.dest.zone = intl_dest.zone;
+               dest.net = xmsg.dest.net = intl_dest.net;
+               dest.node = xmsg.dest.node = intl_dest.node;
+               dest.point = xmsg.dest.point = intl_dest.point;
+           }
+       }
+
+       nfree(ctl);
+
+       ctl = safe_strdup(aka2str(dest)); /* use this just as temp buffer */
+       w_log( LL_DEBUGB, "%s::%u Msg from %s to %s",__FILE__,__LINE__,
+             aka2str(orig), ctl);
+       nfree(ctl);
+
+       for_us = 0;
        for (j=0; j < config->addrCount; j++)
        {
            if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
@@ -689,7 +807,6 @@ void scanNMArea(s_area *area)
 
 	   MsgCloseMsg(msg);
 
-	   cvtAddr(xmsg.orig, &orig);
 	   from_us = 0;
 	   for (j=0; j < config->addrCount; j++)
 	       if (addrComp(orig, config->addr[j])==0) {from_us = 1; break;}
@@ -908,15 +1025,15 @@ void scanExport(int type, char *str) {
                     /* exclude NetmailAreas in echoTossLogFile */
                    if (type & SCN_ECHOMAIL) {
                        if (getNetMailArea(config, line) == NULL) {
-                           scanByName(line, smListed);
-                           processed |= 2;
+                           if(scanByName(line, smListed))
+                               processed |= 2;
                        }
                        else
                            fprintf(ftmp, "%s\n", line);
                     } else {
                        if (getNetMailArea(config, line) != NULL) {
-                           scanByName(line, smListed);
-                           processed |= 2;
+                           if(scanByName(line, smListed))
+                               processed |= 2;
                        }
                        else
                            fprintf(ftmp, "%s\n", line);
