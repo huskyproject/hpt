@@ -63,8 +63,10 @@ int createLockFile(char *lockfile) {
                    writeLogEntry(hpt_log, '9', "createLockFile: cannot create lock file");
                    return 1;
            }
-	   
+
+#ifndef __NT__	   
         fprintf(f, "%u\n", getpid());
+#endif
 
         fclose(f);
         return 0;
