@@ -265,6 +265,9 @@ void processConfig()
 //   FILE *f;
 
    setvar("module", "hpt");
+   xscatprintf(&buff, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
+   setvar("version", buff);
+   nfree(buff);
    config = readConfig(cfgFile);
    if (NULL == config) {
        nfree(cfgFile);
