@@ -1929,6 +1929,8 @@ The tosser must have the rights to create and change the file.
 @strong{You must include the specified file for yourself into fidoconfig,
 so these autocreated areas will be founded in subsequent tosser-runs.}
 
+@strong{autoAreaCreateFile and Include strings must be the *same*.}
+
 This statement can only be repeated for different links.
 
 @node AutoAreaCreateDefaults, AutoAreaCreateSubdirs, AutoAreaCreateFile, Link Keywords
