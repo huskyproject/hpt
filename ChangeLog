@@ -1,3 +1,17 @@
+2003-03-03 Monday 08:28  d_sergienko
+
+	* Makefile (1.13): 
+	link with huskylib
+
+2003-03-03 Monday 08:03  d_sergienko
+
+	* src/: areafix.c (1.386), dupe.c (1.77), fcommon.c (1.163), hpt.c
+	(1.171), hptlink.c (1.49), hpttree.c (1.27), perl.c (1.49),
+	pktwrite.c (1.43), post.c (1.107), query.c (1.95), scan.c (1.185),
+	scanarea.c (1.98), toss.c (1.496), tpkt.c (1.30), txt2pkt.c (1.48):
+	
+	use new huskylib
+
 2003-03-02 Sunday 09:46  pgul
 
 	* misc/filter.pl (1.10): Add netmail dupe- and loop- checking
