@@ -210,12 +210,16 @@ void post(int c, unsigned int *n, char *params[])
                         break;
                     case 'e':    /*  echo name */
                         area = params[++(*n)];
-                        echo = getArea(config, area);
-                        if (echo == &(config->badArea)) {
-                            w_log(LL_ERROR, "post: wrong area to post: %s" , area);
-                            *n = (unsigned int)c;
-                            quit = 1;
-                        }
+                        echo = getNetMailArea(config, area);
+                        if (echo == NULL) {
+                            echo = getArea(config, area);
+                            if (echo == &(config->badArea)) {
+                                w_log(LL_ERROR, "post: wrong area to post: %s" , area);
+                                *n = (unsigned int)c;
+                                quit = 1;
+                            }
+                        } else /* found NetmailArea */
+                            msg.netMail = 1;
                         break;
                     case 's':    /*  subject */
                         msg.subjectLine = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
@@ -388,9 +392,9 @@ void post(int c, unsigned int *n, char *params[])
         if (msg.subjectLine == NULL)
             msg.subjectLine = safe_calloc(1, 1);
         
-        msg.netMail = (char)(area == NULL);
+        if (msg.netMail==0) msg.netMail = (char)(area == NULL);
         /*FIXME*/
-        if (msg.netMail) echo=&(config->netMailAreas[0]);
+        if (msg.netMail && (echo==NULL)) echo=&(config->netMailAreas[0]);
         
         if (msg.origAddr.zone == 0) /*  maybe origaddr isn't specified ? */
             msg.origAddr = echo->useAka[0];
@@ -403,7 +407,7 @@ void post(int c, unsigned int *n, char *params[])
             if(!msg.netMail) memset(&msg.destAddr, '\0', sizeof(hs_addr));
 
             msg.text = createKludges(config,
-                                     (area == NULL) ? NULL : strUpper(area),
+                                     (msg.netMail == NULL) ? strUpper(area) : NULL,
                                      &msg.origAddr,
                                      &msg.destAddr,
                                      versionStr);
