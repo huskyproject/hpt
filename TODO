@@ -8,6 +8,7 @@ Category 1: Will certainly be implemented until next release
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 
+- one inbound tossing
 - document each loglevels
 - add scanned msgs to dupebase
 - del empty .sep catalogues
