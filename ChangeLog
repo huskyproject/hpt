@@ -1,4 +1,9 @@
 ----- cvs ci ------
+Mo   1 Jan 2001 17:28:59 CET
+tobi (patch from current from max (patch from Serguei Revtov)):
+* write to log when areafix can't change config file
+
+----- cvs ci ------
 Mon Jan  1 17:06:19 MEZ 2001
 tobi (patch from max in current):
 * fixed segfault when run "hpt -c"
