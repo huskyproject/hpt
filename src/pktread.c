@@ -251,7 +251,7 @@ s_message *readMsgFromPkt(FILE *pkt,UINT16 def_zone)
    msg->destAddr.node   = getUINT16(pkt);
    msg->origAddr.net    = getUINT16(pkt);
    msg->destAddr.net    = getUINT16(pkt);
-   msg->attributes      = getUINT16(pkt) | MSGFWD;
+   msg->attributes      = getUINT16(pkt);
    msg->origAddr.domain = NULL;
    msg->destAddr.domain = NULL;
 
