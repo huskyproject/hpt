@@ -322,19 +322,24 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 
    echo = getArea(*config, area);
 
-   if (dupeDetection(echo, *msg)==1) {
-      // no dupe
+   if (echo == &(config->badArea))
+      // if msg goes to bad don't do any dupeCheck
+      putMsgInArea(&(config->badArea), msg);
+   else {
+      if (dupeDetection(echo, *msg)==1) {
+         // no dupe
 
-      if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-         putMsgInArea(echo, msg);
-      }
-      if (echo->downlinkCount > 1)     // if only one downlink, we've got the mail from him
-         forwardMsgToLinks(echo, msg, pktOrigAddr);
+         if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
+            putMsgInArea(echo, msg);
+         }
+         if (echo->downlinkCount > 1)     // if only one downlink, we've got the mail from him
+            forwardMsgToLinks(echo, msg, pktOrigAddr);
       
-   } else {
-      // msg is dupe
-      if (echo->dupeCheck == move) {
-         putMsgInArea(&(config->dupeArea), msg);
+      } else {
+         // msg is dupe
+         if (echo->dupeCheck == move) {
+            putMsgInArea(&(config->dupeArea), msg);
+         }
       }
    }
 
