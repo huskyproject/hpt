@@ -289,6 +289,7 @@ void processConfig()
    xscatprintf(&buff, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
    setvar("version", buff);
    nfree(buff);
+   SetAppModule(M_HPT);
    config = readConfig(cfgFile);
    if (NULL == config) {
        nfree(cfgFile);
