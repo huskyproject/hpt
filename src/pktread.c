@@ -210,15 +210,15 @@ s_message *readMsgFromPkt(FILE *pkt,UINT16 def_zone)
    fgets(msg->datetime, 21, pkt);
 
    textBuffer = (CHAR *) malloc(73);   // reserve mem space
-   len = fgetsUntil0(textBuffer, 36, pkt);
+   len = fgetsUntil0(textBuffer, 37, pkt);
    msg->toUserName = (CHAR *) malloc(len);
    strcpy(msg->toUserName, textBuffer);
 
-   len = fgetsUntil0(textBuffer, 36, pkt);
+   len = fgetsUntil0(textBuffer, 37, pkt);
    msg->fromUserName = (CHAR *) malloc(len);
    strcpy(msg->fromUserName, textBuffer);
 
-   len = fgetsUntil0(textBuffer, 72, pkt);
+   len = fgetsUntil0(textBuffer, 73, pkt);
    msg->subjectLine = (CHAR *) malloc(len);
    strcpy(msg->subjectLine, textBuffer);
 
