@@ -1757,6 +1757,8 @@ If this file is not found - all areas will be scaned
 @xref{PackNetMailOnScan}, but if '-f' command line flag specified, scanning
 will stop. Filename after -f is optional. If it is not set, value of
 EchoTossLogFile will be taken from config, and from command line otherwise.
+If scanning from EchoTossLogFile did not make any area scanning, all areas
+will be processed (depending on 'scan' or 'pack' mode)
 
 This statement cannot be repeated.
 
