@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.00"
 	Name="hpt"
+	ProjectGUID="{18B5038B-9EF7-45B7-853B-612F589EE448}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
