@@ -1,3 +1,8 @@
+2002-11-10 Sunday 09:02  sfpavel
+
+	* HISTORY, debian/changelog, src/global.c
+	(hpt-1_2-stable.[4,13,2]): hpt 1.2 release
+
 2002-11-07 Thursday 07:16  mche
 
 	* src/query.c (hpt-1_2-stable.4): fix creating in passthrough when
