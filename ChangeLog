@@ -7,6 +7,7 @@ max:
 * print error messages & exit with wrong inbound settings
   (which may cause to tossing loops)
 * areafix fix: mandatory prevent subcribing
+* changes in versionStr string
 
 ----- cvs ci ------
 Wed Mar 15 18:51:52 NOVT 2000
