@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     char *area = NULL, *passwd = NULL, *tearl = NULL, *orig = NULL, *dir = NULL;
     FILE *text = NULL;
     int quit=0, n = 1;
-    CHAR *textBuffer = NULL;
+    char *textBuffer = NULL;
     char *tmp=NULL;
 
     memset (&header,'\0',sizeof(s_pktHeader));
