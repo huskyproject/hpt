@@ -76,6 +76,7 @@
 #ifdef _MSC_VER
 #ifdef DO_PERL
 #include <delayimp.h>
+#include <hptperl.h>
 // This is the failure hook, dliNotify = {dliFailLoadLib|dliFailGetProc}
 #if defined(__cplusplus)
 extern "C"
