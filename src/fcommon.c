@@ -77,7 +77,7 @@ int createLockFile(char *lockfile) {
                    return 1;
            }
 
-        fprintf(f, "%u\n", getpid());
+        fprintf(f, "%u\n", (unsigned)getpid());
 
         fclose(f);
         return 0;

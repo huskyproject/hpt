@@ -2,7 +2,7 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
-
+Sat Apr  1 18:35:11 NOVST 2000
 max:
 * recoding msgToSysop
 * writing log line when reading recoding table
