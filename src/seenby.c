@@ -134,7 +134,7 @@ void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, 
     xstrcat(&seenByText, start);
 
     token = strtok(seenByText, " \r\t\376");
-    while (token != NULL) {
+    for (; token != NULL; token = strtok(NULL, " \r\t\376")) {
 	if (isdigit(*token)) {
 	    /*  parse token */
 	    temp = strtoul(token, &endptr, 10);
@@ -163,7 +163,6 @@ void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, 
 	    }
 	} else if (strcmp(token,"SEEN-BY:")!=0) break; /*  not digit and not SEEN-BY */
 	
-	token = strtok(NULL, " \r\t\376");
     } /*  end while */
 
     if (*seenByCount != seenByAlloced)
@@ -209,7 +208,7 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
     xstrcat(&seenByText, start);
 
     token = strtok(seenByText, " \r\t\376");
-    while (token != NULL) {
+    for (; token != NULL; token = strtok(NULL, " \r\t\376")) {
 	if (isdigit(*token)) {
 	    /*  parse token */
 	    temp = strtoul(token, &endptr, 10);
@@ -237,7 +236,6 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
 		(*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
 	    }
 	} else if (strcmp(token, "\001PATH:")!=0) break; /*  not digit and not PATH */
-	token = strtok(NULL, " \r\t\376");
     }
 
     if (*seenByCount != seenByAlloced)
