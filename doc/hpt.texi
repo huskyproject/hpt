@@ -292,6 +292,7 @@ FIDOCONFIG about location of config file and keywords ideology.
 * LogLevels::			set level of log output
 * Name::                        your system's name
 * NetmailFlag::                 create flag after unpacking netmail msg
+* NewAreaRefuseFile::		file with areas which we don't want to autocreate
 * NoProcessBundles::            no unpack arcmail bundles
 * Origin::                      add specified origin to hpt messages
 * Pack::                        definition for packer
@@ -929,7 +930,7 @@ Here you specify your Systems name.
 
 This statement cannot be repeated.
 
-@node NetmailFlag, NoProcessBundles, Name, Keywords
+@node NetmailFlag, NewAreaRefuseFile, Name, Keywords
 @subsection NetmailFlag
 @findex NetmailFlag
 @table @asis
@@ -948,7 +949,31 @@ tracker.
 
 This statement cannot be repeated.
 
-@node NoProcessBundles, Origin, NetmailFlag, Keywords
+@node NewAreaRefuseFile, NoProcessBundles, NetmailFlag, Keywords
+@subsection NewAreaRefuseFile
+@findex NewAreaRefuseFile
+@table @asis
+@item Syntax:
+@code{newAreaRefuseFile <file>}
+@item Example:
+@code{newAreaRefuseFile /etc/ftn/areas/dontcrte.lst}
+@end table
+
+This token defines a file which will be used when autocreating echoarea.
+File contains list of areas which we don't allow to autocreate.
+Each line of this file is a mask of echotag.
+
+Example:
+@table @asis
+@item
+@item RU.LIST.CITYCAT.*
+@item SU.KASCHENKO.LOCAL
+@item
+@end table
+
+This statement cannot be repeated.
+
+@node NoProcessBundles, Origin, NewAreaRefuseFile, Keywords
 @subsection NoProcessBundles
 @findex NoProcessBundles
 @table @asis

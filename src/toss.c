@@ -1437,6 +1437,29 @@ int checkAreaLink(s_area *area, s_addr aka, int type)
     return writeAccess;
 }
 
+int checkRefuse(char *areaName)
+{
+    FILE *fp;
+    char *line;
+
+    if (config->newAreaRefuseFile == NULL)
+        return 0;
+
+    fp = fopen(config->newAreaRefuseFile, "rt");
+    if (fp == NULL) w_log(LL_ERR, "Can't open newAreaRefuseFile \"%s\" : %d\n",
+                          config->newAreaRefuseFile, strerror(errno));
+    while((line = readLine(fp)) != NULL)
+    {
+        line = trimLine(line);
+        if (patimat(areaName, line)) {
+            fclose(fp);
+            return 1;
+        }
+    }
+    fclose(fp);
+    return 0;
+}
+
 int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceattr)
 {
     char   *area=NULL, *p = NULL, *q = NULL;
@@ -1458,14 +1481,22 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 
     // no area found -- trying to autocreate echoarea
     if (echo == &(config->badArea)) {
-	// checking for autocreate option
-	link = getLinkFromAddr(config, pktOrigAddr);
-	if ((link != NULL) && (link->autoAreaCreate != 0)) {
-	    if (0 == (writeAccess = autoCreate(area, pktOrigAddr, NULL)))
-		echo = getArea(config, area);
-	    else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
-	} // can't create echoarea - put msg in BadArea
-	else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
+        // check if we should not refuse this area
+        if (checkRefuse(area))
+        {
+            // write msg to sysop
+            w_log(LL_WARN, "Can't create area %s because it was refused by NewAreaRefuseFile\n", area);
+        } else
+        {
+            // checking for autocreate option
+            link = getLinkFromAddr(config, pktOrigAddr);
+            if ((link != NULL) && (link->autoAreaCreate != 0)) {
+                if (0 == (writeAccess = autoCreate(area, pktOrigAddr, NULL)))
+                    echo = getArea(config, area);
+                else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
+            } // can't create echoarea - put msg in BadArea
+            else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
+        }
     }
 
     nfree(area);
