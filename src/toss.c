@@ -134,7 +134,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header) {
 
       // Check if we must remap
       remapit=0;
-      
+
       for (i=0;i<config->remapCount;i++)
           if ((config->remaps[i].toname==NULL ||
                stricmp(config->remaps[i].toname,msg->toUserName)==0) &&
@@ -167,10 +167,10 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header) {
    strcpy((char *) msgHeader.to, msg->toUserName);
    subject=msg->subjectLine;
    if (((msgHeader.attr & MSGFILE) == MSGFILE) && (msg->netMail==1)) {
-     int size=strlen(msg->subjectLine)+strlen(config->inbound)+1;
+     int size=strlen(msg->subjectLine)+strlen(config->protInbound)+1;
      if (size < XMSG_SUBJ_SIZE) {
        subject = (char *) malloc (size);
-       sprintf (subject,"%s%s",config->inbound,msg->subjectLine);
+       sprintf (subject,"%s%s",config->protInbound,msg->subjectLine);
      }
    }
    strcpy((char *) msgHeader.subj,subject);
