@@ -50,6 +50,7 @@
 #include <version.h>
 #include <areafix.h>
 #include <hpt.h>
+#include <recode.h>
 
 void post(int c, unsigned int *n, char *params[])
 {
@@ -152,7 +153,6 @@ void post(int c, unsigned int *n, char *params[])
          quit = 1;
       };  
    };
-   //msg.attributes |= MSGLOCAL; // Always set bit for LOCAL
    // won't be set in the msgbase, because the mail is processed if it were received
    (*n)--; tm = localtime(&t);
    strftime(msg.datetime, 21, "%d %b %y  %T", tm);
@@ -184,12 +184,21 @@ void post(int c, unsigned int *n, char *params[])
       writeLogEntry (hpt_log, '1', "Start posting...");
 
       if (!export)
+        /* FIXME - the echo may be passthrough */
         putMsgInArea(echo, &msg, 1, msg.attributes);
       else {
+	// recoding from internal to transport charSet
+	if (config->outtab != NULL) {
+	    getctab(outtab, (UCHAR *) config->outtab);
+	    recodeToTransportCharset((CHAR*)msg.fromUserName);
+	    recodeToTransportCharset((CHAR*)msg.toUserName);
+	    recodeToTransportCharset((CHAR*)msg.subjectLine);
+	    recodeToTransportCharset((CHAR*)msg.text);
+	}
         if (msg.netMail)
-	  /* FIXME */
 	  processNMMsg(&msg, NULL, NULL, 0);
         else
+	  msg.attributes = 0;
           processEMMsg(&msg, msg.origAddr, 1);
       } 
     if (textBuffer == NULL) {
