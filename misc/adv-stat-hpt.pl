@@ -1,5 +1,6 @@
 #!/usr/bin/perl
-# hptstat ver.0.8, (c)opyright 2002-03, by val khokhlov
+# hptstat (c)opyright 2002-03, by val khokhlov
+$ver="0.8";
 %areas;                       # areas found in stat (tag=>id), id=1,2,3,...
 @area_tag;                    # ...reverse array (id=>tag)
 %links;                       # links found in stat
@@ -16,10 +17,10 @@ $INB = $OUTB = 0;             # total input and output bytes
 # init(<default binary stat log>[, <default config file>])
 init("/home/val/fido/log/hpt.sta", "/home/val/fido/hpt/hpt.conf");
 # header
-print center("hpt statistics"), 
+print center("hpt statistics"),
       center(localtime($stat1)." - ".localtime($stat2)), "\n";
 # top 10 areas graph
-print center("Top 10 areas"), 
+print center("Top 10 areas"),
       join("\n", make_histgr('Area', 1, [9,10], [9,10], 10, 2)), "\n\n";
 # links graph
 print center("Traffic by links"),
@@ -63,10 +64,10 @@ eval {
   if ($rev != 1) {
     $gz->gzclose if $gz;
     close F;
-    die "Stat file $name revision $rev, expected 1\n"; 
+    die "Stat file $name revision $rev, expected 1\n";
   }
   # set times
-  $stat1 = $t0 if !defined $stat1 || $stat1 > $t0; 
+  $stat1 = $t0 if !defined $stat1 || $stat1 > $t0;
   $stat2 = (stat F)[9] if $stat2 < (stat F)[9];
   # read file
   while ( $gz ? $gz->gzread($_, 4) > 0 : !eof F ) {
@@ -130,7 +131,7 @@ sub parse_config {
     }
     # parse link
     elsif (/^\s*link\s+/i) { $in_link = 1; }
-    elsif ($in_link && /^\s*aka/i) { 
+    elsif ($in_link && /^\s*aka/i) {
       my ($aka) = /^\s*\S+\s+(\S+)/;
       $aka =~ s/\.0+$//;
       push @config_links, $aka;
@@ -174,7 +175,7 @@ sub perc2str {
   else { return sprintf "%4.1f%%", 100*$actual/$base; }
 }
 # --------------------------------------------------------------------
-# 
+#
 sub out_histgr {
 # my @symb = (' ', 'ß', 'Ü', 'Û');
   my @symb = ('ú', '±', '²', 'Û');
@@ -190,7 +191,7 @@ sub out_histgr {
   my $cnt = @{$arr->[0]} - 2;
   my $clen = $maxlen + 3 + $cnt*11;
   $len = 78-$clen if $len > 78-$clen;
-  push @out, 
+  push @out,
        sprintf("%-${maxlen}s  %-${len}s %-10s %-10s\n", $type, '', ' Incoming', ' Outgoing').
        ('Ä'x$maxlen).' Ú'.('Ä'x$len).'¿ '.('Ä'x10).' '.('Ä'x10);
   for my $v (@$arr) {
@@ -202,14 +203,14 @@ sub out_histgr {
       $s .= $symb[$ch];
     }
     $s .= "³";
-    for (my $i = 2; $i < 2+$cnt; $i++) { 
-      $s .= sprintf " %4s %s", traf2str($v->[$i]), perc2str($v->[$i], $sum[$i]); 
+    for (my $i = 2; $i < 2+$cnt; $i++) {
+      $s .= sprintf " %4s %s", traf2str($v->[$i]), perc2str($v->[$i], $sum[$i]);
     }
     push @out, $s;
   }
   push @out, ('Ä'x$maxlen).' À'.('Ä'x$len).'Ù '.('Ä'x10).' '.('Ä'x10);
   my ($s2, $s3) = ($totals < 2) ? @sum[2,3] : ($INB, $OUTB);
-  push @out, sprintf "%${maxlen}s  %${len}s  %4s %s %4s %s", 
+  push @out, sprintf "%${maxlen}s  %${len}s  %4s %s %4s %s",
          $title, '', traf2str($sum[2]), perc2str($sum[2], $s2),
          traf2str($sum[3]), perc2str($sum[3], $s3) if $totals;
   return @out;
@@ -217,13 +218,13 @@ sub out_histgr {
 # --------------------------------------------------------------------
 # make_histgr($type, $sort_field, $tosum, $toout[, $count[, $totals]])
 #     type       - Area or Link
-#     sort_field - 0 to sort by area/link, 
+#     sort_field - 0 to sort by area/link,
 #                  1 to sort by sum of $tosum fields,
 #                  2... to sort by corresponding $toout field
 #     tosum      - pointer to array of fields to make sum of
 #     toout      - pointer to array of fields to include into output
 #     count      - make histogram of top $count items
-#     totals     - totals line percents mode: 0 - no totals, 1 - 100%, 
+#     totals     - totals line percents mode: 0 - no totals, 1 - 100%,
 #                  2 - ratio of listed items/total traffic
 sub make_histgr {
   my (@arr, $cur, $prev);
@@ -234,7 +235,7 @@ sub make_histgr {
     # index by rec
     if ($type eq 'Area') { $cur = $area_tag[$v->[0]]; }
     elsif ($type eq 'Link') {
-      $cur = $v->[1].':'.$v->[2].'/'.$v->[3]; 
+      $cur = $v->[1].':'.$v->[2].'/'.$v->[3];
       $cur .= '.'.$v->[4] unless $v->[4] == 0;
     }
     # find rec by index
@@ -247,7 +248,7 @@ sub make_histgr {
     # update rec
     for my $i (@$tosum) { $arr[$c][1] += $v->[$i]; }
     for (my $i = 0; $i < @$toout; $i++) {
-      $arr[$c][$i+2] += $v->[$toout->[$i]]; 
+      $arr[$c][$i+2] += $v->[$toout->[$i]];
       $max = $arr[$c][$i+2] if $arr[$c][$i+2] > $max;
     }
     $maxlen = length $arr[$c][0] if $maxlen < length $arr[$c][0];
@@ -273,7 +274,7 @@ sub make_summary {
     # index by rec
     if ($type eq 'Area') { $cur = $area_tag[$v->[0]]; }
     elsif ($type eq 'Link') {
-      $cur = $v->[1].':'.$v->[2].'/'.$v->[3]; 
+      $cur = $v->[1].':'.$v->[2].'/'.$v->[3];
       $cur .= '.'.$v->[4] unless $v->[4] == 0;
     }
     # find rec by index
@@ -310,21 +311,21 @@ sub make_summary {
     my $s = $v->[0];
     if (length $s > $len) { substr $s, $len-3, length($s)-$len+3, '...'; }
     push @out, sprintf("%-${len}s %5s %s %5s %s %4s %4s %4s %s %4s %s",
-               $s, 
-               ($v->[1] || '-'), perc2str($v->[1], $tot[1]), 
-               ($v->[2] || '-'), perc2str($v->[2], $tot[2]), 
+               $s,
+               ($v->[1] || '-'), perc2str($v->[1], $tot[1]),
+               ($v->[2] || '-'), perc2str($v->[2], $tot[2]),
                ($v->[4] || '-'), ($v->[3] || '-'),
-               traf2str($v->[5]), perc2str($v->[5], $tot[5]), 
+               traf2str($v->[5]), perc2str($v->[5], $tot[5]),
                traf2str($v->[6]), perc2str($v->[6], $tot[6]));
   }
   push @out, sprintf "%${len}s", "No data available" unless @arr > 0; # nothing to out
   push @out, ('Ä'x$len).' '.('Ä'x11).' '.('Ä'x11).' '.('Ä'x4).' '.('Ä'x4).' '.('Ä'x10).' '.('Ä'x10);
   push @out, sprintf("%${len}s %5s %s %5s %s %4s %4s %4s %s %4s %s",
-             "Total ".@arr." ".lc($type)."(s)", 
-             ($tot[1] || '-'), perc2str($tot[1], $tot[1]), 
-             ($tot[2] || '-'), perc2str($tot[2], $tot[2]), 
+             "Total ".@arr." ".lc($type)."(s)",
+             ($tot[1] || '-'), perc2str($tot[1], $tot[1]),
+             ($tot[2] || '-'), perc2str($tot[2], $tot[2]),
              ($tot[4] || '-'), ($tot[3] || '-'),
-             traf2str($tot[5]), perc2str($tot[5], $tot[5]), 
+             traf2str($tot[5]), perc2str($tot[5], $tot[5]),
              traf2str($tot[6]), perc2str($tot[6], $tot[6])) if @arr > 0;
   return @out;
 }
@@ -344,7 +345,7 @@ sub make_notraf {
     next if $areas{$tag};
     my $s = join(' ', @{$config_areas{$tag}{'links'}});
     if (length $s > $len) { substr $s, $len-3, length($s)-$len+3, '...'; }
-    push @out, sprintf "%-${maxlen}s %16s %s", $tag, 
+    push @out, sprintf "%-${maxlen}s %16s %s", $tag,
                $config_areas{$tag}{'uplink'} || 'n/a', $s;
   }
   push @out, "        No areas" unless @out > 2;
@@ -427,18 +428,18 @@ sub str2time {
     my @a = $s =~ /^([+-]?)(\d+)([hHdDwWmMyY])?/o or return undef;
     substr $s, 0, length(join '', @a), '';
     $a[2] = 'd' if !defined $a[2];
-    if (lc $a[2] eq 'y') { 
+    if (lc $a[2] eq 'y') {
       if ($a[0] eq '-') { $y -= $a[1]; }
       elsif ($a[0] eq '+') { $y += $a[1]; }
       elsif ($a[1] < 1900) { $y = $a[1]+100; }
       else { $y = $a[1]-1900; }
     }
-    elsif (lc $a[2] eq 'm') { $m = $a[0] eq '-' ? $m-$a[1] : $a[1]-1; 
+    elsif (lc $a[2] eq 'm') { $m = $a[0] eq '-' ? $m-$a[1] : $a[1]-1;
       if ($a[0] eq '-') { $m -= $a[1]; }
       elsif ($a[0] eq '+') { $m += $a[1]; }
       else { $m = $a[1] - 1; }
     }
-    elsif (lc $a[2] eq 'w') { 
+    elsif (lc $a[2] eq 'w') {
       if ($a[0] eq '-') { $d -= $w+7*$a[1]-1; $w = 1; }
       elsif ($a[0] eq '+') { $d += 7*$a[1]-$w+1; $w = 1; }
       else { return undef; }
@@ -448,7 +449,7 @@ sub str2time {
       elsif ($a[0] eq '+') { $d += $a[1]; }
       else { $d = $a[1]; }
     }
-    elsif (lc $a[2] eq 'h') { 
+    elsif (lc $a[2] eq 'h') {
       if ($a[0] eq '-') { $h -= $a[1]; }
       elsif ($a[0] eq '+') { $h += $a[1]; }
       else { $h = $a[1]; }
@@ -471,7 +472,7 @@ sub parse_cmdline {
     elsif ($ARGV[$i] =~ /^(?:-z|--[Gg][Zz])$/) { $GZ = 1; }
     elsif (lc $ARGV[$i] eq '-a') {
       die "Use: -a <archive layout> <start date> <period>\n" if $i+3 >= @ARGV;
-      $archive = $ARGV[$i+1]; 
+      $archive = $ARGV[$i+1];
       $dt1 = str2time($ARGV[$i+2]) or die "Bad date format: ".$ARGV[$i+2]."\n";
       $dt2 = str2time($ARGV[$i+3], $dt1) or die "Bad date format: ".$ARGV[$i+3]."\n";
       $i += 3;
@@ -521,7 +522,7 @@ sub init {
 }
 
 sub USAGE () { return <<EOF
-advhptstat ver.0.8, (c)opyright 2002-03, by val khokhlov
+advhptstat ver.$ver, (c)opyright 2002-03, by val khokhlov
 
   Usage: advhptstat [options] [stat file...]
   Options are:
