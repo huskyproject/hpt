@@ -1,22 +1,20 @@
-# Mingw32 CPD makefile for crosscompiling for NT under Unix
-#
-# tested with Mingw32 CPD on Linux
 
 DEBUG=
 # set to -g for debugging, NEVER use -s !!!
 
-CC=i386-mingw32-gcc
+CC=gcc
+RM=del
+
+CDEFS=-D__NT__ 
+CFLAGS=-I../h -I../.. -c -Wall -O3 $(DEBUG)
+LFLAGS=$(DEBUG)
+
 EXENAMEFLAG=-o 
 SRC_DIR=../src/
-CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
-LFLAGS=$(DEBUG)
-CDEFS =-DNT -D__NT__ -DWINNT
-
 OBJ=.o
 EXE=.exe
-RM=rm
 
-LIBS=../../fidoconf/libfidoconfigmgw.a ../../smapi/libsmapimgw.a -luser32
+LIBS=-L../../smapi -L../../fidoconf -lfidoconfigmgw -lsmapimgw -luser32
 
 default: all
 
