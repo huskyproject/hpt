@@ -177,7 +177,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
         if( areaNode ) // if area in query
         {
             if( stricmp(areaNode->type,czKillArea) == 0 )
-                return 11;  // area already unsubscribed
+                return 4;  // area already unsubscribed
             if( stricmp(areaNode->type,czFreqArea) == 0 && 
                 addrComp(pktOrigAddr, areaNode->downlinks[0])!=0)
                 return 4;  // wrong link to autocreate from
@@ -329,7 +329,6 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
                 queryAreasHead->linksCount = strlen( areaNode->name );
             strncpy( areaNode->type ,czKillArea, 4);
             af_AddLink( areaNode, uplink );
-            af_AddLink( areaNode, dwlink );
             tmpNode->next = areaNode;
         }
 
@@ -467,7 +466,7 @@ int af_CloseQuery()
 	if (!quiet) fprintf(stderr, "areafix: cannot write to Queue File \"%s\" \n", config->areafixQueueFile);
 	w_log(LL_ERR,"areafix: cannot write to Queue File \"%s\" ", config->areafixQueueFile);
     } else {
-        char ch;
+        int ch;
         while( (ch=getc(queryFile)) != EOF ) putc(ch, resQF); 
         fclose(queryFile); fclose(resQF); 
     }
