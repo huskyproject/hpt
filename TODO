@@ -1,5 +1,4 @@
 - fix SEEN-BY lines
-- include -b flag to toss from badarea
 - netmailarea should be packed when found in echotoss.log
 - divide hpt into several programs:
   tosser

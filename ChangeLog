@@ -2,6 +2,12 @@ hpt 0.27
 --------
 
 ----- cvs ci ------	
+Sat Mar  13 14:49:30
+Max:
++ toss -b (from Fedor)
++ small updates
+
+----- cvs ci ------	
 Wed Mar  10 19:56:00
 Max:
 - fixed segfault when pkt password is NULL (changes in processPkt code)
