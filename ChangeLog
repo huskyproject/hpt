@@ -1,3 +1,16 @@
+2003-04-10 Thursday 10:49  val_khokhlov
+
+	* src/areafix.c (1.401): areafix autoPassive notify flags changed:
+	pvt,loc always and k/s,cpt if they are set if areafixReportsAttr
+
+2003-04-10 Thursday 09:47  val_khokhlov
+
+	* doc/hpt.texi (1.119): docs update for areafixReportsAttr
+
+2003-04-09 Wednesday 21:29  i_zkh
+
+	* make/makefile.mvcdll (1.10): Fixed compiling
+
 2003-04-09 Wednesday 12:11  val_khokhlov
 
 	* src/: areafix.c (1.400), toss.c (1.507): areafixReportsAttr can
