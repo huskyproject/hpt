@@ -75,7 +75,7 @@ int processArea(s_area *echo) {
       }
 
 
-      if ((currentTime - dupePackHeader->packTime) > echo->dupeHistory * 24 * 60 * 60) {
+      if ((currentTime - dupePackHeader->packTime) < echo->dupeHistory * 24 * 60 * 60) {
          // if pack is young enough
 
          // add index
