@@ -59,6 +59,16 @@ clean:
 	-$(RM) *$(OBJ)
 	-$(RM) *~
 	-$(RM) core
+ifeq ($(DEBIAN), 1)
+	-rm -f configure-stamp
+	-rm -f build-stamp
+	-rm -rf debian/hpt
+	-rm -f debian/postinst.debhelper
+	-rm -f debian/postrm.debhelper
+	-rm -f debian/prerm.debhelper
+	-rm -f debian/substvars
+	-rm -f debian/files
+endif
 
 distclean: clean
 	-$(RM) tpkt$(EXE)
