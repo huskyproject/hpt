@@ -92,7 +92,7 @@ int afDeleteArea(s_link *link, s_area *area) {
    return 1;
 }
 
-int afRescanArea(char **report, s_link *link, s_area *area, long rescanCount) {
+int afRescanArea(char **report, s_link *link, s_area *area, long rescanCount, long rescanAfter) {
   char *an = area->areaName;
   s_arealink *arealink;
   long rcc;
@@ -110,7 +110,7 @@ int afRescanArea(char **report, s_link *link, s_area *area, long rescanCount) {
                     rescanCount = link->rescanLimit;
                 }
                 if (arealink->export) {
-                    rcc = rescanEMArea(area, arealink, rescanCount);
+                    rcc = rescanEMArea(area, arealink, rescanCount, rescanAfter);
                     tossTempOutbound(config->tempOutbound);
                 } else {
                     rcc = 0;

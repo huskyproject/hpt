@@ -294,7 +294,7 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
    return 1;
 }
 
-int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount)
+int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount, long rescanAfter)
 {
    HAREA area;
    HMSG  hmsg;
@@ -305,6 +305,7 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount)
    area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, /*echo -> fperm,
    echo -> uid, echo -> gid,*/ (word)(echo->msgbType | MSGTYPE_ECHO));
    if (area != NULL) {
+#if 0 /* val: change in algorithm */
        /*       i = highWaterMark = MsgGetHighWater(area); */
        i = 0;
        highestMsg    = MsgGetHighMsg(area);
@@ -326,7 +327,28 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount)
        }
 
        MsgSetHighWater(area, i);
-
+#else /* val: change in algorithm */
+       i = MsgGetHighMsg(area);
+       MsgSetHighWater(area, i);
+       if (rescanCount <= 0) rescanCount = i;
+       while (i > 0 && rescanCount > 0) {
+	       hmsg = MsgOpenMsg(area, MOPEN_RW, i);
+	       if (hmsg != NULL) {     /*  msg# does not exist */
+             MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+             if (rescanAfter) {
+               struct tm stm;
+               DosDate_to_TmDate((SCOMBO*)(&xmsg.date_written), &stm);
+               if (mktime(&stm) + gettz() < rescanAfter) {
+                 MsgCloseMsg(hmsg);
+                 continue;
+               }
+             }
+             rc += repackEMMsg(hmsg, xmsg, echo, arealink);
+             rescanCount--;        /* keep track of left to rescan messages */
+             MsgCloseMsg(hmsg);
+	       }
+       }
+#endif /* val: change in algorithm */
        MsgCloseArea(area);
        closeOpenedPkt();
 
