@@ -1,5 +1,7 @@
 DEBUG   = 1
 CC      = gcc 
+INSTDIR = /usr/local/bin
+MANDIR  = /usr/local/man/man1
 
 OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o patmat.o scan.o scanarea.o seenby.o dupe.o tree.o 
 SRC_DIR = ../src/
@@ -16,7 +18,9 @@ all: $(OBJS) \
      pktinfo \
      tlog \
      tpkt \
-     hpt
+     hpt \
+     clean \
+     install
 
 %.o: $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
@@ -32,3 +36,10 @@ tpkt: tpkt.o pktwrite.o fcommon.o pktread.o
 
 hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) -lsmapilnx -lfidoconfig
+
+clean:
+	rm -f *.o
+
+install:
+	install hpt tlog pktinfo tpkt $(INSTDIR)
+	install hpt.1.gz $(MANDIR)
