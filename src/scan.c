@@ -556,9 +556,10 @@ void scan(void)
 
       while (!feof(f)) {
          line = readLine(f);
-
          if (line != NULL) {
-			if (stricmp(config->netMailArea.areaName,line)==0) cmPack=1;
+	    if (*line && line[strlen(line)-1] == '\r')
+	       line[strlen(line)-1] = '\0';  /* fix for DOSish echotoss.log */
+	    if (stricmp(config->netMailArea.areaName,line)==0) cmPack=1;
             else area = getArea(config, line);
             if (area == &(config->badArea)) {
                writeLogEntry(hpt_log, '3', "Area \'%s\' is not found -> Scanning stop.", line);
