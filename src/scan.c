@@ -324,11 +324,11 @@ void scan(void)
       while (!feof(f)) {
          line = readLine(f);
 
-         area = getArea(config, line);
-
-         scanEMArea(area);
-         
-         free(f);
+         if (line != NULL) {
+            area = getArea(config, line);
+            scanEMArea(area);
+            free(line);
+         }
       }
 
       fclose(f);
