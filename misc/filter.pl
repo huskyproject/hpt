@@ -637,7 +637,7 @@ sub _route
 "crash  2:463/94    2:(46/0|465/50|465/70)",
 "hold   noroute     .*"
 );
-  my (@route, $dest, $patt, $boss, $flags);
+  my (@route, $dest, $patt, $boss, $host, $flags);
 
   compileNL() unless $nltied;
 
@@ -671,6 +671,8 @@ sub _route
   { ($flavour, $dest, $patt) = split(/\s+/, $_);
     $boss = $addr;
     $boss =~ s/\..*//;
+    $host = $boss;
+    $host =~ s#/.*#/0#;
     if ($patt =~ /^hub(.*)/i)
     { $_ = $1;
       if ($nodelist{$boss} =~ /,(.*)/)
@@ -678,7 +680,7 @@ sub _route
       }
     } elsif ($patt =~ /^reg(.*)/i)
     { $_ = $1;
-      if ($nodelist{$boss} =~ /^(.*),/)
+      if ($nodelist{$host} =~ /^(.*),/)
       { $patt = ".*" if $_ eq $1;
       }
     }
@@ -688,11 +690,14 @@ sub _route
       } elsif ($dest eq "boss")
       { $dest = $boss;
       } elsif ($dest eq "host")
-      { $dest = $addr;
-        $dest =~ s#/.*#/0#;
+      { $dest = $host;
       } elsif ($dest eq "hub")
       { $dest = $boss;
-        $dest = $1 if $nodelist{$boss} =~ /,(.*)/;
+        if ($nodelist{$boss} =~ /,(.*)/)
+        { $dest = $1;
+        } else
+        { $dest = $host;
+        }
       }
       return $dest;
     }
