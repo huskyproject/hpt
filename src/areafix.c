@@ -1737,7 +1737,7 @@ char *processcmd(s_link *link, char *line, int cmd) {
 
 void preprocText(char *split, s_message *msg, char *reply, s_link *link)
 {
-    char *orig = (config->areafixOrigin) ? config->areafixOrigin : config->origin;
+    char *orig = config->areafixOrigin;
 
     msg->text = createKludges(config, NULL, &msg->origAddr,
         &msg->destAddr, versionStr);

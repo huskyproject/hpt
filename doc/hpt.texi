@@ -1161,8 +1161,7 @@ This statement cannot be repeated.
 @code{origin mega cool station}
 @end table
 
-Add this Origin to hpt messages: post, reports about new areas created,
-areafix (if no areafixOrigin defined).
+Add this Origin to hpt messages: post, reports about new areas created.
 
 This statement cannot be repeated.
 
