@@ -2050,6 +2050,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
             }
         }
         nfree (rulesList);
+        rulesCount=0;
     }
 
     w_log(LL_AREAFIX, "Areafix: successfully done for %s",aka2str(link->hisAka));
