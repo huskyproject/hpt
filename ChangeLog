@@ -2,6 +2,11 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Fr  14 Jul 2000 00:10:45 CEST
+tobi:
+* fixed legacy makefiles to a state in which they are usefule for our users :)
+
+----- cvs ci ------
 Thu Jul 13 20:02:50 NOVST 2000
 max:
 * perl support (patch from Pavel Gulchouk)
