@@ -77,23 +77,32 @@ int main(int argc, char *argv[])
     FILE *text = NULL;
     int quit=0, n = 1;
     char *textBuffer = NULL;
+    char *versionStr=NULL;
     char *tmp=NULL;
 
     memset (&header,'\0',sizeof(s_pktHeader));
     memset (&msg,'\0',sizeof(s_message));
 
-   if (argc == 1) {
-      tmp = GenVersionStr( "txt2pkt", VER_MAJOR, VER_MINOR, VER_PATCH,
+   versionStr = GenVersionStr( "txt2pkt", VER_MAJOR, VER_MINOR, VER_PATCH,
                                VER_BRANCH, cvs_date );
-      printf( "%s\n"
-              "\nUsage:\n"
-              "txt2pkt [-xf \"<pkt from address>\"] [-xt \"<pkt to address>\"]"
-              " [-af \"<from address>\"] [-at \"<to address>\"]"
-              " [-nf \"<from name>\"] [-nt \"<to name>\"] [-e \"echo name\"]"
-              " [-p \"password\"] [-t \"tearline\"] [-o \"origin\"]"
-              " [-s \"subject\"] [-d \"<directory>\"] (<text file>|-)\n",
-              tmp );
-      nfree(tmp)
+
+   printf("%s\n\n", versionStr);
+
+   if (argc == 1) {
+      printf("Usage: txt2pkt [options] <file>|-\n"
+             "Options: -xf \"<arg>\" \t- packet from address\n"
+             "\t -xt \"<arg>\" \t- packet to address\n"
+             "\t -p  \"<arg>\" \t- packet password\n"
+             "\t -af \"<arg>\" \t- message from address>\n"
+             "\t -at \"<arg>\" \t- message to address\n"
+             "\t -nf \"<arg>\" \t- message from name\n"
+             "\t -nt \"<arg>\" \t- message to name\n"
+             "\t -e  \"<arg>\" \t- message echo name\n"
+             "\t -t  \"<arg>\" \t- message tearline\n"
+             "\t -o  \"<arg>\" \t- message origin\n"
+             "\t -s  \"<arg>\" \t- message subject\n"
+             "\t -d  \"<path>\" \t- output directory\n"
+             "\t <file> or -\t- text file to post. the '-' sign for standard input\n");
       exit(EX_OK);
    }
 

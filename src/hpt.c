@@ -153,8 +153,8 @@ int  processExportOptions(int *i, int argc, char **argv)
 }
 
 void start_help(void) {
-  fprintf(stdout,"%s",versionStr);
-  fprintf(stdout,"\nUsage: hpt [-c config] [options]\n");
+  fprintf(stdout,"%s\n\n",versionStr);
+  fprintf(stdout,"Usage: hpt [-c config] [options]\n");
   fprintf(stdout,"   hpt toss - tossing mail\n");
   fprintf(stdout,"   hpt toss -b[f] - tossing mail from badarea [force]\n");
   fprintf(stdout,"   hpt scan - scanning echomail\n");

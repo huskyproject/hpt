@@ -36,6 +36,7 @@
 #include <time.h>
 #include <huskylib/huskylib.h>
 #include <huskylib/typesize.h>
+#include <cvsdate.h>
 #include <version.h>
 
 int main()
@@ -67,7 +68,16 @@ int main()
    header.capabilityWord = 1;
    header.prodData = 0;
 
+   versionStr = GenVersionStr( "tpkt", VER_MAJOR, VER_MINOR, VER_PATCH,
+                               VER_BRANCH, cvs_date );
+   printf("%s\n\n", versionStr);
+
+   w_log(LL_START, "Start");
+
    pkt = createPkt("test.pkt", &header);
+
+   w_log(LL_ECHOMAIL, "Create \'test.pkt\' packet file");
+
    if (pkt != NULL) {
       msg.origAddr.zone  = 2;
       msg.origAddr.net   = 2432;
@@ -99,9 +109,11 @@ int main()
       writeMsgToPkt(pkt, msg);
 
       closeCreatedPkt(pkt);
+
    } else {
-      printf("Could not create pkt");
+      w_log (LL_ERR, "Could not create packet");
    } /* endif */
 
+   w_log(LL_STOP, "End");
    return 0;
 }

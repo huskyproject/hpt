@@ -119,12 +119,13 @@ int main(int argc, char *argv[])
 
   versionStr = GenVersionStr( "PktInfo", VER_MAJOR, VER_MINOR, VER_PATCH,
                                VER_BRANCH, cvs_date );
-  printf("%s\n",versionStr);
+  printf("%s\n\n",versionStr);
+
   nfree(versionStr);
   if (argc==1) {
-    printf("usage: pktInfo [-h] [-t] <pktNames>\n" \
-           "       -h means display msg header information (from/to/subject)\n" \
-	   "       -t means display msg text\n");
+    printf("usage: pktinfo [options] <pktNames>\n" \
+           "Oprions: -h\t- means display msg header information (from/to/subject)\n" \
+	   "\t -t\t- means display msg text\n");
     return 1;
   }
 
