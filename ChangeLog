@@ -1,3 +1,7 @@
+2002-10-16 Wednesday 09:37  mche
+
+	* src/areafix.c (1.351): fix bug with rescan echos by pattern
+
 2002-10-15 Tuesday 10:15  stas_degteff
 
 	* doc/hpt-FAQ.russian (1.42): update FAQ
