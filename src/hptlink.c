@@ -338,9 +338,9 @@ void linkArea(s_area *area)
 		 }
 
 		 if ( useSubj && xmsg.subj != NULL) {
-		    if ( (ptr=skipReSubj((char*)xmsg.subj)) == NULL) 
+		    if ( (ptr=skipReSubj((char*)xmsg.subj)) == NULL)
                   ptr = (char*) xmsg.subj;
-		    crepl -> subject = strdup(ptr);
+		    crepl -> subject = sstrdup(ptr);
 		 }
 
                  crepl->msgPos = MsgMsgnToUid(harea, i);
@@ -581,7 +581,7 @@ void linkArea(s_area *area)
 	      }
 
 	      if(crepl -> replyId) nfree(crepl -> replyId);
-	      if(crepl -> subject) free(crepl -> subject);
+	      if(crepl -> subject) nfree(crepl -> subject);
 	      if(crepl -> msgId  ) nfree(crepl -> msgId  );
 	   }
 
