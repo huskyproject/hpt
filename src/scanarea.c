@@ -103,7 +103,8 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    // action == 0 - scan area
    // action == 1 - rescan area
    // action == 2 - rescan badarea
-   char   *kludgeLines = NULL, *seenByPath = NULL;
+    char   *kludgeLines = NULL, *seenByPath = NULL;
+    char   *msgtid = NULL;
    UCHAR  *ctrlBuff = NULL;
    UINT32 ctrlLen;
 
@@ -135,7 +136,11 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    /* MsgReadMsg does not do zero termination! */
    ctrlBuff[ctrlLen] = '\0';
    if (action == 0 && config->disableTID == 0)
+   {
+       while(msgtid = GetCtrlToken(ctrlBuff, "TID"))
+           RemoveFromCtrl(ctrlBuff, "TID");
        xstrscat((char **) &ctrlBuff, "\001TID: ", versionStr, NULL);
+   }
    // add '\r' after each kludge
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
    
