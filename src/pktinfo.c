@@ -23,7 +23,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -87,7 +87,7 @@ int displayPkt(char *name, int showHeader, int showText)
 	      *p = '\n';
       if (showHeader) {
 	 printf("Written at %s\n", msg->datetime);
-         printf("From:    %s\nTo:      %s\nSubject: %s\n", msg->fromUserName, 
+         printf("From:    %s\nTo:      %s\nSubject: %s\n", msg->fromUserName,
 			 msg->toUserName, msg->subjectLine);
          printf("Attr:   ");
          for (i=0; i < sizeof(attrStr) / sizeof(char *); i++) {
@@ -95,10 +95,10 @@ int displayPkt(char *name, int showHeader, int showText)
          }
          printf("\n");
       };
-      if (showText) 
+      if (showText)
 	 printf("--Text----\n%s\n", msg->text);
       freeMsgBuffers(msg);
-      
+
       nfree(msg);
    } /* endwhile */
    nfree(globalBuffer); /*  free msg->text global buffer */
@@ -115,26 +115,24 @@ int main(int argc, char *argv[])
 {
   int          i, showHeader = 0, showText = 0;
 
-/*  printf("PktInfo v%u.%u.%u\n",VER_MAJOR, VER_MINOR, VER_PATCH); */
-
-  versionStr = GenVersionStr( "PktInfo", VER_MAJOR, VER_MINOR, VER_PATCH,
+  versionStr = GenVersionStr( "pktinfo", VER_MAJOR, VER_MINOR, VER_PATCH,
                                VER_BRANCH, cvs_date );
-  printf("%s\n",versionStr);
-  nfree(versionStr);
+  printf("%s\n\n",versionStr);
+
   if (argc==1) {
-    printf("usage: pktInfo [-h] [-t] <pktNames>\n" \
-           "       -h means display msg header information (from/to/subject)\n" \
-	   "       -t means display msg text\n");
+    printf("usage: pktinfo [options] <pktNames>\n" \
+           "Oprions: -h\t- means display msg header information (from/to/subject)\n" \
+	   "\t -t\t- means display msg text\n");
     return 1;
   }
 
   config = readConfig(NULL);
-  
+
   for (i = 1; i < argc; i++)
   {
      if (argv[i][0] == '-') {
-	if (argv[i][1] == 'h') showHeader = 1; 
-	if (argv[i][1] == 't') showText   = 1; 
+	if (argv[i][1] == 'h') showHeader = 1;
+	if (argv[i][1] == 't') showText   = 1;
      } else {
 	displayPkt(argv[i], showHeader, showText);
      };

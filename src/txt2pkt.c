@@ -14,7 +14,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA
@@ -79,23 +79,32 @@ int main(int argc, char *argv[])
     FILE *text = NULL;
     int quit=0, n = 1;
     char *textBuffer = NULL;
+    char *versionStr=NULL;
     char *tmp=NULL;
 
     memset (&header,'\0',sizeof(s_pktHeader));
     memset (&msg,'\0',sizeof(s_message));
 
    if (argc == 1) {
-      tmp = GenVersionStr( "txt2pkt", VER_MAJOR, VER_MINOR, VER_PATCH,
+      versionStr = GenVersionStr( "txt2pkt", VER_MAJOR, VER_MINOR, VER_PATCH,
                                VER_BRANCH, cvs_date );
-      printf( "%s\n"
-              "\nUsage:\n"
-              "txt2pkt [-xf \"<pkt from address>\"] [-xt \"<pkt to address>\"]"
-              " [-af \"<from address>\"] [-at \"<to address>\"]"
-              " [-nf \"<from name>\"] [-nt \"<to name>\"] [-e \"echo name\"]"
-              " [-p \"password\"] [-t \"tearline\"] [-o \"origin\"]"
-              " [-s \"subject\"] [-d \"<directory>\"] (<text file>|-)\n",
-              tmp );
-      nfree(tmp)
+
+      printf("%s\n\n", versionStr);
+
+      printf("Usage: txt2pkt [options] <file>|-\n"
+             "Options: -xf \"<arg>\" \t- packet from address\n"
+             "\t -xt \"<arg>\" \t- packet to address\n"
+             "\t -p  \"<arg>\" \t- packet password\n"
+             "\t -af \"<arg>\" \t- message from address>\n"
+             "\t -at \"<arg>\" \t- message to address\n"
+             "\t -nf \"<arg>\" \t- message from name\n"
+             "\t -nt \"<arg>\" \t- message to name\n"
+             "\t -e  \"<arg>\" \t- message echo name\n"
+             "\t -t  \"<arg>\" \t- message tearline\n"
+             "\t -o  \"<arg>\" \t- message origin\n"
+             "\t -s  \"<arg>\" \t- message subject\n"
+             "\t -d  \"<path>\" \t- output directory\n"
+             "\t <file> or -\t- text file to post. the '-' sign for standard input\n");
       exit(EX_OK);
    }
 
@@ -113,7 +122,7 @@ int main(int argc, char *argv[])
                   default:
                      quit = 1;
                      break;
-               } 
+               }
                break;
             case 'x':    /*  address */
                switch(argv[n][2]) {
@@ -126,7 +135,7 @@ int main(int argc, char *argv[])
                   default:
                      quit = 1;
                      break;
-               } 
+               }
                break;
             case 'n':    /*  name */
                switch(argv[n][2]) {
@@ -270,7 +279,7 @@ int main(int argc, char *argv[])
          xstrcat(&textBuffer, tmp);
       }
 
-      if (msg.origAddr.zone==0 && msg.origAddr.net==0 && 
+      if (msg.origAddr.zone==0 && msg.origAddr.net==0 &&
            msg.origAddr.node==0 && msg.origAddr.point==0)
 	   msg.origAddr = config->addr[0];
 
@@ -302,7 +311,7 @@ int main(int argc, char *argv[])
                  header.origAddr.zone, header.origAddr.net, header.origAddr.node, header.origAddr.point,
                  tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, versionStr);
       }
-      
+
       msg.textLength=strlen(textBuffer);
       nfree(textBuffer);
       nfree(versionStr);

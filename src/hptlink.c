@@ -597,13 +597,12 @@ void linkArea(s_area *area)
 
 void usage(void) {
 
-   printf( "%s\n", versionStr );
-   printf( "Usage:\n hptlink [-t] [-s] [-a] [-r] [areaname ...]\n"
-          "   -t - build reply TREE\n"
-          "   -s - do not use Subject\n"
-          "   -a - search in all messages (for singlethread only)\n"
-          "   -r - do not use REPLY:/MSGID:\n"
-          "   -n Link with 'new' messages only ('new' start from last linked + 1)\n"
+   printf( "Usage: hptlink [options] [areaname ...]\n"
+          "Options:  -t\t- build reply TREE\n"
+          "\t  -s\t- do not use Subject\n"
+          "\t  -a\t- search in all messages (for singlethread only)\n"
+          "\t  -r\t- do not use REPLY:/MSGID:\n"
+          "\t  -n\t- link with 'new' messages only ('new' from last linked + 1)\n"
          );
 }
 
@@ -626,6 +625,8 @@ int main(int argc, char **argv) {
 
    versionStr = GenVersionStr( "hptlink", VER_MAJOR, VER_MINOR, VER_PATCH,
                                VER_BRANCH, cvs_date );
+
+   printf( "%s\n\n", versionStr);
 
    for (i=1; i<argc; i++) {
      if ( argv[i][0] == '-' ) {
