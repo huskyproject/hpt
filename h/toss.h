@@ -57,7 +57,7 @@ void tossTempOutbound(char *directory);
 void arcmail(s_link *link);
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr);
 void tossFromBadArea(void);
-void writeMsgToSysop();
+void writeMsgToSysop(void);
 
 #define REC_HDR 0x0001
 #define REC_TXT 0x0002
