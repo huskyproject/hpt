@@ -1,3 +1,14 @@
+2002-05-03 Friday 14:30  mche
+
+	* h/pkt.h (1.23), src/areafix.c (1.295), src/perl.c (1.32),
+	src/pktwrite.c (1.35), src/post.c (1.73), src/query.c (1.41),
+	src/toss.c (1.400), src/txt2pkt.c (1.35): createKludgesmoved to
+	fidoconfig for common use in hpt htick txt2pkt
+
+2002-05-03 Friday 10:07  mche
+
+	* src/areafix.c (1.294): areafixQueueFile broken logic fixed
+
 2002-05-02 Thursday 15:07  d.sergienko
 
 	* src/areafix.c (1.293): new unsubscribing code (test it please)
