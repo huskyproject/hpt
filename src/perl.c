@@ -384,6 +384,8 @@ perl_fork:
    pid=0;
 #endif
    return pid;
+#else
+return 0;
 #endif 
 }
 
@@ -649,7 +651,7 @@ s_route *perlroute(s_message *msg, s_route *defroute)
    return NULL;
 }
 
-int perlfilter(s_message *msg, s_addr pktOrigAddr, int secure)
+int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
 {
    char *area = NULL, *prc;
    int rc = 0;
