@@ -6,8 +6,6 @@ This file describe changes between hpt-1.2-stable and hpt-1.3-current
    - new parameter for bundlenamestyle: addrsCRC32 - for generate more unique
      bundle file names for every link pair (thanks to Igor Romanovsky);
    - Don't include Origin into areafix reply if areafixorigin is empty string;
-   - misc/hpt_ro: New perl module for filter.pl: hpt read-only manager
-     (written by Andrew Sagulin 2:6073/1).
    - reduces SEEN-BY (FSC-0093)
    - new areafix command: %rsb on/off - turns on/off reduced SEEN-BY mode.
    - @RESCANNED kludge on rescanned messages (FSC-0057)
