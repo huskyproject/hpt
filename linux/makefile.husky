@@ -1,0 +1,105 @@
+# include Husky-Makefile-Config
+include ../../huskymak.cfg
+
+HASHDUPE = 0
+
+OBJS    = hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) log$(OBJ) \
+          global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) seenby$(OBJ) \
+          crc$(OBJ) dupe$(OBJ) tree$(OBJ) recode$(OBJ) areafix$(OBJ) \
+          post$(OBJ) link$(OBJ) strsep$(OBJ) xstr$(OBJ)
+
+SRC_DIR = ../src/
+
+ifeq ($(HASHDUPE), 1)
+
+ifeq ($(DEBUG), 1)
+  CFLAGS  = -c -I../h -I$(INCDIR) -I../../smapi -Wall -ggdb -O3 -DHASHDUPE \
+            -DHAS_POPEN 
+  LFLAGS  = -L$(LIBDIR)
+else
+  CFLAGS  = -c -I../h -I$(INCDIR) -I../../smapi -Wall -O3 -s -DHASHDUPE \
+            -DHAS_POPEN
+  LFLAGS  = -L$(LIBDIR)
+endif
+
+else
+
+ifeq ($(DEBUG), 1)
+  CFLAGS  = -c -I../h -I$(INCDIR) -I../../smapi -Wall -ggdb -O6 -DHAS_POPEN 
+  LFLAGS  = -L$(LIBDIR)
+else
+  CFLAGS  = -c -I../h -I$(INCDIR) -I../../smapi -Wall -O3 -s -DHAS_POPEN
+  LFLAGS  = -L$(LIBDIR)
+endif
+
+endif
+
+CDEFS=-D$(OSTYPE) $(ADDCDEFS)
+
+all: $(OBJS) \
+     pktinfo$(EXE) \
+     tlog$(EXE) \
+     tpkt$(EXE) \
+     txt2pkt$(EXE) \
+     hptlink$(EXE) \
+     hpttree$(EXE) \
+     hpt$(EXE) \
+     purgeDupes$(EXE) 
+
+%$(OBJ): $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+
+pktinfo$(EXE): pktinfo$(OBJ) $(OBJS)
+	$(CC) $(LFLAGS) -o pktinfo$(EXE) log$(OBJ) recode$(OBJ) pktinfo$(OBJ) \
+          pktread$(OBJ) fcommon$(OBJ) global$(OBJ) -lsmapi -lfidoconfig
+
+tlog$(EXE): tlog$(OBJ) log$(OBJ)
+	$(CC) $(LFLAGS) -o tlog$(EXE) tlog$(OBJ) log$(OBJ) 
+
+tpkt$(EXE): tpkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ)
+            recode$(OBJ) log$(OBJ) global$(OBJ) 
+	$(CC) $(LFLAGS) -o tpkt$(EXE) log$(OBJ) tpkt$(OBJ) fcommon$(OBJ) \
+          pktread$(OBJ) recode$(OBJ) pktwrite$(OBJ) global$(OBJ) xstr$(OBJ) \
+          -lsmapi  -lfidoconfig 
+
+txt2pkt$(EXE): txt2pkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
+               recode$(OBJ) log$(OBJ) global$(OBJ)
+	$(CC) $(LFLAGS) -o txt2pkt$(EXE) log$(OBJ) txt2pkt$(OBJ) \
+          fcommon$(OBJ) pktread$(OBJ) recode$(OBJ) pktwrite$(OBJ) \
+          global$(OBJ) xstr$(OBJ) -lsmapi  -lfidoconfig
+
+hptlink$(EXE): hptlink$(OBJ)
+	$(CC) $(LFLAGS) -o hptlink$(EXE) hptlink$(OBJ) -lsmapi -lfidoconfig
+
+hpttree$(EXE): hpttree$(OBJ)
+	$(CC) $(LFLAGS) -o hpttree$(EXE) hpttree$(OBJ) -lsmapi -lfidoconfig
+
+hpt$(EXE): $(OBJS)
+	$(CC) $(LFLAGS) -o hpt$(EXE) $(OBJS) -lsmapi -lfidoconfig 
+
+purgeDupes$(EXE): crc$(OBJ) purgeDupes$(OBJ) global$(OBJ) dupe$(OBJ) \
+                  tree$(OBJ) pktread$(OBJ) log$(OBJ) recode$(OBJ)
+	$(CC) $(LFLAGS) -o purgeDupes$(EXE) crc$(OBJ) purgeDupes$(OBJ) \
+          tree$(OBJ) pktread$(OBJ) recode$(OBJ) dupe$(OBJ) global$(OBJ) \
+          log$(OBJ) -lfidoconfig -lsmapi
+
+clean:
+	-$(RM) -f *$(OBJ)
+	-$(RM) *~
+	-$(RM) core
+
+distclean: clean
+	-$(RM) tpkt$(EXE) txt2pkt$(EXE) pktinfo$(EXE) hpt$(EXE) \
+          purgeDupes$(EXE) tlog$(EXE) hptlink$(EXE) hpttree$(EXE)
+	-$(RM) *.1.gz
+
+install:
+	gzip -c ../man/hpt.1 > hpt.1.gz
+	gzip -c ../man/purgeDupes.1 > purgeDupes.1.gz
+	gzip -c ../man/hptlink.1 > hptlink.1.gz
+	gzip -c ../man/hpttree.1 > hpttree.1.gz
+	install $(IBOPT) hpt$(EXE) pktinfo$(EXE) purgeDupes$(EXE) \
+          txt2pkt$(EXE) hptlink$(EXE) hpttree$(EXE) $(BINDIR)
+	install $(IMOPT) hpt.1.gz purgeDupes.1.gz hptlink.1.gz hpttree.1.gz \
+          $(MANDIR)/man1
+
