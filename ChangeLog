@@ -1,3 +1,12 @@
+2002-06-10 Monday 15:59  mche
+
+	* src/areafix.c (1.312): arealist.* moved to fidoconfig from hpt
+
+2002-06-10 Monday 15:54  mche
+
+	* src/areafix.c (1.311), make/makefile.inc (1.9), makefile.inc
+	(1.18): arealist.* moved to fidoconfig from hpt
+
 2002-06-09 Sunday 15:34  mche
 
 	* src/: areafix.c (1.310), dupe.c (1.62), getfree.c (1.19), hpt.c
