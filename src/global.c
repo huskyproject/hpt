@@ -33,10 +33,22 @@
 s_log     *hpt_log;
 s_fidoconfig *config=NULL;
 
-const int VER_MAJOR = 0;
-const int VER_MINOR = 9;
-const int VER_PATCH = 7;
-char      *versionStr=NULL;
+
+/* basic version number */
+const int   VER_MAJOR   = 0;
+const int   VER_MINOR   = 9;
+const int   VER_PATCH   = 7;
+
+
+/* branch is "" for CVS current, "-stable" for the release candiate branch  */
+const char *VER_BRANCH  = "";
+
+/* The service version string is empty for the first release done from a    */
+/* release candidate branch.  If subsequent service releases are necessary, */
+/* single letters are used, like "a", "b", ...                              */
+const char *VER_SERVICE = "";  
+
+char       *versionStr=NULL;
 
 char	  *tossDir=NULL;
 UCHAR     *globalBuffer = NULL;
