@@ -901,6 +901,33 @@ static XS(perl_gmtoff)
   XSRETURN_NV(offs);
 }
 
+void perl_warn_str (char* str) {
+  while (str && *str) {
+    char* cp = strchr (str, '\n');
+    char  c  = 0;
+    if (cp) { c = *cp; *cp = 0; }
+    w_log (LL_PERL, "PERL: %s", str);
+    if (cp) *cp = c;
+    else break;
+    str = cp + 1;
+  }
+}
+void perl_warn_sv (SV* sv) {
+  STRLEN n_a;
+  char * str = (char *) SvPV (sv, n_a);
+  perl_warn_str (str);
+}
+#ifdef _MSC_VER
+EXTERN_C void perl_warn(pTHXo_ CV* cv)
+#else
+static XS(perl_warn)
+#endif
+{
+  dXSARGS;
+  if (items == 1) perl_warn_sv (ST(0));
+  XSRETURN_EMPTY;
+}
+
 #ifdef _MSC_VER
 EXTERN_C void boot_DynaLoader (pTHXo_ CV* cv);
 #else
@@ -926,6 +953,7 @@ static void xs_init(void)
 #endif
 {
   static char *file = __FILE__;
+#ifndef DO_HPM
 #if defined(__OS2__)
   newXS("DB_File::bootstrap", boot_DB_File, file);
   newXS("Fcntl::bootstrap", boot_Fcntl, file);
@@ -939,6 +967,7 @@ static void xs_init(void)
   dXSUB_SYS;
 #endif
   newXS("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);
+#endif	/* !DO_HPM */
   newXS("w_log", perl_log, file);
   newXS("putMsgInArea",  perl_putMsgInArea,  file);
   newXS("str2attr",      perl_str2attr,      file);
@@ -953,95 +982,9 @@ static void xs_init(void)
   newXS("gmtoff",        perl_gmtoff,        file);
   newXS("flv2str",       perl_flv2str,       file);
   newXS("attr2str",      perl_attr2str,      file);
+  newXS("hpt_warn",      perl_warn,          file);
 }
 
-#if defined(__OS2__)
-static void perlthread(ULONG arg)
-{
-  FILE *f;
-  char str[256], *p;
-  if ((f=fdopen((int)arg, "r")) == NULL)
-    return;
-  while (fgets(str, sizeof(str), f))
-  { if ((p = strchr(str, '\n')) != NULL)
-      *p = '\0';
-    w_log(LL_PERL, "PERL: %s", str);
-  }
-  fclose(f);
-}
-#endif
-
-static int handleperlerr(int *saveerr)
-{
-#ifndef _MSC_VER
-   int perlpipe[2], pid;
-
-#if defined(__UNIX__)
-   pipe(perlpipe);
-perl_fork:
-   if ((pid=fork())>0)
-   {
-     *saveerr=dup(fileno(stderr));
-     dup2(perlpipe[1], fileno(stderr));
-     close(perlpipe[0]);
-     close(perlpipe[1]);
-   }
-   else if (pid==0)
-   { FILE *f;
-     char str[256];
-     close(perlpipe[1]);
-     f=fdopen(perlpipe[0], "r");
-     while (fgets(str, sizeof(str), f))
-     { char *p = strchr(str, '\n');
-       if (p) *p = '\0';
-       w_log(LL_PERL, "PERL: %s", str);
-     }
-     fclose(f);
-     fflush(stdout);
-     _exit(0);
-   }
-   else
-   { if (errno==EINTR)
-       goto perl_fork;
-     w_log(LL_ERR, "Can't fork(): %s!", strerror(errno));
-     close(perlpipe[1]);
-     close(perlpipe[0]);
-     return 0;
-   }
-#elif defined(__OS2__)
-   pipe(perlpipe);
-   *saveerr=dup(fileno(stderr));
-   dup2(perlpipe[1], fileno(stderr));
-   close(perlpipe[1]);
-   DosCreateThread((PTID)&pid, perlthread, perlpipe[0], 0, 65536);
-#else
-   *saveerr=dup(fileno(stderr));
-   perlpipe[0]=open("/dev/null", O_WRONLY);
-   if (perlpipe[0]!=-1)
-   { dup2(perlpipe[0], fileno(stderr));
-     close(perlpipe[0]);
-   }
-   pid=0;
-#endif
-   return pid;
-#endif
-   return 0;
-}
-
-static void restoreperlerr(int saveerr, int pid)
-{
-#ifndef _MSC_VER
-   dup2(saveerr, fileno(stderr));
-   close(saveerr);
-   if (pid == 0)
-     return;
-#if defined(__UNIX__)
-   waitpid(pid, &pid, 0);
-#elif defined(__OS2__)
-   DosWaitThread((PTID)&pid, DCWW_WAIT);
-#endif
-#endif /* _MSC_VER */
-}
 /* mark a part of current config as invalid in order to update it */
 void perl_invalidate(e_perlconftype confType) { perl_vars_invalid |= confType; }
 /* set %config, %links */
@@ -1246,9 +1189,8 @@ int PerlStart(void)
 {
    int rc, i;
    char *perlfile;
-   char *perlargs[]={"", NULL, NULL};
+   char *perlargs[]={"", NULL, NULL, NULL};
    char *cfgfile, *cfgpath=NULL, *patharg=NULL;
-   int saveerr, pid;
    STRLEN n_a;
 
    if (config->hptPerlFile != NULL)
@@ -1272,7 +1214,8 @@ int PerlStart(void)
       nfree(cfgpath);
    }
    if (patharg) perlargs[i++] = patharg;
-   perlargs[i++] = perlfile;
+   perlargs[i++] = "-e";
+   perlargs[i++] = "0";
 #ifdef _MSC_VER
    if (_access(perlfile, R_OK))
 #else
@@ -1284,34 +1227,67 @@ int PerlStart(void)
      nfree(patharg);
      return 1;
    }
+
+   /* Start perl interpreter */
+#ifdef     DO_HPM
+#ifndef     aTHXo
+#define     aTHXo
+#endif   /*!aTHXo*/
+   xs_init (aTHXo);
+   perl = (void*) -1;
+   rc   = 0;
+#else  /* !DO_HPM */
    perl = perl_alloc();
    perl_construct(perl);
-   pid=handleperlerr(&saveerr);
-   rc=perl_parse(perl, xs_init, i, perlargs, NULL);
-   restoreperlerr(saveerr, pid);
+   rc = perl_parse (perl, xs_init, i, perlargs, NULL);
+#endif /* !DO_HPM */
+   if (!rc) {
+     char* cmd = NULL;
+     SV* sv;
+
+     /* val: start constants definition */
+#define VK_MAKE_CONST(_name,_value)                    \
+     newCONSTSUB(PL_defstash, _name, newSVuv(_value)); \
+     sv_setuv( get_sv(_name, TRUE), _value );
+     for (i = 0; i < sizeof(flag_name)/sizeof(flag_name[0]); i++) {
+       char ss[4];
+       strcpy(ss, flag_name[i]); if (ss[1] == '/') ss[1] = '_'; ss[3]=0;
+       VK_MAKE_CONST(ss, (unsigned long)1<<i);
+     }
+
+     /* val: start config importing */
+     perl_setvars();
+
+     /* Set warn and die hook */
+     if (PL_warnhook) SvREFCNT_dec (PL_warnhook);
+     if (PL_diehook ) SvREFCNT_dec (PL_diehook );
+     PL_warnhook = newRV_inc ((SV*) perl_get_cv ("hpt_warn", TRUE));
+     PL_diehook  = newRV_inc ((SV*) perl_get_cv ("hpt_warn", TRUE));
+
+     /* Parse and execute hptPerlFile */
+     xstrscat (&cmd, "do '", perlfile, "'; $@ ? $@ : '';", NULL);
+     sv = perl_eval_pv (cmd, TRUE);
+     if (!SvPOK(sv)) {
+       w_log(LL_PERL,"Syntax error in internal perl expression: %s",cmd);
+       rc = 1;
+     } else if (SvTRUE (sv)) {
+       perl_warn_sv (sv);
+       rc = 1;
+     }
+     nfree (cmd);
+   }
    if (rc)
    { w_log(LL_ERR, "Can't parse %s, perl filtering disabled",
                    perlfile);
+#ifndef DO_HPM
      perl_destruct(perl);
      perl_free(perl);
+#endif  /* !DO_HPM */
      perl=NULL;
      do_perl=0;
      nfree(patharg);
      return 1;
    }
-/* val: start constants definition */
-#define VK_MAKE_CONST(_name,_value)                       \
-      newCONSTSUB(PL_defstash, _name, newSVuv(_value));   \
-      sv_setuv( get_sv(_name, TRUE), _value );
-   for (i = 0; i < sizeof(flag_name)/sizeof(flag_name[0]); i++) {
-       char ss[4];
-       strcpy(ss, flag_name[i]); if (ss[1] == '/') ss[1] = '_'; ss[3] = 0;
-       VK_MAKE_CONST(ss, (unsigned long)1<<i);
-   }
-/* val: start config importing */
-   perl_setvars();
-/* val: run main program body */
-   perl_run(perl);
 /* val: look which subs present */
    if (perl_get_cv(PERLFILT      , FALSE) == NULL)
 					perl_subs &= ~SUB_FILTER;
@@ -1345,7 +1321,6 @@ int PerlStart(void)
 					perl_subs &= ~SUB_EXPORT;
 /* val: run hpt_start() */
    if (perl_subs & SUB_HPT_START) {
-      pid = handleperlerr(&saveerr);
       { dSP;
         ENTER;
         SAVETMPS;
@@ -1357,7 +1332,6 @@ int PerlStart(void)
         FREETMPS;
         LEAVE;
       }
-      restoreperlerr(saveerr, pid);
       if (SvTRUE(ERRSV))
       {
         w_log(LL_ERR, "Perl hpt_start() eval error: %s\n", SvPV(ERRSV, n_a));
@@ -1392,8 +1366,10 @@ void perldone(void)
     PUTBACK;
     FREETMPS;
     LEAVE;
+#ifndef DO_HPM
     perl_destruct(perl);
     perl_free(perl);
+#endif  /* !DO_HPM */
     perl=NULL;
   }
 }
@@ -1402,7 +1378,6 @@ int perlscanmsg(char *area, s_message *msg)
 {
    static int do_perlscan = 1;
    char *prc, *ptr;
-   int pid, saveerr;
    unsigned long attr;
    time_t date;
    SV *svfromname, *svfromaddr, *svtoname, *svtoaddr, *svattr;
@@ -1413,7 +1388,6 @@ int perlscanmsg(char *area, s_message *msg)
 
    VK_START_HOOK(perlscan, SUB_SCAN, 0)
 
-   pid = handleperlerr(&saveerr);
    { dSP;
      svfromname = perl_get_sv("fromname", TRUE);
      svfromaddr = perl_get_sv("fromaddr", TRUE);
@@ -1464,7 +1438,6 @@ int perlscanmsg(char *area, s_message *msg)
      PUTBACK;
      FREETMPS;
      LEAVE;
-     restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
        w_log(LL_ERR, "Perl scan eval error: %s\n", SvPV(ERRSV, n_a));
@@ -1546,11 +1519,9 @@ int perlscanmsg(char *area, s_message *msg)
 s_route *perlroute(s_message *msg, s_route *defroute)
 {
    static int do_perlroute = 1;
-   int pid, saveerr;
 
    VK_START_HOOK(perlroute, SUB_ROUTE, NULL)
 
-   pid = handleperlerr(&saveerr);
    { SV *svaddr, *svattr, *svflv, *svfrom, *svret, *svroute;
      SV *svfromname, *svtoname, *svsubj, *svtext, *svdate;
      SV *svaddvia, *svchange;
@@ -1615,7 +1586,6 @@ s_route *perlroute(s_message *msg, s_route *defroute)
      PUTBACK;
      FREETMPS;
      LEAVE;
-     restoreperlerr(saveerr, pid);
 
      svaddvia = get_sv("addvia", FALSE);
      if (svaddvia != NULL) skip_addvia = (SvIV(svaddvia) == 0);
@@ -1734,12 +1704,10 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
    SV *svchange, *svattr;
    STRLEN n_a;
    static int do_perlfilter=1;
-   int pid, saveerr;
    char *sorig;
 
    VK_START_HOOK(perlfilter, SUB_FILTER, 0)
 
-   pid = handleperlerr(&saveerr);
    if (msg->netMail != 1) {
      char *p, *p1;
      p = msg->text+5;
@@ -1804,7 +1772,6 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      PUTBACK;
      FREETMPS;
      LEAVE;
-     restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
        w_log(LL_ERR, "Perl filter eval error: %s\n", SvPV(ERRSV, n_a));
@@ -1900,11 +1867,9 @@ int perlpkt(const char *fname, int secure)
    char *prc = NULL;
    STRLEN n_a;
    SV *svpktname, *svsecure, *svret;
-   int pid, saveerr;
 
    VK_START_HOOK(perlpkt, SUB_PROCESS_PKT, 0)
 
-   pid = handleperlerr(&saveerr);
    svpktname = perl_get_sv("pktname", TRUE);
    svsecure  = perl_get_sv("secure",  TRUE);
    { dSP;
@@ -1925,7 +1890,6 @@ int perlpkt(const char *fname, int secure)
      PUTBACK;
      FREETMPS;
      LEAVE;
-     restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
        w_log(LL_ERR, "Perl pkt eval error: %s\n", SvPV(ERRSV, n_a));
@@ -1949,11 +1913,9 @@ void perlpktdone(const char *fname, int rc)
    static int do_perlpktdone = 1;
    STRLEN n_a;
    SV *svpktname, *svrc, *svres;
-   int pid, saveerr;
 
    VK_START_HOOK(perlpktdone, SUB_PKT_DONE, )
 
-   pid = handleperlerr(&saveerr);
    { dSP;
      svpktname = perl_get_sv("pktname", TRUE);
      svrc      = perl_get_sv("rc",  TRUE);
@@ -1973,7 +1935,6 @@ void perlpktdone(const char *fname, int rc)
      PUTBACK;
      FREETMPS;
      LEAVE;
-     restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
        w_log(LL_ERR, "Perl pktdone eval error: %s\n", SvPV(ERRSV, n_a));
@@ -1986,11 +1947,9 @@ void perlafterunp(void)
 {
    static int do_perlafterunp = 1;
    STRLEN n_a;
-   int pid, saveerr;
 
    VK_START_HOOK(perlafterunp, SUB_AFTER_UNPACK, )
 
-   pid = handleperlerr(&saveerr);
    { dSP;
      ENTER;
      SAVETMPS;
@@ -2001,7 +1960,6 @@ void perlafterunp(void)
      PUTBACK;
      FREETMPS;
      LEAVE;
-     restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
        w_log(LL_ERR, "Perl afterunp eval error: %s\n", SvPV(ERRSV, n_a));
@@ -2014,11 +1972,9 @@ void perlbeforepack(void)
 {
    static int do_perlbeforepack = 1;
    STRLEN n_a;
-   int pid, saveerr;
 
    VK_START_HOOK(perlbeforepack, SUB_BEFORE_PACK, )
 
-   pid = handleperlerr(&saveerr);
    { dSP;
      ENTER;
      SAVETMPS;
@@ -2029,7 +1985,6 @@ void perlbeforepack(void)
      PUTBACK;
      FREETMPS;
      LEAVE;
-     restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
        w_log(LL_ERR, "Perl beforepack eval error: %s\n", SvPV(ERRSV, n_a));
@@ -2048,11 +2003,9 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
    SV *svreason;
    STRLEN n_a;
    static int do_perltossbad=1;
-   int pid, saveerr;
 
    VK_START_HOOK(perltossbad, SUB_TOSSBAD, 0)
 
-   pid = handleperlerr(&saveerr);
    { dSP;
      svfromname = perl_get_sv("fromname", TRUE);
      svfromaddr = perl_get_sv("fromaddr", TRUE);
@@ -2102,7 +2055,6 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
      PUTBACK;
      FREETMPS;
      LEAVE;
-     restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
        w_log(LL_ERR, "Perl tossbad eval error: %s\n", SvPV(ERRSV, n_a));
@@ -2181,11 +2133,9 @@ int perl_echolist(char **report, s_listype type, ps_arealist al, char *aka)
    SV *svreport, *svlist, *svret;
    STRLEN n_a;
    static int do_perlecholist = 1;
-   int pid, saveerr;
 
    VK_START_HOOK(perlecholist, SUB_ON_ECHOLIST, 0)
 
-   pid = handleperlerr(&saveerr);
    { dSP;
      svreport   = perl_get_sv("report", TRUE);
      sv_setpv(svreport, *report);
@@ -2213,7 +2163,6 @@ int perl_echolist(char **report, s_listype type, ps_arealist al, char *aka)
      FREETMPS;
      LEAVE;
      av_clear(av); av_undef(av);
-     restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
        w_log(LL_ERR, "Perl on_echolist eval error: %s\n", SvPV(ERRSV, n_a));
@@ -2240,11 +2189,9 @@ int perl_afixcmd(char **report, int cmd, char *aka, char *line)
    SV *svreport, *svret;
    STRLEN n_a;
    static int do_perlafixcmd = 1;
-   int pid, saveerr;
 
    VK_START_HOOK(perlafixcmd, SUB_ON_AFIXCMD, 0)
 
-   pid = handleperlerr(&saveerr);
    { dSP;
      svreport   = perl_get_sv("report", TRUE);
      if (*report) sv_setpv(svreport, *report);
@@ -2263,7 +2210,6 @@ int perl_afixcmd(char **report, int cmd, char *aka, char *line)
      PUTBACK;
      FREETMPS;
      LEAVE;
-     restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
        w_log(LL_ERR, "Perl on_afixcmd eval error: %s\n", SvPV(ERRSV, n_a));
@@ -2288,11 +2234,9 @@ int perl_afixreq(s_message *msg, hs_addr pktOrigAddr)
    SV *svtext, *svsubj, *svret;
    STRLEN n_a;
    static int do_perlafixreq=1;
-   int pid, saveerr;
 
    VK_START_HOOK(perlafixreq, SUB_ON_AFIXREQ, 0)
 
-   pid = handleperlerr(&saveerr);
    { dSP;
      svfromname = perl_get_sv("fromname", TRUE);
      svfromaddr = perl_get_sv("fromaddr", TRUE);
@@ -2320,7 +2264,6 @@ int perl_afixreq(s_message *msg, hs_addr pktOrigAddr)
      PUTBACK;
      FREETMPS;
      LEAVE;
-     restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
        w_log(LL_ERR, "Perl on_afixreq eval error: %s\n", SvPV(ERRSV, n_a));
@@ -2364,11 +2307,9 @@ int perl_putmsg(s_area *echo, s_message *msg)
    SV *svchange, *svattr;
    STRLEN n_a;
    static int do_perlputmsg=1;
-   int pid, saveerr;
 
    VK_START_HOOK(perlputmsg, SUB_PUTMSG, 1)
 
-   pid = handleperlerr(&saveerr);
    { dSP;
      svfromname = perl_get_sv("fromname", TRUE);
      svfromaddr = perl_get_sv("fromaddr", TRUE);
@@ -2409,7 +2350,6 @@ int perl_putmsg(s_area *echo, s_message *msg)
      PUTBACK;
      FREETMPS;
      LEAVE;
-     restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
        w_log(LL_ERR, "Perl putmsg eval error: %s\n", SvPV(ERRSV, n_a));
@@ -2475,11 +2415,9 @@ int perl_export(s_area *echo, s_link *link, s_message *msg)
    SV *svarea, *svchange, *svret;
    STRLEN n_a;
    static int do_perlexport=1;
-   int pid, saveerr;
 
    VK_START_HOOK(perlexport, SUB_EXPORT, 1)
 
-   pid = handleperlerr(&saveerr);
    { dSP;
      svtoaddr   = perl_get_sv("toaddr",   TRUE);
      svfromname = perl_get_sv("fromname", TRUE);
@@ -2518,7 +2456,6 @@ int perl_export(s_area *echo, s_link *link, s_message *msg)
      PUTBACK;
      FREETMPS;
      LEAVE;
-     restoreperlerr(saveerr, pid);
      if (SvTRUE(ERRSV))
      {
        w_log(LL_ERR, "Perl export eval error: %s\n", SvPV(ERRSV, n_a));
