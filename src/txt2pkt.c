@@ -312,7 +312,6 @@ int main(int argc, char *argv[])
 		 header.origAddr.net,header.origAddr.node);
          xstrcat(&textBuffer, tmp);
       }
-      xstrcat(&versionStr,"txt2pkt");
       msg.text = createKludges(config,
                                area, &msg.origAddr, &msg.destAddr,
                                versionStr);
