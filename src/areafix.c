@@ -1976,7 +1976,7 @@ void afix(hs_addr addr, char *cmd)
     HMSG            SQmsg;
     unsigned long   highmsg, i;
     XMSG            xmsg;
-    hs_addr         dest;
+    hs_addr         orig, dest;
     s_message	    msg, *tmpmsg;
     int             k, startarea = 0, endarea = config->netMailAreaCount;
     s_area          *area;
@@ -2029,12 +2029,24 @@ void afix(hs_addr addr, char *cmd)
                 if (SQmsg == NULL) continue;
 
                 MsgReadMsg(SQmsg, &xmsg, 0, 0, NULL, 0, NULL);
+                cvtAddr(xmsg.orig, &orig);
                 cvtAddr(xmsg.dest, &dest);
+                w_log(LL_DEBUG, "Reading msg %lu from %s -> %s", i,
+                      aka2str(orig), aka2str(dest));
 
                 /*  if not read and for us -> process AreaFix */
                 striptwhite((char*)xmsg.to);
-                if (((xmsg.attr & MSGREAD) != MSGREAD) &&
-                    (isOurAka(config,dest)) && (strlen((char*)xmsg.to)>0) &&
+                if ((xmsg.attr & MSGREAD) == MSGREAD) {
+                    w_log(LL_DEBUG, "Message is already read, skipping");
+                    MsgCloseMsg(SQmsg);
+                    continue;
+                }
+                if (!isOurAka(config,dest)) {
+                    w_log(LL_DEBUG, "Message is not to us, skipping");
+                    MsgCloseMsg(SQmsg);
+                    continue;
+                }
+                if ((strlen((char*)xmsg.to)>0) &&
                     fc_stristr(config->areafixNames,(char*)xmsg.to))
                 {
                     memset(&msg,'\0',sizeof(s_message));
@@ -2050,8 +2062,11 @@ void afix(hs_addr addr, char *cmd)
                     }
                     freeMsgBuffers(&msg);
                 }
-                else MsgCloseMsg(SQmsg);
-
+                else
+                {
+                    w_log(LL_DEBUG, "Message is not to AreaFix, skipping");
+                    MsgCloseMsg(SQmsg);
+                }
             }
 
             MsgCloseArea(netmail);
