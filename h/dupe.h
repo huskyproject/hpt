@@ -1,5 +1,6 @@
 #ifndef DUPE_H
 #define DUPE_H
+#include <tree.h>
 #include <typesize.h>
 #include <fidoconfig.h>
 #include <pkt.h>
@@ -18,7 +19,6 @@ struct dupeFileHeader {
 typedef struct dupeFileHeader s_dupeFileHeader;
 
 struct dupePackHeader {
-   UINT16  entrySize;
    UINT32  noOfEntries;
    UCHAR   time_tSize;
    time_t  packTime;
@@ -27,15 +27,26 @@ struct dupePackHeader {
 typedef struct dupePackHeader s_dupePackHeader;
 
 struct dupeEntry {
-   UINT32 hash;
+  char *from, *to, *subject, *msgid;
 };
 
 typedef struct dupeEntry s_dupeEntry;
 
+/*
+  A DupeEntry on disk is written in the following way :
+
+  UCHAR fromLength
+  char  from[fromLength];
+  UCHAR toLength
+  char  to[toLength];
+  UCHAR subjectLength
+  char  subject[subjectLength+1];
+  UCHAR msgidLength
+  char  msgid[msgidLength+1];
+*/
+
 struct dupeMemory {
-   UINT16 entrySize;
-   UINT32 noOfEntries;
-   s_dupeEntry *entries;
+  int *tree;
 };
 
 typedef struct dupeMemory s_dupeMemory;

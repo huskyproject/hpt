@@ -241,3 +241,39 @@ void freeMsgBuffers(s_message *msg)
   free(msg->toUserName);
   free(msg->fromUserName);
 }
+
+char *getKludge(s_message msg, char *what) {
+
+    // taken from smapi
+   
+    char *end, *found, *out, *where = msg.text;
+
+    found = NULL;
+
+    if (where != NULL)
+    {
+        found = (char *) strstr((char *) where, (char *) what);
+    }
+
+    if (where != NULL && found != NULL && found[-1] == '\x01')
+    {
+        end = (char *) strchr((char *) found, '\r');
+
+        if (!end)
+        {
+            end = found + strlen((char *) found);
+        }
+
+        out = malloc((size_t) (end - found) + 1);
+        if (out == NULL)
+        {
+            return NULL;
+        }
+
+        memmove(out, found, (size_t) (end - found));
+        out[(size_t) (end - found)] = '\0';
+        return out;
+    }
+
+    return NULL;
+}

@@ -64,7 +64,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
    msg->textLength = MsgGetTextLen(SQmsg);
 
    time(&tm);
-   sprintf(viaLine, "\001Via %u:%u/%u.%u ,%s ,%s", ourAka.zone, ourAka.net, ourAka.node, ourAka.point, ctime(&tm), versionStr);
+   sprintf(viaLine, "\001Via @%u:%u/%u.%u @%s @%s", ourAka.zone, ourAka.net, ourAka.node, ourAka.point, ctime(&tm), versionStr);
 
    msg->text = (char *) malloc(msg->textLength+strlen(kludgeLines)+strlen(viaLine)+1);
 

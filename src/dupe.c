@@ -6,37 +6,63 @@
 #include <dupe.h>
 #include <pkt.h>
 
-#include <lhash.h>
-
+#include <global.h>
 #include <msgapi.h>
 
 #include <compiler.h>
 #include <stamp.h>
 #include <progprot.h>
 
+FILE *write;
+
 char *createDupeFileName(s_area *area) {
    char *name;
 
-   if (area->msgbType == MSGTYPE_PASSTHROUGH) {
-      name = (char *) malloc(strlen(area->areaName)+5);
-      strcpy(name, area->areaName);
-      strcat(name, ".dup");
-      
-   } else {
-      name = (char *) malloc(strlen(area->fileName)+6);
-      strcpy(name, area->fileName);
-
-      if (area->msgbType == MSGTYPE_SDM) strcat(name, "dupes");
-      else strcat(name, ".dup");
-   }
+   name = (char *) malloc(strlen(config->dupeHistoryDir)+strlen(area->areaName)+5);
+   strcpy(name, config->dupeHistoryDir);
+   strcat(name, area->areaName);
+   strcat(name, ".dup");
 
    return name;
+}
+
+int compareEntries(const void *e1, const void *e2) {
+   s_dupeEntry *a, *b;
+   int rc;
+
+   a = e1; b = e2;
+
+   rc = strcmp(a->from, b->from);
+   if (rc == 0) rc = strcmp(a->to, b->to);
+   if (rc == 0) rc = strcmp(a->subject, b->subject);
+   if (rc == 0) rc = strcmp(a->msgid, b->msgid);
+
+   return rc;
+}
+
+int writeEntry(s_dupeEntry *entry) {
+   fputc(strlen(entry->from), write); fputs(entry->from, write);
+   fputc(strlen(entry->to), write); fputs(entry->to, write);
+   fputc(strlen(entry->subject), write); fputs(entry->subject, write);
+   fputc(strlen(entry->msgid), write); fputs(entry->msgid, write);
+   
+   return 0;
+}
+   
+void deleteEntry(s_dupeEntry *entry) {
+   free(entry->to);
+   free(entry->from);
+   free(entry->subject);
+   free(entry->msgid);
+   free(entry);
 }
 
 void doReading(FILE *f, s_dupeMemory *mem) {
    // read Header
    s_dupeFileHeader *fileHeader;
    s_dupePackHeader *packHeader;
+   s_dupeEntry      *entry;
+   UCHAR   length;
    UINT16 headerSize;
    UINT32 i, j;
 
@@ -52,29 +78,33 @@ void doReading(FILE *f, s_dupeMemory *mem) {
    for (i = 0; i < fileHeader->noOfPacks; i++) {
       packHeader = malloc(fileHeader->dupePackHeaderSize);
       fread(packHeader, fileHeader->dupePackHeaderSize, 1, f);
-      
-      mem->entries = realloc(mem->entries, (mem->noOfEntries + packHeader->noOfEntries) * packHeader->entrySize);
-      // process all entries in a pack
+
+      // process all entries
       for (j = 0; j < packHeader->noOfEntries; j++) {
-         // read the entry Struct
-         fread(&(mem->entries[mem->noOfEntries + j]), packHeader->entrySize, 1, f);
+         entry = malloc(sizeof(s_dupeEntry));
          
-         mem->noOfEntries++;
+         length = getc(f);
+         entry->from = malloc(length+1);
+         fgets(entry->from, length+1, f);
+
+         length = getc(f);
+         entry->to = malloc(length+1);
+         fgets(entry->to, length+1, f);
+
+         length = getc(f);
+         entry->subject = malloc(length+1);
+         fgets(entry->subject, length+1, f);
+
+         length = getc(f);
+         entry->msgid = malloc(length+1);
+         fgets(entry->msgid, length+1, f);
+         tree_add(&(mem->tree), &compareEntries, entry, &deleteEntry);
       }
+      
       free(packHeader);
    }
 
    free(fileHeader);
-}
-
-int compareEntries(const void *e1, const void *e2) {
-   const s_dupeEntry *a, *b;
-
-   a = e1; b = e2;
-
-   if (a->hash > b->hash) return 1;
-   else if (a->hash == b->hash) return 0;
-   else return -1;
 }
 
 s_dupeMemory *readDupeFile(s_area *area) {
@@ -83,21 +113,14 @@ s_dupeMemory *readDupeFile(s_area *area) {
    s_dupeMemory *dupeMemory;
    
    dupeMemory = malloc(sizeof(s_dupeMemory));
-   dupeMemory->entries = NULL;
-   dupeMemory->noOfEntries = 0;
+   tree_init(&dupeMemory->tree);
 
    fileName = createDupeFileName(area);
    f = fopen(fileName, "rb");
    if (f != NULL) {
       // readFile
       doReading(f, dupeMemory);
-      // sort entries for faster searching...
-      qsort(dupeMemory->entries,dupeMemory->noOfEntries, sizeof(s_dupeEntry), &compareEntries);
-
       fclose(f);
-   } else {
-      // return "null"-struct
-      dupeMemory->entrySize = sizeof(s_dupeEntry);
    }
    free(fileName);
 
@@ -126,14 +149,15 @@ int appendToDupeFile(char *name, s_dupeMemory newDupeEntries) {
 
    // add new packet to end of file
    fseek(f, 0, SEEK_END);
-   packHeader.entrySize   = sizeof(s_dupeEntry);
-   packHeader.noOfEntries = newDupeEntries.noOfEntries;
+   packHeader.noOfEntries = tree_count(newDupeEntries.tree);
    packHeader.time_tSize  = sizeof(time_t);
    packHeader.packTime    = time(NULL);
    fwrite(&packHeader, sizeof(s_dupePackHeader), 1, f);
 
    // add entries
-   fwrite(&(newDupeEntries.entries), newDupeEntries.entrySize, newDupeEntries.noOfEntries, f);
+   write = f;
+   tree_trav(newDupeEntries.tree, &writeEntry);
+   write = NULL;
          
    fclose(f);
 
@@ -159,14 +183,15 @@ int createDupeFile(char *name, s_dupeMemory newDupeEntries) {
       fwrite(&fileHeader, sizeof(s_dupeFileHeader), 1, f);
 
       // create only one pack, since this is a new dupeFile
-      packHeader.noOfEntries   = newDupeEntries.noOfEntries;
-      packHeader.entrySize     = sizeof(s_dupeEntry);
+      packHeader.noOfEntries   = tree_count(newDupeEntries.tree);
       packHeader.time_tSize    = sizeof(time_t);
       packHeader.packTime      = time(NULL);
       fwrite(&packHeader, sizeof(s_dupePackHeader), 1, f);
 
       // write new Entries
-      fwrite(newDupeEntries.entries, newDupeEntries.entrySize, newDupeEntries.noOfEntries, f);
+      write = f;
+      tree_trav(newDupeEntries.tree, &writeEntry);
+      write = NULL;
       
       return 0;
    } else return 1;
@@ -179,7 +204,7 @@ int writeToDupeFile(s_area *area) {
 
    if (newDupes != NULL) {
 
-      if (newDupes->noOfEntries > 0) {
+      if (tree_count(newDupes->tree) > 0) {
 
          fileName = createDupeFileName(area);
 
@@ -194,62 +219,16 @@ int writeToDupeFile(s_area *area) {
    return rc;
 }
 
-UINT32 msgHash(s_message msg) {
-
-   char   msgId[120];
-   int    i = 0;
-   char   *start;
-   char   *hashstr;
-
-   UINT32 hashCode;
-
-   msgId[0] = 0;
-   start = strstr(msg.text, "MSGID: ");
-   if (start!=NULL)
-      while(*start != '\r') {
-         msgId[i] = *start;
-         start++; i++;
-         if (i > 118) break;
-      }
-   msgId[i] = 0;
-
-   hashstr = malloc(strlen(msg.fromUserName) + strlen(msg.toUserName) + strlen(msg.subjectLine) + strlen(msgId) + 1);
-
-   strcpy(hashstr, msg.fromUserName);
-   strcat(hashstr, msg.toUserName);
-   strcat(hashstr, msg.subjectLine);
-   strcat(hashstr, msgId);
-
-   hashCode = lh_strhash(hashstr);
-   
-   free(hashstr);
-
-   return hashCode;
-}
-
-int binSearch(s_dupeMemory *mem, UINT32 hashCode, UINT32 left, UINT32 right) {
-   UINT32 middle = left + ((right - left) / 2);
-   // test if middle is positiv
-   if (hashCode == mem->entries[middle].hash) return 1;
-   else if (left == right) return 0;
-   // else recurse
-   else if (hashCode < mem->entries[middle].hash) return binSearch(mem, hashCode, left, middle);
-   else return binSearch(mem, hashCode, middle+1, right);
-}
-
-int isDupe(s_area area, const s_message msg) {
-   UINT32 hashCode = msgHash(msg);
-   s_dupeMemory *mem = area.dupes, *newMem = area.newDupes;
+int isDupe(s_area area, s_dupeEntry *entry) {
    char first = 0, second = 0;
 
-   if (mem->noOfEntries > 0) first = binSearch(mem, hashCode, 0, mem->noOfEntries-1);
-   if (newMem->noOfEntries > 0) second = binSearch(newMem, hashCode, 0, newMem->noOfEntries-1);
-   
    return (first || second);
 }
 
 int dupeDetection(s_area *area, const s_message msg) {
-   s_dupeMemory *newDupes;
+   s_dupeMemory *newDupes = area->newDupes;
+   s_dupeEntry  *entry;
+   char         *str;
 
    if (area->dupeCheck == off) return 1; // no dupeCheck return 1 "no dupe"
    
@@ -262,18 +241,21 @@ int dupeDetection(s_area *area, const s_message msg) {
    if (area->newDupes == NULL) {
       //make newDupes "NULL-struct"
       newDupes = malloc(sizeof(s_dupeMemory));
-      newDupes->noOfEntries = 0;
-      newDupes->entrySize = sizeof(s_dupeEntry);
-      newDupes->entries = NULL;
+      tree_init(&newDupes->tree);
       area->newDupes = newDupes;
    }
-   if (!isDupe(*area, msg)) {
+
+   entry = malloc(sizeof(s_dupeEntry));
+
+   entry->from    = malloc(strlen(msg.fromUserName)+1); strcpy(entry->from, msg.fromUserName);
+   entry->to      = malloc(strlen(msg.toUserName)+1); strcpy(entry->to, msg.toUserName);
+   entry->subject = malloc(strlen(msg.subjectLine)+1); strcpy(entry->subject, msg.subjectLine);
+   str = getKludge(msg, "MSGID:");
+   entry->msgid   = malloc(strlen(str)+1); strcpy(entry->msgid, str);
+
+   if (!isDupe(*area, entry)) {
       // add to newDupes
-      newDupes = area->newDupes;
-      newDupes->noOfEntries++;
-      newDupes->entries = realloc(newDupes->entries, newDupes->noOfEntries * sizeof(s_dupeEntry));
-      newDupes->entries[newDupes->noOfEntries-1].hash = msgHash(msg);
-      qsort(newDupes->entries, newDupes->noOfEntries, sizeof(s_dupeEntry), &compareEntries);
+      tree_add(&newDupes->tree, &compareEntries, entry, &deleteEntry);
       return 1;
    }
    // it is a dupe do nothing but return 0
