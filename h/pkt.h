@@ -72,13 +72,13 @@ struct message {
    s_addr destAddr, origAddr;
 
    UINT16 attributes;
-   CHAR   datetime[21];
+   UCHAR  datetime[21];
    CHAR   netMail;
    INT32  textLength;
    INT    recode;
 
-   CHAR   *toUserName, *fromUserName, *subjectLine;
-   CHAR   *text;
+   char   *toUserName, *fromUserName, *subjectLine;
+   char   *text;
 };
 
 typedef struct pktHeader s_pktHeader;
