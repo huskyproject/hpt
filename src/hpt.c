@@ -195,7 +195,10 @@ int processCommandLine(int argc, char **argv)
       } else if (stricmp(argv[i], "pause") == 0) {
 		  cmPause = 1;
 		  continue;
-      } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
+      } else {
+		  printf("Unrecognized commandline option \"%s\"!\n", argv[i]);
+		  return 1;
+	  }
 
    } /* endwhile */
 

@@ -1245,10 +1245,7 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 		xstrcat(&textBuff,"MSGAPIERR: ");
 		
 		switch (msgapierr) {
-		case MERR_NONE: 
-			//xstrcat(&textBuff,"No error\r");
-			//FIXME: msgapierr should return real value!!!
-			xstrcat(&textBuff,"area locked, read-only, etc...\r");
+		case MERR_NONE: xstrcat(&textBuff,"No error\r");
 			break;
 		case MERR_BADH: xstrcat(&textBuff,"Invalid handle passed to function\r");
 			break;

@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ---- cvs ci ------
+Thu Mar  8 17:58:16 NOVT 2001
+max:
+* exit on unrecognized cmd line options
+
+---- cvs ci ------
 Tue Mar  6 16:20:54 NOVT 2001
 max:
 * fixed auto adding link to echo from autoareacreatedefaults with fwd.requests
