@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Mon Oct 16 12:06:41 NOVST 2000
+max:
+* new writeMsgToPkt -- write msg to pkt as one piece
+
+----- cvs ci ------
 Sun Oct 15 15:06:03 NOVST 2000
 max:
 * set k/s flag to relink msg

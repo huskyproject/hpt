@@ -124,10 +124,9 @@ FILE *createPkt(char *filename, s_pktHeader *header)
   }
   return NULL;
 }
-
+/*
 int writeMsgToPkt(FILE *pkt, s_message msg)
 {
-
   // write type 2 msg
   fputc(2, pkt);
   fputc(0, pkt);
@@ -147,12 +146,12 @@ int writeMsgToPkt(FILE *pkt, s_message msg)
   // write date...info
   fwrite(msg.datetime, 20, 1, pkt);
 
-  // write userNames
-  if (strlen(msg.toUserName) >= 36) fwrite(msg.toUserName, 35, 1, pkt);      // max 36 bytes
+  // write userNames (max 36 bytes)
+  if (strlen(msg.toUserName) >= 36) fwrite(msg.toUserName, 35, 1, pkt);
   else fputs(msg.toUserName, pkt);
   fputc(0, pkt);
 
-  if (strlen(msg.fromUserName) >= 36) fwrite(msg.fromUserName, 35, 1, pkt);  // max 36 bytes
+  if (strlen(msg.fromUserName) >= 36) fwrite(msg.fromUserName, 35, 1, pkt);
   else fputs(msg.fromUserName, pkt);
   fputc(0, pkt);
 
@@ -167,9 +166,67 @@ int writeMsgToPkt(FILE *pkt, s_message msg)
 
   return 0;
 }
+*/
+
+int writeMsgToPkt(FILE *pkt, s_message msg)
+{
+  char x,y,z;
+  char *buf, *pbuf; 
+  INT32 textLen;
+  size_t rc;
+
+  x = strlen(msg.toUserName);
+  if (x >= 36) x = 35;
+  y = strlen(msg.fromUserName);
+  if (y >= 36) y = 35;
+  z = strlen(msg.subjectLine);
+  if (z >= 72) x = 71;
+  textLen = strlen(msg.text);
+
+  buf = safe_malloc(38+x+y+z+textLen);
+  pbuf = buf;
+  
+  // type (2 bytes)
+  pbuf[0]='\002'; pbuf[1]='\000'; pbuf+=2;
+
+  // net/node info (8 bytes)
+  put_word(pbuf,(UINT16)msg.origAddr.node); pbuf+=2;
+  put_word(pbuf,(UINT16)msg.destAddr.node); pbuf+=2;
+  put_word(pbuf,(UINT16)msg.origAddr.net);  pbuf+=2;
+  put_word(pbuf,(UINT16)msg.destAddr.net);  pbuf+=2;
+
+  // attribute info (2 bytes)
+  put_word(pbuf,(UINT16)msg.attributes); pbuf+=2;
+
+  // cost info (2 bytes)
+  put_word(pbuf, 0); pbuf+=2;
+
+  // date info (20 bytes)
+  memmove(pbuf, msg.datetime, 20); pbuf+=20;
+
+  // write userNames
+  memmove(pbuf,msg.toUserName,x); pbuf+=x;
+  pbuf[0]='\0'; pbuf++; // 1 byte
+  memmove(pbuf,msg.fromUserName,y); pbuf+=y;
+  pbuf[0]='\0'; pbuf++; // 1 byte
+
+  // write subject
+  memmove(pbuf,msg.subjectLine,z); pbuf+=z;
+  pbuf[0]='\0'; pbuf++; // 1 byte
+
+  // write text
+  memmove(pbuf,msg.text,textLen); pbuf+=textLen;
+  pbuf[0]='\0'; pbuf++; // 1 byte
+
+  rc = fwrite(buf, pbuf-buf, 1, pkt);
+  nfree(buf);
+
+  return ((rc==1) ? 0 : 1);
+}
 
 int closeCreatedPkt(FILE *pkt)
 {
+   // FIXME: we need to check return values of fputc & fclose
    fputc(0, pkt); fputc(0, pkt);
    fclose(pkt);
    return 0;
