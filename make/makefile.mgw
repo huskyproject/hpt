@@ -1,5 +1,6 @@
 # Mingw32 CPD makefile for crosscompiling for NT under Unix
 #
+# tested with Mingw32 CPD on Linux
 
 DEBUG=
 # set to -g for debugging, NEVER use -s !!!

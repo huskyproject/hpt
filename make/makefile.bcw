@@ -1,5 +1,6 @@
 # Makefile for Borland C (Win32)
 #
+# tested with Borland C 4.0
 
 DEBUG=0
 CC=bcc32
