@@ -1,3 +1,8 @@
+2004-05-31 Monday 19:26  d_sergienko
+
+	* src/carbon.c (hpt-1_4-stable.4): fix CarbonRules AND & AND_NOT
+	processing (patch from Nick Voronin, 2:5030/2239.4)
+
 2004-05-07 Friday 21:52  d_sergienko
 
 	* src/seenby.c (hpt-1_4-stable.4): patch from Serguei Revtov
