@@ -1,3 +1,8 @@
+2001-06-26 Tuesday 09:31  mhaase
+
+	* src/areafix.c (1.217): undo changes I made yesterday (rescan
+	feature), it was already implemented at another part
+
 2001-06-25 Monday 20:31  ml
 
 	* doc/hpt.texi (1.30), src/areafix.c (1.216), src/hptlink.c (1.25):
