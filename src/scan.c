@@ -367,7 +367,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    convertMsgHeader(*xmsg, &msg);
    convertMsgText(SQmsg, &msg);
 
-   w_log(LL_DEBUGB, "%s::%s Msg from %u:%u/%u.%u to %u:%u/%u.%u",__FILE__,__LINE__, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point );
+   w_log(LL_DEBUGB, "%s::%u Msg from %u:%u/%u.%u to %u:%u/%u.%u",__FILE__,__LINE__, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point );
 
 #ifdef DO_PERL
    if (perlscanmsg(area->areaName, &msg)) {
@@ -455,7 +455,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 	   }
    }
 
-   w_log(LL_DEBUGB, "%s::%s Msg from %u:%u/%u.%u to %u:%u/%u.%u",__FILE__,__LINE__, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point );
+   w_log(LL_DEBUGB, "%s::%u Msg from %u:%u/%u.%u to %u:%u/%u.%u",__FILE__,__LINE__, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point );
 
    // no route
    if (prio!=normal || (xmsg->attr & MSGFRQ)==MSGFRQ) {
@@ -614,7 +614,7 @@ void scanNMArea(s_area *area)
 	   statScan.msgs++;
 
 	   MsgReadMsg(msg, &xmsg, 0, 0, NULL, 0, NULL);
-           w_log( LL_DEBUGB, "%s::%s Msg from %u:%u/%u.%u to %u:%u/%u.%u",__FILE__,__LINE__,
+           w_log( LL_DEBUGB, "%s::%u Msg from %u:%u/%u.%u to %u:%u/%u.%u",__FILE__,__LINE__,
                   xmsg.orig.zone, xmsg.orig.net, xmsg.orig.node, xmsg.orig.point,
                   xmsg.dest.zone, xmsg.dest.net, xmsg.dest.node, xmsg.dest.point);
 	   cvtAddr(xmsg.dest, &dest);
