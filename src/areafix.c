@@ -338,10 +338,11 @@ s_message *makeMessage (s_addr *origAddr, s_addr *destAddr,
     }
     if (config->areafixKillReports) msg->attributes |= MSGKILL;
 
-    if (m.smapi_subversion < 0x203)
+#if (MSGAPI_SUBVERSION < 0x203)
       strftime((char*)msg->datetime, 21, "%d %b %y  %H:%M:%S", localtime(&time_cur));
-    else
+#else
       fts_time((char*)msg->datetime, localtime(&time_cur));
+#endif
 
     return msg;
 }
