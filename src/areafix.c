@@ -506,7 +506,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 	msg->text = createKludges(config, NULL, uplink->ourAka, &(uplink->hisAka),
                               versionStr);
 	if (config->areafixReportsFlags)
-	    xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r",NULL);
+	    xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r", NULL);
 	uplink->msg = msg;
     } else msg = uplink->msg;
 	
@@ -1679,7 +1679,8 @@ void preprocText(char *split, s_message *msg)
     msg->text = createKludges(config, NULL, &msg->origAddr,
         &msg->destAddr, versionStr);
     /* xstrcat(&(msg->text), "\001FLAGS NPD DIR\r"); */
-    xstrcat(&(msg->text), "\001FLAGS NPD\r");
+    if (config->areafixReportsFlags)
+        xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r", NULL);
     xscatprintf(&split, "\r--- %s areafix\r", versionStr);
     if (orig && orig[0]) {
         xscatprintf(&split, " * Origin: %s (%s)\r", orig, aka2str(msg->origAddr));

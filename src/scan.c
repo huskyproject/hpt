@@ -812,6 +812,10 @@ void scanExport(int type, char *str) {
             if (patimat(config->echoAreas[i].areaName, str))
                 scanByName(config->echoAreas[i].areaName);
         }
+        for (i = 0; i< config->netMailAreaCount; i++) {
+            if (patimat(config->netMailAreas[i].areaName, str))
+                scanByName(config->netMailAreas[i].areaName);
+        }
     } else if (f == NULL) {
         if (type & SCN_FILE) {
             w_log(LL_START, "EchoTossLogFile not found -> Scanning stop");

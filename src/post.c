@@ -412,7 +412,7 @@ void post(int c, unsigned int *n, char *params[])
             if ((export || !echo->fileName) && !config->disableTID)
                 xscatprintf(&msg.text, "\001TID: %s\r", versionStr);
 
-            if (flags) xscatprintf(&msg.text, "\001FLAGS%s\r", flags);
+            if (flags) xscatprintf(&msg.text, "\001FLAGS %s\r", flags);
 
             if( uuepost )
             {

@@ -20,17 +20,16 @@ Changes between hpt-1.2-stable and hpt-1.4-stable
      being posted;
    - new keyword: AvailList (link section): specify variant for reply to %avail
      command.
+   - ^AFLAGS NPD is now configurable via config (areafixReportsAttr)
 
 3. IMPORTANT bugfixes:
    - deadareas.pl: Change dupebase files suffix: 'dpd' to 'dph' ('dpd' is
      obsolete);
    - do not scan messages with flag 'LOK' set;
-   - set 'DIR' flag in areafix's messages - prevent send areafix reports and
-     requests via routing;
    - If message is being scanned (i.e. has 'Loc' flag and doesn't have 'Snt'
      flag) and contains one or more @TID kludges all of them will be
      replaced by one kludge with info about hpt;
-   - Posted message doesn't contain @TID anymore. It will be added only during
+   - Posted message doesn't contain ^ATID anymore. It will be added only during
      scan;
    - Fix trap for messages with illegal date field value: begin of epoch or
      very big (<1.1.1970 and >n.n.2038)
@@ -39,6 +38,7 @@ Changes between hpt-1.2-stable and hpt-1.4-stable
    - Fix CarbonCopy processing: add end of line after kludges
    - Fix linking when ^AMSGID or ^AREPLY are in MiXeD cAsE
    - keepTrsMail works now
+   
 
 
 HPT 1.2.3-release
