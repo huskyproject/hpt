@@ -1,3 +1,21 @@
+2002-03-21 Thursday 16:18  mche
+
+	* src/fcommon.c (1.122), h/fcommon.h (1.37): createLockFile
+	function removed
+
+2002-03-21 Thursday 12:36  mche
+
+	* src/areafix.c (1.274): fixed bug with subscrubing/usubscribing
+	from own address
+
+2002-03-21 Thursday 09:48  mche
+
+	* man/hpt.1 (1.16): man updated
+
+2002-03-21 Thursday 08:04  mche
+
+	* src/link.c (1.50): loglevel changed fot linking warnings
+
 2002-03-20 Wednesday 17:27  mche
 
 	* src/fcommon.c (1.121), src/toss.c (1.396), h/fcommon.h (1.36):
