@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Thu Feb  1 22:26:43 NOVT 2001
+max:
+* don't create areas with symbols space, tab, /, \, and comment symbol
+
+----- cvs ci ------
 Tue Jan 30 23:44:07 MSK 2001
 Nestyurkin Nikolay:
 * an other fix for netmailFlag

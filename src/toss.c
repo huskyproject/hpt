@@ -846,34 +846,26 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    s_link *creatingLink;
    s_area *area;
    int i;
+
+   // don't create areas with symbols space, tab, /, \, and comment symbol
+   if (strchr(c_area,' ') || strchr(c_area,'\t') || strchr(c_area,'\\') ||
+	   strchr(c_area,'/') || strchr(c_area,config->CommentChar)) return 7;
    
    xstrcat(&squishFileName, c_area);
 
    //translating name of the area to lowercase/uppercase
-   if (config->createAreasCase == eUpper) {
-	   for (fileName = c_area; *fileName; fileName++) *fileName=(char)toupper(*fileName);
-   } else {
-	   for (fileName = c_area; *fileName; fileName++) *fileName=(char)tolower(*fileName);
-   }
-
-   fileName = squishFileName;
+   if (config->createAreasCase == eUpper) strUpper(c_area);
+   else strLower(c_area);
 
    //translating filename of the area to lowercase/uppercase
-   while (*fileName != '\0') {
-	   if (config->areasFileNameCase == eUpper)
-		   *fileName=(char)toupper(*fileName);
-	   else
-		   *fileName=(char)tolower(*fileName);
-	   // convert any path delimiters to _
-	   if ((*fileName=='/') || (*fileName=='\\')) *fileName = '_'; 
-	   fileName++;
-   }
-
+   if (config->areasFileNameCase == eUpper) strUpper(squishFileName);
+   else strLower(squishFileName);
+	   
    creatingLink = getLinkFromAddr(*config, pktOrigAddr);
 
    if (creatingLink == NULL) {
       writeLogEntry(hpt_log, '9', "creatingLink == NULL !!!");
-      return 1;
+      return 8;
    }
 
    acDef = creatingLink->autoAreaCreateDefaults;
@@ -885,7 +877,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    f = fopen(fileName, "a");
    if (f == NULL) {
 	   fprintf(stderr,"autocreate: cannot open config file\n");
-	   return 1;
+	   return 9;
    }
 
    // making local address and address of uplink
@@ -1240,10 +1232,19 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 		xstrcat(&textBuff,"Sender not active for this area\r");
 		break;
 	case 5:
-		xstrcat(&textBuff, "Rejected by filter\r");
+		xstrcat(&textBuff,"Rejected by filter\r");
 		break;
 	case 6:
-		xstrcat(&textBuff, "Can't open msgbase\r");
+		xstrcat(&textBuff,"Can't open msgbase\r");
+		break;
+	case 7:
+		xstrcat(&textBuff,"Can't create echoarea with forbidden symbols in areatag\r");
+		break;
+	case 8:
+		xstrcat(&textBuff,"Sender not found in config file\r");
+		break;
+	case 9:
+		xstrcat(&textBuff,"Can't open config file\r");
 		break;
 	default :
 		xstrcat(&textBuff,"Another error\r");
@@ -1456,8 +1457,9 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 	   // checking for autocreate option
 	   link = getLinkFromAddr(*config, pktOrigAddr);
 	   if ((link != NULL) && (link->autoAreaCreate != 0)) {
-           autoCreate(area, pktOrigAddr, NULL);
-           echo = getArea(config, area);
+           if (0 == (writeAccess = autoCreate(area, pktOrigAddr, NULL)))
+			   echo = getArea(config, area);
+		   else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
 	   } // can't create echoarea - put msg in BadArea
 	   else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
    }
@@ -2615,8 +2617,8 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
    if (echo == &(config->badArea)) {
 	   link = getLinkFromAddr(*config, pktOrigAddr);
 	   if (link && link->autoAreaCreate!=0 && area) {
-		   autoCreate(area, pktOrigAddr, NULL);
-		   echo = getArea(config, area);
+		   if (0 == autoCreate(area, pktOrigAddr, NULL))
+			   echo = getArea(config, area);
 	   }
    }
    nfree(area);

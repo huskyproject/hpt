@@ -209,6 +209,11 @@ int main(int argc, char *argv[])
          sprintf(tmp, "\r--- %s\r", (tearl) ? tearl : config->tearline);
          strcat((char *)textBuffer, (char *)tmp);
       }
+
+      if (msg.origAddr.zone==0 && msg.origAddr.net==0 && 
+           msg.origAddr.node==0 && msg.origAddr.point==0)
+	   msg.origAddr = config->addr[0];
+
       if (area != NULL) {
          sprintf(tmp, " * Origin: %s (%d:%d/%d.%d)\r",
                  (orig) ? orig : (config->origin) ? config->origin : "",
@@ -246,6 +251,10 @@ int main(int argc, char *argv[])
          recodeToTransportCharset(msg.toUserName);
       }
 */
+      if (msg.fromUserName==NULL) xstrcat(&msg.fromUserName, "Sysop");
+      if (msg.toUserName==NULL)  xstrcat(&msg.toUserName, "All");
+      if (msg.subjectLine==NULL) xstrcat(&msg.subjectLine, "(none)");
+
       writeMsgToPkt(pkt, msg);
 
       closeCreatedPkt(pkt);
