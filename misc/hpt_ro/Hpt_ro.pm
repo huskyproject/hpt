@@ -10,15 +10,16 @@ package Hpt_ro;
 
 use strict;
 use vars qw($ro_conf $hptconf);
-
+use 5.006;
 
 my $groupsymbol = '@';
 my $commentchar = '#';
+
 #
 # put your paths here
 #
 my $defhptconf = "n:\\bin\\hpt\\config";
-$ro_conf = "ro.cfg";
+$ro_conf = "n:\\bin\\hpt\\ro.cfg";
 
 $hptconf = $ENV{FIDOCONFIG} ? $ENV{FIDOCONFIG} : $defhptconf;
 
@@ -105,7 +106,7 @@ sub init() {
 } # init()
 
 #
-# check for link readonly
+# check link for readonly
 #
 # return reason if access denied
 #
@@ -136,6 +137,9 @@ sub trim($) {
   return $s;
 }
 
+#
+# convert echo mask to regular expression
+#
 sub echo2re($) {
   my $re = shift @_;
   $re = uc(quotemeta($re));
@@ -143,6 +147,9 @@ sub echo2re($) {
   return qr/^$re$/;
 }
 
+#
+# convert link mask to regular expression
+#
 sub link2re($) {
   my $re = shift @_;
   $re .= ".0" unless $re =~ /\..+$/; # add 0-point to node address
@@ -151,6 +158,9 @@ sub link2re($) {
   return qr/^$re$/;
 }
 
+#
+# recursive function for reading HPT config
+#
 sub readhptconf($) {
   my $cfgname = shift @_;
   my @echoes;
@@ -182,7 +192,6 @@ sub readhptconf($) {
           $opt .= '.0' unless $opt =~/\.\d+$/; 
           push @{$echo->{links}},$opt;
         }
-
       } # while(@options)
       push @echoes,$echo;
     } # elsif (/^echoarea\b/i)
@@ -191,6 +200,9 @@ sub readhptconf($) {
   return @echoes;
 }
 
+#
+# read hpt_ro config
+#
 sub readroconf($) {
   my $cfgname = shift @_;
   my %echogroups;
@@ -296,28 +308,10 @@ sub readroconf($) {
     } # link state
     else {die "Unknown parser state: $state\n";}
   } # while 
+
   die "'echogroup' $curgroup block not closed by 'endechogroup'" if $state eq 'echo';
   die "'linkgroup' $curgroup block not closed by 'endlinkgroup'" if $state eq 'link';
   close($hcfg);
-
-=pod
-
-  print "-- echogroups --\n";
-  foreach(keys %echogroups) {
-    print "$_\n";
-    foreach(@{$echogroups{$_}}) {
-      print "  $_\n";
-    }
-  }
-
-  print "\n-- linkgroups --\n";
-  foreach(keys %linkgroups) {
-    print "$_\n";
-    foreach(@{$linkgroups{$_}}) {
-      print "  $_\n";
-    }
-  }
-=cut
 
   return @acl;
 }
