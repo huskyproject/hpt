@@ -54,7 +54,7 @@ all: $(OBJS) \
 
 pktinfo$(EXE): pktinfo$(OBJ) $(OBJS)
 	$(CC) $(LFLAGS) -o pktinfo$(EXE) log$(OBJ) recode$(OBJ) pktinfo$(OBJ) \
-          pktread$(OBJ) fcommon$(OBJ) global$(OBJ)
+          pktread$(OBJ) fcommon$(OBJ) global$(OBJ) xstr$(OBJ)
 
 tlog$(EXE): tlog$(OBJ) log$(OBJ)
 	$(CC) $(LFLAGS) -o tlog$(EXE) tlog$(OBJ) log$(OBJ) 
@@ -83,7 +83,7 @@ purgeDupes$(EXE): crc$(OBJ) purgeDupes$(OBJ) global$(OBJ) dupe$(OBJ) \
                   tree$(OBJ) pktread$(OBJ) log$(OBJ) recode$(OBJ)
 	$(CC) $(LFLAGS) -o purgeDupes$(EXE) crc$(OBJ) purgeDupes$(OBJ) \
           tree$(OBJ) pktread$(OBJ) recode$(OBJ) dupe$(OBJ) global$(OBJ) \
-          log$(OBJ)
+          log$(OBJ) xstr$(OBJ)
 
 clean:
 	-$(RM) -f *$(OBJ)
