@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <time.h>
+#ifndef _MSC_VER
 #include <sys/wait.h>
+#endif
 #ifdef OS2
 #define INCL_DOSPROCESS
 #include <os2.h>
 #endif
+
 
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
@@ -13,11 +16,33 @@
 #include <global.h>
 #include <toss.h>
 #include <hptperl.h>
-
+#if defined(__cplusplus)
+extern "C" {
+#endif
 #include <EXTERN.h>
 #include <perl.h>
+#ifdef _MSC_VER
+#define NO_XSLOCKS
+#endif
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 #include <XSUB.h>
+#ifdef _MSC_VER
+#include "win32iop.h"
+#endif
+#if defined(__cplusplus)
+}
+# ifndef EXTERN_C
+#    define EXTERN_C extern "C"
+#  endif
+#else
+#  ifndef EXTERN_C
+#    define EXTERN_C extern
+#  endif
+#endif
+
+
 
 #ifndef sv_undef
 #define sv_undef PL_sv_undef
@@ -25,8 +50,21 @@
 
 static PerlInterpreter *perl = NULL;
 static int  do_perl=1;
-
+#ifdef _MSC_VER
+EXTERN_C void xs_init (pTHXo);
+EXTERN_C void boot_DynaLoader (pTHXo_ CV* cv);
+EXTERN_C void perl_putMsgInArea(pTHXo_ CV* cv);
+EXTERN_C void perl_log(pTHXo_ CV* cv);
+EXTERN_C void perl_str2attr(pTHXo_ CV* cv);
+EXTERN_C void perl_myaddr(pTHXo_ CV* cv);
+EXTERN_C void perl_nodelistDir(pTHXo_ CV* cv);
+EXTERN_C void perl_crc32(pTHXo_ CV* cv);
+#endif
+#ifdef _MSC_VER
+EXTERN_C void perl_log(pTHXo_ CV* cv)
+#else
 static XS(perl_log)
+#endif
 {
   dXSARGS;
   char *level, *str;
@@ -41,8 +79,11 @@ static XS(perl_log)
   w_log(*level, "%s", str);
   XSRETURN_EMPTY;
 }
-
+#ifdef _MSC_VER
+EXTERN_C void perl_putMsgInArea(pTHXo_ CV* cv)
+#else
 static XS(perl_putMsgInArea)
+#endif
 {
   dXSARGS;
   char *area, *fromname, *toname, *fromaddr, *toaddr;
@@ -143,7 +184,11 @@ static XS(perl_putMsgInArea)
     XSRETURN_PV("Unable to post message");
 }
 
+#ifdef _MSC_VER
+EXTERN_C void perl_str2attr(pTHXo_ CV* cv)
+#else
 static XS(perl_str2attr)
+#endif
 {
   dXSARGS;
   char *attr;
@@ -155,8 +200,11 @@ static XS(perl_str2attr)
   attr = (char *)SvPV(ST(0), n_a); if (n_a == 0) attr = "";
   XSRETURN_IV(str2attr(attr));
 }
-
+#ifdef _MSC_VER
+EXTERN_C void perl_myaddr(pTHXo_ CV* cv)
+#else
 static XS(perl_myaddr)
+#endif
 {
   int naddr;
   dXSARGS;
@@ -172,8 +220,11 @@ static XS(perl_myaddr)
   }
   XSRETURN(naddr);
 }
-
+#ifdef _MSC_VER
+EXTERN_C void perl_nodelistDir(pTHXo_ CV* cv)
+#else
 static XS(perl_nodelistDir)
+#endif
 {
   dXSARGS;
   if (items != 0)
@@ -186,7 +237,11 @@ static XS(perl_nodelistDir)
 
 unsigned long memcrc32(char *str, int size, unsigned long initcrc);
 
+#ifdef _MSC_VER
+EXTERN_C void perl_crc32(pTHXo_ CV* cv)
+#else
 static XS(perl_crc32)
+#endif
 {
   dXSARGS;
   STRLEN n_a;
@@ -199,6 +254,9 @@ static XS(perl_crc32)
   XSRETURN_IV(memcrc32(str, n_a, 0xFFFFFFFFul));
 }
 
+#ifdef _MSC_VER
+EXTERN_C void boot_DynaLoader (pTHXo_ CV* cv);
+#else
 void boot_DynaLoader(CV *cv);
 void boot_DB_File(CV *cv);
 void boot_Fcntl(CV *cv);
@@ -208,8 +266,13 @@ void boot_IO(CV *cv);
 void boot_OS2__Process(CV *cv);
 void boot_OS2__ExtAttr(CV *cv);
 void boot_OS2__REXX(CV *cv);
+#endif
 
+#ifdef _MSC_VER
+EXTERN_C void xs_init (pTHXo)
+#else
 static void xs_init(void)
+#endif
 {
   static char *file = __FILE__;
 #if defined(OS2)
@@ -270,6 +333,7 @@ static void perlthread(ULONG arg)
 
 static int handleperlerr(int *saveerr)
 {
+#ifndef _MSC_VER
    int perlpipe[2], pid;
 
 #if defined(UNIX)
@@ -320,10 +384,12 @@ perl_fork:
    pid=0;
 #endif
    return pid;
+#endif 
 }
 
 static void restoreperlerr(int saveerr, int pid)
 {
+#ifndef _MSC_VER
    dup2(saveerr, fileno(stderr));
    close(saveerr);
    if (pid == 0)
@@ -333,6 +399,7 @@ static void restoreperlerr(int saveerr, int pid)
 #elif defined(OS2)
    DosWaitThread((PTID)&pid, DCWW_WAIT);
 #endif
+#endif /* _MSC_VER */
 }
 
 static int PerlStart(void)

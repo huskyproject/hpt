@@ -1,0 +1,30 @@
+# Microsoft Visual C++ Makefile
+#
+
+DEBUG=0
+CC=cl
+EXENAMEFLAG=-Fe
+SRC_DIR=..\src\
+
+CFLAGS=-nologo -Zp1 -O1 -I..\.. -I..\h -I"D:\Perl\lib\CORE" -c -O1 -MD -DNDEBUG
+LFLAGS=
+CDEFS =  -DDO_PERL -D__NT__ -DNT -DWINNT -D_CONSOLE -DUSE_STAT_MACROS -DNDEBUG -DWIN32 -D_CONSOLE -DNO_STRICT -DHAVE_DES_FCRYPT -DPERL_IMPLICIT_CONTEXT -DPERL_IMPLICIT_SYS -DPERL_MSVCRT_READFIX
+
+OBJ=.obj
+EXE=.exe
+RMÏl
+PERLOBJ = perlwin32.obj
+LIBS=..\..\fidoconf\fconfmvc.lib ..\..\smapi\smapimvc.lib USER32.LIB d:\perl\lib\core\perl56.lib
+
+default: all
+
+{$(SRC_DIR)}.c$(OBJ):
+	$(CC) $(CFLAGS) $(CDEFS) $<
+
+!include makefile.inc
+
+all: commonprogs
+
+clean: commonclean
+
+distclean: commondistclean

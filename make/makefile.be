@@ -19,9 +19,9 @@ SRC_DIR=../src/
 LIBS   =../../fidoconf/libfidoconfigbe.a ../../smapi/libsmapibe.a
 
 default: all
-
 %$(OBJ): $(SRC_DIR)%.c
-    $(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+
     
 include makefile.inc
 
