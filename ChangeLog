@@ -1,3 +1,14 @@
+2001-06-11 Monday 20:36  ml
+
+	* doc/hpt.texi (1.29), src/toss.c (1.351): carbonexcludefwdfrom
+	support
+
+2001-06-11 Monday 13:08  ml
+
+	* doc/hpt.texi (1.28), src/areafix.c (1.213), src/toss.c (1.350):
+	now it is possoble to make spaces before and after searching
+	strings in carboncopy
+
 2001-06-10 Sunday 06:42  ml
 
 	* src/areafix.c (1.212): fixed two bugs in autopause
