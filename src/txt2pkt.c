@@ -241,20 +241,22 @@ int main(int argc, char *argv[])
       nfree(textBuffer);
       nfree(versionStr);
 
-/*
-      if (config->outtab != NULL) {
-         // load recoding tables
-         getctab(outtab, config->outtab);
-         // recoding text to TransportCharSet
-         recodeToTransportCharset(msg.text);
-         recodeToTransportCharset(msg.subjectLine);
-         recodeToTransportCharset(msg.fromUserName);
-         recodeToTransportCharset(msg.toUserName);
-      }
-*/
       if (msg.fromUserName==NULL) xstrcat(&msg.fromUserName, "Sysop");
       if (msg.toUserName==NULL)  xstrcat(&msg.toUserName, "All");
       if (msg.subjectLine==NULL) xstrcat(&msg.subjectLine, "(none)");
+
+      // load recoding tables
+      initCharsets();
+      if (config->outtab) getctab(outtab, (unsigned char*) config->outtab);
+      if (config->intab) getctab(intab, (unsigned char*) config->intab);
+
+      if (config->outtab != NULL) {
+         // recoding text to TransportCharSet
+         recodeToTransportCharset((CHAR*)msg.text);
+         recodeToTransportCharset((CHAR*)msg.subjectLine);
+         recodeToTransportCharset((CHAR*)msg.fromUserName);
+         recodeToTransportCharset((CHAR*)msg.toUserName);
+      }
 
       writeMsgToPkt(pkt, msg);
 
@@ -263,6 +265,9 @@ int main(int argc, char *argv[])
    } else {
       printf("Could not create pkt");
    } /* endif */
+
+   doneCharsets();
+   disposeConfig(config);
 
    return 0;
 }
