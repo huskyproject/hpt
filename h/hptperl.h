@@ -7,6 +7,7 @@
 #define PERLEXIT	"hpt_exit"
 #define PERLROUTE	"route"
 #define PERLSCAN	"scan"
+
 int perlscanmsg(char *area, s_message *msg);
 s_route *perlroute(s_message *msg, s_route *route);
 int perlfilter(s_message *msg, s_addr pktOrigAddr, int secure);
