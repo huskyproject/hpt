@@ -146,44 +146,6 @@ void processConfig()
    }
 }
 
-void tossTempOutbound(char *directory)
-{
-   DIR            *dir;
-   FILE           *pkt;
-   struct dirent  *file;
-   char           *dummy;
-   s_pktHeader    *header;
-   s_link         *link;
-
-   if (directory==NULL) return;
-
-   dir = opendir(directory);
-
-   while ((file = readdir(dir)) != NULL) {
-           if ((patmat(file->d_name, "*.pkt") == 1) || (patmat(file->d_name, "*.PKT") == 1)) {
-                   dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
-                   strcpy(dummy, directory);
-                   strcat(dummy, file->d_name);
-
-                   pkt = fopen(dummy, "rb");
-
-                   header = openPkt(pkt);
-                   link = getLinkFromAddr (*config, header->destAddr);
-                   createTempPktFileName(link);
-
-                   free(link->pktFile);
-                   link->pktFile = dummy;
-
-                   writeLogEntry(log, '7', "found non packed mail in tempOutbound");
-                   fclose(pkt);
-                   arcmail();
-           }
-   }
-
-   closedir(dir);
-   return;
-}
-
 int main(int argc, char **argv)
 {
    struct _minf m;

@@ -1,6 +1,14 @@
 hpt 0.26
 --------
-
+Sat Feb 20 20:48:03 MET 1999
+  Tobias Ernst:
++ Added support for QQQ files. If found in the tempOutbound, they will be
+  packed into the outgoing arcmail bundle. This is useful if you use
+  CFRoute: You can point CFRoutes tempOutbound to the fidoconfig tempOut,
+  in order to pack netmail into arcmail bundles.	
++ Added support for packet forwarding. See the fidoconfig manual for
+  information.	 
+	
 Fri Feb 19 16:47:14 MET 1999
   Tobias Ernst:
 - Added a log file entry for the case that a PKT file in the secure inbound

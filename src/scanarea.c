@@ -160,7 +160,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
    //translating name of the area to uppercase
    while (msg.text[j] != '\r') {msg.text[j]=toupper(msg.text[j]);j++;}
 
-   // scan msg to donwlinks
+   // scan msg to downlinks
 
    for (i = 0; i<echo->downlinkCount; i++) {
 	  if (echo->downlinks[i]->pktFile == NULL) {

@@ -958,6 +958,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 
 	  fclose(pkt); pkt = NULL;
 	  rc = forwardPkt(fileName, header, sec);
+
       }
 	      
       free(header);
@@ -1191,10 +1192,12 @@ void arcmail() {
         return;
 }
 
+static int forwardedPkts = 0;
+
 int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 {
     int i;
-    char logmsg[256], cmd[256], *pkt, *lastPathDelim, saveChar;
+    char logmsg[512];
     int cmdexit;
     s_link *link;
     char *newfn;
@@ -1220,40 +1223,117 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 	    
             /* as we have feature freeze currently, */
 	    /* I enclose the following code with an ifdef ... */
-#ifdef PACKET_FORWARDING
-	    
-	    if (link->hisAka.zone != config->addr[0].zone) {
-		sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
-		zoneOutbound = malloc(strlen(config->outbound)-1+strlen(zoneSuffix)+1);
-		strcpy(zoneOutbound, config->outbound);
-		strcpy(zoneOutbound+strlen(zoneOutbound)-1, zoneSuffix);
-	    } else
-		zoneOutbound = strdup(config->outbound);
 
-	    newfn = makeUniqueDosFileName(zoneOutbound, "pkt", config);
-	    free(zoneOutbound);
+	    newfn = makeUniqueDosFileName(config->tempOutbound, "pkt", config);
 
+	    if (move_file(fileName, newfn) == 0) {  /* move successful ! */
+		    
+		sprintf(logmsg,"Forwarding %s to %s as %s",
+		        fileName, config->links[i].name, newfn + strlen(config->tempOutbound));
+		writeLogEntry(log, '7', logmsg);
 
-	    if (rename(fileName, newfn) == 0) {  /* move successful ! */
-
-		addAnotherPktFile(link, newfn);
+		free(newfn);
+		forwardedPkts = 1;
 		return 0;
 	    }
 	    else
 	    {
-		sprintf (logmsg, "Failure moving %s to %s.", fileName, newfn);
+		sprintf (logmsg, "Failure moving %s to %s (%s)", fileName,
+			 newfn, strerror(errno));
 		writeLogEntry (log, '9', logmsg);
 		free(newfn);
 		return 4;
 	    }
 
-#endif /* PACKET_FORWARDING */
-		  
 	}
     }
     
     return 4;       /* PKT is not for us and we did not find a link to
 		       forward the pkt file to */
+}
+
+
+/* According to the specs, a .QQQ file does not have two leading
+   zeros. This routine checks if the file is a .QQQ file, and if so,
+   it appends the zeros and renames the file to .PKT. */
+   
+
+void fix_qqq(char *filename)
+{
+	FILE *f;
+	char buffer[2] = { '\0', '\0' };
+	size_t l = strlen(filename);
+	char *newname;
+
+	if (l > 3 && newname != NULL && toupper(filename[l-1]) == 'Q' &&
+	    toupper(filename[l-2]) == 'Q' && toupper(filename[l-3]) == 'Q')
+	{
+		newname = strdup(filename);
+
+	        strcpy(newname + l - 3, "pkt");
+                if (rename(newname, filename) == 0)
+		{
+			strcpy(filename, newname);
+
+			if ((f = fopen(filename, "ab")) != NULL)
+			{
+				fwrite(buffer, 2, 1, f);
+				fclose(f);
+			}
+		}
+		free(newname);
+	}
+}
+
+
+void tossTempOutbound(char *directory)
+{
+   DIR            *dir;
+   FILE           *pkt;
+   struct dirent  *file;
+   char           *dummy;
+   s_pktHeader    *header;
+   s_link         *link;
+   size_t         l;
+
+   if (directory==NULL) return;
+
+   dir = opendir(directory);
+
+   while ((file = readdir(dir)) != NULL) {
+	   l = strlen(file->d_name);
+	   if (l > 3 && (stricmp(file->d_name + l - 3, "pkt") == 0 ||
+	                 stricmp(file->d_name + l - 3, "qqq") == 0))
+	   {
+                   dummy = (char *) malloc(strlen(directory)+l+1);
+                   strcpy(dummy, directory);
+                   strcat(dummy, file->d_name);
+
+		   fix_qqq(dummy);
+
+                   pkt = fopen(dummy, "rb");
+
+                   header = openPkt(pkt);
+                   link = getLinkFromAddr (*config, header->destAddr);
+
+		   if (link != NULL) {
+
+			   createTempPktFileName(link);
+
+			   free(link->pktFile);
+			   link->pktFile = dummy;
+
+			   fclose(pkt);
+			   arcmail();
+		   } else {
+			   writeLogEntry(log, '9', "found non packed mail without matching link in tempOutbound");
+			   fclose(pkt);
+		   }
+           }
+   }
+
+   closedir(dir);
+   return;
 }
 
 
@@ -1266,7 +1346,8 @@ void toss()
    createTempPktFileName(&config->links[1]);
    printf("%s %s\n", config->links[0].pktFile, config->links[1].pktFile);
    printf("%s %s\n", config->links[0].packFile, config->links[1].packFile);
-   exit(0);*/
+   exit(0);
+*/
 
    // load recoding tables if needed
    if (config->intab != NULL) getctab(intab, config->intab);
@@ -1277,9 +1358,8 @@ void toss()
    writeLogEntry(log, '4', "Start tossing...");
    processDir(config->localInbound, secLocalInbound);
    processDir(config->protInbound, secProtInbound);
-   arcmail();
-   // only import Netmails from inboundDir
    processDir(config->inbound, secInbound);
+   arcmail();
 
    // write dupeFiles
 
@@ -1299,6 +1379,11 @@ void toss()
 
          fclose(f);
       } else writeLogEntry(log, '5', "Could not open importlogfile");
+   }
+
+   if (forwardedPkts) {
+	   tossTempOutbound(config->tempOutbound);
+	   forwardedPkts = 0;
    }
 
    // write statToss to Log
