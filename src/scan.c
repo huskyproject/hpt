@@ -290,18 +290,48 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 void processAttachs(s_link *link, s_message *msg, unsigned int attr)
 {
    FILE *flo = NULL;
+   char **outbounds[4];
    char *p = NULL, *running = NULL, *token = NULL, *flags = NULL;
-   char *newSubjectLine = NULL;
+   int i, def;
+   char *path = NULL;
+
+   //init outbounds
+   outbounds[0] = &tossDir;
+   outbounds[1] = &config->protInbound;
+   outbounds[2] = &config->inbound;
+   outbounds[3] = NULL;
 
    flo = fopen(link->floFile, "a");
 
-   running = msg->subjectLine;
-   token = strseparate(&running, " \t");
+   xstrcat(&running, msg->subjectLine);
+   token = strseparate(&running, ", \t");
 
    while (token != NULL) {
+// val: try to find file in inbounds
+      if (!strchr(token, PATH_DELIM)) {
+            def = -1; path = NULL;
+	    for (i=0; i<4; i++) {
+		    if (path != NULL) nfree(path);
+		    if (outbounds[i] && *outbounds[i]) {
+                    if (def < 0) def = i;
+                    xscatprintf(&path, "%s%s", *outbounds[i], token);
+		    if (fexist(path)) break;
+#if defined(__linux__) || defined(UNIX)
+                    strLower(path + strlen(*outbounds[i]));
+		    if (fexist(path)) break;
+#endif
+                }
+	    }
+            if (path == NULL)
+                if (def <= 0) continue; // file not found; no outbounds
+                else xscatprintf(&path, "%s%s", *outbounds[def], token);
+            token = path;
+      }
+      else {
 #if defined(UNIX) || defined(__linux__)
 	   if (!fexist(token)) strLower(token);
 #endif
+      }
       if (flo != NULL) {
 		  if (msg->text) flags =
              (char *) GetCtrlToken((byte *)msg->text,(byte *)"FLAGS");
@@ -314,19 +344,12 @@ void processAttachs(s_link *link, s_message *msg, unsigned int attr)
 			  fprintf(flo, "%s\n", token);
 		  nfree(flags);
       }
-	  if (newSubjectLine!=NULL) xstrcat(&newSubjectLine, " ");
-      if (NULL != (p=strrchr(token, PATH_DELIM))) xstrcat(&newSubjectLine, p+1);
-	  else xstrcat(&newSubjectLine, token);
-      token = strseparate(&running, " \t");
+      token = strseparate(&running, ", \t");
    }
 
    if (flo!= NULL) {
       fclose(flo);
    } else w_log(LL_ERR, "Could not open FloFile");
-
-   // replace subjectLine
-   nfree(msg->subjectLine);
-   msg->subjectLine = newSubjectLine;
 }
 
 void processRequests(s_link *link, s_message *msg)
