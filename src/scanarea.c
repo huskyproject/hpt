@@ -274,6 +274,7 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
    s_seenBy     *seenBys = NULL, *path = NULL;
    UINT         seenByCount = 0, pathCount = 0;
    s_arealink   **links;
+   char         *tempbefore, *addrstr, *tempafter;
 
    links = (s_arealink **) scalloc(2, sizeof(s_arealink*));
    if (links==NULL) exit_hpt("out of memory",1);
@@ -290,16 +291,27 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
        return 0;
    }
 
+   /* d_sergienko: Following FSC-0057 ... */
+   tempbefore = (char *) scalloc(j+1, 1);
+   tempbefore = (char *)strncpy(tempbefore, msg.text, j);
+   tempafter = (char *)sstrdup(msg.text+j+1);
+   memset(msg.text, 0, strlen(msg.text)+1);
+   xscatprintf((char **) &msg.text, "%s\r\001RESCANNED: %s\r%s", tempbefore,
+            (addrstr=aka2str5d(*arealink->link->ourAka)), tempafter);
+   nfree(tempbefore);
+   nfree(tempafter);
+   nfree(addrstr);
+
    createSeenByArrayFromMsg(echo, &msg, &seenBys, &seenByCount);
    createPathArrayFromMsg(&msg, &path, &pathCount);
 
    forwardToLinks(&msg, echo, links, &seenBys, &seenByCount, &path, &pathCount);
-
+/*
    // mark msg as sent and scanned
    xmsg.attr |= MSGSENT;
    xmsg.attr |= MSGSCANNED;
    MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
-
+*/
    freeMsgBuffers(&msg);
    nfree(links);
    nfree(seenBys);
