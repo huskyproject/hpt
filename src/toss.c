@@ -977,6 +977,20 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    
    nfree(myaddr);
    nfree(hisaddr);
+
+   // create flag
+   if (config->aacFlag) {
+	   if (NULL == (f = fopen(config->aacFlag,"a")))
+		   writeLogEntry(hpt_log, '9',
+						 "Could not open autoAreaCreate flag: %s",
+						 config->aacFlag);
+	   else {
+		   writeLogEntry(hpt_log, '0',
+						 "Created autoAreaCreate flag: %s",
+						 config->aacFlag);
+		   fclose(f);
+	   }
+   }
    
    return 0;
 }
@@ -1573,6 +1587,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
          writeLogEntry(hpt_log, '7', "Wrote Netmail: %u:%u/%u.%u -> %u:%u/%u.%u", msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
                          msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
          statToss.netMail++;
+
       } else {
 		  writeLogEntry(hpt_log, '9', "Could not write message to NetmailArea %s", area -> areaName);
       } /* endif */
@@ -2109,7 +2124,6 @@ void writeStatLog(void) {
 void writeTossStatsToLog(void) {
    int i;
    float inMailsec, outMailsec, inKBsec;
-//   time_t diff = time(NULL) - statToss.startTossing;
    time_t diff = statToss.realTime;
    char logchar;
 
@@ -2131,7 +2145,7 @@ void writeTossStatsToLog(void) {
 		   statToss.pkts, statToss.dupes, statToss.passthrough, statToss.exported);
    writeLogEntry(hpt_log, logchar, "    msgs: % 5d       bad: % 4d      saved: % 5d      empty: % 5d",
 		   statToss.msgs, statToss.bad, statToss.saved, statToss.empty);
-   writeLogEntry(hpt_log, logchar, "   Input: % 8.2f mails/sec   Output: % 8.2f mails/sec", inMailsec, outMailsec);
+   writeLogEntry(hpt_log, logchar, "   Input: % 8.2f mails/sec        Output: % 8.2f mails/sec", inMailsec, outMailsec);
    writeLogEntry(hpt_log, logchar, "          % 8.2f kb/sec", inKBsec);
 
    /* write personal mail statistic logfile */
@@ -2531,6 +2545,15 @@ void toss()
    // write statToss to Log
    writeTossStatsToLog();
    tossTempOutbound(config->tempOutbound);
+
+   // create flag for netmail trackers
+   if (config->netmailFlag) {
+	   if (NULL == (f = fopen(config->netmailFlag,"a"))) writeLogEntry(hpt_log, '9', "Could not create netmail flag: %s", config->netmailFlag);
+	   else {
+		   writeLogEntry(hpt_log, '0', "Created netmail flag: %s", config->netmailFlag);
+		   fclose(f);
+	   }
+   }
 }
 
 int packBadArea(HMSG hmsg, XMSG xmsg, char force)
@@ -2544,6 +2567,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
    
    makeMsg(hmsg, xmsg, &msg, &(config->badArea), 2);
    memset(&pktOrigAddr,'\0',sizeof(s_addr));
+   statToss.msgs++; // really processed one more msg
    
    // deleting valet string - "FROM:" and "REASON:"
    ptmp = msg.text;
@@ -2611,6 +2635,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
 		   echo->imported++;  // area has got new messages
 		   if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
 			   rc = putMsgInArea(echo, &msg,1, 0);
+			   statToss.saved += rc;
 		   } else {
 		       statToss.passthrough++;
 		       rc = 1; // passthrough always work
@@ -2662,7 +2687,6 @@ void tossFromBadArea(char force)
    if (area != NULL) {
 	   writeLogEntry(hpt_log, '1', "Scanning area: %s", config->badArea.areaName);
 	   highestMsg = MsgGetHighMsg(area);
-//	   writeLogEntry(hpt_log, '1', "hiest msg: %i", highestMsg );
 
 	   if (config->badArea.msgbType==MSGTYPE_SDM) {
 	
@@ -2695,6 +2719,11 @@ void tossFromBadArea(char force)
 	   MsgCloseArea(area);
 	   
 	   writeDupeFiles();
+
+	   writeLogEntry(hpt_log, '1', "Statistics");
+	   writeLogEntry(hpt_log, '1', "    scanned: % 5d   saved: % 7d   CC: % 2d", statToss.msgs, statToss.saved, statToss.CC);
+	   writeLogEntry(hpt_log, '1', "    exported: % 4d   passthru: % 4d", statToss.exported, statToss.passthrough);
+
 	   tossTempOutbound(config->tempOutbound);
 	   
    } else writeLogEntry(hpt_log, '9', "Could not open %s", config->badArea.fileName);

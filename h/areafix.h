@@ -22,8 +22,8 @@
 #define ERROR   255
 
 char *print_ch(int len, char ch);
-int processAreaFix(s_message *msg, s_pktHeader *pktHeader);
-void afix(void);
+int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd);
+void afix(s_addr addr, char *cmd);
 void autoPassive(void);
 s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char *toName, char *subject, int netmail);
 int areaIsAvailable(char *areaName, char *fileName, char **desc, int retd);

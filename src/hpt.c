@@ -122,7 +122,7 @@ void start_help(void) {
   fprintf(stdout,"   hpt post [options] file - posting a mail (for details run \"hpt post -h\")\n");
   fprintf(stdout,"   hpt pack    - packing netmail\n");
   fprintf(stdout,"   hpt link [areaname] - links messages\n");
-  fprintf(stdout,"   hpt afix    - process areafix\n");
+  fprintf(stdout,"   hpt afix [<addr> command] - process areafix\n");
   fprintf(stdout,"   hpt relink <addr> - refresh area subsription\n");
   fprintf(stdout,"   hpt pause - set pause for links who don't poll our system\n");
   fprintf(stdout,"   hpt -q [options] - quiet mode (no screen output)\n");
@@ -164,8 +164,16 @@ int processCommandLine(int argc, char **argv)
 		  cmLink = 1;
 		  continue;
       } else if (stricmp(argv[i], "afix") == 0) {
-         cmAfix = 1;
-         continue;
+		  if (i < argc-1) {
+			  i++;
+			  string2addr(argv[i], &afixAddr);
+			  if (i < argc-1) {
+				  i++;
+				  xstrcat(&afixCmd,argv[i]);
+			  } else printf("parameter missing after \"%s\"!\n", argv[i]);
+		  }
+		  cmAfix = 1;
+		  continue;
       } else if (stricmp(argv[i], "post") == 0) {
          ++i; post(argc, &i, argv);
       } else if (stricmp(argv[i], "relink") == 0) {
@@ -399,8 +407,10 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    if (cmScan == 1) scanExport(SCN_ALL  | SCN_ECHOMAIL, NULL);
    if (cmScan &  2) scanExport(SCN_FILE | SCN_ECHOMAIL, scanParmF);
    if ((cmScan &  4) && scanParmA) scanExport(SCN_NAME | SCN_ECHOMAIL, scanParmA);
-   if (cmAfix == 1) afix();
-    
+
+   if (cmAfix == 1) afix(afixAddr, afixCmd);
+   nfree(afixCmd);
+
    if (cmPack == 1) scanExport(SCN_ALL  | SCN_NETMAIL, NULL);
    if (cmPack &  2) scanExport(SCN_FILE | SCN_NETMAIL, scanParmF);
    if (cmPack &  4) scanExport(SCN_NAME | SCN_NETMAIL, scanParmA);

@@ -63,4 +63,7 @@ extern int       noHighWaters;
 extern int       count; // pkt counter
 extern int	 quiet;
 
+extern s_addr afixAddr;
+extern char *afixCmd;
+
 #endif

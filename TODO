@@ -3,10 +3,8 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- write statistics when tossing from badArea
-- create flag when unpacking netmail
-- AutoCreateSemaphore
-- areafix from cmd line (like hpt afix <addr> %command)
+- areafixEchoAreasLimit
+- amiga style outbound
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

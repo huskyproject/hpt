@@ -2,6 +2,14 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Jan 28 16:43:58 NOVT 2001
+max:
+* write statistics when tossing from badArea
+* create flag when unpacking netmail
+* create flag when autocreating new areas
+* areafix from cmd line (like hpt afix [<addr> command])
+
+----- cvs ci ------
 Sat Jan 27 15:22:41 NOVT 2001
 max:
 * forwardRequestMask

@@ -1661,7 +1661,7 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
+int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 {
 	int i, security=1, notforme = 0;
 	s_link *link = NULL;
@@ -1701,7 +1701,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	}
 	
 	// 2nd security check. link, areafixing & password.
-	if (!security) {
+	if (!security && !force_pwd) {
 		if (link->AreaFix==1) {
 			if (link->areaFixPwd!=NULL) {
 				if (stricmp(link->areaFixPwd,msg->subjectLine)==0) security=0;
@@ -1862,14 +1862,14 @@ void MsgToStruct(HMSG SQmsg, XMSG xmsg, s_message *msg)
 
 }
 
-void afix(void)
+void afix(s_addr addr, char *cmd)
 {
     HAREA           netmail;
     HMSG            SQmsg;
     unsigned long   highmsg, i, j;
     XMSG            xmsg;
     s_addr          dest;
-    s_message	    msg;
+    s_message	    msg, *tmpmsg;
     int             for_us, k;
 	int             startarea = 0, endarea = config->netMailAreaCount;
 	s_area          *area;
@@ -1882,8 +1882,23 @@ void afix(void)
 		endarea = startarea + 1;
 	}
 
-	for (k = startarea; k < endarea; k++) {
-    
+	if (cmd) {
+		
+		for (k=0; k < config->addrCount; k++) {
+			if (config->addr[k].zone==addr.zone &&
+				config->addr[k].net==addr.net) break;
+		} if (k==config->addrCount) k=0;
+
+		tmpmsg = makeMessage(&addr, &(config->addr[k]), "sysop",
+						  "areafix", "password", 1);
+		tmpmsg->text = cmd;
+		processAreaFix(tmpmsg, NULL, 1);
+		tmpmsg->text=NULL;
+		freeMsgBuffers(tmpmsg);
+	}
+
+	else for (k = startarea; k < endarea; k++) {
+		
 		netmail = MsgOpenArea((unsigned char *) config->netMailAreas[k].fileName,
 							  MSGAREA_NORMAL, 
 							  /*config -> netMailArea.fperm, 
@@ -1917,7 +1932,7 @@ void afix(void)
 					 (stricmp((char*)xmsg.to, "hpt")==0) ) ) {
 					memset(&msg,'\0',sizeof(s_message));
 					MsgToStruct(SQmsg, xmsg, &msg);
-					processAreaFix(&msg, NULL);
+					processAreaFix(&msg, NULL, 0);
 					if (config->areafixKillRequests) {
 						MsgCloseMsg(SQmsg);
 						MsgKillMsg(netmail, i);
@@ -1930,14 +1945,13 @@ void afix(void)
 				}
 				else MsgCloseMsg(SQmsg);
 
-			} /* endfor */
+			}
 
-//	writeMsgToSysop(msgToSysop);
 			MsgCloseArea(netmail);
 		} else {
 			writeLogEntry(hpt_log, '9', "Could not open %s",
 						  config->netMailAreas[k].areaName);
-		} /* endif */
+		}
 	}
 }
 
