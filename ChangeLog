@@ -1,3 +1,23 @@
+2003-02-21 Friday 22:02  stas_degteff
+
+	* src/toss.c (1.492): Use symbolic names for autoCreate() return
+	values; use reason strings from array; Fix memory leak
+
+2003-02-21 Friday 21:59  stas_degteff
+
+	* h/fcommon.h (1.52): Define symbolic names for autoCreate() return
+	values and collect reason strings into array
+
+2003-02-21 Friday 20:57  stas_degteff
+
+	* src/: query.c (1.91), toss.c (1.491): Change badmail reason for
+	messages received after area unsubscribe
+
+2003-02-21 Friday 20:13  stas_degteff
+
+	* src/query.c (1.90): Remove '-option' and also '-nooption' a
+	switch echo to passthrough
+
 2003-02-20 Thursday 12:20  stas_degteff
 
 	* HISTORY (1.20): Add sections	for 1.2-stable & 1.4-stable
