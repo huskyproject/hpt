@@ -212,7 +212,7 @@ void scanEMArea(s_area *echo)
    HAREA area;
    HMSG  hmsg;
    XMSG  xmsg;
-   dword highestMsg, i, num;
+   dword highestMsg, i;
    
    if (echo->scn) return;
    

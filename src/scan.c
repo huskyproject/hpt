@@ -532,7 +532,7 @@ void scanNMArea(s_area *area)
 {
    HAREA           netmail;
    HMSG            msg;
-   dword           highestMsg, i, j, num;
+   dword           highestMsg, i, j;
    XMSG            xmsg;
    s_addr          dest, orig;
    int             for_us, from_us;
