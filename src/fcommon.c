@@ -161,7 +161,7 @@ e_prio cvtFlavour2Prio(e_flavour flavour)
 /* This old code will be removed once the new one proves to be reliable */
 
 int fileNameAlreadyUsed(char *pktName, char *packName) {
-   int i;
+   UINT i;
 
    for (i=0; i < config->linkCount; i++) {
       if ((config->links[i].pktFile != NULL) && (pktName != NULL))
@@ -424,6 +424,10 @@ int createTempPktFileName(s_link *link)
         nfree(link->pktFile);
         link->packFile = pfileName;
         link->pktFile = fileName;
+        w_log(LL_CREAT,"packFile %s and pktFile %s created for [%s]",
+            link->packFile,
+            link->pktFile,
+            aka2str(link->hisAka));
         return 0;
     }
     else {
