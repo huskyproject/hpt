@@ -2547,7 +2547,7 @@ void toss()
    tossTempOutbound(config->tempOutbound);
 
    // create flag for netmail trackers
-   if (config->netmailFlag && statToss.netmail) {
+   if (config->netmailFlag && statToss.netMail) {
 	   if (NULL == (f = fopen(config->netmailFlag,"a"))) writeLogEntry(hpt_log, '9', "Could not create netmail flag: %s", config->netmailFlag);
 	   else {
 		   writeLogEntry(hpt_log, '0', "Created netmail flag: %s", config->netmailFlag);
