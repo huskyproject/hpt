@@ -1741,7 +1741,7 @@ void arcmail(s_link *tolink) {
 	w_log(LL_EXEC, "beforePack: execute string \"%s\"", config->beforePack);
 	if ((cmdexit = system(config->beforePack)) != 0) {
 	    w_log(LL_ERR, "exec failed, code %d", cmdexit);
-	};
+	}
     }
 #ifdef DO_PERL
     perlbeforepack();
@@ -1760,6 +1760,9 @@ void arcmail(s_link *tolink) {
 		if (!link->fileBox) link->fileBox = makeFileBoxName (config,link);
 
 		_createDirectoryTree (link->fileBox);
+		if (link->packFile == NULL)
+		    if (createPackFileName(link))
+			 exit_hpt("Could not create new bundle!",1);
 
 		if (link->packerDef != NULL) {
 
@@ -1805,7 +1808,6 @@ void arcmail(s_link *tolink) {
 
 	    } else if (createOutboundFileName(link,link->echoMailFlavour, FLOFILE) == 0) {
 		/*  process if the link not busy, else do not create 12345678.?lo */
-
 		flo = fopen(link->floFile, "a+");
 
 		if (flo == NULL)
@@ -1826,6 +1828,10 @@ void arcmail(s_link *tolink) {
 			/*if we are creating new arcmail bundle -> put packFile into flo*/
 			fseek(flo, 0L, SEEK_SET);
 			foa = find_old_arcmail(link, flo);
+
+			if (link->packFile == NULL)
+			    if (createPackFileName(link))
+				 exit_hpt("Could not create new bundle!",1);
 
 			fillCmdStatement(cmd, link->packerDef->call,
 					 link->packFile,
@@ -2064,7 +2070,7 @@ void tossTempOutbound(char *directory)
 		if (link != NULL) {
 
 		    if (link->packFile == NULL) {
-			if ( createTempPktFileName(link) )
+			if ( createPackFileName(link) )
 			    exit_hpt("Could not create new bundle!",1);
 		    }
 

@@ -230,32 +230,13 @@ void cleanEmptyBundles(char *pathName, int npos, char *wday)
    nfree(tmpfile);
 }
 
-
 int createTempPktFileName(s_link *link)
 {
     char *fileName=NULL; /*  pkt file in tempOutbound */
-    char *pfileName=NULL; /*  name of the arcmail bundle */
-    char *tmp=NULL; /*  temp name of the arcmail bundle */
-    char *tmp2=NULL;    /* temp string */
     time_t aTime = time(NULL);  /* get actual time */
-    int counter, minFreeExt, npos;
-    char limiter=PATH_DELIM;
-	
-    e_bundleFileNameStyle bundleNameStyle = eTimeStamp;
+    int counter;
 
-    time_t tr;
-    char *wday;
-    struct tm *tp;
-    int i;
-    struct stat stbuf;
-    static char ext3[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-    int numExt = sizeof(ext3)-1;
-
-    tr=time(NULL);
-    tp=localtime(&tr);
     counter = pkt_count;
-
-    wday=wdays[tp->tm_wday];
 
     aTime %= 0xffffff;   /* only last 24 bit count */
 
@@ -282,7 +263,39 @@ int createTempPktFileName(s_link *link)
     }
     pkt_count = counter;
     pkt_aTime = aTime;
-	
+
+    nfree(link->pktFile);
+    link->pktFile = fileName;
+    w_log(LL_CREAT,"pktFile %s created for [%s]",
+          link->pktFile,
+          aka2str(link->hisAka));
+    return 0;
+}
+
+int createPackFileName(s_link *link)
+{
+    char *pfileName=NULL; /*  name of the arcmail bundle */
+    char *tmp=NULL; /*  temp name of the arcmail bundle */
+    char *tmp2=NULL;    /* temp string */
+    int  minFreeExt, npos;
+    char limiter=PATH_DELIM;
+    time_t tr, aTime;
+    char *wday;
+    struct tm *tp;
+    int i;
+    struct stat stbuf;
+    static char ext3[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+    int numExt = sizeof(ext3)-1;
+    int counter;
+    e_bundleFileNameStyle bundleNameStyle = eTimeStamp;
+
+    tr=aTime=time(NULL);
+    tp=localtime(&tr);
+    counter = pkt_count;
+
+    wday=wdays[tp->tm_wday];
+
+
     if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
     else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
 	
@@ -391,12 +404,11 @@ int createTempPktFileName(s_link *link)
 				counter = minFreeExt;
 			} else {
 				w_log(LL_ERR,"Can't use more than %d extensions for bundle names",numExt);
-				nfree(fileName);
 				nfree(pfileName);
 				nfree(tmp);
 				/*  Switch link to TimeStamp style */
 				link->linkBundleNameStyle = eTimeStamp;
-				i = createTempPktFileName(link);
+				i = createPackFileName(link);
 				return i;
 			}
 		}
@@ -427,24 +439,20 @@ int createTempPktFileName(s_link *link)
     }
     nfree(tmp);
 
-    if ((!fexist(fileName)) && (!fexist(pfileName))) {
+    if (!fexist(pfileName)) {
         nfree(link->packFile);
-        nfree(link->pktFile);
         link->packFile = pfileName;
-        link->pktFile = fileName;
-        w_log(LL_CREAT,"packFile %s and pktFile %s created for [%s]",
+        w_log(LL_CREAT,"packFile %s created for [%s]",
             link->packFile,
-            link->pktFile,
             aka2str(link->hisAka));
         return 0;
     }
     else {
-        nfree(fileName);
         nfree(pfileName);
-		w_log(LL_ERR,"can't create arcmail bundles any more!");
+	w_log(LL_ERR,"can't create arcmail bundles any more!");
         return 1;
     }
-}/* createTempPktFileName() */
+}/* createPackFileName() */
 #endif
 
 #if 0

@@ -61,14 +61,23 @@ void addAnotherPktFile(s_link *link, char *filename);
 int   createTempPktFileName(s_link *link);
 /*DOC
   Input:  a pointer to a link structure
-  Output: 0 is returned if a filename and a packedfilename could be created.
+  Output: 0 is returned if a pkt filename could be created.
           1 else
-  FZ:     createTempPktFile tries to compose a new, not used pktfilename.
+  FZ:     createTempPktFileName tries to compose a new, not used pktfilename.
           It takes the least 24bit of the actual time. The last 2 Bytes
           area filled with a counter. So you can get up to 256 different files
           in a second and have the same timestamp only every 291 days.
-          The pktFileName and the packFileName are stored in the link
-          structure
+          The pktFileName is stored in the link structure
+*/
+  
+int   createPackFileName(s_link *link);
+/*DOC
+  Input:  a pointer to a link structure
+  Output: 0 is returned if a packedfilename could be created.
+          1 else
+  FZ:     createPackFileName tries to compose a new, not used packfilename.
+          Name depends of bundleNameStyle.
+          The the packFileName is stored in the link structure
 */
 
 int    createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ);
