@@ -1,3 +1,15 @@
+2003-12-04 Thursday 15:33  mche
+
+	* src/areafix.c (1.430): %list, %linked command extension
+	
+	patch by Andrew Ladutsko 2:450/210
+
+2003-12-04 Thursday 15:16  mche
+
+	* src/toss.c (1.531): feature: notify link about bad post
+	
+	patch by Andrew Ladutsko 2:450/210
+
 2003-12-03 Wednesday 18:23  mche
 
 	* src/areafix.c (1.429), src/toss.c (1.530), HISTORY (1.38),
