@@ -51,8 +51,7 @@
  Q33. А можно как-нибудь получать диффы на e-mail/netmail?
  Q34. Как победить ошибки компиляции под Red Hat и ASP Linux?
  Q35. Компилятор под FreeBSD ругается: warning: mktemp() possibly used unsafely
->Q36. Htick не удаляет из рабочего каталога распакованные из архивов файлы
- Q37. Как связаться с разработчиками?
+>Q36. Как связаться с разработчиками?
 
 /---------------------------------------------------------------------/
 
@@ -1002,13 +1001,14 @@ A: (SD)
    2. Найти разработчика нужного модуля на страничке HUSKY TEAM:
       http://husky.sf.net/team.html
    3. Вот нынешние участники проекта c http://sourceforge.net/projects/husky/
-      (данные на конец октября 2002):
+      (данные на ноябрь 2002):
 
 Andy U. Luk'yanov  Packager            andr_lukyanov at users.sourceforge.net
 Andrew Sagulin     Developer           andrews42 at users.sourceforge.net
 Dmitry Sergienko   Project Manager     d_sergienko at users.sourceforge.net
 Georgi Fofanov     Developer           georgi at users.sourceforge.net
 Gerrit Kьhn        Developer           gerritkuehn at users.sourceforge.net
+Igor Zakharoff     Doc Translator      i_zkh at users.sourceforge.net
 Michael Haase      Developer           it-dienste at users.sourceforge.net
 Joerg Stadelhoff   Developer           joergstadelhoff at users.sourceforge.net
 Max Levenkov       Developer           max_levenkov at users.sourceforge.net
@@ -1020,9 +1020,12 @@ Tobias Ernst       Project Manager     os2tobi at users.sourceforge.net
 Pavel Gulchouck    Project Manager     pgul at users.sourceforge.net
 Volker Quetschke   Developer           quetschke at users.sourceforge.net
 Sascha Silbe                           sascha_silbe at users.sourceforge.net
-Pavel Andreew      Packager (.rpm, .deb etc) sfpavel at users.sourceforge.net
-Shilov Vladimir    Packager (.rpm, .deb etc) shivn at users.sourceforge.net
+Pavel Andreew      Packager            sfpavel at users.sourceforge.net
+Shilov Vladimir    Packager            shivn at users.sourceforge.net
 Stas Degteff       Developer           stas_degteff at users.sourceforge.net
+Tema Zelikin       Doc Translator      tema31 at users.sourceforge.net
+
+Чтобы получить email-адрес, " at " нужно заменить на "@".
 
 
 /--------------------------------------------------------------------------/
