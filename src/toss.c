@@ -895,8 +895,14 @@ int processPkt(char *fileName, e_tossSecurity sec)
             }
          }
 
-      } else rc = 4;
+      } else {
+	
+	  /* PKT is not for us - try to forward it to our links */
 
+	  fclose(pkt); pkt = NULL;
+	  rc = forwardPkt(fileName, header);
+      }
+	      
       free(header);
 
    } else {
@@ -905,7 +911,9 @@ int processPkt(char *fileName, e_tossSecurity sec)
       rc = 3;
    }
 
-   fclose(pkt);
+   if (pkt != NULL) {
+       fclose(pkt);
+   }
    return rc;
 }
 
@@ -928,6 +936,7 @@ void fillCmdStatement(char *cmd, const char *call, const char *archiv, const cha
    strcat(cmd, tmp);
 }
 
+int forwardPkt(const char *fileName, s_pktHeader *header);
 void processDir(char *directory, e_tossSecurity sec);
 
 int  processArc(char *fileName, e_tossSecurity sec)
@@ -1033,6 +1042,7 @@ void processDir(char *directory, e_tossSecurity sec)
                break;
             case 4:  // not to us
                changeFileSuffix(dummy, "ntu");
+	       break;
             default:
                remove (dummy);
                break;
@@ -1123,6 +1133,26 @@ void arcmail() {
         }
         return;
 }
+
+int forwardPkt(const char *fileName, s_pktHeader *header)
+{
+        int i;
+        char logmsg[256], cmd[256], *pkt, *lastPathDelim, saveChar;
+        int cmdexit;
+        FILE *flo;
+
+        for (i = 0 ; i < config->linkCount; i++) {
+		if (addrComp(header->destAddr, config->links[i].hisAka) == 0) {
+			/* we found a link to forward the pkt file to */
+
+			/* not yet implemented */
+		}
+	}
+
+        return 4;       /* PKT is not for us and we did not find a link to
+			   forward the pkt file to */
+}
+
 
 void toss()
 {
