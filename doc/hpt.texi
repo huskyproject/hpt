@@ -2257,6 +2257,7 @@ This statement can only be repeated for different links.
 * BadArea::                     definition of badarea
 * DupeArea::                    definition of dupearea
 * EchoArea::                    definition of echoarea
+* EchoAreaDefaults::            defaults for echoarea
 * LocalArea::                   definition of localarea
 * NetArea::                     same as netmailarea
 * NetMailArea::                 definition of netmailarea
@@ -2296,7 +2297,7 @@ Like all areas DupeArea is *.msg base per default.
 
 This statement cannot be repeated.
 
-@node EchoArea, LocalArea, DupeArea, Area Definition
+@node EchoArea, EchoAreaDefaults, DupeArea, Area Definition
 @subsection EchoArea
 @findex EchoArea
 @table @asis
@@ -2400,7 +2401,67 @@ you may also set: "<aka> -r -mn" or "<aka> -w -r" and so on...
 
 This statement can be repeated.
 
-@node LocalArea, NetArea, EchoArea, Area Definition
+@node EchoAreaDefaults, LocalArea, EchoArea, Area Definition
+@subsection EchoAreaDefaults
+@findex EchoAreaDefaults
+@table @asis
+@item Syntax:
+@code{EchoAreaDefaults [-b <msgbase>] [Options]}
+@item Example:
+@code{EchoAreaDefaults -b Squish -a 2:280/1507 -g F -dupeCheck move -dupehistory 11 -p 14 2:280/1126}
+@end table
+
+With this keyword you can specify settings that will be set for the
+@code{EchoArea} and @code{LocalArea} definitions that follow. It makes
+the echoarea definitions shorter. All echoarea settings can be used
+@strong{except} the areaname and path.
+
+When you specify a different value in an echoarea definition, it
+overrules the default setting.
+
+With the default from the example above, an echoarea definition could be:
+
+@example
+EchoArea fidosoft.husky /var/spool/fido/msgb/fidosoft.husky -d "husky
+develpment" 2:280/6207
+
+This will internally be expanded to:
+
+EchoArea fidosoft.husky /var/spool/fido/msgb/fidosoft.husky -d "husky
+develpment" -b Squish -a 2:280/1507 -g F -dupeCheck move -dupehistory 11
+-p 14 2:280/1126 2:280/6207
+@end example
+
+Another example:
+
+@example
+EchoArea evolution /var/spool/fido/msgb/evolution -d "about fantasies" -p 100
+
+that will be expanded to:
+
+EchoArea evolution /var/spool/fido/msgb/evolution -d "about fantasies"
+-b Squish -a 2:280/1507 -g F -dupeCheck move -dupehistory 11 -p 100
+2:280/1126
+@end example
+
+As you will notice, the default settings are combined with the
+additional settings in the EchoArea definition, and the messages are
+purged after 100 days instead of 14 (the default).
+
+This statement can be repeated.
+
+An @code{EchoAreaDefults} setting is valid until a next
+@code{EchoAreaDefaults} setting of until a @code{NetmailArea}
+definition. @code{EchoAreaDefaults} can also be switched off with an
+empty definition:
+
+@example
+EchoAreaDefaults [OFF]
+@end example
+
+The word 'OFF' is not needed but makes it more readable.
+
+@node LocalArea, NetArea, EchoAreaDefaults, Area Definition
 @subsection LocalArea
 @findex LocalArea
 @table @asis
