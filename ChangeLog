@@ -1,4 +1,18 @@
 ----- cvs ci ------
+Sa  16 Sep 2000 23:21:24 CEST
+tobi (patch from max from current)
+* %rescan bug with wildcards & number of msgs to process
+* check that outbound and tempoutbound are different
+* fixed autocreate with -dosfile at the end of AutoAreaCreateDefaults
+* set Pause if files stored only in outbound
+* don't run if outbound not defined
+
+----- cvs ci ------
+Wed Sep 13 16:30:05 NOVST 2000
+max:
+* don't add NOECHO msg if %rescan from SDM area
+
+----- cvs ci ------
 Mon Sep 11 10:56:46 NOVST 2000
 max:
 * hptlink.c & link.c from development branch (linking jam areas & 

@@ -222,6 +222,7 @@ void processConfig()
 
    if (config->addrCount == 0) exit_hpt("at least one addr must be defined",1);
    if (config->linkCount == 0) exit_hpt("at least one link must be specified",1);
+   if (config->outbound == NULL) exit_hpt("you must set outbound in fidoconfig first",1);
    if (config->tempOutbound == NULL) exit_hpt("you must set tempOutbound in fidoconfig first",1);
    if (config->inbound == NULL && config->protInbound == NULL)
 	   exit_hpt("you must set Inbound or protInbound in fidoconfig first",1);
@@ -230,6 +231,7 @@ void processConfig()
    if (config->protInbound && (strcmp(config->protInbound,config->tempInbound)==0)) exit_hpt("protInbound & tempInbound must be differ",1);
    if (config->protInbound && config->inbound && (strcmp(config->protInbound,config->inbound)==0)) exit_hpt("protInbound & Inbound must be differ",1);
    if (config->localInbound && (strcmp(config->localInbound,config->tempInbound)==0)) exit_hpt("localInbound & tempInbound must be differ",1);
+   if (strcmp(config->tempOutbound,config->tempInbound)==0) exit_hpt("tempOutbound & tempInbound must be differ",1);
    if (config->msgBaseDir==NULL) exit_hpt("No msgBaseDir specified in config file!",1);
    if (config->dupeHistoryDir==NULL) exit_hpt("No dupeHistoryDir specified in config file!",1);
    if (config->dupeArea.areaName==NULL) exit_hpt("you must define DupeArea!",1);

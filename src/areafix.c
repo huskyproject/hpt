@@ -1090,7 +1090,7 @@ char *info_link(s_message *msg, s_link *link)
     return report;
 }
 
-void repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
+int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
 {
    s_message    msg;
    UINT32       j=0;
@@ -1103,10 +1103,15 @@ void repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
    //translating name of the area to uppercase
    while (msg.text[j] != '\r') {msg.text[j]=(char)toupper(msg.text[j]);j++;}
 
+   if (strncmp(msg.text+j+1,"NOECHO",6)==0) {
+	   freeMsgBuffers(&msg);
+	   return 0;
+   }
+
    // link is passive?
-   if (link->Pause && !echo->noPause) return;
+   if (link->Pause && !echo->noPause) return 0;
    // check access read for link
-   if (checkAreaLink(echo, link->hisAka, 1)!=0) return;
+   if (checkAreaLink(echo, link->hisAka, 1)!=0) return 0;
 
    if (link->pktFile != NULL && link->pktSize != 0) { // check packet size
 	   len = fsize(link->pktFile);
@@ -1144,6 +1149,7 @@ void repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
    MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
 
    freeMsgBuffers(&msg);
+   return 1;
 }
 
 int rescanEMArea(s_area *echo, s_link *link, long rescanCount)
@@ -1152,6 +1158,7 @@ int rescanEMArea(s_area *echo, s_link *link, long rescanCount)
    HMSG  hmsg;
    XMSG  xmsg;
    dword highestMsg, i;
+   unsigned int rc=0;
 
    /*FIXME: the code in toss.c does createDirectoryTree. We don't*/
    area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, /*echo -> fperm, 
@@ -1163,30 +1170,27 @@ int rescanEMArea(s_area *echo, s_link *link, long rescanCount)
 
       // if rescanCount == -1 all mails should be rescanned
       if ((rescanCount == -1) || (rescanCount > highestMsg))
-        rescanCount = highestMsg;
+		  rescanCount = highestMsg;
 
       while (i <= highestMsg) {
-	if (i > highestMsg - rescanCount) { // honour rescanCount paramater
-	  hmsg = MsgOpenMsg(area, MOPEN_RW, i);
-	  if (hmsg != NULL) {     // msg# does not exist
-	    MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-	    repackEMMsg(hmsg, xmsg, echo, link);
-	    MsgCloseMsg(hmsg);
-	  }
-	}
-	i++;
+		  if (i > highestMsg - rescanCount) { // honour rescanCount paramater
+			  hmsg = MsgOpenMsg(area, MOPEN_RW, i);
+			  if (hmsg != NULL) {     // msg# does not exist
+				  MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+				  rc += repackEMMsg(hmsg, xmsg, echo, link);
+				  MsgCloseMsg(hmsg);
+			  }
+		  }
+		  i++;
       }
 
       MsgSetHighWater(area, i);
 
       MsgCloseArea(area);
-      
-      return rescanCount;
-   }
-   
-   writeLogEntry(hpt_log, '9', "Could not open %s", echo->fileName);
-   return 0;
-}
+   } else writeLogEntry(hpt_log, '9', "Could not open %s", echo->fileName);
+
+   return rc;
+}      
 
 char *errorRQ(char *line)
 {
@@ -1200,7 +1204,7 @@ char *errorRQ(char *line)
 char *rescan(s_link *link, s_message *msg, char *cmd)
 {
     int i, c, rc = 0;
-    long rescanCount = -1;
+    long rescanCount = -1, rcc;
     char *report = NULL, *line, *countstr, *an, *end;
     s_area *area;
     
@@ -1241,12 +1245,11 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 						area->areaName, aka2str(link->hisAka));
 			} else {
 
-			  rescanCount = rescanEMArea(area, link, rescanCount);
+			  rcc = rescanEMArea(area, link, rescanCount);
 			  xscatprintf(&report," %s %s  rescanned %lu mails\r",
-			      an, print_ch(49-strlen(an), '.'), rescanCount);
+			      an, print_ch(49-strlen(an), '.'), rcc);
 			  writeLogEntry(hpt_log,'8',"areafix: %s rescanned %lu mails to %s",
-			      area->areaName, rescanCount, aka2str(link->hisAka));
-//			  arcmail(link);
+			      area->areaName, rcc, aka2str(link->hisAka));
 			  tossTempOutbound(config->tempOutbound);
 			}
 			break;
@@ -1733,6 +1736,9 @@ void autoPassive()
                   path = line;
                   if (*path && (*path == '^' || *path == '#')) {
                      path++;
+					 // set Pause if files stored only in outbound
+					 if (*path && strncmp(path, config->outbound,
+										  strlen(config->outbound)-1)!=0) { nfree(line); continue; }
                      if (stat(path, &stat_file) != -1) {
                         time_cur = time(NULL);
                         time_test = (time_cur - stat_file.st_mtime)/3600;

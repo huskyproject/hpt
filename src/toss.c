@@ -724,7 +724,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
    if (config->msgBaseDir && stricmp(config->msgBaseDir, "passthrough")!=0) {
 #ifndef MSDOS
-	   if (hpt_stristr(newAC, "-dosfile ")==NULL)
+	   if (hpt_stristr(newAC, "-dosfile")==NULL)
 		   xscatprintf(&buff, "EchoArea %s %s%s -a %s%s", c_area,
 					   config->msgBaseDir, squishFileName, myaddr,
 					   (msgbtype) ? "" : " -b Squish");
