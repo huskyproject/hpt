@@ -462,6 +462,10 @@ int main(int argc, char **argv)
    char *title=NULL, oldtitle[ TITLESIZE ];
 #endif
 
+#if defined ( __NT__ )
+   SetUnhandledExceptionFilter(&UExceptionFilter);
+#endif
+
    versionStr = GenVersionStr( "hpt", VER_MAJOR, VER_MINOR, VER_PATCH,
                                VER_BRANCH, cvs_date );
 
