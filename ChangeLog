@@ -1,7 +1,15 @@
+2003-03-09 Sunday 08:52  pgul
+
+	* misc/filter.pl (1.11): Bugfix
+
 2003-03-02 Sunday 17:04  stas_degteff
 
 	* doc/hpt.texi (hpt-1_4-stable.1): MFC: Add section 'Using config';
 	fix spell
+
+2003-03-02 Sunday 09:46  pgul
+
+	* misc/filter.pl (1.10): Add netmail dupe- and loop- checking
 
 2003-03-01 Saturday 22:27  i_zkh
 
