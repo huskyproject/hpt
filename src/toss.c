@@ -196,7 +196,7 @@ char *changeFileSuffix(char *fileName, char *newSuffix) {
     }
    
 }
-
+/*
 int to_us(const s_addr destAddr)
 {
     int i = 0;
@@ -206,7 +206,7 @@ int to_us(const s_addr destAddr)
 	    return 0;
     return !0;
 }
-
+*/
 XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr) 
 {
     char **outbounds[4];
@@ -244,7 +244,8 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 		    break;
 		}
 		
-	if (to_us(msg->destAddr)==0) {
+	//if (to_us(msg->destAddr)==0) {
+    if (isOurAka(msg->destAddr)) {
 	    // kill these flags
 	    msgHeader.attr &= ~(MSGREAD | MSGKILL | MSGFRQ | MSGSCANNED | MSGLOCKED | MSGFWD);
 	    // set this flags
@@ -1729,7 +1730,8 @@ int processPkt(char *fileName, e_tossSecurity sec)
        
 	header = openPkt(pkt);
 	if (header != NULL) {
-	    if ((to_us(header->destAddr)==0) || (sec == secLocalInbound)) {
+	    //if ((to_us(header->destAddr)==0) || (sec == secLocalInbound)) {
+        if ( isOurAka(header->destAddr) || (sec == secLocalInbound)) {
 		w_log('7', "pkt: %s [%s]", fileName, aka2str(header->origAddr));
 		statToss.pkts++;
 		link = getLinkFromAddr(config, header->origAddr);

@@ -47,7 +47,7 @@ typedef struct statToss s_statToss;
 enum tossSecurity {secLocalInbound, secProtInbound, secInbound};
 typedef enum tossSecurity e_tossSecurity;
 
-int  to_us(const s_addr destAddr);
+//int  to_us(const s_addr destAddr);
 int  processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceattr);
 int  processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontdocc, dword forceattr);
 int  processMsg(s_message *msg, s_pktHeader *pktHeader, int secure);
