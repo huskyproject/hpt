@@ -1,3 +1,7 @@
+2003-04-11 Friday 07:11  mche
+
+	* hpt.vcproj (1.3): fix GUIDs of projects
+
 2003-04-10 Thursday 10:49  val_khokhlov
 
 	* src/areafix.c (1.401): areafix autoPassive notify flags changed:
