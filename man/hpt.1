@@ -7,8 +7,8 @@ hpt \- toss pkt files to squish/msg/jam bases and export messages
 hpt toss
 .br
 .TP
-.B Toss messages from badarea
-hpt toss -b
+.B Toss messages from badarea (force)
+hpt toss -b[f]
 .br
 .TP
 .B Scan echomail messages
@@ -32,11 +32,11 @@ hpt pack
 .br
 .TP
 .B Links echomail messages
-hpt link
+hpt link [areamask]
 .br
 .TP
 .B Process areafix
-hpt afix
+hpt afix [<addr> command]
 .br
 .TP
 .B Post a message to area
@@ -83,7 +83,19 @@ hld, xx2,  frq, rrq, cpt, arq, urq
 .br
 .TP
 .B Refresh area subscription
-hpt relink
+hpt relink <addr>
+.br
+.TP
+.B Set pause for links who don't poll our system
+hpt pause
+.br
+.TP
+.B Quiet mode (no screen output)
+hpt -q
+.br
+.TP
+.B Set config-file name, if needed
+hpt -c /path/to/config
 .SH DESCRIPTION
 Highly Portable Tosser is the way to toss your fidonet mail.
 .SH BUGS
@@ -91,6 +103,6 @@ I suppose there are :). So, report me, if you found any.
 Every time you changed the config-file please run tparser to see if 
 your config is valid...
 .SH AUTHORS
-Matthias Tichy, 2:2432/645 (mtt@tichy.de)
+1997-1999: Matthias Tichy, 2:2432/645 (mtt@tichy.de)
 .br
-Max Levenkov, 2:5000/117 (sackett@mail.ru)
+1999-2001: Max Levenkov, 2:5000/117 (sackett@mail.ru)

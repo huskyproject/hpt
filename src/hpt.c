@@ -123,7 +123,7 @@ void start_help(void) {
   fprintf(stdout,"   hpt scan -f <filename> - scanning echomail from alternative echotoss file\n");
   fprintf(stdout,"   hpt post [options] file - posting a mail (for details run \"hpt post -h\")\n");
   fprintf(stdout,"   hpt pack - packing netmail\n");
-  fprintf(stdout,"   hpt link [areaname] - links messages\n");
+  fprintf(stdout,"   hpt link [areamask] - links messages\n");
   fprintf(stdout,"   hpt afix [<addr> command] - process areafix\n");
   fprintf(stdout,"   hpt relink <addr> - refresh area subsription\n");
   fprintf(stdout,"   hpt pause - set pause for links who don't poll our system\n");
@@ -432,7 +432,19 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    if (cmPack &  2) scanExport(SCN_FILE | SCN_NETMAIL, scanParmF);
    if (cmPack &  4) scanExport(SCN_NAME | SCN_NETMAIL, scanParmA);
    
-   if (cmLink == 1) linkAreas(linkName);
+   if (cmLink == 1) {
+	   if (linkName && (strstr(linkName,"*")||strstr(linkName,"?"))) {
+		   for (i=0; i < config->echoAreaCount; i++) 
+			   if (patimat(config->echoAreas[i].areaName, linkName))
+				   linkAreas(config->echoAreas[i].areaName);
+		   for (i=0; i < config->localAreaCount; i++) 
+			   if (patimat(config->localAreas[i].areaName, linkName))
+				   linkAreas(config->localAreas[i].areaName);
+		   for (i=0; i < config->netMailAreaCount; i++) 
+			   if (patimat(config->netMailAreas[i].areaName, linkName))
+				   linkAreas(config->netMailAreas[i].areaName);
+	   } else linkAreas(linkName);
+   }
    nfree(linkName);
    
    writeMsgToSysop();

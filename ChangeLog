@@ -7,6 +7,8 @@ max:
 * checking return value of MsgWriteMsg() in processEMMsg() and
   processNMMsg() for new smapi
 * writeLogEntry() changed to log()
+* "hpt link" founded not all msgids. fixed! (you must update smapi)
+* pattern matching for "hpt link"
 
 ---- cvs ci ------
 Sat Mar  3 16:12:28 NOVT 2001
