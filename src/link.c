@@ -230,7 +230,7 @@ int linkArea(s_area *area, int netMail)
 		else
                    msgId = Jam_GetKludge(harea, i, JAMSFLD_MSGID);
             } else {
-                hmsg  = MsgOpenMsg(harea, (msgsNum >= MAX_INCORE) ? MOPEN_READ : (MOPEN_READ|MOPEN_WRITE), i);
+                hmsg  = MsgOpenMsg(harea, (word)((msgsNum >= MAX_INCORE) ? MOPEN_READ : (MOPEN_READ|MOPEN_WRITE)), i);
                 if (hmsg == NULL) {
                     continue;
                 }
