@@ -551,7 +551,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 
 	if (uplink->msg == NULL) {
 
-	    msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop, uplink->RemoteRobotName ? uplink->RemoteRobotName : "Allfix", uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1);
+	    msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop, uplink->RemoteRobotName ? uplink->RemoteRobotName : "Areafix", uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1);
 
 	    msg->text = (char *) malloc(sizeof(char)*100);
 	    createKludges(msg->text, NULL, uplink->ourAka, &(uplink->hisAka));
@@ -1187,14 +1187,14 @@ void rescanEMArea(s_area *echo, s_link *link)
    } /* endif */
 }
 
-char *rescanError(char *line)
+char *errorRQ(char *line)
 {
-    char *buf;
-    
-    buf = (char*)calloc(strlen(line)+10, sizeof(char));
-    sprintf(buf, "%s Error\r", line);
-    
-    return buf;
+   char *report, err[] = "Error line";
+
+   report = (char*)calloc(strlen(line)+strlen(err)+3, sizeof(char));
+   sprintf(report, "%s %s\r", line, err);
+
+   return report;
 }
 
 char *rescan(s_link *link, s_message *msg, char *cmd)
@@ -1205,16 +1205,16 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
     
     line = cmd+strlen("%rescan");
     
-    if (*line == 0) return rescanError(cmd);
+    if (*line == 0) return errorRQ(cmd);
     
     while (*line && (*line == ' ' || *line == '\t')) line++;
     
-    if (*line == 0) return rescanError(cmd);
+    if (*line == 0) return errorRQ(cmd);
     
     report = strpbrk(line, " \t");
     if (report) *report = 0;
     
-    if (*line == 0) return rescanError(cmd);
+    if (*line == 0) return errorRQ(cmd);
 
     report = (char*)calloc(1, sizeof(char));
     
@@ -1270,16 +1270,6 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
     }
     free(areas);
     return report;
-}
-
-char *errorRQ(char *line)
-{
-   char *report, err[] = "Error line";
-
-   report = (char*)calloc(strlen(line)+strlen(err)+3, sizeof(char));
-   sprintf(report, "%s %s\r", line, err);
-
-   return report;
 }
 
 int tellcmd(char *cmd) {
