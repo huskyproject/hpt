@@ -216,6 +216,7 @@ int createTempPktFileName(s_link *link)
     time_t tr;
     char *wday;
     struct tm *tp;
+	char *ptr;
 
 
     tr=time(NULL);
@@ -242,34 +243,11 @@ int createTempPktFileName(s_link *link)
     big problem, but a big system with many links and many zones may encounter
     problems */
 
+	/* Making pkt name */
 	while(1) {
 		do {
 			sprintf(fileName, "%s%06lx%02x.pkt",
 					config->tempOutbound, (long)aTime, counter);
-
-			if ( link->hisAka.point == 0 ) {
-
-				if (config->separateBundles) {
-					sprintf(tmpPFileName,"%s%04x%04x.sep%c%06lx%02x.%s",
-							zoneOutbound, link->hisAka.net, link->hisAka.node,
-							limiter, (long)aTime, counter, wday);
-				} else {
-					sprintf(tmpPFileName,"%s%06lx%02x.%s",zoneOutbound,
-							(long)aTime,counter,wday);
-				}
-			} else {
-
-				if (config->separateBundles) {
-					sprintf(tmpPFileName,"%s%04x%04x.pnt%c%08x.sep%c%06lx%02x.%s",
-							zoneOutbound, link->hisAka.net,	link->hisAka.node,
-							limiter,link->hisAka.point, limiter, (long)aTime,
-							counter, wday);
-				} else {
-					sprintf(tmpPFileName,"%s%04x%04x.pnt%c%06lx%02x.%s",
-							zoneOutbound, link->hisAka.net,	link->hisAka.node,
-							limiter, (long)aTime, counter, wday);
-				}
-			}
 
 			counter++;
 
@@ -285,9 +263,56 @@ int createTempPktFileName(s_link *link)
 			counter=0;
 		}
 	}
+
+	/* Making path to bundle */
+	if ( link->hisAka.point == 0 ) {
+
+		if (config->separateBundles) {
+			sprintf(tmpPFileName,"%s%04x%04x.sep%c",
+					zoneOutbound, link->hisAka.net, link->hisAka.node, limiter);
+		} else {
+			strcpy(tmpPFileName,zoneOutbound);
+		}
+	} else {
+
+		if (config->separateBundles) {
+			sprintf(tmpPFileName,"%s%04x%04x.pnt%c%08x.sep%c",
+					zoneOutbound, link->hisAka.net,	link->hisAka.node,
+					limiter,link->hisAka.point, limiter);
+		} else {
+			sprintf(tmpPFileName,"%s%04x%04x.pnt%c",
+					zoneOutbound, link->hisAka.net,	link->hisAka.node,limiter);
+		}
+	}
 	nfree(zoneOutbound);
 	count = counter;
 
+	for (ptr=tmpPFileName; *ptr; ptr++); // where to add filename
+
+	/* bundle file name */
+	switch ( config->bundleNameStyle ) {
+
+	case addrDiff:
+		if ( link->hisAka.point == 0 ) {
+			sprintf (ptr, "%04hx%04hx.%s",
+					 link->ourAka->net - link->hisAka.net,
+					 link->ourAka->node - link->hisAka.node,
+					 wday);
+		} else {
+			sprintf (ptr, "%08hx.%s", link->hisAka.point, wday);
+		}
+		break;
+
+	case timeStamp:
+		sprintf(ptr, "%06lx%02x.%s", (long)aTime, counter, wday);
+		break;
+
+	default:
+		writeLogEntry(hpt_log, '9',
+					  "Unknown bundleNameStyle (non-compatible fidoconfig library?)");
+		exit(-1);
+		break;
+	}
 	counter = 0;
 	do {
  		sprintf(pfileName, "%s%01x", tmpPFileName, counter);

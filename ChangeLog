@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Fri Aug 25 12:37:46 NOVST 2000
+max (patch from Serguei Revtov):
+* token BundleNameStyle
+
+----- cvs ci ------
 Thu Aug 24 23:52:17 NOVST 2000
 max:
 * msgs for processing tiny or kill seen-by's stripped after Origin line
