@@ -1,3 +1,8 @@
+2001-08-02 Thursday 10:02  ml
+
+	* src/: scan.c (1.132), scanarea.c (1.70), toss.c (1.356): write
+	areas summary after scaning
+
 2001-07-26 Thursday 17:05  ml
 
 	* doc/hpt.texi (1.32): readonly & writeonly tokens
