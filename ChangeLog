@@ -1,3 +1,26 @@
+2003-04-27 Sunday 20:12  d_sergienko
+
+	* src/areafix.c (hpt-1_4-stable.4): yet another rules sending fix
+
+2003-04-27 Sunday 01:39  d_sergienko
+
+	* doc/hpt.texi (hpt-1_4-stable.3): add info about reduced seen-by
+
+2003-04-27 Sunday 01:06  d_sergienko
+
+	* HISTORY, src/link.c (hpt-1_4-stable.[4,1]): Fix linking when
+	^AMSGID or ^AREPLY are in MiXeD cAsE
+
+2003-04-27 Sunday 00:12  d_sergienko
+
+	* src/areafix.c (hpt-1_4-stable.3): removed "Following ..." from
+	messages with rules
+
+2003-04-26 Saturday 22:09  d_sergienko
+
+	* src/areafix.c (hpt-1_4-stable.2): fix sending rules (thanx to
+	Andrew Ladutsko, 2:450/210)
+
 2003-04-26 Saturday 09:58  d_sergienko
 
 	* src/carbon.c (hpt-1_4-stable.2): yet another fix for carbon @AREA
