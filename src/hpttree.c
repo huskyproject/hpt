@@ -151,7 +151,7 @@ void buildAreaTree(s_area *area)
    int done;
    int root = -1;
 
-fprintf(outlog, "Distribution tree of area %s\n\n", area->areaName);
+   fprintf(outlog, "Distribution tree of area %s\n\n", area->areaName);
 
    if ((area->msgbType & MSGTYPE_PASSTHROUGH) == MSGTYPE_PASSTHROUGH) {
      fprintf(outlog, "PASSTHROUGH, ignoring\n");
@@ -164,6 +164,10 @@ fprintf(outlog, "Distribution tree of area %s\n\n", area->areaName);
      return;
    }
 #endif
+
+   nodeCount = linksInArray = 0;
+   linksOnLevel = NULL;
+   allNodes = NULL;
 
    harea = MsgOpenArea((byte *) area->fileName, MSGAREA_NORMAL, area->msgbType);
 
@@ -265,7 +269,11 @@ fprintf(outlog, "Distribution tree of area %s\n\n", area->areaName);
 
 
 	   // printing tree
-	   printTree (0, root);
+	   if (nodeCount > 0)
+	      printTree (0, root);
+	   else
+	      printf("Not distributed\n");
+
 
 	   for (i=0; i < nodeCount-1; i++) {
 	      if (!((allNodes[i]).printed)) {
