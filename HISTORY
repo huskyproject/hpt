@@ -36,6 +36,7 @@ Changes between hpt-1.2-stable and hpt-1.4-stable
      very big (<1.1.1970 and >n.n.2038)
    - Check netmailarea presence in config (before: trap)
    - ImportLog will not contain passthrough areas any more.
+   - Fix CarbonCopy processing: add end of line after kludges
 
 
 HPT 1.2.3-release
