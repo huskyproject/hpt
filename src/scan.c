@@ -239,7 +239,7 @@ void scanNMArea(void)
    s_addr          dest;
    int             for_us;
 
-   netmail = MsgOpenArea((unsigned char *) config->netMailArea.fileName, MSGAREA_NORMAL, MSGTYPE_SDM);
+   netmail = MsgOpenArea((unsigned char *) config->netMailArea.fileName, MSGAREA_NORMAL, config->netMailArea.msgbType);
    if (netmail != NULL) {
 
       highMsg = MsgGetHighMsg(netmail);
