@@ -2,6 +2,20 @@ hpt 0.27
 --------
 
 ----- cvs ci ------
+Tue Apr  6 18:23:17 CEST 1999
+Antonio: (applied by mtt)
++ Fidoconfig and hpt now supports descriptions for areas. See docs for
+  more info and examples. fconf2golded supports too.
++ fidoconfig and hpt supports create and read filenames of areas in dos
+  style (8+3). Useful when you use Linux and want to store your message base
+  on a DOS partition.
++ hpt now import description from ForwardResquestFile if found it, if
+  not, take the the description from AutoCreateDefault, if not... take
+  nothing... ;)
++ Modifications in dupe-routines 
+  All Dupedatebases are written in lowercase.
+
+----- cvs ci ------
 Mon Mar  29 16:05
 Fedor:
 - fixed bug in seen-by's line (0/0 0 ...)

@@ -1,3 +1,5 @@
+- hpt should sort pkts in the inbound directories in order of the date/time.
+  So older pkts are processed before newer ones.
 - netmailarea should be packed when found in echotoss.log
 - divide hpt into several programs:
   tosser

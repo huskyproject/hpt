@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <ctype.h>
 
 #include <pkt.h>
 
@@ -46,24 +47,47 @@
 
 FILE *fDupe;
 
+char *strtolower(char *string) {
+  register int cont;
+  int l;
+  char *tmp;
+    
+  l=strlen(string);
+  tmp=(char *) malloc (l+1);
+  for (cont=0;cont<=l;cont++)
+    tmp[cont]=tolower(string[cont]);
+  
+  return tmp;
+}
+
 char *createDupeFileName(s_area *area) {
+   char *aux;
    char *name;
-#ifdef MSDOS
    char *afname;
-#endif
 
 #ifndef MSDOS
-   name = (char *) malloc(strlen(config->dupeHistoryDir)+strlen(area->areaName)+5);
+  if (!area->DOSFile) {
+    name = (char *) malloc(strlen(config->dupeHistoryDir)+strlen(area->areaName)+5);
+  }
+  else {
+    name = (char *) malloc(strlen(config->dupeHistoryDir)+5+9);
+  }
 #else
     name = (char *) malloc(strlen(config->dupeHistoryDir)+5+9);
 #endif
 
    strcpy(name, config->dupeHistoryDir);
 #ifndef MSDOS
-   strcat(name, area->areaName);
+   if (!area->DOSFile) {
+     strcat(name, aux=strtolower(area->areaName));
+   }
+   else {
+   strcat(name, (afname = strrchr(area->fileName, '/'))  != NULL ? (aux=strtolower(afname + 1)) :                 (aux=strtolower(area->fileName)));
+   }
 #else
-   strcat(name, (afname = strrchr(area->fileName, '\\'))  != NULL ? afname + 1 : area->fileName);
+   strcat(name, (afname = strrchr(area->fileName, '\\'))  != NULL ? (aux=strtolower(afname + 1)) :                 (aux=strtolower(area->fileName)));
 #endif
+   free(aux);
    strcat(name, ".dup");
 
    return name;
@@ -72,15 +96,16 @@ char *createDupeFileName(s_area *area) {
 void addIndex(s_area *area, UINT32 offset) {
 
    FILE *f;
-   char *fileName = createDupeFileName(area)
-#ifdef MSDOS
-	, *ext
-#endif
-   ;
+   char *fileName = createDupeFileName(area);
+   char *ext;
 
    fileName = realloc(fileName, strlen(fileName)+6+1);
 #ifndef MSDOS
-   strcat(fileName, ".index");
+  if (!area->DOSFile)
+    strcat(fileName, ".index");
+  else
+    strcpy((ext = strrchr(fileName, '.'))  != NULL ? ext :
+           fileName + strlen(fileName), ".idx");
 #else
    strcpy((ext = strrchr(fileName, '.'))  != NULL ? ext :
           fileName + strlen(fileName), ".idx");
