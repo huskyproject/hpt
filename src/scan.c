@@ -169,48 +169,28 @@ void makePktHeader(s_link *link, s_pktHeader *header)
 
 static s_route *findSelfRouteForNetmail(s_message msg)
 {
-	char *addrStr=NULL;
-	UINT i;
+    char *addrStr=NULL;
+    UINT i;
 
-/* remove after 03-Apr-01
-   if ((msg.attributes & MSGFILE) == MSGFILE) {
-      // if msg has file attached
-      for (i=0; i < config->routeFileCount; i++) {
-         if (patmat(addrStr, config->routeFile[i].pattern))
-            return &(config->routeFile[i]);
-      }
-   } else {
-      // if msg has no file attached
-      for (i=0; i < config->routeMailCount; i++) {
-         if (patmat(addrStr, config->routeMail[i].pattern))
-            return &(config->routeMail[i]);
-      }
-   }
+    xscatprintf(&addrStr, "%u:%u/%u.%u",
+		msg.destAddr.zone, msg.destAddr.net,
+		msg.destAddr.node, msg.destAddr.point);
 
-   for (i=0; i < config->routeCount; i++) {
-      if(patmat(addrStr, config->route[i].pattern))
-         return &(config->route[i]);
-   }
-*/
-	xscatprintf(&addrStr, "%u:%u/%u.%u",
-				msg.destAddr.zone, msg.destAddr.net,
-				msg.destAddr.node, msg.destAddr.point);
-
-	for (i=0; i < config->routeCount; i++) {
-		if ((msg.attributes & MSGFILE) == MSGFILE) { // routeFile
-			if (config->route[i].id == id_routeFile)
-				if (patmat(addrStr, config->route[i].pattern))
-					break;
-		} else {
-			if (config->route[i].id != id_routeFile) // route & routeMail
-				if (patmat(addrStr, config->route[i].pattern))
-					break;
-		}
+    for (i=0; i < config->routeCount; i++) {
+	if ((msg.attributes & MSGFILE) == MSGFILE) { // routeFile
+	    if (config->route[i].id == id_routeFile)
+		if (patmat(addrStr, config->route[i].pattern))
+		    break;
+	} else {
+	    if (config->route[i].id != id_routeFile) // route & routeMail
+		if (patmat(addrStr, config->route[i].pattern))
+		    break;
 	}
+    }
 
-	nfree(addrStr);
+    nfree(addrStr);
 
-	return (i==config->routeCount) ? NULL : &(config->route[i]);
+    return (i==config->routeCount) ? NULL : &(config->route[i]);
 }
 
 s_route *findRouteForNetmail(s_message msg)
@@ -397,27 +377,27 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    }
 
    if ((xmsg->attr & MSGFILE) == MSGFILE) {
-	   // file attach
+       // file attach
 	   
-	   // we need route mail
-	   if (prio==NORMAL) {
-		   route = findRouteForNetmail(msg);
-		   link = getLinkForRoute(route, &msg);
-		   if ((route != NULL) && (link != NULL)) {
-			   if (createOutboundFileName(link,
-										  cvtFlavour2Prio(route->flavour),
-										  FLOFILE) == 0) {
-				   processAttachs(link, &msg, xmsg->attr);
-				   remove(link->bsyFile);
-				   nfree(link->bsyFile);
-				   // mark Mail as sent
-				   xmsg->attr |= MSGSENT;
-				   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-				   nfree(link->floFile);
-				   w_log('7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
-			   }
-		   }
+       // we need route mail
+       if (prio==NORMAL) {
+	   route = findRouteForNetmail(msg);
+	   link = getLinkForRoute(route, &msg);
+	   if ((route != NULL) && (link != NULL)) {
+	       if (createOutboundFileName(link,
+					  cvtFlavour2Prio(route->flavour),
+					  FLOFILE) == 0) {
+		   processAttachs(link, &msg, xmsg->attr);
+		   remove(link->bsyFile);
+		   nfree(link->bsyFile);
+		   // mark Mail as sent
+		   xmsg->attr |= MSGSENT;
+		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+		   nfree(link->floFile);
+		   w_log('7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
+	       }
 	   }
+       }
 	   else if (createOutboundFileName(virtualLink, prio, FLOFILE) == 0) {
 		   processAttachs(virtualLink, &msg, xmsg->attr);
 		   remove(virtualLink->bsyFile);
@@ -569,7 +549,7 @@ void scanNMArea(s_area *area)
                 
          // if not sent and not for us -> pack it
          if (((xmsg.attr & MSGSENT) != MSGSENT) && (for_us==0)) {
-			 if (packMsg(msg, &xmsg, area) == 0) statScan.exported++;
+	     if (packMsg(msg, &xmsg, area) == 0) statScan.exported++;
          }
 
          MsgCloseMsg(msg);

@@ -67,7 +67,7 @@ s_nodepath *allNodes = NULL;
 int nodeCount = 0;
 
 FILE *outlog;
-char *version = "1.03";
+char *version = "1.04";
 
 int *linksOnLevel = NULL;
 int linksInArray = 0;
@@ -248,7 +248,7 @@ void buildAreaTree(s_area *area)
 		   } while (!done && !isdigit( (int) *start));
 		   if (!done) {
 		      token = strtok(start, " \r\t\376");
-		      while (token != NULL) {
+		      while (token != NULL && !done) {
 			 if (isdigit( (int) *token)) {
 			    // parse token
 			    temp = strtoul(token, &endptr, 10);
@@ -289,7 +289,8 @@ void buildAreaTree(s_area *area)
 
 			    if (prevNode >= 0 && prevNode != i) (allNodes[prevNode]).exportto = i;
 			    prevNode = i;
-			 }
+			 } else
+			     if (strchr(" \r\t\376", *token)==NULL && strncmp(token, "\001PATH:", 6)!=0) done++; // something's wrong
 			 token = strtok(NULL, " \r\t\376");
 		      }
 		      if (root < 0) root = i;
