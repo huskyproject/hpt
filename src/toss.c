@@ -338,7 +338,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 {
     char *ctrlBuff, *textStart, *textWithoutArea;
     UINT textLength = (UINT) msg->textLength;
-    HAREA harea;
+    //HAREA harea = NULL;
     HMSG  hmsg;
     XMSG  xmsg;
     char /**slash,*/ *p, *q, *tiny;
@@ -364,8 +364,8 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 			(word)(echo->msgbType | (msg->netMail ? 0 : MSGTYPE_ECHO)));
 	if (echo->harea) nopenpkt+=3;
     }
-    if (harea != NULL) {
-	hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
+    if (echo->harea != NULL) {
+	hmsg = MsgOpenMsg(echo->harea, MOPEN_CREATE, 0);
 	if (hmsg != NULL) {
 
 	    // recode from TransportCharset to internal Charset
@@ -689,7 +689,7 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
 }
 
 void closeOpenedPkt(void) {
-    int i;
+    unsigned int i;
     for (i=0; i<config->linkCount; i++)
 	if (config->links[i].pkt) {
 	    if (closeCreatedPkt(config->links[i].pkt))
@@ -731,7 +731,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		    s_seenBy **seenBys, UINT *seenByCount,
 		    s_seenBy **path, UINT *pathCount) {
     unsigned  int i, rc=0;
-    long len;
+    ULONG len;
     FILE *f=NULL;
     s_pktHeader header;
     char *start, *text, *seenByText = NULL, *pathText = NULL;
@@ -2283,7 +2283,7 @@ void writeTossStatsToLog(void) {
 int find_old_arcmail(s_link *link, FILE *flo)
 {
     char *line, *bundle=NULL;
-    long len;
+    ULONG len;
     unsigned i, as;
 
     while ((line = readLine(flo)) != NULL) {
