@@ -668,8 +668,14 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         break;
     case 2:
     //makepass(f, fileName, areaName);
-	break;
-    case 4: // delete area
+    case 5: // subscribe to us passthrough
+        if ( hpt_stristr(area->downlinks[0]->link->autoAreaCreateDefaults,
+            "passthrough") )  {
+            nRet = O_ERR;
+            break;
+        }   // we need to delete area first
+    case 6: 
+    case 4: // delete area 
 	lastpos = ftell(f);
 	fseek(f, 0, SEEK_END);
 	endpos = ftell(f);
@@ -687,7 +693,17 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 #else
 	truncate(fileName, pos+len);
 #endif
-	break;
+    if(action == 4) break;
+    if(action == 5)  // subscribe to us passthrough
+    {                // not fully implemented yet
+        // get area string
+        buff = makeAreaParam(area->downlinks[0]->link , areaName, NULL );
+        // add all links
+        xstrcat( &buff, strstr(cfgline, aka2str(area->downlinks[0]->link->hisAka))-1);
+        fprintf(f, "\n%s\n", buff); // add line to config
+        break;
+    }
+    /* if(action == 6) // make area pass. not implemented yet*/ 
     default: break;
     } // switch (action) {
     } // else of if ((nRet > -1) && (cfgline == NULL)) {
