@@ -1,4 +1,4 @@
-# DJGPP makefile
+# RSXNT
 # no support for the husky build environment
 
 DEBUG=-s
