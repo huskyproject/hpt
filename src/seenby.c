@@ -53,7 +53,7 @@ void sortSeenBys(s_seenBy *seenBys, UINT count)
 char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
 {
    int  size = 81, i;
-   char *text, *line, addr2d[12];
+   char *text, *line, addr2d[13];
    
    if (seenByCount==0) {              //return empty control line
       text = malloc(strlen(lineHeading)+1+1);

@@ -13,7 +13,7 @@ ifeq ($(DEBUG), 1)
   CFLAGS  = -c -I../h -I$(INCDIR) -Wall -g -O2 -DUNIX -D_POSIX_C_SOURCE
   LFLAGS  = -L$(LIBDIR)
 else
-  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -O2 -s -DUNIX $(CADDFLAGS) -D_POSIX_X_SOURCE
+  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -O2 -s -DUNIX $(CADDFLAGS) -D_POSIX_C_SOURCE
   LFLAGS  = -L$(LIBDIR)
 endif
 

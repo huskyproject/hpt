@@ -1,6 +1,11 @@
 hpt 0.30
 --------
 
+----- cvs ci -----	
+Thu Nov  4 10:15:38 MET 1999 
+mtt:
+* fixed buffer overflow bug in seenby.c (thanks to Alex Semenyaka)
+
 
 ----- cvs ci ------
 Wed Nov  3 08:26:56 CET 1999
