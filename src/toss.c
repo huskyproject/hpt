@@ -64,6 +64,7 @@ extern s_message **msgToSysop;
 s_statToss statToss;
 int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec);
 void processDir(char *directory, e_tossSecurity sec);
+void makeMsgToSysop(char *areaName, s_addr fromAddr);
 
 void changeFileSuffix(char *fileName, char *newSuffix) {
 
@@ -599,87 +600,6 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    free(path);
 }
 
-void makeMsgToSysop(char *areaName, s_addr fromAddr)
-{
-    time_t t;
-    struct tm *tm;
-    s_area *echo;
-    char buff[81];
-    int i;
-    
-    echo = getArea(config, areaName);
-    
-    if (echo == &(config->badArea)) return;
-    
-    for (i = 0; i < config->addrCount; i++) {
-	if (echo->useAka == &(config->addr[i])) {
-	    if (msgToSysop[i] == NULL) {
-		msgToSysop[i] = (s_message*)calloc(1,sizeof(s_message));
-
-		msgToSysop[i]->origAddr.zone  = echo->useAka->zone;
-		msgToSysop[i]->origAddr.net   = echo->useAka->net;
-		msgToSysop[i]->origAddr.node  = echo->useAka->node;
-		msgToSysop[i]->origAddr.point = echo->useAka->point;
-		
-		msgToSysop[i]->destAddr.zone  = echo->useAka->zone;
-		msgToSysop[i]->destAddr.net   = echo->useAka->net;
-		msgToSysop[i]->destAddr.node  = echo->useAka->node;
-		msgToSysop[i]->destAddr.point = echo->useAka->point;
-		
-		msgToSysop[i]->attributes = 1;
-	
-		t = time (NULL);
-		tm = gmtime(&t);
-		strftime(msgToSysop[i]->datetime, 21, "%d %b %y  %T", tm);
-		
-		msgToSysop[i]->netMail = 1;
-		
-		msgToSysop[i]->fromUserName = (char *)calloc(strlen(versionStr)+1, sizeof(char));
-		strcpy(msgToSysop[i]->fromUserName, versionStr);
-		
-		msgToSysop[i]->toUserName = (char *)calloc(strlen(config->sysop)+1, sizeof(char));
-		strcpy(msgToSysop[i]->toUserName, config->sysop);
-		
-		msgToSysop[i]->subjectLine = (char *)calloc(18, sizeof(char));
-		strcpy(msgToSysop[i]->subjectLine, "Created new areas");
-		
-		msgToSysop[i]->text = (char *)calloc(300, sizeof(char));
-		createKludges(msgToSysop[i]->text, NULL, echo->useAka, echo->useAka);
-	
-		strcat(msgToSysop[i]->text, "Action   Name");
-		strcat(msgToSysop[i]->text, print_ch(49, ' '));
-		strcat(msgToSysop[i]->text, "By\r");
-		strcat(msgToSysop[i]->text, print_ch(79, '-'));
-		strcat(msgToSysop[i]->text, "\r");
-	    }
-	    sprintf(buff, "Created  %s", echo->areaName);
-	    sprintf(buff+strlen(buff), "%s", print_ch(sizeof(buff)-1-strlen(buff), ' '));
-	    sprintf(buff+62, "%s\r", aka2str(fromAddr));
-	    msgToSysop[i]->text = (char*)realloc(msgToSysop[i]->text, strlen(msgToSysop[i]->text)+strlen(buff)+1);
-	    strcat(msgToSysop[i]->text, buff);
-	    break;
-	}
-    }
-    
-}
-
-void writeMsgToSysop()
-{
-    char tmp[81];
-    int i;
-    
-    for (i = 0; i < config->addrCount; i++) {
-	if (msgToSysop[i]) {
-	    sprintf(tmp, " \r--- %s\r", versionStr);
-	    msgToSysop[i]->text = (char*)realloc(msgToSysop[i]->text, strlen(tmp)+strlen(msgToSysop[i]->text)+1);
-	    strcat(msgToSysop[i]->text, tmp);
-	    msgToSysop[i]->textLength = strlen(msgToSysop[i]->text);
-	    processNMMsg(msgToSysop[i], NULL);
-	}
-    }
-    
-}
-
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 {
    FILE *f;
@@ -855,6 +775,138 @@ void putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
     msg->text = textBuff;
     msg->textLength = strlen(msg->text)+1;
     putMsgInArea(&(config->badArea), msg, 0);
+}
+
+void makeMsgToSysop(char *areaName, s_addr fromAddr)
+{
+    time_t t;
+    struct tm *tm;
+    s_area *echo;
+    char buff[81];
+    int i;
+    
+    if (!config->ReportTo) return;
+
+    echo = getArea(config, areaName);
+    
+    if (echo == &(config->badArea)) return;
+    
+    for (i = 0; i < config->addrCount; i++) {
+	if (echo->useAka == &(config->addr[i])) {
+	    if (msgToSysop[i] == NULL) {
+		msgToSysop[i] = (s_message*)calloc(1,sizeof(s_message));
+
+		msgToSysop[i]->origAddr.zone  = echo->useAka->zone;
+		msgToSysop[i]->origAddr.net   = echo->useAka->net;
+		msgToSysop[i]->origAddr.node  = echo->useAka->node;
+		msgToSysop[i]->origAddr.point = echo->useAka->point;
+		
+		msgToSysop[i]->destAddr.zone  = echo->useAka->zone;
+		msgToSysop[i]->destAddr.net   = echo->useAka->net;
+		msgToSysop[i]->destAddr.node  = echo->useAka->node;
+		msgToSysop[i]->destAddr.point = echo->useAka->point;
+		
+		t = time (NULL);
+		tm = gmtime(&t);
+		strftime(msgToSysop[i]->datetime, 21, "%d %b %y  %T", tm);
+		
+		msgToSysop[i]->fromUserName = (char *)calloc(strlen(versionStr)+1, sizeof(char));
+		strcpy(msgToSysop[i]->fromUserName, versionStr);
+		
+		msgToSysop[i]->subjectLine = (char *)calloc(18, sizeof(char));
+		strcpy(msgToSysop[i]->subjectLine, "Created new areas");
+		
+		msgToSysop[i]->text = (char *)calloc(300, sizeof(char));
+		if (stricmp(config->ReportTo, "netmail")==0){
+		    createKludges(msgToSysop[i]->text, NULL, echo->useAka, echo->useAka);
+		    msgToSysop[i]->toUserName = (char *)calloc(strlen(config->sysop)+1, sizeof(char));
+		    strcpy(msgToSysop[i]->toUserName, config->sysop);
+		    msgToSysop[i]->netMail = 1;
+		    msgToSysop[i]->attributes = 1;
+		} else {
+		    createKludges(msgToSysop[i]->text, config->ReportTo, echo->useAka, echo->useAka);
+		    msgToSysop[i]->toUserName = (char *)calloc(4, sizeof(char));
+		    strcpy(msgToSysop[i]->toUserName, "All");
+		}
+		
+		msgToSysop[i]->attributes |= 0x0100;
+	
+		strcat(msgToSysop[i]->text, "Action   Name");
+		strcat(msgToSysop[i]->text, print_ch(49, ' '));
+		strcat(msgToSysop[i]->text, "By\r");
+		strcat(msgToSysop[i]->text, print_ch(79, '-'));
+		strcat(msgToSysop[i]->text, "\r");
+	    }
+	    sprintf(buff, "Created  %s", echo->areaName);
+	    sprintf(buff+strlen(buff), "%s", print_ch(sizeof(buff)-1-strlen(buff), ' '));
+	    sprintf(buff+62, "%s\r", aka2str(fromAddr));
+	    msgToSysop[i]->text = (char*)realloc(msgToSysop[i]->text, strlen(msgToSysop[i]->text)+strlen(buff)+1);
+	    strcat(msgToSysop[i]->text, buff);
+	    break;
+	}
+    }
+    
+}
+
+void writeMsgToSysop()
+{
+    char	tmp[81], *ptr, *seenByPath;
+    s_area	*echo;
+    int		i;
+    s_seenBy	*seenBys;
+    
+    if (!config->ReportTo) return;
+    
+    for (i = 0; i < config->addrCount; i++) {
+	if (msgToSysop[i]) {
+	    sprintf(tmp, " \r--- %s\r * Origin: %s (%s)\r", versionStr, config->name, aka2str(msgToSysop[i]->origAddr));
+	    msgToSysop[i]->text = (char*)realloc(msgToSysop[i]->text, strlen(tmp)+strlen(msgToSysop[i]->text)+1);
+	    strcat(msgToSysop[i]->text, tmp);
+	    msgToSysop[i]->textLength = strlen(msgToSysop[i]->text);
+	    if (msgToSysop[i]->netMail == 1) processNMMsg(msgToSysop[i], NULL);
+	    else {
+		ptr = strchr(msgToSysop[i]->text, '\r');
+		strncpy(tmp, msgToSysop[i]->text+5, (ptr-msgToSysop[i]->text)-5);
+		tmp[ptr-msgToSysop[i]->text-5]=0;
+		echo = getArea(config, tmp);
+		if (echo != &(config->badArea)) {
+		    if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
+        		putMsgInArea(echo, msgToSysop[i],1);
+        		echo->imported = 1;  // area has got new messages
+		    }
+		    if (config->carbonCount != 0) carbonCopy(msgToSysop[i], echo);
+		    seenBys = (s_seenBy*) calloc(echo->downlinkCount+1,sizeof(s_seenBy));
+		    seenBys[0].net = echo->useAka->net;
+		    seenBys[0].node = echo->useAka->node;
+		    sortSeenBys(seenBys, 1);
+   
+		    seenByPath = createControlText(seenBys, 1, "SEEN-BY: ");
+		    free(seenBys);
+   
+		    // path line
+		    // only include node-akas in path
+		    if (echo->useAka->point == 0) {
+			sprintf(tmp, "%u/%u", echo->useAka->net, echo->useAka->node);
+			seenByPath = (char *) realloc(seenByPath, strlen(seenByPath)+strlen(tmp)+1+8); // 8 == strlen("\001PATH: \r")
+			strcat(seenByPath, "\001PATH: ");
+			strcat(seenByPath, tmp);
+			strcat(seenByPath, "\r");
+		    }
+		    msgToSysop[i]->text = (char*)realloc(msgToSysop[i]->text,
+							 strlen(msgToSysop[i]->text)+
+							 strlen(seenByPath)+1);
+		    strcat(msgToSysop[i]->text, seenByPath);
+		    free(seenByPath);
+		    if (echo->downlinkCount > 0)
+			forwardMsgToLinks(echo, msgToSysop[i], msgToSysop[i]->origAddr);
+			arcmail();
+		} else {
+		    putMsgInBadArea(msgToSysop[i], msgToSysop[i]->origAddr, 0);
+		}
+	    }
+	}
+    }
+    
 }
 
 void processEMMsg(s_message *msg, s_addr pktOrigAddr)

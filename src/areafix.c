@@ -593,30 +593,35 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 			}			
 			else if (stricmp(token, "echoarea")==0) {
 				token = strseparate(&running, " \t"); 
-				if (stricmp(token, areaName)==0)
-					switch 	(action) {
-					case 0: 
-						if ((area->msgbType==MSGTYPE_PASSTHROUGH)
-							&& (area->downlinkCount==1) &&
-							(area->downlinks[0]->link->hisAka.point == 0)) {
-						    forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 0);
-						}
-						addstring(f,aka2str(link->hisAka));
-						break;
- 					case 1:	fseek(f, pos, SEEK_SET);
-						if ((area->msgbType==MSGTYPE_PASSTHROUGH)
-							&& (area->downlinkCount==1) &&
-							(area->downlinks[0]->link->hisAka.point == 0)) {
-						    forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 1);
-						}
-						delLinkFromArea(f, fileName, aka2str(link->hisAka));
-/*						delstring(f,fileName,straka,1);*/
-						break;
-					case 2:
-//						makepass(f, fileName, areaName);
-						break;
-					default: break;
+				if (stricmp(token, areaName)==0) {
+				    switch 	(action) {
+				    case 0: 
+					if ((area->msgbType==MSGTYPE_PASSTHROUGH)
+						&& (area->downlinkCount==1) &&
+						(area->downlinks[0]->link->hisAka.point == 0)) {
+					    forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 0);
 					}
+					addstring(f,aka2str(link->hisAka));
+					break;
+				    case 3: 
+					addstring(f,aka2str(link->hisAka));
+					break;
+ 				    case 1:	fseek(f, pos, SEEK_SET);
+					if ((area->msgbType==MSGTYPE_PASSTHROUGH)
+						&& (area->downlinkCount==1) &&
+						(area->downlinks[0]->link->hisAka.point == 0)) {
+					    forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 1);
+					}
+					delLinkFromArea(f, fileName, aka2str(link->hisAka));
+/*					delstring(f,fileName,straka,1);*/
+					break;
+				    case 2:
+//					makepass(f, fileName, areaName);
+					break;
+					default: break;
+				    }
+				    work = 0;
+				}
 			}
 			
 		}
@@ -736,7 +741,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			sprintf(logmsg,"areafix: %s subscribed to area %s",aka2str(link->hisAka),line);
 			writeLogEntry(log, '8', logmsg);
 			area = getArea(config, line);
-			changeconfig (getConfigFileName(), area, link, 0);
+			changeconfig (getConfigFileName(), area, link, 3);
 			addlink(link, area);
 		}
 		report=(char*) realloc(report, strlen(report)+strlen(addline)+1);

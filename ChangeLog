@@ -2,6 +2,13 @@ hpt 0.27
 --------
 
 ----- cvs ci ------
+Mon Mar  29 16:05
+Fedor:
+- fixed bug in seen-by's line (0/0 0 ...)
+! report to netmail, or echoarea, or nowhere about autocreation areas
++ new sample of config - ./linux/config.sample
+
+----- cvs ci ------
 Sat Mar  27 13:30
 Fedor:
 - fixed small bug in forward of request

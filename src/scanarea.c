@@ -111,8 +111,8 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
        for (i = 0;i < echo->downlinkCount; i++) {
           if (echo->downlinks[i]->link->hisAka.point != 0) continue; // only include nodes in SEEN-BYS
       
-          seenBys[i].net  = echo->downlinks[i]->link->hisAka.net;
-          seenBys[i].node = echo->downlinks[i]->link->hisAka.node;
+          seenBys[seenByCount].net  = echo->downlinks[i]->link->hisAka.net;
+          seenBys[seenByCount].node = echo->downlinks[i]->link->hisAka.node;
           seenByCount++;
        }
        if (echo->useAka->point == 0) {      // only include if system is node
