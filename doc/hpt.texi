@@ -1587,7 +1587,8 @@ This statement cannot be repeated.
 This statement specifies where areafix searches for files with echoarea
 rules which are sent to link via netmail when link is subscribed to
 areas. File name is the same as message base file with trailing
-".rul". Areaname is used when no message base file is set.
+".rul" (and consistently .ru1-.ru9 files with additional information).
+Areaname is used when no message base file is set.
 See also @code{NoRules} statement to avoid areafix from sending rules to
 link.
 

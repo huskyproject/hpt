@@ -1778,6 +1778,7 @@ void RetRules (s_message *msg, s_link *link, char *areaName)
     char *text, *subj=NULL;
     long len;
     s_area *area;
+    int nrul;
 
 
     if ((area=getArea(config, areaName)) == &(config->badArea)) {
@@ -1788,14 +1789,14 @@ void RetRules (s_message *msg, s_link *link, char *areaName)
     if (area->fileName) {
 	fn = area->fileName;
 	for (fn1 = fn; *fn1; fn1++) if (*fn1=='/' || *fn1=='\\') fn = fn1+1;
-	xscatprintf(&fileName, "%s%c%s.rul", config->rulesDir, PATH_DELIM, fn);
+	xscatprintf(&fileName, "%s%s.rul", config->rulesDir, fn);
     } else {
 	fn = makeMsgbFileName(area->areaName);
-	xscatprintf(&fileName, "%s%c%s.rul", config->rulesDir, PATH_DELIM, fn);
+	xscatprintf(&fileName, "%s%s.rul", config->rulesDir, fn);
 	nfree (fn); // allocated by makeMsgbFileName()
     }
 
-    if (f = fopen (fileName, "rb")) {
+    for (nrul=0; nrul<=9 && (f = fopen (fileName, "rb")); nrul++) {
 
 	len = fsize (fileName);
 	text = safe_malloc (len+1);
@@ -1803,17 +1804,26 @@ void RetRules (s_message *msg, s_link *link, char *areaName)
 	fclose (f);
 
 	text[len] = '\0';
-	xscatprintf(&subj, "Rules of %s", areaName);
-	
-	RetMsg(msg, link, text, subj);
 
-	w_log('7', "areafix: sent file '%s' as rules for area '%s'",
-	      fileName, areaName);
+	if (nrul==0) {
+	    xscatprintf(&subj, "Rules of %s", areaName);
+	    w_log('7', "areafix: send '%s' as rules for area '%s'",
+		  fileName, areaName);
+	} else {
+	    xscatprintf(&subj, "Echo related text #%d of %s", nrul, areaName);
+	    w_log('7', "areafix: send '%s' as text %d for area '%s'",
+		  fileName, nrul, areaName);
+	}
+
+	RetMsg(msg, link, text, subj);
 
 	nfree (subj);
 	nfree (text);
 
-    } else {
+	fileName[strlen(fileName)-1] = nrul+'1';
+    }
+
+    if (nrul==0) { // couldn't open any rules file while first one exists!
 	w_log('9', "areafix: can't open file '%s' for reading", fileName);
     }
     nfree (fileName);
