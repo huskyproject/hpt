@@ -107,6 +107,22 @@ int afRescanArea(char **report, s_link *link, s_area *area, long rescanCount) {
   return rcc;
 }
 
+void getLinkData(s_link *link, s_linkdata *linkData)
+{
+    linkData->robot = link->RemoteRobotName ? link->RemoteRobotName : "areafix";
+    linkData->pwd = link->areaFixPwd ? link->areaFixPwd : "\x00";
+    linkData->attrs = link->areafixReportsAttr ? link->areafixReportsAttr : config->areafixReportsAttr;
+    linkData->flags = link->areafixReportsFlags ? link->areafixReportsFlags : config->areafixReportsFlags;
+    linkData->numFrMask = link->numFrMask;
+    linkData->frMask = link->frMask;
+    linkData->numDfMask = link->numDfMask;
+    linkData->dfMask = link->dfMask;
+    linkData->denyFwdFile = link->denyFwdFile;
+    linkData->fwd = link->forwardRequests;
+    linkData->fwdFile = link->forwardRequestFile;
+    linkData->advAfix = link->advancedAreafix;
+}
+
 void autoPassive()
 {
   time_t   time_cur, time_test;
@@ -231,6 +247,7 @@ int init_hptafix(void) {
 
   call_sendMsg  = &afSendMsg;
   call_writeMsgToSysop = &afWriteMsgToSysop;
+  call_getLinkData = &getLinkData;
   hook_onDeleteArea = &afDeleteArea;
   hook_onRescanArea = &afRescanArea;
   hook_onAutoCreate = &afReportAutoCreate;
