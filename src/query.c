@@ -230,6 +230,14 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	addlink(creatingLink, area);
     }
 */
+
+    // fix if dummys del \n from the end of file
+    fseek (f, -1L, SEEK_END);
+    if (getc(f) != '\n') {
+	fseek (f, 0L, SEEK_END);  // not neccesary, but looks better ;)
+	putc ( '\n', f);
+    }
+
     fprintf(f, "%s\n", buff); // add line to config
     fclose(f);
    
