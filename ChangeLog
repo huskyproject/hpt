@@ -1,3 +1,8 @@
+2001-09-16 Sunday 15:28  ml
+
+	* src/toss.c (1.363): prevent multiply CC of one message to the
+	same area [patch by SR]
+
 2001-09-15 Saturday 10:56  pavel.gulchouck
 
 	* src/link.c (1.42): Sqpack saves times_read and cost for Jam and
