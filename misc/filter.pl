@@ -8,8 +8,13 @@ sub faq      { return "c:\\fido\\itrack\\faq\\"; }
 sub route94  { return "c:\\user\\gul\\work\\routing\\route.94"; }
 sub sechubs  { return "c:\\fido\\nodelist\\2nd_hubs.463"; }
 sub echol463 { return "c:\\user\\gul\\work\\echolist.463"; }
-
-sub attr     { return qw(pvt crash read sent att fwd orphan k/s loc hld xx2 frq rrq cpt arq urq); }
+sub listdir  { return "c:\\fido\\hpt\\"; }
+sub listname { return "5020_238.avl"  if $_[0] eq "2:5020/238";
+               return "5020_1381.avl" if $_[0] eq "2:5020/1381";
+               return "94.avl"        if $_[0] eq "2:463/94";
+               return "58.avl"        if $_[0] eq "2:463/58";
+               return "";
+             }
 
 sub maillists { return (
               "Staff",
@@ -37,7 +42,7 @@ use POSIX;
 # My global variables
 my(%nodelist, $nltied);
 my(%pkt, $pkttied, %msg, $msgtied, $newnet, $newecho, @crc_32_tab);
-my($processpktname, $pktkey, $pktval, %msgpkt, $curnodelist);
+my($processpktname, $pktkey, $pktval, %msgpkt, $curnodelist, @areas);
 
 sub filter
 {
@@ -407,6 +412,47 @@ EOF
       $kill = 1;
       return "Message to FaqServer";
     }
+    if ($fromname =~ /^(areafix|gecho)$/i && listname($fromaddr) ne "" &&
+        $subject =~ /^(List request|List of areas available|List of available areas)/)
+    {
+      if (@areas)
+      { if ($areas[0] ne $fromaddr)
+        { putlist();
+          @areas=($fromaddr);
+        }
+      }
+      else
+      { @areas=($fromaddr);
+      }
+      foreach (split(/\s*\r\n?/, $text))
+      {
+        next if /^(\x01|SEEN-BY:)/;
+        if (/^ {15,}(\S.*)$/ && $areas[1])
+        { $areas[@areas-1] .= " $1";
+          next;
+        }
+        if ($subject =~ /^List request/)
+        {
+          next unless /^[\* ] (\S+)(?:(?: \.*)? (\S.*))?\s*$/;
+          push (@areas, "$1 $2");
+          next;
+        }
+        if ($subject =~ /^List of areas available/)
+        {
+          next unless /^([^() \*\'\-][^() *]*)(?: \.+ (\S.*))?\s*$/;
+          push (@areas, "$1 $2");
+          next;
+        }
+        if ($subject =~ /^List of available areas/)
+        {
+          next unless /^ (\S+)(?: +(\S.*))?\s*$/;
+          push (@areas, "$1 $2");
+          next;
+        }
+      }
+      $kill=1;
+      return "List reply";
+    }
     if ($toname =~ /^(areafix|allfix|filefix)$/i)
     {
       if (isattr("cpt", $attr))
@@ -624,6 +670,10 @@ sub hpt_exit
   untie %nodelist if $nltied;
   untie %pkt if $pkttied;
   untie %msg if $msgtied;
+  if (@areas)
+  { putlist();
+    @areas = ();
+  }
   $nltied = $pkttied = $msgtied = 0;
   $flags = $ENV{"FLAGS"};
   close(F) if $newnet && open(F, ">$flags/wasnet.now");
@@ -879,6 +929,37 @@ sub faqserv
   }
   putMsgInArea("", "FaqServer", $fromname, "", $fromaddr,
             "FaqServer reply", "", "pvt loc k/s cpt", $reply, 1);
+}
+
+sub putlist
+{
+  my(%areas, $fromaddr, $areaname, $desc);
+  local(*F);
+
+  %areas = ();
+  $fromaddr = shift(@areas);
+  while(@areas)
+  {
+    $_ = shift(@areas);
+    next unless /^(\S+)(?:\s+(\S.*)|\s*)$/;
+    ($areaname, $desc) = ($1, $2);
+    $desc = "" if $desc =~ /autocreated|new\/unsorted|description missing/i;
+    $desc = "" if $desc =~ /^(Regional|Gated) [Ee]choe?s$/;
+    if (defined($areas{$areaname}))
+    { next if $desc eq "";
+      $areas{$areaname} = $desc;
+    }
+    else
+    { $areas{$areaname} = $desc;
+    }
+  }
+  return if listname($fromaddr) eq "";
+  open(F, ">".listdir().listname($fromaddr)) || return;
+  foreach (sort keys %areas)
+  { print F "$_ " . $areas{$_} . "\n";
+  }
+  close(F);
+  return;
 }
 
 sub arqcpt
