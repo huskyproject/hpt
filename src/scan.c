@@ -532,7 +532,7 @@ void scan(void)
 {
    UINT i;
    FILE *f;
-   char *line;
+   char *line, buff[80];
    s_area *area;
 
    // load recoding tables
@@ -563,7 +563,12 @@ void scan(void)
 
          if (line != NULL) {
             area = getArea(config, line);
-            scanEMArea(area);
+            if (area == &(config->badArea)) {
+               sprintf(buff, "Area \'%s\' is not found -> Scanning stop.", line);
+               writeLogEntry(hpt_log, '3', buff);
+            } else {
+               scanEMArea(area);
+            } /* endif */
             free(line);
          }
       }
@@ -576,3 +581,81 @@ void scan(void)
    arcmail();
    writeScanStatToLog();
 }
+
+void scanF(char *filename)
+{
+   FILE *f;
+   char *line, buff[80];
+   s_area *area;
+
+   // load recoding tables
+   if (config->outtab != NULL) getctab(outtab, config->outtab);
+
+   // zero statScan
+   memset(&statScan, 0, sizeof(s_statScan));
+   writeLogEntry(hpt_log,'1', "Start scanning with -f ...");
+
+   // open echotoss file
+   f = fopen(filename, "r");
+
+   if (f == NULL) {
+      // if echotoss file does not exist scan all areas
+      writeLogEntry(hpt_log, '3', "EchoTossLogFile not found -> Scanning stop.");
+   } else {
+      // else scan only those areas which are listed in the file
+      writeLogEntry(hpt_log, '3', "EchoTossLogFile found -> Scanning only listed areas");
+
+      while (!feof(f)) {
+         line = readLine(f);
+
+         if (line != NULL) {
+            area = getArea(config, line);
+            if (area == &(config->badArea)) {
+               sprintf(buff, "Area \'%s\' is not found -> Scanning stop.", line);
+               writeLogEntry(hpt_log, '3', buff);
+            } else {
+	       scanEMArea(area);
+            } /* endif */
+            free(line);
+         }
+      }
+
+      fclose(f);
+      remove(filename);
+   }
+
+   
+   arcmail();
+   writeScanStatToLog();
+}
+
+void scanA(char *areaname)
+{
+   s_area *area;
+   char    buff[80];
+
+   // load recoding tables
+   if (config->outtab != NULL) getctab(outtab, config->outtab);
+
+   // zero statScan
+   memset(&statScan, 0, sizeof(s_statScan));
+   writeLogEntry(hpt_log,'1', "Start scanning with -a ...");
+
+   area = getArea(config, areaname);
+   if (area == &(config->badArea)) {
+      sprintf(buff, "Area \'%s\' is not found -> Scanning stop.", areaname);
+      writeLogEntry(hpt_log, '3', buff);
+   } else {
+      if (area->msgbType != MSGTYPE_PASSTHROUGH) {
+	  if (area->downlinkCount > 0) scanEMArea(area);
+      } else {
+          sprintf(buff, "Area \'%s\' is passthrough -> Scanning stop.", area->areaName);
+	  writeLogEntry(hpt_log, '3', buff);
+      }
+   } /* endif */
+
+   
+   arcmail();
+   writeScanStatToLog();
+}
+

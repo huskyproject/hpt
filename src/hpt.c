@@ -67,6 +67,7 @@ int __stdcall SetConsoleTitleA( const char* lpConsoleTitle );
 #endif
 
 s_message **msgToSysop = NULL;
+char *scanParm;
 
 void processCommandLine(int argc, char **argv)
 {
@@ -77,6 +78,8 @@ void processCommandLine(int argc, char **argv)
       printf("   hpt toss    - tossing mail\n");
       printf("   hpt toss -b - tossing mail from badarea\n");
       printf("   hpt scan    - scanning echomail\n");
+      printf("   hpt scan -a <areaname> - scanning echomail from <areaname> area\n");
+      printf("   hpt scan -f <filename> - scanning echomail from alternative echotoss file\n");
       printf("   hpt pack    - packing netmail\n");
       printf("   hpt post    - posting a mail\n");
       printf("   hpt link    - links messages\n");
@@ -89,10 +92,34 @@ void processCommandLine(int argc, char **argv)
          cmToss = 1;
 	 if (i < argc-1) if (stricmp(argv[i+1], "-b") == 0) {
 	     cmToss = 2;
-	     i++;
+	     break;
+//	     i++;
 	 }
          continue;
       } else if (stricmp(argv[i], "scan") == 0) {
+         if (i < argc -1) {
+            if (argv[i+1][0] == '-' && (argv[i+1][1] == 'f' || argv[i+1][1] == 'F')) {
+               if (stricmp(argv[i+1], "-f") == 0) {
+                  i++;
+                  scanParm = argv[i+1];
+               } else {
+                  scanParm = argv[i+1]+2;
+               } /* endif */
+               cmScan = 2;
+               break;
+            } else {
+               if (argv[i+1][0] == '-' && (argv[i+1][1] == 'a' || argv[i+1][1] == 'A')) {
+                  if (stricmp(argv[i+1], "-a") == 0) {
+                     i++;
+                     scanParm = argv[i+1];
+                  } else {
+                     scanParm = argv[i+1]+2;
+                  } /* endif */
+                  cmScan = 3;
+                  break;
+               } /* endif */
+            } /* endif */
+         } /* endif */
          cmScan = 1;
          continue;
       } else if (stricmp(argv[i], "pack") == 0) {
@@ -217,6 +244,8 @@ int main(int argc, char **argv)
    if (1 == cmToss) toss();
    if (cmToss == 2) tossFromBadArea();
    if (cmScan == 1) scan();
+   if (cmScan == 2) scanF(scanParm);
+   if (cmScan == 3) scanA(scanParm);
    if (cmAfix == 1) afix();
    if (cmPack == 1) pack();
    if (cmLink == 1) linkAreas();

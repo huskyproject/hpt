@@ -43,6 +43,8 @@ extern s_statScan statScan;
 
 void pack(void);
 void scan(void);
+void scanF(char *filename);
+void scanA(char *areaname);
 void scanEMArea(s_area *echo);
 void makePktHeader(s_link *link, s_pktHeader *header);
 void cvtAddr(const NETADDR aka1, s_addr *aka2);

@@ -1,6 +1,15 @@
 hpt 0.28
 --------
 
+----- cvs ci ------
+Tue May  11 16:24:02
+Fedor:
++ Add 'hpt scan -f<filename>' - scanning echomail from alternative
+  echotoss file.
++ Add 'hpt scan -a<areaname>' - scanning echomail from <areaname> area.
+- If scanning echomail from echotoss (from config) and area is not found
+  in config (unknown area for hpt), then hpt scanned from badarea. Fixed.
+
 
 ----- cvs ci ------
 Mon May 10 13:14:47 CEST 1999
