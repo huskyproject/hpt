@@ -1,3 +1,8 @@
+2002-01-28 Monday 19:38  ml
+
+	* src/toss.c (1.380.2.5): fix broken adding of autocreated areas to
+	config on win32
+
 2002-01-27 Sunday 14:52  ml
 
 	* src/dupe.c (1.49.2.1): don't print error reading dupes when area
