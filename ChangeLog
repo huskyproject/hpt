@@ -3,6 +3,11 @@ hpt 0.9.8 (development version)
 
 
 ----- cvs ci ------
+Sat Sep 23 17:52:53 NOVST 2000
+max (patch from Serguei Revtov):
+* token linkBundleNameStyle
+
+----- cvs ci ------
 Thu Sep 21 11:31:52 NOVST 2000
 max:
 * fix for deleting msg bases (Serguei Revtov)

@@ -277,6 +277,7 @@ int createTempPktFileName(s_link *link)
 
     char *zoneOutbound;         /* this contains the correct outbound directory
                                    including zones */
+    e_bundleFileNameStyle bundleNameStyle;
 
     time_t tr;
     char *wday;
@@ -360,9 +361,14 @@ int createTempPktFileName(s_link *link)
 	for (ptr=tmpPFileName; *ptr; ptr++); // where to add filename
 
 	/* bundle file name */
-	switch ( config->bundleNameStyle ) {
 
-	case addrDiff:
+    if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
+    else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
+    else bundleNameStyle=eTimeStamp;
+
+	switch ( bundleNameStyle ) {
+
+	case eAddrDiff:
 
 		if ( link->hisAka.point == 0 && config->addr[0].point == 0) {
 			sprintf (ptr, "%04hx%04hx.",
@@ -402,10 +408,9 @@ int createTempPktFileName(s_link *link)
 			nfree(pfileName);
 			nfree(tmpPFileName);
 
-			// Temporary switching to TimeStamp style
-			config->bundleNameStyle = timeStamp;
+			// Switch link to TimeStamp style
+			link->linkBundleNameStyle = eTimeStamp;
 			i = createTempPktFileName(link);
-			config->bundleNameStyle = addrDiff;
 			return i;
 		}
 		
@@ -413,7 +418,7 @@ int createTempPktFileName(s_link *link)
 
 		break;
 
-	case timeStamp:
+	case eTimeStamp:
 		sprintf(ptr, "%06lx%02x.%s", (long)aTime, counter, wday);
 		counter = 0;
 		do {
