@@ -881,7 +881,7 @@ static int compare_links_priority(const void *a, const void *b) {
     else return 0;
 }
 
-int forwardRequest(char *areatag, s_link *dwlink, ps_addr lastRlink) {
+int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
     unsigned int i, rc = 1;
     s_link *uplink;
     int *Indexes;
@@ -894,10 +894,22 @@ int forwardRequest(char *areatag, s_link *dwlink, ps_addr lastRlink) {
     }
     qsort(Indexes,Requestable,sizeof(Indexes[0]),compare_links_priority);
 
-
-    for (i = 0; i < Requestable; i++) {
+    if(lastRlink) { // try to find next requestable uplink
+        for (i = 0; i < Requestable; i++) {
+            uplink = &(config->links[Indexes[i]]);
+            if( addrComp(uplink->hisAka, (*lastRlink)->hisAka) == 0)
+            {   // we found lastRequestedlink
+                i++;   // let's try next link
+                break;
+            }
+        }
+    }
+    for (; i < Requestable; i++) {
 	uplink = &(config->links[Indexes[i]]);
-	if (uplink->forwardRequests && (uplink->LinkGrp) ?
+    
+    if(lastRlink) *lastRlink = uplink;
+
+    if (uplink->forwardRequests && (uplink->LinkGrp) ?
         grpInArray(uplink->LinkGrp,dwlink->AccessGrp,dwlink->numAccessGrp) : 1) 
     {
         if ( (uplink->numDfMask) &&
@@ -2058,14 +2070,40 @@ void RetRules (s_message *msg, s_link *link, char *areaName)
 
 }
 
+void sendAreafixMessages()
+{
+    s_link *link = NULL;
+    s_message *linkmsg;
+    unsigned int i;
+
+    for (i = 0; i < config->linkCount; i++) {
+        if (config->links[i].msg == NULL) continue;
+        link = &(config->links[i]);
+        linkmsg = link->msg;
+        
+        xscatprintf(&(linkmsg->text), " \r--- %s areafix\r", versionStr);
+        linkmsg->textLength = strlen(linkmsg->text);
+        
+        w_log('8', "areafix: write netmail msg for %s", aka2str(link->hisAka));
+        
+        processNMMsg(linkmsg, NULL, getNetMailArea(config,config->robotsArea),
+            0, MSGLOCAL);
+        
+        freeMsgBuffers(linkmsg);
+        nfree(linkmsg);
+        link->msg = NULL;
+    }
+    
+}
+
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 {
-    unsigned int i, security=1, notforme = 0;
+    unsigned int security=1, notforme = 0;
     s_link *link = NULL;
     s_link *tmplink = NULL;
-    s_message *linkmsg;
+    //s_message *linkmsg;
     s_pktHeader header;
     char *token, *textBuff, *report=NULL, *preport = NULL;
     int nr;
@@ -2223,23 +2261,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     w_log('8', "areafix: sucessfully done for %s",aka2str(link->hisAka));
 
     // send msg to the links (forward requests to areafix)
-    for (i = 0; i < config->linkCount; i++) {
-	if (config->links[i].msg == NULL) continue;
-	link = &(config->links[i]);
-	linkmsg = link->msg;
-
-	xscatprintf(&(linkmsg->text), " \r--- %s areafix\r", versionStr);
-	linkmsg->textLength = strlen(linkmsg->text);
-
-	w_log('8', "areafix: write netmail msg for %s", aka2str(link->hisAka));
-
-	processNMMsg(linkmsg, NULL, getNetMailArea(config,config->robotsArea),
-		     0, MSGLOCAL);
-	
-	freeMsgBuffers(linkmsg);
-	nfree(linkmsg);
-	link->msg = NULL;
-    }
+    sendAreafixMessages();
     w_log(LL_FUNC, "areafix.c::processAreaFix() rc=1");
     return 1;
 }
@@ -2434,7 +2456,7 @@ void autoPassive()
 			      time_test = 0;
 			  }
 
-			  if (time_test >= (config->links[i].autoPause*24)) {
+			  if (time_test >= (time_t)(config->links[i].autoPause*24)) {
 			      w_log('8', "autopause: the file %s is %d days old", path, time_test/24);
 			      if (changepause((cfgFile) ? cfgFile :
 					      getConfigFileName(),

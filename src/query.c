@@ -20,9 +20,7 @@
 #include <dos.h>
 #endif
 
-#define nbufSize 2*1024
 
-static  time_t  when;
 static  time_t  tnow;
 const   long    secInDay = 3600*24;
 const char czFreqArea[] = "freq";
@@ -315,12 +313,14 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
                     i++;
                 if(i == tmpNode->linksCount) {
                     af_AddLink( tmpNode, dwlink ); // add link to queried area
+                    tmpNode->eTime = config->forwardRequestTimeout*secInDay;
                 } else {
                     tmpNode = NULL;  // link already in query
                 }
             } else {
                 strcpy(tmpNode->type,czFreqArea); // change state to @freq"
                 af_AddLink( tmpNode, dwlink );
+                tmpNode->eTime = config->forwardRequestTimeout*secInDay;
             }
         } else { // area not found, so add it
             areaNode = af_AddAreaListNode( areatag, czFreqArea );
@@ -328,17 +328,9 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
                 queryAreasHead->linksCount = strlen( areatag );
             af_AddLink( areaNode, uplink );
             af_AddLink( areaNode, dwlink );
+            tmpNode->eTime = config->forwardRequestTimeout*secInDay;
         }
-        break;/*
-    case ADDDELETED:
-        if( bFind ) {
-        } else {
-            areaNode = af_AddAreaListNode( areatag, czKillArea );
-            if(strlen( areatag ) > queryAreasHead->linksCount)
-                queryAreasHead->linksCount = strlen( areatag );
-            af_AddLink( areaNode, uplink );
-        }
-        break;*/
+        break;
     case ADDIDLE:
         if( bFind ) {
         } else {
@@ -346,6 +338,7 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
             if(strlen( areatag ) > queryAreasHead->linksCount)
                 queryAreasHead->linksCount = strlen( areatag );
             af_AddLink( areaNode, uplink );
+            tmpNode->eTime = config->idlePassthruTimeout*secInDay;
             w_log(LL_AREAFIX, "areafix: make request idle for area: %s", areaNode->name);
 
         }
@@ -395,7 +388,7 @@ char* af_Req2Idle(char *areatag, char* report, s_addr linkAddr)
                 {
                     strcpy(areaNode->type,czIdleArea);
                     areaNode->bTime = tnow;
-                    areaNode->eTime = when;
+                    areaNode->eTime = config->idlePassthruTimeout*secInDay;
                     w_log('8', "areafix: make request idle for area: %s", areaNode->name);
                 }
                 xscatprintf(&report, " %s %s  request canceled\r",
@@ -533,7 +526,11 @@ void af_QueueReport()
 void af_QueueUpdate()
 {
     s_query_areas *tmpNode  = NULL;
-
+    s_link *lastRlink;
+    s_link *dwlink;
+//    unsigned i;
+//    s_message *linkmsg;
+    
     if( !queryAreasHead ) af_OpenQuery();
 
     tmpNode = queryAreasHead;
@@ -544,9 +541,22 @@ void af_QueueUpdate()
             continue;
         if( stricmp(tmpNode->type,czFreqArea) == 0 )
         {
+            lastRlink = getLinkFromAddr(config,tmpNode->downlinks[0]);
+            dwlink    = getLinkFromAddr(config,tmpNode->downlinks[1]);
+            if(dwlink && !forwardRequest(tmpNode->name, dwlink, &lastRlink))
+            {
+                tmpNode->downlinks[0] = lastRlink->hisAka; 
+                tmpNode->bTime = tnow;
+                tmpNode->eTime = config->forwardRequestTimeout*secInDay;
+            }
+            else
+            {
+                strcpy(tmpNode->type, czKillArea);
+                tmpNode->bTime = tnow;
+                tmpNode->eTime = config->forwardRequestTimeout*secInDay;
+                w_log( LL_AREAFIX, "areafix: request for %s is going to be killed",tmpNode->name);
+            }
             queryAreasHead->nFlag = 1; // query was changed
-            strcpy(tmpNode->type, czKillArea);
-            w_log( LL_AREAFIX, "areafix: request for %s is going to be killed",tmpNode->name);
             continue;
         }
         if( stricmp(tmpNode->type,czKillArea) == 0 )
@@ -554,17 +564,20 @@ void af_QueueUpdate()
             queryAreasHead->nFlag = 1;
             tmpNode->type[0] = '\0';
             w_log( LL_AREAFIX, "areafix: request for %s removed from queue file",tmpNode->name);
-
             continue;
         }
         if( stricmp(tmpNode->type,czIdleArea) == 0 )
         {
             queryAreasHead->nFlag = 1; // query was changed
             strcpy(tmpNode->type, czKillArea);
+            tmpNode->bTime = tnow;
+            tmpNode->eTime = config->killedRequestTimeout*secInDay;
             w_log( LL_AREAFIX, "areafix: request for %s is going to be killed",tmpNode->name);
             do_delete(NULL, getArea(config, tmpNode->name));
         }
     }
+    // send msg to the links (forward requests to areafix)
+    sendAreafixMessages();
 }
 
 int af_OpenQuery()
@@ -580,7 +593,6 @@ int af_OpenQuery()
         return 0;
 
     time( &tnow );
-    when = tnow + cnDaysToKeepFreq*secInDay;
 
     queryAreasHead = af_AddAreaListNode("","");
 
@@ -653,7 +665,7 @@ int af_OpenQuery()
 
 int af_CloseQuery()
 {
-    char buf[nbufSize] = "";
+    char buf[2*1024] = "";
     char *p;
     int nSpace = 0;
     size_t i = 0;
@@ -798,6 +810,5 @@ void af_AddLink(s_query_areas* node, s_addr *link)
         safe_realloc( node->downlinks, sizeof(s_addr)*node->linksCount );
     memcpy( &(node->downlinks[node->linksCount-1]) ,link, sizeof(s_addr) );
     node->bTime = tnow;
-    node->eTime = when;
     queryAreasHead->nFlag = 1; // query was changed
 }

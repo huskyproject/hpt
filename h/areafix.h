@@ -35,6 +35,8 @@ int isPatternLine(char *s);
 int isAreaLink(s_addr link, s_area *area);
 int isOurAka(s_addr link);
 void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr);
+int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink);
+void sendAreafixMessages();
 char *do_delete(s_link *link, s_area *area);
 
 #endif
