@@ -1676,9 +1676,9 @@ void afix(void)
                 
 	    // if not read and for us -> process AreaFix
 		if (((xmsg.attr & MSGREAD) != MSGREAD) && (for_us==1) &&
-			((stricmp(xmsg.to, "areafix")==0) || 
-			 (stricmp(xmsg.to, "areamgr")==0) ||
-			 (stricmp(xmsg.to, "hpt")==0) ) ) {
+			((stricmp((char*)xmsg.to, "areafix")==0) || 
+			 (stricmp((char*)xmsg.to, "areamgr")==0) ||
+			 (stricmp((char*)xmsg.to, "hpt")==0) ) ) {
 		    MsgToStruct(SQmsg, xmsg, &msg);
 		    processAreaFix(&msg, NULL);
 		    xmsg.attr |= MSGREAD;
