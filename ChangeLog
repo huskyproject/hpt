@@ -1,3 +1,12 @@
+2002-01-12 Saturday 09:29  ml
+
+	* src/toss.c (1.380.2.3): bugfix in filebox autocreation
+
+2002-01-12 Saturday 08:20  ml
+
+	* src/scanarea.c (1.72.2.1): fixed carbonmove on outgoing scanning
+	for echomail
+
 2002-01-10 Thursday 17:48  ml
 
 	* src/toss.c (1.380.2.2): fixed recoding of carbonreason
