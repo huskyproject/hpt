@@ -913,6 +913,11 @@ int processPkt(char *fileName, e_tossSecurity sec)
                if ((link != NULL) && ((link->pktPwd == NULL) || (stricmp(link->pktPwd, header->pktPassword) == 0)))
                   processIt = 1;
                else if ((link == NULL) || (stricmp(link->pktPwd, "")==0)) {
+		  sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
+                          fileName, header->origAddr.zone, header->origAddr.net,
+                          header->origAddr.node, header->origAddr.point);
+                  writeLogEntry(log, '9', buff);
+
                   processIt = 2;
                } else {
                   sprintf(buff, "pkt: %s Password Error or no link for %i:%i/%i.%i",

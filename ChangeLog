@@ -1,6 +1,12 @@
 hpt 0.26
 --------
 
+Fri Feb 19 16:47:14 MET 1999
+  Tobias Ernst:
+- Added a log file entry for the case that a PKT file in the secure inbound
+  does not originate from a link of ours (i.E. only netmail from this 
+  packet will be processed, and echomail will "vanish").
+	
 Wed Feb 17 20:07:00 CET 1999                                                
   Gabriel Plutzar:                                                          
 + added implementation of the new remap statment. It takes the parameters 
