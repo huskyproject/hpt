@@ -33,7 +33,8 @@
 
 extern const int VER_MAJOR;
 extern const int VER_MINOR;
+extern const int VER_PATCH;
 
-extern char versionStr[10];
+extern char versionStr[22];
 
 #endif

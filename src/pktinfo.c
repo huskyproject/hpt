@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 {
   int          i, showHeader = 0, showText = 0;
 
-  printf("PktInfo v%u.%02u\n",VER_MAJOR, VER_MINOR);
+  printf("PktInfo v%u.%u.%u\n",VER_MAJOR, VER_MINOR, VER_PATCH);
   if (argc==1) {
     printf("usage: pktInfo [-h] [-t] <pktNames>\n" \
            "       -h means display msg header information (from/to/subject)\n" \

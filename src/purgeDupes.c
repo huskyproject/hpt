@@ -169,7 +169,7 @@ int main() {
 //   s_fidoconfig *config;
    UINT i;
 
-   printf("purgeDupes v%d.%02d\n\n", VER_MAJOR, VER_MINOR);
+   printf("purgeDupes v%d.%d.%d\n\n", VER_MAJOR, VER_MINOR, VER_PATCH);
 
    config = readConfig();
 
