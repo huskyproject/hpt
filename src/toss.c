@@ -973,7 +973,6 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     char *cp;                    /* temp. usage */
     s_link *creatingLink;
     s_area *area;
-    int i;
 
     if (strlen(c_area)>60) return 11;
     if (!isValidConference(c_area) || isPatternLine(c_area)) return 7;

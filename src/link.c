@@ -44,6 +44,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #ifdef OS2
 #define INCL_DOSFILEMSG /* for DosSetMaxFH() */
@@ -113,11 +114,19 @@ static s_msginfo *findMsgId(s_msginfo *entries, struct hashinfo *hash, dword has
 static char *GetKludgeText(byte *ctl, char *kludge)
 {
    char *pKludge, *pToken;
+   s_addr addr;
 
    pToken = (char *) GetCtrlToken(ctl, (byte *)kludge);
    if (pToken) {
       pKludge = safe_strdup(pToken+1+strlen(kludge));
       nfree(pToken);
+      /* convert 5D-address to 4D */
+      for (pToken=pKludge; *pToken && (isdigit(*pToken) || *pToken==':' || *pToken=='/' || *pToken=='.'); pToken++);
+      if (*pToken=='@') {
+         string2addr(pKludge, &addr);
+	 if (addr.zone && addr.net)
+            *pToken = '\0';
+      }
       return pKludge;
    } else
       return NULL;
