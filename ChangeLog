@@ -1,3 +1,36 @@
+2002-10-17 Thursday 12:57  stas_degteff
+
+	* make/makefile.inc (1.11): Fix 'commonclean' tag bug: before
+	remove *dll on win
+
+2002-10-17 Thursday 08:52  stas_degteff
+
+	* doc/: bugreport.rus (1.2), bugreport.txt (1.2): Add bug report
+	form (rus & eng)
+
+2002-10-17 Thursday 08:51  stas_degteff
+
+	* doc/bugreport.txt (1.1): file bugreport.txt was initially added
+	on branch hpt-1_2-stable.
+
+2002-10-17 Thursday 08:51  stas_degteff
+
+	* doc/bugreport.rus (1.1): file bugreport.rus was initially added
+	on branch hpt-1_2-stable.
+
+2002-10-17 Thursday 07:41  mche
+
+	* src/areafix.c (1.353): correct previous patch
+
+2002-10-17 Thursday 06:24  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.43): fix FAQ about loglevels
+
+2002-10-17 Thursday 05:40  mche
+
+	* src/areafix.c (1.352): send areafix replyies using defined
+	routing
+
 2002-10-16 Wednesday 09:37  mche
 
 	* src/areafix.c (1.351): fix bug with rescan echos by pattern
