@@ -13,6 +13,18 @@
  * 33098 Paderborn       40472 Duesseldorf
  * Germany               Germany
  *
+ * Hash Dupe
+ * Copyright (C) 1999
+ * 
+ * Oleg Zrozhevsky
+ *
+ * Fido:     2:5096/1.359 2:5020/359
+ * Internet: zoa@cea.ru
+ *
+ * Radio 17, app.129
+ * 144003 Electrostal
+ * Russia
+ *
  * This file is part of HPT.
  *
  * HPT is free software; you can redistribute it and/or modify it
@@ -38,14 +50,23 @@
 #include <pkt.h>
 
 #include <global.h>
-#include <msgapi.h>
 
 #include <compiler.h>
-#include <stamp.h>
-#include <progprot.h>
 #include <dupe.h>
 
+#ifndef HASHDUPE
+#include <msgapi.h>
+#include <stamp.h>
+#include <progprot.h>
+
 FILE *fDupe;
+#else
+
+FILE *SQHf;
+UINT32 MaxEntryN, MaxAge, MaxDupes;
+
+unsigned long strcrc32(char *, unsigned long);
+#endif
 
 char *strtolower(char *string) {
   register int cont;
@@ -78,19 +99,6 @@ char *createDupeFileName(s_area *area) {
 
    strcpy(name, config->dupeHistoryDir);
 
-   /*
-#ifndef MSDOS
-   if (!area->DOSFile) {
-     strcat(name, aux=strtolower(area->areaName));
-   }
-   else {
-   strcat(name, (afname = strrchr(area->fileName, PATH_DELIM))  != NULL ? (aux=strtolower(afname + 1)) :                 (aux=strtolower(area->fileName)));
-   }
-#else
-   strcat(name, (afname = strrchr(area->fileName, PATH_DELIM))  != NULL ? (aux=strtolower(afname + 1)) :                 (aux=strtolower(area->fileName)));
-#endif
-   */
-
    if (!area->DOSFile) {
      strcat(name, aux=strtolower(area->areaName));
    }
@@ -99,11 +107,17 @@ char *createDupeFileName(s_area *area) {
    }
 
    free(aux);
-   strcat(name, ".dup");
+   strcat(name,
+#ifndef HASHDUPE
+   ".dup");
+#else
+   ".sqh");
+#endif
 
    return name;
 }
 
+#ifndef HASHDUPE
 void addIndex(s_area *area, UINT32 offset) {
 
    FILE *f;
@@ -408,3 +422,242 @@ int dupeDetection(s_area *area, const s_message msg) {
       return 0;
    }
 }
+
+#else
+
+int AppendEntry(UINT32 BaseEntryN, SQHentry *NewEntry, UINT32 LastUMSGID, UINT32 LastTimeStamp) {
+  SQHentry Entry, NextEntry;
+  UINT32 EntryN=BaseEntryN, NextEntryN;
+  UINT16 count;
+  int success=0;
+
+  for (count=1; count<MaxEntryN && count<65535; ++count) {
+    ++EntryN;
+    EntryN &= MaxEntryN;
+    fread(&Entry, sizeof(SQHentry), 1, SQHf);
+    if (Entry.UMSGID + MaxDupes < LastUMSGID ||
+        Entry.timestamp + MaxAge < LastTimeStamp) {
+      /* We found expired entry */
+      if (Entry.preventry != 0) {
+        /* Unlink it from previous entry */
+        NextEntryN = (EntryN - Entry.preventry) & MaxEntryN;
+        fseek(SQHf, NextEntryN*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+        fread(&NextEntry, sizeof(SQHentry), 1, SQHf);
+        NextEntry.nextentry = 0;
+        fseek(SQHf, NextEntryN*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+        fwrite(&NextEntry, sizeof(SQHentry), 1, SQHf);
+      }
+
+      if (Entry.nextentry != 0) {
+        /* Unlink it from next entry */
+        NextEntryN = (EntryN + Entry.nextentry) & MaxEntryN;
+        fseek(SQHf, NextEntryN*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+        fread(&NextEntry, sizeof(SQHentry), 1, SQHf);
+        NextEntry.preventry = 0;
+        fseek(SQHf, NextEntryN*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+        fwrite(&NextEntry, sizeof(SQHentry), 1, SQHf);
+      }
+
+      NewEntry->nextentry = 0;
+      NewEntry->preventry = count;
+      fseek(SQHf, EntryN*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+      fwrite(NewEntry, sizeof(SQHentry), 1, SQHf);
+
+      fseek(SQHf, BaseEntryN*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+      fread(&Entry, sizeof(SQHentry), 1, SQHf);
+      Entry.nextentry = count;
+      fseek(SQHf, BaseEntryN*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+      fwrite(&Entry, sizeof(SQHentry), 1, SQHf);
+      success = 1;
+      break;
+    }
+  }
+  return success;
+}
+
+int CheckDupe(s_area *area, const s_message msg) {
+  char *fileName, *str, *msgid;
+  SQHheader sqhh;
+  SQHentry sqhe, sqheNew, sqheNext;
+  UINT32 HeadEntryN, currententry, nextentry, hash, LastUMSGID, LastTimeStamp;
+  UINT16 success = 0;
+  int wrapcount = 2;
+  
+  /* msgs without MSGID are no dupes! */
+  if ((str=getKludge(msg, "MSGID:"))==NULL) return 0;
+
+  msgid = malloc(strlen(str)+1-7);
+  strcpy(msgid, str+7);
+  free(str);
+
+  fileName = createDupeFileName(area);
+  SQHf = fopen(fileName, "rb+");
+  
+  if (SQHf == NULL) {
+    /* no dupefile found, create new dupefile */
+    SQHf = fopen(fileName, "wb+");
+    if (SQHf != NULL) {
+      strncpy(sqhh.signature, "SqH", 3);
+      sqhh.size = area->dupeSize;
+      sqhh.maxage = area->dupeHistory*86400;
+      sqhh.lastUMSGID = sqhh.maxdupes = 1 << sqhh.size;
+      fwrite(&sqhh, sizeof(SQHheader), 1, SQHf);
+      memset(&sqheNew, 0, sizeof(SQHentry));
+      fseek(SQHf, (sqhh.maxdupes*2 - 1)*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+      fwrite(&sqheNew, sizeof(SQHentry), 1, SQHf);
+    }
+  }
+
+  free(fileName);
+  
+  fread(&sqhh, sizeof(SQHheader), 1, SQHf);
+  /* in tommorow need check signature of *.SQH-file */
+  MaxAge = sqhh.maxage;
+  MaxDupes = sqhh.maxdupes;
+
+  sqheNew.preventry = 0;
+  sqheNew.nextentry = 0;
+  sqheNew.hash = hash = strcrc32(msgid, 0xFFFFFFFFL);
+  sqheNew.timestamp = LastTimeStamp = time (NULL);
+  sqheNew.UMSGID = LastUMSGID = ++sqhh.lastUMSGID;
+
+  MaxEntryN = ((1 << (sqhh.size+1)) - 1);
+  HeadEntryN = currententry = hash & MaxEntryN;
+  fseek(SQHf, currententry*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+  fread(&sqhe, sizeof(SQHentry), 1, SQHf);
+  if (sqhe.preventry == 0) {
+    /* We select head entry */
+    for (;;) {
+      if (sqhe.hash == hash) {
+        /* YES! Hashes is equal, and message is dupe */
+	++success;
+	break;
+      }
+
+      if (sqhe.nextentry == 0) {
+        /* This is a last entry in chain. Dupe not found. Insert new entry */
+        fseek(SQHf, 0, SEEK_SET);
+        fwrite(&sqhh, sizeof(SQHheader), 1, SQHf);
+	for (currententry=HeadEntryN;;currententry = (currententry + sqheNew.nextentry) & MaxEntryN) {
+          fseek(SQHf, currententry*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+          fread(&sqhe, sizeof(SQHentry), 1, SQHf);
+	  sqheNew.preventry = sqhe.preventry;
+	  sqheNew.nextentry = sqhe.nextentry;
+          fseek(SQHf, currententry*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+          fwrite(&sqheNew, sizeof(SQHentry), 1, SQHf);
+          if (sqhe.UMSGID+MaxDupes < LastUMSGID ||
+              sqhe.timestamp+MaxAge < LastTimeStamp)
+	    break;
+	  sqheNew.hash = sqhe.hash;
+	  sqheNew.timestamp = sqhe.timestamp;
+	  sqheNew.UMSGID = sqhe.UMSGID;
+	  if (sqhe.nextentry == 0) {
+	    AppendEntry(currententry, &sqheNew, LastUMSGID, LastTimeStamp);
+	    break;
+	  }
+	}
+	/* Inserted new entry. Exit */
+        break;
+      }
+      
+      /* Select next entry in chain */
+      nextentry = (currententry + sqhe.nextentry) & MaxEntryN;
+      fseek(SQHf, nextentry*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+      fread(&sqhe, sizeof(SQHentry), 1, SQHf);
+      if (nextentry<currententry && --wrapcount) {
+        /* Oops! We come full circle. */
+        str = malloc(strlen(area->areaName)+61+8);
+        sprintf (str, "Too long chain of collision entries for AREA: `%s', entry: `%08xH'", area->areaName, HeadEntryN);
+        writeLogEntry(hpt_log, '5', str);
+        free(str);
+        break;
+      }
+      currententry = nextentry;
+    }
+  }
+
+  else {
+    /* We select collision entry. Dupe not found. */
+    fseek(SQHf, 0, SEEK_SET);
+    fwrite(&sqhh, sizeof(SQHheader), 1, SQHf);
+
+    fseek(SQHf, HeadEntryN*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+    fwrite(&sqheNew, sizeof(SQHentry), 1, SQHf);
+
+    nextentry = (HeadEntryN - sqhe.preventry) & MaxEntryN;
+    fseek(SQHf, nextentry*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+    fread(&sqheNext, sizeof(SQHentry), 1, SQHf);
+    if (sqhe.nextentry) {
+      /* We replace midle entry in chain */
+      sqheNext.nextentry += sqhe.nextentry;
+      fseek(SQHf, nextentry*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+      fwrite(&sqheNext, sizeof(SQHentry), 1, SQHf);
+
+      nextentry = (HeadEntryN + sqhe.nextentry) & MaxEntryN;
+      fseek(SQHf, nextentry*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+      fread(&sqheNext, sizeof(SQHentry), 1, SQHf);
+      sqheNext.preventry += sqhe.preventry;
+      
+      if (sqhe.UMSGID + sqhh.maxdupes < LastUMSGID ||
+          sqhe.timestamp + sqhh.maxage < LastTimeStamp) {
+	/* Entry expired. Reallocation not need. Repair collision chain. */
+        fseek(SQHf, nextentry*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+        fwrite(&sqheNext, sizeof(SQHentry), 1, SQHf);
+      }
+      else /* Reallocate replaced collision entry. */
+       for (currententry=nextentry;;) {
+	  /* sqhe -- replacing entry, sqheNext - replaced entry */
+	  sqhe.preventry = sqheNext.preventry;
+	  sqhe.nextentry = sqheNext.nextentry;
+          fseek(SQHf, currententry*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+          fwrite(&sqhe, sizeof(SQHentry), 1, SQHf);
+          if (sqheNext.UMSGID+MaxDupes < LastUMSGID ||
+              sqheNext.timestamp+MaxAge < LastTimeStamp)
+	    break;
+	  sqhe.hash = sqheNext.hash;
+	  sqhe.timestamp = sqheNext.timestamp;
+	  sqhe.UMSGID = sqheNext.UMSGID;
+	  if (sqhe.nextentry == 0) {
+	    AppendEntry(currententry, &sqhe, LastUMSGID, LastTimeStamp);
+	    break;
+	  }
+	  currententry = (currententry + sqhe.nextentry) & MaxEntryN;
+          fseek(SQHf, currententry*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+          fread(&sqheNext, sizeof(SQHentry), 1, SQHf);
+        }
+    }
+    else {
+      /* We replace last entry in chain */
+      if (sqhe.UMSGID + sqhh.maxdupes < LastUMSGID ||
+          sqhe.timestamp + sqhh.maxage < LastTimeStamp) {
+	/* Entry expired. Reallocation not need. Repair collision chain. */
+        sqheNext.nextentry = 0;
+        fseek(SQHf, nextentry*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
+        fwrite(&sqheNext, sizeof(SQHentry), 1, SQHf);
+      }
+      else /* Reallocate replaced collision entry. */
+        AppendEntry(nextentry, &sqhe, LastUMSGID, LastTimeStamp);
+    }
+
+  }
+  
+  fclose(SQHf);
+  free(msgid);
+  return success;
+}
+
+int dupeDetection(s_area *area, const s_message msg) {
+   int  rc;
+
+   if (area->dupeCheck == dcOff) return 1; // no dupeCheck return 1 "no dupe"
+   
+   if (CheckDupe(area, msg))
+      // it is a dupe do nothing but return 0
+      rc = 0;
+   else
+      rc = 1;
+
+   return rc;
+}
+
+#endif

@@ -1782,12 +1782,14 @@ void toss()
    processDir(config->inbound, secInbound);
    arcmail();
 
+#ifndef HASHDUPE
    // write dupeFiles
 
    for (i = 0 ; i < config->echoAreaCount; i++) {
       writeToDupeFile(&(config->echoAreas[i]));
       freeDupeMemory(&(config->echoAreas[i]));
    }
+#endif
 
    if (config->importlog != NULL) {
       // write importlog

@@ -2,6 +2,12 @@ hpt 0.29
 --------
 
 ----- cvs ci ------
+Mon Aug  9 15:34:24 NOVST 1999
+max:
++ added HASHDUPES code by Oleg Zrozhevsky
+* small fixes in log.c by Oleg Zrozhevsky
+
+----- cvs ci ------
 Mon Jul 26 14:19:28 NOVST 1999
 max:
 * fixed memory leak in dupe.c (thanx to Oleg Zrozhevsky)

@@ -13,6 +13,18 @@
  * 33098 Paderborn       40472 Duesseldorf
  * Germany               Germany
  *
+ * Hash Dupe
+ * Copyright (C) 1999
+ *
+ * Oleg Zrozhevsky
+ *
+ * Fido:     2:5096/1.359 2:5020/359
+ * Internet: zoa@cea.ru
+ *
+ * Radio 17, app.129
+ * 144003 Electrostal
+ * Russia
+ *
  * This file is part of HPT.
  *
  * HPT is free software; you can redistribute it and/or modify it
@@ -31,6 +43,8 @@
  *****************************************************************************/
 #ifndef DUPE_H
 #define DUPE_H
+
+#ifndef HASHDUPE
 #include <tree.h>
 #include <typesize.h>
 #include <fidoconfig.h>
@@ -96,4 +110,34 @@ int dupeDetection(s_area *area, const s_message msg);
 char *createDupeFileName(s_area *area);
 void addIndex(s_area *echo, UINT32 index);
 
-#endif
+#else /* HASHDUPE */
+#include <typesize.h>
+#include <fidoconfig.h>
+#include <pkt.h>
+
+/* This header file contains the structures of the dupe file */
+
+struct _SQHheader {
+  UCHAR  signature[3],
+         size;
+  UINT32 maxage,
+         maxdupes,
+	 lastUMSGID;
+};
+
+typedef struct _SQHheader SQHheader;
+
+struct _SQHentry {
+  UINT16 preventry,
+         nextentry;
+  UINT32 hash,
+         timestamp,
+         UMSGID;
+};
+
+typedef struct _SQHentry SQHentry;
+
+int dupeDetection(s_area *area, const s_message msg);
+
+#endif /* HASHDUPE */
+#endif /* DUPE_H */

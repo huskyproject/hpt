@@ -1,3 +1,4 @@
+- jam message base support
 - fix the bug in pktread.c:96
 - execute external programs before pack & after unpack
 - hpt should delete lockfile if terminated by SIGINT/SIGTERM for win32 and dos
