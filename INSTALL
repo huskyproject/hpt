@@ -1,0 +1,15 @@
+Unix:
+-----
+
+0. the smapi and the fidoconfig package is required for the hpt package
+
+1. Put the hpt package in the directory where the other packages of fido
+   linux reside:
+
+   /usr/src/packages/        -> smapi/
+                             -> hpt/
+                             -> fidoconfig/
+
+2. compile hpt
+
+You're ready. Now you can install hpt, and other software which uses fidoconfig. 
