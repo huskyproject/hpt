@@ -64,49 +64,16 @@
 #include <hptperl.h>
 #endif
 
-// create seen-by's & path
-/* is not used
-char *createSeenByPath(s_area *echo) {
-	unsigned int i, seenByCount = 0;
-	s_seenBy *seenBys = NULL;
-	char *seenByPath = NULL;
-	
-	seenBys = (s_seenBy*) safe_malloc(sizeof(s_seenBy)*(echo->downlinkCount+1));
-	for (i = 0;i < echo->downlinkCount; i++) {
-		// only include nodes in SEEN-BYS
-		if (echo->downlinks[i]->link->hisAka.point != 0) continue;
-		seenBys[seenByCount].net  = (UINT16)echo->downlinks[i]->link->hisAka.net;
-		seenBys[seenByCount].node = (UINT16)echo->downlinks[i]->link->hisAka.node;
-		seenByCount++;
-	}
-	if (echo->useAka->point == 0) {      // only include if system is node
-		seenBys[seenByCount].net = (UINT16) echo->useAka->net;
-		seenBys[seenByCount].node = (UINT16) echo->useAka->node;
-		seenByCount++;
-	}
-	sortSeenBys(seenBys, seenByCount);
-	
-	seenByPath = createControlText(seenBys, seenByCount, "SEEN-BY: ");
-	nfree(seenBys);
-	
-	// path line only include node-akas in path
-	if (echo->useAka->point == 0)
-		xscatprintf(&seenByPath, "\001PATH: %u/%u\r",
-					echo->useAka->net, echo->useAka->node);
-
-	return seenByPath;
-}
-*/
-
 void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
 {
    // action == 0 - scan area
    // action == 1 - rescan area
    // action == 2 - rescan badarea
     char   *kludgeLines = NULL, *seenByPath = NULL;
-    char   *msgtid = NULL;
+   UCHAR  *msgtid = NULL;
    UCHAR  *ctrlBuff = NULL;
    UINT32 ctrlLen;
+   UCHAR  tid[]= "TID";
 
    memset(msg, '\0', sizeof(s_message));
    
@@ -137,8 +104,8 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    ctrlBuff[ctrlLen] = '\0';
    if (action == 0 && config->disableTID == 0)
    {
-       while ((msgtid = GetCtrlToken(ctrlBuff, "TID")) != NULL)
-           MsgRemoveToken(ctrlBuff, "TID");
+       while ((msgtid = GetCtrlToken(ctrlBuff, tid)) != NULL)
+           MsgRemoveToken(ctrlBuff, tid);
        xstrscat((char **) &ctrlBuff, "\001TID: ", versionStr, NULL);
    }
    // add '\r' after each kludge
@@ -146,8 +113,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    
    nfree(ctrlBuff);
 
-   // added SEEN-BY and PATH from scan area only
-   if (action == 0)// seenByPath = createSeenByPath(echo);
+   if (action == 0)
 	   xstrcat(&seenByPath, "SEEN-BY: "); // 9 bytes
 
    // create text
