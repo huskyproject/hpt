@@ -92,7 +92,7 @@ void print_help(void) {
     fprintf(stdout,"            message sender's address, if not  included  post\n");
     fprintf(stdout,"            use first system address (see fidoconfig)\n\n");
     fprintf(stdout,"        -at \"address to\"\n");
-    fprintf(stdout,"            message receiver's address, *MUST BE PRESENT*\n\n");
+    fprintf(stdout,"            message receiver's address, *MUST BE PRESENT FOR NETMAIL*\n\n");
     fprintf(stdout,"         -s \"subject\"\n");
     fprintf(stdout,"            subject line, if not included then assumed to be empty\n\n");
     fprintf(stdout,"         -e \"echo area\"\n");
