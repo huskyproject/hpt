@@ -48,14 +48,14 @@ $appdata)=
         print "From: $origZone:$origNet/$origNode.$origPoint\t\t",$day+1,"/",
 $month+1,"/$year $hour:$minute:$seconds\n";
         print "To  : $destZone:$destNet/$destNode.$destPoint\n";
-        print "Pid : ",$ProductCode+$PCodeHi*256," ($RevMaj.$RevMin)\n";
-        print "Pwd : `$Password'\n";
+        print "Prodcode : ",$ProductCode+$PCodeHi*256," ($RevMaj.$RevMin)\n";
+        print "Password : `$Password'\n";
     } else {
         print "Version:2\n";
         print "From: $origNet/$origNode\t\t$day/$month/$year
 $hour:$minute:$seconds\n";
         print "To  : $destNet/$destNode\n";
-        print "Pid : $ProductCode\n";
+        print "Prodcode : $ProductCode\n";
         print "[ May be 2+ $origZone:$origNet/$origNode.$origPoint ->
 $destZone:$destNet/$destNode.$destPoint ]\n";
     }
