@@ -1,3 +1,13 @@
+2001-12-22 Saturday 18:25  pavel.gulchouck
+
+	* src/hpt.c (1.120): set config var [version] to
+	VERSION.SUBVERSION.PATCHLEVEL (0.9.8 now)
+
+2001-12-22 Saturday 18:20  pavel.gulchouck
+
+	* src/link.c (1.43): minor change for jam and msg - loop to
+	num_msg, not high_msg
+
 2001-12-17 Monday 20:46  ml
 
 	* doc/hpt.texi (1.46), src/fcommon.c (1.104): notValidFileNameChars
