@@ -448,9 +448,22 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
     return 0;
 }
 
+char* GetWordByPos(char* str, UINT pos)
+{
+    UINT i = 0;
+    while( i < pos)
+    {
+        while( *str &&  isspace(*str)) str++; /* skip spaces */
+        i++;
+        if( i == pos ) break;
+        while( *str && !isspace(*str)) str++; /* skip word   */
+        if( *str == '\0' ) return NULL;
+    }
+    return str; 
+}
 
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
-    char *cfgline=NULL, *token=NULL, *tmpPtr=NULL, *line=NULL, *buff=0;
+    char *cfgline=NULL, *token=NULL, *tmpPtr=NULL, *line=NULL, *buff=NULL;
     long strbeg = 0, strend = -1;
     int rc=0;
 
@@ -534,32 +547,41 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         nRet = DEL_OK;
         break;
     case 5: /*  subscribe us to  passthrough */
-        if ( fc_stristr(area->downlinks[0]->link->autoAreaCreateDefaults,
-            "passthrough") )  {
-            nRet = O_ERR;
-            break;
-        }
         w_log(LL_SRCLINE, __FILE__ "::changeconfig():%u",__LINE__);
-        /*  get area string */
-        buff = makeAreaParam(area->downlinks[0]->link , areaName, NULL );
-        nRet = ADD_OK;
-    case 6: /*  make area pass. */
 
-        if(action == 6) {
-            buff = makeAreaParam(area->downlinks[0]->link , areaName, "passthrough" );
-            nRet = DEL_OK;
+        tmpPtr = fc_stristr(cfgline,"passthrough");
+        if ( tmpPtr )  {
+            char* msgbFileName = makeMsgbFileName(config, area->areaName);
+            /*  translating filename of the area to lowercase/uppercase */
+            if (config->areasFileNameCase == eUpper) strUpper(msgbFileName);
+            else strLower(msgbFileName);
+
+            *(--tmpPtr) = '\0';
+            xstrscat(&buff, cfgline, " ", config->msgBaseDir,msgbFileName, tmpPtr+12, NULL);
+            nfree(cfgline);
+            cfgline = buff;
+
+            nfree(msgbFileName);
+        } else  {
+            tmpPtr = fc_stristr(cfgline,"-pass");
+            *(--tmpPtr) = '\0';
+            xstrscat(&buff, cfgline, tmpPtr+6 , NULL);
+            nfree(cfgline);
+            cfgline = buff;
         }
-        /*  add all links */
-        token = NULL;
-        token = strrchr(cfgline, '\"');
-        if(!token) token = cfgline;
-        token = strstr(token, aka2str(area->downlinks[0]->link->hisAka));
-        if(!testAddr(token,area->downlinks[0]->link->hisAka))
-            token = strstr(token+1, aka2str(area->downlinks[0]->link->hisAka));
-
-        xstrcat( &buff, token-1);
-        nfree(cfgline);
-        cfgline = buff;
+        nRet = ADD_OK;
+        break;
+    case 6: /*  make area pass. */
+        tmpPtr = GetWordByPos(cfgline,4);
+        if ( tmpPtr ) {
+            *(--tmpPtr) = '\0';
+            xstrscat(&buff, cfgline, " -pass ", ++tmpPtr , NULL);
+            nfree(cfgline);
+            cfgline = buff;
+        } else {
+            xstrcat(&cfgline, " -pass");
+        }
+        nRet = DEL_OK;
         break;
     default: break;
     } /*  switch (action) */
