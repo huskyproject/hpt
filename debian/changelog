@@ -1,3 +1,10 @@
+hpt (0.9.8-9) unstable; urgency=low
+
+  * Newest CVS.
+  * No more Debug mode.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Mon,  2 Jul 2001 23:33:28 +0200
+
 hpt (0.9.8-8) unstable; urgency=low
 
   * New cvs snapshot.

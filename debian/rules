@@ -10,7 +10,7 @@ export DH_COMPAT=3
 export DEBIAN=1
 export PACKAGE=hpt
 # Next Line to build debug-versions !
-export DEB_BUILD_OPTIONS=nostrip
+# export DEB_BUILD_OPTIONS=nostrip
 
 configure: configure-stamp
 configure-stamp:
@@ -33,17 +33,9 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp configure-stamp
-	-$(MAKE) clean
+	-$(MAKE) distclean
 	-cd doc ;\
-	$(MAKE) clean
-	-rm -f configure-stamp
-	-rm -f build-stamp
-	-rm -rf debian/$(PACKAGE)
-	-rm -f debian/postinst.debhelper
-	-rm -f debian/postrm.debhelper
-	-rm -f debian/prerm.debhelper
-	-rm -f debian/substvars
-	-rm -f debian/files
+	$(MAKE) distclean
 	dh_clean
 
 install: build
