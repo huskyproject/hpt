@@ -450,29 +450,29 @@ int readCheck(s_area *echo, s_link *link) {
     int i;
 
     for (i=0; i<echo->downlinkCount; i++) {
-	if (link == echo->downlinks[i]->link) break;
+		if (link == echo->downlinks[i]->link) break;
     }
     if (i == echo->downlinkCount) return 4;
 
     // pause
     if (link->Pause) return 3;
 
-// Do not check groups here, too much checking, use groups only for areafix
-//    if (echo->group && echo->group != '\060') {
-//	if (link->AccessGrp) {
-//	    if (config->PublicGroup) {
-//		if (strchr(link->AccessGrp, echo->group) == NULL &&
-//		    strchr(config->PublicGroup, echo->group) == NULL) return 1;
-//	    } else if (strchr(link->AccessGrp, echo->group) == NULL) return 1;
-//	} else if (config->PublicGroup) {
-//		   if (strchr(config->PublicGroup, echo->group) == NULL) return 1;
-//	       } else return 1;
-//    }
+    if (strcmp(echo->group,"0")) {
+		if (link->numAccessGrp) {
+			if (config->numPublicGroup) {
+				if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
+					!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup))
+					return 1;
+			} else if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp)) return 1;
+		} else if (config->numPublicGroup) {
+			if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) return 1;
+		} else return 1;
+    }
     
     if (echo->levelread > link->level) return 2;
     
     if (i < echo->downlinkCount) {
-	if (echo->downlinks[i]->export == 0) return 3;
+		if (echo->downlinks[i]->export == 0) return 3;
     }
     
     return 0;
@@ -496,7 +496,7 @@ int writeCheck(s_area *echo, s_addr *aka) {
     if (link == NULL) return 4;
     
     for (i=0; i<echo->downlinkCount; i++) {
-	if (link == echo->downlinks[i]->link) break;
+		if (link == echo->downlinks[i]->link) break;
     }
     if (i == echo->downlinkCount) return 4;
     
@@ -512,10 +512,22 @@ int writeCheck(s_area *echo, s_addr *aka) {
 //	       } else return 1;
 //    }
     
+    if (strcmp(echo->group,"0")) {
+		if (link->numAccessGrp) {
+			if (config->numPublicGroup) {
+				if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
+					!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup))
+					return 1;
+			} else if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp)) return 1;
+		} else if (config->numPublicGroup) {
+			if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) return 1;
+		} else return 1;
+    }
+
     if (echo->levelwrite > link->level) return 2;
     
     if (i < echo->downlinkCount) {
-	if (echo->downlinks[i]->import == 0) return 3;
+		if (echo->downlinks[i]->import == 0) return 3;
     }
     
     return 0;
@@ -544,15 +556,15 @@ int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link, s_addr pktOrigA
   * This function puts all the links of the echoarea in the newLink array who does not have got the mail
   */
 
-void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount, s_area *echo, s_link ***newLinks, s_addr pktOrigAddr)
+void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount, s_area *echo, s_arealink ***newLinks, s_addr pktOrigAddr)
 {
    UINT i, j=0;
 
-   *newLinks = (s_link **) calloc(echo->downlinkCount, sizeof(s_link*));
+   *newLinks = (s_arealink **) calloc(echo->downlinkCount, sizeof(s_arealink*));
 
    for (i=0; i < echo->downlinkCount; i++) {
       if (checkLink(seenBys, seenByCount, echo->downlinks[i]->link, pktOrigAddr)==0) {
-         (*newLinks)[j] = echo->downlinks[i]->link;
+         (*newLinks)[j] = echo->downlinks[i];
          j++;
       }
    }
@@ -566,7 +578,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 
    FILE     *pkt;
    s_pktHeader header;
-   s_link   **newLinks;  // links who does not have their aka in seenBys and thus have not got the echomail.
+   s_arealink   **newLinks;  // links who does not have their aka in seenBys and thus have not got the echomail.
 
    if (!echo->tinySB) {
           createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
@@ -582,11 +594,11 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    for (i=0; i<echo->downlinkCount; i++) {
 
       if (newLinks[i] == NULL) break;               // no link at this index -> break
-      if (newLinks[i]->hisAka.point != 0) continue; // don't include points in SEEN-BYS
+      if (newLinks[i]->link->hisAka.point != 0) continue; // don't include points in SEEN-BYS
 
       seenBys = (s_seenBy*) realloc(seenBys, sizeof(s_seenBy) * (seenByCount+1));
-      seenBys[seenByCount].net = newLinks[i]->hisAka.net;
-      seenBys[seenByCount].node = newLinks[i]->hisAka.node;
+      seenBys[seenByCount].net = newLinks[i]->link->hisAka.net;
+      seenBys[seenByCount].node = newLinks[i]->link->hisAka.node;
       seenByCount++;
    }
 
@@ -655,12 +667,12 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       if (newLinks[i] == NULL) break;           // no link at this index -> break;
 
       // does the link has read access for this echo?
-      if (readCheck(echo, newLinks[i])!=0) continue;
+      if (newLinks[i]->export == 0) continue;
 
       // create pktfile if necessary
-      if (newLinks[i]->pktFile == NULL) {
+      if (newLinks[i]->link->pktFile == NULL) {
          // pktFile does not exist
-         if ( createTempPktFileName(newLinks[i]) ) {
+         if ( createTempPktFileName(newLinks[i]->link) ) {
             writeLogEntry(hpt_log, '9', "Could not create new pkt!\n");
             printf("Could not create new pkt!\n");
             exit(1);
@@ -668,11 +680,11 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       } /* endif */
 
       makePktHeader(NULL, &header);
-      header.origAddr = *(newLinks[i]->ourAka);
-      header.destAddr = newLinks[i]->hisAka;
-      if (newLinks[i]->pktPwd != NULL)
-         strcpy(header.pktPassword, newLinks[i]->pktPwd);
-      pkt = openPktForAppending(newLinks[i]->pktFile, &header);
+      header.origAddr = *(newLinks[i]->link->ourAka);
+      header.destAddr = newLinks[i]->link->hisAka;
+      if (newLinks[i]->link->pktPwd != NULL)
+         strcpy(header.pktPassword, newLinks[i]->link->pktPwd);
+      pkt = openPktForAppending(newLinks[i]->link->pktFile, &header);
 
       // an echomail msg must be adressed to the link
       msg->destAddr = header.destAddr;
@@ -688,6 +700,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    }
    free(seenBys);
    free(path);
+   free(newLinks);
 }
 
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
@@ -1167,12 +1180,24 @@ void writeMsgToSysop()
     
 }
 
+s_arealink *getAreaLink(s_area *area, s_addr aka)
+{
+	UINT i;
+
+	for (i = 0; i <area->downlinkCount; i++) {
+		if (addrComp(aka, area->downlinks[i]->link->hisAka)==0) return area->downlinks[i];
+	}
+	
+	return NULL;
+}
+
 int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 {
    char   *area, *textBuff;
    s_area *echo;
    s_link *link;
-   int    writeAccess, rc = 0, ccrc = 0;
+   s_arealink *arealink;
+   int    writeAccess = 0, rc = 0, ccrc = 0;
 
    textBuff = (char *) malloc(strlen(msg->text)+1);
    strcpy(textBuff, msg->text);
@@ -1185,9 +1210,19 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
    statToss.echoMail++;
 
    if (echo == &(config->badArea)) writeAccess = 0;
-   else writeAccess = writeCheck(echo, &pktOrigAddr);
+// else writeAccess = writeCheck(echo, &pktOrigAddr);
+// this is faster than writeCheck imho
+   else {   
+	   arealink = getAreaLink(echo, pktOrigAddr);
+	   if (arealink) {
+		   if (arealink->import) writeAccess = 0; else writeAccess = 3;
+	   } else {
+		   if (addrComp(pktOrigAddr,*echo->useAka)==0) writeAccess = 0;
+		   else writeAccess = 4;
+	   }
+   }
    if (writeAccess!=0) echo = &(config->badArea);
-
+		
    if (echo != &(config->badArea)) {
       if (dupeDetection(echo, *msg)==1) {
          // no dupe

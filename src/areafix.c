@@ -95,23 +95,14 @@ int subscribeCheck(s_area area, s_message *msg, s_link *link)
     if (addrComp(msg->origAddr, area.downlinks[i]->link->hisAka)==0) return 0;
   }
 
-  if (strcmp(area.group, "\060") != 0)
-  {
-    if (link->numAccessGrp > 0)
-    {
-      for (i = 0; i < link->numAccessGrp; i++)
-	if (strcmp(area.group, link->AccessGrp[i]) == 0) found = 1;
-    }
+  if (strcmp(area.group, "0")) {
+	  if (link->numAccessGrp) 
+		  found = grpInArray(area.group,link->AccessGrp,link->numAccessGrp);
+	  if (config->numPublicGroup)
+		  found = grpInArray(area.group,config->PublicGroup,config->numPublicGroup);
+  } else found = 1;
 
-    if (config->numPublicGroup > 0)
-    {
-      for (i = 0; i < config->numPublicGroup; i++)
-	if (strcmp(area.group, config->PublicGroup[i]) == 0) found = 1;
-    }
-  }
-  else found = 1;
-
-  if (found == 0) return 2;
+  if (!found) return 2;
   if (area.hide) return 3;
   return 1;
 }
@@ -230,39 +221,35 @@ int addstring(FILE *f, char *aka) {
 }
 
 void addlink(s_link *link, s_area *area) {
-    char *test = NULL;
     s_arealink *arealink;
     
     area->downlinks = realloc(area->downlinks, sizeof(s_arealink*)*(area->downlinkCount+1));
     arealink = area->downlinks[area->downlinkCount] = (s_arealink*)calloc(1, sizeof(s_arealink));
     arealink->link = link;
-    
-    if (link->numOptGrp > 0)
-    {
-      unsigned int i;
 
-      test = NULL;
-      for (i = 0; i < link->numOptGrp; i++)
-        if (strcmp(area->group, link->optGrp[i]) == 0) test = link->optGrp[i];
-    }
-    arealink->export = 1;
-    arealink->import = 1;
-    arealink->mandatory = 0;
-    if (link->export) if (*link->export==0) {
-	    if (link->numOptGrp == 0 || (link->numOptGrp && test)) {
-		arealink->export = 0;
-	    }
-	} 
-    if (link->import) if (*link->import==0) {
-	    if (link->numOptGrp == 0 ||  (link->numOptGrp && test)) {
-		arealink->import = 0;
-	    }
-	} 
-    if (link->mandatory) if (*link->mandatory==1) {
-	    if (link->numOptGrp == 0 || (link->numOptGrp && test)) {
-		arealink->mandatory = 1;
-	    }
-	} 
+	if (link->numOptGrp > 0) {
+		// default set export on, import on, mandatory off
+		arealink->export = 1;
+		arealink->import = 1;
+		arealink->mandatory = 0;
+		
+		if (grpInArray(area->group,link->optGrp,link->numOptGrp)) {
+			arealink->export = link->export;
+			arealink->import = link->import;
+			arealink->mandatory = link->mandatory;
+		}
+		
+	} else {
+		arealink->export = link->export;
+		arealink->import = link->import;
+		arealink->mandatory = link->mandatory;
+	}
+	if (area->mandatory) arealink->mandatory = 1;
+	if (link->level < area->levelread)	arealink->export=0;
+	if (link->level < area->levelwrite) arealink->import=0;
+	// paused link can't receive mail
+	if (link->Pause) arealink->export = 0;
+	
     area->downlinkCount++;
 }
 
@@ -660,6 +647,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	    area = &(config->echoAreas[i]);
 	    an = area->areaName;
 
+//		writeLogEntry(hpt_log, '8', "areafix: rc = %u",rc);
 		switch (rc) {
 		case 0: 
 			xscatprintf(&report, " %s %s  already linked\r", an, print_ch(49-strlen(an), '.'));
@@ -684,17 +672,19 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	
 	if ((rc==4) && (strstr(line,"*") == NULL)) {
 	    if (link->fReqFromUpLink) {
-		// try to forward request
-		if (forwardRequest(line, link)!=0)
-			xscatprintf(&report, " %s %s  no uplinks to forward\r", line, print_ch(49-strlen(line), '.'));
-		else {
-			xscatprintf(&report, " %s %s  request forwarded\r", line, print_ch(49-strlen(line), '.'));
-			writeLogEntry(hpt_log, '8', "areafix: %s subscribed to area %s",
+			// try to forward request
+			if (forwardRequest(line, link)!=0)
+				xscatprintf(&report, " %s %s  no uplinks to forward\r",
+							line, print_ch(49-strlen(line), '.'));
+			else {
+				xscatprintf(&report, " %s %s  request forwarded\r",
+							line, print_ch(49-strlen(line), '.'));
+				writeLogEntry(hpt_log, '8', "areafix: %s subscribed to area %s",
 							  aka2str(link->hisAka),line);
-			area = getArea(config, line);
-			changeconfig (getConfigFileName(), area, link, 3);
-			addlink(link, area);
-		}
+				area = getArea(config, line);
+				changeconfig (getConfigFileName(), area, link, 3);
+				addlink(link, area);
+			}
 	    }
 	}
 	

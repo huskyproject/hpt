@@ -5,16 +5,18 @@ Category 1: Will certainly be implemented until next release
 ============================================================
 
 - check group access
+- fix bug with subcribe to echo with non accesable group
+- test %rescan (call arcmail)
 - fix HASHDUPEs under non unices
-- check dupebase filename creation - dos & passthrough areas
-- clean autoCreate code
-- do not open/close files on each msg
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 
+- check dupebase filename creation - dos & passthrough areas
+- do not open/close files on each msg
 - fileboxes
 - templates
+- clean autoCreate code
 
 Category 3: Will only be included if volunteers send patches
 ============================================================

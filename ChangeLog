@@ -1,6 +1,19 @@
 hpt 0.9.6
 ---------
 
+----- cvs ci ------
+Sat Feb  5 02:36:03 NOVT 2000
+max:
+* fixed memleak in toss.c (newLinks was not freed)
+* adopted changes for groups
+* adopted readCheck & writeCheck for new groups
+* removed one writeCheck from processEMMsg and added optimal code
+* the same with readCheck
+
+----- cvs ci ------
+Fri Feb  4 01:04:47 NOVT 2000
+max:
+- disabling HASHDUPE and compiling purgeDupes in hpt/NT (patch from Serguei)
 
 ----- cvs ci ------
 Thu Jan  3 02:35:29 NOVT 2000
