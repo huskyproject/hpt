@@ -319,8 +319,16 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
 
 char *list(s_message *msg, s_link *link) {
 
-	int i,active,avail,rc,arealen,desclen,len;
+	int i,j,active,avail,rc,desclen,len;
+	int areaslen[config->echoAreaCount];
+	int maxlen;
 	char *report, addline[256];
+
+	maxlen = 0;
+	for (i=0; i< config->echoAreaCount; i++) {
+	   areaslen[i]=strlen(config->echoAreas[i].areaName);
+	   if (areaslen[i]>maxlen) maxlen = areaslen[i];
+	}
 	
 	sprintf(addline, "Available areas for %s\r\r", aka2str(link->hisAka));
 
@@ -331,13 +339,12 @@ char *list(s_message *msg, s_link *link) {
 
 	    rc=subscribeCheck(config->echoAreas[i],msg, link);
 	    if (rc < 2) {
-			arealen=strlen(config->echoAreas[i].areaName);
 			if (config->echoAreas[i].description!=NULL)
 			       desclen=strlen(config->echoAreas[i].description);
 			else
 			       desclen=0;
 
-			len=strlen(report)+arealen+(35-arealen)+desclen+4;
+			len=strlen(report)+areaslen[i]+(maxlen-areaslen[i])+desclen+6;
 
 			report=(char*) realloc(report, len);
 				
@@ -352,8 +359,8 @@ char *list(s_message *msg, s_link *link) {
 			strcat(report, config->echoAreas[i].areaName);
 			if (desclen!=0)
 			{
-			       if (arealen>32) arealen=32; else strcat(report," ");
-			       strcat(report, print_ch(32-arealen, '.'));
+			       strcat(report," ");
+			       for (j=0;j<(maxlen)-areaslen[i];j++) strcat(report,".");
                                strcat(report," ");
                                strcat(report,config->echoAreas[i].description);
 			}
