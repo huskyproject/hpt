@@ -45,10 +45,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#if defined(A_HIDDEN) && !defined(_A_HIDDEN)
-#define _A_HIDDEN A_HIDDEN
-#endif
-
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
 /* we can't include windows.h for several reasons ... */
 #ifdef __MINGW32__
@@ -68,6 +64,10 @@ int __stdcall CharToOemA(char *, char *);
 #include <fidoconf/xstr.h>
 #include <fidoconf/afixcmd.h>
 #include <fidoconf/temp.h>
+
+#if defined(A_HIDDEN) && !defined(_A_HIDDEN)
+#define _A_HIDDEN A_HIDDEN
+#endif
 
 #include <pkt.h>
 #include <scan.h>
