@@ -226,9 +226,10 @@ void post(int c, unsigned int *n, char *params[])
                         break;
             };
         } else if (textBuffer == NULL) {
-            if (strcmp(params[*n], "-"))
-                if(fexist(params[*n]))
+            if (strcmp(params[*n], "-")) {
+                if(fexist(params[*n])) 
                     text = fopen(params[*n], "rt");
+            }
             else
                 text = stdin;
             if (text != NULL) {
