@@ -1,3 +1,12 @@
+2003-04-07 Monday 15:47  mche
+
+	* hpt.vcproj (1.2): no message
+
+2003-04-07 Monday 08:59  val_khokhlov
+
+	* src/areafix.c (1.399): areafixReportsAttr now applies to areafix
+	answers too
+
 2003-04-05 Saturday 09:48  d_sergienko
 
 	* HISTORY (1.24), TODO (1.199), src/areafix.c (1.398): add @REPLY
