@@ -524,7 +524,7 @@ void linkArea(s_area *area)
 
 	   for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++) {
 
-              if (area->msgbType & MSGTYPE_JAM) {
+              if (area->msgbType & MSGTYPE_JAM || area->msgbType & MSGTYPE_SDM) {
 
                  if( (linksptr->replyToPos != crepl->replyToPos) ||
                      (linksptr->reply1st  != crepl->reply1st) ||
