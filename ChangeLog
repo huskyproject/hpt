@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ---- cvs ci ------
+Mon Mar  5 11:07:24 NOVT 2001
+max:
+* fixed bug in hpttree (lost nodes)
+
+---- cvs ci ------
 Sun Mar  4 14:42:00 NOVT 2001
 max:
 * checking return value of MsgWriteMsg() in processEMMsg() and

@@ -66,7 +66,7 @@ s_nodepath *allNodes = NULL;
 int nodeCount = 0;
 
 FILE *outlog;
-char *version = "1.02";
+char *version = "1.03";
 
 int *linksOnLevel = NULL;
 int linksInArray = 0;
@@ -99,7 +99,7 @@ void  printTree (int level, int nodeNum)
    }
 
    linksOnLevel[level] = 0;
-   for (i=0; i < nodeCount-1; i++) {
+   for (i=0; i < nodeCount; i++) {
       if ((allNodes[i]).exportto == nodeNum) {
 	 linksOnLevel[level]++;
       }
@@ -123,7 +123,7 @@ void  printTree (int level, int nodeNum)
    }
    cnode->printed = 1; // for checking for lost nodes
 
-   for (i=0; i < nodeCount-1; i++) {
+   for (i=0; i < nodeCount; i++) {
       if ((allNodes[i]).exportto == nodeNum) {
 	 printTree (level+1, i);
       }
@@ -308,7 +308,7 @@ void buildAreaTree(s_area *area)
 	      printf("Not distributed\n");
 
 
-	   for (i=0; i < nodeCount-1; i++) {
+	   for (i=0; i < nodeCount; i++) {
 	      if (!((allNodes[i]).printed)) {
 		 fprintf(outlog, "Lost Node: %d:%d/%d\n", (allNodes[i]).zone, (allNodes[i]).net, (allNodes[i]).node);
 	      }
