@@ -40,7 +40,7 @@
 
 #define LIST_PAGE_SIZE	256
 
-ps_arealist newAreaList()
+ps_arealist newAreaList(void)
 {
 	ps_arealist al;
 
