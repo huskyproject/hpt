@@ -1,7 +1,7 @@
 Source: hpt
 Section: mail
 Priority: optional
-Maintainer: Pavel Andreew <pavel@collage.etel.ru>
+Maintainer: Pavel Andreew <sfpavel@users.sourceforge.net>
 Build-Depends: debhelper (>> 4.0.0), libsmapi2-dev (>=2.4-1), libfidoconf1-dev (>= 1.4-1), libperl-dev, texinfo
 Standards-Version: 3.5.8
 
