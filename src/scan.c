@@ -159,10 +159,7 @@ s_route *findRouteForNetmail(s_message msg)
    UINT i;
 
    // FIX ME - we need a better solution here...
-   if (msg.destAddr.point == 0)
-      sprintf(addrStr, "%u:%u/%u", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node);
-   else
-      sprintf(addrStr, "%u:%u/%u.%u", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+   sprintf(addrStr, "%u:%u/%u.%u", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 
    if ((msg.attributes & MSGFILE) == MSGFILE) {
       // if msg has file attached

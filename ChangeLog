@@ -1,6 +1,14 @@
 hpt 0.27
 --------
 
+----- cvs ci ------	
+Tue Mar  9 15:30:17 MET 1999
+mtt:
+- changed the routing code back, so a netmail to a node (like 2:2433/1245) is 
+  matched to the routing statements using 2:2433/1245.0
+  This means:
+    route crash 2:2433/1245 2:2433/1245.* (matches the node and all points)
+	
 ----- cvs ci ------
 Mon Mar  8 21:36:00
 Max (areafix updates) :
