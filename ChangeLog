@@ -1,3 +1,9 @@
+2003-04-08 Tuesday 19:59  d_sergienko
+
+	* src/stat.c (hpt-1_4-stable.1): backporting patch fixing
+	statistics file breaking (thanx to Matt Bedynek (1:106/1) for
+	bugreport and brave testing ;)
+
 2003-03-31 Monday 07:34  stas_degteff
 
 	* src/: query.c, toss.c (hpt-1_4-stable.[5,2]): Fix 'to' name in
