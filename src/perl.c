@@ -16,7 +16,7 @@
 
 #ifdef _MSC_VER
 #undef __STDC__ 
-#include <sys\types.h>
+#include <sys/types.h>
 #endif
 
 #include <fidoconf/common.h>
