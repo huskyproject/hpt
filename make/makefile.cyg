@@ -2,8 +2,11 @@
 #
 # tested with Mingw32 CPD on Linux
 
-DEBUG=
-# set to -g for debugging, NEVER use -s !!!
+# Uncomment this for compile info for gdb and display more compiler warnings
+#DEBUG	= -g -pedantic
+
+# Uncomment this for strip all simbols from binaries to reduce file sizes
+#STRIP	= -s
 
 PERL=0
 ifeq (~$(PERL)~, ~1~)
@@ -24,15 +27,29 @@ OBJ=.o
 EXE=.exe
 RM=rm
 
-LIBS=../../fidoconf/libfidoconfigcyg.a ../../smapi/libsmapicyg.a -lmingwex
+LIBS=../../fidoconf/libfidoconfigcyg.a ../../smapi/libsmapicyg.a
+
+## other ##
+CYGWIN_VERSION	= $(shell uname -r)
+
+ifeq ( , $(findstring "1.3.9", $(CYGWIN_VERSION)) )
+ifeq ( , $(findstring "1.3.10", $(CYGWIN_VERSION)) )
+ifeq ( , $(findstring "1.3.11", $(CYGWIN_VERSION)) )
+ # new cygwin require library mingwex for build with '-mno-cygwin' option
+LIBS	+= -lmingwex
+endif
+endif
+endif
+
+###########
 
 default: all
 
 %$(OBJ): $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+	$(CC) $(CFLAGS) $(CDEFS) $^
 
 $(PERLOBJ): $(SRC_DIR)perl.c
-	$(CC) $(CFLAGS) $(PERLFLAGS) $(CDEFS) $(SRC_DIR)perl.c
+	$(CC) $(CFLAGS) $(PERLFLAGS) $(CDEFS) $^
 
 include makefile.inc
 
