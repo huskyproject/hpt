@@ -1110,7 +1110,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
             break;
 
         case ct_fromarea:
-	    result=!strcasecmp(echo->areaName,cb->str);
+	    result=!stricmp(echo->areaName,cb->str);
             break;
 
         case ct_group:
