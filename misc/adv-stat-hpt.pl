@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # hptstat (c)opyright 2002-03, by val khokhlov
-$VERSION = "0.9";
+$VERSION = "0.91";
 %areas;                       # areas found in stat (tag=>id), id=1,2,3,...
 @area_tag;                    # ...reverse array (id=>tag)
 %links;                       # links found in stat
@@ -52,6 +52,13 @@ done();
 # --------------------------------------------------------------------
 # center a line
 sub center { return sprintf '%'.(39-length($_[0])/2)."s%s\n", ' ', $_[0]; }
+# --------------------------------------------------------------------
+# cmp fido addresses
+sub acmp {
+  my @a = split m![:/.@]!o, $_[0];
+  my @b = split m![:/.@]!o, $_[1];
+  return $a[0] <=> $b[0] || $a[1] <=> $b[1] || $a[2] <=> $b[2] || $a[3] <=> $b[3];
+}
 # --------------------------------------------------------------------
 # parse stat file into @stat
 sub parse_stat {
@@ -281,7 +288,8 @@ sub make_histgr {
   return () if (@arr <= 0);
   # sort
   if ($sf > 0) { @arr = sort { $b->[$sf] <=> $a->[$sf] } @arr; }
-          else { @arr = sort { $a->[$sf] cmp $b->[$sf] } @arr; }
+  elsif ($type eq 'Area') { @arr = sort { $a->[0] cmp $b->[0] } @arr; }
+  else { @arr = sort { acmp($a->[0], $b->[0]) } @arr; }
   # make top array
   splice @arr, $cnt, $#arr if $cnt > 0;
   $totals = !($cnt > 0) unless defined $totals;
@@ -326,7 +334,8 @@ sub make_summary {
   }
   # sort
   if ($sf > 0) { @arr = sort { $b->[$sf] <=> $a->[$sf] } @arr; }
-          else { @arr = sort { $a->[$sf] cmp $b->[$sf] } @arr; }
+  elsif ($type eq 'Area') { @arr = sort { $a->[0] cmp $b->[0] } @arr; }
+  else { @arr = sort { acmp($a->[0], $b->[0]) } @arr; }
   # make out
   $len = 78 - (1+11+1+11+1+4+1+4+1+10+1+10);
   push @out, sprintf("%-${len}s", $type).'   In msgs     Out msgs   Bad Dupe  In bytes   Out bytes';
@@ -399,8 +408,9 @@ sub make_baddupe {
     $was_link{ $link } = 1;
   }
   # sort
-  if ($sf > 2) { @arr = sort { $b->[$sf] <=> $a->[$sf] } @arr; }
-          else { @arr = sort { $a->[$sf] cmp $b->[$sf] } @arr; }
+  if ($sf > 1) { @arr = sort { $b->[$sf] <=> $a->[$sf] } @arr; }
+  elsif ($sf == 1) { @arr = sort { acmp($a->[1], $b->[1]) } @arr; }
+  else { @arr = sort { $a->[0] cmp $b->[0] } @arr; }
   # make out
   $len = 78 - 17 - 5*@$toout;
   $s = sprintf("%-${len}s", 'Area').'       Link      ';
