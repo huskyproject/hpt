@@ -256,6 +256,7 @@ FIDOCONFIG about location of config file and keywords ideology.
 * DisableTID::			disable adding TID to messages
 * IgnoreCapWord::		ignore Capability Word in pkt files
 * IgnoreSeen::                  ignore SEEN-BYs and pack mail for link
+* KeepTrsFiles::                keep transit files
 * KeepTrsMail::                 keep transit netmail messages
 * KludgeAreaNetmail::           how to process netmail with kludge "AREA:NETMAIL"
 * LinkWithImportLog::           list of areas only which should be linked
@@ -582,7 +583,7 @@ may help, but not recommended. It is better to change old software.
 
 This statement cannot be repeated.
 
-@node IgnoreSeen, KeepTrsMail, IgnoreCapWord, Keywords
+@node IgnoreSeen, KeepTrsFiles, IgnoreCapWord, Keywords
 @subsection IgnoreSeen
 @findex IgnoreSeen
 @table @asis
@@ -597,7 +598,28 @@ But no pack it back if the mail was from him.
 
 This statement can be repeated.
 
-@node KeepTrsMail, KludgeAreaNetmail, IgnoreSeen, Keywords
+@node KeepTrsFiles, KeepTrsMail, IgnoreSeen, Keywords
+@subsection KeepTrsFiles
+@findex KeepTrsFiles
+@table @asis
+@item Syntax:
+@code{keepTrsFiles <bool>}
+@item Example:
+@code{keepTrsFiles}
+@end table
+
+Leave transit (routed) files in @code{Inbound} directory. If this
+statement is ommitted transit files wouldn't be kept. 
+Default is "off".
+
+File route possible with "Att" attribute in message header and file name 
+in subject line.
+
+This statement cannot be repeated.
+
+@xref{RouteFile}.
+
+@node KeepTrsMail, KludgeAreaNetmail, KeepTrsFiles, Keywords
 @subsection KeepTrsMail
 @findex KeepTrsMail
 @table @asis
@@ -607,7 +629,7 @@ This statement can be repeated.
 @code{keepTrsMail}
 @end table
 
-Save transit messages in NetmailArea. If this statement is ommitted,
+Save transit messages in NetmailArea. If this statement is ommitted
 transit messages wouldn't be kept in NetmailArea. Default is "off".
 
 This statement cannot be repeated.

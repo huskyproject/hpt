@@ -248,7 +248,7 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
    } else return route->target;
 }
 
-void processAttachs(s_link *link, s_message *msg)
+void processAttachs(s_link *link, s_message *msg, unsigned int attr)
 {
    FILE *flo;
    char *p, *running, *token, *flags=NULL;
@@ -265,7 +265,8 @@ void processAttachs(s_link *link, s_message *msg)
 #endif
       if (flo != NULL) {
 		  if (msg->text) flags = (char *) GetCtrlToken(msg->text,(byte *)"FLAGS");
-          if (flags && (strstr(flags, "KFS") || (msg->attributes & MSGFWD)))
+          if ((flags && strstr(flags, "KFS")) || 
+			  (config->keepTrsFiles==0 && (attr & MSGFWD)==MSGFWD))
 			  fprintf(flo, "^%s\n", token);
           else if (flags && strstr(flags, "TFS"))
 			  fprintf(flo, "#%s\n", token);
@@ -368,7 +369,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 			   if (createOutboundFileName(link,
 										  cvtFlavour2Prio(route->flavour),
 										  FLOFILE) == 0) {
-				   processAttachs(link, &msg);
+				   processAttachs(link, &msg, xmsg->attr);
 				   remove(link->bsyFile);
 				   nfree(link->bsyFile);
 				   // mark Mail as sent
@@ -380,7 +381,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   }
 	   }
 	   else if (createOutboundFileName(virtualLink, prio, FLOFILE) == 0) {
-		   processAttachs(virtualLink, &msg);
+		   processAttachs(virtualLink, &msg, xmsg->attr);
 		   remove(virtualLink->bsyFile);
 		   nfree(virtualLink->bsyFile);
 		   // mark Mail as sent
