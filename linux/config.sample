@@ -10,31 +10,31 @@ Version		0.15
 PublicGroup 	A
 #AreaFixFromPkt
 
-Unpack		"unzip -j -Loqq $a $f -d $p" 0 504b0304
+Unpack		"unzip -j -Loqq $a -d $p" 0 504b0304
 Pack		zip zip -9 -j -q $a $f
 
-#Unpack  "pkunpak /r $a $p $f" 0 1a
+#Unpack  "pkunpak /r $a $p" 0 1a
 #Pack  arc pkpak -oct a $a $f
  
-#Unpack  "pak e /wn $a $p $f" -2 fe
+#Unpack  "pak e /wn $a $p" -2 fe
 #Pack  pak pak a $a $f
  
-#Unpack  "lha e /m $a $p $f" 2 2d6c68
+#Unpack  "lha e /m $a $p" 2 2d6c68
 #Pack  lha lha a /o /m $a $f
  
-#Unpack  "zoo e:O $a $p $f" 0 5a4f4f
+#Unpack  "zoo e:O $a $p" 0 5a4f4f
 #Pack  zoo zoo a: $a $f
  
-#Unpack  "arj e -+ -y $a $p $f" 0 60ea
+#Unpack  "arj e -+ -y $a $p" 0 60ea
 #Pack  arj arj a -+ -e -y $a $f
 
-Unpack  "unrar e -y  $a $f $p > /dev/null"   0 52617221
+Unpack  "unrar e -y  $a $p > /dev/null"   0 52617221
 #Pack  rar rar a -std -ep $a $f
  
-#Unpack  "jar e -y $a $p $f" 14 1a4a61721b
+#Unpack  "jar e -y $a $p" 14 1a4a61721b
 #Pack  jar jar a -y $a $f
  
-#Unpack  "ha eyq $a $f"  0 4841
+#Unpack  "ha eyq $a"  0 4841
 #Pack  ha ha a21eq $a $f
 
 Link		Fedor
