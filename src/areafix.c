@@ -2183,10 +2183,7 @@ void afix(s_addr addr, char *cmd)
                 striptwhite((char*)xmsg.to);
                 if (((xmsg.attr & MSGREAD) != MSGREAD) &&
                     (isOurAka(config,dest)) && (strlen((char*)xmsg.to)>0) &&
-                    ((stricmp((char*)xmsg.to, "areafix")==0) ||
-                    (stricmp((char*)xmsg.to, "areamgr")==0) ||
-                    (stricmp((char*)xmsg.to, "hpt")==0) ||
-                    fc_stristr(config->areafixNames,(char*)xmsg.to)))
+                    fc_stristr(config->areafixNames,(char*)xmsg.to))
                 {
                     memset(&msg,'\0',sizeof(s_message));
                     MsgToStruct(SQmsg, xmsg, &msg);

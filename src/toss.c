@@ -1429,10 +1429,7 @@ int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
 	if (config->areafixFromPkt &&
 	    isOurAka(config, msg->destAddr) &&
 	    strlen(msg->toUserName)>0 &&
-	    (stricmp(msg->toUserName,"areafix")==0 ||
-	     stricmp(msg->toUserName,"areamgr")==0 ||
-	     stricmp(msg->toUserName,"hpt")==0 ||
-	     fc_stristr(config->areafixNames,msg->toUserName))) {
+	     fc_stristr(config->areafixNames,msg->toUserName)) {
 	    rc = processAreaFix(msg, pktHeader, 0);
 	} else
 	    rc = processNMMsg(msg, pktHeader, NULL, 0, 0);
