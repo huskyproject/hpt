@@ -905,7 +905,7 @@ void fixRules (s_link *link, s_area *area) {
 }
 
 char *subscribe(s_link *link, char *cmd) {
-    unsigned int i, rc=4, found=0;
+    unsigned int i, rc=4, found=0, matched=0;
     char *line, *an=NULL, *report = NULL;
     s_area *area=NULL;
 
@@ -935,12 +935,14 @@ char *subscribe(s_link *link, char *cmd) {
 
 	switch (rc) {
 	case 0:         /* already linked */
-	    /*if (!isPatternLine(line))*/ {
+	    if (isPatternLine(line)) {
+		matched = 1;
+	    } else {
 		xscatprintf(&report, " %s %s  already linked\r",
 			    an, print_ch(49-strlen(an), '.'));
 		w_log(LL_AREAFIX, "areafix: %s already linked to %s",
 		      aka2str(link->hisAka), an);
-		//i = config->echoAreaCount;
+		i = config->echoAreaCount;
 	    }
 	    break;
 	case 1:         /* not linked */
@@ -1039,7 +1041,12 @@ char *subscribe(s_link *link, char *cmd) {
 		    line, print_ch(49-strlen(line), '.'));
     }
 
-    if ((report == NULL && found==0) || (found && area->hide)) {
+    if (matched) {
+	if (report == NULL)
+	    w_log (LL_AREAFIX, "areafix: all areas matched %s are already linked", line);
+	xscatprintf(&report, "All %sareas matched %s are already linked\r", report ? "other " : "", line);
+    }
+    else if ((report == NULL && found==0) || (found && area->hide)) {
 	xscatprintf(&report," %s %s  not found\r",line,print_ch(49-strlen(line),'.'));
 	w_log( LL_AREAFIX, "areafix: area %s is not found",line);
     }
@@ -1161,7 +1168,7 @@ char *delete(s_link *link, char *cmd) {
 }
 
 char *unsubscribe(s_link *link, char *cmd) {
-    unsigned int i, rc = 2, j, from_us=0;
+    unsigned int i, rc = 2, j, from_us=0, matched = 0;
     char *line, *an, *report = NULL;
     s_area *area;
 	
@@ -1227,7 +1234,11 @@ char *unsubscribe(s_link *link, char *cmd) {
 		xscatprintf(&report," %s %s  error. report to sysop!\r",
 			    an, print_ch(49-strlen(an),'.'));
 	    break;
-	case 1: if (isPatternLine(line)) continue;
+	case 1:
+	    if (isPatternLine(line)) {
+		matched = 1;
+		continue;
+	    }
 	    if (area->hide) {
 		i = config->echoAreaCount;
 		break;
@@ -1249,7 +1260,7 @@ char *unsubscribe(s_link *link, char *cmd) {
     }
     report = af_Req2Idle(line, report, link->hisAka);
     if (report == NULL) {
-        if (isPatternLine(line)) {
+        if (matched) {
             xscatprintf(&report, " %s %s  no areas to unlink\r",
                 line, print_ch(49-strlen(line), '.'));
             w_log('8', "areafix: no areas to unlink");
