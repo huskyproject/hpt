@@ -894,7 +894,7 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
             if (dupeDetection(echo, *msg)==1) {
                 /*  no dupe */
 
-                messCC = MessForCC(msg); // make copy of original message
+                messCC = MessForCC(msg); /* make copy of original message */
 
                 statToss.echoMail++;
 

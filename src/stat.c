@@ -13,8 +13,8 @@
 #define REV_CUR 1            /* revision we write */
 #define REV_MAX 1            /* max revision we can read */
 
-//#define STAT_ALONE         /* complie stat.c w/o hpt */
-//#define STAT_DEBUG         /* output stat info each write */
+/*#define STAT_ALONE*/         /* complie stat.c w/o hpt */
+/*#define STAT_DEBUG*/         /* output stat info each write */
 
 #ifdef STAT_ALONE
 #  define msg(s) fprintf(stderr, "stat: %s (file %s, line %d)\n", s, __FILE__, __LINE__)
