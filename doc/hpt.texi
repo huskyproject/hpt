@@ -3403,7 +3403,7 @@ CarbonRule NOT, is in fact AND NOT. So
         CarbonCopy my.mail
 @end example
 
-..will only copy messages when 'beatles' is in the text AND NOT 'bugs'
+...will only copy messages when 'beatles' is in the text AND NOT 'bugs'
 in the text.
 
 In general, it is possible to define more than one set of rules for
@@ -3509,7 +3509,7 @@ This statement can be repeated.
 If an echomail is tossed whose to-field matched <pattern>, the
 echomail is copied to the area specified by the @code{CarbonCopy}
 keyword or moved to the area specified by the @code{CarbonMove}
-keyword.. The names must be an exact match.
+keyword. The names must be an exact match.
 
 You can enclose <pattern> into quotes ("<pattern>").
 
