@@ -5,19 +5,21 @@ Category 1: Will certainly be implemented until next release
 ============================================================
 - areafixfromname
 - split posting messages
+- areafix file with forwarded echo areas
+
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 - check for dublicate links if mask is used (fidoconf)
 - killsb for links
-- autofwdareacreatedefaults
+- autofwdareacreatedefaults 
 - AllowEchoAreaDelete
 - optimize packing (several files)
 - don't open/close on each msg when writing to pkt files (through ifdef)
-- areafix file with forwarded echo areas
 - advanced fileboxes
 - templates
 - speedup getArea by using b-tree
+- change uplinks from command line
 
 Category 3: Will only be included if volunteers send patches
 ============================================================
