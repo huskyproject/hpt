@@ -247,7 +247,7 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 void processAttachs(s_link *link, s_message *msg)
 {
    FILE *flo;
-   char *p, *running, *token;
+   char *p, *running, *token, *flags=NULL;
    char *newSubjectLine = NULL;
 
    flo = fopen(link->floFile, "a");
@@ -260,12 +260,15 @@ void processAttachs(s_link *link, s_message *msg)
 	   if (!fexist(token)) strLower(token);
 #endif
       if (flo != NULL) {
-          if (msg->text && strstr(msg->text, "\001FLAGS KFS"))
+          if (msg->text)
+              flags = (char*) GetCtrlToken(msg->text,(byte *)"FLAGS");
+          if (flags && strstr(flags, "KFS"))
 	      fprintf(flo, "^%s\n", token);
-          else if (msg->text && strstr(msg->text, "\001FLAGS TFS"))
+          else if (flags && strstr(flags, "TFS"))
 	      fprintf(flo, "#%s\n", token);
           else
 	      fprintf(flo, "%s\n", token);
+          nfree(flags);
       }
 	  if (newSubjectLine!=NULL) xstrcat(&newSubjectLine, " ");
       if (NULL != (p=strrchr(token, PATH_DELIM)))
