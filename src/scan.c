@@ -273,7 +273,7 @@ void processAttachs(s_link *link, s_message *msg)
 #endif
       if (flo != NULL) {
 		  if (msg->text) flags = (char *) GetCtrlToken(msg->text,(byte *)"FLAGS");
-          if (flags && strstr(flags, "KFS"))
+          if (flags && (strstr(flags, "KFS") || (msg->attributes & MSGFWD)))
 			  fprintf(flo, "^%s\n", token);
           else if (flags && strstr(flags, "TFS"))
 			  fprintf(flo, "#%s\n", token);
