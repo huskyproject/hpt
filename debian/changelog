@@ -1,3 +1,10 @@
+hpt (1.2.0-20020801-1) stable; urgency=low
+
+  * New Maintainter
+  * Add HISTORY to doc dir
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Wed, 31 Jul 2002 03:43:16 +0600
+
 hpt (1.2.0-20020626-1) stable; urgency=low
 
   * NMU. Joerg, big thanks for Debian packages! But we don't see you now
