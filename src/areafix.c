@@ -1502,7 +1502,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		return processNMMsg(msg, pktHeader);
 	}
 	
-	// 2nd security ckeck. link, araefixing & password.
+	// 2nd security check. link, areafixing & password.
 	if (!security) {
 		if (link->AreaFix==1) {
 			if (link->areaFixPwd!=NULL) {
