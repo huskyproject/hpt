@@ -677,7 +677,9 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 		   nfree(link->bsyFile);
 		   
 		   return 1;
+#if !defined(__WATCOMC__)	   
 	   }
+#endif
    } else close(fd);
 
    return 0;

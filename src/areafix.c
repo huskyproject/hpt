@@ -823,15 +823,16 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		strchr(line,'/') ||	strchr(line,config->CommentChar) ||
 		strchr(line,':')) return errorRQ(line);
 
-	if (limitCheck(link, msg)) rc = 6;
-
 	for (i=0; rc!=6 && i<config->echoAreaCount; i++) {
 	    area = &(config->echoAreas[i]);
 	    an = area->areaName;
 
 	    rc=subscribeAreaCheck(area, msg, line, link);
+		w_log('1',"rc = %d",rc);
 	    if (rc==4) continue;
  		if (rc==1 && mandatoryCheck(*area, link)) rc = 5;
+
+		if (rc!=0 && limitCheck(link, msg)) rc = 6;
 
 		switch (rc) {
 		case 0: 
@@ -849,6 +850,8 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 						  aka2str(link->hisAka),an);
 			if (strstr(line, "*") == NULL) i = config->echoAreaCount;
 			break;
+		case 6:
+			break;
 		default :
 			w_log('8', "areafix: area %s -- no access for %s",
 						  an, aka2str(link->hisAka));
@@ -857,6 +860,8 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			break;
 		}
 	}
+
+	if (rc!=0 && limitCheck(link, msg)) rc = 6;
 	
 	if ((rc==4) && (strstr(line,"*") == NULL) && !found) {
 	    if (link->denyFRA==0) {
@@ -887,12 +892,13 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	    }
 	}
 
-	if (rc==6) {
+	if (rc == 6) {
 		w_log('8',"areafix: area %s -- no access (full limit) for %s",
-					  line, aka2str(link->hisAka));
+			  line, aka2str(link->hisAka));
 		xscatprintf(&report," %s %s  no access (full limit)\r",
 					line, print_ch(49-strlen(line), '.'));
 	}
+
 	if (report == NULL) {
 	    xscatprintf(&report," %s %s  not found\r",line,print_ch(49-strlen(line),'.'));
 	    w_log('8', "areafix: area %s is not found",line);
