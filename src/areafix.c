@@ -1438,8 +1438,12 @@ int tellcmd(char *cmd) {
 		return ERROR;
 	case '\001': return NOTHING;
 	case '\000': return NOTHING;
-	case '-'  :	if (line[1]=='-') return NOTHING; else return DEL;
+	case '-'  :	
+		if (line[1]=='-') return NOTHING;
+		else if (line[1]=='\000') return ERROR;
+		else return DEL;
 	case '~'  : return REMOVE;
+	case '+': if (line[1]=='\000') return ERROR;
 	default: return ADD;
 	}
 	

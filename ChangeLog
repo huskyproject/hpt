@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Aug 13 13:14:34 NOVST 2000
+max:
+* areafix: fix processing commands broked yesterday ("+" & "-" without areatag)
+
+----- cvs ci ------
 Sat Aug 12 23:36:58 NOVST 2000
 max:
 * areafix: fixed tearline bug (report by Konstantin Samoylov)
