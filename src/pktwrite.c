@@ -194,7 +194,7 @@ void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_a
    if (area != NULL)
       sprintf(buff + strlen(buff), "AREA:%s\r", area);
    else {
-      sprintf(buff + strlen(buff), "\1INTL: %u:%u/%u %u:%u/%u\r", destAka->zone,
+      sprintf(buff + strlen(buff), "\1INTL %u:%u/%u %u:%u/%u\r", destAka->zone,
                                                                   destAka->net,
 								  destAka->node,
 								  ourAka->zone,

@@ -1563,7 +1563,7 @@ void arcmail() {
 								  link->packerDef->call,
 								  link->packFile,
 								  link->pktFile, "");
-				 sprintf(logmsg,"Packing mail for %s", link->name);
+				 sprintf(logmsg,"Packing mail for %s %s", aka2str(link->hisAka), link->name);
 				 writeLogEntry(hpt_log, '7', logmsg);
 				 cmdexit = system(cmd);
 				 remove(link->pktFile);

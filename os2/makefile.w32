@@ -9,7 +9,7 @@ SRC_DIR = ..\src
 CFLAGS  = -d2 -hw -i=..\h;..\..\smapi;..\..\fidoconfig -zq
 LFLAGS  =
 !ELSE
-CFLAGS  = -i..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq
+CFLAGS  = -i..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq -wcd=1180 -wcd=1181
 LFLAGS  =
 !ENDIF
 
@@ -23,7 +23,7 @@ $(OBJS): $(SRC_DIR)\$*.c
   @echo compiling $*.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
-pktinfo.obj tlog.obj: $(SRC_DIR)\$*.c
+pktinfo.obj tlog.obj purgedupes.obj: $(SRC_DIR)\$*.c
   @echo compiling $*.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 

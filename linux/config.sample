@@ -52,6 +52,7 @@ AccessGrp	ABCDE
 Level		200
 fRequestFromUpLink off
 EchoMailFlavour Hold
+AutoPause	10
 Packer		zip
 
 Link		Andrew
@@ -62,6 +63,7 @@ LinkGrp		D
 AccessGrp	ABCD
 Level		200
 EchoMailFlavour Hold
+AutoPause	10
 Packer		zip
 
 Link		Mike

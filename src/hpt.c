@@ -294,6 +294,8 @@ int main(int argc, char **argv)
    }
    free(msgToSysop);
 
+   autoPassive();
+
    // deinit SMAPI
    MsgCloseApi();
    

@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #if !defined(MSDOS) || defined(__DJGPP__)
@@ -270,7 +271,46 @@ void removelink(s_link *link, s_area *area) {
 	area->downlinkCount--;
 }
 
-void changeHeader(s_message *msg, s_link *link, char *subject) {
+s_message *makeMessage(s_link *link, char *fromName, char *subject)
+{
+    time_t time_cur;
+    s_message *msg;
+    
+    time_cur = time(NULL);
+    
+    msg = (s_message*)calloc(1, sizeof(s_message));
+    
+    msg->destAddr.zone = link->hisAka.zone;
+    msg->destAddr.net = link->hisAka.net;
+    msg->destAddr.node = link->hisAka.node;
+    msg->destAddr.point = link->hisAka.point;
+
+    msg->origAddr.zone = link->ourAka->zone;
+    msg->origAddr.net = link->ourAka->net;
+    msg->origAddr.node = link->ourAka->node;
+    msg->origAddr.point = link->ourAka->point;
+	
+
+    msg->fromUserName = (char*)calloc(strlen(fromName)+1, sizeof(char));
+    strcpy(msg->fromUserName, fromName);
+    
+    msg->toUserName = (char*)calloc(strlen(link->name)+1, sizeof(char));
+    strcpy(msg->toUserName, link->name);
+    
+    msg->subjectLine = (char*)calloc(strlen(subject)+1, sizeof(char));
+    strcpy(msg->subjectLine, subject);
+    
+    msg->attributes = MSGPRIVATE;
+    msg->attributes |= MSGLOCAL;
+    
+    strftime(msg->datetime, 21, "%d %b %y  %T", localtime(&time_cur));
+    
+    msg->netMail = 1;
+    
+    return msg;
+}
+
+/*void changeHeader(s_message *msg, s_link *link, char *subject) {
 	s_addr *ourAka;
 	char *toname;
 	
@@ -295,7 +335,7 @@ void changeHeader(s_message *msg, s_link *link, char *subject) {
 	msg->netMail = 1;
 	
 	if (config->areafixKillReports) msg->attributes |= MSGKILL;
-}
+}*/
 
 char *list(s_message *msg, s_link *link) {
 
@@ -847,8 +887,10 @@ int testAddr(char *addr, s_addr hisAka)
     return 0;
 }
 
-int changepause(char *confName, s_link *link)
+int changepause(char *confName, s_link *link, int opt)
 {
+    // opt = 0 - AreaFix
+    // opt = 1 - AutoPause
     char *cfgline, *token;
     char *line, logmsg[256];
     long curpos, endpos, cfglen;
@@ -857,7 +899,7 @@ int changepause(char *confName, s_link *link)
     
 	if ((f_conf=fopen(confName,"r+")) == NULL)
 		{
-			fprintf(stderr,"areafix: cannot open config file %s \n", confName);
+			fprintf(stderr,"%s: cannot open config file %s \n", opt ? "autopause" : "areafix", confName);
 			return 1;
 		}
 	
@@ -869,7 +911,7 @@ int changepause(char *confName, s_link *link)
 		if (stricmp(token, "include")==0) {
 			while (*line=='\t') line++;
 			token=strseparate(&line, " \t");
-			changepause(token, link);
+			changepause(token, link, opt);
 		}			
 		if (stricmp(token, "link") == 0) {
 			free(cfgline);
@@ -913,7 +955,7 @@ int changepause(char *confName, s_link *link)
 				free(line);
 				free(cfgline);
 				link->Pause = 1;
-				sprintf(logmsg,"areafix: system %s set passive", aka2str(link->hisAka));
+				sprintf(logmsg,"%s: system %s set passive", opt ? "autopause" : "areafix", aka2str(link->hisAka));
 				writeLogEntry(hpt_log, '8', logmsg);
 				break;
 			}
@@ -930,7 +972,7 @@ char *pause_link(s_message *msg, s_link *link)
     char *report=NULL;
     
     if (link->Pause == 0) {
-		if (changepause(getConfigFileName(), link) == 0) return NULL;    
+	if (changepause(getConfigFileName(), link, 0) == 0) return NULL;    
     }
 
     report = linked(msg, link);
@@ -1185,16 +1227,35 @@ void rescanEMArea(s_area *echo, s_link *link)
    } /* endif */
 }
 
+char *rescanError(char *line)
+{
+    char *buf;
+    
+    buf = (char*)calloc(strlen(line)+10, sizeof(char));
+    sprintf(buf, "%s Error\r", line);
+    
+    return buf;
+}
+
 char *rescan(s_link *link, s_message *msg, char *cmd)
 {
-    int i, c, rc;
+    int i, c, rc = 0;
     char *report, *line, addline[256], logmsg[256];
     s_area *area, **areas=NULL;
     
-    line = cmd;
+    line = cmd+strlen("%rescan");
     
-    report = strseparate(&line, " \t");
+    if (*line == 0) return rescanError(cmd);
     
+    while (*line && (*line == ' ' || *line == '\t')) line++;
+    
+    if (*line == 0) return rescanError(cmd);
+    
+    report = strpbrk(line, " \t");
+    if (report) *report = 0;
+    
+    if (*line == 0) return rescanError(cmd);
+
     report = (char*)calloc(1, sizeof(char));
     
     for (i=c=0; i<config->echoAreaCount; i++) {
@@ -1353,7 +1414,7 @@ void preprocText(char *preport, s_message *msg)
     char *text, tmp[80], kludge[100];
 	
     sprintf(tmp, " \r--- %s areafix\r", versionStr);
-	createKludges(kludge, NULL, &msg->origAddr, &msg->destAddr);
+    createKludges(kludge, NULL, &msg->origAddr, &msg->destAddr);
     text=(char*) malloc(strlen(kludge)+strlen(preport)+strlen(tmp)+1);
     strcpy(text, kludge);
     strcat(text, preport);
@@ -1373,12 +1434,12 @@ char *textHead()
     return text_head;
 }
 
-void RetMsg(s_message *tmpmsg, s_message *msg, s_link *link, char *report, char *subj)
+void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 {
     char *tab;
+    s_message *tmpmsg;
     
-    memcpy(tmpmsg, msg, sizeof(s_message));
-    changeHeader(tmpmsg,link,subj);
+    tmpmsg = makeMessage(link, msg->toUserName, subj);
     preprocText(report, tmpmsg);
     
     tab = config->intab;
@@ -1391,8 +1452,8 @@ void RetMsg(s_message *tmpmsg, s_message *msg, s_link *link, char *report, char 
     
     config->intab = tab;
     
-    free(tmpmsg->text);
-    free(tmpmsg->subjectLine);
+    freeMsgBuffers(tmpmsg);
+    free(tmpmsg);
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -1403,7 +1464,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	int i, security=1, notforme = 0;
 	s_link *link = NULL;
 	s_link *tmplink = NULL;
-	s_message *linkmsg, tmpmsg;
+	s_message *linkmsg;
 	s_pktHeader header;
 	char tmp[80], *token, *textBuff, *report=NULL, *preport;
 	
@@ -1455,10 +1516,10 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 			if (preport != NULL) {
 				switch (RetFix) {
 				case LIST:
-					RetMsg(&tmpmsg, msg, link, preport, "list request");
+					RetMsg(msg, link, preport, "list request");
 					break;
 				case HELP:
-					RetMsg(&tmpmsg, msg, link, preport, "help request");
+					RetMsg(msg, link, preport, "help request");
 					break;
 				case ADD:
 					if (report == NULL) report = textHead();
@@ -1469,19 +1530,19 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 					report = areastatus(preport, report);
 					break;
 				case AVAIL:
-					RetMsg(&tmpmsg, msg, link, preport, "available areas");
+					RetMsg(msg, link, preport, "available areas");
 					break;
 				case UNLINK:
-					RetMsg(&tmpmsg, msg, link, preport, "unlinked request");
+					RetMsg(msg, link, preport, "unlinked request");
 					break;
 				case PAUSE:
-					RetMsg(&tmpmsg, msg, link, preport, "node change request");
+					RetMsg(msg, link, preport, "node change request");
 					break;
 				case RESUME:
-					RetMsg(&tmpmsg, msg, link, preport, "node change request");
+					RetMsg(msg, link, preport, "node change request");
 					break;
 				case INFO:
-					RetMsg(&tmpmsg, msg, link, preport, "link information");
+					RetMsg(msg, link, preport, "link information");
 					break;
 				case RESCAN:
 					if (report == NULL) report=textHead();
@@ -1504,6 +1565,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 			tmplink->hisAka.net = msg->origAddr.net;
 			tmplink->hisAka.node = msg->origAddr.node;
 			tmplink->hisAka.point = msg->origAddr.point;
+			tmplink->name = msg->fromUserName;
 			link = tmplink;
 		}
 		// security problem
@@ -1529,7 +1591,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		report=(char*) malloc(strlen(tmp)+1);
 		strcpy(report,tmp);
 		
-		RetMsg(&tmpmsg, msg, link, report, "security violation");
+		RetMsg(msg, link, report, "security violation");
 		free(report);
 		
 		sprintf(tmp,"areafix: security violation from %s", aka2str(link->hisAka));
@@ -1545,7 +1607,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		report=(char*)realloc(report, strlen(report)+strlen(preport)+1);
 		strcat(report, preport);
 		free(preport);
-		RetMsg(&tmpmsg, msg, link, report, "node change request");
+		RetMsg(msg, link, report, "node change request");
 		free(report);
 	}
 	
@@ -1664,3 +1726,63 @@ void afix(void)
 		writeLogEntry(hpt_log, '9', "Could not open NetmailArea");
     } /* endif */
 }
+
+void autoPassive()
+{
+   time_t   time_cur, time_test;
+   struct   stat stat_file;
+   s_message *msg;
+   FILE *f;
+   char buf[256];
+   char *line, *path;
+   int i;
+
+   for (i = 0; i < config->linkCount; i++) {
+      if (config->links[i].autoPause && config->links[i].Pause == 0) {
+         if (createOutboundFileName(&(config->links[i]), cvtFlavour2Prio(config->links[i].echoMailFlavour), FLOFILE) == 0) {
+            f = fopen(config->links[i].floFile, "rt");
+            if (f) {
+               while ((line = readLine(f))) {
+	          line = trimLine(line);
+                  path = line;
+                  if (*path && (*path == '^' || *path == '#')) {
+                     path++;
+                     if (stat(path, &stat_file) != -1) {
+                        time_cur = time(NULL);
+                        time_test = (time_cur - stat_file.st_mtime)/3600;
+                        if (time_test >= (config->links[i].autoPause*24)) {
+                           if (config->links[i].Pause == 0) {
+                              if (changepause(getConfigFileName(), &(config->links[i]), 1)) {    
+			         msg = makeMessage(&(config->links[i]), versionStr, "AutoPassive");
+                                 sprintf(buf, "\r System switched to passive\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the %%RESUME command.\r\r--- %s autopause\r", versionStr);
+				 msg->text = (char*)calloc(strlen(buf)+100, sizeof(char));
+                                 createKludges(msg->text, NULL, config->links[i].ourAka, &(config->links[i].hisAka));
+                                 strcat(msg->text, buf);
+                                 msg->textLength = strlen(msg->text);
+                                 processNMMsg(msg, NULL);
+                                 freeMsgBuffers(msg);
+				 free(msg);
+                              }
+			      free(line);
+                              fclose(f);
+                              break;
+                           }
+                        } else {
+                        } /* endif */
+                     } /* endif */
+                  } /* endif */
+		  free(line);
+               } /* endwhile */
+               fclose(f);
+            } /* endif */
+            free(config->links[i].floFile); config->links[i].floFile=NULL;
+            remove(config->links[i].bsyFile);
+            free(config->links[i].bsyFile); config->links[i].bsyFile=NULL;
+         }
+         free(config->links[i].pktFile); config->links[i].pktFile=NULL;
+         free(config->links[i].packFile); config->links[i].packFile=NULL;
+      } else {
+      } /* endif */
+   } /* endfor */
+}
+
