@@ -1912,10 +1912,13 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 	if (link->allowPktAddrDiffer == pdOn)
 	    security = 0;  /* OK */
 
-    // this is for me?
+    // is this for me?
     if (link!=NULL)	notforme=addrComp(msg->destAddr, *link->ourAka);
     else if (!security) security=4; // link == NULL; /* unknown system */
 	
+    if (notforme && !security) security=5; // message to wrong AKA
+
+#if 0 // we're process only our messages here
     // ignore msg for other link (maybe this is transit...)
     if (notforme || (link==NULL && security==1)) {
         w_log(LL_FUNC, "areafix.c::processAreaFix() call processNMMsg() and return");
@@ -1923,6 +1926,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 	closeOpenedPkt();
 	return nr;
     }
+#endif
 
     // 2nd security check. link, areafixing & password.
     if (!security && !force_pwd) {
@@ -2009,6 +2013,9 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 	    break;
 	case 4:
 	    xscatprintf(&report, " \r your system is unknown\r");
+	    break;
+	case 5:
+	    xscatprintf(&report, " \r message sent to wrong AKA\r");
 	    break;
 	default:
 	    xscatprintf(&report, " \r unknown error. mail to sysop.\r");
