@@ -1,8 +1,6 @@
 /*****************************************************************************
  * $Id$
  */
-/* !!!!!!!!!!!!!!!! this is tmp work-around !!!!!!!!!!!!!!!!! */
-#define HUSKY_DIRLAYER_H
 
 #include <stdio.h>
 #include <stdlib.h>

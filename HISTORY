@@ -6,10 +6,12 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
 
     - Group support for echoareas (see tokens AreaGroup & AreaGroupDefaults)
     - hpt, txt2pkt and tpkt write its own FTSC ProdCode and ProdRev
+    - perl hooks were noticeably revised (see doc/perlhooks.rus)
 
 2. CONFIG changes:
     - new option for echoArea or netmailArea: -scan (specifies when area
       can be scanned by scan or pack commands)
+    - new token sortEchoList: echolist sorting mode for %LIST, %QUERY, etc.
 
 3. IMPORTANT bugfixes:
    - attach processing was changed: now hpt will try to guess actual attached

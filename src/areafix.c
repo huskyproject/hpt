@@ -222,7 +222,7 @@ char *getPatternFromLine(char *line, int *reversed)
         return NULL;
 }
 
-char *list(s_link *link, char *cmdline) {
+char *list(s_listype type, s_link *link, char *cmdline) {
     unsigned int i, active, avail, rc = 0;
     char *report = NULL;
     char *list = NULL;
@@ -230,14 +230,26 @@ char *list(s_link *link, char *cmdline) {
     int reversed;
     ps_arealist al;
     s_area area;
+    int grps = (config->listEcho == lemGroup) || (config->listEcho == lemGroupName);
 
-    pattern = getPatternFromLine(cmdline, &reversed);
+    if (cmdline) pattern = getPatternFromLine(cmdline, &reversed);
     if ((pattern) && (strlen(pattern)>60 || !isValidConference(pattern))) {
         w_log(LL_FUNC, "areafix::list() FAILED (error request line)");
         return errorRQ(cmdline);
     }
 
-    xscatprintf(&report, "Available areas for %s\r\r", aka2str(link->hisAka));
+    switch (type) {
+      case lt_all:
+        xscatprintf(&report, "Available areas for %s\r\r", aka2str(link->hisAka));
+        break;
+      case lt_linked:
+        xscatprintf(&report, "%s areas for %s\r\r",
+                    ((link->Pause & ECHOAREA) == ECHOAREA) ? "Passive" : "Active", aka2str(link->hisAka));
+        break;
+      case lt_unlinked:
+        xscatprintf(&report, "Unlinked areas for %s\r\r", aka2str(link->hisAka));
+        break;
+    }
 
     al = newAreaList();
     for (i=active=avail=0; i< config->echoAreaCount; i++) {
@@ -245,41 +257,70 @@ char *list(s_link *link, char *cmdline) {
 	area = config->echoAreas[i];
 	rc = subscribeCheck(area, link);
 
-        if (rc < 2 && (!area.hide || (area.hide && rc==0))) { /*  add line */
+        if ( (type == lt_all && rc < 2 && (!area.hide || (area.hide && rc==0)))
+             || (type == lt_linked && rc == 0)
+             || (type == lt_unlinked && rc == 1 && !area.hide)
+           ) { /*  add line */
             if (pattern)
             {
                 /* if matches pattern and not reversed (or vise versa) */
                 if (patimat(area.areaName, pattern)!=reversed)
                 {
-                    addAreaListItem(al,rc==0, area.msgbType!=MSGTYPE_PASSTHROUGH, area.areaName,area.description);
+                    addAreaListItem(al,rc==0, area.msgbType!=MSGTYPE_PASSTHROUGH, area.areaName,area.description,area.group);
                     if (rc==0) active++; avail++;
                 }
             } else
             {
-                addAreaListItem(al,rc==0, area.msgbType!=MSGTYPE_PASSTHROUGH, area.areaName,area.description);
+                addAreaListItem(al,rc==0, area.msgbType!=MSGTYPE_PASSTHROUGH, area.areaName,area.description,area.group);
                 if (rc==0) active++; avail++;
             }
 	} /* end add line */
 
     } /* end for */
     sortAreaList(al);
-    list = formatAreaList(al,78," *R");
+    switch (type) {
+      case lt_all:      list = formatAreaList(al,78," *R", grps); break;
+      case lt_linked:   list = formatAreaList(al,78,"   ", grps); break;
+      case lt_unlinked: list = formatAreaList(al,78,"  R", grps); break;
+    }
     if (list) xstrcat(&report,list);
     nfree(list);
     freeAreaList(al);
 
-    xstrcat(&report,      "\r'R' = area rescanable");
-    xstrcat(&report,      "\r'*' = area active");
-    xscatprintf(&report,  "\r %i areas available, %i areas active",avail, active);
-    xscatprintf(&report,  "\r for link:%s\r", aka2str(link->hisAka));
+    if (type != lt_linked) 
+        xstrcat(&report,     "\r'R' = area rescanable");
+    if (type == lt_all) 
+        xstrcat(&report,     "\r'*' = area active");
+    switch (type) {
+      case lt_all:
+        xscatprintf(&report, "\r %i area(s) available, %i area(s) active\r", avail, active);
+        break;
+      case lt_linked:
+        xscatprintf(&report, "\r %i area(s) linked\r", active);
+        break;
+      case lt_unlinked:
+        xscatprintf(&report, "\r %i area(s) available\r", avail);
+        break;
+    }
+/*    xscatprintf(&report,  "\r for link %s\r", aka2str(link->hisAka));*/
 
     if (link->afixEchoLimit) xscatprintf(&report, "\rYour limit is %u areas for subscribe\r", link->afixEchoLimit);
 
-    w_log(LL_AREAFIX, "areafix: list sent to %s", aka2str(link->hisAka));
+    switch (type) {
+      case lt_all:
+        w_log(LL_AREAFIX, "areafix: list sent to %s", aka2str(link->hisAka));
+        break;
+      case lt_linked:
+        w_log(LL_AREAFIX, "areafix: linked areas list sent to %s", aka2str(link->hisAka));
+        break;
+      case lt_unlinked:
+        w_log(LL_AREAFIX, "areafix: unlinked areas list sent to %s", aka2str(link->hisAka));
+        break;
+    }
 
     return report;
 }
-
+/*
 char *linked(s_link *link) {
     unsigned int i, n, rc;
     char *report = NULL;
@@ -318,7 +359,7 @@ char *unlinked(s_link *link) {
 
     return report;
 }
-
+*/
 char *help(s_link *link) {
     FILE *f;
     int i=1;
@@ -438,10 +479,10 @@ char *available(s_link *link, char *cmdline)
                     {
                         /* if matches pattern and not reversed (or vise versa) */
                         if ((rc==0) &&(patimat(token, pattern)!=reversed))
-                            addAreaListItem(al,0,0,token,running);
+                            addAreaListItem(al,0,0,token,running,uplink->LinkGrp);
                     } else
                     {
-                        if (rc==0) addAreaListItem(al,0,0,token,running);
+                        if (rc==0) addAreaListItem(al,0,0,token,running,uplink->LinkGrp);
                     }
 
     	        }
@@ -467,7 +508,7 @@ char *available(s_link *link, char *cmdline)
  		        sortAreaListNoDupes(halcnt, hal, link->availlist != AVAILLIST_FULL);
  		        if ((hal[halcnt-1])->count)
  		        {
- 			    line = formatAreaList(hal[halcnt-1],78,NULL);
+ 			    line = formatAreaList(hal[halcnt-1],78,NULL,(config->listEcho==lemGroup)||(config->listEcho==lemGroupName));
  			    if (link->availlist != AVAILLIST_UNIQUEONE)
  			        xscatprintf(&report, "\rAvailable Area List from %s:\r", aka2str(uplink->hisAka));
 			    if (line)
@@ -1280,7 +1321,7 @@ char *pause_link(s_link *link)
          return NULL;
    }
    xstrcat(&report, " System switched to passive\r");
-   tmp = linked (link);
+   tmp = list (lt_linked, link, NULL);/*linked (link);*/
    xstrcat(&report, tmp);
    nfree(tmp);
 
@@ -1296,7 +1337,7 @@ char *resume_link(s_link *link)
     }
 
     xstrcat(&report, " System switched to active\r");
-    tmp = linked (link);
+    tmp = list (lt_linked, link, NULL);/*linked (link);*/
     xstrcat(&report, tmp);
     nfree(tmp);
 
@@ -1328,7 +1369,7 @@ char *info_link(s_link *link)
 		    (i+1 == config->packCount) ? "" : ", ");
     xscatprintf(&report, ")\r\r");
     xscatprintf(&report, "Your system is %s\r", ((link->Pause & ECHOAREA) == ECHOAREA)?"passive":"active");
-    ptr = linked (link);
+    ptr = list (lt_linked, link, NULL);/*linked (link);*/
     xstrcat(&report, ptr);
     nfree(ptr);
     w_log(LL_AREAFIX, "areafix: link information sent to %s", aka2str(link->hisAka));
@@ -1625,7 +1666,7 @@ char *processcmd(s_link *link, char *line, int cmd) {
     case DONE: RetFix=DONE;
         return NULL;
 
-    case LIST: report = list (link, line);
+    case LIST: report = list (lt_all, link, line);
         RetFix=LIST;
         break;
     case HELP: report = help (link);
@@ -1643,10 +1684,10 @@ char *processcmd(s_link *link, char *line, int cmd) {
     case AVAIL: report = available (link, line);
         RetFix=AVAIL;
         break;
-    case UNLINK: report = unlinked (link);
+    case UNLINK: report = list (lt_unlinked, link, line);/*report = unlinked (link);*/
         RetFix=UNLINK;
         break;
-    case QUERY: report = linked (link);
+    case QUERY: report = list (lt_linked, link, line);/*report = linked (link);*/
         RetFix=QUERY;
         break;
     case PAUSE: report = pause_link (link);
@@ -2033,7 +2074,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 
     if ( report != NULL ) {
         if (config->areafixQueryReports) {
-            preport = linked (link);
+            preport = list (lt_linked, link, NULL);/*linked (link);*/
             xstrcat(&report, preport);
             nfree(preport);
         }

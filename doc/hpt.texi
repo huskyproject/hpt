@@ -380,6 +380,7 @@ define links and areas before any carbone definitions
 * ScreenLogLevels::	        set level of log output to screen
 * SeparateBundles::             move echomail for each link to his own directory
 * SetConsoleTitle::             schange conesole title under win32
+* SortEchoList::                echolist sort mode
 * Sysop::                       your name
 * TearLine::                    add specified tearline to hpt messages
 * TossingExt::                  extension of mail files while tossing
@@ -1395,7 +1396,7 @@ Move echomail for all links to his own directorys.
 
 This statement cannot be repeated.
 
-@node SetConsoleTitle, Sysop, SeparateBundles, Keywords
+@node SetConsoleTitle, SortEchoList, SeparateBundles, Keywords
 @subsection SetConsoleTitle
 @findex SetConsoleTitle
 @table @asis
@@ -1409,7 +1410,24 @@ Set hpt console title while tossing. (@strong{WIN32 Only!})
 
 This statement cannot be repeated.
 
-@node Sysop, TearLine, SetConsoleTitle, Keywords
+@node SortEchoList, Sysop, SetConsoleTitle, Keywords
+@subsection SortEchoList
+@findex SortEchoList
+@table @asis
+@item Syntax:
+@code{SortEchoList none|name|group|group,name}
+@item Example:
+@code{SortEchoList name}
+@end table
+
+This keyword determines sorting mode for echolist (%LIST, %QUERY, etc):
+none - unsorted (as in config file), by name, by group (-g in echoArea) only
+or by group and name. When sorting is carried out by group, group descriptions
+(see grpDesc keyword) are printed before groups' areas.
+
+This statement cannot be repeated.
+
+@node Sysop, TearLine, SortEchoList, Keywords
 @subsection Sysop
 @findex Sysop
 @table @asis

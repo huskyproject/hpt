@@ -25,6 +25,8 @@
 #define STAT    101
 #define AFERROR   255
 
+typedef enum { lt_all, lt_linked, lt_unlinked } s_listype;
+
 char *print_ch(int len, char ch);
 int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd);
 void afix(hs_addr addr, char *cmd);
