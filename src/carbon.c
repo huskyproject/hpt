@@ -182,6 +182,12 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 
     line = old_text;
 
+    if (!msg->netMail) {
+        xstrscat(&msg->text,
+            (export) ? "AREA:" : "\001AREA:",
+            (export) ? area->areaName : echo->areaName,
+            "\r" , NULL);
+    }
     if (strncmp(line, "AREA:", 5) == 0) {
         /*  jump over AREA:xxxxx\r */
         while (*(line) != '\r') line++;
@@ -208,17 +214,14 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
             if (NULL != (p = strstr(line ? line : text,"\rSEEN-BY:")))
                 i = (size_t) (p - text) + 1;
         }
-	xstrscat(&msg->text,
-         "\r",
-		 (export) ? "AREA:" : "",
-		 (export) ? area->areaName : "",
-		 (export) ? "\r" : "",
-		 (config->carbonExcludeFwdFrom) ? "" : " * Forwarded from area '",
-		 (config->carbonExcludeFwdFrom) ? "" : echo->areaName,
-		 (config->carbonExcludeFwdFrom) ? "" : "'\r",
-		 (reason) ? reason : "",
-		 (reason) ? "\r" : "", NULL);
-	msg->textLength = strlen(msg->text);
+        xstrscat(&msg->text,
+            "\r" ,
+            (config->carbonExcludeFwdFrom) ? "" : " * Forwarded from area '",
+            (config->carbonExcludeFwdFrom) ? "" : echo->areaName,
+            (config->carbonExcludeFwdFrom) ? "" : "'\r",
+            (reason) ? reason : "",
+            (reason) ? "\r" : "", NULL);
+        msg->textLength = strlen(msg->text);
     }
 
     xstralloc(&msg->text,i); /*  add i bytes */
