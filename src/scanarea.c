@@ -275,7 +275,7 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
    nfree(tempafter);
    nfree(addrstr);
 
-   createSeenByArrayFromMsg(echo, &msg, &seenBys, &seenByCount);
+   createSeenByArrayFromMsg(&msg, &seenBys, &seenByCount);
    createPathArrayFromMsg(&msg, &path, &pathCount);
 
    forwardToLinks(&msg, echo, links, &seenBys, &seenByCount, &path, &pathCount);

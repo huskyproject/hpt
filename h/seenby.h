@@ -44,7 +44,7 @@ void sortSeenBys(s_seenBy *seenBys, UINT count);
 
 char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading);
 
-void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy
+void createSeenByArrayFromMsg(s_message *msg, s_seenBy
 							  **seenBys, UINT *seenByCount);
 
 void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount);

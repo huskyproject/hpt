@@ -532,7 +532,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, hs_addr pktOrigAddr)
     /*  links who does not have their aka in seenBys and thus have not got the echomail */
     s_arealink **newLinks = NULL, **zoneLinks = NULL, **otherLinks = NULL;
 
-    createSeenByArrayFromMsg(echo, msg, &seenBys, &seenByCount);
+    createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
     createPathArrayFromMsg(msg, &path, &pathCount);
 
     createNewLinkArray(seenBys, seenByCount, echo, &newLinks, &zoneLinks, &otherLinks, pktOrigAddr);
@@ -1075,7 +1075,10 @@ int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
     if ((rc = perlfilter(msg, pktHeader->origAddr, secure)) == 1)
 	return putMsgInBadArea(msg, pktHeader->origAddr, 5);
     else if (rc == 2)
-	return 1;
+        return 1;
+#else
+    /* prevent compiler warning */
+    secure = secure;
 #endif
     if (msg->netMail == 1) {
         w_log(LL_NETMAIL, "Netmail from %s to %u:%u/%u.%u", aka2str(msg->origAddr),

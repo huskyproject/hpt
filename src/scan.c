@@ -731,6 +731,23 @@ int scanByName(char *name) {
     return 0;
 }
 
+void scanAllAreas(int type)
+{
+    unsigned int i;
+    if (type & SCN_ECHOMAIL) {
+        for (i = 0; i< config->echoAreaCount; i++) {
+            if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
+                scanEMArea(&(config->echoAreas[i]));
+            }
+        }
+    };
+    if (type & SCN_NETMAIL) {
+        for (i = 0; i < config->netMailAreaCount; i++) {
+            scanNMArea(&(config->netMailAreas[i]));
+        }
+    };
+}
+
 void scanExport(int type, char *str) {
 
     unsigned int i = 0;
@@ -739,10 +756,11 @@ void scanExport(int type, char *str) {
     char *tmplogname = NULL;
     char *line = NULL;
     struct stat st;
+    int processed;
 
     if ( !config->tempDir )
     {
-        exit_hpt( "tempDir not defined in config. scanExport imposible" , 1 );
+        exit_hpt( "tempDir not defined in config. scanExport is not possible" , 1 );
     }
 
     w_log( LL_FUNC, "scanExport() begin" );
@@ -766,7 +784,7 @@ void scanExport(int type, char *str) {
                 if (ftmp == NULL) {
                     /* close file so all areas will be scanned instead of panic. */
                     fclose(f);
-		    f = NULL;
+                    f = NULL;
                 }
             }
         }
@@ -775,13 +793,14 @@ void scanExport(int type, char *str) {
     w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
 
     if (type & SCN_FILE) {
+        if (str == NULL) str = config->echotosslog;
         f = fopen(str, "r");
-        if (f != NULL) {
+        if (f != NULL && config->packNetMailOnScan == 0) {
             ftmp = createTempTextFile(config , &tmplogname); /* error diagnostic prints by createTempTextFile() */
             if (ftmp == NULL) {
                 /* close file so all areas will be scanned instead of panic. */
                 fclose(f);
-		f = NULL;
+                f = NULL;
             }
         }
     }
@@ -789,31 +808,24 @@ void scanExport(int type, char *str) {
     w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
 
     if (type & SCN_NAME) {
-        scanByName(str);
+        for (i = 0; i< config->echoAreaCount; i++) {
+            if (patimat(config->echoAreas[i].areaName, str))
+                scanByName(config->echoAreas[i].areaName);
+        }
     } else if (f == NULL) {
         if (type & SCN_FILE) {
             w_log(LL_START, "EchoTossLogFile not found -> Scanning stop");
             nfree(tmplogname);
             return;
         }
-        if (type & SCN_ECHOMAIL) {
-            /*  if echotoss file does not exist scan all areas */
-            w_log(LL_START, "EchoTossLogFile not found -> Scanning all areas.");
-            for (i = 0; i< config->echoAreaCount; i++) {
-                if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
-                    scanEMArea(&(config->echoAreas[i]));
-                }
-            }
-        };
-        if (type & SCN_NETMAIL) {
-            for (i = 0; i < config->netMailAreaCount; i++) {
-                scanNMArea(&(config->netMailAreas[i]));
-            }
-        };
+        /*  if echotoss file does not exist scan all areas */
+        w_log(LL_START, "EchoTossLogFile not found -> Scanning all areas.");
+        scanAllAreas(type);
     } else {
         /*  else scan only those areas which are listed in the file */
         w_log(LL_START, "EchoTossLogFile found -> Scanning only listed areas");
 
+        processed = 0;
         while (!feof(f)) {
             line = readLine(f);
 
@@ -824,15 +836,20 @@ void scanExport(int type, char *str) {
                 if (!ftmp) { /*  the same as if(config->packNetMailOnScan) { */
                     scanByName(line);
                 } else {
+                    processed |= 1;
                     /* exclude NetmailAreas in echoTossLogFile */
                    if (type & SCN_ECHOMAIL) {
-                       if (getNetMailArea(config, line) == NULL)
-                        scanByName(line);
+                       if (getNetMailArea(config, line) == NULL) {
+                           scanByName(line);
+                           processed |= 2;
+                       }
                        else
                            fprintf(ftmp, "%s\n", line);
                     } else {
-                        if (getNetMailArea(config, line) != NULL)
-                            scanByName(line);
+                       if (getNetMailArea(config, line) != NULL) {
+                           scanByName(line);
+                           processed |= 2;
+                       }
                         else
                             fprintf(ftmp, "%s\n", line);
                     }
@@ -840,6 +857,13 @@ void scanExport(int type, char *str) {
                 nfree(line);
             }
         }
+    }
+
+    w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
+
+    if (processed == 1) {
+        w_log(LL_START, "EchoTossLogFile found, but contains no areas -> processing all areas.");
+        scanAllAreas(type);
     }
 
     w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );

@@ -109,7 +109,7 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
    return text;
 }
 
-void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, UINT *seenByCount)
+void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount)
 {
     char *seenByText=NULL, *start = NULL, *token = NULL;
     unsigned long temp;
