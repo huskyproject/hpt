@@ -20,7 +20,6 @@ mtt:
 - fixed a bug in the processPkt routine which leads to wrong recognition of
   pktPassword and so...
 
->>>>>>> 1.36
 ----- cvs ci ------	
 Wed Mar  10 04:55:00
 Max (patches from Fedor Lizunkov):
