@@ -32,9 +32,17 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
-#if !defined(__FreeBSD__)
-#include <malloc.h>
-#endif
+
+// changed by tobi: malloc.h is completely nonstandard and should not be
+// necessary if stdlib.h is there. if your compiler needs malloc.h, then
+// please include it by doing a #ifdef YOURCOMPILER, and don't do it like
+// below. E.g., we want to list the compilers that NEED malloc.h, not to 
+// list those that do NOT need it!
+//
+// #if !defined(__FreeBSD__) 
+// #include <malloc.h>
+// #endif
+
 #include <string.h>
 #include <ctype.h>
 

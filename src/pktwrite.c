@@ -32,9 +32,12 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
-#if !defined(__FreeBSD__)
-#include <malloc.h>
-#endif
+
+// see pktread.c for a comment on malloc.h!
+//#if !defined(__FreeBSD__)
+//#include <malloc.h>
+//#endif
+
 #if (defined (__WATCOMC__) && defined (__NT__)) || defined(__TURBOC__)
 #include <dos.h>
 #endif
