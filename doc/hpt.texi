@@ -595,7 +595,11 @@ Valid attributes are:
 
 Default is "pvt loc k/s npd".
 
-This statement cannot be repeated.
+If this statement is used inside Link or LinkDefaults section, it sets
+attributes for this particular link. Otherwise it defines attributes used
+by default.
+
+This statement can be repeated for different links.
 
 @node AreafixSplitStr, AreafixQueryReports, AreafixReportsAttr, Keywords
 @subsection AreafixSplitStr
@@ -2084,6 +2088,7 @@ This statement cannot be repeated.
 * Areafix::                     areafix access for this link
 * AreafixEchoLimit::            limit for subscribe via areafix
 * AreafixPwd::                  areafix password for this link
+* AreafixReportsAttr::          set flags to areafix reports for the link
 * AutoAreaCreate::              right to auto create areas on your system
 * AutoAreaCreateFile::          file where autoCreated Areas by this links are going
 * AutoAreaCreateDefaults::      set defaults to autocreated echoareas
