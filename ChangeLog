@@ -1,3 +1,8 @@
+2003-01-12 Sunday 15:11  mche
+
+	* hpt.dsp (1.6), src/perl.c (1.46): define INTEL for MSVC in
+	compiler.h
+
 2003-01-11 Saturday 17:41  mche
 
 	* hpt.dsp (1.5), src/stat.c (1.9): fix advStatistic generation
