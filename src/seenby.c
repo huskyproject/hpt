@@ -65,7 +65,7 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
        
       line = safe_malloc ((size_t) size);
 
-      snprintf(addr2d, addr2dSize, "%u/%u", seenBys[0].net, seenBys[0].node);
+      sprintf(addr2d, "%u/%u", seenBys[0].net, seenBys[0].node);
       text = (char *) safe_malloc((size_t) size);
       text[0]='\0';
       strncpy(line, lineHeading, size);
@@ -80,9 +80,9 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
 //			 seenBys[i-1].node == seenBys[i].node) continue;
 
          if (seenBys[i-1].net == seenBys[i].net)
-            snprintf(addr2d, addr2dSize, " %u", seenBys[i].node);
+            sprintf(addr2d, " %u", seenBys[i].node);
          else
-            snprintf(addr2d, addr2dSize, " %u/%u", seenBys[i].net, seenBys[i].node);
+            sprintf(addr2d, " %u/%u", seenBys[i].net, seenBys[i].node);
 
          if (strlen(line)+strlen(addr2d) > size-3) {
             //if line would be greater than 79 characters, make new line
@@ -91,7 +91,7 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
             text = (char *) safe_realloc(text,strlen(text)+size);
             strncpy(line, lineHeading, size);
             // start new line with full 2d information
-            snprintf(addr2d, addr2dSize, "%u/%u", seenBys[i].net, seenBys[i].node);
+            sprintf(addr2d, "%u/%u", seenBys[i].net, seenBys[i].node);
          }
          strcat(line, addr2d);
       }

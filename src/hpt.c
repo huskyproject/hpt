@@ -429,7 +429,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 
 #if defined ( __NT__ )
    if (config->setConsoleTitle) {
-	   snprintf( title, TITLESIZE, "Highly Portable Tosser %s", version);
+	   sprintf( title, "Highly Portable Tosser %s", version);
 	   GetConsoleTitleA( oldtitle, 256 );
 	   SetConsoleTitleA( title );
    }
