@@ -2,97 +2,118 @@
 #
 # $Id$
 #
-# Author:
-# Valery Kondakoff (2:5020/163).
-# Code was based on original Michael Savin (2:5070/269) idea.
+# Authors:
+# Yuriy Daybov (2:5029/42),
+# Valery Kondakoff (2:5020/163),
+# Michael Savin (2:5070/269).
+# Code was based on original Michael Savin idea.
 #
 # Description:
-# This script parse HPT logfile and produce echomail traffic statistics
-# for specified echoareas and specified period of time (in days). You can
-# use '*' as simple wildcard to create statistics for more than one area.
-# Areanames are case insensitive.
+# This script parses HPT logfile and produces echomail traffic,
+# packet/bundles, messages posted by "hpt post" command and echoes
+# throughput statistics for specified echoareas and specified period
+# of time (in days). You can use '*' as simple wildcard to create
+# statistics for more than one area.
+# Areanames are case insensitive. Use -traffic key to sort echoes by
+# traffic. All command line switches are optional. The order of command
+# line switches is not important.
 #
 # Usage:
-# Set $logname to point to your HPT logfile. Then call this script:
-# hptlog_stat.pl [areaname_using_wildcard] [days]
-# or
-# hptlog_stat.pl [days] [areaname_using_wildcard]
-# Both command line arguments are optional.
+# Set $logname to point to your HPT logfile. Then call the script:
+#
+# hptlog_stats.pl [areaname_using_wildcard] [days] [-traffic]
 #
 # Examples:
-# "hptlog_stat.pl ru.nncron 30" - create 30-day statistics for "RU.NNCRON"
-# "hptlog_stat.pl 7" - create 7-day statistics for all the subscribed areas
-# "hptlog_stat.pl 14 *win*" - create 14-day statistics for all echoareas
+# "hptlog_stats.pl ru.nncron 30" - create 30-day statistics for "RU.NNCRON"
+# "hptlog_stats.pl 7" - create 7-day statistics for all the subscribed areas
+# "hptlog_stats.pl 14 *win*" - create 14-day statistics for all echoareas
 # with "win" in their names.
-# "hptlog_stat.pl" - create statistics for all subscribed groups using
+# "hptlog_stats.pl 1 -traffic" - sorted by traffic statistics for last day
+# "hptlog_stats.pl" - create statistics for all subscribed groups using
 # entire HPT log file etc...
 
-$logname = "/fido/log/hpt.log";
+use Time::Local;
 
-sub usage {
-print <<USAGETEXT;
-hpt log statistics (c) Valery Kondakoff (2:5020/163)
-Code was based on original Michael Savin (2:5070/269) idea.
+$logname = "z:/hpt/log/hpt.log";
 
-USAGE:
-       hptlog_stat.pl [areatag_mask] [days]
-       hptlog_stat.pl -h
-
-USAGETEXT
-exit;
-}
-
-if ( $ARGV[0] =~ /-[hH]/ ) { &usage; }
-
+# this hash is used, when converting verbose months to numeral (Jan = 0)
+@months{qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)} = (0..11);
 # working with command line arguments
-if ($#ARGV > 1) {
-    print("Wrong command line arguments number. Call with '-h' option for help\n");
+if ($#ARGV > 2) {
+    print("Wrong command line arguments number\n");
     exit;
 }
-
 foreach (@ARGV) {
-    if(/^\d{1,4}$/ && !$period) {
-        $period = $_;
-    } else {
-        $areaname = $_;
-    }
-    #~ print "debug: inside foreach $period $areaname\n";
+    if(/^-traffic$/) { $traff = 1 }
+        elsif(/^\d{1,4}$/ && !$period) { $period = $_ }
+    else { $areaname = $_ }
 }
-$period ? ($days = calculate_date($period)) : ($days = ".*");
-$areaname = "*" unless $areaname;
-$areaname =~ s/\*/.*/g;
-
+$date = time() - (24 * 60 * 60 * ($period - 1)) if $period;
+# checking if the user enters "*" or "*.*" as areaname
+$long_stats = 1 if !$areaname || $areaname =~ /^\*(\.\*)?$/;
+$areaname ||= "*";
+$areaname =~ s/\./\\./g;
+$areaname =~ s/\*/\.*/g;
 open(LOG, "<$logname") || die "can't open $logname: $!";
 while (<LOG>) {
-    $from = $1 if /-{10}\s+\w+\s($days),/ && !$from;
-    $last = $1 if /-{10}\s+\w+\s(.*),/;
-    $count{"\U$1"} += $2 if $from && (/echo area ($areaname) - (\d*)/i);
+    if (/-{10}\s+\w+\s(.*),/) {
+        $last = $1;
+        if (!$from) {
+            $found = date_to_period($1);
+            $date ||= $found;
+            $from = $1 if ($found >= $date);
+        }
+        next;
+    }
+    if ($from) {
+        $count{"\L$1"} += $2 if (/echo area ($areaname) - (\d*)/i);
+        if (/^5.*\s+posting msg.*area:\s+($areaname)$/i) {
+            $count{"\L$1"}++;
+            $posted++;
+        }
+        $bundles++ if (/^6.*\s+bundle\s/);
+        $packets++ if (/^7.*\s+pkt\:\s/);
+    }
 }
-# error checking - if we can find the day specified in log file
-unless($from) {
-    print "Can't find \"$days\" messages in your HPT log!\n";
-    exit;
-}
-# error checking - if specified area exists
+close LOG || die "Can't close $logname: $!";;
+# error checking
 unless(%count) {
-    print "Can't find \"$areaname\" areaname in your HPT log!\n";
+    print "No messages in \"$areaname\": non existant areaname" .
+            " or wrong period of days!\n";
     exit;
 }
-close LOG || die "can't close $logname: $!";;
-
-print "\nEchomail traffic from \"$from\" to \"$last\".\n";
-print "------------------------- ------\n";
-foreach $key (sort keys %count) {
-    $all += $count{$key};
-    printf "%-25s %-6s\n", $key, $count{$key};
+$period ||= int ((date_to_period($last) - $date) /24 /60 /60 + 1);
+print "\nEchomail traffic from \"$from\" to \"$last\" ";
+printf "($period day%s).\n\n", ($period == 1) ? "" : "s";
+print "Echoarea                  Posts\n";
+print "------------------------- -------\n";
+if ($traff) {
+    foreach $key (sort { $count{$b}<=>$count{$a} } keys %count) {
+       $all += $count{$key};
+       printf "%-25s %-6s\n", $key, $count{$key};
+    }
+} else {
+    foreach $key (sort keys %count) {
+       $all += $count{$key};
+       printf "%-25s %-6s\n", $key, $count{$key};
+    }
 }
-print "------------------------- ------\n";
-print "Messages summary:         $all\n";
-
-# calculating real date (like "20 Jan") from command line argument
-sub calculate_date {
-    $now_string = localtime(time() - (24 * 60 * 60 * $_[0]));
-    $now_string =~ /^\w+\s(\w+)\s(\s?\d+).*(\d\d)$/;
-    $day = sprintf("%02d", $2);
-    return("$day $1 $3");
+print "------------------------- -------\n";
+print "Total messages:           $all\n";
+print "Packets:                  $packets\n" if $long_stats;
+print "Bundles:                  $bundles\n" if $long_stats;
+print "(Auto)posted messages:    $posted\n" if $posted;
+print "------------------------- -------\n";
+print "Total echoes processed:   ", scalar(keys %count),"\n";
+print "------------------------- -------\n";
+print  "Average through-put per day:\n";
+printf "        messages:         %.2f\n", $all/$period;
+printf "        packets:          %.2f\n", $packets/$period if $long_stats;
+printf "        bundles:          %.2f\n", $bundles/$period if $long_stats;
+printf "        (auto)posted:     %.2f\n\n", $posted/$period if $posted;
+# converting verbose date to epoch seconds
+sub date_to_period {
+    $_[0] =~ /(\d\d)\s(\w\w\w)\s(\d\d)/i;
+    ($day, $month, $year) = ($1, $2, $3);
+    timelocal("59", "59", "23", $day, $months{$month}, $year);
 }
