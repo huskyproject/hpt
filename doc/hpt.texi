@@ -1949,7 +1949,8 @@ This statement cannot be repeated.
 * LinkDefaults::                start/end/destroy links default definitions
 * LinkGrp::			add this group to autoareacreatedefaults
 * LinkMsgBaseDir::              base directory of areas for link
-* Mandatory::                   rules for echoarea access
+* Mandatory::                   disable unsubscribing from all echoareas
+* Manual::                      disable subscribing to all echoareas
 * NoRules::                     don't send area rules to link on subscription
 * OptGrp::                      groups for export/import/mandatory
 * OurAka::                      our aka for link
@@ -2604,7 +2605,7 @@ This statement can only be repeated for different links.
 
 @xref{MsgBaseDir}.
 
-@node Mandatory, NoRules, LinkMsgBaseDir, Link Keywords
+@node Mandatory, Manual, LinkMsgBaseDir, Link Keywords
 @subsection Mandatory
 @findex Mandatory
 @table @asis
@@ -2616,11 +2617,27 @@ This statement can only be repeated for different links.
 
 By default "mandatory off".
 
-This statament do not allow the link to subscribe/unsubscribe areas via areafix.
+This statament do not allow the link to unsubscribe areas via areafix.
 
 This statement can only be repeated for different links.
 
-@node NoRules, OptGrp, Mandatory, Link Keywords
+@node Manual, NoRules, Mandatory, Link Keywords
+@subsection Manual
+@findex Manual
+@table @asis
+@item Syntax:
+@code{manual <bool>}
+@item Example:
+@code{manual on}
+@end table
+
+By default "manual off".
+
+This statament do not allow the link to subscribe areas via areafix.
+
+This statement can only be repeated for different links.
+
+@node NoRules, OptGrp, Manual, Link Keywords
 @subsection NoRules
 @findex NoRules
 @table @asis
