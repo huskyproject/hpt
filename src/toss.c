@@ -1290,7 +1290,16 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 */
    if (area == NULL) {
  	area = &(config->netMailAreas[0]);
-   };
+   }
+
+   if (dupeDetection(area, *msg)==0) {
+	   // msg is dupe
+	   if (area->dupeCheck == dcMove) {
+		rc = putMsgInArea(&(config->dupeArea), msg, 0, 0);
+	   } else rc = 1;
+	   statToss.dupes++;
+	   return rc;
+   }
 
    if (config->carbonCount != 0) ccrc = carbonCopy(msg, area);
    if (ccrc > 1) return 1;
@@ -2060,6 +2069,10 @@ void toss()
       writeToDupeFile(&(config->echoAreas[i]));
       freeDupeMemory(&(config->echoAreas[i]));
    }
+   for (i = 0 ; i < config->netMailAreaCount; i++) {
+      writeToDupeFile(&(config->netMailAreas[i]));
+      freeDupeMemory(&(config->netMailAreas[i]));
+   }
 
    if (config->importlog != NULL) {
       // write importlog
@@ -2150,7 +2163,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
 
          echo->imported++;  // area has got new messages
          if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-            rc = !putMsgInArea(echo, &msg,1, 0);
+            rc = !putMsgInArea(echo, &msg,1, 0); // FIXME: why !putMsg not putMsg?
 //            statToss.saved++;
          } else statToss.passthrough++;
 
@@ -2170,7 +2183,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
       } else {
          // msg is dupe
          if (echo->dupeCheck == dcMove) {
-            rc = !putMsgInArea(&(config->dupeArea), &msg, 0, 0);
+            rc = !putMsgInArea(&(config->dupeArea), &msg, 0, 0); // FIXME: why !putMsg not putMsg?
          } else {
 	    rc = 0;
 	 };

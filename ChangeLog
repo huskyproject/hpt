@@ -2,10 +2,14 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Mon Apr 10 20:53:39 NOVST 2000
+max:
+* netmail dupe detection
+
+----- cvs ci ------
 Sun Apr  9 22:41:43 NOVST 2000
 max:
 * moved readCheck & writeCheck to fidoconfig
-to hjk: do not ever delete my code
 
 ----- cvs ci ------
 Sun Apr  9 17:23:17 CET 2000
