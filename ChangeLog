@@ -5,6 +5,8 @@ hpt 0.9.7 (development version)
 Wed Jun  7 09:44:09 MSD 2000
 max (patch from Serguei Revtov):
 * bugfix for creation of lock file in fcommon.c
+* compiling tree.c on win32
+* fix crash in autocreate when no Sysop specified in config
 
 ----- cvs ci ------
 Tue Jun  6 19:39:31 NOVST 2000

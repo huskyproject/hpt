@@ -279,12 +279,14 @@ void removelink(s_link *link, s_area *area) {
 	area->downlinkCount--;
 }
 
-s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char *toName, char *subject, char netmail)
+s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char *toName, char *subject, int netmail)
 {
     // netmail == 0 - echomail
     // netmail == 1 - netmail
     time_t time_cur;
     s_message *msg;
+
+    if (toName == NULL) toName = "Sysop";
     
     time_cur = time(NULL);
     

@@ -21,7 +21,7 @@ char *print_ch(int len, char ch);
 int processAreaFix(s_message *msg, s_pktHeader *pktHeader);
 void afix(void);
 void autoPassive(void);
-s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char *toName, char *subject, char netmail);
+s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char *toName, char *subject, int netmail);
 int areaIsAvailable(char *areaName, char *fileName, char **desc, int retd);
 int relink (char *straddr);
 

@@ -1025,7 +1025,7 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
 	if (echo->useAka == &(config->addr[i])) {
 	    if (msgToSysop[i] == NULL) {
 
-		msgToSysop[i] = makeMessage(echo->useAka, echo->useAka, versionStr, netmail ? config->sysop : "All", "Created new areas", (char)netmail);
+		msgToSysop[i] = makeMessage(echo->useAka, echo->useAka, versionStr, netmail ? config->sysop : "All", "Created new areas", netmail);
 		msgToSysop[i]->text = createKludges(netmail ? NULL : config->ReportTo, echo->useAka, echo->useAka);
 
 		xstrscat(&(msgToSysop[i]->text), "Action   Name", 
