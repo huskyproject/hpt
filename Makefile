@@ -16,11 +16,7 @@ else
   LFLAGS = $(OPTLFLAGS)
 endif
 
-ifeq ($(SHORTNAME), 1)
-  LIBS  = -L$(LIBDIR) -lfidoconf -lsmapi -lhusky
-else
-  LIBS  = -L$(LIBDIR) -lfidoconfig -lsmapi -lhusky
-endif
+LIBS  = -L$(LIBDIR) -lfidoconf -lsmapi -lhusky
 
 ifeq ($(PERL), 1)
   CFLAGS += -DDO_PERL `perl -MExtUtils::Embed -e ccopts`

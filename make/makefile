@@ -14,11 +14,7 @@ else
   LFLAGS = $(OPTLFLAGS)
 endif
 
-ifeq ($(SHORTNAME), 1)
-  LIBS  = -L$(LIBDIR) -lfidoconf -lsmapi
-else
-  LIBS  = -L$(LIBDIR) -lfidoconfig -lsmapi
-endif
+LIBS  = -L$(LIBDIR) -lfidoconf -lsmapi
 
 CDEFS=-D$(OSTYPE) $(ADDCDEFS)
 
