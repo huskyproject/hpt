@@ -1214,6 +1214,7 @@ s_arealink *getAreaLink(s_area *area, s_addr aka)
 }
 
 // import: type == 0, export: type != 0 
+// return value: 0 if access ok, 3 if import/export off, 4 if not linked
 int checkAreaLink(s_area *area, s_addr aka, int type)
 {
 	s_arealink *arealink;
@@ -1222,9 +1223,9 @@ int checkAreaLink(s_area *area, s_addr aka, int type)
 	arealink = getAreaLink(area, aka);
 	if (arealink) {
 	    if (type==0) {
-		if (arealink->import) writeAccess = 0; else writeAccess = 3;
+			if (arealink->import) writeAccess = 0; else writeAccess = 3;
 	    } else {
-		if (arealink->export) writeAccess = 0; else writeAccess = 3;
+			if (arealink->export) writeAccess = 0; else writeAccess = 3;
 	    }
 	} else {
 		if (addrComp(aka, *area->useAka)==0) writeAccess = 0;
@@ -1250,10 +1251,66 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 
    echo = getArea(config, area);
 
+   // no area found -- trying to autocreate echoarea
+   if (echo == &(config->badArea)) {
+	   // checking for autocreate option
+	   link = getLinkFromAddr(*config, pktOrigAddr);
+	   if ((link != NULL) && (link->autoAreaCreate != 0)) {
+           autoCreate(area, pktOrigAddr, NULL);
+           echo = getArea(config, area);
+	   } // can't create echoarea - put msg in BadArea
+	   else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
+   }
+
+   if (echo != &(config->badArea)) {
+	   // area is autocreated!
+
+	   // cheking access of this link
+	   writeAccess = checkAreaLink(echo, pktOrigAddr, 0);
+	   if (writeAccess) rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
+	   else { // access ok - process msg
+
+		   if (dupeDetection(echo, *msg)==1) {
+			   // no dupe
+			   statToss.echoMail++;
+
+			   // if only one downlink, we've got the mail from him
+			   if ((echo->downlinkCount > 1) ||
+				   ((echo->downlinkCount > 0) && 
+					// mail from us
+					(addrComp(pktOrigAddr,*echo->useAka)==0)))
+				   forwardMsgToLinks(echo, msg, pktOrigAddr);
+
+			   if ((config->carbonCount!=0)&&(!dontdocc)) ccrc=carbonCopy(msg,echo);
+
+			   if (ccrc <= 1) {
+				   echo->imported++;  // area has got new messages
+				   if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
+					   rc = putMsgInArea(echo, msg, 1, forceattr);
+					   statToss.saved++;
+				   } 
+				   else {
+					   statToss.passthrough++;
+					   rc = 1; //passthrough does always work
+				   }
+			   } else rc = 1; // normal exit for carbon move & delete
+
+		   } else {
+			   // msg is dupe
+			   if (echo->dupeCheck == dcMove) {
+				   rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
+			   } else rc = 1;
+			   statToss.dupes++;
+		   }
+	   }
+   }
+ 
+/* will be removed after 13-09-00
+
    if (echo == &(config->badArea)) writeAccess = 0;
    else writeAccess = checkAreaLink(echo, pktOrigAddr, 0);
    if (writeAccess!=0) echo = &(config->badArea);
-		
+
    if (echo != &(config->badArea)) {
 	  if (dupeDetection(echo, *msg)==1) {
 		  // no dupe
@@ -1305,6 +1362,12 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 	   } else {
 	     if (dupeDetection(echo, *msg)==1) {
 			 // nodupe
+
+			 // if only one downlink, we've got the mail from him
+			 if (echo->downlinkCount > 1) {
+			     forwardMsgToLinks(echo, msg, pktOrigAddr);
+			     statToss.exported++;
+			 }
 			 statToss.echoMail++;
 			 echo->imported++;  // area has got new messages
 			 if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
@@ -1313,12 +1376,6 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 			 } else {
 				 statToss.passthrough++;
 				 rc = 1; //passthrough does always work
-			 }
-
-			 // if only one downlink, we've got the mail from him
-			 if (echo->downlinkCount > 1) {
-				 forwardMsgToLinks(echo, msg, pktOrigAddr);
-				 statToss.exported++;
 			 }
 	     } else {
 	       // msg is dupe
@@ -1332,6 +1389,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
         } else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
       }
    }
+will be removed after 13-09-00 */
 
    nfree(textBuff);
    return rc;

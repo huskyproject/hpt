@@ -8,6 +8,10 @@ max:
 * deleted old makefiles
 * perl support in new makefiles
 * areafix delete *last* substring in delLinkFromArea()
+* first message to links from autoAreaCreateDefaults after autocreate don't
+  recoded to internal charset (report by Georgi Fofanov)
+* processEMMsg() code cleanup (be carefull)
+* carbonCopy from badArea doesn't works now
 
 ----- cvs ci ------
 Sat Aug 12 23:36:58 NOVST 2000
