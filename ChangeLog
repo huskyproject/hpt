@@ -1,5 +1,11 @@
 ----- cvs ci ------
-Sa   9 Sep 2000 23:51:15 CEST
+Mon Sep 11 10:56:46 NOVST 2000
+max:
+* hptlink.c & link.c from development branch (linking jam areas & 
+  "hpt link" speedup)
+
+----- cvs ci ------
+Sat Sep  9 23:51:15 CEST 2000
 tobi (patch from max from current)
 * "toss -b" fixes (squish & jam areas)
 
