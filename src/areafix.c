@@ -62,6 +62,7 @@
 #include <arealist.h>
 #include <hpt.h>
 #include <dupe.h>
+#include <query.h>
 
 //extern char *curconfname;  /* replased with getCurConfName(); */
 //extern long curconfpos;    /* replased with getCurConfPos(); */
@@ -548,29 +549,33 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
     } else msg = uplink->msg;
 	
     if (act==0) {
-	if (getArea(config, areatag) == &(config->badArea)) {
-	    base = uplink->msgBaseDir;
-	    if (config->createFwdNonPass==0) uplink->msgBaseDir = pass;
-	    // create from own address
-	    if (isOurAka(dwlink->hisAka)) {
-		uplink->msgBaseDir = base;
-	    }
-	    strUpper(areatag);
-	    autoCreate(areatag, uplink->hisAka, &(dwlink->hisAka));
-	    uplink->msgBaseDir = base;
-	}
-	xstrscat(&msg->text, "+", areatag, "\r", NULL);
-    } else if (act==1) {
-	xscatprintf(&(msg->text), "-%s\r", areatag);
-    } else {
-	// delete area
-	if (uplink->advancedAreafix)
-	    xscatprintf(&(msg->text), "~%s\r", areatag);
-	else
-	    xscatprintf(&(msg->text), "-%s\r", areatag);
+    if (getArea(config, areatag) == &(config->badArea)) {
+        if(config->areafixQueueFile) {
+            af_CheckAreaInQuery(areatag, &(uplink->hisAka), &(dwlink->hisAka), ADDFREQ);
+        }
+        else {
+            base = uplink->msgBaseDir;
+            if (config->createFwdNonPass==0) uplink->msgBaseDir = pass;
+            // create from own address
+            if (isOurAka(dwlink->hisAka)) {
+                uplink->msgBaseDir = base;
+            }
+            strUpper(areatag);
+            autoCreate(areatag, uplink->hisAka, &(dwlink->hisAka));
+            uplink->msgBaseDir = base;
+        }
     }
-
-    return 0;	
+    xstrscat(&msg->text, "+", areatag, "\r", NULL);
+    } else if (act==1) {
+        xscatprintf(&(msg->text), "-%s\r", areatag);
+    } else {
+        // delete area
+        if (uplink->advancedAreafix)
+            xscatprintf(&(msg->text), "~%s\r", areatag);
+        else
+            xscatprintf(&(msg->text), "-%s\r", areatag);
+    }
+    return 0;
 }
 
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
@@ -757,49 +762,51 @@ int forwardRequest(char *areatag, s_link *dwlink) {
     for (i = 0; i < Requestable; i++) {
 	uplink = &(config->links[Indexes[i]]);
 	if (uplink->forwardRequests && (uplink->LinkGrp) ?
-	    grpInArray(uplink->LinkGrp,dwlink->AccessGrp,dwlink->numAccessGrp) : 1) {
+        grpInArray(uplink->LinkGrp,dwlink->AccessGrp,dwlink->numAccessGrp) : 1) 
+    {
+        if ( (uplink->numDfMask) &&
+            (tag_mask(areatag, uplink->dfMask, uplink->numDfMask))) 
+        {
+            rc = 2;
+            continue;
+        }
+        if ( (uplink->denyFwdFile!=NULL) &&
+            (areaIsAvailable(areatag,uplink->denyFwdFile,NULL,0)))
+        {
+            rc = 2;
+            continue;
+        }
+        if (uplink->forwardRequestFile!=NULL) {
+            // first try to find the areatag in forwardRequestFile
+            if (tag_mask(areatag, uplink->frMask, uplink->numFrMask) || 
+                areaIsAvailable(areatag,uplink->forwardRequestFile,NULL,0))
+            {
+                forwardRequestToLink(areatag,uplink,dwlink,0);
+                rc = 0;
+            }
+            else  
+            { rc = 2; }// found link with freqfile, but there is no areatag
+        } else {
+            rc = 0;
+            if (uplink->numFrMask) // found mask
+            { 
+                if (tag_mask(areatag, uplink->frMask, uplink->numFrMask))
+                    forwardRequestToLink(areatag,uplink,dwlink,0);
+                else rc = 2;
+            } else { // unconditional forward request
+                if (dwlink->denyUFRA==0)
+                    forwardRequestToLink(areatag,uplink,dwlink,0);
+                else rc = 2;
+            }
+        }//(uplink->forwardRequestFile!=NULL) 
+        if (rc==0) { // ?
+            nfree(Indexes);
+            return rc;
+        }
 
-	    if (uplink->numDfMask) {
-		if (tag_mask(areatag, uplink->dfMask, uplink->numDfMask)) {
-		    rc = 2;
-		    continue;
-		}
-	    }
-			
-	    if (uplink->denyFwdFile!=NULL) {
-		if (areaIsAvailable(areatag,uplink->denyFwdFile,NULL,0)) {
-		    rc = 2;
-		    continue;
-		}
-	    }
-
-	    if (uplink->forwardRequestFile!=NULL) {
-		// first try to find the areatag in forwardRequestFile
-		if (tag_mask(areatag, uplink->frMask, uplink->numFrMask) || 
-		    areaIsAvailable(areatag,uplink->forwardRequestFile,NULL,0)) {
-		    forwardRequestToLink(areatag,uplink,dwlink,0);
-		    nfree(Indexes);
-		    return 0;
-		} else rc = 2; // found link with freqfile, but there is no areatag
-	    } else {
-		rc = 0;
-		if (uplink->numFrMask) { // found mask
-		    if (tag_mask(areatag, uplink->frMask, uplink->numFrMask))
-			forwardRequestToLink(areatag,uplink,dwlink,0);
-		    else rc = 2;
-		} else { // unconditional forward request
-		    if (dwlink->denyUFRA==0)
-			forwardRequestToLink(areatag,uplink,dwlink,0);
-		    else rc = 2;
-		}
-		if (rc==0) { // ?
-		    nfree(Indexes);
-		    return rc;
-		}
-	    }
-	}
-    }
-	
+    }// if (uplink->forwardRequests && (uplink->LinkGrp) ?
+    }// for (i = 0; i < Requestable; i++) {
+    
     // link with "forwardRequests on" not found
     nfree(Indexes);
     return rc;
