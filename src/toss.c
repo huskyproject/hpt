@@ -181,19 +181,16 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 		    // set this flags
 		    msgHeader.attr |= MSGPRIVATE;
 		} else
-		if (header!=NULL) {
+		if (header!=NULL)
 		// set TRS flag, if the mail is not to us
 		msgHeader.attr |= MSGFWD;
-		// clear LOCal flag on transit netmail
-		msgHeader.attr &= ~MSGLOCAL;
-		}
 		
    } else
    // kill these flags on echomail messages
-   msgHeader.attr &= ~(MSGREAD | MSGKILL | MSGFRQ | MSGSCANNED | MSGLOCKED | MSGLOCAL);
+   msgHeader.attr &= ~(MSGREAD | MSGKILL | MSGFRQ | MSGSCANNED | MSGLOCKED);
    
    // always kill crash, hold, sent & local flags on netmail & echomail
-   msgHeader.attr &= ~(MSGCRASH | MSGHOLD | MSGSENT);
+   msgHeader.attr &= ~(MSGCRASH | MSGHOLD | MSGSENT | MSGLOCAL);
 
    /* FORCED ATTRIBUTES !!! */
    msgHeader.attr |= forceattr;
@@ -893,9 +890,9 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 		area->imported++;  // area has got new messages
 	}
 	else if (!msg->netMail)
-		rc = processEMMsg(msg, *area->useAka, 1);
+		rc = processEMMsg(msg, *area->useAka, 1, 0);
 	else 
-		rc = processNMMsg(msg, NULL, area, 1);
+		rc = processNMMsg(msg, NULL, area, 1, 0);
 	
 	free (msg->text);
 	msg->textLength = old_textLength;
@@ -1107,8 +1104,9 @@ void writeMsgToSysop()
 	    msgToSysop[i]->textLength = strlen(msgToSysop[i]->text);
 	    
 	    if (msgToSysop[i]->netMail == 1) 
+	    // FIXME: should be putMsgInArea 
 		    processNMMsg(msgToSysop[i], NULL, config->ReportTo ?
-			getNetMailArea(config, config->ReportTo) : NULL, 1);
+			getNetMailArea(config, config->ReportTo) : NULL, 1, 0);
 	    else {
 		// get echoarea  for this msg    
 		ptr = strchr(msgToSysop[i]->text, '\r');
@@ -1168,7 +1166,7 @@ s_arealink *getAreaLink(s_area *area, s_addr aka)
 	return NULL;
 }
 
-int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
+int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceattr)
 {
    char   *area, *textBuff;
    s_area *echo;
@@ -1216,7 +1214,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 	 if (ccrc <= 1) {
            echo->imported++;  // area has got new messages
        	   if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-              rc = putMsgInArea(echo, msg,1, 0);
+              rc = putMsgInArea(echo, msg, 1, forceattr);
       	      statToss.saved++;
            } 
 	   else {
@@ -1229,7 +1227,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
       } else {
          // msg is dupe
          if (echo->dupeCheck == dcMove) {
-            rc = putMsgInArea(&(config->dupeArea), msg, 0, 0);
+            rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
          } else rc = 1; // quick fix. not sure.
          statToss.dupes++;
       }
@@ -1253,7 +1251,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 	       // nodupe
                echo->imported++;  // area has got new messages
                if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-        	  rc = putMsgInArea(echo, msg, 1, 0);
+        	  rc = putMsgInArea(echo, msg, 1, forceattr);
 		  statToss.saved++;
                }
                if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
@@ -1263,7 +1261,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 	     } else {
 	       // msg is dupe
 	       if (echo->dupeCheck == dcMove) 
-	         rc = putMsgInArea(&(config->dupeArea), msg, 0, 0);
+	         rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
 	       else 
 	         rc = 1;
 	       statToss.dupes++;
@@ -1277,7 +1275,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
    return rc;
 }
 
-int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontdocc)
+int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontdocc, dword forceattr)
 {
    HAREA  netmail;
    HMSG   msgHandle;
@@ -1300,7 +1298,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
    if (dupeDetection(area, *msg)==0) {
 	   // msg is dupe
 	   if (area->dupeCheck == dcMove) {
-		rc = putMsgInArea(&(config->dupeArea), msg, 0, 0);
+		rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
 	   } else rc = 1;
 	   statToss.dupes++;
 	   return rc;
@@ -1346,7 +1344,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 	    }
          }
 
-         msgHeader = createXMSG(msg, pktHeader, 0);
+         msgHeader = createXMSG(msg, pktHeader, forceattr);
          /* Create CtrlBuf for SMAPI */
          ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
          /* write message */
@@ -1382,9 +1380,9 @@ int processMsg(s_message *msg, s_pktHeader *pktHeader)
 	 stricmp(msg->toUserName,"hpt")==0)) {
       rc = processAreaFix(msg, pktHeader);
     } else
-      rc = processNMMsg(msg, pktHeader, NULL, 0);
+      rc = processNMMsg(msg, pktHeader, NULL, 0, 0);
   } else {
-    rc = processEMMsg(msg, pktHeader->origAddr, 0);
+    rc = processEMMsg(msg, pktHeader->origAddr, 0, 0);
   } /* endif */
   return rc;
 }

@@ -259,7 +259,7 @@ void post(int c, unsigned int *n, char *params[])
 	    recodeToTransportCharset((CHAR*)msg.text);
 	}
         if (msg.netMail) {
-	  processNMMsg(&msg, NULL, NULL, 0);
+	  processNMMsg(&msg, NULL, NULL, 0, MSGLOCAL);
 	  cmPack = 1;
 	}
         else {
@@ -268,7 +268,7 @@ void post(int c, unsigned int *n, char *params[])
 	      echo->useAka->net, echo->useAka->node,
 	      echo->useAka->net, echo->useAka->node);
           msg.textLength = strlen(msg.text);
-          processEMMsg(&msg, msg.origAddr, 1);
+          processEMMsg(&msg, msg.origAddr, 1, (MSGSCANNED|MSGSENT|MSGLOCAL));
         }
       } 
       

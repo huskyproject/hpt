@@ -1375,7 +1375,7 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 				     msg->fromUserName, newsubj, 1);
 
 		preprocText(split, tmpmsg);
-		processNMMsg(tmpmsg, NULL, NULL, 0);
+		processNMMsg(tmpmsg, NULL, NULL, 0, MSGLOCAL);
 
 		freeMsgBuffers(tmpmsg);
 		free(tmpmsg);
@@ -1429,7 +1429,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	
 	// ignore msg for other link (maybe this is transit...)
 	if (notforme) {
-		return processNMMsg(msg, pktHeader, NULL, 0);
+		return processNMMsg(msg, pktHeader, NULL, 0, 0);
 	}
 	
 	// 2nd security check. link, areafixing & password.
@@ -1556,7 +1556,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		
 		writeLogEntry(hpt_log, '8', "areafix: write netmail msg for %s", aka2str(link->hisAka));
 
-		processNMMsg(linkmsg, &header, NULL, 0);
+		processNMMsg(linkmsg, &header, NULL, 0, MSGLOCAL);
 
 		freeMsgBuffers(linkmsg);
 		free(linkmsg);
@@ -1687,7 +1687,7 @@ void autoPassive()
 				 msg->text = createKludges(NULL, config->links[i].ourAka, &(config->links[i].hisAka));
                                  xscatprintf(&(msg->text), "\r System switched to passive\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the %%RESUME command.\r\r--- %s autopause\r", versionStr);
                                  msg->textLength = strlen(msg->text);
-                                 processNMMsg(msg, NULL, NULL, 0);
+                                 processNMMsg(msg, NULL, NULL, 0, MSGLOCAL);
                                  freeMsgBuffers(msg);
 				 free(msg);
                               }
