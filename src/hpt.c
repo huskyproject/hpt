@@ -33,8 +33,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
 
 #include <msgapi.h>
+#include <progprot.h>
 
 #include <version.h>
 #include <pkt.h>
@@ -45,6 +47,9 @@
 #include <hpt.h>
 #include <toss.h>
 #include <scan.h>
+#include <fcommon.h>
+#include <dir.h>
+#include <patmat.h>
 
 void processCommandLine(int argc, char **argv)
 {
@@ -83,6 +88,14 @@ void processConfig()
       exit(1);
    }
 
+   // lock...
+   if (config->lockfile!=NULL && fexist(config->lockfile)) {
+	   printf("lock file found! exit...\n");
+	   disposeConfig(config);
+	   exit(1);
+   } 
+   else if (config->lockfile!=NULL) createLockFile(config->lockfile);
+
    // open Logfile
    buff = (char *) malloc(strlen(config->logFileDir)+7+1); // 7 for hpt.log
    strcpy(buff, config->logFileDir),
@@ -91,20 +104,60 @@ void processConfig()
    if (log==NULL) printf("Could not open logfile: %s\n", buff);
    writeLogEntry(log, '1', "Start");
 
-   if (0 == config->addrCount) {
-      printf("at least one addr must be defined\n");
-      exit(1);
-   } /* endif */
+   if (config->addrCount == 0) printf("at least one addr must be defined\n");
+   if (config->linkCount == 0) printf("at least one link must be specified\n");
+   if (config->routeCount == 0) printf("at least one route must be specified\n");
+   if (config->tempOutbound == NULL) printf("you must set tempOutbound in fidoconfig first\n");
 
-   if (config->linkCount == 0) {
-      printf("at least one link must be specified\n");
-      exit(1);
-   } /* endif */
-
-   if (config->routeCount == 0) {
-      printf("at least one route must be specified\n");
-      exit(1);
+   if (config->addrCount == 0 ||
+	   config->linkCount == 0 || 
+	   config->linkCount == 0 ||
+	   config->tempOutbound == NULL) {
+	   if (config->lockfile != NULL) remove(config->lockfile);
+	   writeLogEntry(log, '9', "wrong config file");
+	   writeLogEntry(log, '1', "End");
+	   closeLog(log);
+	   disposeConfig(config);
+	   exit(1);
    }
+}
+
+void tossTempOutbound(char *directory)
+{
+   DIR            *dir;
+   FILE           *pkt;
+   struct dirent  *file;
+   char           *dummy;
+   s_pktHeader    *header;
+   s_link         *link;
+
+   if (directory==NULL) return;
+
+   dir = opendir(directory);
+
+   while ((file = readdir(dir)) != NULL) {
+	   if ((patmat(file->d_name, "*.pkt") == 1) || (patmat(file->d_name, "*.PKT") == 1)) {
+		   dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
+		   strcpy(dummy, directory);
+		   strcat(dummy, file->d_name);
+
+		   pkt = fopen(dummy, "rb");
+
+		   header = openPkt(pkt);
+		   link = getLinkFromAddr (*config, header->destAddr);
+		   createTempPktFileName(link);
+
+		   free(link->pktFile);
+		   link->pktFile = dummy;
+		   
+		   writeLogEntry(log, '7', "found non packed mail in tempOutbound");
+		   fclose(pkt);
+		   arcmail();
+	   }
+   }
+
+   closedir(dir);
+   return;
 }
 
 int main(int argc, char **argv)
@@ -123,11 +176,13 @@ int main(int argc, char **argv)
    m.def_zone = config->addr[0].zone;
    if (MsgOpenApi(&m) != 0) {
       writeLogEntry(log, '9', "MsgApiOpen Error");
+	  if (config->lockfile != NULL) remove(config->lockfile);
       closeLog(log);
       disposeConfig(config);
       exit(1);
    } /*endif */
 
+   tossTempOutbound(config->tempOutbound);
    if (1 == cmToss) toss();
    if (cmScan == 1) scan();
    if (cmPack == 1) pack();
@@ -135,6 +190,7 @@ int main(int argc, char **argv)
    // deinit SMAPI
    MsgCloseApi();
 
+   if (config->lockfile != NULL) remove(config->lockfile);
    writeLogEntry(log, '1', "End");
    closeLog(log);
    disposeConfig(config);

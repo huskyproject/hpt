@@ -149,10 +149,9 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
 void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 {
    s_message    msg;
-   char         *name = NULL;
    UINT32       i,j=0;
    s_pktHeader  header;
-   FILE         *pkt, *flo;
+   FILE         *pkt;
    
    makeMsg(hmsg, xmsg, &msg, echo);
 
@@ -161,26 +160,20 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 
    // scan msg to donwlinks
 
-   for (i = 0; i<echo->downlinkCount; i++)
-   {
-      if (echo->downlinks[i]->pktFile == NULL) {
-
-         // pktFile does not exist
-         if ( createTempPktFileName(echo->downlinks[i]) ) {
-            writeLogEntry(log, '9', "Could not create new pkt.");
-            printf("Could not create new pkt.\n");
-            exit(1);
-         }
-         
-         name = createOutboundFileName(echo->downlinks[i]->hisAka, cvtFlavour2Prio(echo->downlinks[i]->echoMailFlavour), FLOFILE);
-         flo = fopen(name, "a");
-         if (echo->downlinks[i]->packerDef != NULL)
-            fprintf(flo, "^%s\n", echo->downlinks[i]->packFile);
-         else
-            fprintf(flo, "^%s\n", echo->downlinks[i]->pktFile);
-         fclose(flo);
-      } /* endif */
-
+   for (i = 0; i<echo->downlinkCount; i++) {
+	  if (echo->downlinks[i]->pktFile == NULL) {
+		   
+		  // pktFile does not exist
+		  if ( createTempPktFileName(echo->downlinks[i]) ) {
+			  writeLogEntry(log, '9', "Could not create new pkt.");
+			  printf("Could not create new pkt.\n");
+			  disposeConfig(config);
+			  closeLog(log);
+			  exit(1);
+		  }
+		   
+	  } /* endif */
+		   
       makePktHeader(NULL, &header);
       header.origAddr = *(echo->downlinks[i]->ourAka);
       header.destAddr = echo->downlinks[i]->hisAka;

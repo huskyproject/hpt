@@ -45,6 +45,20 @@
 #include <stamp.h>
 #include <progprot.h>
 
+int createLockFile(char *lockfile) {
+	FILE *f;
+	
+	if ((f=fopen(lockfile,"a")) == NULL)
+	   {
+		   fprintf(stderr,"createLockFile: cannot create lock file\"%s\"\n",lockfile);
+		   writeLogEntry(log, '9', "createLockFile: cannot create lock file");
+		   return 1;
+	   }
+	
+	fclose(f);
+	return 0;
+}
+
 e_prio cvtFlavour2Prio(e_flavour flavour)
 {
    switch (flavour) {
@@ -60,11 +74,16 @@ e_prio cvtFlavour2Prio(e_flavour flavour)
 
 int createTempPktFileName(s_link *link)
 {
-   char   *fileName = (char *) malloc(strlen(config->outbound)+1+12+13);
+   char   *fileName = (char *) malloc(strlen(config->tempOutbound)+1+12);
    char   *pfileName = (char *) malloc(strlen(config->outbound)+1+12+13);
    time_t aTime = time(NULL);  // get actual time
    int counter = 0;
    char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
+#ifdef UNIX
+   char limiter='/';
+#else
+   char limiter='\\';
+#endif
 
    time_t tr;
    char *wday;
@@ -77,24 +96,15 @@ int createTempPktFileName(s_link *link)
    aTime %= 0xffffff;   // only last 24 bit count
 
    do {
+	   
+	   sprintf(fileName, "%s%06lx%02x.pkt", config->tempOutbound, aTime, counter);
 
-	  if ( link->hisAka.point == 0 ) {
-		  sprintf(fileName, "%s%06lx%02x.pkt", config->outbound, aTime, counter);
-		  sprintf(pfileName, "%s%06lx%02x.%s0", config->outbound, aTime, counter,wday);
-	  } else {
-		 sprintf(fileName, "%s%04x%04x.pnt/%06lx%02x.pkt",
-				 config->outbound, link->hisAka.net,
-				 link->hisAka.node, aTime, counter);
-		 sprintf(pfileName, "%s%04x%04x.pnt/%06lx%02x.%s0",
-				 config->outbound, link->hisAka.net,
-				 link->hisAka.node,  aTime, counter, wday);
-#ifndef UNIX
-		 // not tested!
-		 fileName[ strlen(fileName) - 14 ] = '\\';
-		 pfileName[ strlen(fileName) - 14 ] = '\\';
-#endif
-	  }
-      counter++;
+	   if ( link->hisAka.point == 0 )
+		   sprintf(pfileName,"%s%06lx%02x.%s0",config->outbound,aTime,counter,wday);
+	   else
+		   sprintf(pfileName, "%s%04x%04x.pnt%c%06lx%02x.%s0", config->outbound, link->hisAka.net, link->hisAka.node, limiter, aTime, counter, wday);
+	   counter++;
+
    } while (fexist(fileName) && (counter<=256));
 
    if (!fexist(fileName)) {
@@ -174,28 +184,28 @@ int createDirectoryTree(const char *pathName) {
    return 0;
 }
 
-char *createOutboundFileName(s_addr aka, e_prio prio, e_type typ)
+int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 {
-   char name[13], zoneSuffix[5], pntDir[14];
-   char *fileName;
+   FILE *f; // bsy file for current link
+   char name[13], bsyname[13], zoneSuffix[5], pntDir[14], *tolog;
 
-   if (aka.point != 0) {
-      sprintf(pntDir, "%04x%04x.pnt\\", aka.net, aka.node);
 #ifdef UNIX
-      pntDir[12] = '/';
+   char limiter='/';
+#else
+   char limiter='\\';
 #endif
-      sprintf(name, "%08x.flo", aka.point);
+
+   if (link->hisAka.point != 0) {
+      sprintf(pntDir, "%04x%04x.pnt%c", link->hisAka.net, link->hisAka.node, limiter);
+      sprintf(name, "%08x.flo", link->hisAka.point);
    } else {
       pntDir[0] = 0;
-      sprintf(name, "%04x%04x.flo", aka.net, aka.node);
+      sprintf(name, "%04x%04x.flo", link->hisAka.net, link->hisAka.node);
    }
 
-   if (aka.zone != config->addr[0].zone) {
+   if (link->hisAka.zone != config->addr[0].zone) {
       // add suffix for other zones
-      sprintf(zoneSuffix, ".%03x\\", aka.zone);
-#ifdef UNIX
-      zoneSuffix[4] = '/';
-#endif
+      sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, limiter);
    } else {
       zoneSuffix[0] = 0;
    }
@@ -220,12 +230,53 @@ char *createOutboundFileName(s_addr aka, e_prio prio, e_type typ)
       } /* endswitch */
    } /* endif */
 
-   fileName = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
-   strcpy(fileName, config->outbound);
-   if (zoneSuffix[0] != 0) strcpy(fileName+strlen(fileName)-1, zoneSuffix);
-   strcat(fileName, pntDir);
-   createDirectoryTree(fileName); // create directoryTree if necessary
-   strcat(fileName, name);
+   // create floFile
+   link->floFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
+    link->bsyFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
+   strcpy(link->floFile, config->outbound);
+   if (zoneSuffix[0] != 0) strcpy(link->floFile+strlen(link->floFile)-1, zoneSuffix);
+   strcat(link->floFile, pntDir);
+   createDirectoryTree(link->floFile); // create directoryTree if necessary
+   strcpy(link->bsyFile, link->floFile);
+   strcat(link->floFile, name);
+
+   // create bsyFile
+   strcpy(bsyname, name);
+   bsyname[9]='b';bsyname[10]='s';bsyname[11]='y';
+   strcat(link->bsyFile, bsyname);
    
-   return fileName;
+   // maybe we have session with this link?
+   if (fexist(link->bsyFile)) {
+
+	   tolog = (char*) malloc (strlen(link->name)+40+1);
+	   sprintf(tolog,"link %s is busy. hold mail in tempOutbound", link->name);
+
+	   writeLogEntry(log, '7', tolog);
+	   free (link->floFile); link->floFile = NULL;
+	   free (link->bsyFile); link->bsyFile = NULL;
+	   free (tolog);
+
+	   return 1;
+
+   } else {
+	   
+	   if ((f=fopen(link->bsyFile,"a")) == NULL)
+		   {
+			   fprintf(stderr,"cannot create *.bsy file for %s\n",link->name);
+			   if (config->lockfile != NULL) {
+				   remove(link->bsyFile);
+				   free(link->bsyFile);
+				   link->bsyFile=NULL;
+			   }
+			   writeLogEntry(log, '9', "cannot create *.bsy file");
+			   writeLogEntry(log, '1', "End");
+			   closeLog(log);
+			   disposeConfig(config);
+			   exit(1);
+		   }
+	   fclose(f);
+   }
+   
+   return 0;
 }
+

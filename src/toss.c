@@ -361,8 +361,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    UINT     seenByCount, pathCount, i;
    char     *start, *c, *newMsgText, *seenByText = NULL, *pathText = NULL;
    
-   char     *name;
-   FILE     *pkt, *flo;
+   FILE     *pkt;
    s_pktHeader header;
 
    createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
@@ -383,14 +382,13 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    //exit(2);
 
    createPathArrayFromMsg(msg, &path, &pathCount);
-   if (echo->useAka->point == 0 &&   // only include nodes in PATH
-      path[pathCount-1].net != echo->useAka->net &&
-	  path[pathCount-1].node != echo->useAka->node ) {
-      // add our aka to path
-      path = (s_seenBy*) realloc(path, sizeof(s_seenBy) * (pathCount)+1);
-      path[pathCount].net = echo->useAka->net;
-      path[pathCount].node = echo->useAka->node;
-      pathCount++;
+   if (path[pathCount-1].net != echo->useAka->net &&
+	   path[pathCount-1].node != echo->useAka->node ) {
+	   // add our aka to path
+	   path = (s_seenBy*) realloc(path, sizeof(s_seenBy) * (pathCount)+1);
+	   path[pathCount].net = echo->useAka->net;
+	   path[pathCount].node = echo->useAka->node;
+	   pathCount++;
    }
 
 //   for (i=0; i< pathCount;i++) printf("%u/%u ", path[i].net, path[i].node);
@@ -438,16 +436,11 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       // create pktfile if necessary
       if (echo->downlinks[i]->pktFile == NULL) {
          // pktFile does not exist
-		 createTempPktFileName(echo->downlinks[i]);
-         name = createOutboundFileName(echo->downlinks[i]->hisAka, cvtFlavour2Prio(echo->downlinks[i]->echoMailFlavour), FLOFILE);
-         flo = fopen(name, "a");
-         if (echo->downlinks[i]->packerDef != NULL)
-            // there is a packer defined -> put packFile into flo
-            fprintf(flo, "^%s\n", echo->downlinks[i]->packFile);
-         else
-            // there is no packer defined -> put pktFile into flo
-            fprintf(flo, "^%s\n", echo->downlinks[i]->pktFile);
-       	 fclose(flo);
+         if ( createTempPktFileName(echo->downlinks[i]) ) {
+	    writeLogEntry(log, '9', "Could not create new pkt!\n");
+	    printf("Could not create new pkt!\n");
+	    exit(1);
+	 }
       } /* endif */
 
       makePktHeader(NULL, &header);
@@ -474,7 +467,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 int autoCreate(char *c_area, s_addr pktOrigAddr)
 {
    FILE *f;
-   char buff[170], myaddr[20], hisaddr[20];
+   char buff[255], myaddr[20], hisaddr[20];
    int i=0,j=0;
    
    //translating name of the area to lowercase, much better imho.
@@ -739,7 +732,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
             if (pwdOK != 0) {
                while ((msg = readMsgFromPkt(pkt, header->origAddr.zone)) != NULL) {
                   rc = 4;
-                  if ((sec==secProtInbound) || (msg->netMail == 1))
+                  if ((sec==secProtInbound) || (msg->netMail == 1)) || (pwdOk != 0))
                      processMsg(msg, header->origAddr);
                   else rc = 3;
                   freeMsgBuffers(msg);
@@ -848,27 +841,50 @@ void fillPackStatement(char *cmd, char *call, const char *archiv, const char *fi
 
 void arcmail() {
 	int i;
-	char cmd[256], logmsg[256];
-        int cmdexit;
-
-	// packing mail
-        for (i = 0 ; i < config->linkCount; i++) {
-
-           if ((config->links[i].pktFile != NULL) && (config->links[i].packerDef != NULL)) {
-
-			fillPackStatement(cmd,config->links[i].packerDef->call,config->links[i].packFile,
-					config->links[i].pktFile);
-			sprintf(logmsg,"Packing mail for %s",config->links[i].name);
-			writeLogEntry(log, '7', logmsg);
-                        cmdexit = system(cmd);
-                        remove(config->links[i].pktFile);
-                        free(config->links[i].pktFile);
-                        config->links[i].pktFile = NULL;
-                        free(config->links[i].packFile);
-                        config->links[i].packFile = NULL;
-		}
-	}
+	char cmd[256], logmsg[256], *pkt;
+	int cmdexit;
+	FILE *flo;
 	
+	for (i = 0 ; i < config->linkCount; i++) {
+		
+		// only create floFile if we have mail for this link
+		if (config->links[i].pktFile != NULL) {
+			// process if the link not busy, else do not create 12345678.?lo
+			if (createOutboundFileName(&(config->links[i]), cvtFlavour2Prio(config->links[i].echoMailFlavour), FLOFILE) == 0) {
+				flo = fopen(config->links[i].floFile, "a");
+				if (config->links[i].packerDef != NULL)
+					// there is a packer defined -> put packFile into flo
+					fprintf(flo, "^%s\n", config->links[i].packFile);
+				else {
+					// there is no packer defined -> put pktFile into flo
+					pkt = (char*) malloc(strlen(config->outbound)+1+12);
+					config->links[i].pktFile += strlen(config->tempOutbound);
+					strcpy(pkt, config->outbound);
+					strcat(pkt, config->links[i].pktFile);
+					config->links[i].pktFile -= strlen(config->tempOutbound);
+					fprintf(flo, "^%s\n", pkt);
+					sprintf(cmd,"mv %s %s",config->links[i].pktFile,config->outbound);
+					cmdexit = system(cmd);
+					free(pkt);
+				}
+				fclose(flo);
+				free(config->links[i].floFile); config->links[i].floFile=NULL;
+				
+				// pack mail
+				if (config->links[i].packerDef != NULL) {
+					fillPackStatement(cmd,config->links[i].packerDef->call,config->links[i].packFile, config->links[i].pktFile);
+					sprintf(logmsg,"Packing mail for %s",config->links[i].name);
+					writeLogEntry(log, '7', logmsg);
+					cmdexit = system(cmd);
+					remove(config->links[i].pktFile);
+				}
+				remove(config->links[i].bsyFile);
+				free(config->links[i].bsyFile); config->links[i].bsyFile=NULL;
+			}
+		}
+		free(config->links[i].pktFile); config->links[i].pktFile=NULL;
+		free(config->links[i].packFile); config->links[i].packFile=NULL;
+	}
 	return;
 }
 

@@ -109,7 +109,8 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
            ourAka.zone, ourAka.net, ourAka.node, ourAka.point,
            dt->tm_year + 1900, dt->tm_mon + 1, dt->tm_mday, dt->tm_hour+1, dt->tm_min, dt->tm_sec, versionStr);
 
-   msg->text = (char *) malloc(msg->textLength+strlen(kludgeLines)+strlen(viaLine)+1);
+   msg->text = (char *) calloc(1, msg->textLength+strlen(kludgeLines)+strlen(viaLine)+1);
+
 
    strcpy(msg->text, kludgeLines);
 //   strcat(msg->text, "\001TID: ");
@@ -213,106 +214,148 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
    } else return route->target;
 }
 
-void packMsg(HMSG SQmsg, XMSG xmsg)
+int packMsg(HMSG SQmsg, XMSG xmsg)
 {
    FILE        *flo, *pkt, *req;
-   char        *fileName, buff[90];
+   char        buff[90];
    e_prio      prio;
    s_message   msg;
    s_pktHeader header;
    s_route     *route;
-   s_link      *link;
+   s_link      *link, *virtualLink;
 
-   convertMsgHeader(xmsg,  &msg);
+   convertMsgHeader(xmsg, &msg);
+
+   // prepare virtual link...
+   virtualLink = malloc(sizeof(s_link));
+   virtualLink->hisAka = msg.destAddr;
+
+   // note: link->floFile used for create 12345678.?ut mail packets & ...
 
    if ((xmsg.attr & MSGFRQ) == MSGFRQ) {
-      // if msg has request flag then put the subjectline into request file.
-      fileName = createOutboundFileName(msg.destAddr, NORMAL, REQUEST);
-      req = fopen(fileName, "a");
-      if (req!=NULL) {
-         fprintf(req, msg.subjectLine);
-         fprintf(req, "\n");
-         fclose(req);
-      } else writeLogEntry(log, '9', "Could not open Request File");
-      free(fileName);
+	   // if msg has request flag then put the subjectline into request file.
+	   if (createOutboundFileName(virtualLink, NORMAL, REQUEST) == 0) {
+		   req = fopen(virtualLink->floFile, "a");
+		   if (req!=NULL) {
+			   fprintf(req, msg.subjectLine);
+			   fprintf(req, "\n");
+			   fclose(req);
+		   } else writeLogEntry(log, '9', "Could not open Request File");
+
+		   remove(virtualLink->bsyFile);
+		   free(virtualLink->bsyFile);
+		   // mark Mail as sent
+		   xmsg.attr |= MSGSENT;
+		   MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+		   free(virtualLink->floFile);
+	   }
    } /* endif */
 
    if ((xmsg.attr & MSGFILE) == MSGFILE) {
-      // file attach
-      prio = NORMAL;
-      if ((xmsg.attr & MSGCRASH) == MSGCRASH) prio = CRASH;
-      if ((xmsg.attr & MSGHOLD)  == MSGHOLD)  prio = HOLD;
-      if (prio != NORMAL) {
-         fileName = createOutboundFileName(msg.destAddr, prio, FLOFILE);
-      } else {
-         route = findRouteForNetmail(msg);
-         link = getLinkForRoute(route, &msg);
-         prio = cvtFlavour2Prio(route->flavour);
-         fileName = createOutboundFileName(link->hisAka, prio, FLOFILE);
-      } /* endif */
-      flo = fopen(fileName, "a");
-      if (flo!= NULL) {
-         fprintf(flo, msg.subjectLine);
-         fprintf(flo, "\n");
-         fclose(flo);
-      } else writeLogEntry(log, '9', "Could not open FloFile");
-      free(fileName);
-   } /* endif */
+	   // file attach
+	   prio = NORMAL;
+	   if ((xmsg.attr & MSGCRASH) == MSGCRASH) prio = CRASH;
+	   if ((xmsg.attr & MSGHOLD)  == MSGHOLD)  prio = HOLD;
+	   // routing of files is not possible for this time
+//	   if (prio != NORMAL) {
+//		   createOutboundFileName(virtualLink, prio, FLOFILE);
+//	   } else {
+//		   route = findRouteForNetmail(msg);
+//		   link = getLinkForRoute(route, &msg);
+//		   prio = cvtFlavour2Prio(route->flavour);
+//		   createOutboundFileName(virtualLink, prio, FLOFILE);
+//	   } /* endif */
+	   if (createOutboundFileName(virtualLink, prio, FLOFILE) == 0) {
+		   flo = fopen(virtualLink->floFile, "a");
+		   if (flo!= NULL) {
+			   fprintf(flo, msg.subjectLine);
+			   fprintf(flo, "\n");
+			   fclose(flo);
+		   } else writeLogEntry(log, '9', "Could not open FloFile");
 
+		   remove(virtualLink->bsyFile);
+		   free(virtualLink->bsyFile);
+		   // mark Mail as sent
+		   xmsg.attr |= MSGSENT;
+		   MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+		   free(virtualLink->floFile);
+	   }
+   } /* endif */
+   
    if ((xmsg.attr & MSGCRASH) == MSGCRASH) {
-      // crash-msg -> make CUT
-      fileName = createOutboundFileName(msg.destAddr, CRASH, PKT);
-      convertMsgText(SQmsg, &msg, msg.origAddr);
-      makePktHeader(&msg, &header);
-      pkt = openPktForAppending(fileName, &header);
-      writeMsgToPkt(pkt, msg);
-      closeCreatedPkt(pkt);
-      sprintf(buff, "Crash-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point,
-              msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-      writeLogEntry(log, '7', buff);
-      free(fileName);
+	   // crash-msg -> make CUT
+	   if (createOutboundFileName(virtualLink, CRASH, PKT) == 0) {
+		   convertMsgText(SQmsg, &msg, msg.origAddr);
+		   makePktHeader(&msg, &header);
+		   pkt = openPktForAppending(virtualLink->floFile, &header);
+		   writeMsgToPkt(pkt, msg);
+		   closeCreatedPkt(pkt);
+		   sprintf(buff, "Crash-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   writeLogEntry(log, '7', buff);
+
+		   remove(virtualLink->bsyFile);
+		   free(virtualLink->bsyFile);
+		   // mark Mail as sent
+		   xmsg.attr |= MSGSENT;
+		   MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+		   free(virtualLink->floFile);
+	   }
    } else
    
    if ((xmsg.attr & MSGHOLD) == MSGHOLD) {
-      // hold-msg -> make HUT
-      fileName = createOutboundFileName(msg.destAddr, HOLD, PKT);
-      convertMsgText(SQmsg, &msg, msg.origAddr);
-      makePktHeader(&msg, &header);
-      pkt = openPktForAppending(fileName, &header);
-      writeMsgToPkt(pkt, msg);
-      closeCreatedPkt(pkt);
-      sprintf(buff, "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point,
-              msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-      writeLogEntry(log, '7', buff);
-      free(fileName);
+	   // hold-msg -> make HUT
+	   if (createOutboundFileName(virtualLink, HOLD, PKT) == 0) {
+		   convertMsgText(SQmsg, &msg, msg.origAddr);
+		   makePktHeader(&msg, &header);
+		   pkt = openPktForAppending(virtualLink->floFile, &header);
+		   writeMsgToPkt(pkt, msg);
+		   closeCreatedPkt(pkt);
+		   sprintf(buff, "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   writeLogEntry(log, '7', buff);
+		   
+		   remove(virtualLink->bsyFile);
+		   free(virtualLink->bsyFile);
+		   // mark Mail as sent
+		   xmsg.attr |= MSGSENT;
+		   MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+		   free(virtualLink->floFile);
+	   }
    } else {
       
-      // no crash, no hold flag -> route netmail
-      route = findRouteForNetmail(msg);
-      link = getLinkForRoute(route, &msg);
-
-      prio = cvtFlavour2Prio(route->flavour);
-      fileName = createOutboundFileName(link->hisAka, prio, PKT);
-      convertMsgText(SQmsg, &msg, *(link->ourAka));
-      makePktHeader(NULL, &header);
-      header.destAddr = link->hisAka;
-      header.origAddr = *(link->ourAka);
-      if (link->pktPwd != NULL) strcpy(&(header.pktPassword[0]), link->pktPwd);
-      pkt = openPktForAppending(fileName, &header);
-      writeMsgToPkt(pkt, msg);
-      closeCreatedPkt(pkt);
-      sprintf(buff, "Msg from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point,
-              msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point,
-              link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
-      writeLogEntry(log, '7', buff);
-      free(fileName);
+	   // no crash, no hold flag -> route netmail
+	   route = findRouteForNetmail(msg);
+	   link = getLinkForRoute(route, &msg);
+	   
+	   prio = cvtFlavour2Prio(route->flavour);
+	   if (createOutboundFileName(link, prio, PKT) == 0) {
+		   convertMsgText(SQmsg, &msg, *(link->ourAka));
+		   makePktHeader(NULL, &header);
+		   header.destAddr = link->hisAka;
+		   header.origAddr = *(link->ourAka);
+		   if (link->pktPwd != NULL) strcpy(&(header.pktPassword[0]), link->pktPwd);
+		   pkt = openPktForAppending(link->floFile, &header);
+		   writeMsgToPkt(pkt, msg);
+		   closeCreatedPkt(pkt);
+		   sprintf(buff, "Msg from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
+		   writeLogEntry(log, '7', buff);
+		   remove(link->bsyFile);
+		   free(link->bsyFile);
+		   // mark Mail as sent
+		   xmsg.attr |= MSGSENT;
+		   MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+		   free(link->floFile);
+	   }
    }
-   
-   // mark Mail as sent
-   xmsg.attr |= MSGSENT;
-   MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
-   
-   freeMsgBuffers(&msg);
+
+   if ((xmsg.attr & MSGSENT) == MSGSENT) {
+	   freeMsgBuffers(&msg);
+	   free(virtualLink);
+	   return 0;
+   } else {
+	   freeMsgBuffers(&msg);
+	   free(virtualLink);
+	   return 1;
+   }
 }
 
 void scanNMArea(void)
@@ -346,8 +389,7 @@ void scanNMArea(void)
                 
          // if not sent and not for us -> pack it
          if (((xmsg.attr & MSGSENT) != MSGSENT) && (for_us==0)) {
-            packMsg(msg, xmsg);
-            statScan.exported++;
+			 if (packMsg(msg, xmsg) == 0) statScan.exported++;
          }
 
          MsgCloseMsg(msg);

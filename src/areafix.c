@@ -108,7 +108,7 @@ int addAka(FILE *f, s_link *link) {
 
 int delAka(FILE *f, s_link *link) {
 	int al,i=1;
-        char straka[20], *cfg, c, j='\40';
+    char straka[20], *cfg, c, j='\40';
 	long areapos,endpos,cfglen;
 	
 	if (link->hisAka.point!=0) {
@@ -256,7 +256,7 @@ int changeconfig(char *line, s_link *link, int i) {
 
 void changeHeader(s_message *msg, s_link *link) {
 	s_addr *ourAka;
-	char *subject, *toname;
+	char *subject = "areafix report", *toname, *tmp;
 	
 	ourAka=link->ourAka;
 	
@@ -270,13 +270,13 @@ void changeHeader(s_message *msg, s_link *link) {
 	msg->origAddr.node = ourAka->node;
 	msg->origAddr.point = ourAka->point;
 	
-	subject=(char *) calloc(15,sizeof(char*));
-	strcpy(subject,"areafix report");
-	free(msg->subjectLine);
-	msg->subjectLine=subject;
-	toname=msg->fromUserName;
-	msg->fromUserName=msg->toUserName;
-	msg->toUserName=toname;
+	tmp = msg->subjectLine;
+	tmp = (char*) realloc(tmp, strlen(subject)+1);
+	strcpy(tmp,subject);
+	msg->subjectLine = tmp;
+	toname = msg->fromUserName;
+	msg->fromUserName = msg->toUserName;
+	msg->toUserName = toname;
 }
 
 int strip(char *text) {
@@ -285,16 +285,18 @@ int strip(char *text) {
 	return( str!=NULL ? (int)(str-text)+1 : strlen(text) );
 }
 
-char *subscribe(s_link *link, s_message *msg, char *line) {
+char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	int i, rc=2;
-	char *report, addline[256], logmsg[256], *header = "Result of your query: ";
+	char *line, *report, addline[256], logmsg[256], *header = "Result of your query: ";
 	s_area *area;
+
+	line = cmd;
 
 	if (line[0]=='+') line++;
 
-        report=(char*) malloc(strlen(header)+strlen(line)+1+1);
+        report=(char*) malloc(strlen(header)+strlen(cmd)+1+1);
         strcpy(report, header);
-        strcat(report, line);
+        strcat(report, cmd);
         strcat(report,"\r");
 	
 	for (i = 0; i< config->echoAreaCount; i++) {
@@ -325,47 +327,56 @@ char *subscribe(s_link *link, s_message *msg, char *line) {
 	return report;
 }
 
-char *unsubscribe(s_link *link, s_message *msg, char *line) {
+char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 	int i, rc = 2;
-	char *report, addline[256], logmsg[256], *header = "Result of your query: ";
+	char *line, *report, addline[256], logmsg[256], *header = "Result of your query: ";
 	s_area *area;
-
+	
+	line = cmd;
+	
 	if (line[1]=='-') return NULL;
 	line++;
-
-        report=(char*) malloc(strlen(header)+strlen(line)+1+1);
-        strcpy(report, header);
-        strcat(report, line);
-        strcat(report, "\r");
-
+	
+	report=(char*) malloc(strlen(header)+strlen(cmd)+1+1);
+	strcpy(report, header);
+	strcat(report, cmd);
+	strcat(report, "\r");
+	
 	for (i = 0; i< config->echoAreaCount; i++) {
 		rc=subscribeAreaCheck(&(config->echoAreas[i]),msg,line);
 		if ( rc==2 ) continue;
-
-                area = &(config->echoAreas[i]);
-                
-                switch (rc) {
-                case 1: sprintf(addline,"you are not linked to area %s\r",area->areaName);
-                        break;
-                case 2: sprintf(addline,"no area '%s' in my config\r",area->areaName);
-                        break;
-                case 0: changeconfig ( area->areaName, link, 1);
-                        removelink(link, area);
-                        sprintf(addline,"area %s unsubscribed\r",area->areaName);
-                        sprintf(logmsg,"areafix: %s unsubscribed from %s",link->name,area->areaName);
-                        writeLogEntry(log, '8', logmsg);
-        
-                        break;
-          	}
-
-          	report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
-                strcat(report, addline);
-
-        }
+		
+		area = &(config->echoAreas[i]);
+		
+		switch (rc) {
+		case 1: 
+			if (strstr(line,"*") != NULL) addline[0] = 0;
+			else sprintf(addline,"you are not linked to area %s\r",area->areaName);
+			break;
+		case 2:
+			sprintf(addline,"no area '%s' in my config\r",area->areaName);
+			break;
+		case 0:
+			changeconfig ( area->areaName, link, 1);
+			removelink(link, area);
+			sprintf(addline,"area %s unsubscribed\r",area->areaName);
+			sprintf(logmsg,"areafix: %s unsubscribed from %s",link->name,area->areaName);
+			writeLogEntry(log, '8', logmsg);
+			break;
+		}
+		
+		if (addline[0] != 0) {
+			report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
+			strcat(report, addline);
+		}
+	}
 	return report;
 }
 
-int tellcmd(char *line) {
+int tellcmd(char *cmd) {
+	char *line;
+	
+	line = cmd;
 
 	switch (line[0]) {
 	case '%': 
@@ -433,10 +444,10 @@ int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
 	INT32 textlength;
 
 	// 1st security check
-        security=addrComp(msg->origAddr, *pktOrigAddr);
-		
+	security=addrComp(msg->origAddr, *pktOrigAddr);
+	
 	// find link
-        link=getLinkFromAddr(*config, msg->origAddr);
+	link=getLinkFromAddr(*config, msg->origAddr);
 
 	//this is for me?
 	if (link!=NULL)	forme=addrComp(msg->destAddr, *link->ourAka);
@@ -479,10 +490,10 @@ int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
 					strcat(report,preport);
 					free(preport);
 				}
-                        }
-                        tmp = strtok(NULL, "\n\r\t");
+			}
+			tmp = strtok(NULL, "\n\r\t");
 		}
-
+		
 		tmp=(char*) realloc(tmp,80*sizeof(char*));
 		sprintf(tmp, " \r--- %s areafix\r", versionStr);
 		report=(char*) realloc(report,strlen(report)+strlen(tmp)+1);
