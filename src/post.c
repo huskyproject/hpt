@@ -130,6 +130,7 @@ void post(int c, unsigned int *n, char *params[])
     long attr;
     int sections=0;
     int part = 0;
+    int subjLen = 0;
     int linesPerSec=LINPERSECTION;
     struct _minf m;
     
@@ -227,6 +228,7 @@ void post(int c, unsigned int *n, char *params[])
 #ifdef __NT__
                         CharToOem(msg.subjectLine, msg.subjectLine);
 #endif
+                        subjLen=strlen(msg.subjectLine);
                         break;
                     case 'x':    /*  export message */
                         export=1;
@@ -423,6 +425,10 @@ void post(int c, unsigned int *n, char *params[])
                 int i; 
                 xscatprintf(&msg.text, "\rsection %d of %d of file %s < %s >\r\r",
                             part+1,sections,fname,versionStr);
+
+                if (part>0) msg.subjectLine[subjLen]='\0';
+                xscatprintf(&msg.subjectLine," [%d/%d]",part+1,sections);
+
                 for(i = 0; i < linesPerSec; i++)
                 {
                     char *res = readLine(tmpfile);
