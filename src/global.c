@@ -35,6 +35,7 @@
 
 s_fidoconfig *config  = NULL;
 char         *cfgFile = NULL;
+s_robot      *robot   = NULL;
 
 int initSMAPI = -1;
 

@@ -43,6 +43,7 @@ extern int initSMAPI;
 
 extern s_fidoconfig *config;
 extern char         *cfgFile;
+extern s_robot      *robot;
 
 /*  vriable for current tossing dir */
 extern char *tossDir;

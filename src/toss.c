@@ -677,18 +677,18 @@ void makeMsgToSysop(char *areaName, hs_addr fromAddr, ps_addr uplinkAddr)
 
                 msgToSysop[i] = makeMessage(echo->useAka,
                     echo->useAka,
-                    config->areafixFromName ? config->areafixFromName : versionStr,
+                    robot->fromName ? robot->fromName : versionStr,
                     netmail ? (config->sysop ? config->sysop : "Sysop") : "All", "Created new areas",
                     netmail,
-                    config->areafixReportsAttr);
+                    robot->reportsAttr);
                 msgToSysop[i]->text = createKludges(config,
                     netmail ? NULL : config->ReportTo,
                     echo->useAka, echo->useAka,
                     versionStr);
 
-		if (config->areafixReportsFlags)
+		if (robot->reportsFlags)
 		    xstrscat(&(msgToSysop[i]->text), "\001FLAGS ",
-		             config->areafixReportsFlags, "\r", NULL);
+		             robot->reportsFlags, "\r", NULL);
                 xstrscat(&(msgToSysop[i]->text),
                     "Action   Name", print_ch(49, ' '), "By\r", NULL);
                 /*  Shitty static variables .... */
@@ -866,15 +866,15 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
                 }
 
                 tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
-                    config->areafixFromName ? config->areafixFromName : versionStr,
+                    robot->fromName ? robot->fromName : versionStr,
                     link->name, "Notification message", 1,
-                    link->areafixReportsAttr ? link->areafixReportsAttr : config->areafixReportsAttr);
+                    link->areafixReportsAttr ? link->areafixReportsAttr : robot->reportsAttr);
                 tmpmsg->text = createKludges(config, NULL, link->ourAka,
                     &(link->hisAka), versionStr);
                 if (link->areafixReportsFlags)
                     xstrscat(&(tmpmsg->text), "\001FLAGS ", link->areafixReportsFlags, "\r",NULL);
-                else if (config->areafixReportsFlags)
-                    xstrscat(&(tmpmsg->text), "\001FLAGS ", config->areafixReportsFlags, "\r",NULL);
+                else if (robot->reportsFlags)
+                    xstrscat(&(tmpmsg->text), "\001FLAGS ", robot->reportsFlags, "\r",NULL);
 
                 xstrcat(&tmpmsg->text, "\r Your message was moved to badmail with the following reason:\r\r");
                 xscatprintf(&tmpmsg->text, " %s\r\r", reason);
@@ -1091,7 +1091,7 @@ int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
 	if (config->areafixFromPkt &&
 	    isOurAka(config, msg->destAddr) &&
 	    strlen(msg->toUserName)>0 &&
-	     fc_stristr(config->areafixNames,msg->toUserName)) {
+	     fc_stristr(robot->names,msg->toUserName)) {
 	    rc = processAreaFix(msg, pktHeader, 0);
 	} else
 	    rc = processNMMsg(msg, pktHeader, NULL, 0, 0);

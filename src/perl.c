@@ -1063,7 +1063,7 @@ void perl_setvars(void) {
      VK_ADD_HASH_str(hv, sv, "tempDir", config->tempDir);
      VK_ADD_HASH_int(hv, sv, "sortEchoList", config->listEcho);
      VK_ADD_HASH_int(hv, sv, "areafixFromPkt", config->areafixFromPkt);
-     VK_ADD_HASH_str(hv, sv, "areafixNames", config->areafixNames);
+     VK_ADD_HASH_str(hv, sv, "areafixNames", robot->names);
      VK_ADD_HASH_str(hv, sv, "robotsArea", config->robotsArea);
      VK_ADD_HASH_str(hv, sv, "reportTo", config->ReportTo);
      VK_ADD_HASH_int(hv, sv, "keepTrsMail", config->keepTrsMail);

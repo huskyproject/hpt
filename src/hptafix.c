@@ -112,8 +112,8 @@ void getLinkData(s_link *link, s_linkdata *linkData)
 {
     linkData->robot = link->RemoteRobotName ? link->RemoteRobotName : "areafix";
     linkData->pwd = link->areaFixPwd ? link->areaFixPwd : "\x00";
-    linkData->attrs = link->areafixReportsAttr ? link->areafixReportsAttr : config->areafixReportsAttr;
-    linkData->flags = link->areafixReportsFlags ? link->areafixReportsFlags : config->areafixReportsFlags;
+    linkData->attrs = link->areafixReportsAttr ? link->areafixReportsAttr : robot->reportsAttr;
+    linkData->flags = link->areafixReportsFlags ? link->areafixReportsFlags : robot->reportsFlags;
     linkData->numFrMask = link->numFrMask;
     linkData->frMask = link->frMask;
     linkData->numDfMask = link->numDfMask;
@@ -169,10 +169,10 @@ void autoPassive()
                                               config->links[i], 1,
                                               config->links[i]->Pause^(ECHOAREA|FILEAREA))) {
                                   UINT j, k;
-                                  int mask = config->links[i]->areafixReportsAttr ? config->links[i]->areafixReportsAttr : config->areafixReportsAttr;
+                                  int mask = config->links[i]->areafixReportsAttr ? config->links[i]->areafixReportsAttr : robot->reportsAttr;
                                   msg = makeMessage(config->links[i]->ourAka,
                                             &(config->links[i]->hisAka),
-                                            config->areafixFromName ? config->areafixFromName : versionStr,
+                                            robot->fromName ? robot->fromName : versionStr,
                                             config->links[i]->name,
                                             "AutoPassive", 1,
                                             MSGPRIVATE | MSGLOCAL | (mask & (MSGKILL|MSGCPT)) );
@@ -258,5 +258,5 @@ int init_hptafix(void) {
   hook_afixcmd        = &perl_afixcmd;
   hook_afixreq        = &perl_afixreq;
 #endif
-  return init_areafix();
+  return init_areafix("areafix");
 }
