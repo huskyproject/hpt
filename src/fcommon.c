@@ -254,7 +254,7 @@ void cleanEmptyBundles(char *pathName, int npos)
 
 	   if ( patimat(file->d_name, pattern) == 1 ) {
 
-		   strncpy(tmpfile+npos, file->d_name, pathlen);
+		   strcpy(tmpfile+npos, file->d_name);
 
 		   if ( stat(tmpfile, &stbuf) == 0) {
 
