@@ -18,10 +18,12 @@
 
 #define nbufSize 2*1024
 
-static struct tm when;
+static  time_t  when;
+const   long    secInDay = 3600*24;
 const char czFreqArea[] = "freq";
 const char czKillArea[] = "kill";
 const int  cnDaysToKeepFreq = 5;
+
 extern s_query_areas *queryAreasHead;
 extern void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr);
 
@@ -182,7 +184,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
                 addrComp(pktOrigAddr, areaNode->downlinks[0])!=0)
                 return 4;  // wrong link to autocreate from
             // removinq area from query. it is autocreated now
-            queryAreasHead->areaDate.year = 1; // query was changed
+            queryAreasHead->nFlag = 1; // query was changed
             areaNode->type[0] = '\0';          // mark as deleted
             
             // setting up msgbase dir
@@ -331,18 +333,32 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
             af_AddLink( areaNode, uplink );
             tmpNode->next = areaNode;
         }
-
         break;
     }
     return tmpNode;
 }
-
+/*
+void af_UpdateQuery()
+{
+    s_query_areas *tmpNode  = NULL;
+    
+    if( !queryAreasHead ) af_OpenQuery();
+    
+    tmpNode = queryAreasHead;
+    while(tmpNode->next)
+    {
+        tmpNode = tmpNode->next;
+        tmpNode->theTime;
+    }
+}
+*/
 int af_OpenQuery()
 {
     FILE *queryFile;
     char *line = NULL;
     char *token = NULL;
     time_t ltime;
+    struct  tm tr;
     char seps[]   = " \t\n";
     s_query_areas *areaNode = NULL;
     s_query_areas *tmpNode  = NULL;
@@ -351,9 +367,7 @@ int af_OpenQuery()
         return 0;
 
     time( &ltime );
-    when = *localtime( &ltime );
-    when.tm_mday = when.tm_mday + cnDaysToKeepFreq;
-    mktime( &when );
+    when = ltime + cnDaysToKeepFreq*secInDay;
 
     queryAreasHead = af_MakeAreaListNode();
 
@@ -373,17 +387,23 @@ int af_OpenQuery()
             token = strtok( NULL, seps );
             strncpy( areaNode->type ,token, 4);
             token = strtok( NULL, seps );
+            memset(&tr, '\0', sizeof(tr));
             if(sscanf(token, "%d-%d-%d@%d:%d",
-                          &areaNode->areaDate.year,
-                          &areaNode->areaDate.month,
-                          &areaNode->areaDate.day,
-                          &areaNode->areaTime.hour,
-                          &areaNode->areaTime.min
+                          &tr.tm_year,
+                          &tr.tm_mon,
+                          &tr.tm_mday,
+                          &tr.tm_hour,
+                          &tr.tm_min
                   ) != 5)
             {
                 af_DelAreaListNode(areaNode);
                 continue;
+            } else {
+                tr.tm_year -= 1900;
+                tr.tm_mon--;
+                areaNode->theTime = mktime(&tr);
             }
+
             token = strtok( NULL, seps );            
             while( token != NULL )
             {
@@ -411,6 +431,7 @@ int af_CloseQuery()
     char *p;
     int nSpace = 0;
     size_t i = 0;
+    struct  tm tr;
     int writeChanges = 0;
     char *tmpFileName=NULL;
     
@@ -421,7 +442,7 @@ int af_CloseQuery()
     if( !queryAreasHead ) {  // list does not exist
         return 0;
     }
-    if(queryAreasHead->areaDate.year == 1) {
+    if(queryAreasHead->nFlag == 1) {
         writeChanges = 1;
     }
     if((tmpFileName=tmpnam(tmpFileName)) != NULL) {
@@ -437,12 +458,13 @@ int af_CloseQuery()
         if(writeChanges && tmpNode->type[0] != '\0')    {
             memset(buf, ' ' ,nSpace); 
             memcpy(buf, tmpNode->name, strlen(tmpNode->name));
+            tr = *localtime( &tmpNode->theTime );
             sprintf( p , "%s %d-%02d-%02d@%02d:%02d" , tmpNode->type,
-                tmpNode->areaDate.year,
-                tmpNode->areaDate.month,
-                tmpNode->areaDate.day,
-                tmpNode->areaTime.hour,
-                tmpNode->areaTime.min);
+                tr.tm_year + 1900,
+                tr.tm_mon  + 1,
+                tr.tm_mday,
+                tr.tm_hour,
+                tr.tm_min   );
             p = p + strlen(p);
             for(i = 0; i < tmpNode->linksCount; i++) {
                 strcat(p," ");
@@ -504,11 +526,6 @@ void af_AddLink(s_query_areas* node, s_addr *link)
     node->downlinks = 
         safe_realloc( node->downlinks, sizeof(s_addr)*node->linksCount );
     memcpy( &(node->downlinks[node->linksCount-1]) ,link, sizeof(s_addr) );
-    node->areaDate.year = when.tm_year +1900;
-    node->areaDate.month= when.tm_mon+1;
-    node->areaDate.day  = when.tm_mday;
-    node->areaTime.hour = when.tm_hour;
-    node->areaTime.min  = when.tm_min;
-
-    queryAreasHead->areaDate.year = 1; // query was changed
+    node->theTime = when;
+    queryAreasHead->nFlag = 1; // query was changed
 }
