@@ -134,7 +134,7 @@ static XS(perl_putMsgInArea)
         *p = '\r';
   xstrcat((char **)(&(msg.text)), text);
   free(text);
-  msg.textLength = strlen(text);
+  msg.textLength = strlen(msg.text);
   rc = putMsgInArea(echo, &msg, 1, msg.attributes);
   freeMsgBuffers(&msg);
   if (rc)
