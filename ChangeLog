@@ -1,3 +1,7 @@
+2005-02-24 Thursday 23:57  nick_voronin
+
+	* misc/adv-stat-hpt.pl (1.11): spelling correction
+
 2005-02-22 Tuesday 18:18  val_khokhlov
 
 	* src/scanarea.c (1.103): fix a bug with %rescan
