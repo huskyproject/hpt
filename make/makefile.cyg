@@ -1,0 +1,32 @@
+# Mingw32 CPD makefile for crosscompiling for NT under Unix
+#
+# tested with Mingw32 CPD on Linux
+
+DEBUG=
+# set to -g for debugging, NEVER use -s !!!
+
+CC=gcc
+EXENAMEFLAG=-o 
+SRC_DIR=../src/
+CFLAGS=-I../h -I../.. -c -O3 $(DEBUG) -mno-cygwin
+LFLAGS=$(DEBUG) -mno-cygwin
+CDEFS =-DNT -D__NT__ -DWINNT -D__CYG__
+
+OBJ=.o
+EXE=.exe
+RM=rm
+
+LIBS=../../fidoconf/libfidoconfigcyg.a ../../smapi/libsmapicyg.a -luser32
+
+default: all
+
+%$(OBJ): $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+
+include makefile.inc
+
+all: commonprogs
+
+clean: commonclean
+
+distclean: commondistclean

@@ -40,6 +40,14 @@
 #endif
 #endif
 
+#if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
+/* we can't include windows.h for several reasons ... */
+#ifdef __MINGW32__
+int __stdcall CharToOemA(char *, char *);
+#endif
+#define CharToOem CharToOemA
+#endif
+
 #include <sys/stat.h>
 #if !(defined(__TURBOC__) || (defined (_MSC_VER) && (_MSC_VER >= 1200)))
 #include <unistd.h>
