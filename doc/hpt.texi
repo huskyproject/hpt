@@ -1,6 +1,8 @@
+\input texinfo   @c -*-texinfo-*-
+
+@c %**start of header
 @c $Id$
 @c adopted from msged.texi, written by Tobias Ernst
-@c %**start of header
 @setfilename hpt.info
 @set HPT HPT
 @set VERSION 1.1.0
@@ -22,6 +24,13 @@
 @direntry
 * HPT: (hpt).               HPT is the fidonet tosser
 @end direntry
+
+@iftex
+@parindent=0pt
+@end iftex
+@iftex
+@afourpaper
+@end iftex
 
 @node Top, Overview, (dir), (dir)
 @top @value{HPT}
