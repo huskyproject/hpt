@@ -46,9 +46,11 @@
 #include <sys/stat.h>
 
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
-   /* we can't include windows.h for several reasons ... */
+  /* we can't include windows.h for prevent compiler errors ... */
+/*#  include <windows.h>*/
 #  define CharToOem CharToOemA
 #endif
+
 
 #if !(defined(__TURBOC__) || (defined (_MSC_VER) && (_MSC_VER >= 1200)))
 #include <unistd.h>
@@ -57,16 +59,6 @@
 #if defined(OS2)
 #include <os2.h>
 #endif
-/*
-#if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
-#include <dos.h>
-#include <process.h>
-#endif
-#if (defined(_MSC_VER) && (_MSC_VER >= 1200))
-#include <process.h>
-#define P_WAIT		_P_WAIT
-#endif
-*/
 
 #if defined(__DJGPP__)
 #include <dos.h>
