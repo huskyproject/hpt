@@ -1231,14 +1231,12 @@ char *add_rescan(s_link *link, char *line) {
 
     if (*line=='+') line++; while (*line==' ') line++;
 
-    p = fc_stristr(line, " /R");
-    *p = '\0';
-
-    p = fc_stristr(line, " R=");
-    *p = '\0';
+    p = strchr(line, ' '); /* select only areaname */
+    if (p)
+        *p = '\0';
 
     report = subscribe (link, line);
-    *p = ' ';
+    *p = ' '; /* resume original string */
 
     xstrscat(&line2,"%rescan ", line, NULL);
     xstrcat(&report, rescan(link, line2));

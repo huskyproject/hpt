@@ -24,6 +24,7 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
      file name on case-sensitive filesystems
    - retry pack pkt into bundle if append to archive failed
    - Fix linking when ^AMSGID or ^AREPLY are in MiXeD cAsE
+   - Fix crash on hpt afix <addr> "+<area> /r=<days>"
 
 
 
