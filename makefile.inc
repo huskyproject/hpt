@@ -29,20 +29,20 @@ commonall: $(OBJS) \
 
 pktinfo$(EXE): pktinfo$(OBJ) $(OBJS)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) pktinfo$(EXE) pktinfo$(OBJ) \
-          pktread$(OBJ) fcommon$(OBJ) global$(OBJ) dupe$(OBJ) tree$(OBJ) \
+          pktread$(OBJ) fcommon$(OBJ) global$(OBJ) dupe$(OBJ) \
 	  $(LIBS)
 
 tpkt$(EXE): tpkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
               global$(OBJ) 
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) tpkt$(EXE) tpkt$(OBJ) \
               fcommon$(OBJ) pktread$(OBJ) pktwrite$(OBJ) global$(OBJ) \
-              dupe$(OBJ) tree$(OBJ) $(LIBS)
+              dupe$(OBJ) $(LIBS)
 
 txt2pkt$(EXE): txt2pkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
                global$(OBJ)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) txt2pkt$(EXE) txt2pkt$(OBJ) \
           fcommon$(OBJ) pktread$(OBJ) pktwrite$(OBJ) \
-          global$(OBJ) dupe$(OBJ) tree$(OBJ) $(LIBS)
+          global$(OBJ) dupe$(OBJ) $(LIBS)
 
 hptlink$(EXE): hptlink$(OBJ)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) hptlink$(EXE) hptlink$(OBJ) $(LIBS)
