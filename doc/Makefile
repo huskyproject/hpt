@@ -39,8 +39,22 @@ hpt.info: hpt.texi
 
 clean:
 	-$(RM) $(RMOPT) *~
-	-$(RM) $(RMOPT) hpt*html
+	-$(RM) $(RMOPT) hpt.aux
+	-$(RM) $(RMOPT) hpt.cp
+	-$(RM) $(RMOPT) hpt.fn
+	-$(RM) $(RMOPT) hpt.fns
+	-$(RM) $(RMOPT) hpt.ky
+	-$(RM) $(RMOPT) hpt.log
+	-$(RM) $(RMOPT) hpt.pg
+	-$(RM) $(RMOPT) hpt.toc
+	-$(RM) $(RMOPT) hpt.tp
+	-$(RM) $(RMOPT) hpt.vr
+
+distclean: clean
+	-$(RM) $(RMOPT) hpt.dvi
 	-$(RM) $(RMOPT) hpt.info*
+	-$(RM) $(RMOPT) hpt.inf
+	-$(RM) $(RMOPT) hpt*html
 
 install: info html dvi
 	@echo .
@@ -53,9 +67,12 @@ ifdef HTMLDIR
 	-$(MKDIR) $(MKDIROPT) $(HTMLDIR)
 	$(INSTALL)  hpt*html $(HTMLDIR)
 endif
-
+ifdef DVIDIR
+	-$(MKDIR) $(MKDIROPT) $(DVIDIR)
+	$(INSTALL)  hpt.dvi $(DVIDIR)
+endif
 uninstall:
 	-install-info --remove --info-dir=$(INFODIR) $(INFODIR)$(DIRSEP)hpt.info
 	-$(RM) $(RMOPT) $(INFODIR)$(DIRSEP)hpt.info
 	-$(RM) $(RMOPT) $(HTMLDIR)$(DIRSEP)hpt*html
-
+	-$(RM) $(RMOPT) $(DVIDIR)$(DIRSEP)hpt.dvi
