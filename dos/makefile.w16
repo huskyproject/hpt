@@ -2,7 +2,7 @@ DEBUG   = 0
 CC      = wcc
 LINK    = WLINK
 
-OBJS    = hpt.obj, strsep.obj, pkt.obj, common.obj, log.obj, config.obj, global.obj, toss.obj
+OBJS    = hpt.obj, strsep.obj, pkt.obj, common.obj, log.obj, config.obj, global.obj, toss.obj, crc.obj
 SRC_DIR = ..\src
 
 !IF $(DEBUG) == 1

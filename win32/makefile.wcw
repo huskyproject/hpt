@@ -2,7 +2,7 @@ DEBUG   = 0
 CC      = wcc386
 LINK    = WLINK
 
-OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj post.obj areafix.obj dupe.obj recode.obj tree.obj seenby.obj strsep.obj link.obj
+OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj post.obj areafix.obj dupe.obj recode.obj tree.obj seenby.obj strsep.obj link.obj crc.obj
 SRC_DIR = ..\src
 
 CFLAGS = -zq -wx -bt=nt -j -i=..\..\fidoconfig;..\..\smapi;..\h; -oneatx -5

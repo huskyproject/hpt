@@ -20,7 +20,8 @@ OBJS    = pktinfo.obj \
           strsep.obj \
           purged~1.obj \
 	  dupe.obj \
-          tree.obj
+          tree.obj \
+	  crc.obj
 
 SRC_DIR = ..\src
 

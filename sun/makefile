@@ -3,7 +3,7 @@ CC      = gcc
 INSTDIR = /usr/local/bin
 MANDIR  = /usr/local/man
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o areafix.o log.o global.o recode.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o link.o post.o strsep.o
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o areafix.o log.o global.o recode.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o link.o post.o strsep.o crc.o
 SRC_DIR = ../src/
 
 FIDOCONFIG = ../../fidoconfig/libfidoconfig.a

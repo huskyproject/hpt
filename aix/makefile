@@ -6,7 +6,7 @@ INSTDIR = $(HOME)/fido/bin
 MANDIR  = $(HOME)/fido/man
 LIBDIR  = $(HOME)/fido/lib
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o strsep.o
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o strsep.o crc.o
 SRC_DIR = ../src/
 
 CFLAGS     = -c -I ../../fidoconfig -I ../../smapi -I ../h -O2 -s -DUNIX

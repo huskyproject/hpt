@@ -1,7 +1,7 @@
 DEBUG   = 1
 CC      = gcc
 
-OBJS    = hpt.o pkt.o common.o log.o config.o global.o toss.o patmat.o strsep.o
+OBJS    = hpt.o pkt.o common.o log.o config.o global.o toss.o patmat.o strsep.o crc.obj
 SRC_DIR = ..\src
 
 !IF $(DEBUG) == 1
