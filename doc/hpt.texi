@@ -1376,13 +1376,16 @@ $a will be replaced by the archive file.
 
 $p will be replaced by the temp inbound path.
 
+$f will be replaced by the description file name if any (used by htick, see 'FileDescName' token)
+
 @example
 
-e.g.: unpack "unzip -joLqq $a -d $p" 0 504b0304
+e.g.: unpack "unzip -joLqq $a -d $p $f" 0 504b0304
 
        files packed by zip can be recognized by
          504b0304(hex) at offset 0(integer)
-       they can be unpacked by "unzip -joLqq <filename> -d <path>"
+       they can be unpacked by 
+       "unzip -joLqq <filename> -d <path> <descrption_filename>"
 
 @end example
 
