@@ -1,3 +1,22 @@
+2003-02-25 Tuesday 14:41  stas_degteff
+
+	* doc/hpt.texi (hpt-1_4-stable.4): MFC: Add section 'Using config'
+
+2003-02-25 Tuesday 12:34  stas_degteff
+
+	* src/areafix.c (hpt-1_4-stable.1): MFC: fix bug [
+	husky-Bugs-637129 ] readonly and writeonly echoareas bug
+
+2003-02-25 Tuesday 09:53  sfpavel
+
+	* debian/changelog (hpt-1_4-stable.4): New debian version:
+	1.4-beta2
+
+2003-02-25 Tuesday 07:09  stas_degteff
+
+	* doc/hpt.texi (hpt-1_4-stable.3): MFC: Fix spell, thanks to Igor
+	Zakharoff and Dmitry Sergienko
+
 2003-02-24 Monday 11:08  pgul
 
 	* doc/hpt-FAQ.russian (1.81): Fixed elif -> elseif
