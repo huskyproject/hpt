@@ -2046,7 +2046,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 	nfree (rulesList);
     }
 
-    w_log('8', "areafix: sucessfully done for %s",aka2str(link->hisAka));
+    w_log('8', "areafix: successfully done for %s",aka2str(link->hisAka));
 
     // send msg to the links (forward requests to areafix)
     sendAreafixMessages();
