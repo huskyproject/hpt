@@ -1,3 +1,26 @@
+2002-11-23 Saturday 21:37  stas_degteff
+
+	* src/areafix.c (1.369): Final avaiable() variant with three
+	availlist values. Patch from Alexander Reznikov, 2:4600/220
+
+2002-11-23 Saturday 21:13  stas_degteff
+
+	* src/fcommon.c (1.149): Fix Watcom C comilation warning (type
+	incompatile of 3rd parameter of spawnvp())
+
+2002-11-23 Saturday 21:07  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.56): Add Q&A about 'AREAFILE fidoconfig'
+	for Golded+ config file
+
+2002-11-23 Saturday 20:40  pgul
+
+	* doc/hpt-FAQ.russian (1.55): fix spelling
+
+2002-11-23 Saturday 20:29  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.54): Change A22 (cygwin & mingw)
+
 2002-11-22 Friday 14:24  stas_degteff
 
 	* src/areafix.c (1.368): Fix for availlist feature. Patch from
