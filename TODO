@@ -9,7 +9,6 @@
   poster
   linker
   areafix
-- put pkt´s into an existing archive
 - zone-gating
 - nodelist access
 - real hub-routing

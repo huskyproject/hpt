@@ -1468,10 +1468,52 @@ void writeTossStatsToLog(void) {
    writeLogEntry(hpt_log, logchar, buff);
 }
 
+int find_old_arcmail(s_link *link) {
+	FILE *flo,*f;
+	char *line, *tmp=NULL, bundle[256]="";
+	char *wdays[7]={ ".su", ".mo", ".tu", ".we", ".th", ".fr", ".sa" };
+	long len;
+	int i;
+
+	flo = fopen(link->floFile, "rb");
+	if (flo != NULL) {
+		
+		while ((line = readLine(flo)) != NULL) {
+//			fprintf(stdout,"%s\n",line);
+			
+			for (i=0; (i<7) && (tmp==NULL); i++) {
+				if (strstr(line,wdays[i])!=NULL) {tmp=line; break;}
+			}
+			
+			if (tmp!=NULL) {tmp++; sprintf(bundle,"%s",tmp); tmp=NULL;}
+			free(line);
+		}
+		
+		fclose(flo);
+		if (bundle[0]!='\000') {
+//			fprintf(stdout,"'%s'\n",bundle);
+			f=fopen(bundle,"rb");
+			if (f!=NULL) {
+				fseek(f, 0L, SEEK_END);
+				len = ftell(f);
+//				printf("%i\n",(int)len);
+				fclose(f);
+				// 500 kb max
+				if ((int)len < 1024*500) {
+					link->packFile=(char*)realloc(link->packFile,strlen(bundle)+1);
+					strcpy(link->packFile,bundle);
+					return 1;
+				}
+			}
+		}
+	}
+	
+return 0;
+}
+
 void arcmail() {
-   int i;
    char logmsg[256], cmd[256], *pkt, *lastPathDelim, saveChar, sepDir[14], *buff;
-   int cmdexit;
+   int i, cmdexit, addfname;
    FILE *flo;
    s_link *link;
    
@@ -1486,7 +1528,9 @@ void arcmail() {
 		  if (createOutboundFileName(link,
 					     cvtFlavour2Prio(link->echoMailFlavour),
 					     FLOFILE) == 0) {
-			  
+
+			 addfname = find_old_arcmail(link);
+
 			 flo = fopen(link->floFile, "a");
 			 
 			 if (flo == NULL) {
@@ -1497,9 +1541,11 @@ void arcmail() {
 			   return;
 			 }
 
-			 if (link->packerDef != NULL)
+			 if (link->packerDef != NULL) {
 				 // there is a packer defined -> put packFile into flo
-				 fprintf(flo, "^%s\n", link->packFile);
+				 // if we are creating new arcmail bundle  ->  -//-//-
+				 if (addfname==0) fprintf(flo, "^%s\n", link->packFile);
+			 }
 			 else {
 				 // there is no packer defined -> put pktFile into flo
 				 pkt = (char*) malloc(strlen(link->floFile)+13+1);
@@ -1546,6 +1592,8 @@ void arcmail() {
 				 sprintf(logmsg,"Packing mail for %s %s", aka2str(link->hisAka), link->name);
 				 writeLogEntry(hpt_log, '7', logmsg);
 				 cmdexit = system(cmd);
+//				 sprintf(logmsg,"cmd: %s\n",cmd);
+// 				 writeLogEntry(hpt_log, '7', logmsg);
 				 remove(link->pktFile);
 			 }
 			 remove(link->bsyFile);

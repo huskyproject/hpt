@@ -1,4 +1,9 @@
 ----- cvs ci ------
+Thu Jun 17 00:08:15 NOVST 1999
+max:
++ pkt's added to existing arcmail bundle (default 500kb)
+
+----- cvs ci ------
 Fri Jun 11  18:52:30
 mm:
 + descriptions of areas are now also displayed when requesting a list
