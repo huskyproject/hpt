@@ -1,3 +1,7 @@
+2003-02-25 Tuesday 14:42  stas_degteff
+
+	* doc/hpt.texi (1.112): Add section 'Using config'
+
 2003-02-24 Monday 11:08  pgul
 
 	* doc/hpt-FAQ.russian (1.81): Fixed elif -> elseif
