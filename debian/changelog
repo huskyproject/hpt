@@ -1,3 +1,11 @@
+hpt (1.2.4-1) stable; urgency=low
+
+  * hpt 1.2.4 release
+  * New maintainer's E-mail
+  * Debhelper V4
+
+ -- Pavel Andreew <sfpavel@users.sourceforge.net>  Fri, 30 May 2003 14:05:36 +0600
+
 hpt (1.2.2-1) stable; urgency=low
 
   * hpt 1.2.2 release
