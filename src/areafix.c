@@ -120,7 +120,7 @@ char *getPatternFromLine(char *line, int *reversed)
 }
 
 char *list(s_listype type, s_link *link, char *cmdline) {
-    unsigned int i, active, avail, rc = 0;
+    unsigned int i, j, export, import, mandatory, active, avail, rc = 0;
     char *report = NULL;
     char *list = NULL;
     char *pattern = NULL;
@@ -158,17 +158,27 @@ char *list(s_listype type, s_link *link, char *cmdline) {
              || (type == lt_linked && rc == 0)
              || (type == lt_unlinked && rc == 1)
            ) { /*  add line */
+
+            import = export = 1; mandatory = 0;
+            for (j = 0; j < area->downlinkCount; j++) {
+               if (addrComp(link->hisAka, area->downlinks[j]->link->hisAka) == 0) {
+                  import = area->downlinks[j]->import;
+                  export = area->downlinks[j]->export;
+                  mandatory = area->downlinks[j]->mandatory;
+               }
+            }
+
             if (pattern)
             {
                 /* if matches pattern and not reversed (or vise versa) */
                 if (patimat(area->areaName, pattern)!=reversed)
                 {
-                    addAreaListItem(al,rc==0, area->msgbType!=MSGTYPE_PASSTHROUGH, area->areaName,area->description,area->group);
+                    addAreaListItem(al,rc==0, area->msgbType!=MSGTYPE_PASSTHROUGH, import, export, mandatory, area->areaName,area->description,area->group);
                     if (rc==0) active++; avail++;
                 }
             } else
             {
-                addAreaListItem(al,rc==0, area->msgbType!=MSGTYPE_PASSTHROUGH, area->areaName,area->description,area->group);
+                addAreaListItem(al,rc==0, area->msgbType!=MSGTYPE_PASSTHROUGH, import, export, mandatory, area->areaName,area->description,area->group);
                 if (rc==0) active++; avail++;
             }
 	} /* end add line */
@@ -179,27 +189,32 @@ char *list(s_listype type, s_link *link, char *cmdline) {
 #endif
     sortAreaList(al);
     switch (type) {
-      case lt_all:      list = formatAreaList(al,78," *R", grps); break;
-      case lt_linked:   list = formatAreaList(al,78,"   ", grps); break;
-      case lt_unlinked: list = formatAreaList(al,78,"  R", grps); break;
+      case lt_linked:
+      case lt_all:      list = formatAreaList(al,78," *SRW M", grps); break;
+      case lt_unlinked: list = formatAreaList(al,78,"  S    ", grps); break;
     }
     if (list) xstrcat(&report,list);
     nfree(list);
     freeAreaList(al);
 
-    if (type != lt_linked) 
-        xstrcat(&report,     "\r'R' = area rescanable");
-    if (type == lt_all) 
-        xstrcat(&report,     "\r'*' = area active");
+    if (type != lt_unlinked) 
+        xstrcat(&report, "\r'*' = area is active");
+        xstrcat(&report, "\r'R' = area is readonly for you");
+        xstrcat(&report, "\r'W' = area is writeonly for you");
+        xstrcat(&report, "\r'M' = area is mandatory for you");
+    xstrcat(&report, "\r'S' = area is rescanable");
+
+    if (type == lt_linked) {
+    }
     switch (type) {
       case lt_all:
-        xscatprintf(&report, "\r %i area(s) available, %i area(s) active\r", avail, active);
+        xscatprintf(&report, "\r\r %i area(s) available, %i area(s) active\r", avail, active);
         break;
       case lt_linked:
-        xscatprintf(&report, "\r %i area(s) linked\r", active);
+        xscatprintf(&report, "\r\r %i area(s) linked\r", active);
         break;
       case lt_unlinked:
-        xscatprintf(&report, "\r %i area(s) available\r", avail);
+        xscatprintf(&report, "\r\r %i area(s) available\r", avail);
         break;
     }
 /*    xscatprintf(&report,  "\r for link %s\r", aka2str(link->hisAka));*/
@@ -342,10 +357,10 @@ char *available(s_link *link, char *cmdline)
                     {
                         /* if matches pattern and not reversed (or vise versa) */
                         if ((rc==0) &&(patimat(token, pattern)!=reversed))
-                            addAreaListItem(al,0,0,token,running,uplink->LinkGrp);
+                            addAreaListItem(al,0,0,1,1,0,token,running,uplink->LinkGrp);
                     } else
                     {
-                        if (rc==0) addAreaListItem(al,0,0,token,running,uplink->LinkGrp);
+                        if (rc==0) addAreaListItem(al,0,0,1,1,0,token,running,uplink->LinkGrp);
                     }
 
     	        }
