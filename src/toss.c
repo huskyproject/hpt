@@ -1750,7 +1750,14 @@ int filesComparer(const void *elem1, const void *elem2) {
     return strcasecmp(((s_fileInDir *) elem1) -> fileName, ((s_fileInDir *) elem2) -> fileName);
 }
 
-char *validExt[] = {"*.MO?", "*.TU?", "*.TH?", "*.WE?", "*.FR?", "*.SA?", "*.SU?"};
+char *validExt[] = {
+"[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].SU[0-9A-Z]",
+"[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].MO[0-9A-Z]",
+"[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].TU[0-9A-Z]",
+"[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].WE[0-9A-Z]",
+"[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].TH[0-9A-Z]",
+"[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].FR[0-9A-Z]",
+"[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].SA[0-9A-Z]"};
 
 void processDir(char *directory, e_tossSecurity sec)
 {
