@@ -251,7 +251,7 @@ char *list(s_listype type, s_link *link, char *cmdline) {
         break;
     }
 
-    al = newAreaList();
+    al = newAreaList(config);
     for (i=active=avail=0; i< config->echoAreaCount; i++) {
 		
 	area = config->echoAreas[i];
@@ -460,7 +460,7 @@ char *available(s_link *link, char *cmdline)
             {
               halcnt++;
               hal = realloc(hal, sizeof(ps_arealist)*halcnt);
-              hal[halcnt-1] = newAreaList();
+              hal[halcnt-1] = newAreaList(config);
               al = hal[halcnt-1];
               w_log(LL_DEBUGW,  __FILE__ ":%u: New item added to hal, halcnt = %u", __LINE__, halcnt);
             }
