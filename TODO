@@ -4,9 +4,6 @@ TODO-List for HPT
 Category 1: Will certainly be implemented until next release
 ============================================================
 
-- check group access
-- fix bug with subcribe to echo with non accesable group
-- test %rescan (call arcmail)
 - fix HASHDUPEs under non unices
 
 Category 2: Might be implemented, but volunteers are always very welcome!

@@ -71,7 +71,7 @@ struct message {
    s_addr destAddr, origAddr;
 
    UINT16 attributes;
-   UCHAR  datetime[21];
+   UCHAR  datetime[22];
    CHAR   netMail;
    INT32  textLength;
    INT    recode;

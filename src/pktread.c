@@ -291,7 +291,9 @@ s_message *readMsgFromPkt(FILE *pkt, s_pktHeader *header)
    msg->destAddr.domain = NULL;
 
    getc(pkt); getc(pkt);                // read unused cost fields (2bytes)
-   fgets(msg->datetime, 21, pkt);
+
+//   fgets(msg->datetime, 21, pkt);
+   fgetsUntil0 (msg->datetime, 22, pkt);
 
    textBuffer = (UCHAR *) malloc(74);   // reserve mem space
    len = fgetsUntil0 ((UCHAR *) textBuffer, 37, pkt);

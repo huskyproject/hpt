@@ -64,26 +64,23 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
 {
    // convert header
    msg->attributes  = xmsg.attr;
+   // clear trs & k/s flags
+   msg->attributes &= ~(MSGFWD|MSGKILL);
 
    msg->origAddr.zone  = xmsg.orig.zone;
    msg->origAddr.net   = xmsg.orig.net;
    msg->origAddr.node  = xmsg.orig.node;
    msg->origAddr.point = xmsg.orig.point;
-   msg->origAddr.domain =  NULL;
 
    msg->destAddr.zone  = xmsg.dest.zone;
    msg->destAddr.net   = xmsg.dest.net;
    msg->destAddr.node  = xmsg.dest.node;
    msg->destAddr.point = xmsg.dest.point;
-   msg->destAddr.domain = NULL;
 
    strcpy(msg->datetime, (char *) xmsg.__ftsc_date);
-   msg->subjectLine = (char *) malloc(strlen((char *)xmsg.subj)+1);
-   msg->toUserName  = (char *) malloc(strlen((char *)xmsg.to)+1);
-   msg->fromUserName = (char *) malloc(strlen((char *)xmsg.from)+1);
-   strcpy(msg->subjectLine, (char *) xmsg.subj);
-   strcpy(msg->toUserName, (char *) xmsg.to);
-   strcpy(msg->fromUserName, (char *) xmsg.from);
+   xstrcat(&(msg->subjectLine), (char *) xmsg.subj);
+   xstrcat(&(msg->toUserName), (char *) xmsg.to);
+   xstrcat(&(msg->fromUserName), (char *) xmsg.from);
 
    // recoding subjectLine to TransportCharset
    if (config->outtab != NULL) {

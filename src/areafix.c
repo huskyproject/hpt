@@ -103,6 +103,8 @@ int subscribeCheck(s_area area, s_message *msg, s_link *link)
   } else found = 1;
 
   if (!found) return 2;
+  if (grpInArray(area.group,link->optGrp,link->numOptGrp) && link->mandatory) return 2;
+  if (link->numOptGrp==0 && link->mandatory) return 2;
   if (area.hide) return 3;
   return 1;
 }
@@ -632,7 +634,7 @@ int forwardRequest(char *areatag, s_link *dwlink) {
 }
 
 char *subscribe(s_link *link, s_message *msg, char *cmd) {
-	int i, rc=4;
+	unsigned int i, rc=4, found=0;
 	char *line, *an, *report = NULL;
 	s_area *area;
 
@@ -665,12 +667,14 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			break;
 		default :
 			writeLogEntry(hpt_log, '8', "areafix: area %s -- no access for %s",
-					area->areaName, aka2str(link->hisAka));
-			continue;
+						  area->areaName, aka2str(link->hisAka));
+			xscatprintf(&report," %s %s  no access\r", line, print_ch(49-strlen(line), '.'));
+			found = 1;
+			break;
 		}
 	}
 	
-	if ((rc==4) && (strstr(line,"*") == NULL)) {
+	if ((rc==4) && (strstr(line,"*") == NULL) && !found) {
 	    if (link->fReqFromUpLink) {
 			// try to forward request
 			if (forwardRequest(line, link)!=0)
@@ -1144,6 +1148,7 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 			      an, print_ch(49-strlen(an), '.'), rescanCount);
 			  writeLogEntry(hpt_log,'8',"areafix: %s rescanned %lu mails to %s",
 			      area->areaName, rescanCount, aka2str(link->hisAka));
+			  arcmail();
 
 			}
 			break;

@@ -2,6 +2,14 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Sat Feb  5 19:15:01 NOVT 2000
+max:
+* correct reading msg's with time like "01 Jan 100  12:00:35"
+  (hpt must be compiling without -Ox options)
+* fixed bug when subscribing to echo with non accessable group
+* pack mail after %rescan
+
+----- cvs ci ------
 Sat Feb  5 02:36:03 NOVT 2000
 max:
 * fixed memleak in toss.c (newLinks was not freed)
