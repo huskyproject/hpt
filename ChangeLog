@@ -1,3 +1,8 @@
+2003-10-06 Monday 21:31  d_sergienko
+
+	* h/areafix.h (1.39), src/areafix.c (1.427), src/hpt.c (1.186):
+	added resubscription ability (patch from Andrey Ladutsko)
+
 2003-10-05 Sunday 18:01  d_sergienko
 
 	* doc/hpt.texi (1.138): fix docs building
