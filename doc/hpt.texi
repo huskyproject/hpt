@@ -2304,8 +2304,8 @@ should be the area-tag (as far as possible). if file == Passthrough then
 Squish-msgbase and @code{Jam} for Jam-msgbase.
 @item linkAKA:
 aka's of up- and down links.
-you can use masks like: "2:*/*" - all downlinks from you config from
-zone2. This links are auto-mandatory. Always use slash in mask!
+you can use masks like: "*:*/*" - all downlinks from you config.
+This links are auto-mandatory. Always use slash in mask!
 @end table
 
 Options:
