@@ -382,13 +382,19 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    //exit(2);
 
    createPathArrayFromMsg(msg, &path, &pathCount);
-   if (path[pathCount-1].net != echo->useAka->net &&
-	   path[pathCount-1].node != echo->useAka->node ) {
-	   // add our aka to path
-	   path = (s_seenBy*) realloc(path, sizeof(s_seenBy) * (pathCount)+1);
-	   path[pathCount].net = echo->useAka->net;
-	   path[pathCount].node = echo->useAka->node;
-	   pathCount++;
+   if (pathCount > 0) {
+      if (path[pathCount-1].net != echo->useAka->net && path[pathCount-1].node != echo->useAka->node ) {
+         // add our aka to path
+         path = (s_seenBy*) realloc(path, sizeof(s_seenBy) * (pathCount)+1);
+         path[pathCount].net = echo->useAka->net;
+         path[pathCount].node = echo->useAka->node;
+         pathCount++;
+      }
+   } else {
+      path = (s_seenBy*) malloc(sizeof(s_seenBy) * (pathCount)+1);
+      path[pathCount].net = echo->useAka->net;
+      path[pathCount].node = echo->useAka->node;
+      pathCount++;
    }
 
 //   for (i=0; i< pathCount;i++) printf("%u/%u ", path[i].net, path[i].node);
@@ -732,7 +738,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
             if (pwdOK != 0) {
                while ((msg = readMsgFromPkt(pkt, header->origAddr.zone)) != NULL) {
                   rc = 4;
-                  if ((sec==secProtInbound) || (msg->netMail == 1)) || (pwdOk != 0))
+                  if ((sec==secProtInbound) || (msg->netMail == 1) || (pwdOK != 0))
                      processMsg(msg, header->origAddr);
                   else rc = 3;
                   freeMsgBuffers(msg);
