@@ -1,3 +1,16 @@
+2002-11-13 Wednesday 15:03  pgul
+
+	* src/toss.c (1.467): Fix typo in previous patch
+
+2002-11-13 Wednesday 15:00  pgul
+
+	* src/toss.c (1.466): Use strmerr() from smapi
+
+2002-11-13 Wednesday 09:52  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.51): Add answer about archivers call and
+	command.com
+
 2002-11-12 Tuesday 11:00  pgul
 
 	* src/seenby.c (1.26): Bugfix: hang on corrupted pkt
