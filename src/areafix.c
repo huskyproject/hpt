@@ -433,11 +433,20 @@ char *help(s_link *link) {
 	return NULL;
 }
 
+int tag_mask(char *tag, char **mask, unsigned num) {
+	unsigned int i;
+
+	for (i = 0; i < num; i++) {
+		if (patimat(tag,mask[i])) return 1;
+	}
+
+	return 0;
+}
+
 char *available(s_link *link) {
 	FILE *f;
-	int j=0;
-	unsigned int k;
-	int found;
+	int j=0, found;
+	unsigned int k, rc;
 	char *report = NULL, *line, *token, *running, linkAka[25];
 	s_link *uplink=NULL;
 	ps_arealist al;
@@ -468,8 +477,15 @@ char *available(s_link *link) {
 			
 					running = line;
 					token = strseparate(&running, " \t\r\n");
+					rc = 0;
 
-					addAreaListItem(al,0,token,running);
+					if (uplink->numDfMask)
+						rc |= tag_mask(token, uplink->dfMask, uplink->numDfMask);
+					
+					if (uplink->denyFwdFile)
+						rc |= areaIsAvailable(token,uplink->denyFwdFile,NULL,0);
+						
+					if (rc==0) addAreaListItem(al,0,token,running);
 
 				}
 				nfree(line);
@@ -702,16 +718,6 @@ static int compare_links_priority(const void *a, const void *b) {
 	else return 0;
 }
 
-int tag_mask(char *tag, char **mask, unsigned num) {
-	unsigned int i;
-
-	for (i = 0; i < num; i++) {
-		if (patimat(tag,mask[i])) return 1;
-	}
-
-	return 0;
-}
-
 int forwardRequest(char *areatag, s_link *dwlink) {
     int i, rc = 1;
     s_link *uplink;
@@ -760,7 +766,11 @@ int forwardRequest(char *areatag, s_link *dwlink) {
 					if (tag_mask(areatag, uplink->frMask, uplink->numFrMask))
 						forwardRequestToLink(areatag,uplink,dwlink,0);
 					else rc = 2;
-				} else forwardRequestToLink(areatag,uplink,dwlink,0);
+				} else { // unconditional forward request
+					if (dwlink->denyUFRA==0)
+						forwardRequestToLink(areatag,uplink,dwlink,0);
+					else rc = 2;
+				}
 				if (rc==0) {
 					nfree(Indexes);
 					return rc;
@@ -836,7 +846,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	}
 	
 	if ((rc==4) && (strstr(line,"*") == NULL) && !found) {
-	    if (link->fReqFromUpLink) {
+	    if (link->denyFRA==0) {
 			// try to forward request
 			if ((rc=forwardRequest(line, link))==2)
 				xscatprintf(&report, " %s %s  no uplinks to forward\r",

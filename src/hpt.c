@@ -39,7 +39,9 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/file.h>
 #include <signal.h>
+#include <fcntl.h>
 
 #include <smapi/msgapi.h>
 #include <smapi/progprot.h>
@@ -71,6 +73,7 @@ s_message **msgToSysop = NULL;
 char *scanParmA;
 char *scanParmF;
 char force = 0;
+int fd;
 
 /* kn: I've really tried not to break it. 
    FIXME: if there is pack and scan options on cmd line - one set 
@@ -251,9 +254,8 @@ void processConfig()
    struct   stat stat_file;
 #endif
    char *buff = NULL;
-   unsigned long pid;
-   
-   FILE *f;
+//   unsigned long pid;
+//   FILE *f;
 
    setvar("module", "hpt");
    config = readConfig(cfgFile);
@@ -263,6 +265,7 @@ void processConfig()
       exit(1);
    }
 
+/* remove after 25-Mar-01
    // lock...
    if (config->lockfile!=NULL && fexist(config->lockfile)) {
 	   if ((f = fopen(config->lockfile, "rt"))==NULL) {
@@ -271,7 +274,7 @@ void processConfig()
 	   }
 	   fscanf(f, "%lu\n", &pid);
 	   fclose(f);
-      /* Checking process PID */
+	   // Checking process PID
 #ifdef __OS2__
       if (DosKillProcess(DKP_PROCESSTREE, pid) == ERROR_NOT_DESCENDANT) {
 #elif UNIX
@@ -283,16 +286,27 @@ void processConfig()
       }
       if (locklife < 180) {
 #endif
-           printf("lock file found! exit...\n");
+           fprintf(stderr,"lock file found! exit...\n");
            disposeConfig(config);
            exit(1);
       } else {
          remove(config->lockfile);
          createLockFile(config->lockfile);
-      } /* endif */
+      }
    }
    else if (config->lockfile!=NULL) createLockFile(config->lockfile);
-   
+*/
+   if (config->lockfile) {
+	   if ( (fd=open(config->lockfile, O_CREAT|O_RDWR,S_IREAD|S_IWRITE)) < 0 ) {
+		   fprintf(stderr,"cannot create lock file: %s\n",config->lockfile);
+		   disposeConfig(config);
+           exit(1);
+	   } else if (lock(fd,0,0)<0) {
+		   fprintf(stderr,"lock file used by another process! exit...\n");
+		   disposeConfig(config);
+		   exit(1);
+	   }
+   }
 
    // open Logfile
    hpt_log = NULL;
@@ -431,14 +445,20 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    // deinit SMAPI
    MsgCloseApi();
    
-   if (config->lockfile != NULL) remove(config->lockfile);
    writeLogEntry(hpt_log, '1', "End");
    closeLog(hpt_log);
-   disposeConfig(config);
    doneCharsets();
    nfree(versionStr);
+
+   if (config->lockfile) {
+	   close(fd);
+	   remove(config->lockfile);
+   }
+
 #if defined ( __NT__ )
    if (config->setConsoleTitle) SetConsoleTitleA(oldtitle);
 #endif
+   disposeConfig(config);
+
    return 0;
 }

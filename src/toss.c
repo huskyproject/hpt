@@ -1247,6 +1247,9 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 	case 9:
 		xstrcat(&textBuff,"Can't open config file\r");
 		break;
+	case 10:
+		xstrcat(&textBuff,"No downlinks for passthrough area\r");
+		break;
 	default :
 		xstrcat(&textBuff,"Another error\r");
 		break;
@@ -1494,9 +1497,13 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 					   rc = putMsgInArea(echo, msg, 1, forceattr);
 					   statToss.saved += rc;
 				   }
-				   else {
-					   statToss.passthrough++;
-					   rc = 1; //passthrough does always work
+				   else { // passthrough
+					   if (echo->downlinkCount==1)
+						   rc = putMsgInBadArea(msg, pktOrigAddr, 10);
+					   else {
+						   statToss.passthrough++;
+						   rc = 1;
+					   }
 				   }
 			   } else rc = 1; // normal exit for carbon move & delete
 

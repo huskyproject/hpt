@@ -571,10 +571,11 @@ static void make_ftsc_date(char *pdate, const struct tm *ptm)
 int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 {
    s_message *msg;
-   int       len, badmsg=0;
+   int len, badmsg=0;
    struct tm tm;
+   char *p, *q;
 #if defined(MSDOS)
-   char      *origin;
+   char *origin;
 #endif
 
    if (2 != getUINT16(pkt)) {
@@ -644,6 +645,13 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 
    correctAddr(msg, header);
    
+   // del "\001FLAGS" from message text
+   if (NULL != (p=strstr(msg->text,"\001FLAGS"))) {
+	   for (q=p; *q && *q!='\r'; q++);
+	   memmove(p,q+1,msg->textLength-(q-msg->text));
+	   msg->textLength -= (q-p+1);
+   }
+
    *message = msg;
    return 1;
 }

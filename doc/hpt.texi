@@ -1304,9 +1304,8 @@ This statement cannot be repeated.
 @code{lockfile /var/lock/hpt.lock}
 @end table
 
-Another session of hpt will be terminated if found running program with
-PID from @code{LockFile}. This is only for Unix and OS/2 Systems. Under
-Win32 @code{LockFile} will be deleted after 3 hours.
+Another session of hpt will be terminated if the original process which
+created @code{LockFile} is running.
 
 This statement cannot be repeated.
 
@@ -1517,9 +1516,10 @@ This statement cannot be repeated.
 * AutoPause::                   stop export mail for this link after xx days
 * DenyFwdFile::                 file with area list for denyed requests
 * DenyFwdMask::                 mask list for denyed requests
+* DenyFwdReqAccess::            deny access to forward requests
+* DenyUncondFwdReqAccess::      deny access to unconditional forward requests
 * EchoMailFlavour::             flavour for outgoing echomail
 * Export::                      rules for echomail export
-* FRequestFromUplink::          allow forward requests from this link
 * ForwardAreaPriority::         forward requests priority
 * ForwardPkts::                 shall we forward inbound packets for this node?
 * ForwardRequestFile::          file for forwardRequest, AvialableAreas & descriptions
@@ -1798,7 +1798,7 @@ Don't forward requests for areas from this file.
 
 This statement can only be repeated for different links.
 
-@node DenyFwdMask, EchoMailFlavour, DenyFwdFile, Link Keywords
+@node DenyFwdMask, DenyFwdReqAccess, DenyFwdFile, Link Keywords
 @subsection DenyFwdMask
 @findex DenyFwdMask
 @table @asis
@@ -1812,7 +1812,37 @@ Don't forward this requests.
 
 This statement can only be repeated for different links.
 
-@node EchoMailFlavour, Export, DenyFwdMask, Link Keywords
+@node DenyFwdReqAccess, DenyUncondFwdReqAccess, DenyFwdMask, Link Keywords
+@subsection DenyFwdReqAccess
+@findex DenyFwdReqAccess
+@table @asis
+@item Syntax:
+@code{denyFwdReqAccess <bool>}
+@item Example:
+@code{denyFwdReqAccess}
+@end table
+
+Don't allow forward requests from this link (via areafix) to your
+links.
+
+This statement can only be repeated for different links.
+
+@node DenyUncondFwdReqAccess, EchoMailFlavour, DenyFwdReqAccess, Link Keywords
+@subsection DenyUncondFwdReqAccess
+@findex DenyUncondFwdReqAccess
+@table @asis
+@item Syntax:
+@code{denyUncondFwdReqAccess <bool>}
+@item Example:
+@code{denyUncondFwdReqAccess}
+@end table
+
+Don't allow unconditional forward requests from this link (via areafix)
+to your links. 
+
+This statement can only be repeated for different links.
+
+@node EchoMailFlavour, Export, DenyUncondFwdReqAccess, Link Keywords
 @subsection EchoMailFlavour
 @findex EchoMailFlavour
 @table @asis
@@ -1827,7 +1857,7 @@ For example set echomailFlavour for points to hold and for uplink crash.
 
 This statement can only be repeated for different links.
 
-@node Export, FRequestFromUplink, EchoMailFlavour, Link Keywords
+@node Export, ForwardAreaPriority, EchoMailFlavour, Link Keywords
 @subsection Export
 @findex Export
 @table @asis
@@ -1845,22 +1875,7 @@ link at all.
 
 This statement can only be repeated for different links.
 
-@node FRequestFromUplink, ForwardAreaPriority, Export, Link Keywords
-@subsection FRequestFromUplink
-@findex FRequestFromUplink
-@table @asis
-@item Syntax:
-@code{frequestfromuplink <bool>}
-@item Example:
-@code{frequestfromuplink off}
-@end table
-
-By default "frequestfromuplink on". "Off" don't allow forward requests
-from this link (via areafix) to your links.
-
-This statement can only be repeated for different links.
-
-@node ForwardAreaPriority, ForwardPkts, FRequestFromUplink, Link Keywords
+@node ForwardAreaPriority, ForwardPkts, Export, Link Keywords
 @subsection ForwardAreaPriority
 @findex ForwardAreaPriority
 @table @asis

@@ -2,6 +2,16 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Feb 25 15:50:46 NOVT 2001
+max:
+* del "\001FLAGS" from incoming mail
+* put msgs to badArea from passthrough echoes w/o downlinks
+* %avail without areas from denyfwdmask & denyfwdfile
+* denyUncondFwdReqAccess
+* frequestfromuplink changed to denyFwdReqAccess !!!
+* advisory lock (to lockfile)
+
+----- cvs ci ------
 Wed Feb 21 22:13:09 NOVT 2001
 max:
 * don't create areas with ':' symbol
