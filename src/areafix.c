@@ -944,6 +944,7 @@ int changeresume(char *confName, s_link *link)
 					rc = 2;
 					break;
 				}
+		                cfgline = trimLine(cfgline);
 				if (*cfgline == 0 || *cfgline == '#') continue;
 				line = cfgline;
 				token = strseparate(&line, " \t");
@@ -1770,7 +1771,8 @@ int relink (char *straddr) {
 	}
 
 	for (count = 0; count < config->echoAreaCount; count++) {
-		if ( isLinkOfArea(researchLink, &config->echoAreas[count]) ) {
+		if ( isLinkOfArea(researchLink, &config->echoAreas[count]) &&
+                     !(config->echoAreas[count].msgbType == MSGTYPE_PASSTHROUGH && config->echoAreas[count].downlinkCount == 1) ) {
 			areasIndexArray[areasArraySize] = &config->echoAreas[count];
 			areasArraySize++;
 			writeLogEntry(hpt_log, '8', "Echo %s from link %s refresh",
@@ -1780,7 +1782,8 @@ int relink (char *straddr) {
 	}
 
 	for ( count = 0; count < config->localAreaCount; count++) {
-		if ( isLinkOfArea(researchLink, &config->localAreas[count]) ) {
+		if ( isLinkOfArea(researchLink, &config->localAreas[count]) &&
+                     !(config->echoAreas[count].msgbType == MSGTYPE_PASSTHROUGH && config->echoAreas[count].downlinkCount == 1) ) {
 			areasIndexArray[areasArraySize] = &config->localAreas[count];
 			areasArraySize++;
 			// to log area name (low priority)

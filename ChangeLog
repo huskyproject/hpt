@@ -2,6 +2,16 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+max (patch from Serguei Revtov):
+Tue May 30 11:01:06 MSD 2000
+* %resume works in spite of space before 'aka' token
+
+----- cvs ci ------
+max (patch from Serguei Revtov):
+Mon May 29 09:49:57 MSD 2000
+* don't subscribe to Passthrough areas with one link on hpt relink
+
+----- cvs ci ------
 Sun May 28 12:47:15 NOVST 2000
 max:
 * fixed bug when renaming to .ntu (.sec, etc) several packets
