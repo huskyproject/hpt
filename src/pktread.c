@@ -3,6 +3,9 @@
 #include <malloc.h>
 #include <string.h>
 
+#include <log.h>
+#include <global.h>
+
 #include <pkt.h>
 
 time_t readPktTime(FILE *pkt)
@@ -111,6 +114,7 @@ void correctNMAddr(s_message *msg, UINT16 def_zone)
 {
    char *start, *copy;
    char buffer[35];
+   char buff[200];
 
    copy = buffer;
    start = strstr(msg->text, "FMPT");
@@ -171,6 +175,10 @@ void correctNMAddr(s_message *msg, UINT16 def_zone)
 
       msg->destAddr.zone = def_zone;     // attention, this is only right for zone 2
       msg->origAddr.zone = def_zone;     // CHANGE!!!
+      sprintf(buff, "Mail without INTL-Kludge. Assuming %i:%i/%i.%i -> %i:%i/%i.%i",
+              msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
+              msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
+      writeLogEntry(log, '2', buff);
    } /* endif */
 }
 

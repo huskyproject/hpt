@@ -3,11 +3,11 @@
 areafix help:
 
 %list		list of areas avialable
-%help		what is you reading, pal? :)
+%help		what are you reading, pal? :)
 +<echotag>	subscribe area
 <echotag>	the same
 -<echotag>	unsubscribe area
 
-attention!	all other lines *ignored*
+attention!	all other lines are *ignored*
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 

@@ -440,7 +440,7 @@ int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
 	//this is for me?
 	if (link!=NULL)	forme=for_me_Check(msg, link);
 	if (forme || link==NULL) {
-		processNMMsg(msg);
+		processNMMsg(msg, *pktOrigAddr);
 		return 0;
 	}
 
@@ -504,7 +504,7 @@ int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
 		changeHeader(msg,link);
 	}
 
-	processNMMsg(msg);
+	processNMMsg(msg, *pktOrigAddr);
 
 	sprintf(logmsg,"areafix: sucessfully done for %s",link->name);
 	writeLogEntry(log, '8', logmsg);

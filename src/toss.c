@@ -83,7 +83,7 @@ XMSG createXMSG(s_message *msg)
    return msgHeader;
 }
 
-void putMsgInArea(s_area *echo, s_message *msg)
+void putMsgInArea(s_area *echo, s_message *msg, int strip)
 {
    char buff[70], *ctrlBuff, *textStart, *textWithoutArea;
    UINT textLength = msg->textLength;
@@ -121,7 +121,7 @@ void putMsgInArea(s_area *echo, s_message *msg)
 
          textWithoutArea = msg->text;
          
-         if ((strncmp(msg->text, "AREA:", 5) == 0) && (echo != &(config->badArea)) && (echo != &(config->dupeArea))) {
+         if ((strncmp(msg->text, "AREA:", 5) == 0) && (strip==1)) {
             // jump over AREA:xxxxx\r
             while (*(textWithoutArea) != '\r') textWithoutArea++;
             textWithoutArea++;
@@ -259,6 +259,70 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
    free(seenByText);
 }
 
+int readCheck(s_area *echo, s_link *link) {
+	int i, rc=0;
+	char *denygrp;
+
+	// read for all
+	if (echo->rgrp==NULL) return 0;
+
+	denygrp = link->DenyGrp;
+
+	if (echo->rgrp!=NULL && denygrp!=NULL) {
+		// is this link allowed to read messages from this area?
+		for (i=0; i< strlen(echo->rgrp); i++) {
+			if ( strchr( denygrp, echo->rgrp[i]) != NULL) {
+//				printf("read!\n");
+				return 0;
+			} else if ( i == strlen (echo->rgrp) - 1 ) rc++;
+		}
+	} else rc++;
+
+	if (echo->rwgrp!=NULL && denygrp!=NULL) {
+		// maybe he have r/w acess?
+		for (i=0; i< strlen(echo->rwgrp); i++) {
+			if ( strchr( denygrp, echo->rwgrp[i]) != NULL) {
+//				printf("read/write!\n");
+				return 0;
+			} else if ( i == strlen (echo->rwgrp) - 1 ) rc++;
+		}
+	} else rc++;
+	
+	return rc;
+}
+
+int writeCheck(s_area *echo, s_link *link) {
+	int i, rc=0;
+	char *denygrp;
+
+	// read/write for all
+	if ((echo->wgrp==NULL) && (echo->rwgrp==NULL)) return 0;
+
+	denygrp = link->DenyGrp;
+
+	if (echo->wgrp!=NULL && denygrp!=NULL) {
+		// is this link allowed to post messages to this area?
+		for (i=0; i< strlen(echo->wgrp); i++) {
+			if ( strchr( denygrp, echo->wgrp[i]) != NULL) {
+				printf("write!\n");
+				return 0;
+			} else if ( i == strlen (echo->wgrp) - 1 ) rc++;
+		}
+	} else rc++;
+
+	if (echo->rwgrp!=NULL && denygrp!=NULL) {
+		// maybe he have r/w acess?
+		for (i=0; i< strlen(echo->rwgrp); i++) {
+			if ( strchr( denygrp, echo->rwgrp[i]) != NULL) {
+				printf("read/write!\n");
+				return 0;
+			} else if ( i == strlen (echo->rwgrp) - 1 ) rc++;
+		}
+	} else rc++;
+	
+	return rc;
+}
+
 
 void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 {
@@ -334,6 +398,9 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    {
       // don't export to link who has sent the echomail to us
       if (addrComp(pktOrigAddr, echo->downlinks[i]->hisAka)==0) continue;
+
+      // does the link has read access for this echo?
+      if (readCheck(echo, echo->downlinks[i])!=0) continue;
       
       // create pktfile if necessary
       if (echo->downlinks[i]->pktFile == NULL) {
@@ -421,12 +488,15 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    writeLogEntry(log, '8', buff);
    return 0;
 }
- 
+
 void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 {
    char   *area, *textBuff;
    s_area *echo;
    s_link *link;
+   int    writeAccess;
+
+   link = getLinkFromAddr(*config, pktOrigAddr);
 
    textBuff = (char *) malloc(strlen(msg->text)+1);
    strcpy(textBuff, msg->text);
@@ -436,6 +506,9 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 
    echo = getArea(config, area);
    statToss.echoMail++;
+
+   writeAccess = writeCheck(echo, link);
+   if (writeAccess!=0) echo = &(config->badArea);
 
    if (echo != &(config->badArea)) {
       if (dupeDetection(echo, *msg)==1) {
@@ -447,7 +520,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
          }
 
          if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-            putMsgInArea(echo, msg);
+            putMsgInArea(echo, msg,1);
             echo->imported = 1;  // area has got new messages
 	    statToss.saved++;
          } else statToss.passthrough++;
@@ -455,7 +528,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
       } else {
          // msg is dupe
          if (echo->dupeCheck == move) {
-            putMsgInArea(&(config->dupeArea), msg);
+            putMsgInArea(&(config->dupeArea), msg, 0);
          }
 	 statToss.dupes++;
       }
@@ -464,20 +537,23 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
    if (echo == &(config->badArea)) {
       // checking for autocreate option
       link = getLinkFromAddr(*config, pktOrigAddr);
-      if ((link != NULL) && (link->autoAreaCreate != 0)) {
+      if ((link != NULL) && (link->autoAreaCreate != 0) &&(writeAccess == 0)) {
          autoCreate(area, pktOrigAddr);
          echo = getArea(config, area);
-      } else
+         putMsgInArea(echo, msg, 1);
+      } else {
          // no autoareaCreate -> msg to bad
          statToss.bad++;
       
-      putMsgInArea(echo, msg);
+         putMsgInArea(&(config->badArea), msg, 0);
+      }
    }
+
 
    free(textBuff);
 }
 
-void processNMMsg(s_message *msg)
+void processNMMsg(s_message *msg,s_addr pktOrigAddr)
 {
    HAREA  netmail;
    HMSG   msgHandle;
@@ -547,7 +623,7 @@ void processMsg(s_message *msg, s_addr pktOrigAddr)
 	   if (stricmp(msg->toUserName,"areafix")==0) {
 		   processAreaFix(msg, &pktOrigAddr);
 	   } else
-		   processNMMsg(msg);
+		   processNMMsg(msg,pktOrigAddr);
    } else {
 	   processEMMsg(msg, pktOrigAddr);
    } /* endif */
@@ -581,7 +657,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
             if ((link->pktPwd != NULL) && (stricmp(link->pktPwd, header->pktPassword) != 0)) pwdOK = 0;
             if (sec==secLocalInbound) pwdOK = !0; // localInbound pkts don´t need pwd
             if (pwdOK != 0) {
-               while ((msg = readMsgFromPkt(pkt,config->addr[0].zone)) != NULL) {
+               while ((msg = readMsgFromPkt(pkt, header->origAddr.zone)) != NULL) {
                   rc = 4;
                   if ((sec==secProtInbound) || (msg->netMail == 1))
                      processMsg(msg, header->origAddr);
@@ -625,6 +701,8 @@ void processDir(char *directory, e_tossSecurity sec)
    struct dirent  *file;
    char           *dummy;
    int            rc;
+
+   if (directory==NULL) return;
 
    dir = opendir(directory);
 
