@@ -6,11 +6,10 @@
 
 use Time::Local;
 
-
-$templog='/tmp/worklog';
+$templog='/tmp/worklog.tmp';
 
 if ( $#ARGV < 1 )
-{   print "syntax is:    cut-hpt.pl d:\\fido\\logs\\hpt.log 14\n";
+{   print "syntax is:    cut-hptlog.pl /var/fido/logs/hpt.log 14\n";
     print "\n";
     print "where first parametr is FULL path to hpt's log-file,\n";
     print "and second - is a number of days ";
@@ -18,43 +17,43 @@ if ( $#ARGV < 1 )
     <>;
     exit;
 };
-die "Logfile ($ARGV[0]) not found" if (!-f $ARGV[0]);
+die "Logfile ($ARGV[0]) not found" unless (-f $ARGV[0]);
 
-$SAVEDAY = $ARGV[1];
+$saveday = $ARGV[1];
+$keepit=0;
 
-($x,$x,$x,$day,$mon,$year,$x,$x,$x)=localtime(time()-$SAVEDAY*24*60*60);
-$SAVE = timelocal(0,0,0,$day,$mon,$year);
+($x,$x,$x,$day,$mon,$year,$x,$x,$x)=localtime(time()-$saveday*24*60*60);
+$save = timelocal(0,0,0,$day,$mon,$year);
 ($x,$x,$x,$day,$mon,$year,$x,$x,$x)=localtime(time());
-$keepit = 0;
-
 
 open OLDLOG,$ARGV[0] || die "$ARGV[0] not found! :(";
 open NEWLOG,'>'.$templog || die "Cannot create temp file ($templog)! :(";
 
 while (<OLDLOG>)
 {
-    if (/\A----------\s+\S+\s+(\d+)\s+(\w+)\s+(\d+)/)
+   if (/\A----------\s+\S+\s+(\d+)\s+(\w+)\s+(\d+)/)
    {
-    $lday=$1;
-    %monthnum = (
-    'Jan' => 0,
-    'Feb' => 1,
-    'Mar' => 2,
-    'Apr' => 3,
-    'May' => 4,
-    'Jun' => 5,
-    'Jul' => 6,
-    'Aug' => 7,
-    'Sep' => 8,
-    'Oct' => 9,
-    'Nov' => 10,
-    'Dec' => 11,);
-    $lmon=$monthnum{$2};
-    $lyear=$3+100;
-    $LDATE = timelocal(0,0,0,$lday,$lmon,$lyear);
-    if ($LDATE >= $SAVE) { print NEWLOG; $keepit = 1; } else {$keepit = 0};
-   }
-else { if ($keepit == 1) {print NEWLOG}};
+        my $lday=$1;
+        my %monthnum = (
+        'Jan' => 0,
+        'Feb' => 1,
+        'Mar' => 2,
+        'Apr' => 3,
+        'May' => 4,
+        'Jun' => 5,
+        'Jul' => 6,
+        'Aug' => 7,
+        'Sep' => 8,
+        'Oct' => 9,
+        'Nov' => 10,
+        'Dec' => 11,);
+        my $lmon=$monthnum{$2};
+        my $lyear=$3+100;
+        my $ldate = timelocal(0,0,0,$lday,$lmon,$lyear);
+        if ($ldate >= $save) { print NEWLOG; $keepit = 1; }
+        else {$keepit = 0};
+    }
+    else { if ($keepit == 1) {print NEWLOG}};
 }
 
 %monthnum = (
