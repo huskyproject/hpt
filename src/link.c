@@ -73,23 +73,34 @@ struct msginfo {
    short freeReply;
    char relinked;
    UMSGID replyto, replynext;
+   UMSGID replies[MAX_REPLY];
+};
+
+struct hashinfo {
+   dword crc;
+   int idx;
 };
 
 typedef struct msginfo s_msginfo;
 unsigned long strcrc32(char *, unsigned long);
 
-static s_msginfo *findMsgId(s_msginfo *entries, dword msgsNum, char *msgId)
+static s_msginfo *findMsgId(s_msginfo *entries, struct hashinfo *hash, dword hashSize, char *msgId, int add)
 {
 	unsigned long h, d = 1;
-	h = strcrc32(msgId, 0xFFFFFFFFL); /* TODO: Maybe find a better hashing function */
-	while (d < msgsNum) {
-		h %= msgsNum;
-		if (entries[h].msgId == NULL)
+	dword crc;
+	h = crc = strcrc32(msgId, 0xFFFFFFFFL); /* TODO: Maybe find a better hashing function */
+	while (d < hashSize) {
+		h %= hashSize;
+		if (hash[h].idx == 0) {
 			/* Found free entry */
-			return &(entries[h]);
-		if (!strcmp(entries[h].msgId, msgId)) {
+			if (!add) return NULL;
+			hash[h].idx = add;
+			hash[h].crc = crc;
+			return &(entries[add-1]);
+		}
+		if (hash[h].crc == crc && !strcmp(entries[hash[h].idx-1].msgId, msgId)) {
 			/* Found it ! */
-			return &(entries[h]);
+			return &(entries[hash[h].idx-1]);
 		} else {
 			/* Collision, resolve it */
 			h++; 
@@ -121,9 +132,9 @@ int linkArea(s_area *area, int netMail)
    XMSG  xmsg;
    s_msginfo *msgs;   
    dword msgsNum, hashNums, i, ctlen, cctlen;
+   struct hashinfo *hash;
    byte *ctl;
    char *msgId;
-   dword *num2hidx;
 
    s_msginfo *curr;
 
@@ -154,10 +165,10 @@ int linkArea(s_area *area, int netMail)
 #endif
 
       hashNums = msgsNum + msgsNum / 10 + 10;
-      msgs = safe_malloc(hashNums * sizeof(s_msginfo));
-      memset(msgs, '\0', hashNums * sizeof(s_msginfo));
-      num2hidx = safe_malloc(msgsNum * sizeof(*num2hidx));
-      memset(num2hidx, '\0', msgsNum * sizeof(*num2hidx));
+      hash = safe_malloc(hashNums * sizeof(*hash));
+      memset(hash, '\0', hashNums * sizeof(*hash));
+      msgs = safe_malloc(msgsNum * sizeof(s_msginfo));
+      memset(msgs, '\0', msgsNum * sizeof(s_msginfo));
       ctl = (byte *) safe_malloc(ctlen = 1); /* Some libs don't accept relloc(NULL, ..
 					 * So let it be initalized
 					 */
@@ -200,7 +211,7 @@ int linkArea(s_area *area, int netMail)
 		MsgCloseMsg(hmsg);
 		continue;
 	 };
-	 curr = findMsgId(msgs, hashNums, msgId);
+	 curr = findMsgId(msgs, hash, hashNums, msgId, i);
 	 if (curr == NULL) {
  		writeLogEntry(hpt_log, '6', "hash table overflow. Tell it to the developers !"); 
 		// try to free as much as possible
@@ -223,25 +234,25 @@ int linkArea(s_area *area, int netMail)
          curr -> msgPos  = MsgMsgnToUid(harea, i);
 	 curr -> freeReply = 0;
          curr -> relinked = 0;
-         curr -> replyto = curr -> xmsg -> replyto;
-         curr -> replynext = curr -> xmsg -> replynext;
-         curr -> xmsg -> replyto = curr -> xmsg -> replynext = 0;
-         num2hidx[i-1] = curr-msgs;
+         curr -> replyto = curr -> replynext = 0;
       }
+
       /* Pass 2nd : going from the last msg to first search for reply links and
         build relations*/
-      for (i = 0; i < hashNums; i++) {
+      for (i = 0; i < msgsNum; i++) {
 	      if (msgs[i].msgId != NULL && msgs[i].replyId != NULL) {
-		      curr = findMsgId(msgs, hashNums, msgs[i].replyId);
+		      curr = findMsgId(msgs, hash, hashNums, msgs[i].replyId, 0);
+		      if (curr == NULL) continue;
 		      if (curr -> msgId == NULL) continue;
 		      if (curr -> freeReply < MAX_REPLY) {
+		      	      curr -> replies[curr -> freeReply] = i;
 			      if (curr -> xmsg -> replies[curr -> freeReply] != msgs[i].msgPos) {
 				      curr -> xmsg -> replies[curr -> freeReply] = msgs[i].msgPos;
 				      if ((area->msgbType & MSGTYPE_SQUISH) || curr->freeReply == 0)
 					    curr -> relinked = 1;
 			      }
 			      if (curr -> freeReply && (area->msgbType & MSGTYPE_JAM)) {
-				  int replyprev = num2hidx[MsgUidToMsgn(harea, curr -> xmsg -> replies[curr -> freeReply - 1], UID_EXACT)-1];
+				  int replyprev = curr -> replies[curr -> freeReply - 1];
 				  msgs[replyprev].replynext = msgs[i].msgPos;
 				  if (msgs[replyprev].xmsg -> replynext != msgs[i].msgPos) {
 				      msgs[replyprev].xmsg -> replynext = msgs[i].msgPos;
@@ -261,7 +272,7 @@ int linkArea(s_area *area, int netMail)
 	      }
       }
       /* Pass 3rd : write information back to msgbase */
-      for (i = 0; i < hashNums; i++) {
+      for (i = 0; i < msgsNum; i++) {
 	if (msgs[i].msgId != NULL) {
 		int j;
 		for (j=0; j<MAX_REPLY && msgs[i].xmsg->replies[j]; j++);
@@ -272,6 +283,8 @@ int linkArea(s_area *area, int netMail)
 		    (msgs[i].freeReply == 0 && j)) {
 			if (msgs[i].freeReply<MAX_REPLY)
 				msgs[i].xmsg->replies[msgs[i].freeReply] = 0;
+			msgs[i].xmsg->replyto = msgs[i].replyto;
+			msgs[i].xmsg->replynext = msgs[i].replynext;
 			MsgWriteMsg(msgs[i].msgh, 0, msgs[i].xmsg, NULL, 0, 0, 0, NULL);
 		}
 	        MsgCloseMsg(msgs[i].msgh);
@@ -284,7 +297,7 @@ int linkArea(s_area *area, int netMail)
       }
       /* close everything, free all allocated memory */
       nfree(msgs);
-      nfree(num2hidx);
+      nfree(hash);
       nfree(ctl);
       MsgCloseArea(harea);
    } else {
