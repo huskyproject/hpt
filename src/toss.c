@@ -1184,7 +1184,7 @@ int carbonCopy(s_message *msg, s_area *echo)
 			break;
 
         case ct_subject:
-            result=!stricmp(msg->subjectLine,cb->str);
+            result=(NULL!=hpt_stristr(msg->subjectLine,cb->str));
             break;
 
         case ct_msgtext:
@@ -1216,11 +1216,19 @@ int carbonCopy(s_message *msg, s_area *echo)
             break;
 
         case ct_group:
-            if(echo->group!=NULL)
+            if(echo->group!=NULL){
 				/* cb->str for example Fido,xxx,.. */
-                result=(NULL!=hpt_stristr(echo->group,cb->str));
+                testptr=cb->str;
+                do{
+                    if(NULL==(testptr=hpt_stristr(echo->group,testptr)))
+                        break;
+                    testptr+=strlen(echo->group);
+                    result=(*testptr==',' || *testptr==' ' || !*testptr);
+                    testptr-=strlen(echo->group);
+                    ++testptr;
+                }while(!result);
+            }
             break;
-
         }
 
         if(cb->rule&CC_NOT) /* NOT on/off */
@@ -1238,7 +1246,9 @@ int carbonCopy(s_message *msg, s_area *echo)
                     if (cb->areaName && cb->move!=2)
                         if (!processCarbonCopy(area,echo,msg,*cb))
                             rc &= 1;
-                if (config->carbonAndQuit) return rc;
+                if (config->carbonAndQuit)
+                    if(*cb->areaName!='*' || cb->move==2) /* not skip quit or delete */
+                        return rc;
             }
             break;
         case CC_AND: /* AND */

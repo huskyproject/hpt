@@ -2599,6 +2599,16 @@ subject line carbons to each @code{EchoArea}.
 If you turn on @code{CarbonAndQuit} message will be copyed to MY.MAIL
 only.
 
+It is however possible to override this setting, by putting an '*'
+before the action:
+@example
+     CarbonCopy *my.mail
+     CarbonMove *my.mail
+     CarbonExtern *<command line>
+@end example
+
+This '*' does not work for CarbonDelete of course.     
+
 This statement cannot be repeated.
 
 @node CarbonCopy, CarbonDelete, CarbonAndQuit, Carbon Copy
@@ -2699,7 +2709,7 @@ an area are copied.
 Another example:
 @example
 CarbonFromArea Interuser
-CarbonRule AND
+CarbonRule NOT
 CarbonText Israel
 CarbonCopy my.news
 @end example
@@ -2831,17 +2841,17 @@ carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
 @code{carbonRule AND|NOT|OR}
 @item Example:
 @code{carbonGroups fido}
-@item
 @code{carbonRule AND}
-@item
 @code{carbonText programming}
-@item
 @code{carbonCopy my.echomail}
 @end table
 
 With this keyword you can make it possible to have more than 1 selection
-criteria for a message. With Carbonrule AND, the two expressions above and
-below the AND must be true or else a message will not be copied.
+criteria for a message. The defaultrule is AND. So without using CarbonRule,
+all expressions will be AND-ed.
+With Carbonrule AND, the two expressions above and below the AND must be 
+true or else a message will not be copied.
+With Carbonrule you can define how the expressions are joined together.
 
 CarbonRule NOT, is in fact AND NOT. So
 
@@ -2862,19 +2872,34 @@ For example:
         CarbonText female
         CarbonRule NOT
         CarbonText connector
+        CarbonRule OR
         CarbonSubj beer
         CarbonRule AND
         CarbonText drink
         CarbonText holliday
         CarbonCopy my.mail
 @end example
-Here are three sets of criteria and for all of them there is only 1 carbonarea
-defined.
+Here are two sets of criteria and for all of them there is only 1 carbonarea
+defined. After an OR, a new set of expressions start.
+The above example can also be written as:
+@example
+        CarbonRule NOT
+        CarbonText connector
+        CarbonRule AND
+        CarbonText female
+        CarbonRule OR
+        CarbonRule AND
+        CarbonSubj beer
+        CarbonText drink
+        CarbonText holliday
+        CarbonCopy my.mail
+@end example
 
-When there is no carbonrule given, a set of criterera ends and a new set
-starts.
-In other words, when no carbonRule is given, the default carbonRule OR will 
-be used. 
+Messages that have 'female' in the text, but not the word 'connector',
+will be copied to the my.mail area.
+
+Also messages with 'beer' in the text AND 'drink' in the text AND 'holliday' 
+in the text, will be copied to the my.mail area.
 
 A set of expressions is true when they are OR-ed and at least one
 of them is true.
@@ -2883,6 +2908,10 @@ A set of expressions is true when they are AND-ed and ALL of them are true.
 Expressions are evaluated from top to bottom.
 
 This statement can be repeated.
+
+A CarbonRule is valid until a next rule is defined of until an action.
+After an action (carbonCopy, carbonMove etc), the carbonrule is AND again.
+
 
 @node CarbonSubj, CarbonText, CarbonRule, Carbon Copy
 @subsection CarbonSubj
