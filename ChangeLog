@@ -1,3 +1,8 @@
+2002-01-01 Tuesday 12:42  ml
+
+	* src/hptlink.c (1.30): ignore domains in MSGID & REPLY when
+	linking with hptlink
+
 2001-12-29 Saturday 16:07  pavel.gulchouck
 
 	* misc/filter.pl (1.6): hub & region routing bugfix
