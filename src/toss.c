@@ -982,7 +982,10 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
                 if (ccrc <= 1) {
                     echo->imported++;  /*  area has got new messages */
                     if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-                        rc = putMsgInArea(echo, messCC, 1, forceattr);
+                        if(messCC)
+                            rc = putMsgInArea(echo, messCC, 1, forceattr);
+                        else
+                            rc = putMsgInArea(echo, msg, 1, forceattr);
                         statToss.saved += rc;
                     }
                     else { /*  passthrough */
@@ -998,8 +1001,10 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
                         rc = 1;
                     }
                 } else rc = 1; /*  normal exit for carbon move & delete */
-                freeMsgBuffers(messCC);
-                nfree(messCC);
+                if(messCC) {
+                    freeMsgBuffers(messCC);
+                    nfree(messCC);
+                }
             } else {
                 /*  msg is dupe */
                 if (echo->dupeCheck == dcMove) {
