@@ -1,3 +1,19 @@
+2002-09-09 Monday 19:40  pgul
+
+	* src/link.c (1.58): Enabled MAX_INCORE again (with bugfix)
+
+2002-09-09 Monday 10:45  pgul
+
+	* src/scanarea.c (1.90): Fixed compiler warning
+
+2002-09-09 Monday 10:42  pgul
+
+	* h/hptperl.h (1.8): Fix compiler warning
+
+2002-09-09 Monday 10:37  pgul
+
+	* src/perl.c (1.39): Logging dest addr after perl hook fixed
+
 2002-09-05 Thursday 08:26  mche
 
 	* src/scanarea.c (1.89): fix MSGAPI function usage
