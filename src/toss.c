@@ -1270,17 +1270,17 @@ int carbonCopy(s_message *msg, s_area *echo)
             break;
 
         case ct_kludge:
-			kludge = (char *) GetCtrlToken(msg->text, (byte *)cb->str);
-			result = (kludge!=NULL);
-			nfree(kludge);
-			break;
+	    kludge = (char *) GetCtrlToken(msg->text, (byte *)cb->str);
+	    result = (kludge!=NULL);
+	    nfree(kludge);
+	    break;
 
         case ct_subject:
             result=(NULL!=hpt_stristr(msg->subjectLine,cb->str));
             break;
 
         case ct_msgtext:
-			/* skip area: kludge */
+	    /* skip area: kludge */
             testptr=msg->text+6+strlen(echo->areaName);
             while(testptr!=NULL){
                 testptr=hpt_stristr(testptr,cb->str);
@@ -1289,7 +1289,7 @@ int carbonCopy(s_message *msg, s_area *echo)
                     /* means that it is a kludge           */
                     testptr2=testptr;   /* remind position */
                     while(*--testptr!='\12'); /* not LF    */
-					/* (skipped) area: kludge prevents going back too far :) */
+		    /* (skipped) area: kludge prevents going back too far :) */
                     if(*++testptr=='\1') /* was a kludge   */
                         testptr=testptr2+strlen(cb->str);
                     else

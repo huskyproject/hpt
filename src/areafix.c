@@ -675,53 +675,51 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 }
 
 int areaIsAvailable(char *areaName, char *fileName, char **desc, int retd) {
-	FILE *f;
-	char *line, *token, *running;
+    FILE *f;
+    char *line, *token, *running;
 
-        if (fileName==NULL || areaName==NULL) return 0;
+    if (fileName==NULL || areaName==NULL) return 0;
 	
-	if ((f=fopen(fileName,"r")) == NULL)
-		{
-			w_log('8',"areafix: cannot open file \"%s\"",fileName);
-			return 0;
-		}
+    if ((f=fopen(fileName,"r")) == NULL) {
+	w_log('8',"areafix: cannot open file \"%s\"",fileName);
+	return 0;
+    }
 	
-	while ((line = readLine(f)) != NULL) {
-		line = trimLine(line);
-		if (line[0] != '\0') {
-			
-			running = line;
-			token = strseparate(&running, " \t\r\n");
+    while ((line = readLine(f)) != NULL) {
+	line = trimLine(line);
+	if (line[0] != '\0') {
 
-			if (token && areaName && stricmp(token, areaName)==0) {
-				// return description if needed
-				if (retd) {
-					*desc = NULL;
-					if (running) {
-						//strip "" at the beginning & end
-						if (running[0]=='"' && running[strlen(running)-1]=='"') {
-							running++; running[strlen(running)-1]='\0';
-						}
-						//change " -> '
-						token = running;
-						while (*token!='\0') {
-							if (*token=='"') *token='\'';
-							token++;
-						}
-						xstrcat(&(*desc), running);
-					}
-				}
-				nfree(line);
-				fclose(f);
-				return 1;
-			}			
+	    running = line;
+	    token = strseparate(&running, " \t\r\n");
+
+	    if (token && areaName && stricmp(token, areaName)==0) {
+		// return description if needed
+		if (retd) {
+		    *desc = NULL;
+		    if (running) {
+			//strip "" at the beginning & end
+			if (running[0]=='"' && running[strlen(running)-1]=='"') {
+			    running++; running[strlen(running)-1]='\0';
+			}
+			//change " -> '
+			token = running;
+			while (*token!='\0') {
+			    if (*token=='"') *token='\'';
+			    token++;
+			}
+			xstrcat(&(*desc), running);
+		    }
 		}
 		nfree(line);
-	}	
-	
-	// not found
-	fclose(f);
-	return 0;
+		fclose(f);
+		return 1;
+	    }			
+	}
+	nfree(line);
+    }	
+    // not found
+    fclose(f);
+    return 0;
 }
 
 static int compare_links_priority(const void *a, const void *b) {

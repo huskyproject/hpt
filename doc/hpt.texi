@@ -2754,6 +2754,8 @@ echomail is copied to the area specified by the @code{CarbonCopy}
 keyword or moved to the area specified by the @code{CarbonMove} keyword.
 The names must be an exact match.
 
+You can use traling "" in <string>.
+
 This statement can be repeated.
 
 @node CarbonFromArea, CarbonGroups, CarbonFrom, Carbon Copy
@@ -2776,7 +2778,7 @@ Another example:
 @example
 CarbonFromArea Interuser
 CarbonRule NOT
-CarbonText Israel
+CarbonText " Israel "
 CarbonCopy my.news
 @end example
 
@@ -2834,6 +2836,11 @@ This statement cannot be repeated.
 If an echomail is tossed which has a kludge line which includes the
 <kludge-string> as a substring, the echomail is copied to the area
 specified by the @code{CarbonCopy} keyword.
+
+You can use traling "" in <kludge-substring>.
+@example
+carbonKludge "REPLY: 2:5000/117 "
+@end example
 
 This statement can be repeated.
 
@@ -2995,6 +3002,8 @@ If an echomail is tossed which has a subject line which includes the
 <subj-string> as a substring, this echomail is copied to the area
 specified by the @code{CarbonCopy} keyword.
 
+You can use traling "" in <subj-substring>.
+
 This statement can be repeated.
 
 @node CarbonText, CarbonTo, CarbonSubj, Carbon Copy
@@ -3013,6 +3022,8 @@ If an echomail is tossed which has a kludge line which includes the
 <text-string> as a substring, he echomail is copied to the area
 specified by the @code{CarbonCopy} keyword.
 
+You can use traling "" in <text-substring>.
+
 This statement can be repeated.
 
 @node CarbonTo, ExcludePassthroughCarbon, CarbonText, Carbon Copy
@@ -3030,6 +3041,8 @@ This statement can be repeated.
 If an echomail is tossed whose to-field is the same as <string>, the
 echomail is copied to the area specified by the @code{CarbonCopy}
 keyword. The names must be an exact match.
+
+You can use traling "" in <string>.
 
 This statement can be repeated.
 
