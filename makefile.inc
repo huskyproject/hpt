@@ -17,7 +17,7 @@ OBJS    = fcommon$(OBJ) hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) log$(OBJ) \
           post$(OBJ) link$(OBJ) strsep$(OBJ) $(PERLOBJ)
 
 
-all: $(OBJS) \
+commonall: $(OBJS) \
      pktinfo$(EXE) \
      tpkt$(EXE) \
      txt2pkt$(EXE) \
