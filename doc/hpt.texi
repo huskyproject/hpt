@@ -2931,23 +2931,34 @@ Options:
 
 @table @asis
 @item -lr <integer>
-required level for read access (see also @code{Level} in link options)
+required level for read access (see also @code{Level} in link options);
+@code{integer} can't be negative;
 @item -lw <integer>
-required level for write access
+required level for write access; @code{integer} can't be negative;
 @item -mandatory
-forbid to unsubscribe from this echo
+forbid to unsubscribe from this echo;
+@item -noMandatory
+enable unsubscribe from this echo if echoareadefaults set @code{-mandatory};
 @item -manual
-disallow remote subscribe (only manual connect).
+disallow remote subscribe (only manual connect);
+@item -noManual
+allow remote subscribe (using netmail to areafix) if echoareadefaults set @code{-manual};
 @item -p <integer>
-purge after n days: used by purging utilities like sqpack (*)
+purge after n days: used by purging utilities like sqpack (*); default value is 0;
 @item -$m <integer>
-leave max n messages after purge in area (*)
-@item -nopack
-Do not purge or pack area (overwrites -p & -$m) (*)
+leave max n messages after purge in area (*); default value is 0;
+@item -noPack
+do not purge or pack area (overwrites -p & -$m) (*)
+@item -pack
+enable purge or pack area (*) if echoareadefaults set @code{-noPack};
 @item -killRead
 kill read msgs in area on purging (*)
+@item -noKillRead
+disable kill read msgs in area on purging (*) if echoareadefaults set @code{-killRead};
 @item -keepUnread
 keep unread msgs in area on purging (*)
+@item -nokeepUnread
+do not keep unread msgs in area on purging (*) if echoareadefaults set @code{-keepUnread};
 @item -a <addr>
 aka to use (first address from config if not defined)
 @item -b <msgbase type>
@@ -2955,37 +2966,55 @@ type of msgbase (Msg, Squish, Jam) (*)
 @item -g <group>
 group for this echoarea
 @item -keepsb
-keep seen-bys (used in CarbonCopy)
+keep seen-by kludges (used in CarbonCopy)
+@item -nokeepsb
+do not keep seen-by kludges (used in CarbonCopy) if echoareadefaults set @code{-keepsb};
 @item -tinysb
 no seen-by kludges stores in message base (*)
+@item -notinysb
+seen-by kludges stores in message base (*) if echoareadefaults set @code{-tinysb};
 @item -killsb
 no seen-by & path kludges stores in message base (*)
+@item -nokillsb
+seen-by & path kludges stores in message base (*) if echoareadefaults set @code{-killsb};
 @item -dosfile
 file name of area is in dos style (8+3). Please be aware of the fact that
 this will currently automatically disable the autoAreaCreateSubdirs feature.
-@item -h
-hide area
+@item -nodosfile
+file name of area is in long filename style if echoareadefaults set @code{-dosfile};
+@item -hide
+hide area in areafix reports (%list & etc.);
+@item -nohide
+show area in areafix reports (%list & etc.) if disabled in echoareadefaults;
 @item -d "Description for the area between double quote (like this)"
-describe area
+describe area (for areafix reports & etc.);
 @item -nopause
-%PAUSE has no effect to this area
+%PAUSE has no effect to this area;
+@item -pause
+%PAUSE has effect to this area if disabled in echoareadefaults;
 @item -ccoff
-disables carbonCopies for this area
+disables carbonCopies for this area;
+@item -noccoff or -ccon
+enables carbonCopies for this area if disabled in echoareadefaults;
 @item -DupeCheck off|move|del
 toss dupes, move dupes to @code{DupeArea} or delete dupes.
 @item -DupeHistory <unsignedInteger>
-size of dupecheck history file in days (7 days if not defined)
+size of dupecheck history file in days (7 days if not defined);
 @item -nolink
-disables reply-linking for this area (*)
+disables reply-linking for this area (*);
+@item -link
+enables reply-linking for this area (*) if disabled in echoareadefaults;
 @item -debug
 write debug info about this area to areaname.dbg (or common.dbg if "-dosfile" is used)
+@item -nodebug
+disable debug output if defined in echoareadefaults;
 @item -sbadd(<addr2D>,...)
-add seen-by(s)
+add seen-by(s) at tossing time;
 @item -sbign(<addr2D>,...)
-ignore seen-by(s) and toss mail to link(s)
+ignore seen-by(s) and toss mail to link(s).
 @end table
 
-(*) - this tokens removs from @code{AutoAreaCreateDefaults} when
+(*) - this tokens remove from @code{AutoAreaCreateDefaults} when
 creating passthrough areas.
 
 LinkOptions:
