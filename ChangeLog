@@ -1,3 +1,7 @@
+2003-04-19 Saturday 10:03  mche
+
+	* misc/extrules.pl (1.2): CR LF --> LF
+
 2003-04-18 Friday 10:44  val_khokhlov
 
 	* src/perl.c (1.60): SvPV_nolen is replaced with SvPV for
