@@ -110,7 +110,7 @@ void exit_hpt(char *logstr, int print) {
     closeLog(hpt_log);
     disposeConfig(config);
     doneCharsets();
-    exit(1);
+    exit(EX_SOFTWARE);
 }
 
 int createLockFile(char *lockfile) {

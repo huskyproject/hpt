@@ -1,13 +1,48 @@
 .TH HPTTREE 1 "08 Jan 2000"
 .SH NAME
 hpttree \- area distribution tree builder for hpt
-.SH SYNTAX
+.SH SYNOPSIS
 .B hpttree
 [\-p] [areaname ...]
+
+.SH DESCRIPTION
+hpttree scan areas bases and prints distribution tree of areas specified
+by arguments \fIareaname\fP.
+
+.SS Options
 .TP
 .B \-p
 toggle pseudographics mode. Default for UNIXs is do not use pseudographic
-character, and use that ones on other platforms
+character, and use that ones on other platforms.
 
-.SH DESCRIPTION
-hpttree prints distribution tree of areas specified by arguments \fIareaname\fP.
+
+.SH ENVIROMENT
+.B FIDOCONFIG
+.PP
+path/filename of the husky configuration file
+
+.SH FILES
+.I /some/path/config
+.B husky
+configuration file
+.PP
+.I /MsgBaseDir/<areabase>
+area base file or directory name
+
+.SH SEE ALSO
+.B hpt(1)
+.PP
+.B hpt
+site:
+.I http://husky.physcip.uni-stuttgart.de/hpt.html
+
+.SH AUTORS
+.B Serguei Revtov
+2:5021/11.10@FIDOnet or 2:5021/19.1@FIDOnet
+
+.B The Husky Team:
+
+.I http://husky.physcip.uni-stuttgart.de/team.html
+.TP
+and some other peoples in the world.
+

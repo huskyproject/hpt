@@ -581,6 +581,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    char *origin;
 #endif
 
+   // WARNING: broken pkts may be lost!
    if (2 != getUINT16(pkt)) {
 	   *message = NULL;
 	   return 0;              /* end of pkt file */

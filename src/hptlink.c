@@ -278,13 +278,13 @@ void linkArea(s_area *area)
 	   if ( (replmap = (s_msginfo *) calloc (highMsg, sizeof(s_msginfo))) == NULL){
 	      if (loglevel>0) fprintf(outlog,"Out of memory. Want %ld bytes\n",  (long) sizeof(s_msginfo)*highMsg);
 	      MsgCloseArea(harea);
-	      exit(-1);
+	      exit(EX_SOFTWARE);
 	   }
 
 	   if ( (links = (s_origlinks *) calloc (highMsg, sizeof(s_origlinks))) == NULL){
 	      if (loglevel>0) fprintf(outlog,"Can't get %ld bytes\n",  (long) sizeof(s_origlinks)*highMsg);
 	      MsgCloseArea(harea);
-	      exit(-1);
+	      exit(EX_SOFTWARE);
 	   }
 
 	   /* Pass 1: read all message information in memory */
@@ -306,7 +306,7 @@ void linkArea(s_area *area)
 		      if (ctl == NULL) {
 			if ( loglevel > 0) fprintf(outlog,"out of memory while linking on msg %ld\n", (long) i);
 			MsgCloseArea(harea);
-			exit(-1);
+			exit(EX_SOFTWARE);
 		      }
 
 		      ctlen_curr = ctlen + 1;
@@ -500,7 +500,7 @@ void linkArea(s_area *area)
 		 linkTo = (replmap[crepl -> treeId -1 ]).treeId;
 		 if (linkTo > highMsg || linkTo <= 0 ) {
 		    if ( loglevel > 5) fprintf(outlog,"\nProgramming error 1 while linking linkTo=%ld\n", (long)linkTo);
-		    exit(-1);
+		    exit(EX_SOFTWARE);
 		 }
 
                  if (maxreply == MAX_REPLY) { // Find place to put link for Squish
@@ -508,7 +508,7 @@ void linkArea(s_area *area)
                        linkTo = MsgUidToMsgn(harea,(replmap[linkTo-1]).replies[0], UID_EXACT );
                        if (linkTo > highMsg || linkTo <= 0 ) {
                           if ( loglevel > 5) fprintf(outlog,"\nProgramming error 2 while linking linkTo=%ld\n", (long)linkTo);
-                          exit(-1);
+                          exit(EX_SOFTWARE);
                        }
                     }
                  }
@@ -636,13 +636,13 @@ int main(int argc, char **argv) {
 
 	       if ( argv[i] == NULL || argv[i][0] == '\0') {
 		  usage();
-		  exit(-1);
+		  exit(EX_USAGE);
 	       }
 
 	       sscanf ( argv[i], "%d", &loglevel);
 	       if ( loglevel < 0 ) {
 		  usage();
-		  exit(-1);
+		  exit(EX_USAGE);
 	       }
 	     break;
 	     case 'n': /* link with 'new' messages only */
@@ -651,7 +651,7 @@ int main(int argc, char **argv) {
 		break;
 	     default:
 		usage();
-		exit(-1);
+		exit(EX_USAGE);
 	  }
      } else {
        // AreaName(s) specified by args
@@ -674,7 +674,7 @@ int main(int argc, char **argv) {
    m.def_zone = (UINT16) cfg->addr[0].zone;
    if (MsgOpenApi(&m)!= 0) {
       if ( loglevel > 0) fprintf(outlog, "MsgOpenApi Error.\n");
-      exit(1);
+      exit(EX_SOFTWARE);
    }
 
    if ( argareas )

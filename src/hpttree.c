@@ -365,18 +365,18 @@ int main(int argc, char **argv) {
                 i++;
                 if ( !argv[i] ) {
                    usage();
-                   exit(-1);
+                   exit(EX_USAGE);
                 }
 		tperiod = atoi(argv[i]);
                 if ( tperiod <=0 ) {
                    usage();
-                   exit(-1);
+                   exit(EX_USAGE);
                 }
 		break;
 
 	     default:
 		usage();
-		exit(-1);
+		exit(EX_USAGE);
 	  }
      } else {
        // AreaName(s) specified by args
