@@ -1,3 +1,11 @@
+2002-02-15 Friday 12:54  ml
+
+	* src/perl.c (1.16.2.1): s_addr -> hs_addr for perl.c compilation
+
+2002-02-15 Friday 12:36  ml
+
+	* make/makeperl.mvc (1.2.2.1): PERL_DIR variable added
+
 2002-02-10 Sunday 08:30  ml
 
 	* src/global.c (1.38.2.3): set pre2 version
