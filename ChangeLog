@@ -1,3 +1,19 @@
+2002-01-31 Thursday 16:12  mche
+
+	* src/areafix.c (1.256): - added unsubscribinfg from own address
+
+2002-01-31 Thursday 11:22  ml
+
+	* src/getfree.c (1.15): updates to my prev. modifycations
+
+2002-01-31 Thursday 10:50  ml
+
+	* src/getfree.c (1.14): define for msdos
+
+2002-01-31 Thursday 07:22  ml
+
+	* src/areafix.c (1.255): remove warning
+
 2002-01-30 Wednesday 10:24  ml
 
 	* src/areafix.c (1.254): do not forward request to area with no
