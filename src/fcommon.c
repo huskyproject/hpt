@@ -316,9 +316,9 @@ int createTempPktFileName(s_link *link)
 		// separate bundles
 		if (config->separateBundles) {
 			if (link->hisAka.point) xscatprintf(&tmp, "%08x.sep%c",
-												link->hisAka.point, limiter);
+							link->hisAka.point, limiter);
 			else xscatprintf(&tmp, "%04x%04x.sep%c", link->hisAka.net,
-							 link->hisAka.node, limiter);
+							link->hisAka.node, limiter);
 		}
 	}
 
@@ -327,23 +327,26 @@ int createTempPktFileName(s_link *link)
     /* bundle file name */
     switch ( bundleNameStyle ) {
 
+    case eAddrsCRC32:
     case eAddrDiff:
     case eAddrDiffAlways:
-
-/*		if ( link->hisAka.point == 0 && config->addr[0].point == 0) {
-			xscatprintf (&tmp, "%04hx%04hx.",
-						 config->addr[0].net - link->hisAka.net,
-						 config->addr[0].node - link->hisAka.node);
-		} else {
-			xscatprintf (&tmp, "%04hx%04hx.",
-						 config->addr[0].node - link->hisAka.node,
-						 config->addr[0].point- link->hisAka.point);
-		}
-*/
-                xscatprintf( &tmp2, "hpt %s ", aka2str(config->addr[0]) );
-		xstrcat( &tmp2, aka2str(link->hisAka) );
-		xscatprintf(&tmp,"%08x.", strcrc32(tmp2,0xFFFFFFFFUL) );
-		w_log(LL_FILENAME, "bundle name generating: %s", tmp);
+                if( bundleNameStyle == eAddrsCRC32 ) {
+                  xscatprintf( &tmp2, "hpt %s ", aka2str(config->addr[0]) );
+  	          xstrcat( &tmp2, aka2str(link->hisAka) );
+                  xscatprintf(&tmp,"%08x.", strcrc32(tmp2,0xFFFFFFFFUL) );
+                  nfree(tmp2);
+                } else {
+                  if ( link->hisAka.point == 0 && config->addr[0].point == 0) {
+                    xscatprintf (&tmp, "%04hx%04hx.",
+                                 config->addr[0].net - link->hisAka.net,
+                                 config->addr[0].node - link->hisAka.node);
+                  } else {
+                    xscatprintf (&tmp, "%04hx%04hx.",
+                                 config->addr[0].node - link->hisAka.node,
+                                 config->addr[0].point- link->hisAka.point);
+                  }
+                }
+                w_log(LL_FILENAME, "bundle name generating: %s", tmp);
 
     case eAmiga:
                 npos = strlen(tmp);
@@ -368,9 +371,9 @@ int createTempPktFileName(s_link *link)
 					// today's bundle
 					counter = i+1;
 					if (stbuf.st_size==0 && (counter<numExt ||
-											 bundleNameStyle==eAddrDiffAlways ||
-											 bundleNameStyle==eAmiga))
-						remove (pfileName);
+      					    bundleNameStyle==eAddrDiffAlways ||
+      					    bundleNameStyle==eAmiga))
+					   remove (pfileName);
 				} else {
 					// old bundle
 					if (stbuf.st_size == 0)	remove (pfileName);

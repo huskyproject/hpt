@@ -567,7 +567,7 @@ This statement cannot be repeated.
 @findex BundleNameStyle
 @table @asis
 @item Syntax:
-@code{bundleNameStyle <timeStamp | addrDiff | addrDiffAlways | Amiga>}
+@code{bundleNameStyle <timeStamp | addrDiff | addrsCRC32 | addrDiffAlways | Amiga>}
 @item Example:
 @code{bundleNameStyle timeStamp}
 @end table
@@ -581,6 +581,11 @@ some kind of random names (current time + some counter).
 create name from difference of source and destination addreses. Always
 the same filename for every pair of links. Automatically  switched to
 @code{timeStamp} when all alowed extensions were used.
+@item addrsCRC32
+create name from CRC32 of string composed from "hpt", source and destination
+addreses. Always the same filename for every pair of links, very unique.
+Automatically switched to @code{timeStamp} when all alowed extensions were
+used.
 @item addrDiffAlways
 the same as addrDiff but tryes to use lower free numbers of extension in
 case when all higher numbers are already busy.

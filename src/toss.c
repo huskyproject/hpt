@@ -144,7 +144,7 @@ static char *get_filename(char *pathname)
         ptr++;
 
     return ptr;
-}   
+}
 
 /*
  * Find the first occurrence of find in s ignoring case
@@ -184,7 +184,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
         w_log(LL_ERR, "Can't put message to passthrough area %s!", echo->areaName);
         return rc;
     }
-      
+
     if (!msg->netMail) {
 	msg->destAddr.zone  = echo->useAka->zone;
 	msg->destAddr.net   = echo->useAka->net;
@@ -196,7 +196,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 
     if (echo->harea == NULL) {
     w_log( LL_SRCLINE, "%s:%d opening %s", __FILE__, __LINE__,echo->fileName);
-	echo->harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, 
+	echo->harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC,
 			/*echo->fperm, echo->uid, echo->gid,*/
 			(word)(echo->msgbType | (msg->netMail ? 0 : MSGTYPE_ECHO)));
 	if (echo->harea) nopenpkt+=3;
@@ -259,7 +259,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
         w_log( LL_SRCLINE, "%s:%d writing msg", __FILE__, __LINE__);
 	    if (MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword)
 			    textLength, (dword) textLength,
-			    (dword)strlen(ctrlBuff), (byte*)ctrlBuff)!=0) 
+			    (dword)strlen(ctrlBuff), (byte*)ctrlBuff)!=0)
 		w_log(LL_ERR, "Could not write msg in %s!", echo->fileName);
 	    else rc = 1; // normal exit
 
@@ -269,7 +269,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 		rc = 0;
 	    }
 	    nfree(ctrlBuff);
-       
+
 	} else w_log(LL_ERR, "Could not create new msg in %s!", echo->fileName);
 	/* endif */
 	if (nopenpkt>=maxopenpkt-12) {
@@ -355,7 +355,7 @@ void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, 
 		(*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
 	    }
 	} else if (strcmp(token,"SEEN-BY:")!=0) break; // not digit and not SEEN-BY
-	   
+	
 	token = strtok(NULL, " \r\t\376");
     } // end while
 
@@ -471,7 +471,7 @@ int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link,
     for (i=0; i < seenByCount; i++) {
 	if ((link->hisAka.net==seenBys[i].net) &&
 	    (link->hisAka.node==seenBys[i].node)) {
-		   
+		
 	    for (j=0; j < config->ignoreSeenCount; j++) {
 		if (config->ignoreSeen[j].net == seenBys[i].net &&
 		    config->ignoreSeen[j].node == seenBys[i].node) {
@@ -552,7 +552,7 @@ void closeOpenedPkt(void) {
 	    nopenpkt-=3;
     }
     for (i=0; i<config->localAreaCount; i++)
-    {        
+    {
         if (config->localAreas[i].harea) {
             w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,config->localAreas[i].fileName);
             MsgCloseArea(config->localAreas[i].harea);
@@ -574,7 +574,7 @@ void closeOpenedPkt(void) {
     }
 }
 
-void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks, 
+void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		    s_seenBy **seenBys, UINT *seenByCount,
 		    s_seenBy **path, UINT *pathCount) {
     unsigned  int i, rc=0;
@@ -591,7 +591,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		 (echo->DOSFile) ? "common" : echo->areaName,
 		 ".dbg", NULL);
 		
-	if (config->areasFileNameCase == eLower) 
+	if (config->areasFileNameCase == eLower)
 	    debug = strLower(debug);
 	else
 	    debug = strUpper(debug);
@@ -691,7 +691,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	if (start) *start='\0';
 	// find start of PATH in Msg
 	start = strstr(text, "\001PATH: ");
-	if (start) *start='\0'; 
+	if (start) *start='\0';
 	else start = text+strlen(text);
     }
     msg->textLength = (size_t) (start - msg->text);
@@ -791,7 +791,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 
     createSeenByArrayFromMsg(echo, msg, &seenBys, &seenByCount);
     createPathArrayFromMsg(msg, &path, &pathCount);
-   
+
     createNewLinkArray(seenBys, seenByCount, echo, &newLinks, &zoneLinks, pktOrigAddr);
 
     forwardToLinks(msg, echo, newLinks, &seenBys, &seenByCount, &path, &pathCount);
@@ -810,8 +810,8 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 #define HAVE_POPEN
 #endif
 
-int processExternal (s_area *echo, s_message *msg,s_carbon carbon) 
-{ 
+int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
+{
     FILE *msgfp = NULL;
     char *fname = NULL;
     char *progname = NULL, *execstr = NULL, *p = NULL;
@@ -839,8 +839,8 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
     fprintf(msgfp, "Date: \"%s\"\n", msg->datetime);
     fprintf(msgfp, "Subject: \"%s\"\n\n", msg->subjectLine);
     /* Output msg text */
-    for (p = msg->text; *p ; p++) 
-	if (*p == '\r') 
+    for (p = msg->text; *p ; p++)
+	if (*p == '\r')
 	    fputc('\n', msgfp);
 	else
 	    fputc(*p, msgfp);
@@ -926,7 +926,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
     xstralloc(&msg->text,i); // add i bytes
     strncat(msg->text,old_text,i); // copy rest of msg
     msg->textLength += i;
-    
+
     if (!export) {
 	if (msg->netMail) rc = putMsgInArea(area,msg,0,MSGSENT);
 	else rc = putMsgInArea(area,msg,0,0);
@@ -948,7 +948,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 
 
 /* Does carbon copying */
-/* Return value: 0 if nothing happend, 1 if there was a carbon copy, 
+/* Return value: 0 if nothing happend, 1 if there was a carbon copy,
    > 1 if there was a carbon move or carbon delete*/
 int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
 {
@@ -1047,7 +1047,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
 
         switch(cb->rule&CC_AND){ /* what operation with next result */
         case CC_OR: /* OR */
-            if (result && area && cb->move!=2 && !config->carbonAndQuit) { 
+            if (result && area && cb->move!=2 && !config->carbonAndQuit) {
                 /* check if we've done cc to dest area already */
                 for (ncop=0; ncop < copiedToCount && result; ncop++)
                     if (area == copiedTo[ncop]) result = 0;
@@ -1097,9 +1097,9 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
 int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 {
     char *tmp = NULL, *line = NULL, *textBuff=NULL, *areaName=NULL, *reason = NULL;
-    
+
     statToss.bad++;
-	 
+	
     // get real name area
     line = strchr(msg->text, '\r');
     if (strncmp(msg->text,"AREA:",5)==0) {
@@ -1109,19 +1109,19 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
     }
 
     switch (writeAccess) {
-    case 0: 
+    case 0:
 	reason = "System not allowed to create new area";
 	break;
-    case 1: 
+    case 1:
 	reason = "Sender not allowed to post in this area (access group)";
-	break; 
-    case 2: 
+	break;
+    case 2:
 	reason = "Sender not allowed to post in this area (access level)";
 	break;
-    case 3: 
+    case 3:
 	reason = "Sender not allowed to post in this area (access import)";
 	break;
-    case 4: 
+    case 4:
 	reason = "Sender not active for this area";
 	break;
     case 5:
@@ -1138,7 +1138,7 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 		break;
 	    case MERR_NOMEM: reason = "MSGAPIERR: Not enough memory for specified operation";
 		break;
-	    case MERR_NODS: 
+	    case MERR_NODS:
 		reason = "MSGAPIERR: Maybe not enough disk space for operation";
 		w_log(LL_ERR, "Maybe not enough disk space for operation\r");
 		break;
@@ -1197,7 +1197,7 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 	if (*(line+1) == '\x01') tmp = line+1;
 	else { tmp = line+1; *line = 0; break; }
     }
-	 
+	
     xstrscat(&textBuff, msg->text, "\rFROM: ", aka2str(pktOrigAddr), "\rREASON: ", reason, "\r", NULL);
 
     if (areaName) xscatprintf(&textBuff, "AREANAME: %s\r\r", areaName);
@@ -1219,29 +1219,29 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
     unsigned int i, netmail=0;
     char *buff=NULL;
     char *strbeg=NULL;
-    
+
     if (config->ReportTo) {
 	if (stricmp(config->ReportTo,"netmail")==0) netmail=1;
 	else if (getNetMailArea(config, config->ReportTo) != NULL) netmail=1;
     } else netmail=1;
 
     echo = getArea(config, areaName);
-    
+
     if (echo == &(config->badArea)) return;
-    
+
     for (i = 0; i < config->addrCount; i++) {
 	if (echo->useAka == &(config->addr[i])) {
 	    if (msgToSysop[i] == NULL) {
 
-		msgToSysop[i] = makeMessage(echo->useAka, 
-                                    echo->useAka, 
+		msgToSysop[i] = makeMessage(echo->useAka,
+                                    echo->useAka,
                                     versionStr,
-                                    netmail ? config->sysop : "All", "Created new areas", 
+                                    netmail ? config->sysop : "All", "Created new areas",
                                     netmail,
                                     config->areafixKillReports);
 		msgToSysop[i]->text = createKludges(
                                     config->disableTID,
-                                    netmail ? NULL : config->ReportTo, 
+                                    netmail ? NULL : config->ReportTo,
                                     echo->useAka, echo->useAka,
                                     versionStr);
 
@@ -1278,20 +1278,20 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
 		xstrscat(&(msgToSysop[i]->text), "\r", print_ch(79-strlen(buff), ' '), buff, "\r", NULL);
             } else if (strlen(strbeg) <62 && strlen(buff) < 79-62) { // most beautiful
 		xstrscat(&(msgToSysop[i]->text), print_ch(62-strlen(strbeg), ' '), buff, "\r", NULL);
-            } else { 
+            } else {
 		xstrscat(&(msgToSysop[i]->text), print_ch(79-strlen(strbeg)-strlen(buff), ' '), buff, "\r", NULL);
             }
             nfree(buff);
             nfree(strbeg);
 
 //          Old report generation
-//	    xscatprintf(&(msgToSysop[i]->text), "Created  %-53s%s\r", 
+//	    xscatprintf(&(msgToSysop[i]->text), "Created  %-53s%s\r",
 //	         echo->areaName, aka2str(fromAddr));
 
 	    break;
 	}
     }
-    
+
 }
 
 void writeMsgToSysop()
@@ -1300,26 +1300,26 @@ void writeMsgToSysop()
     s_area	*echo = NULL;
     unsigned int i, ccrc = 0;
     s_seenBy	*seenBys = NULL;
-    
+
     for (i = 0; i < config->addrCount; i++) {
 	if (msgToSysop[i]) {
-	    xscatprintf(&(msgToSysop[i]->text), " \r--- %s\r * Origin: %s (%s)\r", 
+	    xscatprintf(&(msgToSysop[i]->text), " \r--- %s\r * Origin: %s (%s)\r",
 			(config->tearline) ? config->tearline : "",
 			(config->origin) ? config->origin : config->name,
 			aka2str(msgToSysop[i]->origAddr));
 	    msgToSysop[i]->textLength = strlen(msgToSysop[i]->text);
-	    
-	    if (msgToSysop[i]->netMail == 1) 
-		// FIXME: should be putMsgInArea 
+	
+	    if (msgToSysop[i]->netMail == 1)
+		// FIXME: should be putMsgInArea
 		processNMMsg(msgToSysop[i], NULL, config->ReportTo ?
 			     getNetMailArea(config, config->ReportTo) : NULL, 1, 0);
 	    else {
-		// get echoarea  for this msg    
+		// get echoarea  for this msg
 		ptr = strchr(msgToSysop[i]->text, '\r');
 		*ptr = '\0'; echo = getArea(config, msgToSysop[i]->text + 5); *ptr = '\r';
 		
 		if (echo != &(config->badArea)) {
-		    if (config->carbonCount != 0) 
+		    if (config->carbonCount != 0)
 			ccrc = carbonCopy(msgToSysop[i], NULL, echo);
 		    if (echo->msgbType != MSGTYPE_PASSTHROUGH && ccrc <= 1) {
         		putMsgInArea(echo, msgToSysop[i],1, (MSGSCANNED|MSGSENT|MSGLOCAL));
@@ -1330,13 +1330,13 @@ void writeMsgToSysop()
 		    seenBys[0].net = (UINT16) echo->useAka->net;
 		    seenBys[0].node = (UINT16) echo->useAka->node;
 		    sortSeenBys(seenBys, 1);
-   
+
 		    seenByPath = createControlText(seenBys, 1, "SEEN-BY: ");
 		    nfree(seenBys);
-   
+
 		    // path line
 		    // only include node-akas in path
-		    if (echo->useAka->point == 0) 
+		    if (echo->useAka->point == 0)
    			xscatprintf(&seenByPath, "\001PATH: %u/%u\r", echo->useAka->net, echo->useAka->node);
 		    xstrcat(&(msgToSysop[i]->text), seenByPath);
 		    nfree(seenByPath);
@@ -1364,7 +1364,7 @@ void writeMsgToSysop()
 	    }
 	}
     }
-    
+
 }
 
 s_arealink *getAreaLink(s_area *area, s_addr aka)
@@ -1378,7 +1378,7 @@ s_arealink *getAreaLink(s_area *area, s_addr aka)
     return NULL;
 }
 
-// import: type == 0, export: type != 0 
+// import: type == 0, export: type != 0
 // return value: 0 if access ok, 3 if import/export off, 4 if not linked
 int checkAreaLink(s_area *area, s_addr aka, int type)
 {
@@ -1447,7 +1447,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 
 		// if only one downlink, we've got the mail from him
 		if ((echo->downlinkCount > 1) ||
-		    ((echo->downlinkCount > 0) && 
+		    ((echo->downlinkCount > 0) &&
 		     // mail from us
 		     (addrComp(pktOrigAddr,*echo->useAka)==0)))
 		    forwardMsgToLinks(echo, msg, pktOrigAddr);
@@ -1531,7 +1531,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
     netmail = MsgOpenArea((unsigned char *) area -> fileName, MSGAREA_CRIFNEC,
 /*								 config->netMailArea.fperm, config->netMailArea.uid,
 								 config->netMailArea.gid, */(word) area -> msgbType);
-   
+
     if (netmail != NULL) {
 	msgHandle = MsgOpenMsg(netmail, MOPEN_CREATE, 0);
 
@@ -1628,7 +1628,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
     char        processIt = 0; // processIt = 1, process all mails
     // processIt = 2, process only Netmail
     // processIt = 0, do not process pkt
-   
+
     w_log(LL_FUNC,"toss.c::processPkt()");
 
     if ((pktlen = fsize(fileName)) > 60) {
@@ -1650,11 +1650,11 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	if (perlpkt(fileName, (sec==secLocalInbound || sec==secProtInbound) ? 1 : 0))
 	    return 6;
 #endif
-       
+
 	pkt = fopen(fileName, "rb");
 	if (pkt == NULL) return 2;
         w_log(LL_FILE,"toss.c:processPkt(): opened '%s' (\"rb\" mode)",fileName);
-       
+
 	header = openPkt(pkt);
 	if (header != NULL) {
 	    //if ((to_us(header->destAddr)==0) || (sec == secLocalInbound)) {
@@ -1669,7 +1669,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 		case secLocalInbound:
 		    processIt = 1;
 		    break;
-	     
+	
 		case secProtInbound:
 		    if ((link != NULL) && (link->pktPwd != NULL) && link->pktPwd[0]) {
 			if (stricmp(link->pktPwd, header->pktPassword)==0) {
@@ -1727,7 +1727,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 			processIt = 2;
 		    }
 		    break;
-	     
+	
 		}
 
 		if (processIt != 0) {
@@ -1750,7 +1750,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 		    // real time of process pkt & msg without external programs
 		    statToss.realTime += time(NULL) - realtime;
 		}
-	   
+	
 	    } else {
 		realtime = time(NULL);
 		while ((msgrc = readMsgFromPkt(pkt, header, &msg)) == 1) {
@@ -1768,25 +1768,25 @@ int processPkt(char *fileName, e_tossSecurity sec)
 		    {	/* echomail pkt not for us */
 			freeMsgBuffers(msg);
 			nfree(msg);
-	   
+	
 	  		/* PKT is not for us - try to forward it to our links */
 
-			w_log(LL_ERR, "pkt: %s addressed to %d:%d/%d.%d but not for us", 
-			      fileName, header->destAddr.zone, header->destAddr.net,       
+			w_log(LL_ERR, "pkt: %s addressed to %d:%d/%d.%d but not for us",
+			      fileName, header->destAddr.zone, header->destAddr.net,
 			      header->destAddr.node, header->destAddr.point);
-	   
+	
 			fclose(pkt); pkt = NULL;
-			rc = forwardPkt(fileName, header, sec);	   
+			rc = forwardPkt(fileName, header, sec);	
 		    }
 	    }
-	 
+	
 	    nfree(header);
-	 
+	
 	} else { // header == NULL
 	    w_log(LL_ERR, "pkt: %s wrong pkt-file", fileName);
 	    rc = 3;
 	}
-       
+
 	if (pkt) fclose(pkt);
 
     } else statToss.empty++;
@@ -1911,7 +1911,7 @@ typedef struct fileInDir {
     char *fileName;
     time_t fileTime;
 } s_fileInDir;
- 
+
 int filesComparer(const void *elem1, const void *elem2) {
     // File times comparer for qsort
     if (((s_fileInDir *) elem1) -> fileTime < ((s_fileInDir *) elem2) -> fileTime) return -1;
@@ -2083,7 +2083,7 @@ void writeStatLog(void) {
 	    if (statCC > 0) {
 		fprintf(f, "CC: %d\n", statCC);
 	    }
-		 
+		
 	    fclose(f);
 	}
     }
@@ -2123,21 +2123,21 @@ void writeTossStatsToLog(void) {
     w_log(logchar, "Areas summary:");
     for (i = 0; i < config->netMailAreaCount; i++)
 	if (config->netMailAreas[i].imported > 0)
-	    w_log(logchar, "netmail area %s - %d msgs", 
+	    w_log(logchar, "netmail area %s - %d msgs",
 		  config->netMailAreas[i].areaName, config->netMailAreas[i].imported);
-    if (config->dupeArea.imported) w_log(logchar, "dupe area %s - %d msgs", 
+    if (config->dupeArea.imported) w_log(logchar, "dupe area %s - %d msgs",
 					 config->dupeArea.areaName,
 					 config->dupeArea.imported);
-    if (config->badArea.imported) w_log(logchar, "bad area %s - %d msgs", 
+    if (config->badArea.imported) w_log(logchar, "bad area %s - %d msgs",
 					config->badArea.areaName,
 					config->badArea.imported);
     for (i = 0; i < config->echoAreaCount; i++)
 	if (config->echoAreas[i].imported > 0)
-	    w_log(logchar, "echo area %s - %d msgs", 
+	    w_log(logchar, "echo area %s - %d msgs",
 		  config->echoAreas[i].areaName, config->echoAreas[i].imported);
     for (i = 0; i < config->localAreaCount; i++)
 	if (config->localAreas[i].imported > 0)
-	    w_log(logchar, "local area %s - %d msgs", 
+	    w_log(logchar, "local area %s - %d msgs",
 		  config->localAreas[i].areaName, config->localAreas[i].imported);
 }
 
@@ -2166,9 +2166,9 @@ int find_old_arcmail(s_link *link, FILE *flo)
     if (*bundle != '\000') {
 	len = fsize(bundle);
 	if (len != -1L) {
-	    if (link->arcmailSize!=0) 
+	    if (link->arcmailSize!=0)
 		as = link->arcmailSize;
-	    else if (config->defarcmailSize!=0) 
+	    else if (config->defarcmailSize!=0)
 		as = config->defarcmailSize;
 	    else
 		as = 500; // default 500 kb max
@@ -2217,7 +2217,7 @@ void arcmail(s_link *tolink) {
 
 	// only create floFile if we have mail for this link
 	if (link->pktFile != NULL) {
-      
+
 
 	    if (needUseFileBoxForLink(config,link)) {
 
@@ -2266,7 +2266,7 @@ void arcmail(s_link *tolink) {
 		    else w_log(LL_ERR, "error moving file for %s %s, %s->%s (errorlevel==%i)", aka2str(link->hisAka), link->name, link->pktFile, pkt, errno);
 		    nfree(pkt);
 		}
-    
+
 	    } else if (createOutboundFileName(link,link->echoMailFlavour, FLOFILE) == 0) {
 		// process if the link not busy, else do not create 12345678.?lo
 
@@ -2319,6 +2319,7 @@ void arcmail(s_link *tolink) {
 			if (cmdexit==0) {
 			    if (foa==0) {
 				if (bundleNameStyle == eAddrDiff ||
+				    bundleNameStyle == eAddrsCRC32 ||
 				    bundleNameStyle == eAddrDiffAlways ||
 				    bundleNameStyle == eAmiga)
 				    fprintf(flo, "#%s\n", link->packFile);
@@ -2327,7 +2328,7 @@ void arcmail(s_link *tolink) {
 			    }
 			    remove(link->pktFile);
 			} else
-			    w_log(LL_ERR, "Error executing packer (errorlevel==%i)", 
+			    w_log(LL_ERR, "Error executing packer (errorlevel==%i)",
 				  cmdexit);
 
 		    } // end packerDef
@@ -2344,7 +2345,7 @@ void arcmail(s_link *tolink) {
 			if (config->separateBundles) {
 
 			    if (bundleNameStyle==eAmiga)
-				xscatprintf(&pkt, "%u.%u.%u.%u.sep%c", 
+				xscatprintf(&pkt, "%u.%u.%u.%u.sep%c",
 					    link->hisAka.zone, link->hisAka.net,
 					    link->hisAka.node, link->hisAka.point,
 					    PATH_DELIM);
@@ -2355,7 +2356,7 @@ void arcmail(s_link *tolink) {
 				else
 				    xscatprintf(&pkt, "%04x%04x.sep%c",
 						link->hisAka.net,
-						link->hisAka.node, 
+						link->hisAka.node,
 						PATH_DELIM);
 			    }
 			}
@@ -2396,25 +2397,25 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
     unsigned int i;
     s_link *link = NULL;
     char *newfn = NULL;
-    
+
     for (i = 0 ; i < config->linkCount; i++) {
 	if (addrComp(header->destAddr, config->links[i].hisAka) == 0) {
 	    /* we found a link to forward the pkt file to */
-	    
+	
 	    link = config->links+i;
 			
 	    /* security checks */
 			
 	    if (link->forwardPkts==fOff) return 4;
 	    if ((link->forwardPkts==fSecure)&&(sec != secProtInbound)&&(sec != secLocalInbound)) return 4;
-	    
+	
             /* as we have feature freeze currently, */
 	    /* I enclose the following code with an ifdef ... */
 
 	    newfn = makeUniqueDosFileName(config->tempOutbound, "pkt", config);
 
 	    if (move_file(fileName, newfn) == 0) {  /* move successful ! */
-		    
+		
 		w_log(LL_PKT, "Forwarding %s to %s as %s",
 		      fileName, config->links[i].name, newfn + strlen(config->tempOutbound));
 
@@ -2443,7 +2444,7 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 /* According to the specs, a .QQQ file does not have two leading
    zeros. This routine checks if the file is a .QQQ file, and if so,
    it appends the zeros and renames the file to .PKT. */
-   
+
 
 void fix_qqq(char *filename)
 {
@@ -2522,7 +2523,7 @@ void tossTempOutbound(char *directory)
 		} else {
 		    link = NULL;
 		}
-		             
+		
 		if (link != NULL) {
 
 		    if (link->packFile == NULL) {
@@ -2563,14 +2564,14 @@ void writeImportLog(void) {
 		    fprintf(f, "%s\n", config->netMailAreas[i].areaName);
 
 	    for (i = 0; i < config->echoAreaCount; i++)
-		if (config->echoAreas[i].imported > 0 && 
+		if (config->echoAreas[i].imported > 0 &&
 		    config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH)
 		    fprintf(f, "%s\n", config->echoAreas[i].areaName);
-		  
+		
 	    for (i = 0; i < config->localAreaCount; i++)
 		if (config->localAreas[i].imported > 0)
 		    fprintf(f, "%s\n", config->localAreas[i].areaName);
-		 
+		
 	    fclose(f);
 #ifdef UNIX
 	    chown(config->importlog, config->loguid, config->loggid);
@@ -2701,18 +2702,18 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
     s_addr	pktOrigAddr;
     char 	*ptmp = NULL, *line = NULL, *areaName = NULL, *area=NULL, noexp=0;
     s_link	*link = NULL;
-   
+
     makeMsg(hmsg, xmsg, &msg, &(config->badArea), 2);
     memset(&pktOrigAddr,'\0',sizeof(s_addr));
     statToss.msgs++; // really processed one more msg
-   
+
     // deleting valet string - "FROM:" and "REASON:"
     ptmp = msg.text;
     while ((line = strchr(ptmp, '\r')) != NULL) {
 	/* Temporary make it \0 terminated string */
 	*line = '\000';
-	if (strncmp(ptmp, "FROM: ", 6) == 0 || 
-	    strncmp(ptmp, "REASON: ", 8) == 0 || 
+	if (strncmp(ptmp, "FROM: ", 6) == 0 ||
+	    strncmp(ptmp, "REASON: ", 8) == 0 ||
 	    strncmp(ptmp, "AREANAME: ", 10) == 0) {
 	    // It's from address
 	    if (*ptmp == 'F') string2addr(ptmp + 6, &pktOrigAddr);
@@ -2726,13 +2727,13 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
 		    echo = getArea(config, ptmp+10);
 		    xstrcat(&area, ptmp+10);
 		}
-		memmove(ptmp, line+1, strlen(line+1)+1);	  
+		memmove(ptmp, line+1, strlen(line+1)+1);	
 		break;
 	    } else {
-		memmove(ptmp, line+1, strlen(line+1)+1);	  
+		memmove(ptmp, line+1, strlen(line+1)+1);	
 		continue;
 	    }
-	} else { 
+	} else {
 	    if ((strncmp(ptmp, "AREA:", 5)==0 ||
 		 strncmp(ptmp, "\001AREA:", 6)==0) && area==NULL) {
 		//translating name of the area to uppercase
@@ -2756,18 +2757,18 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
 	}
     }
     nfree(area);
-   
+
     if (echo == &(config->badArea)) {
 	freeMsgBuffers(&msg);
 	return rc;
     }
-   
+
     if (checkAreaLink(echo, pktOrigAddr, 0) == 0 || force) {
 	if (dupeDetection(echo, msg)==1 || noexp) {
 	    // no dupe or toss whithout export to links
-		   
+		
 	    if (config->carbonCount != 0) carbonCopy(&msg, NULL, echo);
-		   
+		
 	    echo->imported++;  // area has got new messages
 	    if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
 		rc = putMsgInArea(echo, &msg,1, 0);
@@ -2791,7 +2792,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
 			msg.recode &= ~REC_TXT;
 		    }
 		}
-   
+
 		if (echo->downlinkCount > 0) {
 		    forwardMsgToLinks(echo, &msg, pktOrigAddr);
 		}
@@ -2806,7 +2807,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
 	}
 
     } else rc = 0;
-   
+
     freeMsgBuffers(&msg);
     return rc;
 }
@@ -2818,7 +2819,7 @@ void tossFromBadArea(char force)
     XMSG  xmsg;
     dword highestMsg, i;
     int   delmsg;
-   
+
     area = MsgOpenArea((UCHAR *) config->badArea.fileName,
 		       MSGAREA_NORMAL, (word)(config->badArea.msgbType|MSGTYPE_ECHO));
     if (area != NULL) {
@@ -2830,15 +2831,15 @@ void tossFromBadArea(char force)
 	    if (hmsg == NULL) continue;      // msg# does not exist
 	    MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
 	    delmsg = packBadArea(hmsg, xmsg, force);
-	 
+	
 	    MsgCloseMsg(hmsg);
-	 
+	
 	    if (delmsg) MsgKillMsg(area, i);
 	    else { i++; highestMsg++; }
 	}
-	   
+	
 	MsgCloseArea(area);
-	   
+	
 	closeOpenedPkt();
 	writeDupeFiles();
 	writeImportLog();
@@ -2848,6 +2849,6 @@ void tossFromBadArea(char force)
 	w_log(LL_STAT, "    exported: % 4d   passthru: % 4d", statToss.exported, statToss.passthrough);
 
 	tossTempOutbound(config->tempOutbound);
-	   
+	
     } else w_log(LL_ERR, "Could not open %s", config->badArea.fileName);
 }
