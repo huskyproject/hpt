@@ -478,7 +478,7 @@ void post(int c, unsigned int *n, char *params[])
                 if (msg.netMail) {
                     processNMMsg(&msg, NULL, NULL, 0, MSGLOCAL);
                 }  else {
-                    processEMMsg(&msg, msg.origAddr, 1, (MSGSCANNED|MSGSENT|MSGLOCAL));
+                    processEMMsg(&msg, *(echo->useAka), 1, (MSGSCANNED|MSGSENT|MSGLOCAL));
                 }
             }
             nfree(msg.text);
