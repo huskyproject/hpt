@@ -653,6 +653,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
             }
         }
         strbeg = get_hcfgPos();
+        w_log(LL_DEBUGF, __FILE__ ":%u:changeconfig() strbeg=%l", __LINE__, strbeg);
         nfree(line);
         nfree(cfgline);
     }
@@ -663,7 +664,6 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         nfree(fileName);
         return -1;
     }
-    w_log(LL_SRCLINE, __FILE__ ":%u:changeconfig()", __LINE__);
 
     switch (action) {
     case 0: /*  forward Request To Link */
@@ -730,7 +730,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     default: break;
     } /*  switch (action) */
 
-    w_log(LL_SRCLINE, __FILE__ ":%u:changeconfig()", __LINE__);
+    w_log(LL_DEBUGF, __FILE__ ":%u:changeconfig() call InsertCfgLine(\"%s\",<cfgline>,%l,%l)", __LINE__, fileName, strbeg, strend);
     InsertCfgLine(fileName, cfgline, strbeg, strend);
     nfree(cfgline);
     nfree(fileName);
