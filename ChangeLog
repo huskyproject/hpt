@@ -1,3 +1,19 @@
+2002-01-25 Friday 19:21  ml
+
+	* misc/: cut-hptlog.pl (1.1), pretty.pl (1.1), purge_fileecho
+	(1.1): new scripts
+
+2002-01-25 Friday 17:52  pavel.gulchouck
+
+	* src/: fcommon.c (1.115), query.c (1.13): Do not reject echoes
+	with comment char in name
+
+2002-01-25 Friday 16:17  stas
+
+	* src/: areafix.c (1.245), fcommon.c (1.114), hpt.c (1.127),
+	seenby.c (1.19): 
+	fix: prevent buffer overflow (after ITS4 check)
+
 2002-01-24 Thursday 21:12  pavel.gulchouck
 
 	* src/fcommon.c (1.113): log ftnaddr instead of link name when busy
