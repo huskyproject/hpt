@@ -222,6 +222,12 @@ unsigned long getfree (char *path)
 
 #endif
 
+#elif defined(MSDOS)
+unsigned long getfree (char *path)
+{
+  w_log ('9', "warning: free space doesn't checked in %s.",path);
+  return 0L;
+}
 #else
 
 #error "unknown system!"
