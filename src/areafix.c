@@ -428,6 +428,8 @@ char *help(s_link *link) {
 	if ((f=fopen(config->areafixhelp,"r")) == NULL) {
 	    fprintf(stderr,"areafix: cannot open help file \"%s\"\n", 
 		    config->areafixhelp);
+	    w_log('9', "areafix: cannot open help file \"%s\"", 
+		    config->areafixhelp);
 	    return NULL;
 	}
 		
@@ -1170,6 +1172,7 @@ linkline:
 		f_conf = fopen(confName, "r+");
 		if (f_conf == NULL) {
 		    fprintf(stderr,"%s: cannot open config file %s \n", opt ? "autopause" : "areafix", confName);
+		    w_log('9', "%s: cannot open config file %s", opt ? "autopause" : "areafix", confName);
 		    nfree(confName);
 		    return 0;
 		}
@@ -1297,6 +1300,7 @@ linkliner:
 	if ((f_conf=fopen(confName,"r+")) == NULL)
 	    {
 		fprintf(stderr,"areafix: cannot open config file %s \n", confName);
+		w_log('9', "areafix: cannot open config file %s", confName);
 		nfree(confName);
 		return 0;
 	    }
