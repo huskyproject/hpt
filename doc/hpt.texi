@@ -1840,7 +1840,7 @@ This statement cannot be repeated.
 @item Syntax:
 @code{tempoutbound <path>}
 @item Example:
-@code{outbound /var/spool/fido/out.tmp}
+@code{tempoutbound /var/spool/fido/out.tmp}
 @end table
 
 This command specifies your temporary outbound path. It is used for
