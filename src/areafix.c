@@ -109,14 +109,14 @@ int subscribeCheck(s_area area, s_message *msg, s_link *link)
   int found = 0;
 
   for (i = 0; i<area.downlinkCount;i++) {
-    if (addrComp(msg->origAddr, area.downlinks[i]->link->hisAka)==0) return 0;
+      if (addrComp(msg->origAddr, area.downlinks[i]->link->hisAka)==0) return 0;
   }
 
   if (area.group) {
-	  if (config->numPublicGroup)
-		  found = grpInArray(area.group,config->PublicGroup,config->numPublicGroup);
-	  if (!found && link->numAccessGrp) 
-		  found = grpInArray(area.group,link->AccessGrp,link->numAccessGrp);
+      if (config->numPublicGroup)
+	  found = grpInArray(area.group,config->PublicGroup,config->numPublicGroup);
+      if (!found && link->numAccessGrp)
+	  found = grpInArray(area.group,link->AccessGrp,link->numAccessGrp);
   } else found = 1;
 
   if (!found) return 2;
@@ -824,7 +824,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
     if (strchr(line,' ') || strchr(line,'\t') || strchr(line,PATH_DELIM) ||
 	strchr(line,config->CommentChar) || strchr(line,':')) return errorRQ(line);
 
-    for (i=0; rc!=6 && i<config->echoAreaCount; i++) {
+    for (i=0; !found && rc!=6 && i<config->echoAreaCount; i++) {
 	area = &(config->echoAreas[i]);
 	an = area->areaName;
 
@@ -858,7 +858,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	    break;
 	case 6:
 	    break;
-	default :
+	default : // rc = 2
 	    if (!area->hide && strstr(line,"*")==NULL) {
 		w_log('8', "areafix: area %s -- no access for %s",
 		      an, aka2str(link->hisAka));
@@ -875,12 +875,15 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
     if ((rc==4) && (strstr(line,"*") == NULL) && !found) {
 	if (link->denyFRA==0) {
 	    // try to forward request
-	    if ((rc=forwardRequest(line, link))==2)
+	    if ((rc=forwardRequest(line, link))==2) {
 		xscatprintf(&report, " %s %s  no uplinks to forward\r",
 			    line, print_ch(49-strlen(line), '.'));
+		w_log('8', "areafix: %s - no uplinks to forward\r", line);
+	    }
 	    else if (rc==0) {
 		xscatprintf(&report, " %s %s  request forwarded\r",
 			    line, print_ch(49-strlen(line), '.'));
+		w_log('8', "areafix: %s - request forwarded\r", line);
 		for (j=0; j < config->addrCount; j++)
 		    if (addrComp(link->hisAka,config->addr[j])==0) {from_us=1;break;}
 		if (from_us==0) {
@@ -908,7 +911,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		    line, print_ch(49-strlen(line), '.'));
     }
 
-    if (report == NULL && found==0) {
+    if ((report == NULL && found==0) || (found && area->hide)) {
 	xscatprintf(&report," %s %s  not found\r",line,print_ch(49-strlen(line),'.'));
 	w_log('8', "areafix: area %s is not found",line);
     }
@@ -1065,6 +1068,10 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 			 an, print_ch(49-strlen(an),'.'));
 	    break;
 	case 1: if (strstr(line, "*")) continue;
+	    if (area->hide) {
+		i = config->echoAreaCount;
+		break;
+	    }
 	    xscatprintf(&report, " %s %s  not linked\r", an, print_ch(49-strlen(an), '.'));
 	    w_log('8', "areafix: area %s is not linked to %s",
 		  area->areaName, aka2str(link->hisAka));
@@ -1074,9 +1081,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		  area->areaName, aka2str(link->hisAka));
 	    break;
 	default:
-	    //w_log('8', "areafix: area %s -- no access for %s",
-	    //area->areaName, aka2str(link->hisAka));
-	    continue;
+	    break;
 	}
     }
     if (report == NULL) {
