@@ -1,4 +1,11 @@
 ----- cvs ci ------
+Mon Jan  1 15:57:02 MET 2001
+tobi:
+* Use FC_MAX_AREADESC_LEN constant (present in stable fidoconfig since
+  January 1) so that we do not auto-add EchoArea's with a long area
+  description that later cannot be parsed by fidoconfig.
+
+----- cvs ci ------
 Fri Nov 17 10:23:21 MEZ 2000
 tobi:
 * migrated return code checks for pkt appending code from current
