@@ -1,2 +1,3 @@
 1) jam echo area with manually deleted messages scans only with -w parameter
    (whithout highwaters)
+2) jam bases damages when no free disk space available and the mail is lost

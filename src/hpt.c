@@ -360,6 +360,19 @@ void processConfig()
    if (config->intab) getctab(intab, (unsigned char*) config->intab);
 }
 
+int isFreeSpace(char *path) {
+	unsigned long sp;
+
+	sp = getfree(path);	
+	if (sp < config->minDiskFreeSpace*1024*1024) {
+		fprintf(stderr, "no free space in %s! (needed %d mb, available %d mb).\n",
+				path, config->minDiskFreeSpace, (unsigned)(sp/(1024*1024)));
+		exit_hpt("no free disk space!",0);
+	}
+
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
    struct _minf m;
@@ -408,7 +421,17 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    }
 #endif
 
-   //printf("free space: %lu Mb\n", getfree("/"));
+   // check for free space
+   if (config->minDiskFreeSpace) {
+	   isFreeSpace(config->tempInbound);
+	   if (stricmp(config->msgBaseDir,"passthrough")!=0)
+		   isFreeSpace(config->msgBaseDir);
+	   for (i=0; i<config->linkCount; i++) {
+		   if (config->links[i].msgBaseDir && 
+			   stricmp(config->links[i].msgBaseDir,"passthrough")!=0)
+			   isFreeSpace(config->links[i].msgBaseDir);
+	   }
+   }
 
    if ( initSMAPI == -1 ) {
 	   // init SMAPI

@@ -1106,6 +1106,7 @@ This statement can be repeated.
 * LocalInbound::                local inbound
 * LockFile::                    file which lock hpt session
 * LogFileDir::                  path for log files
+* MinDiskFreeSpace::            minimum free space on the drive
 * MsgBaseDir::                  base directory of areas
 * Outbound::                    outbound path
 * Outtab::                      file for recoding outgoing msgs
@@ -1305,7 +1306,7 @@ created @code{LockFile} is running.
 
 This statement cannot be repeated.
 
-@node LogFileDir, MsgBaseDir, LockFile, Files and Paths
+@node LogFileDir, MinDiskFreeSpace, LockFile, Files and Paths
 @subsection LogFileDir
 @findex LogFileDir
 @table @asis
@@ -1320,7 +1321,23 @@ be stored.
 
 This statement cannot be repeated.
 
-@node MsgBaseDir, Outbound, LogFileDir, Files and Paths
+@node MinDiskFreeSpace, MsgBaseDir, LogFileDir, Files and Paths
+@subsection MinDiskFreeSpace
+@findex MinDiskFreeSpace
+@table @asis
+@item Syntax:
+@code{MinDiskFreeSpace <integer>}
+@item Example:
+@code{MinDiskFreeSpace 10}
+@end table
+
+This is the minimum disk free space in MB to run @value{HPT}.
+The following directories are checked: @code{TempInbound},
+@code{MsgBaseDir}, @code{LinkMsgBaseDir}s.
+
+This statement cannot be repeated.
+
+@node MsgBaseDir, Outbound, MinDiskFreeSpace, Files and Paths
 @subsection MsgBaseDir
 @findex MsgBaseDir
 @table @asis
