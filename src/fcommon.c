@@ -116,15 +116,15 @@ void exit_hpt(char *logstr, int print) {
     if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
 
     writeDupeFiles();
-    disposeConfig(config);
     doneCharsets();
     w_log(LL_STOP, "Exit");
     closeLog();
-    if (_lockfile) {
-       close(lock_fd);
-       remove(_lockfile);
-       nfree(_lockfile);
+    if (config->lockfile) {
+        close(lock_fd);
+        remove(config->lockfile);
     }
+    disposeConfig(config);
+    
     exit(EX_SOFTWARE);
 }
 
