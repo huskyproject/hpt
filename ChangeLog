@@ -1,3 +1,17 @@
+2001-12-23 Sunday 23:16  pavel.gulchouck
+
+	* doc/hpt.texi (1.47): added arcNetmail
+
+2001-12-23 Sunday 21:44  pavel.gulchouck
+
+	* doc/hpt-FAQ.russian (1.14): Added second answer about pack
+	netmail
+
+2001-12-23 Sunday 21:39  pavel.gulchouck
+
+	* src/: fcommon.c (1.105), scan.c (1.136), toss.c (1.375): added
+	arcNetmail - optional pack netmail into arcmail bundle for link
+
 2001-12-22 Saturday 18:25  pavel.gulchouck
 
 	* src/hpt.c (1.120): set config var [version] to
