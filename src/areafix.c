@@ -1040,13 +1040,14 @@ void rescanEMArea(s_area *echo, s_link *link, long rescanCount)
    HAREA area;
    HMSG  hmsg;
    XMSG  xmsg;
-   dword highWaterMark, highestMsg, i;
+   dword highestMsg, i;
 
    /*FIXME: the code in toss.c does createDirectoryTree. We don't*/
    area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, /*echo -> fperm, 
                       echo -> uid, echo -> gid,*/ echo->msgbType | MSGTYPE_ECHO);
    if (area != NULL) {
-      i = highWaterMark = MsgGetHighWater(area);
+     //      i = highWaterMark = MsgGetHighWater(area);
+     i = 0;
       highestMsg    = MsgGetHighMsg(area);
 
       if (rescanCount == -1) rescanCount = highestMsg; // if rescanCount == -1 all mails should be rescanned
