@@ -2,7 +2,7 @@
 @c %**start of header
 @setfilename hpt.info
 @set HPT HPT
-@set VERSION 0.9.8
+@set VERSION 1.1.0
 @settitle @value{HPT} @value{VERSION} - Highly Portable Tosser
 @setchapternewpage odd
 @c %**end of header
