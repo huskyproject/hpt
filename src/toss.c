@@ -2195,21 +2195,31 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
        if (strncmp(ptmp, "FROM: ", 6) == 0 || 
 	   strncmp(ptmp, "REASON: ", 8) == 0 || 
 	   strncmp(ptmp, "AREANAME: ", 10) == 0) {
-	   if (*ptmp == 'F')
 		   /* It's from address */
-		   string2addr(ptmp + 6, &pktOrigAddr);
-	   /* Cut this kludges */
- 	   memmove(ptmp, line+1, strlen(line+1)+1);	  
-	   continue;
+		   if (*ptmp == 'F') string2addr(ptmp + 6, &pktOrigAddr);
+		   /* Cut this kludges */
+		   if (*ptmp=='A') {
+			   if (area==NULL) {
+				   echo = getArea(config, ptmp+10);
+				   xstrcat(&area, ptmp+10);
+			   }
+			   memmove(ptmp, line+1, strlen(line+1)+1);	  
+			   break;
+		   } else {
+			   memmove(ptmp, line+1, strlen(line+1)+1);	  
+			   continue;
+		   }
        } else { 
-	   if (strncmp(ptmp, "AREA:", 5)==0 || strncmp(ptmp, "\001AREA:", 6)==0) {
-		//translating name of the area to uppercase
-		for (tmp = ptmp; *tmp != '\0'; tmp++) 
-			*tmp=(char)toupper(*tmp);
-		areaName = *ptmp == '\001' ? ptmp + 4 : ptmp + 5;
-		while (*areaName == ' ') areaName++;    // if the areaname begins with a space
-           	echo = getArea(config, areaName);
-			xstrcat(&area, areaName);
+		   if ((strncmp(ptmp, "AREA:", 5)==0 ||
+				strncmp(ptmp, "\001AREA:", 6)==0) && area==NULL) {
+			   //translating name of the area to uppercase
+			   for (tmp = ptmp; *tmp != '\0'; tmp++) 
+				   *tmp=(char)toupper(*tmp);
+			   areaName = *ptmp == '\001' ? ptmp + 4 : ptmp + 5;
+			   // if the areaname begins with a space
+			   while (*areaName == ' ') areaName++;
+			   echo = getArea(config, areaName);
+			   xstrcat(&area, areaName);
 	   };
            ptmp = line+1;
        };
@@ -2288,25 +2298,41 @@ void tossFromBadArea()
    if (area != NULL) {
 	   writeLogEntry(hpt_log, '1', "Scanning area: %s", config->badArea.areaName);
 	   highestMsg = MsgGetHighMsg(area);
+	   writeLogEntry(hpt_log, '1', "hiest msg: %i", highestMsg );
 
-	   for (i=1; i<=highestMsg; i++) {
-		   hmsg = MsgOpenMsg(area, MOPEN_RW, i);
-		   if (hmsg == NULL) continue;      // msg# does not exist
-		   MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-		   delmsg = packBadArea(hmsg, xmsg);
+	   //FIXME: the problem in smapi... msgnum update must be identical.
+
+	   if (config->badArea.msgbType==MSGTYPE_SDM) {
+	
+		   for (i=1; i<=highestMsg; i++) {
+			   hmsg = MsgOpenMsg(area, MOPEN_RW, i);
+			   if (hmsg == NULL) continue;      // msg# does not exist
+			   MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+			   delmsg = packBadArea(hmsg, xmsg);
 	 
-		   MsgCloseMsg(hmsg);
+			   MsgCloseMsg(hmsg);
 	 
-		   if (delmsg) MsgKillMsg(area, i);
+			   if (delmsg) MsgKillMsg(area, i);
+		   }
+		   
+	   } else { // squish & jam. FIXME: hihest msg doesn't updates in JAM.
+
+		   for (i=1; i<=highestMsg; highestMsg--) {
+			   hmsg = MsgOpenMsg(area, MOPEN_RW, i);
+			   if (hmsg == NULL) continue;      // msg# does not exist
+			   MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+			   delmsg = packBadArea(hmsg, xmsg);
+	 
+			   MsgCloseMsg(hmsg);
+	 
+			   if (delmsg) MsgKillMsg(area, i);
+		   }
 	   }
-      
-	   highestMsg = MsgGetHighMsg(area);
-	   MsgSetHighWater(area, highestMsg + 1);
-
+	   
 	   MsgCloseArea(area);
-      
+	   
 	   writeDupeFiles();
 	   tossTempOutbound(config->tempOutbound);
-      
+	   
    } else writeLogEntry(hpt_log, '9', "Could not open %s", config->badArea.fileName);
 }
