@@ -199,8 +199,7 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
     do {
 	start = strstr(start, "\001PATH:");
 	if (start == NULL) return;
-	endptr = start;
-	for (endptr = strchr(endptr, '\r'); endptr; endptr = strchr(endptr, '\r')) {
+	for (endptr = strchr(start, '\r'); endptr; endptr = strchr(endptr, '\r')) {
 	    while (*endptr == '\r' || *endptr == '\n') endptr++;
 	    if (strncmp(endptr, "\001PATH:", 6)) break; /* not path line */
 	}
