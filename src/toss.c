@@ -325,25 +325,27 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
     HAREA harea;
     HMSG  hmsg;
     XMSG  xmsg;
-    char *slash, *p, *q, *tiny;
+    char /**slash,*/ *p, *q, *tiny;
     int rc = 0;
 
     // create Directory Tree if necessary
-    if (echo->msgbType == MSGTYPE_SDM)
+/*    if (echo->msgbType == MSGTYPE_SDM)
 	createDirectoryTree(echo->fileName);
-    else if (echo->msgbType==MSGTYPE_PASSTHROUGH) {
+    else */if (echo->msgbType==MSGTYPE_PASSTHROUGH) {
 	w_log('9', "Can't put message to passthrough area %s!", echo->areaName);
 	return rc;
-    } else {
+    }/* else {
 	// squish or jam area
+
 	slash = strrchr(echo->fileName, PATH_DELIM);
 	if (slash) {
 	    *slash = '\0';
 	    createDirectoryTree(echo->fileName);
 	    *slash = PATH_DELIM;
 	}
+
     }
-   
+*/   
     if (!msg->netMail) {
 	msg->destAddr.zone  = echo->useAka->zone;
 	msg->destAddr.net   = echo->useAka->net;
@@ -1835,7 +1837,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 
     if ((config->carbonCount!=0)&&(!dontdocc)) ccrc = carbonCopy(msg, NULL, area);
     if (ccrc > 1) return 1; // carbon del or move
-
+/*
     // create Directory Tree if necessary
     if (area -> msgbType == MSGTYPE_SDM)
 	createDirectoryTree(area -> fileName);
@@ -1848,7 +1850,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 	    *slash = PATH_DELIM;
 	}
     }
-
+*/
     netmail = MsgOpenArea((unsigned char *) area -> fileName, MSGAREA_CRIFNEC,
 /*								 config->netMailArea.fperm, config->netMailArea.uid,
 								 config->netMailArea.gid, */(word) area -> msgbType);
