@@ -1,3 +1,12 @@
+2002-01-14 Monday 17:18  d.sergienko
+
+	* src/query.c (1.4): fixes for compiling under linux and code
+	cleanup
+
+2002-01-14 Monday 16:34  d.sergienko
+
+	* makefile.inc (1.14): fixed compiling with hpt/Makefile
+
 2002-01-13 Sunday 19:55  ml
 
 	* src/areafix.c (1.236): removing trailing \r from the end of line
