@@ -30,6 +30,7 @@
  *****************************************************************************
  * $Id$
  */
+
 #include <global.h>
 
 s_fidoconfig *config  = NULL;
@@ -38,18 +39,19 @@ char         *cfgFile = NULL;
 int initSMAPI = -1;
 
 /* basic version number */
+/*
 const int   VER_MAJOR   = 1;
 const int   VER_MINOR   = 3;
 const int   VER_PATCH   = 0;
-
+*/
 
 /* branch is "" for CVS current, "-stable" for the release candiate branch  */
-const char *VER_BRANCH  = "";
+/*const char *VER_BRANCH  = ""; */
 
 /* The service version string is empty for the first release done from a    */
 /* release candidate branch.  If subsequent service releases are necessary, */
 /* single letters are used, like "a", "b", ...                              */
-const char *VER_SERVICE = "";  
+/*const char *VER_SERVICE = "";*/
 
 char       *versionStr=NULL;
 

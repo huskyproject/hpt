@@ -35,12 +35,14 @@
 #include <time.h>
 #include <string.h>
 
+#include <fidoconf/common.h>
+#include <fidoconf/afixcmd.h>
+
 #include <global.h>
 #include <pkt.h>
 #include <version.h>
+#include "cvsdate.h"
 
-#include <fidoconf/common.h>
-#include <fidoconf/afixcmd.h>
 
 static char *attrStr[] = { "pvt", "crash", "read", "sent", "att",
                        "fwd", "orphan", "k/s", "loc", "hld",
@@ -113,7 +115,12 @@ int main(int argc, char *argv[])
 {
   int          i, showHeader = 0, showText = 0;
 
-  printf("PktInfo v%u.%u.%u\n",VER_MAJOR, VER_MINOR, VER_PATCH);
+/*  printf("PktInfo v%u.%u.%u\n",VER_MAJOR, VER_MINOR, VER_PATCH); */
+
+  versionStr = GenVersionStr( "PktInfo", VER_MAJOR, VER_MINOR, VER_PATCH,
+                               VER_BRANCH, cvs_date );
+  printf("%s\n",versionStr);
+  nfree(versionStr);
   if (argc==1) {
     printf("usage: pktInfo [-h] [-t] <pktNames>\n" \
            "       -h means display msg header information (from/to/subject)\n" \

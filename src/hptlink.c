@@ -54,7 +54,7 @@
 
 #include <version.h>
 #include <global.h>
-#include <cvsdate.h>
+#include "cvsdate.h"
 
 
 /* internal structure holding msg's related to link information */
@@ -626,6 +626,7 @@ int main(int argc, char **argv) {
    nfree(line);
    SetAppModule(M_HPT);
 
+/*
    xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVICE, VER_BRANCH);
 
 #ifdef __linux__
@@ -646,6 +647,10 @@ int main(int argc, char **argv) {
 
    if (strcmp(VER_BRANCH,"-stable")!=0) xscatprintf(&version, " %s", cvs_date);
    xscatprintf(&versionStr,"hptlink %s", version);
+*/
+
+   versionStr = GenVersionStr( "hptlink", VER_MAJOR, VER_MINOR, VER_PATCH,
+                               VER_BRANCH, cvs_date );
 
    for (i=1; i<argc; i++) {
      if ( argv[i][0] == '-' ) {

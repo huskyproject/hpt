@@ -40,17 +40,6 @@
 #include <dos.h>
 #endif
 
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
-#include <fidoconf/xstr.h>
-#include <fidoconf/afixcmd.h>
-
-#include <global.h>
-#include <version.h>
-#include <pkt.h>
-#include <fidoconf/recode.h>
-#include <smapi/progprot.h>
-
 #if (defined (__WATCOMC__) && defined (__NT__)) || defined(__TURBOC__)
 #include <dos.h>
 #endif
@@ -59,6 +48,19 @@
 /* we can't include windows.h for several reasons ... */
 #define CharToOem CharToOemA
 #endif
+
+#include <smapi/progprot.h>
+
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
+#include <fidoconf/xstr.h>
+#include <fidoconf/afixcmd.h>
+#include <fidoconf/recode.h>
+
+#include <global.h>
+#include <pkt.h>
+#include <version.h>
+#include <cvsdate.h>
 
 int main(int argc, char *argv[])
 {
@@ -77,12 +79,17 @@ int main(int argc, char *argv[])
     memset (&msg,'\0',sizeof(s_message));
 
    if (argc == 1) {
-      printf( "\nUsage:\n"
+      tmp = GenVersionStr( "txt2pkt", VER_MAJOR, VER_MINOR, VER_PATCH,
+                               VER_BRANCH, cvs_date );
+      printf( "%s\n"
+              "\nUsage:\n"
               "txt2pkt [-xf \"<pkt from address>\"] [-xt \"<pkt to address>\"]"
               " [-af \"<from address>\"] [-at \"<to address>\"]"
               " [-nf \"<from name>\"] [-nt \"<to name>\"] [-e \"echo name\"]"
               " [-p \"password\"] [-t \"tearline\"] [-o \"origin\"]"
-              " [-s \"subject\"] [-d \"<directory>\"] (<text file>|-)\n" );
+              " [-s \"subject\"] [-d \"<directory>\"] (<text file>|-)\n",
+              tmp );
+      nfree(tmp)
       exit(EX_OK);
    }
 

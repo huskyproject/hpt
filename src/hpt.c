@@ -63,9 +63,10 @@
 
 #include "fidoconf/log.h"
 #include "fidoconf/recode.h"
-
+#include <fidoconf/version.h>
 
 #include "version.h"
+#include "cvsdate.h"
 #include "pkt.h"
 #include "global.h"
 #include "hpt.h"
@@ -75,7 +76,6 @@
 #include "post.h"
 #include "link.h"
 #include "areafix.h"
-#include "cvsdate.h"
 #include "query.h"
 
 #ifdef DO_PERL
@@ -472,6 +472,7 @@ int main(int argc, char **argv)
    char title[ TITLESIZE ], oldtitle[ TITLESIZE ];
 #endif
 
+/*
 xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVICE, VER_BRANCH);
 
 #ifdef __linux__
@@ -493,6 +494,9 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 
    if (strcmp(VER_BRANCH,"-stable")!=0) xscatprintf(&version, " %s", cvs_date);
    xscatprintf(&versionStr,"hpt %s", version);
+*/
+   versionStr = GenVersionStr( "hpt", VER_MAJOR, VER_MINOR, VER_PATCH,
+                               VER_BRANCH, cvs_date );
    rc = processCommandLine(argc, argv);
    if ((rc==1 || rc==EX_USAGE) && config!=NULL)
       if (config->lockfile) {
