@@ -1,10 +1,11 @@
 hpt 0.9.7a
-----------
-(pending for release)
+==========
+(released on Sun Sep 17 18:58:45 MEST 2000)
+
 
 ----- cvs ci ------
 Sa  16 Sep 2000 23:21:24 CEST
-tobi (patch from max from current)
+tobi (patches from max from current)
 * %rescan bug with wildcards & number of msgs to process
 * check that outbound and tempoutbound are different
 * fixed autocreate with -dosfile at the end of AutoAreaCreateDefaults
@@ -19,7 +20,7 @@ max:
 ----- cvs ci ------
 Mon Sep 11 10:56:46 NOVST 2000
 max:
-* hptlink.c & link.c from development branch (linking jam areas & 
+* hptlink.c & link.c from development branch (linking jam areas &
   "hpt link" speedup)
   NOTE: FOR LINKING JAM AREAS, YOU NEED SMAPI-1.6.4a! SMAPI-1.6.4
   (WITHOUT .a) WILL PRODUCE INCORRECT RESULTS!
@@ -75,8 +76,9 @@ tobi (patch from max):
 
 
 hpt 0.9.7
----------
+=========
 (released on Tue Jul 18 23:33:57 MEST 2000)
+
 
 ----- cvs ci ------
 Tue Jul 18 23:33:57 MEST 2000

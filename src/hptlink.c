@@ -31,12 +31,12 @@
 #include <io.h>
 #endif
 
-#include <fcntl.h>
 #ifdef __EMX__
 #include <share.h>
 #include <sys/types.h>
 #endif
 #include <sys/stat.h>
+#include <fcntl.h>
 
 #include <smapi/msgapi.h>
 #include <fidoconf/fidoconf.h>
