@@ -95,6 +95,10 @@ int __stdcall CharToOemA(char *, char *);
 #include <dos.h>
 #include <process.h>
 #endif
+#if (defined(_MSC_VER) && (_MSC_VER >= 1200))
+#include <process.h>
+#define P_WAIT		_P_WAIT
+#endif
 
 #if defined(__MINGW32__) && defined(__NT__)
 /* we can't include windows.h for several reasons ... */
@@ -214,7 +218,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
     struct tm *date;
     time_t    currentTime;
     union stamp_combo dosdate;
-    int i;
+    unsigned int i;
     char *subject=NULL, *newSubj=NULL, *token, *running;
        
     //init outbounds
@@ -681,7 +685,7 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
 void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks, 
 		    s_seenBy **seenBys, UINT *seenByCount,
 		    s_seenBy **path, UINT *pathCount) {
-    int i, rc=0;
+    unsigned  int i, rc=0;
     long len;
     FILE *pkt, *f=NULL;
     s_pktHeader header;
@@ -1042,7 +1046,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
    > 1 if there was a carbon move or carbon delete*/
 int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
 {
-    int i, rc = 0, result=0;
+    unsigned int i, rc = 0, result=0;
     char *testptr, *testptr2, *kludge;
     s_area *area;
     s_carbon *cb=&(config->carbons[0]);
@@ -1296,7 +1300,7 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
 {
     s_area *echo;
-    int i, netmail=0;
+    unsigned int i, netmail=0;
     char *buff=NULL;
     char *strbeg=NULL;
     
@@ -1369,7 +1373,7 @@ void writeMsgToSysop()
 {
     char	*ptr, *seenByPath;
     s_area	*echo;
-    int		i, ccrc = 0;
+    unsigned int i, ccrc = 0;
     s_seenBy	*seenBys;
     
     for (i = 0; i < config->addrCount; i++) {
@@ -1566,7 +1570,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
     char   *ctrlBuf;               // Kludgelines
     XMSG   msgHeader;
 //    char   *slash;
-    int rc = 0, ccrc = 0, i;
+    unsigned int rc = 0, ccrc = 0, i;
 
     if (area == NULL) {
 	area = &(config->netMailAreas[0]);
@@ -1890,7 +1894,7 @@ void fillCmdStatement(char *cmd, const char *call, const char *archiv, const cha
     strcat(cmd, tmp);
 }
 
-#ifdef __WATCOMC__
+#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
 void *mk_lst(char *a) {
     char *p=a, *q=a, **list=NULL, end=0, num=0;
 
@@ -1915,12 +1919,13 @@ void *mk_lst(char *a) {
 
 int  processArc(char *fileName, e_tossSecurity sec)
 {
-    int  i, j, found;
+    unsigned int  i;
+    int   found, j;
     signed int cmdexit;
     FILE  *bundle;
     char cmd[256];
 
-#ifdef __WATCOMC__
+#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
     const char * const *list;
 #endif
 
@@ -1958,7 +1963,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
 	    }
 	else
 	    {
-#ifdef __WATCOMC__
+#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
 		list = mk_lst(cmd);
 		cmdexit = spawnvp(P_WAIT, cmd, list);
 		free((char **)list);
@@ -2176,7 +2181,7 @@ void writeStatLog(void) {
 }
 
 void writeTossStatsToLog(void) {
-    int i;
+    unsigned int i;
     float inMailsec, outMailsec, inKBsec;
     time_t diff = statToss.realTime;
     char logchar;
@@ -2481,7 +2486,7 @@ static int forwardedPkts = 0;
 
 int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 {
-    int i;
+    unsigned int i;
     s_link *link;
     char *newfn;
     
@@ -2636,7 +2641,7 @@ void tossTempOutbound(char *directory)
 }
 
 void writeImportLog(void) {
-    int i;
+    unsigned int i;
     FILE *f;
     struct stat buf;
 
