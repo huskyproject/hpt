@@ -712,7 +712,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 }
 
 char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
-	int i, c, rc = 2;
+	int i, c, rc = 2, j, from_us=0;
 	char *line, *an, *report = NULL;
 	s_area *area;
 	
@@ -734,13 +734,21 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 			break;
 		    }
 		}
+		for (j = 0; j < config->addrCount; j++)
+		    if (addrComp(link->hisAka, config->addr[j])==0) { from_us = 1; rc = 0; break; }
+
 		if (area->mandatory) rc=5;
 		
 		switch (rc) {
-		case 0: removelink(link, area);
-			changeconfig (getConfigFileName(),  area, link, 1);
-			xscatprintf(&report, " %s %s  unlinked\r", an, print_ch(49-strlen(an), '.'));
-			writeLogEntry(hpt_log, '8', "areafix: %s unlinked from %s",aka2str(link->hisAka),area->areaName);
+		case 0: xscatprintf(&report, " %s %s  unlinked\r", an, print_ch(49-strlen(an), '.'));
+			if (from_us == 0) {
+			   removelink(link, area);
+			   changeconfig (getConfigFileName(),  area, link, 1);
+			   writeLogEntry(hpt_log, '8', "areafix: %s unlinked from %s",aka2str(link->hisAka),area->areaName);
+			} else {
+			if ((area->downlinkCount==1) && (area->downlinks[0]->link->hisAka.point == 0))
+				forwardRequestToLink(area->areaName, area->downlinks[0]->link, NULL, 1);
+			}
 			break;
 		case 1: if (strstr(line, "*")) continue;
 			xscatprintf(&report, " %s %s  not linked\r", an, print_ch(49-strlen(an), '.'));

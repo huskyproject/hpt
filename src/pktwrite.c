@@ -33,6 +33,9 @@
 #if !defined(__FreeBSD__)
 #include <malloc.h>
 #endif
+#if defined (__WATCOMC__) && defined (__NT__)
+#include <dos.h>
+#endif
 #include <string.h>
 #include <unistd.h>
 

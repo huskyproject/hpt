@@ -44,9 +44,8 @@ char *xstralloc(char **s, size_t add)
     if (*s == NULL) {
 	fprintf(stderr, "out of memory");
 	abort();
-    } else 
-	return *s + n;
-
+    }
+    return *s + n;
 }
 
 char *xstrcat(char **s, char *add)

@@ -44,6 +44,7 @@
 #ifdef __WATCOMC__
 #include <fcntl.h>
 #define AW_S_ISDIR(a) (((a) & S_IFDIR) != 0)
+#include <process.h>
 #endif
 
 #include <global.h>

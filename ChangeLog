@@ -1,6 +1,11 @@
 hpt 0.9.6
 ---------
 
+----- cvs ci ------
+Sat Feb 12 23:53:44 NOVT 2000
+max:
+* compiling without warnings under win32
+* unlink from echo with "local areafix" (patch from Nestyurkin Nikolay)
 
 ----- cvs ci ------
 Sat Feb 12 20:50:26 NOVT 2000

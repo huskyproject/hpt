@@ -3,6 +3,7 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
+fix correctEMAddr like (FidoNet 2:5000/117.4) -> 0:2/117.4
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
