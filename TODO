@@ -20,6 +20,7 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - autocreate from badArea
 - carbonFromAddr addr1, addr2, ...
 - carbonCopy when scan, export
+- UnpackAllBeforeToss
 
 Category 3: Will only be included if volunteers send patches
 ============================================================
