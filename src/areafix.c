@@ -493,8 +493,8 @@ char *available(s_link *link) {
 	}
 
 	if (report==NULL) {
-	    xstrcat(&report, "\r  no links for creation Available Area List\r");
-            writeLogEntry(hpt_log, '8', "areafix: no links for creation Available Area List");
+	    xstrcat(&report, "\r  no links for creating Available Area List\r");
+            writeLogEntry(hpt_log, '8', "areafix: no links for creating Available Area List");
 	}
 	
 	return report;
