@@ -82,7 +82,8 @@ int   createTempPktFileName(s_link *link);
           structure
 */
 
-int    createDirectoryTree(const char *pathName); // moved to smapi
+// this function moved to smapi has name _createDirectoryTree
+//int    createDirectoryTree(const char *pathName); // moved to smapi
 /*DOC                              // can be removed from hpt later 
   Input:  a pointer to a \0 terminated string
   Output: 0 if successfull, 1 else
@@ -134,6 +135,5 @@ char *safe_strdup(const char *src);
 int needUseFileBoxForLink (s_link *link);
 char *makeFileBoxName (s_link *link);
 int isValidConference(char *s);
-char *makeMsgbFileName(char *s);
 
 #endif

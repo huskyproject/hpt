@@ -314,7 +314,7 @@ int needUseFileBoxForLink (s_link *link)
 	xscatprintf(&bsyFile, "%04x%04x.pnt%c",
 		    link->hisAka.net, link->hisAka.node, limiter);
    
-    createDirectoryTree(bsyFile); // create directoryTree if necessary
+    _createDirectoryTree(bsyFile); // create directoryTree if necessary
 
     if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
     else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
@@ -416,7 +416,7 @@ int createTempPktFileName(s_link *link)
     if (needUseFileBoxForLink(link)) {
 	if (!link->fileBox) link->fileBox = makeFileBoxName (link);
 	xstrcat(&tmp, link->fileBox);
-	createDirectoryTree (tmp);
+	_createDirectoryTree (tmp);
     } else {
 	xstrcat(&tmp, config->outbound);
 
@@ -632,9 +632,7 @@ int createTempPktFileName(s_link *link)
     link->pktFile = filename;
     return 0;
 }
-
-#endif
-
+// this function moved to smapi has name _createDirectoryTree
 int createDirectoryTree(const char *pathName) {
    char *start, *slash;
 
@@ -684,6 +682,7 @@ int createDirectoryTree(const char *pathName) {
 
    return 0;
 }
+#endif
 
 
 int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
@@ -740,7 +739,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 	   xscatprintf(&link->floFile, "%04x%04x.pnt%c",
 				   link->hisAka.net, link->hisAka.node, limiter);
    
-   createDirectoryTree(link->floFile); // create directoryTree if necessary
+   _createDirectoryTree(link->floFile); // create directoryTree if necessary
    xstrcat(&link->bsyFile, link->floFile);
    xstrcat(&link->floFile, name);
 
@@ -758,7 +757,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
        else xscatprintf(&sepDir, "%04x%04x.sep%c", link->hisAka.net,
 			link->hisAka.node, limiter);
 
-       createDirectoryTree(sepDir);
+       _createDirectoryTree(sepDir);
        nfree(sepDir);
    }
 
@@ -830,19 +829,3 @@ int isValidConference(char *s) {
     return 1;
 }
 
-char *makeMsgbFileName(char *s) {
-    // allowed symbols: 0..9, a..z, A..Z, ".,!@#$^()~-_{}[]"
-    static char defstr[]="\"*/:;<=>?\\|%`'&+"; // not allowed
-    char *name=NULL, *str;
-
-    if (config->notValidFNChars) str = config->notValidFNChars;
-    else str = defstr;
-
-    while (*s) {
-	if (strchr(str,*s)) xscatprintf(&name,"%%%x", *s);
-	else xscatprintf(&name, "%c", *s);
-	s++;
-    }
-
-    return name;
-}
