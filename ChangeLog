@@ -1,3 +1,8 @@
+2004-09-28 Tuesday 12:22  val_khokhlov
+
+	* src/perl.c (1.83): remove read-only on %links not to fail on
+	unlisted nodes
+
 2004-09-20 Monday 10:43  pgul
 
 	* src/post.c (1.117): Fix typo
