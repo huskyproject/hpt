@@ -56,6 +56,7 @@
 #include <global.h>
 #include <recode.h>
 #include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
 
 #include <smapi/typedefs.h>
 #include <smapi/compiler.h>
