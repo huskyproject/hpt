@@ -1,5 +1,11 @@
 hpt 0.29
 --------
+(released on Thu Sep 23 23:05:24 CEST 1999)
+
+----- cvs ci ------
+Wed Sep 15 21:26:46 CEST 1999 
+mtt:
+* djgpp should compile again
 
 ----- cvs ci ------
 Sat Sep 19 17:40:33 NOVST 1999
