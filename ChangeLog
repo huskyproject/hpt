@@ -1,3 +1,17 @@
+2002-04-26 Friday 17:19  mche
+
+	* src/toss.c (1.399): fillCmdStatement moved to fidoconfig for
+	common use in hpt htick nltools
+
+2002-04-26 Friday 11:04  pavel.gulchouck
+
+	* src/scan.c (1.152): Clear trs, loc & k/s attributes after scan()
+	perl hook
+
+2002-04-26 Friday 08:07  mche
+
+	* src/areafix.c (1.290): autopassive for echos & fileechos
+
 2002-04-25 Thursday 07:48  mche
 
 	* src/perl.c (1.30): include and undef added for MSVC
