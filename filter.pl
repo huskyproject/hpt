@@ -1,3 +1,6 @@
+# $Id$
+# Template for perl hook
+#
 # API functions:
 #
 # str2attr(attr);
