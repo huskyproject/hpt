@@ -1,4 +1,8 @@
 /* Areafix improvement by Max Chernogor 2:464/108  */
+/*****************************************************************************
+ * $Id$
+ */
+
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>

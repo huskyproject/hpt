@@ -23,7 +23,9 @@
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
- *****************************************************************************/
+ *****************************************************************************
+ * $Id$
+ */
 /* Revision log:
    19.12.98 - first version
    28.11.99 - write modified chains only (by L. Lisowsky 2:5020/454.2)

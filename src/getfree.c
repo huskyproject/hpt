@@ -1,6 +1,9 @@
 /*                                                                  */
 /* This was taken from BinkD and modified a bit for hpt -- ml, 2001 */
 /*                                                                  */
+/*
+ * $Id$
+ */
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/log.h>
