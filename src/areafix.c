@@ -1748,11 +1748,15 @@ int relink (char *straddr) {
 	// parse config
 	if (config==NULL) processConfig();
 
-	researchLink = getLink(*config, straddr);
+	if (straddr) researchLink = getLink(*config, straddr);
+	else {
+	    writeLogEntry(hpt_log, '9', "No address");
+	    return 1;
+	}
 
 	if ( researchLink == NULL ) {
-		writeLogEntry(hpt_log, '9', "Unknown link address %s", straddr);
-		return 1;
+	    writeLogEntry(hpt_log, '9', "Unknown link address %s", straddr);
+	    return 1;
 	}
 
 	areasArraySize = 0;
