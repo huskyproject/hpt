@@ -953,7 +953,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
 {
     unsigned int i, rc = 0, result=0;
-    char *testptr = NULL, *testptr2 = NULL, *kludge = NULL;
+    char *testptr = NULL, *testptr2 = NULL, *pattern = NULL;
     s_area *area = NULL;
     s_carbon *cb=&(config->carbons[0]);
     s_area **copiedTo = NULL;
@@ -981,41 +981,47 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
 
         switch (cb->ctype) {
         case ct_to:
-            result=!stricmp(msg->toUserName,cb->str);
+            result=patimat(msg->toUserName,cb->str);
             break;
 
         case ct_from:
-            result=!stricmp(msg->fromUserName,cb->str);
+            result=patimat(msg->fromUserName,cb->str);
             break;
 
         case ct_kludge:
-	    kludge = (char *) GetCtrlToken((byte *)msg->text, (byte *)cb->str);
-	    result = (kludge!=NULL);
-	    nfree(kludge);
+        case ct_msgtext:
+            testptr=msg->text;
+	    /* skip area: kludge */
+	    if (strncmp(testptr, "AREA:", 5) == 0)
+		if ((testptr = strchr(testptr, '\r')) != NULL)
+		    testptr++;
+	    /* cb->str is substring, so pattern must be "*str*" */
+	    pattern=safe_malloc(strlen(cb->str)+3);
+	    *pattern='*';
+	    strcpy(pattern+1, cb->str);
+	    strcat(pattern, "*");
+	    result=0;
+
+	    /* check the message line by line */
+	    while (testptr) {
+		testptr2 = strchr(testptr, '\r');
+		if ((*testptr == '\001' && cb->ctype == ct_kludge) ||
+		    (*testptr != '\001' && cb->ctype == ct_msgtext)) {
+		    if (testptr2) *testptr2 = '\0';
+		    result = patimat(testptr, pattern);
+		    if (testptr2) *testptr2 = '\r';
+		    if (result) break;
+		}
+		if (testptr2)
+		    testptr = testptr2+1;
+		else
+		    break;
+	    }
+	    nfree(pattern);
 	    break;
 
         case ct_subject:
-            result=(NULL!=hpt_stristr(msg->subjectLine,cb->str));
-            break;
-
-        case ct_msgtext:
-	    /* skip area: kludge */
-            testptr=msg->text+6+strlen(echo->areaName);
-            while(testptr!=NULL){
-                testptr=hpt_stristr(testptr,cb->str);
-                if(testptr!=NULL){
-                    /* look back: a '\1' after a CR        */
-                    /* means that it is a kludge           */
-                    testptr2=testptr;   /* remind position */
-                    while(*--testptr!='\r'); /* not CR    */
-		    /* (skipped) area: kludge prevents going back too far :) */
-                    if(*++testptr=='\1') /* was a kludge   */
-                        testptr=testptr2+strlen(cb->str);
-                    else
-                        break;
-                }
-            }
-            result=(NULL!=testptr);
+            result=patimat(msg->subjectLine,cb->str);
             break;
 
         case ct_addr:
@@ -1023,7 +1029,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
             break;
 
         case ct_fromarea:
-	    result=!stricmp(echo->areaName,cb->str);
+	    result=patimat(echo->areaName,cb->str);
             break;
 
         case ct_group:

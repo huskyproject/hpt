@@ -3109,15 +3109,15 @@ carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
 @findex CarbonFrom
 @table @asis
 @item Syntax:
-@code{carbonFrom <string>}
+@code{carbonFrom <pattern>}
 @item Example:
 @code{carbonFrom Matthias Tichy}
 @item
 @code{carbonCopy my.echomail}
 @end table
 
-If an echomail is tossed whose from-field is the same as <string>, the
-echomail is copied to the area specified by the @code{CarbonCopy}
+If an echomail is tossed whose from-field matched the pattern <pattern>,
+the echomail is copied to the area specified by the @code{CarbonCopy}
 keyword or moved to the area specified by the @code{CarbonMove} keyword.
 The names must be an exact match.
 
@@ -3130,12 +3130,12 @@ This statement can be repeated.
 @findex CarbonFromArea
 @table @asis
 @item Syntax:
-@code{CarbonFromArea <areatag>}
+@code{CarbonFromArea <pattern>}
 @item Example:
 @code{CarbonFromArea Interuser}
 @end table
 
-Only messages that are written in this area, will be copied. Use it in
+Only messages that are written in this areas will be copied. Use it in
 combination with CarbonRule to prevent that all messages from an area
 are copied.
 
@@ -3149,7 +3149,7 @@ CarbonText " Israel "
 CarbonCopy my.news
 @end example
 
-<areatag> is the area name, defined after EchoArea or NetMailArea.
+<pattern> is the mask for area name, defined after EchoArea or NetMailArea.
 
 This statement can be repeated.
 
@@ -3195,7 +3195,7 @@ This statement cannot be repeated.
 @findex CarbonKludge
 @table @asis
 @item Syntax:
-@code{carbonKludge <kludge-substring>}
+@code{carbonKludge <pattern>}
 @item Example:
 @code{carbonKludge MSGID: 2:5000/117.}
 @item
@@ -3203,10 +3203,10 @@ This statement cannot be repeated.
 @end table
 
 If an echomail is tossed which has a kludge line which includes the
-<kludge-string> as a substring, the echomail is copied to the area
+substring matches <pattern>, the echomail is copied to the area
 specified by the @code{CarbonCopy} keyword.
 
-You can use traling "" in <kludge-substring>.
+You can use traling "" in <pattern>.
 @example
 carbonKludge "REPLY: 2:5000/117 "
 @end example
@@ -3360,18 +3360,18 @@ and new set of expressions starts.
 @findex CarbonSubj
 @table @asis
 @item Syntax:
-@code{carbonSubj <subj-substring>}
+@code{carbonSubj <pattern>}
 @item Example:
 @code{carbonSubj beer}
 @item
 @code{carbonCopy cc.beer}
 @end table
 
-If an echomail is tossed which has a subject line which includes the
-<subj-string> as a substring, this echomail is copied to the area
-specified by the @code{CarbonCopy} keyword.
+If an echomail is tossed which has a subject line matched <pattern>,
+this echomail is copied to the area specified by the @code{CarbonCopy}
+keyword.
 
-You can use traling "" in <subj-substring>.
+You can use traling "" in <pattern>.
 
 This statement can be repeated.
 
@@ -3380,7 +3380,7 @@ This statement can be repeated.
 @findex CarbonText
 @table @asis
 @item Syntax:
-@code{carbonText <text-substring>}
+@code{carbonText <pattern>}
 @item Example:
 @code{carbonText cool beer}
 @item
@@ -3388,10 +3388,10 @@ This statement can be repeated.
 @end table
 
 If an echomail is tossed which has a kludge line which includes the
-<text-string> as a substring, he echomail is copied to the area
+substring matches <pattern>, the echomail is copied to the area
 specified by the @code{CarbonCopy} keyword.
 
-You can use traling "" in <text-substring>.
+You can use traling "" in <pattern>.
 
 This statement can be repeated.
 
@@ -3400,14 +3400,14 @@ This statement can be repeated.
 @findex CarbonTo
 @table @asis
 @item Syntax:
-@code{carbonTo <string>}
+@code{carbonTo <pattern>}
 @item Example:
 @code{carbonTo Max Levenkov}
 @item
 @code{carbonCopy my.echomail}
 @end table
 
-If an echomail is tossed whose to-field is the same as <string>, the
+If an echomail is tossed whose to-field matched <pattern>, the
 echomail is copied to the area specified by the @code{CarbonCopy}
 keyword. The names must be an exact match.
 
