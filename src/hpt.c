@@ -36,7 +36,9 @@
 #include <stdarg.h>
 #include <ctype.h>
 
-#ifdef UNIX
+#if defined(__BEOS__)
+#include <sys/sysexits.h>
+#elif defined(UNIX)
 #include <sysexits.h>
 #endif
 

@@ -28,7 +28,9 @@
 #include <string.h>
 #include <time.h>
 
-#ifdef UNIX
+#if defined(__BEOS__)
+#include <sys/sysexits.h>
+#elif defined(UNIX)
 #include <sysexits.h>
 #endif
 
