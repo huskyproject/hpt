@@ -853,7 +853,7 @@ This statement cannot be repeated.
 @code{PublicGroup local,a,b,othernet}
 @end table
 
-Tis is a list of groups for public echo acess.
+This is a list of groups for public echo acess.
 
 This statement cannot be repeated.
 

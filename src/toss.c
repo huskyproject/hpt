@@ -2797,36 +2797,36 @@ void tossTempOutbound(char *directory)
 }
 
 void writeImportLog(void) {
-	int i;
-	FILE *f;
+    int i;
+    FILE *f;
 
-	if (config->importlog != NULL) {
-		// write importlog
+    if (config->importlog) {
 
-		f = fopen(config->importlog, "a");
-		if (f != NULL) {
+	// write importlog
+	f = fopen(config->importlog, "a");
+	if (f != NULL) {
 
-			for (i = 0; i < config->netMailAreaCount; i++)
-				if (config->netMailAreas[i].imported > 0)
-					fprintf(f, "%s\n", config->netMailAreas[i].areaName);
+	    for (i = 0; i < config->netMailAreaCount; i++)
+		if (config->netMailAreas[i].imported > 0)
+		    fprintf(f, "%s\n", config->netMailAreas[i].areaName);
 
-			for (i = 0; i < config->echoAreaCount; i++)
-				if (config->echoAreas[i].imported > 0 && 
-					config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH)
-					fprintf(f, "%s\n", config->echoAreas[i].areaName);
+	    for (i = 0; i < config->echoAreaCount; i++)
+		if (config->echoAreas[i].imported > 0 && 
+		    config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH)
+		    fprintf(f, "%s\n", config->echoAreas[i].areaName);
 		  
-			for (i = 0; i < config->localAreaCount; i++)
-				if (config->localAreas[i].imported > 0)
-					fprintf(f, "%s\n", config->localAreas[i].areaName);
+	    for (i = 0; i < config->localAreaCount; i++)
+		if (config->localAreas[i].imported > 0)
+		    fprintf(f, "%s\n", config->localAreas[i].areaName);
 		 
-			fclose(f);
+	    fclose(f);
 #ifdef UNIX
-			chown(config->importlog, config->loguid, config->loggid);
-			if (config -> logperm != -1) chmod(config->importlog, config->logperm);
+	    chown(config->importlog, config->loguid, config->loggid);
+	    if (config -> logperm != -1) chmod(config->importlog, config->logperm);
 #endif
 
-		} else w_log('9', "Could not open importlogfile");
-	}
+	} else w_log('9', "Could not open importlogfile");
+    }
 }
 
 void toss()

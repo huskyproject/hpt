@@ -310,9 +310,10 @@ int createTempPktFileName(s_link *link)
     else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
 	
     // fileBoxes support
-    if (link->fileBox) 
-		xstrcat(&tmp, link->fileBox);
-    else {
+    if (link->fileBox) {
+	xstrcat(&tmp, link->fileBox);
+	createDirectoryTree (tmp);
+    } else {
 	xstrcat(&tmp, config->outbound);
 
 	// add suffix for other zones
