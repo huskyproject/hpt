@@ -1841,7 +1841,10 @@ static char *get_filename(char *pathname)
     ptr = pathname + strlen(pathname) - 1;
 
     while (*ptr != '/' && *ptr != '\\' && *ptr != ':' && ptr != pathname)
-        ptr --;
+        ptr--;
+
+    if (*ptr == '/' || *ptr == '\\' || *ptr == ':')
+        ptr++;
 
     return ptr;
 }   
@@ -1935,7 +1938,7 @@ void arcmail(s_link *tolink) {
                                  fillCmdStatement(cmd,	  link->packerDef->call,
 							  link->packFile,
 							  link->pktFile, "");
-				 writeLogEntry(hpt_log, '7', "Packing mail for %s %s [%s -> %s]", aka2str(link->hisAka), link->name, get_filename(link->pktFile), get_filename(link->packFile));
+				 writeLogEntry(hpt_log, '7', "Packing for %s %s, %s > %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile), get_filename(link->packFile));
 				 cmdexit = system(cmd);
 // 				 writeLogEntry(hpt_log, '7', "cmd: %s",cmd);
 				 if (!cmdexit) remove(link->pktFile);
