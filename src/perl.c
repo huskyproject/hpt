@@ -14,6 +14,10 @@
 #include <os2.h>
 #endif
 
+#ifdef _MSC_VER
+#undef __STDC__ 
+#include <sys\types.h>
+#endif
 
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
@@ -25,9 +29,11 @@
 #include <global.h>
 #include <toss.h>
 #include <hptperl.h>
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
 #include <EXTERN.h>
 #include <perl.h>
 #ifdef _MSC_VER
