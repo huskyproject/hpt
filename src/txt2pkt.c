@@ -311,8 +311,7 @@ int main(int argc, char *argv[])
 
       /*  load recoding tables */
       initCharsets();
-      if (config->outtab) getctab(outtab, (unsigned char*) config->outtab);
-      if (config->intab) getctab(intab, (unsigned char*) config->intab);
+      getctabs(NULL,config->outtab);
 
       if (config->outtab != NULL) {
          /*  recoding text to TransportCharSet */

@@ -411,8 +411,7 @@ void processConfig()
 
    /*  load recoding tables */
    initCharsets();
-   if (config->outtab) getctab(outtab, (unsigned char*) config->outtab);
-   if (config->intab) getctab(intab, (unsigned char*) config->intab);
+   getctabs(config->intab,config->outtab);
    w_log(LL_START, "Start");
 }
 
