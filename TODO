@@ -1,5 +1,8 @@
+- temp code for people without packer...
+- temp code flo writing
+- temp code scanning of echomail ?
 - prove temp code
-- leave mails with no route defined untouched
+------- for 0.26
 - link patch from Kolya
 - include -b flag to toss from badarea
 - divide hpt into several programs:

@@ -541,6 +541,8 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 
       // an echomail msg must be adressed to the link
       msg->destAddr = header.destAddr;
+      // .. and must come from us
+      msg->origAddr = header.origAddr;
       writeMsgToPkt(pkt, *msg);
       closeCreatedPkt(pkt);
    }
