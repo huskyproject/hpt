@@ -1,3 +1,18 @@
+2001-06-03 Sunday 12:45  tobi
+
+	* h/date.h (1.180): date.h has been replaced by cvsdate.h, which is
+	server-generated
+
+2001-06-03 Sunday 09:01  ml
+
+	* src/areafix.c (1.211): fixed unsubscribing mandatory links with
+	autopause and small memory leak
+
+2001-06-03 Sunday 07:31  ml
+
+	* src/toss.c (1.349): fixed adding aka to seen-bys for links from
+	ignoreseen or -sbign arrays
+
 2001-05-30 Wednesday 14:14  ml
 
 	* src/toss.c (1.347): fix open directory for old watcom & mingw
