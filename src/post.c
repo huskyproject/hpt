@@ -198,10 +198,16 @@ void post(int c, unsigned int *n, char *params[])
 		 case 'z':
 			 tearl = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
 			 strcpy(tearl, params[*n]);
+#ifdef __NT__
+			 CharToOem(tearl, tearl);
+#endif
 			 break;
 		 case 'o':
 			 origin = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
 			 strcpy(origin, params[*n]);
+#ifdef __NT__
+			 CharToOem(origin, origin);
+#endif
 			 break;
 		 default:
 			 w_log('9', "post: unknown switch %s", params[*n]);
