@@ -35,6 +35,7 @@ s_fidoconfig *config  = NULL;
 char         *cfgFile = NULL;
 
 int initSMAPI = -1;
+struct _minf m;
 
 /* basic version number */
 const int   VER_MAJOR   = 1;

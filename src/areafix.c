@@ -2150,14 +2150,13 @@ int relink (char *straddr) {
     s_link          *researchLink = NULL;
     unsigned int    count, areasArraySize;
     s_area          **areasIndexArray = NULL;
-    struct _minf m;
 
     // parse config
     if (config==NULL) processConfig();
     if ( initSMAPI == -1 ) {
 	// init SMAPI
 	initSMAPI = 0;
-	m.req_version = 0;
+	m.req_version = 2;
 	m.def_zone = (UINT16) config->addr[0].zone;
 	if (MsgOpenApi(&m) != 0) {
 	    exit_hpt("MsgApiOpen Error",1);

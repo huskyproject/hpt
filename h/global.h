@@ -35,6 +35,7 @@
 #include <log.h>
 
 extern int initSMAPI;
+extern struct _minf m;
 
 // variables for config statements
 

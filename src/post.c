@@ -106,9 +106,7 @@ void post(int c, unsigned int *n, char *params[])
    char *area = NULL, *tearl = NULL, *origin = NULL;
    FILE *text = NULL;
    s_area *echo = NULL;
-//   FILE *f = NULL;
    long attr;
-   struct _minf m;
 
    s_message msg;
 
@@ -125,13 +123,13 @@ void post(int c, unsigned int *n, char *params[])
 
    if (config==NULL) processConfig();
    if ( initSMAPI == -1 ) {
-	   // init SMAPI
-	   initSMAPI = 0;
-	   m.req_version = 0;
-	   m.def_zone = (UINT16) config->addr[0].zone;
-	   if (MsgOpenApi(&m) != 0) {
-		   exit_hpt("MsgApiOpen Error",1);
-	   } /*endif */
+       // init SMAPI
+       initSMAPI = 0;
+       m.req_version = 2;
+       m.def_zone = (UINT16) config->addr[0].zone;
+       if (MsgOpenApi(&m) != 0) {
+	   exit_hpt("MsgApiOpen Error",1);
+       } /*endif */
    }
 
    memset(&msg, 0, sizeof(s_message));
