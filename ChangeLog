@@ -1,3 +1,8 @@
+2002-01-18 Friday 05:16  ml
+
+	* src/post.c (1.61): convert AREA:CONFERENCE to upper case if
+	needed when -x option is used in post
+
 2002-01-17 Thursday 09:15  mche
 
 	* src/query.c (1.5): set queryfile location same as main config
