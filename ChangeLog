@@ -1,3 +1,8 @@
+2003-02-09 Sunday 15:31  d_sergienko
+
+	* doc/hpt.texi (1.104): added info about AreaGroup &
+	AreaGroupDefaults tokens
+
 2003-02-06 Thursday 22:43  d_sergienko
 
 	* doc/hpt-FAQ.russian (1.76, hpt-1_4-stable): fixed location of
