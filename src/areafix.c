@@ -1569,6 +1569,7 @@ void MsgToStruct(HMSG SQmsg, XMSG xmsg, s_message *msg)
     msg->textLength = MsgGetTextLen(SQmsg);
     xstralloc(&(msg->text),msg->textLength+1);
     MsgReadMsg(SQmsg, NULL, 0, msg->textLength, (unsigned char *) msg->text, 0, NULL);
+    msg->text[msg->textLength] = '\0';
 
 }
 
