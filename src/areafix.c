@@ -2148,9 +2148,8 @@ void afix(s_addr addr, char *cmd)
                 link->areaFixPwd ?
                 link->areaFixPwd : "", 1,
                 config->areafixKillReports);
-            tmpmsg->text = cmd;
+            tmpmsg->text = safe_strdup(cmd);
             processAreaFix(tmpmsg, NULL, 1);
-            tmpmsg->text=NULL;
             freeMsgBuffers(tmpmsg);
         } else w_log(LL_ERR, "areafix: no such link in config: %s!", aka2str(addr));
     }

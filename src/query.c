@@ -871,7 +871,7 @@ s_query_areas* af_AddAreaListNode(char *areatag, const char *type)
     s_query_areas *tmpPrevNode  = NULL;
     s_query_areas *newNode  = af_MakeAreaListNode();
 
-    newNode->name = safe_strdup(areatag);
+    newNode->name = sstrlen(areatag) > 0 ? safe_strdup(areatag) : NULL;
     strcpy( newNode->type ,type);
 
     tmpPrevNode = tmpNode = queryAreasHead;
