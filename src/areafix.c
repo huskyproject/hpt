@@ -1,7 +1,7 @@
 /*****************************************************************************
  * AreaFix for HPT (FTN NetMail/EchoMail Tosser)
  *****************************************************************************
- * Copyright (C) 1998-2001
+ * Copyright (C) 1998-2002
  *
  * Max Levenkov
  *
@@ -866,7 +866,7 @@ char *subscribe(s_link *link, char *cmd) {
 			an, print_ch(49-strlen(an), '.'));
 	    w_log('8', "areafix: %s already linked to %s",
 		  aka2str(link->hisAka), an);
-	    if (!isPatternLine) i = config->echoAreaCount;
+	    if (!isPatternLine(line)) i = config->echoAreaCount;
 	    break;
 	case 1: 
 	    if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==0) {
