@@ -43,13 +43,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="fidoconf.lib smapi.lib huskylib.lib hptzip.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib msvcrt.lib areafix.lib"
+				AdditionalDependencies="fidoconf.lib smapi.lib huskylib.lib hptzip.lib Kernel32.lib delayimp.lib perl58.lib OLDNAMES.lib msvcrt.lib areafix.lib"
 				OutputFile="..\..\nd_r\bin/hptz.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\nd_r\lib,F:\compilation\perl\lib\CORE"
 				IgnoreAllDefaultLibraries="TRUE"
-				DelayLoadDLLs="perl56.dll"
+				DelayLoadDLLs="perl58.dll"
 				ProgramDatabaseFile="..\..\nd_r\obj\hptz/hptz.pdb"
 				SubSystem="1"/>
 			<Tool
@@ -98,13 +98,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="msvcrtd.lib huskylib.lib hptzip.lib fidoconf.lib smapi.lib areafix.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib"
+				AdditionalDependencies="msvcrtd.lib huskylib.lib hptzip.lib fidoconf.lib smapi.lib areafix.lib Kernel32.lib delayimp.lib perl58.lib OLDNAMES.lib"
 				OutputFile="..\..\nd_d\bin/hptz.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\nd_d\lib,F:\compilation\perl\lib\CORE"
 				IgnoreAllDefaultLibraries="TRUE"
-				DelayLoadDLLs="perl56.dll"
+				DelayLoadDLLs="perl58.dll"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="..\..\nd_d\bin/hptz.pdb"
 				SubSystem="1"/>

@@ -43,13 +43,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="fidoconf.lib smapi.lib huskylib.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib msvcrt.lib areafix.lib"
+				AdditionalDependencies="fidoconf.lib smapi.lib huskylib.lib Kernel32.lib delayimp.lib perl58.lib OLDNAMES.lib msvcrt.lib areafix.lib"
 				OutputFile="..\..\nd_r\bin/hpt.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\nd_r\lib,F:\compilation\perl\lib\CORE"
 				IgnoreAllDefaultLibraries="TRUE"
-				DelayLoadDLLs="perl56.dll"
+				DelayLoadDLLs="perl58.dll"
 				ProgramDatabaseFile="..\..\nd_r\obj\hpt/hpt.pdb"
 				SubSystem="1"/>
 			<Tool
@@ -60,7 +60,7 @@
 				CommandLine="echo Building documentation
 set PATH=%PATH%;F:\compilation\cyg\bin
 cd
-bash -c &apos;makeinfo --html --no-split --force ../doc/hpt.texi&apos;
+sh -c &apos;makeinfo --html --no-split --force ../doc/hpt.texi&apos;
 move /Y  hpt.html $(OutDir)
 "/>
 			<Tool
@@ -104,13 +104,13 @@ move /Y  hpt.html $(OutDir)
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="msvcrtd.lib huskylib.lib fidoconf.lib smapi.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib areafix.lib"
+				AdditionalDependencies="msvcrtd.lib huskylib.lib fidoconf.lib smapi.lib Kernel32.lib delayimp.lib perl58.lib OLDNAMES.lib areafix.lib"
 				OutputFile="..\..\nd_d\bin/hpt.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\nd_d\lib,F:\compilation\perl\lib\CORE"
 				IgnoreAllDefaultLibraries="TRUE"
-				DelayLoadDLLs="perl56.dll"
+				DelayLoadDLLs="perl58.dll"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="..\..\nd_d\bin/hpt.pdb"
 				SubSystem="1"/>
