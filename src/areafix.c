@@ -222,46 +222,7 @@ char *list(s_listype type, s_link *link, char *cmdline) {
 
     return report;
 }
-/*
-char *linked(s_link *link) {
-    unsigned int i, n, rc;
-    char *report = NULL;
 
-    xscatprintf(&report, "\r%s areas on %s\r\r",
-		((link->Pause & ECHOAREA) == ECHOAREA) ? "Passive" : "Active", aka2str(link->hisAka));
-							
-    for (i=n=0; i<config->echoAreaCount; i++) {
-	rc=subscribeCheck(config->echoAreas[i], link);
-	if (rc==0) {
-	    xscatprintf(&report, " %s\r", config->echoAreas[i].areaName);
-	    n++;
-	}
-    }
-    xscatprintf(&report, "\r%u areas linked\r", n);
-    if (link->afixEchoLimit) xscatprintf(&report, "\rYour limit is %u areas for subscribe\r", link->afixEchoLimit);
-    w_log(LL_AREAFIX, "areafix: linked areas list sent to %s", aka2str(link->hisAka));
-    return report;
-}
-
-char *unlinked(s_link *link) {
-    unsigned int i, rc;
-    char *report = NULL;
-    s_area *areas;
-
-    areas=config->echoAreas;
-    xscatprintf(&report, "Unlinked areas to %s\r\r", aka2str(link->hisAka));
-
-    for (i=0; i<config->echoAreaCount; i++) {
-	rc=subscribeCheck(areas[i], link);
-	if (rc == 1 && !areas[i].hide) {
-	    xscatprintf(&report, " %s\r", areas[i].areaName);
-	}
-    }
-    w_log(LL_AREAFIX, "areafix: unlinked areas list sent to %s", aka2str(link->hisAka));
-
-    return report;
-}
-*/
 char *help(s_link *link) {
     FILE *f;
     int i=1;
@@ -487,89 +448,6 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
     return 0;
 }
 
-#if 0
-int delLinkFromString(char **lineOut, char *line, char *linkAddr)
-{
-    char *startLink, *ptr, *tmp, *origLine, *comment, *eptr=NULL, *linkStr;
-    unsigned int nodeAddr=0, rc=1, endLen=0; /*  length of string where link ends */
-
-    origLine = safe_strdup(line);
-    startLink = line;
-    tmp = line;
-    /*  find comments */
-    for (comment = line; (comment = strchr(comment+1, CommentChar)) != NULL;)
-	if (*(comment-1) == ' ' || *(comment-1) == '\t')
-	    break;
-    /*  make search string */
-    linkStr = safe_malloc(strlen(linkAddr)+3);
-    strcpy(linkStr, linkAddr);
-    ptr=strchr(linkStr, '.');
-    if (ptr==NULL) {
-	nodeAddr = 1;
-        ptr=linkStr+strlen(linkStr);
-    }
-    strcpy(ptr, ".*");
-
-    tmp = line;
-    do {
-	ptr = strstr(tmp+1, linkAddr);
-	endLen = 0;
-        if (ptr && comment && ptr>=comment) ptr = NULL;
-        if (ptr) tmp = ptr + strlen(linkAddr);
-	if (ptr && isspace(*(ptr-1))) {
-            eptr = ptr+strlen(linkAddr);
-	    if (isspace(*eptr) || *eptr=='\0' ||
-                (nodeAddr && *eptr=='.' && eptr[1]=='0' && (isspace(eptr[2]) || eptr[2]=='\0'))) {
-                startLink = ptr;
-		endLen = eptr + 1 - line;
-		rc = 0; /*  all ok */
-	    }
-	}
-	ptr = strstr(tmp+1, linkStr);
-        if (ptr && comment && ptr>=comment) ptr = NULL;
-        if (ptr) tmp = ptr + strlen(linkAddr);
-	if (ptr && isspace(*(ptr-1))) {
-	    eptr = ptr+strlen(linkStr);
-            if (isspace(*eptr) || *eptr=='\0') {
-                startLink = ptr;
-		endLen = eptr + 1 - line;
-		rc = 2; /*  found, but cannot unsubscribe */
-	    }
-	}
-    } while (!endLen && tmp);
-
-    if (rc == 0) {
-	eptr = tmp;
-	if (*eptr == '.' && eptr[1] == '0') eptr+=2;
-	if (*eptr && isspace(*eptr)) eptr++;
-	endLen = eptr - line;
-	ptr = line + endLen;
-        while (ptr) {
-            tmp = strseparate(&ptr, " \t"); /*  looking for link options... */
-            if (tmp == NULL)  break; /*  nothing found */
-            if (*tmp != '-') break; /*  this is not option */
-            else { /*  found link option */
-                /*  if (!strncasecmp(tmp, "-r", 2) || */
-                /*     !strncasecmp(tmp, "-w", 2) || */
-                /*     !strncasecmp(tmp, "-mn", 3) || */
-                /*    !strncasecmp(tmp, "-def", 4)) */
-                {
-                    endLen = ptr ? (ptr - line) : strlen(origLine);
-                    continue;
-                }
-            }
-        }
-        nfree(*lineOut);
-        *lineOut = (char *) safe_calloc(strlen(origLine) + 1, 1);
-        strncpy(*lineOut, origLine, startLink - line);
-        if (endLen < strlen(origLine))
-	    strcpy(*lineOut+(startLink-line), origLine+endLen);
-    }
-    nfree(origLine);
-    nfree(linkStr);
-    return rc;
-}
-#endif
 
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     char *cfgline=NULL, *token=NULL, *tmpPtr=NULL, *line=NULL, *buff=0;
