@@ -1,3 +1,9 @@
+hpt (1.1.0-2) unstable; urgency=low
+
+  * Added a recommend for hptkill (now packaged).
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Tue,  5 Mar 2002 14:11:34 +0100
+
 hpt (1.1.0-1) unstable; urgency=low
 
   * Hey, a new Package has been built.
