@@ -347,31 +347,11 @@ void processConfig()
 #endif
 
    if (config->lockfile) {
-       if (config->advisoryLock) {
-           if ((lock_fd=open(config->lockfile,O_CREAT|O_RDWR,S_IREAD|S_IWRITE))<0) {
-               fprintf(stderr,"cannot open/create lock file: %s\n",config->lockfile);
-               disposeConfig(config);
-               exit(EX_CANTCREAT);
-           } else {
-               if (write(lock_fd," ", 1)!=1) {
-                   fprintf(stderr,"can't write to lock file! exit...\n");
-                   disposeConfig(config);
-                   exit(EX_IOERR);
-               }
-               if (lock(lock_fd,0,1)<0) {
-                   fprintf(stderr,"lock file used by another process! exit...\n");
-                   disposeConfig(config);
-                   exit(EX_TEMPFAIL);
-               }
-           }
-       } else { /*  normal locking */
-           if ((lock_fd=open(config->lockfile,
-               O_CREAT|O_RDWR|O_EXCL,S_IREAD|S_IWRITE))<0) {
-               fprintf(stderr,"cannot create new lock file: %s\n",config->lockfile);
-               fprintf(stderr,"lock file probably used by another process! exit...\n");
-               disposeConfig(config);
-               exit(EX_CANTCREAT);
-           }
+       lock_fd = lockFile(config->lockfile, config->advisoryLock);
+       if( lock_fd < 0 )
+       {
+           disposeConfig(config);
+           exit(EX_CANTCREAT);
        }
    }
 

@@ -86,6 +86,78 @@ LINK32=link.exe
 
 # Name "hpt - Win32 Release"
 # Name "hpt - Win32 Debug"
+# Begin Group "Header Files"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\h\areafix.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\cvsdate.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\dupe.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\fcommon.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\hpt.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\hptperl.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\link.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\pkt.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\post.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\query.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\scan.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\scanarea.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\seenby.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\stat.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\toss.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\h\version.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\src\areafix.c
@@ -145,6 +217,10 @@ SOURCE=.\src\scanarea.c
 # Begin Source File
 
 SOURCE=.\src\seenby.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\stat.c
 # End Source File
 # Begin Source File
 
