@@ -1,3 +1,14 @@
+2002-07-12 Friday 21:30  stas
+
+	* doc/hpt-FAQ.russian (1.24): Add question about russian
+	documentation.
+
+2002-07-12 Friday 21:03  stas
+
+	* doc/hpt.texi (1.71), src/fcommon.c (1.134), src/toss.c (1.423):
+	New value 'addrsCRC32' for token 'BundleNameStyle'; return
+	addrdDiff action old
+
 2002-07-09 Tuesday 15:53  stas
 
 	* src/fcommon.c (1.133): Fix patch '2002-07-06 Saturday 18:54 
