@@ -16,7 +16,7 @@ Example:
  -*                           <- Remove all linked areas
  %INFO                        <- Ask for general information
  %LIST                        <- List available areas
- $QUERY			      <- List of areas to which you are currently
+ %QUERY			      <- List of areas to which you are currently
  				 linked
  %UNLINKED                    <- List available areas to which
                                  you are currently not linked

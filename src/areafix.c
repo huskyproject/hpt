@@ -373,30 +373,6 @@ char *linked(s_message *msg, s_link *link)
     return report;
 }
 
-char *query(s_message *msg, s_link *link)
-{
-    int i, rc, n;
-    char *report = NULL;
-    s_area *EchoAreas;
-    
-    EchoAreas=config->echoAreas;
-    
-    xscatprintf(&report, "Linked areas to %s\r\r",
-		    aka2str(link->hisAka));
-    
-    for (i=n=0; i<config->echoAreaCount; i++) {
-	rc=subscribeCheck(EchoAreas[i], msg, link);
-	if (rc==0) {
-            xscatprintf(&report, " %s\r", EchoAreas[i].areaName);
-            n++;
-	}
-    }
-    xscatprintf(&report, "\r%u areas linked\r", n);
-    writeLogEntry(hpt_log, '8', "areafix: linked areas list sent to %s", aka2str(link->hisAka));
-
-    return report;
-}
-
 char *unlinked(s_message *msg, s_link *link)
 {
     int i, rc;
@@ -541,7 +517,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 	
 	areaName = area->areaName;
 
-	if ((f=fopen(fileName,"r+")) == NULL)
+	if ((f=fopen(fileName,"r+b")) == NULL)
 		{
 			fprintf(stderr,"areafix: cannot open config file %s \n", fileName);
 			return 1;
@@ -1211,8 +1187,7 @@ int tellcmd(char *cmd) {
 		if (stricmp(line,"avail")==0) return AVAIL;
 		if (stricmp(line,"available")==0) return AVAIL;
 		if (stricmp(line,"all")==0) return AVAIL;
-                if (stricmp(line,"query")==0) return QUERY;
-                if (stricmp(line,"unlinked")==0) return UNLINK;
+		if (stricmp(line,"unlinked")==0) return UNLINK;
 		if (stricmp(line,"pause")==0) return PAUSE;
 		if (stricmp(line,"resume")==0) return RESUME;
 		if (stricmp(line,"info")==0) return INFO;
@@ -1251,10 +1226,7 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 	case AVAIL: report = available (link); 
 		RetFix=AVAIL;
 		break;
-        case QUERY: report = query (msg, link);
-                RetFix=QUERY;
-                break;
-        case UNLINK: report = unlinked (msg, link);
+	case UNLINK: report = unlinked (msg, link);
 		RetFix=UNLINK;
 		break;
 	case PAUSE: report = pause_link (msg, link);
@@ -1439,10 +1411,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 					break;
 				case AVAIL:
 					RetMsg(msg, link, preport, "available areas");
-                                        break;
-                                case QUERY:
-                                        RetMsg(msg, link, preport, "linked request");
-                                        break;
+					break;
 				case UNLINK:
 					RetMsg(msg, link, preport, "unlinked request");
 					break;
