@@ -98,20 +98,21 @@ void writeDupeFiles(void)
 }
 
 void exit_hpt(char *logstr, int print) {
+    char *_lockfile;
 
+    w_log('9', logstr);
+    _lockfile = config->lockfile;
     if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
 
     writeDupeFiles();
-    if (config->lockfile) {
-	close(lock_fd);
-	remove(config->lockfile);
-    }
-    w_log('9', logstr);
-    w_log('1', "End");
-    closeLog(hpt_log);
     disposeConfig(config);
     doneCharsets();
-    exit(EX_SOFTWARE);
+    w_log('1', "Exit");
+    closeLog(hpt_log);
+    if (_lockfile) {
+        close(lock_fd);
+        remove(_lockfile);
+    }
 }
 
 int createLockFile(char *lockfile) {
