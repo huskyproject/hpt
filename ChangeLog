@@ -1,11 +1,14 @@
 hpt 0.9.8 (development version)
 ---------	
 
+----- cvs ci ------
+Wed Sep 27 20:24:45 NOVST 2000
+* robotsArea
 
 ----- cvs ci ------
 Tue Sep 26 00:25:41 NOVST 2000
 max:
-* autocreate fix (don't del -b areatag from non-pass areas)
+* autocreate fix (don't del "-b basetype" from non-pass areas)
 patch from Serguei Revtov:
 * addrDiffAlways value for BundleNameStyle & linkBundleNameStyle
 

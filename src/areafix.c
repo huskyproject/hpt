@@ -1587,7 +1587,9 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 				     msg->fromUserName, newsubj, 1);
 
 		preprocText(split, tmpmsg);
-		processNMMsg(tmpmsg, NULL, NULL, 0, MSGLOCAL);
+		processNMMsg(tmpmsg, NULL,
+					 getNetMailArea(config,config->robotsArea),
+					 0, MSGLOCAL);
 
 		freeMsgBuffers(tmpmsg);
 		nfree(tmpmsg);
@@ -1608,9 +1610,6 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	s_pktHeader header;
 	char *token, *textBuff, *report=NULL, *preport = NULL;
 	
-	// load recoding tables
-//	if (config->outtab != NULL) getctab(outtab, (unsigned char*) config->outtab);
-
 	// 1st security check
 	if (pktHeader) security=addrComp(msg->origAddr, pktHeader->origAddr);
 	else {
@@ -1768,7 +1767,9 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		
 		writeLogEntry(hpt_log, '8', "areafix: write netmail msg for %s", aka2str(link->hisAka));
 
-		processNMMsg(linkmsg, &header, NULL, 0, MSGLOCAL);
+		processNMMsg(linkmsg, &header,
+					 getNetMailArea(config,config->robotsArea),
+					 0, MSGLOCAL);
 
 		freeMsgBuffers(linkmsg);
 		nfree(linkmsg);
@@ -1813,61 +1814,74 @@ void afix(void)
     XMSG            xmsg;
     s_addr          dest;
     s_message	    msg;
-    int             for_us;
+    int             for_us, k;
+	int             startarea = 0, endarea = config->netMailAreaCount;
+	s_area          *area;
+	char            *name = config->robotsArea;
 
     writeLogEntry(hpt_log, '1', "Start AreaFix...");
+
+	if ((area = getNetMailArea(config, name)) != NULL) {
+		startarea = area - config->netMailAreas;
+		endarea = startarea + 1;
+	}
+
+	for (k = startarea; k < endarea; k++) {
     
-    netmail = MsgOpenArea((unsigned char *) config->netMailAreas[0].fileName, MSGAREA_NORMAL, 
-						  /*config -> netMailArea.fperm, 
-						  config -> netMailArea.uid,
-						  config -> netMailArea.gid,*/
-						  (word)config -> netMailAreas[0].msgbType);
-    if (netmail != NULL) {
+		netmail = MsgOpenArea((unsigned char *) config->netMailAreas[k].fileName,
+							  MSGAREA_NORMAL, 
+							  /*config -> netMailArea.fperm, 
+								config -> netMailArea.uid,
+								config -> netMailArea.gid,*/
+							  (word)config -> netMailAreas[k].msgbType);
 
-	highmsg = MsgGetHighMsg(netmail);
-	writeLogEntry(hpt_log, '1', "Scanning NetmailArea");
+		if (netmail != NULL) {
 
-	// scan all Messages and test if they are already sent.
-	for (i=1; i<= highmsg; i++) {
-	    SQmsg = MsgOpenMsg(netmail, MOPEN_RW, i);
+			highmsg = MsgGetHighMsg(netmail);
+			writeLogEntry(hpt_log,'1',"Scanning %s",config->netMailAreas[k].areaName);
 
-	    // msg does not exist
-	    if (SQmsg == NULL) continue;
+			// scan all Messages and test if they are already sent.
+			for (i=1; i<= highmsg; i++) {
+				SQmsg = MsgOpenMsg(netmail, MOPEN_RW, i);
 
-	    MsgReadMsg(SQmsg, &xmsg, 0, 0, NULL, 0, NULL);
-	    cvtAddr(xmsg.dest, &dest);
-	    for_us = 0;
-	    for (j=0; j < config->addrCount; j++)
-		if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
+				// msg does not exist
+				if (SQmsg == NULL) continue;
+
+				MsgReadMsg(SQmsg, &xmsg, 0, 0, NULL, 0, NULL);
+				cvtAddr(xmsg.dest, &dest);
+				for_us = 0;
+				for (j=0; j < config->addrCount; j++)
+					if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
                 
-	    // if not read and for us -> process AreaFix
-		if (((xmsg.attr & MSGREAD) != MSGREAD) && (for_us==1) &&
-			((stricmp((char*)xmsg.to, "areafix")==0) || 
-			 (stricmp((char*)xmsg.to, "areamgr")==0) ||
-			 (stricmp((char*)xmsg.to, "hpt")==0) ) ) {
-		    memset(&msg,0,sizeof(s_message));
-		    MsgToStruct(SQmsg, xmsg, &msg);
-		    processAreaFix(&msg, NULL);
-			if (config->areafixKillRequests) {
-				MsgCloseMsg(SQmsg);
-				MsgKillMsg(netmail, i);
-			} else {
-				xmsg.attr |= MSGREAD;
-				MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
-				MsgCloseMsg(SQmsg);
-			}
-		    freeMsgBuffers(&msg);
-	    }
-           else
-	    MsgCloseMsg(SQmsg);
+				// if not read and for us -> process AreaFix
+				if (((xmsg.attr & MSGREAD) != MSGREAD) && (for_us==1) &&
+					((stricmp((char*)xmsg.to, "areafix")==0) || 
+					 (stricmp((char*)xmsg.to, "areamgr")==0) ||
+					 (stricmp((char*)xmsg.to, "hpt")==0) ) ) {
+					memset(&msg,'\0',sizeof(s_message));
+					MsgToStruct(SQmsg, xmsg, &msg);
+					processAreaFix(&msg, NULL);
+					if (config->areafixKillRequests) {
+						MsgCloseMsg(SQmsg);
+						MsgKillMsg(netmail, i);
+					} else {
+						xmsg.attr |= MSGREAD;
+						MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+						MsgCloseMsg(SQmsg);
+					}
+					freeMsgBuffers(&msg);
+				}
+				else MsgCloseMsg(SQmsg);
 
-	} /* endfor */
+			} /* endfor */
 
 //	writeMsgToSysop(msgToSysop);
-	MsgCloseArea(netmail);
-    } else {
-		writeLogEntry(hpt_log, '9', "Could not open NetmailArea");
-    } /* endif */
+			MsgCloseArea(netmail);
+		} else {
+			writeLogEntry(hpt_log, '9', "Could not open %s",
+						  config->netMailAreas[k].areaName);
+		} /* endif */
+	}
 }
 
 void autoPassive()
@@ -1909,7 +1923,7 @@ void autoPassive()
 																 &(config->links[i].hisAka));
 									   xscatprintf(&(msg->text), "\r System switched to passive\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the %%RESUME command.\r\r--- %s autopause\r", versionStr);
 									   msg->textLength = strlen(msg->text);
-									   processNMMsg(msg, NULL, NULL, 0, MSGLOCAL);
+									   processNMMsg(msg, NULL, getNetMailArea(config,config->robotsArea), 0, MSGLOCAL);
 									   freeMsgBuffers(msg);
 									   nfree(msg);
 								   }
@@ -2006,7 +2020,9 @@ int relink (char *straddr) {
 		xscatprintf(&(msg->text), " \r--- %s areafix\r", versionStr);
 		msg->textLength = strlen(msg->text);
 		writeLogEntry(hpt_log, '8', "'Refresh' message created to `AreaFix`");
-		processNMMsg(msg, NULL, NULL, 0, MSGLOCAL);
+		processNMMsg(msg, NULL,
+					 getNetMailArea(config,config->robotsArea),
+					 0, MSGLOCAL);
 		freeMsgBuffers(msg);
 		nfree(msg);
 		writeLogEntry(hpt_log, '8', "Total request relink %i area(s)",areasArraySize);
