@@ -2,6 +2,11 @@ hpt 0.27
 --------
 
 ----- cvs ci ------
+Thu Mar  25 12:40
+Fedor:
+! Created area in passthrough, when created from forward of requests
+
+----- cvs ci ------
 Sat Mar  20 16:03
 Max:
 - link patch from Edgar

@@ -477,6 +477,7 @@ char *available(s_link *link) {
 	return report;
 }                                                                               
 
+/*
 int delConfigLine(FILE *f, char *fileName) {
     long curpos, endpos, linelen, len;
     char *buff;
@@ -499,12 +500,13 @@ int delConfigLine(FILE *f, char *fileName) {
     free(buff);
     return 0;
 }
-
+*/
 // subscribe if (act==0),  unsubscribe if (act!=0)
 int forwardRequestToLink (char *areatag, s_link *uplink, int act) {
     time_t t;
     struct tm *tm;
     s_message *msg;
+    char *base, pass[]="passthrough";
 
 	if (uplink->msg == NULL) {
 
@@ -548,8 +550,11 @@ int forwardRequestToLink (char *areatag, s_link *uplink, int act) {
 	msg->text = realloc (msg->text, strlen(msg->text)+1+strlen(areatag)+1+1);
 	
 	if (act==0) {
-		strcat(msg->text,"+");
-		autoCreate(areatag, uplink->hisAka);
+	    strcat(msg->text,"+");
+	    base = config->msgBaseDir;
+	    config->msgBaseDir = pass;
+	    autoCreate(areatag, uplink->hisAka);
+	    config->msgBaseDir = base;
 	} else strcat(msg->text,"-");
 	strcat(msg->text,areatag);
 	strcat(msg->text,"\r");
@@ -559,7 +564,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, int act) {
 
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 	FILE *f;
-	char *cfgline, *token, *running, *areaName;
+	char *cfgline, *token, *running, *areaName, work=1;
 	long pos;
 	
 	areaName = area->areaName;
@@ -570,7 +575,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 			return 1;
 		}
 	
-	while (1) {
+	while (work) {
 		pos = ftell(f);
 		if ((cfgline = readLine(f)) == NULL) break;
 		cfgline = trimLine(cfgline);
@@ -593,13 +598,11 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 						break;
  					case 1:	fseek(f, pos, SEEK_SET);
 						if ((area->msgbType==MSGTYPE_PASSTHROUGH)
-							&& (area->downlinkCount==1)) {
-							delConfigLine(f, fileName);
-							forwardRequestToLink(areaName, area->downlinks[0]->link, 1);
-							free(cfgline);
-							fclose(f);
-							return 0;
-						} else delLinkFromArea(f, fileName, aka2str(link->hisAka));
+							&& (area->downlinkCount==1) &&
+							(area->downlinks[0]->link->hisAka.point == 0)) {
+						    forwardRequestToLink(areaName, area->downlinks[0]->link, 1);
+						}
+						delLinkFromArea(f, fileName, aka2str(link->hisAka));
 /*						delstring(f,fileName,straka,1);*/
 						break;
 					case 2:
