@@ -70,7 +70,7 @@ s_log *openLog(char *fileName, char *appN, char *keys, UINT echoLog)
    xstrcat(&temp->appName, appN);
    xstrcat(&temp->keysAllowed, keys);
 
-   if (config->loglevels) return NULL;
+//   if (config->loglevels) return NULL;
 
    temp->firstLinePrinted=0;
 

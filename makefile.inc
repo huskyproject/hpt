@@ -19,7 +19,6 @@ OBJS    = fcommon$(OBJ) hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) log$(OBJ) \
 
 all: $(OBJS) \
      pktinfo$(EXE) \
-     tlog$(EXE) \
      tpkt$(EXE) \
      txt2pkt$(EXE) \
      hptlink$(EXE) \
@@ -33,9 +32,6 @@ pktinfo$(EXE): pktinfo$(OBJ) $(OBJS)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) pktinfo$(EXE) log$(OBJ) recode$(OBJ) pktinfo$(OBJ) \
           pktread$(OBJ) fcommon$(OBJ) global$(OBJ) dupe$(OBJ) tree$(OBJ) \
 	  crc$(OBJ) $(LIBS)
-
-tlog$(EXE): tlog$(OBJ) log$(OBJ)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG) tlog$(EXE) tlog$(OBJ) log$(OBJ) $(LIBS)
 
 tpkt$(EXE): tpkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
               recode$(OBJ) log$(OBJ) global$(OBJ) 
@@ -68,7 +64,6 @@ distclean: clean
 	-$(RM) txt2pkt$(EXE)
 	-$(RM) pktinfo$(EXE)
 	-$(RM) hpt$(EXE)
-	-$(RM) tlog$(EXE)
 	-$(RM) hptlink$(EXE)
 	-$(RM) hpttree$(EXE)
 
