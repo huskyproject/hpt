@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Mon Jan 29 15:59:11 NOVT 2001
+max:
+* netmailFlag works properly
+
+----- cvs ci ------
 Sun Jan 28 16:43:58 NOVT 2001
 max:
 * write statistics when tossing from badArea
