@@ -63,10 +63,6 @@
 #include <dupe.h>
 #include <query.h>
 
-//extern char *curconfname;  /* replased with getCurConfName(); */
-//extern long curconfpos;    /* replased with getCurConfPos(); */
-//extern FILE *hcfg;
-
 unsigned char RetFix;
 static int rescanMode = 0;
 static int rulesCount = 0;
@@ -160,7 +156,7 @@ int subscribeAreaCheck(s_area *area, char *areaname, s_link *link)
     // this is another area
     return rc;
 }
-
+#if 0
 // del link from area, return 0 on success, 1 on error
 int delLinkFromArea(FILE *f, char *fileName, char *str)
 {
@@ -261,6 +257,7 @@ int addstring(FILE *f, char *aka)
     nfree(cfg);
     return rc;
 }
+#endif // if 0
 
 void addlink(s_link *link, s_area *area)
 {
@@ -581,14 +578,34 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
     return 0;
 }
 
+int testAddr(char *addr, s_addr hisAka)
+{
+    s_addr aka;
+    string2addr(addr, &aka);
+    if (addrComp(aka, hisAka)==0) return 1;
+    return 0;
+}
+
+char* findLinkInString(char *line, s_addr addr)
+{
+    char* linkpos = NULL;
+    while ( (linkpos = strstr(line, aka2str(addr))) != NULL )
+    {
+        if(testAddr(linkpos,addr))
+            break;
+        line = linkpos+1;
+    }
+    return linkpos;
+}
+
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
-    FILE *f;
-    char *cfgline=NULL, *token=NULL, *buff=NULL, *addr=NULL;
+    FILE *cfgin,*cfgout;
+    char *cfgline=NULL, *token=NULL, *buff=NULL, *cfgInline=NULL;
     long pos=-1, lastpos=-1, endpos=-1, len=0;
+    char *tmpFileName=NULL;
     int rc=0;
     e_changeConfigRet nRet = I_ERR;
     char* areaName = area->areaName;
-    s_addr tmpAdr;
 
     w_log(LL_FUNC,"areafix.c::changeconfig()");
 
@@ -621,23 +638,28 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     }
     close_conf();
     if (pos == -1) { // impossible // error occurred
-	nRet = I_ERR;
-	return -1;
+	    return -1;
     }
-
-    if ( (f=fopen(fileName,"r+b")) == NULL ) {
-	fprintf(stderr, "areafix: cannot open config file %s for reading and writing\n", fileName);
+    cfgin = fopen(fileName,"rb");
+    if((tmpFileName=tmpnam(tmpFileName)) != NULL)
+        cfgout = fopen(tmpFileName,"wb"); // create result file
+    else 
+        cfgout = NULL;
+    if ( !cfgin && !cfgout ) {
+	if (!quiet) fprintf(stderr, "areafix: cannot open config file %s for reading and writing\n", fileName);
 	w_log(LL_ERR,"areafix: cannot open config file \"%s\" for reading and writing", fileName);
 	nRet = I_ERR; // go to end :) // error occurred
 	return -1;
     }
     else {
-        fseek(f, pos, SEEK_SET);
-        cfgline = readLine(f);
+        buff = (char*)safe_calloc( (size_t)pos ,sizeof(char) );
+        len = fread(buff, sizeof(char), (size_t)pos, cfgin);
+        fwrite(buff, sizeof(char), (size_t) len, cfgout);
+        cfgInline = readLine(cfgin);
     }
-    if ((nRet != I_ERR) && (cfgline == NULL)) {
-        nRet = I_ERR; // go to end :) // error occurred
-	return -1;
+    if ( cfgInline == NULL ) {
+        nRet = IO_OK; // go to end
+    // return -1; this is useless return!!!
     }
     else { // everithing fine. now we try to do some actions
       switch (action) {
@@ -650,97 +672,93 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
                 forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 0);
             }
         case 3: // add link to existing area
-            if (addstring(f, aka2str(link->hisAka)))
-            {
-                w_log('9',"areafix: can't write to file %s", fileName);
-                nRet = O_ERR;
-            }
-            else { nRet = ADD_OK; }
+            xscatprintf(&cfgInline, " %s", aka2str(link->hisAka));
+            fprintf(cfgout, "%s\n", cfgInline); // add line to config
+            nRet = ADD_OK;
             break;
         case 1: // remove link from area
-            fseek(f, pos, SEEK_SET);
             if ((area->msgbType==MSGTYPE_PASSTHROUGH)
                 && (area->downlinkCount==1) &&
                 (area->downlinks[0]->link->hisAka.point == 0)) {
                 forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 1);
             }
-            if ((rc = delLinkFromArea(f, fileName, aka2str(link->hisAka))) == 1) {
-                if (link->hisAka.point==0) { // fix for node addr with trailing .0
-                    xscatprintf(&addr,"%u:%u/%u.%u",
-                        link->hisAka.zone,link->hisAka.net,
-                        link->hisAka.node,link->hisAka.point);
-                    fseek(f, pos, SEEK_SET);
-                    rc = delLinkFromArea(f, fileName, addr);
-                    nfree(addr);
-                }
+            cfgline = findLinkInString(cfgInline , link->hisAka );
+            rc = 0;
+            while(cfgline[rc] && !isspace(cfgline[rc++])); // search for end of addr string
+            while(cfgline[rc] && !isdigit(cfgline[rc])) rc++; // search for next addrr string
+            cfgline[0] = '\0';
+            if(cfgline[rc]) {
+                strcat(cfgInline, cfgline+rc);
             }
-            if (rc) {
-                w_log('9',"areafix: can't del link %s from echo area %s",
-                aka2str(link->hisAka), areaName);
-                nRet = O_ERR;
+            else {
+                rc = -1;
+                while( isspace(cfgline[rc])) { cfgline[rc] = '\0'; rc--;}
             }
-            else { nRet = DEL_OK; }
+            fprintf(cfgout, "%s\n", cfgInline); // add line to config 
+            nRet = DEL_OK;
             break;
         case 2:
         //makepass(f, fileName, areaName);
-        case 5: // subscribe to us passthrough
+        case 4: // delete area 
+        // do nothing. just do not add this line to new config
+            nRet = DEL_OK;
+            break;
+        case 5: // subscribe us to  passthrough
             if ( hpt_stristr(area->downlinks[0]->link->autoAreaCreateDefaults,
                 "passthrough") )  {
                 nRet = O_ERR;
+                fprintf(cfgout, "%s\n", cfgInline); // add line to config 
                 break;
-            }   // we need to delete area first
-        case 6: 
-        case 4: // delete area 
-          lastpos = ftell(f);
-          fseek(f, 0, SEEK_END);
-          endpos = ftell(f);
-          buff = (char*) safe_malloc((size_t) (endpos-lastpos));
-          memset(buff, '\0', (size_t) (endpos-lastpos));
-          fseek(f, lastpos, SEEK_SET);
-          len = fread(buff, sizeof(char), (size_t) endpos-lastpos, f);
-          fseek(f, pos, SEEK_SET);
-          fwrite(buff, sizeof(char), (size_t) len, f);
-          nfree(buff);
-#if defined(__WATCOMC__) || defined(__MINGW32__)
-          fflush( f );
-          fTruncate( fileno(f), pos+len);
-          fflush( f );
-#else
-          truncate(fileName, pos+len);
-#endif
-          if(action == 4) break;
-
-          if(action == 5)  // subscribe to us passthrough
-          {                // not fully implemented yet
+            }   
             // get area string
             buff = makeAreaParam(area->downlinks[0]->link , areaName, NULL );
             nRet = ADD_OK;
-          }
-          if(action == 6) {// make area pass. fully implemented yet */ 
+        case 6: // make area pass. 
+
+            if(action == 6) {
             buff = makeAreaParam(area->downlinks[0]->link , areaName, "passthrough" );
             nRet = DEL_OK;
           }
           // add all links
           token = strstr(cfgline, aka2str(area->downlinks[0]->link->hisAka));
-          string2addr(token,&tmpAdr);
-          if(addrComp(tmpAdr, area->downlinks[0]->link->hisAka))
+          if(!testAddr(token,area->downlinks[0]->link->hisAka))
             token = strstr(token+1, aka2str(area->downlinks[0]->link->hisAka));
 
-          xstrcat( &buff, token-1); // need to fix extra \n 
-          fprintf(f, "\n%s\n", buff); // add line to config
+          xstrcat( &buff, token-1); 
+          fprintf(cfgout, "%s\n", buff); // add line to config
           break;
         default: break;
       } // switch (action)
-    } // else of if ((nRet > -1) && (cfgline == NULL)) {
-    nfree(buff);
-    nfree(cfgline);
-    nfree(fileName);
-    fclose(f);
+      nfree(buff);
+      lastpos = ftell(cfgin);
+      fseek(cfgin, 0, SEEK_END);
+      endpos = ftell(cfgin);
+      buff = (char*) safe_calloc((size_t) (endpos-lastpos), sizeof(char));
+      fseek(cfgin, lastpos, SEEK_SET);
+      len = fread(buff, sizeof(char), (size_t) endpos-lastpos, cfgin);
+      fwrite(buff, sizeof(char), (size_t) len, cfgout);
+    } // else of if (cfgline == NULL) {
+    fclose(cfgin); fclose(cfgout); 
+    w_log(LL_FILE,"areafix.c::changeconfig(): created '%s' ",tmpFileName);
     if (nRet==I_ERR){
-       w_log(LL_FUNC,"areafix.c::changeconfig() rc=-1");
-       return -1;
-    }
-    w_log(LL_FUNC,"areafix.c::changeconfig() rc=%i",nRet);
+        w_log(LL_FUNC,"areafix.c::changeconfig() rc=-1");
+    } else {
+        cfgin  = fopen(tmpFileName,"rb");
+        cfgout = fopen(fileName,"wb"); // result file
+        if ( !cfgin && !cfgout ) {
+            if (!quiet) fprintf(stderr, "areafix: cannot open config file %s for reading and writing\n", fileName);
+            w_log(LL_ERR,"areafix: cannot open config file \"%s\" for reading and writing", fileName);
+        } else {
+            int ch;
+            while( (ch=getc(cfgin)) != EOF ) putc(ch, cfgout); 
+            fclose(cfgin); fclose(cfgout); 
+        }
+    }    
+    remove(tmpFileName);
+    w_log(LL_FILE,"areafix.c::changeconfig(): deleted '%s' ",tmpFileName);
+    nfree(buff);
+    nfree(fileName);
+    nfree(cfgInline);
     return nRet;
 }
 
@@ -918,7 +936,7 @@ void fixRules (s_link *link, s_area *area) {
 
 char *subscribe(s_link *link, char *cmd) {
     unsigned int i, rc=4, found=0;
-    char *line, *an, *report = NULL;
+    char *line, *an=NULL, *report = NULL;
     s_area *area=NULL;
 
     w_log(LL_FUNC, "areafix::subscribe()");
@@ -976,7 +994,7 @@ char *subscribe(s_link *link, char *cmd) {
                w_log(LL_AREAFIX, "areafix: %s already linked to %s",aka2str(link->hisAka), an);
            }
         } else {
-            if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==0) {
+            if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==ADD_OK) {
                 addlink(link, area);
         	fixRules (link, area);
                 xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
@@ -1020,21 +1038,22 @@ char *subscribe(s_link *link, char *cmd) {
 		w_log( LL_AREAFIX, "areafix: %s - request forwarded", line);
         if( !config->areafixQueueFile && isOurAka(link->hisAka)==0)
         {
-		    if ( !isLinkOfArea(link, area) ) {
-		      if(changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==ADD_OK) {
-			addlink(link, area);
-			fixRules (link, area);
-                        w_log( LL_AREAFIX, "areafix: %s subscribed to area %s",
-                              aka2str(link->hisAka),line);
-                      } else {
-                        xscatprintf( &report," %s %s  error. report to sysop!\r",
-                                     an, print_ch(49-strlen(an),'.') );
-                        w_log( LL_AREAFIX, "areafix: %s not subscribed to %s",
-                              aka2str(link->hisAka),an);
-                        w_log(LL_ERR, "areafix: can't change config file!");
-                      }
-		    } else w_log( LL_AREAFIX, "areafix: %s already subscribed to area %s",
-			          aka2str(link->hisAka), line );
+            area = getArea(config, line);
+            if ( !isLinkOfArea(link, area) ) {
+            if(changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==ADD_OK) {
+                addlink(link, area);
+                fixRules (link, area);
+                w_log( LL_AREAFIX, "areafix: %s subscribed to area %s",
+                    aka2str(link->hisAka),line);
+            } else {
+                xscatprintf( &report," %s %s  error. report to sysop!\r",
+                    an, print_ch(49-strlen(an),'.') );
+                w_log( LL_AREAFIX, "areafix: %s not subscribed to %s",
+                    aka2str(link->hisAka),an);
+                w_log(LL_ERR, "areafix: can't change config file!");
+            }
+          } else w_log( LL_AREAFIX, "areafix: %s already subscribed to area %s",
+                aka2str(link->hisAka), line );
 
 		}
 	    }
@@ -1071,6 +1090,12 @@ static char *do_delete(s_link *link, s_area *area) {
     char *report = NULL, *an = area->areaName;
     int i;
 
+    if(config->areafixQueueFile) { // add deleted area to queue file
+        af_CheckAreaInQuery( area->areaName, 
+            &(area->downlinks[0]->link->hisAka), 
+            NULL, ADDDELETED);
+    }
+        
     /* unsubscribe from downlinks */
     xscatprintf(&report, " %s %s  deleted\r", an, print_ch(49-strlen(an), '.'));
     for (i=0; i<area->downlinkCount; i++) {
@@ -1078,7 +1103,7 @@ static char *do_delete(s_link *link, s_area *area) {
 	    forwardRequestToLink(an, area->downlinks[i]->link, NULL, 2);
     }
     /* remove area from config-file */
-    if( changeconfig ((cfgFile) ? cfgFile : getConfigFileName(),  area, link, 4) ) {
+    if( changeconfig ((cfgFile) ? cfgFile : getConfigFileName(),  area, link, 4) != DEL_OK) {
        w_log( LL_AREAFIX, "areafix: can't remove area from config" );
     }
 
@@ -1188,11 +1213,18 @@ char *unsubscribe(s_link *link, char *cmd) {
 	case 0:
 	    if (from_us == 0) {
 		int i;
-		for (i=0; i<area->downlinkCount; i++)
-		    if (addrComp(link->hisAka, area->downlinks[i]->link->hisAka)==0 &&
-			area->downlinks[i]->defLink)
-			return do_delete(link, area);
-		removelink(link, area);
+        for (i=0; i<area->downlinkCount; i++) {
+            if (addrComp(link->hisAka, area->downlinks[i]->link->hisAka)==0 &&
+                area->downlinks[i]->defLink)
+                return do_delete(link, area);
+        }
+        if ((area->msgbType == MSGTYPE_PASSTHROUGH) &&
+            (area->downlinkCount < 3) &&
+            (area->downlinks[0]->link->hisAka.point == 0) &&
+            (config->areafixQueueFile)) {
+            return do_delete(link, area);
+        }    
+        removelink(link, area);
 		j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,1);
 		if (j != DEL_OK) {
 		    w_log('8', "areafix: %s doesn't unlinked from %s",
@@ -1200,11 +1232,15 @@ char *unsubscribe(s_link *link, char *cmd) {
 		} else
 		    w_log('8',"areafix: %s unlinked from %s",aka2str(link->hisAka),an);
         } else { // unsubscribing from own address
-		    j=0; // always success
+		    j=DEL_OK; // always success
 		    if ((area->downlinkCount==1) &&
                 (area->downlinks[0]->link->hisAka.point == 0)) {
-		        forwardRequestToLink(area->areaName,
-					    area->downlinks[0]->link, NULL, 1);
+                if(config->areafixQueueFile) {
+                    return do_delete(link, area);
+                } else {
+                    forwardRequestToLink(area->areaName,
+                        area->downlinks[0]->link, NULL, 1);
+                }
             }  else {
                j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
             }
@@ -1247,14 +1283,6 @@ char *unsubscribe(s_link *link, char *cmd) {
 	}
     }
     return report;
-}
-
-int testAddr(char *addr, s_addr hisAka)
-{
-    s_addr aka;
-    string2addr(addr, &aka);
-    if (addrComp(aka, hisAka)==0) return 1;
-    return 0;
 }
 
 int changepause(char *confName, s_link *link, int opt)
