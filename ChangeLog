@@ -1,3 +1,8 @@
+2004-05-14 Friday 15:32  andrew_ladutsko
+
+	* src/hptafix.c (1.9): call_getLinkData - returns program-dependent
+	data for link
+
 2004-05-09 Sunday 19:58  d_sergienko
 
 	* src/post.c (1.115): Added section numbers in subject while post
