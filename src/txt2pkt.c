@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #ifdef UNIX
 #include <sysexits.h>
@@ -45,6 +46,7 @@
 #include <version.h>
 #include <pkt.h>
 #include <fidoconf/recode.h>
+#include <smapi/progprot.h>
 
 #if (defined (__WATCOMC__) && defined (__NT__)) || defined(__TURBOC__)
 #include <dos.h>
@@ -245,7 +247,7 @@ int main(int argc, char *argv[])
 
       t = time (NULL);
       tm = localtime(&t);
-      strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", tm);
+      fts_time((char *)msg.datetime, tm);
 
       msg.netMail = 1;
 

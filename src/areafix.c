@@ -221,7 +221,7 @@ s_message *makeMessage (s_addr *origAddr, s_addr *destAddr,
     }
     if (config->areafixKillReports) msg->attributes |= MSGKILL;
 
-    strftime((char*)msg->datetime, 21, "%d %b %y  %H:%M:%S", localtime(&time_cur));
+    fts_time((char*)msg->datetime, localtime(&time_cur));
 
     return msg;
 }

@@ -14,6 +14,7 @@
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/crc.h>
+#include <smapi/progprot.h>
 
 #include <fcommon.h>
 #include <pkt.h>
@@ -279,7 +280,7 @@ static XS(perl_putMsgInArea)
     string2addr(toaddr, &(msg.destAddr));
   if (!date || !*date)
   { time_t t = time(NULL);
-    strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", localtime(&t));
+    fts_time((char *)msg.datetime, localtime(&t));
   }
   else
   { strncpy(msg.datetime, date, sizeof(msg.datetime));
