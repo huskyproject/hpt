@@ -2,22 +2,12 @@
 
 sub msgdb    { return "c:\\fido\\hpt\\dupebase\\plduper.db"; }
 sub pktdb    { return "c:\\fido\\hpt\\dupebase\\plduperpkt.db"; }
-sub nodelist { return "c:\\fido\\nodelist"; }
 sub nldb     { return "c:\\fido\\nodelist\\nodelist.db"; }
-sub myaddr   { return "2:463/68"; }
-sub msgbase  { return "c:\\fido\\msgbase\\"; }
-sub netmail  { return msgbase . "netmail"; }
-sub dupes    { return msgbase . "dupes"; }
 sub faq      { return "c:\\fido\\itrack\\faq\\"; }
 
 sub route94  { return "c:\\user\\gul\\work\\routing\\route.94"; }
 sub sechubs  { return "c:\\fido\\nodelist\\2nd_hubs.463"; }
 sub echol463 { return "c:\\user\\gul\\work\\echolist.463"; }
-
-sub gupaddr  { return "gup\@lucky.net"; }
-sub gupfrom  { return "gatemaster\@gul.kiev.ua"; }
-sub gupstart { return "site happy.carrier.kiev.ua mypass\n"; }
-sub echolist { return "c:\\user\\robots.zzz\\gate\\allnews.lst"; }
 
 sub attr     { return qw(pvt crash read sent att fwd orphan k/s loc hld xx2 frq rrq cpt arq urq); }
 
@@ -62,7 +52,7 @@ sub filter
 # set $change to update $text, $subject, $fromaddr, $toaddr, $fromname, $toname
   my(@hf, @mypoints, @lines, $firstpath, $lastpath, @path, $origin);
   my(@lastpath, $net, @origin, $msgid, $msgidfrom, $approved, $path);
-  my($key, $oldval, $fromboss, $toboss, $knownpoint, $fname, $time);
+  my($key, $oldval, $fromboss, $toboss, $knownpoint, $fname, $time, @myaddr);
   my($oldtime, $oldpath, $oldpktfrom, $curtime, $dupetext, @roechoes);
   local(*F);
   @hf = qw(
@@ -142,6 +132,7 @@ sub filter
     SU.WIN95.NEWS
   );
 
+  @myaddr = &myaddr;
   if (defined($area))
   {
     unless ($pktfrom =~ /^(2:463\/94(\.0)?|2:5020\/238(\.0)?)$/)
@@ -150,10 +141,9 @@ sub filter
       {
         if ($area eq $_)
         {
-          write_msg("none", $fromaddr, $toaddr, $fromname, $toname,
-             "pvt sent read", $subject,
-             "hpt> Posting to r/o echo $area\r" . $text,
-             msgbase . "unsecure");
+          putMsgInArea("UNSECURE", $fromname, $toname, $fromaddr, $toaddr,
+             $subject, $date, "pvt sent read",
+             "hpt> Posting to r/o echo $area\r" . $text, 0);
           $kill = 1;
           return "Posting to r/o echo $area";
         }
@@ -195,10 +185,9 @@ sub filter
       }
       unless ($approved)
       {
-        write_msg("none", $fromaddr, $toaddr, $fromname, $toname,
-           "pvt sent read", $subject,
-           "hpt> Unapproved message in $area\r" . $text,
-           msgbase . "unsecure");
+        putMsgInArea("UNSECURE", $fromname, $toname, $fromaddr, $toaddr,
+           $subject, $date, "pvt sent read",
+           "hpt> Unapproved message in $area\r" . $text, 0);
         $kill = 1;
         return "Unapproved message in $area";
       }
@@ -207,10 +196,9 @@ sub filter
     { unless ($lastpath =~ m/^2:50/)
       { if ($origin =~ /^2:46/)
         {
-          write_msg("none", $fromaddr, $toaddr, $fromname, $toname,
-             "pvt sent read", $subject,
-             "hpt> R46 is r/o in PVT.EXCH.*\r" . $text,
-             msgbase . "unsecure");
+          putMsgInArea("UNSECURE", $fromnme, $toname, $fromaddr,
+             $subject, $date, "pvt sent read",
+             "hpt> R46 is r/o in PVT.EXCH.*\r" . $text, 0);
           $kill = 1;
           return "R46 is r/o in PVT.EXCH.*";
         }
@@ -279,8 +267,8 @@ Original pkt from: $oldpktfrom
 Original PATH: $oldpath
 $text
 EOF
-      write_msg($area, $fromaddr, "2:463/68", $fromname, $toname,
-                "", $subject, $dupetext, dupes);
+      putMsgInArea("DUPES", $fromname, $toname, $fromaddr, "",
+                   $subject, $date, "pvt sent read", $dupetext, 0);
       $kill = 1;
       return "Dupe";
     }
@@ -307,44 +295,40 @@ EOF
   else
   { if (isattr("att", $attr))
     {
-      write_msg("none", $fromaddr, $toaddr, $fromname, $toname,
-         "pvt sent read", $subject,
-         "hpt> FileAttach from unsecure link\r" . $text,
-         msgbase . "unsecure");
+      putMsgInArea("UNSECURE", $fromname, $toname, $fromaddr, $toaddr,
+         $subject, $date, "pvt sent read",
+         "hpt> FileAttach from unsecure link\r" . $text, 0);
       $kill = 1;
       return "FileAttach from unsecure link";
     }
     if ($fromaddr =~ /^(2:463\/68|2:46\/128)(\.\d+)?$/)
     {
-      write_msg("none", $fromaddr, $toaddr, $fromname, $toname,
-         "pvt sent read", $subject,
-         "hpt> Unprotected message from my system\r" . $text,
-         msgbase . "unsecure");
+      putMsgInArea("UNSECURE", $fromname, $toname, $fromaddr, $toaddr,
+         $subject, $date, "pvt sent read",
+         "hpt> Unprotected message from my system\r" . $text, 0);
       $kill = 1;
       return "Unprotected message from my system";
     }
     compileNL() unless $nltied;
     if ($nltied && !defined($nodelist{$fromboss}))
     {
-      write_msg("none", $fromaddr, $toaddr, $fromname, $toname,
-         "pvt sent read", $subject,
-         "hpt> Unprotected message from inlisted system\r" . $text,
-         msgbase . "unsecure");
+      putMsgInArea("UNSECURE", $fromname, $toname, $fromaddr, $toaddr,
+         $subject, $date, "pvt sent read",
+         "hpt> Unprotected message from inlisted system\r" . $text, 0);
       $kill = 1;
       return "Unprotected message from unlisted system";
     }
     unless ($toaddr =~ /^(2:463\/68(\.\d+)?|2:46\/128(\.\d+)?|2:463\/59\.4|17:.*)$/)
     { bounce($fromname, $fromaddr, $toname, $toaddr, $date, $subject, $text,
              "Unprotected outgoing message");
-      write_msg("none", $fromaddr, $toaddr, $fromname, $toname,
-         "pvt sent read", $subject,
-         "hpt> Unprotected outgoing message\r" . $text,
-         msgbase . "unsecure");
+      putMsgInArea("UNSECURE", $fromname, $toname, $fromaddr, $toaddr,
+         $subject, $date, "pvt sent read",
+         "hpt> Unprotected outgoing message\r" . $text, 0);
       $kill = 1;
       return "Unprotected outgoing message";
     }
   }
-  if ($toboss eq myaddr)
+  if ($toboss eq $myaddr[0])
   {
     $knownpoint = 0;
     foreach(@mypoints)
@@ -353,23 +337,22 @@ EOF
     unless ($knownpoint)
     { bounce($fromname, $fromaddr, $toname, $toaddr, $date, $subject, $text,
              "Unknown point");
-      write_msg("none", $fromaddr, $toaddr, $fromname, $toname,
-         "pvt sent read", $subject,
-         "hpt> Unknown point\r" . $text,
-         msgbase . "itrack.bad");
+      putMsgInArea("BADMAIL", $fromname, $toname, $fromaddr, $toaddr,
+         $subject, $date, "pvt sent read",
+         "hpt> Unknown point\r" . $text, 0);
       $kill = 1;
       return "Unknown point";
     }
   }
-  if ($toaddr eq myaddr)
+  if ($toaddr eq $myaddr[0])
   { # check maillists
     foreach (maillists)
     { if ($toname eq $_)
       { s/ //;
         tr/A-Z/a-z/;
         s/^(........).*$/$1/;
-        write_msg("none", $fromaddr, $toaddr, $fromname, $toname,
-                  "pvt sent read", $subject, $text, msgbase . $_);
+        putMsgInArea($_, $fromname, $toname, $fromaddr, $toaddr,
+                  $subject, $date, "pvt sent read", $text, 0);
         $kill = 1;
         return "Maillist $toname";
       }
@@ -378,10 +361,9 @@ EOF
     { 
       if (isattr("cpt", $attr))
       {
-        write_msg("none", $fromaddr, $toaddr, $fromname, $toname,
-           "pvt sent read", $subject,
-           "hpt> Ping request with RRC\r" . $text,
-           msgbase . "itrack.bad");
+        putMsgInArea("BADMAIL", $fromname, $toname, $fromaddr, $toaddr,
+           $subject, $date, "pvt sent read",
+           "hpt> Ping request with RRC\r" . $text, 0);
         $kill = 1;
         return "Ping request with RRC";
       }
@@ -404,8 +386,8 @@ DATE:  $date
 $text
 ============================================================================
 EOF
-      write_msg("", myaddr, $fromaddr, "Crazy Mail Robot", $fromname,
-                "pvt k/s loc cpt", "Ping Reply", $text, &netmail);
+      putMsgInArea("", "Crazy Mail Robot", $fromname, "", $fromaddr,
+                "Ping Reply", "", "pvt k/s loc cpt", $text, 1);
       $newnet = 1;
       $kill = 1;
       return "Ping from $fromaddr";
@@ -414,10 +396,9 @@ EOF
     {
       if (isattr("cpt", $attr))
       {
-        write_msg("none", $fromaddr, $toaddr, $fromname, $toname,
-           "pvt sent read", $subject,
-           "hpt> FaqServer request with RRC\r" . $text,
-           msgbase . "itrack.bad");
+        putMsgInArea("BADMAIL", $fromname, $toname, $fromaddr, $toaddr,
+           $subject, $date, "pvt sent read",
+           "hpt> FaqServer request with RRC\r" . $text, 0);
         $kill = 1;
         return "FaqServer request with RRC";
       }
@@ -430,10 +411,9 @@ EOF
     {
       if (isattr("cpt", $attr))
       {
-        write_msg("none", $fromaddr, $toaddr, $fromname, $toname,
-           "pvt sent read", $subject,
-           "hpt> $toname request with RRC\r" . $text,
-           msgbase . "itrack.bad");
+        putMsgInArea("BADMAIL", $fromname, $toname, $fromaddr, $toaddr,
+           $subject, $date, "pvt sent read",
+           "hpt> $toname request with RRC\r" . $text, 0);
         $kill = 1;
         return "$toname request with RRC";
       }
@@ -443,8 +423,8 @@ EOF
       if (isattr("rrq", $attr) || isattr("arq", $attr))
       { receipt($fromaddr, $toaddr, $fromname, $toname, $subject, $date);
       }
-      write_msg("none", $fromaddr, $toaddr, $fromname, $toname,
-                "pvt sent read", $subject, $text, msgbase . "gul");
+      putMsgInArea("GUL", $fromname, $toname, $fromaddr, $toaddr,
+                $subject, $date, "pvt sent read", $subject, $text, 0);
       $kill = 1;
       return "Message to gul";
     }
@@ -453,8 +433,8 @@ EOF
   {
     if (grep(/^\x01Via 2:463\/68(\.0)?(\@|\s)/, @lines) > 1)
     {
-      write_msg("", $fromaddr, $toaddr, $fromname, $toname,
-         "pvt sent read", $subject, "hpt> loop\r" . $text, msgbase . "loops");
+      putMsgInArea("LOOPS", $fromname, $toname, $fromaddr, $toaddr,
+         $subject, $date, "pvt sent read", "hpt> loop\r" . $text, 0);
       $kill = 1;
       return "Loop";
     }
@@ -502,8 +482,8 @@ Original pkt from: $oldpktfrom
 Original PATH: $oldpath
 $text
 EOF
-      write_msg($area, $fromaddr, "2:463/68", $fromname, $toname,
-                "", $subject, $dupetext, dupes);
+      putMsgInArea("DUPES", $fromname, $toname, $fromaddr, "",
+                $subject, $date, "pvt sent read", $dupetext, 0);
       return "Dupe";
     }
     $msg{$key} = time() . "|local|local";
@@ -522,14 +502,14 @@ EOF
            "Node $toboss mising in $curnodelist");
     return "Node $toboss mising in $curnodelist";
   }
-  if ($fromaddr eq myaddr &&
+  if ($fromaddr eq $myaddr[0] &&
       !isattr("cpt", $attr) &&
       $area =~ /^netmail$/i &&
       $fromname !~ /areafix|crazy mail robot|allfix|ping|uucp/i)
-  { write_msg("none", $fromaddr, $toaddr, $fromname, $toname,
-              "pvt sent read", $subject, $text, msgbase . "i_sent");
+  { putMsgInArea("I_SENT", $fromname, $toname, $fromaddr, $toaddr,
+              $subject, $date, "pvt sent read", $text, 0);
   }
-  if ($toaddr eq myaddr)
+  if ($toaddr eq $myaddr[0])
   { if ($toname =~ /^faqserver$/i)
     {
       faqserv($fromaddr, $fromname, $subject, $text);
@@ -537,14 +517,9 @@ EOF
       return "Message to FaqServer";
     }
     unless ($toname =~ /^(areafix|allfix|filefix)$/i)
-    { write_msg("none", $fromaddr, $toaddr, $fromname, $toname,
-                "pvt sent read", $subject, $text, msgbase . "gul");
+    { putMsgInArea("GUL", $fromname, $toname, $fromaddr, $toaddr,
+                $subject, $date, "pvt sent read", $text, 0);
       return "Message to gul";
-    }
-  }
-  elsif ($toaddr =~ /^(2:46\/128(\.0)?|2:463\/68\.128)$/)
-  { if ($toname =~ /^areafix$/i && $subject =~ /^uucp$/i && $fromaddr =~ /^2:463\/68(\.0)?$/)
-    { return "GateAreafix: " . gateareafix($text);
     }
   }
   $addr = $area;
@@ -750,14 +725,14 @@ sub compileNL
   my(@nlfiles, $a, $mtime, $ctime, $curtime, $curmtime, $curctime);
   my($zone, $region, $net, $hub, $node, $flag);
   local(*F);
-  opendir(F, nodelist) || return;
+  opendir(F, nodelistDir()) || return;
   @nlfiles = grep(/^nodelist\.\d\d\d$/i, readdir(F));
   closedir(F);
   return unless @nlfiles;
   $curnodelist = pop(@nlfiles);
-  ($a,$a,$a,$a,$a,$a,$a,$a,$a,$curmtime,$curctime) = stat(nodelist . "/$curnodelist");
+  ($a,$a,$a,$a,$a,$a,$a,$a,$a,$curmtime,$curctime) = stat(nodelistDir() . "/$curnodelist");
   foreach(@nlfiles)
-  { ($a,$a,$a,$a,$a,$a,$a,$a,$a,$mtime,$ctime) = stat(nodelist . "/$_");
+  { ($a,$a,$a,$a,$a,$a,$a,$a,$a,$mtime,$ctime) = stat(nodelistDir() . "/$_");
     if ($mtime > $curmtime)
     { $curmtime = $mtime;
       $curctime = $ctime;
@@ -769,7 +744,7 @@ sub compileNL
   {
     unlink(nldb);
     tie(%nodelist, 'DB_File', nldb, O_RDWR|O_CREAT, 0644) || return;
-    unless (open(F, "<".nodelist."/$curnodelist"))
+    unless (open(F, "<".nodelistDir()."/$curnodelist"))
     { untie(%nodelist);
       return;
     }
@@ -834,149 +809,16 @@ DATE:  $date
 $text
 ============================================================================
 EOF
-  write_msg("", myaddr, $fromaddr, "Crazy Mail Robot", $fromname,
-            "pvt k/s loc cpt", "Unable to delivery", $bouncetext, &netmail);
+  putMsgInArea("", "Crazy Mail Robot", $fromname, "", $toaddr,
+            "Unable to delivery", "", "pvt k/s loc cpt", $bouncetext, 1);
   $newnet = 1;
   return $reason;
-}
-
-sub crc32
-{
-  my($str) = @_;
-  my($i, $len, $crc);
-  $str =~ s/\s\s+/ /gs;
-  unless (@crc_32_tab)
-  {
-    @crc_32_tab = ( # CRC polynomial 0xedb88320
-0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f, 0xe963a535, 0x9e6495a3,
-0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988, 0x09b64c2b, 0x7eb17cbd, 0xe7b82d07, 0x90bf1d91,
-0x1db71064, 0x6ab020f2, 0xf3b97148, 0x84be41de, 0x1adad47d, 0x6ddde4eb, 0xf4d4b551, 0x83d385c7,
-0x136c9856, 0x646ba8c0, 0xfd62f97a, 0x8a65c9ec, 0x14015c4f, 0x63066cd9, 0xfa0f3d63, 0x8d080df5,
-0x3b6e20c8, 0x4c69105e, 0xd56041e4, 0xa2677172, 0x3c03e4d1, 0x4b04d447, 0xd20d85fd, 0xa50ab56b,
-0x35b5a8fa, 0x42b2986c, 0xdbbbc9d6, 0xacbcf940, 0x32d86ce3, 0x45df5c75, 0xdcd60dcf, 0xabd13d59,
-0x26d930ac, 0x51de003a, 0xc8d75180, 0xbfd06116, 0x21b4f4b5, 0x56b3c423, 0xcfba9599, 0xb8bda50f,
-0x2802b89e, 0x5f058808, 0xc60cd9b2, 0xb10be924, 0x2f6f7c87, 0x58684c11, 0xc1611dab, 0xb6662d3d,
-0x76dc4190, 0x01db7106, 0x98d220bc, 0xefd5102a, 0x71b18589, 0x06b6b51f, 0x9fbfe4a5, 0xe8b8d433,
-0x7807c9a2, 0x0f00f934, 0x9609a88e, 0xe10e9818, 0x7f6a0dbb, 0x086d3d2d, 0x91646c97, 0xe6635c01,
-0x6b6b51f4, 0x1c6c6162, 0x856530d8, 0xf262004e, 0x6c0695ed, 0x1b01a57b, 0x8208f4c1, 0xf50fc457,
-0x65b0d9c6, 0x12b7e950, 0x8bbeb8ea, 0xfcb9887c, 0x62dd1ddf, 0x15da2d49, 0x8cd37cf3, 0xfbd44c65,
-0x4db26158, 0x3ab551ce, 0xa3bc0074, 0xd4bb30e2, 0x4adfa541, 0x3dd895d7, 0xa4d1c46d, 0xd3d6f4fb,
-0x4369e96a, 0x346ed9fc, 0xad678846, 0xda60b8d0, 0x44042d73, 0x33031de5, 0xaa0a4c5f, 0xdd0d7cc9,
-0x5005713c, 0x270241aa, 0xbe0b1010, 0xc90c2086, 0x5768b525, 0x206f85b3, 0xb966d409, 0xce61e49f,
-0x5edef90e, 0x29d9c998, 0xb0d09822, 0xc7d7a8b4, 0x59b33d17, 0x2eb40d81, 0xb7bd5c3b, 0xc0ba6cad,
-0xedb88320, 0x9abfb3b6, 0x03b6e20c, 0x74b1d29a, 0xead54739, 0x9dd277af, 0x04db2615, 0x73dc1683,
-0xe3630b12, 0x94643b84, 0x0d6d6a3e, 0x7a6a5aa8, 0xe40ecf0b, 0x9309ff9d, 0x0a00ae27, 0x7d079eb1,
-0xf00f9344, 0x8708a3d2, 0x1e01f268, 0x6906c2fe, 0xf762575d, 0x806567cb, 0x196c3671, 0x6e6b06e7,
-0xfed41b76, 0x89d32be0, 0x10da7a5a, 0x67dd4acc, 0xf9b9df6f, 0x8ebeeff9, 0x17b7be43, 0x60b08ed5,
-0xd6d6a3e8, 0xa1d1937e, 0x38d8c2c4, 0x4fdff252, 0xd1bb67f1, 0xa6bc5767, 0x3fb506dd, 0x48b2364b,
-0xd80d2bda, 0xaf0a1b4c, 0x36034af6, 0x41047a60, 0xdf60efc3, 0xa867df55, 0x316e8eef, 0x4669be79,
-0xcb61b38c, 0xbc66831a, 0x256fd2a0, 0x5268e236, 0xcc0c7795, 0xbb0b4703, 0x220216b9, 0x5505262f,
-0xc5ba3bbe, 0xb2bd0b28, 0x2bb45a92, 0x5cb36a04, 0xc2d7ffa7, 0xb5d0cf31, 0x2cd99e8b, 0x5bdeae1d,
-0x9b64c2b0, 0xec63f226, 0x756aa39c, 0x026d930a, 0x9c0906a9, 0xeb0e363f, 0x72076785, 0x05005713,
-0x95bf4a82, 0xe2b87a14, 0x7bb12bae, 0x0cb61b38, 0x92d28e9b, 0xe5d5be0d, 0x7cdcefb7, 0x0bdbdf21,
-0x86d3d2d4, 0xf1d4e242, 0x68ddb3f8, 0x1fda836e, 0x81be16cd, 0xf6b9265b, 0x6fb077e1, 0x18b74777,
-0x88085ae6, 0xff0f6a70, 0x66063bca, 0x11010b5c, 0x8f659eff, 0xf862ae69, 0x616bffd3, 0x166ccf45,
-0xa00ae278, 0xd70dd2ee, 0x4e048354, 0x3903b3c2, 0xa7672661, 0xd06016f7, 0x4969474d, 0x3e6e77db,
-0xaed16a4a, 0xd9d65adc, 0x40df0b66, 0x37d83bf0, 0xa9bcae53, 0xdebb9ec5, 0x47b2cf7f, 0x30b5ffe9,
-0xbdbdf21c, 0xcabac28a, 0x53b39330, 0x24b4a3a6, 0xbad03605, 0xcdd70693, 0x54de5729, 0x23d967bf,
-0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94, 0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
-    );
-  }
-
-  $crc = 0xFFFFFFFF;
-  $len = length($str);
-  for ($i=0; $i<$len; $i++)
-  { $crc = $crc_32_tab[($crc ^ substr($str, $i, 1)) & 0xff] ^ ($crc >> 8);
-  }
-  return $crc;
 }
 
 sub isattr
 {
   my($sattr, $attr) = @_;
-  my($i, $b);
-  for ($i=0, $b=1; $i<&attr; $i++)
-  { return ($attr & $b) ? 1 : 0 if $sattr eq (&attr)[$i];
-    $b *= 2;
-  }
-  return "";
-}
-
-sub write_msg
-{
-  # netmail if $at defined
-  my($area, $af, $at, $nf, $nt, $attr, $subj, $text, $dir) = @_;
-  my($maxmsg, $i, $b, $battr, $msgtext, $flags, $msghdr, $kludges, $date);
-  my($tzone, $tnet, $tnode, $tpoint, $fzone, $fnet, $fnode, $fpoint);
-  local(*F);
-  $text =~ tr/\n/\r/;
-  $text .= "\r" unless $text =~ /\r$/s;
-  $maxmsg = 0;
-  if (opendir(F, $dir))
-  { while ($_ = readdir(F))
-    { next unless /^(\d+)\.msg$/i;
-      $maxmsg = $1 if $maxmsg < $1;
-    }
-    closedir(F);
-  }
-  while (1)
-  { $maxmsg++;
-    last if sysopen(F, "$dir/$maxmsg.msg", &O_RDWR|&O_CREAT|&O_EXCL, 0640);
-    if ($! != &EEXIST)
-    { return "Can't create $dir/$maxmsg.msg: $!";
-    }
-  }
-  unless (flock(F, &LOCK_EX))
-  { close(F);
-    return "Can't flock $dir/maxmsg.msg: $!";
-  }
-  # put header
-  $af .= ".0" unless $af =~ /\.\d+$/;
-  if ($at)
-  { $at .= ".0" unless $at =~ /\.\d+$/;
-  }
-  ($fzone, $fnet, $fnode, $fpoint) = ($1, $2, $3, $4) if $af =~ /^(\d+):(\d+)\/(\d+)\.(\d+)$/;
-  ($tzone, $tnet, $tnode, $tpoint) = ($1, $2, $3, $4) if $at =~ /^(\d+):(\d+)\/(\d+)\.(\d+)$/;
-  $battr = 0;
-  $flags = "";
-  foreach (split(/\s+/, $attr))
-  { for ($i=0, $b=1; $i<&attr; $i++)
-    { if ($_ eq (&attr)[$i])
-      { $battr |= $b;
-        last;
-      }
-      $b *= 2;
-    }
-    $flags .= " $_" if $i == &attr;
-  }
-  $flags =~ tr/a-z/A-Z/;
-  $date = strftime "%d %b %y  %H:%M:%S", localtime; 
-  $msghdr = pack("a36a36a72a20v13", $nf, $nt, $subj, $date,
-                 0, $tnode, $fnode, 0, $fnet, $tnet, $tzone, $fzone,
-                 $tpoint, $fpoint, 0, $battr, 0);
-  $kludges = "";
-  if ($area)
-  { $kludges .= "AREA:$area\r" unless $area eq "none";
-  }
-  else
-  { # netmail
-    $kludges = "\x01INTL $tzone:$tnet/$tnode $fzone:$fnet/$fnode\r"
-      unless $text =~ /^(.*\r)?\x01INTL /is;
-    $kludges .= "\x01FMPT $fpoint\r"
-      unless $fpoint == 0 || $text =~ /^(.*\r)?\x01FMPT:? /is;
-    $kludges .= "\x01TOPT $tpoint\r"
-      unless $tpoint == 0 || $text =~ /^(.*\r)?\x01TOPT:? /is;
-  }
-  $kludges .= "\x01FLAGS$flags\r"
-    unless $flags eq "" || $text =~ /^(.*\r)?\x01FLAGS:? /;
-  unless ($area || $text =~ /^(.*\r)?\x01MSGID:/is)
-  { $af =~ s/\.0$//;
-    $kludges .= sprintf("\x01MSGID: $af %08x\r", time());
-  }
-  syswrite(F, $msghdr . $kludges . $text . "\x00");
-  flock(F, &LOCK_UN);
-  close(F);
-  return "";
+  return $attr & str2attr($sattr);
 }
 
 sub faqserv
@@ -1015,8 +857,8 @@ sub faqserv
     }
     if (open(F, "<" . faq . "$_.faq"))
     { read(F, $topic, $fsize);
-      write_msg("", myaddr, $fromaddr, "FaqServer", $fromname,
-                "pvt loc k/s cpt", "Topic $_", $topic, netmail);
+      putMsgInArea("", "FaqServer", $fromname, "", $fromaddr,
+                "Topic $_", "", "pvt loc k/s cpt", "Topic $_", $topic, 1);
       close(F);
       $correct = 1;
     }
@@ -1030,44 +872,13 @@ sub faqserv
     $reply .= "No valid commands found, help sent\r";
     if (open(F, "<" . faq . "help.faq"))
     { read(F, $topic, $fsize);
-      write_msg("", myaddr, $fromaddr, "FaqServer", $fromname,
-                "pvt loc k/s cpt", "Help response", $topic, netmail);
+      putMsgInArea("", "FaqServer", $fromname, "", $fromaddr,
+                "Help response", "", "pvt loc k/s cpt", $topic, 1);
       close(F);
     }
   }
-  write_msg("", myaddr, $fromaddr, "FaqServer", $fromname,
-            "pvt loc k/s cpt", "FaqServer reply", $reply, netmail);
-}
-
-sub gateareafix
-{
-  my($text) = @_;
-  my ($offs, %offset, %relcom, $gupmsg);
-  local(*F);
-
-  $text =~ tr/\r/\n/;
-  open(F, echolist) || return "Can't open " . echolist . ": $!";
-  $offs = 0;
-  while (<F>)
-  { next unless /^.onference\s+(\S+)\s+(\S+)\s*$/;
-    $relcom{$1} = $2;
-    $offset{$1} = $2;
-    $offs = tell(F);
-  }
-  $gupmsg = "From: ".gupfrom."\nTo: ".gupaddr."\n\n".gupstart."\n";
-  foreach (split('\n', $text))
-  {
-    last if /^---/;
-    next unless /^([+-])(\S+)/;
-    next if !defined($relcom{$1});
-    $gupmsg .= sprintf("%s %s\n", ($1 eq "+" ? "include" : "exclude"), $relcom{$2});
-    seek(F, $offset{$2}, 0);
-    print F ($1 eq "+" ? "c" : "C");
-  }
-  close(F);
-  open(F, "|sendmail ".gupaddr) || return "Can't run sendmail: $!";
-  print F $gupmsg;
-  return "";
+  putMsgInArea("", "FaqServer", $fromname, "", $fromaddr,
+            "FaqServer reply", "", "pvt loc k/s cpt", $reply, 1);
 }
 
 sub arqcpt
@@ -1092,8 +903,8 @@ Original message header:
                   Lucky carrier,
                          Pavel Gulchouck (and my mail robot;)
 EOF
-  write_msg("", myaddr, $fromaddr, "Crazy Mail Robot", $fromname,
-            "pvt k/s loc cpt", "Audit Receipt Response", $text, netmail);
+  putMsgInArea("", "Crazy Mail Robot", $fromname, "", $fromaddr,
+            "Audit Receipt Response", "", "pvt k/s loc cpt", $text, 1);
   $newnet = 1;
 }
 
@@ -1117,7 +928,7 @@ Original message header:
                   Lucky carrier,
                          Pavel Gulchouck (and my mail robot;)
 EOF
-  write_msg("", myaddr, $fromaddr, "Crazy Mail Robot", $fromname,
-            "pvt k/s loc cpt", "Return Receipt Response", $text, netmail);
+  putMsgInArea("", "Crazy Mail Robot", $fromname, "", $fromaddr,
+            "Return Receipt Response", "", "pvt k/s loc cpt", $text, 1);
   $newnet = 1;
 }

@@ -20,6 +20,9 @@
 #
 # nodelistDir()
 # returns nodelistDir from config
+#
+# str2attr(att)
+# converts attribute string to binary message attributes
 
 
 sub filter
