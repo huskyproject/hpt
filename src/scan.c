@@ -272,7 +272,7 @@ void processRequests(s_link *link, s_message *msg)
    char *running;
    char *token;
    
-   flo = fopen(link->floFile, "a");
+   flo = fopen(link->floFile, "ab");
 
    running = msg->subjectLine;
    token = strseparate(&running, " \t");
