@@ -1,3 +1,9 @@
+2002-05-28 Tuesday 13:50  ml
+
+	* src/: areafix.c (1.232.2.9), perl.c (1.16.2.2), post.c
+	(1.60.2.5), txt2pkt.c (1.28.2.1): strftime() changed to fts_time()
+	except tpkt.c
+
 2002-05-27 Monday 22:43  pavel.gulchouck
 
 	* src/hpt.c (1.121.2.4): deleting lock file if post failed [patch
