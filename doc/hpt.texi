@@ -759,17 +759,45 @@ This statement cannot be repeated.
 In example we output to log messages with levels 3,4,5,7,8,9.
 The log levels are following:
 
+The log levels are following:
+
 @table @asis
-@item 1 - start, end, statistics
-@item 2 - dupecheck, recoding tables
+@item 1 - Program start, end;
+@item 2 - dupecheck
 @item 3 - linking messages
 @item 4 - scanning messages
 @item 5 - posting messages
-@item 6 - linking errors, execute strings
+@item 6 - execute strings
 @item 7 - bundles, pkts, links, freqs, file routing, file attachs, msg packing
 @item 8 - areafix, relink, autocreate
-@item 9 - error messages
+@item 9 - error messages (critical: exit on error)
 @item 0 - creation of file-flags
+@item A - (reserved for) trivial error messages (print message and continue execution)
+@item B - warnings & alerts
+@item C - informational messages
+@item D - (reserved for) statistics
+@item E - summary
+@item F - print program name & version
+@item G - message send/sent
+@item H - (reserved for) recoding operations & recoding tables read/write
+@item I - Generate or check MSGID
+@item J - Echomail phase
+@item K - Filebox phase
+@item L - Netmail phase
+@item M - File create
+@item N - File delete
+@item O - operations with opened file (read, write, seek, ...)
+@item P - reserved
+@item R - Truncate file
+@item S - File send/sent
+@item T - Test files (exist, permittions, etc.)
+@item U - Functions calls (enter to func & leave from it)
+@item V - reserved
+@item W - reserved
+@item X - Filenames construct
+@item Y - reserved
+@item Z - debug messages: source lines (functions control points).
+@item a-z - debug messages
 @end table
 
 This statement cannot be repeated.
