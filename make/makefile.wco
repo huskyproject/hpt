@@ -2,22 +2,28 @@
 # Makefile for Watcom C (OS/2)
 # Re-written by Andr Luk'yanov 2:5001/7
 #
-# Predefined macroses: __OS2__, __WATCOMC__, ...
+# Predefined macroses: __WATCOMC__, __OS2__ (Not in OpenWatcom), ...
 #
 
-DEBUG=0
-CC=wcl386
-EXENAMEFLAG=-fe=
-SRC_DIR=..\src\
+# Set to 1 for build binary for debugging
+DEBUG = 0
+
+CC    = wcl386
+SRC_DIR =..\src\
+
+CDEFS = -D__OS2__ -DOS2
+CFLAGS= -zq -wx -i=..\h;..\.. -oneatx -5 -c
+LFLAGS= -bt=os2v2 -l=os2v2
+EXENAMEFLAG= -fe=
 
 !IF $(DEBUG) == 1
-CFLAGS=-zq -wx -i=..\..;..\h -oneatx -5 -d2 -hw -c
-LFLAGS=-bt=os2v2 -l=os2v2 /"DEBUG Watcom"
-CDEFS =-DOS2 -DDEBUG_HPT
+CFLAGS+= -d2 -hw
+LFLAGS+= -bt=os2v2 -l=os2v2 /"DEBUG Watcom"
+CDEFS += -DDEBUG_HPT
 !ELSE
-CFLAGS=-zq -wx -i=..\..;..\h -oneatx -5 -c
-LFLAGS=-bt=os2v2 -l=os2v2
-CDEFS =-DOS2
+CFLAGS+=
+LFLAGS+=
+CDEFS +=
 !ENDIF
 
 OBJ=.obj
