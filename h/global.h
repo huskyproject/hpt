@@ -59,6 +59,7 @@ extern int       cmPack;
 extern int       cmLink;
 extern int       cmAfix;
 extern int       cmPause;
+extern int       cmQueue;
 extern int       noHighWaters;
 extern int       pkt_count; // pkt counter
 extern int       pkt_aTime;

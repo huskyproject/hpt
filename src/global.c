@@ -63,6 +63,7 @@ int       cmPack = 0;
 int       cmLink = 0;
 int       cmAfix = 0;
 int       cmPause = 0;
+int       cmQueue = 0;
 int       noHighWaters = 0;
 int       pkt_count = 0;
 int       pkt_aTime = 0;

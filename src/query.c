@@ -339,8 +339,8 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
     }
     return tmpNode;
 }
-/*
-void af_UpdateQuery()
+
+void af_QueueReport()
 {
     s_query_areas *tmpNode  = NULL;
     const char rmask[]="%-37.37s %-4.4s %11.11s %-16.16s %-7.7s\r";
@@ -349,11 +349,11 @@ void af_UpdateQuery()
     char link1[17]="";
     char link2[17]="";
     char* report = NULL;
-    time_t now;
+    char* header = NULL;
+
     int netmail=0;
     if( !queryAreasHead ) af_OpenQuery();
-    
-    time(&now);
+
     tmpNode = queryAreasHead;
     while(tmpNode->next)
     {
@@ -372,17 +372,14 @@ void af_UpdateQuery()
                     "request");
                 continue;
             }
-
             strcpy(type,tmpNode->type);
-            if(tmpNode->eTime < now ) 
+            if(tmpNode->eTime < tnow ) 
             {
-                queryAreasHead->nFlag = 1; // query was changed
-                strcpy(tmpNode->type, czKillArea);
-                strcpy(state,"killed");
+                strcpy(state,"rr_or_d");
             }
             else
             {
-                int days = (tmpNode->eTime - now)/secInDay;
+                int days = (tnow - tmpNode->bTime)/secInDay;
                 sprintf(state,"%2d days",days);
             }
             xscatprintf(&report,rmask, tmpNode->name, type,
@@ -400,17 +397,60 @@ void af_UpdateQuery()
                     "timeout");
                 continue;
             }
+            if(tmpNode->eTime < tnow ) 
+            {
+                strcpy(state,"to_kill");
+            }
+            else
+            {
+                int days = (tnow - tmpNode->bTime)/secInDay;
+                sprintf(state,"%2d days",days);
+            }
+            xscatprintf(&report,rmask, tmpNode->name, type,
+                link1,"",
+                state);
+
         }
+        if( stricmp(tmpNode->type,czIdleArea) == 0 )
+        {
+            if( strcmp(tmpNode->type,czIdleArea) == 0 )
+            {
+                queryAreasHead->nFlag = 1;
+                strUpper(tmpNode->type);
+                xscatprintf(&report,rmask, tmpNode->name, tmpNode->type,
+                    link1,"",
+                    "timeout");
+                continue;
+            }
+            if(tmpNode->eTime < tnow ) 
+            {
+                strcpy(state,"to_kill");
+            }
+            else
+            {
+                int days = (tnow - tmpNode->bTime)/secInDay;
+                sprintf(state,"%2d days",days);
+            }
+            xscatprintf(&report,rmask, tmpNode->name, type,
+                link1,"",
+                state);
+
+        }
+
     }
     if(!report)
         return;
+    xscatprintf(&header,rmask,"Area","Act","From","By","Details");
+    xscatprintf(&header,"%s\r", print_ch(79,'-'));
+    xstrcat(&header, report);
+    report = header;
     if (config->ReportTo) {
 	if (stricmp(config->ReportTo,"netmail")==0) netmail=1;
 	else if (getNetMailArea(config, config->ReportTo) != NULL) netmail=1;
     } else netmail=1;
 
     msgToSysop[0] = makeMessage(&(config->addr[0]),&(config->addr[0]), 
-        versionStr, netmail ? config->sysop : "All", "Created new areas", netmail);
+        versionStr, netmail ? config->sysop : "All", "requests report", netmail);
     msgToSysop[0]->text = createKludges(netmail ? NULL : config->ReportTo, 
         &(config->addr[0]), &(config->addr[0]));
     
@@ -422,14 +462,47 @@ void af_UpdateQuery()
     freeMsgBuffers(msgToSysop[0]);
     nfree(msgToSysop[0]);
 }
-*/
+
+void af_QueueUpdate()
+{
+    s_query_areas *tmpNode  = NULL;
+
+    if( !queryAreasHead ) af_OpenQuery();
+
+    tmpNode = queryAreasHead;
+    while(tmpNode->next)
+    {
+        tmpNode = tmpNode->next;
+        if( tmpNode->eTime > tnow )
+            continue;
+        if( stricmp(tmpNode->type,czFreqArea) == 0 )
+        {
+            queryAreasHead->nFlag = 1; // query was changed
+            strcpy(tmpNode->type, czKillArea);
+            w_log( LL_AREAFIX, "Request for %s removed is going to be killed",tmpNode->name);
+            continue;
+        }
+        if( stricmp(tmpNode->type,czKillArea) == 0 )
+        {
+            queryAreasHead->nFlag = 1;
+            tmpNode->type[0] = '\0';
+            w_log( LL_AREAFIX, "Request for %s removed from queue file",tmpNode->name);
+            continue;
+        }
+        if( stricmp(tmpNode->type,czIdleArea) == 0 )
+        {
+            queryAreasHead->nFlag = 1; // query was changed
+            strcpy(tmpNode->type, czKillArea);
+            w_log( LL_AREAFIX, "Request for %s removed is going to be killed",tmpNode->name);
+        }
+    }
+}
 
 int af_OpenQuery()
 {
     FILE *queryFile;
     char *line = NULL;
     char *token = NULL;
-    time_t ltime;
     struct  tm tr;
     char seps[]   = " \t\n";
     s_query_areas *areaNode = NULL;
@@ -437,9 +510,8 @@ int af_OpenQuery()
     if( queryAreasHead )  // list already exists
         return 0;
 
-    time( &ltime );
-    tnow = ltime;
-    when = ltime + cnDaysToKeepFreq*secInDay;
+    time( &tnow );
+    when = tnow + cnDaysToKeepFreq*secInDay;
 
     queryAreasHead = af_AddAreaListNode("","");
 
@@ -528,8 +600,6 @@ int af_CloseQuery()
     if( !queryAreasHead ) {  // list does not exist
         return 0;
     }
-
-//    af_UpdateQuery();
 
     if(queryAreasHead->nFlag == 1) {
         writeChanges = 1;

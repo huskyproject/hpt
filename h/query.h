@@ -36,7 +36,8 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
 int af_OpenQuery();
 int af_CloseQuery();
 char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir);
-
-
+void af_QueueUpdate();
+void af_QueueReport();
 
 #endif
+
