@@ -1033,6 +1033,13 @@ A: (PG)
    на http://www.gnu.org/software/gcc/releases.html - нет такой версии, после
    2.95.3 сразу идет 3.0.
 
+A: (SD)
+   В compiler.h на этот счет сделан вывод предупреждения:
+   warning Latest GNU C branch 2 is 2.95.*. Your version is not GNU C and not
+   supported. You may use it for your risk.
+   warning Download and install GNU C release from www.gnu.org only, please.
+
+
 /------/
 
 [37] Q: Компилятор под FreeBSD ругается: warning: mktemp() possibly used
