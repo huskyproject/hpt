@@ -47,7 +47,7 @@ enum tossSecurity {secLocalInbound, secProtInbound, secInbound};
 typedef enum tossSecurity e_tossSecurity;
 
 int  to_us(const s_addr destAddr);
-int  processEMMsg(s_message *msg, s_addr pktOrigAddr);
+int  processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc);
 int  processNMMsg(s_message *msg, s_pktHeader *pktHeader);
 int  processMsg(s_message *msg, s_pktHeader *pktHeader);
 int  processPkt(char *fileName, e_tossSecurity sec);

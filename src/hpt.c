@@ -203,10 +203,10 @@ void processConfig()
         hpt_log = openLog(buff, versionStr, "123456789", config->logEchoToScreen);
        else                                                 
         hpt_log = openLog(buff, versionStr, config->loglevels, config->logEchoToScreen);
-     free(buff);
    } else printf("You have no logFileDir in your config, there will be no log created");
    if (hpt_log==NULL) printf("Could not open logfile: %s\n", buff);
    writeLogEntry(hpt_log, '1', "Start");
+   free(buff);
 
    if (config->addrCount == 0) printf("at least one addr must be defined\n");
    if (config->linkCount == 0) printf("at least one link must be specified\n");

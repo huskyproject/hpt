@@ -164,7 +164,7 @@ void post(int c, unsigned int *n, char *params[])
       if (msg.netMail)
          processNMMsg(&msg, NULL);
       else
-         processEMMsg(&msg, msg.origAddr);
+         processEMMsg(&msg, msg.origAddr, 0);
    };
    freeMsgBuffers(&msg);
 }

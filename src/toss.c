@@ -798,6 +798,33 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    return 0;
 }
 
+void processCarbonCopy (s_area *area, s_message *msg, int export)
+{
+   if (!export)
+      putMsgInArea(area,msg,0);
+   else {
+      char *p,*old_text;
+      int i,old_textLength;
+
+      old_textLength = msg->textLength;
+      old_text = msg->text;
+
+      i = strlen(old_text);
+      if (NULL != (p = strstr(old_text,"SEEN-BY:"))) i -= strlen (p);
+      msg->text = malloc(i+strlen("AREA:\r\1")+strlen(area->areaName)+1);
+
+      sprintf(msg->text,"AREA:%s\r\1",area->areaName); // create new area-line
+      strncat(msg->text,old_text,i);                 // copy rest of msg (assumes old AREA:
+      msg->textLength = strlen(msg->text);             // is at the very beginning
+
+      processEMMsg(msg, *area->useAka, 1);
+
+      free (msg->text);
+      msg->textLength = old_textLength;
+      msg->text = old_text;
+   }
+}
+
 int carbonCopy(s_message *msg, s_area *echo)
 {
         int i;
@@ -810,24 +837,26 @@ int carbonCopy(s_message *msg, s_area *echo)
 
                 area = config->carbons[i].area;
 
+                if (!stricmp(echo->areaName,area->areaName)) continue; // dont CC to the echo the mail comes from
+
                 switch (config->carbons[i].type) {
 
                 case 0:
                         if (stricmp(msg->toUserName, config->carbons[i].str)==0) {
-                                putMsgInArea(area,msg,0);
+                                processCarbonCopy(area,msg,config->carbons[i].export);
                                 return 0;
                         }
                         break;
                 case 1:
                         if (stricmp(msg->fromUserName, config->carbons[i].str)==0) {
-                                putMsgInArea(area,msg,0);
+                                processCarbonCopy(area,msg,config->carbons[i].export);
                                 return 0;
                         }
                         break;
                 case 2:
                         kludge=getKludge(*msg, config->carbons[i].str);
                         if (kludge!=NULL) {
-                                putMsgInArea(area,msg,0);
+                                processCarbonCopy(area,msg,config->carbons[i].export);
                                 free(kludge);
                                 return 0;
                         }
@@ -1025,14 +1054,12 @@ void writeMsgToSysop()
     
 }
 
-int processEMMsg(s_message *msg, s_addr pktOrigAddr)
+int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 {
    char   *area, *textBuff;
    s_area *echo;
    s_link *link;
    int    writeAccess, rc = 0;
-
-   link = getLinkFromAddr(*config, pktOrigAddr);
 
    textBuff = (char *) malloc(strlen(msg->text)+1);
    strcpy(textBuff, msg->text);
@@ -1069,7 +1096,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr)
 	     rc = 1; //passthroug does always work
 	 }
 
-         if (config->carbonCount != 0) carbonCopy(msg, echo);
+         if ((config->carbonCount != 0) && (!dontdocc)) carbonCopy(msg, echo);
 
       } else {
          // msg is dupe
@@ -1082,7 +1109,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr)
    }
 
    if (echo == &(config->badArea)) {
-      if (config->carbonCount != 0) carbonCopy(msg, echo);
+      if ((config->carbonCount != 0) && (!dontdocc)) carbonCopy(msg, echo);
       // checking for autocreate option
       link = getLinkFromAddr(*config, pktOrigAddr);
       if ((link != NULL) && (link->autoAreaCreate != 0) && (writeAccess == 0)) {
@@ -1188,7 +1215,7 @@ int processMsg(s_message *msg, s_pktHeader *pktHeader)
     } else
       rc = processNMMsg(msg, pktHeader);
   } else {
-    rc = processEMMsg(msg, pktHeader->origAddr);
+    rc = processEMMsg(msg, pktHeader->origAddr, 0);
   } /* endif */
   return rc;
 }
