@@ -3220,7 +3220,7 @@ the echomail is copied to the area specified by the @code{CarbonCopy}
 keyword or moved to the area specified by the @code{CarbonMove} keyword.
 The names must be an exact match.
 
-You can use trailing "" in <string>.
+You can enclose <string> into quotes ("<string>").
 
 This statement can be repeated.
 
@@ -3305,7 +3305,7 @@ If an echomail is tossed which has a kludge line which includes the
 substring matches <pattern>, the echomail is copied to the area
 specified by the @code{CarbonCopy} keyword.
 
-You can use traling "" in <pattern>.
+You can enclose <pattern> into quotes ("<pattern>").
 @example
 carbonKludge "REPLY: 2:5000/117 "
 @end example
@@ -3469,8 +3469,7 @@ and new set of expressions starts.
 If an echomail is tossed which has a subject line matched <pattern>,
 this echomail is copied to the area specified by the @code{CarbonCopy}
 keyword or moved to the area specified by the @code{CarbonMove} keyword.
-
-You can use traling "" in <pattern>.
+You can enclose <pattern> into quotes ("<pattern>").
 
 This statement can be repeated.
 
@@ -3491,7 +3490,7 @@ substring matches <pattern>, the echomail is copied to the area
 specified by the @code{CarbonCopy} keyword or moved to the area
 specified by the @code{CarbonMove} keyword.
 
-You can use traling "" in <pattern>.
+You can enclose <pattern> into quotes ("<pattern>").
 
 This statement can be repeated.
 
@@ -3512,7 +3511,7 @@ echomail is copied to the area specified by the @code{CarbonCopy}
 keyword or moved to the area specified by the @code{CarbonMove}
 keyword.. The names must be an exact match.
 
-You can use traling "" in <string>.
+You can enclose <pattern> into quotes ("<pattern>").
 
 This statement can be repeated.
 
