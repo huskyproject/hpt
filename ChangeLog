@@ -7,6 +7,7 @@ max:
 * areafix: fix processing commands broked yesterday ("+" & "-" without areatag)
 * deleted old makefiles
 * perl support in new makefiles
+* areafix delete *last* substring in delLinkFromArea()
 
 ----- cvs ci ------
 Sat Aug 12 23:36:58 NOVST 2000

@@ -144,7 +144,7 @@ int subscribeAreaCheck(s_area *area, s_message *msg, char *areaname, s_link *lin
 // del link from area
 int delLinkFromArea(FILE *f, char *fileName, char *str) {
     long curpos, endpos, linelen=0, len;
-    char *buff, *sbuff, *ptr, *tmp, *line;
+    char *buff, *sbuff, *ptr, *tmp, *line, *save;
 	
     curpos = ftell(f);
     buff = readLine(f);
@@ -154,12 +154,14 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 	sbuff = buff;
 
 	while ( (ptr = strstr(sbuff, str)) != NULL ) {
-		if (isspace(ptr[strlen(str)]) || ptr[strlen(str)]=='\000') break;
+		if (isspace(*(ptr-1)) &&
+			(isspace(ptr[strlen(str)]) ||
+			 ptr[strlen(str)]=='\000')) save=ptr;
 		sbuff = ptr+1;
 	}
-	
+	ptr = save;
 	line = ptr;
-	
+
     if (ptr) {
 	curpos += (ptr-buff-1);
 	while (ptr) {

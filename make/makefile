@@ -3,11 +3,14 @@ include ../../huskymak.cfg
 
 SRC_DIR = ../src/
 
+PERL=0
+include makeperl.inc
+
 ifeq ($(DEBUG), 1)
-  CFLAGS = -I../h -I$(INCDIR) $(DEBCFLAGS) $(WARNFLAGS)
+  CFLAGS = -I../h -I$(INCDIR) $(DEBCFLAGS) $(WARNFLAGS) $(PERLFLAGS)
   LFLAGS = $(DEBLFLAGS)
 else
-  CFLAGS = -I../h -I$(INCDIR) $(OPTCFLAGS) $(WARNFLAGS)
+  CFLAGS = -I../h -I$(INCDIR) $(OPTCFLAGS) $(WARNFLAGS) $(PERLFLAGS)
   LFLAGS = $(OPTLFLAGS)
 endif
 
@@ -15,12 +18,6 @@ ifeq ($(SHORTNAME), 1)
   LIBS  = -L$(LIBDIR) -lfidoconf -lsmapi
 else
   LIBS  = -L$(LIBDIR) -lfidoconfig -lsmapi
-endif
-
-ifeq ($(PERL), 1)
-  CFLAGS += -DDO_PERL `perl -MExtUtils::Embed -e ccopts`
-  PERLLIBS = `perl -MExtUtils::Embed -e ldopts`
-  PERLOBJ = perl$(OBJ)
 endif
 
 CDEFS=-D$(OSTYPE) $(ADDCDEFS)
