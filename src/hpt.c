@@ -75,6 +75,45 @@ s_message **msgToSysop = NULL;
 char *scanParmA;
 char *scanParmF;
 
+
+/* kn: I've really tried not to break it. 
+   FIXME: if there is pack and scan options on cmd line - one set 
+   of options are lost */
+int  processExportOptions(int *i, int argc, char **argv)
+{ 
+  int rc = 0;
+  while ((*i) < argc-1) {
+     if (argv[(*i)+1][0] == '-' && (argv[(*i)+1][1] == 'w' || argv[(*i)+1][1] == 'W')) {
+        noHighWaters = 1;
+        (*i)++;
+        continue;
+     } /* endif */
+     if (argv[(*i)+1][0] == '-' && (argv[(*i)+1][1] == 'f' || argv[(*i)+1][1] == 'F')) {
+        if (stricmp(argv[(*i)+1], "-f") == 0) {
+           (*i)++;
+           scanParmF = argv[(*i)+1];
+        } else {
+           scanParmF = argv[(*i)+1]+2;
+        } /* endif */
+        rc |= 2;
+        (*i)++;
+        continue;
+     } else if (argv[(*i)+1][0] == '-' && (argv[(*i)+1][1] == 'a' || argv[(*i)+1][1] == 'A')) {
+        if (stricmp(argv[(*i)+1], "-a") == 0) {
+           (*i)++;
+           scanParmA = argv[(*i)+1];
+        } else {
+           scanParmA = argv[(*i)+1]+2;
+        } /* endif */
+        rc |= 4;
+        (*i)++;
+        continue;
+     } /* endif */
+     break;
+  } /* endwhile */
+  return rc != 0 ? rc : 1;
+}
+
 void processCommandLine(int argc, char **argv)
 {
    unsigned int i = 0;
@@ -104,39 +143,10 @@ void processCommandLine(int argc, char **argv)
          }
          continue;
       } else if (stricmp(argv[i], "scan") == 0) {
-         while (i < argc-1) {
-            if (argv[i+1][0] == '-' && (argv[i+1][1] == 'w' || argv[i+1][1] == 'W')) {
-               noHighWaters = 1;
-               i++;
-               continue;
-            } /* endif */
-            if (argv[i+1][0] == '-' && (argv[i+1][1] == 'f' || argv[i+1][1] == 'F')) {
-               if (stricmp(argv[i+1], "-f") == 0) {
-                  i++;
-                  scanParmF = argv[i+1];
-               } else {
-                  scanParmF = argv[i+1]+2;
-               } /* endif */
-               cmScan |= 2;
-               i++;
-               continue;
-            } else if (argv[i+1][0] == '-' && (argv[i+1][1] == 'a' || argv[i+1][1] == 'A')) {
-               if (stricmp(argv[i+1], "-a") == 0) {
-                  i++;
-                  scanParmA = argv[i+1];
-               } else {
-                  scanParmA = argv[i+1]+2;
-               } /* endif */
-               cmScan |= 4;
-               i++;
-               continue;
-            } /* endif */
-            break;
-         } /* endwhile */
-         if (cmScan == 0) cmScan = 1;
+ 	 cmScan = processExportOptions(&i, argc, argv);
          continue;
       } else if (stricmp(argv[i], "pack") == 0) {
-         cmPack = 1;
+         cmPack = processExportOptions(&i, argc, argv);
          continue;
       } else if (stricmp(argv[i], "link") == 0) {
          cmLink = 1;
@@ -283,11 +293,16 @@ int main(int argc, char **argv)
    tossTempOutbound(config->tempOutbound);
    if (1 == cmToss) toss();
    if (cmToss == 2) tossFromBadArea();
-   if (cmScan == 1) scan();
-   if (cmScan&2) scanF(scanParmF);
-   if (cmScan&4) scanA(scanParmA);
+
+   if (cmScan == 1) scanExport(SCN_ALL  | SCN_ECHOMAIL, NULL);
+   if (cmScan &  2) scanExport(SCN_FILE | SCN_ECHOMAIL, scanParmF);
+   if (cmScan &  4) scanExport(SCN_NAME | SCN_ECHOMAIL, scanParmA);
    if (cmAfix == 1) afix();
-   if (cmPack == 1) pack();
+    
+   if (cmPack == 1) scanExport(SCN_ALL  | SCN_NETMAIL, NULL);
+   if (cmPack &  2) scanExport(SCN_FILE | SCN_NETMAIL, scanParmF);
+   if (cmPack &  4) scanExport(SCN_NAME | SCN_NETMAIL, scanParmA);
+   
    if (cmLink == 1) linkAreas();
    
    writeMsgToSysop();

@@ -221,8 +221,9 @@ void linkAreas(void)
       for (i = 0; i < config -> echoAreaCount; i++)
          if (config -> echoAreas[i].dupeCheck != dcOff)
             linkArea(&(config -> echoAreas[i]), 0);
-      /* link NetMailArea */
-      linkArea(&(config->netMailArea),1);
+      /* link NetMailAreas */
+      for (i = 0; i < config -> netMailAreaCount; i++)
+         linkArea(&(config -> netMailAreas[i]), 1);
 
    } else {
       writeLogEntry(hpt_log, '3', "Using importlogfile -> linking only listed Areas");
@@ -231,8 +232,10 @@ void linkAreas(void)
          line = readLine(f);
 
          if (line != NULL) {
-            if(strcmp(config->netMailArea.areaName,line)==0) linkArea(&(config->netMailArea),1);
-            else {
+		 
+            if ((area = getNetMailArea(config, line)) != NULL) {
+	       linkArea(area,1);
+	    } else {
                area = getArea(config, line);
                if ((area->dupeCheck != dcOff) && (area->areaName != config->badArea.areaName)) linkArea(area,0);
                free(line);

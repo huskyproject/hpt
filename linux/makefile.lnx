@@ -10,10 +10,10 @@ SRC_DIR = ../src/
 ifeq ($(HASHDUPE), 1)
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -ggdb -O3 -DUNIX -DHASHDUPE
+  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -ggdb -O3 -DUNIX -DHASHDUPE -DHAS_POPEN
   LFLAGS  = -L$(LIBDIR)
 else
-  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -O3 -s -DUNIX -DHASHDUPE
+  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -O3 -s -DUNIX -DHASHDUPE -DHAS_POPEN
   LFLAGS  = -L$(LIBDIR)
 endif
 

@@ -562,10 +562,7 @@ int CheckDupe(s_area *area, const s_message msg) {
       fread(&sqhe, sizeof(SQHentry), 1, SQHf);
       if (nextentry<currententry && --wrapcount) {
         /* Oops! We come full circle. */
-        str = malloc(strlen(area->areaName)+61+8);
-        sprintf (str, "Too long chain of collision entries for AREA: `%s', entry: `%08xH'", area->areaName, HeadEntryN);
-        writeLogEntry(hpt_log, '5', str);
-        free(str);
+        writeLogEntry(hpt_log, '5', "Too long chain of collision entries for AREA: `%s', entry: `%08xH'", area->areaName, HeadEntryN);
         break;
       }
       currententry = nextentry;

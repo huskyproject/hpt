@@ -435,7 +435,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
    }
 }
 
-void scanNMArea(void)
+void scanNMArea(s_area *area)
 {
    HAREA           netmail;
    HMSG            msg;
@@ -444,15 +444,15 @@ void scanNMArea(void)
    s_addr          dest, orig;
    int             for_us, from_us;
 
-   netmail = MsgOpenArea((unsigned char *) config->netMailArea.fileName, MSGAREA_NORMAL, 
+   netmail = MsgOpenArea((unsigned char *) area -> fileName, MSGAREA_NORMAL, 
 /*								 config->netMailArea.fperm, 
 								 config->netMailArea.uid, 
 								 config->netMailArea.gid, */
-								 config->netMailArea.msgbType);
+								 area -> msgbType);
    if (netmail != NULL) {
 
       highMsg = MsgGetHighMsg(netmail);
-      writeLogEntry(hpt_log, '1', "Scanning NetmailArea");
+      writeLogEntry(hpt_log, '1', "Scanning NetmailArea %s", area -> areaName);
 
       // scan all Messages and test if they are already sent.
       for (i=1; i<= highMsg; i++) {
@@ -512,144 +512,102 @@ void writeScanStatToLog(void) {
    writeLogEntry(hpt_log, logchar, "    exported: % 4d", statScan.exported);
 }
 
-void pack(void) {
+int scanByName(char *name) {
+	
+    s_area *area;
+    
+    if ((area = getNetMailArea(config, name)) != NULL) {
+       scanNMArea(area); 
+       return 1;
+    } else {
+       // maybe it's echo area    
+       area = getArea(config, name);
+       if (area != &(config->badArea)) {
+          if (area && area->msgbType != MSGTYPE_PASSTHROUGH && 
+              area -> downlinkCount > 0 && !area->scn) { 
+	  /* scan and mark scanned */
+		  scanEMArea(area); area->scn=1; 
+		  return 1;
+	  }; 
+       } else {
+          writeLogEntry(hpt_log, '3', "Area \'%s\' is not found -> Scanning stop.", name);
+       };
+    } /* endif */
+    return 0;
+};
 
-   if (config->outtab != NULL) getctab(outtab, config->outtab);
-   
-   memset(&statScan, 0, sizeof(s_statScan));
-   writeLogEntry(hpt_log, '1', "Start packing...");
-   scanNMArea();
-   statScan.areas++;
-   writeScanStatToLog();
-}
-
-void scan(void)
-{
-   UINT i;
+void scanExport(int type, char *str) {
+	
+   int i;
    FILE *f = NULL;
    char *line;
-   s_area *area = NULL;
-
+   
    // load recoding tables
    if (config->outtab != NULL) getctab(outtab, config->outtab);
-
-   // zero statScan
+   
+   // zero statScan   
    memset(&statScan, 0, sizeof(s_statScan));
-   writeLogEntry(hpt_log,'1', "Start scanning...");
+   writeLogEntry(hpt_log, '1', "Start %s%s...",
+		   type & SCN_ECHOMAIL ? "scanning" : "packing",
+		   type & SCN_FILE ? " with -f " : 
+		   type & SCN_NAME ? " with -a " : "");
+   
+   if (type & SCN_ALL) {
+   	if (config->echotosslog)
+   		f = fopen(config->echotosslog, "r");
+   };
+   
+   if (type & SCN_FILE) f = fopen(str, "r");
 
-   // open echotoss file
-   if (config->echotosslog)
-       f = fopen(config->echotosslog, "r");
-
-   if (f == NULL) {
-      // if echotoss file does not exist scan all areas
-      writeLogEntry(hpt_log, '3', "EchoTossLogFile not found -> Scanning all echoAreas.");
-      for (i = 0; i< config->echoAreaCount; i++) {
-         if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
-            scanEMArea(&(config->echoAreas[i]));
+   if (type & SCN_NAME) {
+      scanByName(str);   
+      statScan.areas++;
+   } else if (f == NULL) {
+	   
+      if (type & SCN_FILE) {
+	  writeLogEntry(hpt_log, '3', "EchoTossLogFile not found -> Scanning stop.");
+	  return; 
+      };
+   // if echotoss file does not exist scan all areas
+      writeLogEntry(hpt_log, '3', "EchoTossLogFile not found -> Scanning all areas.");
+      if (type & SCN_ECHOMAIL) {
+         for (i = 0; i< config->echoAreaCount; i++) {
+            if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
+               scanEMArea(&(config->echoAreas[i]));
+               statScan.areas++;
+            }
+         }
+      };
+      if (type & SCN_NETMAIL) {
+         for (i = 0; i < config->netMailAreaCount; i++) {
+            scanNMArea(&(config->netMailAreas[i]));
             statScan.areas++;
          }
-      }
+      };
    } else {
-      // else scan only those areas which are listed in the file
+   // else scan only those areas which are listed in the file
       writeLogEntry(hpt_log, '3', "EchoTossLogFile found -> Scanning only listed areas");
 
       while (!feof(f)) {
          line = readLine(f);
+
          if (line != NULL) {
 	    if (*line && line[strlen(line)-1] == '\r')
 	       line[strlen(line)-1] = '\0';  /* fix for DOSish echotoss.log */
-	    if (stricmp(config->netMailArea.areaName,line)==0) cmPack=1;
-            else area = getArea(config, line);
-            if (area == &(config->badArea)) {
-               writeLogEntry(hpt_log, '3', "Area \'%s\' is not found -> Scanning stop.", line);
-            } else {
-               if (area && !area->scn) { scanEMArea(area); area->scn=1; }
-            } /* endif */
+            if (scanByName(line))
+	       statScan.areas++;
             free(line);
          }
       }
-
+   };
+   
+   if (f != NULL) { 
       fclose(f);
-      remove(config->echotosslog);
-   }
+      if (type & SCN_ALL) remove(config->echotosslog);
+   };
 
+   if (type & SCN_ECHOMAIL) arcmail();
    
-   arcmail();
    writeScanStatToLog();
 }
-
-void scanF(char *filename)
-{
-   FILE *f;
-   char *line;
-   s_area *area = NULL;
-
-   // load recoding tables
-   if (config->outtab != NULL) getctab(outtab, config->outtab);
-
-   // zero statScan
-   memset(&statScan, 0, sizeof(s_statScan));
-   writeLogEntry(hpt_log,'1', "Start scanning with -f ...");
-
-   // open echotoss file
-   f = fopen(filename, "r");
-
-   if (f == NULL) {
-      // if echotoss file does not exist scan all areas
-      writeLogEntry(hpt_log, '3', "EchoTossLogFile not found -> Scanning stop.");
-   } else {
-      // else scan only those areas which are listed in the file
-      writeLogEntry(hpt_log, '3', "EchoTossLogFile found -> Scanning only listed areas");
-
-      while (!feof(f)) {
-         line = readLine(f);
-
-         if (line != NULL) {
-			if (stricmp(config->netMailArea.areaName,line)==0) cmPack=1;
-            else area = getArea(config, line);
-            if (area == &(config->badArea)) {
-               writeLogEntry(hpt_log, '3', "Area \'%s\' is not found -> Scanning stop.", line);
-            } else {
-               if (area && !area->scn) { scanEMArea(area); area->scn=1; }
-            } /* endif */
-            free(line);
-         }
-      }
-
-      fclose(f);
-      remove(filename);
-   }
-
    
-   arcmail();
-   writeScanStatToLog();
-}
-
-void scanA(char *areaname)
-{
-   s_area *area;
-
-   // load recoding tables
-   if (config->outtab != NULL) getctab(outtab, config->outtab);
-
-   // zero statScan
-   memset(&statScan, 0, sizeof(s_statScan));
-   writeLogEntry(hpt_log,'1', "Start scanning with -a ...");
-
-   area = getArea(config, areaname);
-   if (area == &(config->badArea)) {
-      writeLogEntry(hpt_log, '3', "Area \'%s\' is not found -> Scanning stop.", areaname);
-   } else {
-      if (area->msgbType != MSGTYPE_PASSTHROUGH) {
-	  if (area->downlinkCount > 0) scanEMArea(area);
-      } else {
-          writeLogEntry(hpt_log, '3', "Area \'%s\' is passthrough -> Scanning stop.", area->areaName);
-      }
-   } /* endif */
-
-   
-   arcmail();
-   writeScanStatToLog();
-}
-

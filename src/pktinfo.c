@@ -32,16 +32,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #include <pkt.h>
 #include <version.h>
 
-int displayPkt(char *name)
+int displayPkt(char *name, int showHeader, int showText)
 {
    s_pktHeader *header;
    s_message   *msg;
    FILE *pkt;
-
+   char *p;
    pkt = fopen(name, "rb");
    if (pkt==NULL) {
       printf("couldn't open %s\n", name);
@@ -64,10 +65,20 @@ int displayPkt(char *name)
    printf("prodCode:     %02x%02x\n", header->hiProductCode, header->loProductCode);
    printf("prodRevision  %u.%u\n", header->majorProductRev, header->minorProductRev);
    printf("----------------------------------------\n");
-   while (NULL != (msg = readMsgFromPkt(pkt,0))) {
+   while (NULL != (msg = readMsgFromPkt(pkt,header))) {
       printf("Msg: %u:%u/%u.%u -> %u:%u/%u.%u\n", msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
              msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
+      
+      /* Fix this \r's FIXME: and how does it do on non-*nix systems ? */
+      for (p = msg->text; (p = strchr(p, '\r')) != NULL; )
+	      *p = '\n';
+      if (showHeader) 
+         printf("From:    %s\nTo:      %s\nSubject: %s\n", msg->fromUserName, 
+   			 msg->toUserName, msg->subjectLine);
+      if (showText) 
+	 printf("--Text----\n%s\n", msg->text);
       freeMsgBuffers(msg);
+      
       free(msg);
    } /* endwhile */
 
@@ -81,17 +92,24 @@ int displayPkt(char *name)
 
 int main(int argc, char *argv[])
 {
-  int          i;
+  int          i, showHeader = 0, showText = 0;
 
   printf("PktInfo v%u.%02u\n",VER_MAJOR, VER_MINOR);
   if (argc==1) {
-    printf("usage: pktInfo <pktNames>\n");
+    printf("usage: pktInfo [-h] [-t] <pktNames>\n" \
+           "       -h means display msg header information (from/to/subject)\n" \
+	   "       -t means display msg text\n");
     return 1;
   }
-
+  
   for (i = 1; i < argc; i++)
   {
-     displayPkt(argv[i]);
+     if (argv[i][0] == '-') {
+	if (argv[i][1] == 'h') showHeader = 1; 
+	if (argv[i][1] == 't') showText   = 1; 
+     } else {
+	displayPkt(argv[i], showHeader, showText);
+     };
   }
 
   return 0;

@@ -65,7 +65,6 @@ void post(int c, unsigned int *n, char *params[])
 
    int quit;
    int export=0;
-   char buffer[256];
 
    time_t t = time (NULL);
    struct tm *tm;
@@ -164,7 +163,8 @@ void post(int c, unsigned int *n, char *params[])
           msg.subjectLine = strdup("");
 
       msg.netMail = area == NULL;
-      if (msg.netMail) echo=&config->netMailArea;
+      /*FIXME*/
+      if (msg.netMail) echo=&(config->netMailAreas[0]);
 
       /* reserve mem for the real text */
       /* !!! warning - I suppose that 512 bytes will be enough
@@ -187,7 +187,7 @@ void post(int c, unsigned int *n, char *params[])
         putMsgInArea(echo, &msg, 1, msg.attributes);
       else {
         if (msg.netMail) 
-	  processNMMsg(&msg, NULL);
+	  processNMMsg(&msg, NULL, NULL, 0);
         else
           processEMMsg(&msg, msg.origAddr, 1);
       } 
@@ -197,10 +197,9 @@ void post(int c, unsigned int *n, char *params[])
     if (msg.destAddr.zone == 0) {
        fprintf(stderr, "hpt post: attempt to post netmail msg without specifyng dest address\n");
     }
-      sprintf (buffer,"Posting msg. from %u:%u/%u.%u -> %s in area: %s",
+      writeLogEntry (hpt_log, '2', "Posting msg. from %u:%u/%u.%u -> %s in area: %s",
                   msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node,
                   msg.origAddr.point, aka2str(msg.destAddr), area);
-      writeLogEntry (hpt_log, '2', buffer);
       
       if ((config->echotosslog) && (!export)) {
         f=fopen(config->echotosslog, "a");

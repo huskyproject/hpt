@@ -48,7 +48,7 @@ typedef enum tossSecurity e_tossSecurity;
 
 int  to_us(const s_addr destAddr);
 int  processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc);
-int  processNMMsg(s_message *msg, s_pktHeader *pktHeader);
+int  processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontdocc);
 int  processMsg(s_message *msg, s_pktHeader *pktHeader);
 int  processPkt(char *fileName, e_tossSecurity sec);
 int putMsgInArea(s_area *echo, s_message *msg, int strip, UINT16 forceattr);

@@ -41,10 +41,13 @@ typedef struct statScan s_statScan;
 
 extern s_statScan statScan;
 
-void pack(void);
-void scan(void);
-void scanF(char *filename);
-void scanA(char *areaname);
+#define	SCN_FILE	0x0001
+#define	SCN_ALL		0x0002
+#define	SCN_NAME	0x0004
+#define	SCN_ECHOMAIL	0x0008
+#define	SCN_NETMAIL	0x0010
+
+void scanExport(int type, char *str);
 void scanEMArea(s_area *echo);
 void makePktHeader(s_link *link, s_pktHeader *header);
 void cvtAddr(const NETADDR aka1, s_addr *aka2);

@@ -1154,6 +1154,7 @@ void rescanEMArea(s_area *echo, s_link *link)
    XMSG  xmsg;
    dword highWaterMark, highestMsg, i;
    
+   /*FIXME: the code in toss.c does createDirectoryTree. We don't*/
    area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, /*echo -> fperm, 
                       echo -> uid, echo -> gid,*/ echo->msgbType | MSGTYPE_ECHO);
    if (area != NULL) {
@@ -1435,7 +1436,7 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 				     msg->fromUserName, newsubj, 1);
 
 		preprocText(split, tmpmsg);
-		processNMMsg(tmpmsg, NULL);
+		processNMMsg(tmpmsg, NULL, NULL, 0);
 
 		freeMsgBuffers(tmpmsg);
 		free(tmpmsg);
@@ -1482,7 +1483,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	
 	// ignore msg for other link (maybe this is transit...)
 	if (notforme) {
-		return processNMMsg(msg, pktHeader);
+		return processNMMsg(msg, pktHeader, NULL, 0);
 	}
 	
 	// 2nd security check. link, areafixing & password.
@@ -1620,7 +1621,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		
 		writeLogEntry(hpt_log, '8', "areafix: write netmail msg for %s", aka2str(link->hisAka));
 
-		processNMMsg(linkmsg, &header);
+		processNMMsg(linkmsg, &header, NULL, 0);
 
 		freeMsgBuffers(linkmsg);
 		free(linkmsg);
@@ -1673,11 +1674,11 @@ void afix(void)
 
     writeLogEntry(hpt_log, '1', "Start AreaFix...");
     
-    netmail = MsgOpenArea((unsigned char *) config->netMailArea.fileName, MSGAREA_NORMAL, 
+    netmail = MsgOpenArea((unsigned char *) config->netMailAreas[0].fileName, MSGAREA_NORMAL, 
 								  /*config -> netMailArea.fperm, 
 								  config -> netMailArea.uid,
 								  config -> netMailArea.gid,*/
-								  config -> netMailArea.msgbType);
+								  config -> netMailAreas[0].msgbType);
     if (netmail != NULL) {
 
 	highmsg = MsgGetHighMsg(netmail);
@@ -1751,7 +1752,7 @@ void autoPassive()
                                  createKludges(msg->text, NULL, config->links[i].ourAka, &(config->links[i].hisAka));
                                  strcat(msg->text, buf);
                                  msg->textLength = strlen(msg->text);
-                                 processNMMsg(msg, NULL);
+                                 processNMMsg(msg, NULL, NULL, 0);
                                  freeMsgBuffers(msg);
 				 free(msg);
                               }

@@ -2,6 +2,27 @@ hpt 0.30
 --------
 
 ----- cvs ci ------
+Sun Oct 24 16:58:04 NOVST 1999
+max (patch from Kolya Nesterov):
+- carbonCopy & carbonMove implemented in hpt
+- carbons in netmail are possible (used to implement mailboxes)
+  to use this define transit netmail area (it must be first in
+  config), and your private netmail area(s)
+  Then add something like this to fidoconfig:
+    CarbonTo Kolya Nesterov
+    CarbonMove kolya.netmail
+- carbonExtern: spawns external program with the last parameter equal
+  to temp file with msg header & text or pipes it to the external program
+  if first char of command line is '|' (to use this pipe feature you must
+  have popen function in your system and define HAS_POPEN symbol in makefile
+  (already done for linux))
+- pktinfo: added switches -h (display header msg info) and -t (display msg
+  text) (could be used instead of various pkt viewers)
+- packBadArea - checks for link write access to area added
+- some internal changes in scan.c: decreased the number of functions,
+  all argument for scan are also possible to pack
+
+----- cvs ci ------
 Thu Oct 21 22:44:42 NOVST 1999
 max:
 * areafix: areatags converted to uppercase (forwardRequests)
