@@ -151,7 +151,7 @@ void autoPassive()
                                               getConfigFileName(),
                                               config->links[i], 1,
                                               config->links[i]->Pause^(ECHOAREA|FILEAREA))) {
-                                  int j, k;
+                                  UINT j, k;
                                   int mask = config->links[i]->areafixReportsAttr ? config->links[i]->areafixReportsAttr : config->areafixReportsAttr;
                                   msg = makeMessage(config->links[i]->ourAka,
                                             &(config->links[i]->hisAka),

@@ -25,7 +25,7 @@
 				Optimization="1"
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;..\..\hptzip;f:\compilation\perl\lib\core"
+				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;..\..\areafix;..\..\hptzip;f:\compilation\perl\lib\core"
 				PreprocessorDefinitions="NDEBUG;NO_STRICT;DO_PERL;PERL_MSVCRT_READFIX;NO_STRICT;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_MAKE_DLL;WIN32;_CONSOLE;USE_HPTZIP"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -43,7 +43,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="fidoconf.lib smapi.lib huskylib.lib hptzip.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib msvcrt.lib"
+				AdditionalDependencies="fidoconf.lib smapi.lib huskylib.lib hptzip.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib msvcrt.lib areafix.lib"
 				OutputFile="..\..\nd_r\bin/hptz.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -80,7 +80,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;..\..\hptzip;f:\compilation\perl\lib\core"
+				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;..\..\areafix;..\..\hptzip;f:\compilation\perl\lib\core"
 				PreprocessorDefinitions="DO_PERL;PERL_MSVCRT_READFIX;NO_STRICT;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_MAKE_DLL;WIN32;_CONSOLE;USE_HPTZIP"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -98,7 +98,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="msvcrtd.lib huskylib.lib hptzip.lib fidoconf.lib smapi.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib"
+				AdditionalDependencies="msvcrtd.lib huskylib.lib hptzip.lib fidoconf.lib smapi.lib areafix.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib"
 				OutputFile="..\..\nd_d\bin/hptz.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
@@ -132,9 +132,6 @@
 			Name="headerz"
 			Filter="">
 			<File
-				RelativePath="..\h\areafix.h">
-			</File>
-			<File
 				RelativePath="..\h\cvsdate.h">
 			</File>
 			<File
@@ -148,6 +145,9 @@
 			</File>
 			<File
 				RelativePath="..\h\hpt.h">
+			</File>
+			<File
+				RelativePath="..\h\hptafix.h">
 			</File>
 			<File
 				RelativePath="..\h\hptperl.h">
@@ -184,9 +184,6 @@
 			Name="src"
 			Filter="">
 			<File
-				RelativePath="..\src\areafix.c">
-			</File>
-			<File
 				RelativePath="..\src\carbon.c">
 			</File>
 			<File
@@ -202,6 +199,9 @@
 				RelativePath="..\src\hpt.c">
 			</File>
 			<File
+				RelativePath="..\src\hptafix.c">
+			</File>
+			<File
 				RelativePath="..\src\link.c">
 			</File>
 			<File
@@ -215,9 +215,6 @@
 			</File>
 			<File
 				RelativePath="..\src\post.c">
-			</File>
-			<File
-				RelativePath="..\src\query.c">
 			</File>
 			<File
 				RelativePath="..\src\scan.c">

@@ -25,7 +25,7 @@
 				Optimization="1"
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;f:\compilation\perl\lib\core"
+				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;..\..\areafix;f:\compilation\perl\lib\core"
 				PreprocessorDefinitions="NDEBUG;NO_STRICT;DO_PERL;PERL_MSVCRT_READFIX;NO_STRICT;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_MAKE_DLL;WIN32;_CONSOLE"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -43,7 +43,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="fidoconf.lib smapi.lib huskylib.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib msvcrt.lib"
+				AdditionalDependencies="fidoconf.lib smapi.lib huskylib.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib msvcrt.lib areafix.lib"
 				OutputFile="..\..\nd_r\bin/hpt.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -59,9 +59,10 @@
 				Name="VCPostBuildEventTool"
 				CommandLine="echo Building documentation
 set PATH=%PATH%;F:\compilation\cyg\bin
-cd 
+cd
 bash -c &apos;makeinfo --html --no-split --force ../doc/hpt.texi&apos;
-move /Y  hpt.html $(OutDir)"/>
+move /Y  hpt.html $(OutDir)
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -85,7 +86,7 @@ move /Y  hpt.html $(OutDir)"/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;f:\compilation\perl\lib\core"
+				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;..\..\areafix;f:\compilation\perl\lib\core"
 				PreprocessorDefinitions="DO_PERL;PERL_MSVCRT_READFIX;NO_STRICT;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_MAKE_DLL;WIN32;_CONSOLE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -103,7 +104,7 @@ move /Y  hpt.html $(OutDir)"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="msvcrtd.lib huskylib.lib fidoconf.lib smapi.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib"
+				AdditionalDependencies="msvcrtd.lib huskylib.lib fidoconf.lib smapi.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib areafix.lib"
 				OutputFile="..\..\nd_d\bin/hpt.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
@@ -137,9 +138,6 @@ move /Y  hpt.html $(OutDir)"/>
 			Name="headerz"
 			Filter="">
 			<File
-				RelativePath="..\h\areafix.h">
-			</File>
-			<File
 				RelativePath="..\h\cvsdate.h">
 			</File>
 			<File
@@ -153,6 +151,9 @@ move /Y  hpt.html $(OutDir)"/>
 			</File>
 			<File
 				RelativePath="..\h\hpt.h">
+			</File>
+			<File
+				RelativePath="..\h\hptafix.h">
 			</File>
 			<File
 				RelativePath="..\h\hptperl.h">
@@ -189,9 +190,6 @@ move /Y  hpt.html $(OutDir)"/>
 			Name="src"
 			Filter="">
 			<File
-				RelativePath="..\src\areafix.c">
-			</File>
-			<File
 				RelativePath="..\src\carbon.c">
 			</File>
 			<File
@@ -207,6 +205,9 @@ move /Y  hpt.html $(OutDir)"/>
 				RelativePath="..\src\hpt.c">
 			</File>
 			<File
+				RelativePath="..\src\hptafix.c">
+			</File>
+			<File
 				RelativePath="..\src\link.c">
 			</File>
 			<File
@@ -220,9 +221,6 @@ move /Y  hpt.html $(OutDir)"/>
 			</File>
 			<File
 				RelativePath="..\src\post.c">
-			</File>
-			<File
-				RelativePath="..\src\query.c">
 			</File>
 			<File
 				RelativePath="..\src\scan.c">
