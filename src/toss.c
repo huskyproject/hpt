@@ -1333,10 +1333,10 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
             while(testptr!=NULL){
                 testptr=hpt_stristr(testptr,cb->str);
                 if(testptr!=NULL){
-                    /* look back: a '\1' after a LF        */
+                    /* look back: a '\1' after a CR        */
                     /* means that it is a kludge           */
                     testptr2=testptr;   /* remind position */
-                    while(*--testptr!='\12'); /* not LF    */
+                    while(*--testptr!='\r'); /* not CR    */
 		    /* (skipped) area: kludge prevents going back too far :) */
                     if(*++testptr=='\1') /* was a kludge   */
                         testptr=testptr2+strlen(cb->str);
