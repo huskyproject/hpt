@@ -424,6 +424,8 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
          strcpy(header.pktPassword, echo->downlinks[i]->pktPwd);
       pkt = openPktForAppending(echo->downlinks[i]->pktFile, &header);
 
+      // an echomail msg must be adressed to the link
+      msg->destAddr = header.destAddr;
       writeMsgToPkt(pkt, *msg);
       closeCreatedPkt(pkt);
    }

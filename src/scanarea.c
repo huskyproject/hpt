@@ -157,6 +157,8 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
       strcpy(header.pktPassword, echo->downlinks[i]->pktPwd);
       pkt = openPktForAppending(echo->downlinks[i]->pktFile, &header);
 
+      // an echomail messages must be adressed to the link
+      msg.destAddr = header.destAddr;
       writeMsgToPkt(pkt, msg);
 
       closeCreatedPkt(pkt);
