@@ -60,7 +60,7 @@
 
 void processCommandLine(int argc, char **argv)
 {
-   int i = 0;
+   unsigned int i = 0;
 
    if (argc == 1) {
       printf("\nUsage:\n");

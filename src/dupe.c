@@ -48,10 +48,25 @@ FILE *fDupe;
 
 char *createDupeFileName(s_area *area) {
    char *name;
+   #ifdef MSDOS
+   char *afname;
+   #endif
 
-   name = (char *) malloc(strlen(config->dupeHistoryDir)+strlen(area->areaName)+5);
+   
+   name = (char *) malloc(strlen(config->dupeHistoryDir)+
+   #ifndef MSDOS
+   strlen(area->areaName)+5
+   #else
+   5+9
+   #endif
+   );
+
    strcpy(name, config->dupeHistoryDir);
+   #ifndef MSDOS
    strcat(name, area->areaName);
+   #else
+   strcat(name, (afname = strrchr(area->fileName, '\\'))  != NULL ? afname + 1 : area->fileName);
+   #endif
    strcat(name, ".dup");
 
    return name;
@@ -60,10 +75,19 @@ char *createDupeFileName(s_area *area) {
 void addIndex(s_area *area, UINT32 offset) {
 
    FILE *f;
-   char *fileName = createDupeFileName(area);
+   char *fileName = createDupeFileName(area)
+   #ifdef MSDOS
+	, *ext
+   #endif
+   ;
 
    fileName = realloc(fileName, strlen(fileName)+6+1);
+   #ifndef MSDOS
    strcat(fileName, ".index");
+   #else
+   strcpy((ext = strrchr(fileName, '.'))  != NULL ? ext :
+          fileName + strlen(fileName), ".idx");
+   #endif
 
    f = fopen(fileName, "a");
    fwrite(&offset, sizeof(long), 1, f);

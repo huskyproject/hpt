@@ -12,11 +12,36 @@ hpt scan
 .br
 .TP
 .B Pack netmail messages
-hpt post
+hpt pack
 .br
 .TP
-.B Post netmail to area
-hpt pack
+.B Post a message to area
+hpt post [options] file
+
+options are:
+.TP 1i
+\fB \ \ \ \ \ \ \-nf "name from"
+message sender's name, if not included \fBpost\fP use sysop name (see \fBfidoconfig\fP) 
+.TP 1i
+\fB \ \ \ \ \ \ \-nt "name to"
+message receiver's name, if not included \fBpost\fP use "All"
+.TP 1i
+\fB \ \ \ \ \ \ \-af "address from"
+message sender's address, if not included \fBpost\fP use first system address (see \fBfidoconfig\fP)
+.TP 1i
+\fB \ \ \ \ \ \ \-at "address to"
+message receiver's address, \fB*MUST BE PRESENT*\fP
+.TP 1i
+\fB \ \ \ \ \ \ \-s "subject"
+subject line, if not included then assumed to be empty
+.TP 1i
+\fB \ \ \ \ \ \ \-e "echo area"
+area to post echomail message into, if not included message is posted to netmail
+.TP 1i
+\fB \ \ \ \ \ \ \-f "hex digit"
+hex number representing message flags combination (I'm too lazy to write a parser for that, BTW why in heck you need it ?), LOC attribute is always set
+.TP 1i
+\fB \ \ \ \ \ \ file\fP - text file to post into echo 
 .SH DESCRIPTION
 Highly Portable Tosser is the way to toss your fidonet mail.
 .SH BUGS

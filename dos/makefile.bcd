@@ -24,11 +24,11 @@ OBJS    = pktinfo.obj \
 SRC_DIR = ..\src
 
 !IF $(DEBUG) == 1
-CFLAGS  = -DDEBUG_HPT -v -w -ml -O2 -I..\h -I..\..\fidoconf -I..\..\smapi -DMSDOS
-LFLAGS  = -v -w -ml -O2 -L..\..\fidoconf;..\..\smapi
+CFLAGS  = -DDEBUG_HPT -v -w -ml -I..\h -I..\..\fidoconf -I..\..\smapi -DMSDOS
+LFLAGS  = -v -w -ml -L..\..\fidoconf;..\..\smapi
 !ELSE
-CFLAGS  = -v -w -ml -O2 -I..\h -I..\..\fidoconf -I..\..\smapi -DMSDOS
-LFLAGS  = -v -w -ml -O2 -L..\..\fidoconf;..\..\smapi
+CFLAGS  = -w -ml -I..\h -I..\..\fidoconf -I..\..\smapi -DMSDOS
+LFLAGS  = -w -ml -L..\..\fidoconf;..\..\smapi
 !ENDIF
 
 all: $(OBJS) \

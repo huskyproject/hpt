@@ -91,6 +91,8 @@ s_pktHeader *openPkt(FILE *pkt)
 
   header->origAddr.net = getUINT16(pkt);
   header->destAddr.net = getUINT16(pkt);
+  if (header->origAddr.net == 65535) header->origAddr.net = header->destAddr.net; // bugfix for some braindead point software
+  
   header->loProductCode = getc(pkt);
   header->majorProductRev = getc(pkt);
 

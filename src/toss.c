@@ -578,9 +578,14 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    }
    
    //write new line in config file
-   if (stricmp(config->msgBaseDir, "passthrough")!=0)
-      sprintf(buff, "EchoArea %s %s%s -a %s Squish %s ", c_area, config->msgBaseDir, c_area, myaddr, hisaddr);
-   else
+   if (stricmp(config->msgBaseDir, "passthrough")!=0) {
+     #ifndef MSDOS 
+     sprintf(buff, "EchoArea %s %s%s -a %s Squish %s ", c_area, config->msgBaseDir, c_area, myaddr, hisaddr);
+     #else
+     sleep(1); // to prevent time from creating equal numbers
+     sprintf(buff,"EchoArea %s %s%8lx -a %s Squish %s ", c_area, config->msgBaseDir, time(NULL), myaddr, hisaddr);
+     #endif
+   } else
       sprintf(buff, "EchoArea %s Passthrough -a %s %s ", c_area, myaddr, hisaddr);
    if ((config->autoCreateDefaults != NULL) &&
        (strlen(buff)+strlen(config->autoCreateDefaults))<255) {
