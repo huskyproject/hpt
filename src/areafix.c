@@ -941,6 +941,7 @@ char *subscribe(s_link *link, char *cmd) {
         } else {
             if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==ADD_OK) {
                 Addlink(link, area, NULL);
+                processPermissions(config);
                 fixRules (link, area->areaName);
                 af_CheckAreaInQuery(an, NULL, NULL, DELIDLE);
                 xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
@@ -990,6 +991,7 @@ char *subscribe(s_link *link, char *cmd) {
             if ( !isLinkOfArea(link, area) ) {
                 if(changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==ADD_OK) {
                     Addlink(link, area, NULL);
+                    processPermissions(config);
                     fixRules (link, area->areaName);
                     w_log( LL_AREAFIX, "areafix: %s subscribed to area %s",
                         aka2str(link->hisAka),line);
