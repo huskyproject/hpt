@@ -1,3 +1,7 @@
+2002-05-03 Friday 09:55  ml
+
+	* BUGS (1.17.2.1), INSTALL (1.10.2.1): some fixed
+
 2002-04-24 Wednesday 15:25  pavel.gulchouck
 
 	* src/post.c (1.60.2.4): Recoding tearline/origin fixed
