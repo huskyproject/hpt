@@ -59,6 +59,27 @@ int createLockFile(char *lockfile) {
 	return 0;
 }
 
+#ifdef __TURBOC__
+
+#include <io.h>
+#include <fcntl.h>
+
+#define S_ISDIR(a) (((a) & S_IFDIR) != 0)
+
+int truncate(const char *fileName, long length)
+{
+   int fd = open(fileName, O_RDWR | O_BINARY);
+   if (fd != -1) {
+	  lseek(fd, length, SEEK_SET);
+	  chsize(fd, tell(fd));
+	  close(fd);
+	  return 1;
+   };
+   return 0;
+}
+
+#endif
+
 e_prio cvtFlavour2Prio(e_flavour flavour)
 {
    switch (flavour) {
@@ -196,11 +217,7 @@ int createDirectoryTree(const char *pathName) {
 
       if (stat(start, &buf) != 0) {
          // this part of the path does not exist, create it
-#ifdef UNIX
-         if (mkdir(start, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) != 0) {
-#else
-         if (mkdir(start) != 0) {
-#endif
+         if (mymkdir(start) != 0) {
             buff = (char *) malloc(strlen(start)+30);
             sprintf(buff, "Could not create directory %s", start);
             writeLogEntry(log, '5', buff);

@@ -43,6 +43,7 @@
 #include <typedefs.h>
 #include <compiler.h>
 #include <progprot.h>
+#include <version.h>
 
 FILE *createPkt(char *filename, s_pktHeader *header)
 {
@@ -178,4 +179,29 @@ FILE *openPktForAppending(char *fileName, s_pktHeader *header)
    } /* endif */
 
    return pkt;
+}
+
+/* Note:
+ * This is a simply msgid without any hash function...
+ * Imho it is not necessary to create better msgid for this purpose.
+ */
+
+void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_addr *destAka) {
+
+   *buff = 0;
+   if (area != NULL)
+      sprintf(buff + strlen(buff), "AREA:%s\r", area);
+   else {
+      if (ourAka->point) sprintf(buff + strlen(buff), "\1FMPT: %d\r", ourAka->point);
+      if (destAka->point) sprintf(buff + strlen(buff), "\1TOPT: %d\r", destAka->point);
+   };
+
+   if (ourAka->point)
+      sprintf(buff + strlen(buff),"\1MSGID: %u:%u/%u.%u %08lx\r",
+              ourAka->zone,ourAka->net,ourAka->node,ourAka->point,time(NULL));
+   else
+      sprintf(buff + strlen(buff),"\1MSGID: %u:%u/%u %08lx\r",
+              ourAka->zone,ourAka->net,ourAka->node,time(NULL));
+
+   sprintf(buff + strlen(buff), "\1PID: %s\r", versionStr);
 }

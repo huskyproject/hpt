@@ -417,7 +417,7 @@ void scanNMArea(void)
    } /* endif */
 }
 
-void writeScanStatToLog() {
+void writeScanStatToLog(void) {
    char buff[100];
    
    writeLogEntry(log, '4', "Statistics");
@@ -431,7 +431,7 @@ void pack(void) {
 
    if (config->outtab != NULL) getctab(&outtab, config->outtab);
    
-   memset(&statScan, sizeof(s_statScan), 0);
+   memset(&statScan, 0, sizeof(s_statScan));
    writeLogEntry(log, '4', "Start packing...");
    scanNMArea();
    statScan.areas++;
@@ -449,7 +449,7 @@ void scan(void)
    if (config->outtab != NULL) getctab(&outtab, config->outtab);
 
    // zero statScan
-   memset(&statScan, sizeof(s_statScan), 0);
+   memset(&statScan, 0, sizeof(s_statScan));
    writeLogEntry(log,'4', "Start scanning...");
 
    // open echotoss file

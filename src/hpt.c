@@ -40,7 +40,13 @@
 
 #include <version.h>
 #include <pkt.h>
+
+#ifndef MSDOS
 #include <fidoconfig.h>
+#else
+#include <fidoconf.h>
+#endif
+
 #include <log.h>
 
 #include <global.h>
@@ -50,6 +56,7 @@
 #include <fcommon.h>
 #include <dir.h>
 #include <patmat.h>
+#include <post.h>
 
 void processCommandLine(int argc, char **argv)
 {
@@ -60,6 +67,7 @@ void processCommandLine(int argc, char **argv)
       printf("   hpt toss - tossing mail\n");
       printf("   hpt scan - scanning echomail\n");
       printf("   hpt pack - packing netmail\n");
+      printf("   hpt post - posting a mail\n");
    }
 
    while (i < argc-1) {
@@ -73,6 +81,8 @@ void processCommandLine(int argc, char **argv)
       } else if (stricmp(argv[i], "pack") == 0) {
          cmPack = 1;
          continue;
+      } else if (stricmp(argv[i], "post") == 0) {
+         ++i; post(argc, &i, argv);
       } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
       
    } /* endwhile */
@@ -166,10 +176,10 @@ int main(int argc, char **argv)
 
    sprintf(versionStr, "hpt v%u.%02u", VER_MAJOR, VER_MINOR);
 
-   printf("High Portable Toss v%u.%02u\n", VER_MAJOR, VER_MINOR);
+   printf("Highly Portable Toss v%u.%02u\n", VER_MAJOR, VER_MINOR);
 
-   processCommandLine(argc, argv);
    processConfig();
+   processCommandLine(argc, argv);
 
    // init SMAPI
    m.req_version = 0;

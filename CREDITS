@@ -14,6 +14,9 @@ Credits:
 - some ideas taken from QEcho
 - arcmail code by ml & mtt
 - locking & bsy locks written by Max Levenkov
+- backporting to dos by Kolya Nesterov 2:463/7208.53
+- unpack code by Kolya
+- posting code by Kolya
 
 - the music played while developing mainly comes from Blind Guardian and
   Iron Maiden

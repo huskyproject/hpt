@@ -44,21 +44,21 @@ int main()
    struct tm    *tm;
 
    header.origAddr.zone  = 2;
-   header.origAddr.net   = 2432;
-   header.origAddr.node  = 601;
+   header.origAddr.net   = 2433;
+   header.origAddr.node  = 1245;
    header.origAddr.point = 0;
 
    header.destAddr.zone  = 2;
-   header.destAddr.net   = 2432;
-   header.destAddr.node  = 601;
-   header.destAddr.point = 29;
+   header.destAddr.net   = 2433;
+   header.destAddr.node  = 1247;
+   header.destAddr.point = 0;
 
    header.hiProductCode  = 0;
    header.loProductCode  = 0xfe;
    header.majorProductRev = 0;
    header.minorProductRev = 25;
    //header.pktPassword[0] = 0;
-   strcpy(header.pktPassword, "irkutsk");
+   strcpy(header.pktPassword, "asd");
    header.pktCreated = time(NULL);
 
    header.capabilityWord = 1;
@@ -72,9 +72,9 @@ int main()
       msg.origAddr.point = 0;
 
       msg.destAddr.zone  = 2;
-      msg.destAddr.net   = 2432;
-      msg.destAddr.node  = 601;
-      msg.destAddr.point = 29;
+      msg.destAddr.net   = 2433;
+      msg.destAddr.node  = 1247;
+      msg.destAddr.point = 0;
 
       msg.attributes = 1;
 
@@ -84,13 +84,13 @@ int main()
 
       msg.netMail = 1;
       msg.text = (char *) malloc(300);
-      strcpy(msg.text, "AREA:TERROR\r\001INTL 2:2432/601 2:2432/601\r\001TOPT 29\raslödkjasdlöjkaslödj");
+      strcpy(msg.text, "AREA:LINUX.DEVELOP.GER\rasdasdasd\rasdasdasd\r * Origin: (2:2432/601)\rSEEN-BY: 2432/200 300 2433/1245\r");
       msg.toUserName = (char *) malloc(15);
       strcpy(msg.toUserName, "edde");
       msg.fromUserName = (char *) malloc(20);
       strcpy(msg.fromUserName, "Dirk Fischer");
       msg.subjectLine = (char *) malloc(5);
-      strcpy(msg.subjectLine, "irkutsk");
+      strcpy(msg.subjectLine, "asd");
       msg.textLength = strlen(msg.text);
 
       writeMsgToPkt(pkt, msg);

@@ -268,10 +268,11 @@ s_message *readMsgFromPkt(FILE *pkt,UINT16 def_zone)
    free(textBuffer);                   // free mem space
 
    textBuffer = (CHAR *) malloc(TEXTBUFFERSIZE+1); /* reserve 512kb + 1 (or 32kb+1) text Buffer */
-   msg->textLength = fgetsUntil0(textBuffer, TEXTBUFFERSIZE+1, pkt);
+   msg->textLength = fgetsUntil0(textBuffer, TEXTBUFFERSIZE+1 , pkt);
 
    msg->text = (CHAR *) malloc(msg->textLength); /* reserve mem for the real text */
    strcpy(msg->text, textBuffer);
+
    free(textBuffer);
 
    correctAddr(msg,def_zone);

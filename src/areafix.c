@@ -97,9 +97,9 @@ int addAka(FILE *f, s_link *link) {
 	cfglen=endpos-areapos;
 	
 	// storing end of file...
-	cfg=(char *) calloc(cfglen,sizeof(char*));
+	cfg= (char *) calloc((size_t) cfglen, sizeof(char*));
 	fseek(f,-cfglen,SEEK_END);
-	fread(cfg,sizeof(char*),cfglen,f);
+	fread(cfg,sizeof(char*),(size_t) cfglen,f);
 	
 	// write config
 	fseek(f,-cfglen,SEEK_END);
@@ -140,9 +140,9 @@ int delAka(FILE *f, s_link *link) {
 	cfglen=endpos-areapos-al;
 	
 	// storing end of file...
-	cfg=(char *) calloc(cfglen,sizeof(char*));
+	cfg=(char *) calloc((size_t) cfglen,sizeof(char*));
 	fseek(f,-cfglen-1,SEEK_END);
-	fread(cfg,sizeof(char*),cfglen+1,f);
+	fread(cfg,sizeof(char*),(size_t) (cfglen+1),f);
 	
 	// write config
 	fseek(f,-cfglen-al-2,SEEK_END);
@@ -217,10 +217,10 @@ char *help(s_link *link) {
 		fseek(f,0l,SEEK_END);
 		endpos=ftell(f);
 		
-		help=(char*) calloc(endpos,sizeof(char*));
+		help=(char*) calloc((size_t) endpos,sizeof(char*));
 
 		fseek(f,0l,SEEK_SET);
-		fread(help,1,endpos,f);
+		fread(help,1,(size_t) endpos,f);
 		
 		for (i=0; i<endpos; i++) if (help[i]=='\n') help[i]='\r';
 
@@ -245,7 +245,7 @@ int changeconfig(char *line, s_link *link, int i) {
 			return 1;
 		}
 	
-	while ((cfgline = readLine(f))) {
+	while ((cfgline = readLine(f)) != NULL) {
 		cfgline = trimLine(cfgline);
 		if ((cfgline[0] != '#') && (cfgline[0] != 0)) {
 			cfgline+=9;
@@ -392,11 +392,11 @@ int tellcmd(char *cmd) {
 		if (stricmp(line,"help")==0) return 2;
 		break;
 	case '\01': return 0;
-		break;
+//		break;
 	case '-'  : return 4;
-		break;
+//		break;
 	default: return 3;
-		break;
+//		break;
         }
         return 0;
 }
@@ -419,26 +419,6 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 
 	return report;
 }
-
-
-/* Note:
- * This is a simply msgid without any hash function...
- * Imho it is not necessary to create better msgid for this purpose.
- */
-
-void createmsgid(char *msgid, s_link *link) {
-	s_addr *ourAka;
-
-	ourAka=link->ourAka;
-
-	if (ourAka->point)
-		sprintf(msgid,"\1MSGID: %u:%u/%u.%u %08lx\r",
-				ourAka->zone,ourAka->net,ourAka->node,ourAka->point,time(NULL));
-	else
-		sprintf(msgid,"\1MSGID: %u:%u/%u %08lx\r",
-				ourAka->zone,ourAka->net,ourAka->node,time(NULL));
-}
-
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -475,7 +455,7 @@ int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
 	}
 	
 	tmp=(char*) calloc(128,sizeof(char*));
-	createmsgid (tmp,link);
+	createKludges(tmp, NULL, link->ourAka, pktOrigAddr);
 	report=(char*) calloc(strlen(tmp)+1,sizeof(char*));
 	strcpy(report,tmp);
 	

@@ -39,7 +39,7 @@
 #include <typesize.h>
 #include <fcommon.h>
 
-#ifndef __DOS__
+#if !defined(__DOS__) && !defined(__MSDOS__)
    #define TEXTBUFFERSIZE 512*1024    // for real os
 #else
    #define TEXTBUFFERSIZE 32*1024     // for Dose
@@ -145,7 +145,6 @@ void        freeMsgBuffers(s_message *msg);
   Output: ./.
   FZ:     all memory reserved by readMsgFromPkt will be freed.
 */
-#endif
 
 char        *getKludge(s_message msg, char *what);
 /*DOC
@@ -155,3 +154,15 @@ char        *getKludge(s_message msg, char *what);
           If the kludge does not exist it returns NULL
 */
   
+void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_addr *destAka);
+/*DOC
+   Taken from the areafix.c
+   Input:  a s_addr struct
+   Output: createmsgid fills char space msgid with MSGID kludge
+
+ * Note:
+ * This is a simply msgid without any hash function...
+ * Imho it is not necessary to create better msgid for this purpose.
+ */
+
+#endif

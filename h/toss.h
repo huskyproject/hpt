@@ -51,6 +51,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr);
 void processNMMsg(s_message *msg, s_addr pktOrigAddr);
 void processMsg(s_message *msg, s_addr pktOrigAddr);
 int  processPkt(char *fileName, e_tossSecurity sec);
+void putMsgInArea(s_area *echo, s_message *msg, int strip);
 void toss(void);
 void arcmail(void);
 

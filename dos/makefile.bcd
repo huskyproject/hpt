@@ -1,0 +1,103 @@
+#you should copy this file to ../src directory and run make in it 
+DEBUG   = 0
+CC      = bcc
+
+OBJS    = pktinfo.obj \
+	  areafix.obj \
+          pktread.obj \
+	  pktwrite.obj \
+          fcommon.obj \
+          global.obj \
+          recode.obj \
+          tlog.obj \
+          tpkt.obj \
+          scan.obj \
+	  scanarea.obj \
+          toss.obj \
+          log.obj \
+          hpt.obj \
+          seenby.obj \
+          purged~1.obj \
+	  dupe.obj \
+          tree.obj
+
+SRC_DIR = ..\src
+
+!IF $(DEBUG) == 1
+CFLAGS  = -DDEBUG_HPT -v -w -ml -O2 -I..\h -I..\..\fidoconf -I..\..\smapi -DMSDOS
+LFLAGS  = -v -w -ml -O2 -L..\..\fidoconf;..\..\smapi
+!ELSE
+CFLAGS  = -v -w -ml -O2 -I..\h -I..\..\fidoconf -I..\..\smapi -DMSDOS
+LFLAGS  = -v -w -ml -O2 -L..\..\fidoconf;..\..\smapi
+!ENDIF
+
+all: $(OBJS) \
+     pktinfo.exe \
+     tlog.exe \
+     tpkt.exe \
+     hpt.exe \
+     purged.exe
+
+pktinfo.exe: pktinfo.obj $(OBJS)
+	$(CC) $(LFLAGS) @&&!
+pktinfo.obj
+log.obj
+recode.obj
+pktread.obj
+fcommon.obj
+global.obj
+fidoconf.lib
+smapibcd.lib
+!
+
+tlog.exe: tlog.obj log.obj
+	$(CC) $(LFLAGS) tlog.obj log.obj
+
+tpkt.exe: tpkt.obj pktwrite.obj fcommon.obj pktread.obj recode.obj log.obj global.obj
+	$(CC) $(LFLAGS) @&&!
+tpkt.obj
+log.obj
+fcommon.obj
+pktread.obj
+recode.obj
+pktwrite.obj
+global.obj
+fidoconf.lib
+smapibcd.lib
+!
+
+hpt.exe: $(OBJS)
+	$(CC) $(LFLAGS) @&&!
+hpt.obj
+pktread.obj
+pktwrite.obj
+fcommon.obj
+global.obj
+recode.obj
+scan.obj
+areafix.obj
+seenby.obj
+toss.obj
+log.obj
+scanarea.obj
+dupe.obj
+tree.obj
+smapibcd.lib
+fidoconf.lib
+!
+
+purgeD.exe: purgeD~1.obj global.obj dupe.obj tree.obj pktread.obj log.obj recode.obj
+	$(CC) $(LFLAGS) @&&!
+purgeD~1.obj
+tree.obj
+pktread.obj
+recode.obj
+dupe.obj
+global.obj
+log.obj
+fidoconf.lib
+smapibcd.lib
+!
+ 
+.c.obj:
+  $(CC) $(CFLAGS) -c $<

@@ -34,7 +34,12 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#ifndef  MSDOS
 #include <fidoconfig.h>
+#else
+#include <fidoconf.h>
+#endif
+
 #include <dupe.h>
 #include <version.h>
 #include <global.h>

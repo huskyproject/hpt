@@ -67,8 +67,10 @@ void changeFileSuffix(char *fileName, char *newSuffix) {
    newFileName = (char *) calloc(length+1, 1);
    strncpy(newFileName, fileName, length-strlen(newSuffix));
    strcat(newFileName, newSuffix);
-
-//   printf("old: %s      new: %s\n", fileName, newFileName);
+  
+   #ifdef DEBUG_HPT
+   printf("old: %s      new: %s\n", fileName, newFileName);
+   #endif
    
    rename(fileName, newFileName);
 }
@@ -122,7 +124,7 @@ XMSG createXMSG(s_message *msg)
 void putMsgInArea(s_area *echo, s_message *msg, int strip)
 {
    char buff[70], *ctrlBuff, *textStart, *textWithoutArea;
-   UINT textLength = msg->textLength;
+   UINT textLength = (UINT) msg->textLength;
    HAREA harea;
    HMSG  hmsg;
    XMSG  xmsg;
@@ -188,6 +190,9 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
    char *seenByText, *start, *token;
    unsigned long temp;
    char *endptr;
+   #ifdef DEBUG_HPT
+   int i;
+   #endif
    
    *seenByCount = 0;
    start = msg->text;
@@ -233,7 +238,9 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
    }
 
    //test output for reading of seenBys...
-//   for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
+   #ifdef DEBUG_HPT
+   for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
+   #endif
 //   exit(2);
 
    free(seenByText);
@@ -248,6 +255,9 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
    char *seenByText, *start, *token;
    char *endptr;
    unsigned long temp;
+   #ifdef DEBUG_HPT
+   int i;
+   #endif
    
    *seenByCount = 0;
    start = msg->text;
@@ -290,7 +300,9 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
    }
 
    // test output for reading of paths...
-   //for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
+   #ifdef DEBUG_HPT
+   for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
+   #endif
    //exit(2);
 
    free(seenByText);
@@ -309,7 +321,9 @@ int readCheck(s_area *echo, s_link *link) {
 		// is this link allowed to read messages from this area?
 		for (i=0; i< strlen(echo->rgrp); i++) {
 			if ( strchr( denygrp, echo->rgrp[i]) != NULL) {
-//				printf("read!\n");
+#ifdef DEBUG_HPT
+				printf("read!\n");
+#endif
 				return 0;
 			} else if ( i == strlen (echo->rgrp) - 1 ) rc++;
 		}
@@ -319,7 +333,9 @@ int readCheck(s_area *echo, s_link *link) {
 		// maybe he have r/w acess?
 		for (i=0; i< strlen(echo->rwgrp); i++) {
 			if ( strchr( denygrp, echo->rwgrp[i]) != NULL) {
-//				printf("read/write!\n");
+#ifdef DEBUG_HPT
+				printf("read/write!\n");
+#endif
 				return 0;
 			} else if ( i == strlen (echo->rwgrp) - 1 ) rc++;
 		}
@@ -341,7 +357,9 @@ int writeCheck(s_area *echo, s_link *link) {
 		// is this link allowed to post messages to this area?
 		for (i=0; i< strlen(echo->wgrp); i++) {
 			if ( strchr( denygrp, echo->wgrp[i]) != NULL) {
-//				printf("write!\n");
+#ifdef DEBUG_HPT
+				printf("write!\n");
+#endif
 				return 0;
 			} else if ( i == strlen (echo->wgrp) - 1 ) rc++;
 		}
@@ -351,13 +369,50 @@ int writeCheck(s_area *echo, s_link *link) {
 		// maybe he have r/w acess?
 		for (i=0; i< strlen(echo->rwgrp); i++) {
 			if ( strchr( denygrp, echo->rwgrp[i]) != NULL) {
-//				printf("read/write!\n");
+#ifdef DEBUG_HPT
+				printf("read/write!\n");
+#endif
 				return 0;
 			} else if ( i == strlen (echo->rwgrp) - 1 ) rc++;
 		}
 	} else rc++;
 	
 	return rc;
+}
+
+/**
+  * This function return 0 if the link is not in seenBy else it return 1.
+  */
+
+int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link)
+{
+   UINT i;
+
+   if (link->hisAka.point != 0) return 0; // a point always gets the mail
+
+   for (i=0; i < seenByCount; i++) {
+      if ((link->hisAka.net == seenBys[i].net) && (link->hisAka.node == seenBys[i].node)) return 1;
+   }
+
+   return 0;
+}
+
+/**
+  * This function put all the links of the echoarea in the newLink array who does not have got the mail
+  */
+
+void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount, s_area *echo, s_link ***newLinks)
+{
+   UINT i, j=0;
+   
+   *newLinks = (s_link **) calloc(echo->downlinkCount, sizeof(s_link*));
+
+   for (i=0; i < echo->downlinkCount; i++) {
+      if (checkLink(seenBys, seenByCount, echo->downlinks[i])==0) {
+         (*newLinks)[j] = echo->downlinks[i];
+         j++;
+      }
+   }
 }
 
 void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
@@ -368,25 +423,32 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    
    FILE     *pkt;
    s_pktHeader header;
+   s_link   **newLinks;  // links who does not have their aka in seenBys and thus have not got the echomail.
 
    createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
-   // add seenBy for links
+   createPathArrayFromMsg(msg, &path, &pathCount);
+
+   createNewLinkArray(seenBys, seenByCount, echo, &newLinks);
+   
+   // add seenBy for newLinks
    for (i=0; i<echo->downlinkCount; i++) {
-      if (echo->downlinks[i]->hisAka.point != 0) continue; // don't include points in SEEN-BYS
-      if (addrComp(echo->downlinks[i]->hisAka, pktOrigAddr)==0) continue; // don´t include the link we have got the mail from in SEEN-BYS
+
+      if (newLinks[i] == NULL) break;               // no link at this index -> break
+      if (newLinks[i]->hisAka.point != 0) continue; // don't include points in SEEN-BYS
       
       seenBys = (s_seenBy*) realloc(seenBys, sizeof(s_seenBy) * (seenByCount)+1);
-      seenBys[seenByCount].net = echo->downlinks[i]->hisAka.net;
-      seenBys[seenByCount].node = echo->downlinks[i]->hisAka.node;
+      seenBys[seenByCount].net = newLinks[i]->hisAka.net;
+      seenBys[seenByCount].node = newLinks[i]->hisAka.node;
       seenByCount++;
    }
 
    sortSeenBys(seenBys, seenByCount);
 
-//   for (i=0; i< seenByCount;i++) printf("%u/%u ", seenBys[i].net, seenBys[i].node);
+#ifdef DEBUG_HPT
+   for (i=0; i< seenByCount;i++) printf("%u/%u ", seenBys[i].net, seenBys[i].node);
+#endif
    //exit(2);
 
-   createPathArrayFromMsg(msg, &path, &pathCount);
    if (pathCount > 0) {
       if (path[pathCount-1].net != echo->useAka->net && path[pathCount-1].node != echo->useAka->node ) {
          // add our aka to path
@@ -438,16 +500,16 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    // add msg to the pkt's of the downlinks
    for (i = 0; i<echo->downlinkCount; i++)
    {
-      // don't export to link who has sent the echomail to us
-      if (addrComp(pktOrigAddr, echo->downlinks[i]->hisAka)==0) continue;
 
+      if (newLinks[i] == NULL) break;           // no link at this index -> break;
+      
       // does the link has read access for this echo?
-      if (readCheck(echo, echo->downlinks[i])!=0) continue;
+      if (readCheck(echo, newLinks[i])!=0) continue;
       
       // create pktfile if necessary
-      if (echo->downlinks[i]->pktFile == NULL) {
+      if (newLinks[i]->pktFile == NULL) {
          // pktFile does not exist
-         if ( createTempPktFileName(echo->downlinks[i]) ) {
+         if ( createTempPktFileName(newLinks[i]) ) {
 	    writeLogEntry(log, '9', "Could not create new pkt!\n");
 	    printf("Could not create new pkt!\n");
 	    exit(1);
@@ -455,11 +517,11 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       } /* endif */
 
       makePktHeader(NULL, &header);
-      header.origAddr = *(echo->downlinks[i]->ourAka);
-      header.destAddr = echo->downlinks[i]->hisAka;
-      if (echo->downlinks[i]->pktPwd != NULL)
-         strcpy(header.pktPassword, echo->downlinks[i]->pktPwd);
-      pkt = openPktForAppending(echo->downlinks[i]->pktFile, &header);
+      header.origAddr = *(newLinks[i]->ourAka);
+      header.destAddr = newLinks[i]->hisAka;
+      if (newLinks[i]->pktPwd != NULL)
+         strcpy(header.pktPassword, newLinks[i]->pktPwd);
+      pkt = openPktForAppending(newLinks[i]->pktFile, &header);
 
       // an echomail msg must be adressed to the link
       msg->destAddr = header.destAddr;
@@ -552,13 +614,13 @@ int carbonCopy(s_message *msg, s_area *echo)
 		switch (config->carbons[i].type) {
 
 		case 0:
-			if (strcasecmp(msg->toUserName, config->carbons[i].str)==0) {
+			if (stricmp(msg->toUserName, config->carbons[i].str)==0) {
 				putMsgInArea(area,msg,0);
 				return 0;
 			}
 			break;
 		case 1:
-			if (strcasecmp(msg->fromUserName, config->carbons[i].str)==0) {
+			if (stricmp(msg->fromUserName, config->carbons[i].str)==0) {
 				putMsgInArea(area,msg,0);
 				return 0;
 			}
@@ -870,24 +932,113 @@ int processPkt(char *fileName, e_tossSecurity sec)
 }
 */
 
+void fillCmdStatement(char *cmd, const char *call, const char *archiv, const char *file, const char *path) {
+   const char *start, *tmp, *add;
+
+   *cmd = '\0';  start = NULL;
+   for (tmp = call; (start = strchr(tmp, '$')) != NULL; tmp = start + 2) {
+      switch(*(start + 1)) {
+       	 case 'a': add = archiv; break;
+         case 'p': add = path; break;
+         case 'f': add = file; break;
+         default:
+            strncat(cmd, tmp, (size_t) (start - tmp + 1));
+            start--; continue;
+      };
+      strncat(cmd, tmp, (size_t) (start - tmp));
+      strcat(cmd, add);
+   };
+   strcat(cmd, tmp);
+}
+
+void processDir(char *directory, e_tossSecurity sec);
+
+int  processArc(char *fileName, e_tossSecurity sec)
+{
+   int  i, j, found, cmdexit;
+   FILE  *bundle;
+   char buff[256];
+   char cmd[256];
+
+   if (sec == secInbound) {
+      sprintf(buff, "bundle %s: tossing in unsecure inbound, security violation", fileName);
+      writeLogEntry(log, '6', buff);
+      return 3;
+   };
+
+   // find what unpacker to use
+   for (i = 0, found = 0; (i < config->unpackCount) && !found; i++) {
+      bundle = fopen(fileName, "rb");
+      if (bundle == NULL) return 2;
+      // is offset is negative we look at the end 
+      fseek(bundle, config->unpack[i].offset, config->unpack[i].offset >= 0 ? SEEK_SET : SEEK_END);
+      if (ferror(bundle)) { fclose(bundle); continue; };
+      for (found = 1, j = 0; j < config->unpack[i].codeSize; j++) {
+         if ((getc(bundle) & config->unpack[i].mask[j]) != config->unpack[i].matchCode[j]) 
+            found = 0;
+      }
+      fclose(bundle);
+   }
+   
+   // unpack bundle
+   if (found) {
+      fillCmdStatement(cmd, config->unpack[--i].call, fileName, "*.pkt", config->tempInbound);
+      sprintf(buff, "bundle %s: unpacking with \"%s\"", fileName, cmd);
+      writeLogEntry(log, '6', buff);
+      if ((cmdexit = system(cmd)) != 0) {
+         sprintf(buff, "exec of %s failed, code %d", cmd, errno);
+	 writeLogEntry(log, '6', buff);
+         return 3;
+      };
+   } else {
+      sprintf(buff, "bundle %s: cannot find unpacker", fileName);
+      writeLogEntry(log, '6', buff);
+      return 3;
+   };
+   processDir(config->tempInbound, sec);
+   return 0;
+}
+
+char *validExt[] = {"*.MO?", "*.TU?", "*.TH?", "*.WE?", "*.FR?", "*.SA?", "*.SU?"};
+
 void processDir(char *directory, e_tossSecurity sec)
 {
    DIR            *dir;
    struct dirent  *file;
    char           *dummy;
-   int            rc;
+   int            rc, i;
+   int		  pktFile,
+   		  arcFile;
+
 
    if (directory==NULL) return;
 
    dir = opendir(directory);
 
    while ((file = readdir(dir)) != NULL) {
-//      printf("testing %s\n", file->d_name);
-      if ((patmat(file->d_name, "*.pkt") == 1) || (patmat(file->d_name, "*.PKT") == 1)) {
-         dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
-         strcpy(dummy, directory);
-         strcat(dummy, file->d_name);
-         rc = processPkt(dummy, sec);
+#ifdef DEBUG_HPT
+      printf("testing %s\n", file->d_name);
+#endif
+
+      arcFile = pktFile = 0;
+
+      dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
+      strcpy(dummy, directory);
+      strcat(dummy, file->d_name);
+
+      strUpper(file->d_name);
+
+      if (!(pktFile = patmat(file->d_name, "*.PKT") == 1))
+         for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
+            if (patmat(file->d_name, validExt[i]) == 1)
+               arcFile = 1;
+	
+      if (pktFile || arcFile) {
+
+         if (pktFile) 
+            rc = processPkt(dummy, sec);
+         else if (arcFile)
+            rc = processArc(dummy, sec);
 
          switch (rc) {
             case 1:   // pktpwd problem
@@ -903,22 +1054,22 @@ void processDir(char *directory, e_tossSecurity sec)
                remove (dummy);
                break;
          }
-         free(dummy);
-      }
+      };
+      free(dummy);
    }
    closedir(dir);
 }
 
-void writeTossStatsToLog() {
+void writeTossStatsToLog(void) {
    char buff[100];
    float inMailsec, outMailsec, inKBsec;
    time_t diff = time(NULL) - statToss.startTossing;
 
    if (diff == 0) diff = 1;
 
-   inMailsec = statToss.msgs / diff;
-   outMailsec = statToss.exported / diff;
-   inKBsec = statToss.inBytes / diff / 1024;
+   inMailsec = ((float)(statToss.msgs)) / diff;
+   outMailsec = ((float)(statToss.exported)) / diff;
+   inKBsec = ((float)(statToss.inBytes)) / diff / 1024;
 
    writeLogEntry(log, '4', "Statistics:");
    sprintf(buff, "   pkt's: % 3d   msgs: % 5d   echoMail: % 5d   netmail: % 5d", statToss.pkts, statToss.msgs, statToss.echoMail, statToss.netMail);
@@ -931,26 +1082,6 @@ void writeTossStatsToLog() {
    writeLogEntry(log, '4', buff);
    sprintf(buff, "          % 8.2f kb/sec", inKBsec);
    writeLogEntry(log, '4', buff);
-}
-
-void fillPackStatement(char *cmd, char *call, const char *archiv, const char *file) {
-   char *start, *tmp, buff[256];
-
-   tmp = strdup(call);
-   
-   // replace $a by archiv-filename
-   start = strstr(tmp, "$a");
-   *start = '%';
-   *(start+1) = 's';
-   sprintf(buff, tmp, archiv);
-
-   // replace $f by fileName
-   start = strstr(buff, "$f");
-   *start = '%';
-   *(start+1) = 's';
-   sprintf(cmd, buff, file);
-
-   free(tmp);
 }
 
 void arcmail() {
@@ -986,7 +1117,7 @@ void arcmail() {
 				
 				// pack mail
 				if (config->links[i].packerDef != NULL) {
-					fillPackStatement(cmd,config->links[i].packerDef->call,config->links[i].packFile, config->links[i].pktFile);
+					fillCmdStatement(cmd,config->links[i].packerDef->call,config->links[i].packFile, config->links[i].pktFile, "");
 					sprintf(logmsg,"Packing mail for %s",config->links[i].name);
 					writeLogEntry(log, '7', logmsg);
 					cmdexit = system(cmd);
@@ -1017,7 +1148,7 @@ void toss()
    if (config->intab != NULL) getctab(&intab, config->intab);
 
    // set stats to 0
-   memset(&statToss, sizeof(s_statToss), 0);
+   memset(&statToss, 0, sizeof(s_statToss));
    statToss.startTossing = time(NULL);
    writeLogEntry(log, '4', "Start tossing...");
    processDir(config->localInbound, secLocalInbound);

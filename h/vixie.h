@@ -67,7 +67,9 @@ extern	char	*APC_PROCS[MAXPROC];
 			/*--- why didn't k&r put these into stdio.h? ---*/
 #define	TRUE		1
 #define	FALSE		0
+#ifndef __TURBOC__
 extern	char		*malloc(), *calloc();
+#endif
 
 
 #endif	_VIXIE_FLAG
