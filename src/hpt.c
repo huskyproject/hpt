@@ -275,7 +275,7 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
 
    if (config==NULL) processConfig();
 
-#if defined ( __NT__ )
+#if defined ( __NT__ ) && !defined(__MINGW32__)
    if (config->setConsoleTitle) {
 	   sprintf( title, "Highly Portable Toss %s", version);
 	   GetConsoleTitleA( oldtitle, 256 );
@@ -333,7 +333,7 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
    disposeConfig(config);
    doneCharsets();
    nfree(versionStr);
-#if defined ( __NT__ )
+#if defined ( __NT__ ) && !defined(__MINGW32__)
    if (config->setConsoleTitle) SetConsoleTitleA(oldtitle);
 #endif
    return 0;
