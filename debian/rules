@@ -19,16 +19,13 @@ configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
 	
-
 	touch configure-stamp
 
 build: configure-stamp build-stamp
 build-stamp:
 	dh_testdir
-
 	# Add here commands to compile the package.
 	$(MAKE)
-
 	touch build-stamp
 
 clean:
@@ -45,17 +42,16 @@ install: build
 	dh_testroot
 	dh_clean -k
 	dh_installdirs
-
 	# Add here commands to install the package into debian/hpt.
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/hpt
-	cp misc/areafix.hlp $(CURDIR)/debian/hpt/etc/husky/areafix.hlp
-	mkdir -p $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc
+	cp config/config config/path config/links config/areas debian/hpt/etc/husky/
+	cp misc/areafix.hlp $(CURDIR)/debian/hpt/etc/husky/
 	-cp misc/* $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/
-	mkdir -p $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/hpt_ro
 	-cp misc/hpt_ro/* $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/hpt_ro
 	rm -f $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/*.hlp
 	cd doc ; \
 	make all install DESTDIR=$(CURDIR)/debian/hpt 
+	rm -f $(CURDIR)/debian/hpt/usr/share/info/dir*
 
 
 # Build architecture-independent files here.
