@@ -18,7 +18,7 @@ EXENAMEFLAG=-o
 SRC_DIR=../src/
 CFLAGS=-I../h -I../.. -c -O3 -Wall -pedantic -mno-cygwin $(DEBUG)
 LFLAGS=$(DEBUG) -mno-cygwin
-CDEFS =-DNT -D__NT__ -DWINNT -D__CYG__ $(PERLDEFS)
+CDEFS = -D__NT__ $(PERLDEFS)
 
 OBJ=.o
 EXE=.exe
