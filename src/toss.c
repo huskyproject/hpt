@@ -12,6 +12,8 @@
 #include <seenby.h>
 #include <dupe.h>
 
+#include <recode.h>
+
 #include <msgapi.h>
 #include <stamp.h>
 #include <typedefs.h>
@@ -397,6 +399,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 
          if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
             putMsgInArea(echo, msg);
+            echo->imported = 1;  // area has got new messages
 	    statToss.saved++;
          } else statToss.passthrough++;
          if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
@@ -431,6 +434,8 @@ void processNMMsg(s_message *msg)
       msgHandle = MsgOpenMsg(netmail, MOPEN_CREATE, 0);
 
       if (msgHandle != NULL) {
+         config->netMailArea.imported = 1; // area has got new messages
+         
          msgHeader = createXMSG(msg);
          /* Create CtrlBuf for SMAPI */
          ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
@@ -557,6 +562,10 @@ void writeTossStatsToLog() {
 void toss()
 {
    int i;
+   FILE *f;
+
+   // load recoding tables if needed
+   if (config->intab != NULL) getctab(&intab, config->intab);
 
    // set stats to 0
    memset(&statToss, sizeof(s_statToss), 0);
@@ -568,6 +577,19 @@ void toss()
    // write dupeFiles
 
    for (i = 0 ; i < config->echoAreaCount; i++) writeToDupeFile(&(config->echoAreas[i]));
+
+   if (config->importlog != NULL) {
+      // write importlog
+      
+      f = fopen(config->importlog, "a");
+      if (f != NULL) {
+         if (config->netMailArea.imported == 1) fprintf(f, "%s\n", config->netMailArea.areaName);
+         for (i = 0; i < config->echoAreaCount; i++)
+            if (config->echoAreas[i].imported == 1) fprintf(f, "%s\n", config->echoAreas[i].areaName);
+
+         fclose(f);
+      } else writeLogEntry(log, '5', "Could not open importlogfile");
+   }
 
    // write statToss to Log
    writeTossStatsToLog();

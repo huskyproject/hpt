@@ -12,6 +12,8 @@
 #include <global.h>
 #include <version.h>
 
+#include <recode.h>
+
 s_statScan statScan;
 
 void cvtAddr(const NETADDR aka1, s_addr *aka2)
@@ -243,6 +245,7 @@ void scanNMArea(void)
    if (netmail != NULL) {
 
       highMsg = MsgGetHighMsg(netmail);
+      writeLogEntry(log, '1', "Scanning NetmailArea");
 
       // scan all Messages and test if they are already sent.
       for (i=1; i<= highMsg; i++) {
@@ -289,18 +292,50 @@ void writeScanStatToLog() {
 void scan(void)
 {
    UINT i;
+   FILE *f;
+   char *line;
+   s_area *area;
+
+   // load recoding tables
+   if (config->outtab != NULL) getctab(&outtab, config->outtab);
 
    // zero statScan
    memset(&statScan, sizeof(s_statScan), 0);
    writeLogEntry(log,'4', "Start scanning...");
    scanNMArea();
    statScan.areas++;
-   for (i = 0; i< config->echoAreaCount; i++) {
-      if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
-         scanEMArea(&(config->echoAreas[i]));
-         statScan.areas++;
+
+   // open echotoss file
+   f = fopen(config->echotosslog, "r");
+
+   if (f == NULL) {
+      // if echotoss file does not exist scan all areas
+      writeLogEntry(log, '3', "EchoTossLogFile not found -> Scanning all echoAreas.");
+      for (i = 0; i< config->echoAreaCount; i++) {
+         if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
+            scanEMArea(&(config->echoAreas[i]));
+            statScan.areas++;
+         }
       }
+   } else {
+      // else scan only those areas which are listed in the file
+      writeLogEntry(log, '3', "EchoTossLogFile found -> Scanning only listed areas");
+
+      while (!feof(f)) {
+         line = readLine(f);
+
+         area = getArea(config, line);
+
+         scanEMArea(area);
+         
+         free(f);
+      }
+
+      fclose(f);
+      remove(config->echotosslog);
    }
+
+   
 
    writeScanStatToLog();
 }

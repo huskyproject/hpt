@@ -3,7 +3,7 @@ CC      = gcc
 INSTDIR = /usr/local/bin
 MANDIR  = /usr/local/man
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o 
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
@@ -26,19 +26,19 @@ all: $(OBJS) \
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
 
 pktinfo: pktinfo.o $(OBJS)
-	$(CC) $(LFLAGS) -o pktinfo pktinfo.o pktread.o fcommon.o global.o -lsmapilnx -lfidoconfig
+	$(CC) $(LFLAGS) -o pktinfo recode.o pktinfo.o pktread.o fcommon.o global.o -lsmapilnx -lfidoconfig
 
 tlog: tlog.o log.o
 	$(CC) $(LFLAGS) -o tlog tlog.o log.o
 
-tpkt: tpkt.o pktwrite.o fcommon.o pktread.o
-	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o pktread.o pktwrite.o global.o -lsmapilnx  -lfidoconfig
+tpkt: tpkt.o pktwrite.o fcommon.o pktread.o recode.o
+	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o pktread.o recode.o pktwrite.o global.o -lsmapilnx  -lfidoconfig
 
 hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) -lsmapilnx -lfidoconfig
 
-purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o log.o
-	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o log.o -lfidoconfig -lsmapilnx
+purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o log.o recode.o
+	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o recode.o dupe.o global.o log.o -lfidoconfig -lsmapilnx
 
 clean:
 	-rm -f *.o

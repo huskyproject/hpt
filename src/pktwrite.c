@@ -5,6 +5,8 @@
 
 #include <pkt.h>
 
+#include <recode.h>
+
 #include <stamp.h>
 #include <typedefs.h>
 #include <compiler.h>
@@ -83,6 +85,11 @@ FILE *createPkt(char *filename, s_pktHeader *header)
 
 int writeMsgToPkt(FILE *pkt, s_message msg)
 {
+
+  // recoding from internal charset to transport charset
+  recodeToTransportCharset(msg.subjectLine);
+  recodeToTransportCharset(msg.text);
+   
   // write type 2 msg
   fputc(2, pkt);
   fputc(0, pkt);
