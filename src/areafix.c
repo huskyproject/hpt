@@ -588,6 +588,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     int rc=0;
     e_changeConfigRet nRet = I_ERR;
     char* areaName = area->areaName;
+    s_addr tmpAdr;
 
     w_log(LL_FUNC,"areafix.c::changeconfig()");
 
@@ -713,13 +714,21 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
           {                // not fully implemented yet
             // get area string
             buff = makeAreaParam(area->downlinks[0]->link , areaName, NULL );
-            // add all links
-            xstrcat( &buff, strstr(cfgline, aka2str(area->downlinks[0]->link->hisAka))-1);
-            fprintf(f, "\n%s\n", buff); // add line to config
             nRet = ADD_OK;
-            break;
           }
-          /* if(action == 6) // make area pass. not implemented yet*/ 
+          if(action == 6) {// make area pass. fully implemented yet */ 
+            buff = makeAreaParam(area->downlinks[0]->link , areaName, "passthrough" );
+            nRet = DEL_OK;
+          }
+          // add all links
+          token = strstr(cfgline, aka2str(area->downlinks[0]->link->hisAka));
+          string2addr(token,&tmpAdr);
+          if(addrComp(tmpAdr, area->downlinks[0]->link->hisAka))
+            token = strstr(token+1, aka2str(area->downlinks[0]->link->hisAka));
+
+          xstrcat( &buff, token-1); // need to fix extra \n 
+          fprintf(f, "\n%s\n", buff); // add line to config
+          break;
         default: break;
       } // switch (action)
     } // else of if ((nRet > -1) && (cfgline == NULL)) {
@@ -947,7 +956,7 @@ char *subscribe(s_link *link, char *cmd) {
 	    }
 	    break;
 	case 1:         /* not linked */
-        if( isOurAka(link->hisAka)) {
+        if( isOurAka(link->hisAka)) { 
            if(area->msgbType==MSGTYPE_PASSTHROUGH) {
               int state = 
                   changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,5);
@@ -961,6 +970,8 @@ char *subscribe(s_link *link, char *cmd) {
                                     an, aka2str(area->downlinks[0]->link->hisAka));
               }
            } else {  /* ??? (not passthrou echo) */
+                     //  non-passthrough area for our aka means 
+                     //  that we already linked to this area
                xscatprintf(&report, " %s %s  already linked\r",an, print_ch(49-strlen(an), '.'));
                w_log(LL_AREAFIX, "areafix: %s already linked to %s",aka2str(link->hisAka), an);
            }
@@ -1167,7 +1178,11 @@ char *unsubscribe(s_link *link, char *cmd) {
 	if (rc==4) continue;
 	if (rc==0 && mandatoryCheck(*area,link)) rc = 5;
 
-	if (isOurAka(link->hisAka)) { from_us = 1; rc = 0; }
+	if (isOurAka(link->hisAka))
+    { 
+        from_us = 1;
+        rc = area->msgbType == MSGTYPE_PASSTHROUGH ? 1 : 0 ;
+    }
 
 	switch (rc) {
 	case 0:
@@ -1184,13 +1199,16 @@ char *unsubscribe(s_link *link, char *cmd) {
 			  aka2str(link->hisAka), an);
 		} else
 		    w_log('8',"areafix: %s unlinked from %s",aka2str(link->hisAka),an);
-	    } else {
-		j=0; // always success
-		if ((area->downlinkCount==1) &&
-		    (area->downlinks[0]->link->hisAka.point == 0))
-		    forwardRequestToLink(area->areaName,
-					 area->downlinks[0]->link, NULL, 1);
-	    }
+        } else { // unsubscribing from own address
+		    j=0; // always success
+		    if ((area->downlinkCount==1) &&
+                (area->downlinks[0]->link->hisAka.point == 0)) {
+		        forwardRequestToLink(area->areaName,
+					    area->downlinks[0]->link, NULL, 1);
+            }  else {
+               j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
+            }
+        }
 	    if (j == DEL_OK)
 		xscatprintf(&report," %s %s  unlinked\r",an,print_ch(49-strlen(an),'.'));
 	    else
