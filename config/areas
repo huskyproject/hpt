@@ -1,0 +1,10 @@
+# First, setup this areas
+NetmailArea NETMAIL /var/lib/ftn/msgbase/netmail -b msg
+BadArea     BADZ    /var/lib/ftn/msgbase/squish/bad -b Squish
+DupeArea    DUPEZ   /var/lib/ftn/msgbase/squish/dupe -b Squish
+# This is area for CarbonCopy (optional)
+LocalArea PAVEL.PERSONAL /var/lib/ftn/msgbase/squish/pavel.personal -d "My personal EchoMail" -b Squish
+#
+# And areas..
+EchoArea 59.LOCAL /var/lib/ftn/msgbase/squish/59.local -b Squish -g L -p 14 -dupecheck move -dupeHistory 11 2:5080/59.1 2:5080/59.2
+EchoArea LINUX Passthrough 2:5080/80 2:5080/59.2
