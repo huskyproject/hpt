@@ -1,3 +1,8 @@
+2001-09-15 Saturday 10:56  pavel.gulchouck
+
+	* src/link.c (1.42): Sqpack saves times_read and cost for Jam and
+	Msg msgbases now
+
 2001-09-11 Tuesday 18:16  ml
 
 	* doc/hpt.texi (1.39), src/areafix.c (1.221): inverting
