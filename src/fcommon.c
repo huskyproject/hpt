@@ -148,7 +148,11 @@ int truncate(const char *fileName, long length)
           lseek(fd, length, SEEK_SET);
           chsize(fd, tell(fd));
           close(fd);
+#if (defined(_MSC_VER) && (_MSC_VER >= 1200))
+          w_log(LL_TRUNC,"Can't truncate %s: %s", fileName, strerror(errno));
+#else
           w_log(LL_TRUNC,"Can't truncate %s: %s", fileName, strerr(errno));
+#endif
           return 1;
    };
    w_log(LL_TRUNC,"%s truncated", fileName);
