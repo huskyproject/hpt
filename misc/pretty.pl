@@ -3,6 +3,9 @@
 # $Id$
 #
 # $Log$
+# Revision 1.4  2003/03/30 15:42:24  nssoft
+# Add "-pl" option, which move passthrough areas at the end of file.
+#
 # Revision 1.3  2002/11/17 01:39:00  stas_degteff
 # Use spawnvp() instead system() always if possible
 #
@@ -95,7 +98,7 @@ foreach $line (<LIST>) {
                     push @opt, $res[$i];
                 } else {
                     if ($res[$i]=~/-(def|r|w|mn)/) {
-                        $lnk[$#lnk].=' '.$res[$i];
+                        $lnk[$lnk].=' '.$res[$i];
                     } else {
                         push @lnk, $res[$i];
                     }
