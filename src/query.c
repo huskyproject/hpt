@@ -223,6 +223,8 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
                 queryAreasHead->nFlag = 1; // query was changed
                 areaNode->type[0] = '\0';  // mark as deleted
             }
+            if (config->createFwdNonPass == 0)
+               msgbDir = pass;
             // try to find our aka in links of queried area
             // if not foun area will be passthrough
             for (i = 1; i < areaNode->linksCount; i++)
