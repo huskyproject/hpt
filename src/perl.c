@@ -19,33 +19,6 @@
 #include <sys/types.h>
 #endif
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
-#include <EXTERN.h>
-#include <perl.h>
-#ifdef _MSC_VER
-#define NO_XSLOCKS
-#endif
-#ifndef _MSC_VER
-#include <unistd.h>
-#endif
-#include <XSUB.h>
-#ifdef _MSC_VER
-#include "win32iop.h"
-#endif
-#if defined(__cplusplus)
-}
-# ifndef EXTERN_C
-#    define EXTERN_C extern "C"
-#  endif
-#else
-#  ifndef EXTERN_C
-#    define EXTERN_C extern
-#  endif
-#endif
-
 #include <smapi/progprot.h>
 #include <smapi/compiler.h>
 
@@ -61,21 +34,48 @@ extern "C" {
 #include <toss.h>
 #include <hptperl.h>
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+#include <EXTERN.h>
+#include <perl.h>
+#ifdef _MSC_VER
+# define NO_XSLOCKS
+#endif
+#ifndef _MSC_VER
+# include <unistd.h>
+#endif
+#include <XSUB.h>
+#ifdef _MSC_VER
+# include "win32iop.h"
+#endif
+#if defined(__cplusplus)
+}     /* extern "C" closed */
+# ifndef EXTERN_C
+#    define EXTERN_C extern "C"
+#  endif
+#else
+#  ifndef EXTERN_C
+#    define EXTERN_C extern
+#  endif
+#endif
+
 
 #ifndef sv_undef
-#define sv_undef PL_sv_undef
+# define sv_undef PL_sv_undef
 #endif
 
 #ifndef min
-#define min(a, b)      ((a) < (b) ? (a) : (b))
+# define min(a, b)      ((a) < (b) ? (a) : (b))
 #endif
 
 #ifdef __GNUC__
-#define Perl___notused Perl___notused __attribute__ ((unused))
+# define Perl___notused Perl___notused __attribute__ ((unused))
 #endif
 
 #ifndef LL_PERL
-#define LL_PERL LL_EXEC
+# define LL_PERL LL_EXEC
 #endif
 
 /* for alike */
@@ -94,20 +94,20 @@ static int l_dist_raw(char *str1, char *str2, int len1, int len2);
 static PerlInterpreter *perl = NULL;
 static int  do_perl=1;
 #ifdef _MSC_VER
-EXTERN_C void xs_init (pTHXo);
-EXTERN_C void boot_DynaLoader (pTHXo_ CV* cv);
-EXTERN_C void perl_putMsgInArea(pTHXo_ CV* cv);
-EXTERN_C void perl_log(pTHXo_ CV* cv);
-EXTERN_C void perl_str2attr(pTHXo_ CV* cv);
-EXTERN_C void perl_myaddr(pTHXo_ CV* cv);
-EXTERN_C void perl_nodelistDir(pTHXo_ CV* cv);
-EXTERN_C void perl_crc32(pTHXo_ CV* cv);
-EXTERN_C void perl_alike(pTHXo_ CV* cv);
+  EXTERN_C void xs_init (pTHXo);
+  EXTERN_C void boot_DynaLoader (pTHXo_ CV* cv);
+  EXTERN_C void perl_putMsgInArea(pTHXo_ CV* cv);
+  EXTERN_C void perl_log(pTHXo_ CV* cv);
+  EXTERN_C void perl_str2attr(pTHXo_ CV* cv);
+  EXTERN_C void perl_myaddr(pTHXo_ CV* cv);
+  EXTERN_C void perl_nodelistDir(pTHXo_ CV* cv);
+  EXTERN_C void perl_crc32(pTHXo_ CV* cv);
+  EXTERN_C void perl_alike(pTHXo_ CV* cv);
 #endif
 #ifdef _MSC_VER
-EXTERN_C void perl_log(pTHXo_ CV* cv)
+  EXTERN_C void perl_log(pTHXo_ CV* cv)
 #else
-static XS(perl_log)
+  static XS(perl_log)
 #endif
 {
   dXSARGS;
