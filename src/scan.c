@@ -253,7 +253,7 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 		  break;
       }
 
-      getLink = getLinkFromAddr(*config, tempLink.hisAka);
+      getLink = getLinkFromAddr(config, tempLink.hisAka);
 
       if (getLink != NULL) return getLink;
       else return &tempLink;
@@ -348,7 +348,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 #endif
 
    // prepare virtual link...
-   virtualLink = getLinkFromAddr(*config, msg.destAddr);  //maybe the link is in config?
+   virtualLink = getLinkFromAddr(config, msg.destAddr);  //maybe the link is in config?
    if (virtualLink == NULL) {
       virtualLink = safe_malloc(sizeof(s_link));  // if not create new virtualLink link
       memset(virtualLink, '\0', sizeof(s_link));

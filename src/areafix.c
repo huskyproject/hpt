@@ -1874,7 +1874,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     if (security) security=1;
 
     // find link
-    link=getLinkFromAddr(*config, msg->origAddr);
+    link=getLinkFromAddr(config, msg->origAddr);
 
     // if keyword allowPktAddrDiffer for this link is on,
     // we allow the addresses in PKT and MSG header differ
@@ -2076,7 +2076,7 @@ void afix(s_addr addr, char *cmd)
     }
 
     if (cmd) {
-	link = getLinkFromAddr(*config, addr);
+	link = getLinkFromAddr(config, addr);
 	if (link) {
 	    tmpmsg = makeMessage(&addr, link->ourAka, link->name,
 				 link->RemoteRobotName ?
@@ -2281,7 +2281,7 @@ int relink (char *straddr) {
 
     w_log('1', "Start relink...");
 
-    if (straddr) researchLink = getLink(*config, straddr);
+    if (straddr) researchLink = getLink(config, straddr);
     else {
 	w_log('9', "No address");
 	return 1;

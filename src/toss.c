@@ -1492,7 +1492,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
     // no area found -- trying to autocreate echoarea
     if (echo == &(config->badArea)) {
 	// checking for autocreate option
-	link = getLinkFromAddr(*config, pktOrigAddr);
+	link = getLinkFromAddr(config, pktOrigAddr);
 	if ((link != NULL) && (link->autoAreaCreate != 0)) {
 	    if (0 == (writeAccess = autoCreate(area, pktOrigAddr, NULL)))
 		echo = getArea(config, area);
@@ -1734,7 +1734,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	    if ((to_us(header->destAddr)==0) || (sec == secLocalInbound)) {
 		w_log('7', "pkt: %s [%s]", fileName, aka2str(header->origAddr));
 		statToss.pkts++;
-		link = getLinkFromAddr(*config, header->origAddr);
+		link = getLinkFromAddr(config, header->origAddr);
 		if ((link!=NULL) && (link->pktPwd==NULL) && (header->pktPassword[0]!='\000'))
 		    w_log('9', "Unexpected Password %s.", header->pktPassword);
 	   
@@ -2600,7 +2600,7 @@ void tossTempOutbound(char *directory)
 
 		header = openPkt(pkt);
 		if (header != NULL) {
-		    link = getLinkFromAddr (*config, header->destAddr);
+		    link = getLinkFromAddr (config, header->destAddr);
 		} else {
 		    link = NULL;
 		}
@@ -2759,7 +2759,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
     }
 
     if (echo == &(config->badArea)) {
-	link = getLinkFromAddr(*config, pktOrigAddr);
+	link = getLinkFromAddr(config, pktOrigAddr);
 	if (link && link->autoAreaCreate!=0 && area) {
 	    if (0 == autoCreate(area, pktOrigAddr, NULL))
 		echo = getArea(config, area);
