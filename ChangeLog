@@ -1,3 +1,16 @@
+2002-04-11 Thursday 17:12  mche
+
+	* src/hpt.c (1.141): fix misspeling
+
+2002-04-11 Thursday 12:51  mche
+
+	* h/query.h (1.13): unused defenition removed
+
+2002-04-11 Thursday 08:14  pavel.gulchouck
+
+	* makefile.inc (1.16): removed tree.$(OBJ) from makefile -- was
+	moved to fidoconf
+
 2002-04-10 Wednesday 18:33  mche
 
 	* src/query.c (1.38): fixed bug with incorrect date range when freq
