@@ -672,6 +672,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    FILE *f;
    char *fileName, *squishFileName;
    char buff[255], myaddr[25], hisaddr[25];
+   char msgbtype[7];
    s_link *creatingLink;
    s_addr *aka;
    char *description=NULL;
@@ -726,17 +727,36 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    sprintf(hisaddr, aka2str(pktOrigAddr));
 
    //write new line in config file
+   if ((fileName=strstr(NewAutoCreate, "-b "))==NULL) {
+     strcpy (msgbtype, "Squish");
+   }
+   else {
+     char *tmp, *tmp1;
+
+     if ((tmp1=strtok(fileName+3," \t"))==NULL)
+       strcpy (msgbtype, "Squish");
+     else
+       strncpy(msgbtype, tmp1, 6);
+     tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(tmp1+4)+1,sizeof(char));
+     fileName[0]='\0';
+     strcpy (tmp,NewAutoCreate);
+     tmp1=tmp1+4;
+     strcat(tmp,tmp1);
+     free (NewAutoCreate);
+     NewAutoCreate=tmp;
+   }  
+
    if (stricmp(config->msgBaseDir, "passthrough")!=0) {
 #ifndef MSDOS
    if ((fileName=strstr(NewAutoCreate, "-dosfile "))==NULL)
-     sprintf(buff, "EchoArea %s %s%s -a %s Squish", c_area, config->msgBaseDir, squishFileName, myaddr);
+     sprintf(buff, "EchoArea %s %s%s -a %s -b %s", c_area, config->msgBaseDir, squishFileName, myaddr, msgbtype);
    else {
      sleep(1); // to prevent time from creating equal numbers
-     sprintf(buff,"EchoArea %s %s%8lx -a %s Squish", c_area, config->msgBaseDir, time(NULL), myaddr);
+     sprintf(buff,"EchoArea %s %s%8lx -a %s -b %s", c_area, config->msgBaseDir, time(NULL), myaddr, msgbtype);
    }
 #else
 	   sleep(1); // to prevent time from creating equal numbers
-	   sprintf(buff,"EchoArea %s %s%8lx -a %s Squish", c_area, config->msgBaseDir, time(NULL), myaddr);
+	   sprintf(buff,"EchoArea %s %s%8lx -a %s -b %s", c_area, config->msgBaseDir, time(NULL), myaddr, msgbtype);
 #endif
    } else
 	   sprintf(buff, "EchoArea %s Passthrough -a %s", c_area, myaddr);
