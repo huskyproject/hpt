@@ -452,6 +452,12 @@ void scanNMArea(s_area *area)
    s_addr          dest, orig;
    int             for_us, from_us;
 
+   // FixMe: workaround for not netmail packing when there's no any routing
+   if (config->routeFileCount == 0 && config->routeMailCount == 0 && config->routeCount == 0) {
+      writeLogEntry(hpt_log, '8', "no route at all - leave mail untouched");
+      return;
+   }
+
    netmail = MsgOpenArea((unsigned char *) area -> fileName, MSGAREA_NORMAL, 
 /*								 config->netMailArea.fperm, 
 								 config->netMailArea.uid, 
