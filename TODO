@@ -4,7 +4,6 @@ TODO-List for HPT
 Category 1: Will certainly be implemented until next release
 ============================================================
 - areafix file with forwarded echo areas
-- unsubscribe from area with paused links
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
@@ -26,4 +25,3 @@ Category 4: Will not be implemented
 - UnpackAllBeforeToss -> carc
 - pack netmail in pkt/arcmail bundles -> bsopack (implemented)
 - pack several pkt's at once -> bsopack
-- area-deletion etc. via areafix -> hptkill (implemented)

@@ -460,8 +460,10 @@ This statement cannot be repeated.
 @code{autopassive}
 @end table
 
-If this statement defined, hpt will check for old bundles in every run.
-(See autopause token). You can do it also with command line arg. "pause".
+If this statement defined, @value{HPT} will check for old bundles in
+every run. You can do it also with command line arg. "pause".
+
+@xref{AutoPause}.
 
 This statement cannot be repeated.
 
@@ -1773,7 +1775,13 @@ Stop export echomail for this link after 10 days (write Pause token to
 link section). It works when founding "10 days old" file for this link
 in @code{Outbound} directory with "#" and "^" prefixes.
 
+Link unsubscribed from passrhough echo areas with no downlinks besides
+him. Unsubscribe request forwards to uplink. This doesn't works with
+manual "%PAUSE" via AreaFix.
+
 This statement can only be repeated for different links.
+
+@xref{AutoPassive}.
 
 @node DenyFwdFile, DenyFwdMask, AutoPause, Link Keywords
 @subsection DenyFwdFile

@@ -1978,6 +1978,30 @@ void afix(s_addr addr, char *cmd)
 	}
 }
 
+int unsubscribeFromPausedEchoAreas(s_link *link) {
+	unsigned i;
+	s_area *area;
+	s_message *tmpmsg;
+
+	for (i=0; i<config->echoAreaCount; i++) {
+		area = &(config->echoAreas[i]);
+
+		if ((area->msgbType & MSGTYPE_PASSTHROUGH) &&
+			isLinkOfArea(link,&config->echoAreas[i])) {
+			// unsubscribe only if uplink & auto-paused downlink presents
+			if (area->downlinkCount==2) {
+				tmpmsg = makeMessage(&(link->hisAka), link->ourAka, link->name,
+									 "areafix", link->areaFixPwd, 1);
+				xstrscat(&tmpmsg->text,"-",area->areaName,NULL);
+				processAreaFix(tmpmsg, NULL, 0);
+				freeMsgBuffers(tmpmsg);
+			}
+		}
+	}
+
+	return 0;
+}
+
 void autoPassive()
 {
    time_t   time_cur, time_test;
@@ -1988,58 +2012,65 @@ void autoPassive()
    int i;
 
    for (i = 0; i < config->linkCount; i++) {
-	   if (config->links[i].autoPause && config->links[i].Pause == 0) {
-		   if (createOutboundFileName(&(config->links[i]),
-									  cvtFlavour2Prio(config->links[i].echoMailFlavour),
-									  FLOFILE) == 0) {
-			   f = fopen(config->links[i].floFile, "rt");
-			   if (f) {
-				   while ((line = readLine(f)) != NULL) {
-					   line = trimLine(line);
-					   path = line;
-					   if (*path && (*path == '^' || *path == '#')) {
-						   path++;
-						   // set Pause if files stored only in outbound
-						   if (*path &&
-							   strncmp(config->outbound,path,strlen(config->outbound)-1)==0 &&
-							   stat(path, &stat_file) != -1) {
-							   
-							   time_cur = time(NULL);
-							   time_test = (time_cur - stat_file.st_mtime)/3600;
-							   if (time_test >= (config->links[i].autoPause*24)) {
-								   if (changepause((cfgFile) ? cfgFile :
-												   getConfigFileName(),
-												   &(config->links[i]), 1)) {    
-									   msg = makeMessage(config->links[i].ourAka,
-														 &(config->links[i].hisAka),
-														 versionStr,config->links[i].name,
-														 "AutoPassive", 1);
-									   msg->text = createKludges(NULL,
-																 config->links[i].ourAka,
-																 &(config->links[i].hisAka));
-									   xscatprintf(&(msg->text), "\r System switched to passive\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the %%RESUME command.\r\r--- %s autopause\r", versionStr);
-									   msg->textLength = strlen(msg->text);
-									   processNMMsg(msg, NULL, getNetMailArea(config,config->robotsArea), 0, MSGLOCAL);
-									   freeMsgBuffers(msg);
-									   nfree(msg);
-								   }
-								   nfree(line);
-								   fclose(f);
-								   break;
+
+	   if (config->links[i].autoPause==0 || config->links[i].Pause) continue;
+	   
+	   if (createOutboundFileName(&(config->links[i]),
+								  cvtFlavour2Prio(config->links[i].echoMailFlavour),
+								  FLOFILE) == 0) {
+		   f = fopen(config->links[i].floFile, "rt");
+		   if (f) {
+			   while ((line = readLine(f)) != NULL) {
+				   line = trimLine(line);
+				   path = line;
+				   if (*path && (*path == '^' || *path == '#')) {
+					   path++;
+					   // set Pause if files stored only in outbound
+					   if (*path &&
+						   strncmp(config->outbound,path,strlen(config->outbound)-1)==0 &&
+						   stat(path, &stat_file) != -1) {
+
+						   time_cur = time(NULL);
+						   time_test = (time_cur - stat_file.st_mtime)/3600;
+						   if (time_test >= (config->links[i].autoPause*24)) {
+							   if (changepause((cfgFile) ? cfgFile :
+											   getConfigFileName(),
+											   &(config->links[i]), 1)) {    
+								   msg = makeMessage(config->links[i].ourAka,
+													 &(config->links[i].hisAka),
+													 versionStr,config->links[i].name,
+													 "AutoPassive", 1);
+								   msg->text = createKludges(NULL,
+															 config->links[i].ourAka,
+															 &(config->links[i].hisAka));
+								   xstrcat(&msg->text, "\r System switched to passive\r\r You are will be unsubscribed from echo areas with no downlinks besides you!\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the \%RESUME command.");
+								   xscatprintf(&msg->text, "\r\r--- %s autopause\r", versionStr);
+								   msg->textLength = strlen(msg->text);
+								   processNMMsg(msg, NULL,
+												getNetMailArea(config,config->robotsArea),
+												0, MSGLOCAL);
+								   freeMsgBuffers(msg);
+								   nfree(msg);
+									   
+								   // unsubscribe link from areas without non-paused links
+								   unsubscribeFromPausedEchoAreas(&(config->links[i]));
 							   }
-						   } /* endif */
+							   nfree(line);
+							   fclose(f);
+							   break;
+						   }
 					   } /* endif */
-					   nfree(line);
-				   } /* endwhile */
-				   fclose(f);
-			   } /* endif */
-			   nfree(config->links[i].floFile);
-			   remove(config->links[i].bsyFile);
-			   nfree(config->links[i].bsyFile);
-		   }
-		   nfree(config->links[i].pktFile);
-		   nfree(config->links[i].packFile);
+				   } /* endif */
+				   nfree(line);
+			   } /* endwhile */
+			   fclose(f);
+		   } /* endif */
+		   nfree(config->links[i].floFile);
+		   remove(config->links[i].bsyFile);
+		   nfree(config->links[i].bsyFile);
 	   }
+	   nfree(config->links[i].pktFile);
+	   nfree(config->links[i].packFile);
    } /* endfor */
 }
 
@@ -2079,34 +2110,16 @@ int relink (char *straddr) {
 		(sizeof(s_area *) * (config->echoAreaCount  +
 							 config->localAreaCount + 1));
 
-	if ( areasIndexArray == NULL ) {
-		writeLogEntry(hpt_log, '9', "No mem (to work RELINK)");
-		return 1;
-	}
-
-	for (count = 0; count < config->echoAreaCount; count++) {
-		if ( isLinkOfArea(researchLink, &config->echoAreas[count]) &&
-                     !(config->echoAreas[count].msgbType == MSGTYPE_PASSTHROUGH && config->echoAreas[count].downlinkCount == 1) ) {
+	for (count = 0; count < config->echoAreaCount; count++)
+		if ( isLinkOfArea(researchLink, &config->echoAreas[count])) {
 			areasIndexArray[areasArraySize] = &config->echoAreas[count];
 			areasArraySize++;
-			writeLogEntry(hpt_log, '8', "Echo %s from link %s refresh",
+			writeLogEntry(hpt_log, '8', "Echo %s from link %s refreshed",
 						  config->echoAreas[count].areaName,
 						  aka2str(researchLink->hisAka));
 		}
-	}
-
-	for ( count = 0; count < config->localAreaCount; count++) {
-		if ( isLinkOfArea(researchLink, &config->localAreas[count]) &&
-                     !(config->echoAreas[count].msgbType == MSGTYPE_PASSTHROUGH && config->echoAreas[count].downlinkCount == 1) ) {
-			areasIndexArray[areasArraySize] = &config->localAreas[count];
-			areasArraySize++;
-			// to log area name (low priority)
-			writeLogEntry(hpt_log, '8', "LocalEcho %s link %s refresh",
-						  config->localAreas[count].areaName,
-						  aka2str(researchLink->hisAka));
-		}
-	}
-
+			
+			
 	if ( areasArraySize > 0 ) {
 		s_message *msg;
 
@@ -2114,13 +2127,17 @@ int relink (char *straddr) {
 						  &researchLink->hisAka,
 						  versionStr,
 						  researchLink->RemoteRobotName ?
-						  researchLink->RemoteRobotName : "AreaFix",
+						  researchLink->RemoteRobotName : "areafix",
 						  researchLink->areaFixPwd, 1);
 
 		msg->text = createKludges( NULL,researchLink->ourAka,&researchLink->hisAka);
 
 		for ( count = 0 ; count < areasArraySize; count++ ) {
-			xscatprintf(&(msg->text), "+%s\r",areasIndexArray[count]->areaName);
+			if ((areasIndexArray[count]->downlinkCount  <= 1) &&
+				(areasIndexArray[count]->msgbType & MSGTYPE_PASSTHROUGH))
+				xscatprintf(&(msg->text), "-%s\r",areasIndexArray[count]->areaName);
+			else
+				xscatprintf(&(msg->text), "+%s\r",areasIndexArray[count]->areaName);
 		}
 
 		xscatprintf(&(msg->text), " \r--- %s areafix\r", versionStr);

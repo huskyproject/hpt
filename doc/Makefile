@@ -33,30 +33,8 @@ hpt.info: hpt.texi
 	makeinfo --no-split hpt.texi
 
 clean:
-	-$(RM) $(RMOPT) hpt.fns
-	-$(RM) $(RMOPT) hpt.aux
-	-$(RM) $(RMOPT) hpt.toc
-	-$(RM) $(RMOPT) hpt.cp
-	-$(RM) $(RMOPT) hpt.fn
-	-$(RM) $(RMOPT) hpt.vr
-	-$(RM) $(RMOPT) hpt.kr
-	-$(RM) $(RMOPT) hpt.ke
-	-$(RM) $(RMOPT) hpt.tp
-	-$(RM) $(RMOPT) hpt.kes
-	-$(RM) $(RMOPT) hpt.krs
-	-$(RM) $(RMOPT) hpt.ky
-	-$(RM) $(RMOPT) hpt.pg
-	-$(RM) $(RMOPT) hpt.cps
-	-$(RM) $(RMOPT) hpt.log
-	-$(RM) $(RMOPT) hpt.fns
 	-$(RM) $(RMOPT) *~
-
-distclean: clean
-	-$(RM) $(RMOPT) hpt.dvi
-	-$(RM) $(RMOPT) hpt.inf
 	-$(RM) $(RMOPT) hpt*html
-	-$(RM) $(RMOPT) hpt.ps
-	-$(RM) $(RMOPT) hpt.doc
 	-$(RM) $(RMOPT) hpt.info*
 
 install: info html dvi

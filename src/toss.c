@@ -2241,7 +2241,7 @@ void arcmail(s_link *tolink) {
    s_link *link;
    int startlink=0;
    int endlink = config->linkCount;
-   e_bundleFileNameStyle bundleNameStyle = eTimeStamp;
+   e_bundleFileNameStyle bundleNameStyle;
 
    if (tolink != NULL) {
       startlink = tolink - config->links;
@@ -2281,6 +2281,7 @@ void arcmail(s_link *tolink) {
 					 bundleNameStyle=link->linkBundleNameStyle;
 				 else if (config->bundleNameStyle!=eUndef)
 					 bundleNameStyle=config->bundleNameStyle;
+				 else bundleNameStyle = eTimeStamp;
 
 				 if (link->packerDef != NULL) {
 

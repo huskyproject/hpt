@@ -2,6 +2,14 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Mon Feb 19 14:46:21 NOVT 200
+max:
+* relink changes: unsubscribe from passthru echoes with 1 link, don't
+  process local areas.
+* unsubscribe auto-paused link from passthrough areas with no downlinks
+  besides him
+
+----- cvs ci ------
 Sun Feb 18 14:34:41 NOVT 2001
 max:
 * fixed file attachs deleting
