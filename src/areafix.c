@@ -1707,14 +1707,14 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 	if (msgsize == 0 || len <= msgsize) {
 	    split = text;
 	    text = NULL;
-	    if (partnum) { /* last part of splitted msg */
-		partnum++;
-		xstrcat(&text,split);
-		split = text;
-		text = NULL;
-		nfree(report);
-	    }
-        xscatprintf(&split,"\r\rFollowing is the original message text\r--------------------------------------\r%s\r\r",msg->text);
+        if (partnum) { /* last part of splitted msg */
+            partnum++;
+            xstrcat(&text,split);
+            split = text;
+            text = NULL;
+            nfree(report);
+        }
+        xstrscat(&split,"\r\rFollowing is the original message text\r--------------------------------------\r",msg->text,"\r\r",NULL);
 	} else {
 	    p = text + msgsize;
 	    while (*p != '\r') p--;
