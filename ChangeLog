@@ -1,3 +1,9 @@
+2002-07-04 Thursday 08:14  stas
+
+	* debian/: README.Debian (1.4), changelog (1.12), control (1.10),
+	copyright (1.2), huskymak.cfg (1.10), rules (1.8): new Debian
+	version [patch from Pavel Andreew]
+
 2002-07-03 Wednesday 17:08  stas
 
 	* src/areafix.c (1.319): Add debug messages
