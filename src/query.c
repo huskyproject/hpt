@@ -765,14 +765,9 @@ void af_QueueUpdate()
             tmpNode->linksCount = 1;
             w_log( LL_AREAFIX, "areafix: request for %s is going to be killed",tmpNode->name);
             delarea = getArea(config, tmpNode->name);
-            if (tmpNode->downlinks[0])
-                lastRlink = getLinkFromAddr(config,tmpNode->downlinks[0]);
-            else
-                lastRlink == NULL;
-            forwardRequestToLink(tmpNode->name, lastRlink, NULL, 2);
             if (delarea != &(config->badArea))
             {
-                do_delete(lastRlink, delarea);
+                do_delete(NULL, delarea);
             }
         }
     }
