@@ -358,13 +358,13 @@ char *list(s_link *link, char *line) {
     if (line)
     {
         pattern = line;
-        if (pattern[0] == '%') then pattern++;
+        if (pattern[0] == '%') pattern++;
         while(isspace(pattern[0])) pattern++;
         while(!isspace(pattern[0])) pattern++;
         while(isspace(pattern[0])) pattern++;
     }
 
-    if (pattern) && (strlen(line)>60 || !isValidConference(pattern)) {
+    if ((pattern) && (strlen(line)>60 || !isValidConference(pattern))) {
         w_log(LL_FUNC, "areafix::list() FAILED (error request line)");
         return errorRQ(line);
     }
