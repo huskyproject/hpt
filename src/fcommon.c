@@ -178,8 +178,8 @@ void cleanEmptyBundles(char *pathName, size_t npos, char *wday)
 /*  Removing old empty bundles when bundleNameStyle == addDiff */
 {
    char           *ptr, *tmpfile, *pattern, savech;
-   DIR            *dir;
-   struct dirent  *file;
+   husky_DIR      *dir;
+   char           *filename;
    struct stat stbuf;
    unsigned pathlen;
 
@@ -194,7 +194,7 @@ void cleanEmptyBundles(char *pathName, size_t npos, char *wday)
    savech = tmpfile[npos-1]; /*  there must be path delimiter */
    tmpfile[npos-1] = '\0';
 
-   if(!(dir = opendir(tmpfile))) { /*  nothing to clean */
+   if(!(dir = husky_opendir(tmpfile))) { /*  nothing to clean */
       nfree(tmpfile);
       return;
    }
@@ -208,12 +208,12 @@ void cleanEmptyBundles(char *pathName, size_t npos, char *wday)
    ptr[0]='*';
    ptr[1]='\0';
 
-   while ((file = readdir(dir)) != NULL) {
+   while ((filename = husky_readdir(dir)) != NULL) {
 
-	   if ( patimat(file->d_name, pattern) == 1 &&
-	        strncasecmp(file->d_name+(ptr-pattern), wday, 2) != 0 ) {
+	   if ( patimat(filename, pattern) == 1 &&
+	        strncasecmp(filename+(ptr-pattern), wday, 2) != 0 ) {
 
-		   strcpy(tmpfile+npos, file->d_name);
+		   strcpy(tmpfile+npos, filename);
 
 		   if (stat(tmpfile, &stbuf) == 0 && stbuf.st_size == 0) {
 

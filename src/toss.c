@@ -1360,8 +1360,8 @@ int isArcMail(char *fname)
 
 void processDir(char *directory, e_tossSecurity sec)
 {
-    DIR            *dir = NULL;
-    struct dirent  *file = NULL;
+    husky_DIR      *dir = NULL;
+    char           *filename = NULL;
     char           *dummy = NULL;
     int            rc;
     int            pktFile,
@@ -1388,7 +1388,7 @@ void processDir(char *directory, e_tossSecurity sec)
     directory[dirNameLen-1]='\0';
 #endif
 
-    if (NULL == (dir = opendir(directory))) {
+    if (NULL == (dir = husky_opendir(directory))) {
 	printf("Can't open dir: %s!\n",directory);
 	return;
     }
@@ -1397,14 +1397,14 @@ void processDir(char *directory, e_tossSecurity sec)
     directory[dirNameLen-1]='\\';
 #endif
 
-    while ((file = readdir(dir)) != NULL) {
+    while ((filename = husky_readdir(dir)) != NULL) {
 #ifdef DEBUG_HPT
-	w_log(LL_DEBUGV, "testing %s\n", file->d_name);
+	w_log(LL_DEBUGV, "testing %s\n", filename);
 #endif
 
-	dummy = (char *) safe_malloc(dirNameLen + strlen(file->d_name) + 1);
+	dummy = (char *) safe_malloc(dirNameLen + strlen(filename) + 1);
 	strcpy(dummy,directory);
-	strcat(dummy,file->d_name);
+	strcat(dummy,filename);
 
 #if !defined(__UNIX__)
 #if defined(__TURBOC__) || defined(__DJGPP__)
@@ -1432,7 +1432,7 @@ void processDir(char *directory, e_tossSecurity sec)
 
 	    }
     }
-    closedir(dir);
+    husky_closedir(dir);
 
     qsort (files, nfiles, sizeof(s_fileInDir), filesComparer);
 
@@ -1903,9 +1903,9 @@ void fix_qqq(char *filename)
 
 void tossTempOutbound(char *directory)
 {
-    DIR            *dir = NULL;
+    husky_DIR      *dir = NULL;
     FILE           *pkt = NULL;
-    struct dirent  *file = NULL;
+    char           *filename = NULL;
     char           *dummy = NULL;
     s_pktHeader    *header = NULL;
     s_link         *link = NULL;
@@ -1921,7 +1921,7 @@ void tossTempOutbound(char *directory)
     directory[dirNameLen-1]='\0';
 #endif
 
-    if (NULL == (dir = opendir(directory))) {
+    if (NULL == (dir = husky_opendir(directory))) {
         printf("Can't open dir: %s!\n",directory);
 	return;
     }
@@ -1930,14 +1930,14 @@ void tossTempOutbound(char *directory)
     directory[dirNameLen-1]='\\';
 #endif
 
-    while ((file = readdir(dir)) != NULL) {
-	l = strlen(file->d_name);
-	if (l > 4 && (stricmp(file->d_name + l - 4, ".pkt") == 0 ||
-		      stricmp(file->d_name + l - 4, ".qqq") == 0))
+    while ((filename = husky_readdir(dir)) != NULL) {
+	l = strlen(filename);
+	if (l > 4 && (stricmp(filename + l - 4, ".pkt") == 0 ||
+		      stricmp(filename + l - 4, ".qqq") == 0))
 	    {
 		dummy = (char *) safe_malloc(strlen(directory)+l+1);
 		strcpy(dummy, directory);
-		strcat(dummy, file->d_name);
+		strcat(dummy, filename);
 
 		fix_qqq(dummy);
 
@@ -1971,7 +1971,7 @@ void tossTempOutbound(char *directory)
 	    }
     }
 
-    closedir(dir);
+    husky_closedir(dir);
     return;
 }
 
