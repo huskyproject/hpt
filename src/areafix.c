@@ -56,6 +56,7 @@
 #include <strsep.h>
 #include <seenby.h>
 #include <scan.h>
+#include <recode.h>
 #include <areafix.h>
 #include <scanarea.h>
 
@@ -1143,7 +1144,7 @@ void repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
    s_pktHeader  header;
    FILE         *pkt;
    
-   makeMsg(hmsg, xmsg, &msg, echo);
+   makeMsg(hmsg, xmsg, &msg, echo, 1);
 
    //translating name of the area to uppercase
    while (msg.text[j] != '\r') {msg.text[j]=toupper(msg.text[j]);j++;}
@@ -1407,10 +1408,22 @@ char *textHead()
 
 void RetMsg(s_message *tmpmsg, s_message *msg, s_link *link, char *report, char *subj)
 {
+    char *tab;
+    
     memcpy(tmpmsg, msg, sizeof(s_message));
     changeHeader(tmpmsg,link,subj);
     preprocText(report, tmpmsg);
+    
+    tab = config->intab;
+    
+    if (RetFix == AVAIL) {
+	config->intab = NULL;
+    }
+    
     processNMMsg(tmpmsg, NULL);
+    
+    config->intab = tab;
+    
     free(tmpmsg->text);
     free(tmpmsg->subjectLine);
 }
@@ -1427,6 +1440,9 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	s_pktHeader header;
 	char tmp[80], *token, *textBuff, *report=NULL, *preport;
 	
+	// load recoding tables
+	if (config->outtab != NULL) getctab(outtab, config->outtab);
+
 	// 1st security check
 	if (pktHeader) security=addrComp(msg->origAddr, pktHeader->origAddr);
 	else {

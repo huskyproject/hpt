@@ -68,18 +68,23 @@ void processCommandLine(int argc, char **argv)
 
    if (argc == 1) {
       printf("\nUsage:\n");
-      printf("   hpt toss - tossing mail\n");
-      printf("   hpt scan - scanning echomail\n");
-      printf("   hpt pack - packing netmail\n");
-      printf("   hpt post - posting a mail\n");
-      printf("   hpt link - links messages\n");
-      printf("   hpt afix - process areafix\n");
+      printf("   hpt toss    - tossing mail\n");
+      printf("   hpt toss -b - tossing mail from badarea\n");
+      printf("   hpt scan    - scanning echomail\n");
+      printf("   hpt pack    - packing netmail\n");
+      printf("   hpt post    - posting a mail\n");
+      printf("   hpt link    - links messages\n");
+      printf("   hpt afix    - process areafix\n");
    }
 
    while (i < argc-1) {
       i++;
       if (0 == stricmp(argv[i], "toss")) {
          cmToss = 1;
+	 if (i < argc-1) if (stricmp(argv[i+1], "-b") == 0) {
+	     cmToss = 2;
+	     i++;
+	 }
          continue;
       } else if (stricmp(argv[i], "scan") == 0) {
          cmScan = 1;
@@ -178,6 +183,7 @@ int main(int argc, char **argv)
 
    tossTempOutbound(config->tempOutbound);
    if (1 == cmToss) toss();
+   if (cmToss == 2) tossFromBadArea();
    if (cmScan == 1) scan();
    if (cmAfix == 1) afix();
    if (cmPack == 1) pack();

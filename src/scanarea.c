@@ -52,14 +52,17 @@
 #include <progprot.h>
 #include <toss.h>
 
-void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
+void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
 {
-   char   *kludgeLines, *seenByPath, addr2d[12];
+   // action == 0 - scan area
+   // action == 1 - rescan area
+   // action == 2 - rescan badarea
+   char   *kludgeLines, *seenByPath = NULL, addr2d[12];
    UCHAR  *ctrlBuff;
    UINT32 ctrlLen;
    int    i, seenByCount;
    s_seenBy *seenBys;
-
+   
    // convert Header
    msg->origAddr.zone  = xmsg.orig.zone;
    msg->origAddr.net   = xmsg.orig.net;
@@ -91,57 +94,67 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
    ctrlBuff = (UCHAR *) malloc(ctrlLen+1+6+strlen(versionStr)+1); // 6 == "\001TID: " // 1 == "\r"
    MsgReadMsg(hmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
-   strcat(kludgeLines, "\001TID: ");
-   strcat(kludgeLines, versionStr);
-   strcat(kludgeLines, "\r");
+   
+   if (action == 0) {
+       // added TID from scan area only
+       strcat(kludgeLines, "\001TID: ");
+       strcat(kludgeLines, versionStr);
+       strcat(kludgeLines, "\r");
+   }
    free(ctrlBuff);
 
-   // create seen-by's & path
-   seenByCount = 0;
-   seenBys = (s_seenBy*) calloc(echo->downlinkCount+1,sizeof(s_seenBy));
-   for (i = 0;i < echo->downlinkCount; i++) {
-      if (echo->downlinks[i]->link->hisAka.point != 0) continue; // only include nodes in SEEN-BYS
+   if (action == 0) {
+       // added SEEN-BY and PATH from scan area only
+       // create seen-by's & path
+       seenByCount = 0;
+       seenBys = (s_seenBy*) calloc(echo->downlinkCount+1,sizeof(s_seenBy));
+       for (i = 0;i < echo->downlinkCount; i++) {
+          if (echo->downlinks[i]->link->hisAka.point != 0) continue; // only include nodes in SEEN-BYS
       
-      seenBys[i].net  = echo->downlinks[i]->link->hisAka.net;
-      seenBys[i].node = echo->downlinks[i]->link->hisAka.node;
-      seenByCount++;
-   }
-   if (echo->useAka->point == 0) {      // only include if system is node
-      seenBys[seenByCount].net = echo->useAka->net;
-      seenBys[seenByCount].node = echo->useAka->node;
-      seenByCount++;
-   }
-   sortSeenBys(seenBys, seenByCount);
+          seenBys[i].net  = echo->downlinks[i]->link->hisAka.net;
+          seenBys[i].node = echo->downlinks[i]->link->hisAka.node;
+          seenByCount++;
+       }
+       if (echo->useAka->point == 0) {      // only include if system is node
+          seenBys[seenByCount].net = echo->useAka->net;
+          seenBys[seenByCount].node = echo->useAka->node;
+          seenByCount++;
+       }
+       sortSeenBys(seenBys, seenByCount);
    
-   seenByPath = createControlText(seenBys, seenByCount, "SEEN-BY: ");
-   free(seenBys);
+       seenByPath = createControlText(seenBys, seenByCount, "SEEN-BY: ");
+       free(seenBys);
    
-   // path line
-   // only include node-akas in path
-   if (echo->useAka->point == 0) {
-      sprintf(addr2d, "%u/%u", echo->useAka->net, echo->useAka->node);
-      seenByPath = (char *) realloc(seenByPath, strlen(seenByPath)+strlen(addr2d)+1+8); // 8 == strlen("\001PATH: \r")
-      strcat(seenByPath, "\001PATH: ");
-      strcat(seenByPath, addr2d);
-      strcat(seenByPath, "\r");
+       // path line
+       // only include node-akas in path
+       if (echo->useAka->point == 0) {
+          sprintf(addr2d, "%u/%u", echo->useAka->net, echo->useAka->node);
+          seenByPath = (char *) realloc(seenByPath, strlen(seenByPath)+strlen(addr2d)+1+8); // 8 == strlen("\001PATH: \r")
+          strcat(seenByPath, "\001PATH: ");
+          strcat(seenByPath, addr2d);
+          strcat(seenByPath, "\r");
+       }
    }
-
+   
    // create text
    msg->textLength = MsgGetTextLen(hmsg);
-   msg->text = (char *) malloc(msg->textLength+strlen(seenByPath)+strlen(kludgeLines)+strlen(echo->areaName)+strlen("AREA:\r")+1+1); // second 1 for \r at the end of the origin line
-   strcpy(msg->text, "AREA:");
-   strcat(msg->text, strUpper(echo->areaName));
-   strcat(msg->text, "\r");
+   if (action == 0) msg->text = (char *)calloc(msg->textLength+strlen(seenByPath)+strlen(kludgeLines)+strlen(echo->areaName)+strlen("AREA:\r")+1+1, sizeof(char)); // second 1 for \r at the end of the origin line
+   else msg->text = (char *)calloc(msg->textLength+strlen(kludgeLines)+1, sizeof(char)); 
+   if (action != 2) {
+       strcpy(msg->text, "AREA:");
+       strcat(msg->text, strUpper(echo->areaName));
+       strcat(msg->text, "\r");
+   } 
    strcat(msg->text, kludgeLines);
    MsgReadMsg(hmsg, NULL, (dword) 0, (dword) msg->textLength,
               (byte *)(msg->text+strlen(msg->text)), (dword) 0, (byte *)NULL);
    if (msg->text[strlen(msg->text)-1] != '\r')  // if origin has no ending \r add it
       strcat(msg->text, "\r");
    free(kludgeLines);
-   strcat(msg->text, seenByPath);
-
+   if (action == 0) strcat(msg->text, seenByPath);
+   
    // recoding from internal to transport charSet
-   if (config->outtab != NULL) {
+   if (config->outtab != NULL && action != 2) {
       recodeToTransportCharset(msg->text);
       recodeToTransportCharset(msg->subjectLine);
    }
@@ -156,7 +169,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
    s_pktHeader  header;
    FILE         *pkt;
    
-   makeMsg(hmsg, xmsg, &msg, echo);
+   makeMsg(hmsg, xmsg, &msg, echo, 0);
 
    //translating name of the area to uppercase
    while (msg.text[j] != '\r') {msg.text[j]=toupper(msg.text[j]);j++;}

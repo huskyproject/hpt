@@ -50,6 +50,7 @@
 
 #include <recode.h>
 #include <areafix.h>
+#include <scanarea.h>
 
 #include <msgapi.h>
 #include <stamp.h>
@@ -638,24 +639,27 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    //write new line in config file
    if (stricmp(config->msgBaseDir, "passthrough")!=0) {
 #ifndef MSDOS
-	   sprintf(buff, "EchoArea %s %s%s -a %s Squish ", c_area, config->msgBaseDir, c_area, myaddr);
+	   sprintf(buff, "EchoArea %s %s%s -a %s Squish", c_area, config->msgBaseDir, c_area, myaddr);
 #else
 	   sleep(1); // to prevent time from creating equal numbers
-	   sprintf(buff,"EchoArea %s %s%8lx -a %s Squish ", c_area, config->msgBaseDir, time(NULL), myaddr);
+	   sprintf(buff,"EchoArea %s %s%8lx -a %s Squish", c_area, config->msgBaseDir, time(NULL), myaddr);
 #endif
    } else
-	   sprintf(buff, "EchoArea %s Passthrough -a %s ", c_area, myaddr);
+	   sprintf(buff, "EchoArea %s Passthrough -a %s", c_area, myaddr);
    if ((creatingLink->autoCreateDefaults != NULL) &&
        (strlen(buff)+strlen(creatingLink->autoCreateDefaults))<255) {
-	   strcat(buff, creatingLink->autoCreateDefaults);
-   }
+           if ((fileName=strstr(creatingLink->autoCreateDefaults, "-g")) == NULL) {
+	       if (creatingLink->LinkGrp) {
+	           sprintf(buff+strlen(buff), " -g %c", *(creatingLink->LinkGrp));
+	       }
+	   }
+	   sprintf(buff+strlen(buff), " %s", creatingLink->autoCreateDefaults);
+   } else if (creatingLink->LinkGrp)
+	       sprintf(buff+strlen(buff), " -g %c", *(creatingLink->LinkGrp));
+
+
    sprintf(buff+strlen(buff), " %s", hisaddr);
-   if (creatingLink->export)
-       if (*creatingLink->export == 0) strcat(buff, " -w");
-   if (creatingLink->import)
-       if (*creatingLink->import == 0) strcat(buff, " -r");
-   if (creatingLink->mandatory)
-       if (*creatingLink->mandatory == 1) strcat(buff, " -m");
+   
    fprintf(f, "%s\n", buff);
 //   fprintf(f, "\n");
    
@@ -710,9 +714,63 @@ int carbonCopy(s_message *msg, s_area *echo)
         return 1;
 }
 
+void putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
+{
+    char *tmp, *line, *textBuff, *areaName;
+    
+    statToss.bad++;
+	 
+    // get real name area
+    line = strchr(msg->text, '\r');
+    *line = 0;
+    areaName = (char*)calloc(strlen(msg->text)+13, sizeof(char));
+    sprintf(areaName, "AREANAME: %s\r\r", msg->text+5);
+    *line = '\r';
+	 
+    tmp = msg->text;
+	 
+	 
+    while ((line = strchr(tmp, '\r'))) {
+	if (*(line+1) == '\x01') tmp = line+1;
+	else { tmp = line+1; *line = 0; break; }
+    }
+	 
+    textBuff = (char *)calloc(strlen(msg->text)+strlen(areaName)+80, sizeof(char));
+    
+    sprintf(textBuff, "%s\rFROM: %s\rREASON: ", msg->text, aka2str(pktOrigAddr));
+    switch (writeAccess) {
+	case 0: 
+		strcat(textBuff, "System not allowed to create new area\r");
+		break;
+	case 1: 
+		strcat(textBuff, "Sender not active for this area\r");
+		break; 
+	case 2: 
+		strcat(textBuff, "Sender not allowed to post in this area\r");
+	        break;
+	case 3: 
+		strcat(textBuff, "Sender not allowed to post in this area\r");
+	        break;
+	case 4: 
+		strcat(textBuff, "Sender not active for this area\r");
+	        break;
+	default :
+		strcat(textBuff, "Another error\r");
+		break;
+    }
+    textBuff = (char*)realloc(textBuff, strlen(areaName)+strlen(textBuff)+strlen(tmp)+1);
+    strcat(textBuff, areaName);
+    strcat(textBuff, tmp);
+    free(areaName);
+    free(msg->text);
+    msg->text = textBuff;
+    msg->textLength = strlen(msg->text)+1;
+    putMsgInArea(&(config->badArea), msg, 0);
+}
+
 void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 {
-   char   *tmp, *area, *textBuff;
+   char   *area, *textBuff;
    s_area *echo;
    s_link *link;
    int    writeAccess;
@@ -765,54 +823,19 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
       if ((link != NULL) && (link->autoAreaCreate != 0) && (writeAccess == 0)) {
          autoCreate(area, pktOrigAddr);
          echo = getArea(config, area);
-         if (echo->msgbType != MSGTYPE_PASSTHROUGH)
-            putMsgInArea(echo, msg, 1);
-         if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
-            forwardMsgToLinks(echo, msg, pktOrigAddr);
-            statToss.exported++;
-         }
-
-      } else {
-         // no autoareaCreate -> msg to bad
-         statToss.bad++;
-	 
-	 tmp = msg->text;
-	 
-	 while ((area = strchr(tmp, '\r'))) {
-	     if (*(area+1) == '\x01') tmp = area+1;
-	     else { tmp = area+1; break; }
+	 writeAccess = writeCheck(echo, link);
+	 if (writeAccess) {
+	     putMsgInBadArea(msg, pktOrigAddr, writeAccess);
+	 } else {
+             if (echo->msgbType != MSGTYPE_PASSTHROUGH)
+        	putMsgInArea(echo, msg, 1);
+             if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
+        	forwardMsgToLinks(echo, msg, pktOrigAddr);
+        	statToss.exported++;
+             }
 	 }
-	 
-	 memset(textBuff, 0, tmp+1-msg->text);
-	 
-	 strncpy(textBuff, msg->text, tmp-msg->text);
-	 
-	 sprintf(textBuff+strlen(textBuff), "FROM: %u:%u/%u.%u\rREASON: ",
-	                                    pktOrigAddr.zone,
-	                                    pktOrigAddr.net,
-					    pktOrigAddr.node,
-					    pktOrigAddr.point);
-	 switch (writeAccess) {
-	     case 0: strcat(textBuff, "System not allowed to create new area\r");
-	         break;
-	     case 1: strcat(textBuff, "Sender not active for this area\r");
-	         break; 
-	     case 2: strcat(textBuff, "Sender not allowed to post in this area\r");
-	         break;
-	     case 3: strcat(textBuff, "Sender not allowed to post in this area\r");
-	         break;
-	     case 4: strcat(textBuff, "Sender not active for this area\r");
-	         break;
-	     default : strcat(textBuff, "Another error\r");
-	         break;
-	 }							
-	 textBuff = (char*)realloc(textBuff, strlen(textBuff)+strlen(tmp)+1);
-	 strcat(textBuff, tmp);
-	 tmp = msg->text;
-	 msg->text = textBuff;
-	 textBuff = tmp;
-         putMsgInArea(&(config->badArea), msg, 0);
-      }
+
+      } else putMsgInBadArea(msg, pktOrigAddr, writeAccess);
    }
 
 
@@ -1409,4 +1432,143 @@ void toss()
 
    // write statToss to Log
    writeTossStatsToLog();
+}
+
+int packBadArea(HMSG hmsg, XMSG xmsg)
+{
+   s_message    msg;
+   s_area	*echo;
+   UINT32       j=0;
+   s_addr	pktOrigAddr;
+   char 	*tmp, *ptmp, *line;
+   
+   makeMsg(hmsg, xmsg, &msg, &(config->badArea), 2);
+   
+   // deleting valet string - "FROM:" and "REASON:"
+   tmp = (char*)calloc(strlen(msg.text)+1, sizeof(char));
+   strcpy(tmp, msg.text);
+   memset(msg.text, 0, strlen(msg.text));
+   ptmp = tmp;
+   while ((line = strchr(ptmp, '\r'))) {
+       *line = 0;
+       if (strncmp(ptmp, "FROM: ", 6) == 0) {
+           ptmp +=6;
+	   string2addr(ptmp, &pktOrigAddr);
+	   ptmp = line+1;
+	   continue;
+       }
+       if (strncmp(ptmp, "REASON: ", 8) == 0) {
+           ptmp = line+1;
+	   continue;
+       }
+       if (strncmp(ptmp, "AREANAME: ", 10) == 0) {
+           ptmp = line+2;
+	   continue;
+       }
+       *(line++) = '\r';
+       strncat(msg.text, ptmp, line-ptmp);
+       ptmp = line;
+   }
+
+   
+   tmp = strchr(msg.text, '\r');
+   
+   line = (char*)calloc(tmp+1-msg.text, sizeof(char));
+   strncpy(line, msg.text, tmp-msg.text);
+   
+   if (*(line) == '\x01') tmp = line+6;
+   else tmp = line+5;
+   
+   echo = getArea(config, tmp);
+   free(line);
+   
+   if (echo == &(config->badArea)) {
+       freeMsgBuffers(&msg);
+       return 1;
+   }
+   
+
+   //translating name of the area to uppercase
+   while (msg.text[j] != '\r') {msg.text[j]=toupper(msg.text[j]);j++;}
+
+      if (dupeDetection(echo, msg)==1) {
+	 // no dupe
+
+         if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
+            putMsgInArea(echo, &msg,1);
+            echo->imported = 1;  // area has got new messages
+//            statToss.saved++;
+         } else statToss.passthrough++;
+
+         if (config->carbonCount != 0) carbonCopy(&msg, echo);
+
+	 // recoding from internal to transport charSet
+	 if (config->outtab != NULL) {
+	     recodeToTransportCharset(msg.text);
+	     recodeToTransportCharset(msg.subjectLine);
+	 }
+   
+	 if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
+            forwardMsgToLinks(echo, &msg, pktOrigAddr);
+//            statToss.exported++;
+         }
+
+      } else {
+         // msg is dupe
+         if (echo->dupeCheck == dcMove) {
+            putMsgInArea(&(config->dupeArea), &msg, 0);
+         }
+//         statToss.dupes++;
+      }
+
+   freeMsgBuffers(&msg);
+   return 0;
+}
+
+void tossFromBadArea()
+{
+   HAREA area;
+   HMSG  hmsg;
+   XMSG  xmsg;
+   char  buff[50];
+   dword highestMsg, i;
+   int   delmsg;
+   
+   // load recoding tables
+   if (config->outtab != NULL) getctab(outtab, config->outtab);
+
+   area = MsgOpenArea((UCHAR *) config->badArea.fileName, MSGAREA_NORMAL, config->badArea.msgbType | MSGTYPE_ECHO);
+   if (area != NULL) {
+//      statScan.areas++;
+      sprintf(buff, "Scanning area: %s", config->badArea.areaName);
+      writeLogEntry(log, '1', buff);
+      i = MsgGetHighWater(area);
+      highestMsg    = MsgGetHighMsg(area);
+
+      while (i <= highestMsg) {
+         hmsg = MsgOpenMsg(area, MOPEN_RW, i++);
+         if (hmsg == NULL) continue;      // msg# does not exist
+//         statScan.msgs++;
+         MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+	 delmsg = packBadArea(hmsg, xmsg);
+	 
+         MsgCloseMsg(hmsg);
+	 
+	 if (delmsg == 0) {
+	     MsgKillMsg(area, i-1);
+	     i--;
+//	     statScan.exported++;
+	 }
+      }
+      
+      MsgSetHighWater(area, i);
+
+      MsgCloseArea(area);
+      
+      arcmail();
+      
+   } else {
+      sprintf(buff, "Could not open %s", config->badArea.fileName);
+      writeLogEntry(log, '9', buff);
+   } /* endif */
 }

@@ -56,6 +56,7 @@ void toss(void);
 void tossTempOutbound(char *directory); 
 void arcmail(void);
 int autoCreate(char *c_area, s_addr pktOrigAddr);
+void tossFromBadArea(void);
 
 int readCheck(s_area *echo, s_link *link);
 // '\x0000' access o'k
