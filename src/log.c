@@ -37,6 +37,8 @@
 #include <log.h>
 #include <global.h>
 #include <fcommon.h>
+
+#include <fidoconf/xstr.h>
 #include <smapi/prog.h>
 
 static char *mnames[] = {
@@ -55,6 +57,7 @@ s_log *openLog(char *fileName, char *appN, char *keys, unsigned int echoLog)
    s_log      *temp;
 
    temp = (s_log *) malloc(sizeof(s_log));
+   memset(temp, '\0', sizeof(s_log));
    temp->logFile = fopen(fileName, "a");
    if (NULL == temp->logFile) {
       free(temp);
@@ -64,11 +67,8 @@ s_log *openLog(char *fileName, char *appN, char *keys, unsigned int echoLog)
    temp->open = 1;
 
    /* copy all informations */
-   temp->appName = (char *) malloc (strlen(appN)+1);
-   strcpy(temp->appName, appN);
-
-   temp->keysAllowed = (char *) malloc (strlen(keys)+1);
-   strcpy(temp->keysAllowed, keys);
+   xstrcat(&temp->appName, appN);
+   xstrcat(&temp->keysAllowed, keys);
 
    temp->firstLinePrinted=0;
 
@@ -95,43 +95,44 @@ void closeLog(s_log *hpt_log)
 
 void writeLogEntry(s_log *hpt_log, char key, char *logString, ...)
 {
-   time_t     currentTime;
-   struct tm  *locTime;
+	time_t     currentTime;
+	struct tm  *locTime;
 	va_list	  ap;
 
-   if (hpt_log) {
-     if (hpt_log->open && strchr(hpt_log->keysAllowed, key)) 
-        {
-        currentTime = time(NULL);
-        locTime = localtime(&currentTime);
-	
-        if (!hpt_log->firstLinePrinted)
-           {
-           /* make first line of log */
-           fprintf(hpt_log->logFile, "----------  ");
+	if (hpt_log) {
+		if (hpt_log->open && strchr(hpt_log->keysAllowed, key)) {
+			currentTime = time(NULL);
+			locTime = localtime(&currentTime);
 
-	   fprintf(hpt_log->logFile, "%3s %02u %3s %02u, %s\n",
-             wdnames[locTime->tm_wday], locTime->tm_mday,
-	     mnames[locTime->tm_mon], locTime->tm_year % 100, hpt_log->appName);
+			if (!hpt_log->firstLinePrinted)	{
+				/* make first line of log */
+				fprintf(hpt_log->logFile, "----------  ");
 
-           hpt_log->firstLinePrinted=1;
-           }
+				fprintf(hpt_log->logFile, "%3s %02u %3s %02u, %s\n",
+						wdnames[locTime->tm_wday], locTime->tm_mday,
+						mnames[locTime->tm_mon],locTime->tm_year%100,hpt_log->appName);
 
-        fprintf(hpt_log->logFile, "%c %02u.%02u.%02u  ", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec);
+				hpt_log->firstLinePrinted=1;
+			}
+
+			fprintf(hpt_log->logFile, "%c %02u.%02u.%02u  ",
+					key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec);
  
-	va_start(ap, logString);
-	vfprintf(hpt_log->logFile, logString, ap);
-	va_end(ap);
-	fputc('\n', hpt_log->logFile); 
+			va_start(ap, logString);
+			vfprintf(hpt_log->logFile, logString, ap);
+			va_end(ap);
+			fputc('\n', hpt_log->logFile); 
 
-        fflush(hpt_log->logFile);
-	if (hpt_log->logEcho) {
-	   fprintf(stdout, "%c %02u.%02u.%02u  ", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec);
-	   va_start(ap, logString);
-	   vfprintf(stdout, logString, ap);
-	   va_end(ap);
-	   fputc('\n', stdout);
-	};
-     }
-   }
+			fflush(hpt_log->logFile);
+
+			if (hpt_log->logEcho) {
+				fprintf(stdout, "%c %02u.%02u.%02u  ",
+						key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec);
+				va_start(ap, logString);
+				vfprintf(stdout, logString, ap);
+				va_end(ap);
+				fputc('\n', stdout);
+			}
+		}
+	}
 }

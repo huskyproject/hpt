@@ -34,8 +34,8 @@
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
+#include <fidoconf/xstr.h>
 
-#include <xstr.h>
 #include <pkt.h>
 #include <scan.h>
 #include <seenby.h>

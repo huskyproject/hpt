@@ -7,18 +7,13 @@
 #include <dos.h>
 #endif
 
-#if !defined(MSDOS) || defined(__DJGPP__)
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
-#else
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
-#endif
+#include <fidoconf/xstr.h>
 
 #include <global.h>
 #include <version.h>
 #include <pkt.h>
-#include <xstr.h>
 #include <recode.h>
 
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)

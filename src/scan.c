@@ -32,26 +32,23 @@
 #include <string.h>
 #include <time.h>
 
-#include <smapi/msgapi.h>
-
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
-
-#include <smapi/progprot.h>
-
-
-#include <xstr.h>
 #include <fcommon.h>
 #include <pkt.h>
-#include <smapi/patmat.h>
 #include <scan.h>
 #include <log.h>
 #include <global.h>
 #include <version.h>
-
 #include <recode.h>
 #include <toss.h>
 #include <strsep.h>
+
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
+#include <fidoconf/xstr.h>
+
+#include <smapi/msgapi.h>
+#include <smapi/progprot.h>
+#include <smapi/patmat.h>
 
 s_statScan statScan;
 

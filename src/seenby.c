@@ -32,7 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <xstr.h>
+#include <fidoconf/xstr.h>
 
 int compare(const void *first, const void *second)
 {

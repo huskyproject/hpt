@@ -14,7 +14,7 @@ EXENAMEFLAG=-o
 OBJS    = fcommon$(OBJ) hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) log$(OBJ) \
           global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) seenby$(OBJ) \
           crc$(OBJ) dupe$(OBJ) tree$(OBJ) recode$(OBJ) areafix$(OBJ) arealist$(OBJ) \
-          post$(OBJ) link$(OBJ) strsep$(OBJ) xstr$(OBJ)
+          post$(OBJ) link$(OBJ) strsep$(OBJ)
 
 
 all: $(OBJS) \
@@ -31,7 +31,7 @@ all: $(OBJS) \
 
 pktinfo$(EXE): pktinfo$(OBJ) $(OBJS)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) pktinfo$(EXE) log$(OBJ) recode$(OBJ) pktinfo$(OBJ) \
-          pktread$(OBJ) fcommon$(OBJ) global$(OBJ) xstr$(OBJ) dupe$(OBJ) tree$(OBJ) \
+          pktread$(OBJ) fcommon$(OBJ) global$(OBJ) dupe$(OBJ) tree$(OBJ) \
 	  crc$(OBJ) $(LIBS)
 
 tlog$(EXE): tlog$(OBJ) log$(OBJ)
@@ -40,14 +40,14 @@ tlog$(EXE): tlog$(OBJ) log$(OBJ)
 tpkt$(EXE): tpkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
               recode$(OBJ) log$(OBJ) global$(OBJ) 
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) tpkt$(EXE) log$(OBJ) tpkt$(OBJ) fcommon$(OBJ) \
-              pktread$(OBJ) recode$(OBJ) pktwrite$(OBJ) global$(OBJ) xstr$(OBJ) \
+              pktread$(OBJ) recode$(OBJ) pktwrite$(OBJ) global$(OBJ) \
               dupe$(OBJ) tree$(OBJ) crc$(OBJ) $(LIBS)
 
 txt2pkt$(EXE): txt2pkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
-               recode$(OBJ) log$(OBJ) global$(OBJ) xstr$(OBJ)
+               recode$(OBJ) log$(OBJ) global$(OBJ)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) txt2pkt$(EXE) log$(OBJ) txt2pkt$(OBJ) \
           fcommon$(OBJ) pktread$(OBJ) recode$(OBJ) pktwrite$(OBJ) \
-          global$(OBJ) xstr$(OBJ) dupe$(OBJ) tree$(OBJ) crc$(OBJ) $(LIBS)
+          global$(OBJ) dupe$(OBJ) tree$(OBJ) crc$(OBJ) $(LIBS)
 
 hptlink$(EXE): hptlink$(OBJ)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) hptlink$(EXE) hptlink$(OBJ) $(LIBS)

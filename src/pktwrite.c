@@ -42,7 +42,7 @@
 #endif
 
 #include <fidoconf/fidoconf.h>
-#include <xstr.h>
+#include <fidoconf/xstr.h>
 #include <fidoconf/common.h>
 
 #include <pkt.h>

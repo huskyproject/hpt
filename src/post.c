@@ -35,15 +35,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if !defined(MSDOS) || defined(__DJGPP__)
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
-#else
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
-#endif
-
-#include <xstr.h>
 #include <version.h>
 #include <toss.h>
 #include <post.h>
@@ -53,7 +44,10 @@
 #include <hpt.h>
 #include <recode.h>
 #include <scanarea.h>
-#include <xstr.h>
+
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
+#include <fidoconf/xstr.h>
 
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
 /* we can't include windows.h for several reasons ... */

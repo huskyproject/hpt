@@ -38,12 +38,12 @@
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
+#include <fidoconf/xstr.h>
 
 #include <log.h>
 #include <global.h>
 
 #include <pkt.h>
-#include <xstr.h>
 
 typedef unsigned long flag_t;  /* for at least 32 bit flags */
 #define FTSC_FLAWY  1           /* FTSC field has correctable errors */

@@ -45,19 +45,18 @@
 #include <unistd.h>
 #endif
 
+
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/dirlayer.h>
+#include <fidoconf/xstr.h>
 
-#include <xstr.h>
 #include <pkt.h>
 #include <scan.h>
 #include <toss.h>
 #include <global.h>
-#include <smapi/patmat.h>
 #include <seenby.h>
 #include <dupe.h>
-
 #include <recode.h>
 #include <areafix.h>
 #include <version.h>
@@ -69,6 +68,7 @@
 #include <smapi/typedefs.h>
 #include <smapi/compiler.h>
 #include <smapi/progprot.h>
+#include <smapi/patmat.h>
 
 #if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
 #include <dos.h>
@@ -79,7 +79,6 @@
 int __stdcall GetFileAttributesA(char *);
 #define GetFileAttributes GetFileAttributesA
 #endif
-
 
 extern s_message **msgToSysop;
 

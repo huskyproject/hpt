@@ -42,9 +42,9 @@
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
+#include <fidoconf/xstr.h>
 
 #include <fcommon.h>
-#include <xstr.h>
 #include <global.h>
 #include <pkt.h>
 #include <version.h>

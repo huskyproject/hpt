@@ -46,7 +46,6 @@
 #include <ctype.h>
 
 #include <pkt.h>
-#include <xstr.h>
 
 #include <global.h>
 
@@ -59,6 +58,7 @@
 #include <smapi/progprot.h>
 
 #include <fidoconf/common.h>
+#include <fidoconf/xstr.h>
 
 FILE *fDupe;
 

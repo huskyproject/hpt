@@ -23,7 +23,6 @@ OBJS    = pktinfo.obj \
 	  dupe.obj \
           tree.obj \
 	  crc.obj \
-	  xstr.obj \
 	  hptlink.obj \
           hpttree.obj \
 	  link.obj \
@@ -58,7 +57,6 @@ recode.obj
 pktread.obj
 fcommon.obj
 global.obj
-xstr.obj
 dupe.obj
 tree.obj
 crc.obj
@@ -69,7 +67,7 @@ smapibcd.lib
 tlog.exe: tlog.obj log.obj
 	$(CC) $(LFLAGS) tlog.obj log.obj
 
-tpkt.exe: tpkt.obj pktwrite.obj fcommon.obj pktread.obj recode.obj log.obj global.obj xstr.obj
+tpkt.exe: tpkt.obj pktwrite.obj fcommon.obj pktread.obj recode.obj log.obj global.obj
 	$(CC) $(LFLAGS) @&&!
 tpkt.obj
 log.obj
@@ -78,7 +76,6 @@ pktread.obj
 recode.obj
 pktwrite.obj
 global.obj
-xstr.obj
 dupe.obj
 tree.obj
 crc.obj
@@ -104,7 +101,6 @@ scanarea.obj
 dupe.obj
 tree.obj
 crc.obj
-xstr.obj
 strsep.obj
 post.obj
 fconfbcd.lib
@@ -133,7 +129,6 @@ fcommon.obj
 pktread.obj
 recode.obj
 log.obj
-xstr.obj
 global.obj
 dupe.obj
 tree.obj

@@ -1,7 +1,6 @@
 hpt 0.9.7 (development version)
 ---------	
 
-
 ----- cvs ci ------
 Fri Jun  2 17:39:35 NOVST 2000
 max:
@@ -9,6 +8,7 @@ max:
 * changed export messages code for scanning
 * don't change task title under win32 (setConsoleTitle token)
 * scanned msgs now added to dupebase
+* moved xstr* functions to fidoconf
 
 ----- cvs ci ------
 Thu Jun  1 11:51:34 NOVST 2000
