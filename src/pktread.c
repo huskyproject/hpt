@@ -108,14 +108,17 @@ s_pktHeader *openPkt(FILE *pkt)
   header->minorProductRev = getc(pkt);
 
   capWord = getUINT16(pkt);
-  /* if both capabilitywords aren't the same, abort */
-  /* but read stone-age pkt */
-  if (capWord!=header->capabilityWord && header->capabilityWord!=0) {
-    free(header);
-    header = NULL;
-    return NULL;
-  } /* endif */
 
+  if (!config->ignoreCapWord) {
+	  /* if both capabilitywords aren't the same, abort */
+	  /* but read stone-age pkt */
+	  if (capWord!=header->capabilityWord && header->capabilityWord!=0) {
+		  free(header);
+		  header = NULL;
+		  return NULL;
+	  } /* endif */
+  }
+  
   getUINT16(pkt); getUINT16(pkt); /* read the additional zone info */
 
   header->origAddr.point = getUINT16(pkt);
