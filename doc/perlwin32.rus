@@ -7,10 +7,6 @@ ActivePerl build 623,вероятно будет работать и с более новыми)
 во всем husky source tree поменять s_addr на husky_s_addr
 (иначе будет конфликт с WinSock-s_addr определена и там тоже)
 
-пересобрать smapi, fidoconf:
-
-nmake -f makeperl.mvc
-
 (ActivePerl поставлен в D:\Perl)
 
 hpt:
@@ -45,7 +41,7 @@ DK: Она вызывается если Perl использован при данном пуске hpt
      
 Q: А можно собрать hpt.exe с поддержкой Perl'а но чтобы perl56.dll 
    использовалась только если указано в конфиге?
-DK: Можно, опция perlSupport on|off.Собирать как обычно 
-   Если при запуске perlSupport будет on и не найдется perl56.dll -
+DK: Можно, собирать как обычно.
+   Если при запуске будет указан hptPerlFile и не найдется perl56.dll -
    - будет вылет с EX_UNAVAILABLE и сообщением что нету этой Dll
 
