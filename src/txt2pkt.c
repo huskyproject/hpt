@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
     int quit=0, n = 1;
     char *textBuffer = NULL;
     char *versionStr=NULL;
-    char *tmp=NULL;
+    char *tmp = NULL, *fileName = NULL;
 
     memset (&header,'\0',sizeof(s_pktHeader));
     memset (&msg,'\0',sizeof(s_message));
@@ -259,12 +259,24 @@ int main(int argc, char *argv[])
    xstrcat(&tmp, (dir) ? dir : ".\\");
    if (tmp[strlen(tmp)-1] != '\\')  xstrcat(&tmp,"\\");
 #endif
-   xscatprintf(&tmp,"%08lx.pkt",(long)time(NULL));
+
+   /* Make pkt name */
+   if (config->seqDir == NULL) {
+       sleep(1);
+       xscatprintf(&fileName,"%s%08lx.pkt",tmp,(long)time(NULL));
+   } else {
+       do {
+           nfree(fileName);
+           xscatprintf(&fileName, "%s%08x.pkt",
+                       tmp, GenMsgId(config->seqDir, config->seqOutrun));
+       } while (fexist(fileName));
+   }
 
    if (header.origAddr.zone==0) header.origAddr = msg.origAddr;
    if (header.destAddr.zone==0) header.destAddr = msg.destAddr;
 
-   pkt = createPkt(tmp, &header);
+   pkt = createPkt(fileName, &header);
+   nfree(fileName);
 
    if (pkt != NULL) {
 
