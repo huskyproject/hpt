@@ -561,20 +561,26 @@ int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link,
    if (link->hisAka.point != 0) return 0;
 
    for (i=0; i < seenByCount; i++) {
-	   if ((link->hisAka.net==seenBys[i].net) &&
-		   (link->hisAka.node==seenBys[i].node)) {
+       if ((link->hisAka.net==seenBys[i].net) &&
+	   (link->hisAka.node==seenBys[i].node)) {
 		   
-		   for (j=0; j < config->ignoreSeenCount; j++) {
-			   if (config->ignoreSeen[j].net == seenBys[i].net &&
-				   config->ignoreSeen[j].node == seenBys[i].node) return 0;
-		   }
-		   for (j=0; j < area->sbignCount; j++) {
-			   if (area->sbign[j].net == seenBys[i].net &&
-				   area->sbign[j].node == seenBys[i].node) return 0;
-		   }
-
-		   return 1;
+	   for (j=0; j < config->ignoreSeenCount; j++) {
+	       if (config->ignoreSeen[j].net == seenBys[i].net &&
+		   config->ignoreSeen[j].node == seenBys[i].node) {
+		   link->sb = 1; // fix for double seen-bys
+		   return 0;
+	       }
 	   }
+	   for (j=0; j < area->sbignCount; j++) {
+	       if (area->sbign[j].net == seenBys[i].net &&
+		   area->sbign[j].node == seenBys[i].node) {
+		   link->sb = 1; // fix for double seen-bys
+		   return 0;
+	       }
+	   }
+
+	   return 1;
+       }
    }
    return 0;
 }
@@ -586,30 +592,31 @@ int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link,
 */
 
 void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
-						s_area *echo, s_arealink ***newLinks,
-						s_arealink ***zoneLinks, s_addr pktOrigAddr)
-{
-	UINT i, j=0, k=0;
+			s_area *echo, s_arealink ***newLinks,
+			s_arealink ***zoneLinks, s_addr pktOrigAddr) {
+    UINT i, j=0, k=0;
 	
-	*newLinks = (s_arealink **) calloc(echo->downlinkCount,sizeof(s_arealink*));
-	*zoneLinks = (s_arealink **) calloc(echo->downlinkCount,sizeof(s_arealink*));
-	if (*newLinks==NULL || *zoneLinks==NULL) exit_hpt("out of memory",1);
+    *newLinks = (s_arealink **) calloc(echo->downlinkCount,sizeof(s_arealink*));
+    *zoneLinks = (s_arealink **) calloc(echo->downlinkCount,sizeof(s_arealink*));
+    if (*newLinks==NULL || *zoneLinks==NULL) exit_hpt("out of memory",1);
 
-	for (i=0; i < echo->downlinkCount; i++) {
-		// is the link in SEEN-BYs?
-		if (checkLink(seenBys,seenByCount,
-					  echo->downlinks[i]->link,
-					  pktOrigAddr, echo)!=0) continue;
-		if (pktOrigAddr.zone==echo->downlinks[i]->link->hisAka.zone) {
-			// links with same zone
-			(*newLinks)[j] = echo->downlinks[i];
-			j++;
-		} else {
-			// links in different zones
-			(*zoneLinks)[k] = echo->downlinks[i];
-			k++;
-		}
+    for (i=0; i < echo->downlinkCount; i++) {
+	// is the link in SEEN-BYs?
+	if ( checkLink(seenBys, seenByCount, echo->downlinks[i]->link,
+		       pktOrigAddr, echo)!=0) continue;
+	// link with "export off"
+	if (echo->downlinks[i]->export == 0) continue;
+
+	if (pktOrigAddr.zone==echo->downlinks[i]->link->hisAka.zone) {
+	    // links with same zone
+	    (*newLinks)[j] = echo->downlinks[i];
+	    j++;
+	} else {
+	    // links in different zones
+	    (*zoneLinks)[k] = echo->downlinks[i];
+	    k++;
 	}
+    }
 }
 
 void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks, 
@@ -677,8 +684,8 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		if (newLinks[i] == NULL) break;
 		// don't include points in SEEN-BYs
 		if (newLinks[i]->link->hisAka.point != 0) continue;
-		// don't include arealinks with "export off"
-		if (newLinks[i]->export == 0) continue;
+		// fix for IgnoreSeen & -sbign
+		if (newLinks[i]->link->sb == 1) continue;
 
 		(*seenBys) = (s_seenBy*) safe_realloc((*seenBys), sizeof(s_seenBy) * (*seenByCount+1));
 		(*seenBys)[*seenByCount].net = (UINT16) newLinks[i]->link->hisAka.net;
@@ -755,11 +762,8 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	// add msg to the pkt's of the downlinks
 	for (i = 0; i<echo->downlinkCount; i++) {
 		
-		// no link at this index -> break;
-		if (newLinks[i] == NULL) break;
-		
-		// does the link has read access for this echo?
-		if (newLinks[i]->export == 0) continue;
+	    // no link at this index -> break;
+	    if (newLinks[i] == NULL) break;
 		
 		// check packet size
 		if (newLinks[i]->link->pktFile != NULL && newLinks[i]->link->pktSize != 0) {
