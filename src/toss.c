@@ -1225,13 +1225,8 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 	break;
     case 6:
 	xstrcat(&textBuff,"MSGAPIERR: ");
-
-#ifdef _MAKE_DLL_MVC_
-	switch (GetMsgapiErr())
-#else
 	switch (msgapierr)
-#endif
-	    {
+    {
 	    case MERR_NONE: xstrcat(&textBuff,"No error\r");
 		break;
 	    case MERR_BADH: xstrcat(&textBuff,"Invalid handle passed to function\r");
@@ -1655,11 +1650,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 
 	MsgCloseArea(netmail);
     } else {
-#ifdef _MAKE_DLL_MVC_
-	fprintf(stderr, "msgapierr - %u\n", GetMsgapiErr());
-#else
 	fprintf(stderr, "msgapierr - %u\n", msgapierr);
-#endif
 	w_log('9', "Could not open NetmailArea %s", area -> areaName);
     } /* endif */
     return rc;
