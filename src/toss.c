@@ -356,9 +356,14 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 	msg->destAddr.point = echo->useAka->point;
     }
 
-    harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, 
+    if (maxopenpkt == 0) setmaxopen();
+
+    if (echo->harea == NULL) {
+	echo->harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, 
 			/*echo->fperm, echo->uid, echo->gid,*/
 			(word)(echo->msgbType | (msg->netMail ? 0 : MSGTYPE_ECHO)));
+	if (echo->harea) nopenpkt+=3;
+    }
     if (harea != NULL) {
 	hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
 	if (hmsg != NULL) {
@@ -430,7 +435,11 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
        
 	} else w_log('9', "Could not create new msg in %s!", echo->fileName);
 	/* endif */
-	MsgCloseArea(harea);
+	if (nopenpkt>=maxopenpkt-12) {
+	    MsgCloseArea(echo->harea);
+	    echo->harea = NULL;
+	    nopenpkt-=3;
+	}
     } else w_log('9', "Could not open/create EchoArea %s!", echo->fileName);
     /* endif */
     return rc;
@@ -688,6 +697,34 @@ void closeOpenedPkt(void) {
 	    config->links[i].pkt = NULL;
 	    nopenpkt--;
 	}
+    for (i=0; i<config->echoAreaCount; i++)
+	if (config->echoAreas[i].harea) {
+	    MsgCloseArea(config->echoAreas[i].harea);
+	    config->echoAreas[i].harea = NULL;
+	    nopenpkt-=3;
+	}
+    for (i=0; i<config->netMailAreaCount; i++)
+	if (config->netMailAreas[i].harea) {
+	    MsgCloseArea(config->netMailAreas[i].harea);
+	    config->netMailAreas[i].harea = NULL;
+	    nopenpkt-=3;
+	}
+    for (i=0; i<config->localAreaCount; i++)
+	if (config->localAreas[i].harea) {
+	    MsgCloseArea(config->localAreas[i].harea);
+	    config->localAreas[i].harea = NULL;
+	    nopenpkt-=3;
+	}
+    if (config->badArea.harea) {
+	MsgCloseArea(config->badArea.harea);
+	config->badArea.harea = NULL;
+	nopenpkt-=3;
+    }
+    if (config->dupeArea.harea) {
+	MsgCloseArea(config->dupeArea.harea);
+	config->dupeArea.harea = NULL;
+	nopenpkt-=3;
+    }
 }
 
 void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks, 
