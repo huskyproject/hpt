@@ -7,7 +7,7 @@ OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scan
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -g -O2 -s -DUNIX
+  CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -ggdb -O3 -s -DUNIX
   LFLAGS  = 
 else
   CFLAGS  = -c -I../h -I../../smapi -Wall -O2 -s -DUNIX

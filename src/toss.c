@@ -399,7 +399,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    //write new line in config file
    sprintf(buff,"EchoArea %s %s%s -a %s Squish %s ", c_area, config->msgBaseDir, c_area, myaddr, hisaddr);
    if ((config->autoCreateDefaults != NULL) &&
-       (strlen(buff)+strlen(config->autoCreatedDefaults))<255) {
+       (strlen(buff)+strlen(config->autoCreateDefaults))<255) {
       strcat(buff, config->autoCreateDefaults);
    }
    fprintf(f, buff);
