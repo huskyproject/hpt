@@ -99,11 +99,9 @@ void writeDupeFiles(void)
 }
 
 void exit_hpt(char *logstr, int print) {
-    char *_lockfile;
 
     w_log(LL_FUNC,"exit_hpt()");
     w_log(LL_CRIT, logstr);
-    _lockfile = config->lockfile;
     if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
 
     writeDupeFiles();
@@ -114,6 +112,7 @@ void exit_hpt(char *logstr, int print) {
     if (_lockfile) {
         close(lock_fd);
         remove(_lockfile);
+	nfree(_lockfile);
     }
     exit(EX_SOFTWARE);
 }

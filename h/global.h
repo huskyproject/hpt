@@ -68,6 +68,7 @@ extern s_addr afixAddr;
 extern char *afixCmd;
 
 extern int lock_fd;
+extern char *_lockfile;
 
 extern unsigned long getfree (char *path);
 
