@@ -512,6 +512,12 @@ A: (ML)
 BSOpack by Dmitry Sergienko.
 Бинарники для win32 & OS/2 доступны на http://www.unity.net/~trooper/fido
 
+A: (PG)
+
+В current прописать для линка "arcNetmail", и тогда, если флейвор
+будет совпадает с EchoMailFlavour, netmail будет паковаться в
+бандлы всесте с echomail.
+
 /------/
 
 >27. Как ускорить работу тоссера?
