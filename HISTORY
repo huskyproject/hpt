@@ -21,12 +21,16 @@ This file describe changes between hpt-1.0-stable and hpt-1.2-stable
    - hptlink use hpt.log for logging
    - misc/hptlogstat.pl: new version
    - misc/pretty.pl: sort & format area definitions
+   - misc/hpt_ro: New perl module for filter.pl: hpt read-only manager
+     (written by Andrew Sagulin 2:6073/1).
+   - added hpt link -j switch, link jam areas by msgid/reply crc -- speedup
 
 2. CONFIG changes:
-   - The 'pause' keyword syntax expanded: on, off, 1, 0, earea or farea
+   - the 'pause' keyword syntax expanded: on, off, 1, 0, earea or farea
      possible ('pause earea': echoes paused, 'pause farea': fileareas paused)
-   - Change loglevels (see fidoconf & hpt documentation)
+   - change loglevels (see fidoconf & hpt documentation)
    - new token: sendRules
+   - add sample configs to distribution
 
 3. IMPORTANT bugfixes:
    - do not autoadd tearline & origin in netmail
