@@ -1,3 +1,8 @@
+----- cvs ci ------
+Mon Aug  7 10:06:33 MEZ 2000
+tobi (patch from serguei i. revtov)
+* migrated bugfix for hptlink from current branch: fixed hptlink to link
+  LOCALareas when specified by arguments or in the importlog file.
 
 ----- cvs ci ------
 Mon Jul 31 08:16:37 MSZ 2000
@@ -230,10 +235,10 @@ max (patch from Lev Serebryakov):
 
 <<<<<<< ChangeLog
 hpt 0.9.7
----------	
+---------
 (released on Mon May 22 14:58:56 CEST 2000)
 
------ cvs ci ------	
+----- cvs ci ------
 =======
 ----- cvs ci ------
 >>>>>>> 1.296.2.7
