@@ -1504,7 +1504,7 @@ void processDir(char *directory, e_tossSecurity sec)
       if (!(pktFile = patimat(file->d_name, "*.pkt") == 1)) 
          for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
             if (patimat(file->d_name, validExt[i]) == 1
-#if !defined(UNIX) && !defined(__EMX__)
+#if !defined(UNIX) && !defined(__EMX__) && !defined(__DJGPP__)
 		&& !(file->d_attr & _A_HIDDEN)
 #endif
 					    )
