@@ -1,10 +1,14 @@
 #!/usr/bin/perl
-
-# :: Запустите этот скрипт с ключом '-h' для справки ::
+#
+# $Id$
+#
+# $Log$
+#
 
 $stopat = 5;
 N: foreach (@ARGV) {
     help() if (/^-h$/);
+    rushelp() if (/^-hr$/);
     $df=$1, next N if (/^-desc(.+)/);
     $ds=1,  next N if (/^-set$/);
     $na=1,  next N if (/^-na$/);
@@ -16,11 +20,12 @@ N: foreach (@ARGV) {
     $no=1,  next N if (/^-no$/);
     $nl=1,  next N if (/^-nl$/);
     $alst=$_ if (-f $_);
+    $c=1, next if (/^-c$/);
 }
 help() unless ($alst);
 
-$aold='areas.old';
-$anew='areas.l$$';
+$aold="$alst.old";
+$anew="$alst".'.$$$';
 
 open LIST, "<$alst" or die "Error open $alst";
 open LOUT, ">$anew" or die "Error open temporary file";
@@ -174,8 +179,8 @@ for ($i=0; $i<$ln; $i++) {
 
 close LIST;
 close LOUT;
-rename($alst,$aold) unless ($bk);
-rename($anew,$alst);
+rename($alst,$aold) unless ($bk || $c);
+rename($anew,$alst) unless ($c);
 print ":: Процесс завершен.\n";
 
 sub readna() {
@@ -199,16 +204,42 @@ sub description() {
     ($_)=@_;
     return $descript{$_} if ($descript{$_});
     # :: Здесь вы можете проставить свою реакцию на название арии ::
-    # return 'Some CityCat echo...' if (/^ru\.list\.citycat/);
-    # return 'Some ExUSSR echo...'  if (/^su\./);
-    # return 'Some Russian echo...' if (/^ru\./);
-    # return 'Some private echo...' if (/^pvt\./);
+    # return 'Some CityCat echo...' if (/^ru\.list\.citycat/i);
+    # return 'Some ExUSSR echo...'  if (/^su\./i);
+    # return 'Some Russian echo...' if (/^ru\./i);
+    # return 'Some private echo...' if (/^pvt\./i);
     return '';
 }
 
 sub help() {
+        print "Husky areafile pretty formatter.\n";
+        print "::  Copyleft (c) 2002, by Michael Savin, 2:5070/269.\n";
+        print "::  \n";
+        print "::  Use -hr option for russian help\n";
+        print "::  \n";
+        print "Usage: pretty.pl [-d] [-b] [-ns] [-nf[a]] [-no] [-nl] <[file]area.lst>\n";
+        print "                 [-desc<echodesc> [-na] [-set]] [-n]\n\n";
+        print "::  where:\n";
+        print "::  -c     don't replace original file, formatted areafile saved with suffix '.$$$'\n";
+        print "::  -d     place links & descriptions into same column\n";
+        print "::  -b     don't backup original areafile\n";
+        print "::  -ns    don't sort areatags\n";
+        print "::  -nf    don't justify columns\n";
+        print "::  -nfa   -nf + don't justify options & links\n";
+        print "::  -no    don't sort options for area\n";
+        print "::  -nl    don't sort links for area\n";
+        print "::  -desc [-na] [-set]\n";
+        print "::         add descriptions from comma-delimeted arealist\n";
+        print "::         '-desc -na' - from 'FILEBONE.NA'-like file\n";
+        print "::         '-desc -set' - replace existing descriptions\n";
+        print "::  \n";
+        print "::  This is test version!. You are notified :)\n";
+        exit;
+}
+
+sub rushelp() {
         print "Usage: pretty.pl [-d] [-b] [-ns] [-nf[a]] [-no] [-nl] <areafile>\n";
-        print "                 [-desc<echodesc> [-na] [-set]]\n\n";
+        print "                 [-c] [-desc<echodesc> [-na] [-set]]\n\n";
         print "::  Ключ -d позволяет выравнивать в одну и ту же колонку линков и\n";
         print "::    дескрипшены. Если у вас мало дескрипшенов, но много линков\n";
         print "::    (как у 2:5080/102 ;-), то воспользуйтесь данным ключом.\n";
@@ -218,9 +249,11 @@ sub help() {
         print "::  Ключ -nf запрещает выравнивание (с -nfa не выравниваются опции/линки).\n";
         print "::  Ключ -no запрещает сортировать опции.\n";
         print "::  Ключ -nl запрещает сортировать линков.\n";
+        print "::  Ключ -c  оставляет исходный файл без изменений, новый записывается\n";
+        print "::    в файл с расширением '$$$'\n";
         print "::  Ключ -desc позволяет добавлять описания арий из файла типа\n";
         print "::    echo5020.lst. Если вдобавок установлена опция -na, то описания\n";
-        print "::    будут браться из файла стандартного для hpt формата.\n";
+        print "::    будут браться из файла стандартного для hpt формата (FILEBONE.NA).\n";
         print "::    Можно в принудительном порядке проставлять описания, для этого\n";
         print "::    используйте ключ -set.\n";
         print "::  Example 0: pretty.pl areas.lst\n";
