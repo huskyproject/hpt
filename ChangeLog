@@ -1,3 +1,12 @@
+2003-02-17 Monday 12:27  mche
+
+	* src/: areafix.c (1.385), query.c (1.89): merging s_filearea into
+	s_area
+
+2003-02-17 Monday 11:45  pgul
+
+	* src/pktwrite.c (1.42): Fix compiler warnings
+
 2003-02-16 Sunday 17:59  stas_degteff
 
 	* README (1.17), h/version.h (1.12): Fix type erors; add link to
