@@ -1,3 +1,25 @@
+2002-11-25 Monday 15:37  stas_degteff
+
+	* src/link.c (1.68): Prevent compiler warning 'size mismatch'
+
+2002-11-25 Monday 15:34  stas_degteff
+
+	* src/fcommon.c (1.150): Prevent compiler warning about spawnvp()
+	for non-watcom
+
+2002-11-25 Monday 10:42  mche
+
+	* src/query.c (1.77): fix xstrscat() usage
+
+2002-11-25 Monday 09:00  mche
+
+	* src/areafix.c (1.370), src/global.c (1.46), src/link.c (1.67),
+	src/pktread.c (1.94), src/pktwrite.c (1.39), src/post.c (1.102),
+	src/query.c (1.76), src/scan.c (1.180), src/seenby.c (1.27),
+	src/toss.c (1.478), h/areafix.h (1.35), h/global.h (1.35),
+	h/hptperl.h (1.9), h/query.h (1.17), h/scan.h (1.17), h/seenby.h
+	(1.10), h/toss.h (1.53): s_addr --> hs_addr
+
 2002-11-23 Saturday 22:09  stas_degteff
 
 	* doc/hpt.texi (1.89), HISTORY (1.14): AvailList token are
