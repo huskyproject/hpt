@@ -4,9 +4,11 @@ hpt 0.29
 ----- cvs ci ------
 Sat Sep 11 13:00:16 NOVST 1999
 max:
-* added carbonReason (patch from Serguei Revtov)
++ added carbonReason (patch from Serguei Revtov)
 * carbonCopy code cleanup
 * areafix.c %list - code cleanup & bugfixing (may be) :-)
++ added @NPD kludge for areafix reports
+* some statistix changes (to be continued)
 	
 ----- cvs ci ------
 Tue Sep  7  18:28:00

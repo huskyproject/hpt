@@ -34,10 +34,10 @@
 #include <pkt.h>
 
 struct statToss {
-   int pkts, msgs;
-   int saved, passthrough, exported;
+   int arch, pkts, msgs;
+   int saved, passthrough, exported, CC;
    int echoMail, netMail;
-   int dupes, bad;
+   int dupes, bad, empty;
    int inBytes;
    time_t startTossing;
 };

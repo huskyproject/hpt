@@ -852,14 +852,16 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    return 0;
 }
 
-void processCarbonCopy (s_area *area, s_area *echo, s_message *msg,	s_carbon carbon) {
 /* area - area to carbon messages, echo - original echo area */
+void processCarbonCopy (s_area *area, s_area *echo, s_message *msg,	s_carbon carbon) {
 	char *p, *old_text, *reason = carbon.reason;
 	int i, old_textLength, reasonLen = 0, export = carbon.export;
 
+	statToss.CC++;
+
 	old_textLength = msg->textLength;
 	old_text = msg->text;
-	
+
 	i = strlen(old_text);
 	if ((!config->carbonKeepSb) && (!area->keepsb)) {
 		if (NULL != (p = strstr(old_text,"SEEN-BY:"))) i -= strlen (p);
@@ -880,7 +882,7 @@ void processCarbonCopy (s_area *area, s_area *echo, s_message *msg,	s_carbon car
 	strncat(msg->text,old_text,i); // copy rest of msg
 	msg->textLength = strlen(msg->text);
 	
-	if (!export) putMsgInArea(area,msg,0,0);	  
+	if (!export) putMsgInArea(area,msg,0,0);
 	else processEMMsg(msg, *area->useAka, 1);
 	
 	free (msg->text);
@@ -1275,9 +1277,9 @@ int processPkt(char *fileName, e_tossSecurity sec)
    char        processIt = 0; // processIt = 1, process all mails
                               // processIt = 2, process only Netmail
                               // processIt = 0, do not process pkt
+   
+   if ((stat(fileName, &statBuff) == 0) && (statBuff.st_size > 60)) {
 
-   if ((stat(fileName, &statBuff) == 0) && (statBuff.st_size > 60)) 
-     {
        statToss.inBytes += statBuff.st_size;
        
        pkt = fopen(fileName, "rb");
@@ -1386,15 +1388,15 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	 free(header);
 	 
        } else {
-	 sprintf(buff, "pkt: %s wrong pkt-file", fileName);
-	 writeLogEntry(hpt_log, '9', buff);
-	 rc = 3;
+		   sprintf(buff, "pkt: %s wrong pkt-file", fileName);
+		   writeLogEntry(hpt_log, '9', buff);
+		   rc = 3;
        }
        
-       if (pkt != NULL) {
-	 fclose(pkt);
-       }
-     }
+       if (pkt) fclose(pkt);
+
+   } else statToss.empty++;
+
    return rc;
 }
 
@@ -1467,6 +1469,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
       writeLogEntry(hpt_log, '6', buff);
       return 3;
    };
+   statToss.arch++;
    processDir(config->tempInbound, sec);
    return 0;
 }
@@ -1558,12 +1561,18 @@ void writeTossStatsToLog(void) {
    inKBsec = ((float)(statToss.inBytes)) / diff / 1024;
 
    writeLogEntry(hpt_log, logchar, "Statistics:");
-   sprintf(buff, "   pkt's: % 3d   msgs: % 5d   echoMail: % 5d   netmail: % 5d", statToss.pkts, statToss.msgs, statToss.echoMail, statToss.netMail);
+   sprintf(buff, "     arc: % 5d   netMail: % 4d   echoMail: % 5d         CC: % 5d",
+		   statToss.arch, statToss.netMail, statToss.echoMail, statToss.CC);
    writeLogEntry(hpt_log, logchar, buff);
-   sprintf(buff, "   saved: % 5d   passthrough: % 5d   exported: % 5d", statToss.saved, statToss.passthrough, statToss.exported);
+
+   sprintf(buff, "   pkt's: % 5d      dupe: % 4d   passthru: % 5d   exported: % 5d",
+		   statToss.pkts, statToss.dupes, statToss.passthrough, statToss.exported);
    writeLogEntry(hpt_log, logchar, buff);
-   sprintf(buff, "   dupes: % 5d   bad: % 5d", statToss.dupes, statToss.bad);
+
+   sprintf(buff, "    msgs: % 5d       bad: % 4d      saved: % 5d      empty: % 5d",
+		   statToss.msgs, statToss.bad, statToss.saved, statToss.empty);
    writeLogEntry(hpt_log, logchar, buff);
+
    sprintf(buff, "   Input: % 8.2f mails/sec   Output: % 8.2f mails/sec", inMailsec, outMailsec);
    writeLogEntry(hpt_log, logchar, buff);
    sprintf(buff, "          % 8.2f kb/sec", inKBsec);
@@ -1882,7 +1891,6 @@ void toss()
    processDir(config->localInbound, secLocalInbound);
    processDir(config->protInbound, secProtInbound);
    processDir(config->inbound, secInbound);
-   arcmail();
 
 #ifndef HASHDUPE
    // write dupeFiles
@@ -1913,7 +1921,7 @@ void toss()
 
    // write statToss to Log
    writeTossStatsToLog();
-   
+   arcmail();
 }
 
 int packBadArea(HMSG hmsg, XMSG xmsg)
