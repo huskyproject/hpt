@@ -639,8 +639,10 @@ void *safe_realloc(void *ptr, size_t size)
 
 char *safe_strdup(const char *src)
 {
-    char *ptr = strdup (src);
-    if (ptr == NULL) exit_hpt("out of memory", 1);
+    char *ptr = NULL;
+    if (src)
+      if ( !( ptr = strdup (src) ) )
+        exit_hpt("out of memory", 1);
     return ptr;
 }
 
