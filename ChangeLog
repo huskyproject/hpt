@@ -1,3 +1,18 @@
+2002-07-06 Saturday 18:54  stas
+
+	* src/fcommon.c (1.132): Change addrdiff bundle name stile
+	generation: CRC32("hpt orig-addr link-addr"). Thanks to Igor
+	Romanovsky
+
+2002-07-06 Saturday 18:09  stas
+
+	* doc/hpt.texi (1.68), src/areafix.c (1.322): Mandatory now
+	disallow unsubscribe only; Manual disallow subscribe
+
+2002-07-06 Saturday 16:57  mche
+
+	* src/fcommon.c (1.131): log pkt and arc names generated for link
+
 2002-07-05 Friday 22:45  stas
 
 	* src/areafix.c (1.321): Don't include Origin into areafix reply if
