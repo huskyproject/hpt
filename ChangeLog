@@ -1,3 +1,12 @@
+2002-09-25 Wednesday 22:23  pgul
+
+	* src/toss.c (hpt-1_2-stable.2): security fix
+
+2002-09-25 Wednesday 21:22  pgul
+
+	* src/query.c (hpt-1_2-stable.2): fix autosubscribe when autocreate
+	areas
+
 2002-09-21 Saturday 13:49  pgul
 
 	* src/areafix.c (hpt-1_2-stable.4): areafix scan bugfix (not all
