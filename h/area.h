@@ -1,6 +1,6 @@
 #ifndef AREA_H
 #define AREA_H
-#include <common.h>
+#include <fcommon.h>
 #include <link.h>
 
 struct area {

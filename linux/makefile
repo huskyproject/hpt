@@ -1,8 +1,8 @@
 DEBUG   = 1
-GNULIBC = 2
+GNULIBC = 1
 CC      = gcc 
 
-OBJS    = hpt.o pktread.o pktwrite.o common.o log.o config.o global.o toss.o patmat.o scan.o scanarea.o seenby.o
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o config.o global.o toss.o patmat.o scan.o scanarea.o seenby.o
 SRC_DIR = ../src/
 
 ifeq ($(GNULIBC),2)
@@ -14,7 +14,7 @@ else
 endif
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../smapi -Wall -g -s -DUNIX $(CADDFLAGS)
+  CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -g -s -DUNIX $(CADDFLAGS)
   LFLAGS  = $(LADDFLAGS)
 else
   CFLAGS  = -c -I../h -I../../smapi -Wall -O2 -s -DUNIX $(CADDFLAGS)
@@ -34,20 +34,20 @@ all: $(OBJS) \
 
 pktinfo: pktinfo.o $(OBJS)
 	@echo linking pktinfo
-	$(CC) $(LFLAGS) -o pktinfo pktinfo.o pktread.o common.o global.o ../../smapi/smapilnx.a
+	$(CC) $(LFLAGS) -o pktinfo pktinfo.o pktread.o fcommon.o global.o -lsmapilnx ../../fidoconfig/fidoconfig.a
 
-tconfig: tconfig.o config.o common.o
+tconfig: tconfig.o config.o fcommon.o
 	@echo linking tconfig
-	$(CC) $(LFLAGS) -o tconfig tconfig.o config.o common.o global.o ../../smapi/smapilnx.a
+	$(CC) $(LFLAGS) -o tconfig tconfig.o config.o fcommon.o global.o -lsmapilnx ../../fidoconfig/fidoconfig.a
 
 tlog: tlog.o log.o
 	@echo linking tlog
 	$(CC) $(LFLAGS) -o tlog tlog.o log.o
 
-tpkt: tpkt.o pktwrite.o common.o pktread.o
+tpkt: tpkt.o pktwrite.o fcommon.o pktread.o
 	@echo linking tpkt
-	$(CC) $(LFLAGS) -o tpkt tpkt.o common.o pktread.o pktwrite.o global.o ../../smapi/smapilnx.a
+	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o pktread.o pktwrite.o global.o -lsmapilnx  ../../fidoconfig/fidoconfig.a
 
 hpt: $(OBJS)
 	@echo linking hpt
-	$(CC) $(LFLAGS) -o hpt $(OBJS) ../../smapi/smapilnx.a
+	$(CC) $(LFLAGS) -o hpt $(OBJS) -lsmapilnx ../../fidoconfig/fidoconfig.a

@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include <typesize.h>
-#include <common.h>
+#include <fcommon.h>
 
 #ifndef __DOS__
    #define TEXTBUFFERSIZE 512*1024    // for real os
