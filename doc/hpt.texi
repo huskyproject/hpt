@@ -3186,11 +3186,11 @@ This statement can only be repeated for different links.
 @item Syntax:
 @code{sendNotifyMessages <bool>}
 @item Example:
-@code{sendNotifyMessages yes}
+@code{sendNotifyMessages on}
 @end table
 
 If sendNotifyMessages is true, link will receive notification messages from 
-areafix about link's requests status or bad posts.
+areafix about link's requests status, bad posts or deletion of subscribed area.
 
 By default is off, i.e. do not send any notification messages.
 
