@@ -297,7 +297,11 @@ void post(int c, unsigned int *n, char *params[])
                         lines/linesPerSec : lines/linesPerSec+1;
                     
                     fclose (tmpfile);
-                    tmpfile = freopen (tmpname, "rt",tmpfile);
+                    tmpfile = fopen (tmpname, "rt");
+                    if (tmpfile == NULL)
+                    {
+                        exit_hpt("Couldn't open tmpfile file", 1);
+                    }
                     textBuffer = safe_malloc(4*(MAX_LINELEN/3 + 1));
                 }
                 else
