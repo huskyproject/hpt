@@ -116,7 +116,7 @@
 extern s_message **msgToSysop;
 int save_err;
 
-static int nopenpkt, maxopenpkt;
+static ULONG nopenpkt, maxopenpkt;
 
 s_statToss statToss;
 int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec);
@@ -2023,10 +2023,14 @@ void writeImportLog(void) {
 
 #define INCL_DOS
 
+/* From os2emx.h:
+ULONG DosSetMaxFH (ULONG ulCount);
+ULONG DosSetRelMaxFH (PLONG pulReqCount, PULONG pulCurMaxFH);
+*/
+
 static void setmaxopen(void) {
-    ULONG add;
-    unsigned maxopenpkt = MAXOPEN_DEFAULT;
-    unsigned cur = add = 0;
+    ULONG cur = add = 0;
+/*    ULONG maxopenpkt = MAXOPEN_DEFAULT; */ /* This variable defined in line 119 ! */
 
     if (DosSetRelMaxFH(&add, &cur) == 0)
 	if (cur>=maxopenpkt) return;
