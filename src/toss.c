@@ -2048,8 +2048,7 @@ ULONG DosSetRelMaxFH (PLONG pulReqCount, PULONG pulCurMaxFH);
 */
 
 static void setmaxopen(void) {
-    ULONG cur = add = 0;
-/*    ULONG maxopenpkt = MAXOPEN_DEFAULT; */ /* This variable defined in line 119 ! */
+    ULONG cur = 0, add = 0;
 
     if (DosSetRelMaxFH(&add, &cur) == 0)
 	if (cur>=maxopenpkt) return;
