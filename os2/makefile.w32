@@ -8,8 +8,9 @@ SRC_DIR = ..\src
 !IF $(DEBUG) == 1
 CFLAGS  = -d2 -hw -i=..\h;..\..\smapi;..\..\fidoconfig -zq
 LFLAGS  =
+ DEBUG Watcom
 !ELSE
-CFLAGS  = -i..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq -wcd=1180 -wcd=1181
+CFLAGS  = -i..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq
 LFLAGS  =
 !ENDIF
 
@@ -17,13 +18,15 @@ all: $(OBJS) \
      pktinfo.exe \
      tlog.exe \
      purgedup.exe \
+     tpkt.exe \
+     txt2pkt.exe \
      hpt.exe
 
 $(OBJS): $(SRC_DIR)\$*.c
   @echo compiling $*.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
-pktinfo.obj tlog.obj purgedupes.obj: $(SRC_DIR)\$*.c
+pktinfo.obj tlog.obj purgedupes.obj tpkt.obj txt2pkt.obj: $(SRC_DIR)\$*.c
   @echo compiling $*.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
@@ -34,6 +37,14 @@ pktinfo.exe: pktinfo.obj fcommon.obj pktread.obj
 tlog.exe: tlog.obj log.obj
   @echo linking tlog
   $(LINK) $(LFLAGS) FILE tlog.obj, log.obj NAME tlog.exe
+
+tpkt.exe: tpkt.obj pktwrite.obj fcommon.obj pktread.obj recode.obj log.obj global.obj 
+  @echo linking tpkt
+  $(LINK) $(LFLAGS) FILE log.obj, tpkt.obj, fcommon.obj, pktread.obj, recode.obj, pktwrite.obj, global.obj LIBRARY ..\..\smapi\smapiwco, ..\..\fidoconfig\fidoconfig NAME tpkt.exe
+
+txt2pkt.exe: txt2pkt.obj pktwrite.obj fcommon.obj pktread.obj recode.obj log.obj global.obj
+  @echo linking txt2pkt
+  $(LINK) $(LFLAGS) FILE log.obj, txt2pkt.obj, fcommon.obj, pktread.obj, recode.obj, pktwrite.obj, global.obj LIBRARY ..\..\smapi\smapiwco, ..\..\fidoconfig\fidoconfig NAME txt2pkt.exe
 
 purgedup.exe: purgeDupes.obj global.obj dupe.obj tree.obj pktread.obj log.obj recode.obj
   @echo linking purgedup

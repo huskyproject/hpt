@@ -70,12 +70,6 @@
 int __stdcall SetConsoleTitleA( const char* lpConsoleTitle );
 #endif
 
-#ifdef __OS2__
-#define INCL_DOSPROCESS
-#define INCL_DOSERRORS
-#include <os2.h>
-#endif
-
 s_message **msgToSysop = NULL;
 char *scanParm;
 
