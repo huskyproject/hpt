@@ -1,20 +1,16 @@
-Inbound		c:\fido\in\
-ProtInbound	c:\fido\in.sec\
-#LocalInbound	c:\fido\in.loc\
-TempInbound	c:\fido\in.tmp\
-Outbound	c:\fido\out\
-TempOutbound	c:\fido\out.tmp\
+# Path for Husky (unix)
+LockFile	/var/lib/ftn/flags/hpt.lock
+EchoTossLog     /var/lib/ftn/flags/echoscan.log
+ImportLog       /var/lib/ftn/flags/import.log
 
-LogFileDir      c:\fido\log\
-
-DupeHistoryDir	c:\fido\dupes\
-NodelistDir	c:\fido\nodelist\
-MsgBaseDir	c:\fido\msgb\
-
-EchoTossLog     c:\fido\export.lst
-ImportLog       c:\fido\import.lst
-
-LockFile	c:\fido\hpt-lock
-
-FileAreaBaseDir c:\fido\fileecho\
-PassFileAreaDir c:\fido\fileecho\pass\
+Inbound		/var/spool/ftn/unsecure
+ProtInbound	/var/spool/ftn/secure
+LocalInbound	/var/spool/ftn/local
+Outbound	/var/spool/ftn/outbound
+FileBoxesDir	/var/spool/ftn/boxes
+TempInbound	/var/lib/ftn/husky/pkt-in
+TempOutbound	/var/lib/ftn/husky/pkt-out
+LogFileDir	/var/log/ftn
+DupeHistoryDir	/var/lib/ftn/husky/dupes
+NodeListDir	/var/lib/ftn/nodelist
+MsgBaseDir	/var/lib/ftn/msgbase/squish

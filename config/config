@@ -1,53 +1,65 @@
-  #version 0.10
+##################################################################
+# Husky config for Node system
 
-  # your akas
-  Address 2:7000/700.999
+Version		0.14
 
-  # system's name
-  Name Santa's Station
+Name		Holiday System
+Sysop		Pavel Andreew
+Location 	Ekaterinburg, Russia
+Address		2:5080/59
 
-  # location
-  Location Laplandia
+PublicGroup 	A,B,C,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z
+Origin		* Association of Holiday Mail Robots *
+AreaFixFromPkt
+AreaFixKillReports
+AreafixKillRequests
+AreaFixHelp	/etc/husky/areafix.hlp
+AreaFixMsgSize	32
 
-  # Sysop name
-  Sysop Santa Claus
+LogLevels	34567890ABCDEFGJKMNT
+ScreenLogLevels	234567890ABCDEFGJKMNT
+LogEchoToScreen
 
-  # include <file> here
-include c:\fido\config\packer
-include c:\fido\config\path
+LinkWithImportLog	Kill
 
-#AreaFixFromPkt
-#AreaFixKillReports
-logechotoscreen
-mindiskfreespace 10
+#dupebasetype	commondupebase
+DupeBaseType	HashDupesWMsgId
+AreasMaxDupeAge	10
 
-Link Boss
-Aka 2:7000/700
-AutoAreaCreate on
-AutoFileCreate on
-AccessGrp E,F
-AutoAreaCreateDefaults -g F -b squish -$m 100 
-AutoAreaCreateFile c:\fido\config\areas
-AutoFileCreateFile c:\fido\config\fileareas
-password	password
-packer 		zip
+### Packers
+Unpack		"unzip -j -Loqq $a -d $p" 0 504b0304
+Pack		zip zip -9 -j -q $a $f
 
-# default routing to uplink
-route crash 2:7000/700 1:* 2:* 3:* 4:* 5:* 6:*
-# route for points
-#route hold noroute 2:7000/799.*
+Unpack  "rar e -y  $a $p"   0 52617221
+#Pack  rar rar a -std -ep $a $f
 
-# Main areas
-NetMailArea NetmailArea c:\fido\msgb\netmail 		-g A -b squish -d "Personal mail"
-BadArea     BadArea     c:\fido\msgb\bad 		-g B
-DupeArea    DupeArea    c:\fido\msgb\dupe	 	-g B
+Unpack  "unarj e $a $p" 0 60ea
+#Pack  arj arj a -+ -e -y $a $f
 
-LocalArea Carbon.Area c:\fido\msgb\carbon       -g E -b squish -d "Carbons"
+#SeparateBundles
+DefArcmailSize	300
 
-CarbonTo Santa Claus
-CarbonCopy Carbon.Area
+Include /etc/husky/path
 
-PublicGroup F,G,H # etc
+############################################################################
+# Report about autocreation areas
+# to netMail
+#ReportTo	netmail
+# or to EchoArea
+ReportTo	HOLIDAY.INFO
 
-include 		c:\fido\config\areas
-include 		c:\fido\config\fileareas
+Include	/etc/husky/config.htick
+include	/etc/husky/links
+
+# Areas must be after links definition
+include	/etc/husky/areas
+include	/etc/husky/fileareas
+
+# Carbon copy must be after areas definition
+CarbonTo Pavel Andreew
+CarbonCopy PAVEL.PERSONAL
+
+############################################################################
+# If no routing in config, HPT don't touch outgoing netmail (only receive)
+#route normal 2:5080/80 *
+#route hold 2:5080/59.*
