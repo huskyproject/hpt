@@ -1832,28 +1832,28 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 
 int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
 {
-  int rc;
+    int rc;
 
-  statToss.msgs++;
+    statToss.msgs++;
 #ifdef DO_PERL
-  if ((rc = perlfilter(msg, pktHeader->origAddr, secure)) == 1)
-    return putMsgInBadArea(msg, pktHeader->origAddr, 5);
-  else if (rc == 2)
-    return 1;
+    if ((rc = perlfilter(msg, pktHeader->origAddr, secure)) == 1)
+	return putMsgInBadArea(msg, pktHeader->origAddr, 5);
+    else if (rc == 2)
+	return 1;
 #endif
-  if (msg->netMail == 1) {
-    if (config->areafixFromPkt && 
-		(stricmp(msg->toUserName,"areafix")==0 ||
-		 stricmp(msg->toUserName,"areamgr")==0 ||
-		 stricmp(msg->toUserName,"hpt")==0 ||
-		 hpt_stristr(config->areafixNames,msg->toUserName))) {
-		rc = processAreaFix(msg, pktHeader, 0);
-    } else
-      rc = processNMMsg(msg, pktHeader, NULL, 0, 0);
-  } else {
-    rc = processEMMsg(msg, pktHeader->origAddr, 0, 0);
-  } /* endif */
-  return rc;
+    if (msg->netMail == 1) {
+	if (config->areafixFromPkt && strlen(msg->toUserName)>0 &&
+	    (stricmp(msg->toUserName,"areafix")==0 ||
+	     stricmp(msg->toUserName,"areamgr")==0 ||
+	     stricmp(msg->toUserName,"hpt")==0 ||
+	     hpt_stristr(config->areafixNames,msg->toUserName))) {
+	    rc = processAreaFix(msg, pktHeader, 0);
+	} else
+	    rc = processNMMsg(msg, pktHeader, NULL, 0, 0);
+    } else {
+	rc = processEMMsg(msg, pktHeader->origAddr, 0, 0);
+    } /* endif */
+    return rc;
 }
 
 int processPkt(char *fileName, e_tossSecurity sec)

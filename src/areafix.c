@@ -1933,90 +1933,91 @@ void afix(s_addr addr, char *cmd)
     s_addr          dest;
     s_message	    msg, *tmpmsg;
     int             for_us, k;
-	int             startarea = 0, endarea = config->netMailAreaCount;
-	s_area          *area;
-	char            *name = config->robotsArea;
-	s_link          *link;
+    int             startarea = 0, endarea = config->netMailAreaCount;
+    s_area          *area;
+    char            *name = config->robotsArea;
+    s_link          *link;
 
     w_log('1', "Start AreaFix...");
 
-	if ((area = getNetMailArea(config, name)) != NULL) {
-		startarea = area - config->netMailAreas;
-		endarea = startarea + 1;
-	}
+    if ((area = getNetMailArea(config, name)) != NULL) {
+	startarea = area - config->netMailAreas;
+	endarea = startarea + 1;
+    }
 
-	if (cmd) {
-		link = getLinkFromAddr(*config, addr);
-		if (link) {
-			tmpmsg = makeMessage(&addr, link->ourAka, link->name,
-								 link->RemoteRobotName ?
-								 link->RemoteRobotName : "areafix",
-								 link->areaFixPwd ?
-								 link->areaFixPwd : "", 1);
-			tmpmsg->text = cmd;
-			processAreaFix(tmpmsg, NULL, 1);
-			tmpmsg->text=NULL;
-			freeMsgBuffers(tmpmsg);
-		} else w_log('9', "no such link in config: %s!", aka2str(addr));
-	}
+    if (cmd) {
+	link = getLinkFromAddr(*config, addr);
+	if (link) {
+	    tmpmsg = makeMessage(&addr, link->ourAka, link->name,
+				 link->RemoteRobotName ?
+				 link->RemoteRobotName : "areafix",
+				 link->areaFixPwd ?
+				 link->areaFixPwd : "", 1);
+	    tmpmsg->text = cmd;
+	    processAreaFix(tmpmsg, NULL, 1);
+	    tmpmsg->text=NULL;
+	    freeMsgBuffers(tmpmsg);
+	} else w_log('9', "no such link in config: %s!", aka2str(addr));
+    }
 
-	else for (k = startarea; k < endarea; k++) {
+    else for (k = startarea; k < endarea; k++) {
 		
-		netmail = MsgOpenArea((unsigned char *) config->netMailAreas[k].fileName,
-							  MSGAREA_NORMAL, 
-							  /*config -> netMailArea.fperm, 
-								config -> netMailArea.uid,
-								config -> netMailArea.gid,*/
-							  (word)config -> netMailAreas[k].msgbType);
+	netmail = MsgOpenArea((unsigned char *) config->netMailAreas[k].fileName,
+			      MSGAREA_NORMAL, 
+			      /*config -> netMailArea.fperm, 
+				config -> netMailArea.uid,
+				config -> netMailArea.gid,*/
+			      (word)config -> netMailAreas[k].msgbType);
 
-		if (netmail != NULL) {
+	if (netmail != NULL) {
 
-			highmsg = MsgGetHighMsg(netmail);
-			w_log('1',"Scanning %s",config->netMailAreas[k].areaName);
+	    highmsg = MsgGetHighMsg(netmail);
+	    w_log('1',"Scanning %s",config->netMailAreas[k].areaName);
 
-			// scan all Messages and test if they are already sent.
-			for (i=1; i<= highmsg; i++) {
-				SQmsg = MsgOpenMsg(netmail, MOPEN_RW, i);
+	    // scan all Messages and test if they are already sent.
+	    for (i=1; i<= highmsg; i++) {
+		SQmsg = MsgOpenMsg(netmail, MOPEN_RW, i);
 
-				// msg does not exist
-				if (SQmsg == NULL) continue;
+		// msg does not exist
+		if (SQmsg == NULL) continue;
 
-				MsgReadMsg(SQmsg, &xmsg, 0, 0, NULL, 0, NULL);
-				cvtAddr(xmsg.dest, &dest);
-				for_us = 0;
-				for (j=0; j < config->addrCount; j++)
-					if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
+		MsgReadMsg(SQmsg, &xmsg, 0, 0, NULL, 0, NULL);
+		cvtAddr(xmsg.dest, &dest);
+		for_us = 0;
+		for (j=0; j < config->addrCount; j++)
+		    if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
                 
-				// if not read and for us -> process AreaFix
-				striptwhite((char*)xmsg.to);
-				if (((xmsg.attr & MSGREAD) != MSGREAD) && (for_us==1) &&
-					((stricmp((char*)xmsg.to, "areafix")==0) ||
-					 (stricmp((char*)xmsg.to, "areamgr")==0) ||
-					 (stricmp((char*)xmsg.to, "hpt")==0) ||
-					 hpt_stristr(config->areafixNames,(char*)xmsg.to))) {
-					memset(&msg,'\0',sizeof(s_message));
-					MsgToStruct(SQmsg, xmsg, &msg);
-					processAreaFix(&msg, NULL, 0);
-					if (config->areafixKillRequests) {
-						MsgCloseMsg(SQmsg);
-						MsgKillMsg(netmail, i);
-					} else {
-						xmsg.attr |= MSGREAD;
-						MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
-						MsgCloseMsg(SQmsg);
-					}
-					freeMsgBuffers(&msg);
-				}
-				else MsgCloseMsg(SQmsg);
-
-			}
-
-			MsgCloseArea(netmail);
-		} else {
-			w_log('9', "Could not open %s",
-						  config->netMailAreas[k].areaName);
+		// if not read and for us -> process AreaFix
+		striptwhite((char*)xmsg.to);
+		if (((xmsg.attr & MSGREAD) != MSGREAD) && 
+		    (for_us==1) && (strlen(xmsg.to)>0) &&
+		    ((stricmp((char*)xmsg.to, "areafix")==0) ||
+		     (stricmp((char*)xmsg.to, "areamgr")==0) ||
+		     (stricmp((char*)xmsg.to, "hpt")==0) ||
+		     hpt_stristr(config->areafixNames,(char*)xmsg.to))) {
+		    memset(&msg,'\0',sizeof(s_message));
+		    MsgToStruct(SQmsg, xmsg, &msg);
+		    processAreaFix(&msg, NULL, 0);
+		    if (config->areafixKillRequests) {
+			MsgCloseMsg(SQmsg);
+			MsgKillMsg(netmail, i);
+		    } else {
+			xmsg.attr |= MSGREAD;
+			MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+			MsgCloseMsg(SQmsg);
+		    }
+		    freeMsgBuffers(&msg);
 		}
+		else MsgCloseMsg(SQmsg);
+
+	    }
+
+	    MsgCloseArea(netmail);
+	} else {
+	    w_log('9', "Could not open %s",
+		  config->netMailAreas[k].areaName);
 	}
+    }
 }
 
 int unsubscribeFromPausedEchoAreas(s_link *link) {
