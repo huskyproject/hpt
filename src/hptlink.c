@@ -847,6 +847,7 @@ int main(int argc, char **argv) {
 
    w_log(LL_STOP, "Done");
 
+   MsgCloseApi();
    closeLog();
    disposeConfig(cfg);
    return (0);
