@@ -144,16 +144,14 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
             }
         }
         if (!need_dos_file)
-            xscatprintf(&buff, "EchoArea %s%s%s %s%s%s",
+            xscatprintf(&buff, "EchoArea %s%s%s %s%s",
             quote_areaname, c_area, quote_areaname,
-            msgbDir, msgbFileName,
-            (msgbtype) ? "" : " -b Squish");
+            msgbDir, msgbFileName);
         else {
             sleep(1); /*  to prevent time from creating equal numbers */
-            xscatprintf(&buff,"EchoArea %s%s%s %s%8lx%s",
+            xscatprintf(&buff,"EchoArea %s%s%s %s%8lx",
                 quote_areaname, c_area, quote_areaname,
-                msgbDir, (long)time(NULL),
-                (msgbtype) ? "" : " -b Squish");
+                msgbDir, (long)time(NULL));
         }
 
     } else {
