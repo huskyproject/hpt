@@ -496,7 +496,8 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
         config->areafixReportsAttr);
 	msg->text = createKludges(config, NULL, uplink->ourAka, &(uplink->hisAka),
                               versionStr);
-        /* xstrcat(&(msg->text), "\001FLAGS DIR\r"); */
+	if (config->areafixReportsFlags)
+	    xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r");
 	uplink->msg = msg;
     } else msg = uplink->msg;
 	
@@ -2238,7 +2239,8 @@ void autoPassive()
 					    config->links[i].ourAka,
 					    &(config->links[i].hisAka),
 					    versionStr);
-				  /* xstrcat(&(msg->text), "\001FLAGS DIR\r"); */
+				  if (config->areafixReportsFlags)
+					xstrscat(&msg->text, "\001FLAGS ", config->areafixReportsFlags, "\r", NULL);
 				  xstrcat(&msg->text, "\r System switched to passive, your subscription are paused.\r\r"
 					" You are being unsubscribed from echo areas with no downlinks besides you!\r\r"
 					" When you wish to continue receiving echomail, please send requests\r"
@@ -2330,8 +2332,8 @@ int relink (char *straddr) {
 
 	msg->text = createKludges(config,NULL,researchLink->ourAka,
                               &researchLink->hisAka,versionStr);
-	/* xstrcat(&(msg->text), "\001FLAGS NPD DIR\r"); */
-	xstrcat(&(msg->text), "\001FLAGS NPD\r");
+	if (config->areafixReportsFlags)
+	    xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r");
 
 	for ( count = 0 ; count < areasArraySize; count++ ) {
 	    if ((areasIndexArray[count]->downlinkCount  <= 1) &&

@@ -271,12 +271,12 @@ FIDOCONFIG about location of config file and keywords ideology.
 * Address::                     your system address
 * AfterUnpack::                 execute string after unpack arcmail bundles
 * AreafixFromPkt::              process areafix requests on the fly
-* AreafixKillReports::          set kill/sent flag to areafix reports
 * AreafixKillRequests::         delete areafix requests
 * AreafixMsgSize::              maximum areafix report size
 * AreafixNames::                set additional areafix names
 * AreafixFromName::		set From: field in response messages
 * AreafixOrigin::		set origin for areafix reports
+* AreafixReportsAttr::          set flags to areafix reports
 * AreafixSplitStr::             set split string for splitted areafix messages
 * AreafixQueryReports::         insert linked areas list into areafix reports
 * AreafixQueueFile::		idle requests queue file for areafix
@@ -374,7 +374,7 @@ your pkt files in @code{tempInbound} directory with external utility.
 
 This statement cannot be repeated.
 
-@node AreafixFromPkt, AreafixKillReports, AfterUnpack, Keywords
+@node AreafixFromPkt, AreafixKillRequests, AfterUnpack, Keywords
 @subsection AreafixFromPkt
 @findex AreafixFromPkt
 @table @asis
@@ -391,21 +391,7 @@ This statement cannot be repeated.
 
 @xref{AreafixNames}.
 
-@node AreafixKillReports, AreafixKillRequests, AreafixFromPkt, Keywords
-@subsection AreafixKillReports
-@findex AreafixKillReports
-@table @asis
-@item Syntax:
-@code{areafixKillReports <bool>}
-@item Example:
-@code{areafixKillReports}
-@end table
-
-Set kill/sent flag to areafix reports.
-
-This statement cannot be repeated.
-
-@node AreafixKillRequests, AreafixMsgSize, AreafixKillReports, Keywords
+@node AreafixKillRequests, AreafixMsgSize, AreafixFromPkt, Keywords
 @subsection AreafixKillRequests
 @findex AreafixKillRequests
 @table @asis
@@ -490,7 +476,7 @@ To: Sysop
 
 @end example
 
-@node AreafixOrigin, AreafixSplitStr, AreafixFromName, Keywords
+@node AreafixOrigin, AreafixReportsAttr, AreafixFromName, Keywords
 @subsection AreafixOrigin
 @findex AreafixOrigin
 @table @asis
@@ -505,7 +491,49 @@ the origin string in areafix reports will be like this:
 
 This statement cannot be repeated.
 
-@node AreafixSplitStr, AreafixQueryReports, AreafixOrigin, Keywords
+@node AreafixReportsAttr, AreafixSplitStr, AreafixOrigin, Keywords
+@subsection AreafixKillReports
+@findex AreafixKillReports
+@table @asis
+@item Syntax:
+@code{AreafixReportsAttr <attr>}
+@item Example:
+@code{AreafixReportsAttr pvt,loc,kill}
+@end table
+
+Set attributes to areafix reports.
+
+Valid attributes are:
+@table @asis
+@item pvt
+@item crash
+@item read
+@item sent
+@item att
+@item fwd
+@item orphan
+@item k/s
+@item loc
+@item fwd
+@item xx2
+@item frq
+@item rrq
+@item cpt
+@item arq
+@item urq
+@item kfs
+@item tfs
+@item dir
+@item imm
+@item cfm
+@item npd
+@end table
+
+Default is "pvt loc k/s npd".
+
+This statement cannot be repeated.
+
+@node AreafixSplitStr, AreafixQueryReports, AreafixReportsAttr, Keywords
 @subsection AreafixSplitStr
 @findex AreafixSplitStr
 @table @asis

@@ -683,7 +683,10 @@ void makeMsgToSysop(char *areaName, hs_addr fromAddr, ps_addr uplinkAddr)
                     echo->useAka, echo->useAka,
                     versionStr);
 
-                xstrscat(&(msgToSysop[i]->text), "\001FLAGS NPD\r",
+		if (config->areafixReportsFlags)
+		    xstrscat(&(msgToSysop[i]->text), "\001FLAGS ", 
+		             config->areafixReportsFlags, "\r", NULL);
+                xstrscat(&(msgToSysop[i]->text),
                     "Action   Name", print_ch(49, ' '), "By\r", NULL);
                 /*  Shitty static variables .... */
                 xstrscat(&(msgToSysop[i]->text), print_ch(79, '-'), "\r", NULL);

@@ -652,7 +652,8 @@ void af_QueueReport()
 
     msgToSysop[0]->recode |= (REC_HDR|REC_TXT);
 
-    xstrcat( &(msgToSysop[0]->text), "\001FLAGS NPD\r");
+    if (config->areafixReportsFlags)
+	xstrscat( &(msgToSysop[0]->text), "\001FLAGS ", config->areafixReportsFlags, "\r", NULL);
     xstrcat( &(msgToSysop[0]->text), report );
 
     w_log(LL_STOP, "End generating queue report");
