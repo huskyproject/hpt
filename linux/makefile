@@ -20,7 +20,7 @@ endif
 else
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../fidoconfig -I../h -I../../smapi -Wall -ggdb -O6 -mpentium -DUNIX
+  CFLAGS  = -c -I../h -I../../fidoconfig -I../h -I../../smapi -Wall -ggdb -O6 -DUNIX
   LFLAGS  =
 else
   CFLAGS  = -c -I../h -I../../smapi -Wall -O3 -s -DUNIX

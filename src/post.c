@@ -152,7 +152,9 @@ void post(int c, unsigned int *n, char *params[])
           msg.toUserName = strdup("All");
       if (msg.subjectLine == NULL)
           msg.subjectLine = strdup("");
+
       msg.netMail = area == NULL;
+      if (msg.netMail) echo=&config->netMailArea;
 
       /* reserve mem for the real text */
       /* !!! warning - I suppose that 512 bytes will be enough

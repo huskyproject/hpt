@@ -2,6 +2,11 @@ hpt 0.29
 --------
 
 ----- cvs ci ------
+Tue Sep 14 22:24:52 CEST 1999 
+mtt:
+* applied patch from sven to fix the bug in post.c
+
+----- cvs ci ------
 Sat Sep 11 13:00:16 NOVST 1999
 max:
 + added carbonReason (patch from Serguei Revtov)
