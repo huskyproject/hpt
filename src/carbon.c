@@ -185,9 +185,11 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 
     if (!msg->netMail) {
         xstrscat(&msg->text,
-            (export) ? "AREA:" : "\001AREA:",
-            (export) ? area->areaName : echo->areaName,
-            "\r" , NULL);
+                 (export) ? "AREA:" : "",
+                 (export) ? area->areaName : "",
+                 (export) ? "\r" : "",
+                 "\001AREA:", echo->areaName,
+                 "\r" , NULL);
     }
     if (strncmp(line, "AREA:", 5) == 0) {
         /*  jump over AREA:xxxxx\r */
