@@ -8,7 +8,7 @@ SRC_DIR=..\src\
 
 CFLAGS=-nologo -Zp1 -O2 -I..\.. -I..\h -c
 LFLAGS=
-CDEFS =-D__NT__ -DNT -DWINNT -D_CONSOLE -DINTEL
+CDEFS =-D__NT__ -DWIN32 -D_CONSOLE -DINTEL
 
 OBJ=.obj
 EXE=.exe
