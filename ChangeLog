@@ -1,3 +1,7 @@
+2002-03-11 Monday 18:12  ml
+
+	* src/toss.c (1.380.2.7): carbonText bugfix
+
 2002-03-01 Friday 09:48  ml
 
 	* make/: makefile.mvc (1.2.2.1), makeperl.mvc (1.2.2.3): makefile
