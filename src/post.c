@@ -248,7 +248,7 @@ void post(int c, unsigned int *n, char *params[])
       
       writeLogEntry (hpt_log, '1', "Start posting...");
 
-      writeLogEntry (hpt_log, '2', "Posting msg from %u:%u/%u.%u -> %u:%u/%u.%u in area: %s",
+      writeLogEntry (hpt_log, '5', "Posting msg from %u:%u/%u.%u -> %u:%u/%u.%u in area: %s",
         msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point,
 	msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point,
 	(area) ? area : echo->areaName);

@@ -679,7 +679,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    creatingLink = getLinkFromAddr(*config, pktOrigAddr);
 
    if (creatingLink == NULL) {
-      writeLogEntry(hpt_log, '!', "creatingLink == NULL !!!");
+      writeLogEntry(hpt_log, '9', "creatingLink == NULL !!!");
       return 1;
    }
 
@@ -1399,7 +1399,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	       sprintf(extcmd,"%s %s",config->processPkt,fileName);
 	       writeLogEntry(hpt_log, '6', "ProcessPkt: execute string \"%s\"",extcmd);
 	       if ((cmdexit = system(extcmd)) != 0)
-		 writeLogEntry(hpt_log, '6', "exec failed, code %d", cmdexit);
+		 writeLogEntry(hpt_log, '9', "exec failed, code %d", cmdexit);
 	       free(extcmd);
 	     }
 	 }
@@ -1411,11 +1411,11 @@ int processPkt(char *fileName, e_tossSecurity sec)
        header = openPkt(pkt);
        if (header != NULL) {
 	 if ((to_us(header->destAddr)==0) || (sec == secLocalInbound)) {
-	   writeLogEntry(hpt_log, '6', "pkt: %s", fileName);
+	   writeLogEntry(hpt_log, '7', "pkt: %s", fileName);
 	   statToss.pkts++;
 	   link = getLinkFromAddr(*config, header->origAddr);
 	   if ((link!=NULL) && (link->pktPwd==NULL) && (header->pktPassword[0]!='\000'))
-	       writeLogEntry(hpt_log, '3', "Unexpected Password %s.", header->pktPassword);
+	       writeLogEntry(hpt_log, '9', "Unexpected Password %s.", header->pktPassword);
 	   
 	   switch (sec) {
 	   case secLocalInbound:
@@ -1545,7 +1545,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
    char cmd[256];
 
    if (sec == secInbound) {
-      writeLogEntry(hpt_log, '6', "bundle %s: tossing in unsecure inbound, security violation", fileName);
+      writeLogEntry(hpt_log, '9', "bundle %s: tossing in unsecure inbound, security violation", fileName);
       return 3;
    };
 
@@ -1568,17 +1568,17 @@ int  processArc(char *fileName, e_tossSecurity sec)
 	  fillCmdStatement(cmd,config->unpack[i-1].call,fileName,"",config->tempInbound);
       writeLogEntry(hpt_log, '6', "bundle %s: unpacking with \"%s\"", fileName, cmd);
       if ((cmdexit = system(cmd)) != 0) {
-         writeLogEntry(hpt_log, '6', "exec failed, code %d", cmdexit);
+         writeLogEntry(hpt_log, '9', "exec failed, code %d", cmdexit);
          return 3;
       };
 	  if (config->afterUnpack) {
 		  writeLogEntry(hpt_log, '6', "afterUnpack: execute string \"%s\"", config->afterUnpack);
 		  if ((cmdexit = system(config->afterUnpack)) != 0) {
-			  writeLogEntry(hpt_log, '6', "exec failed, code %d", cmdexit);
+			  writeLogEntry(hpt_log, '9', "exec failed, code %d", cmdexit);
 		  };
 	  }
    } else {
-      writeLogEntry(hpt_log, '6', "bundle %s: cannot find unpacker", fileName);
+      writeLogEntry(hpt_log, '9', "bundle %s: cannot find unpacker", fileName);
       return 3;
    };
    statToss.arch++;
@@ -1838,7 +1838,7 @@ void arcmail(s_link *tolink) {
    if (config->beforePack) {
 	   writeLogEntry(hpt_log, '6', "beforePack: execute string \"%s\"", config->beforePack);
 	   if ((cmdexit = system(config->beforePack)) != 0) {
-		   writeLogEntry(hpt_log, '6', "exec failed, code %d", cmdexit);
+		   writeLogEntry(hpt_log, '9', "exec failed, code %d", cmdexit);
 	   };
    }
    
@@ -1857,7 +1857,7 @@ void arcmail(s_link *tolink) {
 			 flo = fopen(link->floFile, "a+");
 			 
 			 if (flo == NULL) {
-			   writeLogEntry(hpt_log, '!', "Cannot open flo file %s", config->links[i].floFile);
+			   writeLogEntry(hpt_log, '9', "Cannot open flo file %s", config->links[i].floFile);
 			   return;
 			 }
 
@@ -1913,7 +1913,7 @@ void arcmail(s_link *tolink) {
 							  link->pktFile, "");
 				 writeLogEntry(hpt_log, '7', "Packing for %s %s, %s > %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile), get_filename(link->packFile));
 				 cmdexit = system(cmd);
-// 				 writeLogEntry(hpt_log, '7', "cmd: %s",cmd);
+// 				 writeLogEntry(hpt_log, '6', "cmd: %s",cmd);
 				 if (!cmdexit) remove(link->pktFile);
 			 }
 			 remove(link->bsyFile);
@@ -2110,7 +2110,7 @@ void toss()
 	 if (config -> logperm != -1) chmod(config->importlog, config->logperm);
 #endif
 
-      } else writeLogEntry(hpt_log, '5', "Could not open importlogfile");
+      } else writeLogEntry(hpt_log, '9', "Could not open importlogfile");
    }
 
    if (forwardedPkts) {

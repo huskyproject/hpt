@@ -12,7 +12,6 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - noChangeTaskTitle
 - add seen-by (-sb node in echoArea options)
 - one inbound tossing
-- document each loglevels
 - screenloglevels
 - add scanned msgs to dupebase
 - del empty .sep catalogues

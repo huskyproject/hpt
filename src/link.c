@@ -125,7 +125,7 @@ int linkArea(s_area *area, int netMail)
    if (area->msgbType == MSGTYPE_PASSTHROUGH) return 0;
 
    if (area->nolink) {
-     writeLogEntry(hpt_log, '2', "%s has nolink option, ignoring", area->areaName);
+     writeLogEntry(hpt_log, '3', "%s has nolink option, ignoring", area->areaName);
      return 0;
    }
 
@@ -133,7 +133,7 @@ int linkArea(s_area *area, int netMail)
 /*							  area->fperm, area->uid, area->gid,*/
                        (word)(area->msgbType | (netMail ? 0 : MSGTYPE_ECHO)));
    if (harea) {
-      writeLogEntry(hpt_log, '2', "linking area %s", area->areaName);
+      writeLogEntry(hpt_log, '3', "linking area %s", area->areaName);
       msgsNum = MsgGetHighMsg(harea);
       if (msgsNum < 2) { /* Really nothing to link */
 	      MsgCloseArea(harea);

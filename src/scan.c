@@ -443,7 +443,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
                  free(link->floFile);
               }
            } else {
-              writeLogEntry(hpt_log, '8', "no route for mail to %u:%u/%u.%u found - leave mail untouched", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+              writeLogEntry(hpt_log, '7', "no route for mail to %u:%u/%u.%u found - leave mail untouched", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
            }
    }
 
@@ -474,7 +474,7 @@ void scanNMArea(s_area *area)
 
    // FixMe: workaround for not netmail packing when there's no any routing
    if (config->routeFileCount == 0 && config->routeMailCount == 0 && config->routeCount == 0) {
-      writeLogEntry(hpt_log, '8', "no route at all - leave mail untouched");
+      writeLogEntry(hpt_log, '7', "no route at all - leave mail untouched");
       return;
    }
 
@@ -562,7 +562,7 @@ int scanByName(char *name) {
 		  return 1;
 	  }; 
        } else {
-          writeLogEntry(hpt_log, '3', "Area \'%s\' is not found -> Scanning stop.", name);
+          writeLogEntry(hpt_log, '4', "Area \'%s\' is not found -> Scanning stop.", name);
        };
     } /* endif */
     return 0;
@@ -596,11 +596,11 @@ void scanExport(int type, char *str) {
    } else if (f == NULL) {
 	   
       if (type & SCN_FILE) {
-	  writeLogEntry(hpt_log, '3', "EchoTossLogFile not found -> Scanning stop.");
+	  writeLogEntry(hpt_log, '4', "EchoTossLogFile not found -> Scanning stop.");
 	  return; 
       };
    // if echotoss file does not exist scan all areas
-      writeLogEntry(hpt_log, '3', "EchoTossLogFile not found -> Scanning all areas.");
+      writeLogEntry(hpt_log, '4', "EchoTossLogFile not found -> Scanning all areas.");
       if (type & SCN_ECHOMAIL) {
          for (i = 0; i< config->echoAreaCount; i++) {
             if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
@@ -615,7 +615,7 @@ void scanExport(int type, char *str) {
       };
    } else {
    // else scan only those areas which are listed in the file
-      writeLogEntry(hpt_log, '3', "EchoTossLogFile found -> Scanning only listed areas");
+      writeLogEntry(hpt_log, '4', "EchoTossLogFile found -> Scanning only listed areas");
 
       while (!feof(f)) {
          line = readLine(f);

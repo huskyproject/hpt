@@ -1769,7 +1769,7 @@ int relink (char *straddr) {
 		if ( isLinkOfArea(researchLink, &config->echoAreas[count]) ) {
 			areasIndexArray[areasArraySize] = &config->echoAreas[count];
 			areasArraySize++;
-			writeLogEntry(hpt_log, '4', "Echo %s from link %s refresh",
+			writeLogEntry(hpt_log, '8', "Echo %s from link %s refresh",
 						  config->echoAreas[count].areaName,
 						  aka2str(researchLink->hisAka));
 		}
@@ -1780,7 +1780,7 @@ int relink (char *straddr) {
 			areasIndexArray[areasArraySize] = &config->localAreas[count];
 			areasArraySize++;
 			// to log area name (low priority)
-			writeLogEntry(hpt_log, '4', "LocalEcho %s link %s refresh",
+			writeLogEntry(hpt_log, '8', "LocalEcho %s link %s refresh",
 						  config->localAreas[count].areaName,
 						  aka2str(researchLink->hisAka));
 		}
@@ -1804,11 +1804,11 @@ int relink (char *straddr) {
 
 		xscatprintf(&(msg->text), " \r--- %s areafix\r", versionStr);
 		msg->textLength = strlen(msg->text);
-		writeLogEntry(hpt_log, '9', "'Refresh' message created to `AreaFix`");
+		writeLogEntry(hpt_log, '8', "'Refresh' message created to `AreaFix`");
 		processNMMsg(msg, NULL, NULL, 0, 0);
 		freeMsgBuffers(msg);
 		free(msg);
-		writeLogEntry(hpt_log, '9', "Total request relink %i area(s)",areasArraySize);
+		writeLogEntry(hpt_log, '8', "Total request relink %i area(s)",areasArraySize);
 
 		cmPack = 1;
 	}

@@ -5,6 +5,7 @@ hpt 0.9.7 (development version)
 Sat May 27 10:21:30 NOVST 2000
 max:
 * set default dupebase type to hashDupesWmsgid (read documentation)
+* changed loglevels (rtfm)
 
 ----- cvs ci ------
 Fri May 26 14:37:15 NOVST 2000

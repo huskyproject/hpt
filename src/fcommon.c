@@ -430,7 +430,7 @@ int createDirectoryTree(const char *pathName) {
       if (stat(start, &buf) != 0) {
          // this part of the path does not exist, create it
          if (mymkdir(start) != 0) {
-            writeLogEntry(hpt_log, '5', "Could not create directory %s", start);
+            writeLogEntry(hpt_log, '9', "Could not create directory %s", start);
             free(start);
             return 1;
          }
@@ -440,7 +440,7 @@ int createDirectoryTree(const char *pathName) {
 #else
       } else if(!S_ISDIR(buf.st_mode)) {
 #endif
-         writeLogEntry(hpt_log, '5', "%s is a file not a directory", start);
+         writeLogEntry(hpt_log, '9', "%s is a file not a directory", start);
          free(start);
          return 1;
       }
@@ -532,8 +532,8 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    if (fexist(link->bsyFile)) {
 
            writeLogEntry(hpt_log, '7', "link %s is busy.", link->name);
-           free (link->floFile); link->floFile = NULL;
-           free (link->bsyFile); link->bsyFile = NULL;
+           nfree (link->floFile);
+           nfree (link->bsyFile);
 
            return 1;
 
@@ -544,8 +544,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
                            fprintf(stderr,"cannot create *.bsy file for %s\n",link->name);
                            if (config->lockfile != NULL) {
                                    remove(link->bsyFile);
-                                   free(link->bsyFile);
-                                   link->bsyFile=NULL;
+                                   nfree(link->bsyFile);
                            }
                            exit_hpt("cannot create *.bsy file!",0);
                    }
