@@ -205,7 +205,7 @@ void scanEMArea(s_area *echo)
    HAREA area;
    HMSG  hmsg;
    XMSG  xmsg;
-   dword highWaterMark, highestMsg, i;
+   dword highestMsg, i, num;
    
    if (echo->scn) return;
    
@@ -214,9 +214,16 @@ void scanEMArea(s_area *echo)
       statScan.areas++;
       echo->scn = 1;
       w_log('1', "Scanning area: %s", echo->areaName);
-      if (noHighWaters) i = highWaterMark = 0;
-      else i = highWaterMark = MsgGetHighWater(area);
-      highestMsg    = MsgGetHighMsg(area);
+
+      i = (noHighWaters) ? 0 : MsgGetHighWater(area);
+	  highestMsg = MsgGetHighMsg(area);
+
+	  //FIXME: we needs for smapi fix to equivalent work of squish, sdm and jam
+	  if (echo->msgbType == MSGTYPE_JAM) {
+		  num = MsgGetNumMsg(area);
+		  if (highestMsg>num && i>=num) i=0;
+		  highestMsg = num;
+	  }
 
       while (i < highestMsg) {
          hmsg = MsgOpenMsg(area, MOPEN_RW, ++i);
@@ -233,9 +240,8 @@ void scanEMArea(s_area *echo)
 		 if ((xmsg.attr & MSGKILL) == MSGKILL) MsgKillMsg(area, i--);
 
       }
-
-      MsgSetHighWater(area, i);
-
+	  MsgSetHighWater(area, i);
+	  
       MsgCloseArea(area);
    } else {
       w_log('9', "Could not open %s", echo->fileName);

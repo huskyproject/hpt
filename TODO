@@ -4,6 +4,7 @@ TODO-List for HPT
 Category 1: Will certainly be implemented until next release
 ============================================================
 - "/" -> "_", etc... (dosfile)
+- make switch for REASON: No downlinks for passthrough area
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

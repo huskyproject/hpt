@@ -1,12 +1,8 @@
-The following things of fidoconfig are currently not implemented in HPT:
 
-- hub-routing does not use the hubs defined in the nodelist but uses the nodes
-  aka - (aka.node %100)
-  e.g.: a mail to node 2:2433/1245 is send to 2:2433/1200
-  but   a mail to node 2:2433/355 is send to 2:2433/300 which currently does
-        not exist.
-
-  BE CAREFUL!
+! JAM with deleted msgs scanned without highwaters, but there is a fix in code:
+  if the new msg in the end of message base, scanning will be started from this
+  msg, else - from 1-st msg (new msg at the begin or if no new msg at all).
+  Thats why you should always use EchoTossLog file!
 
 Renaming suffxies:
 
@@ -17,3 +13,4 @@ Renaming suffxies:
 .ntu - not to us
 .err - msg tossing problem (couldn't open badArea/couldn't write msg)
 .flt - perl filter (process_pkt()) returns bad retcode
+
