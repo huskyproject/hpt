@@ -1,3 +1,35 @@
+2002-11-06 Wednesday 15:20  stas_degteff
+
+	* src/carbon.c (1.7): Use safety functions on some lines
+
+2002-11-06 Wednesday 14:18  stas_degteff
+
+	* src/carbon.c (1.6): processExternal(): Emulate pipes if OS don't
+	support it
+
+2002-11-06 Wednesday 14:04  stas_degteff
+
+	* src/carbon.c (1.5): alwais use text mode in processExternal()
+
+2002-11-06 Wednesday 13:48  stas_degteff
+
+	* src/carbon.c (1.4): Fix analise return value of system()
+
+2002-11-06 Wednesday 13:43  stas_degteff
+
+	* src/carbon.c (1.3): Prevent compilation warning about
+	signed/unsigned char
+
+2002-11-06 Wednesday 13:40  stas_degteff
+
+	* src/carbon.c (1.2): Prevent compilation warning abount unlink()
+
+2002-11-06 Wednesday 11:53  mche
+
+	* make/makefile.inc (1.13), src/carbon.c (1.1), src/scanarea.c
+	(1.96), src/toss.c (1.461), h/toss.h (1.51): carbone process
+	improved
+
 2002-11-05 Tuesday 15:40  stas_degteff
 
 	* h/global.h (1.33), h/pkt.h (1.28), h/query.h (1.15), h/scanarea.h
