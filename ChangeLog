@@ -1,9 +1,5 @@
 hpt 0.26
 --------
-Mon Feb 22 11:09:53 MET 1999
-  Tobias Ernst:
-- hpt now also recognises .pkt and arcmail filename extensions that are
-  written in lower case.
 	
 Sat Feb 20 20:48:03 MET 1999
   Tobias Ernst:
