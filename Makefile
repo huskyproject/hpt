@@ -17,9 +17,9 @@ else
 endif
 
 ifeq ($(SHORTNAME), 1)
-  LIBS  = -L$(LIBDIR) -lfidoconf -lsmapi
+  LIBS  = -L$(LIBDIR) -lfidoconf -lsmapi -lhuskylib
 else
-  LIBS  = -L$(LIBDIR) -lfidoconfig -lsmapi
+  LIBS  = -L$(LIBDIR) -lfidoconfig -lsmapi -lhuskylib
 endif
 
 ifeq ($(PERL), 1)
