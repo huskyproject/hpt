@@ -1,0 +1,7 @@
+This document desribe how to upgrade from HPT 1.2 to HPT 1.4.
+
+1. AreaFixKillReports token is deprecated now. Change it to:
+    AreafixReportsAttr loc pvt k/s npd         # kill areafix reports
+      or
+    AreafixReportsAttr loc pvt k/s npd dir     # kill areafix reports and
+                                               # send it's directly
