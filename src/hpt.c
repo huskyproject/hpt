@@ -224,7 +224,7 @@ int processCommandLine(int argc, char **argv)
 		  cmAfix = 1;
 		  continue;
       } else if (stricmp(argv[i], "post") == 0) {
-         ++i; post(argc, &i, argv);
+         ++i; post(argc, (unsigned*)&i, argv);
       } else if (stricmp(argv[i], "relink") == 0) {
          i++; relink(argv[i]);
       } else if (stricmp(argv[i], "qupd") == 0) {
