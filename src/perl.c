@@ -1048,7 +1048,7 @@ void perl_invalidate(e_perlconftype confType) { perl_vars_invalid |= confType; }
 void perl_setvars(void) {
    UINT i, j;
    struct sv 		*sv;
-   struct hv 		*hv, *hv2, *hv3;
+   struct hv 		*hv = NULL, *hv2, *hv3;
    struct av 		*av;
 
    if (!do_perl || perl == NULL) return;
@@ -1235,7 +1235,7 @@ void perl_setvars(void) {
      }
    }
 
-   SvREADONLY_on(hv);
+   if (hv) SvREADONLY_on(hv);
 
    perl_vars_invalid = 0;
 }
