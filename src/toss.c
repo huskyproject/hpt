@@ -1101,6 +1101,19 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	addlink(creatingLink, area);
     }
 
+    if (forwardAddr &&
+        (creatingLink=getLinkFromAddr(*config, *forwardAddr))!=NULL) {
+        // subscribe downlink if he is not subscribed
+        for (i = 0; i<area->downlinkCount; i++) {
+	    if (addrComp(*forwardAddr, area->downlinks[i]->link->hisAka)==0)
+	        break;
+        }
+        if (i == area->downlinkCount) {
+	    xscatprintf(&buff, " %s", aka2str(*forwardAddr));
+	    addlink(creatingLink, area);
+        }
+    }
+
     fprintf(f, "%s\n", buff); // add line to config
     fclose(f);
    
