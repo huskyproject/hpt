@@ -508,12 +508,15 @@ void post(int c, unsigned int *n, char *params[])
     
     if (textBuffer == NULL && !quit) {
         w_log(LL_CRIT, "post: no input source specified");
-        //exit(EX_NOINPUT);
+        /* exit(EX_NOINPUT); */
     }
     else if (msg.destAddr.zone == 0 && !quit) {
         w_log(LL_CRIT,"post: attempt to post netmail msg without specifyng dest address");
-        //exit(EX_USAGE);
+        /* exit(EX_USAGE); */
     }
     nfree(textBuffer);
     freeMsgBuffers(&msg);
+
+    /* deinit SMAPI */
+    MsgCloseApi();
 }

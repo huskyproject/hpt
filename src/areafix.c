@@ -2300,7 +2300,8 @@ int relink (char *straddr) {
 
 	msg->text = createKludges(config,NULL,researchLink->ourAka,
                               &researchLink->hisAka,versionStr);
-	xstrcat(&(msg->text), "\001FLAGS DIR\r");
+	/* xstrcat(&(msg->text), "\001FLAGS NPD DIR\r"); */
+	xstrcat(&(msg->text), "\001FLAGS NPD\r");
 
 	for ( count = 0 ; count < areasArraySize; count++ ) {
 	    if ((areasIndexArray[count]->downlinkCount  <= 1) &&
@@ -2325,6 +2326,9 @@ int relink (char *straddr) {
     }
 
     nfree(areasIndexArray);
+
+    /* deinit SMAPI */
+    MsgCloseApi();
 
     return 0;
 }
