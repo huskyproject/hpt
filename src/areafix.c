@@ -1892,9 +1892,10 @@ void autoPassive()
 					   if (*path && (*path == '^' || *path == '#')) {
 						   path++;
 						   // set Pause if files stored only in outbound
-						   if (*path && strncmp(path, config->outbound,
-												strlen(config->outbound)-1)!=0) continue;
-						   if (stat(path, &stat_file) != -1) {
+						   if (*path && 
+							   strncmp(path,config->outbound,strlen(config->outbound)-1)!=0 &&
+							   stat(path, &stat_file) != -1) {
+							   
 							   time_cur = time(NULL);
 							   time_test = (time_cur - stat_file.st_mtime)/3600;
 							   if (time_test >= (config->links[i].autoPause*24)) {
