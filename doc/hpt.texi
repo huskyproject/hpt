@@ -477,8 +477,10 @@ This statement cannot be repeated.
 @code{areafixQueryReports off}
 @end table
 
-This statement enable/disable include linked areas list into all areafix
-replies. Default: enable.
+This statement enables/disables including linked areas list into all areafix
+replies.
+
+Default: enable.
 
 This statement cannot be repeated.
 
@@ -493,9 +495,9 @@ This statement cannot be repeated.
 @code{areafixQueueFile /fido/datafiles}
 @end table
 
-This command specifies your areafix delaied requests queue file. Hpt must have
-read/write rights to this file.
-For use this feature periodically (daily) run 'hpt qupd'.
+This command specifies the queue file containing your delayed forward-requests.
+Hpt must have read/write rights for this file.
+To use this feature run @code{hpt qupd} periodically.
 
 This statement cannot be repeated.
 
@@ -675,16 +677,17 @@ This statement cannot be repeated.
 @item Syntax:
 @code{ForwardRequestTimeout <number>}
 @item Example:
-@code{ForwardRequestTimeout 10}
+@code{ForwardRequestTimeout 7}
 @end table
 
-This statement specified time wait (days) for requested from uplink echoarea.
-If echomail traffic for this echoarea is null then 'hpt qupd' unsubscribe area
-from this uplink and subscribe to it on next uplink. After KilledRequestTimeout
-days 'hpt qupd' remove this area from queue file. Run 'hpt qupd' daily for use
-this feature.
+This statement specifies time to wait (in days) for echoarea requested from
+uplink. If there is no traffic in this echoarea, @code{hpt qupd} unsubscribes
+area from this uplink and subscribes to it at next uplink. If next uplink
+for this echoarea not avaiable, @code{hpt qupd} removes echoarea from queue.
 
-Default is 10 days.
+To use this feature run @code{hpt qupd} daily.
+
+Default is 7 days.
 
 This statement cannot be repeated.
 
@@ -696,14 +699,15 @@ This statement cannot be repeated.
 @item Syntax:
 @code{IdlePassthruTimeout <number>}
 @item Example:
-@code{IdlePassthruTimeout 6}
+@code{IdlePassthruTimeout 3}
 @end table
 
-This statement specified time wait (days) before unsubscribe echoarea from
-uplink after unsubscribe last downlink (one link rest: uplink). Run 'hpt
-qupd' daily for use this feature.
+This statement specifies time to wait (in days) before unsubscribing echoarea
+from uplink after the time last downlink unsubscribed (one uplink rest).
 
-Default is 6 days.
+To use this feature run @code{hpt qupd} daily.
+
+Default is 3 days.
 
 This statement cannot be repeated.
 
@@ -782,13 +786,14 @@ This statement cannot be repeated.
 @item Syntax:
 @code{KilledRequestTimeout <number>}
 @item Example:
-@code{KilledRequestTimeout 7}
+@code{KilledRequestTimeout 4}
 @end table
 
 This statement specified time wait (days) for delete from config echoarea after
-unsubscribe it from uplink (last link). Run 'hpt qupd' daily for use this feature.
+unsubscribe it from uplink (last link).
+Run @code{hpt qupd} daily for use this feature.
 
-Default is 7 days.
+Default is 4 days.
 
 This statement cannot be repeated.
 
