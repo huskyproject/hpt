@@ -1,5 +1,10 @@
-hpt 0.9.7 (development version)
+hpt 0.9.8 (development version)
 ---------	
+
+----- cvs ci ------
+Fri Aug 11 22:03:37 NOVST 2000
+max:
+* links with "export off" don't added to SEEN-BYs
 
 ----- cvs ci ------
 Thu Aug 10 21:01:47 NOVST 2000

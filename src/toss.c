@@ -560,7 +560,9 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		if (newLinks[i] == NULL) break;
 		// don't include points in SEEN-BYs
 		if (newLinks[i]->link->hisAka.point != 0) continue;
-		
+		// don't include arealinks with "export off"
+		if (newLinks[i]->export == 0) continue;
+
 		(*seenBys) = (s_seenBy*) safe_realloc((*seenBys), sizeof(s_seenBy) * (*seenByCount+1));
 		(*seenBys)[*seenByCount].net = (UINT16) newLinks[i]->link->hisAka.net;
 		(*seenBys)[*seenByCount].node = (UINT16) newLinks[i]->link->hisAka.node;
