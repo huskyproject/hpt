@@ -140,7 +140,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     char *buff=NULL, *hisaddr=NULL;
     char *msgbDir=NULL;
     s_link *creatingLink;
-//    s_area *area; 
+    s_area *area; 
     s_query_areas* areaNode=NULL;
     size_t i;
     unsigned int j;
@@ -150,7 +150,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     if (strlen(c_area)>60) return 11;
     if (!isValidConference(c_area) || isPatternLine(c_area)) return 7;
 
-    creatingLink = getLinkFromAddr(*config, pktOrigAddr);
+    creatingLink = getLinkFromAddr(config, pktOrigAddr);
 
     if (creatingLink == NULL) {
 	w_log('9', "creatingLink == NULL !!!");
@@ -202,6 +202,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     buff = makeAreaParam(creatingLink , c_area, msgbDir);
 
     // subscribe links
+/*
     if(areaNode) // areaNode == NULL if areafixQueueFile isn't used
     {
         for(i = 0; i < areaNode->linksCount; i++)
@@ -215,13 +216,9 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
         xstrcat( &buff, " " );
         xstrcat( &buff, hisaddr );
     }
-
+*/
     // add new created echo to config in memory
     parseLine(buff, config);
-
-/* subscribed above -> xstrcat( &buff, hisaddr );
-    later, parseLine(buff, config); subscribed links nd uplink
-    the same way as as pointed below:
 
     // subscribe uplink if he is not subscribed
     area = &(config->echoAreas[config->echoAreaCount-1]);
@@ -229,7 +226,21 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	xscatprintf(&buff, " %s", hisaddr);
 	addlink(creatingLink, area);
     }
-*/
+
+    // subscribe downlinks if present
+    if(areaNode) { // areaNode == NULL if areafixQueueFile isn't used
+        // prevent subscribing of defuault links
+        // or not existing links
+        for(i = 1; i < areaNode->linksCount; i++) 
+            if( ( isAreaLink( areaNode->downlinks[i],area ) != -1 ) &&
+                ( getLinkFromAddr(config,areaNode->downlinks[i]) )
+            ) {
+            xstrcat( &buff, " " );
+            xstrcat( &buff, aka2str(areaNode->downlinks[i]) );
+            addlink(getLinkFromAddr(config,areaNode->downlinks[i]), area);
+        }
+    }
+
 
     // fix if dummys del \n from the end of file
     fseek (f, -1L, SEEK_END);
