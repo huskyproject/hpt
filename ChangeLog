@@ -1,6 +1,12 @@
 hpt 0.9.7 (development version)
 ---------	
 
+
+----- cvs ci ------
+Thu Jun  1 11:51:34 NOVST 2000
+max (patch from Lev Serebryakov):
+* Now hpt sorts links according to ForwardAreaPriority when request areas
+
 ----- cvs ci ------
 max (patch from Serguei Revtov):
 Tue May 30 11:01:06 MSD 2000

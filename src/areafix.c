@@ -653,22 +653,42 @@ int areaIsAvailable(char *areaName, char *fileName, char **desc, int retd) {
 	return 0;
 }
 
+static int compare_links_priority(const void *a, const void *b) {
+	int ia = *((int*)a);
+	int ib = *((int*)b);
+	if(config->links[ia].forwardAreaPriority > config->links[ib].forwardAreaPriority) return -1;
+	else if(config->links[ia].forwardAreaPriority < config->links[ib].forwardAreaPriority) return 1;
+	else return 0;
+}
+
 int forwardRequest(char *areatag, s_link *dwlink) {
     int i;
     s_link *uplink;
-	
+    int *Indexes;
+    int Requestable = 0;
+
+    /* From Lev Serebryakov -- sort Links by priority */
+	Indexes	= malloc(sizeof(int)*config->linkCount);
     for (i = 0; i < config->linkCount; i++) {
-		uplink = &(config->links[i]);
+		if (config->links[i].forwardRequests) Indexes[Requestable++] = i;
+    }
+    qsort(Indexes,Requestable,sizeof(Indexes[0]),compare_links_priority);
+
+
+    for (i = 0; i < Requestable; i++) {
+		uplink = &(config->links[Indexes[i]]);
 		if (uplink->forwardRequests) {
 			
 			if (uplink->forwardRequestFile!=NULL) {
 				// first try to find the areatag in forwardRequestFile
 				if (areaIsAvailable(areatag,uplink->forwardRequestFile,NULL,0)!=0) {
 					forwardRequestToLink(areatag,uplink,dwlink,0);
+					free(Indexes);
 					return 0;
 				}
 			} else {
 				forwardRequestToLink(areatag,uplink,dwlink,0);
+				free(Indexes);
 				return 0;
 			}
 		}
@@ -676,6 +696,7 @@ int forwardRequest(char *areatag, s_link *dwlink) {
     }
 	
 	// link with "forwardRequests on" not found
+	free(Indexes);
 	return 1;	
 }
 
