@@ -80,7 +80,7 @@ s_pktHeader *openPkt(FILE *pkt)
   header->destAddr.node = getUINT16(pkt);
   header->origAddr.domain = NULL;
   header->destAddr.domain = NULL;
-  header->pktCreated = readPktTime(pkt);
+  header->pktCreated = readPktTime(pkt); // 12 bytes
 
   getc(pkt); getc(pkt); /* read 2 bytes for the unused baud field */
 
@@ -98,7 +98,7 @@ s_pktHeader *openPkt(FILE *pkt)
   header->loProductCode = getc(pkt);
   header->majorProductRev = getc(pkt);
 
-  readPktPassword(pkt, (UCHAR *)header->pktPassword);
+  readPktPassword(pkt, (UCHAR *)header->pktPassword); // 8 bytes
 
   header->origAddr.zone = getUINT16(pkt);
   header->destAddr.zone = getUINT16(pkt);
@@ -110,7 +110,8 @@ s_pktHeader *openPkt(FILE *pkt)
   header->minorProductRev = getc(pkt);
 
   capWord = getUINT16(pkt);
-  if (capWord!=header->capabilityWord) { /* if both capabilitywords */
+  if (capWord!=header->capabilityWord &&
+      header->capabilityWord!=0) { /* if both capabilitywords */
     free(header);                        /* aren't the same, abort */
     header = NULL;
     return NULL;
@@ -244,7 +245,7 @@ s_message *readMsgFromPkt(FILE *pkt,UINT16 def_zone)
       return NULL;              /* no packed msg */
    } /* endif */
 
-   msg = (s_message*) malloc(sizeof(s_message));
+   msg = (s_message*) calloc(1,sizeof(s_message));
    if (msg==NULL) {
       return NULL;
    } /* endif */
@@ -285,7 +286,7 @@ s_message *readMsgFromPkt(FILE *pkt,UINT16 def_zone)
 
    correctAddr(msg,def_zone);
 
-   msg->recode = 0;
+//   msg->recode = 0;
 
    return msg;
 }

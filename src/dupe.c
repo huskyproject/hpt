@@ -374,7 +374,7 @@ int dupeDetection(s_area *area, const s_message msg) {
    char         *str;
 
    if (area->dupeCheck == dcOff) return 1; // no dupeCheck return 1 "no dupe"
-   if (getKludge(msg, "MSGID:")==NULL) return 1; // msgs without MSGID are no dupes!
+   if ((str=getKludge(msg, "MSGID:"))==NULL) return 1; // msgs without MSGID are no dupes!
 
    // test if dupeDatabase is already read
    if (area->dupes == NULL) {
@@ -394,11 +394,8 @@ int dupeDetection(s_area *area, const s_message msg) {
    entry->from    = malloc(strlen(msg.fromUserName)+1); strcpy(entry->from, msg.fromUserName);
    entry->to      = malloc(strlen(msg.toUserName)+1); strcpy(entry->to, msg.toUserName);
    entry->subject = malloc(strlen(msg.subjectLine)+1); strcpy(entry->subject, msg.subjectLine);
-   str = getKludge(msg, "MSGID:");
-   if (str != NULL) {
-      entry->msgid   = malloc(strlen(str)+1-7); strcpy(entry->msgid, str+7);
-      free(str);
-   } else entry->msgid = NULL;
+   entry->msgid   = malloc(strlen(str)+1-7); strcpy(entry->msgid, str+7);
+   free(str);
 
    if (!isDupe(*area, entry)) {
       // add to newDupes

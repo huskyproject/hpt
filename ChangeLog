@@ -2,6 +2,12 @@ hpt 0.29
 --------
 
 ----- cvs ci ------
+Mon Jul 26 14:19:28 NOVST 1999
+max:
+* fixed memory leak in dupe.c (thanx to Oleg Zrozhevsky)
+* small changes in pktread.c (now reads stone age pkt's)
+
+----- cvs ci ------
 Wed Jun 30 10:14:02 MET DST 1999
 mtt:
 * applied small patch for os/2
