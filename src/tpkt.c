@@ -13,21 +13,22 @@ int main()
    struct tm    *tm;
 
    header.origAddr.zone  = 2;
-   header.origAddr.net   = 2433;
-   header.origAddr.node  = 1245;
-   header.origAddr.point = 100;
+   header.origAddr.net   = 2432;
+   header.origAddr.node  = 601;
+   header.origAddr.point = 0;
 
    header.destAddr.zone  = 2;
-   header.destAddr.net   = 2433;
-   header.destAddr.node  = 1245;
-   header.destAddr.point = 1;
+   header.destAddr.net   = 2432;
+   header.destAddr.node  = 601;
+   header.destAddr.point = 29;
 
    header.hiProductCode  = 0;
    header.loProductCode  = 0xfe;
    header.majorProductRev = 0;
-   header.minorProductRev = 6;
+   header.minorProductRev = 24;
 
-   header.pktPassword[0] = 0;
+   //header.pktPassword[0] = 0;
+   strcpy(header.pktPassword, "irkutsk");
    header.pktCreated = time(NULL);
 
    header.capabilityWord = 1;
@@ -36,14 +37,14 @@ int main()
    pkt = createPkt("test.pkt", &header);
    if (pkt != NULL) {
       msg.origAddr.zone  = 2;
-      msg.origAddr.net   = 2433;
-      msg.origAddr.node  = 1245;
-      msg.origAddr.point = 100;
+      msg.origAddr.net   = 2432;
+      msg.origAddr.node  = 601;
+      msg.origAddr.point = 0;
 
       msg.destAddr.zone  = 2;
-      msg.destAddr.net   = 2433;
-      msg.destAddr.node  = 1245;
-      msg.destAddr.point = 1;
+      msg.destAddr.net   = 2432;
+      msg.destAddr.node  = 601;
+      msg.destAddr.point = 29;
 
       msg.attributes = 1;
 
@@ -53,13 +54,13 @@ int main()
 
       msg.netMail = 1;
       msg.text = (char *) malloc(300);
-      strcpy(msg.text, "FMPT 100\rTOPT 1\rINTL 2:2433/1245 2:2433/1245\r\rEdde Budde Edde\r\r text text\r---");
+      strcpy(msg.text, "\001TOPT 29\r%list");
       msg.toUserName = (char *) malloc(15);
-      strcpy(msg.toUserName, "Matthias Tichy");
+      strcpy(msg.toUserName, "areafix");
       msg.fromUserName = (char *) malloc(10);
       strcpy(msg.fromUserName, "Hpt Test");
       msg.subjectLine = (char *) malloc(5);
-      strcpy(msg.subjectLine, "Test");
+      strcpy(msg.subjectLine, "irkutsk");
       msg.textLength = strlen(msg.text);
 
       writeMsgToPkt(pkt, msg);

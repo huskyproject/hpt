@@ -12,6 +12,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <version.h>
 #include <toss.h>
 
 
@@ -455,9 +456,6 @@ int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
 		textBuff+=i;
 		
 		while(tmp != NULL) {
-			i = strip(textBuff);
-			tmp = strtok(textBuff,"\n\r\t");
-			textBuff += i;
 			if (tmp != NULL) {
 				preport = processcmd( link, msg, tmp, tellcmd(tmp) );
 				if (preport!=NULL) {
@@ -465,11 +463,12 @@ int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
 					strcat(report,preport);
 					free(preport);
 				}
-			}
+                        }
+                        tmp = strtok(NULL, "\n\r\t");
 		}
 
 		tmp=(char*) realloc(tmp,80*sizeof(char*));
-		sprintf(tmp, " \r--- hpt areafix\r");
+		sprintf(tmp, " \r--- %s areafix\r", versionStr);
 		report=(char*) realloc(report,strlen(report)+strlen(tmp)+1);
 		strcat(report,tmp);
 
