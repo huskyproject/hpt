@@ -103,21 +103,22 @@ int to_us(const s_addr destAddr)
    return !0;
 }
 
-XMSG createXMSG(s_message *msg, const s_pktHeader *header)
-{
-   XMSG  msgHeader;
-   struct tm *date;
-   time_t    currentTime;
-   union stamp_combo dosdate;
-   int i,remapit;
-
-   if (msg->netMail == 1)
-   {  // attributes of netmail must be fixed
-      msgHeader.attr = msg->attributes;
-      msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD | MSGFRQ | MSGSCANNED | MSGLOCKED); // kill these flags
-      msgHeader.attr |= MSGPRIVATE; // set this flags
-      if ((header != NULL) && (to_us(msg->destAddr)!=0)) msgHeader.attr |= MSGFWD; // set intransit flag, if the mail is not to us
-      else msgHeader.attr &= ~MSGFWD;
+XMSG createXMSG(s_message *msg, const s_pktHeader *header) {
+	XMSG  msgHeader;
+	struct tm *date;
+	time_t    currentTime;
+	union stamp_combo dosdate;
+	int i,remapit;
+	
+	if (msg->netMail == 1) {
+		// attributes of netmail must be fixed
+		msgHeader.attr = msg->attributes;
+		
+		if (to_us(msg->destAddr)==0) {
+			msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD
+			  | MSGFRQ | MSGSCANNED | MSGLOCKED | MSGFWD); // kill these flags
+			msgHeader.attr |= MSGPRIVATE; // set this flags
+		} else if (header!=NULL) msgHeader.attr |= MSGFWD; // set TRS flag, if the mail is not to us
 
       // Check if we must remap
       remapit=0;
@@ -598,7 +599,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
 {
    FILE *f;
    char *fileName;
-   char buff[255], myaddr[20], hisaddr[20];
+   char buff[255], myaddr[25], hisaddr[25];
    int i=0;
    s_link *creatingLink;
    s_addr *aka;
@@ -631,22 +632,8 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    aka = creatingLink->ourAka;
 
    // making local address and address of uplink
-   sprintf(myaddr, "%u:%u/%u",aka->zone,aka->net,
-           aka->node);
-   sprintf(hisaddr,"%u:%u/%u",pktOrigAddr.zone,pktOrigAddr.net,
-            pktOrigAddr.node);
-
-   //if you are point...
-   if (aka->point != 0)  {
-           sprintf(buff,".%u",aka->point);
-           strcat(myaddr,buff);
-   }
-
-   //autocreating from point...
-   if (pktOrigAddr.point != 0)  {
-           sprintf(buff,".%u",pktOrigAddr.point);
-           strcat(hisaddr,buff);
-   }
+   sprintf(myaddr, aka2str(*aka));
+   sprintf(hisaddr, aka2str(pktOrigAddr));
 
    //write new line in config file
    if (stricmp(config->msgBaseDir, "passthrough")!=0) {
@@ -873,6 +860,7 @@ void processNMMsg(s_message *msg,s_pktHeader *pktHeader)
          }
 
          msgHeader = createXMSG(msg, pktHeader);
+//	   	 if ((msg->attributes & MSGKILL) == MSGKILL) msgHeader.attr |= MSGKILL;
          /* Create CtrlBuf for SMAPI */
          ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
          /* write message */
@@ -898,18 +886,18 @@ void processNMMsg(s_message *msg,s_pktHeader *pktHeader)
 void processMsg(s_message *msg, s_pktHeader *pktHeader)
 {
 
-   statToss.msgs++;
-   if (msg->netMail == 1) {
-           if (config->AreaFixFromPkt && 
-	       (stricmp(msg->toUserName,"areafix")==0 ||
-		stricmp(msg->toUserName,"areamgr")==0 ||
-		stricmp(msg->toUserName,"hpt")==0)) {
-	     processAreaFix(msg, pktHeader);
-           } else
-	     processNMMsg(msg, pktHeader);
-   } else {
-           processEMMsg(msg, pktHeader->origAddr);
-   } /* endif */
+	statToss.msgs++;
+	if (msg->netMail == 1) {
+		if (config->areafixFromPkt && 
+			(stricmp(msg->toUserName,"areafix")==0 ||
+			 stricmp(msg->toUserName,"areamgr")==0 ||
+			 stricmp(msg->toUserName,"hpt")==0)) {
+			processAreaFix(msg, pktHeader);
+		} else
+			processNMMsg(msg, pktHeader);
+	} else {
+		processEMMsg(msg, pktHeader->origAddr);
+	} /* endif */
 }
 
 int processPkt(char *fileName, e_tossSecurity sec)

@@ -82,7 +82,7 @@ char *print_ch(int len, char ch)
 }
 
 char *aka2str(s_addr aka) {
-    if (aka.point!=0) sprintf(straka,"%u:%u/%u.%u",aka.zone,aka.net,aka.node,aka.point);
+    if (aka.point) sprintf(straka,"%u:%u/%u.%u",aka.zone,aka.net,aka.node,aka.point);
     else sprintf(straka,"%u:%u/%u",aka.zone,aka.net,aka.node);
 	
     return straka;
@@ -90,37 +90,37 @@ char *aka2str(s_addr aka) {
 
 int subscribeCheck(s_area area, s_message *msg, s_link *link) {
 	int i;
-        for (i = 0; i<area.downlinkCount;i++) {
-           if (addrComp(msg->origAddr, area.downlinks[i]->link->hisAka)==0) return 0;
+	for (i = 0; i<area.downlinkCount;i++) {
+		if (addrComp(msg->origAddr, area.downlinks[i]->link->hisAka)==0) return 0;
 	}
 	if (area.group != '\060')
 	    if (link->AccessGrp) {
-		if (config->PublicGroup) {
-		    if (strchr(link->AccessGrp, area.group) == NULL &&
-			strchr(config->PublicGroup, area.group) == NULL) return 2;
-		} else if (strchr(link->AccessGrp, area.group) == NULL) return 2;
+			if (config->PublicGroup) {
+				if (strchr(link->AccessGrp, area.group) == NULL &&
+					strchr(config->PublicGroup, area.group) == NULL) return 2;
+			} else if (strchr(link->AccessGrp, area.group) == NULL) return 2;
 	    } else if (config->PublicGroup) {
-		      if (strchr(config->PublicGroup, area.group) == NULL) return 2;
-		   } else return 2;
+			if (strchr(config->PublicGroup, area.group) == NULL) return 2;
+		} else return 2;
 	if (area.hide) return 3;
 	return 1;
 }
 
 int subscribeAreaCheck(s_area *area, s_message *msg, char *areaname, s_link *link) {
-   int rc=4;
-
-   if (!areaname) return rc;
-
-   if (patimat(area->areaName,areaname)==1) {
-     rc=subscribeCheck(*area, msg, link);
-	// 0 - already subscribed
-	// 1 - need subscribe
-	// 2 - no access group
-	// 3 - area is hidden
-   } else rc = 4;
-   
-   // this is another area
-   return rc;
+	int rc=4;
+	
+	if (!areaname) return rc;
+	
+	if (patimat(area->areaName,areaname)==1) {
+		rc=subscribeCheck(*area, msg, link);
+		// 0 - already subscribed
+		// 1 - need subscribe
+		// 2 - no access group
+		// 3 - area is hidden
+	} else rc = 4;
+	
+	// this is another area
+	return rc;
 }
 
 // del link from area
@@ -353,6 +353,10 @@ void changeHeader(s_message *msg, s_link *link, char *subject) {
 	toname = msg->fromUserName;
 	msg->fromUserName = msg->toUserName;
 	msg->toUserName = toname;
+
+	msg->netMail = 1;
+	
+	if (config->areafixKillReports) msg->attributes |= MSGKILL;
 }
 
 char *list(s_message *msg, s_link *link) {
@@ -365,34 +369,32 @@ char *list(s_message *msg, s_link *link) {
 	report=(char*)calloc(strlen(addline)+1,sizeof(char));
 	strcpy(report, addline);
 
-        for (i=active=avail=0; i< config->echoAreaCount; i++) {
+	for (i=active=avail=0; i< config->echoAreaCount; i++) {
 
 	    rc=subscribeCheck(config->echoAreas[i],msg, link);
 	    if (rc < 2) {
-		report=(char*) realloc(report, strlen(report)+
+			report=(char*) realloc(report, strlen(report)+
 			       strlen(config->echoAreas[i].areaName)+4);
-		if (rc==0) {
-		    strcat(report,"* ");
-		    active++;
-		    avail++;
-		} else {
-		    strcat(report,"  ");
-		    avail++;
-		}
-		strcat(report, config->echoAreas[i].areaName);
-		strcat(report,"\r");
+			if (rc==0) {
+				strcat(report,"* ");
+				active++;
+				avail++;
+			} else {
+				strcat(report,"  ");
+				avail++;
+			}
+			strcat(report, config->echoAreas[i].areaName);
+			strcat(report,"\r");
 	    }
 	}
 	
-	sprintf(addline,"\r'*' = area active for %s\r%i areas available, %i areas active\r",
-						aka2str(link->hisAka),
-						avail, active);
+	sprintf(addline,"\r'*' = area active for %s\r%i areas available, %i areas active\r", aka2str(link->hisAka), avail, active);
 	report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
 	strcat(report, addline);
 
 	sprintf(addline,"AreaFix: list sent to %s", aka2str(link->hisAka));
 	writeLogEntry(log, '8', addline);
-
+	
 	return report;
 }
 
@@ -501,11 +503,11 @@ char *available(s_link *link) {
     for (j = 0; j < config->linkCount; j++) {
 		uplink = &(config->links[j]);
 
-		if (uplink->available!=NULL) {
-			if ((f=fopen(uplink->available,"r")) == NULL)
+		if (uplink->forwardRequestFile!=NULL) {
+			if ((f=fopen(uplink->forwardRequestFile,"r")) == NULL)
 				{
-					fprintf(stderr,"areafix: cannot open Available Areas file \"%s\"\n", uplink->available);
-					sprintf(addline,"areafix: cannot open Available Areas file \"%s\"\n", uplink->available);
+					fprintf(stderr,"areafix: cannot open forwardRequestFile \"%s\"\n", uplink->forwardRequestFile);
+					sprintf(addline,"areafix: cannot open forwardRequestFile \"%s\"\n", uplink->forwardRequestFile);
 					writeLogEntry(log, '8', addline);
 					return report;
 				}
@@ -544,6 +546,86 @@ char *available(s_link *link) {
 	return report;
 }                                                                               
 
+int delConfigLine(FILE *f, char *fileName) {
+    long curpos, endpos, linelen, len;
+    char *buff;
+	
+    curpos = ftell(f);
+    buff = readLine(f);
+    linelen = strlen(buff)+1;
+	
+	fseek(f, 0L, SEEK_END);
+	endpos = ftell(f);
+	len = endpos-(curpos+linelen);
+	buff = (char*)realloc(buff, len+1);
+	memset(buff, 0, len+1);
+	fseek(f, curpos+linelen, SEEK_SET);
+	fread(buff, len, sizeof(char), f);
+ 	fseek(f, curpos, SEEK_SET);
+	fputs(buff, f);
+	truncate(fileName, endpos-linelen);
+	
+    free(buff);
+    return 0;
+}
+
+// subscribe if (act==0),  unsubscribe if (act!=0)
+int forwardRequestToLink (char *areatag, s_link *uplink, int act) {
+    time_t t;
+    struct tm *tm;
+    s_message *msg;
+
+	if (uplink->msg == NULL) {
+
+		msg = calloc (1,sizeof(s_message));
+
+		msg->origAddr.zone  = uplink->ourAka->zone;
+		msg->origAddr.net   = uplink->ourAka->net;
+		msg->origAddr.node  = uplink->ourAka->node;
+		msg->origAddr.point = uplink->ourAka->point;
+		
+		msg->destAddr.zone  = uplink->hisAka.zone;
+		msg->destAddr.net   = uplink->hisAka.net;
+		msg->destAddr.node  = uplink->hisAka.node;
+		msg->destAddr.point = uplink->hisAka.point;
+		
+		msg->attributes = 1;
+		
+		t = time (NULL);
+		tm = gmtime(&t);
+		strftime(msg->datetime, 21, "%d %b %y  %T", tm);
+		
+		msg->netMail = 1;
+		
+		msg->toUserName = (char *) malloc(8);
+		strcpy(msg->toUserName, "areafix");
+		
+		msg->fromUserName = (char *) malloc(strlen(config->sysop)+1);
+		strcpy(msg->fromUserName, config->sysop);
+		
+		if (uplink->areaFixPwd!=NULL) {
+			msg->subjectLine = (char *) malloc(strlen(uplink->areaFixPwd)+1);
+			strcpy(msg->subjectLine, uplink->areaFixPwd);
+		} else msg->subjectLine = (char *) calloc(1, sizeof(char));
+		
+		msg->text = (char *) malloc(sizeof(char)*100);
+		createKludges(msg->text, NULL, uplink->ourAka, &(uplink->hisAka));
+		
+		uplink->msg = msg;
+	} else msg = uplink->msg;
+	
+	msg->text = realloc (msg->text, strlen(msg->text)+1+strlen(areatag)+1+1);
+	
+	if (act==0) {
+		strcat(msg->text,"+");
+		autoCreate(areatag, uplink->hisAka);
+	} else strcat(msg->text,"-");
+	strcat(msg->text,areatag);
+	strcat(msg->text,"\r");
+	
+	return 0;	
+}
+
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 	FILE *f;
 	char *cfgline, *token, *running, *areaName;
@@ -578,9 +660,15 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 					case 0: 
 						addstring(f,aka2str(link->hisAka));
 						break;
- 					case 1:
-						fseek(f, pos, SEEK_SET);
-						delLinkFromArea(f, fileName, aka2str(link->hisAka));
+ 					case 1:	fseek(f, pos, SEEK_SET);
+						if ((area->msgbType==MSGTYPE_PASSTHROUGH)
+							&& (area->downlinkCount==1)) {
+							delConfigLine(f, fileName);
+							forwardRequestToLink(areaName, area->downlinks[0]->link, 1);
+							free(cfgline);
+							fclose(f);
+							return 0;
+						} else delLinkFromArea(f, fileName, aka2str(link->hisAka));
 /*						delstring(f,fileName,straka,1);*/
 						break;
 					case 2:
@@ -598,13 +686,69 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 	return 0;
 }
 
+int areaIsAvailable(char *areaName, char *fileName) {
+	FILE *f;
+	char *line, *token, *running;
+	
+	if ((f=fopen(fileName,"r")) == NULL)
+		{
+			fprintf(stderr,"areafix: cannot open forwardRequestFile \"%s\"\n",fileName);
+			return 0;
+		}
+
+	while ((line = readLine(f)) != NULL) {
+		line = trimLine(line);
+		if (line[0] != '0') {
+			
+			running = line;
+			token = strseparate(&running, " \t\r\n");
+			
+			if (stricmp(token, areaName)==0) {
+				free(line);
+				return 1;
+			}			
+			free(line);
+		}
+	}	
+	
+	// not found
+	fclose(f);
+	return 0;
+}
+
+int forwardRequest(char *areatag) {
+    int i;
+    s_link *uplink;
+	
+    for (i = 0; i < config->linkCount; i++) {
+		uplink = &(config->links[i]);
+		if (uplink->forwardRequests) {
+			
+			if (uplink->forwardRequestFile!=NULL) {
+				// first try to find the areatag in forwardRequestFile
+				if (areaIsAvailable(areatag,uplink->forwardRequestFile)!=0) {
+					forwardRequestToLink(areatag,uplink,0);
+					return 0;
+				}
+			} else {
+				forwardRequestToLink(areatag,uplink,0);
+				return 0;
+			}
+		}
+		
+    }
+	
+	// link with "forwardRequests on" not found
+	return 1;	
+}
+
 char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	int i, rc=4;
 	char *line, *report, addline[256], logmsg[256];
 	s_area *area;
 
 	line = cmd;
-
+	
 	if (line[0]=='+') line++;
 	
 	report=(char*)calloc(1, sizeof(char));
@@ -612,41 +756,56 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	for (i=0; i<config->echoAreaCount; i++) {
 	    rc=subscribeAreaCheck(&(config->echoAreas[i]),msg,line, link);
 	    if (rc == 4) continue;
-
+		
 	    area = &(config->echoAreas[i]);
-
-	    
-            switch (rc) {
-            case 0: sprintf(addline,"%s Already linked\r", area->areaName);
-                    sprintf(logmsg,"AreaFix: %s already linked to %s",
-							    area->areaName,
-							    aka2str(link->hisAka));
-                    writeLogEntry(log, '8', logmsg);
+		
+		switch (rc) {
+		case 0: 
+			sprintf(addline,"%s Already linked\r", area->areaName);
+			sprintf(logmsg,"areafix: %s already linked to %s",
+					aka2str(link->hisAka), area->areaName);
+			writeLogEntry(log, '8', logmsg);
 		    if (strstr(line, "*") == NULL) i = config->echoAreaCount;
         	break;
-            case 1: changeconfig (getConfigFileName(), area, link, 0);
-		    addlink(link, area);
-                    sprintf(addline,"%s Added\r",area->areaName);
-                    sprintf(logmsg,"AreaFix: %s area added to %s",
-						    area->areaName,
-						    aka2str(link->hisAka));
-                    writeLogEntry(log, '8', logmsg);
-		    if (strstr(line, "*") == NULL) i = config->echoAreaCount;
-        	break;
-	    default : sprintf(logmsg,"AreaFix: %s area not access for %s",
-							    area->areaName,
-    							    aka2str(link->hisAka));
-                    writeLogEntry(log, '8', logmsg);
-		    continue;
+		case 1: 
+			changeconfig (getConfigFileName(), area, link, 0);
+			addlink(link, area);
+			sprintf(addline,"%s Added\r",area->areaName);
+			sprintf(logmsg,"areafix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
+			writeLogEntry(log, '8', logmsg);
+			if (strstr(line, "*") == NULL) i = config->echoAreaCount;
+			break;
+		default :
+			sprintf(logmsg,"areafix: area %s -- no access for %s",
+					area->areaName, aka2str(link->hisAka));
+			writeLogEntry(log, '8', logmsg);
+			continue;
 //		break;
-            }
+		}
 	    report=(char*)realloc(report, strlen(report)+strlen(addline)+1);
 	    strcat(report, addline);
 	}
+	
+	if ((rc==4) && (strstr(line,"*") == NULL)) {
+		// try to forward request
+		if (forwardRequest(line)!=0)
+			sprintf(addline,"%s no uplinks to forward\r",line);
+		else {
+			sprintf(addline,"%s request forwarded\r",line);
+			sprintf(logmsg,"areafix: %s subscribed to area %s",aka2str(link->hisAka),line);
+			writeLogEntry(log, '8', logmsg);
+			area = getArea(config, line);
+			changeconfig (getConfigFileName(), area, link, 0);
+			addlink(link, area);
+		}
+		report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
+		strcat(report, addline);
+	}
+	
 	if (*report == 0) {
 	    sprintf(addline,"%s Not found\r",line);
-	    sprintf(logmsg,"areafix: %s area not found",line);
-            writeLogEntry(log, '8', logmsg);
+	    sprintf(logmsg,"areafix: area %s is not found",line);
+		writeLogEntry(log, '8', logmsg);
 	    report=(char*)realloc(report, strlen(addline)+1);
 	    strcpy(report, addline);
 	}
@@ -681,36 +840,27 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		if (area->mandatory) rc=5;
 		
 		
-		
 		switch (rc) {
-		case 0: changeconfig (getConfigFileName(),  area, link, 1);
-			removelink(link, area);
+		case 0: removelink(link, area);
+			changeconfig (getConfigFileName(),  area, link, 1);
 			sprintf(addline,"%s Unlinked\r",area->areaName);
-			sprintf(logmsg,"AreaFix: %s area unlinked from %s",
-								    area->areaName,
-								    aka2str(link->hisAka));
+			sprintf(logmsg,"areafix: %s unlinked from %s",aka2str(link->hisAka),area->areaName);
 			writeLogEntry(log, '8', logmsg);
 			break;
 		case 1: if (strstr(line, "*")) continue;
 			sprintf(addline,"%s Not linked\r",line);
-			sprintf(logmsg,"AreaFix: %s area not linked to %s",
-								    area->areaName,
-								    aka2str(link->hisAka));
-			sprintf(logmsg,"AreaFix: %s area not linked to %s",
-								area->areaName,
-								aka2str(link->hisAka));
+			sprintf(logmsg,"areafix: area %s is not linked to %s",
+					area->areaName, aka2str(link->hisAka));
 			writeLogEntry(log, '8', logmsg);
 			break;
-		case 5: sprintf(addline,"%s Unlinked no possible\r", area->areaName);
-			sprintf(logmsg,"AreaFix: %s area not access unlinked for %s",
-								    area->areaName,
-								    aka2str(link->hisAka));
+		case 5: sprintf(addline,"%s Unlink is not possible\r", area->areaName);
+			sprintf(logmsg,"areafix: area %s -- unlink is not possible for %s",
+					area->areaName, aka2str(link->hisAka));
 			writeLogEntry(log, '8', logmsg);
 			break;
-		default: sprintf(logmsg,"AreaFix: %s area not access for %s",
-							    area->areaName,
-    							    aka2str(link->hisAka));
-            		writeLogEntry(log, '8', logmsg);
+		default: sprintf(logmsg,"areafix: area %s -- no access for %s",
+						 area->areaName, aka2str(link->hisAka));
+			writeLogEntry(log, '8', logmsg);
 			continue;
 //			break;
 		}
@@ -719,11 +869,11 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		strcat(report, addline);
 	}
 	if (*report == 0) {
-	    sprintf(addline,"%s Not found\r",line);
-	    sprintf(logmsg,"AreaFix: %s area not found", line);
-            writeLogEntry(log, '8', logmsg);
-	    report=(char*)realloc(report, strlen(addline)+1);
-	    strcpy(report, addline);
+		sprintf(addline,"%s Not found\r",line);
+		sprintf(logmsg,"areafix: area %s is not found", line);
+		writeLogEntry(log, '8', logmsg);
+		report=(char*)realloc(report, strlen(addline)+1);
+		strcpy(report, addline);
 	}
 	return report;
 }
@@ -915,8 +1065,7 @@ int changeresume(char *confName, s_link *link)
 				free(line);
 				free(cfgline);
 				link->Pause = 0;
-				sprintf(logmsg,"areafix: system %s set active",
-						aka2str(link->hisAka));
+				sprintf(logmsg,"areafix: system %s set active",	aka2str(link->hisAka));
 				writeLogEntry(log, '8', logmsg);
 				break;
     	    }
@@ -954,7 +1103,6 @@ char *info_link(s_message *msg, s_link *link)
     int i;
     
 	sprintf(linkAka,aka2str(link->hisAka));
-//    sprintf(buff, "Here is some information about our link:\r\r% 16s%s\r% 16s%s\r% 16s", hisAddr, linkAka, ourAddr, aka2str(*link->ourAka), Arch);
     sprintf(buff, "Here is some information about our link:\r\r %s%s\r%s%s\r  %s", hisAddr, linkAka, ourAddr, aka2str(*link->ourAka), Arch);
 	
     report = (char*)calloc(strlen(buff)+1, sizeof(char));
@@ -1082,63 +1230,58 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
     report = (char*)calloc(1, sizeof(char));
     
     for (i=c=0; i<config->echoAreaCount; i++) {
-	rc=subscribeAreaCheck(&(config->echoAreas[i]),msg,line, link);
-	if (rc == 4) continue;
+		rc=subscribeAreaCheck(&(config->echoAreas[i]),msg,line, link);
+		if (rc == 4) continue;
 	    
-	area = &(config->echoAreas[i]);
-
-        switch (rc) {
-        case 0: 
-		if (area->msgbType == MSGTYPE_PASSTHROUGH) {
-		    sprintf(addline,"%s No rescan possible\r", area->areaName);
-            	    sprintf(logmsg,"areafix: %s area no rescan possible to %s",
-							    area->areaName,
-    							    aka2str(link->hisAka));
-            	    writeLogEntry(log, '8', logmsg);
-		} else {
-		    sprintf(addline,"%s Rescanned\r", area->areaName);
-            	    sprintf(logmsg,"areafix: %s rescan area to %s",
-							    area->areaName,
-    							    aka2str(link->hisAka));
-            	    writeLogEntry(log, '8', logmsg);
-		    c++;
-		    areas = (s_area**)realloc(areas, c*sizeof(s_area*));
-		    areas[c-1] = area;
-		}
-    		break;
-        case 1: if (strstr(line, "*")) continue;
-		sprintf(logmsg,"areafix: %s area not linked for rescan to %s",
-							    area->areaName,
-    							    aka2str(link->hisAka));
-                writeLogEntry(log, '8', logmsg);
-		sprintf(addline,"%s Not linked for rescan\r", area->areaName);
-		break;
-	default: sprintf(logmsg,"areafix: %s area not access for %s",
-							    area->areaName,
-    							    aka2str(link->hisAka));
-                writeLogEntry(log, '8', logmsg);
-		continue;
+		area = &(config->echoAreas[i]);
+		
+		switch (rc) {
+		case 0: 
+			if (area->msgbType == MSGTYPE_PASSTHROUGH) {
+				sprintf(addline,"%s No rescan possible\r", area->areaName);
+				sprintf(logmsg,"areafix: %s area no rescan possible to %s",
+						area->areaName, aka2str(link->hisAka));
+				writeLogEntry(log, '8', logmsg);
+			} else {
+				sprintf(addline,"%s Rescanned\r", area->areaName);
+				sprintf(logmsg,"areafix: %s rescan area to %s",
+						area->areaName, aka2str(link->hisAka));
+				writeLogEntry(log, '8', logmsg);
+				c++;
+				areas = (s_area**)realloc(areas, c*sizeof(s_area*));
+				areas[c-1] = area;
+			}
+			break;
+		case 1: if (strstr(line, "*")) continue;
+			sprintf(logmsg,"areafix: %s area not linked for rescan to %s",
+					area->areaName, aka2str(link->hisAka));
+			writeLogEntry(log, '8', logmsg);
+			sprintf(addline,"%s Not linked for rescan\r", area->areaName);
+			break;
+		default: sprintf(logmsg,"areafix: %s area not access for %s",
+						 area->areaName, aka2str(link->hisAka));
+			writeLogEntry(log, '8', logmsg);
+			continue;
 //		break;
+		}
+		report=(char*)realloc(report, strlen(report)+strlen(addline)+1);
+		strcat(report, addline);
 	}
-	report=(char*)realloc(report, strlen(report)+strlen(addline)+1);
-	strcat(report, addline);
-    }
     if (*report == 0) {
-	sprintf(addline,"%s Not linked for rescan\r", line);
+		sprintf(addline,"%s Not linked for rescan\r", line);
 //        sprintf(addline,"%s Not found for rescan\r",line);
 //        sprintf(logmsg,"areafix: %s area not linked for rescan", line);
 //        writeLogEntry(log, '8', logmsg);
-	report=(char*)realloc(report, strlen(addline)+1);
-	strcpy(report, addline);
+		report=(char*)realloc(report, strlen(addline)+1);
+		strcpy(report, addline);
     }
     if (c) {
-	for (i = 0; i < c; i++) rescanEMArea(areas[i], link);
-	arcmail();
+		for (i = 0; i < c; i++) rescanEMArea(areas[i], link);
+		arcmail();
     }
     free(areas);
     return report;
 }
-
 
 int tellcmd(char *cmd) {
 	char *line;
@@ -1164,14 +1307,15 @@ int tellcmd(char *cmd) {
 	case '-'  : return 4;
 	case '+': line++; if (line[0]=='\000') return 0;
 	default: return 3;
-        }
-        return 0;
+	}
+	
+	return 0;
 }
 
 char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
-
+	
 	char *report;
-
+	
 	switch (cmd) {
 	case 1:	report = list (msg, link);
 		RetFix=LIST;
@@ -1205,7 +1349,7 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 		break;
 	default: return NULL;
 	}
-
+	
 	return report;
 }
 
@@ -1216,17 +1360,17 @@ char *areastatus(char *preport, char *text)
     tmp = preport;
     ptmp = strchr(tmp, '\r');
     while (ptmp) {
-	*(ptmp++)=0;
+		*(ptmp++)=0;
         report=strchr(tmp, ' ');
-	*(report++)=0;
+		*(report++)=0;
         if (strlen(tmp) > 50) tmp[50] = 0;
-	if (50-strlen(tmp) == 0) sprintf(tmpBuff, " %s  %s\r", tmp, report);
+		if (50-strlen(tmp) == 0) sprintf(tmpBuff, " %s  %s\r", tmp, report);
         else if (50-strlen(tmp) == 1) sprintf(tmpBuff, " %s   %s\r", tmp, report);
-	else sprintf(tmpBuff, " %s %s  %s\r", tmp, print_ch(50-strlen(tmp)-1, '.'), report);
+		else sprintf(tmpBuff, " %s %s  %s\r", tmp, print_ch(50-strlen(tmp)-1, '.'), report);
         pth=(char*)realloc(pth, strlen(tmpBuff)+strlen(pth)+1);
-	strcat(pth, tmpBuff);
-	tmp=ptmp;
-	ptmp = strchr(tmp, '\r');
+		strcat(pth, tmpBuff);
+		tmp=ptmp;
+		ptmp = strchr(tmp, '\r');
     }
     tmp = (char*)calloc(strlen(pth)+strlen(text)+1, sizeof(char));
     strcpy(tmp, text);
@@ -1239,7 +1383,7 @@ char *areastatus(char *preport, char *text)
 void preprocText(char *preport, s_message *msg)
 {
     char *text, tmp[80], kludge[100];
-
+	
     sprintf(tmp, " \r--- %s areafix\r", versionStr);
 	createKludges(kludge, NULL, &msg->origAddr, &msg->destAddr);
     text=(char*) malloc(strlen(kludge)+strlen(preport)+strlen(tmp)+1);
@@ -1294,14 +1438,14 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	}
 	
 	if (security) security=1;
-
+	
 	// find link
-	link=getLinkFromAddr(*config, msg->origAddr);
+	link=getLinkFromAddr(*config, pktHeader->origAddr);
 	
 	// this is for me?
 	if (link!=NULL)	notforme=addrComp(msg->destAddr, *link->ourAka);
 	else security=4; // link == NULL;
-
+	
 	// ignore msg for other link (maybe this is transit...)
 	if (notforme) {
 		processNMMsg(msg, pktHeader);
@@ -1371,13 +1515,13 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	} else {
 
 		if (link == NULL) {
-    		    tmplink = (s_link*)calloc(1, sizeof(s_link));
-		    tmplink->ourAka = &(msg->destAddr);
-		    tmplink->hisAka.zone = msg->origAddr.zone;
-		    tmplink->hisAka.net = msg->origAddr.net;
-		    tmplink->hisAka.node = msg->origAddr.node;
-		    tmplink->hisAka.point = msg->origAddr.point;
-		    link = tmplink;
+			tmplink = (s_link*)calloc(1, sizeof(s_link));
+			tmplink->ourAka = &(msg->destAddr);
+			tmplink->hisAka.zone = msg->origAddr.zone;
+			tmplink->hisAka.net = msg->origAddr.net;
+			tmplink->hisAka.node = msg->origAddr.node;
+			tmplink->hisAka.point = msg->origAddr.point;
+			link = tmplink;
 		}
 		// security problem
 		
@@ -1430,12 +1574,11 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		if (config->links[i].msg == NULL) continue;
 		link = &(config->links[i]);
 		linkmsg = link->msg;
-		report=linkmsg->text;
-
+		
 	    sprintf(tmp, " \r--- %s areafix\r", versionStr);
-		report=(char*) realloc(report,strlen(report)+strlen(tmp)+1);
-		strcat(report,tmp);
-
+		linkmsg->text=(char*) realloc(linkmsg->text,strlen(linkmsg->text)+strlen(tmp)+1);
+		strcat(linkmsg->text, tmp);
+		
 		makePktHeader(NULL, &header);
 		header.origAddr = *(link->ourAka);
 		header.destAddr = link->hisAka;
@@ -1516,7 +1659,10 @@ void afix(void)
 		if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
                 
 	    // if not read and for us -> process AreaFix
-		if (((xmsg.attr & MSGREAD) != MSGREAD) && (for_us==1) && (stricmp(xmsg.to, "areafix")==0)) {
+		if (((xmsg.attr & MSGREAD) != MSGREAD) && (for_us==1) &&
+			((stricmp(xmsg.to, "areafix")==0) || 
+			 (stricmp(xmsg.to, "areamgr")==0) ||
+			 (stricmp(xmsg.to, "hpt")==0) ) ) {
 		    MsgToStruct(SQmsg, xmsg, &msg);
 		    processAreaFix(&msg, NULL);
 		    xmsg.attr |= MSGREAD;
@@ -1530,6 +1676,6 @@ void afix(void)
 
 	MsgCloseArea(netmail);
     } else {
-	writeLogEntry(log, '9', "Could not open NetmailArea");
+		writeLogEntry(log, '9', "Could not open NetmailArea");
     } /* endif */
 }

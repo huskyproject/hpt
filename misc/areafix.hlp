@@ -26,4 +26,5 @@ Example:
                                  area with '-AREANAME'.
  %RESUME                      <- Switch echomail receiving ON again.
  %HELP                        <- AreaFix will send you this help.
-
+ %RESCAN 541.LOCAL            <- Rescan area
+ %RESCAN OS2.*                <- same

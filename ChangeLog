@@ -1,6 +1,18 @@
 hpt 0.27
 --------
 
+----- cvs ci ------	
+Wed Mar  10 15:41:00
+
+Max (areafix updates):
++ new areafix.hlp
++ forward of Requests
++ kill reports if "areafixKillReports" defined in config
++ code cleanup
+- do not kill attributes in transit netmail
+
+areafix is more stable now
+
 ----- cvs ci ------
 Wed Mar 10 00:05:25 CET 1999
 mtt:
@@ -8,6 +20,7 @@ mtt:
 - fixed a bug in the processPkt routine which leads to wrong recognition of
   pktPassword and so...
 
+>>>>>>> 1.36
 ----- cvs ci ------	
 Wed Mar  10 04:55:00
 Max (patches from Fedor Lizunkov):
