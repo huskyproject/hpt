@@ -41,9 +41,7 @@
 #include <sys/stat.h>
 
 #include <smapi/msgapi.h>
-#include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
-#include <fidoconf/log.h>
 #include <fidoconf/xstr.h>
 #include <string.h>
 
@@ -85,8 +83,10 @@ struct origlinks {
 typedef struct origlinks s_origlinks;
 
 #define LOGFILENAME "hpt.log"
-s_log         *log = NULL;
+
+s_log        *hptlink_log = NULL;
 s_fidoconfig *cfg;
+
 char *version = NULL;
 
 int singleRepl = 1;
@@ -696,7 +696,7 @@ int main(int argc, char **argv) {
 
    if (cfg->logFileDir) {
 	xstrscat(&line, cfg->logFileDir, LOGFILENAME, NULL);
-	log = openLog(line, versionStr, cfg);
+	hptlink_log = openLog(line, versionStr, cfg);
 	nfree(line);
    }
 
