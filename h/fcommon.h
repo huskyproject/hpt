@@ -127,7 +127,7 @@ long __stdcall GetConsoleTitleA( const char*, long );
 #include <io.h>
 #endif
 
-int  createLockFile(char *lockFile);
+//int  createLockFile(char *lockFile); // this function has no calls
 void *safe_malloc(size_t size);
 void *safe_calloc(size_t nmemb, size_t size);
 void *safe_realloc(void *ptr, size_t size);

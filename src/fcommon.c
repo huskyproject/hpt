@@ -117,6 +117,7 @@ void exit_hpt(char *logstr, int print) {
     exit(EX_SOFTWARE);
 }
 
+/* this function has no calls
 int createLockFile(char *lockfile) {
         int fd;
         char *pidstr = NULL;
@@ -137,7 +138,7 @@ int createLockFile(char *lockfile) {
         w_log(LL_FUNC,"createLockFile() OK");
         return 0;
 }
-
+*/
 // remove after 15-03-2002 (use setfsize() from smapi)
 #if 0
 #if defined(__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
