@@ -206,9 +206,6 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
             if (NULL != (p = strstr(line ? line : text,"\rSEEN-BY:")))
                 i = (size_t) (p - text) + 1;
         }
-    }
-
-    if (!msg->netMail) {
 	xstrscat(&msg->text,
          "\r",
 		 (export) ? "AREA:" : "",
