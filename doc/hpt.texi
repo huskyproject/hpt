@@ -1459,16 +1459,19 @@ This statement can be repeated.
 @findex AdvisoryLock
 @table @asis
 @item Syntax:
-@code{AdvisoryLock <bool>}
+@code{AdvisoryLock <integer>}
 @item Example:
-@code{AdvisoryLock on}
+@code{AdvisoryLock 10}
 @end table
 
-If @code{AdvisoryLock} turned "on", then @value{HPT} checks if
+If value @code{AdvisoryLock} > 0, then @value{HPT} checks if
 @code{LockFile} is locked by another session of @value{HPT} or not.
-Program will be terminated if the original process which created
-@code{LockFile} is running. And if the file exists, but not locked
+Program will not be terminated if the original process which created
+@code{LockFile} is running. Second instance of hpt will check @code{LockFile} 
+for locking number of times defined by @code{AdvisoryLock} with period 
+of 1 second. And if the file exists, but not locked
 (stale), @value{HPT} will be running...
+If @code{AdvisoryLock} = 0, advisorylock is off.
 
 This statement cannot be repeated.
 
