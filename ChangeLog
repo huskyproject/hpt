@@ -1,3 +1,17 @@
+2002-12-03 Tuesday 15:57  stas_degteff
+
+	* doc/hpt.texi (1.91): Specify default value for BundleNameStyle
+	statement
+
+2002-12-03 Tuesday 13:07  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.59): Update Q9 (golded & fidoconfig)
+
+2002-12-03 Tuesday 13:03  stas_degteff
+
+	* src/query.c (1.81): Fix spelling. Thanks to Denis N. Voituk,
+	2:5012/38
+
 2002-12-02 Monday 16:19  stas_degteff
 
 	* h/version.h (1.10), src/global.c (1.47), src/hpt.c (1.161),
