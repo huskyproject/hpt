@@ -7,11 +7,11 @@ EXENAMEFLAG=-e
 SRC_DIR=..\src\
 
 !IF $(DEBUG) == 1
-CFLAGS=-ml -v -w -O2 -I..\h -I..\.. -c
+CFLAGS=-ml -v -w -O2 -I..\h -I..\.. -I..\..\smapi -I..\..\fidoconf -c
 LFLAGS=-ml -v -w
 CDEFS =-DMSDOS -DDEBUG_HPT
 !ELSE
-CFLAGS=-ml -v -w -O2 -I..\h -I..\.. -c
+CFLAGS=-ml -v -w -O2 -I..\h -I..\.. -I..\..\smapi -I..\..\fidoconf -c
 LFLAGS=-ml -w
 CDEFS =-DMSDOS
 !ENDIF

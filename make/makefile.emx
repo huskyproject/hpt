@@ -5,7 +5,8 @@ DEBUG=-s
 # set to -g for debugging
 
 CC=gcc
-EXENAMEFLAG=-o
+# there must be a spaces after this "-o"!!! Make sure your editor does not trash it when saving!!!
+EXENAMEFLAG=-o 
 SRC_DIR=../src/
 CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
 LFLAGS=-Zcrtdll $(DEBUG)
@@ -29,3 +30,4 @@ all: commonprogs
 clean: commonclean
 
 distclean: commondistclean
+

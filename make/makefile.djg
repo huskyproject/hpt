@@ -4,7 +4,7 @@
 DEBUG=-s
 # set to -g for debugging
 
-CC=cc
+CC=gcc
 EXENAMEFLAG=-o
 SRC_DIR=../src/
 CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
