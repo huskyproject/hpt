@@ -1,3 +1,17 @@
+2002-01-02 Wednesday 20:36  mche
+
+	* src/: hptlink.c (1.31), hpttree.c (1.20): build with smapimvc.dll
+	fconfmvc.dll msvcrt.dll
+
+2002-01-02 Wednesday 19:29  mche
+
+	* src/: pktread.c (1.80), pktwrite.c (1.32): undo some changes
+
+2002-01-02 Wednesday 19:00  ml
+
+	* doc/hpt.texi (1.50), src/toss.c (1.380): fixed carbonfromarea for
+	outgoing netmail areas
+
 2002-01-01 Tuesday 12:42  ml
 
 	* src/hptlink.c (1.30): ignore domains in MSGID & REPLY when
