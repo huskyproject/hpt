@@ -2143,7 +2143,7 @@ void writeStatLog(void) {
    /* if there are new personal mails */
    if ((statNetmail > 0) || (statCC > 0)) {
       /* and statLog is defined in config */
-      f = fopen(config->statlog, "rt");
+      f = fopen(config->statlog, "r");
       if (f != NULL) {
         /* then read last personal mail counter and add to actual counter */
         while(fgets(buffer,sizeof(buffer),f)) {
