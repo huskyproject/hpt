@@ -79,3 +79,4 @@ char *afixCmd = NULL;
 
 int lock_fd;
 int silent_mode = 0;
+int report_changes = 0;

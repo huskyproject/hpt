@@ -74,5 +74,6 @@ extern char *afixCmd;
 extern int lock_fd;
 extern char *versionStr;
 extern int silent_mode;
+extern int report_changes;
 
 #endif

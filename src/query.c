@@ -611,6 +611,7 @@ void af_QueueReport()
                     "request");
                 continue;
             }
+            if (report_changes) continue; /* report changes in queue file only */
             if(tmpNode->eTime < tnow )
             {
                 strcpy(state,"rr_or_d");
@@ -635,6 +636,7 @@ void af_QueueReport()
                     "timeout");
                 continue;
             }
+            if (report_changes) continue;
             if(tmpNode->eTime < tnow )
             {
                 strcpy(state,"to_kill");
@@ -660,6 +662,7 @@ void af_QueueReport()
                     "timeout");
                 continue;
             }
+            if (report_changes) continue;
             if(tmpNode->eTime < tnow )
             {
                 strcpy(state,"to_kill");

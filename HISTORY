@@ -11,6 +11,8 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
     - Add @REPLY kludge in areafix reply message
     - Loop tossing until there is no new pkt/arcmail in inbounds
     - Added new areafix commands: %rules, %pktsize, %arcmailsize
+    - added option `-d' for `hpt qrep' command, which allows generation
+      of report containing only changes in queue.
 
 2. CONFIG changes:
     - new option for echoArea or netmailArea: -scan (specifies when area
