@@ -456,7 +456,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
                prio == virtualLink->echoMailFlavour) {
                    arcNetmail = 1;
                    if (virtualLink->pktFile && virtualLink->pktSize)
-                        if (fsize(virtualLink->pktFile) >= virtualLink->pktSize * 1024L) {
+                        if (fsize(virtualLink->pktFile) >= (long)(virtualLink->pktSize*1024)) {
                              nfree(virtualLink->pktFile);
                              nfree(virtualLink->packFile);
                         }
@@ -499,7 +499,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
                        route->flavour == link->echoMailFlavour) {
                            arcNetmail = 1;
                            if (link->pktFile && link->pktSize)
-                                if (fsize(link->pktFile) >= link->pktSize * 1024L) {
+                                if (fsize(link->pktFile) >= (long)(link->pktSize*1024)) {
                                      nfree(link->pktFile);
                                      nfree(link->packFile);
                                 }
@@ -704,162 +704,167 @@ int scanByName(char *name) {
 }
 
 void scanExport(int type, char *str) {
-	
-   unsigned int i = 0;
-   FILE *f = NULL;
-   FILE *ftmp = NULL;
-   char *tmplogname = NULL, *tmppath = NULL;
-   char *line = NULL;
-   struct stat st;
-   
-   w_log( LL_FUNC, "scanExport() begin" );
-
-   // zero statScan   
-   memset(&statScan, '\0', sizeof(s_statScan));
-   w_log(LL_START, "Start %s%s...",
-		   type & SCN_ECHOMAIL ? "scanning" : "packing",
-		   type & SCN_FILE ? " with -f " : 
-		   type & SCN_NAME ? " with -a " : "");
-
-   if (config->echotosslog)
-   {
-     tmppath = (char *) safe_malloc(strlen(config->echotosslog)+1);
-     memset(tmppath, 0, strlen(config->echotosslog)+1);
-     strncpy(tmppath, config->echotosslog,
-             (strrchr(config->echotosslog, PATH_DELIM) - config->echotosslog));
-     tmplogname = makeUniqueDosFileName(tmppath, "tmp", config);
-     nfree(tmppath);
-   }
-
- w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
-
-   if (type & SCN_ALL) {
-       if (config->echotosslog)
-       {
-           f = fopen(config->echotosslog, "r");
-           if (f != NULL && config->packNetMailOnScan == 0) {
-               ftmp = fopen(tmplogname, "w");
-               if (ftmp == NULL) {
-                   w_log(LL_ERR, "Can't open file %s for writing : %s", tmplogname, strerror(errno));
-                   // close file so all areas will be scanned instead of panic.
-                   fclose(f);
-               }
-	   }
-       }
-   }
-
- w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
-
-   if (type & SCN_FILE) {
-       f = fopen(str, "r");
-       if (f != NULL) {
-           ftmp = fopen(tmplogname, "w");
-           if (ftmp == NULL) {
-               w_log(LL_ERR, "Can't open file %s for writing : %s", tmplogname, strerror(errno));
-               // close file so all areas will be scanned instead of panic.
-               fclose(f);
-           }
-       }
-   }
-
- w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
-
-   if (type & SCN_NAME) {
-       scanByName(str);
-   } else if (f == NULL) {
-       if (type & SCN_FILE) {
-           w_log(LL_START, "EchoTossLogFile not found -> Scanning stop");
-           nfree(tmplogname);
-           return;
-       }
-       if (type & SCN_ECHOMAIL) {
-           // if echotoss file does not exist scan all areas
-           w_log(LL_START, "EchoTossLogFile not found -> Scanning all areas.");
-           for (i = 0; i< config->echoAreaCount; i++) {
-               if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
-                   scanEMArea(&(config->echoAreas[i]));
-               }
-           }
-       };
-       if (type & SCN_NETMAIL) {
-           for (i = 0; i < config->netMailAreaCount; i++) {
-               scanNMArea(&(config->netMailAreas[i]));
-           }
-       };
-   } else {
-       // else scan only those areas which are listed in the file
-       w_log(LL_START, "EchoTossLogFile found -> Scanning only listed areas");
-
-       while (!feof(f)) {
-           line = readLine(f);
-
-           if (line != NULL) {
-               if (*line && line[strlen(line)-1] == '\r')
-                   line[strlen(line)-1] = '\0';  /* fix for DOSish echotoss.log */
-               striptwhite(line);
-               if (!ftmp) { // the same as if(config->packNetMailOnScan) {
-                   scanByName(line);
-               } else {
-                   /* exclude NetmailAreas in echoTossLogFile */
+    
+    unsigned int i = 0;
+    FILE *f = NULL;
+    FILE *ftmp = NULL;
+    char *tmplogname = NULL, *tmppath = NULL;
+    char *line = NULL;
+    struct stat st;
+    
+    w_log( LL_FUNC, "scanExport() begin" );
+    
+    // zero statScan   
+    memset(&statScan, '\0', sizeof(s_statScan));
+    w_log(LL_START, "Start %s%s...",
+        type & SCN_ECHOMAIL ? "scanning" : "packing",
+        type & SCN_FILE ? " with -f " : 
+    type & SCN_NAME ? " with -a " : "");
+    
+    if (config->echotosslog)
+    {
+        tmppath = (char *) safe_malloc(strlen(config->echotosslog)+1);
+        memset(tmppath, 0, strlen(config->echotosslog)+1);
+        strncpy(tmppath, config->echotosslog,
+            (strrchr(config->echotosslog, PATH_DELIM) - config->echotosslog));
+        tmplogname = makeUniqueDosFileName(tmppath, "tmp", config);
+        nfree(tmppath);
+    }
+    
+    w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
+    
+    if (type & SCN_ALL) {
+        if (config->echotosslog)
+        {
+            f = fopen(config->echotosslog, "r");
+            if (f != NULL && config->packNetMailOnScan == 0) {
+                ftmp = fopen(tmplogname, "w");
+                if (ftmp == NULL) {
+                    w_log(LL_ERR, "Can't open file %s for writing : %s", tmplogname, strerror(errno));
+                    // close file so all areas will be scanned instead of panic.
+                    fclose(f);
+                }
+            }
+        }
+    }
+    
+    w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
+    
+    if (type & SCN_FILE) {
+        f = fopen(str, "r");
+        if (f != NULL) {
+            ftmp = fopen(tmplogname, "w");
+            if (ftmp == NULL) {
+                w_log(LL_ERR, "Can't open file %s for writing : %s", tmplogname, strerror(errno));
+                // close file so all areas will be scanned instead of panic.
+                fclose(f);
+            }
+        }
+    }
+    
+    w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
+    
+    if (type & SCN_NAME) {
+        scanByName(str);
+    } else if (f == NULL) {
+        if (type & SCN_FILE) {
+            w_log(LL_START, "EchoTossLogFile not found -> Scanning stop");
+            nfree(tmplogname);
+            return;
+        }
+        if (type & SCN_ECHOMAIL) {
+            // if echotoss file does not exist scan all areas
+            w_log(LL_START, "EchoTossLogFile not found -> Scanning all areas.");
+            for (i = 0; i< config->echoAreaCount; i++) {
+                if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
+                    scanEMArea(&(config->echoAreas[i]));
+                }
+            }
+        };
+        if (type & SCN_NETMAIL) {
+            for (i = 0; i < config->netMailAreaCount; i++) {
+                scanNMArea(&(config->netMailAreas[i]));
+            }
+        };
+    } else {
+        // else scan only those areas which are listed in the file
+        w_log(LL_START, "EchoTossLogFile found -> Scanning only listed areas");
+        
+        while (!feof(f)) {
+            line = readLine(f);
+            
+            if (line != NULL) {
+                if (*line && line[strlen(line)-1] == '\r')
+                    line[strlen(line)-1] = '\0';  /* fix for DOSish echotoss.log */
+                striptwhite(line);
+                if (!ftmp) { // the same as if(config->packNetMailOnScan) {
+                    scanByName(line);
+                } else {
+                    /* exclude NetmailAreas in echoTossLogFile */
                    if (type & SCN_ECHOMAIL) {
                        if (getNetMailArea(config, line) == NULL)
-                           scanByName(line);
+                        scanByName(line);
                        else
                            fprintf(ftmp, "%s\n", line);
-                   } else {
-                       if (getNetMailArea(config, line) != NULL)
-                           scanByName(line);
-                       else
-                           fprintf(ftmp, "%s\n", line);
-                   }
-               }
-               nfree(line);
-           }
-       }
-   }
-   
-   w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
-   
-   if (f != NULL) {
-       fclose(f);
-       if (ftmp != NULL) fclose(ftmp);
-       memset(&st, 0, sizeof(st));
-       if ( tmplogname && (stat(tmplogname, &st) == 0)) {
-           if (type & SCN_ALL) {
-               if (st.st_size == 0) { // all entries was processed
-                   remove(config->echotosslog);
-                   if (tmplogname)
-                       if (remove(tmplogname) != 0)
-                           w_log(LL_ERR, "Couldn't remove temporary file\"%s\"", tmplogname);
-               } else { // we still have areas
-                   remove(config->echotosslog);
-                   if (rename(tmplogname, config->echotosslog) != 0)
-                       w_log(LL_ERR, "Couldn't rename \"%s\" -> \"%s\"", tmplogname, config->echotosslog);
-               }
-           }
-           else if (type & SCN_FILE) {
-               if (st.st_size == 0) {
-                   remove(str);
-                   if (tmplogname)
-                       if (remove(tmplogname) != 0)
-                           w_log(LL_ERR, "Couldn't remove temporary file\"%s\"", tmplogname);
-               } else {
-                   remove(str);
-                   if (rename(tmplogname, str) != 0)
-                       w_log(LL_ERR, "Couldn't rename \"%s\" -> \"%s\"", tmplogname, str);
-               }
-           }
-       }
-       if (tmplogname) nfree (tmplogname);
-   }
-//   if (type & SCN_ECHOMAIL) arcmail(NULL);
-//   if (type & SCN_ECHOMAIL)
-// pack tempOutbound after scan Echomail, Netmail or EchoTossLogFile
-   tossTempOutbound(config->tempOutbound);
+                    } else {
+                        if (getNetMailArea(config, line) != NULL)
+                            scanByName(line);
+                        else
+                            fprintf(ftmp, "%s\n", line);
+                    }
+                }
+                nfree(line);
+            }
+        }
+    }
+    
+    w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
+    
+    if (f != NULL) {
+        fclose(f);
+        if (ftmp != NULL)
+        {
+            fclose(ftmp);
+            memset(&st, 0, sizeof(st));
+            stat(tmplogname, &st);
+            if (type & SCN_ALL) {
+                if (st.st_size == 0) { // all entries was processed
+                    remove(config->echotosslog);
+                    if (remove(tmplogname) != 0)
+                        w_log(LL_ERR, "Couldn't remove temporary file\"%s\"", tmplogname);
+                } else { // we still have areas
+                    remove(config->echotosslog);
+                    if (rename(tmplogname, config->echotosslog) != 0)
+                        w_log(LL_ERR, "Couldn't rename \"%s\" -> \"%s\"", tmplogname, config->echotosslog);
+                }
+            } else {
+                if (st.st_size == 0) {
+                    remove(str);
+                    if (remove(tmplogname) != 0)
+                        w_log(LL_ERR, "Couldn't remove temporary file\"%s\"", tmplogname);
+                } else {
+                    remove(str);
+                    if (rename(tmplogname, str) != 0)
+                        w_log(LL_ERR, "Couldn't rename \"%s\" -> \"%s\"", tmplogname, str);
+                }
+            }
+        }
+        else
+        {
+            if (type & SCN_ALL) {
+                remove(config->echotosslog);
+            }
+            else if (type & SCN_FILE) {
+                remove(str);
+            }
+        }
+    }
+    nfree (tmplogname);
 
-   writeDupeFiles();
-   writeScanStatToLog();
-
-   w_log( LL_FUNC, "scanExport() end" );
-
+    tossTempOutbound(config->tempOutbound);
+    
+    writeDupeFiles();
+    writeScanStatToLog();
+    
+    w_log( LL_FUNC, "scanExport() end" );
 }
