@@ -1473,7 +1473,7 @@ int find_old_arcmail(s_link *link) {
 	char *line, *tmp=NULL, bundle[256]="";
 	char *wdays[7]={ ".su", ".mo", ".tu", ".we", ".th", ".fr", ".sa" };
 	long len;
-	int i;
+	unsigned i, as=500;
 
 	flo = fopen(link->floFile, "rb");
 	if (flo != NULL) {
@@ -1498,8 +1498,12 @@ int find_old_arcmail(s_link *link) {
 				len = ftell(f);
 //				printf("%i\n",(int)len);
 				fclose(f);
-				// 500 kb max
-				if ((int)len < 1024*500) {
+				if (link->arcmailSize!=0) as=link->arcmailSize;
+				else {
+					if (config->defarcmailSize!=0) as=config->defarcmailSize;
+				}
+				// default 500 kb max
+				if ((int)len < as*1024) {
 					link->packFile=(char*)realloc(link->packFile,strlen(bundle)+1);
 					strcpy(link->packFile,bundle);
 					return 1;
