@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <errno.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
