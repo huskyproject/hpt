@@ -1729,6 +1729,8 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 	s_pktHeader header;
 	char *token, *textBuff, *report=NULL, *preport = NULL;
 	
+	RetFix = NOTHING;
+	
 	// 1st security check
 	if (pktHeader) security=addrComp(msg->origAddr, pktHeader->origAddr);
 	else {
@@ -1987,9 +1989,10 @@ void afix(s_addr addr, char *cmd)
 				// if not read and for us -> process AreaFix
 				striptwhite((char*)xmsg.to);
 				if (((xmsg.attr & MSGREAD) != MSGREAD) && (for_us==1) &&
-					((stricmp((char*)xmsg.to, "areafix")==0) || 
+					((stricmp((char*)xmsg.to, "areafix")==0) ||
 					 (stricmp((char*)xmsg.to, "areamgr")==0) ||
-					 (stricmp((char*)xmsg.to, "hpt")==0) ) ) {
+					 (stricmp((char*)xmsg.to, "hpt")==0) ||
+					 hpt_stristr(config->areafixNames,(char*)xmsg.to))) {
 					memset(&msg,'\0',sizeof(s_message));
 					MsgToStruct(SQmsg, xmsg, &msg);
 					processAreaFix(&msg, NULL, 0);

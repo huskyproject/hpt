@@ -243,6 +243,7 @@ FIDOCONFIG about location of config file and keywords ideology.
 * AreafixKillReports::          set kill/sent flag to areafix reports
 * AreafixKillRequests::         delete areafix requests
 * AreafixMsgSize::              maximum areafix report size
+* AreafixNames::                set additional areafix names
 * AreafixOrigin::		set origin for areafix reports
 * AreafixSplitStr::             set split string for splitted areafix messages
 * AreasFileNameCase::           case of filenames of autocreated areas
@@ -348,6 +349,8 @@ Process areafix requests on the fly. Check "areafix", "areamgr" &
 
 This statement cannot be repeated.
 
+@xref{AreafixNames}.
+
 @node AreafixKillReports, AreafixKillRequests, AreafixFromPkt, Keywords
 @subsection AreafixKillReports
 @findex AreafixKillReports
@@ -376,7 +379,7 @@ Delete requests from links to areafix.
 
 This statement cannot be repeated.
 
-@node AreafixMsgSize, AreafixOrigin, AreafixKillRequests, Keywords
+@node AreafixMsgSize, AreafixNames, AreafixKillRequests, Keywords
 @subsection AreafixMsgSize
 @findex AreafixMsgSize
 @table @asis
@@ -391,7 +394,22 @@ If not defined, areafix reports will be not splitted...
 
 This statement cannot be repeated.
 
-@node AreafixOrigin, AreafixSplitStr, AreafixMsgSize, Keywords
+@node AreafixNames, AreafixOrigin, AreafixMsgSize, Keywords
+@subsection AreafixNames
+@findex AreafixNames
+@table @asis
+@item Syntax:
+@code{AreafixNames <string>}
+@item Example:
+@code{AreafixNames SqaFix, hptfix}
+@end table
+
+Set additional names for areafix robot. Default is "areafix", "areamgr", 
+"hpt".
+
+This statement cannot be repeated.
+
+@node AreafixOrigin, AreafixSplitStr, AreafixNames, Keywords
 @subsection AreafixOrigin
 @findex AreafixOrigin
 @table @asis
