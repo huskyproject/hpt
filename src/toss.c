@@ -45,9 +45,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#if defined(__MINGW32__)
+# include <process.h>
+#endif
+
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
-/* we can't include windows.h for several reasons ... */
-#define CharToOem CharToOemA
+   /* we can't include windows.h for several reasons ... */
+#  define CharToOem CharToOemA
 #endif
 
 #if !(defined(__TURBOC__) || (defined (_MSC_VER) && (_MSC_VER >= 1200)))
@@ -1280,10 +1284,6 @@ int  processArc(char *fileName, e_tossSecurity sec)
     FILE  *bundle = NULL;
     char cmd[256];
 
-#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
-    const char * const *list;
-#endif
-
     if (sec == secInbound) {
 	w_log(LL_ERR, "bundle %s: tossing in unsecure inbound, security violation", fileName);
 	return 1;
@@ -1321,7 +1321,8 @@ int  processArc(char *fileName, e_tossSecurity sec)
 	else
 	    {
                 w_log(LL_EXEC, "bundle %s: unpacking with \"%s\"", fileName, cmd);
-#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
+#if defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) /*|| defined(__MINGW32__)*/
+              { const char * const *list;
 		list = mk_lst(cmd);
 		cmdexit = spawnvp(P_WAIT, cmd, list);
 		nfree((char **)list);
@@ -1329,6 +1330,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
 		    w_log(LL_ERR, "exec failed: %s, return code: %d", strerror(errno), cmdexit);
 		    return 3;
 		}
+              }
 #else
 		if ((cmdexit = system(cmd)) != 0) {
 		    w_log(LL_ERR, "exec failed, code %d", cmdexit);
