@@ -1,3 +1,8 @@
+2003-04-26 Saturday 09:58  d_sergienko
+
+	* src/carbon.c (hpt-1_4-stable.2): yet another fix for carbon @AREA
+	kludge
+
 2003-04-08 Tuesday 19:59  d_sergienko
 
 	* src/stat.c (hpt-1_4-stable.1): backporting patch fixing
