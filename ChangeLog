@@ -1,3 +1,8 @@
+2004-12-28 Tuesday 20:51  val_khokhlov
+
+	* src/hptafix.c (1.15): move some vars from global into robot
+	structure
+
 2004-12-25 Saturday 22:06  val_khokhlov
 
 	* src/hptafix.c (1.14): init robot var for hpt itself
