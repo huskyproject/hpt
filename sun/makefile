@@ -1,44 +1,54 @@
 DEBUG   = 1
-CC      = gcc
+CC      = gcc 
+INSTDIR = /usr/local/bin
+MANDIR  = /usr/local/man
 
-OBJS    = hpt.o pktread.o pktwrite.o common.o log.o config.o global.o toss.o patmat.o scan.o scanarea.o
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o 
 SRC_DIR = ../src/
 
+FIDOCONFIG = ../../fidoconfig/fidoconfig.a
+SMAPI      = ../../smapi/libsmapiunix.a
+
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../smapi -Wall -g -s -DUNIX $(CADDFLAGS)
-  LFLAGS  = $(LADDFLAGS)
+  CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -g -O2 -s -DUNIX
+  LFLAGS  = 
 else
   CFLAGS  = -c -I../h -I../../smapi -Wall -O2 -s -DUNIX $(CADDFLAGS)
-  LFLAGS  = $(LADDFLAGS)
+  LFLAGS  =  
 endif
 
 all: $(OBJS) \
      pktinfo \
      tlog \
-     tconfig \
      tpkt \
-     hpt
+     hpt \
+     purgeDupes \
+     install
 
 %.o: $(SRC_DIR)%.c
-	@echo compiling $*.c
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
 
 pktinfo: pktinfo.o $(OBJS)
-	@echo linking pktinfo
-	$(CC) $(LFLAGS) -o pktinfo pktinfo.o pktread.o common.o global.o
-
-tconfig: tconfig.o config.o common.o
-	@echo linking tconfig
-	$(CC) $(LFLAGS) -o tconfig tconfig.o config.o common.o global.o
+	$(CC) $(LFLAGS) -o pktinfo pktinfo.o pktread.o fcommon.o global.o $(FIDOCONFIG) $(SMAPI)
 
 tlog: tlog.o log.o
-	@echo linking tlog
 	$(CC) $(LFLAGS) -o tlog tlog.o log.o
 
-tpkt: tpkt.o pktwrite.o common.o pktread.o
-	@echo linking tpkt
-	$(CC) $(LFLAGS) -o tpkt tpkt.o common.o pktread.o pktwrite.o global.o ../../smapi/smapilnx.a
+tpkt: tpkt.o pktwrite.o fcommon.o pktread.o
+	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o pktread.o pktwrite.o global.o $(FIDOCONFIG) $(SMAPI)
 
 hpt: $(OBJS)
-	@echo linking hpt
-	$(CC) $(LFLAGS) -o hpt $(OBJS) ../../smapi/smapilnx.a
+	$(CC) $(LFLAGS) -o hpt $(OBJS) $(FIDOCONFIG) $(SMAPI) 
+
+purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o log.o
+	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o log.o $(FIDOCONFIG) $(SMAPI)
+
+clean:
+	-rm -f *.o
+	-rm *~
+
+install:
+	install -s hpt pktinfo purgeDupes $(INSTDIR)
+	gzip -c hpt.1 > hpt.1.gz
+	gzip -c purgeDupes.1 > purgeDupes.1.gz
+	install hpt.1.gz purgeDupes.1.gz $(MANDIR)/man1
