@@ -1,3 +1,8 @@
+2002-04-13 Saturday 16:47  mche
+
+	* src/hpt.c (1.142): Some internal features added.  Now we can set
+	application that use fidoconfig
+
 2002-04-11 Thursday 17:12  mche
 
 	* src/hpt.c (1.141): fix misspeling
