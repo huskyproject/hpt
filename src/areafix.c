@@ -2088,7 +2088,7 @@ void autoPassive()
 								   msg->text = createKludges(NULL,
 															 config->links[i].ourAka,
 															 &(config->links[i].hisAka));
-								   xstrcat(&msg->text, "\r System switched to passive\r\r You are will be unsubscribed from echo areas with no downlinks besides you!\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the \%%RESUME command.");
+								   xstrcat(&msg->text, "\r System switched to passive\r\r You are will be unsubscribed from echo areas with no downlinks besides you!\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the \r %RESUME command.");
 								   xscatprintf(&msg->text, "\r\r--- %s autopause\r", versionStr);
 								   msg->textLength = strlen(msg->text);
 								   processNMMsg(msg, NULL,
