@@ -267,7 +267,7 @@ void processConfig()
       exit(1);
    }
 
-/* remove after 25-Mar-01
+/*
    // lock...
    if (config->lockfile!=NULL && fexist(config->lockfile)) {
 	   if ((f = fopen(config->lockfile, "rt"))==NULL) {
@@ -299,27 +299,33 @@ void processConfig()
    else if (config->lockfile!=NULL) createLockFile(config->lockfile);
 */
    if (config->lockfile) {
-#ifndef __BEOS__
-	   if ( (lock_fd=open(config->lockfile, O_CREAT|O_RDWR,S_IREAD|S_IWRITE)) < 0 ) {
-#else
-	   if ((lock_fd=open(config->lockfile,O_CREAT|O_RDWR|O_EXCL,S_IREAD|S_IWRITE))<0) {
-#endif
-		   fprintf(stderr,"cannot create lock file: %s\n",config->lockfile);
-		   disposeConfig(config);
-           exit(1);
-	   } else {
-		   if (write(lock_fd," ", 1)!=1) {
-			   fprintf(stderr,"can't write lo lock file! exit...\n");
+	   if (config->advisoryLock) {
+		   if ((lock_fd=open(config->lockfile,O_CREAT|O_RDWR,S_IREAD|S_IWRITE))<0) {
+			   fprintf(stderr,"cannot open/create lock file: %s\n",config->lockfile);
 			   disposeConfig(config);
 			   exit(1);
+		   } else {
+			   if (write(lock_fd," ", 1)!=1) {
+				   fprintf(stderr,"can't write lo lock file! exit...\n");
+				   disposeConfig(config);
+				   exit(1);
+			   }
+			   if (lock(lock_fd,0,1)<0) {
+				   fprintf(stderr,"lock file used by another process! exit...\n");
+				   disposeConfig(config);
+				   exit(1);
+			   }
 		   }
-		   if (lock(lock_fd,0,1)<0) {
-			   fprintf(stderr,"lock file used by another process! exit...\n");
+	   } else { // normal locking
+		   if ((lock_fd=open(config->lockfile,
+							 O_CREAT|O_RDWR|O_EXCL,S_IREAD|S_IWRITE))<0) {
+			   fprintf(stderr,"cannot create new lock file: %s\n",config->lockfile);
+			   fprintf(stderr,"lock file probably used by another process! exit...\n");
 			   disposeConfig(config);
 			   exit(1);
 		   }
 	   }
-   }
+   }   
 
    // open Logfile
    if (config->logFileDir) {

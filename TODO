@@ -3,12 +3,11 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- "/" -> "_", etc... (dosfile)
-- make switch for advisory lock
 - areafix definition
 - optimize packing (several files)
 - autofwdareacreatedefaults
 - AllowEchoAreaDelete
+- don't make paths with forbidden symbols
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

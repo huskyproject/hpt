@@ -1094,6 +1094,7 @@ This statement can be repeated.
 @section Files and Paths
 
 @menu
+* AdvisoryLock::                set lock file "advisory"
 * AreafixHelp::                 file with help for areafix reports
 * AreasMaxDupeAge::             max age for dupes in CommonDupeBase
 * DupeBaseType::                type of dupe base
@@ -1116,7 +1117,29 @@ This statement can be repeated.
 * TempOutbound::                temporary outbound path
 @end menu
 
-@node AreafixHelp, AreasMaxDupeAge, Files and Paths, Files and Paths
+@node AdvisoryLock, AreafixHelp, Files and Paths, Files and Paths
+@subsection AdvisoryLock
+@findex AdvisoryLock
+@table @asis
+@item Syntax:
+@code{AdvisoryLock <bool>}
+@item Example:
+@code{AdvisoryLock on}
+@end table
+
+If @code{AdvisoryLock} turned "on", then @value{HPT} checks if
+@code{LockFile} is locked by another session of @value{HPT} or not.
+Program will be terminated if the original process which created
+@code{LockFile} is running. And if the file exists, but not locked
+(stale), @value{HPT} will be running...
+
+This statement cannot be repeated.
+
+@strong{Don't use this under BeOS! (there is no locking mechanism).}
+
+@xref{LockFile}.
+
+@node AreafixHelp, AreasMaxDupeAge, AdvisoryLock, Files and Paths
 @subsection AreafixHelp
 @findex AreafixHelp
 @table @asis
@@ -1301,10 +1324,12 @@ This statement cannot be repeated.
 @code{lockfile /var/lock/hpt.lock}
 @end table
 
-Another session of hpt will be terminated if the original process which
-created @code{LockFile} is running.
+Another session of @value{HPT} will be terminated if the @code{LockFile}
+is exists (default setting).
 
 This statement cannot be repeated.
+
+@xref{AdvisoryLock}.
 
 @node LogFileDir, MinDiskFreeSpace, LockFile, Files and Paths
 @subsection LogFileDir

@@ -820,9 +820,8 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	
 	if (*line=='+') line++; while (*line==' ') line++;
 	
-	if (strchr(line,' ') || strchr(line,'\t') || strchr(line,'\\') ||
-		strchr(line,'/') ||	strchr(line,config->CommentChar) ||
-		strchr(line,':')) return errorRQ(line);
+	if (strchr(line,' ') || strchr(line,'\t') || strchr(line,PATH_DELIM) ||
+		strchr(line,config->CommentChar) || strchr(line,':')) return errorRQ(line);
 
 	for (i=0; rc!=6 && i<config->echoAreaCount; i++) {
 	    area = &(config->echoAreas[i]);
