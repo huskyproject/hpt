@@ -1,6 +1,13 @@
 #! /bin/sh
 set -e
 
+# create new ftn user and group 64000.64000
+if ! id ftn >/dev/null 2>&1; then
+  adduser --system --home /var/spool/ftn --uid 64000 --group \
+    --disabled-password --gecos Fidonet ftn
+  chsh -s /bin/bash ftn
+fi
+
 case "$1" in
     configure)
 	#
