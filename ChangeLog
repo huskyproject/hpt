@@ -1,3 +1,8 @@
+2002-10-22 Tuesday 11:00  sfpavel
+
+	* debian/: changelog, docs (hpt-1_2-stable.[12,4]): New debian
+	package
+
 2002-10-19 Saturday 19:03  stas_degteff
 
 	* doc/hpt-FAQ.russian (hpt-1_2-stable.13): Fix husky/BeOS
