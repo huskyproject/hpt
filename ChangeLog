@@ -2,6 +2,12 @@ hpt 0.27
 --------
 
 ----- cvs ci ------
+Max:
+Tue Apr 20 09:31:53 NOVST 1999
+- change rindex() to strrchr() in description code
++ small areafix updates from Edgar (for __WATCOMC__)
+
+----- cvs ci ------
 Mon Apr 19 22:35:21 CEST 1999
 mtt:
 - fixed a bug in autoareacreatecode
@@ -10,6 +16,11 @@ mtt:
 Sun Apr 18 20:47:51 CEST 1999
 Mtt:
 - via lines are now finished with a \r.
+
+----- cvs ci ------
+Sun Apr 18 15:45:09 NOVST 1999
+Max:
++ add separateBundles code
 
 ----- cvs ci ------
 Wed Apr  14 04:50

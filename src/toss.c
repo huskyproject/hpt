@@ -59,6 +59,10 @@
 #include <compiler.h>
 #include <progprot.h>
 
+#ifdef __WATCOMC__
+#include <dos.h>
+#endif
+
 extern s_message **msgToSysop;
 
 s_statToss statToss;
@@ -727,7 +731,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
              fileName[0]='\0';
              sprintf (tmp,"%s-d \"%s\"",NewAutoCreate,description);
              fileName++;
-             fileName=rindex(fileName,'\"')+1;
+             fileName=strrchr(fileName,'\"')+1;
              strcat(tmp,fileName);
              free (NewAutoCreate);
              NewAutoCreate=tmp;

@@ -175,10 +175,17 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 	buff = (char*)realloc(buff, len+1);
 	memset(buff, 0, len+1);
 	fseek(f, curpos+linelen, SEEK_SET);
-	fread(buff, len, sizeof(char), f);
+	len = fread(buff, sizeof(char), (size_t) len, f);
  	fseek(f, curpos, SEEK_SET);
-	fputs(buff, f);
+//	fputs(buff, f);
+	fwrite(buff, sizeof(char), (size_t) len, f);
+#ifdef __WATCOMC__
+	fflush( f );
+	fTruncate( fileno(f), endpos-linelen );
+	fflush( f );
+#else
 	truncate(fileName, endpos-linelen);
+#endif
     }
     free(buff);
     return 0;
@@ -492,6 +499,7 @@ int delConfigLine(FILE *f, char *fileName) {
 	buff = (char*)realloc(buff, len+1);
 	memset(buff, 0, len+1);
 	fseek(f, curpos+linelen, SEEK_SET);
+	
 	fread(buff, len, sizeof(char), f);
  	fseek(f, curpos, SEEK_SET);
 	fputs(buff, f);
@@ -1003,11 +1011,18 @@ int changeresume(char *confName, s_link *link)
 				
 				line = (char*)calloc(cfglen+1, sizeof(char));
 				fseek(f_conf, remstr, SEEK_SET);
-				fread(line, sizeof(char), cfglen, f_conf);
+				cfglen = fread(line, sizeof(char), (size_t) cfglen, f_conf);
 				
 				fseek(f_conf, curpos, SEEK_SET);
-				fputs(line, f_conf);
+//				fputs(line, f_conf);
+				fwrite(line, sizeof(char), (size_t) cfglen, f_conf);
+#ifdef __WATCOMC__
+				fflush( f_conf );
+				fTruncate( fileno(f_conf), endpos-(remstr-curpos) );
+				fflush( f_conf );
+#else
 				truncate(confName, endpos-(remstr-curpos));
+#endif
 				free(line);
 				free(cfgline);
 				link->Pause = 0;

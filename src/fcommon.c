@@ -88,7 +88,18 @@ int truncate(const char *fileName, long length)
    return 0;
 }
 
-#endif
+int fTruncate( int fd, long length )
+{
+   if( fd != -1 )
+   {
+      lseek(fd, length, SEEK_SET);
+      chsize(fd, tell(fd) );
+      return 1;
+   }
+   return 0;
+}
+
+#endif       
 
 e_prio cvtFlavour2Prio(e_flavour flavour)
 {
