@@ -62,7 +62,6 @@
 #include <scanarea.h>
 
 unsigned char RetFix;
-char straka[24];
 
 int strncasesearch(char *strL, char *strR, int len)
 {
@@ -85,13 +84,6 @@ char *print_ch(int len, char ch)
     tmp[len]=0;
     return tmp;
 }
-
-char *aka2str(s_addr aka) {
-    if (aka.point) sprintf(straka,"%u:%u/%u.%u",aka.zone,aka.net,aka.node,aka.point);
-    else sprintf(straka,"%u:%u/%u",aka.zone,aka.net,aka.node);
-	
-    return straka;
-}	
 
 int subscribeCheck(s_area area, s_message *msg, s_link *link) {
 	int i;
