@@ -57,6 +57,7 @@
 #include <fidoconf/crc.h>
 
 #include <smapi/msgapi.h>
+#include <smapi/api_jam.h>
 
 #include <fidoconf/log.h>
 #include <global.h>
@@ -65,13 +66,21 @@
 
 #define MAX_INCORE	10000	// if more messages, do not link incore
 
+dword Jam_Crc32(unsigned char* buff, dword len);
+char *Jam_GetKludge(HAREA jm, dword msgnum, word what);
+JAMHDR *Jam_GetHdr(HAREA jm, dword msgnum);
+void Jam_WriteHdr(HAREA jm, JAMHDR *jamhdr, dword msgnum);
+
 /* internal structure holding msg's related to link information */
 /* used by linkArea */
 struct msginfo {
    char *msgId;
    char *replyId;
    HMSG msgh;
-   XMSG *xmsg;
+   union {
+	XMSG *xmsg;
+	JAMHDR *jamhdr;
+   } hdr;
    UMSGID msgPos; 
 
    short freeReply;
@@ -87,11 +96,16 @@ struct hashinfo {
 
 typedef struct msginfo s_msginfo;
 
-static s_msginfo *findMsgId(s_msginfo *entries, struct hashinfo *hash, dword hashSize, char *msgId, int add)
+static s_msginfo *findMsgId(s_msginfo *entries, struct hashinfo *hash, dword hashSize, char *msgId, int add, dword crc32)
 {
 	unsigned long h, d = 1;
 	dword crc;
-	h = crc = strcrc32(msgId, 0xFFFFFFFFL); /* TODO: Maybe find a better hashing function */
+	if (crc32 == 0)
+		h = crc = strcrc32(msgId, 0xFFFFFFFFL);
+	else if (crc32 == 0xFFFFFFFFL)
+		h = crc = Jam_Crc32(msgId, strlen(msgId));
+	else
+		h = crc = crc32;
 	while (d < hashSize) {
 		h %= hashSize;
 		if (hash[h].idx == 0) {
@@ -146,6 +160,7 @@ int linkArea(s_area *area, int netMail)
    struct hashinfo *hash;
    byte *ctl;
    char *msgId;
+   int jam;
 
    s_msginfo *curr;
 
@@ -157,7 +172,7 @@ int linkArea(s_area *area, int netMail)
    }
 
    harea = MsgOpenArea((UCHAR *) area->fileName, MSGAREA_NORMAL,
-/*							  area->fperm, area->uid, area->gid,*/
+/*					  area->fperm, area->uid, area->gid,*/
                        (word)(area->msgbType | (netMail ? 0 : MSGTYPE_ECHO)));
    if (harea) {
       w_log('3', "linking area %s", area->areaName);
@@ -183,10 +198,14 @@ int linkArea(s_area *area, int netMail)
       ctl = (byte *) safe_malloc(cctlen = 1); /* Some libs don't accept relloc(NULL, ..
 					 * So let it be initalized
 					 */
+      jam = !!(area->msgbType & MSGTYPE_JAM);
       /* Area linking is done in three passes */
       /* Pass 1st : read all message information in memory */
 
       for (i = 1; i <= msgsNum; i++) {
+	    if (jam) {
+		  msgId = Jam_GetKludge(harea, i, JAMSFLD_MSGID);
+	    } else {
 		  hmsg  = MsgOpenMsg(harea, (msgsNum >= MAX_INCORE) ? MOPEN_READ : (MOPEN_READ|MOPEN_WRITE), i);
 		  if (hmsg == NULL) {
 			  continue;
@@ -206,108 +225,144 @@ int linkArea(s_area *area, int netMail)
 		  MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, ctlen, ctl);
 		  ctl[ctlen] = '\0';
 		  msgId   = GetKludgeText(ctl, "MSGID");
-		  if (msgId == NULL) {
-			  w_log('6', "msg %ld haven't got any MSGID, replying is not possible", i);
-			  MsgCloseMsg(hmsg);
-			  continue;
+	    }
+	    if (msgId == NULL) {
+		  w_log('6', "msg %ld haven't got any MSGID, replying is not possible", i);
+		  if (!jam)
+			MsgCloseMsg(hmsg);
+		  continue;
+	    }
+	    curr = findMsgId(msgs, hash, hashNums, msgId, i,
+	                     jam ? Jam_GetHdr(harea, i)->MsgIdCRC : 0);
+	    if (curr == NULL) {
+		  w_log('6', "hash table overflow. Tell it to the developers !"); 
+		  // try to free as much as possible
+		  // FIXME : remove blocks themselves
+		  nfree(msgId);
+		  if (!jam) {
+			nfree(ctl);
+			MsgCloseMsg(hmsg);
+			MsgCloseArea(harea);
 		  }
-		  curr = findMsgId(msgs, hash, hashNums, msgId, i);
-		  if (curr == NULL) {
-			  w_log('6', "hash table overflow. Tell it to the developers !"); 
-			  // try to free as much as possible
-			  // FIXME : remove blocks themselves
-			  nfree(msgId);
-			  nfree(ctl);
-			  MsgCloseMsg(hmsg);
-			  MsgCloseArea(harea);
-			  return 0;
-		  };
-		  if (curr -> msgId != NULL) {
-			  w_log('6', "msg %ld has dupes in msgbase :" \
-							" trown from reply chain", i);
-			  MsgCloseMsg(hmsg);
-			  nfree(msgId);
-			  continue;
+		  return 0;
+	    };
+	    if (curr -> msgId != NULL) {
+		  w_log('6', "msg %ld has dupes in msgbase :" \
+					" trown from reply chain", i);
+		  if (!jam) {
+			MsgCloseMsg(hmsg);
+			nfree(msgId);
 		  }
+		  continue;
+	    }
+	    curr -> msgId = msgId;
+	    curr -> msgPos  = MsgMsgnToUid(harea, i);
+	    curr -> freeReply = 0;
+	    curr -> relinked = 0;
+	    curr -> replyto = curr -> replynext = 0;
+	    curr -> msgh = NULL;
+	    if (jam) {
+		  curr -> replyId = Jam_GetKludge(harea, i, JAMSFLD_REPLYID);
+		  curr -> hdr.jamhdr = Jam_GetHdr(harea, i);
+	    } else {
+		  curr -> replyId = GetKludgeText(ctl, "REPLY");
+	  	  curr -> hdr.xmsg = memdup(&xmsg, sizeof(XMSG));
 		  if (msgsNum >= MAX_INCORE)
 			MsgCloseMsg(hmsg), curr -> msgh = NULL;
 		  else
 			curr -> msgh = hmsg; 
-		  curr -> msgId = msgId;
-		  curr -> xmsg = memdup(&xmsg, sizeof(XMSG));
-		  curr -> replyId = GetKludgeText(ctl, "REPLY");
-		  curr -> msgPos  = MsgMsgnToUid(harea, i);
-		  curr -> freeReply = 0;
-		  curr -> relinked = 0;
-		  curr -> replyto = curr -> replynext = 0;
+	    }
       }
 
       /* Pass 2nd : search for reply links and build relations*/
       for (i = 0; i < msgsNum; i++) {
-	      if (msgs[i].msgId != NULL && msgs[i].replyId != NULL) {
-		      curr = findMsgId(msgs, hash, hashNums, msgs[i].replyId, 0);
-		      if (curr == NULL) continue;
-		      if (curr -> msgId == NULL) continue;
-		      if (curr -> freeReply >= MAX_REPLY-4 &&
-		          (area->msgbType & (MSGTYPE_JAM | MSGTYPE_SDM))) {
-				  curr -> freeReply--;
-				  curr -> replies[curr -> freeReply - 1] = curr -> replies[curr -> freeReply];
-		      }
-		      if (curr -> freeReply < MAX_REPLY) {
-			      curr -> replies[curr -> freeReply] = i;
-			      if (curr -> xmsg -> replies[curr -> freeReply] != msgs[i].msgPos) {
-				      curr -> xmsg -> replies[curr -> freeReply] = msgs[i].msgPos;
-				      if ((area->msgbType & MSGTYPE_SQUISH) || curr->freeReply == 0)
-						  curr -> relinked = 1;
-			      }
-			      if (curr -> freeReply && (area->msgbType & MSGTYPE_JAM)) {
-					  int replyprev = curr -> replies[curr -> freeReply - 1];
-					  msgs[replyprev].replynext = msgs[i].msgPos;
-					  if (msgs[replyprev].xmsg -> xmreplynext != msgs[i].msgPos) {
-						  msgs[replyprev].xmsg -> xmreplynext = msgs[i].msgPos;
-						  msgs[replyprev].relinked = 1;
-					  }
-			      }
-			      (curr -> freeReply)++;
-			      msgs[i].replyto = curr -> msgPos;
-			      if (msgs[i].xmsg -> replyto != curr -> msgPos) {
-				      msgs[i].xmsg -> replyto = curr -> msgPos;
-				      msgs[i].relinked = 1;
-			      }
-		      } else {
-			      w_log('6', "msg %ld: replies count for msg %ld exceeds %d, rest of the replies won't be linked",i+1, curr-msgs+1,MAX_REPLY);
-		      }
-	      }
+	  if (msgs[i].msgId == NULL || msgs[i].replyId == NULL)
+	     continue;
+	  curr = findMsgId(msgs, hash, hashNums, msgs[i].replyId, 0,
+	                   jam ? Jam_GetHdr(harea, i+1)->ReplyCRC : 0);
+	  if (curr == NULL) continue;
+	  if (curr -> msgId == NULL) continue;
+	  if (curr -> freeReply >= MAX_REPLY-4 &&
+	      (area->msgbType & (MSGTYPE_JAM | MSGTYPE_SDM))) {
+		curr -> freeReply--;
+		curr -> replies[curr -> freeReply - 1] = curr -> replies[curr -> freeReply];
+	   }
+	   if (curr -> freeReply >= MAX_REPLY) {
+		w_log('6', "msg %ld: replies count for msg %ld exceeds %d, rest of the replies won't be linked", i+1, curr-msgs+1, MAX_REPLY);
+		continue;
+	   }
+	   curr -> replies[curr -> freeReply] = i;
+	   if (!jam) {
+		if (curr->hdr.xmsg->replies[curr->freeReply]!=msgs[i].msgPos) {
+			curr->hdr.xmsg->replies[curr->freeReply]=msgs[i].msgPos;
+			if ((area->msgbType & MSGTYPE_SQUISH) ||
+			    curr->freeReply == 0)
+				curr -> relinked = 1;
+		}
+		(curr -> freeReply)++;
+		msgs[i].replyto = curr -> msgPos;
+		if (msgs[i].hdr.xmsg -> replyto != curr -> msgPos) {
+			msgs[i].hdr.xmsg -> replyto = curr -> msgPos;
+			msgs[i].relinked = 1;
+		}
+	   } else {
+		if (curr -> freeReply == 0) {
+			if (curr->hdr.jamhdr->Reply1st != msgs[i].msgPos) {
+				curr->hdr.jamhdr->Reply1st = msgs[i].msgPos;
+				curr -> relinked = 1;
+			}
+		} else {
+			int replyprev = curr -> replies[curr -> freeReply - 1];
+			msgs[replyprev].replynext = msgs[i].msgPos;
+			if (msgs[replyprev].hdr.jamhdr -> ReplyNext != msgs[i].msgPos) {
+				msgs[replyprev].hdr.jamhdr -> ReplyNext = msgs[i].msgPos;
+				msgs[replyprev].relinked = 1;
+			}
+		}
+		(curr -> freeReply)++;
+		msgs[i].replyto = curr -> msgPos;
+		if (msgs[i].hdr.jamhdr -> ReplyTo != curr -> msgPos) {
+			msgs[i].hdr.jamhdr -> ReplyTo = curr -> msgPos;
+			msgs[i].relinked = 1;
+		}
+	   }
       }
 
       /* Pass 3rd : write information back to msgbase */
       for (i = 0; i < msgsNum; i++) {
-	if (msgs[i].msgId != NULL) {
-		int j;
-		for (j=0; j<MAX_REPLY && msgs[i].xmsg->replies[j]; j++);
-		if (msgs[i].relinked != 0 ||
-		    msgs[i].replyto != msgs[i].xmsg->replyto ||
-		    ((area->msgbType & MSGTYPE_JAM) && msgs[i].replynext != msgs[i].xmsg->xmreplynext) ||
-		    ((area->msgbType & MSGTYPE_SQUISH) && msgs[i].freeReply != j) ||
-		    (msgs[i].freeReply == 0 && j)) {
-			if (msgs[i].freeReply<MAX_REPLY)
-				msgs[i].xmsg->replies[msgs[i].freeReply] = 0;
-			msgs[i].xmsg->replyto = msgs[i].replyto;
-			if (area->msgbType & MSGTYPE_JAM)
-				msgs[i].xmsg->xmreplynext = msgs[i].replynext;
-			if (msgs[i].msgh == NULL)
-				msgs[i].msgh  = MsgOpenMsg(harea, MOPEN_READ|MOPEN_WRITE, i);
-			if (msgs[i].msgh)
-				MsgWriteMsg(msgs[i].msgh, 0, msgs[i].xmsg, NULL, 0, 0, 0, NULL);
-		}
-	        if (msgs[i].msgh)
-			MsgCloseMsg(msgs[i].msgh);
+	   int j;
+	   if (msgs[i].msgId == NULL)
+		continue;
+	   if (jam) {
+		if ((msgs[i].replyto   != msgs[i].hdr.jamhdr->ReplyTo) ||
+		    (msgs[i].replynext != msgs[i].hdr.jamhdr->ReplyNext) ||
+		    msgs[i].relinked) {
+			msgs[i].hdr.jamhdr->ReplyTo   = msgs[i].replyto;
+			msgs[i].hdr.jamhdr->ReplyNext = msgs[i].replynext;
+			Jam_WriteHdr(harea, msgs[i].hdr.jamhdr, i+1);
+		    }
+		continue;
+	   }
+	   for (j=0; j<MAX_REPLY && msgs[i].hdr.xmsg->replies[j]; j++);
+	   if (msgs[i].relinked != 0 ||
+	       msgs[i].replyto != msgs[i].hdr.xmsg->replyto ||
+	       ((area->msgbType & MSGTYPE_SQUISH) && msgs[i].freeReply != j) ||
+	       (msgs[i].freeReply == 0 && j)) {
+		if (msgs[i].freeReply<MAX_REPLY)
+		    msgs[i].hdr.xmsg->replies[msgs[i].freeReply] = 0;
+		msgs[i].hdr.xmsg->replyto = msgs[i].replyto;
+		if (msgs[i].msgh == NULL)
+		    msgs[i].msgh = MsgOpenMsg(harea, MOPEN_READ|MOPEN_WRITE, i);
+		if (msgs[i].msgh)
+		    MsgWriteMsg(msgs[i].msgh, 0, msgs[i].hdr.xmsg, NULL, 0, 0, 0, NULL);
+	   }
+	   if (msgs[i].msgh)
+		MsgCloseMsg(msgs[i].msgh);
 	 
-         /* free this node */
-		nfree(msgs[i].msgId);
-		nfree(msgs[i].replyId);
-		nfree(msgs[i].xmsg);
-	};
+	   /* free this node */
+	   nfree(msgs[i].msgId);
+	   nfree(msgs[i].replyId);
+	   nfree(msgs[i].hdr.xmsg);
       }
       /* close everything, free all allocated memory */
       nfree(msgs);
