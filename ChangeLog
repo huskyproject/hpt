@@ -1,3 +1,7 @@
+2003-05-05 Monday 11:06  val_khokhlov
+
+	* src/perl.c (1.62): gmtoff() fix
+
 2003-04-28 Monday 18:59  d_sergienko
 
 	* HISTORY (1.29): fix spelling
