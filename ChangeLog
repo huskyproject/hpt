@@ -1,6 +1,12 @@
 hpt 0.27
 --------
 
+Sat Apr 17 12:10
+Antonio:
++ fixed a bug in description code of autoCreate. Someone that had segfaults,
+  please test it!.
+
+----- cvs ci ------
 Thu Apr 15 16:57
 Antonio:
 + hpt now changes subject line in attach netmails. Add the inbound path
