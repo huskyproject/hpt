@@ -170,7 +170,7 @@ unsigned long getfree (char *path)
 #else
   /* we are not on any BSD-like OS */
   /* list other UNIX os'es without getfree mechanism here */
-#if defined( __svr4__ ) || defined( __SVR4 ) || defined (__linux__)
+#if defined( __svr4__ ) || defined( __SVR4 ) || defined (__linux__) && defined (__GLIBC__)
 #include <sys/statvfs.h>
 #ifndef _SYS_STATVFS_H
 #define _SYS_STATVFS_H
@@ -178,6 +178,14 @@ unsigned long getfree (char *path)
 #include <sys/vfs.h>
 #endif /* BEOS */
 #endif /* svr4 or linux */
+
+#if defined (__linux__) && !defined(__GLIBC__)
+#include <sys/vfs.h>
+#ifndef _SYS_STATFS_H
+#define _SYS_STATFS_H
+#endif /* _SYS_STATFS_H */
+#endif /* linux &! GLIBC */
+
 #include <limits.h>
 #endif /* not BSD-like OS */
 
