@@ -1,3 +1,53 @@
+2003-01-17 Friday 14:42  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.68): Fix FAQ
+
+2003-01-17 Friday 14:28  stas_degteff
+
+	* src/hpt.c (1.169): Fix warning (signed/unsigned)
+
+2003-01-17 Friday 14:07  stas_degteff
+
+	* make/makefile.cyg (1.8): Fix cigwin build (check version of
+	cygwin)
+
+2003-01-17 Friday 13:43  stas_degteff
+
+	* src/: carbon.c (1.14), fcommon.c (1.161), hptlink.c (1.48),
+	hpttree.c (1.26), scan.c (1.184): Use HAS_PROCESS_H
+
+2003-01-17 Friday 13:28  mche
+
+	* misc/adv-stat-hpt.pl (1.3): # hptstat ver.0.5, (c)opyright
+	2002-03, by val khokhlov
+
+2003-01-17 Friday 13:16  gerritkuehn
+
+	* src/: carbon.c (1.13), fcommon.c (1.160), scan.c (1.183): Fixed
+	includes to compile under *ix.
+
+2003-01-17 Friday 12:27  mche
+
+	* doc/hpt.texi (1.96): update documentation for ReadOnly token
+
+2003-01-17 Friday 10:26  mche
+
+	* src/fcommon.c (1.159): fix MSVC compilation
+
+2003-01-17 Friday 09:23  stas_degteff
+
+	* h/fcommon.h (1.51), h/hptperl.h (1.10), h/pkt.h (1.31),
+	src/areafix.c (1.381), src/carbon.c (1.12), src/fcommon.c (1.158),
+	src/getfree.c (1.26), src/hpt.c (1.168), src/hptlink.c (1.47),
+	src/hpttree.c (1.25), src/link.c (1.69), src/pktread.c (1.96),
+	src/pktwrite.c (1.40), src/post.c (1.105), src/query.c (1.88),
+	src/scan.c (1.182), src/scanarea.c (1.97), src/toss.c (1.490),
+	src/txt2pkt.c (1.45): Fix includes
+
+2003-01-17 Friday 07:39  stas_degteff
+
+	* src/fcommon.c (1.157): Fix includes
+
 2003-01-16 Thursday 13:19  mche
 
 	* misc/adv-stat-hpt.pl (1.2): # hptstat ver.0.4, (c)opyright
