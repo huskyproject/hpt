@@ -2,6 +2,11 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Jul 1 19:11:34 MSK 2000
+Nestyurkin Nikolay:
+* new make files in 'make' directory
+
+----- cvs ci ------
 Fri Jun 30 23:25:08 NOVST 2000
 max:
 * disable auto packing netmail after relink
