@@ -1,3 +1,43 @@
+2002-12-17 Tuesday 16:44  pgul
+
+	* src/seenby.c (1.29): Optimize previous patch
+
+2002-12-17 Tuesday 13:50  pgul
+
+	* src/seenby.c (1.28): Process last, but not first PATH lines
+
+2002-12-11 Wednesday 10:36  mche
+
+	* src/hpt.c (1.163): fix previous patch
+
+2002-12-11 Wednesday 08:17  stas_degteff
+
+	* src/hpt.c (1.162): Fix win32 console title (Thanks to Roman
+	Dmitriev 2:5032/14)
+
+2002-12-11 Wednesday 08:03  stas_degteff
+
+	* src/txt2pkt.c (1.44): Try to fix unix compiler warnings (thanks
+	to Oleg Kuznetsov)
+
+2002-12-10 Tuesday 12:33  mche
+
+	* src/: post.c (1.104), toss.c (1.485): added some log messages
+
+2002-12-06 Friday 13:23  mche
+
+	* src/areafix.c (1.377): Kill area msgbase only if it dfined area
+	options -- "-k"
+
+2002-12-06 Friday 07:51  mche
+
+	* doc/hpt.texi (1.92): "Areafix keywords" section added
+
+2002-12-06 Friday 06:46  mche
+
+	* src/: fcommon.c (1.151), perl.c (1.45), query.c (1.82), toss.c
+	(1.484): fix warnings
+
 2002-12-05 Thursday 13:54  stas_degteff
 
 	* doc/hpt-FAQ.russian (1.61): Update about golded config
