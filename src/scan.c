@@ -808,11 +808,11 @@ void scanExport(int type, char *str) {
            if (st.st_size == 0) { // all entries was processed
                remove(config->echotosslog);
                if (tmplogname)
-                   if (!remove(tmplogname))
+                   if (remove(tmplogname) != 0)
                        w_log('9', "Couldn't remove temporary file\"%s\"", tmplogname);
            } else { // we still have areas
                remove(config->echotosslog);
-               if (!rename(tmplogname, config->echotosslog))
+               if (rename(tmplogname, config->echotosslog) != 0)
                    w_log('9', "Couldn't rename \"%s\" -> \"%s\"", tmplogname, config->echotosslog);
            }
        }
@@ -820,11 +820,11 @@ void scanExport(int type, char *str) {
            if (st.st_size == 0) {
                remove(str);
                if (tmplogname)
-                   if (!remove(tmplogname))
+                   if (remove(tmplogname) != 0)
                        w_log('9', "Couldn't remove temporary file\"%s\"", tmplogname);
            } else {
                remove(str);
-               if (!rename(tmplogname, str))
+               if (rename(tmplogname, str) != 0)
                    w_log('9', "Couldn't rename \"%s\" -> \"%s\"", tmplogname, str);
            }
        }
