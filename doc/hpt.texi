@@ -379,7 +379,8 @@ define links and areas before any carbone definitions
 * Route::                       routing of netmails
 * RouteFile::                   routing of netmails with file attached
 * RouteMail::                   routing of netmails without file attached
-* ScreenLogLevels::	        set level of log output to screen
+* ScreenLogLevels::	            set level of log output to screen
+* SendNotifyMessages::          send messages about query changes to link
 * SeparateBundles::             move echomail for each link to his own directory
 * SetConsoleTitle::             schange conesole title under win32
 * SortEchoList::                echolist sort mode
@@ -1427,7 +1428,7 @@ This statement is the same as the @code{Route} statement.
 
 This statement can be repeated.
 
-@node ScreenLogLevels, SeparateBundles, RouteMail, Keywords
+@node ScreenLogLevels, SendNotifyMessages, RouteMail, Keywords
 @subsection ScreenLogLevels
 @findex ScreenLogLevels
 @table @asis
@@ -1440,6 +1441,21 @@ This statement can be repeated.
 Set level of log output to screen. See loglevels for details
 
 This statement cannot be repeated.
+
+@node SendNotifyMessages, SeparateBundles, ScreenLogLevels, Keywords
+@subsection SendNotifyMessages
+@findex SendNotifyMessages
+@table @asis
+@item Syntax:
+@code{sendNotifyMessages <bool>}
+@item Example:
+@code{sendNotifyMessages yes}
+@end table
+
+If sendNotifyMessages is true, link will receive notification messages from 
+areafix about link's requests status (this is default behavior).
+
+This statement can be repeated only for different links.
 
 @node SeparateBundles, SetConsoleTitle, ScreenLogLevels, Keywords
 @subsection SeparateBundles

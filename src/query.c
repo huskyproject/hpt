@@ -724,6 +724,15 @@ void af_QueueUpdate()
     s_query_areas *tmpNode  = NULL;
     s_link *lastRlink;
     s_link *dwlink;
+    s_message **tmpmsg = NULL;
+    size_t i = 0;
+    int j = 0;
+
+    tmpmsg = (s_message**) safe_malloc( config->linkCount * sizeof(s_message*));
+    for (i = 0; i < config->linkCount; i++)
+    {
+        tmpmsg[i] = NULL;
+    }
 
     w_log(LL_START, "Start updating queue file");
     if( !queryAreasHead ) af_OpenQuery();
@@ -754,8 +763,42 @@ void af_QueueUpdate()
                 strcpy(tmpNode->type, czKillArea);
                 tmpNode->bTime = tnow;
                 tmpNode->eTime = tnow + config->killedRequestTimeout*secInDay;
-                tmpNode->linksCount = 1;
                 w_log( LL_AREAFIX, "areafix: request for %s is going to be killed",tmpNode->name);
+
+                /* send notification messages */
+                for (i = 1; i < tmpNode->linksCount; i++)
+                {
+                    dwlink = getLinkFromAddr(config,tmpNode->downlinks[i]);
+                    for (j = 0; j < config->linkCount; j++)
+                    {
+                        if ( addrComp(dwlink->hisAka,config->links[j]->hisAka)==0 && dwlink->sendNotifyMessages)
+                        {
+                   	    if (tmpmsg[j] == NULL)
+                   	    {
+                                tmpmsg[j] = makeMessage(dwlink->ourAka,
+                                    &(dwlink->hisAka),
+                                    config->areafixFromName ? config->areafixFromName : versionStr,
+                                    dwlink->name,
+                                    "Notification message", 1,
+                                    dwlink->areafixReportsAttr ? dwlink->areafixReportsAttr : config->areafixReportsAttr);
+                                tmpmsg[j]->text = createKludges(config, NULL,
+                                    dwlink->ourAka,
+                                    &(dwlink->hisAka),
+                                    versionStr);
+                                    if (dwlink->areafixReportsFlags)
+                                        xstrscat(&(tmpmsg[j]->text), "\001FLAGS ", dwlink->areafixReportsFlags, "\r",NULL);
+                                    else if (config->areafixReportsFlags)
+                                        xstrscat(&(tmpmsg[j]->text), "\001FLAGS ", config->areafixReportsFlags, "\r",NULL);
+
+                                  xstrcat(&tmpmsg[j]->text, "\r Your requests for the following areas were forwarded to uplinks,\r");
+                                xscatprintf(&tmpmsg[j]->text, " but no messages were received at least in %u days. Your requests\r",config->forwardRequestTimeout);
+                                    xstrcat(&tmpmsg[j]->text, " are killed by timeout.\r\r");
+                            }
+                            xscatprintf(&tmpmsg[j]->text, " %s\r",tmpNode->name);
+                        }
+                    }
+                }
+                tmpNode->linksCount = 1;
             }
             queryAreasHead->nFlag = 1; /*  query was changed */
             continue;
@@ -782,6 +825,22 @@ void af_QueueUpdate()
                 do_delete(NULL, delarea);
             }
         }
+    }
+    /* send notification messages */
+    for (i = 0; i < config->linkCount; i++)
+    {
+        if (tmpmsg[i])
+        {
+            xscatprintf(&tmpmsg[i]->text, "\r\r--- %s areafix\r", versionStr);
+            tmpmsg[i]->textLength = strlen(tmpmsg[i]->text);
+            processNMMsg(tmpmsg[i], NULL,
+                getNetMailArea(config,config->robotsArea),
+                0, MSGLOCAL);
+            closeOpenedPkt();
+            freeMsgBuffers(tmpmsg[i]);
+            w_log( LL_AREAFIX, "areafix: write notification msg for %s",aka2str(config->links[i]->hisAka));
+        }
+        nfree(tmpmsg[i]);
     }
     /*  send msg to the links (forward requests to areafix) */
     sendAreafixMessages();
