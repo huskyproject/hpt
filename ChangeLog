@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Mon Mar 20 08:56:28 MSK 2000
+max (patch from Serguei Revtov):
+* change legacy SUN & Win makefiles to compile with new includes, simplifying
+
+----- cvs ci ------
 Sun Mar 19 18:49:25 NOVT 2000
 max:
 * areafix: hidden & mandatory fixes

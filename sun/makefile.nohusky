@@ -1,22 +1,13 @@
 DEBUG   = 
 CC      = gcc 
-INSTDIR = /usr/local/bin
-MANDIR  = /usr/local/man
-INCDIR  = /usr/local/include
-
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o areafix.o log.o global.o recode.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o link.o post.o strsep.o crc.o xstr.o
 SRC_DIR = ../src/
 
-FIDOCONFIG = ../../fidoconfig/libfidoconfig.a
-SMAPI      = ../../smapi/libsmapisun.a
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o areafix.o log.o global.o recode.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o link.o post.o strsep.o crc.o xstr.o
 
-ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -g -O2 -s -DUNIX -D_POSIX_C_SOURCE
-  LFLAGS  = 
-else
-  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -O2 -DUNIX $(CADDFLAGS) -D_POSIX_X_SOURCE
-  LFLAGS  = -s
-endif
+LIBS = ../../fidoconfig/libfidoconfig.a ../../smapi/libsmapisun.a
+
+CFLAGS  = -c -I../h -I../.. -Wall -O2 -DUNIX -D_POSIX_X_SOURCE
+LFLAGS  = -s
 
 all: $(OBJS) \
      pktinfo \
@@ -27,33 +18,27 @@ all: $(OBJS) \
      hpttree
 
 %.o: $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
+	$(CC) $(CFLAGS) ../src/$*.c
 
 pktinfo: pktinfo.o $(OBJS)
-	$(CC) $(LFLAGS) -o pktinfo pktinfo.o pktread.o log.o fcommon.o global.o xstr.o $(FIDOCONFIG) $(SMAPI)
+	$(CC) $(LFLAGS) -o pktinfo pktinfo.o pktread.o log.o fcommon.o global.o xstr.o $(LIBS)
 
 tlog: tlog.o log.o
 	$(CC) $(LFLAGS) -o tlog tlog.o log.o
 
 tpkt: tpkt.o pktwrite.o fcommon.o pktread.o
-	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o log.o pktread.o pktwrite.o global.o xstr.o $(FIDOCONFIG) $(SMAPI)
+	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o log.o pktread.o pktwrite.o global.o xstr.o $(LIBS)
 
 hpt: $(OBJS)
-	$(CC) $(LFLAGS) -o hpt $(OBJS) $(FIDOCONFIG) $(SMAPI) 
+	$(CC) $(LFLAGS) -o hpt $(OBJS) $(LIBS) 
 
 hptlink: hptlink.o
-	$(CC) $(LFLAGS) -o hptlink hptlink.o xstr.o $(FIDOCONFIG) $(SMAPI)
+	$(CC) $(LFLAGS) -o hptlink hptlink.o xstr.o $(LIBS)
 
 hpttree: hpttree.o
-	$(CC) $(LFLAGS) -o hpttree hpttree.o xstr.o $(FIDOCONFIG) $(SMAPI)
+	$(CC) $(LFLAGS) -o hpttree hpttree.o xstr.o $(LIBS)
 
 clean:
 	-rm -f *.o
 	-rm *~
 
-install:
-	install -s hpt pktinfo hptlink hprtree $(INSTDIR)
-	gzip -c ../man/hpt.1 > hpt.1.gz
-	gzip -c ../man/hptlink.1 > hptlink.1.gz
-	gzip -c ../man/hpttree.1 > hpttree.1.gz
-	install hpt.1.gz hptlink.1.gz hpttree.1.gz $(MANDIR)/man1
