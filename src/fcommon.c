@@ -323,12 +323,13 @@ char *makeFileBoxName (s_link *link)
 {
     char *name=NULL;
 
-    xscatprintf (&name, "%s%d.%d.%d.%d%c",
+    xscatprintf (&name, "%s%d.%d.%d.%d%s%c",
 		 config->fileBoxesDir,
 		 link->hisAka.zone,
 		 link->hisAka.net,
 		 link->hisAka.node,
 		 link->hisAka.point,
+		 (link->echoMailFlavour==hold) ? ".h" : "",
 		 PATH_DELIM);
     return name;
 }

@@ -1259,7 +1259,9 @@ This statement cannot be repeated.
 @end table
 
 This statement specifies directory where link file boxes are placed (and
-created if necessary).
+created if necessary). Currnetly hpt creates file box names in form
+z.n.f.p (ex.: 2.5021.19.1). Trailing ".h" is added if link echomail
+flavour is "hold".
 
 This statement cannot be repeated.
 
