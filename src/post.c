@@ -508,6 +508,7 @@ void post(int c, unsigned int *n, char *params[])
                 fclose(f);
             }
         }
+        w_log(LL_STOP, "End posting");
     }
     
     if (textBuffer == NULL && !quit) {

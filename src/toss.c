@@ -2125,6 +2125,7 @@ void toss()
 	    fclose(f);
 	}
     }
+    w_log(LL_STOP, "End tossing");
 }
 
 int packBadArea(HMSG hmsg, XMSG xmsg, char force)
