@@ -175,6 +175,7 @@ void processConfig()
    
    FILE *f;
 
+   setvar("module", "hpt");
    config = readConfig(cfgFile);
    nfree(cfgFile);
    if (NULL == config) {

@@ -43,8 +43,6 @@
 #if defined (__TURBOC__)
 #include <process.h>
 #include <dir.h>
-#include <io.h>
-#include <dos.h>
 #endif
 #ifdef __IBMC__
 #include <direct.h>
@@ -57,6 +55,17 @@
 #endif
 #include <fcntl.h>
 #include <errno.h>
+
+#if defined(__TURBOC__) || defined(__IBMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
+
+#include <io.h>
+#include <fcntl.h>
+
+#if !defined(S_ISDIR)
+#define S_ISDIR(a) (((a) & S_IFDIR) != 0)
+#endif
+
+#endif
 
 #include <global.h>
 #include <recode.h>
@@ -117,17 +126,6 @@ int createLockFile(char *lockfile) {
 	nfree(pidstr);
         return 0;
 }
-
-#if defined(__TURBOC__) || defined(__IBMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
-
-#include <io.h>
-#include <fcntl.h>
-
-#if !defined(S_ISDIR)
-#define S_ISDIR(a) (((a) & S_IFDIR) != 0)
-#endif
-
-#endif
 
 #if defined(__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
 

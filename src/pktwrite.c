@@ -201,23 +201,23 @@ char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAk
 	
    if (area) xscatprintf(&buff, "AREA:%s\r", area);
    else {
-	   xscatprintf(&buff, "\1INTL %u:%u/%u %u:%u/%u\r",
+	   xscatprintf(&buff, "\001INTL %u:%u/%u %u:%u/%u\r",
 			   destAka->zone, destAka->net, destAka->node,
 			   ourAka->zone,  ourAka->net,  ourAka->node);
-      if (ourAka->point) xscatprintf(&buff, "\1FMPT %d\r", ourAka->point);
-      if (destAka->point) xscatprintf(&buff, "\1TOPT %d\r", destAka->point);
+      if (ourAka->point) xscatprintf(&buff, "\001FMPT %d\r", ourAka->point);
+      if (destAka->point) xscatprintf(&buff, "\001TOPT %d\r", destAka->point);
    }
 
    sleep(1);
    if (ourAka->point)
-      xscatprintf(&buff, "\1MSGID: %u:%u/%u.%u %08lx\r",
+      xscatprintf(&buff, "\001MSGID: %u:%u/%u.%u %08lx\r",
               ourAka->zone,ourAka->net,ourAka->node,ourAka->point,time(NULL));
    else
-      xscatprintf(&buff, "\1MSGID: %u:%u/%u %08lx\r",
+      xscatprintf(&buff, "\001MSGID: %u:%u/%u %08lx\r",
               ourAka->zone,ourAka->net,ourAka->node,time(NULL));
 
-   if (!config->disableTID) xscatprintf(&buff, "\1PID: %s\r", versionStr);
-   xstrcat(&buff, "\1FLAGS NPD\r");
+   if (!config->disableTID) xscatprintf(&buff, "\001PID: %s\r", versionStr);
+   xstrcat(&buff, "\001FLAGS NPD\r");
 
    return buff;
 }

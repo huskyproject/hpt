@@ -12,7 +12,7 @@
 # post to first netmail area if area eq "";
 # set current date if date eq "";
 # set fromaddr to ouraka if fromaddr eq "";
-# addr -- text string (i.e. "pvt loc k/s");
+# attr -- text string (i.e. "pvt loc k/s");
 # add kludges (INTL, FMPT, TOPT (for netmail), MSGID) if addkludges
 #
 # myaddr()
@@ -32,7 +32,8 @@ sub filter
 # $secure (defined if message from secure link)
 # return "" or reason for moving to badArea
 # set $kill for kill the message (not move to badarea)
-# set $change to update $text, $subject, $fromaddr, $toaddr, $fromname, $toname
+# set $change to update $text, $subject, $fromaddr, $toaddr,
+#     $fromname, $toname, $attr
   return "";
 }
 
@@ -43,7 +44,8 @@ sub scan
 # $toaddr (for netmail),
 # $subject, $text, $date, $attr
 # return "" or reason for dont packing to downlinks
-# set $change to update $text, $subject, $fromaddr, $toaddr, $fromname, $toname
+# set $change to update $text, $subject, $fromaddr, $toaddr,
+#     $fromname, $toname, $attr
   return "";
 }
 

@@ -1489,11 +1489,10 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	     break;
 	     
 	   case secProtInbound:
-		   if ((link != NULL) && (link->pktPwd != NULL) && link->pktPwd[0]) {
-               if (header->pktPassword &&
-				   stricmp(link->pktPwd, header->pktPassword)==0)
-				   processIt = 1;
-			   else {
+	     if ((link != NULL) && (link->pktPwd != NULL) && link->pktPwd[0]) {
+               if (stricmp(link->pktPwd, header->pktPassword)==0) {
+                  processIt = 1;
+               } else {
                   if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (eSecure | eOn)) ) {
                       writeLogEntry(hpt_log, '9', "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
                               fileName, header->origAddr.zone, header->origAddr.net,
@@ -1503,7 +1502,10 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	            writeLogEntry(hpt_log, '9', "pkt: %s Password Error for %i:%i/%i.%i",
 		    fileName, header->origAddr.zone, header->origAddr.net,
 		    header->origAddr.node, header->origAddr.point);
-                    rc = 1;
+		    if (header->pktPassword == NULL || header->pktPassword[0] == '\0')
+		       processIt = 2;
+		    else
+                       rc = 1;
                   }
                }
              } else if ((link != NULL) && ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "")==0))) {
@@ -1513,20 +1515,19 @@ int processPkt(char *fileName, e_tossSecurity sec)
 		       fileName, header->origAddr.zone, header->origAddr.net,
 		       header->origAddr.node, header->origAddr.point);
 	       processIt = 2;
-	       rc = 1;
 	     }
 	     break;
 
 	   case secInbound:
-	     if ((link != NULL) && (link->pktPwd != NULL)) {
-               if (stricmp(link->pktPwd, header->pktPassword)==0) {
+	     if ((link != NULL) && (link->pktPwd != NULL) && link->pktPwd[0]) {               
+	       if (header->pktPassword && stricmp(link->pktPwd, header->pktPassword)==0) {
                   processIt = 1;
                } else {
                   if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (eOn)) ) {
                       writeLogEntry(hpt_log, '9', "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
                               fileName, header->origAddr.zone, header->origAddr.net,
                               header->origAddr.node, header->origAddr.point);
-                      processIt = 1;
+                      processIt = 2; /* Unsecure inbound, do not process echomail */
                   } else {
 	            writeLogEntry(hpt_log, '9', "pkt: %s Password Error for %i:%i/%i.%i",
 		    fileName, header->origAddr.zone, header->origAddr.net,
@@ -1549,12 +1550,15 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	   if (processIt != 0) {
 		   realtime = time(NULL);
 		   while ((msgrc = readMsgFromPkt(pkt, header, &msg)) == 1) {
-               if (msg != NULL) {
+		   	if (msg != NULL) {
 				   if ((processIt == 1) || ((processIt==2) && (msg->netMail==1)))
-					   if (processMsg(msg, header, (sec==secLocalInbound || sec==secProtInbound || processIt == 1) ? 1 : 0) !=1 ) rc=5;
+				   {   if (processMsg(msg, header, (sec==secLocalInbound || sec==secProtInbound || processIt == 1) ? 1 : 0) !=1 )
+					       rc=5;
+				   } else
+				       rc = 1;
 				   freeMsgBuffers(msg);
 				   nfree(msg);
-               }
+			}
 		   }
 		   if (msgrc==2) rc = 3; // rename to .bad (wrong msg format)
 		   // real time of process pkt & msg without external programs
@@ -1562,15 +1566,32 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	   }
 	   
 	 } else {
+		   realtime = time(NULL);
+		   while ((msgrc = readMsgFromPkt(pkt, header, &msg)) == 1) {
+                          if (msg != NULL) {
+				   if (msg->netMail==1)
+				   {   if (processMsg(msg, header, (sec==secLocalInbound || sec==secProtInbound) ? 1 : 0) !=1 )
+					       rc=5;
+				   } else
+				       break;
+				   freeMsgBuffers(msg);
+				   nfree(msg);
+                          }
+		   }
+		   if (msg)
+		   {	/* echomail pkt not for us */
+			freeMsgBuffers(msg);
+			nfree(msg);
 	   
-	   /* PKT is not for us - try to forward it to our links */
+	  		/* PKT is not for us - try to forward it to our links */
 
-	     writeLogEntry(hpt_log, '9', "pkt: %s addressed to %d:%d/%d.%d but not for us", 
+			writeLogEntry(hpt_log, '9', "pkt: %s addressed to %d:%d/%d.%d but not for us", 
 			   fileName, header->destAddr.zone, header->destAddr.net,       
 			   header->destAddr.node, header->destAddr.point);
 	   
-	     fclose(pkt); pkt = NULL;
-	     rc = forwardPkt(fileName, header, sec);	   
+			fclose(pkt); pkt = NULL;
+			rc = forwardPkt(fileName, header, sec);	   
+		   }
 	 }
 	 
 	 nfree(header);
@@ -2337,7 +2358,7 @@ void tossFromBadArea()
 	   }
       
 	   highestMsg = MsgGetHighMsg(area);
-	   if (config->badArea.msgbType!=MSGTYPE_JAM) MsgSetHighWater(area,highestMsg+1);
+	   if (config->badArea.msgbType==MSGTYPE_SQUISH) MsgSetHighWater(area, highestMsg + 1);
 
 	   MsgCloseArea(area);
       

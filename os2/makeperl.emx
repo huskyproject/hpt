@@ -1,7 +1,7 @@
 # EMX A.OUT STYLE MAKEFILE WITH PERL HOOKS SUPPORT (REQ. EMXRT.DLL)
 # no support for the husky build environment
 
-DEBUG=-g
+DEBUG=-s
 # set to -g for debugging
 
 PERL   =D:/PERL5/LIB/5.00553/os2

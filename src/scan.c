@@ -330,6 +330,13 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    memset(&msg,'\0',sizeof(s_message));
    convertMsgHeader(*xmsg, &msg);
    convertMsgText(SQmsg, &msg);
+#ifdef DO_PERL
+   if (perlscanmsg(area->areaName, &msg)) {
+	xmsg->attr |= MSGSENT;
+	freeMsgBuffers(&msg);
+	return 0;
+   }
+#endif
 
    // prepare virtual link...
    virtualLink = getLinkFromAddr(*config, msg.destAddr);  //maybe the link is in config?
@@ -404,22 +411,6 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 	   // crash-msg -> make CUT
 	   if (createOutboundFileName(virtualLink, CRASH, PKT) == 0) {
 		   addViaToMsg(&msg, msg.origAddr);
-#ifdef DO_PERL
-		   if (perlscanmsg(area->areaName, &msg)) {
-perlscanexit:
-			if (virtualLink->bsyFile) {
-			    remove(virtualLink->bsyFile);
-			    nfree(virtualLink->bsyFile);
-			}
-			xmsg->attr |= MSGSENT;
-			freeMsgBuffers(&msg);
-			if (freeVirtualLink==1) {
-				nfree(virtualLink->name);
-				nfree(virtualLink);
-			}
-			return 0;
-		   }
-#endif
 		   makePktHeader(virtualLink, &header);
 		   pkt = openPktForAppending(virtualLink->floFile, &header);
 		   writeMsgToPkt(pkt, msg);
@@ -439,10 +430,6 @@ perlscanexit:
 	   // hold-msg -> make HUT
 	   if (createOutboundFileName(virtualLink, HOLD, PKT) == 0) {
 		   addViaToMsg(&msg, msg.origAddr);
-#ifdef DO_PERL
-		   if (perlscanmsg(area->areaName, &msg))
-			goto perlscanexit;
-#endif
 		   makePktHeader(virtualLink, &header);
 		   pkt = openPktForAppending(virtualLink->floFile, &header);
 		   writeMsgToPkt(pkt, msg);
@@ -466,12 +453,6 @@ perlscanexit:
 		   prio = cvtFlavour2Prio(route->flavour);
 		   if (createOutboundFileName(link, prio, PKT) == 0) {
 			   addViaToMsg(&msg, *(link->ourAka));
-#ifdef DO_PERL
-			   if (perlscanmsg(area->areaName, &msg)) {
-				virtualLink = link;
-				goto perlscanexit;
-			   }
-#endif
 			   makePktHeader(NULL, &header);
 			   header.destAddr = link->hisAka;
 			   header.origAddr = *(link->ourAka);

@@ -124,9 +124,10 @@ static XS(perl_putMsgInArea)
   if (addkludges)
     msg.text = createKludges(msg.netMail ? NULL : area, &msg.origAddr, &msg.destAddr);
   text = safe_strdup(text);
-  for (p=text; *p; p++)
-    if (*p == '\n')
-      *p = '\r';
+  if (strchr(text, '\r') == NULL)
+    for (p=text; *p; p++)
+      if (*p == '\n')
+        *p = '\r';
   xstrcat((char **)(&(msg.text)), text);
   free(text);
   rc = putMsgInArea(echo, &msg, 1, msg.attributes);
@@ -456,6 +457,7 @@ int perlscanmsg(char *area, s_message *msg)
        if (n_a > 0) string2addr(prc, &(msg->destAddr));
        prc = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
        if (n_a > 0) string2addr(prc, &(msg->origAddr));
+       msg->attributes = SvIV(perl_get_sv("attr", FALSE));
      }
    }
    return 0;
@@ -671,6 +673,7 @@ int perlfilter(s_message *msg, s_addr pktOrigAddr, int secure)
        if (n_a > 0) string2addr(prc, &(msg->destAddr));
        prc = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
        if (n_a > 0) string2addr(prc, &(msg->origAddr));
+       msg->attributes = SvIV(perl_get_sv("attr", FALSE));
      }
    }
    if (area) free(area);

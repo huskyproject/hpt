@@ -37,7 +37,7 @@ s_fidoconfig *config=NULL;
 /* basic version number */
 const int   VER_MAJOR   = 0;
 const int   VER_MINOR   = 9;
-const int   VER_PATCH   = 7;
+const int   VER_PATCH   = 8;
 
 
 /* branch is "" for CVS current, "-stable" for the release candiate branch  */

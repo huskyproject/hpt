@@ -3,6 +3,13 @@ hpt 0.9.7 (development version)
 
 
 ----- cvs ci ------
+Tue Jul 25 22:09:07 NOVST 2000
+max (patch from Pavel Gulchouk):
+* module=hpt
+* %delete areatag
+* areafix changes
+
+----- cvs ci ------
 Tue Jul 18 22:51:16 NOVST 2000
 max:
 * don't read /n in message body from pkt
