@@ -1,3 +1,18 @@
+hpt (0.9.8-12) unstable; urgency=low
+
+  * Newest cvs.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Wed,  8 Aug 2001 21:36:34 +0200
+
+hpt (0.9.8-11) unstable; urgency=low
+
+  * Changed to goto contrib/* because smapi is non-free/*
+  * Changed Description in Control File
+  * Changed Build-Depends for libsmapi to be 0.12 not 0.11
+  * Newest CVS with fixes to filter.pl
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Fri, 13 Jul 2001 14:16:50 +0200
+
 hpt (0.9.8-10) unstable; urgency=low
 
   * Newest cvs.

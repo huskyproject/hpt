@@ -46,8 +46,7 @@ install: build
 
 	# Add here commands to install the package into debian/hpt.
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/hpt
-	mkdir -p $(CURDIR)/debian/hpt/etc/fido
-	cp misc/areafix.hlp $(CURDIR)/debian/hpt/etc/fido/areafix.hlp
+	cp misc/areafix.hlp $(CURDIR)/debian/hpt/etc/husky/areafix.hlp
 	mkdir -p $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc
 	-cp misc/* $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/
 	rm -f $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/*.hlp
