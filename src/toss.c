@@ -327,7 +327,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 int autoCreate(char *c_area, s_addr pktOrigAddr)
 {
    FILE *f;
-   char buff[160], myaddr[20], hisaddr[20];
+   char buff[170], myaddr[20], hisaddr[20];
    int i=0,j=0;
    
    //translating name of the area to lowercase, much better imho.
@@ -349,9 +349,10 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    }
 
    //write new line in config file
-   sprintf(buff,"EchoArea %s %s%s -a %s Squish %s\n",c_area,config->msgBaseDir,
+   sprintf(buff,"EchoArea %s %s%s -a %s Squish %s -dupeCheck move",c_area,config->msgBaseDir,
            c_area,myaddr, hisaddr);
-   fprintf(f,buff);
+   fprintf(f, buff);
+   fprintf(f, "\n");
    
    fclose(f);
 
