@@ -15,31 +15,31 @@ Address 2:5100/115
 # ATTENTION the commeneed lines are not tested by me (mtt)
 # and will mostly only useful on dos-systems
 
-Unpack  "pkunzip -^ -o -e $a $f $p" 0 504b0304
+Unpack  "pkunzip -^ -o -e $a $p" 0 504b0304
 Pack zip zip -j -q $a $f
 
-#Unpack  "pkunpak /r $a $p $f" 0 1a
+#Unpack  "pkunpak /r $a $p" 0 1a
 #Pack  arc pkpak -oct a $a $f
 
-#Unpack  "pak e /wn $a $p $f" -2 fe
+#Unpack  "pak e /wn $a $p" -2 fe
 #Pack  pak pak a $a $f
 
-#Unpack  "lha e /m $a $p $f" 2 2d6c68
+#Unpack  "lha e /m $a $p" 2 2d6c68
 #Pack  lha lha a /o /m $a $f
 
-#Unpack  "zoo e:O $a $p $f" 0 5a4f4f
+#Unpack  "zoo e:O $a $p" 0 5a4f4f
 #Pack  zoo zoo a: $a $f
 
-#Unpack  "arj e -+ -y $a $p $f" 0 60ea
+#Unpack  "arj e -+ -y $a $p" 0 60ea
 #Pack  arj arj a -+ -e -y $a $f
 
-Unpack  "unrar e -y  $a $f $p > /dev/null"   0 52617221
+Unpack  "unrar e -y  $a $p > /dev/null"   0 52617221
 #Pack  rar rar a -std -ep $a $f
 
-#Unpack  "jar e -y $a $p $f" 14 1a4a61721b
+#Unpack  "jar e -y $a $p" 14 1a4a61721b
 #Pack  jar jar a -y $a $f
 
-#Unpack  "ha eyq $a $f"  0 4841
+#Unpack  "ha eyq $a"  0 4841
 #Pack  ha ha a21eq $a $f
 
 # include /etc/fido/areas
@@ -50,7 +50,7 @@ ourAka 2:5100/115
 Password xxxxxxxx
 EchoMailFlavour Normal
 AutoAreaCreate on
-AutoCreateDefaults -p 14 -dupeCheck move -dupeHistory 11
+AutoAreaCreateDefaults -p 14 -dupeCheck move -dupeHistory 11
 Packer zip
 
 Link SysOp
@@ -81,8 +81,7 @@ tempInbound     c:\fido\inbound\intmp
 #MsgBaseDir     Passthrough
 MsgBaseDir      c:\fido\squish
 
-public          c:\
-# public                /home/mtt/fido/public2
+#public          c:\
 
 # intab           /home/mtt/fido/recode/outaltkoi8
 # outtab          /home/mtt/fido/recode/outkoi8alt

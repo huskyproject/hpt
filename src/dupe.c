@@ -82,10 +82,10 @@ char *createDupeFileName(s_area *area) {
      strcat(name, aux=strtolower(area->areaName));
    }
    else {
-   strcat(name, (afname = strrchr(area->fileName, '/'))  != NULL ? (aux=strtolower(afname + 1)) :                 (aux=strtolower(area->fileName)));
+   strcat(name, (afname = strrchr(area->fileName, PATH_DELIM))  != NULL ? (aux=strtolower(afname + 1)) :                 (aux=strtolower(area->fileName)));
    }
 #else
-   strcat(name, (afname = strrchr(area->fileName, '\\'))  != NULL ? (aux=strtolower(afname + 1)) :                 (aux=strtolower(area->fileName)));
+   strcat(name, (afname = strrchr(area->fileName, PATH_DELIM))  != NULL ? (aux=strtolower(afname + 1)) :                 (aux=strtolower(area->fileName)));
 #endif
    free(aux);
    strcat(name, ".dup");

@@ -1,6 +1,10 @@
 hpt 0.29
 --------
-	
+
+----- cvs ci ------
+Wed Jun 23 23:20:11 NOVST 1999
+max:
+* bugfix for dupe.c (createDupeFileName)
 
 ----- cvs ci ------
 Mon Jun 21 17:36:45 NOVST 1999
