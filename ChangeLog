@@ -1,3 +1,9 @@
+2002-08-23 Friday 07:24  mche
+
+	* src/link.c (hpt-1_2-stable.1): limit on max linked messages
+	[10000] removed.  cause if it's limit was reached msgbase may
+	become broken
+
 2002-08-22 Thursday 06:21  sfpavel
 
 	* debian/changelog (hpt-1_2-stable.5): Correct apt location (now
