@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Aug 12 23:36:58 NOVST 2000
+max:
+* areafix: fixed tearline bug (report by Konstantin Samoylov)
+
+----- cvs ci ------
 Fri Aug 11 22:03:37 NOVST 2000
 max:
 * links with "export off" don't added to SEEN-BYs
