@@ -65,7 +65,7 @@
 #include <link.h>
 #include <areafix.h>
 #include <recode.h>
-#include <date.h>
+#include <cvsdate.h>
 
 s_message **msgToSysop = NULL;
 char *scanParmA;
@@ -406,7 +406,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 #endif
 
 #ifndef RELEASE
-   xscatprintf(&version, " %s", hpt_date);
+   xscatprintf(&version, " %s", cvs_date);
 #endif
 
    xscatprintf(&versionStr,"hpt %s", version);

@@ -2956,8 +2956,8 @@ Expressions are evaluated from top to bottom.
 This statement can be repeated.
 
 A CarbonRule is valid until a next rule is defined of until an action.
-After an action (carbonCopy, carbonMove etc), the carbonrule is AND again.
-
+After an action (CarbonCopy, CarbonMove, etc), the CarbonRule is AND again
+and new set of expressions starts.
 
 @node CarbonSubj, CarbonText, CarbonRule, Carbon Copy
 @subsection CarbonSubj
