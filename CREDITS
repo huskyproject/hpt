@@ -12,11 +12,14 @@ Credits:
 - some code was taken from ifmail by Eugene G. Crosser <crosser@pccross.msk.su>
 - some inspiration on createDirectoryTree was taken from the GNU Fileutils.
 - some ideas taken from QEcho
+- some code was taken from msgEd TE
 - arcmail code by ml & mtt
 - locking & bsy locks written by Max Levenkov
 - backporting to dos by Kolya Nesterov 2:463/7208.53
 - unpack code by Kolya
 - posting code by Kolya
+- linking code by Koly
+- linkWithImportLog feature by Gerald Fischer
 
 - the music played while developing mainly comes from Blind Guardian and
   Iron Maiden

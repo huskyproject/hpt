@@ -3,6 +3,10 @@ hpt 0.26
 --------
 
 ----- cvs ci ------
+Thu Jan 21 23:52:47 CET 1999
+- included gerald´s patches. linkWithImportLog
+
+----- cvs ci ------
 Thu Jan 21 09:59:14 CET 1999
 - fixed the last bug in pkts going to pnt-dir
 Wed Jan 20 23:04:50 CET 1999

@@ -190,9 +190,40 @@ int linkArea(s_area *area, int netMail)
 
 void linkAreas(void)
 {
+   FILE *f;
+   char *line;
+   s_area *area;
    int i;
-   /* link all echomail areas */
-   for (i = 0; i < config -> echoAreaCount; i++)
-      if (config -> echoAreas[i].dupeCheck != off)
-         linkArea(&(config -> echoAreas[i]), 0);
+
+   // open importlog file
+
+   if ((config->LinkWithImportlog != NULL) && (stricmp(config->LinkWithImportlog, "no")!=0)){
+      f = fopen(config->importlog, "r");
+   } else {
+      f = NULL;
+   }
+
+   if (f == NULL) {
+      // if importlog does not exist link all areas
+      writeLogEntry(log, '3', "Linking all echoAreas.");
+
+      /* link all echomail areas */
+      for (i = 0; i < config -> echoAreaCount; i++)
+         if (config -> echoAreas[i].dupeCheck != off)
+            linkArea(&(config -> echoAreas[i]), 0);
+   } else {
+      writeLogEntry(log, '3', "Using importlogfile -> linking listed echos only");
+
+      while (!feof(f)) {
+         line = readLine(f);
+
+         if (line != NULL) {
+            area = getArea(config, line);
+            if ((area->dupeCheck != off) && (area->areaName != config->badArea.areaName)) linkArea(area,0);
+            free(line);
+         }
+      }
+      fclose(f);
+      if (stricmp(config->LinkWithImportlog, "kill")==0) remove(config->importlog);
+   }
 }
