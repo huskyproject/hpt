@@ -1368,7 +1368,7 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
    UINT         seenByCount = 0, pathCount = 0;
    s_arealink   **links;
 
-   links = (s_arealink **) calloc(2, sizeof(s_arealink*));
+   links = (s_arealink **) scalloc(2, sizeof(s_arealink*));
    if (links==NULL) exit_hpt("out of memory",1);
    links[0] = arealink;
    
