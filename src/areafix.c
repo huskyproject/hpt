@@ -319,7 +319,7 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
 
 char *list(s_message *msg, s_link *link) {
 
-	int i,active,avail,rc;
+	int i,j,active,avail,rc,arealen,desclen,len;
 	char *report, addline[256];
 	
 	sprintf(addline, "Available areas for %s\r\r", aka2str(link->hisAka));
@@ -331,8 +331,16 @@ char *list(s_message *msg, s_link *link) {
 
 	    rc=subscribeCheck(config->echoAreas[i],msg, link);
 	    if (rc < 2) {
-			report=(char*) realloc(report, strlen(report)+
-			       strlen(config->echoAreas[i].areaName)+4);
+			arealen=strlen(config->echoAreas[i].areaName);
+			if (config->echoAreas[i].description!=NULL)
+			       desclen=strlen(config->echoAreas[i].description);
+			else
+			       desclen=0;
+
+			len=strlen(report)+arealen+(35-arealen)+desclen+4;
+
+			report=(char*) realloc(report, len);
+				
 			if (rc==0) {
 				strcat(report,"* ");
 				active++;
@@ -342,6 +350,13 @@ char *list(s_message *msg, s_link *link) {
 				avail++;
 			}
 			strcat(report, config->echoAreas[i].areaName);
+			if (desclen!=0)
+			{
+			       strcat(report," ");
+			       for (j=0;j<33-arealen;j++) strcat(report,".");
+                               strcat(report," ");
+                               strcat(report,config->echoAreas[i].description);
+			}
 			strcat(report,"\r");
 	    }
 	}
@@ -1476,7 +1491,6 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		
 		textBuff = msg->text;
 		token = strseparate (&textBuff, "\n\r");
-		
 		while(token != NULL) {
 			preport = processcmd( link, msg,  stripLeadingChars(token, " \t"), tellcmd (token) );
 			if (preport != NULL) {
