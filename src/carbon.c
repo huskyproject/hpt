@@ -137,10 +137,10 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 	    nfree(execstr);
 	    unlink(fname);
 	    nfree(fname);
-	};
-    if (rc == -1 || rc == 127) {
-	w_log(LL_ERR, "excution of external process %s failed", progname);
-    };
+	}
+/*    if (rc == -1 || rc == 127) */
+    if (rc)  /* system() return exit status returned by shell */
+	w_log(LL_ERR, "Execution of external process failed. Cmd is: %s", execstr);
     return 0;
 
 }
