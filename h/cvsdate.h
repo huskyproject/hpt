@@ -1,1 +1,1 @@
-char cvs_date[]="24-05-02";
+char cvs_date[]="26-05-02";
