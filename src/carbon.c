@@ -100,7 +100,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
     progname = carbon.areaName;
 #ifdef HAS_popen_close
     if (*progname == '|') {
-	msgfp = popen(progname + 1, "wt");
+	msgfp = popen(progname + 1, "w");
     } else
 #endif
 	msgfp = createTempTextFile(config, &fname);
@@ -108,7 +108,8 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
     if (!msgfp) {
 	w_log(LL_ERR, "external process %s: cannot create file", progname);
 	return 1;
-    }else w_log(LL_FILE,"toss.c:processExternal() opened '%s' (\"\" mode)", fname);
+    } else
+        w_log(LL_FILE,"toss.c:processExternal() opened %s %s", fname?"file":"pipe", fname?fname:progname);
     /* Output header info */
     if (!msg->netMail) fprintf(msgfp, "Area: %s\n", echo->areaName);
     fprintf(msgfp, "From: \"%s\" %s\n", msg->fromUserName, aka2str(msg->origAddr));
