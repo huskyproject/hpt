@@ -1,17 +1,13 @@
 /*:ts=8*/
 /*****************************************************************************
- * HPT --- FTN NetMail/EchoMail Tosser
+ * Link for HPT (FTN NetMail/EchoMail Tosser)
  *****************************************************************************
- * Copyright (C) 1997-1999
+ * Copyright (C) 1998-1999
  *
- * Matthias Tichy
+ * Kolya Nesterov
  *
- * Fido:     2:2433/1245 2:2433/1247 2:2432/605.14
- * Internet: mtt@tichy.de
- *
- * Grimmestr. 12         Buchholzer Weg 4
- * 33098 Paderborn       40472 Duesseldorf
- * Germany               Germany
+ * Fido:     2:463/7208.53
+ * Kiev, Ukraine
  *
  * This file is part of HPT.
  *
@@ -24,22 +20,14 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *****************************************************************************/
-#include <global.h>
 
-s_log     *log;
-s_fidoconfig *config;
+#ifndef __LINK_H
+#define __LINK_H
 
-const int VER_MAJOR = 0;
-const int VER_MINOR = 26;
-char      versionStr[10];
-
-int       cmToss = 0;
-int       cmScan = 0;
-int       cmPack = 0;
-int       cmLink = 0;
-
+void linkAreas(void);
+#endif

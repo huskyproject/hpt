@@ -189,6 +189,7 @@ void putMsgInArea(s_area *echo, s_message *msg, int strip)
          MsgWriteMsg(hmsg, 0, &xmsg, textStart, strlen(textStart), strlen(textStart), strlen(ctrlBuff), ctrlBuff);
 
          MsgCloseMsg(hmsg);
+         free(ctrlBuff);
 
       } else {
          sprintf(buff, "Could not create new msg in %s!", echo->fileName);
@@ -468,7 +469,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    //exit(2);
 
    if (pathCount > 0) {
-      if (path[pathCount-1].net != echo->useAka->net && path[pathCount-1].node != echo->useAka->node ) {
+      if ((path[pathCount-1].net != echo->useAka->net) && (path[pathCount-1].node != echo->useAka->node)) {
          // add our aka to path
          path = (s_seenBy*) realloc(path, sizeof(s_seenBy) * (pathCount)+1);
          path[pathCount].net = echo->useAka->net;
@@ -476,10 +477,11 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
          pathCount++;
       }
    } else {
-      path = (s_seenBy*) malloc(sizeof(s_seenBy) * (pathCount)+1);
+      pathCount = 0;
+      path = (s_seenBy*) malloc(sizeof(s_seenBy) * 1);
       path[pathCount].net = echo->useAka->net;
       path[pathCount].node = echo->useAka->node;
-      pathCount++;
+      pathCount = 1;
    }
 
 #ifdef DEBUG_HPT
@@ -880,6 +882,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
                   if ((processIt == 1) || ((processIt==2) && (msg->netMail==1)))
                      processMsg(msg, header->origAddr);
                   freeMsgBuffers(msg);
+                  free(msg);
                }
             }
          }
@@ -897,74 +900,6 @@ int processPkt(char *fileName, e_tossSecurity sec)
    fclose(pkt);
    return rc;
 }
-
-/* int processPkt(char *fileName, e_tossSecurity sec)
-{
-   FILE        *pkt;
-   s_pktHeader *header;
-   s_message   *msg;
-   char        buff[265];
-   s_link      *link;
-   char        pwdOK = !0;
-   int         rc = 0;
-
-   pkt = fopen(fileName, "rb");
-   if (pkt == NULL) return 2;
-
-   header = openPkt(pkt);
-   if (header != NULL) {
-      if (to_us(*header)==0){
-         sprintf(buff, "pkt: %s", fileName);
-         writeLogEntry(log, '6', buff);
-         statToss.pkts++;
-
-         link = getLinkFromAddr(*config, header->origAddr);
-         if (link != NULL) {
-            // if passwords aren't the same don't process pkt
-            // if pkt is from a System we don't have a link (incl. pwd) with
-            // we process it.
-            if ((link->pktPwd != NULL) && (stricmp(link->pktPwd, header->pktPassword) != 0)) pwdOK = 0;
-            if (sec==secLocalInbound) pwdOK = !0; // localInbound pkts don´t need pwd
-            if (pwdOK != 0) {
-               while ((msg = readMsgFromPkt(pkt, header->origAddr.zone)) != NULL) {
-                  rc = 4;
-                  if ((sec==secProtInbound) || (msg->netMail == 1) || (pwdOK != 0))
-                     processMsg(msg, header->origAddr);
-                  else rc = 3;
-                  freeMsgBuffers(msg);
-                  if (rc==3) {
-                     sprintf(buff, "pkt: %s mails found", fileName);
-                     writeLogEntry(log, '1', buff);
-                  }
-               }
-            }
-            else {
-               sprintf(buff, "pkt: %s Password Error for %i:%i/%i.%i",
-                       fileName, header->origAddr.zone, header->origAddr.net,
-                       header->origAddr.node, header->origAddr.point);
-               writeLogEntry(log, '9', buff);
-               rc = 1;
-            } // pwdOk != 0
-         } // link != NULL
-         else {
-            if (msg->netMail ==1) processMsg(msg, header->origAddr);
-            sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
-                    fileName, header->origAddr.zone, header->origAddr.net,
-                    header->origAddr.node, header->origAddr.point);
-            writeLogEntry(log, '9', buff);
-            rc = 1;
-         }
-      }
-   } else {
-      sprintf(buff, "pkt: %s wrong pkt-file", fileName);
-      writeLogEntry(log, '9', buff);
-      rc = 3;
-   }
-
-   fclose(pkt);
-   return rc;
-}
-*/
 
 void fillCmdStatement(char *cmd, const char *call, const char *archiv, const char *file, const char *path) {
    const char *start, *tmp, *add;
@@ -1197,7 +1132,10 @@ void toss()
 
    // write dupeFiles
 
-   for (i = 0 ; i < config->echoAreaCount; i++) writeToDupeFile(&(config->echoAreas[i]));
+   for (i = 0 ; i < config->echoAreaCount; i++) {
+      writeToDupeFile(&(config->echoAreas[i]));
+      freeDupeMemory(&(config->echoAreas[i]));
+   }
 
    if (config->importlog != NULL) {
       // write importlog

@@ -91,6 +91,7 @@ the first long is the offset of the first dupePack :
 */
 
 int writeToDupeFile(s_area *area);
+void freeDupeMemory(s_area *area);
 int dupeDetection(s_area *area, const s_message msg);
 char *createDupeFileName(s_area *area);
 void addIndex(s_area *echo, UINT32 index);

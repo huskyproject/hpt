@@ -52,14 +52,11 @@ char *createDupeFileName(s_area *area) {
    char *afname;
    #endif
 
-   
-   name = (char *) malloc(strlen(config->dupeHistoryDir)+
-   #ifndef MSDOS
-   strlen(area->areaName)+5
-   #else
-   5+9
-   #endif
-   );
+#ifndef MSDOS
+   name = (char *) malloc(strlen(config->dupeHistoryDir)+strlen(area->areaName)+5);
+#else
+    name = (char *) malloc(strlen(config->dupeHistoryDir)+5+9);
+#endif
 
    strcpy(name, config->dupeHistoryDir);
    #ifndef MSDOS
@@ -312,6 +309,21 @@ int writeToDupeFile(s_area *area) {
    return rc;
 }
 
+void freeDupeMemory(s_area *area) {
+
+   s_dupeMemory *dupes = area -> dupes, *newDupes = area -> newDupes;
+
+   if (dupes != NULL) {
+      tree_mung(&(dupes -> avlTree), &deleteEntry);
+      free(area -> dupes); area -> dupes = NULL;
+   };
+   if (newDupes != NULL) {
+      tree_mung(&(newDupes -> avlTree), &deleteEntry);
+      free(area -> newDupes); area -> newDupes = NULL;
+   };
+
+}
+
 int isDupe(s_area area, s_dupeEntry *entry) {
    s_dupeMemory *dupes = area.dupes, *newDupes = area.newDupes;
 
@@ -356,6 +368,9 @@ int dupeDetection(s_area *area, const s_message msg) {
       tree_add(&(newDupes->avlTree), &compareEntries, (char *) entry, &deleteEntry);
       return 1;
    }
-   // it is a dupe do nothing but return 0
-   else return 0;
+   // it is a dupe do nothing but return 0; and free dupe entry
+   else {
+      deleteEntry(entry);
+      return 0;
+   }
 }

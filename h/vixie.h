@@ -68,7 +68,7 @@ extern  char    *APC_PROCS[MAXPROC];
 #define TRUE            1
 #define FALSE           0
 #if !defined(__TURBOC__) && !defined(__IBMC__) && !defined(_AIX)
-extern  char            *malloc(), *calloc();
+//extern  char            *malloc(), *calloc();
 #endif
 
 

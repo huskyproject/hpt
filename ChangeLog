@@ -1,0 +1,15 @@
+
+hpt 0.26
+--------
+----- cvs ci ------
+Thu Jan 14 13:34:41 CET 1999
+- began ChangeLog
+- changed path addition, maybe this is resulting in a bugfix
+Wed Jan 13 20:12:00 CET 1999
+- added Kolya´s memory bug fixes
+- added Kolya´s link feature
+- replaced areafix.c with max´s new version
+
+hpt 0.25.1
+----------
+- fixed a bug in toss.c concerning netmailpackets without password

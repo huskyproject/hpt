@@ -1,6 +1,4 @@
 - pkt files for points should be going to point directory
-------- for 0.26
-- link patch from Kolya
 - include -b flag to toss from badarea
 - divide hpt into several programs:
   tosser
@@ -9,9 +7,9 @@
   poster
   linker
   areafix
+- put pkt´s into an existing archive
 - zone-gating
 - nodelist access
 - real hub-routing
-- put pkt´s into an existing archive
 - regexps for routing
 - go on holiday 

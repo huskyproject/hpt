@@ -245,11 +245,13 @@ s_message *readMsgFromPkt(FILE *pkt,UINT16 def_zone)
       return NULL;
    } /* endif */
 
-   msg->origAddr.node = getUINT16(pkt);
-   msg->destAddr.node = getUINT16(pkt);
-   msg->origAddr.net  = getUINT16(pkt);
-   msg->destAddr.net  = getUINT16(pkt);
-   msg->attributes    = getUINT16(pkt);
+   msg->origAddr.node   = getUINT16(pkt);
+   msg->destAddr.node   = getUINT16(pkt);
+   msg->origAddr.net    = getUINT16(pkt);
+   msg->destAddr.net    = getUINT16(pkt);
+   msg->attributes      = getUINT16(pkt);
+   msg->origAddr.domain = NULL;
+   msg->destAddr.domain = NULL;
 
    getc(pkt); getc(pkt);                // read unused cost fields (2bytes)
    fgets(msg->datetime, 21, pkt);
@@ -290,6 +292,8 @@ void freeMsgBuffers(s_message *msg)
   free(msg->subjectLine);
   free(msg->toUserName);
   free(msg->fromUserName);
+  free(msg->origAddr.domain);
+  free(msg->destAddr.domain);
 }
 
 char *getKludge(s_message msg, char *what) {

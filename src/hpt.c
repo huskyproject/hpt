@@ -59,6 +59,7 @@
 #include <dir.h>
 #include <patmat.h>
 #include <post.h>
+#include <link.h>
 
 void processCommandLine(int argc, char **argv)
 {
@@ -70,6 +71,7 @@ void processCommandLine(int argc, char **argv)
       printf("   hpt scan - scanning echomail\n");
       printf("   hpt pack - packing netmail\n");
       printf("   hpt post - posting a mail\n");
+      printf("   hpt link - links messages\n");
    }
 
    while (i < argc-1) {
@@ -83,6 +85,9 @@ void processCommandLine(int argc, char **argv)
       } else if (stricmp(argv[i], "pack") == 0) {
          cmPack = 1;
          continue;
+      } else if (stricmp(argv[i], "link") == 0) {
+         cmLink = 1;
+         continue;
       } else if (stricmp(argv[i], "post") == 0) {
          ++i; post(argc, &i, argv);
       } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
@@ -92,7 +97,7 @@ void processCommandLine(int argc, char **argv)
 
 void processConfig()
 {
-   char *buff;
+   char *buff = NULL;
 
    config = readConfig();
    if (NULL == config) {
@@ -116,6 +121,7 @@ void processConfig()
      strcpy(buff, config->logFileDir),
      strcat(buff, "hpt.log");
      log = openLog(buff, versionStr, "123456789");
+     free(buff);
    }
    if (log==NULL) printf("Could not open logfile: %s\n", buff);
    writeLogEntry(log, '1', "Start");
@@ -204,6 +210,7 @@ int main(int argc, char **argv)
    if (1 == cmToss) toss();
    if (cmScan == 1) scan();
    if (cmPack == 1) pack();
+   if (cmLink == 1) linkAreas();
 
    // deinit SMAPI
    MsgCloseApi();

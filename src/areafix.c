@@ -2,7 +2,7 @@
 /*****************************************************************************
  * AreaFix for HPT (FTN NetMail/EchoMail Tosser)
  *****************************************************************************
- * Copyright (C) 1998-99
+ * Copyright (C) 1998-1999
  *
  * Max Levenkov
  *
@@ -26,23 +26,46 @@
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *****************************************************************************/
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
+#ifndef MSDOS
 #include <fidoconfig.h>
-#include <common.h>
+#else
+#include <fidoconf.h>
+#endif
 
+#include <common.h>
 #include <fcommon.h>
 #include <global.h>
 #include <pkt.h>
 #include <version.h>
 #include <toss.h>
 #include <patmat.h>
+#include <ctype.h>
+#include <progprot.h>
 
+char *aka2str(s_addr *aka) {
+	int i=1,j;
+	char *straka;
+	
+	// how many bytes allocate? :)
+	if (aka->zone!=0) for (j=aka->zone/10; j > 0; i++) j=j/10;
+	if (aka->net!=0) for (i++, j=aka->net/10; j > 0; i++) j=j/10; else i++;
+	if (aka->node!=0) for (i++, j=aka->node/10; j > 0; i++) j=j/10; else i++;
+	if (aka->point!=0) {
+		i++; for (i++, j=aka->point/10; j > 0; i++) j=j/10;
+	}
+
+	straka=(char*) malloc(i+3);
+	
+	if (aka->point!=0) sprintf(straka,"%u:%u/%u.%u",aka->zone,aka->net,aka->node,aka->point);
+	else sprintf(straka,"%u:%u/%u",aka->zone,aka->net,aka->node);
+	
+	return straka;
+}	
 
 int subscribeCheck(s_area area, s_message *msg) {
 	int i;
@@ -79,15 +102,11 @@ int subscribeAreaCheck(s_area *area, s_message *msg, char *areaname) {
 	return rc;
 }
 
-int addAka(FILE *f, s_link *link) {
-	char straka[20], *cfg;
+// add string to file
+int addstring(FILE *f, char *straka) {
+	char *cfg;
 	long areapos,endpos,cfglen;
 	
-	if (link->hisAka.point!=0) {
-		sprintf(straka," %u:%u/%u.%u",link->hisAka.zone,link->hisAka.net,link->hisAka.node,link->hisAka.point);
-	}
-	else sprintf(straka," %u:%u/%u",link->hisAka.zone,link->hisAka.net,link->hisAka.node);
-
 	//current position
 	fseek(f,-1,SEEK_CUR);
 	areapos=ftell(f);
@@ -98,12 +117,13 @@ int addAka(FILE *f, s_link *link) {
 	cfglen=endpos-areapos;
 	
 	// storing end of file...
-	cfg= (char *) calloc((size_t) cfglen, sizeof(char*));
+	cfg = (char*) calloc((size_t) cfglen, sizeof(char*));
 	fseek(f,-cfglen,SEEK_END);
 	fread(cfg,sizeof(char*),(size_t) cfglen,f);
 	
 	// write config
 	fseek(f,-cfglen,SEEK_END);
+	fputs(" ",f);
 	fputs(straka,f);
 	fputs(cfg,f);
 	
@@ -111,24 +131,19 @@ int addAka(FILE *f, s_link *link) {
 	return 0;
 }
 
-int delAka(FILE *f, char *fileName, s_link *link) {
+int delstring(FILE *f, char *fileName, char *straka, int before_str) {
 	int al,i=1;
-    char straka[20], *cfg, c, j='\40';
+    char *cfg, c, j='\040';
 	long areapos,endpos,cfglen;
-	
-	if (link->hisAka.point!=0) {
-		sprintf(straka,"%u:%u/%u.%u",link->hisAka.zone,link->hisAka.net,link->hisAka.node,link->hisAka.point);
-	} else
-		sprintf(straka,"%u:%u/%u",link->hisAka.zone,link->hisAka.net,link->hisAka.node);
-	
+
 	al=strlen(straka);
 
 	// search for the aka string
-	while ((i!=0) || (j!='\40')) {
+	while ((i!=0) && ((j!='\040') || (j!='\011'))) {
 		for (i=al; i>0; i--) {
 			fseek(f,-2,SEEK_CUR);
 			c=fgetc(f);
-                        if (straka[i-1]!=c) {j = c; break;}
+			if (straka[i-1]!=tolower(c)) {j = c; break;}
 		}
 	}
 	
@@ -141,17 +156,68 @@ int delAka(FILE *f, char *fileName, s_link *link) {
 	cfglen=endpos-areapos-al;
 	
 	// storing end of file...
-	cfg=(char *) calloc((size_t) cfglen,sizeof(char*));
+	cfg=(char*) calloc((size_t) cfglen,sizeof(char*));
 	fseek(f,-cfglen-1,SEEK_END);
 	fread(cfg,sizeof(char*),(size_t) (cfglen+1),f);
 	
 	// write config
-	fseek(f,-cfglen-al-2,SEEK_END);
+	fseek(f,-cfglen-al-1-before_str,SEEK_END);
 	fputs(cfg,f);
 
-	truncate(fileName,endpos-al-1);
+	truncate(fileName,endpos-al-before_str);
 	
+	fseek(f,areapos-1,SEEK_SET);
+
 	free(cfg);
+	return 0;
+}
+
+int removeMsgBase(char *fileName, char *ext) {
+	char *msgBase, logmsg[80];
+
+	msgBase = (char*) malloc (strlen(fileName)+strlen(ext)+1);
+	sprintf(msgBase,"%s%s",fileName,ext);
+
+	if (fexist(msgBase)) {
+		if (remove(msgBase)==0) {
+			sprintf(logmsg,"msgbase '%s' deleted",msgBase);
+			fprintf(stdout, "%s\n", logmsg);
+			writeLogEntry(log, '8', logmsg);
+		} else {
+			sprintf(logmsg,"unable to delete msgbase '%s' !!!",msgBase);
+			fprintf(stderr, "%s\n", logmsg);
+			writeLogEntry(log, '8', logmsg);
+		}
+	}
+
+	free(msgBase);
+	return 0;
+}
+
+int makepass(FILE *f, char *fileName, char *areaName) {
+	s_area *area;
+	char logmsg[80];
+
+	area = getArea(config, areaName);
+
+	if (area->msgbType == MSGTYPE_SQUISH) delstring(f, fileName, "squish", 1);
+
+	if (area->msgbType == MSGTYPE_PASSTHROUGH) {
+		sprintf(logmsg,"Area '%s' already passthrough",area->areaName);
+		fprintf(stderr, "%s\n", logmsg);
+		writeLogEntry(log, '8', logmsg);
+	} else {
+		delstring(f, fileName, area->fileName, 1);
+		addstring(f, "passthrough");
+		sprintf(logmsg,"Area '%s' moved to passthrough",area->areaName);
+		fprintf(stdout, "%s\n", logmsg);
+		writeLogEntry(log, '8', logmsg);
+
+		removeMsgBase(area->fileName,".sqd");
+		removeMsgBase(area->fileName,".sqi");
+		removeMsgBase(area->fileName,".sql");
+	}
+	
 	return 0;
 }
 
@@ -238,8 +304,8 @@ char *help(s_link *link) {
 
 int changeconfig(char *fileName, char *areaName, s_link *link, int action) {
 	FILE *f;
-        char *cfgline, *token, *running;
-	
+	char *cfgline, *token, *running, *straka;
+
 	if ((f=fopen(fileName,"r+")) == NULL)
 		{
 			fprintf(stderr,"areafix: cannot open config file %s \n", fileName);
@@ -248,25 +314,40 @@ int changeconfig(char *fileName, char *areaName, s_link *link, int action) {
 	
 	while ((cfgline = readLine(f)) != NULL) {
 		cfgline = trimLine(cfgline);
-                if ((cfgline[0] != '#') && (cfgline[0] != 0)) {
-
-                   running = cfgline;
-                   token = strsep(&running, " \t");
-                   
-                   if (stricmp(token, "include")==0)
-                   	changeconfig(strsep(&running, " \t"), areaName, link, action);
-
-                   else
-                      if (stricmp(token, "echoarea")==0) {
-                         token = strsep(&running, " \t");
-                         if (stricmp(token, areaName)==0)
-                            if (action) delAka(f, fileName, link); else addAka(f, link);
-                      }
-
-                }
-                free(cfgline);
-        }
-
+		if ((cfgline[0] != '#') && (cfgline[0] != 0)) {
+			
+			running = cfgline;
+			token = strsep(&running, " \t");
+			
+			if (stricmp(token, "include")==0) {
+				token=strsep(&running, " \t");
+				changeconfig(token, areaName, link, action);
+			}			
+			else if (stricmp(token, "echoarea")==0) {
+				token = strsep(&running, " \t");
+				if (stricmp(token, areaName)==0)
+					switch 	(action) {
+					case 0: 
+						straka=aka2str(&(link->hisAka));
+						addstring(f,straka);
+						free(straka);
+						break;
+ 					case 1:
+						straka=aka2str(&(link->hisAka));
+						delstring(f,fileName,straka,1);
+						free(straka);
+						break;
+					case 2:
+						makepass(f, fileName, areaName);
+						break;
+					default: break;
+					}
+			}
+			
+		}
+		free(cfgline);
+	}
+	
 	fclose(f);
 	return 0;
 }
@@ -374,7 +455,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 			sprintf(addline,"no area '%s' in my config\r",area->areaName);
 			break;
 		case 0:
-			changeconfig (getConfigFileName(),  area->areaName, link, 1);
+			changeconfig (getConfigFileName(), area->areaName, link, 1);
 			removelink(link, area);
 			sprintf(addline,"area %s unsubscribed\r",area->areaName);
 			sprintf(logmsg,"areafix: %s unsubscribed from %s",link->name,area->areaName);
