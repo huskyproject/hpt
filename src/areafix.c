@@ -49,6 +49,7 @@
 #include <fidoconf/xstr.h>
 #include <fidoconf/areatree.h>
 #include <fidoconf/afixcmd.h>
+#include <fidoconf/arealist.h>
 
 #include <fcommon.h>
 #include <global.h>
