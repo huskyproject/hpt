@@ -46,7 +46,7 @@ const char *VER_BRANCH  = "-stable";
 /* The service version string is empty for the first release done from a    */
 /* release candidate branch.  If subsequent service releases are necessary, */
 /* single letters are used, like "a", "b", ...                              */
-const char *VER_SERVICE = "";  
+const char *VER_SERVICE = "a";
 
 char       *versionStr=NULL;
 
