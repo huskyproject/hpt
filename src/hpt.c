@@ -415,7 +415,7 @@ FARPROC WINAPI ourhook(unsigned dliNotify,PDelayLoadInfo pdli)
   //print error message and exit
   char msg[128];
   memset(msg,0,sizeof(msg));
-  sprintf(msg,"perSupport is On but loading of %s failed - exiting ",pdli->szDll);
+  sprintf(msg,"perlSupport is On but loading of %s failed - exiting ",pdli->szDll);
   w_log('8',msg);
   //standart deinit sequence
   // deinit SMAPI
