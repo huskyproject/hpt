@@ -35,7 +35,7 @@ s_fidoconfig *config=NULL;
 
 const int VER_MAJOR = 0;
 const int VER_MINOR = 9;
-const int VER_PATCH = 5;
+const int VER_PATCH = 6;
 char      versionStr[22];
 
 int       cmToss = 0;
