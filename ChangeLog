@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Thu Oct  5 18:26:32 MSD 2000
+max (patch from Serguei Revtov):
+* adapt hptlink.c for xmreply1st and xmreplynext as replies[0,1]
+
+----- cvs ci ------
 Tue Oct  3 17:08:22 MSD 2000
 Fedor:
 * adapted link.c and hptlink.c for used xmreply1st and xmreplynext

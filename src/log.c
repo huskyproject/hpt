@@ -64,7 +64,7 @@ s_log *openLog(char *fileName, char *appN)
       return NULL;
    } /* endif */
 
-   temp->open = 1;
+   temp->isopen = 1;
 
    /* copy all informations */
    xstrcat(&temp->appName, appN);
@@ -89,11 +89,11 @@ s_log *openLog(char *fileName, char *appN)
 void closeLog(s_log *hpt_log)
 {
    if (hpt_log != NULL) {
-      if (hpt_log->open != 0) {
+      if (hpt_log->isopen != 0) {
          if (hpt_log->firstLinePrinted)
             fprintf(hpt_log->logFile, "\n");
          fclose(hpt_log->logFile);
-         hpt_log->open = 0;
+         hpt_log->isopen = 0;
       } /* endif */
       nfree(hpt_log->appName);
       nfree(hpt_log->keysAllowed);
@@ -110,7 +110,7 @@ void writeLogEntry(s_log *hpt_log, char key, char *logString, ...)
 	UINT       log=0, screen=0;
 
 	if (hpt_log) {
-		if (hpt_log->open && strchr(hpt_log->keysAllowed, key)) log=1;
+		if (hpt_log->isopen && strchr(hpt_log->keysAllowed, key)) log=1;
 		if (hpt_log->logEcho && strchr(hpt_log->keysPrinted, key)) screen=1;
 	}
 

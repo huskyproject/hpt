@@ -5,12 +5,12 @@
 DEBUG=
 # set to -g for debugging, NEVER use -s !!!
 
-CC=i386--mingw32-gcc
+CC=i386-mingw32-gcc
 EXENAMEFLAG=-o 
 SRC_DIR=../src/
 CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
 LFLAGS=$(DEBUG)
-CDEFS =-DNT -D__NT__ -DWINNT -D__MINGW32__
+CDEFS =-DNT -D__NT__ -DWINNT
 
 OBJ=.o
 EXE=.exe

@@ -40,7 +40,7 @@ struct hpt_log {
    char *keysPrinted;    // only log-data with these keys will be printed to screen
    char *appName;        // name of the application which has created this log entry
    FILE *logFile;        // in this logFile
-   char open;            // is the log-file open?
+   unsigned int isopen;         // is the log-file open?
    char firstLinePrinted;// First line in Log File printed ?
    unsigned int logEcho; // echo log to screen?
 };
