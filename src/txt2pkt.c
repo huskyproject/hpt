@@ -1,0 +1,184 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#if !defined(MSDOS) || defined(__DJGPP__)
+#include <fidoconfig.h>
+#else
+#include <fidoconf.h>
+#endif
+
+#include <global.h>
+#include <common.h>
+#include <version.h>
+#include <pkt.h>
+#include <recode.h>
+
+int main(int argc, char *argv[])
+{
+    s_pktHeader  header;
+    s_message    msg;
+    FILE         *pkt;
+    time_t       t;
+    struct tm    *tm;
+    char *area = NULL, *passwd = NULL, *tearl = NULL, *orig = NULL, *dir = NULL;
+    FILE *text = NULL;
+    int quit, n = 1;
+    CHAR *textBuffer = NULL;
+    char tmp[512];
+
+   if (argc == 1) {
+      printf("\nUsage:\n");
+      printf("txt2pkt -af \"<from address>\" -at \"<to address>\" -nf \"<from name>\" -nt \"<to name>\" -e \"echo name\" -p \"password\" -t \"tearline\" -o \"origin\" -s \"subject\" -d \"<directory>\" <text file>\n");
+      exit(1);
+   }
+
+   config = readConfig();
+   if (NULL == config) {
+      printf("Config not found\n");
+      exit(1);
+   }
+
+   for (quit = 0;n < argc && !quit; n++) {
+      if (*argv[n] == '-') {
+         switch(argv[n][1]) {
+            case 'a':    // address
+               switch(argv[n][2]) {
+                  case 'f':
+                     string2addr(argv[++n], &(header.origAddr));
+                     break;
+                  case 't':
+                     string2addr(argv[++n], &(header.destAddr));
+                     break;
+                  default:
+                     quit = 1;
+                     break;
+               }; break;
+            case 'n':    // name
+               switch(argv[n][2]) {
+                  case 't':
+                     msg.toUserName = (char *) malloc(strlen(argv[++n]) + 1);
+                     strcpy(msg.toUserName, argv[n]);
+                     break;
+                  case 'f':
+                     msg.fromUserName = (char *) malloc(strlen(argv[++n]) + 1);
+                     strcpy(msg.fromUserName, argv[n]);
+                     break;
+                  default:
+                     quit = 1;
+                     break;
+               }; break;
+            case 'e':    // echo name
+               area = argv[++n];
+               break;
+            case 'p':    // password
+               passwd = argv[++n];
+               break;
+            case 't':    // tearline
+               tearl = argv[++n];
+               break;
+            case 'o':    // origin
+               orig = argv[++n];
+               break;
+            case 'd':    // directory
+               dir = argv[++n];
+               break;
+            case 's':    // subject
+               msg.subjectLine = (char *) malloc(strlen(argv[++n]) + 1);
+               strcpy(msg.subjectLine, argv[n]);
+               break;
+	    default:
+               quit = 1;
+               break;
+         };
+      } else {
+         if ((text = fopen(argv[n], "rt")) != NULL) {
+            /* reserve 512kb + 1 (or 32kb+1) text Buffer */
+            textBuffer = (CHAR *) malloc(TEXTBUFFERSIZE+1);
+            for (msg.textLength = 0; msg.textLength < (long) TEXTBUFFERSIZE; msg.textLength++) {
+               if ((textBuffer[msg.textLength] = getc(text)) == 0)
+                  break;
+               if (feof(text)) {
+                  textBuffer[++msg.textLength] = 0;
+                  break;
+               }; /* endif */
+               if ('\r' == textBuffer[msg.textLength])
+                  msg.textLength--;
+               if ('\n' == textBuffer[msg.textLength])
+                  textBuffer[msg.textLength] = '\r';
+            }; /* endfor */
+            textBuffer[msg.textLength-1] = 0;
+            fclose(text);
+         } else {
+	    printf("Text file not found\n");
+	    exit(1);
+	 };
+      };  
+   };
+
+   header.hiProductCode  = 0;
+   header.loProductCode  = 0xfe;
+   header.majorProductRev = 0;
+   header.minorProductRev = 26;
+   strcpy(header.pktPassword, passwd);
+   header.pktCreated = time(NULL);
+
+   header.capabilityWord = 1;
+   header.prodData = 0;
+
+   strcpy(tmp,dir);
+#ifdef UNIX
+   if (tmp[strlen(tmp)-1] != '/') strcat(tmp,"/");
+#else
+   if (tmp[strlen(tmp)-1] != '\\')  strcat(tmp,"\\");
+#endif
+   sprintf(tmp + strlen(tmp),"%08lx.pkt",time(NULL));
+
+   pkt = createPkt(tmp, &header);
+
+   if (pkt != NULL) {
+
+      msg.origAddr  = header.origAddr;
+      msg.destAddr  = header.destAddr;
+
+      msg.attributes = 1;
+
+      t = time (NULL);
+      tm = gmtime(&t);
+      strftime(msg.datetime, 21, "%d %b %y  %T", tm);
+
+      msg.netMail = 1;
+
+      sprintf(tmp, "--- %s\r * Origin: %s (%d:%d/%d.%d)\r",
+              tearl, orig, msg.origAddr.zone, msg.origAddr.net,
+              msg.origAddr.node, msg.origAddr.point);
+      strcat(textBuffer, tmp);
+      sprintf(tmp,"SEEN-BY: %d/%d\r\1PATH: %d/%d\r",header.origAddr.net,header.origAddr.node,header.origAddr.net,header.origAddr.node);
+      strcat(textBuffer, tmp);
+      msg.textLength=strlen(textBuffer);
+      msg.text = (CHAR *) malloc(msg.textLength + 1 + 512);
+      strcpy(versionStr,"txt2pkt");
+      createKludges(msg.text, area, &msg.origAddr, &msg.destAddr);
+      strcat(msg.text, textBuffer);
+      
+      free(textBuffer);
+
+      if (config->outtab != NULL) {
+         // load recoding tables
+         getctab(outtab, config->outtab);
+         // recoding text to TransportCharSet
+         recodeToTransportCharset(msg.text);
+         recodeToTransportCharset(msg.subjectLine);
+         recodeToTransportCharset(msg.fromUserName);
+         recodeToTransportCharset(msg.toUserName);
+      }
+
+      writeMsgToPkt(pkt, msg);
+
+      closeCreatedPkt(pkt);
+   } else {
+      printf("Could not create pkt");
+   } /* endif */
+
+   return 0;
+}
