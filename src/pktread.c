@@ -438,7 +438,7 @@ flag_t parse_ftsc_date(struct tm * ptm, char *pdatestr)
 
     memcpy(buf, pdatestr, 21); buf[21] = 0;
 
-    if ((pday = strtok(pdatestr, " ")) != NULL)
+    if ((pday = strtok(buf, " ")) != NULL)
         if ((pmon = strtok(NULL, " ")) != NULL)
             if ((pyear = strtok(NULL, " ")) != NULL)
                 if ((phour = strtok(NULL, ":")) != NULL)
@@ -450,7 +450,7 @@ flag_t parse_ftsc_date(struct tm * ptm, char *pdatestr)
     {
                  /* let's try and see if it might be the old SeaDog format */
 
-        rval = FTSC_BROKEN;
+        memcpy(buf, pdatestr, 21); buf[21] = 0;
 
         if ((strtok(buf, " ")) != NULL)
             if ((pday = strtok(NULL, " ")) != NULL)
@@ -599,9 +599,11 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
     
     getc(pkt); getc(pkt);                /*  read unused cost fields (2bytes) */
     
-    fgetsUntil0 (msg->datetime, 22, pkt, NULL);
+    /* val: fgetsUntil0 (msg->datetime, 22, pkt, NULL);*/
+    fread(msg->datetime, 20, 1, pkt);    /* read datetime field - 20 bytes */
+    msg->datetime[20] = 0;               /* ensure it's null-terminated */
     parse_ftsc_date(&tm, (char*)msg->datetime);
-    make_ftsc_date((char*)msg->datetime, &tm);
+    /* val: make_ftsc_date((char*)msg->datetime, &tm); */
     
     if (globalBuffer==NULL) {
         globalBuffer = (UCHAR *) safe_malloc(BUFFERSIZE+1); /*  128K (32K in MS-DOS) */
