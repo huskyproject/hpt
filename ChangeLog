@@ -1,3 +1,15 @@
+2002-10-18 Friday 13:57  nssoft
+
+	* doc/faqfmt.pl (1.5): Add lost backslash
+
+2002-10-18 Friday 12:36  stas_degteff
+
+	* doc/bugreport.rus (1.3): Change bugreport form (russian)
+
+2002-10-18 Friday 12:35  stas_degteff
+
+	* src/toss.c (1.454): Prevent EMX compilation warnings
+
 2002-10-17 Thursday 12:57  stas_degteff
 
 	* make/makefile.inc (1.11): Fix 'commonclean' tag bug: before
