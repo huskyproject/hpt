@@ -1942,7 +1942,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
       w_log('6', "bundle %s: unpacking with \"%s\"", fileName, cmd);
 #ifdef __WATCOMC__
       list = mk_lst(cmd);
-      cmdexit = spawnv(P_WAIT, cmd, list);
+      cmdexit = spawnvp(P_WAIT, cmd, list);
       free((char **)list);
       if (cmdexit != 0) {
 		  w_log('9', "exec failed: %s, return code: %d", strerror(errno), cmdexit);
@@ -2352,7 +2352,7 @@ void arcmail(s_link *tolink) {
     					 w_log('6', "cmd: %s", cmd);
 #ifdef __WATCOMC__
 					 list = mk_lst(cmd);
-					 cmdexit = spawnv(P_WAIT, cmd, list);
+					 cmdexit = spawnvp(P_WAIT, cmd, list);
 					 free((char **)list);
 #else
 					 cmdexit = system(cmd);

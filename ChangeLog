@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Mon Apr  9 13:12:20 NOVST 2001
+max (patch from Alex Bronin):
+* use spawnvp() instead of spawnv()
+
+----- cvs ci ------
 Sat Apr  7 22:43:10 NOVST 2001
 max:
 * fixed "created 256 pkt's/sec!" (were always printed when generated 256 pkt
