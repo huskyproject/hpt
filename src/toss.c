@@ -117,7 +117,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header)
       else msgHeader.attr &= ~MSGFWD;
    }
    else
-      msgHeader.attr = MSGPRIVATE;
+      msgHeader.attr = msg->attributes;
    
    strcpy((char *) msgHeader.from,msg->fromUserName);
    strcpy((char *) msgHeader.to, msg->toUserName);
@@ -379,7 +379,7 @@ int writeCheck(s_area *echo, s_link *link) {
 
         // test if the link is linked to the area
         // if not all should be tossed to bad
-        if (!isLinkOfArea(link, echo)) return 1;
+        if (!isLinkOfArea(link, echo) && (echo != &(config->badArea))) return 1;
 
         // read/write for all
         if ((echo->wgrp==NULL) && (echo->rwgrp==NULL)) return 0;

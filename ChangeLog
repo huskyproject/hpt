@@ -3,6 +3,13 @@ hpt 0.26
 --------
 
 ----- cvs ci ------
+Wed Feb 10 20:38:22 CET 1999
+- fixed a bug i introduced in (3), so autoareacreate does not work...
+
+Wed Feb 10 09:40:49 CET 1999
+- echomails now have the right attributes...
+
+----- cvs ci ------
 Tue Feb  9 10:13:56 CET 1999
 - fixed the things from yesterday night.
 
@@ -17,7 +24,7 @@ Thu Feb  4 09:21:57 CET 1999
 ----- cvs ci ------
 Wed Feb  3 23:23:06 CET 1999
 - if a link is not linked to an echomail area, all echomail will be tossed to
-  bad, which come from the link and go to the area.
+  bad, which come from the link and go to the area. (3)
 Wed Feb  3 20:19:03 CET 1999
 - replaced the strsep from bsd with that from the gnu libc5, so we do not have
   to make advertisment for the university of california.
