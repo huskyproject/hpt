@@ -1,3 +1,11 @@
+2002-04-23 Tuesday 13:41  ml
+
+	* src/global.c (1.38.2.5): set -stable version
+
+2002-04-23 Tuesday 13:11  mche
+
+	* src/pktwrite.c (1.32.2.1): Big Subject line bug fixed
+
 2002-03-11 Monday 18:12  ml
 
 	* src/toss.c (1.380.2.7): carbonText bugfix
