@@ -176,7 +176,7 @@ void post(int c, unsigned int *n, char *params[])
       
       free(textBuffer);
 
-      xscatprintf(&msg.text, "\r--- %s\r * Origin: %s (%s)",
+      xscatprintf(&msg.text, "\r--- %s\r * Origin: %s (%s)\r",
               versionStr, config->name, aka2str(msg.origAddr));
 
       msg.textLength = strlen(msg.text);
@@ -199,7 +199,7 @@ void post(int c, unsigned int *n, char *params[])
     }
       writeLogEntry (hpt_log, '2', "Posting msg. from %u:%u/%u.%u -> %s in area: %s",
                   msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node,
-                  msg.origAddr.point, aka2str(msg.destAddr), area);
+                  msg.origAddr.point, aka2str(msg.destAddr), (area) ? area : echo->areaName);
       
       if ((config->echotosslog) && (!export)) {
         f=fopen(config->echotosslog, "a");
