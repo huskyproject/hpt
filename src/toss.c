@@ -1845,9 +1845,11 @@ int  processArc(char *fileName, e_tossSecurity sec)
 	if( hpt_stristr(config->unpack[i-1].call, "zipInternal") )
 	    {
                 w_log(LL_BUNDLE, "bundle %s: unpacking with zlib", fileName);
-		cmdexit = 1;
 #ifdef USE_HPT_ZLIB
 		cmdexit = UnPackWithZlib(fileName, config->tempInbound);
+#else
+		cmdexit = 1;
+                w_log(LL_ERR, "zlib not compiled into hpt", fileName);
 #endif
 	    }
 	else
