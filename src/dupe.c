@@ -86,7 +86,8 @@ char *createDupeFileName(s_area *area) {
     if (!area->DOSFile) {
 	xstrcat(&name, area->areaName);
 	// fix for passthrough areas with PATH_DELIM in AREATAG
-	if ( (ptr = strchr(name, PATH_DELIM)) != NULL ) *ptr = '_';
+	if ( area->msgbType == MSGTYPE_PASSTHROUGH &&
+	     (ptr = strchr(name, PATH_DELIM)) != NULL ) *ptr = '_';
     } else {
 	if (area->fileName) xstrcat(&name, (ptr = strrchr(area->fileName,PATH_DELIM))
 				    ? ptr+1 : area->fileName);

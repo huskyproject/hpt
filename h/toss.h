@@ -56,6 +56,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr);
 void toss(void);
 void tossTempOutbound(char *directory); 
 void arcmail(s_link *link);
+int isValidName(char *str);
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr);
 void tossFromBadArea(char force);
 void writeMsgToSysop(void);

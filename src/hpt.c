@@ -420,13 +420,13 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    if (rc==1) exit(EX_OK);
    if (rc==EX_USAGE) exit(EX_USAGE);
 
-//   if (quiet==0) fprintf(stdout, "Highly Portable Toss %s\n", version);
+//   if (quiet==0) fprintf(stdout, "Highly Portable Tosser %s\n", version);
 
    if (config==NULL) processConfig();
 
 #if defined ( __NT__ )
    if (config->setConsoleTitle) {
-	   sprintf( title, "Highly Portable Toss %s", version);
+	   sprintf( title, "Highly Portable Tosser %s", version);
 	   GetConsoleTitleA( oldtitle, 256 );
 	   SetConsoleTitleA( title );
    }

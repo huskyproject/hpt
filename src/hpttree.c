@@ -1,5 +1,5 @@
 /*
- *      hpttree - area tree builder for High Portable Tosser (hpt)
+ *      hpttree - area tree builder for Highly Portable Tosser (hpt)
  *      by Serguei Revtov 2:5021/11.10 || 2:5021/19.1
  *
  * This file is part of HPT.

@@ -3,13 +3,13 @@
 @setfilename hpt.info
 @set HPT HPT
 @set VERSION 0.9.8
-@settitle @value{HPT} @value{VERSION} - High Portable Tosser
+@settitle @value{HPT} @value{VERSION} - Highly Portable Tosser
 @setchapternewpage odd
 @c %**end of header
 
 @titlepage
 @title @value{HPT} @value{VERSION} manual
-@subtitle High Portable Tosser
+@subtitle Highly Portable Tosser
 @author Matthias Tichy @@ 2:2432/645 (1997 - 1999)
 @author Max Levenkov @@ 2:5000/117 (1999 - 2001)
 @page

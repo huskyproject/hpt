@@ -1,5 +1,5 @@
 /*
- *      hptlink - areas linker for High Portable Tosser (hpt)
+ *      hptlink - areas linker for Highly Portable Tosser (hpt)
  *      by Serguei Revtov 2:5021/11.10 || 2:5021/19.1
  *      Some code was taken from hpt/src/link.c by Kolya Nesterov
  *

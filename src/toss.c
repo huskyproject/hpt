@@ -12,6 +12,14 @@
  * 33098 Paderborn       40472 Duesseldorf
  * Germany               Germany
  *
+ * Copyright (C) 1999-2001
+ *
+ * Max Levenkov
+ *
+ * Fido:     2:5000/117
+ * Internet: sackett@mail.ru
+ * Novosibirsk, West Siberia, Russia
+ *
  * This file is part of HPT.
  *
  * HPT is free software; you can redistribute it and/or modify it
@@ -948,6 +956,20 @@ static int makealldirs(const char *basedir, const char *filename)
     
 #undef my_isdirsep
 
+int isValidName(char *str) {
+    const char validstr[]="._0123456789$&-'/";
+    
+    while (*str) {
+	if (!(*str >= 'A' && *str <= 'Z') &&
+	    !(*str >= 'a' && *str <= 'z') &&
+	    (strchr(validstr, *str)==NULL))
+	    return 0;
+	str++;
+    }
+
+    return 1;    
+}
+
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 {
     FILE *f;
@@ -961,9 +983,10 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
     // don't create areas with symbols space, tab, path delim, :, and
     // comment symbol
-    if (strchr(c_area,' ') || strchr(c_area,'\t') ||
-	strchr(c_area,PATH_DELIM) || strchr(c_area,config->CommentChar) ||
-	strchr(c_area,':')) return 7;
+    //if (strchr(c_area,' ') || strchr(c_area,'\t') ||
+    //strchr(c_area,PATH_DELIM) || strchr(c_area,config->CommentChar) ||
+    //strchr(c_area,':')) return 7;
+    if (!isValidName(c_area)) return 7;
 
     xstrcat(&squishFileName, c_area);
 
@@ -1010,6 +1033,8 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
 #ifndef MSDOS                            
 	    need_dos_file = hpt_stristr(newAC, "-dosfile")!=NULL;
+	    if (!need_dos_file) // fix for slashes in AREATAG
+		need_dos_file = strchr(squishFileName,PATH_DELIM)!=NULL;
 #else
 	    need_dos_file = 1;
 #endif       
