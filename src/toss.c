@@ -107,6 +107,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header)
    struct tm *date;
    time_t    currentTime;
    union stamp_combo dosdate;
+   int i,remapit;
 
    if (msg->netMail == 1)
    {  // attributes of netmail must be fixed
@@ -115,6 +116,31 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header)
       msgHeader.attr |= MSGPRIVATE; // set this flags
       if ((header != NULL) && (to_us(msg->destAddr)!=0)) msgHeader.attr |= MSGFWD; // set intransit flag, if the mail is not to us
       else msgHeader.attr &= ~MSGFWD;
+
+      // Check if we must remap
+      remapit=0;
+      
+      for (i=0;i<config->remapCount;i++)
+          if ((config->remaps[i].toname==NULL ||
+               stricmp(config->remaps[i].toname,msg->toUserName)==0) &&
+              (config->remaps[i].oldaddr.zone==0 ||
+               (config->remaps[i].oldaddr.zone==msg->destAddr.zone &&
+                config->remaps[i].oldaddr.net==msg->destAddr.net &&
+                config->remaps[i].oldaddr.node==msg->destAddr.node &&
+                config->remaps[i].oldaddr.point==msg->destAddr.point) ) )
+             {
+             remapit=1;
+             break;
+             }
+
+      if (remapit)
+         {
+         msg->destAddr.zone=config->remaps[i].newaddr.zone;              
+         msg->destAddr.net=config->remaps[i].newaddr.net;
+         msg->destAddr.node=config->remaps[i].newaddr.node;   
+         msg->destAddr.point=config->remaps[i].newaddr.point;             
+         }                                                               
+
    }
    else
      {

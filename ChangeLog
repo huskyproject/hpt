@@ -1,6 +1,13 @@
 hpt 0.26
 --------
 
+Wed Feb 17 20:07:00 CET 1999                                                
+  Gabriel Plutzar:                                                          
++ added implementation of the new remap statment. It takes the parameters 
+  ToName,OldAddr,NewAddr, seperated by commas. ToName or OldAddr may be *.  
+  If a Netmail meets the ToName and OldAddr Criteria, it is sent to
+  NewAddr.
+
 Mon Feb 15 18:21:51 CET 1999
 - echomails now have the flags minus the unnecessary flags like CRASH
 - added autoCreateFile
