@@ -6,7 +6,7 @@ OBJS    = hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) log$(OBJ) \
           crc$(OBJ) dupe$(OBJ) tree$(OBJ) recode$(OBJ) areafix$(OBJ) \
           post$(OBJ) link$(OBJ) strsep$(OBJ) xstr$(OBJ)
 
-SRC_DIR = src/
+SRC_DIR = src$(DIRSEP)
 
 ifeq ($(DEBUG), 1)
   CFLAGS = -Ih -I$(INCDIR) $(DEBCFLAGS) $(WARNFLAGS)
