@@ -1,3 +1,28 @@
+2002-10-17 Thursday 12:56  stas_degteff
+
+	* make/makefile.inc (hpt-1_2-stable.1): Fix 'commonclean' tag bug:
+	before remove *dll on win
+
+2002-10-17 Thursday 08:51  stas_degteff
+
+	* doc/bugreport.txt (1.1): file bugreport.txt was initially added
+	on branch hpt-1_2-stable.
+
+2002-10-17 Thursday 08:51  stas_degteff
+
+	* doc/bugreport.rus (1.1): file bugreport.rus was initially added
+	on branch hpt-1_2-stable.
+
+2002-10-17 Thursday 08:51  stas_degteff
+
+	* doc/: bugreport.rus, bugreport.txt (hpt-1_2-stable.[1,1]): Add
+	bug report form (rus & eng)
+
+2002-10-17 Thursday 06:23  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.12): fix FAQ about loglevels
+	and debugging log levels list
+
 2002-10-15 Tuesday 10:14  stas_degteff
 
 	* doc/hpt-FAQ.russian (hpt-1_2-stable.11): update FAQ
