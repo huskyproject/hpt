@@ -63,7 +63,6 @@
 
 #include <fidoconf/log.h>
 #include <global.h>
-#include <tree.h>
 #include <fcommon.h>
 
 #define MAX_INCORE	10000	// if more messages, do not link incore
