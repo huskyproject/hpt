@@ -1,3 +1,15 @@
+2003-05-17 Saturday 12:06  d_sergienko
+
+	* src/areafix.c (1.415): fix typo
+
+2003-05-17 Saturday 11:59  d_sergienko
+
+	* src/: post.c (1.110), toss.c (1.517): fix recode on post
+
+2003-05-17 Saturday 11:45  d_sergienko
+
+	* src/: areafix.c (1.414), carbon.c (1.28): some fixes for recoding
+
 2003-05-16 Friday 10:18  val_khokhlov
 
 	* misc/adv-stat-hpt.pl (1.8): new version of adv-stat-hpt.pl
