@@ -176,15 +176,19 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 		    // set this flags
 		    msgHeader.attr |= MSGPRIVATE;
 		} else
+		if (header!=NULL) {
 		// set TRS flag, if the mail is not to us
-		if (header!=NULL) msgHeader.attr |= MSGFWD;
+		msgHeader.attr |= MSGFWD;
+		// clear LOCal flag on transit netmail
+		msgHeader.attr &= ~MSGLOCAL;
+		}
 		
    } else
    // kill these flags on echomail messages
-   msgHeader.attr &= ~(MSGREAD | MSGKILL | MSGFRQ | MSGSCANNED | MSGLOCKED);
+   msgHeader.attr &= ~(MSGREAD | MSGKILL | MSGFRQ | MSGSCANNED | MSGLOCKED | MSGLOCAL);
    
    // always kill crash, hold, sent & local flags on netmail & echomail
-   msgHeader.attr &= ~(MSGCRASH | MSGHOLD | MSGSENT | MSGLOCAL);
+   msgHeader.attr &= ~(MSGCRASH | MSGHOLD | MSGSENT);
 
    /* FORCED ATTRIBUTES !!! */
    msgHeader.attr |= forceattr;

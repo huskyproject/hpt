@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Fri Apr  7 14:09:52 NOVST 2000
+max:
+* clear MSGLOCAL flag on transit netmail bugfix
+
+----- cvs ci ------
 Tue Apr  4 16:27:54 NOVST 2000
 max:
 * fixed double posting in some cases
