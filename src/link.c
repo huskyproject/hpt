@@ -367,6 +367,8 @@ int linkArea(s_area *area, int netMail)
                     msgs[i].hdr.jamhdr->ReplyNext = msgs[i].replynext;
                     Jam_WriteHdr(harea, msgs[i].hdr.jamhdr, i+1);
                 }
+                nfree(msgs[i].msgId);
+                nfree(msgs[i].replyId);
                 continue;
             }
             for (j=0; j<MAX_REPLY && msgs[i].hdr.xmsg->replies[j]; j++);
