@@ -3208,10 +3208,9 @@ purged after 100 days instead of 14 (the default).
 
 This statement can be repeated.
 
-An @code{EchoAreaDefults} setting is valid until a next
-@code{EchoAreaDefaults} setting of until a @code{NetmailArea}
-definition. @code{EchoAreaDefaults} can also be switched off with an
-empty definition:
+An @code{EchoAreaDefults} setting is valid until a next @code{EchoAreaDefaults}
+setting.
+@code{EchoAreaDefaults} can also be switched off with an empty definition:
 
 @example
 EchoAreaDefaults [OFF]
