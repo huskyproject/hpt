@@ -9,7 +9,7 @@ include makefile.inc
 
 DEBUG=0
 
-USE_PERL = 1
+USE_PERL = 0
 
 !if $(USE_PERL) == 1
 PERL_DIR = c:\programs\Perl
