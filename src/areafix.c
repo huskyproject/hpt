@@ -1632,7 +1632,7 @@ void preprocText(char *split, s_message *msg)
     
     msg->text = createKludges(config->disablePID, NULL, &msg->origAddr,
         &msg->destAddr, versionStr);
-    xstrcat(&(msg->text), "\001FLAGS NPD DIR\r");
+    /* xstrcat(&(msg->text), "\001FLAGS NPD DIR\r"); */
     xscatprintf(&split, "\r--- %s areafix\r", versionStr);
     if (orig && orig[0]) {
         xscatprintf(&split, " * Origin: %s (%s)\r", orig, aka2str(msg->origAddr));
@@ -1674,57 +1674,57 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 
     while (text) {
 
-	len = strlen(text);
-	if (msgsize == 0 || len <= msgsize) {
-	    split = text;
-	    text = NULL;
-        if (partnum) { /* last part of splitted msg */
-            partnum++;
-            xstrcat(&text,split);
+        len = strlen(text);
+        if (msgsize == 0 || len <= msgsize) {
             split = text;
             text = NULL;
-            nfree(report);
+            if (partnum) { /* last part of splitted msg */
+                partnum++;
+                xstrcat(&text,split);
+                split = text;
+                text = NULL;
+                nfree(report);
+            }
+            xstrscat(&split,"\r\rFollowing is the original message text\r--------------------------------------\r",msg->text,"\r\r",NULL);
+        } else {
+            p = text + msgsize;
+            while (*p != '\r') p--;
+            *p = '\000';
+            len = p - text;
+            split = (char*)safe_malloc(len+strlen(splitStr ? splitStr : splitted)+3+1);
+            memcpy(split,text,len);
+            strcpy(split+len,"\r\r");
+            strcat(split, (splitStr) ? splitStr : splitted);
+            strcat(split,"\r");
+            text = p+1;
+            partnum++;
         }
-        xstrscat(&split,"\r\rFollowing is the original message text\r--------------------------------------\r",msg->text,"\r\r",NULL);
-	} else {
-	    p = text + msgsize;
-	    while (*p != '\r') p--;
-	    *p = '\000';
-	    len = p - text;
-	    split = (char*)safe_malloc(len+strlen(splitStr ? splitStr : splitted)+3+1);
-	    memcpy(split,text,len);
-	    strcpy(split+len,"\r\r");
-	    strcat(split, (splitStr) ? splitStr : splitted);
-	    strcat(split,"\r");
-	    text = p+1;
-	    partnum++;
-	}
-
-	if (partnum) xscatprintf(&newsubj, "%s (%d)", subj, partnum);
-	else newsubj = subj;
-
+        
+        if (partnum) xscatprintf(&newsubj, "%s (%d)", subj, partnum);
+        else newsubj = subj;
+        
         if (config->areafixFromName == NULL)
-	tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
-			     msg->toUserName,
-			     msg->fromUserName, newsubj, 1,
-                             config->areafixKillReports);
+            tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
+            msg->toUserName,
+            msg->fromUserName, newsubj, 1,
+            config->areafixKillReports);
         else
             tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
-                                 config->areafixFromName,
-                                 msg->fromUserName, newsubj, 1,
-                                 config->areafixKillReports);
-
-
-	preprocText(split, tmpmsg);
-	processNMMsg(tmpmsg, NULL, getNetMailArea(config,config->robotsArea),
-		     0, MSGLOCAL);
-
-	closeOpenedPkt();
-	freeMsgBuffers(tmpmsg);
-	nfree(tmpmsg);
-	if (partnum) nfree(newsubj);
+            config->areafixFromName,
+            msg->fromUserName, newsubj, 1,
+            config->areafixKillReports);
+        
+        
+        preprocText(split, tmpmsg);
+        processNMMsg(tmpmsg, NULL, getNetMailArea(config,config->robotsArea),
+            0, MSGLOCAL);
+        
+        closeOpenedPkt();
+        freeMsgBuffers(tmpmsg);
+        nfree(tmpmsg);
+        if (partnum) nfree(newsubj);
     }
-
+    
     config->intab = tab;
 }
 
