@@ -176,6 +176,11 @@ void buildAreaTree(s_area *area)
    }
 #endif
 
+   if((area->useAka)!=NULL)
+      node.zone = (area->useAka)->zone;
+   else
+      node.zone = 2;
+
    nodeCount = linksInArray = 0;
    linksOnLevel = NULL;
    allNodes = NULL;
@@ -227,7 +232,6 @@ void buildAreaTree(s_area *area)
 		   start = text;
 		   prevNode = -1;
 		   node.exportto = -1;
-		   node.zone = 2;
 		   node.printed = 0;
 		   done = 0;
 
