@@ -10,7 +10,7 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 - check for dublicate links if mask is used (fidoconf)
 - killsb for links
-- autofwdareacreatedefaults 
+- autofwdareacreatedefaults
 - AllowEchoAreaDelete
 - optimize packing (several files)
 - advanced fileboxes
@@ -19,6 +19,7 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - remote change areafixpwd, pktpwd, ticpwd, filefixpwd and packer by links
 - change CHRS kludge when recode message
 - add areafix %users command which sends list of links, subscribed to echo
+- EchoAreaGroupDefaults
 
 Category 3: Will only be included if volunteers send patches
 ============================================================
