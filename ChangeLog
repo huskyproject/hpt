@@ -1,3 +1,13 @@
+2002-02-10 Sunday 08:30  ml
+
+	* src/global.c (1.38.2.3): set pre2 version
+
+2002-02-10 Sunday 08:29  ml
+
+	* src/dupe.c (1.49.2.2): Unique dupe history file for passthou
+	areas with -dosfile option: filename generated as crc32 of area
+	name; detect reason of error reading dupes message
+
 2002-02-07 Thursday 10:06  ml
 
 	* src/scanarea.c (1.72.2.2): don't convert interal echo area names
