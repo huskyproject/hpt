@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Rules directory (fileecho)
+RULES_DIR=/ext/ftn/fileareas/xofcerules
+
+# Dir with symlinks, must be defined as RulesDir in fidoconfig
+SYMLINK_DIR=/ext/ftn/misc/rules
+
+for rulefile in `ls $RULES_DIR/*.rul` ; do
+    rulesname=`grep 'Area        :' $rulefile | tr -d [:space:] | cut -b 6- -`
+    rulesname=`echo $rulesname | gawk '{ print tolower($1) }'`
+    if [ ! -f $SYMLINK_DIR/$rulesname.rul ]; then
+    ln -s $rulefile $SYMLINK_DIR/$rulesname.rul
+    fi
+done
