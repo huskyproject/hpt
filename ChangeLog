@@ -1,3 +1,7 @@
+2002-03-28 Thursday 10:20  mche
+
+	* src/areafix.c (1.276): fixed bug with autounsubscribing
+
 2002-03-27 Wednesday 15:10  mche
 
 	* src/fcommon.c (1.124), src/toss.c (1.398), h/fcommon.h (1.39):
