@@ -1,13 +1,21 @@
-2002-06-06 Thursday 23:14  og
+2002-06-06 Thursday 23:16  oliver.grimm
 
-	* src/scan.c: addViaToMsg() - fix a possible crash when adding a via
-	line to a message without body and without *ANY* kludges (should never
-	happen, but nobody knows :-) )
+	* src/scan.c (1.162): OG: If a possible bug when adding via lines
+	to a *empty* (no body, no kludge) Message
 
-2002-06-06 Thursday 10:20  og
+2002-06-06 Thursday 11:21  mche
 
-	* src/scan.c: addViaToMsg() appends \r to Msg if needed before adding
-	via line.
+	* h/pkt.h (1.26): function freeMsgBuffers() moved from hpt to
+	fidoconfig
+
+2002-06-06 Thursday 10:21  oliver.grimm
+
+	* src/scan.c (1.161): OG: scan.c/addViaToMsg() - appends \r to end
+	of message if needed
+
+2002-06-06 Thursday 07:58  mche
+
+	* src/dupe.c (1.61): fixed coredump on CommonDupeBase
 
 2002-06-05 Wednesday 14:33  mche
 
