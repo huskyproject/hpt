@@ -2077,7 +2077,9 @@ void tossTempOutbound(char *directory)
 		             
 		   if (link != NULL) {
 
-			   createTempPktFileName(link);
+                           if (link->packFile == NULL) {
+                               createTempPktFileName(link);
+                           }
 
 			   free(link->pktFile);
 			   link->pktFile = dummy;

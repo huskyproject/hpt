@@ -343,6 +343,13 @@ int createTempPktFileName(s_link *link)
 
     free(zoneOutbound);
 
+    if (link->packFile != NULL) {
+        free(link->packFile);
+    }
+    if (link->pktFile != NULL) {
+        free(link->pktFile);
+    }
+
     link->packFile = pfilename;
     link->pktFile = filename;
     return 0;
