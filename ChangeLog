@@ -1,3 +1,8 @@
+2002-05-24 Friday 12:35  d.sergienko
+
+	* src/scan.c (1.156): fixed scanning when echoTossLogFile and
+	temporary file on different filesystems
+
 2002-05-22 Wednesday 13:20  mche
 
 	* src/areafix.c (1.306): new version of DelLinkFromString() moved
