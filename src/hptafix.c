@@ -189,7 +189,7 @@ void autoPassive()
                                       rc += pauseAreas(0,config->links[i],NULL);
 #ifdef DO_PERL
                                   /* update perl vars */
-                                  perl_invalidate();
+                                  perl_invalidate(PERL_CONF_LINKS|PERL_CONF_AREAS);
 #endif
                               } /*  end changepause */
                               nfree(line);

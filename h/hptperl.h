@@ -67,7 +67,7 @@
 
 extern int skip_addvia;
 
-void perl_invalidate(void);
+void perl_invalidate(e_perlconftype confType);
 void perl_setvars(void);
 
 int perlscanmsg(char *area, s_message *msg);

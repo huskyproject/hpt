@@ -127,7 +127,10 @@ static int l_dist_raw(char *str1, char *str2, int len1, int len2);
 
 static PerlInterpreter *perl = NULL;
 static int  do_perl=1;
-static int  perl_vars_invalid = 1;      /* val: to update perl vars */
+
+/* val: to update perl vars */
+static int  perl_vars_invalid = PERL_CONF_MAIN|PERL_CONF_LINKS|PERL_CONF_AREAS;
+
 int skip_addvia = 0;			/* val: skip via adding */
 int perl_subs   = -1;			/* val: defined subs */
 #ifdef _MSC_VER
@@ -1035,8 +1038,8 @@ static void restoreperlerr(int saveerr, int pid)
 #endif
 #endif /* _MSC_VER */
 }
-/* mark current config as invalid in order to setup a new one */
-void perl_invalidate(void) { perl_vars_invalid = 1; }
+/* mark a part of current config as invalid in order to update it */
+void perl_invalidate(e_perlconftype confType) { perl_vars_invalid |= confType; }
 /* set %config, %links */
 void perl_setvars(void) {
    UINT i, j;
@@ -1045,7 +1048,7 @@ void perl_setvars(void) {
    struct av 		*av;
 
    if (!do_perl || perl == NULL) return;
-   w_log( LL_SRCLINE, "%s:%d setting Perl variables", __FILE__, __LINE__);
+   w_log( LL_FUNC, "perl.c::perl_setvars()" );
 
 #define VK_ADD_HASH_sv(_hv,_sv,_name)                  \
     if (_sv != NULL) {                                 \
@@ -1069,146 +1072,165 @@ void perl_setvars(void) {
       VK_ADD_HASH_intz(_hv,_sv,_name,0)                                  \
     }
 
-   if ((sv = get_sv("hpt_ver", TRUE)) != NULL) {
-     char *vers = NULL;
-     xscatprintf(&vers, "hpt %u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
-     #ifdef __linux__
-        xstrcat(&vers, "/lnx");
-     #elif defined(__FreeBSD__) || defined(__NetBSD__)
-        xstrcat(&vers, "/bsd");
-     #elif defined(__OS2__) || defined(OS2)
-        xstrcat(&vers, "/os2");
-     #elif defined(__NT__)
-        xstrcat(&vers, "/w32");
-     #elif defined(__sun__)
-        xstrcat(&vers, "/sun");
-     #elif defined(MSDOS)
-        xstrcat(&vers, "/dos");
-     #elif defined(__BEOS__)
-        xstrcat(&vers, "/beos");
-     #endif
-     sv_setpv(sv, vers); SvREADONLY_on(sv);
-   }
-   if ((sv = get_sv("hpt_version", TRUE)) != NULL) {
-     SvREADONLY_off(sv); sv_setpv(sv, versionStr); SvREADONLY_on(sv);
-   }
-   hv = perl_get_hv("config", TRUE); 
-   SvREADONLY_off(hv); hv_clear(hv);
-   VK_ADD_HASH_str(hv, sv, "inbound", config->inbound);
-   VK_ADD_HASH_str(hv, sv, "protInbound", config->protInbound);
-   VK_ADD_HASH_str(hv, sv, "localInbound", config->localInbound);
-   VK_ADD_HASH_str(hv, sv, "outbound", config->outbound);
-   VK_ADD_HASH_str(hv, sv, "name", config->name);
-   VK_ADD_HASH_str(hv, sv, "sysop", config->sysop);
-   VK_ADD_HASH_str(hv, sv, "origin", config->origin);
-   VK_ADD_HASH_str(hv, sv, "logDir", config->logFileDir);
-   VK_ADD_HASH_str(hv, sv, "dupeHistoryDir", config->dupeHistoryDir);
-   VK_ADD_HASH_str(hv, sv, "nodelistDir", config->nodelistDir);
-   VK_ADD_HASH_str(hv, sv, "tempDir", config->tempDir);
-   VK_ADD_HASH_int(hv, sv, "sortEchoList", config->listEcho);
-   VK_ADD_HASH_int(hv, sv, "areafixFromPkt", config->areafixFromPkt);
-   VK_ADD_HASH_str(hv, sv, "areafixNames", config->areafixNames);
-   VK_ADD_HASH_str(hv, sv, "robotsArea", config->robotsArea);
-   VK_ADD_HASH_str(hv, sv, "reportTo", config->ReportTo);
-   VK_ADD_HASH_int(hv, sv, "keepTrsMail", config->keepTrsMail);
-   VK_ADD_HASH_int(hv, sv, "keepTrsFiles", config->keepTrsFiles);
-   VK_ADD_HASH_str(hv, sv, "fileBoxesDir", config->fileBoxesDir);
-   VK_ADD_HASH_str(hv, sv, "rulesDir", config->rulesDir);
-   if (config->packCount) {
-     char *packlist = NULL;
-     for (j = 0; j < config->packCount; j++)
-         xstrscat(&packlist, " ", config->pack[j].packer, NULL);
-     VK_ADD_HASH_str(hv, sv, "packers", packlist+1);
-     nfree(packlist);
-   }
-   av = newAV();
-   for (i = 0; i < config->addrCount; i++)
-      if ( (sv = newSVpv(aka2str(config->addr[i]), 0)) != NULL ) {
-          SvREADONLY_on(sv); av_push(av, sv);
-      }
-   SvREADONLY_on(av);
-   sv = newRV_noinc((struct sv*)av); 
-   /*SvPOK_on(sv); sv_setpv(aka2str(config->addr[0]), 0); SvREADONLY_on(sv);*/
-   VK_ADD_HASH_sv(hv, sv, "addr");
+   /* set main config */
+   if (perl_vars_invalid & PERL_CONF_MAIN) {
 
-   hv = perl_get_hv("links", TRUE); 
-   SvREADONLY_off(hv); hv_clear(hv);
-   for (i = 0; i < config->linkCount; i++) {
-      hv2 = newHV();
-      VK_ADD_HASH_str(hv2, sv, "name", config->links[i]->name);
-      VK_ADD_HASH_str(hv2, sv, "aka", aka2str(*config->links[i]->ourAka));
-      VK_ADD_HASH_str(hv2, sv, "password", config->links[i]->defaultPwd);
-      VK_ADD_HASH_str(hv2, sv, "filebox", config->links[i]->fileBox);
-      VK_ADD_HASH_str(hv2, sv, "robot", config->links[i]->RemoteRobotName);
-      VK_ADD_HASH_int(hv2, sv, "flavour", flv2flag(config->links[i]->netMailFlavour));
-      VK_ADD_HASH_int(hv2, sv, "eflavour", flv2flag(config->links[i]->echoMailFlavour));
-      VK_ADD_HASH_int(hv2, sv, "pause", getPause( config->links[i] ));
-      VK_ADD_HASH_int(hv2, sv, "level", config->links[i]->level);
-      VK_ADD_HASH_int(hv2, sv, "advAfix", config->links[i]->advancedAreafix);
-      VK_ADD_HASH_int(hv2, sv, "echoLimit", config->links[i]->afixEchoLimit);
-      VK_ADD_HASH_int(hv2, sv, "forwreqs", config->links[i]->forwardRequests);
-      VK_ADD_HASH_str(hv2, sv, "forwreqsFile", config->links[i]->forwardRequestFile);
-      VK_ADD_HASH_int(hv2, sv, "forwreqsPrio", config->links[i]->forwardAreaPriority);
-      VK_ADD_HASH_int(hv2, sv, "reducedSeenBy", config->links[i]->reducedSeenBy);
-      VK_ADD_HASH_int(hv2, sv, "noRules", config->links[i]->noRules);
-      VK_ADD_HASH_int(hv2, sv, "pktSize", config->links[i]->pktSize);
-      VK_ADD_HASH_int(hv2, sv, "arcmailSize", (config->links[i]->arcmailSize ?
-                                                 config->links[i]->arcmailSize :
-                                                 (config->defarcmailSize ? config->defarcmailSize : 500) ));
-      if (config->links[i]->packerDef) VK_ADD_HASH_str(hv2, sv, "packer", config->links[i]->packerDef->packer);
-      if (config->links[i]->AccessGrp) {
-        char *grplist = NULL;
-        for (j = 0; j < config->links[i]->numAccessGrp; j++)
-          if (config->links[i]->AccessGrp[j])
-            xstrscat(&grplist, " ", config->links[i]->AccessGrp[j], NULL);
-        if (grplist) VK_ADD_HASH_str(hv2, sv, "groups", grplist+1);
-        nfree(grplist);
-      }
-      /* val r/o: SvREADONLY_on(hv2); */
-      sv = newRV_noinc((struct sv*)hv2);
-      VK_ADD_HASH_sv(hv, sv, aka2str(config->links[i]->hisAka));
-   }
+     w_log( LL_SRCLINE, "%s:%d setting Perl variables (main)", __FILE__, __LINE__);
 
-   hv = perl_get_hv("areas", TRUE); 
-   SvREADONLY_off(hv); hv_clear(hv);
-   for (i = 0; i < config->echoAreaCount; i++) {
-      hv2 = newHV();
-      VK_ADD_HASH_str(hv2, sv, "desc", config->echoAreas[i].description);
-      VK_ADD_HASH_str(hv2, sv, "aka", aka2str(*config->echoAreas[i].useAka));
-      VK_ADD_HASH_str(hv2, sv, "group", config->echoAreas[i].group);
-      VK_ADD_HASH_int(hv2, sv, "hide", config->echoAreas[i].hide);
-      VK_ADD_HASH_int(hv2, sv, "passthrough", config->echoAreas[i].msgbType == MSGTYPE_PASSTHROUGH);
-      VK_ADD_HASH_int(hv2, sv, "mandatory", config->echoAreas[i].mandatory);
-      VK_ADD_HASH_int(hv2, sv, "manual", config->echoAreas[i].manual);
-      VK_ADD_HASH_int(hv2, sv, "lvl_r", config->echoAreas[i].levelread);
-      VK_ADD_HASH_int(hv2, sv, "lvl_w", config->echoAreas[i].levelwrite);
-      VK_ADD_HASH_int(hv2, sv, "paused", config->echoAreas[i].paused);
-      if (config->echoAreas[i].downlinks) {
-        hv3 = newHV();
-        for (j = 0; j < config->echoAreas[i].downlinkCount; j++) {
-          VK_ADD_HASH_int(hv3, sv, 
-                          aka2str(config->echoAreas[i].downlinks[j]->link->hisAka),
-                          1 | config->echoAreas[i].downlinks[j]->defLink << 1
-                          | config->echoAreas[i].downlinks[j]->manual << 2
-                          | config->echoAreas[i].downlinks[j]->mandatory << 3
-                          | config->echoAreas[i].downlinks[j]->import << 4
-                          | config->echoAreas[i].downlinks[j]->export << 5
-                         );
+     if ((sv = get_sv("hpt_ver", TRUE)) != NULL) {
+       char *vers = NULL;
+       xscatprintf(&vers, "hpt %u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
+       #ifdef __linux__
+          xstrcat(&vers, "/lnx");
+       #elif defined(__FreeBSD__) || defined(__NetBSD__)
+          xstrcat(&vers, "/bsd");
+       #elif defined(__OS2__) || defined(OS2)
+          xstrcat(&vers, "/os2");
+       #elif defined(__NT__)
+          xstrcat(&vers, "/w32");
+       #elif defined(__sun__)
+          xstrcat(&vers, "/sun");
+       #elif defined(MSDOS)
+          xstrcat(&vers, "/dos");
+       #elif defined(__BEOS__)
+          xstrcat(&vers, "/beos");
+       #endif
+       sv_setpv(sv, vers); SvREADONLY_on(sv);
+     }
+     if ((sv = get_sv("hpt_version", TRUE)) != NULL) {
+       SvREADONLY_off(sv); sv_setpv(sv, versionStr); SvREADONLY_on(sv);
+     }
+     hv = perl_get_hv("config", TRUE); 
+     SvREADONLY_off(hv); hv_clear(hv);
+     VK_ADD_HASH_str(hv, sv, "inbound", config->inbound);
+     VK_ADD_HASH_str(hv, sv, "protInbound", config->protInbound);
+     VK_ADD_HASH_str(hv, sv, "localInbound", config->localInbound);
+     VK_ADD_HASH_str(hv, sv, "outbound", config->outbound);
+     VK_ADD_HASH_str(hv, sv, "name", config->name);
+     VK_ADD_HASH_str(hv, sv, "sysop", config->sysop);
+     VK_ADD_HASH_str(hv, sv, "origin", config->origin);
+     VK_ADD_HASH_str(hv, sv, "logDir", config->logFileDir);
+     VK_ADD_HASH_str(hv, sv, "dupeHistoryDir", config->dupeHistoryDir);
+     VK_ADD_HASH_str(hv, sv, "nodelistDir", config->nodelistDir);
+     VK_ADD_HASH_str(hv, sv, "tempDir", config->tempDir);
+     VK_ADD_HASH_int(hv, sv, "sortEchoList", config->listEcho);
+     VK_ADD_HASH_int(hv, sv, "areafixFromPkt", config->areafixFromPkt);
+     VK_ADD_HASH_str(hv, sv, "areafixNames", config->areafixNames);
+     VK_ADD_HASH_str(hv, sv, "robotsArea", config->robotsArea);
+     VK_ADD_HASH_str(hv, sv, "reportTo", config->ReportTo);
+     VK_ADD_HASH_int(hv, sv, "keepTrsMail", config->keepTrsMail);
+     VK_ADD_HASH_int(hv, sv, "keepTrsFiles", config->keepTrsFiles);
+     VK_ADD_HASH_str(hv, sv, "fileBoxesDir", config->fileBoxesDir);
+     VK_ADD_HASH_str(hv, sv, "rulesDir", config->rulesDir);
+     if (config->packCount) {
+       char *packlist = NULL;
+       for (j = 0; j < config->packCount; j++)
+           xstrscat(&packlist, " ", config->pack[j].packer, NULL);
+       VK_ADD_HASH_str(hv, sv, "packers", packlist+1);
+       nfree(packlist);
+     }
+     av = newAV();
+     for (i = 0; i < config->addrCount; i++)
+        if ( (sv = newSVpv(aka2str(config->addr[i]), 0)) != NULL ) {
+            SvREADONLY_on(sv); av_push(av, sv);
         }
-        /* val r/o: SvREADONLY_on(hv3); */
-        sv = newRV_noinc((struct sv*)hv3);
-        VK_ADD_HASH_sv(hv2, sv, "links");
-      }
-      /* val r/o: SvREADONLY_on(hv2); */
-      sv = newRV_noinc((struct sv*)hv2);
-      VK_ADD_HASH_sv(hv, sv, config->echoAreas[i].areaName);
+     SvREADONLY_on(av);
+     sv = newRV_noinc((struct sv*)av); 
+     /*SvPOK_on(sv); sv_setpv(aka2str(config->addr[0]), 0); SvREADONLY_on(sv);*/
+     VK_ADD_HASH_sv(hv, sv, "addr");
+
+     hv = perl_get_hv("groups", TRUE);
+     SvREADONLY_off(hv); hv_clear(hv);
+     for (i = 0; i < config->groupCount; i++) {
+        VK_ADD_HASH_str(hv, sv, config->group[i].name, config->group[i].desc);
+     }
    }
 
-   hv = perl_get_hv("groups", TRUE); 
-   SvREADONLY_off(hv); hv_clear(hv);
-   for (i = 0; i < config->groupCount; i++) {
-      VK_ADD_HASH_str(hv, sv, config->group[i].name, config->group[i].desc);
+   /* set links config */
+   if (perl_vars_invalid & PERL_CONF_LINKS) {
+
+     w_log( LL_SRCLINE, "%s:%d setting Perl variables (links)", __FILE__, __LINE__);
+
+     hv = perl_get_hv("links", TRUE); 
+     SvREADONLY_off(hv); hv_clear(hv);
+     for (i = 0; i < config->linkCount; i++) {
+        hv2 = newHV();
+        VK_ADD_HASH_str(hv2, sv, "name", config->links[i]->name);
+        VK_ADD_HASH_str(hv2, sv, "aka", aka2str(*config->links[i]->ourAka));
+        VK_ADD_HASH_str(hv2, sv, "password", config->links[i]->defaultPwd);
+        VK_ADD_HASH_str(hv2, sv, "filebox", config->links[i]->fileBox);
+        VK_ADD_HASH_str(hv2, sv, "robot", config->links[i]->RemoteRobotName);
+        VK_ADD_HASH_int(hv2, sv, "flavour", flv2flag(config->links[i]->netMailFlavour));
+        VK_ADD_HASH_int(hv2, sv, "eflavour", flv2flag(config->links[i]->echoMailFlavour));
+        VK_ADD_HASH_int(hv2, sv, "pause", getPause( config->links[i] ));
+        VK_ADD_HASH_int(hv2, sv, "level", config->links[i]->level);
+        VK_ADD_HASH_int(hv2, sv, "advAfix", config->links[i]->advancedAreafix);
+        VK_ADD_HASH_int(hv2, sv, "echoLimit", config->links[i]->afixEchoLimit);
+        VK_ADD_HASH_int(hv2, sv, "forwreqs", config->links[i]->forwardRequests);
+        VK_ADD_HASH_str(hv2, sv, "forwreqsFile", config->links[i]->forwardRequestFile);
+        VK_ADD_HASH_int(hv2, sv, "forwreqsPrio", config->links[i]->forwardAreaPriority);
+        VK_ADD_HASH_int(hv2, sv, "reducedSeenBy", config->links[i]->reducedSeenBy);
+        VK_ADD_HASH_int(hv2, sv, "noRules", config->links[i]->noRules);
+        VK_ADD_HASH_int(hv2, sv, "pktSize", config->links[i]->pktSize);
+        VK_ADD_HASH_int(hv2, sv, "arcmailSize", (config->links[i]->arcmailSize ?
+                                                   config->links[i]->arcmailSize :
+                                                   (config->defarcmailSize ? config->defarcmailSize : 500) ));
+        if (config->links[i]->packerDef) VK_ADD_HASH_str(hv2, sv, "packer", config->links[i]->packerDef->packer);
+        if (config->links[i]->AccessGrp) {
+          char *grplist = NULL;
+          for (j = 0; j < config->links[i]->numAccessGrp; j++)
+            if (config->links[i]->AccessGrp[j])
+              xstrscat(&grplist, " ", config->links[i]->AccessGrp[j], NULL);
+          if (grplist) VK_ADD_HASH_str(hv2, sv, "groups", grplist+1);
+          nfree(grplist);
+        }
+        /* val r/o: SvREADONLY_on(hv2); */
+        sv = newRV_noinc((struct sv*)hv2);
+        VK_ADD_HASH_sv(hv, sv, aka2str(config->links[i]->hisAka));
+     }
    }
+
+   /* set areas config */
+   if (perl_vars_invalid & PERL_CONF_AREAS) {
+
+     w_log( LL_SRCLINE, "%s:%d setting Perl variables (areas)", __FILE__, __LINE__);
+
+     hv = perl_get_hv("areas", TRUE); 
+     SvREADONLY_off(hv); hv_clear(hv);
+     for (i = 0; i < config->echoAreaCount; i++) {
+        hv2 = newHV();
+        VK_ADD_HASH_str(hv2, sv, "desc", config->echoAreas[i].description);
+        VK_ADD_HASH_str(hv2, sv, "aka", aka2str(*config->echoAreas[i].useAka));
+        VK_ADD_HASH_str(hv2, sv, "group", config->echoAreas[i].group);
+        VK_ADD_HASH_int(hv2, sv, "hide", config->echoAreas[i].hide);
+        VK_ADD_HASH_int(hv2, sv, "passthrough", config->echoAreas[i].msgbType == MSGTYPE_PASSTHROUGH);
+        VK_ADD_HASH_int(hv2, sv, "mandatory", config->echoAreas[i].mandatory);
+        VK_ADD_HASH_int(hv2, sv, "manual", config->echoAreas[i].manual);
+        VK_ADD_HASH_int(hv2, sv, "lvl_r", config->echoAreas[i].levelread);
+        VK_ADD_HASH_int(hv2, sv, "lvl_w", config->echoAreas[i].levelwrite);
+        VK_ADD_HASH_int(hv2, sv, "paused", config->echoAreas[i].paused);
+        if (config->echoAreas[i].downlinks) {
+          hv3 = newHV();
+          for (j = 0; j < config->echoAreas[i].downlinkCount; j++) {
+            VK_ADD_HASH_int(hv3, sv, 
+                            aka2str(config->echoAreas[i].downlinks[j]->link->hisAka),
+                            1 | config->echoAreas[i].downlinks[j]->defLink << 1
+                            | config->echoAreas[i].downlinks[j]->manual << 2
+                            | config->echoAreas[i].downlinks[j]->mandatory << 3
+                            | config->echoAreas[i].downlinks[j]->import << 4
+                            | config->echoAreas[i].downlinks[j]->export << 5
+                           );
+          }
+          /* val r/o: SvREADONLY_on(hv3); */
+          sv = newRV_noinc((struct sv*)hv3);
+          VK_ADD_HASH_sv(hv2, sv, "links");
+        }
+        /* val r/o: SvREADONLY_on(hv2); */
+        sv = newRV_noinc((struct sv*)hv2);
+        VK_ADD_HASH_sv(hv, sv, config->echoAreas[i].areaName);
+     }
+   }
+
    SvREADONLY_on(hv);
 
    perl_vars_invalid = 0;
