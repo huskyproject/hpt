@@ -42,6 +42,9 @@ extern s_fidoconfig *config;
 // vriable for current tossing dir
 char *tossDir;
 
+// buffer for msg->text
+UCHAR *globalBuffer;
+
 // variables for commandline statements
 
 extern int       cmToss;

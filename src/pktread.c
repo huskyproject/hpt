@@ -521,21 +521,19 @@ static void make_ftsc_date(char *pdate, const struct tm *ptm)
             ptm->tm_hour % 100, ptm->tm_min % 100, ptm->tm_sec % 100);
 }
 
-s_message *readMsgFromPkt(FILE *pkt, s_pktHeader *header)
+int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 {
    s_message *msg;
-   UCHAR     *textBuffer;
-   int       len;
+   int       len, badmsg=0;
    struct tm tm;
 
    if (2 != getUINT16(pkt)) {
-      return NULL;              /* no packed msg */
-   } /* endif */
+	   *message = NULL;
+	   return 0;              /* end of pkt file */
+   }
 
    msg = (s_message*) calloc(1,sizeof(s_message));
-   if (msg==NULL) {
-      return NULL;
-   } /* endif */
+   if (msg==NULL) exit_hpt("out of memory", 1);
 
    msg->origAddr.node   = getUINT16(pkt);
    msg->destAddr.node   = getUINT16(pkt);
@@ -547,47 +545,70 @@ s_message *readMsgFromPkt(FILE *pkt, s_pktHeader *header)
 
    getc(pkt); getc(pkt);                // read unused cost fields (2bytes)
 
-//   fgets(msg->datetime, 21, pkt);
    fgetsUntil0 (msg->datetime, 22, pkt);
-//   writeLogEntry(hpt_log, 'd', "msg datetime: %s", msg->datetime);
    parse_ftsc_date(&tm, msg->datetime);
    make_ftsc_date(msg->datetime, &tm);
-//   writeLogEntry(hpt_log, 'd', "new datetime: %s", msg->datetime);
 
-   textBuffer = (UCHAR *) malloc(74);   // reserve mem space
-   len = fgetsUntil0 ((UCHAR *) textBuffer, 37, pkt);
-   msg->toUserName = (char *) malloc(len);
-   strcpy((char *)msg->toUserName, (char *) textBuffer);
+   if (globalBuffer==NULL) {
+	   globalBuffer = malloc(BUFFERSIZE+1); // 128K (32K in MS-DOS)
+	   if (globalBuffer==NULL) exit_hpt("out of memory", 1);
+   }
 
-   len = fgetsUntil0((UCHAR *) textBuffer, 37, pkt);
-   msg->fromUserName = (char *) malloc(len);
-   strcpy((char *)msg->fromUserName, (char *) textBuffer);
+   len = fgetsUntil0 ((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt);
+   if (len > XMSG_TO_SIZE+1) badmsg=1;
+   else xstrcat(&msg->toUserName, (char *) globalBuffer);
 
-   len = fgetsUntil0((UCHAR *) textBuffer, 73, pkt);
-   msg->subjectLine = (char *) malloc(len);
-   strcpy((char *)msg->subjectLine, (char *)textBuffer);
+   fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt);
+   if (len > XMSG_FROM_SIZE+1) badmsg=1;
+   else xstrcat(&msg->fromUserName, (char *) globalBuffer);
 
-   free(textBuffer);                   // free mem space
+   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt);
+   if (len > XMSG_SUBJ_SIZE+1) badmsg=1;
+   else xstrcat(&msg->subjectLine, (char *) globalBuffer);
 
-   textBuffer = (UCHAR *) malloc(TEXTBUFFERSIZE+1); /* reserve 512kb + 1 (or 32kb+1) text Buffer */
+   if (badmsg) {
+	   freeMsgBuffers(msg);
+	   *message = NULL;
+	   return 2; // exit with error
+   }
+
+#if !defined(__DOS__) && !defined(__MSDOS__)
+   do {
+	   len = fgetsUntil0(globalBuffer, BUFFERSIZE+1, pkt);
+	   xstrcat(&msg->text, globalBuffer);
+	   msg->textLength+=len-1; // trailing \0 is not the text
+   } while (len == BUFFERSIZE+1);
+#else
+   len = fgetsUntil0(globalBuffer, BUFFERSIZE+1, pkt);
+   xstrcat(&msg->text, globalBuffer);
+   msg->textLength+=len-1; // trailing \0 is not the text
+   while (len == BUFFERSIZE+1) {
+	   // skip msg text
+	   len = fgetsUntil0(globalBuffer, BUFFERSIZE+1, pkt);
+   }
+#endif
+
+/* old code
+   // reserve 512kb + 1 (or 32kb+1) text Buffer
+   textBuffer = (UCHAR *) malloc(TEXTBUFFERSIZE+1); 
    msg->textLength = fgetsUntil0((unsigned char *) textBuffer, TEXTBUFFERSIZE+1 , pkt);
-
-   msg->text = (char *) malloc(msg->textLength); /* reserve mem for the real text */
+   msg->text = (char *) malloc(msg->textLength); // reserve mem for the real text
    strcpy((char *)msg->text, (char *)textBuffer);
-
    free(textBuffer);
+*/
 
    correctAddr(msg, header);
-
-   return msg;
+   
+   *message = msg;
+   return 1;
 }
 
 void freeMsgBuffers(s_message *msg)
 {
-  if (msg->text) free(msg->text);
-  free(msg->subjectLine);
-  free(msg->toUserName);
-  free(msg->fromUserName);
+  nfree(msg->text);
+  nfree(msg->subjectLine);
+  nfree(msg->toUserName);
+  nfree(msg->fromUserName);
 //  if (msg->destAddr.domain) free(msg->destAddr.domain);
   // do not free the domains of the adresses of the message, because they
   // come from fidoconfig structures and are needed more than once.

@@ -39,6 +39,7 @@ const int VER_PATCH = 7;
 char      *versionStr=NULL;
 
 char	  *tossDir=NULL;
+UCHAR     *globalBuffer = NULL;
 
 int       cmToss = 0;
 int       cmScan = 0;

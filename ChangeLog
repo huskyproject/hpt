@@ -2,6 +2,12 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Jun  3 17:46:07 NOVST 2000
+max:
+* transit messages from our address kills now
+* changed readMsgFromPkt: no limits, safe code.
+
+----- cvs ci ------
 Fri Jun  2 17:39:35 NOVST 2000
 max:
 * zone seen-by stripping works again

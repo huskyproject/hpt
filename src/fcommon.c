@@ -82,10 +82,10 @@ void writeDupeFiles(void)
 
 void exit_hpt(char *logstr, int print) {
 
-	writeDupeFiles();
-	
-    if (config->lockfile != NULL) remove(config->lockfile);
     if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
+
+    writeDupeFiles();
+    if (config->lockfile != NULL) remove(config->lockfile);
     writeLogEntry(hpt_log, '9', logstr);
     writeLogEntry(hpt_log, '1', "End");
     closeLog(hpt_log);

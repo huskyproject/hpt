@@ -37,6 +37,8 @@
 #include <pkt.h>
 #include <version.h>
 
+#include <fidoconf/common.h>
+
 static char *attrStr[] = { "pvt", "crash", "read", "sent", "att",
                        "fwd", "orphan", "k/s", "loc", "hld",
                        "xx2",  "frq", "rrq", "cpt", "arq", "urq" };
@@ -71,7 +73,7 @@ int displayPkt(char *name, int showHeader, int showText)
    printf("prodCode:     %02x%02x\n", header->hiProductCode, header->loProductCode);
    printf("prodRevision  %u.%u\n", header->majorProductRev, header->minorProductRev);
    printf("----------------------------------------\n");
-   while (NULL != (msg = readMsgFromPkt(pkt,header))) {
+   while (1 == (readMsgFromPkt(pkt,header,&msg))) {
       printf("Msg: %u:%u/%u.%u -> %u:%u/%u.%u\n", msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
              msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
       
@@ -94,6 +96,7 @@ int displayPkt(char *name, int showHeader, int showText)
       
       free(msg);
    } /* endwhile */
+   nfree(globalBuffer); // free msg->text global buffer
 
    free (header);
    fclose(pkt);

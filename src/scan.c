@@ -518,6 +518,9 @@ void scanNMArea(s_area *area)
          
 	 //  non transit messages without k/s flag not killed
 	 if (!(xmsg.attr & MSGKILL) && !(xmsg.attr & MSGFWD)) from_us = 1;
+
+	 // transit messages from us will be killed
+	 if (from_us && (xmsg.attr & MSGFWD)) from_us = 0;
 	 
          if ( (((!for_us) && (!from_us)) || (xmsg.attr & MSGKILL)) &&(xmsg.attr & MSGSENT) ){
               MsgKillMsg(netmail, i);

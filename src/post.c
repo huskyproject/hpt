@@ -99,7 +99,7 @@ void post(int c, unsigned int *n, char *params[])
    
    s_message msg;
 
-   UCHAR *textBuffer = NULL;
+   CHAR *textBuffer = NULL;
 
    int quit;
    int export=0;
@@ -184,7 +184,7 @@ void post(int c, unsigned int *n, char *params[])
             text = stdin;
          if (text != NULL) {
             /* reserve 512kb + 1 (or 32kb+1) text Buffer */
-            textBuffer = (UCHAR *) malloc(TEXTBUFFERSIZE+1); 
+            xstralloc(&textBuffer, (size_t) (TEXTBUFFERSIZE+1));
             for (msg.textLength = 0; msg.textLength < (long) TEXTBUFFERSIZE; msg.textLength++) {
 	       int c = getc(text);
 	       if (c == EOF) {

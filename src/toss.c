@@ -1369,7 +1369,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
    s_pktHeader *header;
    s_message   *msg;
    s_link      *link;
-   int         rc = 0;
+   int         rc = 0, msgrc = 0;
    struct stat statBuff;
    time_t      realtime;
    /* +AS+ */
@@ -1475,14 +1475,16 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	   
 	   if (processIt != 0) {
 		   realtime = time(NULL);
-		   while ((msg = readMsgFromPkt(pkt, header)) != NULL) {
+		   while ((msgrc = readMsgFromPkt(pkt, header, &msg)) == 1) {
                if (msg != NULL) {
 				   if ((processIt == 1) || ((processIt==2) && (msg->netMail==1)))
-					if (processMsg(msg, header)!=1) rc=5;
+					   if (processMsg(msg, header)!=1) rc=5;
 				   freeMsgBuffers(msg);
 				   free(msg);
                }
 		   }
+		   nfree(globalBuffer); // free msg->text global buffer
+		   if (msgrc==2) rc = 3; // rename to .bad (wrong msg format)
 		   // real time of process pkt & msg without external programs
 		   statToss.realTime += time(NULL) - realtime;
 	   }
@@ -1501,7 +1503,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	 
 	 free(header);
 	 
-       } else {
+       } else { // header == NULL
 		   writeLogEntry(hpt_log, '9', "pkt: %s wrong pkt-file", fileName);
 		   rc = 3;
        }

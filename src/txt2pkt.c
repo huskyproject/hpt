@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
       } else {
          if ((text = fopen(argv[n], "rt")) != NULL) {
             /* reserve 512kb + 1 (or 32kb+1) text Buffer */
-            textBuffer = (CHAR *) malloc((size_t)(TEXTBUFFERSIZE+1));
+            xstralloc(&textBuffer, (size_t)(TEXTBUFFERSIZE+1));
             for (msg.textLength = 0; msg.textLength < (long) TEXTBUFFERSIZE; msg.textLength++) {
                 int c = getc(text);
                 if (c == EOF) {

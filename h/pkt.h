@@ -38,10 +38,14 @@
 #include <fidoconf/typesize.h>
 #include <fcommon.h>
 
+/* note that 128K - work buffer, not the max text length */
 #if !defined(__DOS__) && !defined(__MSDOS__)
 #define TEXTBUFFERSIZE 512*1024    // for real os
+#define BUFFERSIZE 128*1024        // work buffer for msg text in pktread
 #else
+/* under ms-dos  message will be stripped to 32K */
 #define TEXTBUFFERSIZE 32*1024     // for Dose
+#define BUFFERSIZE 32*1024         // work buffer for msg text in pktread
 #endif
 
 struct pktHeader {
@@ -129,14 +133,14 @@ s_pktHeader *openPkt(FILE *pkt);
           it reads the data as an 2+ packet.
 */
 
-s_message   *readMsgFromPkt(FILE *pkt, s_pktHeader *header);
+int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message);
 /*DOC
   Input:  pkt is a pointer to a FILE which is already open.
           readMsgFromPkt will read from the current position of the filepointer
           header, when in a netmail no intl kludge is found, header will be used
           to assume intl kludge
-  Output: readMsgFromPkt returns a pointer to a s_message struct or NULL if
-          pkt does not include a message or a wrong message.
+		  message from pkt reading into *message structure, NULL if no msg 
+  Output: number of msg was read (1 or 0), or 2 if error while reading
   FZ:     readMsgFromPkt reads a message out of the pkt and transforms the data
           to the struct.
 */
