@@ -1,0 +1,17 @@
+HPT 1.3-current (started 25.06.2002)
+
+This file describe changes between hpt-1.2-stable and hpt-1.3-current
+
+1. MAJOR feature improvements:
+
+2. CONFIG changes:
+   - area definition options -manual & -mandatory are different:
+     '-mandatory' prevent unsubscribe, '-manual' disable subscribe;
+
+3. IMPORTANT bugfixes:
+   - addrDiff bundle name style generate more unique file names
+   - deadareas.pl: Change dupebase files suffix: 'dpd' to 'dph' ('dpd' is
+     obsolete)
+   - do not scan messages with flag 'LOK' set
+
+$Id$
