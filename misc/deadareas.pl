@@ -4,7 +4,7 @@
 # by roman korolyov
 # rk@inetcomm.net / 2:5095/1.0
 #
-$DUPES="/home/fido/dupes/*.dpd";        # filemask to dupebase
+$DUPES="/home/fido/dupes/*.dph";        # filemask to dupebase
 $EXCLUDE="/home/fido/config/deadareas.exclude"; #Exclude areas
 $DEADTIME=30;                           # days before set to dead
 $LOGFILE="/home/fido/log/deadareas.log";# logfile
@@ -35,9 +35,9 @@ $curtime=time;
  print LOG "--- $logtime ---\n";
  foreach $i ( @dps ) {
     if ( length($i) > 1 ) {
-       
+
 ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat($i);
-        $i=~m/\/(.+)\/(.+)\.dpd/g;
+        $i=~m/\/(.+)\/(.+)\.dph/g;
         $fname=$2;
         if ( $curtime >= $mtime ) {
             if ( ( $curtime - $mtime ) > ($DEADTIME*24*60*60) ) {
