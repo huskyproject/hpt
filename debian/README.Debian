@@ -1,13 +1,7 @@
 hpt for Debian
 --------------
 
-English Readers: Try Babelfish or wait until someone translates this. :)
-
-hpt besteht auf der Fidoconfig (deswegen ja auch der Depend *g*).
-
-Im Verzeichnis /usr/share/doc/hpt/misc liegen die Scripte und Dateien
-die bei hpt ebenfalls in misc mitgeliefert werden. Nur die areafix.hlp 
-habe ich bereits nach /etc/fido/* kopiert, weil diese zumeist benoetigt 
-wird.
+I now enabled the Perl Support for the Package. But i don't use it, so 
+i dont know if its buggy !
 
  -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>, Sat, 31 Mar 2001 00:18:13 +0200

@@ -1,3 +1,10 @@
+hpt (0.9.8-10) unstable; urgency=low
+
+  * Newest cvs.
+  * Enabled Perl for Debian Packages.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Sun,  8 Jul 2001 21:06:02 +0200
+
 hpt (0.9.8-9) unstable; urgency=low
 
   * Newest CVS.
