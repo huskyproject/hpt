@@ -63,7 +63,7 @@
 #include <dos.h>
 #endif
 
-#if defined(__TURBOC__) || defined(__IBMC__) || (__MSVC__)
+#if defined(__TURBOC__) || defined(__IBMC__)
 
 #if !defined(S_ISDIR)
 #define S_ISDIR(a) (((a) & S_IFDIR) != 0)
