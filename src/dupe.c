@@ -83,7 +83,8 @@ char *createDupeFileName(s_area *area) {
     char *name=NULL, *ptr, *retname=NULL;
 
     if (!area->DOSFile) {
-	if (area->fileName) xstrcat(&name, area->fileName);
+	if (area->fileName) xstrcat(&name, (ptr = strrchr(area->fileName,PATH_DELIM))
+				    ? ptr+1 : area->fileName);
 	else name = makeMsgbFileName(area->areaName);
     } else {
 	if (area->fileName) xstrcat(&name, (ptr = strrchr(area->fileName,PATH_DELIM))
