@@ -232,7 +232,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 	   while (token != NULL) {
 		   for (i=0;i<4;i++) {
 			   nfree(subject);
-			   if (outbounds[i]) xstrcat(&subject, *outbounds[i]);
+			   if (outbounds[i] && *outbounds[i]) xstrcat(&subject, *outbounds[i]);
 			   xstrcat (&subject, token);
 #if defined(__linux__) || defined(UNIX)
 			   subject = strLower(subject);
