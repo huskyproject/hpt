@@ -9,9 +9,10 @@ Category 1: Will certainly be implemented until next release
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 
+- del empty .sep catalogues
 - check dupebase filename creation - dos & passthrough areas
 - clean autoCreate code
-- use spawn() insted of system() under win32
+- use spawn() instead of system() under win32
 - do not open/close files on each msg
 - add option "run with another config"
 - fileboxes
