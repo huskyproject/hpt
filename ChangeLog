@@ -1,4 +1,14 @@
 ----- cvs ci ------
+Fr  27 Okt 2000 09:47:21 CEST
+tobi (patches from max and Serguei I. Revtov):
+* links with "export off" don't added to SEEN-BYs
+* Jam fix for hptlink
+* use spawn() instead of system() in WATCOMC (so, arcmail shouldn't be lost)
+* calculate packet orig zone if zero
+* calculate packet dest zone if zero
+* tearline stops areafix
+
+----- cvs ci ------
 Sun Oct 22 00:33:21 MEZ 2000
 tobi:
 * Synchronized hpt link and hptlink code with current branch 

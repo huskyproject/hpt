@@ -135,6 +135,25 @@ s_pktHeader *openPkt(FILE *pkt)
 	  else header->origAddr.net = header->destAddr.net; // not in FSC !
   }
 
+  if (header->origAddr.zone == 0) {
+	  for (capWord=0; capWord<config->addrCount; capWord++) {
+		  if (header->origAddr.net==config->addr[capWord].net) {
+			  header->origAddr.zone = config->addr[capWord].zone;
+			  break;
+		  }
+	  }
+	  if (header->origAddr.zone==0) header->origAddr.zone=config->addr[0].zone;
+  }
+  if (header->destAddr.zone == 0) {
+	  for (capWord=0; capWord<config->addrCount; capWord++) {
+		  if (header->destAddr.net==config->addr[capWord].net) {
+			  header->destAddr.zone = config->addr[capWord].zone;
+			  break;
+		  }
+	  }
+	  if (header->destAddr.zone==0) header->destAddr.zone=config->addr[0].zone;
+  }
+
   return header;
 }
 

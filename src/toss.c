@@ -72,6 +72,9 @@
 
 #if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
 #include <dos.h>
+#ifdef __WATCOMC__
+#include <process.h>
+#endif
 #endif
 
 #if defined(__MINGW32__) && defined(__NT__)
@@ -558,7 +561,9 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		if (newLinks[i] == NULL) break;
 		// don't include points in SEEN-BYs
 		if (newLinks[i]->link->hisAka.point != 0) continue;
-		
+		// don't include arealinks with "export off"
+		if (newLinks[i]->export == 0) continue;
+
 		(*seenBys) = (s_seenBy*) safe_realloc((*seenBys), sizeof(s_seenBy) * (*seenByCount+1));
 		(*seenBys)[*seenByCount].net = (UINT16) newLinks[i]->link->hisAka.net;
 		(*seenBys)[*seenByCount].node = (UINT16) newLinks[i]->link->hisAka.node;
@@ -1609,11 +1614,38 @@ void fillCmdStatement(char *cmd, const char *call, const char *archiv, const cha
    strcat(cmd, tmp);
 }
 
+#ifdef __WATCOMC__
+void *mk_lst(char *a) {
+	char *p=a, *q=a, **list=NULL, end=0, num=0;
+
+	while (*p && !end) {
+		while (*q && !isspace(*q)) q++;
+		if (*q=='\0') end=1;
+		*q ='\0';
+		list = (char **) realloc(list, ++num*sizeof(char*));
+		list[num-1]=(char*)p;
+		if (!end) {
+			p=q+1;
+			while(isspace(*p)) p++;
+		}
+		q=p;
+	}
+	list = (char **) realloc(list, (++num)*sizeof(char*));
+	list[num-1]=NULL;
+
+	return list;
+}
+#endif
+
 int  processArc(char *fileName, e_tossSecurity sec)
 {
    int  i, j, found, cmdexit;
    FILE  *bundle;
    char cmd[256];
+
+#ifdef __WATCOMC__
+   const char * const *list;
+#endif
 
    if (sec == secInbound) {
       writeLogEntry(hpt_log, '9', "bundle %s: tossing in unsecure inbound, security violation", fileName);
@@ -1638,10 +1670,20 @@ int  processArc(char *fileName, e_tossSecurity sec)
    if (found) {
 	  fillCmdStatement(cmd,config->unpack[i-1].call,fileName,"",config->tempInbound);
       writeLogEntry(hpt_log, '6', "bundle %s: unpacking with \"%s\"", fileName, cmd);
+#ifdef __WATCOMC__
+      list = mk_lst(cmd);
+      cmdexit = spawnv(P_WAIT, cmd, list);
+      free((char **)list);
+      if (cmdexit == -1) {
+		  writeLogEntry(hpt_log, '9', "exec failed: %s", strerror(errno));
+		  return 3;
+      }
+#else
       if ((cmdexit = system(cmd)) != 0) {
          writeLogEntry(hpt_log, '9', "exec failed, code %d", cmdexit);
          return 3;
       };
+#endif
 	  if (config->afterUnpack) {
 		  writeLogEntry(hpt_log, '6', "afterUnpack: execute string \"%s\"", config->afterUnpack);
 		  if ((cmdexit = system(config->afterUnpack)) != 0) {
