@@ -1475,8 +1475,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	
 	// ignore msg for other link (maybe this is transit...)
 	if (notforme) {
-		processNMMsg(msg, pktHeader);
-		return 0;
+		return processNMMsg(msg, pktHeader);
 	}
 	
 	// 2nd security ckeck. link, araefixing & password.
@@ -1584,7 +1583,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		
 		free(tmplink);
 		
-		return 1;
+		return 0;
 	}
 
 	if ( report != NULL ) {
@@ -1624,7 +1623,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		linkmsg = NULL;
 	}
 	
-	return 0;
+	return 1;
 }
 
 void MsgToStruct(HMSG SQmsg, XMSG xmsg, s_message *msg)
