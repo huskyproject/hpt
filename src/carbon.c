@@ -28,7 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
 
 #ifdef HAS_PROCESS_H
 #  include <process.h>

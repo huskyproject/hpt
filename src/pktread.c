@@ -35,7 +35,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>

@@ -12,7 +12,8 @@
 #include <errno.h>
 
 /* compiler.h */
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
+#include <huskylib/huskylib.h>
 
 #ifdef HAS_UNISTD_H
 #include <unistd.h>
@@ -23,8 +24,6 @@
 #endif
 
 /* smapi */
-#include <huskylib/huskylib.h>
-
 
 /* fidoconf */
 #include <fidoconf/fidoconf.h>

@@ -38,12 +38,11 @@
 #include <ctype.h>
 #include <errno.h>
 
-#include <smapi/compiler.h>
-
-#include <smapi/msgapi.h>
+#include <huskylib/compiler.h>
 #include <huskylib/huskylib.h>
 #include <huskylib/cvtdate.h>
-#include <huskylib/typedefs.h>
+
+#include <smapi/msgapi.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>

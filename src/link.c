@@ -50,7 +50,7 @@ be cleared.
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
 
 #ifdef __OS2__
 #define INCL_DOSFILEMSG /* for DosSetMaxFH() */

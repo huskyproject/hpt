@@ -19,13 +19,13 @@
 #include <sys/types.h>
 #endif
 
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
+#include <huskylib/huskylib.h>
 
 #if defined(__NT__) && !defined(WIN32) /* WIN32 needed for perl-core include files */
 #  define WIN32
 #endif
 
-#include <huskylib/huskylib.h>
 
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>

@@ -21,7 +21,7 @@
 #include <sys/types.h>
 #include <limits.h>
 
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
 
 #ifdef HAS_DIRECT_H
 #include <direct.h>

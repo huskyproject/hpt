@@ -51,13 +51,13 @@
 #include <pkt.h>
 #include <global.h>
 
-#include <smapi/compiler.h>
-#include <smapi/msgapi.h>
-#include <dupe.h>
-
+#include <huskylib/compiler.h>
 #include <huskylib/huskylib.h>
 #include <huskylib/cvtdate.h>
 #include <huskylib/unused.h>
+
+#include <smapi/msgapi.h>
+#include <dupe.h>
 
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>

@@ -41,7 +41,11 @@
 #include <sys/stat.h>
 
 /* compiler.h */
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
+/* huskylib */
+#include <huskylib/huskylib.h>
+#include <huskylib/patmat.h>
+
 
 #ifdef HAS_PROCESS_H
 #  include <process.h>
@@ -54,10 +58,6 @@
 #ifdef HAS_IO_H
 #include <io.h>
 #endif
-
-/* huskylib */
-#include <huskylib/huskylib.h>
-#include <huskylib/patmat.h>
 
 /* smapi */
 #include <smapi/msgapi.h>

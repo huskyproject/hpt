@@ -35,7 +35,9 @@
 #include <string.h>
 #include <errno.h>
 
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
+#include <huskylib/huskylib.h>
+#include <huskylib/cvtdate.h>
 
 #ifdef HAS_DOS_H
 #include <dos.h>
@@ -43,10 +45,6 @@
 #ifdef HAS_UNISTD_H
 #include <unistd.h>
 #endif
-
-#include <huskylib/typedefs.h>
-#include <huskylib/huskylib.h>
-#include <huskylib/cvtdate.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/xstr.h>

@@ -41,7 +41,9 @@
 #include <signal.h>
 #include <fcntl.h>
 
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
+#include <huskylib/huskylib.h>
+#include <huskylib/patmat.h>
 
 #ifdef HAS_IO_H
 #include <io.h>
@@ -58,8 +60,6 @@
 #include <sysexits.h>
 #endif
 
-#include <huskylib/huskylib.h>
-#include <huskylib/patmat.h>
 #include <smapi/msgapi.h>
 
 #include <fidoconf/fidoconf.h>

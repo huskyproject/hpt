@@ -30,7 +30,8 @@
 #include <time.h>
 #include <string.h>
 
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
+#include <huskylib/huskylib.h>
 
 #ifdef HAS_IO_H
 #include <io.h>
@@ -51,7 +52,6 @@
 #include <sysexits.h>
 #endif
 
-#include <huskylib/huskylib.h>
 #include <smapi/msgapi.h>
 
 #include <fidoconf/fidoconf.h>

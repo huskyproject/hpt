@@ -40,8 +40,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
+#include <huskylib/huskylib.h>
+#include <huskylib/cvtdate.h>
 
 #ifdef HAS_PROCESS_H
 #  include <process.h>
@@ -73,10 +74,6 @@
 #endif
 
 #endif
-
-#include <huskylib/huskylib.h>
-#include <huskylib/typedefs.h>
-#include <huskylib/cvtdate.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>

@@ -30,7 +30,8 @@
 
 
 /* compiler.h */
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
+#include <huskylib/huskylib.h>
 
 #ifdef HAS_UNISTD_H
 #include <unistd.h>
@@ -51,9 +52,6 @@
 /* we can't include windows.h to prevent type redefinitions ... */
 #define CharToOem CharToOemA
 #endif
-
-/* smapi */
-#include <huskylib/huskylib.h>
 
 /*  fidoconf */
 #include <fidoconf/fidoconf.h>

@@ -42,7 +42,9 @@
 #include <sys/stat.h>
 
 
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
+#include <huskylib/patmat.h>
+#include <huskylib/huskylib.h>
 
 #ifdef HAS_IO_H
 #include <io.h>
@@ -51,9 +53,6 @@
 #ifdef HAS_UNISTD_H
 #include <unistd.h>
 #endif
-
-#include <huskylib/patmat.h>
-#include <huskylib/huskylib.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>

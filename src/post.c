@@ -41,7 +41,8 @@ tearline generation added
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
+#include <huskylib/huskylib.h>
 
 #ifdef HAS_SYS_SYSEXITS_H
 #include <sys/sysexits.h>
@@ -49,8 +50,6 @@ tearline generation added
 #ifdef HAS_SYSEXITS_H
 #include <sysexits.h>
 #endif
-
-#include <huskylib/huskylib.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
