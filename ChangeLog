@@ -1,3 +1,20 @@
+2002-07-07 Sunday 23:04  stas
+
+	* HISTORY (1.1): Add changes log for user's attention
+
+2002-07-07 Sunday 23:02  stas
+
+	* filter.pl (1.10): Cosmetic: add file description
+
+2002-07-07 Sunday 21:56  stas
+
+	* src/query.c (1.53): Cosmetic fix
+
+2002-07-07 Sunday 21:55  stas
+
+	* src/areafix.c (1.323): Rescan: exit from for cycle after area
+	found.
+
 2002-07-06 Saturday 18:54  stas
 
 	* src/fcommon.c (1.132): Change addrdiff bundle name stile
