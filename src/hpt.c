@@ -496,9 +496,9 @@ int main(int argc, char **argv)
 	   if (stricmp(config->msgBaseDir,"passthrough")!=0)
 		   isFreeSpace(config->msgBaseDir);
 	   for (i=0; i<config->linkCount; i++) {
-		   if (config->links[i].msgBaseDir &&
-			   stricmp(config->links[i].msgBaseDir,"passthrough")!=0)
-			   isFreeSpace(config->links[i].msgBaseDir);
+		   if (config->links[i]->msgBaseDir &&
+			   stricmp(config->links[i]->msgBaseDir,"passthrough")!=0)
+			   isFreeSpace(config->links[i]->msgBaseDir);
 	   }
    }
 

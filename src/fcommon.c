@@ -163,10 +163,10 @@ int fileNameAlreadyUsed(char *pktName, char *packName) {
    UINT i;
 
    for (i=0; i < config->linkCount; i++) {
-      if ((config->links[i].pktFile != NULL) && (pktName != NULL))
-         if ((stricmp(pktName, config->links[i].pktFile)==0)) return 1;
-      if ((config->links[i].packFile != NULL) && (packName != NULL))
-         if ((stricmp(packName, config->links[i].packFile)==0)) return 1;
+      if ((config->links[i]->pktFile != NULL) && (pktName != NULL))
+         if ((stricmp(pktName, config->links[i]->pktFile)==0)) return 1;
+      if ((config->links[i]->packFile != NULL) && (packName != NULL))
+         if ((stricmp(packName, config->links[i]->packFile)==0)) return 1;
    }
 
    return 0;

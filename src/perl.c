@@ -1116,28 +1116,28 @@ void perl_setvars(void) {
    hv = perl_get_hv("links", TRUE);
    for (i = 0; i < config->linkCount; i++) {
       hv2 = newHV();
-      VK_ADD_HASH_str(hv2, sv, "name", config->links[i].name);
-      VK_ADD_HASH_str(hv2, sv, "aka", aka2str(*config->links[i].ourAka));
-      VK_ADD_HASH_str(hv2, sv, "password", config->links[i].defaultPwd);
-      VK_ADD_HASH_str(hv2, sv, "filebox", config->links[i].fileBox);
-      VK_ADD_HASH_str(hv2, sv, "robot", config->links[i].RemoteRobotName);
-      VK_ADD_HASH_int(hv2, sv, "flavour", flv2flag(config->links[i].netMailFlavour));
-      VK_ADD_HASH_int(hv2, sv, "eflavour", flv2flag(config->links[i].echoMailFlavour));
-      VK_ADD_HASH_int(hv2, sv, "pause", getPause( &(config->links[i]) ));
-      VK_ADD_HASH_int(hv2, sv, "level", config->links[i].level);
-      VK_ADD_HASH_int(hv2, sv, "advAfix", config->links[i].advancedAreafix);
-      VK_ADD_HASH_int(hv2, sv, "echoLimit", config->links[i].afixEchoLimit);
-      if (config->links[i].AccessGrp) {
+      VK_ADD_HASH_str(hv2, sv, "name", config->links[i]->name);
+      VK_ADD_HASH_str(hv2, sv, "aka", aka2str(*config->links[i]->ourAka));
+      VK_ADD_HASH_str(hv2, sv, "password", config->links[i]->defaultPwd);
+      VK_ADD_HASH_str(hv2, sv, "filebox", config->links[i]->fileBox);
+      VK_ADD_HASH_str(hv2, sv, "robot", config->links[i]->RemoteRobotName);
+      VK_ADD_HASH_int(hv2, sv, "flavour", flv2flag(config->links[i]->netMailFlavour));
+      VK_ADD_HASH_int(hv2, sv, "eflavour", flv2flag(config->links[i]->echoMailFlavour));
+      VK_ADD_HASH_int(hv2, sv, "pause", getPause( config->links[i] ));
+      VK_ADD_HASH_int(hv2, sv, "level", config->links[i]->level);
+      VK_ADD_HASH_int(hv2, sv, "advAfix", config->links[i]->advancedAreafix);
+      VK_ADD_HASH_int(hv2, sv, "echoLimit", config->links[i]->afixEchoLimit);
+      if (config->links[i]->AccessGrp) {
         char *grplist = NULL;
-        for (j = 0; j < config->links[i].numAccessGrp; j++)
-          if (config->links[i].AccessGrp[j])
-            xstrscat(&grplist, " ", config->links[i].AccessGrp[j], NULL);
+        for (j = 0; j < config->links[i]->numAccessGrp; j++)
+          if (config->links[i]->AccessGrp[j])
+            xstrscat(&grplist, " ", config->links[i]->AccessGrp[j], NULL);
         if (grplist) VK_ADD_HASH_str(hv2, sv, "groups", grplist+1);
         nfree(grplist);
       }
       SvREADONLY_on(hv2);
       sv = newRV_noinc((struct sv*)hv2);
-      VK_ADD_HASH_sv(hv, sv, aka2str(config->links[i].hisAka));
+      VK_ADD_HASH_sv(hv, sv, aka2str(config->links[i]->hisAka));
    }
 
    hv = perl_get_hv("areas", TRUE);

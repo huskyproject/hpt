@@ -292,7 +292,7 @@ char *available(s_link *link, char *cmdline)
 
     for (j = 0; j < config->linkCount; j++)
     {
-	uplink = &(config->links[j]);
+	uplink = config->links[j];
 
 	found = 0;
 	isuplink = 0;
@@ -575,8 +575,8 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 static int compare_links_priority(const void *a, const void *b) {
     int ia = *((int*)a);
     int ib = *((int*)b);
-    if(config->links[ia].forwardAreaPriority < config->links[ib].forwardAreaPriority) return -1;
-    else if(config->links[ia].forwardAreaPriority > config->links[ib].forwardAreaPriority) return 1;
+    if(config->links[ia]->forwardAreaPriority < config->links[ib]->forwardAreaPriority) return -1;
+    else if(config->links[ia]->forwardAreaPriority > config->links[ib]->forwardAreaPriority) return 1;
     else return 0;
 }
 
@@ -589,13 +589,13 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
     /* From Lev Serebryakov -- sort Links by priority */
     Indexes = safe_malloc(sizeof(int)*config->linkCount);
     for (i = 0; i < config->linkCount; i++) {
-	if (config->links[i].forwardRequests) Indexes[Requestable++] = i;
+	if (config->links[i]->forwardRequests) Indexes[Requestable++] = i;
     }
     qsort(Indexes,Requestable,sizeof(Indexes[0]),compare_links_priority);
     i = 0;
     if(lastRlink) { /*  try to find next requestable uplink */
         for (; i < Requestable; i++) {
-            uplink = &(config->links[Indexes[i]]);
+            uplink = config->links[Indexes[i]];
             if( addrComp(uplink->hisAka, (*lastRlink)->hisAka) == 0)
             {   /*  we found lastRequestedlink */
                 i++;   /*  let's try next link */
@@ -604,7 +604,7 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
         }
     }
     for (; i < Requestable; i++) {
-	uplink = &(config->links[Indexes[i]]);
+	uplink = config->links[Indexes[i]];
 
     if(lastRlink) *lastRlink = uplink;
 
@@ -1662,8 +1662,8 @@ void sendAreafixMessages()
     unsigned int i;
 
     for (i = 0; i < config->linkCount; i++) {
-        if (config->links[i].msg == NULL) continue;
-        link = &(config->links[i]);
+        if (config->links[i]->msg == NULL) continue;
+        link = config->links[i];
         linkmsg = link->msg;
 
         xscatprintf(&(linkmsg->text), " \r--- %s areafix\r", versionStr);
@@ -2066,13 +2066,13 @@ void autoPassive()
 
   for (i = 0; i < config->linkCount; i++) {
 
-      if (config->links[i].autoPause==0 || (config->links[i].Pause == (ECHOAREA|FILEAREA))
+      if (config->links[i]->autoPause==0 || (config->links[i]->Pause == (ECHOAREA|FILEAREA))
          ) continue;
 
-      if (createOutboundFileName(&(config->links[i]),
-				 config->links[i].echoMailFlavour,
+      if (createOutboundFileName(config->links[i],
+				 config->links[i]->echoMailFlavour,
 				 FLOFILE) == 0) {
-	  f = fopen(config->links[i].floFile, "rt");
+	  f = fopen(config->links[i]->floFile, "rt");
 	  if (f) {
 	      while ((line = readLine(f)) != NULL) {
 		  line = trimLine(line);
@@ -2093,21 +2093,21 @@ void autoPassive()
 			      time_test = 0;
 			  }
 
-			  if (time_test >= (time_t)(config->links[i].autoPause*24)) {
+			  if (time_test >= (time_t)(config->links[i]->autoPause*24)) {
 			      w_log(LL_AREAFIX, "autopause: the file %s is %d days old", path, time_test/24);
 			      if (Changepause((cfgFile) ? cfgFile :
 					      getConfigFileName(),
-					      &(config->links[i]), 1,
-					      config->links[i].Pause^(ECHOAREA|FILEAREA))) {
-				  int mask = config->links[i].areafixReportsAttr ? config->links[i].areafixReportsAttr : config->areafixReportsAttr;
-				  msg = makeMessage(config->links[i].ourAka,
-					    &(config->links[i].hisAka),
-					    versionStr,config->links[i].name,
+					      config->links[i], 1,
+					      config->links[i]->Pause^(ECHOAREA|FILEAREA))) {
+				  int mask = config->links[i]->areafixReportsAttr ? config->links[i]->areafixReportsAttr : config->areafixReportsAttr;
+				  msg = makeMessage(config->links[i]->ourAka,
+					    &(config->links[i]->hisAka),
+					    versionStr,config->links[i]->name,
 					    "AutoPassive", 1,
                                             MSGPRIVATE | MSGLOCAL | (mask & (MSGKILL|MSGCPT)) );
 				  msg->text = createKludges(config, NULL,
-					    config->links[i].ourAka,
-					    &(config->links[i].hisAka),
+					    config->links[i]->ourAka,
+					    &(config->links[i]->hisAka),
 					    versionStr);
 				  xstrcat(&msg->text, "\r System switched to passive, your subscription are paused.\r\r"
 					" You are being unsubscribed from echo areas with no downlinks besides you!\r\r"
@@ -2138,12 +2138,12 @@ void autoPassive()
 	      } /* endwhile */
 	      fclose(f);
 	  } /* endif */
-	  nfree(config->links[i].floFile);
-	  remove(config->links[i].bsyFile);
-	  nfree(config->links[i].bsyFile);
+	  nfree(config->links[i]->floFile);
+	  remove(config->links[i]->bsyFile);
+	  nfree(config->links[i]->bsyFile);
       }
-      nfree(config->links[i].pktFile);
-      nfree(config->links[i].packFile);
+      nfree(config->links[i]->pktFile);
+      nfree(config->links[i]->packFile);
   } /* endfor */
 }
 

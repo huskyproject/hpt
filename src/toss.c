@@ -280,10 +280,10 @@ void closeOpenedPkt(void) {
     unsigned int i;
 
     for (i=0; i<config->linkCount; i++)
-	if (config->links[i].pkt) {
-	    if (closeCreatedPkt(config->links[i].pkt))
-		w_log(LL_ERR,"can't close pkt: %s", config->links[i].pktFile);
-	    config->links[i].pkt = NULL;
+	if (config->links[i]->pkt) {
+	    if (closeCreatedPkt(config->links[i]->pkt))
+		w_log(LL_ERR,"can't close pkt: %s", config->links[i]->pktFile);
+	    config->links[i]->pkt = NULL;
 	    nopenpkt--;
 	}
     for (i=0; i<config->echoAreaCount; i++)
@@ -1645,15 +1645,8 @@ void arcmail(s_link *tolink) {
     int i, cmdexit, foa = 0;
     FILE *flo = NULL;
     s_link *link = NULL;
-    int startlink=0;
-    int endlink = config->linkCount;
     hs_addr *aka;
     e_bundleFileNameStyle bundleNameStyle;
-
-    if (tolink != NULL) {
-	startlink = tolink - config->links;
-	endlink = startlink + 1;
-    }
 
     closeOpenedPkt();
     if (config->beforePack) {
@@ -1666,9 +1659,13 @@ void arcmail(s_link *tolink) {
     perlbeforepack();
 #endif
 
-    for (i = startlink ; i < endlink; i++) {
-
-	link = &(config->links[i]);
+    for (i = 0 ; i < config->linkCount; i++) {
+        if(tolink) {
+            link = tolink;
+            i = config->linkCount;
+        } else {
+	        link = config->links[i];
+        }
 
 	/*  only create floFile if we have mail for this link */
 	if (link->pktFile != NULL) {
@@ -1727,7 +1724,7 @@ void arcmail(s_link *tolink) {
 
 		if (flo == NULL)
 		    w_log(LL_ERR, "Cannot open flo file %s",
-			  config->links[i].floFile);
+			  config->links[i]->floFile);
 		else {
                     w_log(LL_FILE,"toss.c:arcmail(): opened '%s' (\"a+\" mode)",link->floFile);
 
@@ -1859,10 +1856,10 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
     char *newfn = NULL;
 
     for (i = 0 ; i < config->linkCount; i++) {
-	if (addrComp(header->destAddr, config->links[i].hisAka) == 0) {
+	if (addrComp(header->destAddr, config->links[i]->hisAka) == 0) {
 	    /* we found a link to forward the pkt file to */
 	
-	    link = config->links+i;
+	    link = config->links[i];
 			
 	    /* security checks */
 			
@@ -1877,7 +1874,7 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 	    if (move_file(fileName, newfn, 0) == 0) {  /* save if exist */
 		
 		w_log(LL_PKT, "Forwarding %s to %s as %s",
-		      fileName, config->links[i].name, newfn + strlen(config->tempOutbound));
+		      fileName, config->links[i]->name, newfn + strlen(config->tempOutbound));
 
 		nfree(newfn);
 		forwardedPkts = 1;
