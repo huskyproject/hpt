@@ -643,7 +643,6 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
                     token[strlen(token)-1]='\0';
                 }
                 if (stricmp(token, areaName)==0) {
-                    // why do you need to redefine the same filename?
                     fileName = safe_strdup(getCurConfName());
                     strend = get_hcfgPos();
                     if(strbeg > strend) strbeg = 0;
@@ -655,9 +654,9 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         nfree(line);
         nfree(cfgline);
     }
+    close_conf();
     nfree(line);
     if (strend == -1) { // impossible // error occurred
-        close_conf();
         nfree(cfgline);
         nfree(fileName);
         return -1;
