@@ -1,3 +1,41 @@
+2002-01-21 Monday 20:15  ml
+
+	* h/global.h (1.28), h/hpt.h (1.6), src/fcommon.c (1.111),
+	src/hpt.c (1.126): getfree() declaration moved from hpt.c to
+	global.c; LogFileName macro in hpt.h/hpt.c; critical messages write
+	to stderr, some log messages changed. Close log file before
+	lockfile removing in exit_hpt(). Patch from Stas Degteff 2:5080/102
+	<g@grumber.org>
+
+2002-01-21 Monday 19:53  ml
+
+	* makefile.inc (1.15), h/global.h (1.27), h/log.h (1.16),
+	h/recode.h (1.7), h/strsep.h (1.2), make/makefile.inc (1.6),
+	src/areafix.c (1.241), src/crc.c (1.4), src/dupe.c (1.51),
+	src/fcommon.c (1.110), src/getfree.c (1.11), src/global.c (1.40),
+	src/hpt.c (1.125), src/link.c (1.45), src/log.c (1.25), src/perl.c
+	(1.17), src/pktread.c (1.82), src/post.c (1.62), src/recode.c
+	(1.17), src/scan.c (1.138), src/scanarea.c (1.74), src/strsep.c
+	(1.7), src/tlog.c (1.9), src/toss.c (1.385), src/txt2pkt.c (1.29):
+	crc.c/.h, recode.c/h, log.c, strsep.c moved to fidoconf library
+	(memcrc32(), strcrc32(), openLog(), closeLog(), w_log(),
+	initCharsets(), doneCharsets(), recodeToInternalCharset(),
+	recodeToTransportCharset(), getctab(), strseparate() functions).
+	Patch from Stas Degteff 2:5080/102 <g@grumber.org>
+
+2002-01-21 Monday 19:10  ml
+
+	* src/query.c (1.11): fix if dummys del \n from the end of
+	autoareacreatefile
+
+2002-01-21 Monday 19:00  mche
+
+	* src/areafix.c (1.240): added code for queryfile support
+
+2002-01-21 Monday 18:05  mche
+
+	* src/hpt.c (1.124): added code for queryfile support
+
 2002-01-19 Saturday 17:55  mche
 
 	* src/query.c (1.10): fixes for compiling under linux and code
