@@ -1313,6 +1313,7 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
 
    if (strncmp(msg.text+j+1,"NOECHO",6)==0) {
 	   freeMsgBuffers(&msg);
+	   nfree(links);
 	   return 0;
    }
 

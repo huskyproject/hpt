@@ -5,6 +5,7 @@ hpt 0.9.8 (development version)
 Sun Feb 18 00:19:33 NOVT 2001
 max:
 * fixed recoding in some other reports
+* fixed kludges zero termination in scan, rescan & toss from badarea
 
 ----- cvs ci ------
 Mon Feb 12 23:47:14 NOVT 2001

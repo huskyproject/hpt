@@ -123,10 +123,10 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    ctrlLen = MsgGetCtrlLen(hmsg);
    ctrlBuff = (UCHAR *) safe_malloc(ctrlLen+1);
    MsgReadMsg(hmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
-   /* MsgReadMsg does not do zero termination! */
-   //ctrlBuff[ctrlLen] = '\0'; // now it is do it
+   /* MsgReadMsg does not do zero termination for kludges! */
+   ctrlBuff[ctrlLen] = '\0';
    if (action == 0 && config->disableTID == 0)
-       xscatprintf((char **) &ctrlBuff, "\001TID: %s", versionStr);
+       xstrscat((char **) &ctrlBuff, "\001TID: ", versionStr, NULL);
    // add '\r' after each kludge
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
    
