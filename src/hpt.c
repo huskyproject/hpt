@@ -409,6 +409,7 @@ void processConfig()
    initCharsets();
    if (config->outtab) getctab(outtab, (unsigned char*) config->outtab);
    if (config->intab) getctab(intab, (unsigned char*) config->intab);
+   w_log(LL_START, "Start");
 }
 
 int isFreeSpace(char *path) {
@@ -500,7 +501,6 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 //   if (quiet==0) fprintf(stdout, "Highly Portable Tosser %s\n", version);
 
    if (config==NULL) processConfig();
-   w_log(LL_START, "Start");
 
 #if defined ( __NT__ )
    if (config->setConsoleTitle) {
