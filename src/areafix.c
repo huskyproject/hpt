@@ -195,14 +195,14 @@ int addstring(FILE *f, char *aka) {
 	long areapos,endpos,cfglen,len;
 
 	/* in dos and win32 by default \n translates into 2 chars */
-	fseek(f,-2,SEEK_CUR);
+	fseek(f,-2L,SEEK_CUR);
 	c=fgetc(f);
-	if (c==0x0D) fseek(f,-1,SEEK_CUR);
+	if (c==0x0D) fseek(f,-1L,SEEK_CUR);
 
 	areapos=ftell(f);
 	
 	// end of file
-	fseek(f,0l,SEEK_END);
+	fseek(f,0L,SEEK_END);
 	endpos=ftell(f);
 	cfglen=endpos-areapos;
 	
@@ -410,12 +410,12 @@ char *help(s_link *link) {
 				return NULL;
 			}
 		
-		fseek(f,0l,SEEK_END);
+		fseek(f,0L,SEEK_END);
 		endpos=ftell(f);
 		
 		help=(char*) calloc((size_t) endpos+1,sizeof(char));
 
-		fseek(f,0l,SEEK_SET);
+		fseek(f,0L,SEEK_SET);
 		fread(help,1,(size_t) endpos,f);
 		
 		for (i=0; i<endpos; i++) if (help[i]=='\n') help[i]='\r';
@@ -459,10 +459,10 @@ char *available(s_link *link) {
 
 		   	xscatprintf(&report, "Available Area List from %s:\r", aka2str(uplink->hisAka));
 
-			fseek(f,0l,SEEK_END);
+			fseek(f,0L,SEEK_END);
 			endpos=ftell(f);
 			
-			fseek(f,0l,SEEK_SET);
+			fseek(f,0L,SEEK_SET);
 			endpos=fread(avail = xstralloc(&report, endpos + 1), 1, (size_t) endpos,f);
 			for (i=0; i<endpos; i++) if (avail[i]=='\n') avail[i]='\r';
 			avail[endpos] = '\0';
@@ -1430,10 +1430,10 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 			if (preport != NULL) {
 				switch (RetFix) {
 				case LIST:
-					RetMsg(msg, link, preport, "list request");
+					RetMsg(msg, link, preport, "areafix reply: list request");
 					break;
 				case HELP:
-					RetMsg(msg, link, preport, "help request");
+					RetMsg(msg, link, preport, "areafix reply: help request");
 					break;
 				case ADD:
 					report = areaStatus(report, preport);
@@ -1442,22 +1442,22 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 					report = areaStatus(report, preport);
 					break;
 				case AVAIL:
-					RetMsg(msg, link, preport, "available areas");
+					RetMsg(msg, link, preport, "areafix reply: available areas");
 					break;
 				case UNLINK:
-					RetMsg(msg, link, preport, "unlinked request");
+					RetMsg(msg, link, preport, "areafix reply: unlinked request");
 					break;
 				case QUERY:
-					RetMsg(msg, link, preport, "linked request");
+					RetMsg(msg, link, preport, "areafix reply: linked request");
 					break;
 				case PAUSE:
-					RetMsg(msg, link, preport, "node change request");
+					RetMsg(msg, link, preport, "areafix reply: node change request");
 					break;
 				case RESUME:
-					RetMsg(msg, link, preport, "node change request");
+					RetMsg(msg, link, preport, "areafix reply: node change request");
 					break;
 				case INFO:
-					RetMsg(msg, link, preport, "link information");
+					RetMsg(msg, link, preport, "areafix reply: link information");
 					break;
 				case RESCAN:
  					report=areaStatus(report, preport);
@@ -1504,7 +1504,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 			break;
 		}
 		
-		RetMsg(msg, link, report, "security violation");
+		RetMsg(msg, link, report, "areafix reply: security violation");
 		writeLogEntry(hpt_log, '8', "areafix: security violation from %s", aka2str(link->hisAka));
 		free(tmplink);
 		
@@ -1515,7 +1515,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		preport=linked(msg, link);
 		xstrcat(&report, preport);
 		free(preport);
-		RetMsg(msg, link, report, "node change request");
+		RetMsg(msg, link, report, "areafix reply: node change request");
 	}
 	
 	writeLogEntry(hpt_log, '8', "areafix: sucessfully done for %s",aka2str(link->hisAka));

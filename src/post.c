@@ -66,6 +66,7 @@ void post(int c, unsigned int *n, char *params[])
 
    int quit;
    int export=0;
+   int erasef=0;
 
    time_t t = time (NULL);
    struct tm *tm;
@@ -94,10 +95,16 @@ void post(int c, unsigned int *n, char *params[])
                   case 't':
                      msg.toUserName = (char *) malloc(strlen(params[++(*n)]) + 1);
                      strcpy(msg.toUserName, params[*n]);
+#ifdef __NT__
+                     CharToOem(msg.toUserName, msg.toUserName);
+#endif
                      break;
                   case 'f':
                      msg.fromUserName = (char *) malloc(strlen(params[++(*n)]) + 1);
                      strcpy(msg.fromUserName, params[*n]);
+#ifdef __NT__
+                     CharToOem(msg.fromUserName, msg.fromUserName);
+#endif
                      break;
                   default:
                      quit = 1;
@@ -116,9 +123,15 @@ void post(int c, unsigned int *n, char *params[])
             case 's':    // subject
                msg.subjectLine = (char *) malloc(strlen(params[++(*n)]) + 1);
                strcpy(msg.subjectLine, params[*n]);
+#ifdef __NT__
+               CharToOem(msg.subjectLine, msg.subjectLine);
+#endif
                break;
             case 'x':    // export message
                export=1;
+               break;
+            case 'd':    // erase input file after posting
+               erasef=1;
                break;
 	    case 'h':	// print help
 	       fprintf(stdout,"\n       Post a message to area:\n");
@@ -146,6 +159,7 @@ void post(int c, unsigned int *n, char *params[])
 	       fprintf(stdout,"                 are: pvt, crash, read, sent, att,  fwd,  orphan,\n");
 	       fprintf(stdout,"                 k/s, loc, hld, xx2,  frq, rrq, cpt, arq, urq\n\n");
 	       fprintf(stdout,"              -x export message to echo links\n\n");
+	       fprintf(stdout,"              -d erase input file after posting\n\n");
 	       fprintf(stdout,"              -h get help\n\n");
 	       fprintf(stdout,"              file - text file to post into echo or \"-\" for stdin\n\n");
 	       quit = 1;
@@ -175,6 +189,8 @@ void post(int c, unsigned int *n, char *params[])
             }; /* endfor */
             textBuffer[msg.textLength-1] = 0;
             fclose(text);
+            if (strcmp(params[*n], "-")&&erasef==1)
+               remove(params[*n]);
          } else {
             fprintf(stderr, "hpt post: failed to open input file %s\n", params[*n]);
         };

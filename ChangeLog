@@ -2,6 +2,12 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Fri Feb 25 11:19:12 NOVT 2000
+max:
+* small changes in areafix
+* del option in post (patch from Alexander Vernigora)
+
+----- cvs ci ------
 Sat Feb 19 17:44:32 NOVT 2000
 max:
 * my last fix really works now :)

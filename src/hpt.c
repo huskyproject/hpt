@@ -66,10 +66,6 @@
 #include <areafix.h>
 #include <recode.h>
 
-#if defined ( __WATCOMC__ ) && defined ( __NT__ )
-int __stdcall SetConsoleTitleA( const char* lpConsoleTitle );
-#endif
-
 s_message **msgToSysop = NULL;
 char *scanParmA;
 char *scanParmF;
