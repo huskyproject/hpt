@@ -1,3 +1,13 @@
+2004-05-27 Thursday 21:08  d_sergienko
+
+	* src/carbon.c (1.31): CarbonRule NOT fix from Nick Voronin,
+	2:5030/2239.4
+
+2004-05-27 Thursday 20:53  d_sergienko
+
+	* src/toss.c (1.535): fix processing of allowEmptyPktPwd. Thanks to
+	Michael Dukelsky, 2:5020/1042
+
 2004-05-14 Friday 15:32  andrew_ladutsko
 
 	* src/hptafix.c (1.9): call_getLinkData - returns program-dependent
