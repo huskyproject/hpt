@@ -592,7 +592,8 @@ int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr, unsigned writeAccess)
     /*11*/"lenght of CONFERENCE name is more than 60 symbols",
     /*12*/"Area killed (unsubscribed)",
     /*13*/"New area refused by NewAreaRefuseFile",
-    /*14*/"Wrong link to autocreate from (area requested from other link)"
+    /*14*/"Wrong link to autocreate from (area requested from other link)",
+    /*15*/"Area is paused (unsubscribed)"
     };
 
     w_log(LL_FUNC, "putMsgInBadArea() begin");
@@ -812,12 +813,13 @@ s_arealink *getAreaLink(s_area *area, hs_addr aka)
 }
 
 /*  import: type == 0, export: type != 0 */
-/*  return value: 0 if access ok, 3 if import/export off, 4 if not linked */
+/*  return value: 0 if access ok, 3 if import/export off, 4 if not linked, */
+/*  15 if area is paused */
 int checkAreaLink(s_area *area, hs_addr aka, int type)
 {
     s_arealink *arealink = NULL;
     int writeAccess = 0;
-	
+
     arealink = getAreaLink(area, aka);
     if (arealink) {
 	if (type==0) {
@@ -829,6 +831,8 @@ int checkAreaLink(s_area *area, hs_addr aka, int type)
 	if (addrComp(aka, *area->useAka)!=0) writeAccess = BM_NOT_LINKED;
     }
 
+    if (writeAccess==0 && area->paused) writeAccess = BM_AREA_IS_PAUSED;
+	
     return writeAccess;
 }
 

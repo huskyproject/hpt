@@ -587,6 +587,26 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         }
         nRet = DEL_OK;
         break;
+    case 8: /*  make area paused. */
+        tmpPtr = GetWordByPos(cfgline,4);
+        if ( tmpPtr ) {
+            *(--tmpPtr) = '\0';
+            xstrscat(&buff, cfgline, " -paused ", ++tmpPtr , NULL);
+            nfree(cfgline);
+            cfgline = buff;
+        } else {
+            xstrcat(&cfgline, " -paused");
+        }
+        nRet = ADD_OK;
+        break;
+    case 9: /*  make area not paused */
+        tmpPtr = fc_stristr(cfgline,"-paused");
+        *(--tmpPtr) = '\0';
+        xstrscat(&buff, cfgline, tmpPtr+8 , NULL);
+        nfree(cfgline);
+        cfgline = buff;
+        nRet = ADD_OK;
+        break;
     default: break;
     } /*  switch (action) */
 
@@ -767,6 +787,8 @@ char *subscribe(s_link *link, char *cmd) {
                   af_CheckAreaInQuery(an, NULL, NULL, DELIDLE);
                   xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
                   w_log(LL_AREAFIX, "areafix: %s subscribed to %s",aka2str(link->hisAka),an);
+                  if (config->autoAreaPause && area->paused)
+                      pauseAreas(1, NULL, area);
               } else {
                   xscatprintf(&report, " %s %s  not subscribed\r",an,print_ch(49-strlen(an), '.'));
                   w_log(LL_AREAFIX, "areafix: %s not subscribed to %s , cause uplink",aka2str(link->hisAka),an);
@@ -783,9 +805,11 @@ char *subscribe(s_link *link, char *cmd) {
             if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==ADD_OK) {
                 Addlink(config, link, area);
                 fixRules (link, area->areaName);
-                af_CheckAreaInQuery(an, NULL, NULL, DELIDLE);
                 xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
                 w_log(LL_AREAFIX, "areafix: %s subscribed to %s",aka2str(link->hisAka),an);
+                if (config->autoAreaPause && area->paused && (link->Pause & ECHOAREA)!=ECHOAREA)
+                    pauseAreas(1, link, area);
+                af_CheckAreaInQuery(an, NULL, NULL, DELIDLE);
                 if(cmNotifyLink)
                 forwardRequestToLink(area->areaName,link, NULL, 0);
             } else {
@@ -1037,9 +1061,12 @@ char *unsubscribe(s_link *link, char *cmd) {
                         {
                             j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,1);
                         }
-                    } else {
-
+                    }
+                    else
+                    {
                         j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,7);
+                        if (j == DEL_OK && config->autoAreaPause && !area->paused && (link->Pause & ECHOAREA) != ECHOAREA)
+                            pauseAreas(0,NULL,area);
                     }
                     if (j != DEL_OK) {
                         w_log(LL_AREAFIX, "areafix: %s doesn't unlinked from %s",
@@ -1065,8 +1092,14 @@ char *unsubscribe(s_link *link, char *cmd) {
                 }
                 j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
 /*                if ( (j == DEL_OK) && area->msgbType!=MSGTYPE_PASSTHROUGH ) */
-                if ( (j == DEL_OK) && area->fileName && area->killMsgBase)
-                   MsgDeleteBase(area->fileName, (word) area->msgbType);
+                if (j == DEL_OK) {
+                   if (area->fileName && area->killMsgBase)
+                       MsgDeleteBase(area->fileName, (word) area->msgbType);
+                   if (config->autoAreaPause && !area->paused) {
+                       area->msgbType = MSGTYPE_PASSTHROUGH;
+                       pauseAreas(0,NULL,area);
+                   }
+                }
             }
             if (j == DEL_OK){
                 xscatprintf(&report," %s %s  unlinked\r",an,print_ch(49-strlen(an),'.'));
@@ -1115,6 +1148,75 @@ char *unsubscribe(s_link *link, char *cmd) {
     return report;
 }
 
+/* if act==0 pause area, if act==1 unpause area */
+void pauseAreas(int act, s_link *searchLink, s_area *searchArea) {
+  unsigned int i, j, k, linkCount;
+
+  if (!searchLink && !searchArea) return;
+
+  for (i=0; i < config->echoAreaCount; i++) {
+    s_link *uplink;
+    s_area *area;
+    s_message *msg;
+
+    area = &(config->echoAreas[i]);
+    if (act==0 && (area->paused || area->noautoareapause || area->msgbType!=MSGTYPE_PASSTHROUGH)) continue;
+    if (act==1 && (!area->paused)) continue;
+    if (searchArea && searchArea != area) continue;
+    if (searchLink && isLinkOfArea(searchLink, area)!=1) continue;
+
+    linkCount = 0;
+    for (j=0; j < area->downlinkCount; j++) { /* try to find uplink */
+      if ( (area->downlinks[j]->link->Pause & ECHOAREA) != ECHOAREA &&
+           (!searchLink || addrComp(searchLink->hisAka, area->downlinks[j]->link->hisAka)!=0) ) {
+        linkCount++;
+        if (area->downlinks[j]->defLink) uplink = area->downlinks[j]->link;
+      }
+    }
+
+    if (linkCount!=1 || !uplink) continue; /* uplink not found */
+
+    /* change config */
+    if (act==0) { /* make area paused */
+      if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,NULL,8)==ADD_OK) {
+        w_log(LL_AREAFIX, "areafix: area %s is paused (uplink: %s)",
+                 area->areaName, aka2str(uplink->hisAka));
+      } else {
+        w_log(LL_AREAFIX, "areafix: error pausing area %s", area->areaName);
+        continue;
+      }
+    } else if (act==1) { /* make area non paused */
+      if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,NULL,9)==ADD_OK) {
+        w_log(LL_AREAFIX, "areafix: area %s is not paused any more (uplink: %s)",
+                 area->areaName, aka2str(uplink->hisAka));
+      } else {
+        w_log(LL_AREAFIX, "areafix: error unpausing area %s", area->areaName);
+        continue;
+      }
+    }
+
+    /* write messages */
+    if (uplink->msg == NULL) {
+      msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop,
+      uplink->RemoteRobotName ? uplink->RemoteRobotName : "areafix",
+      uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1,
+      uplink->areafixReportsAttr ? uplink->areafixReportsAttr : config->areafixReportsAttr);
+      msg->text = createKludges(config, NULL, uplink->ourAka, &(uplink->hisAka),
+                      versionStr);
+      if (uplink->areafixReportsFlags)
+        xstrscat(&(msg->text), "\001FLAGS ", uplink->areafixReportsFlags, "\r",NULL);
+      else if (config->areafixReportsFlags)
+        xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r",NULL);
+      uplink->msg = msg;
+    } else msg = uplink->msg;
+
+    if (act==0)
+      xscatprintf(&(msg->text), "-%s\r", area->areaName);
+    else if (act==1)
+      xscatprintf(&(msg->text), "+%s\r", area->areaName);
+
+  }
+}
 
 char *pause_link(s_link *link)
 {
@@ -1128,6 +1230,10 @@ char *pause_link(s_link *link)
    tmp = list (lt_linked, link, NULL);/*linked (link);*/
    xstrcat(&report, tmp);
    nfree(tmp);
+
+   /* check for areas with one link alive and others paused */
+   if (config->autoAreaPause)
+       pauseAreas(0, link, NULL);
 
    return report;
 }
@@ -1144,6 +1250,10 @@ char *resume_link(s_link *link)
     tmp = list (lt_linked, link, NULL);/*linked (link);*/
     xstrcat(&report, tmp);
     nfree(tmp);
+
+    /* check for paused areas with this link */
+    if (config->autoAreaPause)
+        pauseAreas(1, link, NULL);
 
     return report;
 }
@@ -2254,42 +2364,6 @@ void afix(hs_addr addr, char *cmd)
     w_log(LL_FUNC, __FILE__ "::afix() end");
 }
 
-int unsubscribeFromPausedEchoAreas(s_link *link) {
-    unsigned i,j;
-    char *text = NULL;
-    s_area *area;
-    s_message *tmpmsg;
-
-    for (i=0; i<config->echoAreaCount; i++) {
-	area = &(config->echoAreas[i]);
-
-	if ((area->msgbType & MSGTYPE_PASSTHROUGH) && isLinkOfArea(link,area)) {
-
-	    /*  unsubscribe only if uplink & auto-paused downlink presents */
-	    if (area->downlinkCount==2) {
-		if ((j = isAreaLink(link->hisAka, area)) != -1) {
-		    /*  don't touch mandatory links */
-		    if (area->downlinks[j]->mandatory) continue;
-		    /*  add area for unsubscribe */
-		    xstrscat(&text,"-",area->areaName,"\r",NULL);
-		}
-	    }
-	}
-    }
-
-    if (text) {
-	tmpmsg = makeMessage(&(link->hisAka), link->ourAka, link->name,
-			     "areafix", link->areaFixPwd, 1,
-                             link->areafixReportsAttr ? link->areafixReportsAttr : config->areafixReportsAttr);
-	tmpmsg->text = text;
-	processAreaFix(tmpmsg, NULL, 0);
-	freeMsgBuffers(tmpmsg);
-	nfree(tmpmsg);
-    }
-
-    return 0;
-}
-
 void autoPassive()
 {
   time_t   time_cur, time_test;
@@ -2359,10 +2433,9 @@ void autoPassive()
 				  freeMsgBuffers(msg);
 				  nfree(msg);
 
-				  /*  unsubscribe link from areas without non-paused links */
-                  /* use "hptkill -y" or "hptkill -yp" to fulfill this purpose
-				  unsubscribeFromPausedEchoAreas(&(config->links[i]));
-                  */
+				  /* pause areas with one link alive while others are paused */
+				  if (config->autoAreaPause)
+                                      pauseAreas(0,config->links[i],NULL);
 
 			      } /*  end changepause */
 			      nfree(line);

@@ -13,6 +13,9 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
     - Added new areafix commands: %rules, %pktsize, %arcmailsize
     - added option `-d' for `hpt qrep' command, which allows generation
       of report containing only changes in queue.
+    - added ability to automatically pause area when all links but uplink
+      (determined by "-def" flag) are in pause (see description of "autoAreaPause"
+      token in documentation for details).
 
 2. CONFIG changes:
     - new option for echoArea or netmailArea: -scan (specifies when area
@@ -27,6 +30,10 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
       defined in AutoAreaCreateDefaults. Use EchoAreaDefaults also.
     - added ability to control if areafix should send notification messages
       about queue changes to link (token sendNotifyMessages)
+    - added area pause algorythm (see "autoAreaPause" token), "-paused" and
+      "-noautoareapause" options for areas.
+
+
 
 3. IMPORTANT bugfixes:
    - attach processing was changed: now hpt will try to guess actual attached

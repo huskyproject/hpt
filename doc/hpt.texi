@@ -335,37 +335,38 @@ define links and areas before any carbone definitions
 * AreafixKillRequests::         delete areafix requests
 * AreafixMsgSize::              maximum areafix report size
 * AreafixNames::                set additional areafix names
-* AreafixFromName::		set From: field in response messages
-* AreafixOrigin::		set origin for areafix reports
+* AreafixFromName::     set From: field in response messages
+* AreafixOrigin::       set origin for areafix reports
 * AreafixReportsAttr::          set flags to areafix reports
 * AreafixSplitStr::             set split string for splitted areafix messages
 * AreafixQueryReports::         insert linked areas list into areafix reports
-* AreafixQueueFile::		idle requests queue file for areafix
+* AreafixQueueFile::        idle requests queue file for areafix
 * AreasFileNameCase::           case of filenames of autocreated areas
 * AutoAreaCreateFlag::          create this file-flag after auto-area-create
+* AutoAreaPause::               Enables or disables area pause algorythm
 * AutoPassive::                 set pause for links who don't poll our system
 * BeforePack::                  execute string before pack pkt files
 * BundleNameStyle::             style of filenames of arcmail bundles
 * CreateAddUplink::             set default uplink for auto-created areas
 * CreateAreasCase::             case of autocreated areas names
 * CreateFwdNonPass::            autocreate non-passthru echoes in fwd.req. operations
-* DefArcmailSize::		default size for arcmail bundle
-* DisableTID::			disable adding TID to messages
-* DisablePID::			disable adding PID to messages
-* ForwardRequestTimeout::	requested from uplink echoarea traffic timeout (in days)
-* IdlePassthruTimeout:: 	timeout (in days) before unlink on uplink passthrough echo with one link (& some time later remove from config)
-* IgnoreCapWord::		ignore Capability Word in pkt files
+* DefArcmailSize::      default size for arcmail bundle
+* DisableTID::          disable adding TID to messages
+* DisablePID::          disable adding PID to messages
+* ForwardRequestTimeout::   requested from uplink echoarea traffic timeout (in days)
+* IdlePassthruTimeout::     timeout (in days) before unlink on uplink passthrough echo with one link (& some time later remove from config)
+* IgnoreCapWord::       ignore Capability Word in pkt files
 * IgnoreSeen::                  ignore SEEN-BYs and pack mail for link
 * KeepTrsFiles::                keep transit files
 * KeepTrsMail::                 keep transit netmail messages
-* KilledRequestTimeout::	wait time (in days) for kill echo without links
+* KilledRequestTimeout::    wait time (in days) for kill echo without links
 * KludgeAreaNetmail::           how to process netmail with kludge "AREA:NETMAIL"
 * LinkWithImportLog::           list of areas only which should be linked
 * LogEchoToScreen::             set output to screen log information
-* LogLevels::			set level of log output
+* LogLevels::           set level of log output
 * Name::                        your system's name
 * NetmailFlag::                 create flag after unpacking netmail msg
-* NewAreaRefuseFile::		file with areas which we don't want to autocreate
+* NewAreaRefuseFile::       file with areas which we don't want to autocreate
 * NoProcessBundles::            no unpack arcmail bundles
 * Origin::                      add specified origin to hpt messages
 * Pack::                        definition for packer
@@ -379,7 +380,7 @@ define links and areas before any carbone definitions
 * Route::                       routing of netmails
 * RouteFile::                   routing of netmails with file attached
 * RouteMail::                   routing of netmails without file attached
-* ScreenLogLevels::	            set level of log output to screen
+* ScreenLogLevels::             set level of log output to screen
 * SendNotifyMessages::          send messages about query changes to link
 * SeparateBundles::             move echomail for each link to his own directory
 * SetConsoleTitle::             schange conesole title under win32
@@ -510,7 +511,7 @@ This statement cannot be repeated.
 @code{AreafixFromName "HPT AreaFix"}
 @end table
 
-	Use value from @code{AreafixFromName} in field @code{From} when
+    Use value from @code{AreafixFromName} in field @code{From} when
 responding on messages to areafix. If this token not defined, name in
 original message will be used. Example:
 @example
@@ -653,7 +654,7 @@ To use this feature run @code{hpt qupd} periodically.
 
 This statement cannot be repeated.
 
-@node AreasFileNameCase, AutoAreaCreateFlag, AreafixQueueFile, Keywords
+@node AreasFileNameCase, AutoAreaPause, AreafixQueueFile, Keywords
 @subsection AreasFileNameCase
 @findex AreasFileNameCase
 @table @asis
@@ -668,7 +669,33 @@ Default is lower case.
 
 This statement cannot be repeated.
 
-@node AutoAreaCreateFlag, AutoPassive, AreasFileNameCase, Keywords
+@node AutoAreaPause, AutoAreaCreateFlag, AreasFileNameCase, Keywords
+@subsection AutoAreaPause
+@findex AutoAreaPause
+@table @asis
+@item Syntax:
+@code{AutoAreaPause <bool>}
+@item Example:
+@code{AutoAreaPause}
+@end table
+
+default: off (disabled)
+
+Enables or disables area pause algorythm. If area is passthrough
+and there is only uplink alive (link with "-def" flag set) while other links
+are paused, unsubscribe message will be sent to uplink and "-paused" flag
+will be set to area. If another link subscribes to the area, or one of already
+paused links resumes his subscription, area will be subscribed at uplink again
+and "-paused" flag cleared. Note, that links cannot send messages to paused
+area, they will be moved to badmail. If enabled, algorythm also works if link
+is paused by AutoPassive.
+
+You may disable or enable algorythm for a particular area by setting one of
+"-noautoareapause" or "-autoareapause" flags.
+
+This statement cannot be repeated.
+
+@node AutoAreaCreateFlag, AutoPassive, AutoAreaPause, Keywords
 @subsection AutoAreaCreateFlag
 @findex AutoAreaCreateFlag
 @table @asis
@@ -1222,7 +1249,7 @@ command.com.
 
 If you use hptzip (winth Zlib) library, you can set default packer by     
 
-	Pack    zip zipInternal 
+    Pack    zip zipInternal 
 
 @node PackNetMailOnScan, ProcessPkt, Pack, Keywords
 @subsection PackNetMailOnScan
@@ -1617,7 +1644,7 @@ command.com.
 * AdvisoryLock::                set lock file "advisory"
 * AdvStatisticsFile::           binary statistic file
 * AreafixHelp::                 file with help for areafix reports
-* AreafixQueueFile::		    idle requests queue file for areafix
+* AreafixQueueFile::            idle requests queue file for areafix
 * AreasMaxDupeAge::             max age for dupes in CommonDupeBase
 * DupeBaseType::                type of dupe base
 * DupeHistoryDir::              path for dupe files
@@ -2165,8 +2192,8 @@ This statement cannot be repeated.
 * Aka::                         links adress
 * AllowEmptyPktPwd::            allow empty packet passwords
 * AllowPktAddrDiffer::          allow addresses in PKT and MSG differ for areafix req.
-* ArcmailSize::			size of arcmail bundle
-* ArcNetmail::			pack netmail for this link into arcmail bundles
+* ArcmailSize::         size of arcmail bundle
+* ArcNetmail::          pack netmail for this link into arcmail bundles
 * Areafix::                     areafix access for this link
 * AreafixEchoLimit::            limit for subscribe via areafix
 * AreafixPwd::                  areafix password for this link
@@ -2196,7 +2223,7 @@ This statement cannot be repeated.
 * Link::                        adding a link to your config
 * LinkBundleNameStyle::         style of filenames of arcmail bundles for link
 * LinkDefaults::                start/end/destroy links default definitions
-* LinkGrp::			add this group to autoareacreatedefaults
+* LinkGrp::         add this group to autoareacreatedefaults
 * LinkMsgBaseDir::              base directory of areas for link
 * Mandatory::                   disable unsubscribing from all echoareas
 * Manual::                      disable subscribing to all echoareas
@@ -2208,7 +2235,7 @@ This statement cannot be repeated.
 * Packer::                      default packer for link
 * Password::                    links default password
 * Pause::                       don't export mail for this link
-* PktSize::			max size of pkt in arcmail bundle
+* PktSize::         max size of pkt in arcmail bundle
 * PktPwd::                      pktpassword for this link
 * ReducedSeenBY::               reduced seen-by mode (FSC-0093)
 * RemoteRobotName::             remote "areafix" name
@@ -3159,7 +3186,7 @@ This statement can only be repeated for different links.
 * DupeArea::                    definition of dupearea
 * EchoArea::                    definition of echoarea
 * EchoAreaDefaults::            defaults for echoarea
-* AreaGroup::			definition of areagroup
+* AreaGroup::           definition of areagroup
 * AreaGroupDefaults::           default options for areas in group
 * LocalArea::                   definition of localarea
 * NetArea::                     same as netmailarea
@@ -3302,6 +3329,13 @@ describe area (for areafix reports & etc.);
 %PAUSE has no effect to this area;
 @item -pause
 %PAUSE has effect to this area if disabled in echoareadefaults;
+@item -paused
+Area is paused (unsubscribed at uplink). This flag is automatically set and
+cleared by hpt if (@xref{AutoAreaPause}) enabled.
+@item -noautoareapause
+Do not automatically pause area even if (@xref{AutoAreaPause}) is enabled.
+@item -autoareapause
+Automatically pause area (if (@xref{AutoAreaPause}) is enabled).
 @item -ccoff
 disables carbonCopies for this area;
 @item -noccoff or -ccon
@@ -3520,9 +3554,9 @@ If areaMask begins with '!' symbol it means that links won't be set
 readonly for areas that match areaMask
 
 @example
-	ReadOnly 2:5021/19.* tver.sysop*
-	ReadOnly 2:5021/19.1 !tver.sysop*
-	ReadOnly 2:5021/19.2 !tver.sysop.talks
+    ReadOnly 2:5021/19.* tver.sysop*
+    ReadOnly 2:5021/19.1 !tver.sysop*
+    ReadOnly 2:5021/19.2 !tver.sysop.talks
 @end example
 
 It means that all points if 2:5021/19 set r/o for tver.sysop*

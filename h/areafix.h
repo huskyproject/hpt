@@ -34,6 +34,7 @@ char *print_ch(int len, char ch);
 int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd);
 void afix(hs_addr addr, char *cmd);
 void autoPassive(void);
+void pauseAreas(int act, s_link *searchLink, s_area *searchArea);
 int relink(char *straddr);
 int resubscribe(char *pattern, char *strFromAddr, char *strToAddr);
 char *rescan(s_link *link, char *cmd);

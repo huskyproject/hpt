@@ -57,7 +57,8 @@ typedef enum{
  BM_AREA_KILLED=12,
  BM_DENY_NEWAREAREFUSEFILE=13,
  BM_WRONG_LINK_TO_AUTOCREATE=14,
- BM_MAXERROR=14       /* Set to max value, equivalence of last element */
+ BM_AREA_IS_PAUSED=15,
+ BM_MAXERROR=15       /* Set to max value, equivalence of last element */
 }e_BadmailReasons;
 
 
