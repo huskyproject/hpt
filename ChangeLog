@@ -1,3 +1,18 @@
+2002-07-30 Tuesday 15:55  mche
+
+	* src/areafix.c (1.332), src/query.c (1.56), src/toss.c (1.431),
+	h/toss.h (1.48): hpt_stristr() moved to fidoconfig
+
+2002-07-30 Tuesday 10:34  gerrit
+
+	* doc/hpt.texi (1.77): Added "\input texinfo" and fixed header to
+	make texi2dvi work (again).
+
+2002-07-30 Tuesday 10:26  gerrit
+
+	* doc/texinfo.tex (1.1): Added texinfo.tex in huskybse/doc to allow
+	texi2dvi to work.
+
 2002-07-29 Monday 17:48  pavel.gulchouck
 
 	* src/toss.c (1.430): Minor fix bundle sort method
