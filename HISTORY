@@ -45,5 +45,6 @@ This file describe changes between hpt-1.0-stable and hpt-1.2-stable
      very big (<1.1.1970 and >n.n.2038);
    - Check netmailarea presence in config (before: trap)
    - ImportLog will not contain passthrough areas any more.
+   - Fix CarbonCopy processing
 
 $Id$
