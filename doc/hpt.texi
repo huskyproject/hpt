@@ -1842,8 +1842,9 @@ echo name is treated as directory separator. Thus, @samp{FIDOSOFT.HUSKY}
 would be created with a base name of @file{husky} in the @file{fidosoft}
 directory, e.g. @file{/var/spool/msgbase/fidosoft/husky.sqd}.
 
-(Tobi April 2001: FIXME: Only implemented in htick with AutoFileCreateSubdirs, not yet implemented in
-hpt. Will do this as soon as the feature has proven stable in htick.)
+Please note that this option will @emph{not} currently work if the
+@code{-dosfile} option is used to create filenames in 8.3 convention.
+@xref{EchoArea,,EchoArea}, for more information on the @code{-dosfile} option.
 
 @node AutoPause, DenyFwdFile, AutoAreaCreateSubdirs, Link Keywords
 @subsection AutoPause
@@ -2431,7 +2432,8 @@ no seen-by & path kludges stores in message base (*)
 @item -manual
 disallow remote changes (only manual connect/disconnect). same as mandatory.
 @item -dosfile
-file name of area is in dos style (8+3)
+file name of area is in dos style (8+3). Please be aware of the fact that
+this will currently automatically disable the autoAreaCreateSubdirs feature.
 @item -h
 hide area
 @item -d "Description for the area between double quote (like this)"
