@@ -3,6 +3,12 @@ hpt 0.26
 --------
 
 ----- cvs ci ------
+Wed Jan 27 18:36:53 CET 1999
+- changed all occurences of strsep to strtok_r
+Mon Jan 25 19:40:48 CET 1999
+- fixed a core dump in purgeDupes when there was no index file
+
+----- cvs ci ------
 Sat Jan 23 16:01:49 CET 1999
 - fixed the first FIX-ME in link.c when trying to access a msg which does not
   exist.

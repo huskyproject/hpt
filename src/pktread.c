@@ -212,8 +212,8 @@ void correctNMAddr(s_message *msg, UINT16 def_zone)
       msg->origAddr.zone = atoi(buffer);
    } else {
 
-      msg->destAddr.zone = def_zone;     // attention, this is only right for zone 2
-      msg->origAddr.zone = def_zone;     // CHANGE!!!
+      msg->destAddr.zone = def_zone;     // FIX-ME! there seems a problem here
+      msg->origAddr.zone = def_zone;     //
       sprintf(buff, "Mail without INTL-Kludge. Assuming %i:%i/%i.%i -> %i:%i/%i.%i",
               msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
               msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);

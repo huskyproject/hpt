@@ -11,7 +11,7 @@ ifeq ($(DEBUG), 1)
 # LFLAGS  = -L../../smapi -L../../fidoconfig -static 
   LFLAGS  = 
 else
-  CFLAGS  = -c -I../h -I../../smapi -Wall -O2 -s -DUNIX
+  CFLAGS  = -c -I../h -I../../smapi -Wall -O3 -s -DUNIX
 # LFLAGS  = -L../../smapi -L../../fidoconfig
   LFLAGS  =  
 endif

@@ -71,7 +71,10 @@ int processArea(s_area *echo) {
    //rename index file
    indexFileName = realloc(indexFileName, strlen(indexFileName)+6+1);
    strcat(indexFileName, ".index");
-   rename(indexFileName, tmpIndexFileName);
+   if (rename(indexFileName, tmpIndexFileName)!=0) {
+      return 1;
+   }
+   
 
    // open renamed index file
    tmpIndexFile = fopen(tmpIndexFileName, "r");
