@@ -1492,9 +1492,13 @@
 
 2000-03-12 Sunday 15:48  tobi
 
-	* src/: fcommon.c (1.36), toss.c (1.173), txt2pkt.c (1.9): 64 bit
+	* src/txt2pkt.c (1.9): 64 bit bug fixes
+
+2000-03-12 Sunday 15:48  tobi
+
+	* src/: fcommon.c (1.36), toss.c (1.173): 64 bit bug fixes64 bit
 	bug fixes64 bit bug fixes64 bit bug fixes64 bit bug fixes64 bit bug
-	fixes64 bit bug fixes
+	fixes
 
 2000-03-09 Thursday 17:27  sms
 
