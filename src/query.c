@@ -2,11 +2,13 @@
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
+#include <fidoconf/xstr.h>
 #include <global.h>
 #include <toss.h>
+#include <areafix.h>
 #include <query.h>
 #include <time.h>
-
+#include <stdlib.h>
 
 #define nbufSize 2*1024
 
@@ -17,7 +19,7 @@ char czTmpQueryFile[nbufSize] = "";
 char czQueryFile[nbufSize] = "";
 const int  cnDaysToKeepFreq = 3;
 extern s_query_areas *queryAreasHead;
-
+extern void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr);
 
 void del_tok(char **ac, char *tok) {
     char *p, *q;
