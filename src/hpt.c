@@ -413,10 +413,8 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    xstrcat(&version, "/beos");
 #endif
 
-#ifndef RELEASE
-   xscatprintf(&version, " %s", cvs_date);
-#endif
 
+   if (strcmp(VER_BRANCH,"-stable")!=0) xscatprintf(&version, " %s", cvs_date);
    xscatprintf(&versionStr,"hpt %s", version);
 
    rc = processCommandLine(argc, argv);

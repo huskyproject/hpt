@@ -11,7 +11,7 @@
 @title @value{HPT} @value{VERSION} manual
 @subtitle Highly Portable Tosser
 @author Matthias Tichy @@ 2:2432/645 (1997 - 1999)
-@author Max Levenkov @@ 2:5000/117 (1999 - 2001)
+@author Max Levenkov @@ 2:5000/117 (1999 - 2002)
 @page
 @c{empty page to get the page numbering right}
 @end titlepage
@@ -105,7 +105,28 @@ groups for @code{EchoAreas})
 @node Compiling, Support, Download, Installation
 @section Compiling the Source Code
 
-Under development.
+1. The smapi and fidoconf packages are required for hpt.
+
+2. Put the fidoconfig ans smapi packages in the directory where the
+   other packages of fido linux reside:
+
+@table @asis
+@item /usr/src/packages/
+@item -> smapi/
+@item -> hpt/
+@item -> fidoconfig/
+@end table
+
+3. Compile and install smapi and fidoconf packages. Use "Makefile" for
+   dynamic executables and makefile.lnx (or what you need) for static
+   ones.
+
+4. Compile and install hpt:
+@table @asis
+@item $ make
+@item $ make install
+@end table
+You should use the _same_ makefiles in smapi, fidoconf and hpt.
 
 @node Support, Credits, Compiling, Installation
 @section Support, Contacting the Author, Reporting Bugs, Contributing Code 
