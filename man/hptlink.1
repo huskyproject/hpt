@@ -1,0 +1,29 @@
+.TH HPTLINK 1 "10 Dec 1999"
+.SH NAME
+hptlink \- messages linker for hpt
+.SH SYNTAX
+.B hptlink
+[\-t] [\-s] [\-a] [\-r] [\-l loglevel] [areaname ...]
+.TP
+.B \-t
+build reply TREE
+.TP
+.B \-s
+do not use Subject
+.TP
+.B \-a
+search in all messages (for singlethread only)
+.TP
+.B \-r
+do not use REPLY:/MSGID:
+.TP
+.B \-l loglevel
+log output level. Must be greater or equal to 0.
+Edge values: 0,5,10,11,15. Default is 10.
+
+.SH DESCRIPTION
+hptlink links messages in areas specified by arguments \fIareaname\fP.
+Area list can be obtained from \fIimportlog\fP file when \fILinkWithImportlog\fP
+isn't set to \fI'no'\fP.
+All areas are linked when \fIimportlog\fP file doesn't exist and no \fIareaname\fP
+are set by arguments.

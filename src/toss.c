@@ -908,7 +908,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 
 	if (!msg->netMail) {
 		if ((!config->carbonKeepSb) && (!area->keepsb)) {
-			if (NULL != (p = strstr(old_text,"SEEN-BY:"))) i -= strlen (p);
+			if (NULL != (p = strstr(old_text,"\rSEEN-BY:"))) i -= strlen (p+1);
 		}
 	};
 	
