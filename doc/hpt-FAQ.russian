@@ -59,6 +59,7 @@
 >Q41. Как коppектно отписаться самому от эхи.
 >Q42. Научите пользоваться CVS, а то на http://husky.sf.net ничего непонятно!
 >Q43. Почта не тоссится из-под крона, а при запуске вручную работает.
+>Q44. На CVS куча каталогов ("модулей"), что в них и кто ими занимается?
 
 /---------------------------------------------------------------------/
 
@@ -117,25 +118,26 @@ A: (ML,SD)
 A: (ML)
 
 Это сокращения от имен людей, написавших ответы:
-    ML  - Max Levenkov, 2:5000/117
-    PG  - Pavel Gulchouck, 2:463/68
-    VS  - Victor Sergienko. 2:464/118
-    SR  - Serguei Revtov, 2:5021/11.10 & 2:5021/19.1
-    FL  - Fedor Lizunkov, 2:5020/960
-    VL  - Vitaliy Lovky, 2:463/1113
-    TE  - Tobias Ernst, 2:2476/418
-    DK  - Dmitriy Kazimirow, 2:5004/73
-    mk  - mihail kapitanov, 2:465/239
-    sv  - sergei volodchenkov, 2:5030/1197.10
     aim - andrey i mavlyanov, 2:5030/1159
-    SD  - Stas Degteff, 2:5080/102
-    PA  - Pavel Andreew, 2:5080/59
-    DP  - Dmitry Pankov, 2:5022/81
-    PS  - Pavel Scvortsov, 2:5055/80.333
-    Gi  - Pavel Girnov, 2:5066/18.66
     AM  - Alexey Matvienko, 2:6083/333
     AS  - Alexander N. Skovpen, 2:5020/9696
+    DK  - Dmitriy Kazimirow, 2:5004/73
+    DP  - Dmitry Pankov, 2:5022/81
+    FL  - Fedor Lizunkov, 2:5020/960
+    Gi  - Pavel Girnov, 2:5066/18.66
     IF  - Ivan Fedorov, 2:5070/275
+    MC  - Max Chernogor, 2:464/108
+    mk  - mihail kapitanov, 2:465/239
+    ML  - Max Levenkov, 2:5000/117
+    PA  - Pavel Andreew, 2:5080/59
+    PG  - Pavel Gulchouck, 2:463/68
+    PS  - Pavel Scvortsov, 2:5055/80.333
+    SR  - Serguei Revtov, 2:5021/11.10 & 2:5021/19.1
+    TE  - Tobias Ernst, 2:2476/418
+    VL  - Vitaliy Lovky, 2:463/1113
+    VS  - Victor Sergienko. 2:464/118
+    SD  - Stas Degteff, 2:5080/102
+    sv  - sergei volodchenkov, 2:5030/1197.10
 
 /------/
 
@@ -1134,6 +1136,122 @@ A: (SD)
 Дело в переменной PATH (пути поиска исполняемых файлов). Решения:
 * прочитать man crontab и описать в crontab переменную PATH с нужными путями;
 * указать в конфиге в строках Pack и Unpack полные пути к архиваторам.
+
+/------/
+
+[44] Q: На CVS куча каталогов ("модулей"), что в них и кто ими занимается?
+
+A: (SD,MC)
+
+Вот краткие описания модулей и списко разработчиков, кому стоит присылать патчи
+и багрепорты (если указан ведущий модуля - лучше патчи прылать ему, но можно и
+остальным разработчикам, если не указан - присылайте патчи любому из списка,
+списки отсортированы по имени).
+
+smapi:     библиотека для работы с базами сообщений (здесь же некоторые функции
+           общего назначения, будут перенесены в huskylib)
+           програмисты: Max Chernogor, Pavel Goulchuck, Stas Degteff,
+                        Dmitry Sergienko
+
+fidoconf:  библиотека для работы с конфигом (здесь же некоторые функции общего
+           назначения, будут перенесены в huskylib)
+           програмисты: Max Chernogor, Pavel Goulchuck, Stas Degteff,
+                        Dmitry Sergienko
+
+bsopack:   утилита для упаковки pkt и arcmail
+
+carc:      утилита для распаковки arcmail; после расширения синтаксиса токена
+           Unpack стала не нужна
+
+cfroute:   упаковщик-роутер нетмэйла
+
+diskpoll:  local mailer: для "отправки" и "привема" писем внутри одной системы
+           (например для локального пойнта); большая часть функциональности
+           реализуется через файлбоксы hpt и htick
+
+emailpkt:  ftn-over-email мэйлер: для отправки и приема фидошных файлов и почты
+           по email
+           ведущий модуля: Stas Degteff
+
+fastlst:   генератор файллиста
+           ведущий модуля: Gerrit K╪hn
+
+ffma:      FreeFidoMessageAssistant
+
+fidostat:  Analyser for Binkd Log Files
+
+gff:       Graphisches Fido Frontend fuer Linux
+
+homepage:  зеркало http://husky.sf.net и исходники страниц
+
+hpt:       тоссер
+           ведущий модуля: Max Chernogor
+
+hptkill:   программа для отписки неиспользуемых эхоконференций и удаления баз
+           сообщений
+           ведущий модуля: Max Chernogor
+
+hptsqfix:  программа для починки базы сообщений
+           (program to rebuild index and some info in squish message bases)
+
+hptutil:   работа с базами сообщений: сортировка, отмена удаления, ...
+
+hptzip:    библиотека, реализующая упаковку и распаковку arcmail
+           ведущий модуля: Dmitriy Kazimirow (2:5004/73)
+
+hpucode:   программа для извлечения файлов из базы сообщений
+           ведущий модуля: Max Chernogor
+
+htick:     тикер (fileechoprocessor)
+           ведущий модуля: Max Chernogor
+
+htpl:      библиотека работы с шаблонами
+
+huskmisc:  набор утилит:
+           nmcopy  - copies netmails to homedirs
+           poll    - create a poll to some link
+           request - create a FREQ to some link
+           send    - send a file to some link
+           tolower - lowercase file name
+
+huskybse:  базовая документация и примеры
+
+huskylib:  библиотека общего назначения: компиляторозависимые определения и
+           функции общего назначения
+
+huskypnt:  Комплект программ husky для пойнта с минимальными настройками
+           (point packet that bases on software of the husky project.)
+
+kfe:       Kde Fido Editor
+
+lxtrack:   трекер нетмэйла, полный аналог netmrg
+
+mpost:     постинг файлов в конференции или нетмэйл
+
+msged:     редактор сообщений
+
+msgidd:    демон для генерации уникального msgid
+
+nltools:   сборщик нодлистов из диффов и обновлений
+
+pktapi:    библиотека доступа к pkt (не используется)
+
+pntstr:    автоматическая обработка пойнтлистовых строк
+           ведущий модуля: Stas Degteff
+
+progate:   internet-fidonet gate
+
+promknl:   сборщик-чекер нодлиста из сегментов
+
+protick:   тикер (fileechoprocessor)
+
+sqpack:    программа для удаления старых сообщений и сжатия баз
+           ведущий модуля: Max Chernogor
+
+test:      Служебный модуль: тестирование компиляторов на предпределенные
+           макросы; тестирование возможностей CVS и т.п.
+
+umapi:     библиотека "universal message API" (не используется)
 
 /--------------------------------------------------------------------------/
 
