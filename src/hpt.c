@@ -421,7 +421,6 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    if (rc==EX_USAGE) exit(EX_USAGE);
 
 //   if (quiet==0) fprintf(stdout, "Highly Portable Toss %s\n", version);
-   nfree(version);
 
    if (config==NULL) processConfig();
 
@@ -432,6 +431,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 	   SetConsoleTitleA( title );
    }
 #endif
+   nfree(version);
 
    // check for free space
    if (config->minDiskFreeSpace) {
