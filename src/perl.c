@@ -16,6 +16,7 @@
 
 #include <EXTERN.h>
 #include <perl.h>
+#include <unistd.h>
 #include <XSUB.h>
 
 static PerlInterpreter *perl = NULL;
@@ -386,16 +387,16 @@ int perlscanmsg(char *area, s_message *msg)
      sv_setpv(svdate,     msg->datetime);
      sv_setpv(svsubj,     msg->subjectLine);
      sv_setpv(svtext,     msg->text);
-     sv_setsv(svchange,   &PL_sv_undef);
+     sv_setsv(svchange,   &sv_undef);
      sv_setiv(svattr,     msg->attributes);
      if (area)
        sv_setpv(svarea,   area);
      else
-       sv_setsv(svarea,   &PL_sv_undef);
+       sv_setsv(svarea,   &sv_undef);
      if (msg->netMail)
        sv_setpv(svtoaddr, aka2str(msg->destAddr));
      else
-       sv_setsv(svtoaddr, &PL_sv_undef);
+       sv_setsv(svtoaddr, &sv_undef);
      ENTER;
      SAVETMPS;
      PUSHMARK(SP);
@@ -591,19 +592,19 @@ int perlfilter(s_message *msg, s_addr pktOrigAddr, int secure)
      sv_setpv(svsubj,     msg->subjectLine);
      sv_setpv(svtext,     msg->text);
      sv_setpv(svpktfrom,  aka2str(pktOrigAddr));
-     sv_setsv(svkill,     &PL_sv_undef);
-     sv_setsv(svchange,   &PL_sv_undef);
+     sv_setsv(svkill,     &sv_undef);
+     sv_setsv(svchange,   &sv_undef);
      sv_setiv(svattr,     msg->attributes);
      if (secure)
        sv_setiv(svsecure, 1);
      else
-       sv_setsv(svsecure, &PL_sv_undef);
+       sv_setsv(svsecure, &sv_undef);
      if (area)
      { sv_setpv(svarea,   area);
-       sv_setsv(svtoaddr, &PL_sv_undef);
+       sv_setsv(svtoaddr, &sv_undef);
      }
      else
-     { sv_setsv(svarea,   &PL_sv_undef);
+     { sv_setsv(svarea,   &sv_undef);
        sv_setpv(svtoaddr, aka2str(msg->destAddr));
      }
      ENTER;
@@ -695,7 +696,7 @@ int perlpkt(const char *fname, int secure)
    { dSP;
      sv_setpv(svpktname, fname);
      if (secure) sv_setiv(svsecure, 1);
-     else sv_setsv(svsecure, &PL_sv_undef);
+     else sv_setsv(svsecure, &sv_undef);
      ENTER;
      SAVETMPS;
      PUSHMARK(SP);
@@ -751,7 +752,7 @@ void perlpktdone(const char *fname, int rc)
      if (rc)
        sv_setpv(svres, res[rc]);
      else
-       sv_setsv(svres, &PL_sv_undef);
+       sv_setsv(svres, &sv_undef);
      ENTER;
      SAVETMPS;
      PUSHMARK(SP);

@@ -46,6 +46,7 @@
 #include <fidoconf/common.h>
 
 #include <pkt.h>
+#include <global.h>
 
 #include <smapi/stamp.h>
 #include <smapi/typedefs.h>
@@ -215,7 +216,7 @@ char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAk
       xscatprintf(&buff, "\1MSGID: %u:%u/%u %08lx\r",
               ourAka->zone,ourAka->net,ourAka->node,time(NULL));
 
-   xscatprintf(&buff, "\1PID: %s\r", versionStr);
+   if (!config->disableTID) xscatprintf(&buff, "\1PID: %s\r", versionStr);
    xstrcat(&buff, "\1FLAGS NPD\r");
 
    return buff;

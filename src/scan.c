@@ -97,27 +97,23 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
    msg->netMail = 1;
 }
 
-void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
+void convertMsgText(HMSG SQmsg, s_message *msg)
 {
    char    *kludgeLines;
    UCHAR   *ctrlBuff;
    UINT32  ctrlLen;
-   time_t  tm;
-   struct tm *dt;
 
    // get kludge lines
    ctrlLen = MsgGetCtrlLen(SQmsg);
    ctrlBuff = (unsigned char *) safe_malloc(ctrlLen+1);
    MsgReadMsg(SQmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
-   ctrlBuff[ctrlLen] = '\0'; /* MsgReadMsg does not do zero termination! */
+   /* MsgReadMsg does not do zero termination! */
+   ctrlBuff[ctrlLen] = '\0'; // now smapi do it
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
    nfree(ctrlBuff);
 
    // make text
    msg->textLength = MsgGetTextLen(SQmsg);
-
-   time(&tm);
-   dt = gmtime(&tm);
 
    msg->text = NULL;
    xstrcat(&(msg->text), kludgeLines);
@@ -127,18 +123,27 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
    ctrlLen = strlen(msg->text);
    xstralloc(&(msg->text), msg->textLength + ctrlLen);
 
-   MsgReadMsg(SQmsg, NULL, 0, msg->textLength, (unsigned char *) msg->text+ctrlLen, 0, NULL);
-   msg->text[msg->textLength+ctrlLen] = '\0'; /* MsgReadMsg doesn't do zero termination */
-
-   xscatprintf(&(msg->text), "\001Via %u:%u/%u.%u @%04u%02u%02u.%02u%02u%02u.UTC %s\r",
-			   ourAka.zone, ourAka.net, ourAka.node, ourAka.point,
-			   dt->tm_year + 1900, dt->tm_mon + 1, dt->tm_mday,
-			   dt->tm_hour, dt->tm_min, dt->tm_sec, versionStr);
+   MsgReadMsg(SQmsg, NULL, 0, msg->textLength, (UCHAR *) msg->text+ctrlLen, 0, NULL);
+   /* MsgReadMsg doesn't do zero termination */
+   msg->text[msg->textLength+ctrlLen] = '\0'; // now smapi do it
 
    // recoding text to TransportCharSet
    if (config->outtab != NULL) recodeToTransportCharset((CHAR*)msg->text);
 
    nfree(kludgeLines);
+}
+
+void addViaToMsg(s_message *msg, s_addr ourAka) {
+	time_t  tm;
+	struct tm *dt;
+
+	time(&tm);
+	dt = gmtime(&tm);
+
+	xscatprintf(&(msg->text),"\001Via %u:%u/%u.%u @%04u%02u%02u.%02u%02u%02u.UTC %s\r",
+				ourAka.zone, ourAka.net, ourAka.node, ourAka.point,
+				dt->tm_year + 1900, dt->tm_mon + 1, dt->tm_mday,
+				dt->tm_hour, dt->tm_min, dt->tm_sec, versionStr);
 }
 
 void makePktHeader(s_link *link, s_pktHeader *header)
@@ -324,7 +329,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 
    memset(&msg,'\0',sizeof(s_message));
    convertMsgHeader(*xmsg, &msg);
-   convertMsgText(SQmsg, &msg, msg.origAddr);
+   convertMsgText(SQmsg, &msg);
 
    // prepare virtual link...
    virtualLink = getLinkFromAddr(*config, msg.destAddr);  //maybe the link is in config?
@@ -398,6 +403,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    if ((xmsg->attr & MSGCRASH) == MSGCRASH) {
 	   // crash-msg -> make CUT
 	   if (createOutboundFileName(virtualLink, CRASH, PKT) == 0) {
+		   addViaToMsg(&msg, msg.origAddr);
 #ifdef DO_PERL
 		   if (perlscanmsg(area->areaName, &msg)) {
 perlscanexit:
@@ -432,6 +438,7 @@ perlscanexit:
    if ((xmsg->attr & MSGHOLD) == MSGHOLD) {
 	   // hold-msg -> make HUT
 	   if (createOutboundFileName(virtualLink, HOLD, PKT) == 0) {
+		   addViaToMsg(&msg, msg.origAddr);
 #ifdef DO_PERL
 		   if (perlscanmsg(area->areaName, &msg))
 			goto perlscanexit;
@@ -458,6 +465,7 @@ perlscanexit:
 	   if ((route != NULL) && (link != NULL) && (route->routeVia != nopack)) {
 		   prio = cvtFlavour2Prio(route->flavour);
 		   if (createOutboundFileName(link, prio, PKT) == 0) {
+			   addViaToMsg(&msg, *(link->ourAka));
 #ifdef DO_PERL
 			   if (perlscanmsg(area->areaName, &msg)) {
 				virtualLink = link;

@@ -2,7 +2,14 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
-Fr  14 Jul 2000 00:10:45 CEST
+Fri Jul 14 15:35:18 NOVST 2000
+max:
+* perl fixes
+* disabeleTID also turns off PID
+* fixed @Via adding in routed messages
+
+----- cvs ci ------
+Fri Jul 14 00:10:45 CEST 2000
 tobi:
 * fixed legacy makefiles to a state in which they are usefule for our users :)
 
