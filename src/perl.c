@@ -1183,6 +1183,7 @@ int PerlStart(void)
    int rc, i;
    char *perlfile;
    char *perlargs[]={"", NULL, NULL};
+   char *cfgfile, *cfgpath=NULL, *patharg=NULL;
    int saveerr, pid;
    STRLEN n_a;
 
@@ -1193,7 +1194,21 @@ int PerlStart(void)
       do_perl=0;
       return 1;
    }
-   perlargs[1] = perlfile;
+   i = 1;
+   /* val: try to find out the actual path to perl script and set dir to -I */
+   cfgfile = (cfgFile) ? cfgFile : getConfigFileName();
+   if ( strchr(perlfile, PATH_DELIM) ) {
+      cfgpath = GetDirnameFromPathname(perlfile);
+      xstrscat(&patharg, "-I", cfgpath, NULL);
+      nfree(cfgpath);
+   }
+   else if ( strchr(cfgfile, PATH_DELIM) ) {
+      cfgpath = GetDirnameFromPathname(cfgfile);
+      xstrscat(&patharg, "-I", cfgpath, NULL);
+      nfree(cfgpath);
+   }
+   if (patharg) perlargs[i++] = patharg;
+   perlargs[i++] = perlfile;
 #ifdef _MSC_VER
    if (_access(perlfile, R_OK))
 #else
@@ -1202,12 +1217,13 @@ int PerlStart(void)
    { w_log(LL_ERR, "Can't read %s: %s, perl filtering disabled",
                    perlfile, strerror(errno));
      do_perl=0;
+     nfree(patharg);
      return 1;
    }
    perl = perl_alloc();
    perl_construct(perl);
    pid=handleperlerr(&saveerr);
-   rc=perl_parse(perl, xs_init, 2, perlargs, NULL);
+   rc=perl_parse(perl, xs_init, i, perlargs, NULL);
    restoreperlerr(saveerr, pid);
    if (rc)
    { w_log(LL_ERR, "Can't parse %s, perl filtering disabled",
@@ -1216,6 +1232,7 @@ int PerlStart(void)
      perl_free(perl);
      perl=NULL;
      do_perl=0;
+     nfree(patharg);
      return 1;
    }
 /* val: start constants definition */
@@ -1268,6 +1285,7 @@ int PerlStart(void)
       }
    }
 /* val: end config importing */
+   nfree(patharg);
    return 0;
 }
 
