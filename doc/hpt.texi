@@ -840,23 +840,7 @@ MsgBaseDir should be not passthrough!
 
 This statement cannot be repeated.
 
-@node DailyBundles, DefArcmailSize, CreateFwdNonPass, Keywords
-@subsection DailyBundles
-@findex DailyBundles
-@table @asis
-@item Syntax:
-@code{dailyBundles <bool>}
-@item Example:
-@code{dailyBundles}
-@end table
-
-If DailyBundles is off, hpt will use existing arcmail bundles to add packets
-into, even if they were created in the previous days. If DailyBundles is set, 
-a new arcmail bundle will be started when the new day begins.
-
-This statement cannot be repeated.
-
-@node DefArcmailSize, DisableTID, DailyBundles, Keywords
+@node DefArcmailSize, DisableTID, CreateFwdNonPass, Keywords
 @subsection DefArcmailSize
 @findex DefArcmailSize
 @table @asis
@@ -2562,7 +2546,6 @@ This statement can only be repeated for different links.
 
 @xref{AutoPassive}.
 
-
 @node AvailList, DailyBundles, AutoPause, Link Keywords
 @subsection AvailList
 @findex AvailList
@@ -2588,7 +2571,6 @@ Default value is @code{AvailList Full}.
 
 This statement can only be repeated for different links.
 
-
 @node DailyBundles, DenyFwdFile, AvailList, Keywords
 @subsection DailyBundles
 @findex DailyBundles
@@ -2604,7 +2586,7 @@ for this link, even if they were created in the previous days. If
 DailyBundles is set, a new arcmail bundle for the link will be started when 
 the new day begins.
 
-This statement cannot be repeated.
+This statement can only be repeated for different links.
 
 @node DenyFwdFile, DenyFwdMask, DailyBundles, Link Keywords
 @subsection DenyFwdFile
