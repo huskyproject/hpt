@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Sun Feb  6 01:24:10 NOVT 2000
+max:
+* don't unpack arcmail if set noProcessBundles in config
+
+----- cvs ci ------
 Sat Feb  5 19:15:01 NOVT 2000
 max:
 * correct reading msg's with time like "01 Jan 100  12:00:35"

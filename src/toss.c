@@ -1693,7 +1693,7 @@ void processDir(char *directory, e_tossSecurity sec)
             if (patimat(dummy+dirNameLen, validExt[i]) == 1)
                arcFile = 1;
 
-      if (pktFile || arcFile) {
+      if (pktFile || (arcFile && !config->noProcessBundles)) {
 
          rc = 3; // nonsence, but compiler warns
          if (pktFile)
