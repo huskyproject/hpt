@@ -47,7 +47,7 @@
 #include <version.h>
 #include <global.h>
 
-#ifndef HASHDUPE
+#if !defined(HASHDUPE) && !defined(NEWHASHDUPE)
 int processArea(s_area *echo) {
    time_t currentTime = time(NULL);
    char *dupeFileName = createDupeFileName(echo),
@@ -190,7 +190,7 @@ int main() {
 int main() {
 
    printf("purgeDupes v%d.%02d\n\n", VER_MAJOR, VER_MINOR);
-   printf("HASHDUPE is used. purgeDupes not needed.\n\n");
+   printf("HASHDUPE or NEWHASHDUPE is used. purgeDupes not needed.\n\n");
 
    return 0;
 }

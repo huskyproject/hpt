@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Mon Feb  7 22:37:12 NOVT 2000
+max:
+* newhashdupe's from Alexander Vernigora, 2:4625/69
+
+----- cvs ci ------
 Sun Feb  6 01:24:10 NOVT 2000
 max:
 * don't unpack arcmail if set noProcessBundles in config

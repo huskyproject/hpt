@@ -24,6 +24,18 @@
  * 144003 Electrostal
  * Russia
  *
+ * Hash Dupe from original DUPE (C) Matthias Tichy
+ * Partial copyright (C) 2000
+ *
+ * Alexander Vernigora
+ *
+ * Fido:     2:4625/69              
+ * Internet: alexv@vsmu.vinnica.ua
+ *
+ * Yunosty 79, app.13 
+ * 287100 Vinnitsa   
+ * Ukraine
+ *
  * This file is part of HPT.
  *
  * HPT is free software; you can redistribute it and/or modify it
@@ -51,6 +63,7 @@
 
 /* This header file contains the structures of the dupe file */
 
+#ifndef NEWHASHDUPE
 #define DUPE_MAJOR_VER 0
 #define DUPE_MINOR_VER 2
 
@@ -108,7 +121,28 @@ void freeDupeMemory(s_area *area);
 int dupeDetection(s_area *area, const s_message msg);
 char *createDupeFileName(s_area *area);
 void addIndex(s_area *echo, UINT32 index);
+#else /* NEWHASHDUPE */
 
+struct dupeEntry {
+   time_t  TimeStampOfDupe;
+   UINT32  CrcOfDupe;
+};
+
+typedef struct dupeEntry s_dupeEntry;
+
+struct dupeMemory {
+  tree *avlTree;
+};
+
+typedef struct dupeMemory s_dupeMemory;
+
+
+int writeToDupeFile(s_area *area);
+void freeDupeMemory(s_area *area);
+int dupeDetection(s_area *area, const s_message msg);
+char *createDupeFileName(s_area *area);
+
+#endif
 #else /* HASHDUPE */
 #include <typesize.h>
 #include <fidoconfig.h>

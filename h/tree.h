@@ -30,4 +30,6 @@ void tree_mung(tree **ppr_tree, int (*pfi_uar)());
 
 unsigned long tree_count(tree **ppr_tree);
 
+int tree_srchall(tree **ppr_tree, int (*pfi_compare)(),char * pc_user);
+
 #endif /*_TREE_FLAG*/

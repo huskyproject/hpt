@@ -5,6 +5,7 @@
  * vix 20jun86 [added tree_delete per wirth a+ds (mod2 v.) p. 224]
  * vix 23jun86 [added delete uar to add for replaced nodes]
  * mtt 08aug98 [added tree_count for count of knots]
+ * avv 03feb00 [added tree_srchall for full search]
  */
 #include <stdlib.h>
 
@@ -526,4 +527,23 @@ tree **ppr_tree;
    count = 0;
    tree_trav(ppr_tree, &countEach);
    return count;
+}
+
+int tree_srchall(ppr_tree, pfi_compare, pc_user)
+tree	**ppr_tree;
+int	(*pfi_compare)();
+char	*pc_user;
+{
+	ENTER("tree_srchall")
+
+	if (!*ppr_tree)
+		EXIT(TRUE)
+
+	if (!tree_srchall(&(**ppr_tree).tree_l, pfi_compare, pc_user))
+		EXIT(FALSE)
+	if (!(*pfi_compare)((**ppr_tree).tree_p, pc_user))
+		EXIT(FALSE)
+	if (!tree_srchall(&(**ppr_tree).tree_r, pfi_compare, pc_user))
+		EXIT(FALSE)
+	EXIT(TRUE)
 }

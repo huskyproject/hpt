@@ -47,6 +47,7 @@
 #include <ctype.h>
 
 #include <pkt.h>
+#include <xstr.h>
 
 #include <global.h>
 
@@ -59,11 +60,19 @@
 #include <progprot.h>
 
 FILE *fDupe;
+
+#ifdef NEWHASHDUPE
+
+UINT32  DupeCountInHeader, maxTimeLifeDupesInArea;
+unsigned long strcrc32(char *, unsigned long); 
+
+#endif
 #else
 
 FILE *SQHf;
 UINT32 MaxEntryN, MaxAge, MaxDupes;
 unsigned long strcrc32(char *, unsigned long);
+
 #endif
 
 char *strtolower(char *string) {
@@ -107,7 +116,11 @@ char *createDupeFileName(s_area *area) {
    free(aux);
    strcat(name,
 #ifndef HASHDUPE
+#ifndef NEWHASHDUPE
    ".dup");
+#else
+   ".dph");
+#endif
 #else
    ".sqh");
 #endif
@@ -116,6 +129,7 @@ char *createDupeFileName(s_area *area) {
 }
 
 #ifndef HASHDUPE
+#ifndef NEWHASHDUPE
 void addIndex(s_area *area, UINT32 offset) {
 
    FILE *f;
@@ -417,7 +431,190 @@ int dupeDetection(s_area *area, const s_message msg) {
    }
 }
 
-#else
+#else    /* NEWHASHDUPE */
+
+int compareEntries(s_dupeEntry *e1, s_dupeEntry *e2) {
+   int rc;
+
+   if (e1->CrcOfDupe == e2->CrcOfDupe)
+       rc=0;
+   else
+       rc=1;   
+
+   return rc;
+}
+
+
+int writeEntry(s_dupeEntry *entry) {
+   s_dupeEntry entry_towr;
+   UINT32 diff=0;
+   time_t currtime;
+
+   currtime = time(NULL);
+
+   entry_towr.TimeStampOfDupe=entry->TimeStampOfDupe;
+   entry_towr.CrcOfDupe      =entry->CrcOfDupe;
+  
+   if ( (diff = currtime - entry_towr.TimeStampOfDupe) < maxTimeLifeDupesInArea) {
+      fwrite(&entry_towr, sizeof(s_dupeEntry), 1, fDupe);
+      DupeCountInHeader++;   
+   }
+   return 1;
+}
+
+int deleteEntry(s_dupeEntry *entry) {
+   free(entry);
+   return 1;
+}
+   
+void doReading(FILE *f, s_dupeMemory *mem) {
+   s_dupeEntry      *entry;
+   s_dupeEntry      entry_tord;
+   UINT32 i;
+
+   // read Number Of Dupes from dupefile
+   fread(&DupeCountInHeader, sizeof(UINT32), 1, f);
+
+   // process all dupes
+   for (i = 0; i < DupeCountInHeader; i++) {
+       if (feof(f)) break;
+       entry = malloc(sizeof(s_dupeEntry));
+       fread(&entry_tord, sizeof(s_dupeEntry), 1, f);
+       entry->TimeStampOfDupe = entry_tord.TimeStampOfDupe;
+       entry->CrcOfDupe       = entry_tord.CrcOfDupe;
+
+       tree_add(&(mem->avlTree), &compareEntries, (char *) entry, &deleteEntry);
+   }
+
+}
+
+s_dupeMemory *readDupeFile(s_area *area) {
+   FILE *f;
+   char *fileName;
+   s_dupeMemory *dupeMemory;
+
+   writeLogEntry(hpt_log, '2', "Reading dupes of %s.", area->areaName);
+   
+   dupeMemory = malloc(sizeof(s_dupeMemory));
+   tree_init(&(dupeMemory->avlTree));
+
+   fileName = createDupeFileName(area);
+   f = fopen(fileName, "rb");
+   if (f != NULL) {
+      // readFile
+      doReading(f, dupeMemory);
+      fclose(f);
+   } else writeLogEntry(hpt_log, '2', "Error reading dupes.");
+   
+   free(fileName);
+
+   return dupeMemory;
+}
+
+
+int createDupeFile(s_area *area, char *name, s_dupeMemory DupeEntries) {
+   FILE *f;
+
+   f = fopen(name, "wb");
+   if (f!= NULL) {
+      
+       maxTimeLifeDupesInArea=area->dupeHistory*86400;    
+       DupeCountInHeader = 0;
+       fwrite(&DupeCountInHeader, sizeof(UINT32), 1, f);    
+       fDupe = f;
+       tree_trav(&(DupeEntries.avlTree), &writeEntry);
+       fDupe = NULL;
+       // writeDupeFileHeader
+
+       if (DupeCountInHeader>0) {
+          fseek(f, 0, SEEK_SET);
+          fwrite(&DupeCountInHeader, sizeof(UINT32), 1, f);    
+          fclose(f);
+       }
+       else {
+          fclose(f);
+          remove (name);
+       }
+     
+       return 0;
+   } else return 1;
+}
+
+int writeToDupeFile(s_area *area) {
+   char *fileName;
+   int  rc = 0;
+
+   s_dupeMemory *dupes = area->dupes;
+
+   fileName = createDupeFileName(area);
+
+   if (dupes != NULL) {
+      if (tree_count(&(dupes->avlTree)) > 0) {
+         rc = createDupeFile(area, fileName, *dupes);
+         free(fileName);
+      }
+   }
+
+   return rc;
+}
+
+void freeDupeMemory(s_area *area) {
+
+   s_dupeMemory *dupes = area -> dupes;
+
+   if (dupes != NULL) {
+      tree_mung(&(dupes -> avlTree), &deleteEntry);
+      free(area -> dupes); area -> dupes = NULL;
+   };
+
+}
+
+int isDupe(s_area area, s_dupeEntry *entry) {
+   s_dupeMemory *dupes = area.dupes;
+
+   return !tree_srchall(&(dupes->avlTree), &compareEntries, (char *) entry);
+}
+
+int dupeDetection(s_area *area, const s_message msg) {
+   s_dupeMemory *Dupes = area->dupes;
+   s_dupeEntry  *entry;
+   char         *str;
+   char         *str1 = NULL;
+
+
+   if (area->dupeCheck == dcOff) return 1; // no dupeCheck return 1 "no dupe"
+   if ((str=getKludge(msg, "MSGID:"))==NULL) return 1; // msgs without MSGID are no dupes!
+
+   // test if dupeDatabase is already read
+   if (area->dupes == NULL) {
+      //read Dupes
+      Dupes = area->dupes = readDupeFile(area);
+   }
+
+   entry = malloc(sizeof(s_dupeEntry));
+   xstrcat(&str1, msg.fromUserName);
+   xstrcat(&str1, msg.toUserName);
+   xstrcat(&str1, msg.subjectLine);
+   xstrcat(&str1, str+7);
+   free(str);
+   entry->CrcOfDupe       = strcrc32(str1, 0xFFFFFFFFL);
+   entry->TimeStampOfDupe = time (NULL);
+   free(str1);
+
+   if (!isDupe(*area, entry)) {
+      // add to newDupes
+      tree_add(&(Dupes->avlTree), &compareEntries, (char *) entry, &deleteEntry);
+      return 1;
+   }
+   // it is a dupe do nothing but return 0; and free dupe entry
+   else {
+      deleteEntry(entry);
+      return 0;
+   }
+}
+
+#endif   /* NEWHASHDUPE */
+#else    /* HASHDUPE */
 
 int AppendEntry(UINT32 BaseEntryN, SQHentry *NewEntry, UINT32 LastUMSGID, UINT32 LastTimeStamp) {
   SQHentry Entry, NextEntry;
@@ -470,7 +667,7 @@ int AppendEntry(UINT32 BaseEntryN, SQHentry *NewEntry, UINT32 LastUMSGID, UINT32
 }
 
 int CheckDupe(s_area *area, const s_message msg) {
-  char *fileName, *str, *msgid;
+  char *fileName, *str, *msgid=NULL;
   SQHheader sqhh;
   SQHentry sqhe, sqheNew, sqheNext;
   UINT32 HeadEntryN, currententry, nextentry, hash, LastUMSGID, LastTimeStamp;
@@ -480,8 +677,7 @@ int CheckDupe(s_area *area, const s_message msg) {
   /* msgs without MSGID are no dupes! */
   if ((str=getKludge(msg, "MSGID:"))==NULL) return 0;
 
-  msgid = malloc(strlen(str)+1-7);
-  strcpy(msgid, str+7);
+  xstrcat(&msgid, str+7);
   free(str);
 
   fileName = createDupeFileName(area);

@@ -63,8 +63,8 @@ hpttree: hpttree.o
 hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) -lsmapilnx -lfidoconfig 
 
-purgeDupes: crc.o purgeDupes.o global.o dupe.o tree.o pktread.o log.o recode.o 
-	$(CC) $(LFLAGS) -o purgeDupes crc.o purgeDupes.o tree.o pktread.o recode.o dupe.o global.o log.o -lfidoconfig -lsmapilnx
+purgeDupes: crc.o purgeDupes.o global.o dupe.o tree.o pktread.o log.o recode.o xstr.o
+	$(CC) $(LFLAGS) -o purgeDupes crc.o purgeDupes.o tree.o pktread.o recode.o dupe.o global.o log.o xstr.o -lfidoconfig -lsmapilnx
 
 clean:
 	-rm -f *.o
