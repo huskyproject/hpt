@@ -15,20 +15,6 @@
 /*  the License, or (at your option) any later version. See COPYING.  */
 /*--------------------------------------------------------------------*/
 
-#if defined(__NT__) || defined (NT) || defined (WINNT)
-
-/* See  fidoconf/log.h  */
-#  define LL_ERROR   	'A'      /* Trivial error: continue */
-#  define LL_ERR     LL_ERROR
-#  define LL_WARN    	'B'      /* Warning */
-   extern void w_log(char key, char *logString, ...);
-
-#else
-
-#  include <fidoconf/log.h>
-
-#endif
-
 
 #if defined(__NT__) || defined (NT) || defined (WINNT)
 
@@ -59,6 +45,13 @@
 #include <stdio.h>
 #include <limits.h>
 #include <ctype.h>
+
+/* See  fidoconf/log.h  */
+#  define LL_ERROR   	'A'      /* Trivial error: continue */
+#  define LL_ERR     LL_ERROR
+#  define LL_WARN    	'B'      /* Warning */
+   extern void w_log(char key, char *logString, ...);
+
 
 unsigned long getfree (char *path) {
 char RPN[MAXPATHLEN];	// root path
@@ -120,6 +113,7 @@ BOOL rc;
 #include <os2.h>
 #include <ctype.h>
 #include <limits.h>
+#include <fidoconf/log.h>
 
 
 unsigned long getfree (char *path)
@@ -151,6 +145,8 @@ unsigned long getfree (char *path)
   }
 }
 #elif defined(UNIX) || defined (__linux__)
+
+
 /*
    This was taken from ifmail, and modified a bit for binkd -- mff, 1997
 
@@ -169,7 +165,6 @@ unsigned long getfree (char *path)
  */
 
 #include <sys/types.h>
-
 
 
 /* TE: test for FreeBSD, NetBSD, OpenBSD or any other BSD 4.4 - derived OS */
@@ -206,9 +201,14 @@ unsigned long getfree (char *path)
 #include <limits.h>
 #endif /* not BSD-like OS */
 
-//#if !(defined(_SYS_STATFS_H) || defined(_SYS_STATVFS_H))
-//#error no statfs() or statvfs() in your system!
-//#endif
+/*
+#if !(defined(_SYS_STATFS_H) || defined(_SYS_STATVFS_H))
+#error no statfs() or statvfs() in your system!
+#endif
+*/
+
+
+#include <fidoconf/log.h>
 
 
 #if defined(_SYS_STATFS_H) || defined(_SYS_STATVFS_H)
@@ -239,6 +239,7 @@ unsigned long getfree (char *path)
 }
 
 #else
+
 unsigned long getfree (char *path)
 {
   w_log (LL_WARN, "warning: free space doesn't checked in %s",path);
@@ -248,7 +249,11 @@ unsigned long getfree (char *path)
 #endif
 
 #elif defined(MSDOS)
+
 #include <limits.h>
+
+#include <fidoconf/log.h>
+
 unsigned long getfree (char *path)
 {
   w_log (LL_WARN, "warning: free space doesn't checked in %s",path);
