@@ -125,8 +125,8 @@ int processCommandLine(int argc, char **argv)
       printf("   hpt scan -w - scanning echomail without highwaters\n");
       printf("   hpt scan -a <areaname> - scanning echomail from <areaname> area\n");
       printf("   hpt scan -f <filename> - scanning echomail from alternative echotoss file\n");
+      printf("   hpt post [options] file - posting a mail (for details run \"hpt post -h\")\n");
       printf("   hpt pack    - packing netmail\n");
-      printf("   hpt post    - posting a mail\n");
       printf("   hpt link    - links messages\n");
       printf("   hpt afix    - process areafix\n");
    }

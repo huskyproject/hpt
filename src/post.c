@@ -118,8 +118,38 @@ void post(int c, unsigned int *n, char *params[])
                strcpy(msg.subjectLine, params[*n]);
                break;
             case 'x':    // export message
-               export=1; (*n)++;
+               export=1;
                break;
+	    case 'h':	// print help
+	       fprintf(stdout,"\n       Post a message to area:\n");
+	       fprintf(stdout,"              hpt post [options] file\n\n");
+	       fprintf(stdout,"              options are:\n\n");
+	       fprintf(stdout,"              -nf \"name from\"\n");
+	       fprintf(stdout,"                 message sender's name, if not included post  use\n");
+	       fprintf(stdout,"                 sysop name (see fidoconfig)\n\n");
+	       fprintf(stdout,"              -nt \"name to\"\n");
+	       fprintf(stdout,"                 message  receiver's  name,  if not included post\n");
+	       fprintf(stdout,"                 use \"All\"\n\n");
+	       fprintf(stdout,"              -af \"address from\"\n");
+	       fprintf(stdout,"                 message sender's address, if not  included  post\n");
+	       fprintf(stdout,"                 use first system address (see fidoconfig)\n\n");
+	       fprintf(stdout,"              -at \"address to\"\n");
+	       fprintf(stdout,"                 message receiver's address, *MUST BE PRESENT*\n\n");
+	       fprintf(stdout,"              -s \"subject\"\n");
+	       fprintf(stdout,"                 subject line, if not included then assumed to be\n");
+	       fprintf(stdout,"                 empty\n\n");
+	       fprintf(stdout,"              -e \"echo area\"\n");
+	       fprintf(stdout,"                 area to  post  echomail  message  into,  if  not\n");
+	       fprintf(stdout,"                 included message is posted to netmail\n\n");
+	       fprintf(stdout,"              -f \"flags\"\n");
+	       fprintf(stdout,"                 flags  to  set  to the posted msg. possible ones\n");
+	       fprintf(stdout,"                 are: pvt, crash, read, sent, att,  fwd,  orphan,\n");
+	       fprintf(stdout,"                 k/s, loc, hld, xx2,  frq, rrq, cpt, arq, urq\n\n");
+	       fprintf(stdout,"              -x export message to echo links\n\n");
+	       fprintf(stdout,"              -h get help\n\n");
+	       fprintf(stdout,"              file - text file to post into echo or \"-\" for stdin\n\n");
+	       quit = 1;
+	       break;
 	    default:
                fprintf(stderr, "hpt post: unknown switch %s\n", params[*n]);
                quit = 1;
@@ -183,8 +213,12 @@ void post(int c, unsigned int *n, char *params[])
       
       writeLogEntry (hpt_log, '1', "Start posting...");
 
-      if (!export)
-        /* FIXME - the echo may be passthrough */
+      writeLogEntry (hpt_log, '2', "Posting msg from %u:%u/%u.%u -> %u:%u/%u.%u in area: %s",
+        msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point,
+	msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point,
+	(area) ? area : echo->areaName);
+
+      if (!export && echo->fileName)
         putMsgInArea(echo, &msg, 1, msg.attributes);
       else {
 	// recoding from internal to transport charSet
@@ -201,19 +235,9 @@ void post(int c, unsigned int *n, char *params[])
 	  msg.attributes = 0;
           processEMMsg(&msg, msg.origAddr, 1);
       } 
-    if (textBuffer == NULL) {
-       fprintf(stderr, "hpt post: no input source specified\n");
-    }
-    if (msg.destAddr.zone == 0) {
-       fprintf(stderr, "hpt post: attempt to post netmail msg without specifyng dest address\n");
-    }
-      writeLogEntry (hpt_log, '2', "Posting msg. from %u:%u/%u.%u -> %s in area: %s",
-                  msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node,
-                  msg.origAddr.point, aka2str(msg.destAddr), (area) ? area : echo->areaName);
       
       if ((config->echotosslog) && (!export)) {
         f=fopen(config->echotosslog, "a");
-      
         if (f==NULL)
           writeLogEntry (hpt_log, '9', "Could not open or create EchoTossLogFile.");
         else {
@@ -221,7 +245,16 @@ void post(int c, unsigned int *n, char *params[])
           fclose(f);
         }
       }
-      
+
    };
+
+   if (textBuffer == NULL && !quit) {
+     fprintf(stderr, "hpt post: no input source specified\n");
+   }
+
+   if (msg.destAddr.zone == 0 && !quit) {
+     fprintf(stderr, "hpt post: attempt to post netmail msg without specifyng dest address\n");
+   }
+   
    freeMsgBuffers(&msg);
 }

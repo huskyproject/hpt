@@ -4,14 +4,10 @@ TODO-List for HPT
 Category 1: Will certainly be implemented until next release
 ============================================================
 
-- jam link, purge & pack
 - real statistics - speed (max)
 - check dupebase filename creation - dos & passthrough areas
 - autocreate reports
-- add Origin to areafix reports
 - fix file route
-- fix bug when posting to passthough area
-- command line help ala festecho
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
