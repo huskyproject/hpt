@@ -161,12 +161,14 @@ int to_us(const s_addr destAddr)
 
 XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr) 
 {
+	char **outbounds[] = { &tossDir, &config->protInbound, &config->inbound, NULL};
 	XMSG  msgHeader;
 	struct tm *date;
 	time_t    currentTime;
 	union stamp_combo dosdate;
 	int i;
-	char *subject;
+	char *subject=NULL;
+	struct stat fInfo;
 
 	// clear msgheader
 	memset(&msgHeader, '\0', sizeof(XMSG));
@@ -212,21 +214,27 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
    
    strcpy((char *) msgHeader.from,msg->fromUserName);
    strcpy((char *) msgHeader.to, msg->toUserName);
-   subject=msg->subjectLine;
-   if (((msgHeader.attr & MSGFILE) == MSGFILE) && (msg->netMail==1)
-       && !strchr(msg->subjectLine, PATH_DELIM)) {
-     int size=strlen(msg->subjectLine)+strlen(tossDir)+1;
-     if (size < XMSG_SUBJ_SIZE) {
-       subject = (char *) safe_malloc (size);
-       sprintf (subject,"%s%s",tossDir,msg->subjectLine);
+
+   if (((msgHeader.attr & MSGFILE) == MSGFILE) 
+	   && (msg->netMail==1)
+       && !strchr(msg->subjectLine, PATH_DELIM))
+	   for (i=0;i<4;i++) {
+		   int size=strlen(msg->subjectLine)+(outbounds[i]?strlen(*outbounds[i])+1:1);
+		   if (size < XMSG_SUBJ_SIZE) {
+			   subject = (char *) safe_malloc (size);
+			   sprintf (subject,"%s%s",(outbounds[i])?*outbounds[i]:"",msg->subjectLine);
 #if defined(__linux__) || defined(UNIX)
-       subject = strLower(subject);
+			   subject = strLower(subject);
 #endif
-     }
-   }
-   strcpy((char *) msgHeader.subj,subject);
-   if (subject != msg->subjectLine)
-       nfree(subject);
+			   if (strchr(subject, ' ')!=NULL)
+				   subject[(long int)strchr(subject, ' ') - (long int)subject] = '\0';
+			   if (!stat(subject, &fInfo)) break;
+			   nfree(subject);
+		   }
+	   }
+
+   strcpy((char *) msgHeader.subj,(subject)?subject:msg->subjectLine);
+   if (subject != msg->subjectLine) nfree(subject);
        
    msgHeader.orig.zone  = (word) msg->origAddr.zone;
    msgHeader.orig.node  = (word) msg->origAddr.node;

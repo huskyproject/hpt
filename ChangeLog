@@ -1,6 +1,10 @@
 hpt 0.9.8 (development version)
 ---------	
 
+----- cvs ci ------
+Wed Oct 11 21:35:53 NOVST 2000
+max(patch from Dmitry Sergienko):
+* process attaches in packed netmail (tossed from tempInbound)
 
 ----- cvs ci ------
 Wed Oct 11 11:14:47 MSD 2000
