@@ -306,9 +306,8 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       if (echo->downlinks[i]->pktFile == NULL) {
          // pktFile does not exist
          name = createTempPktFileName();
-         echo->downlinks[i]->pktFile = (char *) malloc(strlen(name)+4+1); // 4 == strlen(".pkt");
+         echo->downlinks[i]->pktFile = (char *) malloc(strlen(name)+1);
          strcpy(echo->downlinks[i]->pktFile, name);
-         strcat(echo->downlinks[i]->pktFile, ".pkt");
          name = createOutboundFileName(echo->downlinks[i]->hisAka, NORMAL, FLOFILE);
          flo = fopen(name, "a");
          fprintf(flo, "#%s\n", echo->downlinks[i]->pktFile);
