@@ -1,3 +1,20 @@
+2002-10-08 Tuesday 14:31  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.40): FAQ fix
+
+2002-10-08 Tuesday 14:26  stas_degteff
+
+	* src/toss.c (1.450): Use new syntax of move_file() and
+	copy_file(). Test this please!
+
+2002-10-08 Tuesday 12:20  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.39): Update 34 answer
+
+2002-10-08 Tuesday 06:56  sfpavel
+
+	* debian/: changelog (1.17), docs (1.6): New debian package
+
 2002-10-07 Monday 12:55  mche
 
 	* src/query.c (1.67): fix bug with createFwdNonPass
