@@ -8,6 +8,7 @@ Category 1: Will certainly be implemented until next release
 - check dupebase filename creation - dos & passthrough areas
 - autocreate reports
 - fix file route
+- fix %avail bug in areafix (broken by sms)
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
