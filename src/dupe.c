@@ -459,7 +459,7 @@ void freeDupeMemory(s_area *area) {
       dupes = CommonDupes;
 
    if (dupes != NULL) {
-      tree_deinit(&(dupes -> avlTree), deleteEntry);
+      tree_mung(&(dupes -> avlTree), deleteEntry);
       if (config->typeDupeBase != commonDupeBase) {
          nfree(area -> dupes);
       }
