@@ -93,6 +93,7 @@
 #include <fidoconf/afixcmd.h>
 #include <huskylib/temp.h>
 #include <huskylib/recode.h>
+#include <fidoconf/stat.h>
 
 #if defined(A_HIDDEN) && !defined(_A_HIDDEN)
 #define _A_HIDDEN A_HIDDEN
@@ -114,7 +115,6 @@
 #include <scanarea.h>
 #include <fcommon.h>
 #include <hpt.h>
-#include "stat.h"
 #ifdef DO_PERL
 #include <hptperl.h>
 #endif

@@ -69,6 +69,7 @@
 #include <huskylib/log.h>
 #include <huskylib/recode.h>
 #include <fidoconf/version.h>
+#include <fidoconf/stat.h>
 
 #include "version.h"
 #include "cvsdate.h"
@@ -82,7 +83,6 @@
 #include "link.h"
 #include "areafix.h"
 #include "query.h"
-#include "stat.h"
 
 #ifdef DO_PERL
 #include "hptperl.h"
