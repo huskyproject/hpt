@@ -257,7 +257,7 @@ void processConfig()
 
 int main(int argc, char **argv)
 {
-   struct _minf m;
+   static struct _minf m;
    int i;
    char *version = NULL;
 #if defined ( __NT__ )
@@ -303,12 +303,16 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    }
 #endif
 
-   // init SMAPI
-   m.req_version = 0;
-   m.def_zone = (UINT16) config->addr[0].zone;
-   if (MsgOpenApi(&m) != 0) {
-      exit_hpt("MsgApiOpen Error",1);
-   } /*endif */
+   
+   if ( initSMAPI == -1 ) {
+	   // init SMAPI
+	   initSMAPI = 0;
+	   m.req_version = 0;
+	   m.def_zone = (UINT16) config->addr[0].zone;
+	   if (MsgOpenApi(&m) != 0) {
+		   exit_hpt("MsgApiOpen Error",1);
+	   } /*endif */
+   }
    
    msgToSysop = (s_message**) safe_malloc(config->addrCount * sizeof(s_message*));
    for (i = 0; i < config->addrCount; i++) {

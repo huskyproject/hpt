@@ -33,6 +33,7 @@
 s_log     *hpt_log;
 s_fidoconfig *config=NULL;
 
+int initSMAPI = -1;
 
 /* basic version number */
 const int   VER_MAJOR   = 0;

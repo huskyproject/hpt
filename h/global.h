@@ -34,6 +34,8 @@
 #include <fidoconf/fidoconf.h>
 #include <log.h>
 
+extern int initSMAPI;
+
 // variables for config statements
 
 extern s_log     *hpt_log;

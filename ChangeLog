@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Tue Sep 12 14:34:02 NOVST 2000
+max:
+* fixed bug in post (init smapi first)
+
+----- cvs ci ------
 Mon Sep 11 22:31:46 NOVST 2000
 max:
 * %rescan bug with wildcards & number of msgs to process (Pavel Sizykh)

@@ -97,6 +97,7 @@ void print_help(void) {
 
 void post(int c, unsigned int *n, char *params[])
 {
+   static struct _minf m;
    char *area = NULL, *tearl = NULL, *origin = NULL;
    FILE *text = NULL;
    s_area *echo = NULL;
@@ -117,6 +118,15 @@ void post(int c, unsigned int *n, char *params[])
    if (params[*n]!='\0' && params[*n][1]=='h') print_help();
 
    if (config==NULL) processConfig();
+   if ( initSMAPI == -1 ) {
+	   // init SMAPI
+	   initSMAPI = 0;
+	   m.req_version = 0;
+	   m.def_zone = (UINT16) config->addr[0].zone;
+	   if (MsgOpenApi(&m) != 0) {
+		   exit_hpt("MsgApiOpen Error",1);
+	   } /*endif */
+   }
 
    memset(&msg, 0, sizeof(s_message));
 
