@@ -420,8 +420,9 @@ void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, 
    char *seenByText=NULL, *start, *token;
    unsigned long temp;
    char *endptr;
+   UINT seenByAlloced;
 
-   *seenByCount = 0;
+   *seenByCount = seenByAlloced = 0;
 
    start = strrstr(msg->text, " * Origin:"); // jump over Origin
    if (start == NULL) start = msg->text;
@@ -441,17 +442,19 @@ void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, 
    token = strtok(seenByText, " \r\t\376");
    while (token != NULL) {
 	   if (isdigit(*token)) {
-
-		   // get new memory
-		   (*seenByCount)++;
-		   (*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
-
 		   // parse token
 		   temp = strtoul(token, &endptr, 10);
 		   if (*endptr==':') {
 			   token = endptr+1;
 			   temp = strtoul(token, &endptr, 10);
 		   }
+		   if (*endptr && *endptr != '/')
+			   continue;
+
+		   // get new memory
+		   if ((*seenByCount)++ >= seenByAlloced)
+			   (*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAlloced+=32));
+
 		   if ((*endptr) == '\0') {
 			   // only node aka
 			   (*seenBys)[*seenByCount-1].node = (UINT16) temp;
@@ -469,6 +472,8 @@ void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, 
 	   token = strtok(NULL, " \r\t\376");
    } // end while
 
+   if (*seenByCount != seenByAlloced)
+	   (*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
    //test output for reading of seenBys...
 #ifdef DEBUG_HPT
    for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
@@ -487,11 +492,12 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
    char *seenByText=NULL, *start, *token;
    char *endptr;
    unsigned long temp;
+   UINT seenByAlloced;
 #ifdef DEBUG_HPT
    int i;
 #endif
 
-   *seenByCount = 0;
+   *seenByCount = seenByAlloced = 0;
 
    start = strrstr(msg->text, " * Origin:"); // jump over Origin
    if (start == NULL) start = msg->text;
@@ -511,15 +517,19 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
    token = strtok(seenByText, " \r\t\376");
    while (token != NULL) {
 	   if (isdigit(*token)) {
-		   (*seenByCount)++;
-		   *seenBys = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
-		   
 		   // parse token
 		   temp = strtoul(token, &endptr, 10);
 		   if (*endptr==':') {
 			   token = endptr+1;
 			   temp = strtoul(token, &endptr, 10);
 		   }
+		   if (*endptr && *endptr != '/')
+			   continue;
+
+		   // get new memory
+		   if ((*seenByCount)++ >= seenByAlloced)
+			   (*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAlloced+=32));
+
 		   if ((*endptr) == '\0') {
 			   // only node aka
 			   (*seenBys)[*seenByCount-1].node = (UINT16) temp;
@@ -535,6 +545,9 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
 	   } else if (strcmp(token, "\001PATH:")!=0) break; // not digit and not PATH
 	   token = strtok(NULL, " \r\t\376");
    }
+
+   if (*seenByCount != seenByAlloced)
+	   (*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
 
    // test output for reading of paths...
 #ifdef DEBUG_HPT
