@@ -38,6 +38,8 @@ const int VER_MINOR = 9;
 const int VER_PATCH = 7;
 char      *versionStr=NULL;
 
+char	  *tossDir=NULL;
+
 int       cmToss = 0;
 int       cmScan = 0;
 int       cmPack = 0;

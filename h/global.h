@@ -34,10 +34,13 @@
 #include <fidoconf/fidoconf.h>
 #include <log.h>
 
+// variables for config statements
+
 extern s_log     *hpt_log;
 extern s_fidoconfig *config;
 
-// variables for config statements
+// vriable for current tossing dir
+char *tossDir;
 
 // variables for commandline statements
 

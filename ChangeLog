@@ -6,6 +6,8 @@ hpt 0.9.7 (development version)
 Thu Jun  1 11:51:34 NOVST 2000
 max:
 * fixed several "toss -b" processing (thanx to Fedor Lizunkov)
+* del spaces in beginning when parsing line in areafix
+* fixed processing attaches from unsecured inbound
 patch from Lev Serebryakov:
 * Now hpt sorts links according to ForwardAreaPriority when request areas
 

@@ -211,10 +211,10 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
    subject=msg->subjectLine;
    if (((msgHeader.attr & MSGFILE) == MSGFILE) && (msg->netMail==1)
        && !strchr(msg->subjectLine, PATH_DELIM)) {
-     int size=strlen(msg->subjectLine)+strlen(config->protInbound)+1;
+     int size=strlen(msg->subjectLine)+strlen(tossDir)+1;
      if (size < XMSG_SUBJ_SIZE) {
        subject = (char *) malloc (size);
-       sprintf (subject,"%s%s",config->protInbound,msg->subjectLine);
+       sprintf (subject,"%s%s",tossDir,msg->subjectLine);
 #if defined(__linux__) || defined(UNIX)
        subject = strLower(subject);
 #endif
@@ -1616,8 +1616,9 @@ void processDir(char *directory, e_tossSecurity sec)
    unsigned fattrs;
 #endif
 
-
    if (directory==NULL) return;
+
+   tossDir = directory;
 
    dirNameLen = strlen(directory);
 

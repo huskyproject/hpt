@@ -8,10 +8,10 @@ OBJS    = hpt.obj, strsep.obj, pkt.obj, common.obj, log.obj, config.obj, global.
 SRC_DIR = ..\src
 
 !IF $(DEBUG) == 1
-CFLAGS  = -d2 -hw -i=..\h -we -zq -bt=dos -D__DOS__ -DHAS_JUNK_AFTER_SEEK
+CFLAGS  = -d2 -hw -i=..\h -we -zq -bt=dos -D__DOS__
 LFLAGS  = FORM DOS LIBpath e:\watcom\lib286\dos
 !ELSE
-CFLAGS  = -i..\h -oneatx -we -zq -bt=dos -D__DOS__ -DHAS_JUNK_AFTER_SEEK
+CFLAGS  = -i..\h -oneatx -we -zq -bt=dos -D__DOS__
 LFLAGS  = FORM DOS LIBpath e:\watcom\lib286\dos
 !ENDIF
 

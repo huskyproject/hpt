@@ -1263,7 +1263,8 @@ int tellcmd(char *cmd) {
 	char *line;
 
 	if (strncasesearch(cmd, "* Origin:", 9) == 0) return NOTHING;
-	line = strpbrk(cmd, " \t");
+        while ((*cmd == ' ') || (*cmd == '\t')) cmd++;
+   	line = strpbrk(cmd, " \t");
 	if (line && *cmd != '%') *line = 0;
 
 	line = cmd;
