@@ -1,3 +1,20 @@
+2004-01-07 Wednesday 09:47  andrew_ladutsko
+
+	* HISTORY (1.39), misc/areafix.866 (1.7), misc/areafix.hlp (1.22):
+	added info about %areafixpwd and %pktpwd commands
+
+2004-01-07 Wednesday 05:15  d_sergienko
+
+	* VERSION (1.8): correct version numbers
+
+2004-01-07 Wednesday 02:03  d_sergienko
+
+	* TODO (1.201): update
+
+2004-01-07 Wednesday 01:55  d_sergienko
+
+	* VERSION (1.7): update up to current requirements
+
 2004-01-06 Tuesday 20:27  d_sergienko
 
 	* src/pktread.c (1.103): fix INTL parsing while reading message
