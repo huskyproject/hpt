@@ -1,3 +1,12 @@
+2003-12-05 Friday 15:28  mche
+
+	* src/areafix.c (1.431): added ability to automatically pause area
+	when all links but uplink (determined by "-def" flag) are in pause
+	(see description of "autoAreaPause" token in documentation for
+	details).
+	
+	fix by Andrew Ladutsko 2:450/210
+
 2003-12-04 Thursday 15:33  mche
 
 	* src/areafix.c (1.430): %list, %linked command extension
