@@ -1,3 +1,10 @@
+2002-11-10 Sunday 16:18  pgul
+
+	* h/fcommon.h (1.45), src/fcommon.c (1.141), src/toss.c (1.463):
+	Fixed losing current arcmail ext when link busy and bundleNameStyle
+	AddrDiff or AddrCRC32.	Split createTempPktFileName into
+	createTempPktFileName and createPackFileName.
+
 2002-11-09 Saturday 13:47  mche
 
 	* misc/makeavl/: makeavl.pl (1.1), readlist.pm (1.1):
