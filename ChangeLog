@@ -1,3 +1,9 @@
+2003-09-02 Tuesday 12:08  val_khokhlov
+
+	* src/: areafix.c (1.423), hpt.c (1.181), perl.c (1.68), query.c
+	(1.104): perldone() moved to end of hpt; perl structures are
+	updated after auto-create
+
 2003-08-17 Sunday 16:10  nssoft
 
 	* doc/hpt-FAQ.russian (1.87): Update developers list
