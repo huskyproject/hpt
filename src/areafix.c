@@ -217,8 +217,7 @@ char *list(s_link *link, char *cmdline) {
     char *list = NULL;
     char *pattern = NULL;
     int reversed;
-    ps_arealist al, *hal;
-    unsigned int halcnt;
+    ps_arealist al;
     s_area area;
 
     pattern = getPatternFromLine(cmdline, &reversed);
@@ -355,6 +354,9 @@ int tag_mask(char *tag, char **mask, unsigned num) {
     return 0;
 }
 
+/* Process %avail command.
+ *
+ */
 char *available(s_link *link, char *cmdline)
 {
     FILE *f;
@@ -365,7 +367,7 @@ char *available(s_link *link, char *cmdline)
     int reversed;
     s_link *uplink=NULL;
     ps_arealist al=NULL, *hal=NULL;
-    unsigned int halcnt=0;
+    unsigned int halcnt=0, isuplink;
 
     pattern = getPatternFromLine(cmdline, &reversed);
     if ((pattern) && (strlen(pattern)>60 || !isValidConference(pattern))) {
@@ -373,20 +375,18 @@ char *available(s_link *link, char *cmdline)
         return errorRQ(cmdline);
     }
 
-    hal = NULL;
-    halcnt = 0;
- 
-    for (j = 0; j < config->linkCount; j++) 
+    for (j = 0; j < config->linkCount; j++)
     {
 	uplink = &(config->links[j]);
 
 	found = 0;
+	isuplink = 0;
 	for (k = 0; k < link->numAccessGrp && uplink->LinkGrp; k++)
 	    if (strcmp(link->AccessGrp[k], uplink->LinkGrp) == 0)
 		found = 1;
 
 	if ((uplink->forwardRequests && uplink->forwardRequestFile) &&
-	    ((uplink->LinkGrp == NULL) || (found != 0))) 
+	    ((uplink->LinkGrp == NULL) || (found != 0)))
 	{
 	    if ((f=fopen(uplink->forwardRequestFile,"r")) == NULL) {
 		w_log(LL_ERR, "areafix: cannot open forwardRequestFile \"%s\": %s",
@@ -394,14 +394,10 @@ char *available(s_link *link, char *cmdline)
  		continue;
 	    }
 
-            if (link->availlist == AVAILLIST_UNIQUEONE)
-            {
-              if (!hal)
+	    isuplink = 1;
+
+            if ((!hal)&&(link->availlist == AVAILLIST_UNIQUEONE))
                 xscatprintf(&report, "Available Area List from all uplinks:\r");
-            }
-            else
-              xscatprintf(&report, "Available Area List from %s:\r",  
-                           aka2str(uplink->hisAka));    
 
             if ((!halcnt)||(link->availlist != AVAILLIST_UNIQUEONE))
             {
@@ -445,22 +441,30 @@ char *available(s_link *link, char *cmdline)
 
             /*  warning! do not ever use aka2str twice at once! */
             sprintf(linkAka, "%s", aka2str(link->hisAka));
-            w_log(LL_AREAFIX, "areafix: Available Area List from %s sent to %s", aka2str(uplink->hisAka), linkAka);
+            w_log( LL_AREAFIX, "areafix: Available Area List from %s %s to %s",
+                  aka2str(uplink->hisAka),
+                  (link->availlist == AVAILLIST_UNIQUEONE) ? "prepared": "sent",
+                  linkAka );
         }
 
 
  	if ((link->availlist != AVAILLIST_UNIQUEONE)||(j==(config->linkCount-1)))
  	{
- 		if((hal)&&((hal[halcnt-1])->count)) {
- 			sortAreaListNoDupes(halcnt, hal, link->availlist != AVAILLIST_FULL);
- 			line = formatAreaList(hal[halcnt-1],78,NULL);
- 			xstrcat(&report,"\r");
-			if (line)
- 			  xstrcat(&report,line);
- 			nfree(line);
-	 		xscatprintf(&report, " %s\r\r",print_ch(77,'-'));
- 		}
- 
+ 		if((hal)&&((hal[halcnt-1])->count))
+ 		    if ((link->availlist != AVAILLIST_UNIQUE)||(isuplink))
+ 		    {
+ 		        sortAreaListNoDupes(halcnt, hal, link->availlist != AVAILLIST_FULL);
+ 		        if ((hal[halcnt-1])->count)
+ 		        {
+ 			    line = formatAreaList(hal[halcnt-1],78,NULL);
+ 			    if (link->availlist != AVAILLIST_UNIQUEONE)
+ 			        xscatprintf(&report, "\rAvailable Area List from %s:\r", aka2str(uplink->hisAka));
+			    if (line)
+ 			        xstrscat(&report, "\r", line,print_ch(77,'-'), "\r", NULL);
+ 			    nfree(line);
+	 	        }
+ 		    }
+
             if ((link->availlist != AVAILLIST_UNIQUE)||(j==(config->linkCount-1)))
               if (hal)
               {
@@ -480,162 +484,6 @@ char *available(s_link *link, char *cmdline)
 }
 
 
-#if 0   /* Not fully work variant */
-char *available(s_link *link, char *cmdline)
-{
-    FILE *f;
-    unsigned int j=0, found;
-    unsigned int k, rc;
-    char *report = NULL, *line, *token, *running, linkAka[SIZE_aka2str];
-    char *pattern;
-    int reversed;
-    s_link *uplink=NULL;
-    ps_arealist al=NULL, *hal=NULL;
-    unsigned int halcnt=0;
-
-    pattern = getPatternFromLine(cmdline, &reversed);
-    if ((pattern) && (strlen(pattern)>60 || !isValidConference(pattern))) {
-        w_log(LL_FUNC, "areafix::avail() FAILED (error request line)");
-        return errorRQ(cmdline);
-    }
-
-    hal = NULL;
-    halcnt = 0;
- 
-    for (j = 0; j < config->linkCount; j++) {
-	uplink = &(config->links[j]);
-
-	found = 0;
-	for (k = 0; k < link->numAccessGrp && uplink->LinkGrp; k++)
-	    if (strcmp(link->AccessGrp[k], uplink->LinkGrp) == 0)
-		found = 1;
-
-	if ((uplink->forwardRequests && uplink->forwardRequestFile) &&
-	    ((uplink->LinkGrp == NULL) || (found != 0))) {
-	    if ((f=fopen(uplink->forwardRequestFile,"r")) == NULL) {
-		w_log(LL_ERR, "areafix: cannot open forwardRequestFile \"%s\": %s",
-		      uplink->forwardRequestFile, strerror(errno));
- 		continue;
-	    }
-
-        if ( (!halcnt) && (link->availlist == AVAILLIST_UNIQUEONE) )
-            xscatprintf(&report, "\rAvailable Area List from all uplinks:\r");
-
-        if ((!halcnt)||(link->availlist != AVAILLIST_UNIQUEONE))
-        {
-          halcnt++;
-          hal = realloc(hal, sizeof(ps_arealist)*halcnt);
-          hal[halcnt-1] = newAreaList();
-          al = hal[halcnt-1];
-          w_log(LL_DEBUGW,  __FILE__ ":%u: New item added to hal, halcnt = %u", __LINE__, halcnt);
-        }
-
-        while ((line = readLine(f)) != NULL) {
-        line = trimLine(line);
-        if (line[0] != '\0') {
-            running = line;
-            token = strseparate(&running, " \t\r\n");
-            rc = 0;
-
-            if (uplink->numDfMask)
-              rc |= tag_mask(token, uplink->dfMask, uplink->numDfMask);
-
-            if (uplink->denyFwdFile)
-              rc |= IsAreaAvailable(token,uplink->denyFwdFile,NULL,0);
-
-                if (pattern)
-                {
-                    /* if matches pattern and not reversed (or vise versa) */
-                    if ((rc==0) &&(patimat(token, pattern)!=reversed))
-                        addAreaListItem(al,0,0,token,running);
-                } else
-                {
-                    if (rc==0) addAreaListItem(al,0,0,token,running);
-                }
-
-    	}
-    	nfree(line);
-        }
-        fclose(f);
-
-/*#ifdef DEBUG_HPT*/
-            w_log(LL_DEBUGW, __FILE__ ":%u: j=%u, config->linkCount=%u", __LINE__, j, config->linkCount);
-/*#endif*/
-/*            if ((link->availlist != AVAILLIST_UNIQUEONE))*/
-            if ((link->availlist != AVAILLIST_UNIQUEONE)||(j==(config->linkCount-1)))
-            {
-#ifdef DEBUG_HPT
-                if(hal && halcnt) w_log(LL_DEBUGW, __FILE__ ":%u: hal[%u-1]=%x,", __LINE__, halcnt, hal[halcnt]);
-#endif
-                if ( (hal)&&((hal[halcnt-1])->count) ) {
-                  sortAreaListNoDupes(halcnt, hal, link->availlist != AVAILLIST_FULL);
-                  line = formatAreaList(hal[halcnt-1],78,NULL);
-                  if (line) {
-                   sprintf(linkAka, "%s", aka2str(link->hisAka));
-                    if (link->availlist != AVAILLIST_UNIQUEONE)
-                       xscatprintf(&report, "\rAvailable Area List from %s:\r",
-                                            aka2str(uplink->hisAka));
-                    xstrcat(&report,"\r");
-                    xstrcat(&report,line);
-                    nfree(line);
-                    xscatprintf(&report, " %s\r",print_ch(77,'-'));
-                   /*  warning! do not ever use aka2str twice at once! (static string) */
-                   w_log(LL_AREAFIX, "areafix: Available Area List from %s %s to %s", aka2str(uplink->hisAka),
-                                     link->availlist == AVAILLIST_UNIQUEONE ? "prepared" : "sent", linkAka);
-                  }
-                }
-
-#ifdef DEBUG_HPT
-                w_log(LL_DEBUGW, __FILE__ ":%u: ", __LINE__);
-#endif
-/*                if ((link->availlist != AVAILLIST_UNIQUEONE))*/
-                if ((link->availlist != AVAILLIST_UNIQUE)||(j==(config->linkCount-1)))
-                  if (hal)
-                  {
-    	            w_log(LL_DEBUGW,  __FILE__ ":%u: hal freed, (%u items)", __LINE__, halcnt);
-                    for(;halcnt;halcnt--)
-                      freeAreaList(hal[halcnt-1]);
-                    nfree(hal);
-                  }
- 	    }
-
-	}
-    }
-
-/*
-    if ( (link->availlist == AVAILLIST_UNIQUE) && halcnt && hal )
-    {
-      if ( (hal[halcnt-1])->count ) {
-        sortAreaListNoDupes(halcnt, hal, link->availlist != AVAILLIST_FULL);
-        line = formatAreaList(hal[halcnt-1],78,NULL);
-        if (line) {
-          sprintf(linkAka, "%s", aka2str(link->hisAka));
-          if (link->availlist == AVAILLIST_UNIQUEONE)
-            xscatprintf(&report, "\rAvailable Area List from all uplinks:\r");
-          xstrcat(&report,"\r");
-          xstrcat(&report,line);
-          nfree(line);
-          xscatprintf(&report, " %s\r",print_ch(77,'-'));
-         w_log(LL_AREAFIX, "areafix: Available Area List from %s %s to %s", aka2str(uplink->hisAka),
-                           link->availlist == AVAILLIST_UNIQUEONE ? "prepared" : "sent", linkAka);
-        }
-      }
-
-      w_log(LL_DEBUGW,  __FILE__ ":%u: free hal, (%u items)", __LINE__, halcnt);
-      for(;halcnt;halcnt--)
-        freeAreaList(hal[halcnt-1]);
-      nfree(hal);
-    }
-*/
-    if (report==NULL) {
-	xstrcat(&report, "\r  no links for creating Available Area List\r");
-	w_log(LL_AREAFIX, "areafix: no links for creating Available Area List");
-    }
-    return report;
-}
-
-#endif
-
 /*  subscribe if (act==0),  unsubscribe if (act==1), delete if (act==2) */
 int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act) {
     s_message *msg;
@@ -648,7 +496,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
         config->areafixKillReports);
 	msg->text = createKludges(config, NULL, uplink->ourAka, &(uplink->hisAka),
                               versionStr);
-        /* xstrcat(&(msg->text), "\001FLAGS DIR\r"); */ 
+        /* xstrcat(&(msg->text), "\001FLAGS DIR\r"); */
 	uplink->msg = msg;
     } else msg = uplink->msg;
 	
@@ -1207,7 +1055,7 @@ char *do_delete(s_link *link, s_area *area) {
     }
 
     /* delete msgbase and dupebase for the area */
-    
+
     /*
     if (area->msgbType!=MSGTYPE_PASSTHROUGH)
 	MsgDeleteBase(area->fileName, (word) area->msgbType);
@@ -1356,7 +1204,7 @@ char *unsubscribe(s_link *link, char *cmd) {
                 j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
             }
             if (j == DEL_OK){
-                MsgDeleteBase(area->fileName, (word) area->msgbType);                
+                MsgDeleteBase(area->fileName, (word) area->msgbType);
                 xscatprintf(&report," %s %s  unlinked\r",an,print_ch(49-strlen(an),'.'));
             }else
                 xscatprintf(&report," %s %s  error. report to sysop!\r",
@@ -1586,7 +1434,7 @@ char *packer(s_link *link, char *cmdline) {
         ps_pack packerDef = NULL;
         char *confName = NULL;
         long  strbeg=0;
-        long  strend=0; 
+        long  strend=0;
 
         for (i=0; i < config->packCount; i++)
         {
@@ -1623,7 +1471,7 @@ char *packer(s_link *link, char *cmdline) {
         xscatprintf(&report, "none (");
     else
         xscatprintf(&report, "%s (", link->packerDef->packer);
-    
+
     for (i=0; i < config->packCount; i++)
         xscatprintf(&report, "%s%s", config->pack[i].packer,(i+1 == config->packCount) ? "" : ", ");
 
@@ -1689,12 +1537,12 @@ char *rsb(s_link *link, char *cmdline)
 
 int tellcmd(char *cmd) {
     char *line;
-    
+
     if (strncmp(cmd, "* Origin:", 9) == 0) return NOTHING;
-    
+
     line = cmd;
     if (line && *line && (line[1]==' ' || line[1]=='\t')) return AFERROR;
-    
+
     switch (line[0]) {
     case '%':
         line++;
@@ -1739,18 +1587,18 @@ int tellcmd(char *cmd) {
 }
 
 char *processcmd(s_link *link, char *line, int cmd) {
-    
+
     char *report;
-    
+
     w_log(LL_FUNC, __FILE__ "::processcmd()");
-    
+
     switch (cmd) {
-        
+
     case NOTHING: return NULL;
-        
+
     case DONE: RetFix=DONE;
         return NULL;
-        
+
     case LIST: report = list (link, line);
         RetFix=LIST;
         break;
@@ -1808,7 +1656,7 @@ char *processcmd(s_link *link, char *line, int cmd) {
 void preprocText(char *split, s_message *msg)
 {
     char *orig = (config->areafixOrigin) ? config->areafixOrigin : config->origin;
-    
+
     msg->text = createKludges(config, NULL, &msg->origAddr,
         &msg->destAddr, versionStr);
     /* xstrcat(&(msg->text), "\001FLAGS NPD DIR\r"); */
@@ -1879,10 +1727,10 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
             text = p+1;
             partnum++;
         }
-        
+
         if (partnum) xscatprintf(&newsubj, "%s (%d)", subj, partnum);
         else newsubj = subj;
-        
+
         if (config->areafixFromName == NULL)
             tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
             msg->toUserName,
@@ -1893,18 +1741,18 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
             config->areafixFromName,
             msg->fromUserName, newsubj, 1,
             config->areafixKillReports);
-        
-        
+
+
         preprocText(split, tmpmsg);
         processNMMsg(tmpmsg, NULL, getNetMailArea(config,config->robotsArea),
             0, MSGLOCAL);
-        
+
         closeOpenedPkt();
         freeMsgBuffers(tmpmsg);
         nfree(tmpmsg);
         if (partnum) nfree(newsubj);
     }
-    
+
     config->intab = tab;
 }
 
@@ -2046,7 +1894,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     token = strseparate (&tmp,"\n\r");
 
     while(token != NULL) {
-        if( !strcmp(token,"---") || !strncmp(token,"--- ",4) ) 
+        if( !strcmp(token,"---") || !strncmp(token,"--- ",4) )
             /*  stop on tearline ("---" or "--- text") */
             break;
         if( token[0] != '\001' )
@@ -2054,7 +1902,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
         token = strseparate (&tmp,"\n\r");
     }
     nfree(msg->text);
-    msg->text = textBuff;   
+    msg->text = textBuff;
     if (!security) {
 	textBuff = safe_strdup(msg->text);
         tmp = textBuff;
