@@ -1,3 +1,15 @@
+2002-06-20 Thursday 16:09  stas
+
+	* src/areafix.c (1.316): Fix free shifted pointer
+
+2002-06-20 Thursday 15:39  stas
+
+	* src/hptlink.c (1.38): Remove \n from log message
+
+2002-06-20 Thursday 15:36  stas
+
+	* makefile.inc (1.19): Fix link hptlink.
+
 2002-06-19 Wednesday 21:17  stas
 
 	* src/: getfree.c (1.22), hptlink.c (1.37): Fixes: remove unmatched
