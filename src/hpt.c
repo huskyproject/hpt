@@ -71,7 +71,19 @@
 #include <areafix.h>
 #include <fidoconf/recode.h>
 #include <cvsdate.h>
-#include "query.h"
+#include <query.h>
+
+#ifdef _MSC_VER
+#ifdef DO_PERL
+#include <delayimp.h>
+// This is the failure hook, dliNotify = {dliFailLoadLib|dliFailGetProc}
+#if defined(__cplusplus)
+extern "C"
+#endif
+extern
+PfnDliHook   __pfnDliFailureHook;
+#endif
+#endif
 
 s_log         *hpt_log = NULL;
 s_message    **msgToSysop = NULL;
@@ -386,6 +398,37 @@ int isFreeSpace(char *path) {
 	return 0;
 }
 
+
+#ifdef _MSC_VER
+#ifdef DO_PERL
+FARPROC WINAPI ourhook(unsigned dliNotify,PDelayLoadInfo pdli)
+{
+  //print error message and exit
+  char msg[128];
+  memset(msg,0,sizeof(msg));
+  sprintf(msg,"perSupport is On but loading of %s failed - exiting ",pdli->szDll);
+  w_log('8',msg);
+  //standart deinit sequence
+  // deinit SMAPI
+  MsgCloseApi();
+  w_log('1', "End");
+
+  closeLog(hpt_log);
+  doneCharsets();
+  nfree(versionStr);
+  if (config->lockfile) {
+	   close(lock_fd);
+	   remove(config->lockfile);
+  }
+
+  disposeConfig(config);
+  nfree(cfgFile);
+  exit(EX_UNAVAILABLE);
+   return 0; 
+}
+#endif 
+#endif
+
 int main(int argc, char **argv)
 {
    struct _minf m;
@@ -417,7 +460,6 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 
    if (strcmp(VER_BRANCH,"-stable")!=0) xscatprintf(&version, " %s", cvs_date);
    xscatprintf(&versionStr,"hpt %s", version);
-
    rc = processCommandLine(argc, argv);
    if (rc==1){ nfree(version); nfree(versionStr); exit(EX_OK); }
    if (rc==EX_USAGE){ nfree(version); nfree(versionStr); exit(EX_USAGE); }
@@ -457,7 +499,13 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 	   exit_hpt("MsgApiOpen Error",1);
        }
    }
-
+#ifdef _MSC_VER
+#ifdef DO_PERL
+   __pfnDliFailureHook=ourhook;
+   //attempt to start Perl
+   if (config->perlSupport) PerlStart();
+#endif 
+#endif
    msgToSysop = (s_message**) safe_malloc(config->addrCount * sizeof(s_message*));
    for (i = 0; i < config->addrCount; i++) {
 	   

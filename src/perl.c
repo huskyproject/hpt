@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #ifndef _MSC_VER
 #include <sys/wait.h>
@@ -50,6 +52,19 @@ extern "C" {
 #define sv_undef PL_sv_undef
 #endif
 
+/* for alike */
+#define MAX_LDIST_LEN      40 // max word len to compair
+#define ADDITION           1  // penality for needing to add a character
+#define CHANGE             1  // penality for needing to modify a character
+#define DELETION           1  // penality for needing to delete a character
+#define ALIKE              1
+#define NOT_ALIKE          0
+#define LENGTH_MISMATCH    32767
+static int l_dist_list(char *key, char **list, char **match, int dist[], int match_limit, int *threshold);
+static int l_dist_raw(char *str1, char *str2, int len1, int len2);
+
+
+
 static PerlInterpreter *perl = NULL;
 static int  do_perl=1;
 #ifdef _MSC_VER
@@ -61,6 +76,7 @@ EXTERN_C void perl_str2attr(pTHXo_ CV* cv);
 EXTERN_C void perl_myaddr(pTHXo_ CV* cv);
 EXTERN_C void perl_nodelistDir(pTHXo_ CV* cv);
 EXTERN_C void perl_crc32(pTHXo_ CV* cv);
+EXTERN_C void perl_alike(pTHXo_ CV* cv);
 #endif
 #ifdef _MSC_VER
 EXTERN_C void perl_log(pTHXo_ CV* cv)
@@ -80,6 +96,114 @@ static XS(perl_log)
   str   = (char *)SvPV(ST(1), n_a); if (n_a == 0) str   = "";
   w_log(*level, "%s", str);
   XSRETURN_EMPTY;
+}
+
+int l_dist_list(char *key,
+                char **list,
+                char **match,
+                int dist[],
+                int match_limit,
+                int *threshold)
+{
+   int i, j, k, key_len, l_dist, len, num;
+   key_len = strlen(key);
+   key_len = min(key_len, MAX_LDIST_LEN);
+   *threshold = 1 + ((key_len + 2) / 4);
+   num = 0;
+   for (k=0; list[k][0]; k++)
+   {
+      len = strlen(list[k]);
+      len = min(len, MAX_LDIST_LEN);
+      if (abs(key_len-len) <= *threshold)
+      {
+         // calculate the distance
+         l_dist = l_dist_raw(key, list[k], key_len, len);
+         // is this acceptable?
+         if (l_dist <= *threshold)        // is it in range to consider
+         {
+            // search the list to see where we should insert this result
+            for (i=j=0; i<num && !j; )
+               if (l_dist < dist[i])
+                  j = 1;
+               else
+                  i++;        // do not increment when we find a match
+            // i points to the next higher valued result if j=1, otherwise
+            // i points to the end of the list, insert at i if in range
+            // found a higher valued (worse) result or list not full
+            if (j || i < match_limit-1)
+            {                             // insert in front of higher results
+               for (j=min(match_limit-2,num-1); j>=i; j--)
+               {
+                  match[j+1] = match[j];
+                  dist[j+1]  = dist[j];
+               }
+               match[i] = list[k];
+               dist[i]  = l_dist;
+               if (num < match_limit) num++;
+            }
+         }  // if l_dist <= threshold
+      }  // if len diff <= threshold
+   }  // for k
+   return(num);
+}
+#define SMALLEST_OF(x,y,z)       ( (x<y) ? min(x,z) : min(y,z) )
+#define ZERO_IF_EQUAL(ch1,ch2)   ( (ch1==ch2) ? 0 : CHANGE )
+static int l_dist_raw(char *str1, char *str2, int len1, int len2)
+{
+   register int i, j;
+   unsigned int dist_im1[MAX_LDIST_LEN+1];
+   unsigned int dist_i_j, dist_i_jm1, dist_j0;
+   char *p1, *p2;
+   for (i=1, dist_im1[0]=0; i<=MAX_LDIST_LEN; i++)
+      dist_im1[i] = dist_im1[i-1] + ADDITION;
+   dist_j0 = 0;
+
+   for (i=1, p1=str1; i<=len1; i++, p1++)
+   {
+      dist_i_jm1 = dist_j0 += DELETION;
+      for (j=1, p2=str2; j<=len2; j++, p2++)
+      {
+         dist_i_j = SMALLEST_OF(dist_im1[j-1] + ZERO_IF_EQUAL(*p1, *p2),
+                                dist_i_jm1    + ADDITION,
+                                dist_im1[j]   + DELETION );
+         dist_im1[j-1] = dist_i_jm1;
+         dist_i_jm1 = dist_i_j;
+      }
+      dist_im1[j] = dist_i_j;
+   }
+   return(dist_i_j);
+}
+
+#ifdef _MSC_VER
+EXTERN_C void perl_alike(pTHXo_ CV* cv)
+#else
+static XS(perl_alike)
+#endif
+{
+  /* расчет расстояния между словами по алгоритму Левештейна
+     0-слова совпадают
+
+  */
+  dXSARGS;
+  char * str1;
+  char * str2;
+  int len1,len2,threshold,ldist;
+  STRLEN n_a;
+  if (items!=2)
+  {
+    w_log('9',"wrong number of params to alike(need 2, exist %d)", items);
+    XSRETURN_EMPTY;
+  }
+  str1=(char *)SvPV(ST(0),n_a);if (n_a==0) str1="";
+  str2=(char *)SvPV(ST(1),n_a);if (n_a==0) str2="";
+  len1 = strlen(str1);
+  len2 = strlen(str2);
+  threshold = 1 + ((len1 + 2) / 4);
+  ldist = LENGTH_MISMATCH;
+  len1 = min(len1, MAX_LDIST_LEN);
+  len2 = min(len2, MAX_LDIST_LEN);
+  ldist = l_dist_raw(str1, str2, len1, len2);
+  XSRETURN_IV(ldist);
 }
 #ifdef _MSC_VER
 EXTERN_C void perl_putMsgInArea(pTHXo_ CV* cv)
@@ -295,6 +419,7 @@ static void xs_init(void)
   newXS("myaddr",        perl_myaddr,        file);
   newXS("nodelistDir",   perl_nodelistDir,   file);
   newXS("crc32",         perl_crc32,         file);
+  newXS("alike",	 perl_alike,	     file);	
 }
 
 static void exitperl(void)
@@ -402,14 +527,18 @@ static void restoreperlerr(int saveerr, int pid)
 #endif
 #endif /* _MSC_VER */
 }
-
-static int PerlStart(void)
+int PerlStart(void)
 {
    int rc;
    char *perlfile;
    char *perlargs[]={"", NULL, NULL};
    int saveerr, pid;
-
+   
+   if (!config->perlSupport)
+   {
+     do_perl=0;
+     return 1;
+   }
    if (config->hptPerlFile != NULL)
      perlfile = config->hptPerlFile;
    else
@@ -650,7 +779,7 @@ s_route *perlroute(s_message *msg, s_route *defroute)
    return NULL;
 }
 
-int perlfilter(s_message *msg, s_addr pktOrigAddr, int secure)
+int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
 {
    char *area = NULL, *prc;
    int rc = 0;

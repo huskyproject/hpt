@@ -97,7 +97,6 @@ groups for @code{EchoAreas})
 
 @table @asis
 @item Main page (source code, win32 & os/2 releases) - @url{http://husky.physcip.uni-stuttgart.de/hpt.html}
-@item Win32 bins, tools, faqs (current, russian) - @url{http://hpt-tosser.narod.ru}
 @item Win32 bins (current, russian) - @url{www.chat.ru/~sirevtov/files}
 @item Win32 bins (current, russian) - @url{www.sirevtov.narod.ru}
 @end table
@@ -2827,6 +2826,7 @@ This statement can be repeated.
 * CarbonTo::                    make carbonCopy using to-field of msg
 * ExcludePassthroughCarbon::    don't carbon in passthrough areas
 * NetmailExtern::               specify the external Program to pass netmail msgs to
+
 @end menu
 
 @node CarbonAddr, CarbonAndQuit, Carbon Copy, Carbon Copy
@@ -3314,6 +3314,7 @@ how to use several netmail areas and similar.
 * Suffixes::    renaming suffixes for pkt files
 * Netmail::     defining several netmail areas for several users
 * ZoneGating::  how zonegating works for echomail
+* Perl support::Perl support in HPT
 @end menu
 
 @node Exit, Suffixes, Advanced Concepts, Advanced Concepts
@@ -3358,7 +3359,7 @@ for second address in second netmail area respectively, you must add
 @item NetmailArea OtherNetMail /home/ml/fido/msgb/othernetmail -b squish -a 2:90/190
 @end table
 
-@node ZoneGating, , Netmail, Advanced Concepts
+@node ZoneGating, Perl support, Netmail, Advanced Concepts
 @section How Zone Gating works for echomail and what seen-bys is stripped
 
 We have EchoArea with links from zone1 & zone2. Echo->useAka with
@@ -3401,6 +3402,79 @@ b) msg comes from z2. forward it to z2 links. then forward to z1
 c) scan works the same: first sending to z2 links, adding to seen-by's
    z1 links and export to them.
 
+@node Perl support, , ZoneGating , Advanced Concepts
+@section Perl support in HPT
+HPT may be compiled with support for calling Perl subs in some parts of its 
+work. In this case it also provides API for such subs(Perl hooks).
+Perl subs are located in file filter.pl, which usually located
+in same directory as HPT's executable file but it's name and location
+may changed via @code{HptPerlFile} configuration option.
+The following Perl hooks are supported:
+@table @asis
+@item 1.
+ after_unpack - called after unpacking an echomail bundle to @code{TempInbound}
+@item 2.
+ before_pack - called before packing echomail bundle to one of links
+@item 3.
+ process_pkt - called before processing pkt, the following variables avaible:
+ $pktname - name of pkt,$secure - defined if this pkt from secure link
+ hook must return "" for normal pkt processing or other string to rename pkt to .flt
+@item 4.
+ pkt_done - called after pkt processing, the following variables avaible:
+ $pktname - name of pkt, $rc - exit code(0-ok),$res - reason(exit code in text form):
+  0 - OK ($res undefined),
+  1 - Security violation,
+  2 - Can't open pkt,
+  3 - Bad pkt format,
+  4 - Not to us,
+  5 - Msg tossing problem
+@item 5.
+  hpt_exit - called before hpt completely exit if any other Perl hook was called 
+  during this session. 
+@item 6.
+  route - called just before routing netmail message, the following variables 
+  availble:
+  $addr - message destination address,
+  $from - message originating address,
+  $text - message text,
+  $route - default route for this message(derermined via @code{Route} statements in 
+  config file (may be empty, this means that either no route at all for this message
+  or it will be routed via one-to-multi routing(Route normal noroute 2:5004/73.*)).
+
+  Before return you can set $flavour - to hold|normal|crash|direct|immediate
+  for required flavour of message.
+  return "" for default routing or address via which this message should be sent.
+  example:
+
+@example
+  sub route
+
+    if ($from eq "2:5004/75.73") return "2:5004/75.0";
+    else return "";
+@end example
+
+  if source address of message is 2:5004/75.73 then route it via 2:5004/75,
+  otherwise route it using default routing
+@item 7.
+ scan - called while scanning messages(hpt scan or hpt pack).
+    
+@end table
+@subsection perlSupport
+@findex perlSupport
+
+This statement enables/disables perl support in win32 hpt's version 
+wich was compiled with perl support.
+If you enable Perl support, you must also have ActivePerl's perl56.dll from
+ActivePerl 623 or later(www.activestate.com,about 10 Mb) somewere on your PATH.
+Run without perl56.dll and with this option set to on will result in 
+emergency exit with message telling that delay-loading of perl56.dll failed
+and exit code EX_UNAVAILABLE
+This option have any sence only on hpt.exe compiled with MS Visual C++ 6.0
+or later using makeperl.mvc
+
+Default is off
+
+This statement cannot be repeated 
 
 @node Keyword Index,  , Advanced Concepts, Top
 @appendix Configuration File Keyword Index
