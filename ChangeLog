@@ -1,445 +1,445 @@
-2002-08-03 Saturday 20:45  mche
+2002-08-03 Saturday 11:45  mche
 
 	* src/areafix.c (1.337): fix if statment that brakes areafix
 	message processing
 
-2002-08-01 Thursday 13:45  mche
+2002-08-01 Thursday 04:45  mche
 
 	* src/areafix.c (1.336): now tearline brakes areafix message
 	processing
 
-2002-07-31 Wednesday 17:04  stas
+2002-07-31 Wednesday 08:04  stas
 
 	* src/: perl.c (1.38), pktread.c (1.88), toss.c (1.432): replace
 	free() calls to nfree()
 
-2002-07-31 Wednesday 15:46  stas
+2002-07-31 Wednesday 06:46  stas
 
 	* src/query.c (1.59): Change syntax: C++ -> C; check for NULL
 
-2002-07-31 Wednesday 15:39  stas
+2002-07-31 Wednesday 06:39  stas
 
 	* src/query.c (1.58): Add debug log messages (LL_FUNC)
 
-2002-07-31 Wednesday 15:24  stas
+2002-07-31 Wednesday 06:24  stas
 
 	* src/areafix.c (1.335): Add log message 'Process command ...'
 
-2002-07-31 Wednesday 15:22  stas
+2002-07-31 Wednesday 06:22  stas
 
 	* src/areafix.c (1.334): Fix unsubscribe error (illegal condition
 	for tearline)
 
-2002-07-31 Wednesday 12:15  stas
+2002-07-31 Wednesday 03:15  stas
 
 	* src/areafix.c (1.333): Insert and change debug output
 
-2002-07-31 Wednesday 12:11  gerrit
+2002-07-31 Wednesday 03:11  gerrit
 
 	* doc/Makefile (1.4): Extended clean, install and uninstall
 	sections for DVI-files.  Added distclean target.
 
-2002-07-31 Wednesday 10:48  mche
+2002-07-31 Wednesday 01:48  mche
 
 	* src/query.c (1.57): fixed building config line for autocreated
 	area.  "autosubscribing" works correct now.
 
-2002-07-30 Tuesday 15:55  mche
+2002-07-30 Tuesday 06:55  mche
 
 	* src/areafix.c (1.332), src/query.c (1.56), src/toss.c (1.431),
 	h/toss.h (1.48): hpt_stristr() moved to fidoconfig
 
-2002-07-30 Tuesday 10:34  gerrit
+2002-07-30 Tuesday 01:34  gerrit
 
 	* doc/hpt.texi (1.77): Added "\input texinfo" and fixed header to
 	make texi2dvi work (again).
 
-2002-07-30 Tuesday 10:26  gerrit
+2002-07-30 Tuesday 01:26  gerrit
 
 	* doc/texinfo.tex (1.1): Added texinfo.tex in huskybse/doc to allow
 	texi2dvi to work.
 
-2002-07-29 Monday 17:48  pavel.gulchouck
+2002-07-29 Monday 08:48  pavel.gulchouck
 
 	* src/toss.c (1.430): Minor fix bundle sort method
 
-2002-07-27 Saturday 12:13  d.sergienko
+2002-07-27 Saturday 03:13  d.sergienko
 
 	* HISTORY (1.5): added info about NewAreaRefuseFile
 
-2002-07-26 Friday 18:36  mche
+2002-07-26 Friday 09:36  mche
 
 	* src/: areafix.c (1.331), query.c (1.55): fixed bug with time
 	adjusting
 
-2002-07-26 Friday 17:44  d.sergienko
+2002-07-26 Friday 08:44  d.sergienko
 
 	* src/toss.c (1.429): open NewAreaRefuseFile as "r+b" instead of
 	"rt"
 
-2002-07-26 Friday 15:58  d.sergienko
+2002-07-26 Friday 06:58  d.sergienko
 
 	* doc/hpt.texi (1.76), src/toss.c (1.428): added NewAreaRefuseFile
 	processing
 
-2002-07-26 Friday 14:29  stas
+2002-07-26 Friday 05:29  stas
 
 	* src/scanarea.c (1.86): Insert include directive for errno
 
-2002-07-26 Friday 12:01  mche
+2002-07-26 Friday 03:01  mche
 
 	* src/areafix.c (1.330), h/areafix.h (1.31), misc/areafix.hlp
 	(1.17): remote packer changing
 
-2002-07-25 Thursday 16:17  mche
+2002-07-25 Thursday 07:17  mche
 
 	* src/areafix.c (1.329): some code improvement of  function
 	changeconfig() using InsertCfgLine()
 
-2002-07-25 Thursday 09:16  mche
+2002-07-25 Thursday 00:16  mche
 
 	* src/areafix.c (1.328), h/fcommon.h (1.42), src/scanarea.c (1.85),
 	h/scanarea.h (1.5): rescan functions moved to scanarea.c
 
-2002-07-24 Wednesday 22:36  stas
+2002-07-24 Wednesday 13:36  stas
 
 	* src/areafix.c (1.327): Initialize variable 'j' in unsubscribe(),
 	line 1222 (prevent compiler varning)
 
-2002-07-24 Wednesday 22:27  stas
+2002-07-24 Wednesday 13:27  stas
 
 	* doc/hpt-FAQ.russian (1.26): Add question about disable netmail
 	packing
 
-2002-07-24 Wednesday 18:18  mche
+2002-07-24 Wednesday 09:18  mche
 
 	* TODO (1.195): no message
 
-2002-07-24 Wednesday 17:35  mche
+2002-07-24 Wednesday 08:35  mche
 
 	* src/: link.c (1.56), query.c (1.54): link warnings log level
 	changed
 
-2002-07-24 Wednesday 17:00  mche
+2002-07-24 Wednesday 08:00  mche
 
 	* src/areafix.c (1.326): report about rescanable areas by %list
 	command to areafix rescanable areas will have mark 'R'
 
-2002-07-24 Wednesday 15:48  mche
+2002-07-24 Wednesday 06:48  mche
 
 	* src/areafix.c (1.325): fix core when unsubscribe from own addres
 	from area that has no links and non-passthroughtþ in this case area
 	will be removed from config file
 
-2002-07-24 Wednesday 13:20  mche
+2002-07-24 Wednesday 04:20  mche
 
 	* src/link.c (1.55): do not link areas twice
 
-2002-07-23 Tuesday 09:15  pavel.gulchouck
+2002-07-23 Tuesday 00:15  pavel.gulchouck
 
 	* misc/filter.pl (1.8): routing a bit improved
 
-2002-07-22 Monday 23:00  stas
+2002-07-22 Monday 14:00  stas
 
 	* src/toss.c (1.427): Fix remap bug: synchronise INTL kludge
 
-2002-07-22 Monday 18:07  mche
+2002-07-22 Monday 09:07  mche
 
 	* TODO (1.194): no message
 
-2002-07-22 Monday 14:35  stas
+2002-07-22 Monday 05:35  stas
 
 	* src/scan.c (1.169): Change log messages (debug)
 
-2002-07-21 Sunday 21:01  stas
+2002-07-21 Sunday 12:01  stas
 
 	* src/scan.c (1.168): Add (debug-levels) log output
 
-2002-07-17 Wednesday 22:58  tobi
+2002-07-17 Wednesday 13:58  tobi
 
 	* src/: pktread.c (1.87), pktwrite.c (1.37): Fixes for MacOS X
 
-2002-07-16 Tuesday 21:51  stas
+2002-07-16 Tuesday 12:51  stas
 
 	* src/hptlink.c (1.42): replace free() to nfree(), strdup() to
 	sstrdup()
 
-2002-07-16 Tuesday 21:19  stas
+2002-07-16 Tuesday 12:19  stas
 
 	* src/toss.c (1.426): Add log messages with Badmail reason text
 	(level LL_ECHOMAIL)
 
-2002-07-15 Monday 22:30  stas
+2002-07-15 Monday 13:30  stas
 
 	* doc/hpt.texi (1.75): Fix 'areafixQueryReports' default
 
-2002-07-15 Monday 20:48  stas
+2002-07-15 Monday 11:48  stas
 
 	* doc/hpt.texi (1.74): Correct english phrases
 
-2002-07-15 Monday 10:07  pavel.gulchouck
+2002-07-15 Monday 01:07  pavel.gulchouck
 
 	* doc/hpt.texi (1.73), src/fcommon.c (1.137), src/toss.c (1.425):
 	Added bundleNameStyle addrsCRC32Always
 
-2002-07-14 Sunday 23:26  pavel.gulchouck
+2002-07-14 Sunday 14:26  pavel.gulchouck
 
 	* src/fcommon.c (1.136): removing sent empty arcmail fix again
 
-2002-07-14 Sunday 23:16  stas
+2002-07-14 Sunday 14:16  stas
 
 	* src/hpt.c (1.154): Fix compiler warning (perldone())
 
-2002-07-14 Sunday 21:10  pavel.gulchouck
+2002-07-14 Sunday 12:10  pavel.gulchouck
 
 	* src/toss.c (1.424), doc/hpt.texi (1.72):
 	Carbon(From|To|Subj|Text|Kludge|FromArea) are patterns now
 
-2002-07-14 Sunday 20:30  stas
+2002-07-14 Sunday 11:30  stas
 
 	* HISTORY (1.4): Add MAJOR feature
 
-2002-07-14 Sunday 19:51  pavel.gulchouck
+2002-07-14 Sunday 10:51  pavel.gulchouck
 
 	* src/fcommon.c (1.135): removing sent empty arcmail fix
 
-2002-07-14 Sunday 17:49  pavel.gulchouck
+2002-07-14 Sunday 08:49  pavel.gulchouck
 
 	* doc/hpt-FAQ.russian (1.25): fix spelling
 
-2002-07-12 Friday 21:30  stas
+2002-07-12 Friday 12:30  stas
 
 	* doc/hpt-FAQ.russian (1.24): Add question about russian
 	documentation.
 
-2002-07-12 Friday 21:03  stas
+2002-07-12 Friday 12:03  stas
 
 	* doc/hpt.texi (1.71), src/fcommon.c (1.134), src/toss.c (1.423):
 	New value 'addrsCRC32' for token 'BundleNameStyle'; return
 	addrdDiff action old
 
-2002-07-09 Tuesday 15:53  stas
+2002-07-09 Tuesday 06:53  stas
 
 	* src/fcommon.c (1.133): Fix patch '2002-07-06 Saturday 18:54 
 	stas'
 
-2002-07-09 Tuesday 15:13  mche
+2002-07-09 Tuesday 06:13  mche
 
 	* src/areafix.c (1.324): fix rules sending for passthrough areas
 
-2002-07-08 Monday 22:09  stas
+2002-07-08 Monday 13:09  stas
 
 	* doc/hpt.texi (1.70): Describe new action for manual & mandatory
 
-2002-07-08 Monday 21:56  stas
+2002-07-08 Monday 12:56  stas
 
 	* doc/hpt.texi (1.69): Describe keyword for idle areafix forward
 	requests: areafixqueuefile, ForwardRequestTimeout,
 	IdlePassthruTimeout, KilledRequestTimeout
 
-2002-07-08 Monday 00:29  stas
+2002-07-07 Sunday 15:29  stas
 
 	* HISTORY (1.3): Update HISTORY file
 
-2002-07-08 Monday 00:10  stas
+2002-07-07 Sunday 15:10  stas
 
 	* HISTORY (1.2): update HISTORY file
 
-2002-07-07 Sunday 23:04  stas
+2002-07-07 Sunday 14:04  stas
 
 	* HISTORY (1.1): Add changes log for user's attention
 
-2002-07-07 Sunday 23:02  stas
+2002-07-07 Sunday 14:02  stas
 
 	* filter.pl (1.10): Cosmetic: add file description
 
-2002-07-07 Sunday 21:56  stas
+2002-07-07 Sunday 12:56  stas
 
 	* src/query.c (1.53): Cosmetic fix
 
-2002-07-07 Sunday 21:55  stas
+2002-07-07 Sunday 12:55  stas
 
 	* src/areafix.c (1.323): Rescan: exit from for cycle after area
 	found.
 
-2002-07-06 Saturday 18:54  stas
+2002-07-06 Saturday 09:54  stas
 
 	* src/fcommon.c (1.132): Change addrdiff bundle name stile
 	generation: CRC32("hpt orig-addr link-addr"). Thanks to Igor
 	Romanovsky
 
-2002-07-06 Saturday 18:09  stas
+2002-07-06 Saturday 09:09  stas
 
 	* doc/hpt.texi (1.68), src/areafix.c (1.322): Mandatory now
 	disallow unsubscribe only; Manual disallow subscribe
 
-2002-07-06 Saturday 16:57  mche
+2002-07-06 Saturday 07:57  mche
 
 	* src/fcommon.c (1.131): log pkt and arc names generated for link
 
-2002-07-05 Friday 22:45  stas
+2002-07-05 Friday 13:45  stas
 
 	* src/areafix.c (1.321): Don't include Origin into areafix reply if
 	origin is empty string
 
-2002-07-05 Friday 22:22  stas
+2002-07-05 Friday 13:22  stas
 
 	* doc/hpt.texi (1.67): Desribe token AreafixQueryReports.
 
-2002-07-05 Friday 21:56  stas
+2002-07-05 Friday 12:56  stas
 
 	* misc/hpt_ro/: Hpt_ro.pm (1.1), ro.cfg (1.1), ro_parser.pl (1.1),
 	ro_purge.pl (1.1), ro_readme_rus.txt (1.1): New perl module: hpt
 	read-only manager. Written by Andrew Sagulin 2:6073/1
 
-2002-07-05 Friday 10:50  mche
+2002-07-05 Friday 01:50  mche
 
 	* src/areafix.c (1.320): fix config braking while area is deleted
 
-2002-07-04 Thursday 08:14  stas
+2002-07-03 Wednesday 23:14  stas
 
 	* debian/: README.Debian (1.4), changelog (1.12), control (1.10),
 	copyright (1.2), huskymak.cfg (1.10), rules (1.8): new Debian
 	version [patch from Pavel Andreew]
 
-2002-07-03 Wednesday 17:08  stas
+2002-07-03 Wednesday 08:08  stas
 
 	* src/areafix.c (1.319): Add debug messages
 
-2002-07-02 Tuesday 16:36  mche
+2002-07-02 Tuesday 07:36  mche
 
 	* src/toss.c (1.422): fix log messages errrors
 
-2002-07-02 Tuesday 15:58  stas
+2002-07-02 Tuesday 06:58  stas
 
 	* debian/: changelog (1.11), control (1.9), postinst (1.2): Change
 	debian control files (like in -stable branch)
 
-2002-07-02 Tuesday 10:41  mche
+2002-07-02 Tuesday 01:41  mche
 
 	* src/areafix.c (1.318): making shure that config is closed before
 	opening
 
-2002-07-01 Monday 22:15  stas
+2002-07-01 Monday 13:15  stas
 
 	* src/hptlink.c (1.41): Fix warning message
 
-2002-07-01 Monday 22:14  stas
+2002-07-01 Monday 13:14  stas
 
 	* TODO (1.193): Add 'ListEcho'
 
-2002-07-01 Monday 14:23  stas
+2002-07-01 Monday 05:23  stas
 
 	* debian/postinst (1.1): file postinst was initially added on
 	branch hpt-1_2-stable.
 
-2002-07-01 Monday 12:08  mche
+2002-07-01 Monday 03:08  mche
 
 	* src/areafix.c (1.317): fixed bug with changing config
 
-2002-06-30 Sunday 09:43  mche
+2002-06-30 Sunday 00:43  mche
 
 	* src/: scan.c (1.167), scanarea.c (1.84): fixed bug with scaning
 	locked messages
 
-2002-06-29 Saturday 21:11  stas
+2002-06-29 Saturday 12:11  stas
 
 	* misc/deadareas.pl (1.3): Change dupebase files suffix: 'dpd' to
 	'dpn'. (Fix from Vladimir Leonov 2:5061/122).
 
-2002-06-29 Saturday 20:58  stas
+2002-06-29 Saturday 11:58  stas
 
 	* TODO (1.192): Add EchoAreaGroupDefaults to Category 2
 
-2002-06-28 Friday 14:44  stas
+2002-06-28 Friday 05:44  stas
 
 	* src/toss.c (1.421): w_log() format string fix
 
-2002-06-28 Friday 13:05  mche
+2002-06-28 Friday 04:05  mche
 
 	* src/toss.c (1.420): added some traces
 
-2002-06-28 Friday 10:15  stas
+2002-06-28 Friday 01:15  stas
 
 	* src/query.c (1.52): Add some diagnostic messages
 
-2002-06-27 Thursday 11:21  mche
+2002-06-27 Thursday 02:21  mche
 
 	* src/: query.c (1.51), toss.c (1.418): added some traces
 
-2002-06-27 Thursday 08:01  mche
+2002-06-26 Wednesday 23:01  mche
 
 	* makefile.inc (1.20): patch by [Alexander Shiyan
 	<shc@milas.spb.ru>]
 
-2002-06-25 Tuesday 18:04  stas
+2002-06-25 Tuesday 09:04  stas
 
 	* VERSION (1.4), src/global.c (1.44): Change -current version
 	number after 1.2-stable branch starting.
 
-2002-06-25 Tuesday 17:53  stas
+2002-06-25 Tuesday 08:53  stas
 
 	* INSTALL (1.11), TODO (1.191): Change documentation.
 
-2002-06-25 Tuesday 12:10  mche
+2002-06-25 Tuesday 03:10  mche
 
 	* src/hptlink.c (1.40): fix msvc static compilation
 
-2002-06-24 Monday 21:07  stas
+2002-06-24 Monday 12:07  stas
 
 	* src/toss.c (1.417): Fix loglevel for "Packing for ..." message
 	fortossing to filebox.
 
-2002-06-24 Monday 15:47  stas
+2002-06-24 Monday 06:47  stas
 
 	* src/hptlink.c (1.39): Change loglevel for "Pass..." messages.
 
-2002-06-24 Monday 14:28  stas
+2002-06-24 Monday 05:28  stas
 
 	* man/hptlink.1 (1.3): Update hptlink man page: remove -l option ;
 	add AUTORS, SEE ALSO, FILES sections.
 
-2002-06-22 Saturday 14:02  mche
+2002-06-22 Saturday 05:02  mche
 
 	* src/scan.c (1.166): fixed problems with deleting echotosslog
 
-2002-06-20 Thursday 16:09  stas
+2002-06-20 Thursday 07:09  stas
 
 	* src/areafix.c (1.316): Fix free shifted pointer
 
-2002-06-20 Thursday 15:39  stas
+2002-06-20 Thursday 06:39  stas
 
 	* src/hptlink.c (1.38): Remove \n from log message
 
-2002-06-20 Thursday 15:36  stas
+2002-06-20 Thursday 06:36  stas
 
 	* makefile.inc (1.19): Fix link hptlink.
 
-2002-06-19 Wednesday 21:17  stas
+2002-06-19 Wednesday 12:17  stas
 
 	* src/: getfree.c (1.22), hptlink.c (1.37): Fixes: remove unmatched
 	closing comment; remove \òn from log messages.
 
-2002-06-19 Wednesday 09:31  stas
+2002-06-19 Wednesday 00:31  stas
 
 	* doc/hpt.texi (1.66): Loglevels description sinchronized with
 	fidoconfig doc.
 
-2002-06-17 Monday 17:08  mche
+2002-06-17 Monday 08:08  mche
 
 	* src/scan.c (1.165): fix deleting of nonexisting file
 
-2002-06-17 Monday 15:00  stas
+2002-06-17 Monday 06:00  stas
 
 	* src/toss.c (1.416): Change diagnostic if zlib not compiled but
 	"zipInternal" unpacker spacified.
 
-2002-06-17 Monday 14:10  stas
+2002-06-17 Monday 05:10  stas
 
 	* src/getfree.c (1.21): Fix redefinitions conflict with win32
 	compilers.
 
-2002-06-17 Monday 13:54  stas
+2002-06-17 Monday 04:54  stas
 
 	* src/: areafix.c (1.315), dupe.c (1.64), fcommon.c (1.130),
 	getfree.c (1.20), hpt.c (1.153), link.c (1.54), perl.c (1.37),
@@ -447,337 +447,337 @@
 	scanarea.c (1.83), tlog.c (1.12), toss.c (1.415): New loglevels
 	applied. Use LL_* defines.
 
-2002-06-17 Monday 13:51  stas
+2002-06-17 Monday 04:51  stas
 
 	* make/makefile.inc (1.10), src/hptlink.c (1.36): Hptlink changes:
 	use hpt.log for logging; change version info: generate like as in
 	hpt.
 
-2002-06-17 Monday 06:52  stas
+2002-06-16 Sunday 21:52  stas
 
 	* doc/hpt.texi (1.65): Copy loglevels table from fidoconfig doc.
 
-2002-06-15 Saturday 10:26  mche
+2002-06-15 Saturday 01:26  mche
 
 	* src/areafix.c (1.314): no message
 
-2002-06-14 Friday 14:31  mche
+2002-06-14 Friday 05:31  mche
 
 	* src/dupe.c (1.63): some trace added
 
-2002-06-11 Tuesday 18:36  mche
+2002-06-11 Tuesday 09:36  mche
 
 	* src/arealist.c (1.7), h/arealist.h (1.4): no message
 
-2002-06-11 Tuesday 18:36  mche
+2002-06-11 Tuesday 09:36  mche
 
 	* src/areafix.c (1.313): do not send rules of not created areas
 
-2002-06-10 Monday 15:59  mche
+2002-06-10 Monday 06:59  mche
 
 	* src/areafix.c (1.312): arealist.* moved to fidoconfig from hpt
 
-2002-06-10 Monday 15:54  mche
+2002-06-10 Monday 06:54  mche
 
 	* src/areafix.c (1.311), make/makefile.inc (1.9), makefile.inc
 	(1.18): arealist.* moved to fidoconfig from hpt
 
-2002-06-09 Sunday 15:34  mche
+2002-06-09 Sunday 06:34  mche
 
 	* src/: areafix.c (1.310), dupe.c (1.62), getfree.c (1.19), hpt.c
 	(1.152), hptlink.c (1.35), link.c (1.53), pktinfo.c (1.16),
 	pktread.c (1.85), pktwrite.c (1.36), scan.c (1.163), toss.c
 	(1.414): fix cygwin warnings
 
-2002-06-09 Sunday 15:29  mche
+2002-06-09 Sunday 06:29  mche
 
 	* h/pkt.h (1.27): removed commented code
 
-2002-06-09 Sunday 15:28  mche
+2002-06-09 Sunday 06:28  mche
 
 	* make/makefile.cyg (1.2): increase warnings level
 
-2002-06-09 Sunday 12:05  mche
+2002-06-09 Sunday 03:05  mche
 
 	* src/scanarea.c (1.82): afixcmd.h included
 
-2002-06-08 Saturday 15:53  mche
+2002-06-08 Saturday 06:53  mche
 
 	* src/areafix.c (1.309), src/query.c (1.49), h/areafix.h (1.30):
 	IsAreaAvailable() moved to fidoconfig
 
-2002-06-06 Thursday 23:16  oliver.grimm
+2002-06-06 Thursday 14:16  oliver.grimm
 
 	* src/scan.c (1.162): OG: If a possible bug when adding via lines
 	to a *empty* (no body, no kludge) Message
 
-2002-06-06 Thursday 11:21  mche
+2002-06-06 Thursday 02:21  mche
 
 	* h/pkt.h (1.26): function freeMsgBuffers() moved from hpt to
 	fidoconfig
 
-2002-06-06 Thursday 10:21  oliver.grimm
+2002-06-06 Thursday 01:21  oliver.grimm
 
 	* src/scan.c (1.161): OG: scan.c/addViaToMsg() - appends \r to end
 	of message if needed
 
-2002-06-06 Thursday 07:58  mche
+2002-06-05 Wednesday 22:58  mche
 
 	* src/dupe.c (1.61): fixed coredump on CommonDupeBase
 
-2002-06-05 Wednesday 14:33  mche
+2002-06-05 Wednesday 05:33  mche
 
 	* src/: hpt.c (1.151), pktread.c (1.84), scan.c (1.160): function
 	freeMsgBuffers() moved from hpt to fidoconfig
 
-2002-06-04 Tuesday 18:42  pavel.gulchouck
+2002-06-04 Tuesday 09:42  pavel.gulchouck
 
 	* h/fcommon.h (1.41), src/fcommon.c (1.129): removed commented out
 	Truncate
 
-2002-06-04 Tuesday 18:30  pavel.gulchouck
+2002-06-04 Tuesday 09:30  pavel.gulchouck
 
 	* doc/hpt-FAQ.russian (1.23): Added info about JamSMAPIHighwater
 
-2002-06-04 Tuesday 15:36  stas
+2002-06-04 Tuesday 06:36  stas
 
 	* src/query.c (1.48): Add diagnostic messages ("areafixQueueFile
 	not defined" & etc.)
 
-2002-06-03 Monday 07:57  mche
+2002-06-02 Sunday 22:57  mche
 
 	* src/areafix.c (1.308): fix rules sending
 
-2002-05-31 Friday 13:02  mche
+2002-05-31 Friday 04:02  mche
 
 	* src/areafix.c (1.307): areafix warnig changed
 
-2002-05-30 Thursday 17:18  stas
+2002-05-30 Thursday 08:18  stas
 
 	* src/: scan.c (1.159), scanarea.c (1.81), seenby.c (1.22), tlog.c
 	(1.11), toss.c (1.413): Add intialisations in declarations for
 	pointers.
 
-2002-05-30 Thursday 16:58  stas
+2002-05-30 Thursday 07:58  stas
 
 	* src/query.c (1.47): Fix: "hpt qrep" cause memory fault if
 	echotosslog not defined in config.
 
-2002-05-30 Thursday 16:56  stas
+2002-05-30 Thursday 07:56  stas
 
 	* src/fcommon.c (1.128): Test NULL string pointer in safe_strdup().
 
-2002-05-30 Thursday 16:38  stas
+2002-05-30 Thursday 07:38  stas
 
 	* src/scan.c (1.158): FIx: "hpt pack" cause memory fault when
 	echotosslog not defined in config. (FreeBSD)
 
-2002-05-29 Wednesday 12:30  mche
+2002-05-29 Wednesday 03:30  mche
 
 	* src/query.c (1.46): sstrdup() changed for safe_strdup()
 
-2002-05-28 Tuesday 17:45  mche
+2002-05-28 Tuesday 08:45  mche
 
 	* src/query.c (1.45): do not create tmp-file when saving queryFile
 
-2002-05-28 Tuesday 09:18  pavel.gulchouck
+2002-05-28 Tuesday 00:18  pavel.gulchouck
 
 	* src/scan.c (1.157): Bugfix in rename() and remove() retcode
 	analysis
 
-2002-05-26 Sunday 07:47  ml
+2002-05-25 Saturday 22:47  ml
 
 	* make/makefile.inc (1.8): $(RMOPT) in HPT Makefile
 
-2002-05-24 Friday 12:35  d.sergienko
+2002-05-24 Friday 03:35  d.sergienko
 
 	* src/scan.c (1.156): fixed scanning when echoTossLogFile and
 	temporary file on different filesystems
 
-2002-05-22 Wednesday 13:20  mche
+2002-05-22 Wednesday 04:20  mche
 
 	* src/areafix.c (1.306): new version of DelLinkFromString() moved
 	from hpt to fidoconfig for common use in hpt & htick
 
-2002-05-21 Tuesday 14:41  mche
+2002-05-21 Tuesday 05:41  mche
 
 	* make/makeperl.mvc (1.9): fix compilation
 
-2002-05-21 Tuesday 11:13  mche
+2002-05-21 Tuesday 02:13  mche
 
 	* src/post.c (1.86): fix bug with posting to netmail
 
-2002-05-20 Monday 15:20  pavel.gulchouck
+2002-05-20 Monday 06:20  pavel.gulchouck
 
 	* src/hpt.c (1.150): fix spelling
 
-2002-05-20 Monday 12:09  d.sergienko
+2002-05-20 Monday 03:09  d.sergienko
 
 	* src/areafix.c (1.305): 
 	fixed unlinking in delLinkFromString() again.
 
-2002-05-20 Monday 11:43  pavel.gulchouck
+2002-05-20 Monday 02:43  pavel.gulchouck
 
 	* src/: fcommon.c (1.127), hpt.c (1.149), hpttree.c (1.23), post.c
 	(1.85), txt2pkt.c (1.37): BeOS compilation fix
 
-2002-05-19 Sunday 10:52  ml
+2002-05-19 Sunday 01:52  ml
 
 	* doc/hpt-FAQ.russian (1.22): update
 
-2002-05-19 Sunday 10:35  ml
+2002-05-19 Sunday 01:35  ml
 
 	* doc/hpt-FAQ.russian (1.21), h/hptperl.h (1.7), src/hpt.c (1.148),
 	src/perl.c (1.36): patch for using putMsgInArea in hpt_exit by
 	Dmitriy Kazimirow
 
-2002-05-18 Saturday 21:24  pavel.gulchouck
+2002-05-18 Saturday 12:24  pavel.gulchouck
 
 	* misc/hpt-stat.russian (1.3): bugfix
 
-2002-05-18 Saturday 20:26  pavel.gulchouck
+2002-05-18 Saturday 11:26  pavel.gulchouck
 
 	* src/hpttree.c (1.22): hpttree works on JAM areas
 
-2002-05-18 Saturday 16:16  pavel.gulchouck
+2002-05-18 Saturday 07:16  pavel.gulchouck
 
 	* src/toss.c (1.412): Fixed BeOS compilation
 
-2002-05-18 Saturday 09:27  mche
+2002-05-18 Saturday 00:27  mche
 
 	* src/post.c (1.84): case of areaname corrected
 
-2002-05-17 Friday 21:23  pavel.gulchouck
+2002-05-17 Friday 12:23  pavel.gulchouck
 
 	* src/areafix.c (1.304): fix spelling
 
-2002-05-17 Friday 17:06  mche
+2002-05-17 Friday 08:06  mche
 
 	* src/post.c (1.83): do not post "\n\r" in uue posting
 
-2002-05-17 Friday 17:05  mche
+2002-05-17 Friday 08:05  mche
 
 	* src/query.c (1.44): make report only if queue file changed
 
-2002-05-17 Friday 08:50  d.sergienko
+2002-05-16 Thursday 23:50  d.sergienko
 
 	* TODO (1.190): 
 	add %users afix command
 
-2002-05-16 Thursday 14:33  d.sergienko
+2002-05-16 Thursday 05:33  d.sergienko
 
 	* src/areafix.c (1.303): 
 	memory leak in delLinkFromString() fixed
 
-2002-05-15 Wednesday 19:11  mche
+2002-05-15 Wednesday 10:11  mche
 
 	* src/link.c (1.52): linking log messages are grouped
 
-2002-05-15 Wednesday 19:02  mche
+2002-05-15 Wednesday 10:02  mche
 
 	* src/post.c (1.82): scan only posted areas // again :( do not make
 	posting to wrong defined area
 
-2002-05-14 Tuesday 12:13  d.sergienko
+2002-05-14 Tuesday 03:13  d.sergienko
 
 	* src/scan.c (1.155): 
 	using makeUniqueDosFileName() for all platforms for temp filename
 	creation during processing echotossLog
 
-2002-05-13 Monday 14:02  pavel.gulchouck
+2002-05-13 Monday 05:02  pavel.gulchouck
 
 	* src/areafix.c (1.302): set passive to both echo and fileecho by
 	autopause
 
-2002-05-13 Monday 13:28  pavel.gulchouck
+2002-05-13 Monday 04:28  pavel.gulchouck
 
 	* doc/hpt.texi (1.64): syntax fix
 
-2002-05-13 Monday 12:50  mche
+2002-05-13 Monday 03:50  mche
 
 	* src/post.c (1.81): fixed broken multipart posting logic
 
-2002-05-13 Monday 08:37  mche
+2002-05-12 Sunday 23:37  mche
 
 	* make/makeperl.mvcdll (1.5): compilation fixed
 
-2002-05-12 Sunday 16:51  d.sergienko
+2002-05-12 Sunday 07:51  d.sergienko
 
 	* src/post.c (1.80): fixed scanning during post with existing
 	echotoss.log
 
-2002-05-12 Sunday 13:46  d.sergienko
+2002-05-12 Sunday 04:46  d.sergienko
 
 	* src/scan.c (1.154): fixed temporary filenames creation
 	(echotoss.log.*) under DOS.
 
-2002-05-11 Saturday 12:16  mche
+2002-05-11 Saturday 03:16  mche
 
 	* src/toss.c (1.411): changeFileSuffix() moved to fidoconfig for
 	common use in hpt, htick
 
-2002-05-11 Saturday 11:18  mche
+2002-05-11 Saturday 02:18  mche
 
 	* h/pkt.h (1.25), src/toss.c (1.410): createXMSG() moved to
 	fidoconfig for common use in hpt, htick
 
-2002-05-10 Friday 18:21  pavel.gulchouck
+2002-05-10 Friday 09:21  pavel.gulchouck
 
 	* src/areafix.c (1.301): areafix process and reply about error for
 	messages sent to not ourAKA
 
-2002-05-07 Tuesday 13:53  mche
+2002-05-07 Tuesday 04:53  mche
 
 	* src/toss.c (1.408): putMsgInArea()  wrong usage of pointers fixed
 
-2002-05-07 Tuesday 13:10  mche
+2002-05-07 Tuesday 04:10  mche
 
 	* src/perl.c (1.35): fixed redifenition of s_addr from winsock.h
 
-2002-05-07 Tuesday 11:54  pavel.gulchouck
+2002-05-07 Tuesday 02:54  pavel.gulchouck
 
 	* src/toss.c (1.407): Do not reopen msgbase files for toss each
 	message
 
-2002-05-07 Tuesday 09:51  pavel.gulchouck
+2002-05-07 Tuesday 00:51  pavel.gulchouck
 
 	* filter.pl (1.9), doc/hpt.texi (1.63), h/hptperl.h (1.6),
 	src/perl.c (1.34), src/toss.c (1.406): added new perl hook tossbad,
 	called when put message to badarea
 
-2002-05-06 Monday 18:15  pavel.gulchouck
+2002-05-06 Monday 09:15  pavel.gulchouck
 
 	* src/toss.c (1.404), TODO (1.188): speedup: do not reopen pkt for
 	writing each message
 
-2002-05-06 Monday 14:44  pavel.gulchouck
+2002-05-06 Monday 05:44  pavel.gulchouck
 
 	* src/post.c (1.76): added flags dir, imm, kfs, tfs, cfm, npd
 
-2002-05-06 Monday 14:04  pavel.gulchouck
+2002-05-06 Monday 05:04  pavel.gulchouck
 
 	* src/: areafix.c (1.299), query.c (1.43), toss.c (1.403): add
 	kludge "FLAGS NPD" when it needed
 
-2002-05-06 Monday 13:39  pavel.gulchouck
+2002-05-06 Monday 04:39  pavel.gulchouck
 
 	* src/post.c (1.75): Do not autoadd tearline & origin in netmail
 
-2002-05-06 Monday 12:24  pavel.gulchouck
+2002-05-06 Monday 03:24  pavel.gulchouck
 
 	* src/areafix.c (1.298): delLinkFromString changed
 
-2002-05-04 Saturday 23:17  d.sergienko
+2002-05-04 Saturday 14:17  d.sergienko
 
 	* src/areafix.c (1.297): 
 	fixed bug of overwriting main config when used inclusion file with
 	areas
 
-2002-05-04 Saturday 14:07  pavel.gulchouck
+2002-05-04 Saturday 05:07  pavel.gulchouck
 
 	* src/toss.c (1.402): changed seen-by check logic
 
-2002-05-04 Saturday 09:54  mche
+2002-05-04 Saturday 00:54  mche
 
 	* src/areafix.c (1.296), src/getfree.c (1.18), src/perl.c (1.33),
 	src/post.c (1.74), src/query.c (1.42), src/toss.c (1.401),
@@ -785,58 +785,58 @@
 	makeMessage() moved to fidoconfig for common use in hpt htick
 	txt2pkt
 
-2002-05-03 Friday 14:30  mche
+2002-05-03 Friday 05:30  mche
 
 	* h/pkt.h (1.23), src/areafix.c (1.295), src/perl.c (1.32),
 	src/pktwrite.c (1.35), src/post.c (1.73), src/query.c (1.41),
 	src/toss.c (1.400), src/txt2pkt.c (1.35): createKludgesmoved to
 	fidoconfig for common use in hpt htick txt2pkt
 
-2002-05-03 Friday 10:07  mche
+2002-05-03 Friday 01:07  mche
 
 	* src/areafix.c (1.294): areafixQueueFile broken logic fixed
 
-2002-05-02 Thursday 15:07  d.sergienko
+2002-05-02 Thursday 06:07  d.sergienko
 
 	* src/areafix.c (1.293): new unsubscribing code (test it please)
 
-2002-04-28 Sunday 21:20  pavel.gulchouck
+2002-04-28 Sunday 12:20  pavel.gulchouck
 
 	* src/areafix.c (1.292): fix spelling
 
-2002-04-28 Sunday 20:44  pavel.gulchouck
+2002-04-28 Sunday 11:44  pavel.gulchouck
 
 	* src/areafix.c (1.291): bugfix, unsubscribe can hangs since 1.284
 	(23 Apr)
 
-2002-04-27 Saturday 09:35  ml
+2002-04-27 Saturday 00:35  ml
 
 	* src/hpt.c (1.147): Compile HPT with Perl support on VC.Net by
 	Dmitriy Kazimirow
 
-2002-04-26 Friday 17:19  mche
+2002-04-26 Friday 08:19  mche
 
 	* src/toss.c (1.399): fillCmdStatement moved to fidoconfig for
 	common use in hpt htick nltools
 
-2002-04-26 Friday 11:04  pavel.gulchouck
+2002-04-26 Friday 02:04  pavel.gulchouck
 
 	* src/scan.c (1.152): Clear trs, loc & k/s attributes after scan()
 	perl hook
 
-2002-04-26 Friday 08:07  mche
+2002-04-25 Thursday 23:07  mche
 
 	* src/areafix.c (1.290): autopassive for echos & fileechos
 
-2002-04-25 Thursday 07:48  mche
+2002-04-24 Wednesday 22:48  mche
 
 	* src/perl.c (1.30): include and undef added for MSVC
 
-2002-04-24 Wednesday 12:20  pavel.gulchouck
+2002-04-24 Wednesday 03:20  pavel.gulchouck
 
 	* src/areafix.c (1.289): Improve errors reporting
 
-2002-04-24 Wednesday 11:49  d.sergienko
+2002-04-24 Wednesday 02:49  d.sergienko
 
 	* h/: areafix.h (1.28), arealist.h (1.3), dupe.h (1.19), fcommon.h
 	(1.40), global.h (1.31), hpt.h (1.7), hptperl.h (1.5), link.h
@@ -844,7 +844,7 @@
 	scanarea.h (1.4), seenby.h (1.8), toss.h (1.46), version.h (1.8):
 	added rcs_id.
 
-2002-04-24 Wednesday 11:28  d.sergienko
+2002-04-24 Wednesday 02:28  d.sergienko
 
 	* src/: areafix.c (1.288), arealist.c (1.6), dupe.c (1.60),
 	fcommon.c (1.126), getfree.c (1.17), global.c (1.43), hpt.c
@@ -853,867 +853,867 @@
 	post.c (1.72), query.c (1.40), scan.c (1.151), scanarea.c (1.79),
 	seenby.c (1.21), tlog.c (1.10), tpkt.c (1.26): added rcs_id.
 
-2002-04-24 Wednesday 11:13  d.sergienko
+2002-04-24 Wednesday 02:13  d.sergienko
 
 	* src/areafix.c (1.287): 
 	fixed bug in unsubscribe() when last link unsubscribing.
 
-2002-04-24 Wednesday 10:59  pavel.gulchouck
+2002-04-24 Wednesday 01:59  pavel.gulchouck
 
 	* src/areafix.c (1.286): do not report all already linked areas for
 	pattern subscribing
 
-2002-04-23 Tuesday 23:48  pavel.gulchouck
+2002-04-23 Tuesday 14:48  pavel.gulchouck
 
 	* src/query.c (1.39): preserving EOL config style fix
 
-2002-04-23 Tuesday 21:35  pavel.gulchouck
+2002-04-23 Tuesday 12:35  pavel.gulchouck
 
 	* src/perl.c (1.28): avoid gcc warnings
 
-2002-04-23 Tuesday 21:33  pavel.gulchouck
+2002-04-23 Tuesday 12:33  pavel.gulchouck
 
 	* src/: areafix.c (1.285), perl.c (1.27), post.c (1.71), tpkt.c
 	(1.25), txt2pkt.c (1.34): strftime() changed to fts_time(), it's
 	not depended of locale now
 
-2002-04-23 Tuesday 17:08  d.sergienko
+2002-04-23 Tuesday 08:08  d.sergienko
 
 	* src/areafix.c (1.284): fixed bug in findLinkInString() when
 	unsibscribing
 
-2002-04-23 Tuesday 12:24  mche
+2002-04-23 Tuesday 03:24  mche
 
 	* src/pktwrite.c (1.33): Big Subject line bug fixed
 
-2002-04-22 Monday 14:46  mche
+2002-04-22 Monday 05:46  mche
 
 	* src/areafix.c (1.283): report about already linked areas
 
-2002-04-22 Monday 13:25  d.sergienko
+2002-04-22 Monday 04:25  d.sergienko
 
 	* src/post.c (1.70): fixed segfault during posting uue.
 
-2002-04-22 Monday 13:03  pavel.gulchouck
+2002-04-22 Monday 04:03  pavel.gulchouck
 
 	* misc/filter.pl (1.7): process CrashEcho list reply
 
-2002-04-20 Saturday 14:49  mche
+2002-04-20 Saturday 05:49  mche
 
 	* src/dupe.c (1.59): dupe search improvement
 
-2002-04-20 Saturday 13:40  mche
+2002-04-20 Saturday 04:40  mche
 
 	* src/areafix.c (1.282): fixed bug in usubscribe()
 
-2002-04-19 Friday 16:20  mche
+2002-04-19 Friday 07:20  mche
 
 	* src/: areafix.c (1.281), hpt.c (1.145): pause statement expanded
 	to: Pause ON Pause OFF Pause FAREA Pause EAREA
 
-2002-04-18 Thursday 10:33  mche
+2002-04-18 Thursday 01:33  mche
 
 	* src/hpt.c (1.144): deleting lock file if post failed [patch by
 	Andrew Sagulin 2:6037/1]
 
-2002-04-18 Thursday 09:03  mche
+2002-04-18 Thursday 00:03  mche
 
 	* src/post.c (1.69): translates origin & tirline to OEM-defined
 	character set (for win32)
 
-2002-04-17 Wednesday 13:24  mche
+2002-04-17 Wednesday 04:24  mche
 
 	* src/areafix.c (1.280): fixed bug with unsubscribing
 
-2002-04-15 Monday 18:54  pavel.gulchouck
+2002-04-15 Monday 09:54  pavel.gulchouck
 
 	* doc/: hpt-FAQ.russian (1.20), hpt.texi (1.62): perlSupport token
 	and default for perlFile removed
 
-2002-04-15 Monday 12:54  mche
+2002-04-15 Monday 03:54  mche
 
 	* src/: hpt.c (1.143), perl.c (1.26): token perlSupport removed
 
-2002-04-14 Sunday 20:48  ml
+2002-04-14 Sunday 11:48  ml
 
 	* doc/hpt-FAQ.russian (1.19): update
 
-2002-04-14 Sunday 19:52  ml
+2002-04-14 Sunday 10:52  ml
 
 	* misc/make_rules (1.1): bash script for making rules dir from
 	fileecho's xofcerules dir
 
-2002-04-14 Sunday 19:42  ml
+2002-04-14 Sunday 10:42  ml
 
 	* make/makeperl.mvc (1.8): delayload perl56.dll
 
-2002-04-13 Saturday 16:47  mche
+2002-04-13 Saturday 07:47  mche
 
 	* src/hpt.c (1.142): Some internal features added.  Now we can set
 	application that use fidoconfig
 
-2002-04-11 Thursday 17:12  mche
+2002-04-11 Thursday 08:12  mche
 
 	* src/hpt.c (1.141): fix misspeling
 
-2002-04-11 Thursday 12:51  mche
+2002-04-11 Thursday 03:51  mche
 
 	* h/query.h (1.13): unused defenition removed
 
-2002-04-11 Thursday 08:14  pavel.gulchouck
+2002-04-10 Wednesday 23:14  pavel.gulchouck
 
 	* makefile.inc (1.16): removed tree.$(OBJ) from makefile -- was
 	moved to fidoconf
 
-2002-04-10 Wednesday 18:33  mche
+2002-04-10 Wednesday 09:33  mche
 
 	* src/query.c (1.38): fixed bug with incorrect date range when freq
 	--> kill
 
-2002-04-10 Wednesday 18:19  mche
+2002-04-10 Wednesday 09:19  mche
 
 	* src/dupe.c (1.58): fixed bug with duplicate dupebase filenames
 	when autoareacreatesubdirs on
 
-2002-04-10 Wednesday 17:31  mche
+2002-04-10 Wednesday 08:31  mche
 
 	* src/hpt.c (1.140): fixed warnings with perl build
 
-2002-04-10 Wednesday 16:36  mche
+2002-04-10 Wednesday 07:36  mche
 
 	* make/makeperl.mvcdll (1.4): delayloading compilation
 
-2002-04-10 Wednesday 11:46  mche
+2002-04-10 Wednesday 02:46  mche
 
 	* src/areafix.c (1.279): query file logic fixed (bug with
 	unsubscribing)
 
-2002-04-09 Tuesday 18:21  mche
+2002-04-09 Tuesday 09:21  mche
 
 	* h/tree.h (1.7), h/vixie.h (1.7), src/tree.c (1.11): no message
 
-2002-04-08 Monday 13:27  mche
+2002-04-08 Monday 04:27  mche
 
 	* src/dupe.c (1.57): speedup dupe search (need to check)
 
-2002-04-08 Monday 13:15  mche
+2002-04-08 Monday 04:15  mche
 
 	* src/dupe.c (1.56): speedup dupe search (need to check)
 
-2002-04-06 Saturday 08:35  mche
+2002-04-05 Friday 22:35  mche
 
 	* TODO (1.187): no message
 
-2002-04-05 Friday 16:15  mche
+2002-04-05 Friday 06:15  mche
 
 	* src/: areafix.c (1.278), query.c (1.37): rebuild area tree
 
-2002-04-05 Friday 12:51  ml
+2002-04-05 Friday 02:51  ml
 
 	* src/fcommon.c (1.125): work again on wcw (case insensitive
 	CreateOutboundFileName function calls of Watcom C)
 
-2002-04-05 Friday 09:25  pavel.gulchouck
+2002-04-04 Thursday 23:25  pavel.gulchouck
 
 	* filter.pl (1.8), doc/hpt.texi (1.61), src/perl.c (1.25): Added
 	vars $fromname, $toname, $date, $subj for route() func in filter.pl
 
-2002-04-04 Thursday 13:12  ml
+2002-04-04 Thursday 03:12  ml
 
 	* src/areafix.c (1.277): sendRules fix
 
-2002-03-31 Sunday 08:16  ml
+2002-03-30 Saturday 22:16  ml
 
 	* BUGS (1.18), doc/hpt.texi (1.60), src/scan.c (1.150):
 	packNetMailOnScan token; memory leak in scan.c [patch by sir]
 
-2002-03-28 Thursday 10:20  mche
+2002-03-28 Thursday 01:20  mche
 
 	* src/areafix.c (1.276): fixed bug with autounsubscribing
 
-2002-03-27 Wednesday 15:10  mche
+2002-03-27 Wednesday 06:10  mche
 
 	* src/fcommon.c (1.124), src/toss.c (1.398), h/fcommon.h (1.39):
 	functions needUseFileBoxForLink,makeFileBoxName moved to fidoconfig
 	for common usage in htick and hpt
 
-2002-03-27 Wednesday 11:22  mche
+2002-03-27 Wednesday 02:22  mche
 
 	* src/areafix.c (1.275), src/fcommon.c (1.123), src/scan.c (1.149),
 	src/toss.c (1.397), h/fcommon.h (1.38): function
 	createOutboundFileName moved to fidoconfig
 
-2002-03-21 Thursday 16:18  mche
+2002-03-21 Thursday 07:18  mche
 
 	* src/fcommon.c (1.122), h/fcommon.h (1.37): createLockFile
 	function removed
 
-2002-03-21 Thursday 12:36  mche
+2002-03-21 Thursday 03:36  mche
 
 	* src/areafix.c (1.274): fixed bug with subscrubing/usubscribing
 	from own address
 
-2002-03-21 Thursday 09:48  mche
+2002-03-21 Thursday 00:48  mche
 
 	* man/hpt.1 (1.16): man updated
 
-2002-03-21 Thursday 08:04  mche
+2002-03-20 Wednesday 23:04  mche
 
 	* src/link.c (1.50): loglevel changed fot linking warnings
 
-2002-03-20 Wednesday 17:27  mche
+2002-03-20 Wednesday 08:27  mche
 
 	* src/fcommon.c (1.121), src/toss.c (1.396), h/fcommon.h (1.36):
 	function makeMsgbFileName is removed from htick  and hpt to
 	fidoconfig function createDirectoryTree changed to
 	_createDirectoryTree from smapi
 
-2002-03-20 Wednesday 17:14  mche
+2002-03-20 Wednesday 08:14  mche
 
 	* src/: areafix.c (1.273), dupe.c (1.55), query.c (1.36): function
 	makeMsgbFileName is removed from htick	and hpt to fidoconfig
 
-2002-03-20 Wednesday 15:28  mche
+2002-03-20 Wednesday 06:28  mche
 
 	* h/areafix.h (1.27): functions isOurAka, isAreaLink are moved to
 	fidoconfig
 
-2002-03-20 Wednesday 15:16  mche
+2002-03-20 Wednesday 06:16  mche
 
 	* src/: areafix.c (1.272), query.c (1.35), toss.c (1.395):
 	functions isOurAka, isAreaLink are moved to fidoconfig
 
-2002-03-19 Tuesday 17:02  mche
+2002-03-19 Tuesday 08:02  mche
 
 	* src/toss.c (1.394): chenged call "system" for "spawnvp"
 
-2002-03-19 Tuesday 11:24  mche
+2002-03-19 Tuesday 02:24  mche
 
 	* src/query.c (1.34): added some log messages fixed bug with
 	rerequests
 
-2002-03-19 Tuesday 11:15  mche
+2002-03-19 Tuesday 02:15  mche
 
 	* src/hpt.c (1.139): added description for new commands
 
-2002-03-18 Monday 16:44  mche
+2002-03-18 Monday 07:44  mche
 
 	* src/link.c (1.49): b-tree moved from hpt to fidoconfig
 
-2002-03-18 Monday 16:34  mche
+2002-03-18 Monday 07:34  mche
 
 	* h/dupe.h (1.18), make/makefile.inc (1.7): b-tree moved from hpt
 	to fidoconfig
 
-2002-03-18 Monday 14:39  mche
+2002-03-18 Monday 05:39  mche
 
 	* src/query.c (1.33): fixed bug with wrong date in idle requests
 
-2002-03-17 Sunday 15:51  mche
+2002-03-17 Sunday 06:51  mche
 
 	* src/hpt.c (1.138): commands call logic changed (for qreport,
 	qudate)
 
-2002-03-17 Sunday 15:23  mche
+2002-03-17 Sunday 06:23  mche
 
 	* src/query.c (1.32): fixed bug with forward requests
 
-2002-03-17 Sunday 14:55  mche
+2002-03-17 Sunday 05:55  mche
 
 	* src/query.c (1.31): fixed bug with forward requests
 
-2002-03-17 Sunday 14:41  mche
+2002-03-17 Sunday 05:41  mche
 
 	* src/areafix.c (1.271): fixed bug with forward requests
 
-2002-03-17 Sunday 14:05  d.sergienko
+2002-03-17 Sunday 05:05  d.sergienko
 
 	* src/scan.c (1.148): bug with echotoss.log because micro$oft's
 	implementation of rename() and POSIX's rename() are different :(
 
-2002-03-17 Sunday 13:35  d.sergienko
+2002-03-17 Sunday 04:35  d.sergienko
 
 	* src/scan.c (1.147): fixed yet another bug with stale
 	echotoss.log.* files
 
-2002-03-16 Saturday 13:34  mche
+2002-03-16 Saturday 04:34  mche
 
 	* h/toss.h (1.45), src/toss.c (1.393): duplicated code removed
 
-2002-03-16 Saturday 13:21  mche
+2002-03-16 Saturday 04:21  mche
 
 	* src/hpt.c (1.137): changed: commandline commands
 
-2002-03-16 Saturday 13:19  mche
+2002-03-16 Saturday 04:19  mche
 
 	* src/areafix.c (1.270), src/query.c (1.30), h/areafix.h (1.26):
 	expanded forward request logic
 
-2002-03-15 Friday 15:05  mche
+2002-03-15 Friday 06:05  mche
 
 	* TODO (1.186): no message
 
-2002-03-15 Friday 09:30  mche
+2002-03-15 Friday 00:30  mche
 
 	* src/areafix.c (1.269): fixed bug with unsubscribing
 
-2002-03-14 Thursday 13:37  mche
+2002-03-14 Thursday 04:37  mche
 
 	* src/query.c (1.29): added: idle request feature
 
-2002-03-14 Thursday 13:32  mche
+2002-03-14 Thursday 04:32  mche
 
 	* h/areafix.h (1.25), h/query.h (1.12), src/areafix.c (1.268):
 	added: idle request feature
 
-2002-03-13 Wednesday 17:23  mche
+2002-03-13 Wednesday 08:23  mche
 
 	* src/query.c (1.28): added: canceling request feature
 
-2002-03-13 Wednesday 16:36  mche
+2002-03-13 Wednesday 07:36  mche
 
 	* src/query.c (1.27): added: canceling request feature
 
-2002-03-13 Wednesday 16:32  mche
+2002-03-13 Wednesday 07:32  mche
 
 	* h/query.h (1.11), src/areafix.c (1.267): added: canceling request
 	feature
 
-2002-03-11 Monday 18:47  ml
+2002-03-11 Monday 09:47  ml
 
 	* src/toss.c (1.392): carbonText bugfix
 
-2002-03-11 Monday 11:03  d.sergienko
+2002-03-11 Monday 02:03  d.sergienko
 
 	* src/scan.c (1.146): 
 	fixed bug with stale temporary echotoss.log files
 
-2002-03-08 Friday 19:58  ml
+2002-03-08 Friday 10:58  ml
 
 	* misc/hptlogstat.pl (1.3): new version
 
-2002-03-06 Wednesday 17:38  mche
+2002-03-06 Wednesday 08:38  mche
 
 	* src/areafix.c (1.266): warnings removed
 
-2002-03-06 Wednesday 16:54  mche
+2002-03-06 Wednesday 07:54  mche
 
 	* src/global.c (1.42), src/hpt.c (1.136), src/query.c (1.26),
 	h/global.h (1.30), h/query.h (1.10): new command "queue" added (not
 	documented yet)
 
-2002-03-06 Wednesday 08:05  mche
+2002-03-05 Tuesday 23:05  mche
 
 	* src/scan.c (1.145): fix includes for msvc
 
-2002-03-05 Tuesday 19:36  d.sergienko
+2002-03-05 Tuesday 10:36  d.sergienko
 
 	* src/hpt.c (1.135): added info to usage() about post -a & post -f
 	commands
 
-2002-03-05 Tuesday 19:13  d.sergienko
+2002-03-05 Tuesday 10:13  d.sergienko
 
 	* src/: hpt.c (1.134), scan.c (1.144): scan processes only echomail
 	from echotoss.log, pack processes only netmail. The rest lines
 	throw out.
 
-2002-03-05 Tuesday 14:13  joerg.jaspert
+2002-03-05 Tuesday 05:13  joerg.jaspert
 
 	* debian/: changelog (1.10), control (1.8): Added Recommends for
 	hptkill
 
-2002-03-05 Tuesday 10:17  mche
+2002-03-05 Tuesday 01:17  mche
 
 	* src/post.c (1.68): chahged params for uue posting -u[size]
 	uue-multipart posting
 
-2002-03-05 Tuesday 01:27  joerg.jaspert
+2002-03-04 Monday 16:27  joerg.jaspert
 
 	* debian/: README.Debian (1.3), changelog (1.9), control (1.7),
 	docs (1.3), huskymak.cfg (1.9), rules (1.7): New Debian Package
 	built
 
-2002-03-04 Monday 18:54  pavel.gulchouck
+2002-03-04 Monday 09:54  pavel.gulchouck
 
 	* src/link.c (1.48): Fixed compile error under cygwin
 
-2002-03-04 Monday 17:33  mche
+2002-03-04 Monday 08:33  mche
 
 	* src/hpt.c (1.133): some warnings removed, added new command
 	"requpdate"
 
-2002-03-04 Monday 17:16  mche
+2002-03-04 Monday 08:16  mche
 
 	* h/query.h (1.9), src/query.c (1.24), src/query.c (1.25): changed
 	format of query file
 
-2002-03-04 Monday 16:24  mche
+2002-03-04 Monday 07:24  mche
 
 	* src/post.c (1.67): added number of lines per section (150 for
 	default)
 
-2002-03-04 Monday 08:00  mche
+2002-03-03 Sunday 23:00  mche
 
 	* src/post.c (1.66): fixed bug with posting nonexisting file
 
-2002-03-03 Sunday 21:17  pavel.gulchouck
+2002-03-03 Sunday 12:17  pavel.gulchouck
 
 	* src/link.c (1.47): Jam link speedup
 
-2002-03-03 Sunday 14:35  mche
+2002-03-03 Sunday 05:35  mche
 
 	* src/post.c (1.65): added: -u uue-multipart posting
 
-2002-03-01 Friday 14:15  mche
+2002-03-01 Friday 05:15  mche
 
 	* make/: makefile.mvcdll (1.3), makeperl.mvcdll (1.3): makefile
 	updates (change optimization)
 
-2002-03-01 Friday 09:17  ml
+2002-03-01 Friday 00:17  ml
 
 	* make/: makeperl.mvc (1.7), makeperl.mvcdll (1.2): makefile
 	updates (change optimization)
 
-2002-02-28 Thursday 20:12  pavel.gulchouck
+2002-02-28 Thursday 11:12  pavel.gulchouck
 
 	* src/link.c (1.46): Optimize memory usage for link huge areas
 
-2002-02-28 Thursday 15:35  d.sergienko
+2002-02-28 Thursday 06:35  d.sergienko
 
 	* misc/areafix.hlp (1.16): 
 	added documentation about new syntax of %list and %avail
 
-2002-02-28 Thursday 15:28  d.sergienko
+2002-02-28 Thursday 06:28  d.sergienko
 
 	* src/areafix.c (1.265): 
 	typo again :)
 
-2002-02-28 Thursday 15:25  d.sergienko
+2002-02-28 Thursday 06:25  d.sergienko
 
 	* src/areafix.c (1.264): 
 	added %avail extensions (the same as for %list)
 
-2002-02-28 Thursday 15:02  d.sergienko
+2002-02-28 Thursday 06:02  d.sergienko
 
 	* src/areafix.c (1.263): 
 	added reversed logic of pattern in %list command
 
-2002-02-28 Thursday 13:40  d.sergienko
+2002-02-28 Thursday 04:40  d.sergienko
 
 	* src/scan.c (1.143): 
 	don't scan NetmailAreas when they found in echoTossLogFile and hpt
 	is being run in scan mode.
 
-2002-02-28 Thursday 10:34  mche
+2002-02-28 Thursday 01:34  mche
 
 	* src/hpt.c (1.132): some changes for query file
 
-2002-02-27 Wednesday 18:44  d.sergienko
+2002-02-27 Wednesday 09:44  d.sergienko
 
 	* src/getfree.c (1.16): 
 	fixed compilation on non-GLIBC linux (uses statfs instead statvfs)
 
-2002-02-27 Wednesday 16:23  d.sergienko
+2002-02-27 Wednesday 07:23  d.sergienko
 
 	* src/areafix.c (1.262): 
 	typo fix
 
-2002-02-27 Wednesday 16:10  pavel.gulchouck
+2002-02-27 Wednesday 07:10  pavel.gulchouck
 
 	* src/toss.c (1.391): Change rescan badarea according to api_sdm
 	changes
 
-2002-02-27 Wednesday 16:09  d.sergienko
+2002-02-27 Wednesday 07:09  d.sergienko
 
 	* misc/areafix.hlp (1.15), src/areafix.c (1.261): 
 	added %link areafix command extension
 
-2002-02-27 Wednesday 14:19  pavel.gulchouck
+2002-02-27 Wednesday 05:19  pavel.gulchouck
 
 	* src/: scan.c (1.142), scanarea.c (1.78): Fix compiler warnings
 
-2002-02-27 Wednesday 09:46  pavel.gulchouck
+2002-02-27 Wednesday 00:46  pavel.gulchouck
 
 	* src/: scan.c (1.141), scanarea.c (1.77): HighWaterMark set fix
 	for scan jam area with deleted messages
 
-2002-02-26 Tuesday 15:48  mche
+2002-02-26 Tuesday 06:48  mche
 
 	* src/query.c (1.23): add sorting to queryfile
 
-2002-02-26 Tuesday 15:34  mche
+2002-02-26 Tuesday 06:34  mche
 
 	* h/query.h (1.8): added variable for report string
 
-2002-02-26 Tuesday 09:07  ml
+2002-02-26 Tuesday 00:07  ml
 
 	* make/makeperl.mvc (1.6), make/makeperl.mvcdll (1.1), src/perl.c
 	(1.24): changes for compiling mscv6 dll version with perl support
 
-2002-02-25 Monday 21:55  pavel.gulchouck
+2002-02-25 Monday 12:55  pavel.gulchouck
 
 	* src/: scan.c (1.140), scanarea.c (1.76): jam special highwater
 	check removed
 
-2002-02-24 Sunday 11:26  ml
+2002-02-24 Sunday 02:26  ml
 
 	* src/query.c (1.22): include prorotype for sleep()
 
-2002-02-22 Friday 13:25  ml
+2002-02-22 Friday 04:25  ml
 
 	* h/hptperl.h (1.4): remove compilation warning
 
-2002-02-21 Thursday 15:38  mche
+2002-02-21 Thursday 06:38  mche
 
 	* TODO (1.185): - speedup getArea by using b-tree
 
-2002-02-20 Wednesday 18:16  mche
+2002-02-20 Wednesday 09:16  mche
 
 	* src/query.c (1.21): changed datetime rutin in query
 
-2002-02-20 Wednesday 18:15  mche
+2002-02-20 Wednesday 09:15  mche
 
 	* h/query.h (1.7): changed datetime rutine in query
 
-2002-02-19 Tuesday 21:33  pavel.gulchouck
+2002-02-19 Tuesday 12:33  pavel.gulchouck
 
 	* doc/hpt.texi (1.59), src/post.c (1.64): "hpt post" add areaname
 	to echotosslog when run without -x switch
 
-2002-02-19 Tuesday 11:15  ml
+2002-02-19 Tuesday 02:15  ml
 
 	* h/global.h (1.29), src/fcommon.c (1.120), src/global.c (1.41),
 	src/hpt.c (1.131): more safe exit_hpt()
 
-2002-02-17 Sunday 17:16  ml
+2002-02-17 Sunday 08:16  ml
 
 	* src/hptlink.c (1.33): ignore characters case and .0 at the end of
 	node address in msgid/reply fields
 
-2002-02-17 Sunday 08:02  ml
+2002-02-16 Saturday 23:02  ml
 
 	* doc/hpt.texi (1.58), src/perl.c (1.23): fixes for yesterday
 	changes
 
-2002-02-17 Sunday 01:18  pavel.gulchouck
+2002-02-16 Saturday 16:18  pavel.gulchouck
 
 	* src/perl.c (1.22): Fix compilation errors
 
-2002-02-16 Saturday 20:48  ml
+2002-02-16 Saturday 11:48  ml
 
 	* src/perl.c (1.21): translate comment
 
-2002-02-16 Saturday 20:34  ml
+2002-02-16 Saturday 11:34  ml
 
 	* make/makeperl.mvc (1.5): update
 
-2002-02-16 Saturday 20:25  ml
+2002-02-16 Saturday 11:25  ml
 
 	* doc/hpt-FAQ.russian (1.18), doc/hpt.texi (1.57),
 	doc/perlwin32.rus (1.2), h/hptperl.h (1.3), src/hpt.c (1.130),
 	src/perl.c (1.20): perlsupport
 
-2002-02-16 Saturday 19:52  ml
+2002-02-16 Saturday 10:52  ml
 
 	* src/post.c (1.63): cosmetic fix when printing errors
 
-2002-02-16 Saturday 17:07  pavel.gulchouck
+2002-02-16 Saturday 08:07  pavel.gulchouck
 
 	* doc/hpt-FAQ.russian (1.17): Fix spelling, update jam known bugs
 	info
 
-2002-02-16 Saturday 12:08  pavel.gulchouck
+2002-02-16 Saturday 03:08  pavel.gulchouck
 
 	* src/: areafix.c (1.260), query.c (1.20): config EOL-slyle
 	detection minor fix
 
-2002-02-16 Saturday 12:01  pavel.gulchouck
+2002-02-16 Saturday 03:01  pavel.gulchouck
 
 	* src/: areafix.c (1.259), query.c (1.19): Put LF or CRLF in new
 	lines according to config style
 
-2002-02-15 Friday 12:43  ml
+2002-02-15 Friday 03:43  ml
 
 	* make/makeperl.mvc (1.4): PERL_DIR variable added
 
-2002-02-15 Friday 12:22  ml
+2002-02-15 Friday 03:22  ml
 
 	* config/config (1.4): fixed location of fileareas
 
-2002-02-15 Friday 12:18  ml
+2002-02-15 Friday 03:18  ml
 
 	* config/config (1.3), h/fcommon.h (1.35), make/makeperl.mvc (1.3),
 	src/fcommon.c (1.119): comment truncate() and ftruncate()
 	functions; use setfsize() from smapi
 
-2002-02-15 Friday 12:00  ml
+2002-02-15 Friday 03:00  ml
 
 	* src/areafix.c (1.258): use setfsize()  instead of truncate() for
 	changeresume()
 
-2002-02-15 Friday 09:49  ml
+2002-02-15 Friday 00:49  ml
 
 	* src/areafix.c (1.257): new changeconfig() code & bugfixes from
 	Max Chernogor
 
-2002-02-15 Friday 08:35  ml
+2002-02-14 Thursday 23:35  ml
 
 	* src/fcommon.c (1.118): changing strncpy() to strcpy() back
 
-2002-02-14 Thursday 13:59  mche
+2002-02-14 Thursday 04:59  mche
 
 	* make/makefile.mvcdll (1.2): minimized binaries size
 
-2002-02-11 Monday 17:55  mche
+2002-02-11 Monday 08:55  mche
 
 	* src/query.c (1.18): - added log messages
 
-2002-02-11 Monday 16:34  mche
+2002-02-11 Monday 07:34  mche
 
 	* src/query.c (1.17): - fixed: query file saving
 
-2002-02-09 Saturday 09:18  ml
+2002-02-09 Saturday 00:18  ml
 
 	* misc/cut-hptlog.pl (1.2): update
 
-2002-02-08 Friday 18:22  mche
+2002-02-08 Friday 09:22  mche
 
 	* src/toss.c (1.390): - removed win32 specific code
 
-2002-02-08 Friday 10:17  mche
+2002-02-08 Friday 01:17  mche
 
 	* h/query.h (1.6), src/query.c (1.16): - fixed: query file
 	modification and saving
 
-2002-02-08 Friday 10:11  mche
+2002-02-08 Friday 01:11  mche
 
 	* h/areafix.h (1.24): making isOurAka available for other files
 
-2002-02-07 Thursday 10:09  ml
+2002-02-07 Thursday 01:09  ml
 
 	* make/makefile.bcd (1.3): compile without semaphores for msdos
 
-2002-02-07 Thursday 09:56  ml
+2002-02-07 Thursday 00:56  ml
 
 	* src/scanarea.c (1.75): don't convert interal echo area names to
 	upper case
 
-2002-02-05 Tuesday 18:05  stas
+2002-02-05 Tuesday 09:05  stas
 
 	* src/dupe.c (1.54): Unique dupe history file for passthou areas
 	with -dosfile option: filename generated as crc32 of area name.
 
-2002-02-04 Monday 18:43  stas
+2002-02-04 Monday 09:43  stas
 
 	* src/dupe.c (1.53): Fix log message: remove message 'Dupe base not
 	found' in readDupeFile, add message 'Can't open dupebase' if dupe
 	history file exist and fopen return NULL.  Add log messages with
 	level LL_FILE & other.
 
-2002-02-04 Monday 18:36  stas
+2002-02-04 Monday 09:36  stas
 
 	* src/toss.c (1.389): Add log messages on file open events (level
 	LL_FILE). Add 'Id' RCS tag.
 
-2002-02-04 Monday 09:32  ml
+2002-02-04 Monday 00:32  ml
 
 	* src/toss.c (1.388): compiling under msvc6 and logical fix
 
-2002-02-01 Friday 15:10  stas
+2002-02-01 Friday 06:10  stas
 
 	* src/txt2pkt.c (1.33): Bugfix: clean string buffer before
 	composing tearline & origin.
 
-2002-02-01 Friday 14:42  mche
+2002-02-01 Friday 05:42  mche
 
 	* src/fcommon.c (1.117): fixed bug with w_log(LL_TRUNC....
 
-2002-01-31 Thursday 16:12  mche
+2002-01-31 Thursday 07:12  mche
 
 	* src/areafix.c (1.256): - added unsubscribinfg from own address
 
-2002-01-31 Thursday 11:22  ml
+2002-01-31 Thursday 02:22  ml
 
 	* src/getfree.c (1.15): updates to my prev. modifycations
 
-2002-01-31 Thursday 10:50  ml
+2002-01-31 Thursday 01:50  ml
 
 	* src/getfree.c (1.14): define for msdos
 
-2002-01-31 Thursday 07:22  ml
+2002-01-30 Wednesday 22:22  ml
 
 	* src/areafix.c (1.255): remove warning
 
-2002-01-30 Wednesday 10:24  ml
+2002-01-30 Wednesday 01:24  ml
 
 	* src/areafix.c (1.254): do not forward request to area with no
 	access
 
-2002-01-28 Monday 21:33  stas
+2002-01-28 Monday 12:33  stas
 
 	* src/areafix.c (1.253): Add log messages with high levels. Insert
 	comments.
 
-2002-01-28 Monday 20:07  stas
+2002-01-28 Monday 11:07  stas
 
 	* src/areafix.c (1.252): Add checking of subscribe in one variant.
 
-2002-01-28 Monday 19:32  mche
+2002-01-28 Monday 10:32  mche
 
 	* src/areafix.c (1.251): Fix bug with subscribing and usubscribing
 
-2002-01-28 Monday 19:27  stas
+2002-01-28 Monday 10:27  stas
 
 	* src/hpt.c (1.129): Fix: exit after help displaing if hpt called
 	with '-h' option.
 
-2002-01-28 Monday 18:26  stas
+2002-01-28 Monday 09:26  stas
 
 	* misc/hptlogstat.pl (1.2): hange areatag names to upper case in
 	output.
 
-2002-01-28 Monday 10:56  mche
+2002-01-28 Monday 01:56  mche
 
 	* src/query.c (1.15): fixed bug with append new autocreated area to
 	configfile
 
-2002-01-28 Monday 01:02  pavel.gulchouck
+2002-01-27 Sunday 16:02  pavel.gulchouck
 
 	* src/areafix.c (1.250): parse quoted areaname, add vars_expand()
 	call
 
-2002-01-28 Monday 00:32  pavel.gulchouck
+2002-01-27 Sunday 15:32  pavel.gulchouck
 
 	* src/query.c (1.14): quote areaname if needed when autocreate
 
-2002-01-27 Sunday 21:25  stas
+2002-01-27 Sunday 12:25  stas
 
 	* h/query.h (1.5): enum changeConfigRet modification.
 
-2002-01-27 Sunday 20:12  stas
+2002-01-27 Sunday 11:12  stas
 
 	* src/txt2pkt.c (1.32): Prevent buffer overflow.
 
-2002-01-27 Sunday 20:07  stas
+2002-01-27 Sunday 11:07  stas
 
 	* src/txt2pkt.c (1.31): Fix memory fault if illegal option present.
 
-2002-01-27 Sunday 19:30  stas
+2002-01-27 Sunday 10:30  stas
 
 	* src/txt2pkt.c (1.30), man/txt2pkt.1 (1.2): Update help message in
 	txt2pkt utility and corresponded man page.
 
-2002-01-27 Sunday 17:57  stas
+2002-01-27 Sunday 08:57  stas
 
 	* src/areafix.c (1.249): Prevent buffer overflow.
 
-2002-01-27 Sunday 17:41  stas
+2002-01-27 Sunday 08:41  stas
 
 	* src/: areafix.c (1.248), hpt.c (1.128), seenby.c (1.20): Fix
 	'2002-01-25 Friday 16:17' patch: replace snprintf to sprintf (for
 	ISO C compatibility).
 
-2002-01-27 Sunday 17:03  stas
+2002-01-27 Sunday 08:03  stas
 
 	* Makefile (1.10): Install txt2pkt man page.
 
-2002-01-27 Sunday 15:38  stas
+2002-01-27 Sunday 06:38  stas
 
 	* misc/pretty.pl (1.2): Add the '-c' option (copy mode) and change
 	temp & old file names.
 
-2002-01-27 Sunday 15:00  ml
+2002-01-27 Sunday 06:00  ml
 
 	* src/dupe.c (1.52): don't print error reading dupes when area just
 	autocreated
 
-2002-01-27 Sunday 13:30  stas
+2002-01-27 Sunday 04:30  stas
 
 	* src/toss.c (1.387): Add some log messages with high loglevels.
 
-2002-01-27 Sunday 13:02  stas
+2002-01-27 Sunday 04:02  stas
 
 	* src/areafix.c (1.247): Fix for '2002-01-22 Tuesday 18:48' patch.
 
-2002-01-27 Sunday 10:00  stas
+2002-01-27 Sunday 01:00  stas
 
 	* misc/hptlogstat.pl (1.1): hpt log statistics script (perl) by
 	Valery Kondakoff (2:5020/163)
 
-2002-01-26 Saturday 15:52  mche
+2002-01-26 Saturday 06:52  mche
 
 	* src/areafix.c (1.246): added code for queryfile support
 
-2002-01-25 Friday 19:21  ml
+2002-01-25 Friday 10:21  ml
 
 	* misc/: cut-hptlog.pl (1.1), pretty.pl (1.1), purge_fileecho
 	(1.1): new scripts
 
-2002-01-25 Friday 17:52  pavel.gulchouck
+2002-01-25 Friday 08:52  pavel.gulchouck
 
 	* src/: fcommon.c (1.115), query.c (1.13): Do not reject echoes
 	with comment char in name
 
-2002-01-25 Friday 16:17  stas
+2002-01-25 Friday 07:17  stas
 
 	* src/: areafix.c (1.245), fcommon.c (1.114), hpt.c (1.127),
 	seenby.c (1.19): 
 	fix: prevent buffer overflow (after ITS4 check)
 
-2002-01-24 Thursday 21:12  pavel.gulchouck
+2002-01-24 Thursday 12:12  pavel.gulchouck
 
 	* src/fcommon.c (1.113): log ftnaddr instead of link name when busy
 	(linkname can be null)
 
-2002-01-24 Thursday 19:15  ml
+2002-01-24 Thursday 10:15  ml
 
 	* doc/hpt.texi (1.56): doc updates (autoareacreatefile)
 
-2002-01-24 Thursday 05:00  ml
+2002-01-23 Wednesday 20:00  ml
 
 	* src/areafix.c (1.244): fixed relink bug if no link password
 	defined
 
-2002-01-23 Wednesday 15:26  pavel.gulchouck
+2002-01-23 Wednesday 06:26  pavel.gulchouck
 
 	* src/perl.c (1.19): bugfix
 
-2002-01-23 Wednesday 14:59  pavel.gulchouck
+2002-01-23 Wednesday 05:59  pavel.gulchouck
 
 	* src/perl.c (1.18): fix compile error
 
-2002-01-22 Tuesday 18:48  mche
+2002-01-22 Tuesday 09:48  mche
 
 	* src/areafix.c (1.243): added some changes to function
 	"changeconfig"
 
-2002-01-22 Tuesday 14:53  mche
+2002-01-22 Tuesday 05:53  mche
 
 	* src/query.c (1.12), h/areafix.h (1.23): fixed subscribing links
 	to autocreated areas
 
-2002-01-22 Tuesday 14:50  mche
+2002-01-22 Tuesday 05:50  mche
 
 	* src/: areafix.c (1.242), scan.c (1.139), toss.c (1.386): code
 	improvement canged passing arguments by value to passing by
 	pointers
 
-2002-01-22 Tuesday 12:06  mche
+2002-01-22 Tuesday 03:06  mche
 
 	* src/fcommon.c (1.112): fixed bug with compilation under MCVS
 	compiler
 
-2002-01-22 Tuesday 11:32  mche
+2002-01-22 Tuesday 02:32  mche
 
 	* src/getfree.c (1.13): fixed bug with compilation under MCVS
 	compiler
 
-2002-01-22 Tuesday 10:24  mche
+2002-01-22 Tuesday 01:24  mche
 
 	* src/getfree.c (1.12): fixed bug with compilation under MCVS
 	compiler
 
-2002-01-21 Monday 20:15  ml
+2002-01-21 Monday 11:15  ml
 
 	* h/global.h (1.28), h/hpt.h (1.6), src/fcommon.c (1.111),
 	src/hpt.c (1.126): getfree() declaration moved from hpt.c to
@@ -1722,7 +1722,7 @@
 	lockfile removing in exit_hpt(). Patch from Stas Degteff 2:5080/102
 	<g@grumber.org>
 
-2002-01-21 Monday 19:53  ml
+2002-01-21 Monday 10:53  ml
 
 	* makefile.inc (1.15), h/global.h (1.27), h/log.h (1.16),
 	h/recode.h (1.7), h/strsep.h (1.2), make/makefile.inc (1.6),
@@ -1738,327 +1738,327 @@
 	recodeToTransportCharset(), getctab(), strseparate() functions).
 	Patch from Stas Degteff 2:5080/102 <g@grumber.org>
 
-2002-01-21 Monday 19:10  ml
+2002-01-21 Monday 10:10  ml
 
 	* src/query.c (1.11): fix if dummys del \n from the end of
 	autoareacreatefile
 
-2002-01-21 Monday 19:00  mche
+2002-01-21 Monday 10:00  mche
 
 	* src/areafix.c (1.240): added code for queryfile support
 
-2002-01-21 Monday 18:05  mche
+2002-01-21 Monday 09:05  mche
 
 	* src/hpt.c (1.124): added code for queryfile support
 
-2002-01-19 Saturday 17:55  mche
+2002-01-19 Saturday 08:55  mche
 
 	* src/query.c (1.10): fixes for compiling under linux and code
 	cleanup
 
-2002-01-19 Saturday 17:52  mche
+2002-01-19 Saturday 08:52  mche
 
 	* src/query.c (1.9): makeAreaParam function added to make size of
 	autoCreate smaller
 
-2002-01-19 Saturday 17:52  mche
+2002-01-19 Saturday 08:52  mche
 
 	* h/query.h (1.4): type of 'linksCount' variable change
 
-2002-01-19 Saturday 17:40  mche
+2002-01-19 Saturday 08:40  mche
 
 	* h/query.h (1.3): makeAreaParam function added to make size of
 	autoCreate smaller
 
-2002-01-19 Saturday 17:34  ml
+2002-01-19 Saturday 08:34  ml
 
 	* src/query.c (1.8): fix if dummys del \n from the end of
 	autoareacreatefile
 
-2002-01-19 Saturday 16:11  mche
+2002-01-19 Saturday 07:11  mche
 
 	* h/query.h (1.2): code cleanup
 	
 	token areafixqueryrequests changed to arefixqueuefile
 
-2002-01-19 Saturday 16:07  mche
+2002-01-19 Saturday 07:07  mche
 
 	* src/query.c (1.7): code cleanup
 	
 	token areafixqueryrequests changed to arefixqueuefile
 
-2002-01-19 Saturday 14:14  mche
+2002-01-19 Saturday 05:14  mche
 
 	* src/: dupe.c (1.50), fcommon.c (1.109): removed win32 specific
 	code
 
-2002-01-19 Saturday 09:59  ml
+2002-01-19 Saturday 00:59  ml
 
 	* src/areafix.c (1.239): small fix for last changes
 
-2002-01-19 Saturday 09:54  ml
+2002-01-19 Saturday 00:54  ml
 
 	* TODO (1.184), doc/hpt.texi (1.55), make/makefile.lnx (1.6),
 	src/areafix.c (1.238), src/query.c (1.6): fixed bug in areafix when
 	unsubscribing node addr with trailing .0
 
-2002-01-19 Saturday 08:33  ml
+2002-01-18 Friday 23:33  ml
 
 	* src/areafix.c (1.237): fix pattern subscrition after hidden areas
 
-2002-01-18 Friday 05:16  ml
+2002-01-17 Thursday 20:16  ml
 
 	* src/post.c (1.61): convert AREA:CONFERENCE to upper case if
 	needed when -x option is used in post
 
-2002-01-17 Thursday 09:15  mche
+2002-01-17 Thursday 00:15  mche
 
 	* src/query.c (1.5): set queryfile location same as main config
 	file location
 
-2002-01-14 Monday 17:18  d.sergienko
+2002-01-14 Monday 08:18  d.sergienko
 
 	* src/query.c (1.4): fixes for compiling under linux and code
 	cleanup
 
-2002-01-14 Monday 16:34  d.sergienko
+2002-01-14 Monday 07:34  d.sergienko
 
 	* makefile.inc (1.14): fixed compiling with hpt/Makefile
 
-2002-01-13 Sunday 19:55  ml
+2002-01-13 Sunday 10:55  ml
 
 	* src/areafix.c (1.236): removing trailing \r from the end of line
 	'request forwarded' (log message)
 
-2002-01-12 Saturday 09:33  ml
+2002-01-12 Saturday 00:33  ml
 
 	* src/toss.c (1.384): bugfix in filebox autocreation; identing
 	toss.c
 
-2002-01-12 Saturday 08:20  ml
+2002-01-11 Friday 23:20  ml
 
 	* src/: query.c (1.3), scanarea.c (1.73), toss.c (1.383): fixed
 	carbonmove on outgoing scanning for echomail
 
-2002-01-11 Friday 09:01  mche
+2002-01-11 Friday 00:01  mche
 
 	* make/makefile.mvcdll (1.1): build hpt with dlls
 
-2002-01-10 Thursday 17:52  mche
+2002-01-10 Thursday 08:52  mche
 
 	* make/makefile.inc (1.5): - new : areafixQueryRequests fiture
 	under construction
 
-2002-01-10 Thursday 17:50  ml
+2002-01-10 Thursday 08:50  ml
 
 	* src/toss.c (1.382): fixed recoding of carbonreason
 
-2002-01-10 Thursday 17:44  mche
+2002-01-10 Thursday 08:44  mche
 
 	* src/: hpt.c (1.123), query.c (1.2), toss.c (1.381): function
 	autoCreate moved from toss.c to query.c
 
-2002-01-10 Thursday 17:16  mche
+2002-01-10 Thursday 08:16  mche
 
 	* h/query.h (1.1), src/query.c (1.1): - new : areafixQueryRequests
 	fiture under construction
 
-2002-01-10 Thursday 17:10  ml
+2002-01-10 Thursday 08:10  ml
 
 	* TODO (1.183), doc/hpt-FAQ.russian (1.16), doc/hpt.texi (1.54),
 	src/areafix.c (1.235): multiply rules files (by sir)
 
-2002-01-06 Sunday 20:54  ml
+2002-01-06 Sunday 11:54  ml
 
 	* src/areafix.c (1.234): fixed forward requests to subscribed
 	hidden area
 
-2002-01-06 Sunday 17:50  ml
+2002-01-06 Sunday 08:50  ml
 
 	* doc/hpt.texi (1.53), src/areafix.c (1.233), src/hpt.c (1.122):
 	sending rules to link when it's subscribed (rulesDir & noRules
 	tokens)
 
-2002-01-06 Sunday 17:49  ml
+2002-01-06 Sunday 08:49  ml
 
 	* src/hptlink.c (1.32): totally ignore @domain in MSGID & REPLY
 
-2002-01-05 Saturday 09:43  ml
+2002-01-05 Saturday 00:43  ml
 
 	* src/getfree.c (1.10): getfree modifications
 
-2002-01-04 Friday 11:24  pavel.gulchouck
+2002-01-04 Friday 02:24  pavel.gulchouck
 
 	* src/getfree.c (1.9): getfree() on linux fix
 
-2002-01-03 Thursday 14:17  ml
+2002-01-03 Thursday 05:17  ml
 
 	* VERSION (1.3), doc/hpt.texi (1.52), src/global.c (1.39): change
 	version number
 
-2002-01-03 Thursday 13:21  ml
+2002-01-03 Thursday 04:21  ml
 
 	* VERSION (1.2), doc/hpt.texi (1.51), man/hpt.1 (1.14),
 	src/global.c (1.38), src/hpt.c (1.121): prerelease changes
 
-2002-01-03 Thursday 10:20  ml
+2002-01-03 Thursday 01:20  ml
 
 	* TODO (1.182), src/areafix.c (1.232), src/fcommon.c (1.108),
 	src/pktread.c (1.81), src/scan.c (1.137): print different error
 	when scan local area, print error and rename pkt if there is data
 	after last msg
 
-2002-01-02 Wednesday 20:36  mche
+2002-01-02 Wednesday 11:36  mche
 
 	* src/: hptlink.c (1.31), hpttree.c (1.20): build with smapimvc.dll
 	fconfmvc.dll msvcrt.dll
 
-2002-01-02 Wednesday 19:29  mche
+2002-01-02 Wednesday 10:29  mche
 
 	* src/: pktread.c (1.80), pktwrite.c (1.32): undo some changes
 
-2002-01-02 Wednesday 19:00  ml
+2002-01-02 Wednesday 10:00  ml
 
 	* doc/hpt.texi (1.50), src/toss.c (1.380): fixed carbonfromarea for
 	outgoing netmail areas
 
-2002-01-01 Tuesday 12:42  ml
+2002-01-01 Tuesday 03:42  ml
 
 	* src/hptlink.c (1.30): ignore domains in MSGID & REPLY when
 	linking with hptlink
 
-2001-12-29 Saturday 16:07  pavel.gulchouck
+2001-12-29 Saturday 07:07  pavel.gulchouck
 
 	* misc/filter.pl (1.6): hub & region routing bugfix
 
-2001-12-29 Saturday 13:43  pavel.gulchouck
+2001-12-29 Saturday 04:43  pavel.gulchouck
 
 	* src/: link.c (1.44), toss.c (1.379): link 4D<->5D addresses in
 	MSGID/REPLY with "hpt link"
 
-2001-12-28 Friday 18:22  ml
+2001-12-28 Friday 09:22  ml
 
 	* TODO (1.180), doc/hpt-FAQ.russian (1.15), doc/hpt.texi (1.49),
 	src/areafix.c (1.231), src/toss.c (1.378): remove yesterday code
 	from pavel and fix this bug in areafix
 
-2001-12-28 Friday 10:08  mche
+2001-12-28 Friday 01:08  mche
 
 	* src/toss.c (1.377): - unified memory (de-)allocation functions
 
-2001-12-28 Friday 09:48  mche
+2001-12-28 Friday 00:48  mche
 
 	* src/: areafix.c (1.230), dupe.c (1.49): - unified memory
 	(de-)allocation functions
 
-2001-12-27 Thursday 20:52  pavel.gulchouck
+2001-12-27 Thursday 11:52  pavel.gulchouck
 
 	* src/toss.c (1.376): bugfix: subscribe link requested echo via
 	uplink manager to the echo
 
-2001-12-26 Wednesday 18:33  mche
+2001-12-26 Wednesday 09:33  mche
 
 	* src/: pktread.c (1.79), pktwrite.c (1.31): moved functions
 	fputUINT16, fgetsUntil0, getUINT16 from fidoconfig to pktread.c
 	pktwrite.c to avoid error with I/O file operations when HPT is made
 	with dlls
 
-2001-12-26 Wednesday 17:33  mche
+2001-12-26 Wednesday 08:33  mche
 
 	* src/areafix.c (1.229): added functions getCurConfName();
 	getCurConfPos(); get_hcfgPos(); to avoid external variables
 
-2001-12-26 Wednesday 08:54  mche
+2001-12-25 Tuesday 23:54  mche
 
 	* src/fcommon.c (1.107): redesign of functions safe_malloc
 	safe_realloc safe_strdup
 
-2001-12-24 Monday 22:16  pavel.gulchouck
+2001-12-24 Monday 13:16  pavel.gulchouck
 
 	* src/perl.c (1.16): $kill and $change make sense whith any
 	filter() retcode
 
-2001-12-24 Monday 07:53  ml
+2001-12-23 Sunday 22:53  ml
 
 	* doc/hpt.texi (1.48): small fixes for compiling
 
-2001-12-24 Monday 07:42  ml
+2001-12-23 Sunday 22:42  ml
 
 	* src/fcommon.c (1.106): uncomment config->notValidFNChars
 
-2001-12-23 Sunday 23:16  pavel.gulchouck
+2001-12-23 Sunday 14:16  pavel.gulchouck
 
 	* doc/hpt.texi (1.47): added arcNetmail
 
-2001-12-23 Sunday 21:44  pavel.gulchouck
+2001-12-23 Sunday 12:44  pavel.gulchouck
 
 	* doc/hpt-FAQ.russian (1.14): Added second answer about pack
 	netmail
 
-2001-12-23 Sunday 21:39  pavel.gulchouck
+2001-12-23 Sunday 12:39  pavel.gulchouck
 
 	* src/: fcommon.c (1.105), scan.c (1.136), toss.c (1.375): added
 	arcNetmail - optional pack netmail into arcmail bundle for link
 
-2001-12-22 Saturday 18:25  pavel.gulchouck
+2001-12-22 Saturday 09:25  pavel.gulchouck
 
 	* src/hpt.c (1.120): set config var [version] to
 	VERSION.SUBVERSION.PATCHLEVEL (0.9.8 now)
 
-2001-12-22 Saturday 18:20  pavel.gulchouck
+2001-12-22 Saturday 09:20  pavel.gulchouck
 
 	* src/link.c (1.43): minor change for jam and msg - loop to
 	num_msg, not high_msg
 
-2001-12-17 Monday 20:46  ml
+2001-12-17 Monday 11:46  ml
 
 	* doc/hpt.texi (1.46), src/fcommon.c (1.104): notValidFileNameChars
 	support
 
-2001-12-17 Monday 13:15  ml
+2001-12-17 Monday 04:15  ml
 
 	* BUGS (1.16), h/areafix.h (1.22), src/areafix.c (1.228),
 	src/fcommon.c (1.103), src/hpt.c (1.119), src/toss.c (1.374):
 	updates
 
-2001-12-17 Monday 06:21  ml
+2001-12-16 Sunday 21:21  ml
 
 	* src/dupe.c (1.48): fix for creating dupe file name of
 	non-passthru areas
 
-2001-12-16 Sunday 21:50  ml
+2001-12-16 Sunday 12:50  ml
 
 	* TODO (1.177), h/fcommon.h (1.34), h/toss.h (1.44), src/areafix.c
 	(1.227), src/dupe.c (1.47), src/fcommon.c (1.102), src/toss.c
 	(1.373): make CONFERENCE name according to FSC-0074 excluding
 	CommentChar
 
-2001-12-13 Thursday 17:11  mche
+2001-12-13 Thursday 08:11  mche
 
 	* src/toss.c (1.372): calls of createDirectoryTree are removed
 	(commented)
 
-2001-12-13 Thursday 16:48  mche
+2001-12-13 Thursday 07:48  mche
 
 	* h/fcommon.h (1.33): fiture - createDirectoryTree moved  from
 	hpt/fcommon to smapi/fexist, now when we try to write to msgbase we
 	build DirectoryTree if needed it probably increase speed of tossing
 	to non passthrough areas.
 
-2001-12-13 Thursday 15:55  ml
+2001-12-13 Thursday 06:55  ml
 
 	* doc/hpt-FAQ.russian (1.13), src/toss.c (1.371): print link
 	address after pkt name
 
-2001-12-12 Wednesday 17:00  ml
+2001-12-12 Wednesday 08:00  ml
 
 	* src/scanarea.c (1.72): fixed carbonCopy() parameters
 
-2001-12-12 Wednesday 13:22  ml
+2001-12-12 Wednesday 04:22  ml
 
 	* src/areafix.c (1.226): code cleanup and reformat
 
-2001-12-12 Wednesday 12:48  ml
+2001-12-12 Wednesday 03:48  ml
 
 	* TODO (1.176), doc/hpt-FAQ.russian (1.12), doc/hpt.texi (1.45),
 	h/toss.h (1.43), src/areafix.c (1.225), src/dupe.c (1.46),
@@ -2066,81 +2066,81 @@
 	src/toss.c (1.370): don't make AREATAGs and PATHs with forbidden
 	symbols
 
-2001-12-11 Tuesday 20:43  ml
+2001-12-11 Tuesday 11:43  ml
 
 	* doc/hpt.texi (1.44), h/toss.h (1.42), src/scan.c (1.135),
 	src/toss.c (1.369): trying to delete messages on outgoing
 	carbonmove and carbondelete from netmail
 
-2001-12-11 Tuesday 11:39  ml
+2001-12-11 Tuesday 02:39  ml
 
 	* src/dupe.c (1.45): fix for passthrough areas with PATH_DELIM in
 	AREATAG
 
-2001-12-10 Monday 21:29  ml
+2001-12-10 Monday 12:29  ml
 
 	* doc/hpt.texi (1.43), h/areafix.h (1.21), src/areafix.c (1.224),
 	src/dupe.c (1.44), src/hpt.c (1.117), src/toss.c (1.368): new
 	funtions in areafix from Max Chernogor and code cleanup by me
 
-2001-12-09 Sunday 19:38  ml
+2001-12-09 Sunday 10:38  ml
 
 	* doc/: hpt-FAQ.russian (1.11), hpt.texi (1.42): doc updates
 
-2001-12-09 Sunday 19:37  ml
+2001-12-09 Sunday 10:37  ml
 
 	* src/hpt.c (1.116): fix memleak when printing console title under
 	win32
 
-2001-12-09 Sunday 16:30  ml
+2001-12-09 Sunday 07:30  ml
 
 	* src/areafix.c (1.223): areafixQueryReports
 
-2001-12-09 Sunday 15:58  ml
+2001-12-09 Sunday 06:58  ml
 
 	* src/toss.c (1.366): write statistics from dupe and bad areas to
 	areas summary
 
-2001-12-09 Sunday 07:29  ml
+2001-12-08 Saturday 22:29  ml
 
 	* src/areafix.c (1.222): print 'not found' for hidden areas
 
-2001-11-13 Tuesday 14:58  ml
+2001-11-13 Tuesday 05:58  ml
 
 	* doc/hpt-FAQ.russian (1.10), man/hpttree.1 (1.2), src/fcommon.c
 	(1.100), src/hptlink.c (1.28), src/hpttree.c (1.18), src/pktread.c
 	(1.78): exit codes for hptlink & hpttree [patch by Serguei Revtov]
 
-2001-11-08 Thursday 15:42  ml
+2001-11-08 Thursday 06:42  ml
 
 	* src/: fcommon.c (1.99), hpt.c (1.115), hpttree.c (1.17), post.c
 	(1.60), txt2pkt.c (1.28): define sysexits.h only for unix systems
 
-2001-11-06 Tuesday 08:57  ml
+2001-11-05 Monday 23:57  ml
 
 	* make/makefile.cyg (1.1), src/toss.c (1.365): cygwin makefile
 
-2001-10-24 Wednesday 09:37  ml
+2001-10-24 Wednesday 00:37  ml
 
 	* TODO (1.174), src/fcommon.c (1.98), src/hpt.c (1.114),
 	src/hpttree.c (1.16), src/post.c (1.59), src/txt2pkt.c (1.27):
 	change exit codes
 
-2001-10-19 Friday 12:30  ml
+2001-10-19 Friday 03:30  ml
 
 	* doc/perlwin32.rus (1.1), make/makefile.be (1.2),
 	make/makeperl.mvc (1.1), src/perl.c (1.15): perl for win32 support
 
-2001-10-19 Friday 09:34  pavel.gulchouck
+2001-10-19 Friday 00:34  pavel.gulchouck
 
 	* src/fcommon.c (1.97): fixed yesterday changes
 
-2001-10-17 Wednesday 13:10  pavel.gulchouck
+2001-10-17 Wednesday 04:10  pavel.gulchouck
 
 	* src/fcommon.c (1.96): bugfix: creating bundle names (timestamp
 	method)
 
-2001-09-29 Saturday 05:45  ml
+2001-09-28 Friday 20:45  ml
 
 	* doc/hpt.texi (1.41), src/fcommon.c (1.95), src/pktread.c (1.77),
 	src/post.c (1.58), src/scan.c (1.133), src/scanarea.c (1.71): don't
@@ -2148,581 +2148,581 @@
 	to fix them; don't create echotosslog file after posting; create
 	netmailflag after scanning netmail when no routing defined
 
-2001-09-20 Thursday 07:51  ml
+2001-09-19 Wednesday 22:51  ml
 
 	* doc/: hpt-FAQ.russian (1.8), hpt.texi (1.40): updating docs
 
-2001-09-18 Tuesday 17:01  pavel.gulchouck
+2001-09-18 Tuesday 08:01  pavel.gulchouck
 
 	* src/: fcommon.c (1.94), toss.c (1.364): stat() changed to
 	fexist/direxist
 
-2001-09-16 Sunday 15:28  ml
+2001-09-16 Sunday 06:28  ml
 
 	* src/toss.c (1.363): prevent multiply CC of one message to the
 	same area [patch by SR]
 
-2001-09-15 Saturday 10:56  pavel.gulchouck
+2001-09-15 Saturday 01:56  pavel.gulchouck
 
 	* src/link.c (1.42): Sqpack saves times_read and cost for Jam and
 	Msg msgbases now
 
-2001-09-11 Tuesday 18:16  ml
+2001-09-11 Tuesday 09:16  ml
 
 	* doc/hpt.texi (1.39), src/areafix.c (1.221): inverting
 	forwardAreaPriority. now works according to documentation.
 
-2001-09-06 Thursday 16:50  ml
+2001-09-06 Thursday 07:50  ml
 
 	* src/areafix.c (1.220): fixed bug with very long lines in areafix
 	requests
 
-2001-09-05 Wednesday 07:39  ml
+2001-09-04 Tuesday 22:39  ml
 
 	* doc/hpt.texi (1.38): documented echomail zonegating
 
-2001-09-04 Tuesday 06:13  ml
+2001-09-03 Monday 21:13  ml
 
 	* TODO (1.173), doc/hpt.texi (1.37), src/fcommon.c (1.93),
 	src/toss.c (1.362): remove empty importlog
 
-2001-08-31 Friday 10:21  ml
+2001-08-31 Friday 01:21  ml
 
 	* doc/hpt.texi (1.36), src/fcommon.c (1.92): Use/create filebox
 	names with trailing .h for links with hold [patch by SR]
 
-2001-08-30 Thursday 17:51  ml
+2001-08-30 Thursday 08:51  ml
 
 	* doc/hpt.texi (1.35), h/fcommon.h (1.31), src/fcommon.c (1.91),
 	src/toss.c (1.361): New tokens: FileBoxesDir, FileBoxAlways [patch
 	by SR]
 
-2001-08-27 Monday 10:11  ml
+2001-08-27 Monday 01:11  ml
 
 	* INSTALL (1.10), TODO (1.171), doc/hpt.texi (1.34), src/fcommon.c
 	(1.90), src/toss.c (1.360): file box directory autocreation [patch
 	bt SR]
 
-2001-08-24 Friday 09:27  ml
+2001-08-24 Friday 00:27  ml
 
 	* doc/hpt-FAQ.russian (1.7), src/hpt.c (1.113), src/toss.c (1.359):
 	fixed config file name processing with -c option
 
-2001-08-21 Tuesday 18:48  georgi
+2001-08-21 Tuesday 09:48  georgi
 
 	* src/txt2pkt.c (1.26): Fixed recoding in txt2pkt
 
-2001-08-19 Sunday 13:35  ml
+2001-08-19 Sunday 04:35  ml
 
 	* TODO (1.170), doc/hpt-FAQ.russian (1.5): Russian FAQ update
 
-2001-08-19 Sunday 13:10  ml
+2001-08-19 Sunday 04:10  ml
 
 	* src/toss.c (1.358): print pkt file name to echoarea debug file
 	(-debug)
 
-2001-08-18 Saturday 05:40  ml
+2001-08-17 Friday 20:40  ml
 
 	* src/post.c (1.57): fixed typos in post.c
 
-2001-08-16 Thursday 16:03  ml
+2001-08-16 Thursday 07:03  ml
 
 	* src/: getfree.c (1.8), hpt.c (1.112): fixed mindiskfreespace
 	checking on large HDDs
 
-2001-08-16 Thursday 14:29  ml
+2001-08-16 Thursday 05:29  ml
 
 	* src/: areafix.c (1.219), toss.c (1.357): print errors when
 	couldn't write to config; don't add -a ourAka to area after
 	autocreate
 
-2001-08-08 Wednesday 21:56  joerg.jaspert
+2001-08-08 Wednesday 12:56  joerg.jaspert
 
 	* debian/: changelog (1.8), control (1.6), dirs (1.3), huskymak.cfg
 	(1.8), rules (1.6): Newest Build.
 
-2001-08-08 Wednesday 13:29  ml
+2001-08-08 Wednesday 04:29  ml
 
 	* doc/hpt-FAQ.russian (1.4), doc/hpt.texi (1.33), man/hpt.1 (1.13),
 	src/areafix.c (1.218), src/post.c (1.56): documented how to post
 	with several flags
 
-2001-08-02 Thursday 10:02  ml
+2001-08-02 Thursday 01:02  ml
 
 	* src/: scan.c (1.132), scanarea.c (1.70), toss.c (1.356): write
 	areas summary after scaning
 
-2001-07-26 Thursday 17:05  ml
+2001-07-26 Thursday 08:05  ml
 
 	* doc/hpt.texi (1.32): readonly & writeonly tokens
 
-2001-07-24 Tuesday 14:12  pavel.gulchouck
+2001-07-24 Tuesday 05:12  pavel.gulchouck
 
 	* src/toss.c (1.355): path & seen-by processing speedup
 
-2001-07-24 Tuesday 10:33  ml
+2001-07-24 Tuesday 01:33  ml
 
 	* doc/hpt-FAQ.russian (1.3), src/toss.c (1.354): don't add zone
 	number in PATH; some shanges in code which creates path&seen-by
 	arrays from msg text
 
-2001-07-11 Wednesday 22:52  pavel.gulchouck
+2001-07-11 Wednesday 13:52  pavel.gulchouck
 
 	* filter.pl (1.7), src/perl.c (1.14): log() changed to w_log() -
 	log() is natural logarithm in perl
 
-2001-07-11 Wednesday 21:22  pavel.gulchouck
+2001-07-11 Wednesday 12:22  pavel.gulchouck
 
 	* filter.pl (1.6): writeLogEntry() changed to log() according to
 	perl.c
 
-2001-07-09 Monday 09:20  mhaase
+2001-07-09 Monday 00:20  mhaase
 
 	* src/scan.c (1.131): changed 'fileroute' to 'routeFile' (right
 	keyword) in error message
 
-2001-07-08 Sunday 21:28  joerg.jaspert
+2001-07-08 Sunday 12:28  joerg.jaspert
 
 	* debian/: README.Debian (1.2), changelog (1.7), control (1.5),
 	docs (1.2): Enabled Perl for Debian Packages.  Rebuild with new
 	fidoconf
 
-2001-07-08 Sunday 21:05  joerg.jaspert
+2001-07-08 Sunday 12:05  joerg.jaspert
 
 	* debian/huskymak.cfg (1.7): Enabled Perl for Debian Packages
 
-2001-07-03 Tuesday 15:41  ml
+2001-07-03 Tuesday 06:41  ml
 
 	* doc/hpt.texi (1.31), src/perl.c (1.13), src/toss.c (1.353):
 	hptperlfile [patch by Serge N. Pokhodyaev]
 
-2001-07-03 Tuesday 11:13  pavel.gulchouck
+2001-07-03 Tuesday 02:13  pavel.gulchouck
 
 	* src/perl.c (1.12): segfault in perlroute() if 'noroute' rule is
 	in config
 
-2001-07-02 Monday 23:53  joerg.jaspert
+2001-07-02 Monday 14:53  joerg.jaspert
 
 	* debian/: README.BUILD-DEB (1.2), changelog (1.6), control (1.4),
 	huskymak.cfg (1.6), rules (1.5): Rebuild hpt Package.
 
-2001-07-02 Monday 18:12  pavel.gulchouck
+2001-07-02 Monday 09:12  pavel.gulchouck
 
 	* misc/filter.pl (1.5): perl route(): process messages with
 	hold/direct/crash/imm attributes
 
-2001-06-26 Tuesday 09:31  mhaase
+2001-06-26 Tuesday 00:31  mhaase
 
 	* src/areafix.c (1.217): undo changes I made yesterday (rescan
 	feature), it was already implemented at another part
 
-2001-06-25 Monday 20:31  ml
+2001-06-25 Monday 11:31  ml
 
 	* doc/hpt.texi (1.30), src/areafix.c (1.216), src/hptlink.c (1.25):
 	workadound for hptlink when MsgUidToMsgn() returns -1 on Jam
 
-2001-06-24 Sunday 19:49  mhaase
+2001-06-24 Sunday 10:49  mhaase
 
 	* src/areafix.c (1.215): same as I wrote in January, but didn't
 	commit; addition to rescan feature: +area /r is possible
 
-2001-06-15 Friday 07:48  pavel.gulchouck
+2001-06-14 Thursday 22:48  pavel.gulchouck
 
 	* misc/filter.pl (1.4): Minor bugfix
 
-2001-06-14 Thursday 16:21  pavel.gulchouck
+2001-06-14 Thursday 07:21  pavel.gulchouck
 
 	* filter.pl (1.5): Added descriptions of $route, $flavour and $attr
 	in route() hook
 
-2001-06-14 Thursday 16:15  pavel.gulchouck
+2001-06-14 Thursday 07:15  pavel.gulchouck
 
 	* misc/filter.pl (1.3): Added processing list reply from uplink
 
-2001-06-14 Thursday 16:00  pavel.gulchouck
+2001-06-14 Thursday 07:00  pavel.gulchouck
 
 	* filter.pl (1.4), misc/filter.pl (1.2): Adapted to current perl
 	API
 
-2001-06-12 Tuesday 07:30  ml
+2001-06-11 Monday 22:30  ml
 
 	* src/: areafix.c (1.214), toss.c (1.352): fixed areafix replying
 	to messages with empty ToUserName field
 
-2001-06-11 Monday 20:36  ml
+2001-06-11 Monday 11:36  ml
 
 	* doc/hpt.texi (1.29), src/toss.c (1.351): carbonexcludefwdfrom
 	support
 
-2001-06-11 Monday 13:08  ml
+2001-06-11 Monday 04:08  ml
 
 	* doc/hpt.texi (1.28), src/areafix.c (1.213), src/toss.c (1.350):
 	now it is possoble to make spaces before and after searching
 	strings in carboncopy
 
-2001-06-10 Sunday 06:42  ml
+2001-06-09 Saturday 21:42  ml
 
 	* src/areafix.c (1.212): fixed two bugs in autopause
 
-2001-06-08 Friday 11:55  ml
+2001-06-08 Friday 02:55  ml
 
 	* src/: hpttree.c (1.15), scan.c (1.130): try to work with mixed
 	PATH/SEEN-BY in hpttree [patch by Serguei Revtov]
 
-2001-06-05 Tuesday 15:11  ml
+2001-06-05 Tuesday 06:11  ml
 
 	* src/hptlink.c (1.24): ignore repeating areas in hptlink [patch by
 	Serguei Revtov]
 
-2001-06-03 Sunday 12:45  tobi
+2001-06-03 Sunday 03:45  tobi
 
 	* h/date.h (1.180): date.h has been replaced by cvsdate.h, which is
 	server-generated
 
-2001-06-03 Sunday 09:01  ml
+2001-06-03 Sunday 00:01  ml
 
 	* src/areafix.c (1.211): fixed unsubscribing mandatory links with
 	autopause and small memory leak
 
-2001-06-03 Sunday 07:31  ml
+2001-06-02 Saturday 22:31  ml
 
 	* src/toss.c (1.349): fixed adding aka to seen-bys for links from
 	ignoreseen or -sbign arrays
 
-2001-05-30 Wednesday 14:14  ml
+2001-05-30 Wednesday 05:14  ml
 
 	* src/toss.c (1.347): fix open directory for old watcom & mingw
 
-2001-05-30 Wednesday 07:21  ml
+2001-05-29 Tuesday 22:21  ml
 
 	* src/toss.c (1.346): fixed core dumps with CarbonDelete (only for
 	new carbon code)
 
-2001-05-29 Tuesday 10:36  ml
+2001-05-29 Tuesday 01:36  ml
 
 	* src/fcommon.c (1.89): fileBox fix
 
-2001-05-24 Thursday 17:06  ml
+2001-05-24 Thursday 08:06  ml
 
 	* doc/hpt.texi (1.27), src/fcommon.c (1.88), src/toss.c (1.345):
 	fileBoxes support
 
-2001-05-22 Tuesday 23:06  pavel.gulchouck
+2001-05-22 Tuesday 14:06  pavel.gulchouck
 
 	* h/hptperl.h (1.2), src/perl.c (1.11), src/scan.c (1.129): $route
 	and $flavour vars are available in route() perl hook
 
-2001-05-17 Thursday 07:38  ml
+2001-05-16 Wednesday 22:38  ml
 
 	* src/areafix.c (1.210): don't print 'no access' to areafix reports
 	when  is used in request
 
-2001-05-17 Thursday 07:21  ml
+2001-05-16 Wednesday 22:21  ml
 
 	* src/: areafix.c (1.209), getfree.c (1.7): trying to fix getfree.c
 	to compiling with libc5. don't print 'no access' to areafix reports
 	when area is hided
 
-2001-05-15 Tuesday 14:32  ml
+2001-05-15 Tuesday 05:32  ml
 
 	* make/makefile.wcw (1.3), src/scan.c (1.128), src/toss.c (1.344):
 	write log error when processing fileattach and no fileroute defined
 
-2001-05-09 Wednesday 18:47  ml
+2001-05-09 Wednesday 09:47  ml
 
 	* src/scan.c (1.127): disable any netmail packing without any
 	routing
 
-2001-05-07 Monday 17:56  ml
+2001-05-07 Monday 08:56  ml
 
 	* BUGS (1.13), h/date.h (1.177), src/hpt.c (1.110), src/scan.c
 	(1.126): bugfix. don't scan echomail from echotosslog file if
 	packing netmail
 
-2001-05-05 Saturday 22:28  tobi
+2001-05-05 Saturday 13:28  tobi
 
 	* doc/hpt.texi (1.25), src/toss.c (1.343): Implemented the
 	"autoAreaCreateSubdirs" feature to create a structured message base
 	instead of a flat one.
 
-2001-05-05 Saturday 12:12  ml
+2001-05-05 Saturday 03:12  ml
 
 	* TODO (1.169), doc/hpt.texi (1.24), src/areafix.c (1.208),
 	src/toss.c (1.342): areafixnames, fixed bug in areafix when
 	processing more than one request at once
 
-2001-05-05 Saturday 10:51  ml
+2001-05-05 Saturday 01:51  ml
 
 	* TODO (1.168), doc/hpt.texi (1.23), src/areafix.c (1.207),
 	src/hpt.c (1.109), src/toss.c (1.341): advisory lock
 
-2001-05-05 Saturday 09:08  ml
+2001-05-05 Saturday 00:08  ml
 
 	* TODO (1.167), doc/hpt.texi (1.22), src/toss.c (1.340): allowed
 	passthrough keyword in autoarecreatedefaults
 
-2001-05-04 Friday 19:55  ml
+2001-05-04 Friday 10:55  ml
 
 	* TODO (1.166), doc/hpt.texi (1.21), h/date.h (1.176), src/toss.c
 	(1.339): write importlog when tossing from BadArea
 
-2001-05-03 Thursday 21:41  ml
+2001-05-03 Thursday 12:41  ml
 
 	* doc/hpt.texi (1.20), h/date.h (1.175), src/toss.c (1.338): patch
 	from kees: carbon copy changes
 
-2001-05-03 Thursday 13:25  ml
+2001-05-03 Thursday 04:25  ml
 
 	* .cvs2cl (1.1): added .cvs2cl file
 
-2001-04-30 Monday 08:26  kazimirow
+2001-04-29 Sunday 23:26  kazimirow
 
 	* src/areafix.c (1.206): 'unrec.%-sequence' under MSVC(possible
 	others also) fixed(this time really -:))
 
-2001-04-30 Monday 08:12  kazimirow
+2001-04-29 Sunday 23:12  kazimirow
 
 	* src/areafix.c (1.205): fixed 'unrecognized %-sequence'
 
-2001-04-21 Saturday 17:23  joerg.jaspert
+2001-04-21 Saturday 08:23  joerg.jaspert
 
 	* debian/: changelog (1.5), control (1.3), huskymak.cfg (1.5),
 	rules (1.4): Turned debug on
 
-2001-04-18 Wednesday 23:47  tobi
+2001-04-18 Wednesday 14:47  tobi
 
 	* doc/hpt.texi (1.18): added doc about (not yet implemented)
 	autoareacreatesubdirs
 
-2001-04-14 Saturday 16:55  joerg.jaspert
+2001-04-14 Saturday 07:55  joerg.jaspert
 
 	* debian/control (1.2): Changed build-depends
 
-2001-04-14 Saturday 14:49  tobi
+2001-04-14 Saturday 05:49  tobi
 
 	* debian/huskymak.cfg (1.4): fixed DEBLFLAGS
 
-2001-04-13 Friday 15:19  joerg.jaspert
+2001-04-13 Friday 06:19  joerg.jaspert
 
 	* debian/: changelog (1.4), huskymak.cfg (1.3): Recompiled. Change
 	to smapi-version made it neccessary for right Dependencys (I hope
 	apt-get/dselect like it now!)
 
-2001-04-12 Thursday 17:33  tobi
+2001-04-12 Thursday 08:33  tobi
 
 	* doc/keywords.bp (1.1): test
 
-2001-04-12 Thursday 13:32  joerg.jaspert
+2001-04-12 Thursday 04:32  joerg.jaspert
 
 	* debian/: changelog (1.3), dirs (1.2), huskymak.cfg (1.2), rules
 	(1.3): 99% of Debian-specific things now done in rules-file, not in
 	upstream-makefile
 
-2001-04-12 Thursday 13:31  joerg.jaspert
+2001-04-12 Thursday 04:31  joerg.jaspert
 
 	* Makefile (1.9), makefile.inc (1.13): Deleted yesterdays
 	debian-changes
 
-2001-04-11 Wednesday 22:31  joerg.jaspert
+2001-04-11 Wednesday 13:31  joerg.jaspert
 
 	* debian/README.BUILD-DEB (1.1): Some words for package-building on
 	Debian Systems.
 
-2001-04-10 Tuesday 22:26  joerg.jaspert
+2001-04-10 Tuesday 13:26  joerg.jaspert
 
 	* debian/: changelog (1.2), doc-base (1.1): doc-base was missing.
 
-2001-04-10 Tuesday 22:13  joerg.jaspert
+2001-04-10 Tuesday 13:13  joerg.jaspert
 
 	* debian/rules (1.2): Placed a - on the wrong line.
 
-2001-04-10 Tuesday 22:11  joerg.jaspert
+2001-04-10 Tuesday 13:11  joerg.jaspert
 
 	* doc/Makefile (1.3): Debian-specific changes
 
-2001-04-10 Tuesday 22:11  joerg.jaspert
+2001-04-10 Tuesday 13:11  joerg.jaspert
 
 	* debian/: README.Debian (1.1), changelog (1.1), control (1.1),
 	copyright (1.1), dirs (1.1), docs (1.1), huskymak.cfg (1.1), rules
 	(1.1): Files needed to build .debs
 
-2001-04-10 Tuesday 22:10  joerg.jaspert
+2001-04-10 Tuesday 13:10  joerg.jaspert
 
 	* Makefile (1.8), makefile.inc (1.12): Debian-specific changes.
 	Included in ifeqs
 
-2001-04-05 Thursday 14:11  joerg.jaspert
+2001-04-05 Thursday 05:11  joerg.jaspert
 
 	* man/: pktinfo.1 (1.1), txt2pkt.1 (1.1): manpages for the two
 	binaries without manpage in hpt. Check for errors please
 
-2001-04-03 Tuesday 22:25  tobi
+2001-04-03 Tuesday 13:25  tobi
 
 	* src/toss.c (1.327): fix crash after tossing finished due to
 	statlog being NULL
 
-2001-04-03 Tuesday 19:35  mhaase
+2001-04-03 Tuesday 10:35  mhaase
 
 	* src/toss.c (1.326): fixed non Ansi C code with fopen ("rt" ->
 	"r") for reading statlog (Michael Haase)
 
-2001-04-03 Tuesday 00:29  tobi
+2001-04-02 Monday 15:29  tobi
 
 	* src/getfree.c (1.5): portability fix for BSD-based operating
 	systems
 
-2001-03-21 Wednesday 10:46  tobi
+2001-03-21 Wednesday 01:46  tobi
 
 	* src/fcommon.c (1.83): bounds checking compatibility fix
 
-2001-03-11 Sunday 21:42  tobi
+2001-03-11 Sunday 12:42  tobi
 
 	* src/getfree.c (1.3): fixed ifdef errors in getfree for os/2 and
 	win32
 
-2001-03-11 Sunday 21:34  oliver.grimm
+2001-03-11 Sunday 12:34  oliver.grimm
 
 	* src/getfree.c (1.2): OG: sys/fsstat.h excluded for BeOS !
 
-2001-03-11 Sunday 00:15  tobi
+2001-03-10 Saturday 15:15  tobi
 
 	* src/: hptlink.c (1.22), hpttree.c (1.14): portability fixes
 
-2001-02-11 Sunday 19:36  ml
+2001-02-11 Sunday 10:36  ml
 
 	* doc/: Makefile (1.1), hpt.texi (1.1), makefile.lnx (1.1),
 	makefile.os2 (1.1): doc
 
-2001-02-09 Friday 09:57  pavel.gulchouck
+2001-02-09 Friday 00:57  pavel.gulchouck
 
 	* make/makeperl.inc (1.2): failed if $PERL not defined
 
-2001-01-30 Tuesday 21:47  nestyurkin.nikolay
+2001-01-30 Tuesday 12:47  nestyurkin.nikolay
 
 	* src/toss.c (1.313): an other fix for netmailFlag
 
-2001-01-24 Wednesday 19:03  pavel.gulchouck
+2001-01-24 Wednesday 10:03  pavel.gulchouck
 
 	* src/perl.c (1.7): set msg.textLength fixed
 
-2001-01-24 Wednesday 18:54  pavel.gulchouck
+2001-01-24 Wednesday 09:54  pavel.gulchouck
 
 	* src/perl.c (1.6): set msg.textLength in perl_putMsgInArea
 
-2001-01-20 Saturday 16:54  ml
+2001-01-20 Saturday 07:54  ml
 
 	* h/global.h (1.23), src/global.c (1.33), src/hpt.c (1.96),
 	src/toss.c (1.307): new feature
 
-2001-01-20 Saturday 05:05  ml
+2001-01-19 Friday 20:05  ml
 
 	* h/date.h (1.134), src/scan.c (1.113), src/scanarea.c (1.64):
 	bugfixes
 
-2001-01-19 Friday 17:38  ml
+2001-01-19 Friday 08:38  ml
 
 	* h/date.h (1.133), src/pktread.c (1.69), src/scan.c (1.112),
 	src/scanarea.c (1.63), src/toss.c (1.306): speed up
 
-2001-01-15 Monday 17:01  ml
+2001-01-15 Monday 08:01  ml
 
 	* TODO (1.141), h/toss.h (1.41), src/areafix.c (1.180), src/toss.c
 	(1.305): new features
 
-2001-01-15 Monday 09:31  ml
+2001-01-15 Monday 00:31  ml
 
 	* BUGS (1.9), TODO (1.140), h/areafix.h (1.19), h/date.h (1.131),
 	h/toss.h (1.40), misc/areafix.hlp (1.14), src/areafix.c (1.179),
 	src/toss.c (1.304): new features
 
-2001-01-09 Tuesday 14:59  ml
+2001-01-09 Tuesday 05:59  ml
 
 	* h/date.h (1.130), misc/areafix.hlp (1.13), src/areafix.c (1.178):
 	rescan mode on subscribe
 
-2001-01-07 Sunday 20:43  ml
+2001-01-07 Sunday 11:43  ml
 
 	* TODO (1.139), h/date.h (1.129), src/areafix.c (1.177),
 	src/txt2pkt.c (1.23): delete fixes
 
-2000-12-13 Wednesday 19:43  sms
+2000-12-13 Wednesday 10:43  sms
 
 	* src/toss.c (1.302): removed length limit for area descriptions in
 	autocreate
 
-2000-12-06 Wednesday 19:10  ml
+2000-12-06 Wednesday 10:10  ml
 
 	* h/date.h (1.125), src/toss.c (1.299): attaches fix
 
-2000-12-05 Tuesday 04:20  sms
+2000-12-04 Monday 19:20  sms
 
 	* src/: hptlink.c (1.20), link.c (1.39): using enum for
 	linkWithImportLog instead of strings
 
-2000-12-03 Sunday 19:46  sms
+2000-12-03 Sunday 10:46  sms
 
 	* TODO (1.136), src/scan.c (1.111): forcing KFS on intransit mails
 	with file attaches
 
-2000-12-03 Sunday 19:34  sms
+2000-12-03 Sunday 10:34  sms
 
 	* TODO (1.135): updated TODO
 
-2000-12-03 Sunday 18:59  sms
+2000-12-03 Sunday 09:59  sms
 
 	* Makefile (1.7): using RMOPT from huskymak.cfg
 
-2000-11-30 Thursday 10:22  ml
+2000-11-30 Thursday 01:22  ml
 
 	* h/date.h (1.123), h/global.h (1.22), src/areafix.c (1.176),
 	src/global.c (1.32), src/hpt.c (1.94), src/toss.c (1.296): see
 	changelog 30-nov-2000
 
-2000-11-29 Wednesday 10:58  ml
+2000-11-29 Wednesday 01:58  ml
 
 	* h/date.h (1.122), src/areafix.c (1.175): write to log when
 	areafix can't change config file
 
-2000-11-28 Tuesday 06:30  ml
+2000-11-27 Monday 21:30  ml
 
 	* src/: areafix.c (1.174), fcommon.c (1.75), scan.c (1.110): delete
 	old code
 
-2000-11-17 Friday 10:21  tobi
+2000-11-17 Friday 01:21  tobi
 
 	* src/pktwrite.c (1.30): print errno when append fails
 
-2000-11-12 Sunday 11:52  ml
+2000-11-12 Sunday 02:52  ml
 
 	* h/date.h (1.120), src/areafix.c (1.172), src/hpt.c (1.93),
 	src/toss.c (1.295): see ChangeLog Nov 12
 
-2000-11-08 Wednesday 19:35  ml
+2000-11-08 Wednesday 10:35  ml
 
 	* README (1.10), h/date.h (1.119), src/scanarea.c (1.62),
 	src/toss.c (1.294): see ChangeLog Nov 09
 
-2000-11-03 Friday 17:10  ml
+2000-11-03 Friday 08:10  ml
 
 	* h/date.h (1.118), src/toss.c (1.293): see changelog Nov 03
 
-2000-10-30 Monday 21:23  mhaase
+2000-10-30 Monday 12:23  mhaase
 
 	* src/areafix.c (1.171): * fixed previous added update (upped wrong
 	file)
 
-2000-10-30 Monday 20:59  mhaase
+2000-10-30 Monday 11:59  mhaase
 
 	* src/areafix.c (1.170): * hpt (areafix): with %rescan command now
 	also /R=xx and /R allowed   e.g.: '%rescan area /r=10' is the same
 	as '%rescan area 10'	     '%rescan area' is the same as '%rescan
 	/r'	     (Micha)
 
-2000-10-28 Saturday 19:38  ml
+2000-10-28 Saturday 10:38  ml
 
 	* h/date.h (1.117), src/toss.c (1.292): see changelog oct 29
 
-2000-10-26 Thursday 20:25  mhaase
+2000-10-26 Thursday 11:25  mhaase
 
 	* src/toss.c (1.290): * New optional keyword: statlog	After
 	tossing (hpt toss), it is checked if there is new personal mail  
@@ -2744,364 +2744,364 @@
 	   if exist stat.log type stat.log
 	   if exist stat.log del stat.log>nul
 
-2000-10-23 Monday 17:53  ml
+2000-10-23 Monday 08:53  ml
 
 	* BUGS (1.8), TODO (1.132), h/date.h (1.115), src/hptlink.c (1.19),
 	src/scan.c (1.109): see ChangeLog Oct 23
 
-2000-10-22 Sunday 16:35  ml
+2000-10-22 Sunday 07:35  ml
 
 	* BUGS (1.7), TODO (1.131), src/areafix.c (1.169), src/hpt.c
 	(1.92), src/post.c (1.52), src/toss.c (1.288): see ChangeLog Oct 22
 
-2000-10-22 Sunday 11:11  ml
+2000-10-22 Sunday 02:11  ml
 
 	* h/date.h (1.114), src/scan.c (1.108): see ChangeLog Oct 22
 
-2000-10-21 Saturday 18:17  ml
+2000-10-21 Saturday 09:17  ml
 
 	* h/date.h (1.113), h/toss.h (1.38), src/areafix.c (1.168),
 	src/toss.c (1.287): see ChangeLog Oct 21
 
-2000-10-18 Wednesday 17:58  ml
+2000-10-18 Wednesday 08:58  ml
 
 	* h/date.h (1.112), src/pktread.c (1.67): calculate packet orig
 	zone if zero
 
-2000-10-17 Tuesday 11:25  ml
+2000-10-17 Tuesday 02:25  ml
 
 	* h/date.h (1.111), src/areafix.c (1.167), src/hpt.c (1.91),
 	src/pktwrite.c (1.29), src/scan.c (1.107): see ChangeLog Oct 17
 
-2000-10-16 Monday 16:43  ml
+2000-10-16 Monday 07:43  ml
 
 	* src/: areafix.c (1.166), pktwrite.c (1.28), toss.c (1.286): see
 	ChangeLog Oct 16
 
-2000-10-16 Monday 07:04  ml
+2000-10-15 Sunday 22:04  ml
 
 	* h/date.h (1.110), src/pktwrite.c (1.27): write msg to pkt as one
 	piece
 
-2000-10-15 Sunday 19:14  ml
+2000-10-15 Sunday 10:14  ml
 
 	* BUGS (1.6), src/pktread.c (1.66), src/toss.c (1.285): zone fixing
 
-2000-10-15 Sunday 14:18  ml
+2000-10-15 Sunday 05:18  ml
 
 	* src/link.c (1.38): see ChangeLog Oct 15
 
-2000-10-15 Sunday 10:05  ml
+2000-10-15 Sunday 01:05  ml
 
 	* h/date.h (1.109), src/areafix.c (1.165), src/hpt.c (1.90),
 	src/post.c (1.51), src/toss.c (1.284): see ChangeLog Oct 15
 
-2000-10-11 Wednesday 17:10  ml
+2000-10-11 Wednesday 08:10  ml
 
 	* src/scan.c (1.106): attaches fix
 
-2000-10-11 Wednesday 16:39  ml
+2000-10-11 Wednesday 07:39  ml
 
 	* src/toss.c (1.282): attaches fix
 
-2000-10-11 Wednesday 15:28  ml
+2000-10-11 Wednesday 06:28  ml
 
 	* h/date.h (1.107), man/hptlink.1 (1.2), src/hptlink.c (1.18):
 	hptlink -n
 
-2000-10-09 Monday 12:27  ml
+2000-10-09 Monday 03:27  ml
 
 	* h/areafix.h (1.18), h/date.h (1.106), src/areafix.c (1.164):
 	tearline stops areafix
 
-2000-10-08 Sunday 20:58  tobi
+2000-10-08 Sunday 11:58  tobi
 
 	* src/pktwrite.c (1.26): * when appending to a zero-length pkt
 	file, write a pkt header first
 
-2000-10-07 Saturday 09:11  ml
+2000-10-07 Saturday 00:11  ml
 
 	* h/date.h (1.105), src/areafix.c (1.163), src/toss.c (1.281): see
 	changelog Oct 07
 
-2000-10-05 Thursday 19:00  ml
+2000-10-05 Thursday 10:00  ml
 
 	* h/date.h (1.104), h/log.h (1.12), make/makefile.mgw (1.4),
 	src/hptlink.c (1.17), src/log.c (1.22): hptlink update
 
-2000-09-30 Saturday 18:04  ml
+2000-09-30 Saturday 09:04  ml
 
 	* src/areafix.c (1.162): autopause bugfix
 
-2000-09-27 Wednesday 15:26  ml
+2000-09-27 Wednesday 06:26  ml
 
 	* h/date.h (1.103), src/areafix.c (1.161): robotsArea
 
-2000-09-25 Monday 19:48  ml
+2000-09-25 Monday 10:48  ml
 
 	* src/toss.c (1.280): autocreate fix
 
-2000-09-25 Monday 19:26  ml
+2000-09-25 Monday 10:26  ml
 
 	* TODO (1.130), h/date.h (1.102), src/fcommon.c (1.74), src/toss.c
 	(1.279): addrDiffAlways
 
-2000-09-23 Saturday 16:22  ml
+2000-09-23 Saturday 07:22  ml
 
 	* h/date.h (1.101), src/fcommon.c (1.73), src/toss.c (1.278): see
 	ChangeLog Sep 23
 
-2000-09-21 Thursday 15:22  ml
+2000-09-21 Thursday 06:22  ml
 
 	* h/date.h (1.100), h/global.h (1.21), h/link.h (1.5),
 	src/areafix.c (1.160), src/global.c (1.31), src/hpt.c (1.89),
 	src/link.c (1.36), src/perl.c (1.5): see ChangeLog Sep 21
 
-2000-09-16 Saturday 17:20  ml
+2000-09-16 Saturday 08:20  ml
 
 	* h/date.h (1.99), src/toss.c (1.277): autocreate fix
 
-2000-09-15 Friday 11:29  ml
+2000-09-15 Friday 02:29  ml
 
 	* src/areafix.c (1.159): small fix to last patch (areafix.c)
 
-2000-09-15 Friday 11:09  ml
+2000-09-15 Friday 02:09  ml
 
 	* src/areafix.c (1.158): small fix to last patch (areafix.c)
 
-2000-09-15 Friday 10:24  ml
+2000-09-15 Friday 01:24  ml
 
 	* src/: areafix.c (1.157), hpt.c (1.88): see ChangeLog Fri Sep 15
 
-2000-09-15 Friday 06:43  ml
+2000-09-14 Thursday 21:43  ml
 
 	* h/date.h (1.98), src/toss.c (1.276): fixed autocreate with
 	-dosfile at the end of AutoAreaCreateDefaults
 
-2000-09-14 Thursday 09:24  ml
+2000-09-14 Thursday 00:24  ml
 
 	* h/date.h (1.97), src/fcommon.c (1.72): addrDiff changes
 
-2000-09-13 Wednesday 11:59  ml
+2000-09-13 Wednesday 02:59  ml
 
 	* h/date.h (1.96), src/areafix.c (1.156): don't add NOECHO msg if
 	escan from SDM area
 
-2000-09-12 Tuesday 18:00  ml
+2000-09-12 Tuesday 09:00  ml
 
 	* src/toss.c (1.275): seen-by
 
-2000-09-12 Tuesday 17:43  ml
+2000-09-12 Tuesday 08:43  ml
 
 	* src/toss.c (1.274): seen-by
 
-2000-09-12 Tuesday 10:21  ml
+2000-09-12 Tuesday 01:21  ml
 
 	* h/global.h (1.20), src/global.c (1.30), src/hpt.c (1.87),
 	src/post.c (1.50): post fix
 
-2000-09-11 Monday 19:22  ml
+2000-09-11 Monday 10:22  ml
 
 	* h/date.h (1.95), src/areafix.c (1.155), src/hpt.c (1.86): rescan
 	bugfix
 
-2000-09-10 Sunday 17:53  ml
+2000-09-10 Sunday 08:53  ml
 
 	* h/date.h (1.94), src/fcommon.c (1.71), src/toss.c (1.273): see
 	changelog Sep 10
 
-2000-09-09 Saturday 17:11  ml
+2000-09-09 Saturday 08:11  ml
 
 	* h/date.h (1.93), src/toss.c (1.272): toss -b fix
 
-2000-09-08 Friday 05:32  ml
+2000-09-07 Thursday 20:32  ml
 
 	* h/date.h (1.92), src/areafix.c (1.154): areafix bugfix
 
-2000-09-07 Thursday 11:03  ml
+2000-09-07 Thursday 02:03  ml
 
 	* h/date.h (1.91), misc/filter.pl (1.1): filter.pl
 
-2000-09-06 Wednesday 12:57  ml
+2000-09-06 Wednesday 03:57  ml
 
 	* h/date.h (1.90), h/fcommon.h (1.29), src/hptlink.c (1.15): see
 	changeLog Sep 06
 
-2000-09-05 Tuesday 18:06  ml
+2000-09-05 Tuesday 09:06  ml
 
 	* h/date.h (1.89), src/link.c (1.35): hpt link speedup
 
-2000-09-04 Monday 19:45  ml
+2000-09-04 Monday 10:45  ml
 
 	* src/link.c (1.34): link fix
 
-2000-09-04 Monday 11:34  ml
+2000-09-04 Monday 02:34  ml
 
 	* h/date.h (1.88), h/fcommon.h (1.28), make/makeperl.emo (1.2),
 	make/makeperl.emx (1.2), src/fcommon.c (1.70), src/hpt.c (1.85),
 	src/hptlink.c (1.14), src/link.c (1.33), src/log.c (1.21),
 	src/recode.c (1.14), src/seenby.c (1.18): see changelog sep 04
 
-2000-09-03 Sunday 17:26  ml
+2000-09-03 Sunday 08:26  ml
 
 	* man/hpt.1 (1.11), src/post.c (1.49): post - orig&tearl
 
-2000-09-03 Sunday 14:52  ml
+2000-09-03 Sunday 05:52  ml
 
 	* h/date.h (1.87), src/link.c (1.32): see ChangeLog Sep 03
 
-2000-09-03 Sunday 05:02  sms
+2000-09-02 Saturday 20:02  sms
 
 	* TODO (1.129): updated TODO
 
-2000-09-02 Saturday 15:54  ml
+2000-09-02 Saturday 06:54  ml
 
 	* h/date.h (1.86), src/toss.c (1.270): see changelog Sep 02
 
-2000-08-30 Wednesday 17:55  ml
+2000-08-30 Wednesday 08:55  ml
 
 	* h/date.h (1.85), src/fcommon.c (1.69), src/toss.c (1.269): see
 	changelog
 
-2000-08-29 Tuesday 17:58  ml
+2000-08-29 Tuesday 08:58  ml
 
 	* TODO (1.128), src/hptlink.c (1.13), src/toss.c (1.268): see
 	ChangeLog Aug 29
 
-2000-08-27 Sunday 20:31  sms
+2000-08-27 Sunday 11:31  sms
 
 	* Makefile (1.6): removed -I.. (only used for debugging purposes)
 
-2000-08-27 Sunday 19:51  sms
+2000-08-27 Sunday 10:51  sms
 
 	* makefile.inc (1.10): added manual pages to target distclean
 
-2000-08-27 Sunday 19:39  sms
+2000-08-27 Sunday 10:39  sms
 
 	* Makefile (1.5), makefile.inc (1.9): added manual pages to target
 	all
 
-2000-08-27 Sunday 16:29  ml
+2000-08-27 Sunday 07:29  ml
 
 	* TODO (1.127), h/date.h (1.83), src/toss.c (1.267): see changelog
 	Aug 27
 
-2000-08-25 Friday 08:16  ml
+2000-08-24 Thursday 23:16  ml
 
 	* h/date.h (1.82), src/fcommon.c (1.68): see changelog Aug 25
 
-2000-08-24 Thursday 19:36  ml
+2000-08-24 Thursday 10:36  ml
 
 	* TODO (1.126), h/date.h (1.81), h/global.h (1.19), src/global.c
 	(1.29), src/hpt.c (1.84), src/log.c (1.20), src/toss.c (1.266): see
 	changelog Aug 25
 
-2000-08-22 Tuesday 22:39  sms
+2000-08-22 Tuesday 13:39  sms
 
 	* TODO (1.125): updated TODO list
 
-2000-08-22 Tuesday 00:26  sms
+2000-08-21 Monday 15:26  sms
 
 	* Makefile (1.4): fixed missing TABs
 
-2000-08-21 Monday 15:15  sms
+2000-08-21 Monday 06:15  sms
 
 	* Makefile (1.3): added target uninstall
 
-2000-08-13 Sunday 17:53  ml
+2000-08-13 Sunday 08:53  ml
 
 	* h/date.h (1.78), src/toss.c (1.264): processEMMsg
 
-2000-08-13 Sunday 08:16  ml
+2000-08-12 Saturday 23:16  ml
 
 	* src/areafix.c (1.151): areafix fix.2
 
-2000-08-12 Saturday 18:56  ml
+2000-08-12 Saturday 09:56  ml
 
 	* h/date.h (1.77), src/areafix.c (1.150): areafix bugfix
 
-2000-08-11 Friday 17:05  ml
+2000-08-11 Friday 08:05  ml
 
 	* src/toss.c (1.263): seen-bys fix
 
-2000-08-06 Sunday 21:56  tobi
+2000-08-06 Sunday 12:56  tobi
 
 	* src/hpt.c (1.83): added BeOS version identification
 
-2000-08-02 Wednesday 18:14  ml
+2000-08-02 Wednesday 09:14  ml
 
 	* TODO (1.120), src/toss.c (1.262): autoCreate fix
 
-2000-08-02 Wednesday 09:30  ml
+2000-08-02 Wednesday 00:30  ml
 
 	* TODO (1.119), h/date.h (1.74), src/hptlink.c (1.11): hptlink
 	bugfix
 
-2000-07-24 Monday 19:56  ml
+2000-07-24 Monday 10:56  ml
 
 	* misc/clean_outb (1.4): clean_outb cleanup
 
-2000-07-18 Tuesday 19:34  ml
+2000-07-18 Tuesday 10:34  ml
 
 	* src/toss.c (1.259): fix in putMsgInBadArea
 
-2000-07-18 Tuesday 18:09  ml
+2000-07-18 Tuesday 09:09  ml
 
 	* src/pktread.c (1.65): /n stripping
 
-2000-07-18 Tuesday 18:08  ml
+2000-07-18 Tuesday 09:08  ml
 
 	* src/toss.c (1.258): seen-by & path bugfix
 
-2000-07-14 Friday 00:55  tobi
+2000-07-13 Thursday 15:55  tobi
 
 	* VERSION (1.1): file VERSION was initially added on branch
 	hpt-0_9_7.
 
-2000-07-14 Friday 00:40  tobi
+2000-07-13 Thursday 15:40  tobi
 
 	* h/version.h (1.7), src/global.c (1.27), src/hpt.c (1.81):
 	implemented versioning scheme as discussed with mtt
 
-2000-07-12 Wednesday 13:11  tobi
+2000-07-12 Wednesday 04:11  tobi
 
 	* INSTALL (1.8): merged fixes from stable
 
-2000-07-08 Saturday 00:18  tobi
+2000-07-07 Friday 15:18  tobi
 
 	* h/fcommon.h (1.27), src/hpt.c (1.79): more mingw32 adaptions
 
-2000-07-07 Friday 20:43  tobi
+2000-07-07 Friday 11:43  tobi
 
 	* src/arealist.c (1.5): migrated fixes from stable
 
-2000-07-07 Friday 20:35  tobi
+2000-07-07 Friday 11:35  tobi
 
 	* src/fcommon.c (1.65): turbo c fix from stable
 
-2000-07-07 Friday 20:28  tobi
+2000-07-07 Friday 11:28  tobi
 
 	* h/arealist.h (1.2): merged prototype fix from stable
 
-2000-07-05 Wednesday 01:56  tobi
+2000-07-04 Tuesday 16:56  tobi
 
 	* make/makefile.rxw (1.2): makefile fix
 
-2000-07-05 Wednesday 01:54  tobi
+2000-07-04 Tuesday 16:54  tobi
 
 	* src/hpt.c (1.77): fix for mingw (don't know where to get this API
 	from)
 
-2000-07-05 Wednesday 01:54  tobi
+2000-07-04 Tuesday 16:54  tobi
 
 	* make/: makefile.bcd (1.2), makefile.bco (1.2), makefile.bcw
 	(1.2), makefile.djg (1.2), makefile.emx (1.2): some makefile fixes
 
-2000-07-01 Saturday 17:38  nestyurkin.nikolay
+2000-07-01 Saturday 08:38  nestyurkin.nikolay
 
 	* make/makefile.inc (1.2): update
 
-2000-07-01 Saturday 17:16  nestyurkin.nikolay
+2000-07-01 Saturday 08:16  nestyurkin.nikolay
 
 	* make/: makefile (1.1), makefile.aix (1.1), makefile.bcd (1.1),
 	makefile.bco (1.1), makefile.bcw (1.1), makefile.bsd (1.1),
@@ -3112,7 +3112,7 @@
 	makefile.wco (1.1), makefile.wcw (1.1), makefile.wcx (1.1): new
 	makefiles
 
-2000-06-13 Tuesday 21:10  tobi
+2000-06-13 Tuesday 12:10  tobi
 
 	* src/: fcommon.c (1.63), post.c (1.46): * Fix: netmail area tag is
 	now added to echotoss.log for "hpt post", instead   of an empty
@@ -3120,127 +3120,127 @@
 	arguments to open for creation of bsy files - fixes misbehaviour  
 	on OS/2 reported by D. Friedmann.
 
-2000-06-04 Sunday 18:29  nestyurkin.nikolay
+2000-06-04 Sunday 09:29  nestyurkin.nikolay
 
 	* src/: hpt.c (1.72), scan.c (1.93): fix
 
-2000-06-04 Sunday 17:42  nestyurkin.nikolay
+2000-06-04 Sunday 08:42  nestyurkin.nikolay
 
 	* src/txt2pkt.c (1.18): fix
 
-2000-06-04 Sunday 17:15  nestyurkin.nikolay
+2000-06-04 Sunday 08:15  nestyurkin.nikolay
 
 	* h/global.h (1.18, hpt-0_9_7d-release, hpt-0_9_7c-release,
 	hpt-0_9_7b-release, hpt-0_9_7a-release), src/pktread.c (1.60),
 	src/tree.c (1.7): fix
 
-2000-06-04 Sunday 14:03  tobi
+2000-06-04 Sunday 05:03  tobi
 
 	* src/areafix.c (1.135): grammatical "fix" ;-)
 
-2000-05-27 Saturday 20:46  tobi
+2000-05-27 Saturday 11:46  tobi
 
 	* src/scan.c (1.87): added a missing include file
 
-2000-05-27 Saturday 20:01  tobi
+2000-05-27 Saturday 11:01  tobi
 
 	* src/scan.c (1.86): Only lowercase filename in flow file if the
 	file does not exist in the original spelling.
 
-2000-05-22 Monday 14:54  mt
+2000-05-22 Monday 05:54  mt
 
 	* src/global.c (1.24): changed version number
 
-2000-05-10 Wednesday 00:26  sms
+2000-05-09 Tuesday 15:26  sms
 
 	* TODO (1.83): updated TODO
 
-2000-04-26 Wednesday 22:18  tobi
+2000-04-26 Wednesday 13:18  tobi
 
 	* src/pktread.c (1.53): fixed handling of INTL kludges
 
-2000-04-21 Friday 13:14  sms
+2000-04-21 Friday 04:14  sms
 
 	* Makefile (1.1, hpt-0_9_7d-release, hpt-0_9_7c-release,
 	hpt-0_9_7b-release, hpt-0_9_7a-release), makefile.husky (1.12):
 	renamed makefile.husky to Makefile
 
-2000-04-17 Monday 07:47  tobi
+2000-04-16 Sunday 22:47  tobi
 
 	* src/fcommon.c (1.48): undone filename algo changes; they were not
 	FTSC compliant.
 
-2000-04-16 Sunday 23:47  tobi
+2000-04-16 Sunday 14:47  tobi
 
 	* src/: fcommon.c (1.47), toss.c (1.207): hpt unnecessary polled
 	the packfilename twice. fixed.
 
-2000-04-16 Sunday 23:36  tobi
+2000-04-16 Sunday 14:36  tobi
 
 	* src/toss.c (1.206): further cleanup on log file messages
 
-2000-04-16 Sunday 23:31  tobi
+2000-04-16 Sunday 14:31  tobi
 
 	* src/toss.c (1.205): cleaned up packet file name logging
 
-2000-04-16 Sunday 23:02  tobi
+2000-04-16 Sunday 14:02  tobi
 
 	* src/toss.c (1.204): improved logging of filenames
 
-2000-04-16 Sunday 22:48  tobi
+2000-04-16 Sunday 13:48  tobi
 
 	* src/fcommon.c (1.46): small bug fixes
 
-2000-04-16 Sunday 22:40  tobi
+2000-04-16 Sunday 13:40  tobi
 
 	* src/: fcommon.c (1.45), toss.c (1.203): fixed the filename
 	generation routines
 
-2000-04-16 Sunday 20:01  tobi
+2000-04-16 Sunday 11:01  tobi
 
 	* src/: areafix.c (1.113), fcommon.c (1.44), log.c (1.12), post.c
 	(1.39), toss.c (1.202), txt2pkt.c (1.13): added fixes for mingw32
 
-2000-04-16 Sunday 16:29  tobi
+2000-04-16 Sunday 07:29  tobi
 
 	* src/hpt.c (1.59): legacy makefile fixes
 
-2000-04-16 Sunday 16:03  tobi
+2000-04-16 Sunday 07:03  tobi
 
 	* src/: hpt.c (1.58), toss.c (1.201): fixes for DJGPP
 
-2000-04-16 Sunday 13:42  tobi
+2000-04-16 Sunday 04:42  tobi
 
 	* makefile.husky (1.11): makefiles reworked
 
-2000-04-16 Sunday 13:36  tobi
+2000-04-16 Sunday 04:36  tobi
 
 	* makefile.inc (1.1): legacy makefiles reworked
 
-2000-04-16 Sunday 13:35  tobi
+2000-04-16 Sunday 04:35  tobi
 
 	* TODO (1.73): updated todo list
 
-2000-04-15 Saturday 23:39  tobi
+2000-04-15 Saturday 14:39  tobi
 
 	* src/pktinfo.c (1.11): fixed problem with ambiguous evaluation
 	order
 
-2000-04-15 Saturday 23:23  tobi
+2000-04-15 Saturday 14:23  tobi
 
 	* src/fcommon.c (1.43): further borland c fixes
 
-2000-04-15 Saturday 23:21  tobi
+2000-04-15 Saturday 14:21  tobi
 
 	* src/crc.c (1.2, hpt-0_9_7d-release, hpt-0_9_7c-release,
 	hpt-0_9_7b-release, hpt-0_9_7a-release): Fixes for Borland C
 
-2000-04-15 Saturday 22:52  tobi
+2000-04-15 Saturday 13:52  tobi
 
 	* h/fcommon.h (1.23), src/post.c (1.38), src/txt2pkt.c (1.12):
 	removed another warning
 
-2000-04-15 Saturday 20:09  tobi
+2000-04-15 Saturday 11:09  tobi
 
 	* h/dupe.h (1.16, hpt-0_9_7d-release, hpt-0_9_7c-release,
 	hpt-0_9_7b-release, hpt-0_9_7a-release), h/fcommon.h (1.22),
@@ -3255,20 +3255,20 @@
 	src/tpkt.c (1.23), src/txt2pkt.c (1.11): fixed include statements
 	to match new 8.3 filenames
 
-2000-04-14 Friday 17:11  nestyurkin.nikolay
+2000-04-14 Friday 08:11  nestyurkin.nikolay
 
 	* src/areafix.c (1.110): areafix kill request fix
 
-2000-04-12 Wednesday 23:56  tobi
+2000-04-12 Wednesday 14:56  tobi
 
 	* makefile.husky (1.10): small fix
 
-2000-04-12 Wednesday 23:28  tobi
+2000-04-12 Wednesday 14:28  tobi
 
 	* src/toss.c (1.195): implemented check for hidden files in inbound
 	for borland c
 
-2000-04-12 Wednesday 23:28  tobi
+2000-04-12 Wednesday 14:28  tobi
 
 	* h/: areafix.h (1.12), recode.h (1.6, hpt-0_9_7d-release,
 	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release), toss.h
@@ -3276,15 +3276,15 @@
 	hpt-0_9_7b-release, hpt-0_9_7a-release): Borland Fixes / removed
 	Warnings
 
-2000-04-12 Wednesday 22:48  tobi
+2000-04-12 Wednesday 13:48  tobi
 
 	* src/fcommon.c (1.41): borland c fix
 
-2000-04-12 Wednesday 21:51  tobi
+2000-04-12 Wednesday 12:51  tobi
 
 	* src/hpt.c (1.56): Added SetConsoleTitle for Borland C
 
-2000-04-12 Wednesday 20:11  tobi
+2000-04-12 Wednesday 11:11  tobi
 
 	* src/: areafix.c (1.109), dupe.c (1.32), fcommon.c (1.40), hpt.c
 	(1.55), hptlink.c (1.5), hpttree.c (1.7), link.c (1.25), pktread.c
@@ -3294,62 +3294,62 @@
 	hpt-0_9_7a-release), toss.c (1.194), tpkt.c (1.22), tree.c (1.6):
 	Removed warnings for Borland C
 
-2000-04-12 Wednesday 18:08  tobi
+2000-04-12 Wednesday 09:08  tobi
 
 	* src/: areafix.c (1.108), fcommon.c (1.39), hpt.c (1.54),
 	pktwrite.c (1.19), toss.c (1.193): Fixes for Borland C
 
-2000-04-12 Wednesday 17:50  tobi
+2000-04-12 Wednesday 08:50  tobi
 
 	* src/dupe.c (1.31): removed more ampersands
 
-2000-04-12 Wednesday 17:47  tobi
+2000-04-12 Wednesday 08:47  tobi
 
 	* src/dupe.c (1.30): removed superfluous (and possibly harmful)
 	ampersands
 
-2000-04-10 Monday 16:41  sms
+2000-04-10 Monday 07:41  sms
 
 	* src/toss.c (1.192): some changes to fidoconfig.h and affected
 	files needed to automatically convert fidoconfig.h to fidoconf.pas
 	with h2pas
 
-2000-04-09 Sunday 17:29  hjk
+2000-04-09 Sunday 08:29  hjk
 
 	* src/toss.c (1.189): * Code cleanup
 
-2000-04-09 Sunday 17:25  hjk
+2000-04-09 Sunday 08:25  hjk
 
 	* src/toss.c (1.188): * removed check of groupaccess on import and
 	export of messages
 
-2000-03-30 Thursday 09:33  tobi
+2000-03-29 Wednesday 23:33  tobi
 
 	* makefile.husky (1.8): makefile fixes by max and others
 
-2000-03-19 Sunday 23:33  tobi
+2000-03-19 Sunday 14:33  tobi
 
 	* makefile.husky (1.7): Makefile fixes
 
-2000-03-12 Sunday 15:55  tobi
+2000-03-12 Sunday 06:55  tobi
 
 	* src/hptlink.c (1.4): 64 bit bug fixes
 
-2000-03-12 Sunday 15:48  tobi
+2000-03-12 Sunday 06:48  tobi
 
 	* src/txt2pkt.c (1.9): 64 bit bug fixes
 
-2000-03-12 Sunday 15:48  tobi
+2000-03-12 Sunday 06:48  tobi
 
 	* src/: fcommon.c (1.36), toss.c (1.173): 64 bit bug fixes64 bit
 	bug fixes64 bit bug fixes64 bit bug fixes64 bit bug fixes64 bit bug
 	fixes
 
-2000-03-09 Thursday 17:48  sms
+2000-03-09 Thursday 08:48  sms
 
 	* makefile.husky (1.6): changed / to DIRSEP in makefile.husky
 
-2000-03-09 Thursday 17:27  sms
+2000-03-09 Thursday 08:27  sms
 
 	* makefile.husky (1.5), h/dupe.h (1.15), h/fcommon.h (1.20),
 	h/global.h (1.12), h/log.h (1.8), h/pkt.h (1.17), h/scan.h (1.13),
@@ -3361,270 +3361,270 @@
 	src/tpkt.c (1.21), src/txt2pkt.c (1.8): moved smapi and fidoconfig
 	headers to INCDIR/smapi and INCDIR/fidoconfig
 
-2000-03-07 Tuesday 16:37  tobi
+2000-03-07 Tuesday 07:37  tobi
 
 	* makefile.husky (1.4): makefile fixes
 
-2000-02-22 Tuesday 09:51  edi
+2000-02-22 Tuesday 00:51  edi
 
 	* src/areafix.c (1.97): 
 	edi: * now if token `allowPktAddrDiffer' for link is on, areafix
 	allows the originating addresses in PKT and MSG header be
 	different. See the manual of fidoconfig about this token.
 
-2000-02-06 Sunday 23:32  henk-jan.krueger
+2000-02-06 Sunday 14:32  henk-jan.krueger
 
 	* src/areafix.c (1.88): * Added '%query' to AreaFix - Update
 
-2000-02-06 Sunday 23:29  henk-jan.krueger
+2000-02-06 Sunday 14:29  henk-jan.krueger
 
 	* h/areafix.h (1.11), misc/areafix.hlp (1.7), src/areafix.c (1.87):
 	* Added '%query' to AreaFix
 
-2000-01-29 Saturday 12:57  mt
+2000-01-29 Saturday 03:57  mt
 
 	* src/scan.c (1.70): last fix for requests
 
-2000-01-28 Friday 21:42  sms
+2000-01-28 Friday 12:42  sms
 
 	* src/: areafix.c (1.80), toss.c (1.164): changed groups from chars
 	to strings
 
-2000-01-27 Thursday 19:18  mt
+2000-01-27 Thursday 10:18  mt
 
 	* src/scan.c (1.69): requets bugfix
 
-2000-01-27 Thursday 18:56  mt
+2000-01-27 Thursday 09:56  mt
 
 	* src/toss.c (1.163): patch by alex Semyaka
 
-2000-01-25 Tuesday 20:04  mt
+2000-01-25 Tuesday 11:04  mt
 
 	* src/scan.c (1.68): request bug fixed
 
-2000-01-24 Monday 20:05  mt
+2000-01-24 Monday 11:05  mt
 
 	* src/areafix.c (1.79): hopefully fixed rescan
 
-2000-01-24 Monday 00:30  sms
+2000-01-23 Sunday 15:30  sms
 
 	* makefile.husky (1.1): move makefile.husky from linux subdir to
 	main dir
 
-2000-01-16 Sunday 14:11  sms
+2000-01-16 Sunday 05:11  sms
 
 	* INSTALL (1.6): added reference to husky-common-package to INSTALL
 
-2000-01-01 Saturday 22:14  tobi
+2000-01-01 Saturday 13:14  tobi
 
 	* src/: areafix.c (1.73), recode.c (1.8): Fixed some warning.
 
-1999-12-22 Wednesday 14:47  mt
+1999-12-22 Wednesday 05:47  mt
 
 	* src/: pktinfo.c (1.8), toss.c (1.157): merely bugfixes. Look into
 	Changelog
 
-1999-12-15 Wednesday 23:38  mt
+1999-12-15 Wednesday 14:38  mt
 
 	* h/version.h (1.5), src/global.c (1.19), src/hpt.c (1.38),
 	src/pktinfo.c (1.7), src/pktread.c (1.43), src/purgeDupes.c (1.12):
 	version numbers changed changed
 
-1999-12-07 Tuesday 19:44  mt
+1999-12-07 Tuesday 10:44  mt
 
 	* src/pktread.c (1.41): fixed the last bugfix back to original
 	correct behaviour
 
-1999-12-06 Monday 18:59  tobi
+1999-12-06 Monday 09:59  tobi
 
 	* src/pktread.c (1.39): * Month number in PKT header was
 	interpreted wrong, fixed.    (Patch by Eduard Dulich).
 
-1999-12-06 Monday 14:53  tobi
+1999-12-06 Monday 05:53  tobi
 
 	* src/: areafix.c (1.71), hpt.c (1.37), pktread.c (1.38), post.c
 	(1.18), recode.c (1.7), scan.c (1.63), scanarea.c (1.39), toss.c
 	(1.153): Fixed warnings, adapted dirlayer.h, and fixed osf makefile
 
-1999-12-02 Thursday 11:45  mt
+1999-12-02 Thursday 02:45  mt
 
 	* src/areafix.c (1.70): fixed bug in rescanEMArea introduced by me
 	yesterday
 
-1999-12-01 Wednesday 09:33  mt
+1999-12-01 Wednesday 00:33  mt
 
 	* misc/areafix.hlp (1.6), src/areafix.c (1.69): rescan parameter
 	for maximum count of echomail rescanned added
 
-1999-11-30 Tuesday 22:12  sms
+1999-11-30 Tuesday 13:12  sms
 
 	* src/: areafix.c (1.68), toss.c (1.152): fixed some misuses of ++
 	in areafix.c and toss.c
 
-1999-11-04 Thursday 12:31  mt
+1999-11-04 Thursday 03:31  mt
 
 	* src/seenby.c (1.9): fixed buffer overflow bug
 
-1999-11-03 Wednesday 08:56  mt
+1999-11-02 Tuesday 23:56  mt
 
 	* src/toss.c (1.150): fixed the bug when hpt got a bad echomail
 	with spaces between AREA:   <NAME>
 
-1999-10-19 Tuesday 21:04  mt
+1999-10-19 Tuesday 12:04  mt
 
 	* src/: global.c (1.17), link.c (1.15): fixed one bug and adjusted
 	version
 
-1999-10-18 Monday 09:14  tobi
+1999-10-18 Monday 00:14  tobi
 
 	* src/scan.c (1.60): Recognise trailing ^M in echotoss.log
 
-1999-10-12 Tuesday 10:43  mt
+1999-10-12 Tuesday 01:43  mt
 
 	* src/pktwrite.c (1.14): npd kludge corrected
 
-1999-10-10 Sunday 23:21  henk-jan.krueger
+1999-10-10 Sunday 14:21  henk-jan.krueger
 
 	* src/toss.c (1.147): * Too much checks for reading or writing an
 	area, groups are now only used for AreaFix check
 
-1999-09-24 Friday 11:14  mt
+1999-09-24 Friday 02:14  mt
 
 	* INSTALL (1.5): release updates
 
-1999-09-23 Thursday 23:20  mt
+1999-09-23 Thursday 14:20  mt
 
 	* CREDITS (1.14, hpt-0_9_7d-release, hpt-0_9_7c-release,
 	hpt-0_9_7b-release, hpt-0_9_7a-release): ready for release
 
-1999-09-15 Wednesday 21:39  mt
+1999-09-15 Wednesday 12:39  mt
 
 	* src/toss.c (1.141): djgpp should work again
 
-1999-09-14 Tuesday 22:37  mt
+1999-09-14 Tuesday 13:37  mt
 
 	* CREDITS (1.13), src/post.c (1.11): applied patch from sven
 
-1999-09-08 Wednesday 15:40  tobi
+1999-09-08 Wednesday 06:40  tobi
 
 	* src/areafix.c (1.60): Fixed areafix message in case of different
 	pkt and msg addresses.	Previously, the message was "system is
 	unknown". Now, it is "different pkt and msg addresses", as
 	originally intended.
 
-1999-09-06 Monday 14:22  tobi
+1999-09-06 Monday 05:22  tobi
 
 	* src/areafix.c (1.59): Fixed a coredump that occured when a PKT
 	file was processed that contained two messages, each an areafix
 	request for an area that was not available, but needed to be
 	requested at the uplink.
 
-1999-08-12 Thursday 12:51  tobi
+1999-08-12 Thursday 03:51  tobi
 
 	* src/toss.c (1.132): Implemented the "allowEmptyPktPwd" feature.
 	Lothar never seems to get his ITrack configured correctly ... ;-)
 
-1999-08-03 Tuesday 13:30  georgi
+1999-08-03 Tuesday 04:30  georgi
 
 	* src/txt2pkt.c (1.3): Added Via line if post in netmail
 
-1999-08-02 Monday 15:37  georgi
+1999-08-02 Monday 06:37  georgi
 
 	* src/toss.c (1.129): attachs now find in protInbound dir
 
-1999-07-30 Friday 19:50  tobi
+1999-07-30 Friday 10:50  tobi
 
 	* src/areafix.c (1.54): Fixed return codes of processAreaFix. 0 is
 	error and 1 is OK, not the other way round.
 
-1999-07-30 Friday 19:22  tobi
+1999-07-30 Friday 10:22  tobi
 
 	* src/: link.c (1.13), scan.c (1.52), scanarea.c (1.33): Fix: Added
 	trailing zeros to the control buffer after call to MsgReadMsg,
 	because MsgReadMsg does not insert them, but CvtCtrlToKludge does
 	need them.
 
-1999-07-30 Friday 18:05  tobi
+1999-07-30 Friday 09:05  tobi
 
 	* src/areafix.c (1.53): Fixed nonportable declaration of areaslen
 
-1999-07-21 Wednesday 09:06  georgi
+1999-07-21 Wednesday 00:06  georgi
 
 	* src/areafix.c (1.52): change %list
 
-1999-06-30 Wednesday 10:16  mt
+1999-06-30 Wednesday 01:16  mt
 
 	* src/scan.c (1.51): small patch
 
-1999-06-29 Tuesday 12:06  mt
+1999-06-29 Tuesday 03:06  mt
 
 	* src/toss.c (1.128): first message in autocreated area is now also
 	in dupe-database recorded.
 
-1999-06-23 Wednesday 21:05  mt
+1999-06-23 Wednesday 12:05  mt
 
 	* src/: dupe.c (1.19), global.c (1.15): version updated bugfix for
 	dupe.c
 
-1999-06-23 Wednesday 13:23  georgi
+1999-06-23 Wednesday 04:23  georgi
 
 	* src/txt2pkt.c (1.1): posting text files to pkt
 
-1999-06-11 Friday 20:06  mm
+1999-06-11 Friday 11:06  mm
 
 	* src/areafix.c (1.47): + area descriptions are printed as well in
 	arealist
 
-1999-06-08 Tuesday 00:24  mt
+1999-06-07 Monday 15:24  mt
 
 	* src/pktread.c (1.27): release
 
-1999-06-07 Monday 19:20  mt
+1999-06-07 Monday 10:20  mt
 
 	* h/toss.h (1.20), src/hpt.c (1.29), src/post.c (1.8), src/toss.c
 	(1.120): post patches
 
-1999-06-01 Tuesday 19:36  mt
+1999-06-01 Tuesday 10:36  mt
 
 	* h/toss.h (1.19), src/dupe.c (1.17), src/post.c (1.7), src/toss.c
 	(1.119): post fixed, dupe fixed
 
-1999-05-26 Wednesday 10:19  mt
+1999-05-26 Wednesday 01:19  mt
 
 	* src/: post.c (1.6), toss.c (1.118): fixed the swapped parameters
 	at and af in post
 
-1999-05-20 Thursday 12:27  mt
+1999-05-20 Thursday 03:27  mt
 
 	* src/toss.c (1.117): err files with passthrough areas now fixed
 
-1999-05-19 Wednesday 20:52  mt
+1999-05-19 Wednesday 11:52  mt
 
 	* src/toss.c (1.116): empty packets are processed no more
 
-1999-05-18 Tuesday 20:54  mt
+1999-05-18 Tuesday 11:54  mt
 
 	* h/toss.h (1.18), src/toss.c (1.115): fix applied and other
 	changes
 
-1999-05-18 Tuesday 19:20  mt
+1999-05-18 Tuesday 10:20  mt
 
 	* src/toss.c (1.114): update
 
-1999-05-17 Monday 14:50  mt
+1999-05-17 Monday 05:50  mt
 
 	* src/toss.c (1.113): pktpwd bug fixed
 
-1999-05-17 Monday 01:23  mt
+1999-05-16 Sunday 16:23  mt
 
 	* src/toss.c (1.112): updates
 
-1999-05-11 Tuesday 20:58  mt
+1999-05-11 Tuesday 11:58  mt
 
 	* src/: areafix.c (1.43), log.c (1.7): one bugfixes in areafix and
 	new patches from oleg
 
-1999-05-10 Monday 14:46  mt
+1999-05-10 Monday 05:46  mt
 
 	* h/global.h (1.9), h/log.h (1.6), src/areafix.c (1.42), src/dupe.c
 	(1.16), src/fcommon.c (1.23), src/global.c (1.14), src/hpt.c
@@ -3632,54 +3632,54 @@
 	(1.9), src/scan.c (1.48), src/scanarea.c (1.30), src/tlog.c (1.5),
 	src/toss.c (1.111): pgcc/emx related fixes
 
-1999-05-10 Monday 00:19  mt
+1999-05-09 Sunday 15:19  mt
 
 	* src/: link.c (1.11), scan.c (1.47), toss.c (1.110): small fixes
 
-1999-04-21 Wednesday 12:41  mt
+1999-04-21 Wednesday 03:41  mt
 
 	* src/toss.c (1.109): fixed null pointer errors
 
-1999-04-20 Tuesday 00:05  mt
+1999-04-19 Monday 15:05  mt
 
 	* src/toss.c (1.107): fixed the bug, when no autocreatedefaults was
 	specified
 
-1999-04-18 Sunday 22:53  mt
+1999-04-18 Sunday 13:53  mt
 
 	* src/scan.c (1.46): vialine fix
 
-1999-04-09 Friday 12:19  mt
+1999-04-09 Friday 03:19  mt
 
 	* src/toss.c (1.100): applied a fix from Antonio
 
-1999-04-08 Thursday 17:25  mt
+1999-04-08 Thursday 08:25  mt
 
 	* TODO (1.22), src/dupe.c (1.15), src/toss.c (1.99): new patches by
 	antonio
 
-1999-04-06 Tuesday 22:38  mt
+1999-04-06 Tuesday 13:38  mt
 
 	* INSTALL (1.4), src/global.c (1.13), src/hpt.c (1.24),
 	src/scanarea.c (1.28), src/toss.c (1.97): applied antonios patches
 
-1999-03-20 Saturday 15:24  mt
+1999-03-20 Saturday 06:24  mt
 
 	* src/toss.c (1.94): applied a patch from as russian. (forgot the
 	name sorry)
 
-1999-03-18 Thursday 18:53  gabriel
+1999-03-18 Thursday 09:53  gabriel
 
 	* src/areafix.c (1.36): changed loglevel for string "Start AReafix"
 	from 4 to 1
 
-1999-03-13 Saturday 10:54  ml
+1999-03-13 Saturday 01:54  ml
 
 	* h/scanarea.h (1.2), h/toss.h (1.16), src/areafix.c (1.33),
 	src/hpt.c (1.21), src/scanarea.c (1.25), src/toss.c (1.92): Max: +
 	toss -b (from Fedor Lizunkov) + small fixes
 
-1999-03-10 Wednesday 16:01  ml
+1999-03-10 Wednesday 07:01  ml
 
 	* src/toss.c (1.91): Max: - fixed core dump if no pkt pwd (change
 	processPkt code)
@@ -3687,34 +3687,34 @@
 	CVS : Enter Log.  Lines beginning with `CVS:' are removed
 	automatically
 
-1999-03-10 Wednesday 01:18  mt
+1999-03-09 Tuesday 16:18  mt
 
 	* TODO (1.18), src/link.c (1.8), src/toss.c (1.89): segfault in
 	link fixed, fixed a bug in processPkt
 
-1999-03-10 Wednesday 01:00  ml
+1999-03-09 Tuesday 16:00  ml
 
 	* h/toss.h (1.15), src/areafix.c (1.31), src/toss.c (1.88): Max
 	(patches from Fedor Lizunkov): - fixed areafix bug when send mail
 	to uunknown link - fixed echo access (readCheck, writeCheck)
 
-1999-03-09 Tuesday 16:41  mt
+1999-03-09 Tuesday 07:41  mt
 
 	* src/scan.c (1.45): changed the routing back to old style. See
 	ChangeLog
 
-1999-03-09 Tuesday 02:10  mt
+1999-03-08 Monday 17:10  mt
 
 	* TODO (1.17), h/scanarea.h (1.1), src/link.c (1.7): small fixes
 
-1999-03-08 Monday 12:51  ml
+1999-03-08 Monday 03:51  ml
 
 	* src/areafix.c (1.30): Max (areafix updates) : - core dumped at
 	%info - fixed small bugz in %pause & %resume - small changes in
 	available code - delLinkFromArea: unsubscribed other links -
 	%rescan: fixed core dumps if no area defined.
 
-1999-03-07 Sunday 19:36  ml
+1999-03-07 Sunday 10:36  ml
 
 	* CREDITS (1.11), h/areafix.h (1.4), h/toss.h (1.14), src/areafix.c
 	(1.29), src/pktwrite.c (1.10), src/scanarea.c (1.24), src/toss.c
@@ -3722,21 +3722,21 @@
 	Max: - added rescan code by Fedor and other.  - areafix is in test
 	stage, so...
 
-1999-03-04 Thursday 12:43  mt
+1999-03-04 Thursday 03:43  mt
 
 	* src/toss.c (1.86): fixed a bug where no pkt-files are recognized.
 
-1999-03-03 Wednesday 23:57  mt
+1999-03-03 Wednesday 14:57  mt
 
 	* h/areafix.h (1.3), h/global.h (1.8), h/scan.h (1.9), h/toss.h
 	(1.13), misc/areafix.hlp (1.4), src/areafix.c (1.28), src/global.c
 	(1.12), src/hpt.c (1.20), src/toss.c (1.85): applied max patch
 
-1999-03-02 Tuesday 13:18  mt
+1999-03-02 Tuesday 04:18  mt
 
 	* src/: config.c (1.4), tconfig.c (1.4): removed old config code
 
-1999-03-01 Monday 23:26  gabriel
+1999-03-01 Monday 14:26  gabriel
 
 	* CREDITS (1.10), h/log.h (1.4), src/hpt.c (1.19), src/log.c (1.5),
 	src/scan.c (1.44), src/toss.c (1.84): Mon Mar  1 22:00	 Gabriel
@@ -3750,48 +3750,48 @@
 	happening worth logging)   + Changes to the code to force all
 	unneeded log entries to loglevel 1
 
-1999-03-01 Monday 19:59  mt
+1999-03-01 Monday 10:59  mt
 
 	* INSTALL (1.3), src/areafix.c (1.27), src/hpt.c (1.18), src/link.c
 	(1.6), src/post.c (1.5), src/purgeDupes.c (1.8) (utags: hpt-0_26):
 	djgpp port
 
-1999-02-28 Sunday 20:28  gabriel
+1999-02-28 Sunday 11:28  gabriel
 
 	* src/areafix.c (1.26): little change in subscribeareacheck to you
 	the new patimat funktion
 
-1999-02-27 Saturday 22:58  gabriel
+1999-02-27 Saturday 13:58  gabriel
 
 	* misc/: areafix.hlp (1.3), filefix.hlp (1.1, hpt-0_9_7d-release,
 	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release) (utags:
 	hpt-0_26): updated areafix & filefix help file
 
-1999-02-27 Saturday 20:22  gabriel
+1999-02-27 Saturday 11:22  gabriel
 
 	* src/areafix.c (1.25): Minor Changes
 
-1999-02-25 Thursday 22:43  gabriel
+1999-02-25 Thursday 13:43  gabriel
 
 	* h/toss.h (1.12, hpt-0_26): Warning fixed
 
-1999-02-25 Thursday 19:02  gabriel
+1999-02-25 Thursday 10:02  gabriel
 
 	* src/: fcommon.c (1.20), toss.c (1.83) (utags: hpt-0_26): Warnings
 	& makefile fixed
 
-1999-02-22 Monday 11:26  tobi
+1999-02-22 Monday 02:26  tobi
 
 	* src/toss.c (1.82): - Ignore my last check-in message, hpt was
 	able to recognise mixed case   file name extensions even before my
 	last check-in.
 
-1999-02-22 Monday 11:13  tobi
+1999-02-22 Monday 02:13  tobi
 
 	* src/toss.c (1.81): - hpt now also recognises .pkt and arcmail
 	filename extensions that are   written in lower case.
 
-1999-02-20 Saturday 21:21  tobi
+1999-02-20 Saturday 12:21  tobi
 
 	* h/fcommon.h (1.14, hpt-0_26), src/fcommon.c (1.19), src/hpt.c
 	(1.17), src/scanarea.c (1.23, hpt-0_26), src/toss.c (1.80): + Added
@@ -3802,20 +3802,20 @@
 	support for packet forwarding. See the fidoconfig manual for  
 	information.
 
-1999-02-19 Friday 20:33  tobi
+1999-02-19 Friday 11:33  tobi
 
 	* h/fcommon.h (1.13), src/fcommon.c (1.18), src/toss.c (1.79):
 	Changes for the pkt forwarding feature. All embraced in ifdefs
 	because of the feature freeze.
 
-1999-02-19 Friday 18:06  tobi
+1999-02-19 Friday 09:06  tobi
 
 	* src/toss.c (1.78): - Added a log file entry for the case that a
 	PKT file in the secure inbound	 does not originate from a link of
 	ours (i.E. only netmail from this   packet will be processed, and
 	echomail will "vanish").
 
-1999-02-17 Wednesday 21:24  gabriel
+1999-02-17 Wednesday 12:24  gabriel
 
 	* src/toss.c (1.77): Wed Feb 17 20:07:00 CET 1999   Gabriel
 	Plutzar: + added implementation of the new remap statment. It takes
@@ -3823,89 +3823,89 @@
 	ToName or OldAddr may be *.    If a Netmail meets the ToName and
 	OldAddr Criteria, it is sent to    NewAddr.
 
-1999-02-16 Tuesday 19:08  gabriel
+1999-02-16 Tuesday 10:08  gabriel
 
 	* src/areafix.c (1.24): Gabriel Plutzar:   I included a new Areafix
 	Command, %avail  (alias %available, %all) which   sends back the
 	file availableareas, which should contain all areas for   forward
 	requests
 
-1999-02-15 Monday 20:23  mt
+1999-02-15 Monday 11:23  mt
 
 	* TODO (1.16, hpt-0_26), src/areafix.c (1.23), src/dupe.c (1.14,
 	hpt-0_26), src/link.c (1.5), src/purgeDupes.c (1.7), src/toss.c
 	(1.76), src/tpkt.c (1.18, hpt-0_26): added autoCreateFile and
 	applied max's patch
 
-1999-02-14 Sunday 14:16  mt
+1999-02-14 Sunday 05:16  mt
 
 	* src/toss.c (1.75): applied patch from max
 
-1999-02-10 Wednesday 21:51  mt
+1999-02-10 Wednesday 12:51  mt
 
 	* src/tpkt.c (1.17): update
 
-1999-02-10 Wednesday 21:50  mt
+1999-02-10 Wednesday 12:50  mt
 
 	* src/: toss.c (1.74), tpkt.c (1.16): fixed autoareacreate bug
 
-1999-02-09 Tuesday 11:29  mt
+1999-02-09 Tuesday 02:29  mt
 
 	* TODO (1.15), h/areafix.h (1.2, hpt-0_26), h/toss.h (1.11),
 	src/areafix.c (1.22), src/post.c (1.4), src/toss.c (1.73),
 	src/tpkt.c (1.15): fixed bugs, and changed the netmail tossing
 	behaviour
 
-1999-02-08 Monday 14:09  tobi
+1999-02-08 Monday 05:09  tobi
 
 	* src/toss.c (1.72): Started to work on PKT forwarding and fixed a
 	small bug.
 
-1999-02-04 Thursday 11:20  mt
+1999-02-04 Thursday 02:20  mt
 
 	* TODO (1.14), src/scan.c (1.43, hpt-0_26), src/strsep.c (1.3,
 	hpt-0_26), src/toss.c (1.71): new strsep and if echomail is from a
 	link which is not linked, it will be tossed to bad.
 
-1999-02-02 Tuesday 21:41  mt
+1999-02-02 Tuesday 12:41  mt
 
 	* TODO (1.13), h/scan.h (1.8, hpt-0_26), src/pktread.c (1.24,
 	hpt-0_26), src/scan.c (1.42): outgoing pkt's now have a valid
 	pktpassword if the link is defined in fidoconfig and the mails have
 	the flag crash or hold
 
-1999-02-02 Tuesday 00:21  mt
+1999-02-01 Monday 15:21  mt
 
 	* TODO (1.12), src/pktread.c (1.23), src/pktwrite.c (1.9,
 	hpt-0_26): fixed the TOPT, FMPT bug and made a work-around for a
 	memory-problem
 
-1999-02-01 Monday 20:53  mt
+1999-02-01 Monday 11:53  mt
 
 	* BUG-REPORTING (1.1, hpt-0_26): added BUG-REPORTING
 
-1999-02-01 Monday 20:52  mt
+1999-02-01 Monday 11:52  mt
 
 	* src/: pktinfo.c (1.4, hpt-0_26), pktread.c (1.22): hpt now can
 	read pkt's which use \n as line separator and pktinfo displays all
 	pkt's on the commandline
 
-1999-02-01 Monday 14:22  mt
+1999-02-01 Monday 05:22  mt
 
 	* src/: scanarea.c (1.22), toss.c (1.70): fixed MSGLOCAL bug in
 	makeMsg
 
-1999-01-31 Sunday 03:04  tobi
+1999-01-30 Saturday 18:04  tobi
 
 	* src/pktread.c (1.21): Removed some other code that accidentally
 	slipped into CVS. Errrrr ....
 
-1999-01-31 Sunday 03:03  tobi
+1999-01-30 Saturday 18:03  tobi
 
 	* src/pktread.c (1.20): Removed some debugging code that
 	accidentally slipped into the CVS. Sorry.
 
-1999-01-28 Thursday 19:26  tobi
+1999-01-28 Thursday 10:26  tobi
 
 	* h/strsep.h (1.1, hpt-0_9_7d-release, hpt-0_9_7c-release,
 	hpt-0_9_7b-release, hpt-0_9_7a-release, hpt-0_26), src/areafix.c
@@ -3913,25 +3913,25 @@
 	src/scanarea.c (1.21), src/strsep.c (1.2), src/toss.c (1.69):
 	portability fixes
 
-1999-01-27 Wednesday 19:50  mt
+1999-01-27 Wednesday 10:50  mt
 
 	* TODO (1.11), src/pktread.c (1.18), src/purgeDupes.c (1.6): fixes
 
-1999-01-27 Wednesday 19:14  mt
+1999-01-27 Wednesday 10:14  mt
 
 	* src/: areafix.c (1.20), scan.c (1.40): changed strsep to strtok_r
 
-1999-01-27 Wednesday 13:51  tobi
+1999-01-27 Wednesday 04:51  tobi
 
 	* h/pkt.h (1.9, hpt-0_26): Fixed preprocessor statements
 
-1999-01-27 Wednesday 13:35  tobi
+1999-01-27 Wednesday 04:35  tobi
 
 	* src/strsep.c (1.1): Added strsep.c from EMX source as temporary
 	solution for those UNIX systems that do not have strsep in their C
 	library (like OSF).
 
-1999-01-27 Wednesday 13:21  tobi
+1999-01-27 Wednesday 04:21  tobi
 
 	* src/: dupe.c (1.13), toss.c (1.68): - Fixed non-standard
 	preprocessor directives.    Hey, everybody: YOU MUST PUT THE # HASH
@@ -3946,58 +3946,58 @@
 	
 	  !!!
 
-1999-01-23 Saturday 19:24  mt
+1999-01-23 Saturday 10:24  mt
 
 	* src/link.c (1.3): link patch for netmail from gerald and bugfix
 	for linking not existing msg
 
-1999-01-22 Friday 11:20  mt
+1999-01-22 Friday 02:20  mt
 
 	* CREDITS (1.9, hpt-0_26), src/link.c (1.2): added
 	linkWithImportLog
 
-1999-01-21 Thursday 11:05  mt
+1999-01-21 Thursday 02:05  mt
 
 	* TODO (1.10), src/scan.c (1.39), src/toss.c (1.67): bugfixes on
 	svens patch and my pkt-pnt stuff
 
-1999-01-20 Wednesday 10:35  mt
+1999-01-20 Wednesday 01:35  mt
 
 	* src/toss.c (1.66): fixed pkt placing for points
 
-1999-01-19 Tuesday 23:39  mt
+1999-01-19 Tuesday 14:39  mt
 
 	* TODO (1.9), src/scan.c (1.38): sven's patches, wrong netmail
 	scanning and cosmetical prob
 
-1999-01-19 Tuesday 11:09  mt
+1999-01-19 Tuesday 02:09  mt
 
 	* TODO (1.8), src/areafix.c (1.19), src/hpt.c (1.16), src/scan.c
 	(1.37), src/toss.c (1.65): security-prob in areafix fixed and,
 	pkt's are going to pnt-dir now
 
-1999-01-18 Monday 18:26  mt
+1999-01-18 Monday 09:26  mt
 
 	* TODO (1.7), src/scan.c (1.36), src/scanarea.c (1.20), src/toss.c
 	(1.64), src/tree.c (1.4, hpt-0_26): fixed one bug and made some
 	other small changes
 
-1999-01-17 Sunday 22:52  mt
+1999-01-17 Sunday 13:52  mt
 
 	* h/recode.h (1.3, hpt-0_26), src/pktread.c (1.17), src/pktwrite.c
 	(1.8), src/recode.c (1.3, hpt-0_26), src/scan.c (1.35), src/toss.c
 	(1.63): added makefile for bsd, and made some bugfixes
 
-1999-01-14 Thursday 20:55  mt
+1999-01-14 Thursday 11:55  mt
 
 	* src/tpkt.c (1.14): fixes
 
-1999-01-14 Thursday 20:50  mt
+1999-01-14 Thursday 11:50  mt
 
 	* src/: toss.c (1.62), tpkt.c (1.13): fixed a bug with core dump
 	whern autocreating passthrough areas
 
-1999-01-14 Thursday 14:52  mt
+1999-01-14 Thursday 05:52  mt
 
 	* TODO (1.6), h/dupe.h (1.9, hpt-0_26), h/global.h (1.7, hpt-0_26),
 	h/link.h (1.3, hpt-0_26), h/vixie.h (1.5, hpt-0_26), src/areafix.c
@@ -4005,54 +4005,54 @@
 	(1.15), src/link.c (1.1), src/pktread.c (1.16), src/toss.c (1.61):
 	link patch, memory bug fix from Kolya and some patches from me
 
-1999-01-14 Thursday 11:40  mt
+1999-01-14 Thursday 02:40  mt
 
 	* src/hpt.c (1.14): fixed bug if no logFileDir was specified
 
-1999-01-13 Wednesday 13:53  mt
+1999-01-13 Wednesday 04:53  mt
 
 	* src/toss.c (1.60): big bug fixed in toss.c
 
-1999-01-12 Tuesday 12:00  mt
+1999-01-12 Tuesday 03:00  mt
 
 	* src/toss.c (1.59): last minute fixes
 
-1999-01-12 Tuesday 00:13  mt
+1999-01-11 Monday 15:13  mt
 
 	* TODO (1.5): fixes for release
 
-1999-01-10 Sunday 20:54  mt
+1999-01-10 Sunday 11:54  mt
 
 	* src/toss.c (1.58): fixed bug with giving the mail back to the
 	link we got it from
 
-1999-01-08 Friday 18:19  tobi
+1999-01-08 Friday 09:19  tobi
 
 	* h/vixie.h (1.4): added osf makefile. doesn't work yet.  fixed
 	vixie.h for aix
 
-1999-01-08 Friday 00:14  mt
+1999-01-07 Thursday 15:14  mt
 
 	* TODO (1.4), src/fcommon.c (1.17), src/toss.c (1.57), src/tpkt.c
 	(1.12): first tempcode bugfixes
 
-1999-01-06 Wednesday 14:43  mt
+1999-01-06 Wednesday 05:43  mt
 
 	* TODO (1.3), src/toss.c (1.56): fixed echomail fromaddr bug for
 	fidogate
 
-1999-01-06 Wednesday 00:16  mt
+1999-01-05 Tuesday 15:16  mt
 
 	* TODO (1.2), src/scan.c (1.34), src/toss.c (1.55): hpt now does
 	not touch netmails without route, hopefully fixed that netmail -
 	empty password problem
 
-1999-01-04 Monday 11:15  mt
+1999-01-04 Monday 02:15  mt
 
 	* src/areafix.c (1.17): fixed an areafix bug, with areas in
 	included files
 
-1999-01-03 Sunday 01:56  mt
+1999-01-02 Saturday 16:56  mt
 
 	* README (1.5, hpt-0_26), TODO (1.1), h/dupe.h (1.8), h/fcommon.h
 	(1.12), h/global.h (1.6), h/hpt.h (1.3, hpt-0_26), h/log.h (1.3,
@@ -4066,74 +4066,74 @@
 	hpt-0_26), src/tconfig.c (1.3, hpt-0_26), src/tlog.c (1.3,
 	hpt-0_26), src/toss.c (1.54), src/tpkt.c (1.11): added TODO
 
-1999-01-02 Saturday 19:27  mt
+1999-01-02 Saturday 10:27  mt
 
 	* src/areafix.c (1.15): changed makefiles, fixed some unpack code
 	and done some other changes
 
-1998-12-31 Thursday 14:46  mt
+1998-12-31 Thursday 05:46  mt
 
 	* src/: fcommon.c (1.15), hpt.c (1.12), scan.c (1.32), toss.c
 	(1.53): fixed one unpack bug on unix systems, and some minor
 	kosmetical changes
 
-1998-12-30 Wednesday 13:43  mt
+1998-12-30 Wednesday 04:43  mt
 
 	* src/scan.c (1.31): fixed another subjectline Bug, now for file
 	requests
 
-1998-12-29 Tuesday 23:33  mt
+1998-12-29 Tuesday 14:33  mt
 
 	* src/toss.c (1.52): fixed one unportable thing in arcmail code
 
-1998-12-29 Tuesday 20:34  mt
+1998-12-29 Tuesday 11:34  mt
 
 	* src/scan.c (1.30): fixed the file attach handling code, it should
 	now work good also for more than one file
 
-1998-12-29 Tuesday 19:38  mt
+1998-12-29 Tuesday 10:38  mt
 
 	* src/scanarea.c (1.18): fixed a big memory bug in makeMsg. There
 	was to less memory reserved. I was stupid that day i wrote that
 	shit .-)
 
-1998-12-28 Monday 17:45  mt
+1998-12-28 Monday 08:45  mt
 
 	* src/: areafix.c (1.14), hpt.c (1.11), toss.c (1.51), tpkt.c
 	(1.10): fixed a nested strtok problem with strsep, which is not so
 	widely available, maybe i will add an implementation to hpt later
 
-1998-12-27 Sunday 18:46  mt
+1998-12-27 Sunday 09:46  mt
 
 	* h/vixie.h (1.3), src/areafix.c (1.13), src/fcommon.c (1.14),
 	src/hpt.c (1.10), src/toss.c (1.50), src/tpkt.c (1.9): done some
 	backporting to os/2 for ibm and watcom compiler and one big
 	security bug
 
-1998-12-27 Sunday 01:41  mt
+1998-12-26 Saturday 16:41  mt
 
 	* src/: areafix.c (1.12), dupe.c (1.10), tpkt.c (1.8): fixed a bug
 	in areafix concerning white spaces after echoarea keyword and a bug
 	concerning echoareas in included files
 
-1998-12-22 Tuesday 18:00  mt
+1998-12-22 Tuesday 09:00  mt
 
 	* src/toss.c (1.49): fixed a bug in autoAreaCreate with the wrong
 	-a option generated, fixed a bug in changeFileSuffix with
 	overwriting duplicate fileName
 
-1998-12-21 Monday 23:55  mt
+1998-12-21 Monday 14:55  mt
 
 	* h/post.h (1.2, hpt-0_26), src/dupe.c (1.9), src/hpt.c (1.9),
 	src/pktread.c (1.14), src/post.c (1.2), src/toss.c (1.48): fixed a
 	bug concerning pkt reading, and applied the third patch by Kolya
 	with Docu for post-feature and some minor changes
 
-1998-12-19 Saturday 00:40  mt
+1998-12-18 Friday 15:40  mt
 
 	* src/scan.c (1.29): fixed a bug in via line with wrong hour info
 
-1998-12-17 Thursday 23:51  mt
+1998-12-17 Thursday 14:51  mt
 
 	* CREDITS (1.8), h/fcommon.h (1.11), h/pkt.h (1.7), h/post.h (1.1),
 	h/toss.h (1.9), h/vixie.h (1.2), src/areafix.c (1.11),
@@ -4143,61 +4143,61 @@
 	and patches by Kolya, post and unpack feature by Kolya and
 	backporting to dos by Kolya
 
-1998-12-15 Tuesday 21:25  mt
+1998-12-15 Tuesday 12:25  mt
 
 	* h/toss.h (1.8), src/toss.c (1.46): added performance statistics
 	for tossing
 
-1998-12-14 Monday 16:21  mtt
+1998-12-14 Monday 07:21  mtt
 
 	* h/typesize.h (1.4): got it working on an ultrasparc removed
 	redundant typesize.h
 
-1998-12-14 Monday 13:09  mt
+1998-12-14 Monday 04:09  mt
 
 	* CREDITS (1.7), src/fcommon.c (1.12), src/scan.c (1.27):
 	zoneOutbound fix, fattach bugfix, minor doc changes
 
-1998-12-12 Saturday 00:02  tobi
+1998-12-11 Friday 15:02  tobi
 
 	* src/toss.c (1.45): fixed the syntax error that I made when fixing
 	the other syntax error ;-)
 
-1998-12-12 Saturday 00:01  tobi
+1998-12-11 Friday 15:01  tobi
 
 	* src/toss.c (1.44): fixed a trivial syntax error
 
-1998-12-11 Friday 00:55  mt
+1998-12-10 Thursday 15:55  mt
 
 	* src/toss.c (1.43): fixed a autocreate bug
 
-1998-12-10 Thursday 23:38  mt
+1998-12-10 Thursday 14:38  mt
 
 	* INSTALL (1.2), src/areafix.c (1.10), src/toss.c (1.42),
 	src/tpkt.c (1.6): fixed a bug in passthrough-autoareacreate code
 	and rewrote the security handling function
 
-1998-12-08 Tuesday 11:47  mt
+1998-12-08 Tuesday 02:47  mt
 
 	* src/: fcommon.c (1.11), toss.c (1.41): added passthrough for
 	autocreate and some other things
 
-1998-12-02 Wednesday 00:51  mt
+1998-12-01 Tuesday 15:51  mt
 
 	* h/fcommon.h (1.10), h/pkt.h (1.6), src/areafix.c (1.9),
 	src/pktread.c (1.12), src/pktwrite.c (1.5), src/scan.c (1.26),
 	src/scanarea.c (1.17), src/toss.c (1.40): updated hpt to new
 	fidoconfig
 
-1998-12-01 Tuesday 21:27  mt
+1998-12-01 Tuesday 12:27  mt
 
 	* h/fcommon.h (1.9): added createLockFile() to fcommon.h
 
-1998-12-01 Tuesday 21:13  mt
+1998-12-01 Tuesday 12:13  mt
 
 	* src/toss.c (1.39): no PATH bug fixed, made hpt compilable again
 
-1998-11-30 Monday 18:13  mt
+1998-11-30 Monday 09:13  mt
 
 	* CREDITS (1.6), h/fcommon.h (1.8), src/areafix.c (1.8),
 	src/fcommon.c (1.10), src/hpt.c (1.7), src/scan.c (1.25),
@@ -4205,47 +4205,47 @@
 	fixed one minor bug. This is a q&d bugfix, i will do a better
 	later.
 
-1998-11-28 Saturday 13:08  tobi
+1998-11-28 Saturday 04:08  tobi
 
 	* h/typesize.h (1.3): Added FreeBSD support
 
-1998-11-23 Monday 14:40  mt
+1998-11-23 Monday 05:40  mt
 
 	* src/: areafix.c (1.7), toss.c (1.37), tpkt.c (1.5): included some
 	small patches from max
 
-1998-11-21 Saturday 19:32  mt
+1998-11-21 Saturday 10:32  mt
 
 	* src/toss.c (1.36): fixed printing of seenBys
 
-1998-11-21 Saturday 13:58  mt
+1998-11-21 Saturday 04:58  mt
 
 	* src/global.c (1.9): updated global. c to 0.25
 
-1998-11-18 Wednesday 21:32  mt
+1998-11-18 Wednesday 12:32  mt
 
 	* src/areafix.c (1.6): added gpl header on areafix.c
 
-1998-11-17 Tuesday 10:37  mt
+1998-11-17 Tuesday 01:37  mt
 
 	* README (1.4), src/pktread.c (1.11), src/scan.c (1.24): routing
 	does work now as it is specified in fidoconfig
 
-1998-11-16 Monday 17:38  mt
+1998-11-16 Monday 08:38  mt
 
 	* src/seenby.c (1.6): fixed a problem when a point exports an
 	echomail msg to another point. Which shouldn't be done anyhow.
 
-1998-11-16 Monday 17:08  mt
+1998-11-16 Monday 08:08  mt
 
 	* h/pkt.h (1.5), src/fcommon.c (1.9), src/pktread.c (1.10),
 	src/toss.c (1.35): included several patches from max
 
-1998-11-11 Wednesday 17:12  mt
+1998-11-11 Wednesday 08:12  mt
 
 	* h/areafix.h (1.1): forgot areafix.h
 
-1998-11-11 Wednesday 12:15  mt
+1998-11-11 Wednesday 03:15  mt
 
 	* README (1.3), h/dupe.h (1.7), h/fcommon.h (1.7), h/global.h
 	(1.5), h/hpt.h (1.2), h/log.h (1.2), h/pkt.h (1.4), h/scan.h (1.6),
@@ -4258,53 +4258,53 @@
 	src/tpkt.c (1.4): put copyright into header of files hacked araefix
 	up, so it can serve also requests with wildcards
 
-1998-11-05 Thursday 11:23  mt
+1998-11-05 Thursday 02:23  mt
 
 	* src/: toss.c (1.33), tpkt.c (1.3): bug fixes
 
-1998-11-03 Tuesday 23:22  mt
+1998-11-03 Tuesday 14:22  mt
 
 	* src/: scanarea.c (1.14), toss.c (1.32): echomails must be
 	adressed to the link.
 
-1998-11-03 Tuesday 00:41  mt
+1998-11-02 Monday 15:41  mt
 
 	* src/: areafix.c (1.4), tpkt.c (1.2): fixed a bug in the areafix.
 
-1998-11-02 Monday 14:39  mt
+1998-11-02 Monday 05:39  mt
 
 	* CREDITS (1.5), src/areafix.c (1.3), src/toss.c (1.31):
 	incorparated localareas and carboncopys by max
 
-1998-10-30 Friday 12:15  mt
+1998-10-30 Friday 03:15  mt
 
 	* CREDITS (1.4), h/toss.h (1.6), misc/areafix.hlp (1.2),
 	src/areafix.c (1.2), src/pktread.c (1.8), src/toss.c (1.30):
 	incorporated max patches incorporated svens patch
 
-1998-10-29 Thursday 09:50  mt
+1998-10-29 Thursday 00:50  mt
 
 	* h/fcommon.h (1.6), h/toss.h (1.5), src/fcommon.c (1.7),
 	src/scan.c (1.22), src/scanarea.c (1.13), src/seenby.c (1.4),
 	src/toss.c (1.29), src/tree.c (1.3): arcmail fixed echoMailFlavour
 	implemented routing flavour fixed localinbound implemented
 
-1998-10-28 Wednesday 00:40  mt
+1998-10-27 Tuesday 15:40  mt
 
 	* src/: global.c (1.7), scan.c (1.21): changed version to 0.24
 	added killing of intransit netmail after exporting it to links
 
-1998-10-27 Tuesday 23:17  mt
+1998-10-27 Tuesday 14:17  mt
 
 	* src/toss.c (1.28): added recoding of incoming netmail patched
 	logging of pkt-problems from Sven in changed arcmail to use
 	packerdef changeFileSuffix bug with little filenames fixed
 
-1998-10-26 Monday 21:27  mt
+1998-10-26 Monday 12:27  mt
 
 	* src/toss.c (1.27): changed typo in toss.c
 
-1998-10-26 Monday 16:56  mt
+1998-10-26 Monday 07:56  mt
 
 	* CREDITS (1.3), h/fcommon.h (1.5), h/toss.h (1.4),
 	misc/areafix.hlp (1.1), misc/fidom2iso (1.1, hpt-0_9_7d-release,
@@ -4323,20 +4323,20 @@
 	(1.20), src/scanarea.c (1.12), src/toss.c (1.26): incorporated
 	patches by max for areafix, autoCreateDefaults, arcmail
 
-1998-10-22 Thursday 09:47  mt
+1998-10-22 Thursday 00:47  mt
 
 	* src/pktread.c (1.7): made correctEMaddr more robust. There will
 	be a complete rewrite in 0.24
 
-1998-10-19 Monday 15:32  mt
+1998-10-19 Monday 06:32  mt
 
 	* CREDITS (1.2): fixed maxs e-mail adress in CREDITS
 
-1998-10-19 Monday 15:20  mt
+1998-10-19 Monday 06:20  mt
 
 	* CREDITS (1.1): added CREDITS
 
-1998-10-19 Monday 15:19  mt
+1998-10-19 Monday 06:19  mt
 
 	* README (1.2), h/fcommon.h (1.4), src/fcommon.c (1.5), src/toss.c
 	(1.25): Added createDirectoryTree() killed install target from
@@ -4344,14 +4344,14 @@
 	putMsgInArea/processNMArea/createOutboundFileName, so you can
 	always use the directories
 
-1998-10-18 Sunday 22:25  mt
+1998-10-18 Sunday 13:25  mt
 
 	* h/scan.h (1.5), src/scanarea.c (1.11), src/toss.c (1.24): while
 	scanning echomails to downlinks, hpt will upcase area name hpt now
 	first toss an echomail to the downlinks and then put it in the
 	msgbase (so only recoded msgs go to msgbase)
 
-1998-10-16 Friday 15:27  mt
+1998-10-16 Friday 06:27  mt
 
 	* src/: pktread.c (1.6), pktwrite.c (1.3), scan.c (1.19),
 	scanarea.c (1.10), toss.c (1.23): fixed a typo in makefile rewrote
@@ -4359,18 +4359,18 @@
 	put to msgbase or scanned from msgbase rewrote recoding so no
 	recoding is done, when no in/outtabs are specified.
 
-1998-10-16 Friday 14:25  mt
+1998-10-16 Friday 05:25  mt
 
 	* h/recode.h (1.2), src/recode.c (1.2), src/scan.c (1.18),
 	src/toss.c (1.22): fixed a bug in toss.c concerning reading
 	seenByLines
 
-1998-10-16 Friday 12:00  mt
+1998-10-16 Friday 03:00  mt
 
 	* src/seenby.c (1.3): lines should only be 80 characters long, not
 	81
 
-1998-10-15 Thursday 11:51  mt
+1998-10-15 Thursday 02:51  mt
 
 	* h/global.h (1.4), src/global.c (1.6), src/hpt.c (1.5), src/scan.c
 	(1.17), src/scanarea.c (1.9): made a distinction between scan and
@@ -4378,30 +4378,30 @@
 	found a bug concerning points as downlinks and scanning of
 	echomails.
 
-1998-10-14 Wednesday 14:55  mt
+1998-10-14 Wednesday 05:55  mt
 
 	* h/fcommon.h (1.3), src/fcommon.c (1.4), src/global.c (1.5),
 	src/scanarea.c (1.8): 0.22 -> 0.23 added createDirectoryTree
 	routine fixed a bug concerning two or more downlinks in scanarea.c
 	(only the first downlink array[0] was used.)
 
-1998-10-14 Wednesday 14:34  mt
+1998-10-14 Wednesday 05:34  mt
 
 	* h/fcommon.h (1.2), src/fcommon.c (1.3), src/scanarea.c (1.7):
 	seenByCount was wrong in scanarea.c if tossing to a point
 	seenbyCount was bigger than seenbys was.
 
-1998-10-14 Wednesday 12:18  mt
+1998-10-14 Wednesday 03:18  mt
 
 	* src/toss.c (1.21): when tossing echomails to downlinks
 	filename.pkt.pkt is generated.fixed
 
-1998-10-14 Wednesday 12:14  mt
+1998-10-14 Wednesday 03:14  mt
 
 	* src/toss.c (1.20): when tossing echomails to downlinks recoding
 	do not work
 
-1998-10-12 Monday 12:22  tobi
+1998-10-12 Monday 03:22  tobi
 
 	* src/seenby.c (1.2): Removed the inline operator before the
 	compare functions for two reasons: #1: The GNU compiler cannot
@@ -4409,29 +4409,29 @@
 	function would not be inlined anyway #2: AIX xlC does not
 	understand it.
 
-1998-10-12 Monday 12:05  tobi
+1998-10-12 Monday 03:05  tobi
 
 	* h/typesize.h (1.2): Added preliminary AIX defines. They do only
 	work on 32 bit RS/6000 machines, and I have not yet looked into the
 	big endian problematic.
 
-1998-10-09 Friday 17:22  mt
+1998-10-09 Friday 08:22  mt
 
 	* src/: pktread.c (1.5), toss.c (1.19): stripped AREA: from
 	echomails which do not go to dupeArea or BadArea
 
-1998-10-07 Wednesday 22:29  mt
+1998-10-07 Wednesday 13:29  mt
 
 	* src/pktread.c (1.4): this bugfix addresses a problem if
 	subjectline is 72 + \0 and to 36+\0 and from...  It should no read
 	ok .-)
 
-1998-10-04 Sunday 17:25  mt
+1998-10-04 Sunday 08:25  mt
 
 	* src/scan.c (1.16): fixed a bug/typo in echotosslog code that only
 	the first area is scanned.
 
-1998-10-03 Saturday 23:59  mt
+1998-10-03 Saturday 14:59  mt
 
 	* h/recode.h (1.1), src/pktread.c (1.3), src/pktwrite.c (1.2),
 	src/recode.c (1.1), src/scan.c (1.15), src/toss.c (1.18):
@@ -4439,32 +4439,32 @@
 	tables / recoding source added import.log feature added
 	echotoss.log feature changed makefile
 
-1998-10-03 Saturday 11:55  mt
+1998-10-03 Saturday 02:55  mt
 
 	* src/toss.c (1.17): fixes
 
-1998-10-01 Thursday 18:08  mt
+1998-10-01 Thursday 09:08  mt
 
 	* src/scan.c (1.14): netmailarea was only *.msg...  now you can
 	also make it Squish
 
-1998-09-28 Monday 19:55  mt
+1998-09-28 Monday 10:55  mt
 
 	* src/: dupe.c (1.7), scanarea.c (1.6): added scanned flag for
 	scanned echomails
 
-1998-09-26 Saturday 15:05  mt
+1998-09-26 Saturday 06:05  mt
 
 	* h/scan.h (1.4), src/scan.c (1.13): added Statistics support for
 	scanning changed a typo downLinkCount
 
-1998-09-24 Thursday 11:57  mt
+1998-09-24 Thursday 02:57  mt
 
 	* src/: scan.c (1.12), scanarea.c (1.5): added statistics for
 	scanning makefile now without profiling support hopefully the
 	problems are gone...
 
-1998-09-21 Monday 13:27  mt
+1998-09-21 Monday 04:27  mt
 
 	* h/dir.h (1.2), src/dir.c (1.2), src/hpt.c (1.4), src/purgeDupes.c
 	(1.3): moved dir.c and dir.h (opendir etc. vor ibm visualagec++)
@@ -4473,88 +4473,88 @@
 	message if commandline option is invalid added error message and
 	usage screen if hpt is incoked without a commandline option
 
-1998-09-20 Sunday 23:49  mt
+1998-09-20 Sunday 14:49  mt
 
 	* h/patmat.h (1.2), src/patmat.c (1.2), src/scan.c (1.11),
 	src/toss.c (1.16): moved patmat to fidoconfig bugfixes
 
-1998-09-20 Sunday 15:26  mt
+1998-09-20 Sunday 06:26  mt
 
 	* src/: scan.c (1.10), scanarea.c (1.4), toss.c (1.15): added patch
 	by Max Levenkov for empty pktPasswords changed purgeDupes
 
-1998-09-19 Saturday 19:13  mt
+1998-09-19 Saturday 10:13  mt
 
 	* h/scan.h (1.3), h/toss.h (1.3), src/scan.c (1.9), src/toss.c
 	(1.14): added statistics for tossing and scanning
 
-1998-09-16 Wednesday 18:41  mt
+1998-09-16 Wednesday 09:41  mt
 
 	* src/purgeDupes.c (1.2): fixed crazy bug concerning time condition
 
-1998-09-15 Tuesday 00:28  mt
+1998-09-14 Monday 15:28  mt
 
 	* src/purgeDupes.c (1.1): added purging of dupeFiles
 
-1998-09-15 Tuesday 00:22  mt
+1998-09-14 Monday 15:22  mt
 
 	* h/dupe.h (1.6), h/global.h (1.3), src/dupe.c (1.6), src/toss.c
 	(1.13): added dupeFile Indexes made a bugfix to toss.c concerning
 	empty passwords
 
-1998-09-08 Tuesday 22:52  mt
+1998-09-08 Tuesday 13:52  mt
 
 	* src/toss.c (1.12): max fixed bug if no pktpwd in fidoconfig were
 	given
 
-1998-09-08 Tuesday 22:38  mt
+1998-09-08 Tuesday 13:38  mt
 
 	* src/toss.c (1.11): made processEMMsg a little better (eleganter
 	:-) )
 
-1998-09-07 Monday 23:16  mt
+1998-09-07 Monday 14:16  mt
 
 	* .hpt.prcs_aux (1.2), hpt.prj (1.2): these files are unnecessary
 
-1998-09-07 Monday 23:03  mt
+1998-09-07 Monday 14:03  mt
 
 	* src/toss.c (1.10): added autoareacreate from max Levenkov and
 	made some changes to it.  Also the makefile now has an install and
 	clean option
 
-1998-09-03 Thursday 16:35  mt
+1998-09-03 Thursday 07:35  mt
 
 	* src/scan.c (1.8): added man-page and new makefile (thnx to max
 	levenkov)
 
-1998-09-02 Wednesday 12:38  mt
+1998-09-02 Wednesday 03:38  mt
 
 	* h/toss.h (1.2), src/toss.c (1.9): hpt now renames pkt's to *.sec
 	*.bad *.acs if there were errors     *.sec :	pktpassword is
 	incorrect     *.bad :	 file is not a recognized pkt	  *.acs :  
 	 file could not be opened
 
-1998-09-02 Wednesday 12:34  mt
+1998-09-02 Wednesday 03:34  mt
 
 	* src/scan.c (1.7): changed style of via-kludge (now conforming to
 	some unwritten standard)
 
-1998-08-22 Saturday 13:02  mt
+1998-08-22 Saturday 04:02  mt
 
 	* src/: global.c (1.4), toss.c (1.8): changed to 0.22 fixed bug
 	which causes a segfault when dup-checking a mail which goes to bad
 	instead of a msgbase
 
-1998-08-13 Thursday 13:55  mt
+1998-08-13 Thursday 04:55  mt
 
 	* h/vixie.h (1.1): needed for avl-trees
 
-1998-08-13 Thursday 13:48  mt
+1998-08-13 Thursday 04:48  mt
 
 	* h/dupe.h (1.5), h/tree.h (1.2, hpt-0_26), src/dupe.c (1.5),
 	src/tree.c (1.2): dupe Detection now working.
 
-1998-08-08 Saturday 14:37  mt
+1998-08-08 Saturday 05:37  mt
 
 	* h/dupe.h (1.4), h/pkt.h (1.3), h/tree.h (1.1), src/dupe.c (1.4),
 	src/lhash.c (1.2), src/pktread.c (1.2), src/scan.c (1.6),
@@ -4562,105 +4562,105 @@
 	with full information about message.  changed via line. (it will be
 	changed further)
 
-1998-08-08 Saturday 14:35  mt
+1998-08-08 Saturday 05:35  mt
 
 	* h/lhash.h (1.2): remobed hashing from dupe-detection
 
-1998-07-23 Thursday 14:17  mt
+1998-07-23 Thursday 05:17  mt
 
 	* h/dupe.h (1.3), src/dupe.c (1.3), src/global.c (1.3), src/scan.c
 	(1.5), src/toss.c (1.7): I updated several files. Mainly dupe
 	support added. Beware! It's slow and does not find all dupes. in 3
 	week there will be a bugfix.
 
-1998-07-21 Tuesday 22:52  mt
+1998-07-21 Tuesday 13:52  mt
 
 	* h/dupe.h (1.2), src/dupe.c (1.2): bugfixes and dupe base-support
 	working
 
-1998-07-17 Friday 23:00  mt
+1998-07-17 Friday 14:00  mt
 
 	* src/: scan.c (1.4), toss.c (1.6): added PASSTHROUGH support
 
-1998-07-17 Friday 22:54  mt
+1998-07-17 Friday 13:54  mt
 
 	* src/: dupe.c (1.1), lhash.c (1.1): preparing for dupe-checkingy
 
-1998-07-17 Friday 22:53  mt
+1998-07-17 Friday 13:53  mt
 
 	* h/dupe.h (1.1): preparing for dupe-checking
 
-1998-07-17 Friday 22:48  mt
+1998-07-17 Friday 13:48  mt
 
 	* h/lhash.h (1.1): added hashing for dupe-checking
 
-1998-06-16 Tuesday 18:48  mt
+1998-06-16 Tuesday 09:48  mt
 
 	* src/scan.c (1.3): bug-fixes
 
-1998-06-16 Tuesday 18:47  mt
+1998-06-16 Tuesday 09:47  mt
 
 	* src/toss.c (1.5): fixes
 
-1998-06-07 Sunday 14:26  mt
+1998-06-07 Sunday 05:26  mt
 
 	* src/scanarea.c (1.3): finished fidoconfig support
 
-1998-06-03 Wednesday 22:49  mt
+1998-06-03 Wednesday 13:49  mt
 
 	* h/global.h (1.2), h/scan.h (1.2), src/scanarea.c (1.2),
 	src/toss.c (1.4): made hpt full fidoconfig able, runs and works
 	(afaik :-)
 
-1998-05-28 Thursday 18:24  mt
+1998-05-28 Thursday 09:24  mt
 
 	* h/: route.h (1.3), config.h (1.2): no more needed
 
-1998-05-28 Thursday 18:22  mt
+1998-05-28 Thursday 09:22  mt
 
 	* h/link.h (1.2): changed to fidoconfig, no more needed
 
-1998-05-28 Thursday 18:21  mt
+1998-05-28 Thursday 09:21  mt
 
 	* src/: fcommon.c (1.2), global.c (1.2), hpt.c (1.3), log.c (1.2),
 	scan.c (1.2), toss.c (1.3): changed to fidoconfig
 
-1998-05-28 Thursday 18:21  mt
+1998-05-28 Thursday 09:21  mt
 
 	* h/area.h (1.3): change to fidoconfig
 
-1998-05-21 Thursday 18:16  mt
+1998-05-21 Thursday 09:16  mt
 
 	* h/area.h (1.2), h/pkt.h (1.2), h/route.h (1.2), src/hpt.c (1.2):
 	made some changes
 
-1998-05-21 Thursday 18:15  mt
+1998-05-21 Thursday 09:15  mt
 
 	* src/common.c (1.2): moved common.c to fidoconfig
 
-1998-05-21 Thursday 18:15  mt
+1998-05-21 Thursday 09:15  mt
 
 	* h/common.h (1.2): removed common.h to fidoconfig
 
-1998-05-21 Thursday 18:14  mt
+1998-05-21 Thursday 09:14  mt
 
 	* h/fcommon.h (1.1): move much code from common.h to fidoconfig and
 	created fcommon.h
 
-1998-05-21 Thursday 18:13  mt
+1998-05-21 Thursday 09:13  mt
 
 	* src/fcommon.c (1.1): removed much code of common.c to fidoconfig
 	and created fcommon.c
 
-1998-05-21 Thursday 18:10  mt
+1998-05-21 Thursday 09:10  mt
 
 	* INSTALL (1.1): added INSTALL for hpt
 
-1998-05-08 Friday 11:05  tw
+1998-05-08 Friday 02:05  tw
 
 	* src/toss.c (1.2): Stand 8.5.98
 
-1998-05-06 Wednesday 21:48  mt
+1998-05-06 Wednesday 12:48  mt
 
 	* .hpt.prcs_aux (1.1), COPYING (1.1), hpt.prj (1.1), h/area.h
 	(1.1), h/common.h (1.1), h/config.h (1.1), h/dir.h (1.1),
