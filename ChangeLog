@@ -1,3 +1,7 @@
+2003-09-27 Saturday 19:34  d_sergienko
+
+	* doc/hpt.texi (1.132): fixed description of EchoTossLog
+
 2003-09-18 Thursday 20:43  d_sergienko
 
 	* src/toss.c (1.521): added total kb of tossed mail in toss report
