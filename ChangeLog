@@ -1,3 +1,8 @@
+2003-04-23 Wednesday 06:39  mche
+
+	* src/areafix.c (1.403): code improvement patch by Sergey A.
+	Davydov <colonel@SD4701.spb.edu>
+
 2003-04-21 Monday 10:30  nssoft
 
 	* misc/pretty.pl (1.5): Bugfix
