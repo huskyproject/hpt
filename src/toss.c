@@ -833,13 +833,16 @@ void processCarbonCopy (s_area *area, s_area *echo, s_message *msg, int export) 
 	old_text = msg->text;
 	
 	i = strlen(old_text);
-	if (NULL != (p = strstr(old_text,"SEEN-BY:"))) i -= strlen (p);
+	if ((!config->carbonKeepSb) && (!area->keepsb)) {
+		if (NULL != (p = strstr(old_text,"SEEN-BY:"))) i -= strlen (p);
+	}
 	msg->text = malloc(i+strlen("AREA:\r * Forwarded from area ''\r\r\1")
 					   +strlen(area->areaName)+strlen(echo->areaName)+1);
 	
 	//create new area-line
-	sprintf(msg->text, "AREA:%s\r * Forwarded from area '%s'\r\r\1",
-			area->areaName,echo->areaName);
+	if (export) sprintf(msg->text, "AREA:%s\r * Forwarded from area '%s'\r\r\1",
+						area->areaName,echo->areaName);
+	else sprintf(msg->text, " * Forwarded from area '%s'\r\r\1",echo->areaName);
 	strncat(msg->text,old_text,i); // copy rest of msg (assumes old AREA:
 	msg->textLength = strlen(msg->text); // is at the very beginning
 	
@@ -1282,7 +1285,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
                if (stricmp(link->pktPwd, header->pktPassword)==0) {
                   processIt = 1;
                } else {
-                  if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (fSecure | fOn)) ) {
+                  if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (eSecure | eOn)) ) {
                       sprintf(buff, "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
                               fileName, header->origAddr.zone, header->origAddr.net,
                               header->origAddr.node, header->origAddr.point);
@@ -1312,7 +1315,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
                if (stricmp(link->pktPwd, header->pktPassword)==0) {
                   processIt = 1;
                } else {
-                  if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (fOn)) ) {
+                  if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (eOn)) ) {
                       sprintf(buff, "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
                               fileName, header->origAddr.zone, header->origAddr.net,
                               header->origAddr.node, header->origAddr.point);

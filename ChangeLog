@@ -2,6 +2,13 @@ hpt 0.29
 --------
 
 ----- cvs ci ------
+Fri Aug 13 13:30:54 NOVST 1999
+max:
+changes in carbon copy:
+* fixed bug when CC to LocalArea
++ now we can keep kludges (carbonKeepSb in config or -keepsb in echoarea options)
+
+----- cvs ci ------
 Wed Aug 11 02:20:37 NOVST 1999
 max:
 + added stricmp function (thanx to Serguei Revtov)

@@ -1,3 +1,4 @@
+- maxmsgsize for areafix reports
 - jam message base support
 - fix the bug in pktread.c:96
 - execute external programs before pack & after unpack
