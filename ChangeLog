@@ -1,3 +1,10 @@
+2003-01-27 Monday 14:50  mche
+
+	* src/dupe.c (1.72): one more improved dupe detection :)
+	
+	2Developers: if you want to make changes in dupe detection let me
+	know first (mihz@ua.fm)
+
 2003-01-25 Saturday 17:52  stas_degteff
 
 	* doc/hpt-FAQ.russian (1.72): Add information about warning for gcc
@@ -5,20 +12,11 @@
 
 2003-01-25 Saturday 15:45  pgul
 
-	* src/carbon.c (1.21): minor fix
-
-2003-01-25 Saturday 15:29  mche
-
-	* src/carbon.c (1.20): undo buggy patches (r 1.18,1.19) . back to
-	working code 1.17 And no patches any more!!!
+	* src/carbon.c (1.21): Prevent memory fault
 
 2003-01-25 Saturday 11:07  mche
 
 	* src/dupe.c (1.71): fix bug in compare dupe entries
-
-2003-01-24 Friday 11:42  mche
-
-	* src/carbon.c (1.19): fix previous patch
 
 2003-01-24 Friday 11:15  mche
 
@@ -31,22 +29,9 @@
 	2Developers: if you want to make changes in dupe detection let me
 	know first (mihz@ua.fm)
 
-2003-01-24 Friday 06:04  stas_degteff
-
-	* src/carbon.c (1.18): Optimise code: use strchr() instead for(){}
-
-2003-01-23 Thursday 11:28  mche
-
-	* src/carbon.c (1.17): 1.17
-
-2003-01-23 Thursday 11:14  stas_degteff
-
-	* src/carbon.c (1.16): Fix AREA for carboned messages. Path from
-	Alexander N. Skovpen 2:5020/9696 (modified).
-
 2003-01-23 Thursday 09:21  mche
 
-	* src/dupe.c (1.69): optimization on dupe detection
+	* src/dupe.c (1.69): optimization of dupe detection
 
 2003-01-22 Wednesday 09:23  mche
 
@@ -144,8 +129,8 @@
 
 2003-01-16 Thursday 10:18  stas_degteff
 
-	* src/perl.c (1.48): Define WIN32 if needed. Use new defines from
-	compiler.h
+	* src/perl.c (1.48): '#define WIN32' is need for win32 platform.
+	Use new defines from compiler.h
 
 2003-01-16 Thursday 10:17  stas_degteff
 
@@ -184,7 +169,8 @@
 
 2003-01-14 Tuesday 12:35  mche
 
-	* src/carbon.c (1.10): fix kluge location in carbon copied messages
+	* src/carbon.c (1.10): fix kludge location in carbon copied
+	messages
 
 2003-01-14 Tuesday 11:24  stas_degteff
 
@@ -205,7 +191,7 @@
 
 2003-01-13 Monday 08:10  stas_degteff
 
-	* doc/hpt-FAQ.russian (1.63): Update people list
+	* doc/hpt-FAQ.russian (1.63): Update peoples list
 
 2003-01-13 Monday 08:09  stas_degteff
 
@@ -329,7 +315,7 @@
 
 2002-12-27 Friday 13:15  mche
 
-	* src/query.c (1.84): clean flag on empty reeport
+	* src/query.c (1.84): clean flag at empty report
 
 2002-12-27 Friday 12:46  mche
 
@@ -410,8 +396,8 @@
 
 2002-12-06 Friday 13:23  mche
 
-	* src/areafix.c (1.377): Kill area msgbase only if it dfined area
-	options -- "-k"
+	* src/areafix.c (1.377): Kill area msgbase only when area option
+	'-k' is defined
 
 2002-12-06 Friday 07:51  mche
 
@@ -463,7 +449,7 @@
 2002-11-29 Friday 14:24  stas_degteff
 
 	* src/toss.c (1.483): Try to fix EMX version (remove local variable
-	maxopenpkt, use global instaed (as for other compilers)
+	maxopenpkt, use global instead (as for other compilers)
 
 2002-11-29 Friday 10:28  stas_degteff
 
@@ -497,7 +483,7 @@
 
 2002-11-28 Thursday 07:20  stas_degteff
 
-	* config/packer (1.7): Add unacker definition for ACE
+	* config/packer (1.7): Add unpacker definition for ACE
 
 2002-11-27 Wednesday 15:14  pgul
 
@@ -530,7 +516,7 @@
 
 2002-11-27 Wednesday 11:39  stas_degteff
 
-	* make/makefile.wco (1.2): Fix watcom C Os/2 makefile (Patch from
+	* make/makefile.wco (1.2): Fix Watcom C OS/2 makefile (Patch from
 	Andr Luk'yanov 2:5001/7)
 
 2002-11-27 Wednesday 05:31  stas_degteff
@@ -548,7 +534,7 @@
 
 2002-11-26 Tuesday 11:17  stas_degteff
 
-	* config/packer (1.6): Add unpaker defines for many rar sfx
+	* config/packer (1.6): Add unpacker definitions for many rar sfx
 	archives
 
 2002-11-25 Monday 15:37  stas_degteff
@@ -576,7 +562,7 @@
 2002-11-23 Saturday 22:09  stas_degteff
 
 	* doc/hpt.texi (1.89), HISTORY (1.14): AvailList token are
-	ocumented now
+	documented now
 
 2002-11-23 Saturday 21:37  stas_degteff
 
@@ -651,7 +637,7 @@
 
 2002-11-21 Thursday 07:31  stas_degteff
 
-	* config/packer (1.4): Add unpacker exapmles:  pkzipc, pkzip25
+	* config/packer (1.4): Add unpacker examples:  pkzipc, pkzip25
 
 2002-11-21 Thursday 06:23  stas_degteff
 
@@ -725,7 +711,7 @@
 
 2002-11-14 Thursday 14:25  stas_degteff
 
-	* src/toss.c (1.472): Use spanvp alwais if possible
+	* src/toss.c (1.472): Use spanvp() always if possible
 
 2002-11-14 Thursday 13:17  stas_degteff
 
@@ -779,12 +765,13 @@
 
 2002-11-12 Tuesday 06:58  mche
 
-	* src/areafix.c (1.363): fix coredump in areafix tanks to Alexander
-	Reznikov [2:4600/220]
+	* src/areafix.c (1.363): fix coredump in areafix (Thanks to
+	Alexander Reznikov [2:4600/220]
 
 2002-11-12 Tuesday 06:04  mche
 
-	* src/areafix.c (1.362): delete msgbase when ulink from own address
+	* src/areafix.c (1.362): delete msgbase when unlink from own
+	address
 
 2002-11-11 Monday 11:58  pgul
 
@@ -817,7 +804,7 @@
 
 2002-11-09 Saturday 12:48  mche
 
-	* makefile.inc (1.24): fixed
+	* makefile.inc (1.24): Add carbon$(OBJ) into object files list
 
 2002-11-08 Friday 08:46  mche
 
@@ -825,8 +812,8 @@
 
 2002-11-08 Friday 08:40  mche
 
-	* src/toss.c (1.462): fix tosing when carbons not defined thanks to
-	[Alexander Reznikov   2:4600/220]
+	* src/toss.c (1.462): Fix tossing when carbons not defined. (Thanks
+	to Alexander Reznikov 2:4600/220)
 
 2002-11-07 Thursday 11:17  pgul
 
@@ -914,7 +901,7 @@
 
 2002-10-30 Wednesday 05:47  mche
 
-	* doc/hpt.texi (1.87): correect Unpack statment
+	* doc/hpt.texi (1.87): Fix description of the "Unpack" statement
 
 2002-10-30 Wednesday 05:35  nssoft
 
