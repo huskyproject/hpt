@@ -5,6 +5,9 @@ hpt 0.9.8 (development version)
 Fri Sep 15 11:34:16 NOVST 2000
 max:
 * fixed autocreate with -dosfile at the end of AutoAreaCreateDefaults
+* set Pause if files stored only in outbound
+patch from Serguei Revtov:
+* additional checks of directories difference
 
 ----- cvs ci ------
 Wed Sep 14 15:44:37 NOVST 2000

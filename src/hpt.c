@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 #include <ctype.h>
 #if !defined(__IBMC__) && !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
@@ -50,7 +51,7 @@
 #include <fidoconf/dirlayer.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/common.h>
-
+ 
 #include <log.h>
 
 #include <global.h>
@@ -174,6 +175,50 @@ int processCommandLine(int argc, char **argv)
    return argc;
 }
 
+void allDiff(char *nam, char *var, ...)
+{
+   va_list	ap;
+   char	*ptr;
+
+   struct diffCmp {
+      char *name;
+      char *var;
+   } *diffData;
+
+   int	ncmp, i, j;
+
+   for (va_start(ap, var), ncmp = 1; va_arg(ap, char *) != NULL; ) {
+      ptr = va_arg(ap, char *); // variable may be set ti NULL
+      ncmp++;
+   }
+
+   diffData = safe_malloc(ncmp * sizeof(struct diffCmp));
+
+   diffData[0].name = nam;
+   diffData[0].var  = var;
+
+   for (va_start(ap, var), i=1; i<ncmp; i++) {
+      diffData[i].name = va_arg(ap, char *);
+      diffData[i].var  = va_arg(ap, char *);
+   }
+   ptr = NULL;
+
+   for (i=0; i < ncmp-1; i++) {
+      if (diffData[i].var) {
+         for (j=i+1; j < ncmp; j++) {
+            if (diffData[j].var && strcmp (diffData[i].var, diffData[j].var) == 0) {
+               xscatprintf(&ptr, "%s & %s must be different", diffData[i].name, diffData[j].name);
+               nfree(diffData);
+               exit_hpt(ptr, 1);
+            }
+         }
+      }
+   }   
+
+   nfree(diffData);
+}
+
+
 void processConfig()
 {
 #if !defined(__OS2__) && !defined(UNIX)
@@ -233,15 +278,11 @@ void processConfig()
 
    if (config->addrCount == 0) exit_hpt("at least one addr must be defined",1);
    if (config->linkCount == 0) exit_hpt("at least one link must be specified",1);
+   if (config->outbound == NULL) exit_hpt("you must set outbound in fidoconfig first",1);
    if (config->tempOutbound == NULL) exit_hpt("you must set tempOutbound in fidoconfig first",1);
    if (config->inbound == NULL && config->protInbound == NULL)
 	   exit_hpt("you must set Inbound or protInbound in fidoconfig first",1);
    if (config->tempInbound == NULL) exit_hpt("you must set tempInbound in fidoconfig first",1);
-   if (config->inbound && strcmp(config->inbound,config->tempInbound)==0) exit_hpt("Inbound & tempInbound must be differ",1);
-   if (config->protInbound && (strcmp(config->protInbound,config->tempInbound)==0)) exit_hpt("protInbound & tempInbound must be differ",1);
-   if (config->protInbound && config->inbound && (strcmp(config->protInbound,config->inbound)==0)) exit_hpt("protInbound & Inbound must be differ",1);
-   if (config->localInbound && (strcmp(config->localInbound,config->tempInbound)==0)) exit_hpt("localInbound & tempInbound must be differ",1);
-   if (strcmp(config->tempOutbound,config->tempInbound)==0) exit_hpt("tempOutbound & tempInbound must be differ",1);
    if (config->msgBaseDir==NULL) exit_hpt("No msgBaseDir specified in config file!",1);
    if (config->dupeHistoryDir==NULL) exit_hpt("No dupeHistoryDir specified in config file!",1);
    if (config->dupeArea.areaName==NULL) exit_hpt("you must define DupeArea!",1);
@@ -249,6 +290,14 @@ void processConfig()
    if (config->badArea.areaName==NULL) exit_hpt("you must define BadArea!",1);
    if (config->badArea.fileName==NULL) exit_hpt("BadArea can not be passthrough!",1);
 
+   allDiff ( "Inbound",      config->inbound,
+			 "tempInbound",  config->tempInbound,
+			 "protInbound",  config->protInbound,
+			 "localInbound", config->localInbound,
+			 "outbound",     config->outbound,
+			 "tempOutbound", config->tempOutbound,
+			 NULL);
+   
    // load recoding tables
    initCharsets();
    if (config->outtab) getctab(outtab, (unsigned char*) config->outtab);

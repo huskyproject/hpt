@@ -1880,49 +1880,59 @@ void autoPassive()
    int i;
 
    for (i = 0; i < config->linkCount; i++) {
-      if (config->links[i].autoPause && config->links[i].Pause == 0) {
-         if (createOutboundFileName(&(config->links[i]), cvtFlavour2Prio(config->links[i].echoMailFlavour), FLOFILE) == 0) {
-            f = fopen(config->links[i].floFile, "rt");
-            if (f) {
-               while ((line = readLine(f)) != NULL) {
-	          line = trimLine(line);
-                  path = line;
-                  if (*path && (*path == '^' || *path == '#')) {
-                     path++;
-                     if (stat(path, &stat_file) != -1) {
-                        time_cur = time(NULL);
-                        time_test = (time_cur - stat_file.st_mtime)/3600;
-                        if (time_test >= (config->links[i].autoPause*24)) {
-                           if (config->links[i].Pause == 0) {
-                              if (changepause(getConfigFileName(), &(config->links[i]), 1)) {    
-			         msg = makeMessage(config->links[i].ourAka, &(config->links[i].hisAka), versionStr, config->links[i].name, "AutoPassive", 1);
-				 msg->text = createKludges(NULL, config->links[i].ourAka, &(config->links[i].hisAka));
-                                 xscatprintf(&(msg->text), "\r System switched to passive\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the %%RESUME command.\r\r--- %s autopause\r", versionStr);
-                                 msg->textLength = strlen(msg->text);
-                                 processNMMsg(msg, NULL, NULL, 0, MSGLOCAL);
-                                 freeMsgBuffers(msg);
-				 nfree(msg);
-                              }
-			      nfree(line);
-                              fclose(f);
-                              break;
-                           }
-                        } else {
-                        } /* endif */
-                     } /* endif */
-                  } /* endif */
-		  nfree(line);
-               } /* endwhile */
-               fclose(f);
-            } /* endif */
-            nfree(config->links[i].floFile);
-            remove(config->links[i].bsyFile);
-            nfree(config->links[i].bsyFile);
-         }
-         nfree(config->links[i].pktFile);
-         nfree(config->links[i].packFile);
-      } else {
-      } /* endif */
+	   if (config->links[i].autoPause && config->links[i].Pause == 0) {
+		   if (createOutboundFileName(&(config->links[i]),
+									  cvtFlavour2Prio(config->links[i].echoMailFlavour),
+									  FLOFILE) == 0) {
+			   f = fopen(config->links[i].floFile, "rt");
+			   if (f) {
+				   while ((line = readLine(f)) != NULL) {
+					   line = trimLine(line);
+					   path = line;
+					   if (*path && (*path == '^' || *path == '#')) {
+						   path++;
+						   // set Pause if files stored only in outbound
+						   if (*path && strncmp(path, config->outbound,
+												strlen(config->outbound)-1)!=0) continue;
+						   if (stat(path, &stat_file) != -1) {
+							   time_cur = time(NULL);
+							   time_test = (time_cur - stat_file.st_mtime)/3600;
+							   if (time_test >= (config->links[i].autoPause*24)) {
+								   if (config->links[i].Pause == 0) {
+									   if (changepause(getConfigFileName(), &(config->links[i]), 1)) {    
+										   msg = makeMessage(config->links[i].ourAka,
+															 &(config->links[i].hisAka),
+															 versionStr,config->links[i].name,
+															 "AutoPassive", 1);
+										   msg->text = createKludges(NULL,
+																	 config->links[i].ourAka,
+																	 &(config->links[i].hisAka));
+										   xscatprintf(&(msg->text), "\r System switched to passive\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the %%RESUME command.\r\r--- %s autopause\r", versionStr);
+										   msg->textLength = strlen(msg->text);
+										   processNMMsg(msg, NULL, NULL, 0, MSGLOCAL);
+										   freeMsgBuffers(msg);
+										   nfree(msg);
+									   }
+									   nfree(line);
+									   fclose(f);
+									   break;
+								   }
+							   } else {
+							   } /* endif */
+						   } /* endif */
+					   } /* endif */
+					   nfree(line);
+				   } /* endwhile */
+				   fclose(f);
+			   } /* endif */
+			   nfree(config->links[i].floFile);
+			   remove(config->links[i].bsyFile);
+			   nfree(config->links[i].bsyFile);
+		   }
+		   nfree(config->links[i].pktFile);
+		   nfree(config->links[i].packFile);
+	   } else {
+	   } /* endif */
    } /* endfor */
 }
 
