@@ -16,6 +16,8 @@ Category 1: Will certainly be implemented until next release
 - UnpackAllBeforeToss ???
 - hpt -q (quiet)
 - AutoCreateSemaphore
+- autoAreaCreateMask
+- areafix from cmd line (like hpt afix <addr> %command)
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

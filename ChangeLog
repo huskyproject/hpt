@@ -2,6 +2,11 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Thu Aug 10 21:01:47 NOVST 2000
+max:
+* perl support in Makefile
+
+----- cvs ci ------
 Wed Aug  2 13:59:09 NOVST 2000
 max 
 * fixed bug in autoCreate() from Jul 31
