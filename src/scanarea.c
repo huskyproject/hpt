@@ -332,7 +332,7 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount, long resc
        MsgSetHighWater(area, i);
        if (rescanCount <= 0) rescanCount = i;
        while (i > 0 && rescanCount > 0) {
-	       hmsg = MsgOpenMsg(area, MOPEN_RW, i);
+	       hmsg = MsgOpenMsg(area, MOPEN_RW, i--);
 	       if (hmsg != NULL) {     /*  msg# does not exist */
              MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
              if (rescanAfter) {
