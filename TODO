@@ -3,28 +3,23 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
+- carbons for exported netmail
+- fix reading long messages under ms-dos (path & seen-by)
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
-
-Category 3: Will only be included if volunteers send patches
-============================================================
-
-- use spawn() instead of system() under win32
-- templates
 - fileboxes
-- divide hpt into several programs:
-  tosser
-  packer
-  scanner
-  poster
-  linker
-  areafix
-- nodelist access
-- real hub-routing
-- area-deletion etc. via areafix
+- templates
 - scan uplink-responses (from forwarded requests) and send info to 
   requesting downlink
 
+Category 3: Will only be included if volunteers send patches
+============================================================
+- use spawn() instead of system() under win32
+- remove areafix from hpt, make hptfix (areafix & filefix)
+- area-deletion etc. via areafix
+
 Category 4: Will not be implemented
 ===================================
+- nodelist access
+- real hub-routing

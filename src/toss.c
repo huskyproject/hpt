@@ -903,8 +903,9 @@ int carbonCopy(s_message *msg, s_area *echo)
 		area = config->carbons[i].area;
 		
 		// dont CC to the echo the mail comes from
-		if (!stricmp(echo->areaName,area->areaName) &&
-		// fix for carbonDelete
+		if (!config->carbons[i].extspawn && // fix for extspawn
+		    !stricmp(echo->areaName,area->areaName) &&
+		    // fix for carbonDelete
 		    config->carbons[i].areaName != NULL) continue;
 
 		switch (config->carbons[i].ctype) {

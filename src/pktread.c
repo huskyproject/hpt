@@ -551,7 +551,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    make_ftsc_date(msg->datetime, &tm);
 
    if (globalBuffer==NULL) {
-	   globalBuffer = malloc(BUFFERSIZE+1); // 128K (32K in MS-DOS)
+	   globalBuffer = (UCHAR *) malloc(BUFFERSIZE+1); // 128K (32K in MS-DOS)
 	   if (globalBuffer==NULL) exit_hpt("out of memory", 1);
    }
 
@@ -576,28 +576,19 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 
 #if !defined(__DOS__) && !defined(__MSDOS__)
    do {
-	   len = fgetsUntil0(globalBuffer, BUFFERSIZE+1, pkt);
+	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt);
 	   xstrcat(&msg->text, globalBuffer);
 	   msg->textLength+=len-1; // trailing \0 is not the text
    } while (len == BUFFERSIZE+1);
 #else
-   len = fgetsUntil0(globalBuffer, BUFFERSIZE+1, pkt);
+   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt);
    xstrcat(&msg->text, globalBuffer);
    msg->textLength+=len-1; // trailing \0 is not the text
    while (len == BUFFERSIZE+1) {
 	   // skip msg text
-	   len = fgetsUntil0(globalBuffer, BUFFERSIZE+1, pkt);
+	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt);
    }
 #endif
-
-/* old code
-   // reserve 512kb + 1 (or 32kb+1) text Buffer
-   textBuffer = (UCHAR *) malloc(TEXTBUFFERSIZE+1); 
-   msg->textLength = fgetsUntil0((unsigned char *) textBuffer, TEXTBUFFERSIZE+1 , pkt);
-   msg->text = (char *) malloc(msg->textLength); // reserve mem for the real text
-   strcpy((char *)msg->text, (char *)textBuffer);
-   free(textBuffer);
-*/
 
    correctAddr(msg, header);
    
