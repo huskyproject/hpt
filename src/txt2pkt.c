@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     struct tm    *tm;
     char *area = NULL, *passwd = NULL, *tearl = NULL, *orig = NULL, *dir = NULL;
     FILE *text = NULL;
-    int quit, n = 1;
+    int quit=0, n = 1;
     CHAR *textBuffer = NULL;
     char tmp[512];
 
@@ -84,13 +84,7 @@ int main(int argc, char *argv[])
       exit(EX_OK);
    }
 
-   config = readConfig(NULL);
-   if (NULL == config) {
-      printf("Config not found\n");
-      exit(EX_UNAVAILABLE);
-   }
-
-   for (quit = 0;n < argc && !quit; n++) {
+   for (; n < argc; n++) {
       if (*argv[n] == '-' && argv[n][1]) {
          switch(argv[n][1]) {
             case 'a':    // address
@@ -172,6 +166,13 @@ int main(int argc, char *argv[])
                quit = 1;
                break;
          }
+         if (quit) {
+            fprintf(stderr,"Unknown option '%s', exit.\n", argv[n]);
+            nfree(msg.fromUserName);
+            nfree(msg.toUserName);
+            nfree(msg.subjectLine);
+            exit(EX_USAGE);
+         }
       } else {
          if (strcmp(argv[n], "-") == 0)
             text = stdin;
@@ -200,10 +201,16 @@ int main(int argc, char *argv[])
             if (strcmp(argv[n], "-"))
             fclose(text);
          } else {
-	    printf("Text file not found\n");
+	    fprintf(stderr,"Text file not found, exit\n");
 	    exit(EX_NOINPUT);
 	 }
       }
+   }
+
+   config = readConfig(NULL);
+   if (NULL == config) {
+      fprintf(stderr,"Config not found, exit\n");
+      exit(EX_UNAVAILABLE);
    }
 
    header.hiProductCode  = 0;
