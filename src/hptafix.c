@@ -108,20 +108,8 @@ int afRescanArea(char **report, s_link *link, s_area *area, long rescanCount) {
   return rcc;
 }
 
-void getLinkData(s_link *link, s_linkdata *linkData)
-{
-    linkData->robot = link->RemoteRobotName ? link->RemoteRobotName : "areafix";
-    linkData->pwd = link->areaFixPwd ? link->areaFixPwd : "\x00";
-    linkData->attrs = link->areafixReportsAttr ? link->areafixReportsAttr : robot->reportsAttr;
-    linkData->flags = link->areafixReportsFlags ? link->areafixReportsFlags : robot->reportsFlags;
-    linkData->numFrMask = link->numFrMask;
-    linkData->frMask = link->frMask;
-    linkData->numDfMask = link->numDfMask;
-    linkData->dfMask = link->dfMask;
-    linkData->denyFwdFile = link->denyFwdFile;
-    linkData->fwd = link->forwardRequests;
-    linkData->fwdFile = link->forwardRequestFile;
-    linkData->advAfix = link->advancedAreafix;
+s_link_robot *getLinkRobot(s_link *link) {
+    return &(link->areafix);
 }
 
 void autoPassive()
@@ -169,7 +157,7 @@ void autoPassive()
                                               config->links[i], 1,
                                               config->links[i]->Pause^(ECHOAREA|FILEAREA))) {
                                   UINT j, k;
-                                  int mask = config->links[i]->areafixReportsAttr ? config->links[i]->areafixReportsAttr : robot->reportsAttr;
+                                  int mask = config->links[i]->areafix.reportsAttr ? config->links[i]->areafix.reportsAttr : robot->reportsAttr;
                                   msg = makeMessage(config->links[i]->ourAka,
                                             &(config->links[i]->hisAka),
                                             robot->fromName ? robot->fromName : versionStr,
@@ -241,6 +229,7 @@ int init_hptafix(void) {
   af_silent_mode = silent_mode;
   af_report_changes = report_changes;
   af_send_notify = cmNotifyLink;
+  af_pause = ECHOAREA;
   /* callbacks and hooks */
   call_sstrdup  = &safe_strdup;
   call_smalloc  = &safe_malloc;
@@ -248,7 +237,7 @@ int init_hptafix(void) {
 
   call_sendMsg  = &afSendMsg;
   call_writeMsgToSysop = &afWriteMsgToSysop;
-  call_getLinkData = &getLinkData;
+  call_getLinkRobot = &getLinkRobot;
   hook_onDeleteArea = &afDeleteArea;
   hook_onRescanArea = &afRescanArea;
   hook_onAutoCreate = &afReportAutoCreate;

@@ -868,11 +868,11 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
                 tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
                     robot->fromName ? robot->fromName : versionStr,
                     link->name, "Notification message", 1,
-                    link->areafixReportsAttr ? link->areafixReportsAttr : robot->reportsAttr);
+                    link->areafix.reportsAttr ? link->areafix.reportsAttr : robot->reportsAttr);
                 tmpmsg->text = createKludges(config, NULL, link->ourAka,
                     &(link->hisAka), versionStr);
-                if (link->areafixReportsFlags)
-                    xstrscat(&(tmpmsg->text), "\001FLAGS ", link->areafixReportsFlags, "\r",NULL);
+                if (link->areafix.reportsFlags)
+                    xstrscat(&(tmpmsg->text), "\001FLAGS ", link->areafix.reportsFlags, "\r",NULL);
                 else if (robot->reportsFlags)
                     xstrscat(&(tmpmsg->text), "\001FLAGS ", robot->reportsFlags, "\r",NULL);
 
