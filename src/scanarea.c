@@ -72,8 +72,8 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
       seenByCount++;
    }
    if (echo->useAka->point == 0) {      // only include if system is node
-      seenBys[i].net = echo->useAka->net;
-      seenBys[i].node = echo->useAka->node;
+      seenBys[seenByCount].net = echo->useAka->net;
+      seenBys[seenByCount].node = echo->useAka->node;
       seenByCount++;
    }
    sortSeenBys(seenBys, seenByCount);

@@ -13,5 +13,6 @@ extern s_fidoconfig *config;
 
 extern int       cmToss;
 extern int       cmScan;
+extern int       cmPack;
 
 #endif

@@ -289,6 +289,14 @@ void writeScanStatToLog() {
    writeLogEntry(log, '4', buff);
 }
 
+void pack(void) {
+   memset(&statScan, sizeof(s_statScan), 0);
+   writeLogEntry(log, '4', "Start packing...");
+   scanNMArea();
+   statScan.areas++;
+   writeScanStatToLog();
+}
+
 void scan(void)
 {
    UINT i;
@@ -302,8 +310,6 @@ void scan(void)
    // zero statScan
    memset(&statScan, sizeof(s_statScan), 0);
    writeLogEntry(log,'4', "Start scanning...");
-   scanNMArea();
-   statScan.areas++;
 
    // open echotoss file
    f = fopen(config->echotosslog, "r");

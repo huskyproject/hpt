@@ -22,16 +22,20 @@ void processCommandLine(int argc, char **argv)
    if (argc == 1) {
       printf("\nUsage:\n");
       printf("   hpt toss - tossing mail\n");
-      printf("   hpt scan - scaning mail\n");
+      printf("   hpt scan - scanning echomail\n");
+      printf("   hpt pack - packing netmail\n");
    }
 
    while (i < argc-1) {
       i++;
-      if (0 == strcmp(argv[i], "toss")) {
+      if (0 == stricmp(argv[i], "toss")) {
          cmToss = 1;
          continue;
-      } else if (strcmp(argv[i], "scan") == 0) {
+      } else if (stricmp(argv[i], "scan") == 0) {
          cmScan = 1;
+         continue;
+      } else if (stricmp(argv[i], "pack") == 0) {
+         cmPack = 1;
          continue;
       } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
       
@@ -95,6 +99,7 @@ int main(int argc, char **argv)
 
    if (1 == cmToss) toss();
    if (cmScan == 1) scan();
+   if (cmPack == 1) pack();
 
    // deinit SMAPI
    MsgCloseApi();

@@ -9,4 +9,5 @@ char      versionStr[10];
 
 int       cmToss = 0;
 int       cmScan = 0;
+int       cmPack = 0;
 
