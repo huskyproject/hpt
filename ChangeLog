@@ -1,3 +1,9 @@
+2004-01-19 Monday 18:44  d_sergienko
+
+	* src/scan.c (1.201): backports from stable: fetch addresses from
+	@INTL if it exists; fix scanning of areas with echotoss.log (all
+	areas are invalid in echotoss.log)
+
 2004-01-17 Saturday 14:01  d_sergienko
 
 	* src/post.c (1.113): ability to set netmailArea via -e flag when
