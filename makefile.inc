@@ -55,7 +55,6 @@ hpt$(EXE): $(OBJS)
 
 clean:
 	-$(RM) $(RMOPT) *$(OBJ)
-	-$(RM) $(RMOPT) *~
 	-$(RM) $(RMOPT) core
 
 distclean: clean
