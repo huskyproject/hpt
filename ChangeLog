@@ -1,3 +1,7 @@
+2005-03-28 Monday 09:44  val_khokhlov
+
+	* filter.pl (1.15): add description for on_robotmsg() hook
+
 2005-03-26 Saturday 10:40  val_khokhlov
 
 	* src/: hptafix.c (1.21), perl.c (1.87), toss.c (1.543):
