@@ -36,9 +36,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#if !defined(__TURBOC__)
 #include <unistd.h>
+#endif
 
-#if !defined(MSDOS) || defined(__DJGPP__)
+#if !defined(SHORTNAMES)
 #include <fidoconfig/fidoconfig.h>
 #include <fidoconfig/common.h>
 #else
@@ -144,7 +146,7 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 
 	sbuff = buff;
 
-	while ( (ptr = strstr(sbuff, str)) ) {
+	while ( (ptr = strstr(sbuff, str)) != NULL ) {
 		if (isspace(ptr[strlen(str)]) || ptr[strlen(str)]=='\000') break;
 		sbuff = ptr+1;
 	}
@@ -202,7 +204,7 @@ int addstring(FILE *f, char *aka) {
 
 	/* in dos and win32 by default \n translates into 2 chars */
 	fseek(f,-2L,SEEK_CUR);
-	c=fgetc(f);
+	c=(char) fgetc(f);
 	if (c==0x0D) fseek(f,-1L,SEEK_CUR);
 
 	areapos=ftell(f);
@@ -1042,7 +1044,7 @@ void repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
    makeMsg(hmsg, xmsg, &msg, echo, 1);
 
    //translating name of the area to uppercase
-   while (msg.text[j] != '\r') {msg.text[j]=toupper(msg.text[j]);j++;}
+   while (msg.text[j] != '\r') {msg.text[j]=(char)toupper(msg.text[j]);j++;}
 
    // link is passive?
    if (link->Pause && !echo->noPause) return;

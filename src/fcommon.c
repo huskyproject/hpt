@@ -37,7 +37,9 @@
 #include <sys/types.h>
 #endif
 #include <sys/stat.h>
+#if !defined(__TURBOC__)
 #include <unistd.h>
+#endif
 #ifdef __IBMC__
 #include <direct.h>
 #endif

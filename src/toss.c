@@ -41,7 +41,9 @@
 #endif
 
 #include <sys/stat.h>
+#if !defined(__TURBOC__)
 #include <unistd.h>
+#endif
 
 #include <fidoconfig/fidoconfig.h>
 #include <fidoconfig/common.h>
@@ -68,7 +70,7 @@
 #include <smapi/compiler.h>
 #include <smapi/progprot.h>
 
-#ifdef __WATCOMC__
+#if defined(__WATCOMC__) || defined(__TURBOC__)
 #include <dos.h>
 #endif
 
@@ -82,7 +84,7 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr);
 /*
  * Find the first occurrence of find in s ignoring case
  */
-char *stristr(char *str, char *find)
+char *hpt_stristr(char *str, char *find)
 {
 	char ch, sc, *str1, *find1;
 
@@ -225,7 +227,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
    msgHeader.utc_ofs = 0;
    msgHeader.replyto = 0;
    memset(msgHeader.replies, 0, MAX_REPLY * sizeof(UMSGID));   // no replies
-   strcpy((char *) msgHeader.__ftsc_date, msg->datetime);
+   strcpy((char *) msgHeader.__ftsc_date, (char *)msg->datetime);
    ASCII_Date_To_Binary((char *)msg->datetime, (union stamp_combo *) &(msgHeader.date_written));
 
    currentTime = time(NULL);
@@ -267,8 +269,8 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
    }
 
    harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, 
-/*							  echo->fperm, echo->uid, echo->gid,*/
-							  echo->msgbType | MSGTYPE_ECHO);
+/*			echo->fperm, echo->uid, echo->gid,*/
+			echo->msgbType | MSGTYPE_ECHO);
    if (harea != NULL) {
       hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
       if (hmsg != NULL) {
@@ -674,11 +676,11 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    xstrcat(&hisaddr, aka2str(pktOrigAddr));
 
    //write new line in config file
-   msgbtype = stristr(newAutoCreate, "-b ");
+   msgbtype = hpt_stristr(newAutoCreate, "-b ");
 
    if (stricmp(config->msgBaseDir, "passthrough")!=0) {
 #ifndef MSDOS
-	   if ((fileName=stristr(newAutoCreate, "-dosfile "))==NULL)
+	   if ((fileName=hpt_stristr(newAutoCreate, "-dosfile "))==NULL)
 		   xscatprintf(&buff, "EchoArea %s %s%s -a %s%s", c_area,
 					   config->msgBaseDir, squishFileName, myaddr,
 					   (msgbtype) ? "" : " -b Squish");
@@ -707,7 +709,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
        char *line, *copy = NULL;
        int out=0;
        
-       while ((line = readLine(fforw))) {
+       while ((line = readLine(fforw)) != NULL) {
          line = trimLine(line);
 	 copy = (char*)calloc(strlen(line)+1, sizeof(char));
 	 strcpy(copy, line);
@@ -724,7 +726,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
        if (out) {
          if (((description=strtok(NULL," \t"))!=NULL) && (description=strstr(copy,description))!=NULL) {
            fileName=NULL;
-           if ((fileName=stristr(newAutoCreate, "-d "))==NULL) {
+           if ((fileName=hpt_stristr(newAutoCreate, "-d "))==NULL) {
                char *tmp;
                tmp=(char *) calloc (strlen(newAutoCreate)+strlen(description)+7,sizeof(char));
                sprintf (tmp,"%s -d \"%s\"",newAutoCreate,description);
@@ -752,7 +754,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    }
 
    if (newAutoCreate) {
-	   if ((fileName=stristr(newAutoCreate, "-g")) == NULL) {
+	   if ((fileName=hpt_stristr(newAutoCreate, "-g")) == NULL) {
 	       if (creatingLink->LinkGrp) {
 	           xscatprintf(&buff, " -g %s", creatingLink->LinkGrp);
 	       }
@@ -927,17 +929,17 @@ int carbonCopy(s_message *msg, s_area *echo)
 		
 		switch (config->carbons[i].ctype) {
 			
-		case 0:	str=stristr(msg->toUserName,config->carbons[i].str);
+		case 0:	str=hpt_stristr(msg->toUserName,config->carbons[i].str);
 			break;
-		case 1:	str=stristr(msg->fromUserName,config->carbons[i].str);
+		case 1:	str=hpt_stristr(msg->fromUserName,config->carbons[i].str);
 			break;
 		case 2:
 			kludge=getKludge(*msg, config->carbons[i].str);
 			str=kludge; if (kludge) free(kludge);
 			break;
-		case 3:	str=stristr(msg->subjectLine,config->carbons[i].str);
+		case 3:	str=hpt_stristr(msg->subjectLine,config->carbons[i].str);
 			break;
-		case 4:	str=stristr(msg->text+strlen(area->areaName)+6,config->carbons[i].str);
+		case 4:	str=hpt_stristr(msg->text+strlen(area->areaName)+6,config->carbons[i].str);
 			break;
 
 		} /* end switch*/
@@ -977,7 +979,7 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
     tmp = msg->text;
 	 
 	 
-    while ((line = strchr(tmp, '\r'))) {
+    while ((line = strchr(tmp, '\r')) != NULL) {
 	if (*(line+1) == '\x01') tmp = line+1;
 	else { tmp = line+1; *line = 0; break; }
     }
@@ -1642,7 +1644,7 @@ void processDir(char *directory, e_tossSecurity sec)
       printf("testing %s\n", file->d_name);
 #endif
 
-#if !defined(UNIX)
+#if !defined(UNIX) && !defined(__TURBOC__)
       if( !(file->d_attr & _A_HIDDEN) )
 #endif
       {

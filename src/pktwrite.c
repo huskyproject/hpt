@@ -33,11 +33,13 @@
 #if !defined(__FreeBSD__)
 #include <malloc.h>
 #endif
-#if defined (__WATCOMC__) && defined (__NT__)
+#if (defined (__WATCOMC__) && defined (__NT__)) || defined(__TURBOC__)
 #include <dos.h>
 #endif
 #include <string.h>
+#if !defined(__TURBOC__)
 #include <unistd.h>
+#endif
 
 #include <fidoconfig/fidoconfig.h>
 #include <xstr.h>

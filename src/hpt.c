@@ -32,7 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#ifndef __IBMC__
+#if !defined(__IBMC__) && !defined(__TURBOC__)
 #include <unistd.h>
 #endif
 #include <time.h>
@@ -249,13 +249,13 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
 
 #ifdef __linux__
    xstrcat(&version, "/lnx");
-#elif __freebsd__
+#elif defined(__FreeBSD__) || defined(__NetBSD__)
    xstrcat(&version, "/bsd");
-#elif __OS2__
+#elif defined(__OS2__)
    xstrcat(&version, "/os2");
-#elif __NT__
+#elif defined(__NT__)
    xstrcat(&version, "/NT");
-#elif __sun__
+#elif defined(__sun__)
    xstrcat(&version, "/sun");
 #endif
 
