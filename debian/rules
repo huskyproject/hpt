@@ -42,7 +42,8 @@ install: build
 	dh_installdirs
 	# Add here commands to install the package into debian/hpt.
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/hpt
-	cp config/config config/path config/links config/areas debian/hpt/etc/husky/
+	cp config/config config/path config/links config/areas \
+	    filter.pl debian/hpt/etc/husky/
 	cp misc/areafix.hlp $(CURDIR)/debian/hpt/etc/husky/
 	-cp misc/* $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/
 	rm -f $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/*.hlp

@@ -21,6 +21,8 @@ include c:\fido\config\path
 logechotoscreen
 mindiskfreespace 10
 
+#hptPerlFile c:\fido\config\filter.pl
+
 Link Boss
 Aka 2:7000/700
 AutoAreaCreate on

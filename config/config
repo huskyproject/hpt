@@ -41,6 +41,9 @@ DefArcmailSize	300
 
 Include /etc/husky/path
 
+# Uncomment if you use filter.pl
+#hptPerlFile /etc/filter.pl
+
 ############################################################################
 # Report about autocreation areas
 # to netMail
