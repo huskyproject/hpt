@@ -37,6 +37,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #if !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
@@ -354,8 +355,11 @@ char *help(s_link *link) {
 
     if (config->areafixhelp!=NULL) {
 	if ((f=fopen(config->areafixhelp,"r")) == NULL) {
-	    fprintf(stderr,"areafix: cannot open help file \"%s\"\n", 
-		    config->areafixhelp);
+	    w_log ('8', "areafix: cannot open help file \"%s\": %s",
+	           config->areafixhelp, strerror(errno));
+	    if (!quiet)
+		fprintf(stderr,"areafix: cannot open help file \"%s\": %s\n", 
+		        config->areafixhelp, strerror(errno));
 	    return NULL;
 	}
 		
@@ -417,8 +421,8 @@ char *available(s_link *link, char *cmdline)
 	if ((uplink->forwardRequests && uplink->forwardRequestFile) &&
 	    ((uplink->LinkGrp == NULL) || (found != 0))) {
 	    if ((f=fopen(uplink->forwardRequestFile,"r")) == NULL) {
-		w_log('8', "areafix: cannot open forwardRequestFile \"%s\"",
-		      uplink->forwardRequestFile);
+		w_log('8', "areafix: cannot open forwardRequestFile \"%s\": %s",
+		      uplink->forwardRequestFile, strerror(errno));
 		return report;
 	    }
 
@@ -978,7 +982,7 @@ char *subscribe(s_link *link, char *cmd) {
             } else {
                 xscatprintf(&report," %s %s  error. report to sysop!\r",an,print_ch(49-strlen(an),'.'));
                 w_log(LL_AREAFIX, "areafix: %s not subscribed to %s",aka2str(link->hisAka),an);
-                w_log(LL_ERR, "areafix: can't write to config file!");
+                w_log(LL_ERR, "areafix: can't write to config file: %s!", strerror(errno));
             }//if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==0)
         }
 	    if (!isPatternLine(line)) i = config->echoAreaCount;
@@ -1026,7 +1030,7 @@ char *subscribe(s_link *link, char *cmd) {
                     an, print_ch(49-strlen(an),'.') );
                 w_log( LL_AREAFIX, "areafix: %s not subscribed to %s",
                     aka2str(link->hisAka),an);
-                w_log(LL_ERR, "areafix: can't change config file!");
+                w_log(LL_ERR, "areafix: can't change config file: %s!", strerror(errno));
             }
           } else w_log( LL_AREAFIX, "areafix: %s already subscribed to area %s",
                 aka2str(link->hisAka), line );
@@ -1089,7 +1093,7 @@ char *do_delete(s_link *link, s_area *area) {
     }
     /* remove area from config-file */
     if( changeconfig ((cfgFile) ? cfgFile : getConfigFileName(),  area, link, 4) != DEL_OK) {
-       w_log( LL_AREAFIX, "areafix: can't remove area from config" );
+       w_log( LL_AREAFIX, "areafix: can't remove area from config: %s", strerror(errno));
     }
 
     /* delete msgbase and dupebase for the area */
@@ -1412,7 +1416,7 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount)
 
        MsgCloseArea(area);
       
-   } else w_log('9', "Could not open %s", echo->fileName);
+   } else w_log('9', "Could not open %s: %s", echo->fileName, strerror(errno));
 
    return rc;
 }
@@ -1773,7 +1777,7 @@ void RetRules (s_message *msg, s_link *link, char *areaName)
     }
 
     if (nrul==0) { // couldn't open any rules file while first one exists!
-	w_log('9', "areafix: can't open file '%s' for reading", fileName);
+	w_log('9', "areafix: can't open file '%s' for reading: %s", fileName, strerror(errno));
     }
     nfree (fileName);
 
