@@ -84,7 +84,7 @@ int displayPkt(char *name, int showHeader, int showText)
 			 msg->toUserName, msg->subjectLine);
          printf("Attr:   ");
          for (i=0; i < sizeof(attrStr) / sizeof(char *); i++) {
-            if ((1 << i & msg->attributes) != 0) printf(" %s", attrStr[i]);
+            if (((1 << i) & msg->attributes) != 0) printf(" %s", attrStr[i]);
          }
          printf("\n");
       };
