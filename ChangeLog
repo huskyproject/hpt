@@ -1,3 +1,7 @@
+2003-05-22 Thursday 20:42  d_sergienko
+
+	* doc/hpt.texi (hpt-1_4-stable.4): added more info about Remap
+
 2003-05-21 Wednesday 08:55  sfpavel
 
 	* debian/control (hpt-1_4-stable.3): Change debian maintainer's
