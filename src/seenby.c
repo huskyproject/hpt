@@ -52,14 +52,14 @@ int compare(const void *first, const void *second)
    return 0;
 }
 
-void sortSeenBys(s_seenBy *seenBys, UINT count)
+void sortSeenBys(s_seenBy *seenBys, UINT16 count)
 {
    qsort(seenBys, count, sizeof(s_seenBy), compare);
 }
 
 void cleanDupesFromSeenBys(s_seenBy **seenBys, UINT16 *count)
 {
-    UINT i;
+    UINT16 i;
     s_seenBy seenBy;
 
     if (seenBys == NULL || *seenBys == NULL || count == NULL || *count < 2)
@@ -84,7 +84,7 @@ void cleanDupesFromSeenBys(s_seenBy **seenBys, UINT16 *count)
 
 void cleanDupes_seenByZone()
 {
-    UINT i;
+    UINT16 i;
 
     for (i=0;i<MAX_ZONE;i++)
         cleanDupesFromSeenBys(&(seenBysZone[i].seenByArray), (UINT16 *) &(seenBysZone[i].seenByCount));
@@ -92,7 +92,7 @@ void cleanDupes_seenByZone()
 
 void zero_seenBysZone()
 {
-    int i;
+    UINT16 i;
 
     for (i=0;i<MAX_ZONE;i++)
     {
@@ -103,13 +103,13 @@ void zero_seenBysZone()
 
 void free_seenBysZone()
 {
-    int i;
+    UINT16 i;
     for (i=0;i<MAX_ZONE;i++)
         nfree(seenBysZone[i].seenByArray);
     zero_seenBysZone();
 }
 
-void attachTo_seenBysZone(int zone, s_seenBy **seenBys, int count)
+void attachTo_seenBysZone(UINT16 zone, s_seenBy **seenBys, UINT16 count)
 {
     seenBysZone[zone].seenByArray = *seenBys;
     seenBysZone[zone].seenByCount = count;
@@ -117,7 +117,7 @@ void attachTo_seenBysZone(int zone, s_seenBy **seenBys, int count)
 
 void addTo_seenByZone(UINT16 zone, UINT16 net, UINT16 node)
 {
-    int i;
+    UINT16 i;
 
     if (seenBysZone[zone].seenByArray == NULL) {
         i=0;
@@ -138,7 +138,7 @@ void addTo_seenByZone(UINT16 zone, UINT16 net, UINT16 node)
 
 void deleteFrom_seenByZone(UINT16 zone, UINT16 net, UINT16 node)
 {
-    int i;
+    UINT16 i;
 
     if (seenBysZone[zone].seenByArray == NULL) return;
 
@@ -152,11 +152,11 @@ void deleteFrom_seenByZone(UINT16 zone, UINT16 net, UINT16 node)
     seenBysZone[zone].seenByArray[i].net = 0;
 }
 
-char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
+char *createControlText(s_seenBy seenBys[], UINT16 seenByCount, char *lineHeading)
 {
    #define size 81
    #define addr2dSize 13
-   UINT  i;
+   UINT16  i;
    char *text=NULL, *line = NULL, addr2d[addr2dSize];
 
    if (seenByCount==0) {              /* return empty control line */
@@ -206,12 +206,12 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
    return text;
 }
 
-void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount)
+void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT16 *seenByCount)
 {
     char *seenByText=NULL, *start = NULL, *token = NULL;
     unsigned long temp;
     char *endptr = NULL;
-    UINT seenByAlloced;
+    UINT16 seenByAlloced;
 
     *seenByCount = seenByAlloced = 0;
 
@@ -273,7 +273,7 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCo
     nfree(seenByText);
 }
 
-void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount)
+void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT16 *seenByCount)
 {
 
     /*  DON'T GET MESSED UP WITH THE VARIABLES NAMED SEENBY... */
@@ -282,9 +282,9 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
     char *seenByText=NULL, *start = NULL, *token = NULL;
     char *endptr = NULL;
     unsigned long temp;
-    UINT seenByAlloced;
+    UINT16 seenByAlloced;
 #ifdef DEBUG_HPT
-    int i;
+    UINT16 i;
 #endif
 
     *seenByCount = seenByAlloced = 0;
@@ -359,10 +359,10 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
   * This function returns 0 if the link is not in seenBy else it returns 1.
   */
 
-int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link,
+UINT16 checkLink(s_seenBy *seenBys, UINT16 seenByCount, s_link *link,
               s_area *echo, hs_addr pktOrigAddr)
 {
-    UINT i,j;
+    UINT16 i,j;
 
     /*  the link where we got the mail from */
     if (addrComp(pktOrigAddr, link->hisAka) == 0) return 1;
@@ -406,9 +406,9 @@ int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link,
  */
 
 void createNewLinksArray(s_area *echo, s_arealink ***newLinks,
-                         hs_addr pktOrigAddr, int rsb)
+                         hs_addr pktOrigAddr, UINT16 rsb)
 {
-    UINT i, lFound = 0;
+    UINT16 i, lFound = 0;
 
     *newLinks =  (s_arealink **)safe_calloc(echo->downlinkCount,sizeof(s_arealink*));
 
@@ -428,9 +428,9 @@ void createNewLinksArray(s_area *echo, s_arealink ***newLinks,
         nfree(*newLinks);
 }
 
-void addLinksTo_seenByZone(s_arealink **newLinks, int count)
+void addLinksTo_seenByZone(s_arealink **newLinks, UINT16 count)
 {
-    UINT i;
+    UINT16 i;
     hs_addr *addr;
 
     if (newLinks == NULL) return;
@@ -445,7 +445,7 @@ void addLinksTo_seenByZone(s_arealink **newLinks, int count)
 
 void addAkasTo_seenByZone()
 {
-    UINT i;
+    UINT16 i;
     for (i=0; i < config->addrCount; i++) {
         if (config->addr[i].point != 0) continue; /* don't include point addresses */
         addTo_seenByZone(config->addr[i].zone, config->addr[i].net, config->addr[i].node);
@@ -454,7 +454,7 @@ void addAkasTo_seenByZone()
 
 void processAutoAdd_seenByZone(s_area *echo)
 {
-    UINT i, zone;
+    UINT16 i, zone;
 
     for (zone=0;zone<MAX_ZONE;zone++) {
         for (i=0; i<config->addToSeenCount; i++)

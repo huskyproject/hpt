@@ -2180,7 +2180,9 @@ This is sometimes necessary as a workaraound if your link sends you netmail
 packets without packet passwords, for example.
 
 The default state is off. In this case the incoming packet password must
-match the packet password that you defined. This is the most secure option.
+match the packet password that you defined. Otherwise only netmail will be 
+processed if packet is being tossed from secure inbound.
+This is the most secure option.
 
 If you set this switch to @code{secure}, packets that do not contain a
 packet password and are received in the protected inbound will be processed.

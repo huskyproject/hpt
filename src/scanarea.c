@@ -246,7 +246,7 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
    s_message    msg;
    UINT32       j=0;
    s_seenBy     *seenBys = NULL, *path = NULL;
-   UINT         seenByCount = 0, pathCount = 0;
+   UINT16         seenByCount = 0, pathCount = 0;
    char         *tempbefore, *addrstr, *tempafter;
 
    makeMsg(hmsg, xmsg, &msg, echo, 1);

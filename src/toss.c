@@ -315,14 +315,14 @@ void closeOpenedPkt(void) {
 
 
 void forwardMsgToLink(s_message *msg, s_area *echo, s_link *link,
-                    s_seenBy *seenBys, UINT seenByCount,
-                    s_seenBy *pathArray, UINT pathArrayCount)
+                    s_seenBy *seenBys, UINT16 seenByCount,
+                    s_seenBy *pathArray, UINT16 pathArrayCount)
 {
-    unsigned  int rc=0;
+    UINT16 rc=0;
     ULONG len;
     s_pktHeader header;
     s_seenBy *path = NULL;
-    UINT pathCount = 0;
+    UINT16 pathCount = 0;
     char *start = NULL, *text = NULL, *seenByText = NULL, *pathText = NULL;
 
     /*  add our aka to path */
@@ -434,10 +434,10 @@ void forwardMsgToLink(s_message *msg, s_area *echo, s_link *link,
     return;
 }
 
-void forwardMsgToLinks_rsb(s_area *echo, s_message *msg, hs_addr pktOrigAddr, int rsb)
+void forwardMsgToLinks_rsb(s_area *echo, s_message *msg, hs_addr pktOrigAddr, UINT16 rsb)
 {
     s_seenBy *seenBys = NULL, *path = NULL;
-    UINT     seenByCount = 0 , pathCount = 0;
+    UINT16     seenByCount = 0 , pathCount = 0;
     int i;
 
     /*  links who does not have their aka in seenBys and thus have not got the echomail */
@@ -489,7 +489,7 @@ void forwardMsgToLinks_rsb(s_area *echo, s_message *msg, hs_addr pktOrigAddr, in
 void forwardMsgToLinks(s_area *echo, s_message *msg, hs_addr pktOrigAddr)
 {
     char *msgtext;
-    UINT textlen;
+    UINT16 textlen;
     msgtext = safe_strdup(msg->text);
     textlen = msg->textLength;
     /* forward message to all links with normal seen-bys */

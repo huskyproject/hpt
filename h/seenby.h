@@ -50,24 +50,24 @@ struct seenByZone {
 typedef struct seenByZone s_seenByZone;
 extern s_seenByZone seenBysZone[MAX_ZONE];
 
-void sortSeenBys(s_seenBy *seenBys, UINT count);
+void sortSeenBys(s_seenBy *seenBys, UINT16 count);
 
-char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading);
+char *createControlText(s_seenBy seenBys[], UINT16 seenByCount, char *lineHeading);
 
 void createSeenByArrayFromMsg(s_message *msg, s_seenBy
-							  **seenBys, UINT *seenByCount);
+							  **seenBys, UINT16 *seenByCount);
 
-void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount);
+void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT16 *seenByCount);
 
 
 void zero_seenBysZone();
 void free_seenBysZone();
-void attachTo_seenBysZone(int zone, s_seenBy **seenBys, int count);
+void attachTo_seenBysZone(UINT16 zone, s_seenBy **seenBys, UINT16 count);
 void addTo_seenByZone(UINT16 zone, UINT16 net, UINT16 node);
 void deleteFrom_seenByZone(UINT16 zone, UINT16 net, UINT16 node);
 void createNewLinksArray(s_area *echo, s_arealink ***newLinks,
-                         hs_addr pktOrigAddr, int rsb);
-void addLinksTo_seenByZone(s_arealink **newLinks, int count);
+                         hs_addr pktOrigAddr, UINT16 rsb);
+void addLinksTo_seenByZone(s_arealink **newLinks, UINT16 count);
 void addAkasTo_seenByZone();
 void processAutoAdd_seenByZone(s_area *echo);
 void cleanDupes_seenByZone();
