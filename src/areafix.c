@@ -1888,10 +1888,10 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 	    if (preport != NULL) {
 		switch (RetFix) {
 		case LIST:
-		    RetMsg(msg, link, preport, "areafix reply: list request");
+		    RetMsg(msg, link, preport, "Areafix reply: list request");
 		    break;
 		case HELP:
-		    RetMsg(msg, link, preport, "areafix reply: help request");
+		    RetMsg(msg, link, preport, "Areafix reply: help request");
 		    break;
 		case ADD:
 		    report = areaStatus(report, preport);
@@ -1902,28 +1902,28 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 		    }
 		    break;
 		case AVAIL:
-		    RetMsg(msg, link, preport, "areafix reply: available areas");
+		    RetMsg(msg, link, preport, "Areafix reply: available areas");
 		    break;
 		case UNLINK:
-		    RetMsg(msg, link, preport, "areafix reply: unlinked request");
+		    RetMsg(msg, link, preport, "Areafix reply: unlinked request");
 		    break;
 		case QUERY:
-		    RetMsg(msg, link, preport, "areafix reply: linked request");
+		    RetMsg(msg, link, preport, "Areafix reply: linked request");
 		    break;
 		case PAUSE:
-		    RetMsg(msg, link, preport, "areafix reply: pause request");
+		    RetMsg(msg, link, preport, "Areafix reply: pause request");
 		    break;
 		case RESUME:
-		    RetMsg(msg, link, preport, "areafix reply: resume request");
+		    RetMsg(msg, link, preport, "Areafix reply: resume request");
 		    break;
 		case INFO:
-		    RetMsg(msg, link, preport, "areafix reply: link information");
+		    RetMsg(msg, link, preport, "Areafix reply: link information");
 		    break;
 		case PACKER:
-		    RetMsg(msg, link, preport, "areafix reply: packer change request");
+		    RetMsg(msg, link, preport, "Areafix reply: packer change request");
 		    break;
 		case RSB:
-		    RetMsg(msg, link, preport, "areafix reply: redused seen-by change request");
+		    RetMsg(msg, link, preport, "Areafix reply: redused seen-by change request");
 		    break;
 		case STAT:
 		    report = areaStatus(report, preport);
@@ -1971,7 +1971,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 	    break;
 	}
 
-	RetMsg(msg, link, report, "areafix reply: security violation");
+	RetMsg(msg, link, report, "Areafix reply: security violation");
 	w_log(LL_AREAFIX, "areafix: security violation from %s", aka2str(link->hisAka));
 	nfree(tmplink);
         w_log(LL_FUNC, __FILE__ ":%u:processAreaFix() rc=1", __LINE__);
@@ -1984,7 +1984,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
             xstrcat(&report, preport);
             nfree(preport);
         }
-        RetMsg(msg, link, report, "areafix reply: node change request");
+        RetMsg(msg, link, report, "Areafix reply: node change request");
     }
 
     if (rulesCount) {
@@ -1995,7 +1995,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
         nfree (rulesList);
     }
 
-    w_log(LL_AREAFIX, "areafix: successfully done for %s",aka2str(link->hisAka));
+    w_log(LL_AREAFIX, "Areafix: successfully done for %s",aka2str(link->hisAka));
 
     // send msg to the links (forward requests to areafix)
     sendAreafixMessages();
