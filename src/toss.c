@@ -1848,7 +1848,7 @@ void processDir(char *directory, e_tossSecurity sec)
 	printf("testing sorted %s\n", dummy);
 #endif
 	if (!(pktFile = patimat(dummy+dirNameLen, "*.pkt") == 1))
-	    for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
+	    for (i = 0; i < sizeof(validExt) / sizeof(validExt[0]); i++)
 		if (patimat(dummy+dirNameLen, validExt[i]) == 1)
 		    arcFile = 1;
 
@@ -1993,7 +1993,7 @@ int find_old_arcmail(s_link *link, FILE *flo)
 #ifndef UNIX
 	line = trimLine(line);
 #endif
-	for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
+	for (i = 0; i < sizeof(validExt) / sizeof(validExt[0]); i++)
 	    if (patimat(line, validExt[i]) == 1) {
 		if (*line!='~') {
 		    nfree(bundle);
