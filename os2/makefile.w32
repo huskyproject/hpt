@@ -6,11 +6,10 @@ OBJS    = hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, 
 SRC_DIR = ..\src
 
 !IF $(DEBUG) == 1
-CFLAGS  = -d2 -hw -i=..\h;..\..\smapi;..\..\fidoconfig -zq
-LFLAGS  =
- DEBUG Watcom
+CFLAGS  = -d2 -hw -i=..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq -5
+LFLAGS  = DEBUG Watcom
 !ELSE
-CFLAGS  = -i..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq
+CFLAGS  = -i..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq -5
 LFLAGS  =
 !ENDIF
 

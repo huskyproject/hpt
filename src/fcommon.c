@@ -109,12 +109,12 @@ int fTruncate( int fd, long length )
 e_prio cvtFlavour2Prio(e_flavour flavour)
 {
    switch (flavour) {
-      case hold:   return HOLD;;
-                   break;
-      case normal: return NORMAL;
-                   break;
-      default:     return CRASH;
-                   break;
+      case hold:      return HOLD;
+      case normal:    return NORMAL;
+      case direct:    return DIRECT;
+      case crash:     return CRASH;
+      case immediate: return IMMEDIATE;
+      default:        return NORMAL;
    }
    return NORMAL;
 }
@@ -332,11 +332,15 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 
    if (typ != REQUEST) {
       switch (prio) {
-         case CRASH : name[9] = 'c';
-                      break;
-         case HOLD  : name[9] = 'h';
-                      break;
-         case NORMAL: break;
+         case CRASH :    name[9] = 'c';
+                         break;
+         case HOLD  :    name[9] = 'h';
+                         break;
+	 case DIRECT:    name[9] = 'd';
+	                 break;
+	 case IMMEDIATE: name[9] = 'i';
+	                 break;
+         case NORMAL:    break;
       } /* endswitch */
    } /* endif */
 

@@ -2,6 +2,11 @@ hpt 0.29
 --------
 
 ----- cvs ci ------
+Mon Jun 28  16:47:00
+Fedor:
++ Added direct and immediate flavours
+
+----- cvs ci ------
 Sun Jun 27  17:16:00
 Fedor:
 * fixed small bug with intab when request %LIST (description of area)
