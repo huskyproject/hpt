@@ -123,24 +123,28 @@ char *skipReSubj ( char *subjstr )
 void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j )
 {
 
-   if (crepl -> msgId && srepl -> msgId && strcmp ( crepl -> msgId, srepl -> msgId) == 0) {
+    if (crepl -> msgId && srepl -> msgId &&
+        strcmp ( crepl -> msgId, srepl -> msgId) == 0) {
+        if (loglevel >= 15)
+            fprintf(outlog, "Warning: msg %ld is dupe to %ld\n",
+                    (long)i, (long)j);
+        links_ignored++;
+        return;
+    }
 
-     if ( loglevel >= 15) fprintf(outlog, "Warning: msg %ld is dupe to %ld\n", i, j);
-     links_ignored++;
-     return;
-   }
 
-
-   if (crepl -> freeReply >= MAX_REPLY-1)
-   {
-      if ( loglevel >= 15) fprintf(outlog, "replies count for msg %ld exceeds %d, rest of the replies won't be linked\n",
-	 j, MAX_REPLY-1);
-      links_ignored++;
-   } else {
-      links_total++;
-      (crepl -> replies)[(crepl -> freeReply)++] = MsgMsgnToUid(harea, j);
-      srepl -> replyToPos = MsgMsgnToUid(harea, i);
-   }
+    if (crepl -> freeReply >= MAX_REPLY-1)
+    {
+        if ( loglevel >= 15)
+            fprintf(outlog, "replies count for msg %ld exceeds %d,\
+rest of the replies won't be linked\n",
+                    (long)j, MAX_REPLY-1);
+        links_ignored++;
+    } else {
+        links_total++;
+        (crepl -> replies)[(crepl -> freeReply)++] = MsgMsgnToUid(harea, j);
+        srepl -> replyToPos = MsgMsgnToUid(harea, i);
+    }
 }
 
 static char *GetCtrlValue (char *ctl, char *kludge)
