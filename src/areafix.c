@@ -70,7 +70,7 @@ int strncasesearch(char *strL, char *strR, int len)
     
     str = (char*) safe_malloc(strlen(strL)+1);
     strcpy(str, strL);
-    if (strlen(str) > len) str[len] = 0;
+    if (strlen(str) > len) str[len] = '\0';
     ret = stricmp(str, strR);
     nfree(str);
     return ret;
@@ -1268,7 +1268,7 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 int tellcmd(char *cmd) {
 	char *line;
 
-	if (strncasesearch(cmd, "* Origin:", 9) == 0) return NOTHING;
+	if (strncasesearch(cmd, " * Origin:", 10) == 0) return NOTHING;
         while ((*cmd == ' ') || (*cmd == '\t')) cmd++;
    	line = strpbrk(cmd, " \t");
 	if (line && *cmd != '%') *line = 0;

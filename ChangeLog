@@ -2,6 +2,11 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Mon Jun 19 20:35:10 NOVST 2000
+max:
+* fixed areafix bug: " * Origin" seems like "*" (thanx to Konstantin Mohorea)
+
+----- cvs ci ------
 Sun Jun 18 13:35:07 NOVST 2000
 max:
 * manual tearline, origin
