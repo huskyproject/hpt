@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
 #else
    if (tmp[strlen(tmp)-1] != '\\')  strcat(tmp,"\\");
 #endif
-   sprintf(tmp + strlen(tmp),"%08lx.pkt",time(NULL));
+   sprintf(tmp + strlen(tmp),"%08lx.pkt",(long)time(NULL));
 
    if (header.origAddr.zone==0) header.origAddr = msg.origAddr;
    if (header.destAddr.zone==0) header.destAddr = msg.destAddr;
