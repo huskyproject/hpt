@@ -77,7 +77,7 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
     msgbtype = hpt_stristr(newAC, "-b ");
 
     if(!msgbDir)
-        msgbDir=(creatingLink->msgBaseDir) ? 
+        msgbDir=(creatingLink->msgBaseDir) ?
         creatingLink->msgBaseDir : config->msgBaseDir;
 
     quote_areaname = strchr(TRUE_COMMENT "\"", *c_area) ? "\"" : "";
@@ -87,7 +87,7 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
         // we have to find a file name
         int need_dos_file;
 
-#ifndef MSDOS                            
+#ifndef MSDOS
         need_dos_file = hpt_stristr(newAC, "-dosfile")!=NULL;
 #else
         need_dos_file = 1;
@@ -150,7 +150,7 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
     }
     if (*newAC) xstrcat(&buff, newAC);
     nfree(newAC);
-    return buff; 
+    return buff;
 }
 
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
@@ -160,7 +160,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     char *buff=NULL, *hisaddr=NULL;
     char *msgbDir=NULL;
     s_link *creatingLink;
-    s_area *area; 
+    s_area *area;
     s_query_areas* areaNode=NULL;
     size_t i;
     unsigned int j;
@@ -194,7 +194,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
         w_log( LL_FUNC, "%s::autoCreate() rc=9", __FILE__ );
 	return 9;
     }
-   
+
     if(config->areafixQueueFile)
     {
         areaNode = af_CheckAreaInQuery(c_area, &pktOrigAddr, NULL, FIND);
@@ -204,7 +204,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
                 w_log( LL_FUNC, "%s::autoCreate() rc=4", __FILE__ );
                 return 4;  // area already unsubscribed
             }
-            if( stricmp(areaNode->type,czFreqArea) == 0 && 
+            if( stricmp(areaNode->type,czFreqArea) == 0 &&
                 addrComp(pktOrigAddr, areaNode->downlinks[0])!=0)
             {
                 w_log( LL_FUNC, "%s::autoCreate() rc=4", __FILE__ );
@@ -234,7 +234,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
     // making address of uplink
     xstrcat(&hisaddr, aka2str(pktOrigAddr));
-        
+
     buff = makeAreaParam(creatingLink , c_area, msgbDir);
 
     // add new created echo to config in memory
@@ -274,17 +274,17 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     }
     fprintf(f, "%s%s", buff, cfgEol()); // add line to config
     fclose(f);
-   
+
     nfree(buff);
 
     // echoarea addresses changed by safe_reallocating of config->echoAreas[]
     carbonNames2Addr(config);
 
     w_log(LL_AUTOCREATE, "Area %s autocreated by %s", c_area, hisaddr);
-   
+
     if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr, NULL);
     else makeMsgToSysop(c_area, *forwardAddr, &pktOrigAddr);
-   
+
     nfree(hisaddr);
 
     // create flag
@@ -322,7 +322,7 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
         tmpNode = tmpNode->next;
     }
 
-    switch( act )    
+    switch( act )
     {
     case FIND:
         if( !bFind || tmpNode == queryAreasHead )
@@ -391,7 +391,7 @@ char* af_Req2Idle(char *areatag, char* report, s_addr linkAddr)
     while(tmpNode->next)
     {
         areaNode = tmpNode->next;
-        if( ( areaNode->name ) && 
+        if( ( areaNode->name ) &&
             ( stricmp(areaNode->type,czFreqArea) == 0 ) &&
             ( patimat(areaNode->name,areatag)==1) )
         {
@@ -417,7 +417,7 @@ char* af_Req2Idle(char *areatag, char* report, s_addr linkAddr)
                     w_log(LL_AREAFIX, "areafix: make request idle for area: %s", areaNode->name);
                 }
                 xscatprintf(&report, " %s %s  request canceled\r",
-                    areaNode->name, 
+                    areaNode->name,
                     print_ch(49-strlen(areaNode->name), '.'));
                 w_log(LL_AREAFIX, "areafix: request canceled for [%s] area: %s",aka2str(linkAddr),
                     areaNode->name);
@@ -443,7 +443,7 @@ w_log(LL_FUNC, "af_GetQFlagName(): begin");
     if(logdir)
     {
         logdir[1] = '\0';
-        xstrcat(&chanagedflag,(char*)czChangFlg); 
+        xstrcat(&chanagedflag,(char*)czChangFlg);
     }
     else
     {
@@ -466,7 +466,7 @@ void af_QueueReport()
     char* header = NULL;
     int netmail=0;
     char *reportFlg = NULL;
-    
+
     w_log(LL_FUNC, "af_QueueReport(): begin");
 
     if( !config->areafixQueueFile ){
@@ -476,7 +476,7 @@ void af_QueueReport()
     }
 
     reportFlg = af_GetQFlagName();
-    
+
     if(!fexist(reportFlg))
     {
         w_log(LL_STOP, "Queue file wasn't changed. Exiting...");
@@ -503,7 +503,7 @@ void af_QueueReport()
                     "request");
                 continue;
             }
-            if(tmpNode->eTime < tnow ) 
+            if(tmpNode->eTime < tnow )
             {
                 strcpy(state,"rr_or_d");
             }
@@ -527,7 +527,7 @@ void af_QueueReport()
                     "timeout");
                 continue;
             }
-            if(tmpNode->eTime < tnow ) 
+            if(tmpNode->eTime < tnow )
             {
                 strcpy(state,"to_kill");
             }
@@ -552,7 +552,7 @@ void af_QueueReport()
                     "timeout");
                 continue;
             }
-            if(tmpNode->eTime < tnow ) 
+            if(tmpNode->eTime < tnow )
             {
                 strcpy(state,"to_kill");
             }
@@ -579,24 +579,24 @@ void af_QueueReport()
         else if (getNetMailArea(config, config->ReportTo) != NULL) netmail=1;
     } else netmail=1;
 
-    msgToSysop[0] = makeMessage(&(config->addr[0]),&(config->addr[0]), 
-                                versionStr, 
-                                netmail ? config->sysop : "All", "requests report", 
+    msgToSysop[0] = makeMessage(&(config->addr[0]),&(config->addr[0]),
+                                versionStr,
+                                netmail ? config->sysop : "All", "Requests report",
                                 netmail,
                                 config->areafixKillReports);
     msgToSysop[0]->text = createKludges(
                                 config->disableTID,
-                                netmail ? NULL : config->ReportTo, 
+                                netmail ? NULL : config->ReportTo,
                                 &(config->addr[0]), &(config->addr[0]),
                                 versionStr);
-    
+
     msgToSysop[0]->recode |= (REC_HDR|REC_TXT);
 
     xstrcat( &(msgToSysop[0]->text), "\001FLAGS NPD\r");
     xstrcat( &(msgToSysop[0]->text), report );
 
     w_log(LL_STOP, "End generating queue report");
-    
+
     writeMsgToSysop();
     freeMsgBuffers(msgToSysop[0]);
     nfree(msgToSysop[0]);
@@ -610,8 +610,8 @@ void af_QueueUpdate()
     s_query_areas *tmpNode  = NULL;
     s_link *lastRlink;
     s_link *dwlink;
- 
-    w_log(LL_START, "Start updating queue file");    
+
+    w_log(LL_START, "Start updating queue file");
     if( !queryAreasHead ) af_OpenQuery();
 
     tmpNode = queryAreasHead;
@@ -629,7 +629,7 @@ void af_QueueUpdate()
                 tmpNode->name, aka2str(lastRlink->hisAka));
             if(dwlink && !forwardRequest(tmpNode->name, dwlink, &lastRlink))
             {
-                tmpNode->downlinks[0] = lastRlink->hisAka; 
+                tmpNode->downlinks[0] = lastRlink->hisAka;
                 tmpNode->bTime = tnow;
                 tmpNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
                 w_log( LL_AREAFIX, "areafix: request for %s is going to node %s",
@@ -671,7 +671,7 @@ void af_QueueUpdate()
     }
     // send msg to the links (forward requests to areafix)
     sendAreafixMessages();
-    w_log(LL_STOP, "End updating queue file");    
+    w_log(LL_STOP, "End updating queue file");
 }
 
 int af_OpenQuery()
@@ -746,15 +746,15 @@ int af_OpenQuery()
                 areaNode->eTime = mktime(&tr);
             }
 
-            token = strtok( NULL, seps );            
+            token = strtok( NULL, seps );
             while( token != NULL )
             {
-                
+
                 areaNode->linksCount++;
-                areaNode->downlinks = 
+                areaNode->downlinks =
                 safe_realloc( areaNode->downlinks,
                               sizeof(s_addr)*areaNode->linksCount );
-                string2addr(token , 
+                string2addr(token ,
                             &(areaNode->downlinks[areaNode->linksCount-1]));
                 token = strtok( NULL, seps );
             }
@@ -773,20 +773,20 @@ int af_CloseQuery()
     size_t i = 0;
     struct  tm t1,t2;
     int writeChanges = 0;
-    
+
     FILE *queryFile=NULL;
     s_query_areas *delNode = NULL;
     s_query_areas *tmpNode  = NULL;
-    
-    
+
+
     if( !queryAreasHead ) {  // list does not exist
         return 0;
     }
-    
+
     if(queryAreasHead->nFlag == 1) {
         writeChanges = 1;
     }
-    if (writeChanges) 
+    if (writeChanges)
     {
         if ((queryFile = fopen(config->areafixQueueFile,"w")) == NULL)
         {
@@ -801,23 +801,23 @@ int af_CloseQuery()
             nfree(chanagedflag);
         }
     }
-    
+
     tmpNode = queryAreasHead->next;
     nSpace = queryAreasHead->linksCount+1;
     p = buf+nSpace;
     while(tmpNode) {
         if(writeChanges && tmpNode->type[0] != '\0')    {
-            memset(buf, ' ' ,nSpace); 
+            memset(buf, ' ' ,nSpace);
             memcpy(buf, tmpNode->name, strlen(tmpNode->name));
             t1 = *localtime( &tmpNode->bTime );
             t2 = *localtime( &tmpNode->eTime );
-            sprintf( p , "%s %d-%02d-%02d@%02d:%02d\t%d-%02d-%02d@%02d:%02d" , 
+            sprintf( p , "%s %d-%02d-%02d@%02d:%02d\t%d-%02d-%02d@%02d:%02d" ,
                 tmpNode->type,
                 t1.tm_year + 1900,
                 t1.tm_mon  + 1,
                 t1.tm_mday,
                 t1.tm_hour,
-                t1.tm_min,   
+                t1.tm_min,
                 t2.tm_year + 1900,
                 t2.tm_mon  + 1,
                 t2.tm_mday,
@@ -839,7 +839,7 @@ int af_CloseQuery()
     af_DelAreaListNode(queryAreasHead);
     queryAreasHead = NULL;
     if(queryFile) fclose(queryFile);
-    
+
     return 0;
 }
 
@@ -856,10 +856,10 @@ s_query_areas* af_AddAreaListNode(char *areatag, const char *type)
     s_query_areas *tmpNode      = NULL;
     s_query_areas *tmpPrevNode  = NULL;
     s_query_areas *newNode  = af_MakeAreaListNode();
-    
+
     newNode->name = safe_strdup(areatag);
     strcpy( newNode->type ,type);
-    
+
     tmpPrevNode = tmpNode = queryAreasHead;
 
     while(tmpNode)
@@ -884,7 +884,7 @@ void af_DelAreaListNode(s_query_areas* node)
 
     while(tmpNode->next && tmpNode->next != node)
     {
-        tmpNode = tmpNode->next;   
+        tmpNode = tmpNode->next;
     }
     if(tmpNode->next)
     {
@@ -899,7 +899,7 @@ void af_DelAreaListNode(s_query_areas* node)
 void af_AddLink(s_query_areas* node, s_addr *link)
 {
     node->linksCount++;
-    node->downlinks = 
+    node->downlinks =
         safe_realloc( node->downlinks, sizeof(s_addr)*node->linksCount );
     memcpy( &(node->downlinks[node->linksCount-1]) ,link, sizeof(s_addr) );
     node->bTime = tnow;
