@@ -1,3 +1,13 @@
+2001-07-24 Tuesday 14:12  pavel.gulchouck
+
+	* src/toss.c (1.355): path & seen-by processing speedup
+
+2001-07-24 Tuesday 10:33  ml
+
+	* doc/hpt-FAQ.russian (1.3), src/toss.c (1.354): don't add zone
+	number in PATH; some shanges in code which creates path&seen-by
+	arrays from msg text
+
 2001-07-11 Wednesday 22:52  pavel.gulchouck
 
 	* filter.pl (1.7), src/perl.c (1.14): log() changed to w_log() -
