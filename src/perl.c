@@ -1040,6 +1040,7 @@ void perl_setvars(void) {
    struct av 		*av;
 
    if (!do_perl || perl == NULL) return;
+   w_log( LL_SRCLINE, "%s:%d setting Perl variables", __FILE__, __LINE__);
 
 #define VK_ADD_HASH_sv(_hv,_sv,_name)                  \
     if (_sv != NULL) {                                 \
@@ -1084,9 +1085,10 @@ void perl_setvars(void) {
      sv_setpv(sv, vers); SvREADONLY_on(sv);
    }
    if ((sv = get_sv("hpt_version", TRUE)) != NULL) {
-     sv_setpv(sv, versionStr); SvREADONLY_on(sv);
+     SvREADONLY_off(sv); sv_setpv(sv, versionStr); SvREADONLY_on(sv);
    }
-   hv = perl_get_hv("config", TRUE); hv_clear(hv);
+   hv = perl_get_hv("config", TRUE); 
+   SvREADONLY_off(hv); hv_clear(hv);
    VK_ADD_HASH_str(hv, sv, "inbound", config->inbound);
    VK_ADD_HASH_str(hv, sv, "protInbound", config->protInbound);
    VK_ADD_HASH_str(hv, sv, "localInbound", config->localInbound);
@@ -1124,7 +1126,8 @@ void perl_setvars(void) {
    /*SvPOK_on(sv); sv_setpv(aka2str(config->addr[0]), 0); SvREADONLY_on(sv);*/
    VK_ADD_HASH_sv(hv, sv, "addr");
 
-   hv = perl_get_hv("links", TRUE); hv_clear(hv);
+   hv = perl_get_hv("links", TRUE); 
+   SvREADONLY_off(hv); hv_clear(hv);
    for (i = 0; i < config->linkCount; i++) {
       hv2 = newHV();
       VK_ADD_HASH_str(hv2, sv, "name", config->links[i]->name);
@@ -1161,7 +1164,8 @@ void perl_setvars(void) {
       VK_ADD_HASH_sv(hv, sv, aka2str(config->links[i]->hisAka));
    }
 
-   hv = perl_get_hv("areas", TRUE); hv_clear(hv);
+   hv = perl_get_hv("areas", TRUE); 
+   SvREADONLY_off(hv); hv_clear(hv);
    for (i = 0; i < config->echoAreaCount; i++) {
       hv2 = newHV();
       VK_ADD_HASH_str(hv2, sv, "desc", config->echoAreas[i].description);
@@ -1194,7 +1198,8 @@ void perl_setvars(void) {
       VK_ADD_HASH_sv(hv, sv, config->echoAreas[i].areaName);
    }
 
-   hv = perl_get_hv("groups", TRUE); hv_clear(hv);
+   hv = perl_get_hv("groups", TRUE); 
+   SvREADONLY_off(hv); hv_clear(hv);
    for (i = 0; i < config->groupCount; i++) {
       VK_ADD_HASH_str(hv, sv, config->group[i].name, config->group[i].desc);
    }
