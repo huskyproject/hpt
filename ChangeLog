@@ -2,6 +2,11 @@ hpt 0.27
 --------
 
 ----- cvs ci ------
+Sun Apr  11 15:46
+Fedor:
+- fixed small bug in "SENDER:" string (badarea).
+
+----- cvs ci ------
 Sat Apr  10 22:25:12
 Max:
 removed "\*.pkt" from unpack code

@@ -383,6 +383,11 @@ int readCheck(s_area *echo, s_link *link) {
     // rc == '\x0004' not linked
     
     int i;
+
+    for (i=0; i<echo->downlinkCount; i++) {
+	if (link == echo->downlinks[i]->link) break;
+    }
+    if (i == echo->downlinkCount) return 4;
     
     if (echo->group && echo->group != '\060') {
 	if (link->AccessGrp) {
@@ -394,14 +399,13 @@ int readCheck(s_area *echo, s_link *link) {
 		   if (strchr(config->PublicGroup, echo->group) == NULL) return 1;
 	       } else return 1;
     }
+    
     if (echo->levelread > link->level) return 2;
-    for (i=0; i<echo->downlinkCount; i++) {
-	if (link == echo->downlinks[i]->link) {
-	    if (echo->downlinks[i]->export == 0) return 3;
-	    break;
-	}
+    
+    if (i < echo->downlinkCount) {
+	if (echo->downlinks[i]->export == 0) return 3;
     }
-    if (i == echo->downlinkCount) return 4;
+    
     return 0;
 }
 
@@ -415,6 +419,11 @@ int writeCheck(s_area *echo, s_link *link) {
 
     int i;
     
+    for (i=0; i<echo->downlinkCount; i++) {
+	if (link == echo->downlinks[i]->link) break;
+    }
+    if (i == echo->downlinkCount) return 4;
+    
     if (echo->group != '\060') {
 	if (link->AccessGrp) {
 	    if (config->PublicGroup) {
@@ -425,14 +434,13 @@ int writeCheck(s_area *echo, s_link *link) {
 		   if (strchr(config->PublicGroup, echo->group) == NULL) return 1;
 	       } else return 1;
     }
+    
     if (echo->levelwrite > link->level) return 2;
-    for (i=0; i<echo->downlinkCount; i++) {
-	if (link == echo->downlinks[i]->link) {
-	    if (echo->downlinks[i]->import == 0) return 3;
-	    break;
-	}
+    
+    if (i < echo->downlinkCount) {
+	if (echo->downlinks[i]->import == 0) return 3;
     }
-    if (i == echo->downlinkCount) return 4;
+    
     return 0;
 }
 
@@ -812,13 +820,13 @@ void putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 		strcat(textBuff, "System not allowed to create new area\r");
 		break;
 	case 1: 
-		strcat(textBuff, "Sender not active for this area\r");
+		strcat(textBuff, "Sender not allowed to post in this area (access group)\r");
 		break; 
 	case 2: 
-		strcat(textBuff, "Sender not allowed to post in this area\r");
+		strcat(textBuff, "Sender not allowed to post in this area (access level)\r");
 	        break;
 	case 3: 
-		strcat(textBuff, "Sender not allowed to post in this area\r");
+		strcat(textBuff, "Sender not allowed to post in this area (access import)\r");
 	        break;
 	case 4: 
 		strcat(textBuff, "Sender not active for this area\r");
