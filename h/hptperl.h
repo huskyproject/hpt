@@ -47,6 +47,7 @@
 #define SUB_ON_AFIXREQ		0x1000
 #define SUB_PUTMSG		0x2000
 #define SUB_EXPORT		0x4000
+#define SUB_FILTER2             0x8000
 
 #define PERLFILE        "filter.pl"
 #define PERLFILT        "filter"
@@ -64,6 +65,7 @@
 #define PERLONAFIXREQ	"on_afixreq"
 #define PERLPUTMSG      "put_msg"
 #define PERLEXPORT      "export"
+#define PERLFILT2       "filter2"
 
 extern int skip_addvia;
 

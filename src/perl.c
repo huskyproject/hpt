@@ -1292,6 +1292,8 @@ int PerlStart(void)
 /* val: look which subs present */
    if (perl_get_cv(PERLFILT      , FALSE) == NULL)
 					perl_subs &= ~SUB_FILTER;
+   if (perl_get_cv(PERLFILT2     , FALSE) == NULL)
+					perl_subs &= ~SUB_FILTER2;
    if (perl_get_cv(PERLPKT       , FALSE) == NULL)
 					perl_subs &= ~SUB_PROCESS_PKT;
    if (perl_get_cv(PERLPKTDONE   , FALSE) == NULL)
@@ -1704,10 +1706,14 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
    SV *svdate, *svtext, *svarea, *svsubj, *svsecure, *svret;
    SV *svchange, *svattr;
    STRLEN n_a;
-   static int do_perlfilter=1;
+   static int do_perlfilter=1, do_perlfilter2=1;
    char *sorig;
+   char _cur[2] = {0, 0};
 
-   VK_START_HOOK(perlfilter, SUB_FILTER, 0)
+   if (secure < 0) { VK_START_HOOK(perlfilter2, SUB_FILTER2, 0) }
+   else { VK_START_HOOK(perlfilter, SUB_FILTER, 0) }
+
+   _cur[0] = secure < 0 ? '2' : 0;
 
    perl_setattr = 0;
    if (msg->netMail != 1) {
@@ -1748,7 +1754,7 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      sv_setsv(svkill,     &sv_undef);
      sv_setsv(svchange,   &sv_undef);
      sv_setuv(svattr,     msg->attributes | parse_flags(msg->text));
-     if (secure)
+     if (secure > 0)
        sv_setiv(svsecure, 1);
      else
        sv_setsv(svsecure, &sv_undef);
@@ -1764,7 +1770,7 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      SAVETMPS;
      PUSHMARK(SP);
      PUTBACK;
-     perl_call_pv(PERLFILT, G_EVAL|G_SCALAR);
+     perl_call_pv(secure >= 0 ? PERLFILT : PERLFILT2, G_EVAL|G_SCALAR);
      SPAGAIN;
      svret=POPs;
      if (SvTRUE(svret))
@@ -1776,8 +1782,8 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      LEAVE;
      if (SvTRUE(ERRSV))
      {
-       w_log(LL_ERR, "Perl filter eval error: %s\n", SvPV(ERRSV, n_a));
-       do_perlfilter = 0;
+       w_log(LL_ERR, "Perl filter%s eval error: %s\n", _cur, SvPV(ERRSV, n_a));
+       if (secure < 0) do_perlfilter2 = 0; else do_perlfilter = 0;
        nfree(area);
        return 0;
      }
@@ -1786,11 +1792,11 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      { /*  kill */
        sorig = aka2str5d(msg->origAddr);
        if (area)
-         w_log(LL_PERL, "PerlFilter: Area %s from %s %s killed%s%s",
+         w_log(LL_PERL, "PerlFilter%s: Area %s from %s %s killed%s%s", _cur,
                        area, msg->fromUserName, sorig,
                        prc ? ": " : "", prc ? prc : "");
        else
-         w_log(LL_PERL, "PerlFilter: NetMail from %s %s to %s %s killed%s%s",
+         w_log(LL_PERL, "PerlFilter%s: NetMail from %s %s to %s %s killed%s%s", _cur,
                        msg->fromUserName, sorig,
                        msg->toUserName, aka2str(msg->destAddr),
                        prc ? ": " : "", prc ? prc : "");
@@ -1848,10 +1854,10 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      {
        sorig = aka2str5d(msg->origAddr);
        if (area)
-         w_log(LL_PERL, "PerlFilter: Area %s from %s %s: %s",
+         w_log(LL_PERL, "PerlFilter%s: Area %s from %s %s: %s", _cur,
                        area, msg->fromUserName, sorig, prc);
        else
-         w_log(LL_PERL, "PerlFilter: NetMail from %s %s to %s %s: %s",
+         w_log(LL_PERL, "PerlFilter%s: NetMail from %s %s to %s %s: %s", _cur,
                        msg->fromUserName, sorig,
                        msg->toUserName, aka2str(msg->destAddr), prc);
        rc = 1;

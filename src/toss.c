@@ -900,8 +900,18 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
         }
         else
         { /*  access ok - process msg */
+	    int not_dupe = 1;
 
-            if (dupeDetection(echo, *msg)==1) {
+#ifdef DO_PERL
+	    w_log(LL_SRCLINE, "toss.c:%u:processEMMsg() #ifdef DO_PERL", __LINE__);
+	    if ((rc = perlfilter(msg, pktOrigAddr, -1)) == 1)
+		return not_dupe = 0;
+	    else if (rc == 2)
+		return 1;
+#endif
+
+	    if (not_dupe) not_dupe = dupeDetection(echo, *msg);
+            if (not_dupe) {
                 /*  no dupe */
 
                 messCC = MessForCC(msg); /* make copy of original message */
