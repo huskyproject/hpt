@@ -308,18 +308,18 @@ tparser -Dmodule=hpt -Dversion=@value{VERSION}.0
 @subsection Statements order
 
 Common rule for config statements order is:
-@strong{Define object before ise it!}.
+@strong{Define object before using it!}.
 
 Examples:
 @itemize
 @item
-define addresses before any link, area and carbone definitions
+define addresses before any link, area and carbon definitions
 @item
 define packers before any link definitions
 @item
 define links before any area and route definitions
 @item
-define links and areas before any carbone definitions
+define links and areas before any carbon definitions
 @end itemize
 
 
