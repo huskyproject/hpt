@@ -1,3 +1,20 @@
+2002-05-13 Monday 14:02  pavel.gulchouck
+
+	* src/areafix.c (1.302): set passive to both echo and fileecho by
+	autopause
+
+2002-05-13 Monday 13:28  pavel.gulchouck
+
+	* doc/hpt.texi (1.64): syntax fix
+
+2002-05-13 Monday 12:50  mche
+
+	* src/post.c (1.81): fixed broken multipart posting logic
+
+2002-05-13 Monday 08:37  mche
+
+	* make/makeperl.mvcdll (1.5): compilation fixed
+
 2002-05-12 Sunday 16:51  d.sergienko
 
 	* src/post.c (1.80): fixed scanning during post with existing
