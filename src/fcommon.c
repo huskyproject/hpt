@@ -32,7 +32,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+
+#ifdef UNIX
 #include <sysexits.h>
+#endif
 
 #ifdef __EMX__
 #include <sys/types.h>

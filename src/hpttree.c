@@ -22,7 +22,10 @@
 
 #include <stdio.h>
 #include <ctype.h>
+
+#ifdef UNIX
 #include <sysexits.h>
+#endif
 
 #ifdef UNIX
 #include <unistd.h>

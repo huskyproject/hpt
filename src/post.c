@@ -34,7 +34,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef UNIX
 #include <sysexits.h>
+#endif
 
 #include <version.h>
 #include <toss.h>

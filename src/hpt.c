@@ -33,7 +33,10 @@
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
+
+#ifdef UNIX
 #include <sysexits.h>
+#endif
 
 #if !defined(__IBMC__) && !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
