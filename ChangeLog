@@ -1,3 +1,15 @@
+2002-04-22 Monday 14:46  mche
+
+	* src/areafix.c (1.283): report about already linked areas
+
+2002-04-22 Monday 13:25  d.sergienko
+
+	* src/post.c (1.70): fixed segfault during posting uue.
+
+2002-04-22 Monday 13:03  pavel.gulchouck
+
+	* misc/filter.pl (1.7): process CrashEcho list reply
+
 2002-04-20 Saturday 14:49  mche
 
 	* src/dupe.c (1.59): dupe search improvement
