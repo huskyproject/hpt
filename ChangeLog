@@ -1,3 +1,15 @@
+2003-05-22 Thursday 20:55  d_sergienko
+
+	* doc/hpt.texi (1.124): add more info about remaps
+
+2003-05-22 Thursday 14:48  nssoft
+
+	* misc/pretty.pl (1.7): Second try to fix error with "-pl" option.
+
+2003-05-22 Thursday 14:46  nssoft
+
+	* doc/hpt-FAQ.russian (1.84): Cosmetical fix.
+
 2003-05-19 Monday 13:14  nssoft
 
 	* misc/pretty.pl (1.6): Try to fix error with "-pl" option.
