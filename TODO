@@ -6,7 +6,6 @@ Category 1: Will certainly be implemented until next release
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
-- jam link speedup (pavel gulchouk)
 - check for dublicate links if mask is used (fidoconf)
 - killsb for links
 - autofwdareacreatedefaults
@@ -25,8 +24,8 @@ Category 3: Will only be included if volunteers send patches
 
 Category 4: Will not be implemented
 ===================================
-- nodelist access
-- real hub-routing
+- nodelist access -> filter.pl
+- real hub-routing -> filter.pl
 - unpack all bundles before toss -> carc
 - afterUnpackBundle, afterUnpackAll -> carc
 - UnpackAllBeforeToss -> carc
