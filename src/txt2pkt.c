@@ -230,10 +230,10 @@ int main(int argc, char *argv[])
    }
 
 
-   header.hiProductCode  = 0;
-   header.loProductCode  = 0xfe;
-   header.majorProductRev = 0;
-   header.minorProductRev = 26;
+   header.hiProductCode  = HPT_PRODCODE_HIGHBYTE;
+   header.loProductCode  = HPT_PRODCODE_LOWBYTE;
+   header.majorProductRev = VER_MAJOR;
+   header.minorProductRev = VER_MINOR;
    if (passwd!=NULL) strcpy(header.pktPassword, passwd);
    header.pktCreated = time(NULL);
 

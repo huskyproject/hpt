@@ -5,6 +5,7 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
 1. MAJOR feature improvements:
 
     - Group support for echoareas (see tokens AreaGroup & AreaGroupDefaults)
+    - hpt, txt2pkt and tpkt write its own FTSC ProdCode and ProdRev
 
 2. CONFIG changes:
 

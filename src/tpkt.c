@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <smapi/progprot.h>
+#include <version.h>
 
 int main()
 {
@@ -55,10 +56,10 @@ int main()
    header.destAddr.node  = 605;
    header.destAddr.point = 14;
 
-   header.hiProductCode  = 0;
-   header.loProductCode  = 0xfe;
-   header.majorProductRev = 0;
-   header.minorProductRev = 26;
+   header.hiProductCode  = HPT_PRODCODE_HIGHBYTE;
+   header.loProductCode  = HPT_PRODCODE_LOWBYTE;
+   header.majorProductRev = VER_MAJOR;
+   header.minorProductRev = VER_MINOR;
    /* header.pktPassword[0] = 0; */
    strcpy(header.pktPassword, "xxx");
    header.pktCreated = time(NULL);

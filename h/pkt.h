@@ -38,6 +38,9 @@
 #include <fidoconf/fidoconf.h>
 #include <fcommon.h>
 
+#define HPT_PRODCODE_LOWBYTE 0xff
+#define HPT_PRODCODE_HIGHBYTE 0x10
+
 /* note that 128K - work buffer, not the max text length */
 #if !defined(__FLAT__) && defined(__DOS__)
 /* under ms-dos without extenders message will be stripped to 30K */
