@@ -1,23 +1,20 @@
-# EMX OS/2 OMF STYLE MAKEFILE
+# EMX A.OUT STYLE MAKEFILE (REQ. EMXRT.DLL)
 # no support for the husky build environment
 
 DEBUG=-s
 # set to -g for debugging
 
-.SUFFIXES:
-.SUFFIXES: .c .obj
-
-OBJ    =.obj
+OBJ    =.o
 EXE    =.exe
 RM     =cmd /c del
 DIRSEP =/
-CFLAGS =-Zomf -I../h -I../.. -c -O3 $(DEBUG)
-LFLAGS =-Zomf -Zsys $(DEBUG)
+CFLAGS =-I../h -I../.. -c -O3 $(DEBUG)
+LFLAGS =-Zcrtdll $(DEBUG)
 CDEFS  =-DOS2
 CC     =gcc
 EXENAMEFLAG=-o
 SRC_DIR=../src/
-LIBS   =../../fidoconf/fconfemo.lib ../../smapi/smapiemo.lib
+LIBS   =../../fidoconf/fconfemx.a ../../smapi/smapiemx.a
 
 include ../makefile.inc
 
