@@ -1444,7 +1444,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		token = strseparate (&textBuff, "\n\r");
 		
 		while(token != NULL) {
-			preport = processcmd( link, msg, token, tellcmd (token) );
+			preport = processcmd( link, msg,  stripLeadingChars(token, " \t"), tellcmd (token) );
 			if (preport != NULL) {
 				switch (RetFix) {
 				case LIST:

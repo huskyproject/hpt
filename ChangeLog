@@ -2,6 +2,12 @@ hpt 0.28
 --------
 
 ----- cvs ci ------
+mtt:
+Tue May 11 19:13:26 CEST 1999
+* if you write to AreaFix all leading space before a command is removed.
+- some more hpt_log changes
+
+----- cvs ci ------
 Tue May  11 16:24:02
 Fedor:
 + Add 'hpt scan -f<filename>' - scanning echomail from alternative
@@ -10,19 +16,18 @@ Fedor:
 - If scanning echomail from echotoss (from config) and area is not found
   in config (unknown area for hpt), then hpt scanned from badarea. Fixed.
 
-
 ----- cvs ci ------
 Mon May 10 13:14:47 CEST 1999
 mtt:
-+ replaced all occurences of log to hpt_log because log is defined on pgcc/emx
-+ inserted include <sys/types.h> whereever necessary for pgcc/emx
-+ made some other changes (makefiles etc.) for pgcc/emx
+- replaced all occurences of log to hpt_log because log is defined on pgcc/emx
+- inserted include <sys/types.h> whereever necessary for pgcc/emx
+- made some other changes (makefiles etc.) for pgcc/emx
 	
 ----- cvs ci ------
 Sun May  9 21:06:02 CEST 1999
 mtt:
 + applied patch by John Zaitsev (2:5037/24)
-  so also toName and fromName are encode
+  so also toName and fromName are encoded
 
 
 hpt 0.27
