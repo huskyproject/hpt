@@ -7,6 +7,5 @@ The following things of fidoconfig are currently not implemented in HPT:
   e.g.: a mail to node 2:2433/1245 is send to 2:2433/1200
   but   a mail to node 2:2433/355 is send to 2:2433/300 which currently does
         not exist. 
-- zonegated netmail not normally routed
 
   BE CAREFUL!

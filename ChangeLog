@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Fri May 19 14:13:34 NOVST 2000
+max:
+* fix my yesterday bug: carbons exported again (works? don't touch anything!)
+
+----- cvs ci ------
 Thu May 18 10:07:35 NOVST 2000
 max:
 * Use zone of our area AKA in hpttree instead of 2 (patch from Serguei Revtov)

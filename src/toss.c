@@ -1111,14 +1111,12 @@ void writeMsgToSysop()
 		    if (echo->downlinkCount > 0) {
 			// recoding from internal to transport charSet
 			if (config->outtab) {
-//			    getctab(outtab, (unsigned char*) config->outtab);
 			    recodeToTransportCharset((CHAR*)msgToSysop[i]->fromUserName);
 		    	    recodeToTransportCharset((CHAR*)msgToSysop[i]->toUserName);
 		    	    recodeToTransportCharset((CHAR*)msgToSysop[i]->subjectLine);
 			    recodeToTransportCharset((CHAR*)msgToSysop[i]->text);
 			}
 			forwardMsgToLinks(echo, msgToSysop[i], msgToSysop[i]->origAddr);
-//			arcmail(NULL);
 			tossTempOutbound(config->tempOutbound);
 		    }
 		} else {
@@ -1190,9 +1188,10 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 		  // if only one downlink, we've got the mail from him
 		  if ((echo->downlinkCount > 1) ||
 			  ((echo->downlinkCount > 0) && 
-			   (addrComp(pktOrigAddr,*echo->useAka)!=0))) // or it's our own aka
+			   // mail from us
+			   (addrComp(pktOrigAddr,*echo->useAka)==0)))
 			  forwardMsgToLinks(echo, msg, pktOrigAddr);
-		  
+			  
 		  if ((config->carbonCount != 0) && (!dontdocc)) ccrc = carbonCopy(msg, echo);
 
 		  if (ccrc <= 1) {
