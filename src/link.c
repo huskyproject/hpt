@@ -420,23 +420,34 @@ void linkAreas(char *name)
          linkArea(&(config -> netMailAreas[i]), 1);
 
    } else {
-      w_log(LL_LINKING, "Using importlogfile -> linking only listed Areas");
+       w_log(LL_LINKING, "Using importlogfile -> linking only listed Areas");
+       
+       while (!feof(f)) {
+           line = readLine(f);
+           
+           if (line != NULL) {
+               
+               if ((area = getNetMailArea(config, line)) != NULL) {
+                   if(area->scn == 0)
+                   {
+                       linkArea(area,1);
+                       area->scn = 1;
+                   }
 
-      while (!feof(f)) {
-         line = readLine(f);
-
-         if (line != NULL) {
-		 
-            if ((area = getNetMailArea(config, line)) != NULL) {
-	       linkArea(area,1);
-	    } else {
-               area = getArea(config, line);
-               if /*(area->dupeCheck != dcOff) && */ (area->areaName != config->badArea.areaName) linkArea(area,0);
-               nfree(line);
-            }
-         }
-      }
-      fclose(f);
-      if (config->LinkWithImportlog == lwiKill) remove(config->importlog);
+               } else {
+                   area = getArea(config, line);
+                   if (area->areaName != config->badArea.areaName)
+                   if(area->scn == 0)
+                   {
+                       linkArea(area,1);
+                       area->scn = 1;
+                   }
+                   nfree(line);
+               }
+           }
+       }
+       fclose(f);
+       if (config->LinkWithImportlog == lwiKill) 
+           remove(config->importlog);
    }
 }
