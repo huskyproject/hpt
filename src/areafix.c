@@ -1354,7 +1354,7 @@ char *rescan(s_link *link, char *cmd) {
 		w_log(LL_AREAFIX,"areafix: %s rescanned %lu mails to %s",
 		      an, rcc, aka2str(link->hisAka));
 	    }
-            i=config->echoAreaCount;
+	    if (!isPatternLine(line)) i = config->echoAreaCount;
 	    break;
 	case 1: if (isPatternLine(line)) continue;
 	    w_log(LL_AREAFIX, "areafix: %s area not linked for rescan to %s",
