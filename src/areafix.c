@@ -277,6 +277,9 @@ char *list(s_listype type, s_link *link, char *cmdline) {
 	} /* end add line */
 
     } /* end for */
+#ifdef DO_PERL
+    if ( !perl_echolist(&report, type, al, aka2str(link->hisAka)) ) {
+#endif
     sortAreaList(al);
     switch (type) {
       case lt_all:      list = formatAreaList(al,78," *R", grps); break;
@@ -305,7 +308,9 @@ char *list(s_listype type, s_link *link, char *cmdline) {
 /*    xscatprintf(&report,  "\r for link %s\r", aka2str(link->hisAka));*/
 
     if (link->afixEchoLimit) xscatprintf(&report, "\rYour limit is %u areas for subscribe\r", link->afixEchoLimit);
-
+#ifdef DO_PERL
+    }
+#endif
     switch (type) {
       case lt_all:
         w_log(LL_AREAFIX, "areafix: list sent to %s", aka2str(link->hisAka));
@@ -1617,7 +1622,7 @@ int tellcmd(char *cmd) {
         if (strncasecmp(line,"help",4)==0) return HELP;
         if (strncasecmp(line,"avail",5)==0) return AVAIL;
         if (strncasecmp(line,"all",3)==0) return AVAIL;
-        if (strncasecmp(line,"unlinked",8)==0) return UNLINK;
+        if (strncasecmp(line,"unlinked",8)==0) return UNLINKED;
         if (strncasecmp(line,"linked",6)==0) return QUERY;
         if (strncasecmp(line,"query",5)==0) return QUERY;
         if (strncasecmp(line,"pause",5)==0) return PAUSE;
@@ -1658,7 +1663,15 @@ char *processcmd(s_link *link, char *line, int cmd) {
     char *report;
 
     w_log(LL_FUNC, __FILE__ "::processcmd()");
-
+#ifdef DO_PERL
+    if (cmd != NOTHING && cmd != DONE && cmd != AFERROR) {
+      int rc = perl_afixcmd(&report, cmd, aka2str(link->hisAka), line);
+      if (cmd == DEL || cmd == REMOVE || cmd == RESCAN || cmd == ADD_RSC)
+        RetFix = STAT;
+        else RetFix = cmd;
+      if (rc) return report;
+    }
+#endif
     switch (cmd) {
 
     case NOTHING: return NULL;
@@ -1684,8 +1697,8 @@ char *processcmd(s_link *link, char *line, int cmd) {
     case AVAIL: report = available (link, line);
         RetFix=AVAIL;
         break;
-    case UNLINK: report = list (lt_unlinked, link, line);/*report = unlinked (link);*/
-        RetFix=UNLINK;
+    case UNLINKED: report = list (lt_unlinked, link, line);/*report = unlinked (link);*/
+        RetFix=UNLINKED;
         break;
     case QUERY: report = list (lt_linked, link, line);/*report = linked (link);*/
         RetFix=QUERY;
@@ -1970,6 +1983,10 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     }
     nfree(msg->text);
     msg->text = textBuff;
+#ifdef DO_PERL
+    if ( perl_afixreq(msg, pktHeader->origAddr) )
+        link = getLinkFromAddr(config, msg->origAddr);
+#endif
     if (!security) {
 	textBuff = safe_strdup(msg->text);
         tmp = textBuff;
@@ -1998,7 +2015,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 		case AVAIL:
 		    RetMsg(msg, link, preport, "Areafix reply: available areas");
 		    break;
-		case UNLINK:
+		case UNLINKED:
 		    RetMsg(msg, link, preport, "Areafix reply: unlinked request");
 		    break;
 		case QUERY:
@@ -2017,7 +2034,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 		    RetMsg(msg, link, preport, "Areafix reply: packer change request");
 		    break;
 		case RSB:
-		    RetMsg(msg, link, preport, "Areafix reply: redused seen-by change request");
+		    RetMsg(msg, link, preport, "Areafix reply: reduced seen-by change request");
 		    break;
 		case STAT:
 		    report = areaStatus(report, preport);
