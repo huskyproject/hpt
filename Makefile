@@ -51,4 +51,17 @@ endif
 	$(INSTALL) $(IBOPT) hptlink$(EXE) $(BINDIR)
 	$(INSTALL) $(IBOPT) hpttree$(EXE) $(BINDIR)
 
+uninstall:
+	-$(RM) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpt.1
+        -$(RM) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hptlink.1
+        -$(RM) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpttree.1
+	-$(RM) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpt.1.gz 
+	-$(RM) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hptlink.1.gz
+	-$(RM) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpttree.1.gz
+	-$(RM) $(BINDIR)$(DIRSEP)hpt$(EXE)
+	-$(RM) $(BINDIR)$(DIRSEP)pktinfo$(EXE)
+	-$(RM) $(BINDIR)$(DIRSEP)txt2pkt$(EXE)
+	-$(RM) $(BINDIR)$(DIRSEP)hptlink$(EXE)
+	-$(RM) $(BINDIR)$(DIRSEP)hpttree$(EXE)
+
 
