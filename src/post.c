@@ -102,9 +102,8 @@ void print_help(void) {
     fprintf(stdout,"                 loc k/s\n\n");
     fprintf(stdout,"              -x export message to echo links\n\n");
     fprintf(stdout,"              -d erase input file after posting\n\n");
-    fprintf(stdout,"              -u uue-multipart posting \n\n");
-    fprintf(stdout,"              -l \"n\"\n");
-    fprintf(stdout,"                 number of lines per section (150 for default)\n\n");
+    fprintf(stdout,"              -u[size] uue-multipart posting\n");
+    fprintf(stdout,"                 size - number of lines per section(150 for default)\n\n");
     fprintf(stdout,"              -h get help\n\n");
     fprintf(stdout,"              file - text file to post into echo or \"-\" for stdin\n\n");
     exit(EX_OK);
@@ -214,9 +213,7 @@ void post(int c, unsigned int *n, char *params[])
                         break;
                     case 'u':    // uue-multipart posting
                         uuepost=1;
-                        break;
-                    case 'l':    // uue-multipart posting
-                        linesPerSec = atoi(params[++(*n)]);
+                        linesPerSec = atoi(params[(*n)]+2);
                         if(linesPerSec<10)
                             linesPerSec=LINPERSECTION;
                         break;
