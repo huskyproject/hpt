@@ -24,7 +24,8 @@ OBJS    = pktinfo.obj \
           hpttree.obj \
 	  link.obj \
 	  strsep.obj \
-	  post.obj 
+	  post.obj  \
+	  txt2pkt.obj
 
 SRC_DIR = ..\src
 
@@ -42,7 +43,8 @@ all: $(OBJS) \
      tpkt.exe \
      hpt.exe \
      hptlink.exe \
-     hpttree.exe
+     hpttree.exe \
+     txt2pkt.exe
 
 pktinfo.exe: pktinfo.obj $(OBJS)
 	$(CC) $(LFLAGS) @&&!
@@ -113,7 +115,19 @@ fconfbcw.lib
 smapibcw.lib
 ! 
 
-
+txt2pkt.exe: $(OBJS)
+	$(CC) $(LFLAGS) @&&!
+txt2pkt.obj
+pktwrite.obj
+fcommon.obj
+pktread.obj
+recode.obj
+log.obj
+xstr.obj
+global.obj
+fconfbcw.lib
+smapibcw.lib
+!
 
 {..\src}.c.obj:
 	$(CC) $(CFLAGS) -c $<
@@ -124,11 +138,5 @@ clean:
 distclean: clean
 	del *.exe
 
-install: hpt.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe hpttree.exe
-	copy hpt.exe $(BINDIR)
-	copy hptlink.exe $(BINDIR)
-	copy hpttree.exe $(BINDIR)
-	copy pktinfo.exe $(BINDIR)
-	copy tpkt.exe $(BINDIR)
-	copy tlog.exe $(BINDIR)
+
 
