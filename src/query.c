@@ -71,14 +71,6 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
     if (config->areasFileNameCase == eUpper) strUpper(msgbFileName);
     else strLower(msgbFileName);
 
-    if (creatingLink->LinkGrp && creatingLink->autoAreaCreateDefaults) {
-        if (fc_stristr(creatingLink->autoAreaCreateDefaults, " -g ")==NULL)
-            buff = safe_strdup(creatingLink->autoAreaCreateDefaults);
-            nfree(creatingLink->autoAreaCreateDefaults);
-            xscatprintf(&creatingLink->autoAreaCreateDefaults, "-g %s %s", creatingLink->LinkGrp, buff);
-            nfree(buff);
-    }
-
     acDef = creatingLink->autoAreaCreateDefaults;
 
     xscatprintf(&newAC, "%s%s", (acDef) ? " " : "", (acDef) ? acDef : "");
@@ -146,6 +138,11 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
     }
 
     nfree(msgbFileName);
+    if (creatingLink->LinkGrp) {
+        if (fc_stristr(newAC, " -g ")==NULL)
+            xscatprintf(&buff, " -g %s", creatingLink->LinkGrp);
+    }
+
     if (IsAreaAvailable(c_area,creatingLink->forwardRequestFile,&desc,1)==1) {
         if (desc) {
             if (fc_stristr(newAC, " -d ")==NULL)
