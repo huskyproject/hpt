@@ -1,0 +1,4 @@
+
+HPT.INF: hpt.texi
+	-texi2ipf.exe hpt.texi > HPT.Ipf
+	ipfc.exe /CODEPAGE=850 /L=ENG /INF HPT.Ipf

@@ -1,0 +1,42 @@
+INFODIR = /usr/local/info
+IOPT	= -m 644
+
+info hpt.info: hpt.texi
+	makeinfo --no-split hpt.texi
+
+dvi hpt.dvi:  hpt.texi
+	texi2dvi hpt.texi
+
+ps hpt.ps: hpt.dvi
+	dvips hpt.dvi -o hpt.ps
+
+html hpt_toc.html: hpt.texi
+	texi2html -number -menu hpt.texi
+
+clean:
+	-rm *~
+	-rm hpt.fns
+	-rm hpt.aux
+	-rm hpt.toc
+	-rm hpt.cp
+	-rm hpt.fn
+	-rm hpt.vr
+	-rm hpt.kr
+	-rm hpt.ke
+	-rm hpt.tp
+	-rm hpt.kes
+	-rm hpt.krs
+	-rm hpt.ky
+	-rm hpt.pg
+	-rm hpt.cps
+	-rm hpt.log
+	-rm hpt.fns
+
+distclean: clean
+	-rm hpt.dvi
+	-rm hpt.info
+	-rm hpt*html
+	-rm hpt.ps
+
+install:
+	install $(IOPT) hpt.info ${INFODIR}
