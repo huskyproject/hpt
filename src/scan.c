@@ -37,6 +37,9 @@
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 
+#include <smapi/progprot.h>
+
+
 #include <xstr.h>
 #include <fcommon.h>
 #include <pkt.h>
