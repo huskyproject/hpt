@@ -3769,6 +3769,9 @@ carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
 If no @code{EchoArea} defined to copy, the carbon msgs goes to the
 @code{BadArea}.
 
+Note: You cannot carbonCopy a message from EchoArea to NetmailArea
+and vice versa.
+
 This statement can be placed after different
 carbon@{Addr|To|From|Kludge|Subj|Text@} statements.
 
@@ -3951,6 +3954,9 @@ carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
 
 If no @code{EchoArea} defined to copy (or move), the carbon msgs goes to
 the @code{BadArea}.
+
+Note: You cannot carbonMove a message from EchoArea to NetmailArea
+and vice versa.
 
 Unlike @code{CarbonCopy} msg gets moved, not copied into this area.
 
