@@ -75,8 +75,8 @@ recode.obj
 pktwrite.obj
 global.obj
 xstr.obj
-fconfbcw.lib
-smapibcw.lib
+fconfbcd.lib
+smapibcd.lib
 !
 
 hpt.exe: $(OBJS)
@@ -100,22 +100,22 @@ crc.obj
 xstr.obj
 strsep.obj
 post.obj
-fconfbcw.lib
-smapibcw.lib
+fconfbcd.lib
+smapibcd.lib
 !
 
 hptlink.exe: hptlink.obj
 	$(CC) $(LFLAGS) @&&!
 hptlink.obj
-fconfbcw.lib
-smapibcw.lib
+fconfbcd.lib
+smapibcd.lib
 ! 
 
 hpttree.exe: hpttree.obj
 	$(CC) $(LFLAGS) @&&!
 hpttree.obj
-fconfbcw.lib
-smapibcw.lib
+fconfbcd.lib
+smapibcd.lib
 ! 
 
 txt2pkt.exe: $(OBJS)
@@ -128,8 +128,8 @@ recode.obj
 log.obj
 xstr.obj
 global.obj
-fconfbcw.lib
-smapibcw.lib
+fconfbcd.lib
+smapibcd.lib
 !
 
 {..\src}.c.obj:
