@@ -1,3 +1,37 @@
+2002-09-03 Tuesday 14:33  mche
+
+	* src/toss.c (1.439): fix RSB generation
+
+2002-09-03 Tuesday 13:35  stas_degteff
+
+	* src/areafix.c (1.345): Lowercase rules file name mask. (Patch
+	from Ershov Serg)
+
+2002-09-03 Tuesday 10:20  stas_degteff
+
+	* h/fcommon.h (1.43), src/fcommon.c (1.139): Use 'const' modifier
+	for isValidConference()'s parameter
+
+2002-09-03 Tuesday 10:15  stas_degteff
+
+	* src/fcommon.c (1.138): Modify safe_strdup: use sstrdup() from
+	fidoconf/common.c
+
+2002-09-03 Tuesday 09:41  mche
+
+	* src/areafix.c (1.344): correct areafix behaviour when unsubscribe
+	from own address and areafixQueueFile enabled
+
+2002-09-03 Tuesday 09:30  mche
+
+	* src/: areafix.c (1.343), query.c (1.62): fixed memory leak in
+	afix() that makes hpt coredump on some OS
+
+2002-09-03 Tuesday 04:16  stas_degteff
+
+	* HISTORY (1.8): Include following htick's keywords in
+	documentation: AnnFileOrigin, AnnFileRFrom.
+
 2002-09-02 Monday 18:07  stas_degteff
 
 	* src/toss.c (1.438): Print areaname in badarea's reason log
