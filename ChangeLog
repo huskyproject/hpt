@@ -1,3 +1,8 @@
+2002-01-30 Wednesday 10:24  ml
+
+	* src/areafix.c (1.232.2.7): do not forward request to area with no
+	access
+
 2002-01-28 Monday 19:38  ml
 
 	* src/toss.c (1.380.2.5): fix broken adding of autocreated areas to
