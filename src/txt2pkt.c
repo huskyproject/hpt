@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #if !defined(MSDOS) || defined(__DJGPP__)
 #include <fidoconfig.h>

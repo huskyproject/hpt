@@ -2,6 +2,15 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Wed Feb  9 23:20:55 NOVT 2000
+max (patch from Serguei Revtov):
+- small fixes in areafix.c (closing file, empty line comparation, memory leak)
+- adding crc.o to Sun & win32 makefiles
+patch from Nestyurkin Nikolay (2:5020/3600):
+* you can make link with you addr[] and subscribe to echoarea (if not
+  exist - forward request to uplink and creates non passthrough area)
+
+----- cvs ci ------
 Mon Feb  7 22:37:12 NOVT 2000
 max:
 * newhashdupe's from Alexander Vernigora, 2:4625/69

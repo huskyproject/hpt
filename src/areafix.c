@@ -485,6 +485,7 @@ char *available(s_link *link) {
 int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act) {
     s_message *msg;
     char *base, pass[]="passthrough", action = '!';
+    int j;
 
 	if (uplink->msg == NULL) {
 
@@ -500,6 +501,11 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 	    if (getArea(config, areatag) == &(config->badArea)) {
 		base = config->msgBaseDir;
 		config->msgBaseDir = pass;
+                for (j = 0; j < config->addrCount; j++)
+                    if (addrComp(dwlink->hisAka, config->addr[j])==0) {
+                       config->msgBaseDir = base;
+                       break;
+                    }
 		strUpper(areatag);
 		autoCreate(areatag, uplink->hisAka, &(dwlink->hisAka));
 		config->msgBaseDir = base;
@@ -590,17 +596,18 @@ int areaIsAvailable(char *areaName, char *fileName) {
 
 	while ((line = readLine(f)) != NULL) {
 		line = trimLine(line);
-		if (line[0] != '0') {
+		if (line[0] != '\0') {
 			
 			running = line;
 			token = strseparate(&running, " \t\r\n");
 
 			if (token && stricmp(token, areaName)==0) {
 				free(line);
+				fclose(f);
 				return 1;
 			}			
-			free(line);
 		}
+		free(line);
 	}	
 	
 	// not found
@@ -635,7 +642,7 @@ int forwardRequest(char *areatag, s_link *dwlink) {
 }
 
 char *subscribe(s_link *link, s_message *msg, char *cmd) {
-	unsigned int i, rc=4, found=0;
+	unsigned int i, rc=4, found=0, j, from_us=0;
 	char *line, *an, *report = NULL;
 	s_area *area;
 
@@ -684,11 +691,15 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			else {
 				xscatprintf(&report, " %s %s  request forwarded\r",
 							line, print_ch(49-strlen(line), '.'));
-				writeLogEntry(hpt_log, '8', "areafix: %s subscribed to area %s",
+				for (j=0; j < config->addrCount; j++)
+				    if (addrComp(link->hisAka, config->addr[j])==0) { from_us=1; break; }
+				if (!from_us) {
+				    writeLogEntry(hpt_log, '8', "areafix: %s subscribed to area %s",
 							  aka2str(link->hisAka),line);
-				area = getArea(config, line);
-				changeconfig (getConfigFileName(), area, link, 3);
-				addlink(link, area);
+				    area = getArea(config, line);
+				    changeconfig (getConfigFileName(), area, link, 3);
+				    addlink(link, area);
+				}
 			}
 	    }
 	}

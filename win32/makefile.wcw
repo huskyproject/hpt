@@ -5,7 +5,7 @@ LINK    = WLINK
 OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj post.obj areafix.obj dupe.obj recode.obj tree.obj seenby.obj strsep.obj link.obj crc.obj xstr.obj purgeDupes.obj
 SRC_DIR = ..\src
 
-CFLAGS = -zq -wx -bt=nt -zp=1 -i=..\..\fidoconfig;..\..\smapi;..\h; -oneatx -5 -DHAS_JUNK_AFTER_SEEK
+CFLAGS = -DNEWHASHDUPE -zq -wx -bt=nt -zp=1 -i=..\..\fidoconfig;..\..\smapi;..\h; -oneatx -5 -DHAS_JUNK_AFTER_SEEK
 all: $(OBJS) pktinfo.exe tlog.exe hpt.exe hptlink.exe hpttree.exe purgeDupes.exe
 
 $(OBJS): $(SRC_DIR)\*.c
@@ -39,12 +39,9 @@ hpt.exe: $(OBJS)
   @echo linking hpt
   $(LINK) $(LFLAGS) FILE hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, post.obj, areafix.obj, dupe.obj, recode.obj, tree.obj, seenby.obj, strsep.obj, link.obj, crc.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fidoconfig.lib NAME hpt.exe
 
-purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o log.o
-	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o log.o $(FIDOCONFIG) $(SMAPI)
-
 purgeDupes.exe: $(OBJS)
   @echo linking purgeDupes
-  $(LINK) $(LFLAGS) FILE purgeDupes.obj, tree.obj, pktread.obj, dupe.obj, global.obj, log.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fidoconfig.lib NAME purgeDupes.exe
+  $(LINK) $(LFLAGS) FILE purgeDupes.obj, tree.obj, pktread.obj, dupe.obj, global.obj, log.obj, crc.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fidoconfig.lib NAME purgeDupes.exe
 
 clean:
 	del *.obj

@@ -10,10 +10,10 @@ FIDOCONFIG = ../../fidoconfig/libfidoconfig.a
 SMAPI      = ../../smapi/libsmapisun.a
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -g -O2 -s -DUNIX -D_POSIX_C_SOURCE
+  CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -g -O2 -s -DUNIX -D_POSIX_C_SOURCE -DNEWHASHDUPE
   LFLAGS  = 
 else
-  CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -O2 -DUNIX $(CADDFLAGS) -D_POSIX_X_SOURCE
+  CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -O2 -DUNIX $(CADDFLAGS) -D_POSIX_X_SOURCE -DNEWHASHDUPE
   LFLAGS  = -s
 endif
 
@@ -42,7 +42,7 @@ hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) $(FIDOCONFIG) $(SMAPI) 
 
 purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o log.o
-	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o log.o xstr.o $(FIDOCONFIG) $(SMAPI)
+	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o log.o xstr.o crc.o $(FIDOCONFIG) $(SMAPI)
 
 hptlink: hptlink.o
 	$(CC) $(LFLAGS) -o hptlink hptlink.o xstr.o $(FIDOCONFIG) $(SMAPI)
