@@ -256,11 +256,12 @@ int changeconfig(char *fileName, char *areaName, s_link *link, int action) {
                    if (stricmp(token, "include")==0)
                    	changeconfig(strsep(&running, " \t"), areaName, link, action);
 
-                   else {
-                   	token = strsep(&running, " \t");
-                      	if (stricmp(token, areaName)==0)
-                        	if (action) delAka(f, fileName, link); else addAka(f, link);
-		   }
+                   else
+                      if (stricmp(token, "echoarea")==0) {
+                         token = strsep(&running, " \t");
+                         if (stricmp(token, areaName)==0)
+                            if (action) delAka(f, fileName, link); else addAka(f, link);
+                      }
 
                 }
                 free(cfgline);
