@@ -309,22 +309,26 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
     }
 
     /*  fix if dummys del \n from the end of file */
-    fseek (f, -2L, SEEK_END);
-    CR = getc (f); /*   may be it is CR aka '\r'  */
-    if (getc(f) != '\n') {
-        fseek (f, 0L, SEEK_END);  /*  not neccesary, but looks better ;) */
-        fputs (cfgEol(), f);
-    } else {
-        fseek (f, 0L, SEEK_END);
+    if( fseek (f, -2L, SEEK_END) == 0) 
+    {
+        CR = getc (f); /*   may be it is CR aka '\r'  */
+        if (getc(f) != '\n') {
+            fseek (f, 0L, SEEK_END);  /*  not neccesary, but looks better ;) */
+            fputs (cfgEol(), f);
+        } else {
+            fseek (f, 0L, SEEK_END);
+        }
+        i = ftell(f); /* config length */
+        /* correct EOL in memory */
+        if(CR == '\r')
+            xstrcat(&buff,"\r\n"); /* DOS EOL */
+        else
+            xstrcat(&buff,"\n");   /* UNIX EOL */
     }
-    i = ftell(f); /* config length */
-    
-    /* correct EOL in memory */
-    if(CR == '\r')
-        xstrcat(&buff,"\r\n"); /* DOS EOL */
     else
-        xstrcat(&buff,"\n");   /* UNIX EOL */
-
+    {
+        xstrcat(&buff,cfgEol());   /* config depended EOL */
+    }
     /*  add line to config */
     if ( fprintf(f, "%s", buff) != (int)(strlen(buff)) || fflush(f) != 0) 
     {
