@@ -1,3 +1,7 @@
+2003-05-11 Sunday 00:32  d_sergienko
+
+	* HISTORY, src/scan.c (hpt-1_4-stable.[5,1]): keepTrsMail works now
+
 2003-05-08 Thursday 23:34  d_sergienko
 
 	* src/toss.c (hpt-1_4-stable.3): fix description in badmail when
