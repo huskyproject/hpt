@@ -1,3 +1,7 @@
+2001-11-06 Tuesday 08:57  ml
+
+	* make/makefile.cyg (1.1), src/toss.c (1.365): cygwin makefile
+
 2001-10-24 Wednesday 09:37  ml
 
 	* TODO (1.174), src/fcommon.c (1.98), src/hpt.c (1.114),
