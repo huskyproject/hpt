@@ -1297,6 +1297,7 @@ int tellcmd(char *cmd) {
 	    if (line[1]=='-') return NOTHING;
             else if (line[1]=='\000') return ERROR;
             else return DEL;
+	case '~'   : return REMOVE;
 	case '+'   : if (line[1]=='\000') return ERROR;
 	default: return ADD;
 	}

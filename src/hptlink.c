@@ -58,7 +58,7 @@ struct msginfo {
    char *replyId;
    char *msgId;
    char *subject;
-   UMSGID replyToPos, replyNextPos;
+   UMSGID replyToPos;
    UMSGID replies[MAX_REPLY];
    UMSGID treeId;
    int freeReply;
@@ -67,7 +67,7 @@ struct msginfo {
 typedef struct msginfo s_msginfo;
 
 struct origlinks {
-   UMSGID replyToPos, replyNextPos;
+   UMSGID replyToPos;
    UMSGID replies[MAX_REPLY];
 };
 typedef struct origlinks s_origlinks;
@@ -119,7 +119,7 @@ char *skipReSubj ( char *subjstr )
 }
 
 
-void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo *replmap )
+void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j )
 {
 
     if (crepl -> msgId && srepl -> msgId &&
@@ -140,11 +140,8 @@ rest of the replies won't be linked\n",
                     (long)j, MAX_REPLY-1);
         links_ignored++;
     } else {
-        int msguid = MsgMsgnToUid(harea, j);
         links_total++;
-        if (crepl -> freeReply)
-		replmap[MsgUidToMsgn(harea, (crepl -> replies)[(crepl -> freeReply)-1], UID_EXACT)].replyNextPos = msguid;
-        (crepl -> replies)[(crepl -> freeReply)++] = msguid;
+        (crepl -> replies)[(crepl -> freeReply)++] = MsgMsgnToUid(harea, j);
         srepl -> replyToPos = MsgMsgnToUid(harea, i);
     }
 }
@@ -167,7 +164,7 @@ static char *GetCtrlValue (char *ctl, char *kludge)
 
    out = (char *) malloc((size_t) (end - value) + 1 );
    if (out == NULL) return (NULL);
-
+   
    memcpy(out, value, (size_t) (end - value));
    out[(size_t) (end - value)] = '\0';
 
@@ -202,6 +199,12 @@ void linkArea(s_area *area)
 
    if ((area->msgbType & MSGTYPE_PASSTHROUGH) == MSGTYPE_PASSTHROUGH) {
      if (loglevel>=10) fprintf(outlog, "PASSTHROUGH, ignoring\n");
+     return;
+   }
+
+   // JAM linking is not supported by smapi
+   if ((area->msgbType & MSGTYPE_JAM) == MSGTYPE_JAM) {
+     if (loglevel>=10) fprintf(outlog, "JAM, ignoring\n");
      return;
    }
 
@@ -244,8 +247,6 @@ void linkArea(s_area *area)
 		 if( ctlen == 0 )
 		 {
 		    if ( loglevel >= 15) fprintf(outlog, "msg %ld has no control information\n", (long) i);
-		    MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-
 		 } else {
 		   if( ctl==NULL || ctlen_curr < ctlen + 1) {
 
@@ -267,19 +268,17 @@ void linkArea(s_area *area)
 		      crepl -> msgId = (char *) GetCtrlValue( (char *)ctl, "MSGID:");
 		   }
 
+		   if ( useSubj && xmsg.subj != NULL) {
+		      if ( (ptr=skipReSubj(xmsg.subj)) == NULL) ptr = xmsg.subj;
+		      crepl -> subject = strdup(ptr);
+		   }
+
+		   // Save data for comparing
+		   memcpy(linksptr->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
+		   linksptr->replyToPos = xmsg.replyto;
+
+		   MsgCloseMsg(hmsg);
 		 }
-
-		 if ( useSubj && xmsg.subj != NULL) {
-		    if ( (ptr=skipReSubj(xmsg.subj)) == NULL) ptr = xmsg.subj;
-		    crepl -> subject = strdup(ptr);
-		 }
-
-		 // Save data for comparing
-		 memcpy(linksptr->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
-		 linksptr->replyToPos = xmsg.replyto;
-		 linksptr->replyNextPos = xmsg.replynext;
-
-		 MsgCloseMsg(hmsg);
 	      }
 	   }
 
@@ -318,7 +317,7 @@ void linkArea(s_area *area)
 		       if (singleRepl) {
 			  treeLinks++;
 		       } else {
-			  linkMsgs ( crepl, srepl, i, j, replmap );
+			  linkMsgs ( crepl, srepl, i, j );
 		       }
 		  }
 
@@ -361,7 +360,7 @@ void linkArea(s_area *area)
 		       if (singleRepl) {
 			  treeLinks++;
 		       } else {
-			  linkMsgs ( srepl, crepl, j, i, replmap );
+			  linkMsgs ( srepl, crepl, j, i );
 		       }
 		     }
 		  }
@@ -417,7 +416,7 @@ void linkArea(s_area *area)
 		       exit(-1);
 		    }
 		 }
-		 linkMsgs ( &(replmap[linkTo-1]), crepl, linkTo, i , replmap );
+		 linkMsgs ( &(replmap[linkTo-1]), crepl, linkTo, i );
 		 (replmap[crepl -> treeId - 1]).treeId = i; // where to link next message
 		 treeLinks--;
 	      }
@@ -430,8 +429,7 @@ void linkArea(s_area *area)
 	   for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++) {
 
 	      if( ((linksptr->replyToPos) != (crepl->replyToPos)) ||
-	           ((linksptr->replyNextPos) != (crepl->replyNextPos) && (area->msgbType & MSGTYPE_JAM)) ||
-		   memcmp(linksptr->replies, crepl->replies, sizeof(UMSGID) * ((area->msgbType & MSGTYPE_SQUISH) ? MAX_REPLY : 1))) {
+		   memcmp(linksptr->replies, crepl->replies, sizeof(UMSGID) * MAX_REPLY)) {
 
 		 hmsg  = MsgOpenMsg(harea, MOPEN_RW, i);
 
@@ -442,7 +440,6 @@ void linkArea(s_area *area)
 
 		    memcpy(xmsg.replies, crepl->replies, sizeof(UMSGID) * MAX_REPLY);
 		    xmsg.replyto = crepl->replyToPos;
-		    xmsg.replynext = crepl->replyNextPos;
 		    MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
 
 		    MsgCloseMsg(hmsg);

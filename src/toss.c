@@ -2298,7 +2298,7 @@ void tossFromBadArea()
    if (area != NULL) {
 	   writeLogEntry(hpt_log, '1', "Scanning area: %s", config->badArea.areaName);
 	   highestMsg = MsgGetHighMsg(area);
-//	   writeLogEntry(hpt_log, '1', "hiest msg: %i", highestMsg );
+	   writeLogEntry(hpt_log, '1', "hiest msg: %i", highestMsg );
 
 	   //FIXME: the problem in smapi... msgnum update must be identical.
 
