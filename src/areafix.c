@@ -1805,7 +1805,10 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
                 text = NULL;
                 nfree(report);
             }
-            xstrscat(&split,"\rFollowing is the original message text\r--------------------------------------\r",msg->text,"\r--------------------------------------\r",NULL);
+            if (msg->text)
+                xstrscat(&split,"\rFollowing is the original message text\r--------------------------------------\r",msg->text,"\r--------------------------------------\r",NULL);
+            else
+                xstrscat(&split,"\r",NULL);
         } else {
             p = text + msgsize;
             while (*p != '\r') p--;
@@ -1847,6 +1850,7 @@ void RetRules (s_message *msg, s_link *link, char *areaName)
     FILE *f=NULL;
     char *fileName = NULL;
     char *text=NULL, *subj=NULL;
+    char *msg_text;
     long len=0;
     int nrul=0;
 
@@ -1871,7 +1875,12 @@ void RetRules (s_message *msg, s_link *link, char *areaName)
 		  fileName, nrul, areaName);
 	}
 
-	RetMsg(msg, link, text, subj);
+        /* prevent "Following original message text" in rules msgs */
+        msg_text = msg->text;
+        msg->text= NULL;
+        RetMsg(msg, link, text, subj);
+        /* preserve original message text */
+        msg->text= msg_text;
 
 	nfree (subj);
 	/* nfree (text); don't free text because RetMsg() free it */
