@@ -1,76 +1,51 @@
-# include Husky-Makefile-Config
-!include ..\..\huskymak.cfg
+DEBUG = O
+CC = wcc386
+LINK = wlink
 
-CC      = wcc386
-LINK    = WLINK
+OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj post.obj areafix.obj dupe.obj recode.obj tree.obj seenby.obj strsep.obj link.obj crc.obj xstr.obj
 
-OBJS    = hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, seenby.obj, dupe.obj, tree.obj, recode.obj, areafix.obj, post.obj, link.obj, strsep.obj, crc.obj xstr.obj
 SRC_DIR = ..\src
 
-!IF $(DEBUG) == 1
-CFLAGS  = -d2 -hw -i=..\h;$(INCDIR) -oneatx -zq -5
+CFLAGS = -d2 -hw -i=..\..;..\h; -oneatx -zq -5
 LFLAGS  = DEBUG Watcom
-!ELSE
-CFLAGS  = -i..\h;$(INCDIR) -oneatx -zq -5
-LFLAGS  =
-!ENDIF
 
-all: $(OBJS) \
-     pktinfo.exe \
-     tlog.exe \
-     tpkt.exe \
-     txt2pkt.exe \
-     hpt.exe \
-     hptlink.exe \
-     hpttree.exe
+all: $(OBJS) pktinfo.exe tlog.exe hpt.exe hptlink.exe hpttree.exe
 
-$(OBJS): $(SRC_DIR)\$*.c
-  @echo compiling $*.c
+$(OBJS): $(SRC_DIR)\*.c
+  @echo compiling *.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
-pktinfo.obj tlog.obj tpkt.obj txt2pkt.obj hptlink.obj hpttree.obj: $(SRC_DIR)\$*.c
+pktinfo.obj tlog.obj: $(SRC_DIR)\*.c
   @echo compiling $*.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
 pktinfo.exe: pktinfo.obj fcommon.obj pktread.obj
   @echo linking pktinfo
-  $(LINK) $(LFLAGS) FILE pktinfo.obj, pktread.obj, log.obj, global.obj LIBRARY $(LIBDIR)\smapiwco, $(LIBDIR)\fidoconfig NAME pktinfo.exe
+  $(LINK) $(LFLAGS) FILE pktinfo.obj, log.obj, pktread.obj, global.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fconfwcw.lib NAME pktinfo.exe
 
 tlog.exe: tlog.obj log.obj
   @echo linking tlog
   $(LINK) $(LFLAGS) FILE tlog.obj, log.obj NAME tlog.exe
 
-tpkt.exe: tpkt.obj pktwrite.obj fcommon.obj pktread.obj recode.obj log.obj global.obj 
-  @echo linking tpkt
-  $(LINK) $(LFLAGS) FILE log.obj, tpkt.obj, fcommon.obj, pktread.obj, recode.obj, pktwrite.obj, global.obj LIBRARY $(LIBDIR)\smapiwco, $(LIBDIR)\fidoconfig NAME tpkt.exe
-
-txt2pkt.exe: txt2pkt.obj pktwrite.obj fcommon.obj pktread.obj recode.obj log.obj global.obj
-  @echo linking txt2pkt
-  $(LINK) $(LFLAGS) FILE log.obj, txt2pkt.obj, fcommon.obj, pktread.obj, recode.obj, pktwrite.obj, global.obj LIBRARY $(LIBDIR)\smapiwco, $(LIBDIR)\fidoconfig NAME txt2pkt.exe
-
-hptlink.exe: hptlink.obj
+hptlink.exe:
+  $(CC) $(CFLAGS) $(SRC_DIR)\hptlink.c
   @echo linking hptlink
-  $(LINK) $(LFLAGS) FILE hptlink.obj LIBRARY $(LIBDIR)\smapiwco, $(LIBDIR)\fidoconfig NAME hptlink.exe
+  $(LINK) $(LFLAGS) FILE hptlink.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fconfwcw.lib NAME hptlink.exe
 
-hpttree.exe: hpttree.obj
+hpttree.exe:
+  $(CC) $(CFLAGS) $(SRC_DIR)\hpttree.c
   @echo linking hpttree
-  $(LINK) $(LFLAGS) FILE hpttree.obj LIBRARY $(LIBDIR)\smapiwco, $(LIBDIR)\fidoconfig NAME hpttree.exe
+  $(LINK) $(LFLAGS) FILE hpttree.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fconfwcw.lib NAME hpttree.exe
 
 hpt.exe: $(OBJS)
   @echo linking hpt
-  $(LINK) $(LFLAGS) FILE $(OBJS) Library $(LIBDIR)\smapiwco, $(LIBDIR)\fidoconfig.lib NAME hpt.exe
+  $(LINK) $(LFLAGS) FILE hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, post.obj, areafix.obj, dupe.obj, recode.obj, tree.obj, seenby.obj, strsep.obj, link.obj, crc.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fconfwcw.lib NAME hpt.exe
 
 clean:
-	del *.obj *.bak
+	del *.obj
+        del *.bak
 
-distclean: clean
+distclean:
+	del *.obj
+        del *.bak
 	del *.exe
-
-install: hpt.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe hpttree.exe
-	copy hpt.exe $(BINDIR)
-	copy pktinfo.exe $(BINDIR)
-	copy tpkt.exe $(BINDIR)
-	copy tlog.exe $(BINDIR)
-	copy hptlink.exe $(BINDIR)
-	copy hpttree.exe $(BINDIR)
-
