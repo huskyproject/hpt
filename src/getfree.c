@@ -121,7 +121,9 @@ unsigned long getfree (char *path)
  */
 
 #include <sys/types.h>
+#ifndef __BEOS__
 #include <sys/statfs.h>
+#endif
 #include <limits.h>
 
 extern void w_log (char key, char *logString, ...);
