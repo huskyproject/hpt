@@ -1,3 +1,7 @@
+2004-11-17 Wednesday 23:22  andrew_ladutsko
+
+	* src/hptafix.c (1.12): change pauseAreas() calling
+
 2004-11-05 Friday 14:18  mche
 
 	* make/: hpt.vcproj (1.6), hptz.vcproj (1.4): make files changed
