@@ -63,6 +63,8 @@
 #include <tree.h>
 #include <fcommon.h>
 
+#define MAX_INCORE	10000	// if more messages, do not link incore
+
 /* internal structure holding msg's related to link information */
 /* used by linkArea */
 struct msginfo {
@@ -178,38 +180,27 @@ int linkArea(s_area *area, int netMail)
       memset(hash, '\0', hashNums * sizeof(*hash));
       msgs = safe_malloc(msgsNum * sizeof(s_msginfo));
       memset(msgs, '\0', msgsNum * sizeof(s_msginfo));
-      ctl = (byte *) safe_malloc(ctlen = 1); /* Some libs don't accept relloc(NULL, ..
+      ctl = (byte *) safe_malloc(cctlen = 1); /* Some libs don't accept relloc(NULL, ..
 					 * So let it be initalized
 					 */
       /* Area linking is done in three passes */
       /* Pass 1st : read all message information in memory */
 
       for (i = 1; i <= msgsNum; i++) {
-		  hmsg  = MsgOpenMsg(harea, MOPEN_READ|MOPEN_WRITE, i);
+		  hmsg  = MsgOpenMsg(harea, (msgsNum >= MAX_INCORE) ? MOPEN_READ : (MOPEN_READ|MOPEN_WRITE), i);
 		  if (hmsg == NULL) {
 			  continue;
 		  }
-		  cctlen = MsgGetCtrlLen(hmsg);
-		  if( ctlen == 0 )
-			  {
-				  MsgCloseMsg(hmsg);
-				  w_log('6', "msg %ld has no control information: trown from reply chain", i);
-				  continue;
-			  }
-
-		  if (cctlen > ctlen) {
-			  ctlen = cctlen;
-			  ctl   = (byte *) safe_realloc(ctl, cctlen + 1);
-		  };
-
-		  if (ctl == NULL) {
-			  w_log('9', "out of memory while linking on msg %ld", i);
-			  // try to free as much as possible
-			  // FIXME : remove blocks themselves
-			  nfree(ctl);
+		  ctlen = MsgGetCtrlLen(hmsg);
+		  if (ctlen == 0 ) {
 			  MsgCloseMsg(hmsg);
-			  MsgCloseArea(harea);
-			  return 0;
+			  w_log('6', "msg %ld has no control information: trown from reply chain", i);
+			  continue;
+		  }
+
+		  if (ctlen > cctlen) {
+			  cctlen = ctlen;
+			  ctl   = (byte *) safe_realloc(ctl, ctlen + 1);
 		  }
 
 		  MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, ctlen, ctl);
@@ -226,6 +217,7 @@ int linkArea(s_area *area, int netMail)
 			  // try to free as much as possible
 			  // FIXME : remove blocks themselves
 			  nfree(msgId);
+			  nfree(ctl);
 			  MsgCloseMsg(hmsg);
 			  MsgCloseArea(harea);
 			  return 0;
@@ -237,7 +229,11 @@ int linkArea(s_area *area, int netMail)
 			  nfree(msgId);
 			  continue;
 		  }
-		  curr -> msgId = msgId; curr -> msgh = hmsg; 
+		  if (msgsNum >= MAX_INCORE)
+			MsgCloseMsg(hmsg), curr -> msgh = NULL;
+		  else
+			curr -> msgh = hmsg; 
+		  curr -> msgId = msgId;
 		  curr -> xmsg = memdup(&xmsg, sizeof(XMSG));
 		  curr -> replyId = GetKludgeText(ctl, "REPLY");
 		  curr -> msgPos  = MsgMsgnToUid(harea, i);
@@ -299,9 +295,13 @@ int linkArea(s_area *area, int netMail)
 			msgs[i].xmsg->replyto = msgs[i].replyto;
 			if (area->msgbType & MSGTYPE_JAM)
 				msgs[i].xmsg->xmreplynext = msgs[i].replynext;
-			MsgWriteMsg(msgs[i].msgh, 0, msgs[i].xmsg, NULL, 0, 0, 0, NULL);
+			if (msgs[i].msgh == NULL)
+				msgs[i].msgh  = MsgOpenMsg(harea, MOPEN_READ|MOPEN_WRITE, i);
+			if (msgs[i].msgh)
+				MsgWriteMsg(msgs[i].msgh, 0, msgs[i].xmsg, NULL, 0, 0, 0, NULL);
 		}
-	        MsgCloseMsg(msgs[i].msgh);
+	        if (msgs[i].msgh)
+			MsgCloseMsg(msgs[i].msgh);
 	 
          /* free this node */
 		nfree(msgs[i].msgId);
