@@ -156,6 +156,7 @@ void start_help(void) {
   fprintf(stdout,"   hpt pack -a <areaname> - packing netmail from <areaname> area\n");
   fprintf(stdout,"   hpt pack -f <filename> - packing netmail from alternative echotoss file\n");
   fprintf(stdout,"   hpt link [areamask] - links messages\n");
+  fprintf(stdout,"   hpt link -j [areamask] - link jam areas using CRC (more quickly)\n");
   fprintf(stdout,"   hpt afix [<addr> command] - process areafix\n");
   fprintf(stdout,"   hpt qupd - update queue file and do some areafix jobs\n");
   fprintf(stdout,"   hpt qrep - make report based on information from queue file\n");
@@ -193,6 +194,10 @@ int processCommandLine(int argc, char **argv)
          cmPack = processExportOptions(&i, argc, argv);
          continue;
       } else if (stricmp(argv[i], "link") == 0) {
+		  if (i < argc-1 && stricmp(argv[i+1], "-j") == 0) {
+			  i++;
+			  linkJamByCRC = 1;
+		  }
 		  if (i < argc-1) {
 			  i++;
 			  xstrcat(&linkName,argv[i]);

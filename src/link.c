@@ -99,6 +99,8 @@ struct hashinfo {
 
 typedef struct msginfo s_msginfo;
 
+int linkJamByCRC = 0;
+
 static s_msginfo *findMsgId(s_msginfo *entries, struct hashinfo *hash, dword hashSize, char *msgId, int add, dword crc32)
 {
     unsigned long h, d = 1;
@@ -149,6 +151,22 @@ static char *GetKludgeText(byte *ctl, char *kludge)
         return pKludge;
     } else
         return NULL;
+}
+
+static char *crc2str(dword crc)
+{
+   char *ptr, *str;
+
+   if (crc==0 || crc==0xFFFFFFFFul)
+      return NULL;
+   ptr=str=safe_malloc(11);
+   /* backward figures order, it's not mistake */
+   while (crc) {
+      *ptr++='0'+crc%10;
+      crc/=10;
+   }
+   *ptr='\0';
+   return str;
 }
 
 /* linking for msgid/reply */
@@ -207,7 +225,10 @@ int linkArea(s_area *area, int netMail)
         
         for (i = 1; i <= msgsNum; i++) {
             if (jam) {
-                msgId = Jam_GetKludge(harea, i, JAMSFLD_MSGID);
+                if (linkJamByCRC)
+		   msgId = crc2str(Jam_GetHdr(harea, i)->MsgIdCRC);
+		else
+                   msgId = Jam_GetKludge(harea, i, JAMSFLD_MSGID);
             } else {
                 hmsg  = MsgOpenMsg(harea, (msgsNum >= MAX_INCORE) ? MOPEN_READ : (MOPEN_READ|MOPEN_WRITE), i);
                 if (hmsg == NULL) {
@@ -264,8 +285,11 @@ int linkArea(s_area *area, int netMail)
             curr -> replyto = curr -> replynext = 0;
             curr -> msgh = NULL;
             if (jam) {
-                curr -> replyId = Jam_GetKludge(harea, i, JAMSFLD_REPLYID);
                 curr -> hdr.jamhdr = Jam_GetHdr(harea, i);
+		if (linkJamByCRC)
+                   curr -> replyId = crc2str(curr->hdr.jamhdr->ReplyCRC);
+		else
+                   curr -> replyId = Jam_GetKludge(harea, i, JAMSFLD_REPLYID);
             } else {
                 curr -> replyId = GetKludgeText(ctl, "REPLY");
                 curr -> hdr.xmsg = memdup(&xmsg, sizeof(XMSG));
