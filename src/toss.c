@@ -763,13 +763,13 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    else {
      sleep(1); // to prevent time from creating equal numbers
      sprintf(buff,"EchoArea %s %s%8lx -a %s%s", c_area,
-			 config->msgBaseDir, time(NULL), myaddr,
+			 config->msgBaseDir, (long)time(NULL), myaddr,
 			 (msgbtype) ? "" : " -b Squish");
    }
 #else
 	   sleep(1); // to prevent time from creating equal numbers
 	   sprintf(buff,"EchoArea %s %s%8lx -a %s%s", c_area,
-			   config->msgBaseDir, time(NULL), myaddr,
+			   config->msgBaseDir, (long)time(NULL), myaddr,
 			   (msgbtype) ? "" : " -b Squish");
 #endif
    } else

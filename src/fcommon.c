@@ -135,99 +135,104 @@ int fileNameAlreadyUsed(char *pktName, char *packName) {
 
 int createTempPktFileName(s_link *link)
 {
-   // pkt file in tempOutbound
-   char   *fileName = (char *) malloc(strlen(config->tempOutbound)+12+1);
-   // name of the arcmail bundle
-   char   *pfileName = (char *) malloc(strlen(config->outbound)+13+13+12+1);
-   // temp name of the arcmail bundle
-   char   *tmpPFileName = (char *) malloc(strlen(config->outbound)+13+13+12+1);
-   time_t aTime = time(NULL);  // get actual time
-   int counter = 0;
-   char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
-   char limiter=PATH_DELIM;
-   char zoneSuffix[6] = "\0";
+    /* pkt file in tempOutbound */
+    char  *fileName = (char *) malloc(strlen(config->tempOutbound)+12+1);
+    /* name of the arcmail bundle */
+    char  *pfileName = (char *) malloc(strlen(config->outbound)+13+13+12+1);
+    /* temp name of the arcmail bundle */
+    char  *tmpPFileName = (char *) malloc(strlen(config->outbound)+13+13+12+1);
+    time_t aTime = time(NULL);  /* get actual time */
+    int counter = 0;
+    char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
+    char limiter=PATH_DELIM;
+    char zoneSuffix[6] = "\0";
+    
+    char *zoneOutbound;         /* this contains the correct outbound directory
+                                   including zones */
 
-   char *zoneOutbound; // this contains the correct outbound directory including zones
+    time_t tr;
+    char *wday;
+    struct tm *tp;
+    
 
-   time_t tr;
-   char *wday;
-   struct tm *tp;
+    tr=time(NULL);
+    tp=localtime(&tr);
+    counter = 0;
+    
+    wday=wdays[tp->tm_wday];
+    
+    aTime %= 0xffffff;   /* only last 24 bit count */
 
-
-   tr=time(NULL);
-   tp=localtime(&tr);
-   counter = 0;
-
-   wday=wdays[tp->tm_wday];
-
-   aTime %= 0xffffff;   // only last 24 bit count
-
-   if (link->hisAka.zone != config->addr[0].zone) {
-      sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
-      zoneOutbound = malloc(strlen(config->outbound)-1+strlen(zoneSuffix)+1);
-      strcpy(zoneOutbound, config->outbound);
-      strcpy(zoneOutbound+strlen(zoneOutbound)-1, zoneSuffix);
-   } else
-      zoneOutbound = strdup(config->outbound);
+    if (link->hisAka.zone != config->addr[0].zone) {
+        sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
+        zoneOutbound = malloc(strlen(config->outbound)-1+strlen(zoneSuffix)+1);
+        strcpy(zoneOutbound, config->outbound);
+        strcpy(zoneOutbound+strlen(zoneOutbound)-1, zoneSuffix);
+    } else
+        zoneOutbound = strdup(config->outbound);
 
 
-   // There is a problem here: Since we use the tmpOutbound fileName for duplicate checking, links with different zones who does not
-   // have problems with duplicate pfileName´s increment the counter. We can run out of counters without using them.
-   // Has anybody understand that? :-)
-   // This is no big problem, but a big system with many links and many zones may encounter problems
+   /* There is a problem here: Since we use the tmpOutbound fileName for
+    duplicate checking, links with different zones who does not have problems
+    with duplicate pfileName´s increment the counter. We can run out of
+    counters without using them.  Has anybody understand that? :-) This is no
+    big problem, but a big system with many links and many zones may encounter
+    problems */
 
-   do {
+    do {
+        
+        sprintf(fileName, "%s%06lx%02x.pkt",
+                config->tempOutbound, (long)aTime, counter);
 	   
-	   sprintf(fileName, "%s%06lx%02x.pkt", config->tempOutbound, aTime, counter);
+        if ( link->hisAka.point == 0 ) {
+
+            if (config->separateBundles) {
+                sprintf(tmpPFileName,"%s%04x%04x.sep%c%06lx%02x.%s",
+                        zoneOutbound, link->hisAka.net, link->hisAka.node,
+                        limiter, (long)aTime, counter, wday);
+            } else {
+                sprintf(tmpPFileName,"%s%06lx%02x.%s",zoneOutbound,
+                        (long)aTime,counter,wday);
+            }
+        } else {
+            
+            if (config->separateBundles) {
+                sprintf(tmpPFileName,"%s%04x%04x.pnt%c%08x.sep%c%06lx%02x.%s",
+                        zoneOutbound, link->hisAka.net,	link->hisAka.node,
+                        limiter,link->hisAka.point, limiter, (long)aTime,
+                        counter, wday);
+            } else {
+		sprintf(tmpPFileName,"%s%04x%04x.pnt%c%06lx%02x.%s",
+                        zoneOutbound, link->hisAka.net,	link->hisAka.node,
+                        limiter, (long)aTime, counter, wday);
+            }
+        }
 	   
-	   if ( link->hisAka.point == 0 ) {
-
-		   if (config->separateBundles) sprintf(tmpPFileName,
-												"%s%04x%04x.sep%c%06lx%02x.%s",
-												zoneOutbound, link->hisAka.net,
-												link->hisAka.node, limiter,
-												aTime, counter, wday);
-		   
-		   else sprintf(tmpPFileName,"%s%06lx%02x.%s",zoneOutbound,aTime,counter,wday);
-
-	   } else {
-		   
-		   if (config->separateBundles) sprintf(tmpPFileName,
-												"%s%04x%04x.pnt%c%08x.sep%c%06lx%02x.%s",
-												zoneOutbound, link->hisAka.net,
-												link->hisAka.node, limiter,
-												link->hisAka.point, limiter,
-												aTime, counter, wday);
-		   else sprintf(tmpPFileName,
-						"%s%04x%04x.pnt%c%06lx%02x.%s",
-						zoneOutbound, link->hisAka.net,
-						link->hisAka.node, limiter,
-						aTime, counter, wday);
-	   }
+        counter++;
 	   
-	   counter++;
-	   
-   } while ((fexist(fileName) || fileNameAlreadyUsed(fileName, NULL)) && (counter<=255));
-   free(zoneOutbound);
+    } while ((fexist(fileName) || fileNameAlreadyUsed(fileName, NULL)) &&
+             (counter<=255));
+    free(zoneOutbound);
 
-   counter = 0;
-   do {
-      sprintf(pfileName, "%s%0x", tmpPFileName, counter);
-      counter++;
-   } while ((fexist(pfileName) || fileNameAlreadyUsed(NULL, pfileName)) && (counter <= 15));
+    counter = 0;
+    do {
+        sprintf(pfileName, "%s%0x", tmpPFileName, counter);
+        counter++;
+    } while ((fexist(pfileName) || fileNameAlreadyUsed(NULL, pfileName)) &&
+             (counter <= 15));
 
-   free(tmpPFileName);
-
-   if ((!fexist(fileName)) && (!fexist(pfileName))) {
-           link->packFile = pfileName;
-           link->pktFile = fileName;
-           return 0;
-   }
-   else {
-      free(fileName);
-      free(pfileName);
-      return 1;
-   }
+    free(tmpPFileName);
+    
+    if ((!fexist(fileName)) && (!fexist(pfileName))) {
+        link->packFile = pfileName;
+        link->pktFile = fileName;
+        return 0;
+    }
+    else {
+        free(fileName);
+        free(pfileName);
+        return 1;
+    }
 }
 
 int createDirectoryTree(const char *pathName) {
