@@ -32,9 +32,14 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <ctype.h>
+
 #ifdef __EMX__
 #include <sys/types.h>
+#ifndef _A_HIDDEN
+#define _A_HIDDEN A_HIDDEN
 #endif
+#endif
+
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -854,7 +859,10 @@ void processCarbonCopy (s_area *area, s_area *echo, s_message *msg,	s_carbon car
 	strncat(msg->text,old_text,i); // copy rest of msg
 	msg->textLength = strlen(msg->text);
 	
-	if (!export) putMsgInArea(area,msg,0,0);
+	if (!export) {
+		putMsgInArea(area,msg,0,0);
+		area->imported = 1;  // area has got new messages
+	}
 	else processEMMsg(msg, *area->useAka, 1);
 	
 	free (msg->text);
@@ -1476,7 +1484,7 @@ void processDir(char *directory, e_tossSecurity sec)
       if (!(pktFile = patimat(file->d_name, "*.pkt") == 1)) 
          for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
             if (patimat(file->d_name, validExt[i]) == 1
-#if !defined(UNIX) && !defined(__EMX__) && !defined(__DJGPP__)
+#if !defined(UNIX)
 		&& !(file->d_attr & _A_HIDDEN)
 #endif
 					    )
@@ -1878,10 +1886,18 @@ void toss()
 
       f = fopen(config->importlog, "a");
       if (f != NULL) {
-         if (config->netMailArea.imported == 1) fprintf(f, "%s\n", config->netMailArea.areaName);
-         for (i = 0; i < config->echoAreaCount; i++)
-            if (config->echoAreas[i].imported == 1) fprintf(f, "%s\n", config->echoAreas[i].areaName);
 
+		  if (config->netMailArea.imported == 1)
+			  fprintf(f, "%s\n", config->netMailArea.areaName);
+
+		  for (i = 0; i < config->echoAreaCount; i++)
+			  if (config->echoAreas[i].imported == 1)
+				  fprintf(f, "%s\n", config->echoAreas[i].areaName);
+		  
+         for (i = 0; i < config->localAreaCount; i++)
+			 if (config->localAreas[i].imported == 1)
+				 fprintf(f, "%s\n", config->localAreas[i].areaName);
+		 
          fclose(f);
       } else writeLogEntry(hpt_log, '5', "Could not open importlogfile");
    }

@@ -669,8 +669,8 @@ int areaIsAvailable(char *areaName, char *fileName) {
 			
 			running = line;
 			token = strseparate(&running, " \t\r\n");
-			
-			if (stricmp(token, areaName)==0) {
+
+			if (token && stricmp(token, areaName)==0) {
 				free(line);
 				return 1;
 			}			

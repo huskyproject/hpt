@@ -15,6 +15,7 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - hpt should sort pkts in the inbound directories in order of the date/time.
   So older pkts are processed before newer ones.
 - several netmail areas
+- fileboxes
 
 Category 3: Will only be included if volunteers send patches
 ============================================================
