@@ -2521,11 +2521,14 @@ This statement can be repeated.
 * CarbonDelete::                specify that the carbon msg should be deleted
 * CarbonExtern::                specify the external program to pass msg text to
 * CarbonFrom::                  make carbonCopy using from-field of msg
+* CarbonFromArea::              carbon messages from area
+* CarbonGroups::                make carbonbonCopy from this groups
 * CarbonKeepSb::                keep seen-by's and path
 * CarbonKludge::                make carbonCopy using kludge lines of msg
 * CarbonMove::                  specify the area where the carbon msg get moved into
 * CarbonOut::                   carbon outgoing messages
 * CarbonReason::                string of carbon copy reason
+* CarbonRule::                  how to combine Carbon expressions
 * CarbonSubj::                  make carbonCopy using subject-field of msg
 * CarbonText::                  make carbonCopy using text-field of msg
 * CarbonTo::                    make carbonCopy using to-field of msg
@@ -2631,7 +2634,7 @@ the pipe, not temporary file.
 This statement can be repeated for each different
 carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
 
-@node CarbonFrom,  CarbonKeepSb, CarbonExtern, Carbon Copy
+@node CarbonFrom,  CarbonFromArea, CarbonExtern, Carbon Copy
 @subsection CarbonFrom
 @findex CarbonFrom
 @table @asis
@@ -2650,7 +2653,53 @@ The names must be an exact match.
 
 This statement can be repeated.
 
-@node CarbonKeepSb, CarbonKludge, CarbonFrom, Carbon Copy
+@node CarbonFromArea, CarbonGroups, CarbonFrom, Carbon Copy
+@subsection CarbonFromArea
+@findex CarbonFromArea
+@table @asis
+@item Syntax:
+@code{CarbonFromArea <areatag>}
+@item Example:
+@code{CarbonFromArea Interuser}
+@end table
+
+Only messages that are written in this area, will be copied.
+Use it in combination with CarbonRule to prevent that all messages from
+an area are copied.
+
+@xref{CarbonRule}.
+
+Another example:
+@example
+CarbonFromArea Interuser
+CarbonRule AND
+CarbonText Israel
+CarbonCopy my.news
+@end example
+
+This statement can be repeated.
+
+@node CarbonGroups, CarbonKeepSb, CarbonFromArea, Carbon Copy
+@subsection CarbonGroups
+@findex CarbonGroups
+@table @asis
+@item Syntax:
+@code{carbonGroups <string> [,<string>...]}
+@item Example:
+@code{carbonGroups Fido, LifeNet}
+@item
+@code{carbonCopy my.echomail}
+@end table
+
+With this keyword you can define from which groups messages should be copied.
+It is wise when you use this keyword together with other selection criteria
+or else the result will give many messages.
+
+@xref{CarbonRule}.
+
+This statement can be repeated.
+
+@node CarbonKeepSb, CarbonKludge, CarbonGroups, Carbon Copy
 @subsection CarbonKeepSb
 @findex CarbonKeepSb
 @table @asis
@@ -2723,7 +2772,7 @@ packed). Don't forget to set carbon rules.
 
 This statement cannot be repeated.
 
-@node CarbonReason, CarbonSubj, CarbonOut, Carbon Copy
+@node CarbonReason, CarbonRule, CarbonOut, Carbon Copy
 @subsection CarbonReason
 @findex CarbonReason
 @table @asis
@@ -2747,7 +2796,68 @@ No reason string is printed if this statement is ommitted.
 This statement can be repeated for each different
 carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
 
-@node CarbonSubj, CarbonText, CarbonReason, Carbon Copy
+@node CarbonRule, CarbonSubj, CarbonReason, Carbon Copy
+@subsection CarbonRule
+@findex CarbonRule
+@table @asis
+@item Syntax:
+@code{carbonRule AND|NOT|OR}
+@item Example:
+@code{carbonGroups fido}
+@item
+@code{carbonRule AND}
+@item
+@code{carbonText programming}
+@item
+@code{carbonCopy my.echomail}
+@end table
+
+With this keyword you can make it possible to have more than 1 selection
+criteria for a message. With Carbonrule AND, the two expressions above and
+below the AND must be true or else a message will not be copied.
+
+CarbonRule NOT, is in fact AND NOT. So
+
+@example
+        CarbonText beatles
+        CarbonRule NOT
+        CarbonText bugs
+        CarbonCopy my.mail
+@end example
+
+..will only copy messages when 'beatles' is in the text AND NOT 'bugs'
+in the text.
+
+In general, it is possible to define more than one set of rules for
+1 single carbonArea.
+For example:
+@example
+        CarbonText female
+        CarbonRule NOT
+        CarbonText connector
+        CarbonSubj beer
+        CarbonRule AND
+        CarbonText drink
+        CarbonText holliday
+        CarbonCopy my.mail
+@end example
+Here are three sets of criteria and for all of them there is only 1 carbonarea
+defined.
+
+When there is no carbonrule given, a set of criterera ends and a new set
+starts.
+In other words, when no carbonRule is given, the default carbonRule OR will 
+be used. 
+
+A set of expressions is true when they are OR-ed and at least one
+of them is true.
+
+A set of expressions is true when they are AND-ed and ALL of them are true.
+Expressions are evaluated from top to bottom.
+
+This statement can be repeated.
+
+@node CarbonSubj, CarbonText, CarbonRule, Carbon Copy
 @subsection CarbonSubj
 @findex CarbonSubj
 @table @asis
