@@ -100,25 +100,25 @@ int isarcmail (char *name)
 int mandatoryCheck(s_area area, s_link *link) {
     int i;
 
-    w_log(LL_FUNC,"areafix.c::mandatoryCheck()");
+    w_log(LL_FUNC, __FILE__ "::mandatoryCheck()");
 
     if (grpInArray(area.group,link->optGrp,link->numOptGrp)&&link->mandatory){
-      w_log(LL_FUNC,"areafix.c::mandatoryCheck() rc=1");
+      w_log(LL_FUNC, __FILE__ "::mandatoryCheck() rc=1");
       return 1;
     }
     if (link->numOptGrp==0 && link->mandatory){
-      w_log(LL_FUNC,"areafix.c::mandatoryCheck() rc=1");
+      w_log(LL_FUNC, __FILE__ "::mandatoryCheck() rc=1");
       return 1;
     }
     if (area.mandatory){
-      w_log(LL_FUNC,"areafix.c::mandatoryCheck() rc=1");
+      w_log(LL_FUNC, __FILE__ "::mandatoryCheck() rc=1");
       return 1;
     }
     if ((i=isAreaLink(link->hisAka, &area))!=-1){
-      w_log(LL_FUNC,"areafix.c::mandatoryCheck() rc=%d", area.downlinks[i]->mandatory);
+      w_log(LL_FUNC, __FILE__ "::mandatoryCheck() rc=%d", area.downlinks[i]->mandatory);
       return area.downlinks[i]->mandatory;
     }
-      w_log(LL_FUNC,"areafix.c::mandatoryCheck() rc=0");
+      w_log(LL_FUNC, __FILE__ "::mandatoryCheck() rc=0");
     return 0;
 }
 
@@ -127,25 +127,25 @@ int mandatoryCheck(s_area area, s_link *link) {
 int manualCheck(s_area area, s_link *link) {
     int i;
 
-    w_log(LL_FUNC,"areafix.c::manualCheck()");
+    w_log(LL_FUNC, __FILE__ "::manualCheck()");
 
     if (grpInArray(area.group,link->optGrp,link->numOptGrp)&&link->manual){
-      w_log(LL_FUNC,"areafix.c::manualCheck() rc=1");
+      w_log(LL_FUNC, __FILE__ "::manualCheck() rc=1");
       return 1;
     }
     if (link->numOptGrp==0 && link->manual){
-      w_log(LL_FUNC,"areafix.c::manualCheck() rc=1");
+      w_log(LL_FUNC, __FILE__ "::manualCheck() rc=1");
       return 1;
     }
     if (area.manual){
-      w_log(LL_FUNC,"areafix.c::manualCheck() rc=1");
+      w_log(LL_FUNC, __FILE__ "::manualCheck() rc=1");
       return 1;
     }
     if ((i=isAreaLink(link->hisAka, &area))!=-1){
-      w_log(LL_FUNC,"areafix.c::manualCheck() rc=%d", area.downlinks[i]->manual);
+      w_log(LL_FUNC, __FILE__ "::manualCheck() rc=%d", area.downlinks[i]->manual);
       return area.downlinks[i]->manual;
     }
-      w_log(LL_FUNC,"areafix.c::manualCheck() rc=0");
+      w_log(LL_FUNC, __FILE__ "::manualCheck() rc=0");
     return 0;
 }
 
@@ -683,12 +683,12 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     e_changeConfigRet nRet = I_ERR;
     char *areaName = area->areaName;
 
-    w_log(LL_FUNC,"areafix.c::changeconfig(%s,...)", fileName);
+    w_log(LL_FUNC, __FILE__ "::changeconfig(%s,...)", fileName);
 
     if (init_conf(fileName))
 		return -1;
 
-    w_log(LL_SRCLINE,"areafix.c:%u:changeconfig() action=%i",__LINE__,action);
+    w_log(LL_SRCLINE, __FILE__ ":%u:changeconfig() action=%i",__LINE__,action);
 
     while ((cfgline = configline()) != NULL) {
         line = sstrdup(cfgline);
@@ -723,7 +723,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         nfree(fileName);
         return -1;
     }
-    w_log(LL_SRCLINE,"areafix.c:%u:changeconfig()", __LINE__);
+    w_log(LL_SRCLINE, __FILE__ ":%u:changeconfig()", __LINE__);
 
     switch (action) {
     case 0: // forward Request To Link
@@ -765,7 +765,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
             nRet = O_ERR;
             break;
         }
-        w_log(LL_SRCLINE,"areafix.c::changeconfig():%u",__LINE__);
+        w_log(LL_SRCLINE, __FILE__ "::changeconfig():%u",__LINE__);
         // get area string
         buff = makeAreaParam(area->downlinks[0]->link , areaName, NULL );
         nRet = ADD_OK;
@@ -790,11 +790,11 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     default: break;
     } // switch (action)
 
-    w_log(LL_SRCLINE,"areafix.c:%u:changeconfig()", __LINE__);
+    w_log(LL_SRCLINE, __FILE__ ":%u:changeconfig()", __LINE__);
     InsertCfgLine(fileName, cfgline, strbeg, strend);
     nfree(cfgline);
     nfree(fileName);
-    w_log(LL_FUNC,"areafix.c::changeconfig() rc=%i", nRet);
+    w_log(LL_FUNC, __FILE__ "::changeconfig() rc=%i", nRet);
     return nRet;
 }
 
@@ -892,14 +892,14 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
 int limitCheck(s_link *link) {
     register unsigned int i,n;
 
-    w_log(LL_FUNC,"areafix.c::limitCheck()");
+    w_log(LL_FUNC, __FILE__ "::limitCheck()");
 
     if (link->afixEchoLimit==0) return 0;
     for (i=n=0; i<config->echoAreaCount; i++)
 	if (0==subscribeCheck(config->echoAreas[i], link))	
 	    n++;
     i = n >= link->afixEchoLimit ;
-    w_log(LL_FUNC,"areafix.c::limitCheck() rc=%u", i);
+    w_log(LL_FUNC, __FILE__ "::limitCheck() rc=%u", i);
     return i;
 }
 
@@ -1196,7 +1196,8 @@ char *unsubscribe(s_link *link, char *cmd) {
     unsigned int i, rc = 2, j=(unsigned int)I_ERR, from_us=0, matched = 0;
     char *line, *an, *report = NULL;
     s_area *area;
-	
+
+    w_log(LL_FUNC,__FILE__ ":%u:unsubscribe() begin", __LINE__);
     line = cmd;
 	
     if (line[1]=='-') return NULL;
@@ -1308,6 +1309,7 @@ char *unsubscribe(s_link *link, char *cmd) {
             w_log(LL_AREAFIX, "areafix: area %s is not found", line);
         }
     }
+    w_log(LL_FUNC,__FILE__ ":%u:unsubscribe() end", __LINE__);
     return report;
 }
 
@@ -1593,7 +1595,7 @@ char *processcmd(s_link *link, char *line, int cmd) {
     
     char *report;
     
-    w_log(LL_FUNC,"areafix.c::processcmd()");
+    w_log(LL_FUNC, __FILE__ "::processcmd()");
     
     switch (cmd) {
         
@@ -1649,7 +1651,7 @@ char *processcmd(s_link *link, char *line, int cmd) {
         break;
     default: return NULL;
     }
-    w_log(LL_FUNC,"areafix.c::processcmd() OK");
+    w_log(LL_FUNC, __FILE__ "::processcmd() OK");
     return report;
 }
 
@@ -1831,7 +1833,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     char *textBuff = NULL,*tmp;
     int nr;
 
-    w_log(LL_FUNC, "areafix.c::processAreaFix()");
+    w_log(LL_FUNC, __FILE__ "::processAreaFix()");
 
     RetFix = NOTHING;
 
@@ -1865,7 +1867,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 #if 0 // we're process only our messages here
     // ignore msg for other link (maybe this is transit...)
     if (notforme || (link==NULL && security==1)) {
-        w_log(LL_FUNC, "areafix.c::processAreaFix() call processNMMsg() and return");
+        w_log(LL_FUNC, __FILE__ "::processAreaFix() call processNMMsg() and return");
 	nr = processNMMsg(msg, pktHeader, NULL, 0, 0);
 	closeOpenedPkt();
 	return nr;
@@ -1940,7 +1942,9 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 		case STAT:
 		    report = areaStatus(report, preport);
 		    break;
-		default: break;
+		default:
+		    w_log(LL_ERR,"Unknown areafix command:%s", token);
+		    break;
 		}
 	    } /* end if (preport != NULL) */
 	    token = strseparate (&tmp, "\n\r");
@@ -1984,7 +1988,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 	RetMsg(msg, link, report, "areafix reply: security violation");
 	w_log(LL_AREAFIX, "areafix: security violation from %s", aka2str(link->hisAka));
 	nfree(tmplink);
-        w_log(LL_FUNC, "areafix.c::processAreaFix() rc=1");
+        w_log(LL_FUNC, __FILE__ ":%u:processAreaFix() rc=1", __LINE__);
 	return 1;
     }
 
@@ -2009,7 +2013,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 
     // send msg to the links (forward requests to areafix)
     sendAreafixMessages();
-    w_log(LL_FUNC, "areafix.c::processAreaFix() rc=1");
+    w_log(LL_FUNC, __FILE__ "::processAreaFix() end (rc=1)");
     return 1;
 }
 
@@ -2053,6 +2057,7 @@ void afix(s_addr addr, char *cmd)
     char            *name = config->robotsArea;
     s_link          *link;
 
+    w_log(LL_FUNC, __FILE__ "::afix() begin");
     w_log(LL_INFO, "Start AreaFix...");
 
     if ((area = getNetMailArea(config, name)) != NULL) {
@@ -2130,6 +2135,7 @@ void afix(s_addr addr, char *cmd)
             w_log(LL_ERR, "Could not open %s", config->netMailAreas[k].areaName);
         }
     }
+    w_log(LL_FUNC, __FILE__ "::afix() end");
 }
 
 int unsubscribeFromPausedEchoAreas(s_link *link) {
