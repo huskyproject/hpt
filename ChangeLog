@@ -1,3 +1,8 @@
+2001-06-24 Sunday 19:49  mhaase
+
+	* src/areafix.c (1.215): same as I wrote in January, but didn't
+	commit; addition to rescan feature: +area /r is possible
+
 2001-06-15 Friday 07:48  pavel.gulchouck
 
 	* misc/filter.pl (1.4): Minor bugfix
