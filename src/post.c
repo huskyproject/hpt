@@ -269,17 +269,17 @@ void post(int c, unsigned int *n, char *params[])
 
       msg.textLength = strlen(msg.text);
 
-      log ('1', "Start posting...");
+      w_log('1', "Start posting...");
 
 	  if ((msg.destAddr.zone + msg.destAddr.net +
 		   msg.destAddr.node + msg.destAddr.point)==0)
-		  log ('5',
+		  w_log('5',
 						 "Posting msg from %u:%u/%u.%u -> %s in area: %s",
 						 msg.origAddr.zone, msg.origAddr.net,
 						 msg.origAddr.node, msg.origAddr.point,
 						 msg.toUserName,
 						 (area) ? area : echo->areaName);
-	  else log ('5',
+	  else w_log('5',
 						  "Posting msg from %u:%u/%u.%u -> %u:%u/%u.%u in area: %s",
 						  msg.origAddr.zone, msg.origAddr.net,
 						  msg.origAddr.node, msg.origAddr.point,
@@ -316,7 +316,7 @@ void post(int c, unsigned int *n, char *params[])
       if ((config->echotosslog) && (!export)) {
         f=fopen(config->echotosslog, "a");
         if (f==NULL)
-          log ('9', "Could not open or create EchoTossLogFile.");
+          w_log('9', "Could not open or create EchoTossLogFile.");
         else {
           fprintf(f,"%s\n", (area) ? area : echo->areaName);
           fclose(f);

@@ -102,7 +102,7 @@ void closeLog(s_log *hpt_log)
    }
 }
 
-void log(char key, char *logString, ...)
+void w_log(char key, char *logString, ...)
 {
 	time_t     currentTime;
 	struct tm  *locTime;

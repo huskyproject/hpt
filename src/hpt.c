@@ -319,7 +319,7 @@ void processConfig()
 	   nfree(buff);
    } else printf("logFileDir not defined, there will be no log created!\n");
    
-   log('1', "Start");
+   w_log('1', "Start");
 
    if (config->addrCount == 0) exit_hpt("at least one addr must be defined",1);
    if (config->linkCount == 0) exit_hpt("at least one link must be specified",1);
@@ -460,7 +460,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    // deinit SMAPI
    MsgCloseApi();
    
-   log('1', "End");
+   w_log('1', "End");
    closeLog(hpt_log);
    doneCharsets();
    nfree(versionStr);

@@ -359,11 +359,11 @@ s_dupeMemory *readDupeFile(s_area *area) {
    
    if (config->typeDupeBase!=commonDupeBase) {
 	  fileName = createDupeFileName(area);
-      log('2', "Reading dupes of %s.", area->areaName);
+      w_log('2', "Reading dupes of %s.", area->areaName);
    }
    else {
 	   xstrscat(&fileName, config->dupeHistoryDir, "hpt_base.dpa", NULL);
-	   log('2', "Reading dupes from %s.", fileName);
+	   w_log('2', "Reading dupes from %s.", fileName);
    }
 
    f = fopen(fileName, "rb");
@@ -371,7 +371,7 @@ s_dupeMemory *readDupeFile(s_area *area) {
       // readFile
       doReading(f, dupeMemory);
       fclose(f);
-   } else log('2', "Error reading dupes.");
+   } else w_log('2', "Error reading dupes.");
    
    nfree(fileName);
 

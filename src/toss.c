@@ -145,7 +145,7 @@ char *changeFileSuffix(char *fileName, char *newSuffix) {
       rename(fileName, newFileName);
       return newFileName;
    } else {
-      log('9', "Could not change suffix for %s. File already there and the 255 files after", fileName);
+      w_log('9', "Could not change suffix for %s. File already there and the 255 files after", fileName);
       nfree(newFileName);
       return NULL;
    }
@@ -253,7 +253,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 		   strcpy((char *) msgHeader.subj, newSubj);
 	   else {
 		   strncpy((char *) msgHeader.subj, newSubj, XMSG_SUBJ_SIZE-1);
-		   log('9',
+		   w_log('9',
 						 "Long subjectLine! Some files will be not routed.");
 	   }
 	   nfree(newSubj);
@@ -294,7 +294,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
    if (echo->msgbType == MSGTYPE_SDM)
 	   createDirectoryTree(echo->fileName);
    else if (echo->msgbType==MSGTYPE_PASSTHROUGH) {
-	   log('9', "Can't put message to passthrough area %s!",
+	   w_log('9', "Can't put message to passthrough area %s!",
 					 echo->areaName);
 	   return rc;
    } else {
@@ -376,21 +376,21 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
          if (MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword)
 						 textLength, (dword) textLength,
 						 (dword)strlen(ctrlBuff), (byte*)ctrlBuff)!=0) 
-			 log('9', "Could not write msg in %s!", echo->fileName);
+			 w_log('9', "Could not write msg in %s!", echo->fileName);
 		 else rc = 1; // normal exit
 
          if (MsgCloseMsg(hmsg)!=0) {
-			 log('9', "Could not close msg in %s!", echo->fileName);
+			 w_log('9', "Could not close msg in %s!", echo->fileName);
 			 rc = 0;
 		 }
          nfree(ctrlBuff);
 
       } else
-		  log('9', "Could not create new msg in %s!", echo->fileName);
+		  w_log('9', "Could not create new msg in %s!", echo->fileName);
       /* endif */
       MsgCloseArea(harea);
    } else 
-      log('9', "Could not open/create EchoArea %s!", echo->fileName);
+      w_log('9', "Could not open/create EchoArea %s!", echo->fileName);
    /* endif */
    return rc;
 }
@@ -645,7 +645,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 			debug = strUpper(debug);
 		
 		if ((f=fopen(debug,"a"))==NULL) {
-			log('9',"can't open file: %s",debug);
+			w_log('9',"can't open file: %s",debug);
 		}
 		nfree(debug);
 	}
@@ -786,10 +786,10 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		// .. and must come from us
 		msg->origAddr = header.origAddr;
 		rc += writeMsgToPkt(pkt, *msg);
-		if (rc) log('9',"can't write msg to pkt: %s",
+		if (rc) w_log('9',"can't write msg to pkt: %s",
 							  newLinks[i]->link->pktFile);
 		rc += closeCreatedPkt(pkt);
-		if (rc) log('9',"can't close pkt: %s",
+		if (rc) w_log('9',"can't close pkt: %s",
 							  newLinks[i]->link->pktFile);
 		if (f) {
 			if (rc) fputs(" failed: ",f);
@@ -871,7 +871,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    creatingLink = getLinkFromAddr(*config, pktOrigAddr);
 
    if (creatingLink == NULL) {
-      log('9', "creatingLink == NULL !!!");
+      w_log('9', "creatingLink == NULL !!!");
       return 8;
    }
 
@@ -969,7 +969,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    // echoarea addresses changed by safe_reallocating of config->echoAreas[]
    carbonNames2Addr(config);
 
-   log('8', "Area '%s' autocreated by %s", c_area, hisaddr);
+   w_log('8', "Area '%s' autocreated by %s", c_area, hisaddr);
    
    if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr, NULL);
    else makeMsgToSysop(c_area, *forwardAddr, &pktOrigAddr);
@@ -980,11 +980,11 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    // create flag
    if (config->aacFlag) {
 	   if (NULL == (f = fopen(config->aacFlag,"a")))
-		   log('9',
+		   w_log('9',
 						 "Could not open autoAreaCreate flag: %s",
 						 config->aacFlag);
 	   else {
-		   log('0',
+		   w_log('0',
 						 "Created autoAreaCreate flag: %s",
 						 config->aacFlag);
 		   fclose(f);
@@ -1013,7 +1013,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 	};
 	
 	if (!msgfp) {
-		log('9', "external process %s: cannot create file", progname);
+		w_log('9', "external process %s: cannot create file", progname);
 		return 1;
 	};
 	/* Output header info */
@@ -1045,7 +1045,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 		unlink(fname);
 	};
 	if (rc == -1 || rc == 127) {
-		log('9', "excution of external process %s failed", progname);
+		w_log('9', "excution of external process %s failed", progname);
 	};
 	return 0;
 
@@ -1332,7 +1332,7 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
 		// Shitty static variables ....
 		xstrscat(&(msgToSysop[i]->text), print_ch(79, '-'), "\r", NULL);
 		msgToSysop[i]->recode |= (REC_HDR|REC_TXT);
-//		log('8',"Created msg to sysop");
+//		w_log('8',"Created msg to sysop");
 	    }
 
 //          New report generation
@@ -1638,25 +1638,25 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
          /* write message */
          if (MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *)
 						 bodyStart, len, len, strlen(ctrlBuf)+1,
-						 (UCHAR *) ctrlBuf)!=0) log('9',"Could not write msg to NetmailArea %s",area->areaName);
+						 (UCHAR *) ctrlBuf)!=0) w_log('9',"Could not write msg to NetmailArea %s",area->areaName);
 		 else rc = 1; // normal exit
 		 nfree(ctrlBuf);
 		 if (MsgCloseMsg(msgHandle)!=0) { // can't close
-			 log('9',"Could not close msg in NetmailArea %s",area->areaName);
+			 w_log('9',"Could not close msg in NetmailArea %s",area->areaName);
 			 rc = 0;
 		 } else { // normal close
-			 log('7', "Wrote Netmail: %u:%u/%u.%u -> %u:%u/%u.%u", msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point, msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
+			 w_log('7', "Wrote Netmail: %u:%u/%u.%u -> %u:%u/%u.%u", msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point, msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
 			 statToss.netMail++;
 		 }
 
       } else {
-		  log('9', "Could not create new msg in NetmailArea %s", area -> areaName);
+		  w_log('9', "Could not create new msg in NetmailArea %s", area -> areaName);
       } /* endif */
 
       MsgCloseArea(netmail);
    } else {
 	   fprintf(stderr, "msgapierr - %u\n", msgapierr);
-	   log('9', "Could not open NetmailArea %s", area -> areaName);
+	   w_log('9', "Could not open NetmailArea %s", area -> areaName);
    } /* endif */
    return rc;
 }
@@ -1712,9 +1712,9 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	 {
 	   extcmd = safe_malloc(strlen(config->processPkt)+strlen(fileName)+2);
 	   sprintf(extcmd,"%s %s",config->processPkt,fileName);
-	   log('6', "ProcessPkt: execute string \"%s\"",extcmd);
+	   w_log('6', "ProcessPkt: execute string \"%s\"",extcmd);
 	   if ((cmdexit = system(extcmd)) != 0)
-	   log('9', "exec failed, code %d", cmdexit);
+	   w_log('9', "exec failed, code %d", cmdexit);
 	   nfree(extcmd);
 	 }
        /* -AS- */
@@ -1729,11 +1729,11 @@ int processPkt(char *fileName, e_tossSecurity sec)
        header = openPkt(pkt);
        if (header != NULL) {
 	 if ((to_us(header->destAddr)==0) || (sec == secLocalInbound)) {
-	   log('7', "pkt: %s", fileName);
+	   w_log('7', "pkt: %s", fileName);
 	   statToss.pkts++;
 	   link = getLinkFromAddr(*config, header->origAddr);
 	   if ((link!=NULL) && (link->pktPwd==NULL) && (header->pktPassword[0]!='\000'))
-	       log('9', "Unexpected Password %s.", header->pktPassword);
+	       w_log('9', "Unexpected Password %s.", header->pktPassword);
 	   
 	   switch (sec) {
 	   case secLocalInbound:
@@ -1746,12 +1746,12 @@ int processPkt(char *fileName, e_tossSecurity sec)
                   processIt = 1;
                } else {
                   if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (eSecure | eOn)) ) {
-                      log('9', "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
+                      w_log('9', "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
                               fileName, header->origAddr.zone, header->origAddr.net,
                               header->origAddr.node, header->origAddr.point);
                       processIt = 1;
                   } else {
-	            log('9', "pkt: %s Password Error for %i:%i/%i.%i",
+	            w_log('9', "pkt: %s Password Error for %i:%i/%i.%i",
 		    fileName, header->origAddr.zone, header->origAddr.net,
 		    header->origAddr.node, header->origAddr.point);
 		    if (header->pktPassword == NULL || header->pktPassword[0] == '\0')
@@ -1763,7 +1763,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
              } else if ((link != NULL) && ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "")==0))) {
                processIt=1;
 	     } else /* if (link == NULL) */ {	
-	       log('9', "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
+	       w_log('9', "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
 		       fileName, header->origAddr.zone, header->origAddr.net,
 		       header->origAddr.node, header->origAddr.point);
 	       processIt = 2;
@@ -1776,12 +1776,12 @@ int processPkt(char *fileName, e_tossSecurity sec)
                   processIt = 1;
                } else {
                   if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (eOn)) ) {
-                      log('9', "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
+                      w_log('9', "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
                               fileName, header->origAddr.zone, header->origAddr.net,
                               header->origAddr.node, header->origAddr.point);
                       processIt = 2; /* Unsecure inbound, do not process echomail */
                   } else {
-	            log('9', "pkt: %s Password Error for %i:%i/%i.%i",
+	            w_log('9', "pkt: %s Password Error for %i:%i/%i.%i",
 		    fileName, header->origAddr.zone, header->origAddr.net,
 		    header->origAddr.node, header->origAddr.point);
                     rc = 1;
@@ -1790,7 +1790,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
              } else if ((link != NULL) && ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "")==0))) {
                processIt=1;
 	     } else /* if (link == NULL) */ {	
-	       log('9', "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
+	       w_log('9', "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
 		       fileName, header->origAddr.zone, header->origAddr.net,
 		       header->origAddr.node, header->origAddr.point);
 	       processIt = 2;
@@ -1840,7 +1840,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	   
 	  		/* PKT is not for us - try to forward it to our links */
 
-			log('9', "pkt: %s addressed to %d:%d/%d.%d but not for us", 
+			w_log('9', "pkt: %s addressed to %d:%d/%d.%d but not for us", 
 			   fileName, header->destAddr.zone, header->destAddr.net,       
 			   header->destAddr.node, header->destAddr.point);
 	   
@@ -1852,7 +1852,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	 nfree(header);
 	 
        } else { // header == NULL
-		   log('9', "pkt: %s wrong pkt-file", fileName);
+		   w_log('9', "pkt: %s wrong pkt-file", fileName);
 		   rc = 3;
        }
        
@@ -1921,7 +1921,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
 #endif
 
    if (sec == secInbound) {
-      log('9', "bundle %s: tossing in unsecure inbound, security violation", fileName);
+      w_log('9', "bundle %s: tossing in unsecure inbound, security violation", fileName);
       return 1;
    };
 
@@ -1942,32 +1942,32 @@ int  processArc(char *fileName, e_tossSecurity sec)
    // unpack bundle
    if (found) {
 	  fillCmdStatement(cmd,config->unpack[i-1].call,fileName,"",config->tempInbound);
-      log('6', "bundle %s: unpacking with \"%s\"", fileName, cmd);
+      w_log('6', "bundle %s: unpacking with \"%s\"", fileName, cmd);
 #ifdef __WATCOMC__
       list = mk_lst(cmd);
       cmdexit = spawnv(P_WAIT, cmd, list);
       free((char **)list);
       if (cmdexit == -1) {
-		  log('9', "exec failed: %s", strerror(errno));
+		  w_log('9', "exec failed: %s", strerror(errno));
 		  return 3;
       }
 #else
       if ((cmdexit = system(cmd)) != 0) {
-		  log('9', "exec failed, code %d", cmdexit);
+		  w_log('9', "exec failed, code %d", cmdexit);
 		  return 3;
       }
 #endif
 	  if (config->afterUnpack) {
-		  log('6', "afterUnpack: execute string \"%s\"", config->afterUnpack);
+		  w_log('6', "afterUnpack: execute string \"%s\"", config->afterUnpack);
 		  if ((cmdexit = system(config->afterUnpack)) != 0) {
-			  log('9', "exec failed, code %d", cmdexit);
+			  w_log('9', "exec failed, code %d", cmdexit);
 		  };
 	  }
 #ifdef DO_PERL
       perlafterunp();
 #endif
    } else {
-      log('9', "bundle %s: cannot find unpacker", fileName);
+      w_log('9', "bundle %s: cannot find unpacker", fileName);
       return 3;
    };
    statToss.arch++;
@@ -2094,7 +2094,7 @@ void processDir(char *directory, e_tossSecurity sec)
             rc = processArc(dummy, sec);
 
         if (rc>=1 && rc<=6) {
-	    log('9', "Renaming pkt/arc to .%s",ext[rc]);
+	    w_log('9', "Renaming pkt/arc to .%s",ext[rc]);
             newFileName=changeFileSuffix(dummy, ext[rc]);
 	} else {
 	    if (rc!=7) remove(dummy);
@@ -2199,33 +2199,33 @@ void writeTossStatsToLog(void) {
    outMailsec = ((float)(statToss.exported)) / diff;
    inKBsec = ((float)(statToss.inBytes)) / diff / 1024;
 
-   log(logchar, "Statistics:");
-   log(logchar, "     arc: % 5d   netMail: % 4d   echoMail: % 5d         CC: % 5d",
+   w_log(logchar, "Statistics:");
+   w_log(logchar, "     arc: % 5d   netMail: % 4d   echoMail: % 5d         CC: % 5d",
 		   statToss.arch, statToss.netMail, statToss.echoMail, statToss.CC);
-   log(logchar, "   pkt's: % 5d      dupe: % 4d   passthru: % 5d   exported: % 5d",
+   w_log(logchar, "   pkt's: % 5d      dupe: % 4d   passthru: % 5d   exported: % 5d",
 		   statToss.pkts, statToss.dupes, statToss.passthrough, statToss.exported);
-   log(logchar, "    msgs: % 5d       bad: % 4d      saved: % 5d      empty: % 5d",
+   w_log(logchar, "    msgs: % 5d       bad: % 4d      saved: % 5d      empty: % 5d",
 		   statToss.msgs, statToss.bad, statToss.saved, statToss.empty);
-   log(logchar, "   Input: % 8.2f mails/sec        Output: % 8.2f mails/sec", inMailsec, outMailsec);
-   log(logchar, "          % 8.2f kb/sec", inKBsec);
+   w_log(logchar, "   Input: % 8.2f mails/sec        Output: % 8.2f mails/sec", inMailsec, outMailsec);
+   w_log(logchar, "          % 8.2f kb/sec", inKBsec);
 
    /* write personal mail statistic logfile */
    writeStatLog();
 
    /* Now write areas summary */
-   log(logchar, "Areas summary:");
+   w_log(logchar, "Areas summary:");
    for (i = 0; i < config->netMailAreaCount; i++)
 	if (config->netMailAreas[i].imported > 0)
-		log(logchar, "netmail area %s - %d msgs", 
+		w_log(logchar, "netmail area %s - %d msgs", 
 			config->netMailAreas[i].areaName, config->netMailAreas[i].imported);
 
    for (i = 0; i < config->echoAreaCount; i++)
 	if (config->echoAreas[i].imported > 0)
-		log(logchar, "echo area %s - %d msgs", 
+		w_log(logchar, "echo area %s - %d msgs", 
 			config->echoAreas[i].areaName, config->echoAreas[i].imported);
    for (i = 0; i < config->localAreaCount; i++)
 	if (config->localAreas[i].imported > 0)
-		log(logchar, "local area %s - %d msgs", 
+		w_log(logchar, "local area %s - %d msgs", 
 			config->localAreas[i].areaName, config->localAreas[i].imported);
 }
 
@@ -2302,9 +2302,9 @@ void arcmail(s_link *tolink) {
    }
 
    if (config->beforePack) {
-	   log('6', "beforePack: execute string \"%s\"", config->beforePack);
+	   w_log('6', "beforePack: execute string \"%s\"", config->beforePack);
 	   if ((cmdexit = system(config->beforePack)) != 0) {
-		   log('9', "exec failed, code %d", cmdexit);
+		   w_log('9', "exec failed, code %d", cmdexit);
 	   };
    }
 #ifdef DO_PERL
@@ -2326,7 +2326,7 @@ void arcmail(s_link *tolink) {
 			 flo = fopen(link->floFile, "a+");
 
 			 if (flo == NULL)
-				 log('9', "Cannot open flo file %s",
+				 w_log('9', "Cannot open flo file %s",
 							   config->links[i].floFile);
 			 else {
 
@@ -2346,9 +2346,9 @@ void arcmail(s_link *tolink) {
 					 fillCmdStatement(cmd, link->packerDef->call,
 									  link->packFile,
 									  link->pktFile, "");
-					 log('7', "Packing for %s %s, %s > %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile), get_filename(link->packFile));
+					 w_log('7', "Packing for %s %s, %s > %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile), get_filename(link->packFile));
 					 cmdexit = system(cmd);
-					 //log('6', "cmd: %s",cmd);
+					 //w_log('6', "cmd: %s",cmd);
 					 if (cmdexit==0) {
 						 if (foa==0) {
 							 if (bundleNameStyle == eAddrDiff ||
@@ -2360,7 +2360,7 @@ void arcmail(s_link *tolink) {
 						 }
 						 remove(link->pktFile);
 					 } else
-						 log('9',
+						 w_log('9',
 									   "Error executing packer (errorlevel==%i)",
 									   cmdexit);
 				 } // end packerDef
@@ -2400,9 +2400,9 @@ void arcmail(s_link *tolink) {
 					 cmdexit = rename(link->pktFile, pkt);
 					 if (cmdexit==0) {
 						 fprintf(flo, "^%s\n", pkt);
-						 log('7', "Leave non-packed mail for %s %s, %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile));
+						 w_log('7', "Leave non-packed mail for %s %s, %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile));
 					 } 
-					 else log('9', "error moving file for %s %s, %s->%s (errorlevel==%i)", aka2str(link->hisAka), link->name, link->pktFile, pkt, errno);
+					 else w_log('9', "error moving file for %s %s, %s->%s (errorlevel==%i)", aka2str(link->hisAka), link->name, link->pktFile, pkt, errno);
 					 nfree(pkt);
 				 }
 
@@ -2448,7 +2448,7 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 
 	    if (move_file(fileName, newfn) == 0) {  /* move successful ! */
 		    
-		log('7', "Forwarding %s to %s as %s",
+		w_log('7', "Forwarding %s to %s as %s",
 		        fileName, config->links[i].name, newfn + strlen(config->tempOutbound));
 
 		nfree(newfn);
@@ -2457,7 +2457,7 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 	    }
 	    else
 	    {
-		log ('9', "Failure moving %s to %s (%s)", fileName,
+		w_log('9', "Failure moving %s to %s (%s)", fileName,
 			 newfn, strerror(errno));
 		nfree(newfn);
 		return 4;
@@ -2466,7 +2466,7 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 	}
     }
 
-    log('9', "Packet %s is not to us or our links",fileName);
+    w_log('9', "Packet %s is not to us or our links",fileName);
 
     return 4;       /* PKT is not for us and we did not find a link to
 		       forward the pkt file to */
@@ -2555,7 +2555,7 @@ void tossTempOutbound(char *directory)
 			   arcmail(link);
 		   } else {
  			   nfree(dummy);
-			   log('9', "found non packed mail without matching link in tempOutbound");
+			   w_log('9', "found non packed mail without matching link in tempOutbound");
 			   fclose(pkt);
 		   }
            }
@@ -2572,7 +2572,7 @@ void toss()
 
    // set stats to 0
    memset(&statToss, '\0', sizeof(s_statToss));
-   log('1', "Start tossing...");
+   w_log('1', "Start tossing...");
    processDir(config->localInbound, secLocalInbound);
    processDir(config->protInbound, secProtInbound);
    processDir(config->inbound, secInbound);
@@ -2605,7 +2605,7 @@ void toss()
 	 if (config -> logperm != -1) chmod(config->importlog, config->logperm);
 #endif
 
-      } else log('9', "Could not open importlogfile");
+      } else w_log('9', "Could not open importlogfile");
    }
 
    if (forwardedPkts) {
@@ -2619,9 +2619,9 @@ void toss()
 
    // create flag for netmail trackers
    if (config->netmailFlag && statToss.netMail) {
-	   if (NULL == (f = fopen(config->netmailFlag,"a"))) log('9', "Could not create netmail flag: %s", config->netmailFlag);
+	   if (NULL == (f = fopen(config->netmailFlag,"a"))) w_log('9', "Could not create netmail flag: %s", config->netmailFlag);
 	   else {
-		   log('0', "Created netmail flag: %s", config->netmailFlag);
+		   w_log('0', "Created netmail flag: %s", config->netmailFlag);
 		   fclose(f);
 	   }
    }
@@ -2756,7 +2756,7 @@ void tossFromBadArea(char force)
    area = MsgOpenArea((UCHAR *) config->badArea.fileName,
 					  MSGAREA_NORMAL, (word)(config->badArea.msgbType|MSGTYPE_ECHO));
    if (area != NULL) {
-	   log('1', "Scanning area: %s", config->badArea.areaName);
+	   w_log('1', "Scanning area: %s", config->badArea.areaName);
 	   highestMsg = MsgGetHighMsg(area);
 
 	   if (config->badArea.msgbType==MSGTYPE_SDM) {
@@ -2791,11 +2791,11 @@ void tossFromBadArea(char force)
 	   
 	   writeDupeFiles();
 
-	   log('1', "Statistics");
-	   log('1', "    scanned: % 5d   saved: % 7d   CC: % 2d", statToss.msgs, statToss.saved, statToss.CC);
-	   log('1', "    exported: % 4d   passthru: % 4d", statToss.exported, statToss.passthrough);
+	   w_log('1', "Statistics");
+	   w_log('1', "    scanned: % 5d   saved: % 7d   CC: % 2d", statToss.msgs, statToss.saved, statToss.CC);
+	   w_log('1', "    exported: % 4d   passthru: % 4d", statToss.exported, statToss.passthrough);
 
 	   tossTempOutbound(config->tempOutbound);
 	   
-   } else log('9', "Could not open %s", config->badArea.fileName);
+   } else w_log('9', "Could not open %s", config->badArea.fileName);
 }

@@ -5,6 +5,7 @@ hpt 0.9.8 (development version)
 Mon Mar  5 11:07:24 NOVT 2001
 max:
 * fixed bug in hpttree (lost nodes)
+* log() -> w_log() bacause of conflicts with perl.h
 
 ---- cvs ci ------
 Sun Mar  4 14:42:00 NOVT 2001
