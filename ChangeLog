@@ -1,3 +1,23 @@
+2002-10-29 Tuesday 14:11  mche
+
+	* src/query.c (1.71): fix area autocreation
+
+2002-10-29 Tuesday 08:43  stas_degteff
+
+	* doc/: bugreport.rus (1.4), bugreport.txt (1.3), hpt-FAQ.russian
+	(1.47): Update FAQ (q.1 & q.36); use RCS  keyword for automate FAQ
+	dating
+
+2002-10-29 Tuesday 06:17  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.46): Fix FAQ
+
+2002-10-28 Monday 23:30  pgul
+
+	* src/: areafix.c (1.358), query.c (1.70), toss.c (1.458),
+	txt2pkt.c (1.40), perl.c (1.41), post.c (1.97): Change
+	createKludges() args
+
 2002-10-25 Friday 13:21  mche
 
 	* src/areafix.c (1.357): fix cygwin warning
