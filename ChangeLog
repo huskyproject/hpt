@@ -1,3 +1,7 @@
+2002-09-17 Tuesday 19:52  stas_degteff
+
+	* doc/hpt.texi (hpt-1_2-stable.2): Correct documentation
+
 2002-09-09 Monday 10:27  pgul
 
 	* h/hptperl.h (hpt-1_2-stable.1): fix compiler warning
