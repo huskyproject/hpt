@@ -1,6 +1,7 @@
-Tue Jun  5 15:50:43 MSD 2001
+2001-06-05 Tuesday 15:11  ml
 
-	* ignore repeating areas in hptlink
+	* src/hptlink.c (1.24): ignore repeating areas in hptlink [patch by
+	Serguei Revtov]
 
 2001-06-03 Sunday 12:45  tobi
 
