@@ -315,7 +315,7 @@ static XS(perl_putMsgInArea)
     if ((attr = str2attr(p)) != (dword)-1)
       msg.attributes |= attr;
   }
-  free(sattr);
+  nfree(sattr);
   if (addkludges)
     msg.text = createKludges(config->disableTID,
                 msg.netMail ? NULL : area, 
@@ -327,7 +327,7 @@ static XS(perl_putMsgInArea)
       if (*p == '\n')
         *p = '\r';
   xstrcat((char **)(&(msg.text)), text);
-  free(text);
+  nfree(text);
   msg.textLength = strlen(msg.text);
   rc = putMsgInArea(echo, &msg, 1, msg.attributes);
   freeMsgBuffers(&msg);
@@ -674,7 +674,7 @@ int perlscanmsg(char *area, s_message *msg)
                        area, msg->fromUserName,
                        msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
                        prc);
-       free(prc);
+       nfree(prc);
        return 1;
      }
      else if (svchange && SvTRUE(svchange))
@@ -807,7 +807,7 @@ s_route *perlroute(s_message *msg, s_route *defroute)
          w_log(LL_PERL, "Perl route unknown flavour %s, set to hold", flv);
          route.flavour = hold;
        }
-       free(routeaddr);
+       nfree(routeaddr);
        return &route;
      }
    }
@@ -897,7 +897,7 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      {
        w_log(LL_ERR, "Perl filter eval error: %s\n", SvPV(ERRSV, n_a));
        do_perlfilter = 0;
-       if (area) free(area);
+       nfree(area);
        return 0;
      }
      svkill = perl_get_sv("kill", FALSE);
@@ -912,8 +912,8 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
                        msg->fromUserName, aka2str(msg->origAddr),
                        msg->toUserName, aka2str(msg->destAddr),
                        prc ? ": " : "", prc ? prc : "");
-       if (prc) free(prc);
-       if (area) free(area);
+       nfree(prc);
+       nfree(area);
        return 2;
      }
      svchange = perl_get_sv("change", FALSE);
@@ -950,10 +950,10 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
                        msg->fromUserName, aka2str(msg->origAddr),
                        msg->toUserName, aka2str(msg->destAddr), prc);
        rc = 1;
-       free(prc);
+       nfree(prc);
      }
    }
-   if (area) free(area);
+   nfree(area);
    return rc;
 }
 
@@ -1000,7 +1000,7 @@ int perlpkt(const char *fname, int secure)
      else if (prc)
      {
        w_log(LL_PERL, "Packet %s rejected by perl filter: %s", fname, prc);
-       free(prc);
+       nfree(prc);
        return 1;
      }
    }
@@ -1188,7 +1188,7 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
          w_log(LL_PERL, "PerlFilter: NetMail from %s %s to %s %s killed: %s",
                       msg->fromUserName, aka2str(msg->origAddr),
                       msg->toUserName, aka2str(msg->destAddr), prc);
-       free(prc);
+       nfree(prc);
        return 1;
      }
      svchange = perl_get_sv("change", FALSE);

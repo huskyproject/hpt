@@ -352,7 +352,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
 
       msg->textLength += xscatprintf(&text,"\1INTL %u:%u/%u %u:%u/%u\r",msg->destAddr.zone,msg->destAddr.net,msg->destAddr.node,msg->origAddr.zone,msg->origAddr.net,msg->origAddr.node);
       xstrcat(&text,msg->text);
-      free(msg->text);
+      nfree(msg->text);
       msg->text = text;
       
       w_log( LL_PKT, "Mail without INTL-Kludge. Assuming %i:%i/%i.%i -> %i:%i/%i.%i",

@@ -1924,7 +1924,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
 #if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
 		list = mk_lst(cmd);
 		cmdexit = spawnvp(P_WAIT, cmd, list);
-		free((char **)list);
+		nfree((char **)list);
 		if (cmdexit != 0) {
 		    w_log(LL_ERR, "exec failed: %s, return code: %d", strerror(errno), cmdexit);
 		    return 3;
@@ -2294,7 +2294,7 @@ void arcmail(s_link *tolink) {
 #ifdef __WATCOMC__
 			    list = mk_lst(cmd);
 			    cmdexit = spawnvp(P_WAIT, cmd, list);
-			    free((char **)list);
+			    nfree((char **)list);
 #else
 			    cmdexit = system(cmd);
 #endif
