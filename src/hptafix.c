@@ -258,5 +258,6 @@ int init_hptafix(void) {
   hook_afixcmd        = &perl_afixcmd;
   hook_afixreq        = &perl_afixreq;
 #endif
+  robot = getRobot(config, "areafix", 0); /* !!! val: change this later !!! */
   return init_areafix("areafix");
 }
