@@ -1259,7 +1259,7 @@ int checkAreaLink(s_area *area, s_addr aka, int type)
 
 int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceattr)
 {
-   char   *area=NULL, *p;
+   char   *area=NULL, *p, *q;
    s_area *echo=&(config->badArea);
    s_link *link;
    int    writeAccess = 0, rc = 0, ccrc = 0;
@@ -1277,8 +1277,9 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
    p = strchr(msg->text,'\r');
    if (p) {
 	   *p='\0';
-	   area = msg->text+5;
-	   while (*area == ' ') area++;
+	   q = msg->text+5;
+	   while (*q == ' ') q++;
+	   xstrcat(&area, q);
 	   echo = getArea(config, area);
 	   *p='\r';
    }
@@ -1293,6 +1294,8 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 	   } // can't create echoarea - put msg in BadArea
 	   else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
    }
+
+   nfree(area);
 
    if (echo != &(config->badArea)) {
 	   // area is autocreated!

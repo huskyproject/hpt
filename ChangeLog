@@ -2,6 +2,14 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Wed Aug 30 22:12:03 NOVST 2000
+max:
+* fixed autocreate bug (reported by Konstantin Kubatkin)
+patch from Serguei Revtov:
+* expanding number of bundle filename extensions (.??0-.??9, .??a-.??z)
+* bugfix for BundleNameStyle addrDiff
+
+----- cvs ci ------
 Tue Aug 29 22:54:10 NOVST 2000
 max (patches from Serguei Revtov):
 * hptlink bugfix when linking with -t

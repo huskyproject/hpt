@@ -218,6 +218,11 @@ int createTempPktFileName(s_link *link)
     struct tm *tp;
 	char *ptr;
 
+	int i;
+	struct stat stbuf;
+	static char *ext3 = "0123456789abcdefghijklmnopqrstuvwxyz";
+	int numExt = strlen(ext3);
+
 
     tr=time(NULL);
     tp=localtime(&tr);
@@ -274,7 +279,7 @@ int createTempPktFileName(s_link *link)
 			strcpy(tmpPFileName,zoneOutbound);
 		}
 	} else {
-
+	
 		if (config->separateBundles) {
 			sprintf(tmpPFileName,"%s%04x%04x.pnt%c%08x.sep%c",
 					zoneOutbound, link->hisAka.net,	link->hisAka.node,
@@ -301,27 +306,55 @@ int createTempPktFileName(s_link *link)
 		} else {
 			sprintf (ptr, "%08hx.%s", link->hisAka.point, wday);
 		}
+
+		counter = 0;
+		for (i=0; i<numExt; i++) {
+
+			sprintf(pfileName, "%s%c", tmpPFileName, ext3[i]);
+
+			if (stat(pfileName, &stbuf) == 0) {
+
+				if (tr - stbuf.st_mtime < 60*60*24) {
+					// today's bundle
+					counter = i+1;
+					if (stbuf.st_size==0 && counter<numExt) remove (pfileName);
+				} else {
+					// old bundle
+					if (stbuf.st_size == 0)
+						remove (pfileName);
+					else
+						counter = i+1;
+				}
+			}
+		}
+		if (counter >= numExt) {
+		   writeLogEntry(hpt_log,'7',"Can't use more than %d extensions for bundle names", numExt);
+		   counter = numExt-1;
+		}
+		
+		sprintf(pfileName, "%s%c", tmpPFileName, ext3[counter]);
+
 		break;
 
 	case timeStamp:
 		sprintf(ptr, "%06lx%02x.%s", (long)aTime, counter, wday);
+		counter = 0;
+		do {
+			sprintf(pfileName, "%s%c", tmpPFileName, ext3[counter]);
+			counter++;
+		} while ((fexist(pfileName) || fileNameAlreadyUsed(NULL, pfileName))
+				 && (counter < numExt));
+
+		if (counter >= numExt) writeLogEntry(hpt_log,'7',"created %d bundles/sec!", numExt);
+
 		break;
 
 	default:
-		writeLogEntry(hpt_log, '9',
-					  "Unknown bundleNameStyle (non-compatible fidoconfig library?)");
+		writeLogEntry(hpt_log, '9', "Unknown bundleNameStyle (non-compatible fidoconfig library?)");
 		exit(-1);
 		break;
 	}
-	counter = 0;
-	do {
- 		sprintf(pfileName, "%s%01x", tmpPFileName, counter);
-		counter++;
-	} while ((fexist(pfileName) || fileNameAlreadyUsed(NULL, pfileName)) &&
-			 (counter <= 15));
 	nfree(tmpPFileName);
-
-	if (counter > 15) writeLogEntry(hpt_log,'7',"created 16 bundles/sec!");
 
     if ((!fexist(fileName)) && (!fexist(pfileName))) {
         nfree(link->packFile);
