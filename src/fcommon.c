@@ -200,19 +200,17 @@ void cleanEmptyBundles(char *pathName, int npos)
 // Removing old empty bundles when bundleNameStyle == addDiff
 {
    char           *ptr, *tmpfile, *pattern, savech;
-   int            i, found;
    DIR            *dir;
    struct dirent  *file;
    struct stat stbuf;
    time_t tr;
-
 
    tmpfile = safe_malloc(strlen(pathName) + 4);
 
    strcpy(tmpfile, pathName);
    savech = tmpfile[npos-1]; // there must be path delimiter
    tmpfile[npos-1] = '\0';
-   
+
    if(!(dir = opendir(tmpfile))) { // nothing to clean
       nfree(tmpfile);
       return;
@@ -224,33 +222,26 @@ void cleanEmptyBundles(char *pathName, int npos)
    strcpy(pattern, tmpfile+npos);
 
    for (ptr=pattern; *ptr; ptr++);
-   ptr[2]='?';
-   ptr[3]='\0';
+   ptr[0]='*';
+   ptr[1]='\0';
 
    tr = time(NULL);
 
    while ((file = readdir(dir)) != NULL) {
 
-      for (found=0, i=0; i<7 && !found; i++) {
+	   if ( patimat(file->d_name, pattern) == 1 ) {
 
-         ptr[0] = wdays[i][0];
-         ptr[1] = wdays[i][1];
+		   strcpy(tmpfile+npos, file->d_name);
 
-         if ( patimat(file->d_name, pattern) == 1 ) {
-
-            strcpy(tmpfile+npos, file->d_name);
-
-            if ( stat(tmpfile, &stbuf) == 0) {
+		   if ( stat(tmpfile, &stbuf) == 0) {
 
                if (tr - stbuf.st_mtime >= 60*60*24 && stbuf.st_size == 0 ) {
 
-                  remove (tmpfile); // old empty bundle
+				   remove (tmpfile); // old empty bundle
 
                }
-            }
-            found++;
-         }
-      }
+		   }
+	   }
    }
 
    closedir(dir);
@@ -264,7 +255,7 @@ int createTempPktFileName(s_link *link)
 	char *pfileName=NULL; // name of the arcmail bundle
 	char *tmp=NULL; // temp name of the arcmail bundle
     time_t aTime = time(NULL);  /* get actual time */
-    int counter, minFreeExt;
+    int counter, minFreeExt, npos;
     char limiter=PATH_DELIM;
 	
     e_bundleFileNameStyle bundleNameStyle = eTimeStamp;
@@ -273,7 +264,7 @@ int createTempPktFileName(s_link *link)
     char *wday;
     struct tm *tp;
 
-	int i, npos;
+	int i;
 	struct stat stbuf;
 	static char *ext3 = "0123456789abcdefghijklmnopqrstuvwxyz";
 	int numExt = strlen(ext3);
@@ -339,9 +330,9 @@ int createTempPktFileName(s_link *link)
 							 link->hisAka.node, limiter);
 		}
 	}
-	
-	npos = strlen(tmp); // for cleanEmptyBundles()
-	
+
+	npos = strlen(tmp);
+
 	/* bundle file name */
 	switch ( bundleNameStyle ) {
 
@@ -365,7 +356,7 @@ int createTempPktFileName(s_link *link)
 						 link->hisAka.node, link->hisAka.point);
 		}
 
-		cleanEmptyBundles(tmp, npos);
+		cleanEmptyBundles(tmp,npos);
 
 		counter = 0;
 		minFreeExt = -1;

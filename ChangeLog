@@ -4,7 +4,7 @@ hpt 0.9.8 (development version)
 ----- cvs ci ------
 Tue Feb 20 19:07:02 NOVT 2001
 max:
-* uncomment cleanEmptyBundles()
+* adapted cleanEmptyBundles()
 
 ----- cvs ci ------
 Mon Feb 19 14:46:21 NOVT 200
