@@ -1,3 +1,7 @@
+2002-02-21 Thursday 15:38  mche
+
+	* TODO (1.185): - speedup getArea by using b-tree
+
 2002-02-20 Wednesday 18:16  mche
 
 	* src/query.c (1.21): changed datetime rutin in query
