@@ -122,7 +122,7 @@ void processConfig()
      strcat(buff, "hpt.log");
      log = openLog(buff, versionStr, "123456789");
      free(buff);
-   }
+   } else printf("You have no logFileDir in your config, there will be no log created");
    if (log==NULL) printf("Could not open logfile: %s\n", buff);
    writeLogEntry(log, '1', "Start");
 

@@ -290,7 +290,7 @@ int packMsg(HMSG SQmsg, XMSG xmsg)
    convertMsgHeader(xmsg, &msg);
 
    // prepare virtual link...
-   virtualLink = malloc(sizeof(s_link));
+   virtualLink = calloc(1, sizeof(s_link));
    virtualLink->hisAka = msg.destAddr;
    virtualLink->name = (char *) malloc(strlen(msg.toUserName)+1);
    strcpy(virtualLink->name, msg.toUserName);

@@ -540,7 +540,8 @@ int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
 			if (link->AreaFix==1) {
 				if (link->areaFixPwd!=NULL) {
 					if (stricmp(link->areaFixPwd,msg->subjectLine)==0) security=0;
-				} else security=1;
+                                        else security=1;
+                                }
 			} else security=1;
 		} else security=1;
 	}

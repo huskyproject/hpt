@@ -1062,7 +1062,7 @@ void writeTossStatsToLog(void) {
 
 void arcmail() {
         int i;
-        char logmsg[256], cmd[256], *pkt;
+        char logmsg[256], cmd[256], *pkt, *lastPathDelim;
         int cmdexit;
         FILE *flo;
 
@@ -1079,13 +1079,17 @@ void arcmail() {
                                 else {
                                         // there is no packer defined -> put pktFile into flo
                                         pkt = (char*) malloc(strlen(config->outbound)+1+4+12);
-                                        config->links[i].pktFile += strlen(config->tempOutbound);
-                                        
+                                        lastPathDelim = strrchr(config->links[i].pktFile, PATH_DELIM);
+
                                         // change to createPktFileName
-                                        strcpy(pkt, config->outbound);
-                                        
+                                        *lastPathDelim = '\0';
+                                        strcpy(pkt, config->links[i].pktFile);
+                                        *lastPathDelim = PATH_DELIM;
+
+                                        config->links[i].pktFile += strlen(config->tempOutbound);
                                         strcat(pkt, config->links[i].pktFile);
                                         config->links[i].pktFile -= strlen(config->tempOutbound);
+                                        
                                         fprintf(flo, "^%s\n", pkt);
                                         rename(config->links[i].pktFile, pkt);
                                         free(pkt);

@@ -3,6 +3,13 @@ hpt 0.26
 --------
 
 ----- cvs ci ------
+Tue Jan 19 10:03:19 CET 1999
+- areafix patch included, security problem.
+Mon Jan 18 17:34:18 CET 1999
+- pkt´s for points are now going to pnt-dir
+- fixed a bug when no logFileDir was created
+
+----- cvs ci ------
 Mon Jan 18 17:00:20 CET 1999
 - fixed all warnings
 - changed logic of findRouteForNetmail (the aka-string now has no .0 if link is node)
