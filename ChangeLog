@@ -1,3 +1,16 @@
+2002-03-13 Wednesday 17:23  mche
+
+	* src/query.c (1.28): added: canceling request feature
+
+2002-03-13 Wednesday 16:36  mche
+
+	* src/query.c (1.27): added: canceling request feature
+
+2002-03-13 Wednesday 16:32  mche
+
+	* h/query.h (1.11), src/areafix.c (1.267): added: canceling request
+	feature
+
 2002-03-11 Monday 18:47  ml
 
 	* src/toss.c (1.392): carbonText bugfix
