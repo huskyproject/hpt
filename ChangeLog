@@ -1,3 +1,40 @@
+2002-01-28 Monday 21:33  stas
+
+	* src/areafix.c (1.253): Add log messages with high levels. Insert
+	comments.
+
+2002-01-28 Monday 20:07  stas
+
+	* src/areafix.c (1.252): Add checking of subscribe in one variant.
+
+2002-01-28 Monday 19:32  mche
+
+	* src/areafix.c (1.251): Fix bug with subscribing and usubscribing
+
+2002-01-28 Monday 19:27  stas
+
+	* src/hpt.c (1.129): Fix: exit after help displaing if hpt called
+	with '-h' option.
+
+2002-01-28 Monday 18:26  stas
+
+	* misc/hptlogstat.pl (1.2): hange areatag names to upper case in
+	output.
+
+2002-01-28 Monday 10:56  mche
+
+	* src/query.c (1.15): fixed bug with append new autocreated area to
+	configfile
+
+2002-01-28 Monday 01:02  pavel.gulchouck
+
+	* src/areafix.c (1.250): parse quoted areaname, add vars_expand()
+	call
+
+2002-01-28 Monday 00:32  pavel.gulchouck
+
+	* src/query.c (1.14): quote areaname if needed when autocreate
+
 2002-01-27 Sunday 21:25  stas
 
 	* h/query.h (1.5): enum changeConfigRet modification.
