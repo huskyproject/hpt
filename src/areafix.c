@@ -732,18 +732,6 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 
     w_log(LL_SRCLINE,"areafix.c:%u:changeconfig()", __LINE__);
 
-    fseek(f_conf, 0L, SEEK_END);
-    endpos = ftell(f_conf);
-    cfglen = endpos - strend;
-    line = (char*) smalloc((size_t) cfglen+1);
-    fseek(f_conf, strend, SEEK_SET);
-    cfglen = fread(line, sizeof(char), cfglen, f_conf);
-    line[cfglen]='\0';
-    fseek(f_conf, strbeg, SEEK_SET);
-    setfsize( fileno(f_conf), strbeg );
-
-    w_log(LL_SRCLINE,"areafix.c:%u:changeconfig()", __LINE__);
-
     switch (action) {
     case 0: // forward Request To Link
         if ((area->msgbType==MSGTYPE_PASSTHROUGH) &&
@@ -784,7 +772,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
             nRet = O_ERR;
             break;
         }
-    w_log(LL_SRCLINE,"areafix.c::changeconfig():%u",__LINE__);
+        w_log(LL_SRCLINE,"areafix.c::changeconfig():%u",__LINE__);
         // get area string
         buff = makeAreaParam(area->downlinks[0]->link , areaName, NULL );
         nRet = ADD_OK;
@@ -808,6 +796,18 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         break;
     default: break;
     } // switch (action)
+    
+    w_log(LL_SRCLINE,"areafix.c:%u:changeconfig()", __LINE__);
+    
+    fseek(f_conf, 0L, SEEK_END);
+    endpos = ftell(f_conf);
+    cfglen = endpos - strend;
+    line = (char*) smalloc((size_t) cfglen+1);
+    fseek(f_conf, strend, SEEK_SET);
+    cfglen = fread(line, sizeof(char), cfglen, f_conf);
+    line[cfglen]='\0';
+    fseek(f_conf, strbeg, SEEK_SET);
+    setfsize( fileno(f_conf), strbeg );
     if(cfgline) { // line not deleted
         fprintf(f_conf, "%s%s%s", cfgline, cfgEol(), line);
     } else {
@@ -1226,67 +1226,72 @@ char *unsubscribe(s_link *link, char *cmd) {
     while (*line==' ') line++;
 	
     for (i = 0; i< config->echoAreaCount; i++) {
-	area = &(config->echoAreas[i]);
-	an = area->areaName;
-
-	rc = subscribeAreaCheck(area, line, link);
-	if (rc==4) continue;
-	if (rc==0 && mandatoryCheck(*area,link)) rc = 5;
-
-	if (isOurAka(config,link->hisAka))
-    {
-        from_us = 1;
-        rc = area->msgbType == MSGTYPE_PASSTHROUGH ? 1 : 0 ;
-    }
-
-	switch (rc) {
-	case 0:
-	    if (from_us == 0) {
+        area = &(config->echoAreas[i]);
+        an = area->areaName;
+        
+        rc = subscribeAreaCheck(area, line, link);
+        if (rc==4) continue;
+        if (rc==0 && mandatoryCheck(*area,link)) rc = 5;
+        
+        if (isOurAka(config,link->hisAka))
+        {
+            from_us = 1;
+            rc = area->msgbType == MSGTYPE_PASSTHROUGH ? 1 : 0 ;
+        }
+        
+        switch (rc) {
+        case 0:
+            if (from_us == 0) {
                 unsigned int k;
                 for (k=0; k<area->downlinkCount; k++)
                     if (addrComp(link->hisAka, area->downlinks[k]->link->hisAka)==0 &&
                         area->downlinks[k]->defLink)
                         return do_delete(link, area);
-                removelink(link, area);
-                if ((area->msgbType == MSGTYPE_PASSTHROUGH) &&
-                    (area->downlinkCount == 1) &&
-                    (area->downlinks[0]->link->hisAka.point == 0))
-                {
-                    if(config->areafixQueueFile)
+                    removelink(link, area);
+                    if ((area->msgbType == MSGTYPE_PASSTHROUGH) &&
+                        (area->downlinkCount == 1) &&
+                        (area->downlinks[0]->link->hisAka.point == 0))
                     {
-                        af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
+                        if(config->areafixQueueFile)
+                        {
+                            af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
+                            j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,7);
+                        }
+                        else
+                        {
+                            j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,1);
+                        }
+                    } else {
+                        
                         j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,7);
                     }
-                    else
-                    {
-                        j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,1);
-                    }
-                } else {
-
-                    j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,7);
-                }
-                if (j != DEL_OK) {
-                    w_log(LL_AREAFIX, "areafix: %s doesn't unlinked from %s",
-                          aka2str(link->hisAka), an);
-                } else
-                    w_log(LL_AREAFIX,"areafix: %s unlinked from %s",aka2str(link->hisAka),an);
+                    if (j != DEL_OK) {
+                        w_log(LL_AREAFIX, "areafix: %s doesn't unlinked from %s",
+                            aka2str(link->hisAka), an);
+                    } else
+                        w_log(LL_AREAFIX,"areafix: %s unlinked from %s",aka2str(link->hisAka),an);
             } else { // unsubscribing from own address
-                if ((area->downlinkCount==1) &&
+                if (area->downlinkCount==0)
+                {
+                    return do_delete(getLinkFromAddr(config,*(area->useAka)), area);
+                }
+                else if ((area->downlinkCount==1) &&
                     (area->downlinks[0]->link->hisAka.point == 0)) {
                     if(config->areafixQueueFile) {
                         af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
                     } else {
                         forwardRequestToLink(area->areaName,
-                                             area->downlinks[0]->link, NULL, 1);
+                            area->downlinks[0]->link, NULL, 1);
                     }
+                } else {
+                    j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
                 }
-                j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
             }
-	    if (j == DEL_OK)
+            if (j == DEL_OK)
                 xscatprintf(&report," %s %s  unlinked\r",an,print_ch(49-strlen(an),'.'));
             else
                 xscatprintf(&report," %s %s  error. report to sysop!\r",
-                            an, print_ch(49-strlen(an),'.'));
+                an, print_ch(49-strlen(an),'.'));
             break;
         case 1:
             if (isPatternLine(line)) {
@@ -1298,22 +1303,22 @@ char *unsubscribe(s_link *link, char *cmd) {
                 break;
             }
             xscatprintf(&report, " %s %s  not linked\r",
-                        an, print_ch(49-strlen(an), '.'));
+                an, print_ch(49-strlen(an), '.'));
             w_log(LL_AREAFIX, "areafix: area %s is not linked to %s",
-                  area->areaName, aka2str(link->hisAka));
+                area->areaName, aka2str(link->hisAka));
             break;
         case 5:
-	    xscatprintf(&report, " %s %s  unlink is not possible\r",
-			an, print_ch(49-strlen(an), '.'));
-	    w_log(LL_AREAFIX, "areafix: area %s -- unlink is not possible for %s",
-		  area->areaName, aka2str(link->hisAka));
-	    break;
-	default:
-	    break;
-	}
+            xscatprintf(&report, " %s %s  unlink is not possible\r",
+                an, print_ch(49-strlen(an), '.'));
+            w_log(LL_AREAFIX, "areafix: area %s -- unlink is not possible for %s",
+                area->areaName, aka2str(link->hisAka));
+            break;
+        default:
+            break;
+        }
     }
     if(config->areafixQueueFile)
-    report = af_Req2Idle(line, report, link->hisAka);
+        report = af_Req2Idle(line, report, link->hisAka);
     if (report == NULL) {
         if (matched) {
             xscatprintf(&report, " %s %s  no areas to unlink\r",
@@ -2071,79 +2076,81 @@ void afix(s_addr addr, char *cmd)
     w_log(LL_INFO, "Start AreaFix...");
 
     if ((area = getNetMailArea(config, name)) != NULL) {
-	startarea = area - config->netMailAreas;
-	endarea = startarea + 1;
+        startarea = area - config->netMailAreas;
+        endarea = startarea + 1;
     }
 
     if (cmd) {
-	link = getLinkFromAddr(config, addr);
-	if (link) {
-	    tmpmsg = makeMessage(&addr, link->ourAka, link->name,
-				 link->RemoteRobotName ?
-				 link->RemoteRobotName : "Areafix",
-				 link->areaFixPwd ?
-				 link->areaFixPwd : "", 1,
-                 config->areafixKillReports);
-	    tmpmsg->text = cmd;
-	    processAreaFix(tmpmsg, NULL, 1);
-	    tmpmsg->text=NULL;
-	    freeMsgBuffers(tmpmsg);
-	} else w_log(LL_ERR, "areafix: no such link in config: %s!", aka2str(addr));
+        link = getLinkFromAddr(config, addr);
+        if (link) {
+            tmpmsg = makeMessage(&addr, link->ourAka, link->name,
+                link->RemoteRobotName ?
+                link->RemoteRobotName : "Areafix",
+                link->areaFixPwd ?
+                link->areaFixPwd : "", 1,
+                config->areafixKillReports);
+            tmpmsg->text = cmd;
+            processAreaFix(tmpmsg, NULL, 1);
+            tmpmsg->text=NULL;
+            freeMsgBuffers(tmpmsg);
+        } else w_log(LL_ERR, "areafix: no such link in config: %s!", aka2str(addr));
     }
-
     else for (k = startarea; k < endarea; k++) {
-		
-	netmail = MsgOpenArea((unsigned char *) config->netMailAreas[k].fileName,
-			      MSGAREA_NORMAL,
-			      /*config -> netMailArea.fperm,
-				config -> netMailArea.uid,
-				config -> netMailArea.gid,*/
-			      (word)config -> netMailAreas[k].msgbType);
-
-	if (netmail != NULL) {
-
-	    highmsg = MsgGetHighMsg(netmail);
-	    w_log(LL_INFO,"Scanning %s",config->netMailAreas[k].areaName);
-
-	    // scan all Messages and test if they are already sent.
-	    for (i=1; i<= highmsg; i++) {
-		SQmsg = MsgOpenMsg(netmail, MOPEN_RW, i);
-
-		// msg does not exist
-		if (SQmsg == NULL) continue;
-
-		MsgReadMsg(SQmsg, &xmsg, 0, 0, NULL, 0, NULL);
-		cvtAddr(xmsg.dest, &dest);
-
-		// if not read and for us -> process AreaFix
-		striptwhite((char*)xmsg.to);
-		if (((xmsg.attr & MSGREAD) != MSGREAD) &&
-		    (isOurAka(config,dest)) && (strlen((char*)xmsg.to)>0) &&
-		    ((stricmp((char*)xmsg.to, "areafix")==0) ||
-		     (stricmp((char*)xmsg.to, "areamgr")==0) ||
-		     (stricmp((char*)xmsg.to, "hpt")==0) ||
-		     hpt_stristr(config->areafixNames,(char*)xmsg.to))) {
-		    memset(&msg,'\0',sizeof(s_message));
-		    MsgToStruct(SQmsg, xmsg, &msg);
-		    processAreaFix(&msg, NULL, 0);
-		    if (config->areafixKillRequests) {
-			MsgCloseMsg(SQmsg);
-			MsgKillMsg(netmail, i);
-		    } else {
-			xmsg.attr |= MSGREAD;
-			MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
-			MsgCloseMsg(SQmsg);
-		    }
-		    freeMsgBuffers(&msg);
-		}
-		else MsgCloseMsg(SQmsg);
-
-	    }
-
-	    MsgCloseArea(netmail);
-	} else {
-	    w_log(LL_ERR, "Could not open %s", config->netMailAreas[k].areaName);
-	}
+        
+        netmail = MsgOpenArea((unsigned char *) config->netMailAreas[k].fileName,
+            MSGAREA_NORMAL,
+            /*config -> netMailArea.fperm,
+            config -> netMailArea.uid,
+            config -> netMailArea.gid,*/
+            (word)config -> netMailAreas[k].msgbType);
+        
+        if (netmail != NULL) {
+            
+            highmsg = MsgGetHighMsg(netmail);
+            w_log(LL_INFO,"Scanning %s",config->netMailAreas[k].areaName);
+            
+            // scan all Messages and test if they are already sent.
+            for (i=1; i<= highmsg; i++) {
+                SQmsg = MsgOpenMsg(netmail, MOPEN_RW, i);
+                
+                // msg does not exist
+                if (SQmsg == NULL) continue;
+                
+                MsgReadMsg(SQmsg, &xmsg, 0, 0, NULL, 0, NULL);
+                cvtAddr(xmsg.dest, &dest);
+                
+                w_log(LL_INFO,"message %d from %s was read" ,i,xmsg.from);
+                
+                // if not read and for us -> process AreaFix
+                striptwhite((char*)xmsg.to);
+                if (((xmsg.attr & MSGREAD) != MSGREAD) &&
+                    (isOurAka(config,dest)) && (strlen((char*)xmsg.to)>0) &&
+                    ((stricmp((char*)xmsg.to, "areafix")==0) ||
+                    (stricmp((char*)xmsg.to, "areamgr")==0) ||
+                    (stricmp((char*)xmsg.to, "hpt")==0) ||
+                    hpt_stristr(config->areafixNames,(char*)xmsg.to)))
+                {
+                    memset(&msg,'\0',sizeof(s_message));
+                    MsgToStruct(SQmsg, xmsg, &msg);
+                    processAreaFix(&msg, NULL, 0);
+                    if (config->areafixKillRequests) {
+                        MsgCloseMsg(SQmsg);
+                        MsgKillMsg(netmail, i);
+                    } else {
+                        xmsg.attr |= MSGREAD;
+                        MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+                        MsgCloseMsg(SQmsg);
+                    }
+                    freeMsgBuffers(&msg);
+                }
+                else MsgCloseMsg(SQmsg);
+                
+            }
+            
+            MsgCloseArea(netmail);
+        } else {
+            w_log(LL_ERR, "Could not open %s", config->netMailAreas[k].areaName);
+        }
     }
 }
 
