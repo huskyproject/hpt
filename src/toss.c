@@ -1944,8 +1944,8 @@ int  processArc(char *fileName, e_tossSecurity sec)
       list = mk_lst(cmd);
       cmdexit = spawnv(P_WAIT, cmd, list);
       free((char **)list);
-      if (cmdexit == -1) {
-		  w_log('9', "exec failed: %s", strerror(errno));
+      if (cmdexit != 0) {
+		  w_log('9', "exec failed: %s, return code: %d", strerror(errno), cmdexit);
 		  return 3;
       }
 #else
@@ -2347,7 +2347,7 @@ void arcmail(s_link *tolink) {
 									  link->packFile,
 									  link->pktFile, "");
 					 w_log('7', "Packing for %s %s, %s > %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile), get_filename(link->packFile));
-
+    					 w_log('6', "cmd: %s", cmd);
 #ifdef __WATCOMC__
 					 list = mk_lst(cmd);
 					 cmdexit = spawnv(P_WAIT, cmd, list);
@@ -2355,8 +2355,6 @@ void arcmail(s_link *tolink) {
 #else
 					 cmdexit = system(cmd);
 #endif
-
-					 //w_log('6', "cmd: %s",cmd);
 					 if (cmdexit==0) {
 						 if (foa==0) {
 							 if (bundleNameStyle == eAddrDiff ||
