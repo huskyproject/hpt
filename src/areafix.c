@@ -352,7 +352,7 @@ char *list(s_message *msg, s_link *link) {
 			strcat(report, config->echoAreas[i].areaName);
 			if (desclen!=0)
 			{
-			       strcat(report," ");
+			       if (arealen>32) arealen=32; else strcat(report," ");
 			       strcat(report, print_ch(32-arealen, '.'));
                                strcat(report," ");
                                strcat(report,config->echoAreas[i].description);

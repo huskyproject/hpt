@@ -1,5 +1,10 @@
 hpt 0.29
 --------
+
+----- cvs ci ------
+Tue Jun 29 23:43:34 NOVST 1999
+max:
+* fixed bug in areafix.c (%list and long area names)
 	
 ----- cvs ci ------
 Tue Jun 29 10:45:07 CEST 1999
