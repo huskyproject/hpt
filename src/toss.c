@@ -42,12 +42,11 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <ctype.h>
-
-#ifdef __EMX__
 #include <sys/types.h>
-#ifndef _A_HIDDEN
+#include <sys/stat.h>
+
+#if defined(A_HIDDEN) && !defined(_A_HIDDEN)
 #define _A_HIDDEN A_HIDDEN
-#endif
 #endif
 
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
@@ -58,7 +57,6 @@ int __stdcall CharToOemA(char *, char *);
 #define CharToOem CharToOemA
 #endif
 
-#include <sys/stat.h>
 #if !(defined(__TURBOC__) || (defined (_MSC_VER) && (_MSC_VER >= 1200)))
 #include <unistd.h>
 #endif
