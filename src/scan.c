@@ -725,7 +725,7 @@ void scanExport(int type, char *str) {
     unsigned int i = 0;
     FILE *f = NULL;
     FILE *ftmp = NULL;
-    char *tmplogname = NULL, *tmppath = NULL;
+    char *tmplogname = NULL;
     char *line = NULL;
     struct stat st;
 
