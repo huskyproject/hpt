@@ -1514,14 +1514,13 @@ char *rules(s_link *link, char *cmdline)
     long  strbeg=0;
     long  strend=0;
 
-    param = getPatternFromLine(cmdline, &mode); /*  extract rules value (on or off) */
-    if (param == NULL)
+    param = safe_strdup(getPatternFromLine(cmdline, &mode)); /*  extract rules value (on or off) */
+    param = trimLine(param);
+    if (*param == '\0')
     {
         xscatprintf(&report, "Invalid request: %s\rPlease read help.\r\r", cmdline);
         return report;
     }
-
-    param = trimLine(param);
 
     if ((!strcmp(param, "0")) || (!strcasecmp(param, "off")))
         mode = 0;
@@ -1549,7 +1548,7 @@ char *rules(s_link *link, char *cmdline)
     xscatprintf(&param, "noRules %s", mode?"off":"on");
     if( InsertCfgLine(confName, param, strbeg, strend) )
     {
-        xscatprintf(&report, "Send rules mode is turned %s now\r\r", mode?"off":"on");
+        xscatprintf(&report, "Send rules mode is turned %s now\r\r", mode?"on":"off");
         link->noRules = (mode ? 0 : 1);
     }
     nfree(param);
