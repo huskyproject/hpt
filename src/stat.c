@@ -192,14 +192,20 @@ void upd_stat(char *file)
     oldf = file;
     OLD = fopen(oldf, "rb");
     if (OLD != NULL) {
-        fread(&ohdr, sizeof(ohdr), 1, OLD); 
-        if (ohdr.rev < REV_MIN || ohdr.rev > REV_MAX) {
+        int rc = fread(&ohdr, sizeof(ohdr), 1, OLD); 
+        if (rc < 1) {
+#ifdef STAT_DEBUG
+            msg2("Ignoring empty or corrupt stat base", oldf);
+#endif
+            fclose(OLD); OLD = NULL;
+        }
+        else if (ohdr.rev < REV_MIN || ohdr.rev > REV_MAX) {
             msg2("Incompatible stat base", oldf); fclose(OLD); 
-            OLD = NULL; /*do_stat = 0; return;*/ 
+            do_stat = 0; return;
         }
     }
     /* make new base: hpt.st$ */
-    if((newf = sstrdup(oldf))) newf[strlen(newf)-1] = '$';
+    if ( (newf = sstrdup(oldf)) ) newf[strlen(newf)-1] = '$';
     else { msg("Out of memory"); if (OLD != NULL) fclose(OLD); return; }
     NEW = fopen(newf, "wb");
     if (NEW == NULL) {
