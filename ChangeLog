@@ -2,12 +2,14 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
-Sat Jun  3 17:46:07 NOVST 2000
+Sat Jun  3 23:25:14 NOVST 2000
 max:
 * transit messages from our address kills now
 * changed readMsgFromPkt: no limits, safe code.
 * parse SEEN-BYs after Origin (if exist)
 * don't create err files after areafixfrompkt (if error)
+patch from Serguei Revtov:
+* atomic creation of lock&bsy files in fcommon.c
 
 ----- cvs ci ------
 Fri Jun  2 17:39:35 NOVST 2000

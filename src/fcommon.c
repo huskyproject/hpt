@@ -53,6 +53,7 @@
 #include <process.h>
 #include <dos.h>
 #endif
+#include <fcntl.h>
 
 #include <global.h>
 #include <recode.h>
@@ -95,18 +96,20 @@ void exit_hpt(char *logstr, int print) {
 }
 
 int createLockFile(char *lockfile) {
-        FILE *f;
+        int fd;
+        char pidstr[32];
 
-        if ((f=fopen(lockfile,"a")) == NULL)
+        if ( (fd=open(lockfile, O_CREAT | O_EXCL, S_IREAD | S_IWRITE)) < 0 )
            {
                    fprintf(stderr,"createLockFile: cannot create lock file\"%s\"\n",lockfile);
                    writeLogEntry(hpt_log, '9', "createLockFile: cannot create lock file \"%s\"m", lockfile);
                    return 1;
            }
 
-        fprintf(f, "%u\n", (unsigned)getpid());
+        sprintf(pidstr, "%u\n", (unsigned)getpid());
+        write (fd, pidstr, strlen(pidstr));
 
-        fclose(f);
+        close(fd);
         return 0;
 }
 
@@ -455,7 +458,7 @@ int createDirectoryTree(const char *pathName) {
 
 int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 {
-   FILE *f; // bsy file for current link
+   int fd; // bsy file for current link
    char name[13], bsyname[13], zoneSuffix[6], pntDir[14];
    char	*sepDir, sepname[13];
 
@@ -525,7 +528,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 
    // create bsyFile
    strcpy(bsyname, name);
-   bsyname[9]='b';bsyname[10]='s';bsyname[11]='y';
+   strcpy(&bsyname[9], "bsy");
    strcat(link->bsyFile, bsyname);
 
    // maybe we have session with this link?
@@ -539,16 +542,22 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 
    } else {
 
-           if ((f=fopen(link->bsyFile,"a")) == NULL)
-                   {
-                           fprintf(stderr,"cannot create *.bsy file for %s\n",link->name);
-                           if (config->lockfile != NULL) {
-                                   remove(link->bsyFile);
-                                   nfree(link->bsyFile);
-                           }
-                           exit_hpt("cannot create *.bsy file!",0);
-                   }
-           fclose(f);
+           if ( (fd=open(link->bsyFile, O_CREAT | O_EXCL, S_IREAD | S_IWRITE)) < 0 ) {
+              if (!fexist(link->bsyFile)) {
+
+                 fprintf(stderr,"cannot create *.bsy file for %s\n",link->name);
+                 exit_hpt("cannot create *.bsy file!",0);
+
+              } else {
+
+                 writeLogEntry(hpt_log, '7', "link %s is busy (2nd check).", link->name);
+                 nfree (link->floFile);
+                 nfree (link->bsyFile);
+
+                 return 1;
+              }
+
+           } else close(fd);
    }
 
    return 0;
