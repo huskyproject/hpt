@@ -10,8 +10,10 @@ typedef struct query_areas
     char *name;
     char  type[5];
     char *report;
-   
-    time_t theTime;
+    
+    time_t bTime;
+    time_t eTime;
+    
     int nFlag;
     ps_addr downlinks;
     size_t linksCount;        

@@ -7,6 +7,7 @@
 #include <toss.h>
 #include <areafix.h>
 #include <query.h>
+//#include <hpt.h>
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,6 +23,7 @@
 #define nbufSize 2*1024
 
 static  time_t  when;
+static  time_t  tnow;
 const   long    secInDay = 3600*24;
 const char czFreqArea[] = "freq";
 const char czIdleArea[] = "idle";
@@ -29,6 +31,8 @@ const char czKillArea[] = "kill";
 const int  cnDaysToKeepFreq = 5;
 
 extern s_query_areas *queryAreasHead;
+extern s_message **msgToSysop;
+extern char       *versionStr;
 extern void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr);
 
 void del_tok(char **ac, char *tok) {
@@ -339,26 +343,87 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
 void af_UpdateQuery()
 {
     s_query_areas *tmpNode  = NULL;
-    
+    const char rmask[]="%-37.37s %-4.4s %11.11s %-16.16s %-7.7s\r";
+    char type[5]="";
+    char state[8]="";
+    char link1[17]="";
+    char link2[17]="";
+    char* report = NULL;
+    time_t now;
+    int netmail=0;
     if( !queryAreasHead ) af_OpenQuery();
     
+    time(&now);
     tmpNode = queryAreasHead;
     while(tmpNode->next)
     {
         tmpNode = tmpNode->next;
+        strcpy(link1,aka2str(tmpNode->downlinks[0]));
 
-        if( stricmp(tmpNode->type,czKillArea) == 0 )
-        {
-            queryAreasHead->nFlag = 1; // query was changed
-            tmpNode->type[0] = '\0';  // mark as deleted
-            continue;
-        }
         if( stricmp(tmpNode->type,czFreqArea) == 0 )
         {
+            strcpy(link2,aka2str(tmpNode->downlinks[1]));
+            if( strcmp(tmpNode->type,czFreqArea) == 0 )
+            {
+                queryAreasHead->nFlag = 1;
+                strUpper(tmpNode->type);
+                xscatprintf(&report,rmask, tmpNode->name, tmpNode->type,
+                    link1,link2,
+                    "request");
+                continue;
+            }
+
+            strcpy(type,tmpNode->type);
+            if(tmpNode->eTime < now ) 
+            {
+                queryAreasHead->nFlag = 1; // query was changed
+                strcpy(tmpNode->type, czKillArea);
+                strcpy(state,"killed");
+            }
+            else
+            {
+                int days = (tmpNode->eTime - now)/secInDay;
+                sprintf(state,"%2d days",days);
+            }
+            xscatprintf(&report,rmask, tmpNode->name, type,
+                link1,link2,
+                state);
+        }
+        if( stricmp(tmpNode->type,czKillArea) == 0 )
+        {
+            if( strcmp(tmpNode->type,czKillArea) == 0 )
+            {
+                queryAreasHead->nFlag = 1;
+                strUpper(tmpNode->type);
+                xscatprintf(&report,rmask, tmpNode->name, tmpNode->type,
+                    link1,"",
+                    "timeout");
+                continue;
+            }
         }
     }
+    if(!report)
+        return;
+    if (config->ReportTo) {
+	if (stricmp(config->ReportTo,"netmail")==0) netmail=1;
+	else if (getNetMailArea(config, config->ReportTo) != NULL) netmail=1;
+    } else netmail=1;
+
+    msgToSysop[0] = makeMessage(&(config->addr[0]),&(config->addr[0]), 
+        versionStr, netmail ? config->sysop : "All", "Created new areas", netmail);
+    msgToSysop[0]->text = createKludges(netmail ? NULL : config->ReportTo, 
+        &(config->addr[0]), &(config->addr[0]));
+    
+    msgToSysop[0]->recode |= (REC_HDR|REC_TXT);
+
+    xstrcat( &(msgToSysop[0]->text), report );
+    
+    writeMsgToSysop();
+    freeMsgBuffers(msgToSysop[0]);
+    nfree(msgToSysop[0]);
 }
 */
+
 int af_OpenQuery()
 {
     FILE *queryFile;
@@ -373,6 +438,7 @@ int af_OpenQuery()
         return 0;
 
     time( &ltime );
+    tnow = ltime;
     when = ltime + cnDaysToKeepFreq*secInDay;
 
     queryAreasHead = af_AddAreaListNode("","");
@@ -405,7 +471,24 @@ int af_OpenQuery()
             } else {
                 tr.tm_year -= 1900;
                 tr.tm_mon--;
-                areaNode->theTime = mktime(&tr);
+                areaNode->bTime = mktime(&tr);
+            }
+            token = strtok( NULL, seps );
+            memset(&tr, '\0', sizeof(tr));
+            if(sscanf(token, "%d-%d-%d@%d:%d",
+                          &tr.tm_year,
+                          &tr.tm_mon,
+                          &tr.tm_mday,
+                          &tr.tm_hour,
+                          &tr.tm_min
+                  ) != 5)
+            {
+                af_DelAreaListNode(areaNode);
+                continue;
+            } else {
+                tr.tm_year -= 1900;
+                tr.tm_mon--;
+                areaNode->eTime = mktime(&tr);
             }
 
             token = strtok( NULL, seps );            
@@ -433,17 +516,21 @@ int af_CloseQuery()
     char *p;
     int nSpace = 0;
     size_t i = 0;
-    struct  tm tr;
+    struct  tm t1,t2;
     int writeChanges = 0;
     char *tmpFileName=NULL;
     
     FILE *queryFile=NULL, *resQF;
     s_query_areas *delNode = NULL;
     s_query_areas *tmpNode  = NULL;
+
     
     if( !queryAreasHead ) {  // list does not exist
         return 0;
     }
+
+    af_UpdateQuery();
+
     if(queryAreasHead->nFlag == 1) {
         writeChanges = 1;
     }
@@ -453,6 +540,7 @@ int af_CloseQuery()
         w_log('9',"areafix: cannot create tmp file");
         writeChanges = 0;
     }
+
     tmpNode = queryAreasHead->next;
     nSpace = queryAreasHead->linksCount+1;
     p = buf+nSpace;
@@ -460,13 +548,20 @@ int af_CloseQuery()
         if(writeChanges && tmpNode->type[0] != '\0')    {
             memset(buf, ' ' ,nSpace); 
             memcpy(buf, tmpNode->name, strlen(tmpNode->name));
-            tr = *localtime( &tmpNode->theTime );
-            sprintf( p , "%s %d-%02d-%02d@%02d:%02d" , tmpNode->type,
-                tr.tm_year + 1900,
-                tr.tm_mon  + 1,
-                tr.tm_mday,
-                tr.tm_hour,
-                tr.tm_min   );
+            t1 = *localtime( &tmpNode->bTime );
+            t2 = *localtime( &tmpNode->eTime );
+            sprintf( p , "%s %d-%02d-%02d@%02d:%02d\t%d-%02d-%02d@%02d:%02d" , 
+                tmpNode->type,
+                t1.tm_year + 1900,
+                t1.tm_mon  + 1,
+                t1.tm_mday,
+                t1.tm_hour,
+                t1.tm_min,   
+                t2.tm_year + 1900,
+                t2.tm_mon  + 1,
+                t2.tm_mday,
+                t2.tm_hour,
+                t2.tm_min   );
             p = p + strlen(p);
             for(i = 0; i < tmpNode->linksCount; i++) {
                 strcat(p," ");
@@ -563,6 +658,7 @@ void af_AddLink(s_query_areas* node, s_addr *link)
     node->downlinks = 
         safe_realloc( node->downlinks, sizeof(s_addr)*node->linksCount );
     memcpy( &(node->downlinks[node->linksCount-1]) ,link, sizeof(s_addr) );
-    node->theTime = when;
+    node->bTime = tnow;
+    node->eTime = when;
     queryAreasHead->nFlag = 1; // query was changed
 }
