@@ -1,3 +1,39 @@
+2002-11-21 Thursday 16:27  pgul
+
+	* h/toss.h (1.52), src/toss.c (1.476), src/areafix.c (1.367):
+	isArcMail() function, compatible with amiga-style outbound
+
+2002-11-21 Thursday 14:24  stas_degteff
+
+	* src/: pktread.c (1.92), toss.c (1.475): Fix duplicating origin
+	for DOS32
+
+2002-11-21 Thursday 13:07  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.53): Update developers list; remove
+	question about htick
+
+2002-11-21 Thursday 12:42  stas_degteff
+
+	* config/packer (1.5): Fix Unpack pkzip25 line
+
+2002-11-21 Thursday 11:17  pgul
+
+	* src/post.c (1.101): Fix permission field in uue header
+
+2002-11-21 Thursday 07:45  stas_degteff
+
+	* src/perl.c (1.43): Fix constants redefinition (prevent comiper
+	warnings)
+
+2002-11-21 Thursday 07:31  stas_degteff
+
+	* config/packer (1.4): Add unpacker exapmles:  pkzipc, pkzip25
+
+2002-11-21 Thursday 06:23  stas_degteff
+
+	* config/packer (1.3): Add unpacker example for rar-sfx/dos
+
 2002-11-20 Wednesday 15:38  stas_degteff
 
 	* src/areafix.c (1.366): Three variants for %avail, token
