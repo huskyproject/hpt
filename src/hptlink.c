@@ -759,7 +759,7 @@ int main(int argc, char **argv) {
 	    }
 	}
 
-	w_log(LL_WARN, "Couldn't find area \"%s\"", argareas[j]);
+	if(!found) w_log(LL_WARN, "Couldn't find area \"%s\"", argareas[j]);
      }
 
    } else {
@@ -816,7 +816,7 @@ int main(int argc, char **argv) {
 		   }
 	       }
 
-	       w_log(LL_ERR, "Couldn't find area \"%s\"", line);
+	       if(!found) w_log(LL_ERR, "Couldn't find area \"%s\"", line);
 	       nfree(line);
 	    }
 
