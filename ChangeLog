@@ -1,3 +1,7 @@
+2003-07-28 Monday 06:39  mche
+
+	* src/query.c (1.103): undo buggy patch
+
 2003-07-27 Sunday 18:28  d_sergienko
 
 	* src/: areafix.c (1.419), carbon.c (1.30), query.c (1.102): fix
