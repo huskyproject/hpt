@@ -38,6 +38,8 @@ struct statToss {
    int saved, passthrough, exported;
    int echoMail, netMail;
    int dupes, bad;
+   int inBytes;
+   time_t startTossing;
 };
 typedef struct statToss s_statToss;
 

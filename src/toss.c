@@ -33,6 +33,8 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <ctype.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include <fidoconfig.h>
 #include <common.h>
@@ -728,9 +730,12 @@ int processPkt(char *fileName, e_tossSecurity sec)
    s_link      *link;
    char        rc = 0;
    char        buff[256];
+   struct stat statBuff;
    char        processIt = 0; // processIt = 1, process all mails
                               // processIt = 2, process only Netmail
                               // processIt = 0, do not process pkt
+
+   if (stat(fileName, &statBuff) == 0) statToss.inBytes += statBuff.st_size;
 
    pkt = fopen(fileName, "rb");
    if (pkt == NULL) return 2;
@@ -906,6 +911,14 @@ void processDir(char *directory, e_tossSecurity sec)
 
 void writeTossStatsToLog() {
    char buff[100];
+   float inMailsec, outMailsec, inKBsec;
+   time_t diff = time(NULL) - statToss.startTossing;
+
+   if (diff == 0) diff = 1;
+
+   inMailsec = statToss.msgs / diff;
+   outMailsec = statToss.exported / diff;
+   inKBsec = statToss.inBytes / diff / 1024;
 
    writeLogEntry(log, '4', "Statistics:");
    sprintf(buff, "   pkt's: % 3d   msgs: % 5d   echoMail: % 5d   netmail: % 5d", statToss.pkts, statToss.msgs, statToss.echoMail, statToss.netMail);
@@ -913,6 +926,10 @@ void writeTossStatsToLog() {
    sprintf(buff, "   saved: % 5d   passthrough: % 5d   exported: % 5d", statToss.saved, statToss.passthrough, statToss.exported);
    writeLogEntry(log, '4', buff);
    sprintf(buff, "   dupes: % 5d   bad: % 5d", statToss.dupes, statToss.bad);
+   writeLogEntry(log, '4', buff);
+   sprintf(buff, "   Input: % 8.2f mails/sec   Output: % 8.2f mails/sec", inMailsec, outMailsec);
+   writeLogEntry(log, '4', buff);
+   sprintf(buff, "          % 8.2f kb/sec", inKBsec);
    writeLogEntry(log, '4', buff);
 }
 
@@ -1001,6 +1018,7 @@ void toss()
 
    // set stats to 0
    memset(&statToss, sizeof(s_statToss), 0);
+   statToss.startTossing = time(NULL);
    writeLogEntry(log, '4', "Start tossing...");
    processDir(config->localInbound, secLocalInbound);
    processDir(config->protInbound, secProtInbound);
