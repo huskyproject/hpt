@@ -1,3 +1,7 @@
+2002-06-03 Monday 07:57  mche
+
+	* src/areafix.c (1.308): fix rules sending
+
 2002-05-31 Friday 13:02  mche
 
 	* src/areafix.c (1.307): areafix warnig changed
