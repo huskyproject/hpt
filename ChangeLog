@@ -6,6 +6,7 @@ Sat Apr 15 10:47:38 NOVST 2000
 max:
 * set Loc Scn Snt flags to posted message with -x parameter
 * MSGLOCAL updates (add forceattr to processEMMsg & processNMMsg)
+* disableTID
 
 ----- cvs ci ------
 Wed Apr 12 13:57:24 MSD 2000

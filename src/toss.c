@@ -1166,12 +1166,27 @@ s_arealink *getAreaLink(s_area *area, s_addr aka)
 	return NULL;
 }
 
+int checkAreaLink(s_area *area, s_addr aka)
+{
+	s_arealink *arealink;
+	int writeAccess = 0;
+	
+	arealink = getAreaLink(area, aka);
+	if (arealink) {
+		if (arealink->import) writeAccess = 0; else writeAccess = 3;
+	} else {
+		if (addrComp(aka, *area->useAka)==0) writeAccess = 0;
+		else writeAccess = 4;
+	}
+	
+	return writeAccess;
+}
+
 int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceattr)
 {
    char   *area, *textBuff;
    s_area *echo;
    s_link *link;
-   s_arealink *arealink;
    int    writeAccess = 0, rc = 0, ccrc = 0;
 
    textBuff = (char *) malloc(strlen(msg->text)+1);
@@ -1185,17 +1200,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
    statToss.echoMail++;
 
    if (echo == &(config->badArea)) writeAccess = 0;
-// else writeAccess = writeCheck(echo, &pktOrigAddr);
-// this is faster than writeCheck imho
-   else {   
-	   arealink = getAreaLink(echo, pktOrigAddr);
-	   if (arealink) {
-		   if (arealink->import) writeAccess = 0; else writeAccess = 3;
-	   } else {
-		   if (addrComp(pktOrigAddr,*echo->useAka)==0) writeAccess = 0;
-		   else writeAccess = 4;
-	   }
-   }
+   else writeAccess = checkAreaLink(echo, pktOrigAddr);
    if (writeAccess!=0) echo = &(config->badArea);
 		
    if (echo != &(config->badArea)) {
@@ -1243,7 +1248,8 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
         if ((link != NULL) && (link->autoAreaCreate != 0) && (writeAccess == 0)) {
            autoCreate(area, pktOrigAddr, NULL);
            echo = getArea(config, area);
-	   writeAccess = e_writeCheck(config, echo, &pktOrigAddr);
+		   //writeAccess = e_writeCheck(config, echo, &pktOrigAddr);
+		   writeAccess = checkAreaLink(echo, pktOrigAddr);
 	   if (writeAccess) {
 	       rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
 	   } else {
