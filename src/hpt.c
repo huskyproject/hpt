@@ -249,7 +249,7 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef __linux__
-   sprintf(versionStr, "hpt %u.%u.%u/LNX", VER_MAJOR, VER_MINOR, VER_PATCH);
+   sprintf(versionStr, "hpt %u.%u.%u/lnx", VER_MAJOR, VER_MINOR, VER_PATCH);
 #elif __freebsd__
    sprintf(versionStr, "hpt %u.%u.%u/BSD", VER_MAJOR, VER_MINOR, VER_PATCH);
 #elif __OS2__

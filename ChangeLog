@@ -1,6 +1,15 @@
 hpt 0.9.6
 ---------
 
+
+----- cvs ci ------
+Tue Feb  1 16:23:04 NOVT 2000
+max:
+* fixed bug in %rescan (report by Lev Serebryakov)
+* some %rescan changes (code cleanup)
+* autocreate reports by default in netmail
+* now possible reports to echo & local areas, secondary netmail areas
+
 ----- cvs ci ------
 Mon Jan 31 01:32:43 NOVT 2000
 max:

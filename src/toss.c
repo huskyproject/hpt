@@ -1079,9 +1079,12 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 void makeMsgToSysop(char *areaName, s_addr fromAddr)
 {
     s_area *echo;
-    int i;
+    int i, netmail=0;
     
-    if (!config->ReportTo) return;
+    if (config->ReportTo) {
+	if (stricmp(config->ReportTo,"netmail")==0) netmail=1;
+	else if (getNetMailArea(config, config->ReportTo) != NULL) netmail=1;
+    } else netmail=1;
 
     echo = getArea(config, areaName);
     
@@ -1090,18 +1093,16 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr)
     for (i = 0; i < config->addrCount; i++) {
 	if (echo->useAka == &(config->addr[i])) {
 	    if (msgToSysop[i] == NULL) {
-		if (stricmp(config->ReportTo, "netmail")==0) {
-		    msgToSysop[i] = makeMessage(echo->useAka, echo->useAka, versionStr, config->sysop, "Created new areas", 1);
-		    msgToSysop[i]->text = createKludges(NULL, echo->useAka, echo->useAka);
-		} else {
-		    msgToSysop[i] = makeMessage(echo->useAka, echo->useAka, versionStr, "All", "Created new areas", 0);
-		    msgToSysop[i]->text = createKludges(config->ReportTo, echo->useAka, echo->useAka);
-		} /* endif */
+
+		msgToSysop[i] = makeMessage(echo->useAka, echo->useAka, versionStr, netmail ? config->sysop : "All", "Created new areas", netmail);
+		msgToSysop[i]->text = createKludges(netmail ? NULL : config->ReportTo, echo->useAka, echo->useAka);
 
 		xstrscat(&(msgToSysop[i]->text), "Action   Name", 
 			print_ch(49, ' '), "By\r", NULL);
 		// Shitty static variables ....
 		xstrscat(&(msgToSysop[i]->text), print_ch(79, '-'), "\r", NULL);
+		
+//		writeLogEntry(hpt_log,'8',"Created msg to sysop");
 	    }
 	    xscatprintf(&(msgToSysop[i]->text), "Created  %-53s%s\r", 
 	    	 echo->areaName, aka2str(fromAddr));
@@ -1118,8 +1119,6 @@ void writeMsgToSysop()
     int		i, ccrc = 0;
     s_seenBy	*seenBys;
     
-    if (!config->ReportTo) return;
-    
     for (i = 0; i < config->addrCount; i++) {
 	if (msgToSysop[i]) {
 	    xscatprintf(&(msgToSysop[i]->text), " \r--- %s\r * Origin: %s (%s)\r", 
@@ -1127,7 +1126,8 @@ void writeMsgToSysop()
 	    msgToSysop[i]->textLength = strlen(msgToSysop[i]->text);
 	    
 	    if (msgToSysop[i]->netMail == 1) 
-		    processNMMsg(msgToSysop[i], NULL, NULL, 1);
+		    processNMMsg(msgToSysop[i], NULL, config->ReportTo ?
+			getNetMailArea(config, config->ReportTo) : NULL, 1);
 	    else {
 		// get echoarea  for this msg    
 		ptr = strchr(msgToSysop[i]->text, '\r');

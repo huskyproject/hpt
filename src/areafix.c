@@ -1061,7 +1061,7 @@ void repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
    freeMsgBuffers(&msg);
 }
 
-void rescanEMArea(s_area *echo, s_link *link, long rescanCount)
+int rescanEMArea(s_area *echo, s_link *link, long rescanCount)
 {
    HAREA area;
    HMSG  hmsg;
@@ -1076,7 +1076,9 @@ void rescanEMArea(s_area *echo, s_link *link, long rescanCount)
      i = 0;
       highestMsg    = MsgGetHighMsg(area);
 
-      if (rescanCount == -1) rescanCount = highestMsg; // if rescanCount == -1 all mails should be rescanned
+      // if rescanCount == -1 all mails should be rescanned
+      if ((rescanCount == -1) || (rescanCount > highestMsg))
+        rescanCount = highestMsg;
 
       while (i <= highestMsg) {
 	if (i > highestMsg - rescanCount) { // honour rescanCount paramater
@@ -1093,9 +1095,12 @@ void rescanEMArea(s_area *echo, s_link *link, long rescanCount)
       MsgSetHighWater(area, i);
 
       MsgCloseArea(area);
-   } else 
-      writeLogEntry(hpt_log, '9', "Could not open %s", echo->fileName);
-   /* endif */
+      
+      return rescanCount;
+   }
+   
+   writeLogEntry(hpt_log, '9', "Could not open %s", echo->fileName);
+   return 0;
 }
 
 char *errorRQ(char *line)
@@ -1112,7 +1117,7 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
     int i, c, rc = 0;
     long rescanCount = -1;
     char *report = NULL, *line, *countstr, *an, *end;
-    s_area *area, **areas=NULL;
+    s_area *area;
     
     line = cmd+strlen("%rescan");
     
@@ -1150,19 +1155,13 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 				writeLogEntry(hpt_log, '8', "areafix: %s area no rescan possible to %s",
 						area->areaName, aka2str(link->hisAka));
 			} else {
-			  if (rescanCount == -1) {
-				xscatprintf(&report," %s %s  rescanned\r", an, print_ch(49-strlen(an), '.'));
-				writeLogEntry(hpt_log, '8', "areafix: %s rescan area to %s",
-						area->areaName, aka2str(link->hisAka));
-			  }
-			  else {
-			    xscatprintf(&report," %s %s  rescanned %lu mails\r", an, print_ch(49-strlen(an), '.'), rescanCount);
-			    writeLogEntry(hpt_log, '8', "areafix: %s rescan %lu mails in area to %s",
-					  area->areaName, rescanCount, aka2str(link->hisAka));
-			  }
-			        c++;
-				areas = (s_area**)realloc(areas, c*sizeof(s_area*));
-				areas[c-1] = area;
+
+			  rescanCount = rescanEMArea(area, link, rescanCount);
+			  xscatprintf(&report," %s %s  rescanned %lu mails\r",
+			      an, print_ch(49-strlen(an), '.'), rescanCount);
+			  writeLogEntry(hpt_log,'8',"areafix: %s rescanned %lu mails to %s",
+			      area->areaName, rescanCount, aka2str(link->hisAka));
+
 			}
 			break;
 		case 1: if (strstr(line, "*")) continue;
@@ -1179,11 +1178,6 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 	xscatprintf(&report," %s %s  not linked for rescan\r", line, print_ch(49-strlen(line), '.'));
 	writeLogEntry(hpt_log, '8', "areafix: %s area not linked for rescan", line);
     }
-    if (c) {
-	for (i = 0; i < c; i++) rescanEMArea(areas[i], link, rescanCount);
-	arcmail();
-    }
-    free(areas);
     return report;
 }
 

@@ -535,7 +535,7 @@ int scanByName(char *name) {
        return 1;
     } else {
        // maybe it's echo area    
-       area = getArea(config, name);
+       area = getEchoArea(config, name);
        if (area != &(config->badArea)) {
           if (area && area->msgbType != MSGTYPE_PASSTHROUGH && 
               area -> downlinkCount > 0 && !area->scn) { 
