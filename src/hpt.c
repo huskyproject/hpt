@@ -51,39 +51,39 @@
 #include <signal.h>
 #include <fcntl.h>
 
-#include <smapi/msgapi.h>
-#include <smapi/progprot.h>
+#include "smapi/progprot.h"
+#include "smapi/msgapi.h"
+#include "smapi/patmat.h"
 
-#include <version.h>
-#include <pkt.h>
+#include "fidoconf/fidoconf.h"
+#include "fidoconf/xstr.h"
+#include "fidoconf/common.h"
+#include "fidoconf/dirlayer.h"
+#include "fidoconf/afixcmd.h"
 
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/dirlayer.h>
-#include <fidoconf/xstr.h>
-#include <fidoconf/common.h>
-#include <fidoconf/afixcmd.h>
+#include "fidoconf/log.h"
+#include "fidoconf/recode.h"
 
-#include <fidoconf/log.h>
 
-#include <global.h>
-#include <hpt.h>
-#include <toss.h>
-#include <scan.h>
-#include <fcommon.h>
-#include <smapi/patmat.h>
-#include <post.h>
-#include <link.h>
-#include <areafix.h>
-#include <fidoconf/recode.h>
-#include <cvsdate.h>
-#include <query.h>
+#include "version.h"
+#include "pkt.h"
+#include "global.h"
+#include "hpt.h"
+#include "toss.h"
+#include "scan.h"
+#include "fcommon.h"
+#include "post.h"
+#include "link.h"
+#include "areafix.h"
+#include "cvsdate.h"
+#include "query.h"
 
 #ifdef DO_PERL
-#include <hptperl.h>
+#include "hptperl.h"
 #endif
 #ifdef _MSC_VER
 #ifdef DO_PERL
-#include <delayimp.h>
+#include "delayimp.h"
 /*  This is the failure hook, dliNotify = {dliFailLoadLib|dliFailGetProc} */
 #if defined(__cplusplus)
 extern "C"
