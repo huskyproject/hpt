@@ -3220,7 +3220,7 @@ the echomail is copied to the area specified by the @code{CarbonCopy}
 keyword or moved to the area specified by the @code{CarbonMove} keyword.
 The names must be an exact match.
 
-You can use traling "" in <string>.
+You can use trailing "" in <string>.
 
 This statement can be repeated.
 
@@ -3345,7 +3345,7 @@ carbon@{Addr|To|From|Kludge|Subj|Text@} statements.
 @code{carbonOut}
 @end table
 
-This statament makes possible carbon your outgoing mail (scanned &
+This statement makes possible carbon your outgoing mail (scanned &
 packed). Don't forget to set carbon rules.
 
 This statement cannot be repeated.
@@ -3468,7 +3468,7 @@ and new set of expressions starts.
 
 If an echomail is tossed which has a subject line matched <pattern>,
 this echomail is copied to the area specified by the @code{CarbonCopy}
-keyword.
+keyword or moved to the area specified by the @code{CarbonMove} keyword.
 
 You can use traling "" in <pattern>.
 
@@ -3488,7 +3488,8 @@ This statement can be repeated.
 
 If an echomail is tossed which has a kludge line which includes the
 substring matches <pattern>, the echomail is copied to the area
-specified by the @code{CarbonCopy} keyword.
+specified by the @code{CarbonCopy} keyword or moved to the area
+specified by the @code{CarbonMove} keyword.
 
 You can use traling "" in <pattern>.
 
@@ -3508,7 +3509,8 @@ This statement can be repeated.
 
 If an echomail is tossed whose to-field matched <pattern>, the
 echomail is copied to the area specified by the @code{CarbonCopy}
-keyword. The names must be an exact match.
+keyword or moved to the area specified by the @code{CarbonMove}
+keyword.. The names must be an exact match.
 
 You can use traling "" in <string>.
 
