@@ -1,3 +1,8 @@
+----- cvs ci ------
+Tue Sep 28 17:31:08 NOVST 1999
+max:
+* fixed small bug in forwardMsgToLinks
+
 hpt 0.29
 --------
 (released on Thu Sep 23 23:05:24 CEST 1999)

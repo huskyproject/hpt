@@ -564,7 +564,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       if (newLinks[i] == NULL) break;               // no link at this index -> break
       if (newLinks[i]->hisAka.point != 0) continue; // don't include points in SEEN-BYS
 
-      seenBys = (s_seenBy*) realloc(seenBys, sizeof(s_seenBy) * (seenByCount)+1);
+      seenBys = (s_seenBy*) realloc(seenBys, sizeof(s_seenBy) * (seenByCount+1));
       seenBys[seenByCount].net = newLinks[i]->hisAka.net;
       seenBys[seenByCount].node = newLinks[i]->hisAka.node;
       seenByCount++;
