@@ -1,6 +1,17 @@
-hpt 0.26
+hpt 0.27
 --------
 
+
+hpt 0.26
+(released on Mon Mar  1 19:47:36 CET 1999)
+--------
+
+----- cvs ci ------
+Mon Mar  1 19:45:25 CET 1999
+- included work when i staid in Austria.
+- djgpp support
+
+----- cvs ci ------
 Thu Feb 25 17:52:04 MET 1999
   Gabriel Plutzar:
 * Changed Makefile so that fidoconfig Header Files are included
@@ -8,6 +19,7 @@ Thu Feb 25 17:52:04 MET 1999
   warning fixed
 * Unused variable warning in fcommon.c fixed
 	
+----- cvs ci ------
 Sat Feb 20 20:48:03 MET 1999
   Tobias Ernst:
 + Added support for QQQ files. If found in the tempOutbound, they will be
@@ -23,6 +35,7 @@ Fri Feb 19 16:47:14 MET 1999
   does not originate from a link of ours (i.E. only netmail from this 
   packet will be processed, and echomail will "vanish").
 	
+----- cvs ci ------
 Wed Feb 17 20:07:00 CET 1999                                                
   Gabriel Plutzar:                                                          
 + added implementation of the new remap statment. It takes the parameters 
@@ -30,6 +43,7 @@ Wed Feb 17 20:07:00 CET 1999
   If a Netmail meets the ToName and OldAddr Criteria, it is sent to
   NewAddr.
 
+----- cvs ci ------
 Mon Feb 15 18:21:51 CET 1999
 - echomails now have the flags minus the unnecessary flags like CRASH
 - added autoCreateFile

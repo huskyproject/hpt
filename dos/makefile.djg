@@ -1,0 +1,62 @@
+DEBUG   = 1
+CC      = gcc 
+INSTDIR = /usr/local/bin
+MANDIR  = /usr/local/man
+
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o cline.o
+SRC_DIR = ../src/
+
+ifeq ($(DEBUG), 1)
+  CFLAGS  = -I../h -I../../smapi -I../../fidoconfig -Wall -ggdb -O3
+  LFLAGS  = -L../../smapi -L../../fidoconfig 
+# LFLAGS  =
+else
+  CFLAGS  = -I../h -I../../smapi -Wall -O3 -s
+  LFLAGS  = -L../../smapi -L../../fidoconfig
+#  LFLAGS  =  
+endif
+
+all: cline.exe \
+     $(OBJS) \
+     pktinfo.exe \
+     tlog.exe \
+     tpkt.exe \
+     hpt.exe \
+     purgeDupes.exe 
+
+%.o: $(SRC_DIR)%.c
+	$(CC) -c $(CFLAGS) $(SRC_DIR)$*.c
+
+pktinfo.exe: pktinfo.o $(OBJS)
+	$(CC) $(LFLAGS) -o pktinfo.exe log.o recode.o pktinfo.o pktread.o fcommon.o global.o -lsmapidjg -lfidoconfig
+
+tlog.exe: tlog.o log.o
+	$(CC) $(LFLAGS) -o tlog.exe tlog.o log.o
+
+tpkt.exe: tpkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o 
+	$(CC) $(LFLAGS) -o tpkt.exe log.o tpkt.o fcommon.o pktread.o recode.o pktwrite.o global.o -lsmapidjg  -lfidoconfig
+
+hpt.exe: $(OBJS)
+	$(CC) $(LFLAGS) -o hpt.exe $(OBJS) -lsmapidjg -lfidoconfig
+
+purgeDupes.exe: purgeDupes.o global.o dupe.o tree.o pktread.o log.o recode.o
+	$(CC) $(LFLAGS) -o purgeDupes.exe purgeDupes.o tree.o pktread.o recode.o dupe.o global.o log.o -lfidoconfig -lsmapidjg
+
+cline.exe: $(SRC_DIR)cline.c
+	$(CC) $(CFLAGS) $(LFLAGS) -o cline.exe $(SRC_DIR)cline.c -DTEST
+
+clean:
+	-del *.o
+	-del *~
+	-del core
+
+distclean: clean
+	-del *.exe
+	-del *.1.gz
+	-del *.log
+
+install:
+	install -s hpt pktinfo purgeDupes $(INSTDIR)
+	gzip -c hpt.1 > hpt.1.gz
+	gzip -c purgeDupes.1 > purgeDupes.1.gz
+	install hpt.1.gz purgeDupes.1.gz $(MANDIR)/man1

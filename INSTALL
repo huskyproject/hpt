@@ -1,7 +1,8 @@
 Unix:
 -----
 
-0. the smapi and the fidoconfig package is required for the hpt package
+0. the smapi and the fidoconfig package is required for the hpt package. They
+must be already compiled and installed.
 
 1. Put the hpt package in the directory where the other packages of fido
    linux reside:

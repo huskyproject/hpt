@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef MSDOS
+#if !defined(MSDOS) || defined(__DJGPP__)
 #include <fidoconfig.h>
 #else
 #include <fidoconf.h>

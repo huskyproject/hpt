@@ -42,7 +42,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef MSDOS
+#if !defined(MSDOS) || defined(__DJGPP__)
 #include <fidoconfig.h>
 #else
 #include <fidoconf.h>
@@ -127,14 +127,14 @@ int linkArea(s_area *area, int netMail)
          ctl   = (byte *) malloc(ctlen);
          curr  = calloc(1, sizeof(s_msginfo));
 
-  if (ctl == NULL || curr == NULL) {
-            sprintf(buff, "out of memory while linking on msg %ld", i);
-            writeLogEntry(log, '9', buff);
-            // try to free as much as possible
-            // FIXME : remove blocks themselves
-            tree_mung(&avlTree, NULL);
-            MsgCloseMsg(hmsg);
-            MsgCloseArea(harea);
+	 if (ctl == NULL || curr == NULL) {
+	    sprintf(buff, "out of memory while linking on msg %ld", i);
+	    writeLogEntry(log, '9', buff);
+	    // try to free as much as possible
+	    // FIXME : remove blocks themselves
+	    tree_mung(&avlTree, NULL);
+	    MsgCloseMsg(hmsg);
+	    MsgCloseArea(harea);
             return 0;
          };
 
