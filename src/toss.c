@@ -1654,6 +1654,7 @@ void arcmail(s_link *tolink) {
 	endlink = startlink + 1;
     }
 
+    closeOpenedPkt();
     if (config->beforePack) {
 	w_log(LL_EXEC, "beforePack: execute string \"%s\"", config->beforePack);
 	if ((cmdexit = cmdcall(config->beforePack)) != 0) {
