@@ -41,11 +41,7 @@
 #endif
 #if defined (__TURBOC__)
 #include <process.h>
-//#include <dir.h> Remove after Oct 13 2000
 #endif
-//#ifdef __IBMC__ Remove after Oct 13 2000
-//#include <direct.h>
-//#endif
 #ifdef __WATCOMC__
 #include <fcntl.h>
 #define AW_S_ISDIR(a) (((a) & S_IFDIR) != 0)

@@ -1246,69 +1246,6 @@ char *info_link(s_message *msg, s_link *link)
     return report;
 }
 
-/* remove after 21-Nov-00
-int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
-{
-   s_message    msg;
-   UINT32       j=0;
-   s_pktHeader  header;
-   FILE         *pkt;
-   long         len;
-
-   makeMsg(hmsg, xmsg, &msg, echo, 1);
-
-   //translating name of the area to uppercase
-   while (msg.text[j] != '\r') {msg.text[j]=(char)toupper(msg.text[j]);j++;}
-
-   if (strncmp(msg.text+j+1,"NOECHO",6)==0) {
-	   freeMsgBuffers(&msg);
-	   return 0;
-   }
-
-   // link is passive?
-   if (link->Pause && !echo->noPause) return 0;
-   // check access read for link
-   if (checkAreaLink(echo, link->hisAka, 1)!=0) return 0;
-
-   if (link->pktFile != NULL && link->pktSize != 0) { // check packet size
-	   len = fsize(link->pktFile);
-	   if (len >= link->pktSize * 1024L) { // Stop writing to pkt
-		   nfree(link->pktFile);
-		   nfree(link->packFile);
-	   }
-   }
-   
-   if (link->pktFile == NULL) {
-	   
-	   // pktFile does not exist
-	   if ( createTempPktFileName(link) ) {
-		   exit_hpt("Could not create new pkt!",1);
-	   }
-	   
-   }
-   
-   makePktHeader(NULL, &header);
-   header.origAddr = *(link->ourAka);
-   header.destAddr = link->hisAka;
-   if (link->pktPwd != NULL) strcpy(header.pktPassword, link->pktPwd);
-   pkt = openPktForAppending(link->pktFile, &header);
-
-   // an echomail messages must be adressed to the link
-   msg.destAddr = header.destAddr;
-   writeMsgToPkt(pkt, msg);
-
-   closeCreatedPkt(pkt);
-
-   // mark msg as sent and scanned
-   xmsg.attr |= MSGSENT;
-   xmsg.attr |= MSGSCANNED;
-   MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
-
-   freeMsgBuffers(&msg);
-   return 1;
-}
-*/
-
 int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
 {
    s_message    msg;

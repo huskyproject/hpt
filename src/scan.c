@@ -435,45 +435,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 		   nfree(virtualLink->floFile);
 	   }
-   } else
-/*   remove after Nov 17 (2000)
-   if ((xmsg->attr & MSGCRASH) == MSGCRASH) {
-	   // crash-msg -> make CUT
-	   if (createOutboundFileName(virtualLink, CRASH, PKT) == 0) {
-		   addViaToMsg(&msg, msg.origAddr);
-		   makePktHeader(virtualLink, &header);
-		   pkt = openPktForAppending(virtualLink->floFile, &header);
-		   writeMsgToPkt(pkt, msg);
-		   closeCreatedPkt(pkt);
-		   writeLogEntry(hpt_log, '7', "Crash-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-
-		   remove(virtualLink->bsyFile);
-		   nfree(virtualLink->bsyFile);
-		   // mark Mail as sent
-		   xmsg->attr |= MSGSENT;
-		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-		   nfree(virtualLink->floFile);
-	   }
-   } else
-   
-   if ((xmsg->attr & MSGHOLD) == MSGHOLD) {
-	   // hold-msg -> make HUT
-	   if (createOutboundFileName(virtualLink, HOLD, PKT) == 0) {
-		   addViaToMsg(&msg, msg.origAddr);
-		   makePktHeader(virtualLink, &header);
-		   pkt = openPktForAppending(virtualLink->floFile, &header);
-		   writeMsgToPkt(pkt, msg);
-		   closeCreatedPkt(pkt);
-		   writeLogEntry(hpt_log, '7', "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   
-		   remove(virtualLink->bsyFile);
-		   nfree(virtualLink->bsyFile);
-		   // mark Mail as sent
-		   xmsg->attr |= MSGSENT;
-		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-		   nfree(virtualLink->floFile);
-	   }
-   } else */ {
+   } else {
        // no crash, no hold flag -> route netmail
 	   route = findRouteForNetmail(msg);
 	   link = getLinkForRoute(route, &msg);
