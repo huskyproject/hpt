@@ -24,6 +24,9 @@ char *strseparate(char **pp, const char *delim)
 
   if (!(p = *pp))
     return 0;
+    
+  if (!*p) return 0;
+  
   if ((q = strpbrk (p, delim)))
     {
       *pp = q + 1;

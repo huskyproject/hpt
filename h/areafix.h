@@ -3,6 +3,7 @@
 
 #include <fcommon.h>
 
+#define NOTHING 0
 #define LIST    1
 #define HELP    2
 #define ADD     3
@@ -19,6 +20,7 @@ char *aka2str(s_addr aka);
 char *print_ch(int len, char ch);
 int processAreaFix(s_message *msg, s_pktHeader *pktHeader);
 void afix(void);
-void autoPassive();
+void autoPassive();
+s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char *toName, char *subject, char netmail);
 
 #endif

@@ -1,5 +1,12 @@
 
 ----- cvs ci ------
+Thu Jun 10  19:30:00
+Fedor:
+* change areafix.c
+* when autocreated and added description from forwardRequestFile, if zero line
+  in this file ("\r\n"), then to core. Fixed.
+
+----- cvs ci ------
 Tue Jun 8  20:53:32
 Fedor:
 * small change areafix.c

@@ -271,8 +271,10 @@ void removelink(s_link *link, s_area *area) {
 	area->downlinkCount--;
 }
 
-s_message *makeMessage(s_link *link, char *fromName, char *subject)
+s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char *toName, char *subject, char netmail)
 {
+    // netmail == 0 - echomail
+    // netmail == 1 - netmail
     time_t time_cur;
     s_message *msg;
     
@@ -280,62 +282,40 @@ s_message *makeMessage(s_link *link, char *fromName, char *subject)
     
     msg = (s_message*)calloc(1, sizeof(s_message));
     
-    msg->destAddr.zone = link->hisAka.zone;
-    msg->destAddr.net = link->hisAka.net;
-    msg->destAddr.node = link->hisAka.node;
-    msg->destAddr.point = link->hisAka.point;
+    msg->origAddr.zone = origAddr->zone;
+    msg->origAddr.net = origAddr->net;
+    msg->origAddr.node = origAddr->node;
+    msg->origAddr.point = origAddr->point;
 
-    msg->origAddr.zone = link->ourAka->zone;
-    msg->origAddr.net = link->ourAka->net;
-    msg->origAddr.node = link->ourAka->node;
-    msg->origAddr.point = link->ourAka->point;
+    msg->destAddr.zone = destAddr->zone;
+    msg->destAddr.net = destAddr->net;
+    msg->destAddr.node = destAddr->node;
+    msg->destAddr.point = destAddr->point;
+
 	
 
     msg->fromUserName = (char*)calloc(strlen(fromName)+1, sizeof(char));
     strcpy(msg->fromUserName, fromName);
     
-    msg->toUserName = (char*)calloc(strlen(link->name)+1, sizeof(char));
-    strcpy(msg->toUserName, link->name);
+    msg->toUserName = (char*)calloc(strlen(toName)+1, sizeof(char));
+    strcpy(msg->toUserName, toName);
     
     msg->subjectLine = (char*)calloc(strlen(subject)+1, sizeof(char));
     strcpy(msg->subjectLine, subject);
-    
-    msg->attributes = MSGPRIVATE;
-    msg->attributes |= MSGLOCAL;
+
+    msg->attributes = MSGLOCAL;
+    if (netmail) {
+       msg->attributes |= MSGPRIVATE;
+       msg->netMail = 1;
+    }
+    if (config->areafixKillReports) msg->attributes |= MSGKILL;
     
     strftime(msg->datetime, 21, "%d %b %y  %T", localtime(&time_cur));
     
-    msg->netMail = 1;
     
     return msg;
 }
 
-/*void changeHeader(s_message *msg, s_link *link, char *subject) {
-	s_addr *ourAka;
-	char *toname;
-	
-	ourAka=link->ourAka;
-	
-	msg->destAddr.zone = link->hisAka.zone;
-	msg->destAddr.net = link->hisAka.net;
-	msg->destAddr.node = link->hisAka.node;
-	msg->destAddr.point = link->hisAka.point;
-
-	msg->origAddr.zone = ourAka->zone;
-	msg->origAddr.net = ourAka->net;
-	msg->origAddr.node = ourAka->node;
-	msg->origAddr.point = ourAka->point;
-	
-	msg->subjectLine = (char*)calloc(1, strlen(subject)+1);
-	strcpy(msg->subjectLine,subject);
-	toname = msg->fromUserName;
-	msg->fromUserName = msg->toUserName;
-	msg->toUserName = toname;
-
-	msg->netMail = 1;
-	
-	if (config->areafixKillReports) msg->attributes |= MSGKILL;
-}*/
 
 char *list(s_message *msg, s_link *link) {
 
@@ -551,53 +531,18 @@ int delConfigLine(FILE *f, char *fileName) {
 */
 // subscribe if (act==0),  unsubscribe if (act!=0)
 int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act) {
-    time_t t;
-    struct tm *tm;
     s_message *msg;
     char *base, pass[]="passthrough";
 
 	if (uplink->msg == NULL) {
 
-		msg = calloc (1,sizeof(s_message));
+	    msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop, uplink->RemoteRobotName ? uplink->RemoteRobotName : "Allfix", uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1);
 
-		msg->origAddr.zone  = uplink->ourAka->zone;
-		msg->origAddr.net   = uplink->ourAka->net;
-		msg->origAddr.node  = uplink->ourAka->node;
-		msg->origAddr.point = uplink->ourAka->point;
+	    msg->text = (char *) malloc(sizeof(char)*100);
+	    createKludges(msg->text, NULL, uplink->ourAka, &(uplink->hisAka));
 		
-		msg->destAddr.zone  = uplink->hisAka.zone;
-		msg->destAddr.net   = uplink->hisAka.net;
-		msg->destAddr.node  = uplink->hisAka.node;
-		msg->destAddr.point = uplink->hisAka.point;
-		
-		msg->attributes = 1;
-		
-		t = time (NULL);
-		tm = gmtime(&t);
-		strftime(msg->datetime, 21, "%d %b %y  %T", tm);
-		
-		msg->netMail = 1;
-		
-		if (uplink->RemoteRobotName) {
-		    msg->toUserName = (char *)calloc(strlen(uplink->RemoteRobotName)+1, sizeof(char));
-		    strcpy(msg->toUserName, uplink->RemoteRobotName);
-		} else {
-		    msg->toUserName = (char *)calloc(8, sizeof(char));
-		    strcpy(msg->toUserName, "areafix");
-		}
-		
-		msg->fromUserName = (char *) malloc(strlen(config->sysop)+1);
-		strcpy(msg->fromUserName, config->sysop);
-		
-		if (uplink->areaFixPwd!=NULL) {
-			msg->subjectLine = (char *) malloc(strlen(uplink->areaFixPwd)+1);
-			strcpy(msg->subjectLine, uplink->areaFixPwd);
-		} else msg->subjectLine = (char *) calloc(1, sizeof(char));
-		
-		msg->text = (char *) malloc(sizeof(char)*100);
-		createKludges(msg->text, NULL, uplink->ourAka, &(uplink->hisAka));
-		
-		uplink->msg = msg;
+	    uplink->msg = msg;
+	    
 	} else msg = uplink->msg;
 	
 	msg->text = realloc (msg->text, strlen(msg->text)+1+strlen(areatag)+1+1);
@@ -1312,30 +1257,45 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
     return report;
 }
 
+char *errorRQ(char *line)
+{
+   char *report, err[] = "Error line";
+
+   report = (char*)calloc(strlen(line)+strlen(err)+3, sizeof(char));
+   sprintf(report, "%s %s\r", line, err);
+
+   return report;
+}
+
 int tellcmd(char *cmd) {
 	char *line;
-	
+
+	if (strncasesearch(cmd, "* Origin:", 9) == 0) return NOTHING;
+	line = strpbrk(cmd, " \t");
+	if (line && *cmd != '%') *line = 0;
+
 	line = cmd;
 
 	switch (line[0]) {
 	case '%': 
 		line++;
-		if (stricmp(line,"list")==0) return 1;
-		if (stricmp(line,"help")==0) return 2;
-		if (stricmp(line,"avail")==0) return 5;
-		if (stricmp(line,"available")==0) return 5;
-		if (stricmp(line,"all")==0) return 5;
-		if (stricmp(line,"unlinked")==0) return 6;
-		if (stricmp(line,"pause")==0) return 7;
-		if (stricmp(line,"resume")==0) return 8;
-		if (stricmp(line,"info")==0) return 9;
-		if (strncasesearch(line, "rescan", 6)==0) return 10;
-		break;
-	case '\001': return 0;
-	case '\000': return 0;
-	case '-'  : return 4;
-	case '+': line++; if (line[0]=='\000') return 0;
-	default: return 3;
+		if (*line == 0) return ERROR;
+		if (stricmp(line,"list")==0) return LIST;
+		if (stricmp(line,"help")==0) return HELP;
+		if (stricmp(line,"avail")==0) return AVAIL;
+		if (stricmp(line,"available")==0) return AVAIL;
+		if (stricmp(line,"all")==0) return AVAIL;
+		if (stricmp(line,"unlinked")==0) return UNLINK;
+		if (stricmp(line,"pause")==0) return PAUSE;
+		if (stricmp(line,"resume")==0) return RESUME;
+		if (stricmp(line,"info")==0) return INFO;
+		if (strncasesearch(line, "rescan", 6)==0) return RESCAN;
+		return ERROR;
+	case '\001': return NOTHING;
+	case '\000': return NOTHING;
+	case '-'  : return DEL;
+	case '+': line++; if (line[0]=='\000') return ERROR;
+	default: return ADD;
 	}
 	
 	return 0;
@@ -1346,35 +1306,41 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 	char *report;
 	
 	switch (cmd) {
-	case 1:	report = list (msg, link);
+
+	case NOTHING: return NULL;
+
+	case LIST: report = list (msg, link);
 		RetFix=LIST;
 		break;
-	case 2:	report = help (link);
+	case HELP: report = help (link);
 		RetFix=HELP;
 		break;
-	case 3: report = subscribe (link,msg,line);
+	case ADD: report = subscribe (link,msg,line);
 		RetFix=ADD;
 		break;
-	case 4: report = unsubscribe (link,msg,line);
+	case DEL: report = unsubscribe (link,msg,line);
 		RetFix=DEL;
 		break;
-	case 5: report = available (link); 
+	case AVAIL: report = available (link); 
 		RetFix=AVAIL;
 		break;
-	case 6: report = unlinked (msg, link);
+	case UNLINK: report = unlinked (msg, link);
 		RetFix=UNLINK;
 		break;
-	case 7: report = pause_link (msg, link);
+	case PAUSE: report = pause_link (msg, link);
 		RetFix=PAUSE;
 		break;
-	case 8: report = resume_link (msg, link);
+	case RESUME: report = resume_link (msg, link);
 		RetFix=RESUME;
 		break;
-	case 9: report = info_link(msg, link);
+	case INFO: report = info_link(msg, link);
 		RetFix=INFO;
 		break;
-	case 10: report = rescan(link, msg, line);
+	case RESCAN: report = rescan(link, msg, line);
 		RetFix=RESCAN;
+		break;
+	case ERROR: report = errorRQ(line);
+		RetFix=ERROR;
 		break;
 	default: return NULL;
 	}
@@ -1439,7 +1405,7 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
     char *tab;
     s_message *tmpmsg;
     
-    tmpmsg = makeMessage(link, msg->toUserName, subj);
+    tmpmsg = makeMessage(link->ourAka, &(link->hisAka), msg->toUserName, msg->fromUserName, subj, 1);
     preprocText(report, tmpmsg);
     
     tab = config->intab;
@@ -1548,6 +1514,10 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 					if (report == NULL) report=textHead();
  					report=areastatus(preport, report);
  					break;
+				case ERROR:
+					if (report == NULL) report = textHead();
+					report = areastatus(preport, report);
+					break;
 				default: break;
 				}
 				
@@ -1565,7 +1535,6 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 			tmplink->hisAka.net = msg->origAddr.net;
 			tmplink->hisAka.node = msg->origAddr.node;
 			tmplink->hisAka.point = msg->origAddr.point;
-			tmplink->name = msg->fromUserName;
 			link = tmplink;
 		}
 		// security problem
@@ -1753,7 +1722,7 @@ void autoPassive()
                         if (time_test >= (config->links[i].autoPause*24)) {
                            if (config->links[i].Pause == 0) {
                               if (changepause(getConfigFileName(), &(config->links[i]), 1)) {    
-			         msg = makeMessage(&(config->links[i]), versionStr, "AutoPassive");
+			         msg = makeMessage(config->links[i].ourAka, &(config->links[i].hisAka), versionStr, config->links[i].name, "AutoPassive", 1);
                                  sprintf(buf, "\r System switched to passive\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the %%RESUME command.\r\r--- %s autopause\r", versionStr);
 				 msg->text = (char*)calloc(strlen(buf)+100, sizeof(char));
                                  createKludges(msg->text, NULL, config->links[i].ourAka, &(config->links[i].hisAka));

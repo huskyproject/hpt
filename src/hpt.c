@@ -180,7 +180,7 @@ void processConfig()
           time_cur = time(NULL);
 	  locklife = (time_cur - stat_file.st_mtime)/60;
       }
-      if (locklife < 180) {	// more 3 hour?
+      if (locklife < 180) {
 #endif
            printf("lock file found! exit...\n");
            disposeConfig(config);

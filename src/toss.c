@@ -646,7 +646,6 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    FILE *f;
    char *fileName, *squishFileName;
    char buff[255], myaddr[25], hisaddr[25];
-   int i=0;
    s_link *creatingLink;
    s_addr *aka;
    char *description=NULL;
@@ -654,16 +653,16 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
    squishFileName = (char *) malloc(strlen(c_area)+1);
    strcpy(squishFileName, c_area);
+   
+   fileName = squishFileName;
 
    //translating name of the area to lowercase, much better imho.
-   while (*squishFileName != '\0') {
-      *squishFileName=tolower(*squishFileName);
-      if ((*squishFileName=='/') || (*squishFileName=='\\')) *squishFileName = '_'; // convert any path delimiters to _
-      squishFileName++;
-      i++;
+   while (*fileName != '\0') {
+      *fileName=tolower(*fileName);
+      if ((*fileName=='/') || (*fileName=='\\')) *fileName = '_'; // convert any path delimiters to _
+      fileName++;
    }
 
-   while (i>0) {squishFileName--;i--;};
 
    creatingLink = getLinkFromAddr(*config, pktOrigAddr);
 
@@ -723,21 +722,25 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
        fprintf(stderr,"areafix: cannot open forwardRequestFile \"%s\"\n",creatingLink->forwardRequestFile);
      }
      else {
-       char line[256];
-       char copy[256];
+       char *line, *copy = NULL;
        int out=0;
        
-       line[0]='\0'; copy[0]='\0';
-       while ((!out) && (fgets(line,sizeof(line),fforw))) {
-         line[strlen(line)-1]='\0';
-         strcpy (copy,line);
-         description=strtok(copy," \t\n");
-         if (patimat(description,c_area)==1) {
-           out=1;
-         }
+       while ((line = readLine(fforw))) {
+         line = trimLine(line);
+	 copy = (char*)calloc(strlen(line)+1, sizeof(char));
+	 strcpy(copy, line);
+	 if (*line) {
+	     description=strtok(line," \t");
+	     if (patimat(description,c_area)==1) {
+	         out=1;
+		 break;
+	     }
+	 }
+	 free(copy);
+	 free(line);
        }
        if (out) {
-         if (((description=strtok(NULL," \t\n"))!=NULL) && (description=strstr(line,description))!=NULL) {
+         if (((description=strtok(NULL," \t"))!=NULL) && (description=strstr(copy,description))!=NULL) {
            fileName=NULL;
            if ((fileName=strstr(NewAutoCreate, "-d "))==NULL) {
                char *tmp;
@@ -759,6 +762,8 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
              NewAutoCreate=tmp;
            }  
          }
+	 free(line);
+	 free(copy);
        }
        fclose(fforw);
      }
@@ -924,8 +929,6 @@ void putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 
 void makeMsgToSysop(char *areaName, s_addr fromAddr)
 {
-    time_t t;
-    struct tm *tm;
     s_area *echo;
     char buff[81];
     int i;
@@ -939,43 +942,16 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr)
     for (i = 0; i < config->addrCount; i++) {
 	if (echo->useAka == &(config->addr[i])) {
 	    if (msgToSysop[i] == NULL) {
-		msgToSysop[i] = (s_message*)calloc(1,sizeof(s_message));
-
-		msgToSysop[i]->origAddr.zone  = echo->useAka->zone;
-		msgToSysop[i]->origAddr.net   = echo->useAka->net;
-		msgToSysop[i]->origAddr.node  = echo->useAka->node;
-		msgToSysop[i]->origAddr.point = echo->useAka->point;
-		
-		msgToSysop[i]->destAddr.zone  = echo->useAka->zone;
-		msgToSysop[i]->destAddr.net   = echo->useAka->net;
-		msgToSysop[i]->destAddr.node  = echo->useAka->node;
-		msgToSysop[i]->destAddr.point = echo->useAka->point;
-		
-		t = time (NULL);
-		tm = gmtime(&t);
-		strftime(msgToSysop[i]->datetime, 21, "%d %b %y  %T", tm);
-		
-		msgToSysop[i]->fromUserName = (char *)calloc(strlen(versionStr)+1, sizeof(char));
-		strcpy(msgToSysop[i]->fromUserName, versionStr);
-		
-		msgToSysop[i]->subjectLine = (char *)calloc(18, sizeof(char));
-		strcpy(msgToSysop[i]->subjectLine, "Created new areas");
-		
-		msgToSysop[i]->text = (char *)calloc(300, sizeof(char));
-		if (stricmp(config->ReportTo, "netmail")==0){
+		if (stricmp(config->ReportTo, "netmail")==0) {
+		    msgToSysop[i] = makeMessage(echo->useAka, echo->useAka, versionStr, config->sysop, "Created new areas", 1);
+		    msgToSysop[i]->text = (char *)calloc(300, sizeof(char));
 		    createKludges(msgToSysop[i]->text, NULL, echo->useAka, echo->useAka);
-		    msgToSysop[i]->toUserName = (char *)calloc(strlen(config->sysop)+1, sizeof(char));
-		    strcpy(msgToSysop[i]->toUserName, config->sysop);
-		    msgToSysop[i]->netMail = 1;
-		    msgToSysop[i]->attributes = 1;
 		} else {
+		    msgToSysop[i] = makeMessage(echo->useAka, echo->useAka, versionStr, "All", "Created new areas", 0);
+		    msgToSysop[i]->text = (char *)calloc(300, sizeof(char));
 		    createKludges(msgToSysop[i]->text, config->ReportTo, echo->useAka, echo->useAka);
-		    msgToSysop[i]->toUserName = (char *)calloc(4, sizeof(char));
-		    strcpy(msgToSysop[i]->toUserName, "All");
-		}
-		
-		msgToSysop[i]->attributes |= 0x0100;
-	
+		} /* endif */
+
 		strcat(msgToSysop[i]->text, "Action   Name");
 		strcat(msgToSysop[i]->text, print_ch(49, ' '));
 		strcat(msgToSysop[i]->text, "By\r");
@@ -1422,7 +1398,11 @@ void processDir(char *directory, e_tossSecurity sec)
 
       if (!(pktFile = patimat(file->d_name, "*.pkt") == 1)) 
          for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
-            if (patimat(file->d_name, validExt[i]) == 1)
+            if (patimat(file->d_name, validExt[i]) == 1
+#ifndef UNIX
+		&& !(file->d_attr & _A_HIDDEN)
+#endif
+					    )
                arcFile = 1;
 
       if (pktFile || arcFile) {
