@@ -223,6 +223,7 @@ void processConfig()
    if (config->tempInbound == NULL) exit_hpt("you must set tempInbound in fidoconfig first",1);
    if (strcmp(config->inbound,config->tempInbound)==0) exit_hpt("Inbound & tempInbound must be differ",1);
    if (config->protInbound && (strcmp(config->protInbound,config->tempInbound)==0)) exit_hpt("protInbound & tempInbound must be differ",1);
+   if (config->protInbound && (strcmp(config->protInbound,config->inbound)==0)) exit_hpt("protInbound & Inbound must be differ",1);
    if (config->localInbound && (strcmp(config->localInbound,config->tempInbound)==0)) exit_hpt("localInbound & tempInbound must be differ",1);
    if (config->msgBaseDir==NULL) exit_hpt("No msgBaseDir specified in config file!",1);
    if (config->dupeHistoryDir==NULL) exit_hpt("No dupeHistoryDir specified in config file!",1);
