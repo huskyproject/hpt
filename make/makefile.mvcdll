@@ -14,7 +14,7 @@ OBJ=.obj
 EXE=.exe
 RM=del
 
-LIBS=..\..\fidoconf\fconfmvc.lib ..\..\smapi\smapimvc.lib USER32.LIB msvcrt.lib Kernel32.lib
+LIBS=..\..\fidoconf\fconfmvc.lib ..\..\smapi\smapimvc.lib USER32.LIB msvcrt.lib Kernel32.lib /link /opt:nowin98
 
 default: all
 
