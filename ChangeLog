@@ -35,6 +35,10 @@ tobi:
 * Use FC_MAX_AREADESC_LEN constant (present in stable fidoconfig since
   January 1) so that we do not auto-add EchoArea's with a long area
   description that later cannot be parsed by fidoconfig.
+  
+  ATTENTION!
+  Source code users MUST COMPILE AND INSTALL FIDOCONF 0.10C-STABLE (or
+  later)  BEFORE COMPILING hpt in order for this bugfix tot ake effect.
 
 ----- cvs ci ------
 Fri Nov 17 10:23:21 MEZ 2000
