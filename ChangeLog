@@ -1,3 +1,35 @@
+2002-06-17 Monday 17:08  mche
+
+	* src/scan.c (1.165): fix deleting of nonexisting file
+
+2002-06-17 Monday 15:00  stas
+
+	* src/toss.c (1.416): Change diagnostic if zlib not compiled but
+	"zipInternal" unpacker spacified.
+
+2002-06-17 Monday 14:10  stas
+
+	* src/getfree.c (1.21): Fix redefinitions conflict with win32
+	compilers.
+
+2002-06-17 Monday 13:54  stas
+
+	* src/: areafix.c (1.315), dupe.c (1.64), fcommon.c (1.130),
+	getfree.c (1.20), hpt.c (1.153), link.c (1.54), perl.c (1.37),
+	pktread.c (1.86), post.c (1.87), query.c (1.50), scan.c (1.164),
+	scanarea.c (1.83), tlog.c (1.12), toss.c (1.415): New loglevels
+	applied. Use LL_* defines.
+
+2002-06-17 Monday 13:51  stas
+
+	* make/makefile.inc (1.10), src/hptlink.c (1.36): Hptlink changes:
+	use hpt.log for logging; change version info: generate like as in
+	hpt.
+
+2002-06-17 Monday 06:52  stas
+
+	* doc/hpt.texi (1.65): Copy loglevels table from fidoconfig doc.
+
 2002-06-15 Saturday 10:26  mche
 
 	* src/areafix.c (1.314): no message
