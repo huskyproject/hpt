@@ -1073,23 +1073,25 @@ char *subscribe(s_link *link, char *cmd) {
         {
             area = getArea(config, line);
             if ( !isLinkOfArea(link, area) ) {
-            if(changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==ADD_OK) {
-                addlink(link, area);
-                fixRules (link, area);
-                w_log( LL_AREAFIX, "areafix: %s subscribed to area %s",
-                    aka2str(link->hisAka),line);
-            } else {
-                xscatprintf( &report," %s %s  error. report to sysop!\r",
-                    an, print_ch(49-strlen(an),'.') );
-                w_log( LL_AREAFIX, "areafix: %s not subscribed to %s",
-                    aka2str(link->hisAka),an);
-                w_log(LL_ERR, "areafix: can't change config file: %s!", strerror(errno));
-            }
-          } else w_log( LL_AREAFIX, "areafix: %s already subscribed to area %s",
+                if(changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==ADD_OK) {
+                    addlink(link, area);
+                    fixRules (link, area);
+                    w_log( LL_AREAFIX, "areafix: %s subscribed to area %s",
+                        aka2str(link->hisAka),line);
+                } else {
+                    xscatprintf( &report," %s %s  error. report to sysop!\r",
+                        an, print_ch(49-strlen(an),'.') );
+                    w_log( LL_AREAFIX, "areafix: %s not subscribed to %s",
+                        aka2str(link->hisAka),an);
+                    w_log(LL_ERR, "areafix: can't change config file: %s!", strerror(errno));
+                }
+            } else w_log( LL_AREAFIX, "areafix: %s already subscribed to area %s",
                 aka2str(link->hisAka), line );
-
-		}
-	    }
+            
+        } else {
+            fixRules (link, area);
+        }
+        }
 	}
     }
 
