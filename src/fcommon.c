@@ -60,6 +60,7 @@
 #include <dupe.h>
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
+#include <fidoconf/xstr.h>
 
 #include <smapi/typedefs.h>
 #include <smapi/compiler.h>
@@ -97,19 +98,20 @@ void exit_hpt(char *logstr, int print) {
 
 int createLockFile(char *lockfile) {
         int fd;
-        char pidstr[32];
+        char *pidstr = NULL;
 
-        if ( (fd=open(lockfile, O_CREAT | O_EXCL, S_IREAD | S_IWRITE)) < 0 )
+        if ( (fd=open(lockfile, O_CREAT | O_EXCL | O_WRONLY, S_IREAD | S_IWRITE)) < 0 )
            {
                    fprintf(stderr,"createLockFile: cannot create lock file\"%s\"\n",lockfile);
                    writeLogEntry(hpt_log, '9', "createLockFile: cannot create lock file \"%s\"m", lockfile);
                    return 1;
            }
 
-        sprintf(pidstr, "%u\n", (unsigned)getpid());
+        xscatprintf(&pidstr, "%u\n", (unsigned)getpid());
         write (fd, pidstr, strlen(pidstr));
 
         close(fd);
+	free(pidstr);
         return 0;
 }
 

@@ -2,6 +2,11 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Wed Jun  7 09:44:09 MSD 2000
+max (patch from Serguei Revtov):
+* bugfix for creation of lock file in fcommon.c
+
+----- cvs ci ------
 Tue Jun  6 19:39:31 NOVST 2000
 max:
 * safe_malloc(), safe_realloc()
