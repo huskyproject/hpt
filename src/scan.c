@@ -167,17 +167,10 @@ void makePktHeader(s_link *link, s_pktHeader *header)
    header->prodData        = 0;
 }
 
-s_route *findRouteForNetmail(s_message msg)
+static s_route *findSelfRouteForNetmail(s_message msg)
 {
 	char *addrStr=NULL;
 	UINT i;
-
-#ifdef DO_PERL
-	{ s_route *route;
-	if ((route = perlroute(&msg)) != NULL)
-		return route;
-	}
-#endif
 
 /* remove after 03-Apr-01
    if ((msg.attributes & MSGFILE) == MSGFILE) {
@@ -218,6 +211,22 @@ s_route *findRouteForNetmail(s_message msg)
 	nfree(addrStr);
 
 	return (i==config->routeCount) ? NULL : &(config->route[i]);
+}
+
+s_route *findRouteForNetmail(s_message msg)
+{
+	s_route *route;
+
+	route = findSelfRouteForNetmail(msg);
+
+#ifdef DO_PERL
+	{ s_route *sroute;
+	  if ((sroute = perlroute(&msg, route)) != NULL)
+		return sroute;
+	}
+#endif
+
+	return route;
 }
 
 s_link *getLinkForRoute(s_route *route, s_message *msg) {

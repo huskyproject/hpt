@@ -475,7 +475,7 @@ int perlscanmsg(char *area, s_message *msg)
    return 0;
 }
 
-s_route *perlroute(s_message *msg)
+s_route *perlroute(s_message *msg, s_route *defroute)
 {
    static int do_perlroute = 1;
    int pid, saveerr;
@@ -485,17 +485,32 @@ s_route *perlroute(s_message *msg)
    if (!perl || !do_perlroute)
      return NULL;
    pid = handleperlerr(&saveerr);
-   { SV *svaddr, *svattr, *svflv, *svfrom, *svret;
+   { SV *svaddr, *svattr, *svflv, *svfrom, *svret, *svroute;
      char *routeaddr;
      STRLEN n_a;
      static s_route route;
      dSP;
      svaddr  = perl_get_sv("addr",    TRUE);
      svfrom  = perl_get_sv("from",    TRUE);
+     svroute = perl_get_sv("route",   TRUE);
      svflv   = perl_get_sv("flavour", TRUE);
      svattr  = perl_get_sv("attr",    TRUE);
      sv_setpv(svaddr, aka2str(msg->destAddr));
      sv_setpv(svfrom, aka2str(msg->origAddr));
+     if (defroute)
+     {
+ 	sv_setpv(svroute, aka2str(defroute->target->hisAka));
+	if (defroute->flavour==normal)
+	    sv_setpv(svflv, "normal");
+	else if (defroute->flavour==hold)
+	    sv_setpv(svflv, "hold");
+	else if (defroute->flavour==direct)
+	    sv_setpv(svflv, "direct");
+	else if (defroute->flavour==crash)
+	    sv_setpv(svflv, "crash");
+	else if (defroute->flavour==immediate)
+	    sv_setpv(svflv, "immediate");
+     }
      sv_setiv(svattr, msg->attributes);
      ENTER;
      SAVETMPS;

@@ -1,3 +1,8 @@
+2001-05-22 Tuesday 23:58  gul
+
+	* src/scan.c, src/perl.c: hpt routing available as changable
+	$route and $flavour in route() perl hook
+
 2001-05-17 Thursday 07:38  ml
 
 	* src/areafix.c (1.210): don't print 'no access' to areafix reports
