@@ -1,3 +1,14 @@
+2001-08-08 Wednesday 21:56  joerg.jaspert
+
+	* debian/: changelog (1.8), control (1.6), dirs (1.3), huskymak.cfg
+	(1.8), rules (1.6): Newest Build.
+
+2001-08-08 Wednesday 13:29  ml
+
+	* doc/hpt-FAQ.russian (1.4), doc/hpt.texi (1.33), man/hpt.1 (1.13),
+	src/areafix.c (1.218), src/post.c (1.56): documented how to post
+	with several flags
+
 2001-08-02 Thursday 10:02  ml
 
 	* src/: scan.c (1.132), scanarea.c (1.70), toss.c (1.356): write
