@@ -1,3 +1,9 @@
+2004-11-18 Thursday 22:50  d_sergienko
+
+	* h/seenby.h, src/seenby.c, src/toss.c (hpt-1_4-stable.[4,6,12]):
+	debugging for seen-by and path. should be removed as soon as bug
+	will be fixed.
+
 2004-11-14 Sunday 20:58  d_sergienko
 
 	* doc/hpt.texi, h/seenby.h, h/toss.h, src/scanarea.c, src/seenby.c,
