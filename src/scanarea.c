@@ -225,13 +225,6 @@ void scanEMArea(s_area *echo)
        i = (noHighWaters) ? 0 : MsgGetHighWater(area);
        highestMsg = MsgGetHighMsg(area);
 
-       //FIXME: we needs for smapi fix to equivalent work of squish, sdm and jam
-       if (echo->msgbType == MSGTYPE_JAM) {
-	   num = MsgGetNumMsg(area);
-	   if (highestMsg>num && i>=num) i=0;
-	   highestMsg = num;
-       }
-
        while (i < highestMsg) {
 	   hmsg = MsgOpenMsg(area, MOPEN_RW, ++i);
 	   if (hmsg == NULL) continue;      // msg# does not exist

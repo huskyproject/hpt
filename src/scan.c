@@ -570,13 +570,6 @@ void scanNMArea(s_area *area)
        i = (noHighWaters) ? 0 : MsgGetHighWater(netmail);
        highestMsg = MsgGetHighMsg(netmail);
 
-       //FIXME: we needs for smapi fix to equivalent work of squish, sdm and jam
-       if (area->msgbType == MSGTYPE_JAM) {
-	   num = MsgGetNumMsg(netmail);
-	   if (highestMsg>num && i>=num) i=0;
-	   highestMsg = num;
-       }
-
        // scan all Messages and test if they are already sent.
        while (i < highestMsg) {
 	   msg = MsgOpenMsg(netmail, MOPEN_RW, ++i);
