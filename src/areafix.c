@@ -129,7 +129,7 @@ int subscribeAreaCheck(s_area *area, s_message *msg, char *areaname, s_link *lin
 
 // del link from area
 int delLinkFromArea(FILE *f, char *fileName, char *str) {
-    long curpos, endpos, linelen, len;
+    long curpos, endpos, linelen=0, len;
     char *buff, *sbuff, *ptr, *tmp, *line;
 	
     curpos = ftell(f);
@@ -157,6 +157,16 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 	    if (*ptr != '-') {
 		linelen = ptr-line;
 		break;
+	    }
+	    else {
+		if (strncasesearch(ptr, "-r", 2)) {
+		    if (strncasesearch(ptr, "-w", 2)) {
+			if (strncasesearch(ptr, "-mn", 3)) {
+			    linelen = ptr-line;
+			    break;
+			}
+		    }
+		}
 	    }
 	}
 	fseek(f, 0L, SEEK_END);
@@ -1506,14 +1516,15 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	writeLogEntry(log, '8', tmp);
 	
 	// send msg to the links (forward requests to areafix)
-    for (i = 0; i < config->linkCount; i++) {
+	for (i = 0; i < config->linkCount; i++) {
 		if (config->links[i].msg == NULL) continue;
 		link = &(config->links[i]);
 		linkmsg = link->msg;
 		
-	    sprintf(tmp, " \r--- %s areafix\r", versionStr);
+		sprintf(tmp, " \r--- %s areafix\r", versionStr);
 		linkmsg->text=(char*) realloc(linkmsg->text,strlen(linkmsg->text)+strlen(tmp)+1);
 		strcat(linkmsg->text, tmp);
+		linkmsg->textLength = strlen(linkmsg->text);
 		
 		makePktHeader(NULL, &header);
 		header.origAddr = *(link->ourAka);
