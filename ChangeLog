@@ -2,6 +2,12 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Sun Apr  9 22:41:43 NOVST 2000
+max:
+* moved readCheck & writeCheck to fidoconfig
+to hjk: do not ever delete my code
+
+----- cvs ci ------
 Sun Apr  9 17:23:17 CET 2000
 hjk:
 * removed check of groupaccess on import and export of messages

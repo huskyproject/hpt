@@ -440,90 +440,6 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
    free(seenByText);
 }
 
-int readCheck(s_area *echo, s_link *link) {
-
-    // rc == '\x0000' access o'k
-    // rc == '\x0001' no access group
-    // rc == '\x0002' no access level
-    // rc == '\x0003' no access export
-    // rc == '\x0004' not linked
-    
-    int i;
-
-    for (i=0; i<echo->downlinkCount; i++) {
-		if (link == echo->downlinks[i]->link) break;
-    }
-    if (i == echo->downlinkCount) return 4;
-
-    // pause
-    if (link->Pause) return 3;
-
-// Do not check for groupaccess here, use groups only (!) for Areafix
-/*    if (strcmp(echo->group,"0")) {
-		if (link->numAccessGrp) {
-			if (config->numPublicGroup) {
-				if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
-					!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup))
-					return 1;
-			} else if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp)) return 1;
-		} else if (config->numPublicGroup) {
-			if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) return 1;
-		} else return 1;
-    }*/
-    
-    if (echo->levelread > link->level) return 2;
-    
-    if (i < echo->downlinkCount) {
-		if (echo->downlinks[i]->export == 0) return 3;
-    }
-    
-    return 0;
-}
-
-int writeCheck(s_area *echo, s_addr *aka) {
-
-    // rc == '\x0000' access o'k
-    // rc == '\x0001' no access group
-    // rc == '\x0002' no access level
-    // rc == '\x0003' no access import
-    // rc == '\x0004' not linked
-
-    int i;
-
-    s_link *link;
-    
-    if (!addrComp(*aka,*echo->useAka)) return 0;
-    
-    link = getLinkFromAddr (*config,*aka);
-    if (link == NULL) return 4;
-    
-    for (i=0; i<echo->downlinkCount; i++) {
-		if (link == echo->downlinks[i]->link) break;
-    }
-    if (i == echo->downlinkCount) return 4;
-    
-// Do not check for groupaccess here, use groups only (!) for Areafix
-/*    if (strcmp(echo->group,"0")) {
-        if (link->numAccessGrp) {
-			if (config->numPublicGroup) {
-				if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
-					!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup))
-					return 1;
-			} else if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp)) return 1;
-		} else if (config->numPublicGroup) {
-			if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) return 1;
-		} else return 1;
-    }*/
-
-    if (echo->levelwrite > link->level) return 2;
-    
-    if (i < echo->downlinkCount) {
-		if (echo->downlinks[i]->import == 0) return 3;
-    }
-    
-    return 0;
-}
-
 /**
   * This function returns 0 if the link is not in seenBy else it returns 1.
   */
@@ -1252,6 +1168,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
    char   *area, *textBuff;
    s_area *echo;
    s_link *link;
+   s_arealink *arealink;
    int    writeAccess = 0, rc = 0, ccrc = 0;
 
    textBuff = (char *) malloc(strlen(msg->text)+1);
@@ -1265,10 +1182,19 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
    statToss.echoMail++;
 
    if (echo == &(config->badArea)) writeAccess = 0;
-   else writeAccess = writeCheck(echo, &pktOrigAddr);
-
+// else writeAccess = writeCheck(echo, &pktOrigAddr);
+// this is faster than writeCheck imho
+   else {   
+	   arealink = getAreaLink(echo, pktOrigAddr);
+	   if (arealink) {
+		   if (arealink->import) writeAccess = 0; else writeAccess = 3;
+	   } else {
+		   if (addrComp(pktOrigAddr,*echo->useAka)==0) writeAccess = 0;
+		   else writeAccess = 4;
+	   }
+   }
    if (writeAccess!=0) echo = &(config->badArea);
-
+		
    if (echo != &(config->badArea)) {
       if (dupeDetection(echo, *msg)==1) {
          // no dupe
@@ -1292,7 +1218,9 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 	       statToss.passthrough++;
 	       rc = 1; //passthrough does always work
 	   }
-	 }
+	 };
+
+
       } else {
          // msg is dupe
          if (echo->dupeCheck == dcMove) {
@@ -1312,7 +1240,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
         if ((link != NULL) && (link->autoAreaCreate != 0) && (writeAccess == 0)) {
            autoCreate(area, pktOrigAddr, NULL);
            echo = getArea(config, area);
-	   writeAccess = writeCheck(echo, &pktOrigAddr);
+	   writeAccess = e_writeCheck(config, echo, &pktOrigAddr);
 	   if (writeAccess) {
 	       rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
 	   } else {
@@ -1337,7 +1265,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 	     }
 	   }
         } else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
-      }
+      };
    }
 
    free(textBuff);
@@ -2215,7 +2143,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
        return 1;
    }
    
-   if (writeCheck(echo, &pktOrigAddr) == 0) {
+   if (e_writeCheck(config, echo, &pktOrigAddr) == 0) {
       if (dupeDetection(echo, msg)==1) {
 	 // no dupe
          if (config->carbonCount != 0) carbonCopy(&msg, echo);

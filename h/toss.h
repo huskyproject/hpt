@@ -59,20 +59,6 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr);
 void tossFromBadArea(void);
 void writeMsgToSysop();
 
-int readCheck(s_area *echo, s_link *link);
-// '\x0000' access o'k
-// '\x0001' no access group
-// '\x0002' no access level
-// '\x0003' no access export
-// '\x0004' not linked
-
-int writeCheck(s_area *echo, s_addr *aka);
-// '\x0000' access o'k
-// '\x0001' no access group
-// '\x0002' no access level
-// '\x0003' no access import
-// '\x0004' not linked
-
 #define REC_HDR 0x0001
 #define REC_TXT 0x0002
 
