@@ -1,9 +1,15 @@
 hpt 0.27
 --------
 
+----- cvs ci ------
+Wed Mar 10 00:05:25 CET 1999
+mtt:
+- fixed the seg-fault, when trying to link passthrough areas
+- fixed a bug in the processPkt routine which leads to wrong recognition of
+  pktPassword and so...
+
 ----- cvs ci ------	
 Wed Mar  10 04:55:00
-
 Max (patches from Fedor Lizunkov):
 - fixed areafix bug when send mail to uunknown link
 - fixed echo access (readCheck, writeCheck)

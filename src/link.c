@@ -107,6 +107,8 @@ int linkArea(s_area *area, int netMail)
    s_msginfo  *prv, *curr, *tail, *orig;
    tree *avlTree;
 
+   if (area->msgbType == MSGTYPE_PASSTHROUGH) return 0;
+
    harea = MsgOpenArea((UCHAR *) area->fileName, MSGAREA_NORMAL,
                        area->msgbType | (netMail ? 0 : MSGTYPE_ECHO));
    if (harea) {
