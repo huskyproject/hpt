@@ -1016,9 +1016,9 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
       
 	    if (creatingLink->autoAreaCreateSubdirs && !need_dos_file)
 		{
-                                // "subdirify" the message base path if the
-                                // user wants this. this currently does not
-	                        // work with the -dosfile option
+		    // "subdirify" the message base path if the
+		    // user wants this. this currently does not
+		    // work with the -dosfile option
 		    for (cp = squishFileName; *cp; cp++)
 			{
 			    if (*cp == '.')
@@ -1063,11 +1063,6 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	}
    
     nfree(squishFileName);
-
-    //remove after 16-Sep-01
-    //if (hpt_stristr(newAC, " -a ")==NULL)
-    // add "-a ourAka" to echoarea
-    //xstrscat(&buff, " -a ", myaddr, NULL);
 
     if (creatingLink->LinkGrp) {
 	if (hpt_stristr(newAC, " -g ")==NULL)
@@ -1225,26 +1220,6 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 		i = (size_t) (p - old_text) + 1;
 	}
     }
-
-/* remove after 11-Jul-2001
-   if (reason) reasonLen = strlen(reason)+1;  // +1 for \r
-
-   msg->text = safe_malloc(i+strlen("AREA:\r * Forwarded from area ''\r\r\1")+strlen(area->areaName)+strlen(echo->areaName)+reasonLen+1);
-	
-   //create new area-line
-   if (!msg->netMail)
-   sprintf(msg->text, "%s%s%s * Forwarded from area '%s'\r%s%s\r\1",
-   (export) ? "AREA:" : "",
-   (export) ? area->areaName : "",
-   (export) ? "\r" : "", echo->areaName,
-   (reason) ? reason : "",
-   (reason) ? "\r" : "");
-   else *(msg->text) = '\0';
-
-   msg->textLength = strlen(msg->text);
-   strncat(msg->text,old_text,i); // copy rest of msg
-   msg->textLength += i;
-*/
 
     msg->text = NULL;
     msg->textLength = 0;
@@ -1529,7 +1504,11 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
     nfree(msg->text);
     msg->text = textBuff;
     msg->textLength = strlen(msg->text);
-    return putMsgInArea(&(config->badArea), msg, 0, 0);
+    if (putMsgInArea(&(config->badArea), msg, 0, 0)) {
+	config->badArea.imported++;
+	return 1;
+    }
+    return 0;
 }
 
 void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
@@ -1787,6 +1766,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 		    rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
 		} else rc = 1;
 		statToss.dupes++;
+		if (rc) config->dupeArea.imported++;
 	    }
 	}
     }
@@ -1820,6 +1800,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 	    rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
 	} else rc = 1;
 	statToss.dupes++;
+	if (rc) config->dupeArea.imported++;
 	return rc;
     }
 
@@ -2425,6 +2406,12 @@ void writeTossStatsToLog(void) {
 	if (config->netMailAreas[i].imported > 0)
 	    w_log(logchar, "netmail area %s - %d msgs", 
 		  config->netMailAreas[i].areaName, config->netMailAreas[i].imported);
+    if (config->dupeArea.imported) w_log(logchar, "dupe area %s - %d msgs", 
+					 config->dupeArea.areaName,
+					 config->dupeArea.imported);
+    if (config->badArea.imported) w_log(logchar, "bad area %s - %d msgs", 
+					config->badArea.areaName,
+					config->badArea.imported);
     for (i = 0; i < config->echoAreaCount; i++)
 	if (config->echoAreas[i].imported > 0)
 	    w_log(logchar, "echo area %s - %d msgs", 
@@ -3005,6 +2992,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
 	    if (echo->dupeCheck == dcMove) {
 		rc = putMsgInArea(&(config->dupeArea), &msg, 0, 0);
 	    } else rc = 1; // dupeCheck del
+	    if (rc) config->dupeArea.imported++;
 	}
 
     } else rc = 0;
