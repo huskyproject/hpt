@@ -640,8 +640,11 @@ void af_QueueReport()
                 state);
         }
     }
-    if(!report)
+    if(!report) {
+        remove(reportFlg);
+        nfree(reportFlg);
         return;
+    }    
 
     w_log(LL_START, "Start generating queue report");
     xscatprintf(&header,rmask,"Area","Act","From","By","Details");
