@@ -92,8 +92,8 @@ FILE *createPkt(char *filename, s_pktHeader *header)
      fputUINT16(pkt, (UINT16) header->origAddr.net);
      fputUINT16(pkt, (UINT16) header->destAddr.net);
 
-/*     fputc(header->loProductCode, pkt);   /*  put lowByte of Prod-Id */
-/*     fputc(header->majorProductRev, pkt); /*  put major version number */
+/*     fputc(header->loProductCode, pkt);     put lowByte of Prod-Id */
+/*     fputc(header->majorProductRev, pkt);   put major version number */
 
      fputc(HPT_PRODCODE_LOWBYTE, pkt);   /*  put lowByte of Prod-Id */
      fputc(VER_MAJOR, pkt); /*  put major version number */
@@ -114,8 +114,8 @@ FILE *createPkt(char *filename, s_pktHeader *header)
      dummy = (UCHAR)(header->capabilityWord % 256);
      fputc(dummy, pkt);
 
-/*     fputc(header->hiProductCode, pkt);      /*  put hiByte of Prod-Id */
-/*     fputc(header->minorProductRev, pkt);    /*  put minor version number */
+/*     fputc(header->hiProductCode, pkt);        put hiByte of Prod-Id */
+/*     fputc(header->minorProductRev, pkt);      put minor version number */
 
      fputc(HPT_PRODCODE_HIGHBYTE, pkt);      /*  put hiByte of Prod-Id */
      fputc(VER_MINOR, pkt);                  /*  put minor version number */
