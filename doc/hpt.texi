@@ -3202,10 +3202,11 @@ advanced concepts in @value{HPT} that deserve special attention, like
 how to use several netmail areas and similar. 
 
 @menu
-* Netmail::   defining several netmail areas for several users
+* Netmail::     defining several netmail areas for several users
+* ZoneGating::  how zonegating works for echomail
 @end menu
 
-@node Netmail, , Advanced Concepts, Advanced Concepts
+@node Netmail, ZoneGating, Advanced Concepts, Advanced Concepts
 @section Defining Several Netmail Areas For Several Users
 
 If you want receive netmail for one address in first netmail area, and
@@ -3218,6 +3219,50 @@ for second address in second netmail area respectively, you must add
 @item NetmailArea NetMail /home/ml/fido/msgb/netmail -b squish -a 2:5000/117
 @item NetmailArea OtherNetMail /home/ml/fido/msgb/othernetmail -b squish -a 2:90/190
 @end table
+
+@node ZoneGating, , Netmail, Advanced Concepts
+@section How Zone Gating works for echomail and what seen-bys is stripped
+
+We have EchoArea with links from zone1 & zone2. Echo->useAka with
+zone2. Defined by "-a <addr>" or the by the first Echo->address from
+config if not defined in EchoArea line.
+
+Program algorythm:
+
+@table @asis
+@item 1.
+check pkt zone address
+@item 2.
+split links in to groups: with (pktaddr.zone == linkaddr.zone) and
+(pktaddr.zone != linkaddr.zone)
+@item 3.
+send msg to first group of links (their aka adding to seen-bys and
+echo->useAka too if not in seen-bys yet)
+@item 4.
+if (pktaddr.zone != echo->useAka.zone) seen-bys cleaned.
+@item 5.
+send msg to second group of links (their aka adding to seen-bys and
+echo->useAka too if not in seen-bys yet)
+@item 6.
+store msg in msgbase
+@end table
+
+Examples:
+
+a) msg comes from z1. for z1 links we sending seen-bys with z2
+   nodes. but z1 links must clean seen-bys by themselves (this is z2
+   echo) or download this echo from z1 link. after that seen-bys cleaned
+   and msg forwarded to z2 links. in the msgbase seen-bys from z2 links
+   only.
+
+b) msg comes from z2. forward it to z2 links. then forward to z1
+   links. seen-bys not cleaned: this is z2 echo and z1 links must clean
+   it by themselves or receive echo from z1 link. store in msgbase with
+   all seen-bys from z1 & z2 nodes.
+
+c) scan works the same: first sending to z2 links, adding to seen-by's
+   z1 links and export to them.
+
 
 @node Keyword Index,  , Advanced Concepts, Top
 @appendix Configuration File Keyword Index
