@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ---- cvs ci ------
+Tue Mar  6 16:20:54 NOVT 2001
+max:
+* fixed auto adding link to echo from autoareacreatedefaults with fwd.requests
+
+---- cvs ci ------
 Mon Mar  5 11:07:24 NOVT 2001
 max:
 * fixed bug in hpttree (lost nodes)

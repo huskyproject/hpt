@@ -855,13 +855,20 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 				xscatprintf(&report, " %s %s  request forwarded\r",
 							line, print_ch(49-strlen(line), '.'));
 				for (j=0; j < config->addrCount; j++)
-				    if (addrComp(link->hisAka, config->addr[j])==0) { from_us=1; break; }
-				if (!from_us) {
-				    w_log('8', "areafix: %s subscribed to area %s",
-							  aka2str(link->hisAka),line);
+				    if (addrComp(link->hisAka,config->addr[j])==0) {from_us=1;break;}
+				if (from_us==0) {
 				    area = getArea(config, line);
-				    changeconfig ((cfgFile) ? cfgFile : getConfigFileName(), area, link, 3);
-				    addlink(link, area);
+
+					for (j=0; j < area->downlinkCount; j++)
+						if (addrComp(link->hisAka,
+									 area->downlinks[j]->link->hisAka)==0) break;
+
+					if (j == area->downlinkCount) {
+						changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3);
+						addlink(link, area);
+					}
+				    w_log('8', "areafix: %s subscribed to area %s",
+						  aka2str(link->hisAka),line);
 				}
 			}
 	    }
