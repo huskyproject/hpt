@@ -186,7 +186,8 @@ void post(int c, unsigned int *n, char *params[])
       if (!export)
         putMsgInArea(echo, &msg, 1, msg.attributes);
       else {
-        if (msg.netMail) 
+        if (msg.netMail)
+	  /* FIXME */
 	  processNMMsg(&msg, NULL, NULL, 0);
         else
           processEMMsg(&msg, msg.origAddr, 1);
