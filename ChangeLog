@@ -1,3 +1,23 @@
+2002-05-30 Thursday 17:18  stas
+
+	* src/: scan.c (1.159), scanarea.c (1.81), seenby.c (1.22), tlog.c
+	(1.11), toss.c (1.413): Add intialisations in declarations for
+	pointers.
+
+2002-05-30 Thursday 16:58  stas
+
+	* src/query.c (1.47): Fix: "hpt qrep" cause memory fault if
+	echotosslog not defined in config.
+
+2002-05-30 Thursday 16:56  stas
+
+	* src/fcommon.c (1.128): Test NULL string pointer in safe_strdup().
+
+2002-05-30 Thursday 16:38  stas
+
+	* src/scan.c (1.158): FIx: "hpt pack" cause memory fault when
+	echotosslog not defined in config. (FreeBSD)
+
 2002-05-29 Wednesday 12:30  mche
 
 	* src/query.c (1.46): sstrdup() changed for safe_strdup()
