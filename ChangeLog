@@ -1,3 +1,26 @@
+2002-04-10 Wednesday 18:33  mche
+
+	* src/query.c (1.38): fixed bug with incorrect date range when freq
+	--> kill
+
+2002-04-10 Wednesday 18:19  mche
+
+	* src/dupe.c (1.58): fixed bug with duplicate dupebase filenames
+	when autoareacreatesubdirs on
+
+2002-04-10 Wednesday 17:31  mche
+
+	* src/hpt.c (1.140): fixed warnings with perl build
+
+2002-04-10 Wednesday 16:36  mche
+
+	* make/makeperl.mvcdll (1.4): delayloading compilation
+
+2002-04-10 Wednesday 11:46  mche
+
+	* src/areafix.c (1.279): query file logic fixed (bug with
+	unsubscribing)
+
 2002-04-09 Tuesday 18:21  mche
 
 	* h/tree.h (1.7), h/vixie.h (1.7), src/tree.c (1.11): no message
