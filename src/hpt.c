@@ -252,7 +252,7 @@ int main(int argc, char **argv)
    char title[ 256 ], oldtitle[ 256 ];
 #endif
 
-xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
+xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVICE, VER_BRANCH);
 
 #ifdef __linux__
    xstrcat(&version, "/lnx");
