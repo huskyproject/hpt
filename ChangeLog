@@ -2,6 +2,11 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Jun 25 22:44:15 NOVST 2000
+max:
+* don't creates .err files after autocreating passthrough areas
+
+----- cvs ci ------
 Wed Jun 21 13:44:01 NOVST 2000
 max:
 * carbons outgoing mail if carbonOut in config

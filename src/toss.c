@@ -1270,7 +1270,11 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 			 if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
 				 rc = putMsgInArea(echo, msg, 1, forceattr);
 				 statToss.saved++;
+			 } else {
+				 statToss.passthrough++;
+				 rc = 1; //passthrough does always work
 			 }
+
 			 // if only one downlink, we've got the mail from him
 			 if (echo->downlinkCount > 1) {
 				 forwardMsgToLinks(echo, msg, pktOrigAddr);
