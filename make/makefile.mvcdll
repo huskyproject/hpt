@@ -47,44 +47,54 @@ _ILK	= .ilk
 _PDB	= .pdb
 
 ## program options ##
-CFLAGS=-nologo -MD -Zp1 -Ob2 -c
+CFLAGS=-nologo -MD -Zp1
 CINCL= -I$(H_DIR) -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib $(HPTZIPI) $(PERLI)
 LFLAGS=
 CDEFS =-D__NT__ -D_CONSOLE -D_MAKE_DLL $(HPTZIPD) $(PERLD)
+COPT	= -Ob2
+
+EXEFLAGS = /link /nodefaultlib /opt:nowin98
 EXENAMEFLAG=-Fe
 
 # List of HUSKY libraries required to build binary file(s)
 LIBS	= ..\..\fidoconf\make\fconfmvc.lib ..\..\smapi\make\smapimvc.lib \
 	  ..\..\huskylib\make\huskymvc.lib $(HPTZIPL) \
-	  USER32.LIB msvcrt.lib Kernel32.lib $(PERLL) \
-	  /link /nodefaultlib /opt:nowin98
+	  USER32.LIB msvcrt.lib Kernel32.lib $(PERLL)
 	  
-
-default: all
+default:
+	@echo Run 'make programs' to build dinamic version of programs
+	@echo ($(PROGRAMS))
+	@echo Run 'make all' to build all above
 
 programs:  $(PROGRAMS)
 all: programs
 
 {$(_SRC_DIR)}.c$(_OBJ):
-	@$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $<
+	@$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(COPT) -c $<
 
 $(PKTINFO): $(PKTINFOOBJS)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG)$@ $** $(LIBS)
+	@echo Create $(PKTINFO)...
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS) $(EXEFLAGS)
 
 $(TPKT): $(TPKTOBJS)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG)$@ $** $(LIBS)
+	@echo Create $(TPKT)...
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS) $(EXEFLAGS)
 
 $(TXT2PKT): $(TXT2PKTOBJS)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG)$@ $** $(LIBS)
+	@echo Create $(TXT2PKT)...
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS) $(EXEFLAGS)
 
 $(HPTLINK): $(HPTLINKOBJS)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG)$@ $** $(LIBS)
+	@echo Create $(HPTLINK)...
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS) $(EXEFLAGS)
 
 $(HPTTREE): $(HPTTREEOBJS)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG)$@ $** $(LIBS)
+	@echo Create $(HPTTREE)...
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS) $(EXEFLAGS)
 
 $(HPT): $(HPTOBJS)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG)$@ $** $(LIBS) $(PERLDLL)
+	@echo Create $(HPT)...
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS) $(EXEFLAGS)
 
 clean:
 	-$(RM) $(RMOPT) *$(_OBJ)

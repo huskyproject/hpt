@@ -1,38 +1,102 @@
-# Microsoft Visual C++ Makefile
+# $Id$
 #
+# Microsoft Visual C++ Makefile for build static program(s)
+# No support for the Husky build environment.
+#
+# Tested on MS Visual C 6.0
+#
+include makefile.inc
 
 DEBUG=0
-HPTZIP=0
 
-!if $(HPTZIP) == 1
-HPTZIPL = ..\..\hptzip\make\hptzip.lib
+USE_PERL = 0
+
+!if $(USE_PERL) == 1
+PERL_DIR = c:\programs\Perl
+PERLL	 = delayimp.lib $(PERL_DIR)\lib\core\perl56.lib
+PERLI	 = -I$(PERL_DIR)\lib\core
+PERLD	 = -DDO_PERL -DWIN32 -DNO_STRICT -DHAVE_DES_FCRYPT -DPERL_IMPLICIT_CONTEXT -DPERL_IMPLICIT_SYS -DPERL_MSVCRT_READFIX
+PERLDLL  = /delayload:perl56.dll
+PERLOBJ  = perl.obj
+!endif
+
+USE_HPTZIP=0
+
+!if $(USE_HPTZIP) == 1
+HPTZIPL = ..\..\hptzip/make/hptzip.lib
 HPTZIPI = -I..\..\hptzip
 HPTZIPD = -DUSE_HPTZIP
 !endif
 
-CC=cl
-EXENAMEFLAG=-Fe
-SRC_DIR=..\src\
+## programs ##
 
-CFLAGS=-nologo -Zp1 -O2 -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib $(HPTZIPI) -c
+CC	= cl
+AR	= lib
+LINK	= link
+RANLIB	=
+RM	= del
+
+## file suffixes ##
+_C	= .c
+_OBJ	= .obj
+_LIB	= .lib
+_EXE	= .exe
+_DLL	= .dll
+_EXP	= .exp
+_ILK	= .ilk
+_PDB	= .pdb
+
+## program options ##
+CFLAGS=-nologo -Zp1
+CINCL= -I$(H_DIR) -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib $(HPTZIPI) $(PERLI)
 LFLAGS=
-CDEFS =-D__NT__ -D_CONSOLE $(HPTZIPD)
+CDEFS =-D__NT__ -D_CONSOLE $(HPTZIPD) $(PERLD)
+COPT	= -Ob2
 
-OBJ=.obj
-EXE=.exe
-RM=del
+EXENAMEFLAG=-Fe
 
-LIBS=..\..\fidoconf\fconfmvc.lib ..\..\smapi\make\smapimvc.lib ..\..\huskylib\make\huskymvc.lib $(HPTZIPL) USER32.LIB
+# List of HUSKY libraries required to build binary file(s)
+LIBS	= ..\..\fidoconf\make\fconfmvc.lib ..\..\smapi\make\smapimvc.lib \
+	  ..\..\huskylib\make\huskymvc.lib \
+	  USER32.LIB $(HPTZIPL) $(PERLL)
 
-default: all
+default:
+	@echo Run 'make programs' to build static version of programs
+	@echo ($(PROGRAMS))
+	@echo Run 'make all' to build all above
 
-{$(SRC_DIR)}.c$(OBJ):
-	$(CC) $(CFLAGS) $(CDEFS) $<
+programs:  $(PROGRAMS)
+all: programs
 
-!include makefile.inc
+{$(_SRC_DIR)}.c$(_OBJ):
+	@$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(COPT) -c $<
 
-all: commonprogs
+$(PKTINFO): $(PKTINFOOBJS)
+	@echo Create $(PKTINFO)...
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS)
 
-clean: commonclean
+$(TPKT): $(TPKTOBJS)
+	@echo Create $(TPKT)...
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS)
 
-distclean: commondistclean
+$(TXT2PKT): $(TXT2PKTOBJS)
+	@echo Create $(TXT2PKT)...
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS)
+
+$(HPTLINK): $(HPTLINKOBJS)
+	@echo Create $(HPTLINK)...
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS)
+
+$(HPTTREE): $(HPTTREEOBJS)
+	@echo Create $(HPTTREE)...
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS)
+
+$(HPT): $(HPTOBJS)
+	@echo Create $(HPT)...
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS)
+
+clean:
+	-$(RM) $(RMOPT) *$(_OBJ)
+
+distclean: clean
+	-$(RM) $(RMOPT) $(PROGRAMS)
