@@ -506,6 +506,7 @@ void scanNMArea(s_area *area)
    XMSG            xmsg;
    s_addr          dest, orig;
    int             for_us, from_us;
+   FILE            *f;
 
    // do not scan one area twice
    if (area->scn) return;
@@ -637,7 +638,7 @@ int scanByName(char *name) {
 		  return 1;
 	  }; 
        } else {
-          w_log('4', "Area \'%s\' is not found -> Scanning stop.", name);
+          w_log('4', "Area \'%s\' is not found -> Scanning stop", name);
        };
     } /* endif */
     return 0;
@@ -667,7 +668,7 @@ void scanExport(int type, char *str) {
       scanByName(str);   
    } else if (f == NULL) {
 	   if (type & SCN_FILE) {
-		   w_log('4', "EchoTossLogFile not found -> Scanning stop.");
+		   w_log('4', "EchoTossLogFile not found -> Scanning stop");
 		   return; 
 	   }
 	   if (type & SCN_ECHOMAIL) {
