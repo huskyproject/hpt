@@ -19,7 +19,8 @@ all: $(OBJS) \
      pktinfo.exe \
      tlog.exe \
      tconfig.exe \
-     hpt.exe
+     hpt.exe \
+     hptlink.exe
 
 $(OBJS): $(SRC_DIR)\$*.c
   @echo compiling $*.c
@@ -45,6 +46,9 @@ hpt.exe: $(OBJS)
   @echo linking hpt
   $(LINK) $(LFLAGS) FILE $(OBJS) NAME hpt.exe
 
+hptlink.exe: $(OBJS)
+  @echo linking hptlink
+  $(LINK) $(LFLAGS) FILE hptlink.obj NAME hptlink.exe
 clean:
 	del *.obj
 	del *.bak
@@ -52,10 +56,11 @@ clean:
 distclean: clean
 	del *.exe
 
-install: hpt.exe purged.exe pktinfo.exe tpkt.exe tlog.exe
+install: hpt.exe purged.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe
 	copy hpt.exe $(BINDIR)
 	copy purged.exe $(BINDIR)
 	copy pktinfo.exe $(BINDIR)
 	copy tpkt.exe $(BINDIR)
 	copy tlog.exe $(BINDIR)
+	copy hptlink.exe $(BINDIR)
 

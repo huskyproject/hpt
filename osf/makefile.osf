@@ -25,7 +25,8 @@ all: $(OBJS) \
      tlog \
      tpkt \
      hpt \
-     purgeDupes 
+     purgeDupes \
+     hptlink
 #     install
 
 %.o: $(SRC_DIR)%.c
@@ -46,15 +47,19 @@ hpt: $(OBJS)
 purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o log.o recode.o
 	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o log.o recode.o $(FIDOCONFIG) $(SMAPI)
 
+hptlink: hptlink.o
+	$(CC) $(LFLAGS) -o hptlink hptlink.o $(FIDOCONFIG) $(SMAPI)
+
 clean:
 	-rm -f *.o
 	-rm *~
 
 distclean: clean
-	-rm purgeDupes hpt tpkt tlog pktinfo
+	-rm purgeDupes hpt tpkt tlog pktinfo hptlink
 
-install: hpt pktinfo purgeDupes ../linux/hpt.1
+install: hpt pktinfo purgeDupes ../man/hpt.1
 	cp hpt pktinfo purgeDupes $(BINDIR)
-	cp ../linux/hpt.1 $(MANDIR)/man1
-	cp ../linux/purgeDupes.1 $(MANDIR)/man1
+	cp ../man/hpt.1 $(MANDIR)/man1
+	cp ../man/purgeDupes.1 $(MANDIR)/man1
+	cp ../man/hptlink.1 $(MANDIR)/man1
 

@@ -2,6 +2,12 @@ hpt 0.30
 --------
 
 ----- cvs ci ------
+Sat Dec 11 13:08:47 NOVT 1999
+max (patch from Serguei Revtov):
+* added alternative tool hptlink
+* moved man pages
+
+----- cvs ci ------
 Thu Dec  9 16:33:03 NOVT 1999
 max (patch from Kolya):
 * fixed bug in "area linking speed up!"

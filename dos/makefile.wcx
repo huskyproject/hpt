@@ -37,6 +37,10 @@ tlog.exe: tlog.obj log.obj
   @echo linking tlog
   $(LINK) $(LFLAGS) FILE tlog.obj, log.obj NAME tlog.exe
 
+hptlink.exe: hptlink.obj
+  @echo linking hptlink
+  $(LINK) $(LFLAGS) FILE hptlink.obj NAME hptlink.exe
+
 tconfig.exe: tconfig.obj config.obj common.obj
   @echo linking tconfig
   $(LINK) $(LFLAGS) FILE tconfig.obj, config.obj, common.obj NAME tconfig.exe
@@ -52,10 +56,11 @@ clean:
 distclean: clean
 	del *.exe
 
-install: hpt.exe purged.exe pktinfo.exe tpkt.exe tlog.exe
+install: hpt.exe purged.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe
 	copy hpt.exe $(BINDIR)
 	copy purged.exe $(BINDIR)
 	copy pktinfo.exe $(BINDIR)
 	copy tpkt.exe $(BINDIR)
 	copy tlog.exe $(BINDIR)
+	copy hptlink.exe $(BINDIR)
 

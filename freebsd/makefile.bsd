@@ -5,7 +5,7 @@ CC    = gcc -Wall
 
 OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o crc.o
 SRC_DIR = ../src/
-CDIR = ../linux
+CDIR = ../man
 
 ifeq ($(DEBUG), 1)
  CFLAGS     = -c -I $(INCDIR) -I ../h -O2 -pipe -DUNIX -g
@@ -16,7 +16,7 @@ LFLAGS     = -L $(LIBDIR)
 FIDOCONFIG = -lfidoconfig
 SMAPI      = -lsmapibsd
 
-ALLBIN = pktinfo tlog tpkt hpt purgeDupes
+ALLBIN = pktinfo tlog tpkt hpt purgeDupes hptlink
 
 all: $(ALLBIN)
 
@@ -38,6 +38,9 @@ hpt: $(OBJS)
 purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o log.o recode.o
 	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o log.o recode.o $(FIDOCONFIG) $(SMAPI)
 
+hptlink: hptlink.o
+	$(CC) $(LFLAGS) -o hptlink hptlink.o $(FIDOCONFIG) $(SMAPI)
+
 clean:
 	-rm -f *.o *.1.gz
 	-rm *~
@@ -49,5 +52,6 @@ install: $(ALLBIN) $(CDIR)/hpt.1
 	install $(IBOPT) $(ALLBIN) $(BINDIR)
 	gzip -c $(CDIR)/hpt.1 > hpt.1.gz
 	gzip -c $(CDIR)/purgeDupes.1 > purgeDupes.1.gz
-	install $(IMOPT) hpt.1.gz purgeDupes.1.gz $(MANDIR)/man1
+	gzip -c $(CDIR)/hptlink.1 > hptlink.1.gz
+	install $(IMOPT) hpt.1.gz purgeDupes.1.gz hptlink.1.gz $(MANDIR)/man1
 
