@@ -397,14 +397,16 @@ int writeCheck(s_area *echo, s_link *link) {
 }
 
 /**
-  * This function return 0 if the link is not in seenBy else it return 1.
+  * This function returns 0 if the link is not in seenBy else it returns 1.
   */
 
-int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link)
+int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link, s_addr pktOrigAddr)
 {
    UINT i;
 
-   if (link->hisAka.point != 0) return 0; // a point always gets the mail
+   if (addrComp(pktOrigAddr, link->hisAka) == 0) return 1;   // the link where we got the mail from
+   
+   if (link->hisAka.point != 0) return 0;                    // a point always gets the mail
 
    for (i=0; i < seenByCount; i++) {
       if ((link->hisAka.net == seenBys[i].net) && (link->hisAka.node == seenBys[i].node)) return 1;
@@ -414,10 +416,10 @@ int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link)
 }
 
 /**
-  * This function put all the links of the echoarea in the newLink array who does not have got the mail
+  * This function puts all the links of the echoarea in the newLink array who does not have got the mail
   */
 
-void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount, s_area *echo, s_link ***newLinks)
+void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount, s_area *echo, s_link ***newLinks, s_addr pktOrigAddr)
 {
    UINT i, j=0;
 
@@ -480,7 +482,9 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       pathCount++;
    }
 
-//   for (i=0; i< pathCount;i++) printf("%u/%u ", path[i].net, path[i].node);
+#ifdef DEBUG_HPT
+   for (i=0; i< pathCount;i++) printf("%u/%u ", path[i].net, path[i].node);
+#endif
    //exit(2);
 
 
