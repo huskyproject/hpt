@@ -2220,7 +2220,7 @@ void autoPassive()
 
   for (i = 0; i < config->linkCount; i++) {
 
-      if (config->links[i].autoPause==0 || ((config->links[i].Pause & EPAUSE) == EPAUSE)
+      if (config->links[i].autoPause==0 || (config->links[i].Pause == (EPAUSE|FPAUSE))
          ) continue;
 
       if (createOutboundFileName(&(config->links[i]),
@@ -2251,7 +2251,8 @@ void autoPassive()
 			      w_log('8', "autopause: the file %s is %d days old", path, time_test/24);
 			      if (Changepause((cfgFile) ? cfgFile :
 					      getConfigFileName(),
-					      &(config->links[i]), 1,EPAUSE|FPAUSE)) {    
+					      &(config->links[i]), 1,
+					      config->links[i].Pause^(EPAUSE|FPAUSE))) {
 				  msg = makeMessage(config->links[i].ourAka,
 						    &(config->links[i].hisAka),
 						    versionStr,config->links[i].name,
@@ -2262,7 +2263,7 @@ void autoPassive()
 							    config->links[i].ourAka,
 							    &(config->links[i].hisAka)
                                 ,versionStr);
-				  xstrcat(&msg->text, "\r System switched to passive\r\r You are being unsubscribed from echo areas with no downlinks besides you!\r\r When you wish to continue receiving arcmail, please send request to AreaFix\r containing the \r %RESUME command.");
+				  xstrcat(&msg->text, "\r System switched to passive\r\r You are being unsubscribed from echo and fileecho areas with no downlinks besides you!\r\r When you wish to continue receiving arcmail and fileechoes, please send requests to AreaFix and FileFix\r containing the \r %RESUME command.");
 				  xscatprintf(&msg->text, "\r\r--- %s autopause\r", versionStr);
 				  msg->textLength = strlen(msg->text);
 				  processNMMsg(msg, NULL,
