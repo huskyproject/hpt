@@ -35,7 +35,9 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>
-#include <process.h>
+#ifndef UNIX
+#  include <process.h>
+#endif
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/types.h>

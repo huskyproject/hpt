@@ -37,7 +37,9 @@
 #include <string.h>
 #include <time.h>
 #include <errno.h>
-#include <process.h>
+#ifndef UNIX
+#  include <process.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 
