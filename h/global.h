@@ -65,7 +65,7 @@ extern int       cmQueue;
 extern int       noHighWaters;
 extern int       pkt_count; // pkt counter
 extern int       pkt_aTime;
-extern int	 quiet;
+extern int   	  quiet;
 
 extern s_addr afixAddr;
 extern char *afixCmd;
@@ -73,6 +73,5 @@ extern char *afixCmd;
 extern int lock_fd;
 extern char *_lockfile;
 
-extern unsigned long getfree (char *path);
 
 #endif

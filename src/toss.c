@@ -1513,12 +1513,12 @@ int processPkt(char *fileName, e_tossSecurity sec)
 			    processIt = 1;
 			} else {
 			    if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (eSecure | eOn)) ) {
-				w_log(LL_ERR, "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
+				w_log(LL_WARN, "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
 				      fileName, header->origAddr.zone, header->origAddr.net,
 				      header->origAddr.node, header->origAddr.point);
 				processIt = 1;
 			    } else {
-				w_log(LL_ERR, "pkt: %s Password Error for %i:%i/%i.%i",
+				w_log(LL_WARN, "pkt: %s Password Error for %i:%i/%i.%i",
 				      fileName, header->origAddr.zone, header->origAddr.net,
 				      header->origAddr.node, header->origAddr.point);
 				if (header->pktPassword == NULL || header->pktPassword[0] == '\0')

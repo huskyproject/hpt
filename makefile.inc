@@ -11,7 +11,7 @@ EXENAMEFLAG=-o
 #SRC_DIR=../src/
 #LIBS   =-L$(LIBDIR) -lfidoconfig -lsmapi
 
-OBJS	= $(PERLOBJ) fcommon$(OBJ) getfree$(OBJ) hpt$(OBJ) pktread$(OBJ) \
+OBJS	= $(PERLOBJ) fcommon$(OBJ) hpt$(OBJ) pktread$(OBJ) \
 	global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) seenby$(OBJ) \
 	dupe$(OBJ) query$(OBJ) areafix$(OBJ) post$(OBJ) \
 	link$(OBJ) pktwrite$(OBJ)
