@@ -1,10 +1,10 @@
-If you found error in husky program fill following form
-please and post report into one from:
+If you've found an error in husky program, please fill the
+following form and post report by one of these ways:
 - post into 
   https://sourceforge.net/tracker/?group_id=1332&atid=101332
   (https://sourceforge.net/projects/husky - "bug" link)
 - post into fidosoft.husky FIDOnet echo
-- send report to this program developer via email or netmail.
+- send report to the program's developer via email or netmail.
 
 -------------------------------------------------------------
 
@@ -21,7 +21,7 @@ _____________________________________________________________
 _____________________________________________________________
 _____________________________________________________________
 
-Repetitions bug? [ ]yes  [ ]no
+Can bug be repeated? [ ]yes  [ ]no
 
 Debugging log
 (using `Loglevels 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ`):
@@ -38,7 +38,7 @@ _____________________________________________________________
 _____________________________________________________________
 _____________________________________________________________
 
-Config part (bug related):
+Part of config (related to the bug):
 _____________________________________________________________
 _____________________________________________________________
 _____________________________________________________________
