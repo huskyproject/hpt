@@ -44,7 +44,7 @@ const int   VER_PATCH   = 2;
 
 
 /* branch is "" for CVS current, "-stable" for the release candiate branch  */
-const char *VER_BRANCH  = "-stable";
+const char *VER_BRANCH  = "-release";
 
 /* The service version string is empty for the first release done from a    */
 /* release candidate branch.  If subsequent service releases are necessary, */
