@@ -1951,11 +1951,11 @@ void autoPassive()
    } /* endfor */
 }
 
+struct _minf m;
 int relink (char *straddr) {
 	s_link          *researchLink = NULL;
 	unsigned int    count, areasArraySize;
 	s_area          **areasIndexArray = NULL;
-	static struct _minf m;
 
 	// parse config
 	if (config==NULL) processConfig();
@@ -2036,7 +2036,7 @@ int relink (char *straddr) {
 		writeLogEntry(hpt_log, '8', "'Refresh' message created to `AreaFix`");
 		processNMMsg(msg, NULL,
 					 getNetMailArea(config,config->robotsArea),
-					 1, MSGLOCAL);
+					 1, MSGLOCAL|MSGKILL);
 		freeMsgBuffers(msg);
 		nfree(msg);
 		writeLogEntry(hpt_log, '8', "Total request relink %i area(s)",areasArraySize);

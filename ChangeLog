@@ -2,6 +2,12 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Oct 15 15:06:03 NOVST 2000
+max:
+* set k/s flag to relink msg
+* use fexist() instead of fstat()
+
+----- cvs ci ------
 Wed Oct 11 21:35:53 NOVST 2000
 max:
 * attaches with kludges like "FLAGS IMM KFS" processed correctly

@@ -168,7 +168,6 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 	union stamp_combo dosdate;
 	int i;
 	char *subject=NULL;
-	struct stat fInfo;
        
         //init outbounds
         outbounds[0] = &tossDir;
@@ -234,7 +233,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 #endif
 			   if (strchr(subject, ' ')!=NULL)
 				   subject[(long int)strchr(subject, ' ') - (long int)subject] = '\0';
-			   if (!stat(subject, &fInfo)) break;
+			   if (fexist(subject)) break;
 			   nfree(subject);
 		   }
 	   }
