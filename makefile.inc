@@ -13,8 +13,8 @@ EXENAMEFLAG=-o
 
 OBJS	= $(PERLOBJ) fcommon$(OBJ) getfree$(OBJ) hpt$(OBJ) pktread$(OBJ) \
 	global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) seenby$(OBJ) \
-	dupe$(OBJ) tree$(OBJ) query$(OBJ) areafix$(OBJ) arealist$(OBJ) \
-	post$(OBJ) link$(OBJ) pktwrite$(OBJ)
+	dupe$(OBJ) query$(OBJ) areafix$(OBJ) arealist$(OBJ) post$(OBJ) \
+	link$(OBJ) pktwrite$(OBJ)
 
 commonall: $(OBJS) \
      pktinfo$(EXE) \
