@@ -102,16 +102,31 @@ int mandatoryCheck(s_area area, s_link *link) {
 
     w_log(LL_FUNC,"areafix.c::mandatoryCheck()");
 
-    if (grpInArray(area.group,link->optGrp,link->numOptGrp)&&link->mandatory) return 1;
-    if (link->numOptGrp==0 && link->mandatory) return 1;
-    if (area.mandatory) return 1;
-    if ((i=isAreaLink(link->hisAka, &area))!=-1) return area.downlinks[i]->mandatory;
+    if (grpInArray(area.group,link->optGrp,link->numOptGrp)&&link->mandatory){
+      w_log(LL_FUNC,"areafix.c::mandatoryCheck() rc=1");
+      return 1;
+    }
+    if (link->numOptGrp==0 && link->mandatory){
+      w_log(LL_FUNC,"areafix.c::mandatoryCheck() rc=1");
+      return 1;
+    }
+    if (area.mandatory){
+      w_log(LL_FUNC,"areafix.c::mandatoryCheck() rc=1");
+      return 1;
+    }
+    if ((i=isAreaLink(link->hisAka, &area))!=-1){
+      w_log(LL_FUNC,"areafix.c::mandatoryCheck() rc=%d", area.downlinks[i]->mandatory);
+      return area.downlinks[i]->mandatory;
+    }
+      w_log(LL_FUNC,"areafix.c::mandatoryCheck() rc=0");
     return 0;
 }
 
 int subscribeCheck(s_area area, s_link *link)
 {
     int found = 0;
+
+    w_log( LL_FUNC, "%s::subscribeCheck() begin", __FILE__ );
 
     if (isLinkOfArea(link, &area)) return 0;
 
@@ -122,8 +137,15 @@ int subscribeCheck(s_area area, s_link *link)
 	    found = grpInArray(area.group,link->AccessGrp,link->numAccessGrp);
     } else found = 1;
 
-    if (!found) return 2;
-    if (area.levelwrite > link->level && area.levelread > link->level) return 2;
+    if (!found){
+      w_log( LL_FUNC, "%s::subscribeCheck() end, rc=2", __FILE__ );
+      return 2;
+    }
+    if (area.levelwrite > link->level && area.levelread > link->level){
+      w_log( LL_FUNC, "%s::subscribeCheck() end, rc=2", __FILE__ );
+      return 2;
+    }
+    w_log( LL_FUNC, "%s::subscribeCheck() end, rc=1", __FILE__ );
     return 1;
 }
 
@@ -131,14 +153,20 @@ int subscribeAreaCheck(s_area *area, char *areaname, s_link *link)
 {
     int rc=4;
 
-    if (!areaname) return rc;
+    w_log( LL_SRCLINE, "%s::subscribeAreaCheck()", __FILE__ );
+
+    if( (!areaname)||(!areaname[0]) ){
+      w_log( LL_SRCLINE, "%s::subscribeAreaCheck() Failed (areaname empty) rc=%d", __FILE__, rc );
+      return rc;
+    }
     if (patimat(area->areaName,areaname)==1) {
 	rc=subscribeCheck(*area, link);
 	// 0 - already subscribed / linked
 	// 1 - need subscribe / not linked
 	// 2 - no access
     }
-    // this is another area
+    // else: this is another area
+    w_log( LL_SRCLINE, "%s::subscribeAreaCheck() end rc=%d", __FILE__, rc );
     return rc;
 }
 
@@ -621,7 +649,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     e_changeConfigRet nRet = I_ERR;
     char *areaName = area->areaName;
 
-    w_log(LL_FUNC,"areafix.c::changeconfig()");
+    w_log(LL_FUNC,"areafix.c::changeconfig(%s,...)", fileName);
 
     if (init_conf(fileName))
 		return -1;
@@ -897,7 +925,7 @@ char *subscribe(s_link *link, char *cmd) {
     char *line, *an=NULL, *report = NULL;
     s_area *area=NULL;
 
-    w_log(LL_FUNC, "areafix::subscribe()");
+    w_log(LL_FUNC, "%s::subscribe(...,%s)", __FILE__, cmd);
 
     line = cmd;
 	
@@ -907,8 +935,9 @@ char *subscribe(s_link *link, char *cmd) {
     if (*line=='+') line++; while (*line==' ') line++;
 	
     if (strlen(line)>60 || !isValidConference(line)) {
-      w_log(LL_FUNC, "areafix::subscribe() FAILED (error request line)");
-      return errorRQ(line);
+      report = errorRQ(line);
+      w_log(LL_FUNC, "%s::subscribe() FAILED (error request line) rc=%s", __FILE__, report);
+      return report;
     }
 
     for (i=0; !found && rc!=6 && i<config->echoAreaCount; i++) {
