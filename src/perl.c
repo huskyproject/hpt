@@ -341,7 +341,11 @@ static int PerlStart(void)
    char *perlargs[]={"", PERLFILE, NULL};
    int saveerr, pid;
 
+#ifdef _MSC_VER
+   if (_access(PERLFILE, R_OK))
+#else
    if (access(PERLFILE, R_OK))
+#endif
    { w_log('8', "Can't read " PERLFILE ": %s, perl filtering disabled",
                    strerror(errno));
      do_perl=0;

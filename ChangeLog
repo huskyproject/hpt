@@ -2,6 +2,12 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Tue Apr 17 23:59:14 NOVST 2001
+max:
+* remove copying msgs to bad with "no downlinks for passthrough area" reason
+* fixed bug in "toss -b" with \001 before AREA
+
+----- cvs ci ------
 Thu Apr 12 12:12:34 NOVST 2001
 max:
 * use current smapi! (fixed "direct" & "immediate" msg packing)

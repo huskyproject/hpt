@@ -1587,12 +1587,16 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 					   statToss.saved += rc;
 				   }
 				   else { // passthrough
+					   /*
 					   if (echo->downlinkCount==1 && dontdocc==0)
 						   rc = putMsgInBadArea(msg, pktOrigAddr, 10);
 					   else {
 						   statToss.passthrough++;
 						   rc = 1;
 					   }
+					   */
+					   statToss.passthrough++;
+					   rc = 1;
 				   }
 			   } else rc = 1; // normal exit for carbon move & delete
 
@@ -2692,7 +2696,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
    s_message   msg;
    s_area	*echo = &(config -> badArea);
    s_addr	pktOrigAddr;
-   char 	*tmp, *ptmp, *line, *areaName, *area=NULL, noexp=0;
+   char 	*ptmp, *line, *areaName, *area=NULL, noexp=0;
    s_link   *link;
    
    makeMsg(hmsg, xmsg, &msg, &(config->badArea), 2);
@@ -2729,9 +2733,8 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
 		   if ((strncmp(ptmp, "AREA:", 5)==0 ||
 				strncmp(ptmp, "\001AREA:", 6)==0) && area==NULL) {
 			   //translating name of the area to uppercase
-			   for (tmp = ptmp; *tmp != '\0'; tmp++) 
-				   *tmp=(char)toupper(*tmp);
-			   areaName = *ptmp == '\001' ? ptmp + 4 : ptmp + 5;
+			   strUpper(ptmp);
+			   areaName = (*ptmp!='\001') ? ptmp+5 : ptmp+6;
 			   // if the areaname begins with a space
 			   while (*areaName == ' ') areaName++;
 			   echo = getArea(config, areaName);
