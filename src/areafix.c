@@ -1976,9 +1976,11 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     }
 
     if (rulesCount) {
-	for (nr=0; nr < rulesCount; nr++) {
-	    RetRules (msg, link, rulesList[nr]);
-	    nfree (rulesList[nr]);
+        for (nr=0; nr < rulesCount; nr++) {
+            if (rulesList && rulesList[nr]) {
+                RetRules (msg, link, rulesList[nr]);
+                nfree (rulesList[nr]);
+            }
 	}
 	nfree (rulesList);
     }
