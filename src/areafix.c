@@ -974,7 +974,7 @@ void fixRules (s_link *link, s_area *area) {
 	for (fn1 = fn; *fn1; fn1++) if (*fn1=='/' || *fn1=='\\') fn = fn1+1;
 	xscatprintf(&fileName, "%s%c%s.rul", config->rulesDir, PATH_DELIM, fn);
     } else {
-	fn = makeMsgbFileName(area->areaName);
+	fn = makeMsgbFileName(config, area->areaName);
 	xscatprintf(&fileName, "%s%c%s.rul", config->rulesDir, PATH_DELIM, fn);
 	nfree (fn); // allocated by makeMsgbFileName()
     }
@@ -2011,7 +2011,7 @@ void RetRules (s_message *msg, s_link *link, char *areaName)
 	for (fn1 = fn; *fn1; fn1++) if (*fn1=='/' || *fn1=='\\') fn = fn1+1;
 	xscatprintf(&fileName, "%s%s.rul", config->rulesDir, fn);
     } else {
-	fn = makeMsgbFileName(area->areaName);
+	fn = makeMsgbFileName(config, area->areaName);
 	xscatprintf(&fileName, "%s%s.rul", config->rulesDir, fn);
 	nfree (fn); // allocated by makeMsgbFileName()
     }

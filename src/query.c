@@ -53,7 +53,7 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
     char *msgbtype, *newAC=NULL, *desc, *quote_areaname;
     char *cp, *buff=NULL;                    /* temp. usage */
 
-    msgbFileName = makeMsgbFileName(c_area);
+    msgbFileName = makeMsgbFileName(config, c_area);
 
     // translating name of the area to lowercase/uppercase
     if (config->createAreasCase == eUpper) strUpper(c_area);
