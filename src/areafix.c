@@ -441,7 +441,7 @@ char *available(s_link *link, char *cmdline)
 			rc |= tag_mask(token, uplink->dfMask, uplink->numDfMask);
 
 		    if (uplink->denyFwdFile)
-			rc |= areaIsAvailable(token,uplink->denyFwdFile,NULL,0);
+			rc |= IsAreaAvailable(token,uplink->denyFwdFile,NULL,0);
 
                     if (pattern)
                     {
@@ -779,54 +779,6 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     return nRet;
 }
 
-int areaIsAvailable(char *areaName, char *fileName, char **desc, int retd) {
-    FILE *f;
-    char *line, *token, *running;
-
-    if (fileName==NULL || areaName==NULL) return 0;
-	
-    if ((f=fopen(fileName,"r")) == NULL) {
-	w_log('8',"areafix: cannot open file \"%s\"",fileName);
-	return 0;
-    }
-	
-    while ((line = readLine(f)) != NULL) {
-	line = trimLine(line);
-	if (line[0] != '\0') {
-
-	    running = line;
-	    token = strseparate(&running, " \t\r\n");
-
-	    if (token && areaName && stricmp(token, areaName)==0) {
-		// return description if needed
-		if (retd) {
-		    *desc = NULL;
-		    if (running) {
-			//strip "" at the beginning & end
-			if (running[0]=='"' && running[strlen(running)-1]=='"') {
-			    running++; running[strlen(running)-1]='\0';
-			}
-			//change " -> '
-			token = running;
-			while (*token!='\0') {
-			    if (*token=='"') *token='\'';
-			    token++;
-			}
-			xstrcat(&(*desc), running);
-		    }
-		}
-		nfree(line);
-		fclose(f);
-		return 1;
-	    }			
-	}
-	nfree(line);
-    }	
-    // not found
-    fclose(f);
-    return 0;
-}
-
 static int compare_links_priority(const void *a, const void *b) {
     int ia = *((int*)a);
     int ib = *((int*)b);
@@ -873,7 +825,7 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
             continue;
         }
         if ( (uplink->denyFwdFile!=NULL) &&
-            (areaIsAvailable(areatag,uplink->denyFwdFile,NULL,0)))
+            (IsAreaAvailable(areatag,uplink->denyFwdFile,NULL,0)))
         {
             rc = 2;
             continue;
@@ -881,7 +833,7 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
         if (uplink->forwardRequestFile!=NULL) {
             // first try to find the areatag in forwardRequestFile
             if (tag_mask(areatag, uplink->frMask, uplink->numFrMask) || 
-                areaIsAvailable(areatag,uplink->forwardRequestFile,NULL,0))
+                IsAreaAvailable(areatag,uplink->forwardRequestFile,NULL,0))
             {
                 forwardRequestToLink(areatag,uplink,dwlink,0);
                 rc = 0;
