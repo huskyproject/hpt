@@ -1,3 +1,9 @@
+2001-10-24 Wednesday 09:37  ml
+
+	* TODO (1.174), src/fcommon.c (1.98), src/hpt.c (1.114),
+	src/hpttree.c (1.16), src/post.c (1.59), src/txt2pkt.c (1.27):
+	change exit codes
+
 2001-10-19 Friday 12:30  ml
 
 	* doc/perlwin32.rus (1.1), make/makefile.be (1.2),
