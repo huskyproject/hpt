@@ -110,7 +110,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
    dt = gmtime(&tm);
    sprintf(viaLine, "\001Via %u:%u/%u.%u @%04u%02u%02u.%02u%02u%02u.UTC %s",
            ourAka.zone, ourAka.net, ourAka.node, ourAka.point,
-           dt->tm_year + 1900, dt->tm_mon + 1, dt->tm_mday, dt->tm_hour+1, dt->tm_min, dt->tm_sec, versionStr);
+           dt->tm_year + 1900, dt->tm_mon + 1, dt->tm_mday, dt->tm_hour, dt->tm_min, dt->tm_sec, versionStr);
 
    msg->text = (char *) calloc(1, msg->textLength+strlen(kludgeLines)+strlen(viaLine)+1);
 
