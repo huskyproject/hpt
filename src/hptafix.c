@@ -203,7 +203,7 @@ void autoPassive()
 
                                   /* pause areas with one link alive while others are paused */
                                   if (config->autoAreaPause)
-                                      rc += pauseAreas(0,config->links[i],NULL);
+                                      rc += pauseArea(ACT_PAUSE, config->links[i], NULL);
 #ifdef DO_PERL
                                   /* update perl vars */
                                   perl_invalidate(PERL_CONF_LINKS|PERL_CONF_AREAS);
