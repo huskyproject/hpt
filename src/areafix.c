@@ -1932,10 +1932,10 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 		    RetMsg(msg, link, preport, "areafix reply: linked request");
 		    break;
 		case PAUSE:
-		    RetMsg(msg, link, preport, "areafix reply: node change request");
+		    RetMsg(msg, link, preport, "areafix reply: pause request");
 		    break;
 		case RESUME:
-		    RetMsg(msg, link, preport, "areafix reply: node change request");
+		    RetMsg(msg, link, preport, "areafix reply: resume request");
 		    break;
 		case INFO:
 		    RetMsg(msg, link, preport, "areafix reply: link information");
