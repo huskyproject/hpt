@@ -80,6 +80,8 @@ int strncasesearch(char *strL, char *strR, int len)
 char *print_ch(int len, char ch)
 {
     static char tmp[256];
+
+	if (len <= 0 || len > 255) return "";
     
     memset(tmp, ch, len);
     tmp[len]=0;

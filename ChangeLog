@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Mon Mar 27 11:24:07 NOVST 2000
+max:
+* fixed error with static buffer in areafix
+
+----- cvs ci ------
 Sun Mar 26 14:00:02 NOVST 2000
 max:
 * fixed static buffers in autoCreate()
