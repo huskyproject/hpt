@@ -301,7 +301,7 @@ void linkArea(s_area *area)
 	   }
 
 	   /* Pass 1: read all message information in memory */
-	   w_log( LL_LINKING, "Pass 1 - reading");
+	   w_log( LL_LINKPASS, "Pass 1 - reading");
 
 	   for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++) {
 	      hmsg  = MsgOpenMsg(harea, MOPEN_READ, i);
@@ -382,9 +382,9 @@ void linkArea(s_area *area)
 	   /* Pass 2: building relations tree, & filling tree IDs */
 	   if ( loglevel >= 11 ) {
               if (linkNew)
-                 w_log(LL_LINKING, "Pass 2: building relations for %ld messages, new from %ld", (long) i-1, (long) newStart);
+                 w_log(LL_LINKPASS, "Pass 2: building relations for %ld messages, new from %ld", (long) i-1, (long) newStart);
               else
-                 w_log(LL_LINKING, "Pass 2: building relations for %ld messages", (long) i-1);
+                 w_log(LL_LINKPASS, "Pass 2: building relations for %ld messages", (long) i-1);
            }
 
 	   for (i = 1, crepl=replmap; i < highMsg; i++, crepl++) {
@@ -505,7 +505,7 @@ void linkArea(s_area *area)
 	   /* Pass 3: finding unlinked messages with filled tree IDs, and link
 	    * them to the tree where possible
 	    */
-	   w_log(LL_LINKING, "Pass 3: buildng relations by treeIds");
+	   w_log(LL_LINKPASS, "Pass 3: buildng relations by treeIds");
 
 	   for (i = 1, crepl=replmap; i <= highMsg && treeLinks; i++, crepl++) {
 	      if ( crepl->replyToPos == 0 && crepl->freeReply == 0 &&
@@ -539,7 +539,7 @@ void linkArea(s_area *area)
 
 
 	   /* Pass 4: write information back to msgbase */
-	   w_log(LL_LINKING, "Pass 4: writing");
+	   w_log(LL_LINKPASS, "Pass 4: writing");
 
 	   for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++) {
 
