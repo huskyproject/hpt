@@ -3,7 +3,9 @@ hpt 0.9.7 (development version)
 
 ----- cvs ci ------
 Wed Aug  2 13:59:09 NOVST 2000
-max (patch from Serguei Revtov):
+max 
+* fixed bug in autoCreate() from Jul 31
+patch from Serguei Revtov:
 * hptlink links LOCALareas when they are specified by args or in importlog file
 
 ----- cvs ci ------

@@ -781,7 +781,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    parseLine(buff, config);
 
    // subscribe uplink if he is not subscribed
-   area = &(config->echoAreas[config->echoAreaCount]);
+   area = &(config->echoAreas[config->echoAreaCount-1]);
    for (i = 0; i<area->downlinkCount; i++) {
       if (addrComp(pktOrigAddr, area->downlinks[i]->link->hisAka)==0)
 	  break;
