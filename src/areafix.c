@@ -1147,13 +1147,13 @@ void repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
    freeMsgBuffers(&msg);
 }
 
-void rescanEMArea(s_area *echo, s_link *link)
+void rescanEMArea(s_area *echo, s_link *link, long rescanCount)
 {
    HAREA area;
    HMSG  hmsg;
    XMSG  xmsg;
    dword highWaterMark, highestMsg, i;
-   
+
    /*FIXME: the code in toss.c does createDirectoryTree. We don't*/
    area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, /*echo -> fperm, 
                       echo -> uid, echo -> gid,*/ echo->msgbType | MSGTYPE_ECHO);
@@ -1161,14 +1161,17 @@ void rescanEMArea(s_area *echo, s_link *link)
       i = highWaterMark = MsgGetHighWater(area);
       highestMsg    = MsgGetHighMsg(area);
 
-      while (i <= highestMsg) {
-	 hmsg = MsgOpenMsg(area, MOPEN_RW, i);
-         i++;
-         if (hmsg == NULL) continue;      // msg# does not exist
-         MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-         repackEMMsg(hmsg, xmsg, echo, link);
+      if (rescanCount == -1) rescanCount = highestMsg; // if rescanCount == -1 all mails should be rescanned
 
-         MsgCloseMsg(hmsg);
+      while (i <= highestMsg) {
+	if (i > highestMsg - rescanCount) { // honour rescanCount paramater
+	  hmsg = MsgOpenMsg(area, MOPEN_RW, i);
+	  if (hmsg == NULL) continue;      // msg# does not exist
+	  MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+	  repackEMMsg(hmsg, xmsg, echo, link);
+	  MsgCloseMsg(hmsg);
+	}
+	i++;
       }
 
       MsgSetHighWater(area, i);
@@ -1192,7 +1195,8 @@ char *errorRQ(char *line)
 char *rescan(s_link *link, s_message *msg, char *cmd)
 {
     int i, c, rc = 0;
-    char *report, *line, addline[256];
+    long rescanCount = -1;
+    char *report, *line, *countstr, addline[256];
     s_area *area, **areas=NULL;
     
     line = cmd+strlen("%rescan");
@@ -1202,6 +1206,15 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
     while (*line && (*line == ' ' || *line == '\t')) line++;
     
     if (*line == 0) return errorRQ(cmd);
+
+    countstr = line;
+    while (*countstr && (!isspace(*countstr))) countstr++;
+    while (*countstr && (*countstr == ' ' || *countstr == '\t')) countstr++;
+
+    if (*countstr != 0)
+      {
+         rescanCount = strtol(countstr, NULL, 10);
+      }
     
     report = strpbrk(line, " \t");
     if (report) *report = 0;
@@ -1223,10 +1236,17 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 				writeLogEntry(hpt_log, '8', "areafix: %s area no rescan possible to %s",
 						area->areaName, aka2str(link->hisAka));
 			} else {
+			  if (rescanCount == -1) {
 				sprintf(addline,"%s Rescanned\r", area->areaName);
 				writeLogEntry(hpt_log, '8', "areafix: %s rescan area to %s",
 						area->areaName, aka2str(link->hisAka));
-				c++;
+			  }
+			  else {
+			    sprintf(addline,"%s Rescanned %lu mails\r", area->areaName, rescanCount);
+			    writeLogEntry(hpt_log, '8', "areafix: %s rescan %lu mails in area to %s",
+					  area->areaName, rescanCount, aka2str(link->hisAka));
+			  }
+			        c++;
 				areas = (s_area**)realloc(areas, c*sizeof(s_area*));
 				areas[c-1] = area;
 			}
@@ -1253,7 +1273,7 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 		strcpy(report, addline);
     }
     if (c) {
-		for (i = 0; i < c; i++) rescanEMArea(areas[i], link);
+		for (i = 0; i < c; i++) rescanEMArea(areas[i], link, rescanCount);
 		arcmail();
     }
     free(areas);
