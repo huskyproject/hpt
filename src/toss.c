@@ -1288,6 +1288,9 @@ int carbonCopy(s_message *msg, s_area *echo)
     char *testptr, *testptr2, *kludge;
     s_area *area;
     s_carbon *cb=&(config->carbons[0]);
+    s_area **copiedTo = NULL;
+    int copiedToCount = 0;
+    int ncop;
 
     if (echo->ccoff==1)
         return 0;
@@ -1377,6 +1380,17 @@ int carbonCopy(s_message *msg, s_area *echo)
 
         switch(cb->rule&CC_AND){ /* what operation with next result */
         case CC_OR: /* OR */
+            if (result && area && cb->move!=2 && !config->carbonAndQuit) { 
+                /* check if we've done cc to dest area already */
+                for (ncop=0; ncop < copiedToCount && result; ncop++)
+                    if (area == copiedTo[ncop]) result = 0;
+                if (result) {
+                    copiedTo = safe_realloc (copiedTo, (copiedToCount+1) * sizeof (s_area *));
+                    copiedTo[copiedToCount] = area;
+                    copiedToCount++;
+                }
+            }
+
             if(result){
                 /* make cc */
                 /* Set value: 1 if copy 3 if move */
@@ -1406,6 +1420,7 @@ int carbonCopy(s_message *msg, s_area *echo)
         }
     } /* end for() */
 
+    if (copiedTo) nfree (copiedTo);
     return rc;
 }
 
