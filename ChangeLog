@@ -1,3 +1,21 @@
+2005-02-02 Wednesday 17:53  val_khokhlov
+
+	* doc/hpt.texi (1.159): description for 'rescanLimit' keyword
+
+2005-02-02 Wednesday 17:48  val_khokhlov
+
+	* src/hptafix.c (1.19): limit max rescan msgs count
+
+2005-02-02 Wednesday 15:54  val_khokhlov
+
+	* doc/hpt.texi (1.158): description for the new token
+	'reportRequester'
+
+2005-02-02 Wednesday 15:45  val_khokhlov
+
+	* src/toss.c (1.542): new token 'reportRequester' - if turned off,
+	don't report who requested area
+
 2005-01-30 Sunday 20:08  i_zkh
 
 	* doc/hpt.texi (1.157): Moved RobotsArea description to fidoconfig
