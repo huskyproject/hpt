@@ -1,6 +1,25 @@
+2002-10-04 Friday 04:56  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.5): MFC: Fix about hptsqfix
+	module
+
+2002-10-04 Friday 04:37  stas_degteff
+
+	* doc/perlwin32.txt (hpt-1_2-stable.1): HPT with Perl support
+	Frequently Asked Questions
+
+2002-10-03 Thursday 15:52  d_sergienko
+
+	* doc/perlwin32.txt (1.2): fix spelling
+
 2002-10-03 Thursday 15:16  stas_degteff
 
 	* doc/perlwin32.rus (hpt-1_2-stable.2): update hpt/perl faq
+
+2002-10-03 Thursday 14:50  stas_degteff
+
+	* doc/perlwin32.txt (1.1): HPT with Perl support: Frequently Asked
+	Questions
 
 2002-10-03 Thursday 13:34  stas_degteff
 
