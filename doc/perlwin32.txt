@@ -19,8 +19,12 @@ A: (DK)
 Q: Why sub hpt_exit cannot be called sometimes?
 A: (DK)
    This function is called only if other perl hooks had been called before.
-     
+
 Q: Can I compile hpt with perl support, but perl56.dll is to be used only when
 Q: it's needed?
 A: (DK)
    Yes. See config statement 'HptPerlFile'
+
+Legend:
+-------
+DK: Dmitriy Kazimirow, 2:5004/73

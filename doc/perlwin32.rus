@@ -2,27 +2,23 @@
 
 (ActivePerl-5.6.0.623-MSWin32-x86-multi-thread.msi, fsize 7639040
 ActivePerl build 623, вероятно будет работать и с более новыми)
-Компилятор MSVC6 (без установленных SP)
+Компилятор MSVC6
 
-во всем husky source tree поменять s_addr на husky_s_addr
-(иначе будет конфликт с WinSock - s_addr определена и там тоже)
+собрать smapi, fidoconf:
 
-пересобрать smapi, fidoconf:
-
-nmake -f makeperl.mvc
-
-(ActivePerl поставлен в D:\Perl)
+nmake -f makefile.mvc или nmake -f makefile.mvcdll
 
 hpt:
+(ActivePerl поставлен в D:\Perl; иначе надо исправить путь в makefile.mvc*)
 
-nmake -f makeperl.mvc
+nmake -f makeperl.mvc или nmake -f makeperl.mvcdll
 
-если распостранять бинарники, то можно от Perl'а брать только perl56.dll
+если распространять бинарники, то можно от Perl'а брать только perl56.dll
 
 тестировалось не очень сильно - просьба не пинать,
 а сообщать о проблемах мне на 2:5004/73
 
-Dmitriy Kazimirow,2:5004/73
+Dmitriy Kazimirow, 2:5004/73
 
 
                         Frequently Asked Questions:
@@ -44,9 +40,9 @@ A: (DK)
 Q: Почему sub hpt_exit не вызывается иногда?
 A: (DK)
    Она вызывается, если Perl использован при данном пуске hpt
-    (т.е. если был вызван какой-либо другой хук)
-     
-Q: А можно собрать hpt.exe с поддержкой Perl'а, но чтобы perl56.dll 
+   (т.е. если был вызван какой-либо другой хук)
+
+Q: А можно собрать hpt.exe с поддержкой Perl'а, но чтобы perl56.dll
 Q: использовалась только если указано в конфиге?
 A: (DK)
    Можно, в конфиге hptPerlFile оставить пустым.
