@@ -1,7 +1,7 @@
 /*****************************************************************************
  * AreaFix for HPT (FTN NetMail/EchoMail Tosser)
  *****************************************************************************
- * Copyright (C) 1998-2000
+ * Copyright (C) 1998-2001
  *
  * Max Levenkov
  *
@@ -1630,7 +1630,8 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
     int len, msgsize = config->areafixMsgSize * 1024, partnum=0;
     s_message *tmpmsg;
 
-    if (RetFix == AVAIL || RetFix == LIST || RetFix == HELP) config->intab = NULL;
+	config->intab = NULL;
+
 	text = report;
 
 	while (text) {
