@@ -1282,6 +1282,9 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 
                 w_log( LL_SRCLINE, "%s::processEMMsg():%d", __FILE__, __LINE__);
 
+		/* todo: remove TID from local-generated msgs by hpt post -x
+		 * (if (addrComp(pktOrigAddr,*echo->useAka)==0)) */
+
 		if ((config->carbonCount!=0)&&(!dontdocc))
 		    ccrc=carbonCopy(msg, NULL, echo);
 
