@@ -1,3 +1,8 @@
 1) in jam netmail area will be stripped @via lines
 2) jam echo area with manually deleted messages scans only with -w parameter
    (whithout highwaters)
+3) when hpt coudn't write msg (or open area) hpt renames .pkt to .err
+   but message, which wasn't written to msgbase will be in dupeArea,
+   because hpt saved its dupeEntry to dupeBase in first tossing...
+4) under win32 & watcom c (others compilers didn't tested for this problem)
+   system() returns 0 if unpacker does not found, so arcmail will be lost...
