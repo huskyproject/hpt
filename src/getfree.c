@@ -15,7 +15,38 @@
 /*  the License, or (at your option) any later version. See COPYING.  */
 /*--------------------------------------------------------------------*/
 
-#if defined(__NT__) || defined (NT) || defined (WINNT)
+#include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
+#include <sys/types.h>
+#include <limits.h>
+
+#include <smapi/compiler.h>
+
+#ifdef HAS_DIRECT_H
+#include <direct.h>
+#endif
+
+#ifdef HAS_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+
+#ifdef HAS_SYS_MOUNT_H
+#include <sys/mount.h>
+#endif
+
+#ifdef HAS_SYS_STATVFS_H
+#include <sys/statvfs.h>
+#endif
+
+#ifdef HAS_SYS_VFS_H
+#include <sys/vfs.h>
+#endif
+
+#include <fidoconf/log.h>
+
+/*#if defined(__NT__)*/
+#if 0
 
 /* See  fidoconf/log.h  */
 #  define LL_ERROR   	'A'      /* Trivial error: continue */
@@ -30,15 +61,13 @@
 #endif
 
 
-#if defined(__NT__) || defined (NT) || defined (WINNT)
+#if defined(__NT__)
 
 #ifdef __WATCOMC__
-#include <direct.h>
 #ifndef MAXPATHLEN
 #define MAXPATHLEN NAME_MAX
 #endif
 #elif defined (_MSC_VER)
-#include <stdlib.h>
 #ifndef MAXPATHLEN
 #define MAXPATHLEN _MAX_PATH
 #endif
@@ -49,9 +78,6 @@
 #endif
 
 #include <windows.h>
-#include <stdio.h>
-#include <limits.h>
-#include <ctype.h>
 
 unsigned long getfree (char *path) {
 char RPN[MAXPATHLEN];	/*  root path */
@@ -102,7 +128,7 @@ BOOL rc;
       return (unsigned long) (FC / (1024 / (BPS * SPC)));
   }
 }
-#elif defined(__OS2__) || defined(OS2)
+#elif defined(__OS2__)
 
 #ifdef __WATCOMC__
 #define __IBMC__ 0
@@ -111,8 +137,6 @@ BOOL rc;
 
 #define INCL_DOS
 #include <os2.h>
-#include <ctype.h>
-#include <limits.h>
 
 
 unsigned long getfree (char *path)
@@ -143,7 +167,7 @@ unsigned long getfree (char *path)
       return fsa.cUnitAvail / (1024 / (fsa.cSectorUnit * fsa.cbSector));
   }
 }
-#elif defined(UNIX) || defined (__linux__)
+#elif defined(__UNIX__)
 /*
    This was taken from ifmail, and modified a bit for binkd -- mff, 1997
 
@@ -160,9 +184,6 @@ unsigned long getfree (char *path)
    EITHER EXPRESSED OR IMPLIED.  IN NO EVENT WILL THE COPYRIGHT HOLDER BE
    LIABLE FOR ANY DAMAGES RESULTING FROM THE USE OF THIS SOFTWARE.
  */
-
-#include <sys/types.h>
-
 
 
 /* TE: test for FreeBSD, NetBSD, OpenBSD or any other BSD 4.4 - derived OS */
@@ -184,7 +205,7 @@ unsigned long getfree (char *path)
 #include <sys/statvfs.h>
 #ifndef _SYS_STATVFS_H
 #define _SYS_STATVFS_H
-#elif !defined (__BEOS__)
+#elif !defined (__BEOS__)   /* Strange... BeOS is not SVR4, and not linux */
 #include <sys/vfs.h>
 #endif /* BEOS */
 #endif /* svr4 or linux */
@@ -196,7 +217,6 @@ unsigned long getfree (char *path)
 #endif /* _SYS_STATFS_H */
 #endif /* linux &! GLIBC */
 
-#include <limits.h>
 #endif /* not BSD-like OS */
 
 /* #if !(defined(_SYS_STATFS_H) || defined(_SYS_STATVFS_H)) */
@@ -240,8 +260,7 @@ unsigned long getfree (char *path)
 
 #endif
 
-#elif defined(MSDOS)
-#include <limits.h>
+#elif defined(__DOS__)
 unsigned long getfree (char *path)
 {
   w_log (LL_WARN, "warning: free space doesn't checked in %s",path);
