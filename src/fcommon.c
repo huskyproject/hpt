@@ -51,6 +51,7 @@
 #include <fcntl.h>
 #define AW_S_ISDIR(a) (((a) & S_IFDIR) != 0)
 #include <process.h>
+#include <dos.h>
 #endif
 
 #include <global.h>
