@@ -1,3 +1,8 @@
+2001-05-04 Friday 19:55  ml
+
+	* TODO (1.166), doc/hpt.texi (1.21), h/date.h (1.176), src/toss.c
+	(1.339): write importlog when tossing from BadArea
+
 2001-05-03 Thursday 21:41  ml
 
 	* doc/hpt.texi (1.20), h/date.h (1.175), src/toss.c (1.338): patch
