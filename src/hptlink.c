@@ -301,7 +301,7 @@ void linkArea(s_area *area)
 	   }
 
 	   /* Pass 1: read all message information in memory */
-	   w_log( LL_LINKING, "\nPass 1 - reading");
+	   w_log( LL_LINKING, "Pass 1 - reading");
 
 	   for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++) {
 	      hmsg  = MsgOpenMsg(harea, MOPEN_READ, i);
