@@ -2221,6 +2221,7 @@ void afix(hs_addr addr, char *cmd)
                     memset(&msg,'\0',sizeof(s_message));
                     MsgToStruct(SQmsg, xmsg, &msg);
                     processAreaFix(&msg, NULL, 0);
+                    nfree(msg->ctl);
                     if (config->areafixKillRequests) {
                         MsgCloseMsg(SQmsg);
                         MsgKillMsg(netmail, i--);
