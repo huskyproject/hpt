@@ -2,6 +2,12 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Sun Apr  2 11:04:29 NOVST 2000
+max:
+* fixing recoding in post.c when posting to netmailArea
+* pack mail when posting to netMail with -x parameter
+
+----- cvs ci ------
 Sat Apr  1 18:35:11 NOVST 2000
 max:
 * recoding msgToSysop

@@ -240,8 +240,10 @@ void post(int c, unsigned int *n, char *params[])
 	msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point,
 	(area) ? area : echo->areaName);
 
-      if (!export && echo->fileName)
-        putMsgInArea(echo, &msg, 1, msg.attributes);
+      if (!export && echo->fileName) {
+          msg.recode |= (REC_HDR|REC_TXT); // msg already in internal Charset
+          putMsgInArea(echo, &msg, 1, msg.attributes);
+      }
       else {
 	// recoding from internal to transport charSet
 	if (config->outtab != NULL) {
@@ -251,8 +253,10 @@ void post(int c, unsigned int *n, char *params[])
 	    recodeToTransportCharset((CHAR*)msg.subjectLine);
 	    recodeToTransportCharset((CHAR*)msg.text);
 	}
-        if (msg.netMail)
+        if (msg.netMail) {
 	  processNMMsg(&msg, NULL, NULL, 0);
+	  cmPack = 1;
+	}
         else
 	  msg.attributes = 0;
           xscatprintf(&msg.text, "SEEN-BY: %u/%u\r\001PATH: %u/%u\r",
