@@ -1,7 +1,7 @@
-2001-05-22 Tuesday 23:58  gul
+2001-05-22 Tuesday 23:06  pavel.gulchouck
 
-	* src/scan.c, src/perl.c: hpt routing available as changable
-	$route and $flavour in route() perl hook
+	* h/hptperl.h (1.2), src/perl.c (1.11), src/scan.c (1.129): $route
+	and $flavour vars are available in route() perl hook
 
 2001-05-17 Thursday 07:38  ml
 
