@@ -1,3 +1,8 @@
+2001-08-24 Friday 09:27  ml
+
+	* doc/hpt-FAQ.russian (1.7), src/hpt.c (1.113), src/toss.c (1.359):
+	fixed config file name processing with -c option
+
 2001-08-21 Tuesday 18:48  georgi
 
 	* src/txt2pkt.c (1.26): Fixed recoding in txt2pkt
