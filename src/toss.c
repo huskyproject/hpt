@@ -809,15 +809,14 @@ int checkAreaLink(s_area *area, hs_addr aka, int type)
     arealink = getAreaLink(area, aka);
     if (arealink) {
 	if (type==0) {
-	    if (arealink->import) writeAccess = 0; else writeAccess = 3;
+	    if (!arealink->import) writeAccess = BM_DENY_IMPORT;
 	} else {
-	    if (arealink->export) writeAccess = 0; else writeAccess = 3;
+	    if (!arealink->export) writeAccess = BM_DENY_IMPORT;
 	}
     } else {
-	if (addrComp(aka, *area->useAka)==0) writeAccess = 0;
-	else writeAccess = 4;
+	if (addrComp(aka, *area->useAka)!=0) writeAccess = BM_NOT_LINKED;
     }
-	
+
     return writeAccess;
 }
 
@@ -1037,7 +1036,7 @@ int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
 #ifdef DO_PERL
     w_log(LL_SRCLINE, "toss.c:%u:processMsg() #ifdef DO_PERL", __LINE__);
     if ((rc = perlfilter(msg, pktHeader->origAddr, secure)) == 1)
-	return putMsgInBadArea(msg, pktHeader->origAddr, 5);
+	return putMsgInBadArea(msg, pktHeader->origAddr, BM_DENY_BY_FILTER);
     else if (rc == 2)
 	return 1;
 #endif
@@ -1185,7 +1184,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 					       (sec==secLocalInbound ||
 						sec==secProtInbound ||
 						processIt == 1) ? 1 : 0) != 1 )
-				    if (putMsgInBadArea(msg, header->origAddr, 6)==0)
+				    if (putMsgInBadArea(msg, header->origAddr, BM_MSGAPI_ERROR)==0)
 					rc = 5; /*  can't write to badArea - rename to .err */
 			    } else rc = 1;
 			    freeMsgBuffers(msg);
