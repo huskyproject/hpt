@@ -1212,6 +1212,9 @@ doesn't run command.com to execute external commands such as
 packers/unpackers. hpt calls OS function to execute them instead of
 command.com.
 
+If you use hptzip (Zlib) library, you can set packed by     
+
+	Pack    zip zipInternal 
 
 @node PackNetMailOnScan, ProcessPkt, Pack, Keywords
 @subsection PackNetMailOnScan
@@ -1566,6 +1569,10 @@ e.g.: unpack "unzip -joLqq $a -d $p $f" 0 504b0304
          504b0304(hex) at offset 0(integer)
        they can be unpacked by
        "unzip -joLqq <filename> -d <path> <descrption_filename>"
+or
+       if you use hptzip (Zlib) library, you can set unpacked by     
+
+       unpack  zipInternal 0 504b0304
 
 @end example
 
