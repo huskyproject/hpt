@@ -3,6 +3,11 @@ hpt 0.9.7 (development version)
 
 
 ----- cvs ci ------
+Fri Jul 28 19:29:14 NOVST 2000
+max (patch from Pavel Gulchouk):
+* %delete areatag changed to ~areatag
+
+----- cvs ci ------
 Tue Jul 25 22:09:07 NOVST 2000
 max (patch from Pavel Gulchouk):
 * module=hpt

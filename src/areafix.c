@@ -545,7 +545,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 	} else {
 	    // delete area
 	    if (uplink->advancedAreafix)
-		xscatprintf(&(msg->text), "%%delete %s\r", areatag);
+		xscatprintf(&(msg->text), "~%s\r", areatag);
 	    else
 		xscatprintf(&(msg->text), "-%s\r", areatag);
 	}
@@ -854,11 +854,7 @@ char *delete(s_link *link, s_message *msg, char *cmd) {
     char *line, *report = NULL, *an;
     s_area *area;
 
-    line = cmd+strlen("%delete");
-
-    if (*line == 0) return errorRQ(cmd);
-
-    while (*line && (*line == ' ' || *line == '\t')) line++;
+    for (line = cmd + 1; *line == ' ' || *line == '\t'; line++);
 
     if (*line == 0) return errorRQ(cmd);
 
@@ -1407,12 +1403,12 @@ int tellcmd(char *cmd) {
 		if (strncasecmp(line,"pause",5)==0) return PAUSE;
 		if (strncasecmp(line,"resume",6)==0) return RESUME;
 		if (strncasecmp(line,"info",4)==0) return INFO;
-		if (strncasecmp(line,"delete",4)==0) return DEL;
 		if (strncasesearch(line, "rescan", 6)==0) return RESCAN;
 		return ERROR;
 	case '\001': return NOTHING;
 	case '\000': return NOTHING;
 	case '-'  : return DEL;
+	case '~'  : return REMOVE;
 	case '+': line++; if (line[0]=='\000') return ERROR;
 	default: return ADD;
 	}
