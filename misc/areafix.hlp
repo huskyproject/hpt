@@ -40,10 +40,12 @@ Example:
  %HELP                        <- AreaFix will send you this help.
  %RESCAN 541.LOCAL            <- Rescan area
  %RESCAN OS2.*                <- same
- %RESCAN linux.develop.ger 200  <- rescan the last 200 mails
+ %RESCAN linux.develop.ger 200      <- rescan the last 200 mails
+ %RESCAN linux.develop.ger 30 days  <- rescan mails for last 30 days
  %RESCAN                      <- turn on rescanning of following subscription
  NSK.SYSOP /r                 <- subscribe & rescan area
- NSK.PARTY /r=100		      <- subscribe & rescan the last 100 mails
+ NSK.PARTY /r=100             <- subscribe & rescan the last 100 mails
+ NSK.PARTY /r=30 days         <- subscribe & rescan mails for last 30 days
 %COMPRESS                     <- ask for list of packers   
 %COMPRESS zip                 <- switch current packer for 'zip' 
 %COMPRESS none                <- switch off packing your mail
