@@ -132,7 +132,10 @@ static XS(perl_putMsgInArea)
   free(text);
   rc = putMsgInArea(echo, &msg, 1, msg.attributes);
   freeMsgBuffers(&msg);
-  XSRETURN_PV(rc ? "" : "Unable to post message");
+  if (rc)
+    XSRETURN_UNDEF;
+  else
+    XSRETURN_PV("Unable to post message");
 }
 
 static XS(perl_str2attr)

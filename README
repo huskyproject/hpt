@@ -17,3 +17,4 @@ Renaming suffxies:
 .bad - not/wrong pkt
 .ntu - not to us
 .err - msg tossing problem (couldn't open area/couldn't write msg)
+.flt - perl filter (process_pkt()) returns bad retcode

@@ -14,7 +14,7 @@ Example:
  -F.???.COMP.*                <- Remove all areas that match this pattern
  *                            <- Add all areas available for you
  -*                           <- Remove all linked areas
- ~RU.SEX                      <- Delete this area from config
+ ~RU.SEX                      <- Delete this area
  %INFO                        <- Ask for general information
  %LIST                        <- List available areas
  %QUERY			      <- List of areas to which you are currently

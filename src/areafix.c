@@ -144,7 +144,7 @@ int subscribeAreaCheck(s_area *area, s_message *msg, char *areaname, s_link *lin
 // del link from area
 int delLinkFromArea(FILE *f, char *fileName, char *str) {
     long curpos, endpos, linelen=0, len;
-    char *buff, *sbuff, *ptr, *tmp, *line, *save;
+    char *buff, *sbuff, *ptr, *tmp, *line, *save = NULL;
 	
     curpos = ftell(f);
     buff = readLine(f);
@@ -713,7 +713,7 @@ static int compare_links_priority(const void *a, const void *b) {
 }
 
 int forwardRequest(char *areatag, s_link *dwlink) {
-    int i;
+    int i, rc = 1;
     s_link *uplink;
     int *Indexes;
     int Requestable = 0;
@@ -738,7 +738,7 @@ int forwardRequest(char *areatag, s_link *dwlink) {
 					forwardRequestToLink(areatag,uplink,dwlink,0);
 					nfree(Indexes);
 					return 0;
-				}
+				} else rc = 2; // found link with freqfile, but there is no areatag
 			} else {
 				forwardRequestToLink(areatag,uplink,dwlink,0);
 				nfree(Indexes);
@@ -750,7 +750,7 @@ int forwardRequest(char *areatag, s_link *dwlink) {
 	
 	// link with "forwardRequests on" not found
 	nfree(Indexes);
-	return 1;	
+	return rc;
 }
 
 char *subscribe(s_link *link, s_message *msg, char *cmd) {
@@ -800,10 +800,10 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	if ((rc==4) && (strstr(line,"*") == NULL) && !found) {
 	    if (link->fReqFromUpLink) {
 			// try to forward request
-			if (forwardRequest(line, link)!=0)
+			if ((rc=forwardRequest(line, link))==2)
 				xscatprintf(&report, " %s %s  no uplinks to forward\r",
 							line, print_ch(49-strlen(line), '.'));
-			else {
+			else if (rc==0) {
 				xscatprintf(&report, " %s %s  request forwarded\r",
 							line, print_ch(49-strlen(line), '.'));
 				for (j=0; j < config->addrCount; j++)
@@ -820,7 +820,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	}
 	
 	if (report == NULL) {
-	    xscatprintf(&report," %s %s  Not found\r", line, print_ch(49-strlen(line), '.'));
+	    xscatprintf(&report," %s %s  not found\r", line, print_ch(49-strlen(line), '.'));
 	    writeLogEntry(hpt_log, '8', "areafix: area %s is not found",line);
 	}
 	return report;
@@ -1510,7 +1510,7 @@ void preprocText(char *split, s_message *msg)
     char *orig = (config->areafixOrigin) ? config->areafixOrigin : config->origin;
 
     msg->text = createKludges(NULL, &msg->origAddr, &msg->destAddr);
-    xscatprintf(&split, " \r--- %s areafix\r", versionStr);
+    xscatprintf(&split, "\r--- %s areafix\r", versionStr);
     if (orig) {
 	xscatprintf(&split, " * Origin: %s (%s)\r", orig, aka2str(msg->origAddr));
     }

@@ -2,6 +2,15 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Mon Aug 14 12:07:14 NOVST 2000
+max:
+* if no uplinks with "forwardRequests on" then areafix wrote "not found"
+  instead of "no uplinks to forward"
+patch from PG:
+* better bsy processing
+* fixed bug when linking netmail areas in hptlink
+
+----- cvs ci ------
 Sun Aug 13 13:14:34 NOVST 2000
 max:
 * areafix: fix processing commands broked yesterday ("+" & "-" without areatag)

@@ -3,6 +3,7 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
+- create_bsy(), remove_bsy() from sqwish
 - excludePassthroughCarbon
 - don't open/close on each msg when writing to pkt files.
 - add pkt from to dupe messages
@@ -11,7 +12,7 @@ Category 1: Will certainly be implemented until next release
 - reduces Seen-BYs (fsc-0093)
 - createForwardNonPass
 - correctEMAddr: take node from path if no origin in message
-- unpack all bundles before toss
+- unpack all bundles before toss ???
 - afterUnpackBundle, afterUnpackAll ???
 - UnpackAllBeforeToss ???
 - hpt -q (quiet)

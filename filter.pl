@@ -68,7 +68,7 @@ sub process_pkt
 {
 # $pktname - name of pkt
 # $secure  - defined for secure pkt
-# return non-empty string for rejecting pkt (don't process, rename to *.dup)
+# return non-empty string for rejecting pkt (don't process, rename to *.flt)
   return "";
 }
 

@@ -553,7 +553,7 @@ int main(int argc, char **argv) {
 	}
 
 	// NetMail areas
-	for (i=0; i < cfg->localAreaCount && !found; i++) {
+	for (i=0; i < cfg->netMailAreaCount && !found; i++) {
 	   if (stricmp(cfg->netMailAreas[i].areaName, argareas[j])==0){
 	      linkArea(&(cfg->netMailAreas[i]));
 	      found++;
