@@ -240,6 +240,7 @@ int changeconfig(char *fileName, char *areaName, s_link *link, int action) {
 	FILE *f;
         char *cfgline;
         char *token;
+        char *running;
 	
 	if ((f=fopen(fileName,"r+")) == NULL)
 		{
@@ -251,14 +252,15 @@ int changeconfig(char *fileName, char *areaName, s_link *link, int action) {
 		cfgline = trimLine(cfgline);
                 if ((cfgline[0] != '#') && (cfgline[0] != 0)) {
 
-                   token = strtok(cfgline, " \t");
+                   running = cfgline;
+                   token = strsep(&running, " \t");
                    
                    if (stricmp(token, "include")==0)
-                      changeconfig(strtok(NULL, " \t"), areaName, link, action);
+                      changeconfig(strsep(&running, " \t"), areaName, link, action);
 
                    else
                       
-                      token = strtok(NULL, " \t");
+                      token = strsep(&running, " \t");
                       if (stricmp(token, areaName)==0)
                          if (action) delAka(f, link); else addAka(f, link);
 

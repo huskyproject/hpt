@@ -1008,7 +1008,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
 
    // unpack bundle
    if (found) {
-      fillCmdStatement(cmd, config->unpack[--i].call, fileName, "*.pkt", config->tempInbound);
+      fillCmdStatement(cmd, config->unpack[i-1].call, fileName, "*.pkt", config->tempInbound);
       sprintf(buff, "bundle %s: unpacking with \"%s\"", fileName, cmd);
       writeLogEntry(log, '6', buff);
       if ((cmdexit = system(cmd)) != 0) {

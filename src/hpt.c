@@ -120,6 +120,7 @@ void processConfig()
    if (config->linkCount == 0) printf("at least one link must be specified\n");
    if (config->routeCount == 0) printf("at least one route must be specified\n");
    if (config->tempOutbound == NULL) printf("you must set tempOutbound in fidoconfig first\n");
+   if (config->tempInbound == NULL) printf("you must set tempInbound in fidoconfig first\n");
 
    if (config->addrCount == 0 ||
            config->linkCount == 0 ||
