@@ -1421,11 +1421,22 @@ This statement cannot be repeated.
 @end table
 
 This keyword determines sorting mode for echolist (%LIST, %QUERY, etc):
-none - unsorted (as in config file), by name, by group (-g in echoArea) only
-or by group and name. When sorting is carried out by group, group descriptions
+@table @asis
+@item @code{none}
+unsorted (order as presents in config file)
+@item @code{name}
+sort by name
+@item @code{group}
+sort by group (-g in echoArea) only
+@item @code{group,name}
+sort by group and name.
+@end table
+
+When sorting is carried out by group, group descriptions
 (see grpDesc keyword) are printed before groups' areas.
 
 This statement cannot be repeated.
+
 
 @node Sysop, TearLine, SortEchoList, Keywords
 @subsection Sysop
