@@ -2142,9 +2142,12 @@ void MsgToStruct(HMSG SQmsg, XMSG xmsg, s_message *msg)
     xstrcat(&(msg->fromUserName), (char *) xmsg.from);
 
     msg->textLength = MsgGetTextLen(SQmsg);
+    msg->ctlLength = MsgGetCtrlLen(SQmsg);
     xstralloc(&(msg->text),msg->textLength+1);
-    MsgReadMsg(SQmsg, NULL, 0, msg->textLength, (unsigned char *) msg->text, 0, NULL);
+    xstralloc(&(msg->ctl),msg->ctlLength+1);
+    MsgReadMsg(SQmsg, NULL, 0, msg->textLength, (unsigned char *) msg->text, msg->ctlLength, msg->ctl);
     msg->text[msg->textLength] = '\0';
+    msg->ctl[msg->ctlLength] = '\0';
 
 }
 
