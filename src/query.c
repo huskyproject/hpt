@@ -40,18 +40,11 @@ void del_tok(char **ac, char *tok) {
     }
 }
 
-int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
+char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
 {
-    FILE *f;
-    char *fileName, *msgbFileName=NULL, *acDef;
-    char *buff=NULL, *hisaddr=NULL;
-    char *msgbtype, *newAC=NULL, *desc, *msgbDir;
-    char *cp;                    /* temp. usage */
-    s_link *creatingLink;
-    s_area *area;
-
-    if (strlen(c_area)>60) return 11;
-    if (!isValidConference(c_area) || isPatternLine(c_area)) return 7;
+    char *msgbFileName=NULL, *acDef;
+    char *msgbtype, *newAC=NULL, *desc;
+    char *cp, *buff=NULL;                    /* temp. usage */
 
     msgbFileName = makeMsgbFileName(c_area);
 
@@ -63,15 +56,106 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     if (config->areasFileNameCase == eUpper) strUpper(msgbFileName);
     else strLower(msgbFileName);
 
+    acDef = creatingLink->autoAreaCreateDefaults;
+    xscatprintf(&newAC, "%s%s", (acDef) ? " " : "", (acDef) ? acDef : "");
+
+    msgbtype = hpt_stristr(newAC, "-b ");
+
+    if(!msgbDir)
+        msgbDir=(creatingLink->msgBaseDir) ? 
+        creatingLink->msgBaseDir : config->msgBaseDir;
+
+    if (stricmp(msgbDir, "passthrough")!=0 && NULL==hpt_stristr(newAC,"passthrough"))
+    {
+        // we have to find a file name
+        int need_dos_file;
+
+#ifndef MSDOS                            
+        need_dos_file = hpt_stristr(newAC, "-dosfile")!=NULL;
+#else
+        need_dos_file = 1;
+#endif       
+        if (creatingLink->autoAreaCreateSubdirs && !need_dos_file)
+        {
+             //"subdirify" the message base path if the
+             //user wants this. this currently does not
+             //work with the -dosfile option
+            for (cp = msgbFileName; *cp; cp++)
+            {
+                if (*cp == '.')
+                {
+                    *cp = PATH_DELIM;
+                }
+            }
+        }
+        if (!need_dos_file)
+            xscatprintf(&buff, "EchoArea %s %s%s%s", c_area,
+            msgbDir, msgbFileName,
+            (msgbtype) ? "" : " -b Squish");
+        else {
+            sleep(1); // to prevent time from creating equal numbers
+            xscatprintf(&buff,"EchoArea %s %s%8lx%s", c_area,
+                msgbDir, (long)time(NULL),
+                (msgbtype) ? "" : " -b Squish");
+        }
+
+    } else {
+        // passthrough
+        xscatprintf(&buff, "EchoArea %s passthrough", c_area);
+
+        del_tok(&newAC, "passthrough");
+        del_tok(&newAC, "-b ");  // del "-b msgbtype" from autocreate defaults
+        del_tok(&newAC, "-$m "); // del "-$m xxx" from autocreate defaults
+        del_tok(&newAC, "-p ");  // del "-p xxx" from autocreate defaults
+
+        del_tok(&newAC, "-killsb");
+        del_tok(&newAC, "-tinysb");
+        del_tok(&newAC, "-nopack");
+        del_tok(&newAC, "-nolink");
+        del_tok(&newAC, "-killread");
+        del_tok(&newAC, "-keepunread");
+    }
+
+    nfree(msgbFileName);
+    if (creatingLink->LinkGrp) {
+        if (hpt_stristr(newAC, " -g ")==NULL)
+            xscatprintf(&newAC, " -g %s", creatingLink->LinkGrp);
+    }
+    if (areaIsAvailable(c_area,creatingLink->forwardRequestFile,&desc,1)==1) {
+        if (desc) {
+            if (hpt_stristr(newAC, " -d ")==NULL)
+                xscatprintf(&newAC, " -d \"%s\"", desc);
+            nfree(desc);
+        }
+    }
+    if (*newAC) xstrcat(&buff, newAC);
+    nfree(newAC);
+    return buff; 
+}
+
+int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
+{
+    FILE *f;
+    char *fileName, *msgbFileName=NULL;
+    char *buff=NULL, *hisaddr=NULL;
+    char *newAC=NULL, *msgbDir=NULL;
+    s_link *creatingLink;
+//    s_area *area; 
+    s_query_areas* areaNode=NULL;
+    size_t i;
+    unsigned int j;
+    char pass[] = "passthrough";
+
+
+    if (strlen(c_area)>60) return 11;
+    if (!isValidConference(c_area) || isPatternLine(c_area)) return 7;
+
     creatingLink = getLinkFromAddr(*config, pktOrigAddr);
 
     if (creatingLink == NULL) {
 	w_log('9', "creatingLink == NULL !!!");
 	return 8;
     }
-
-    acDef = creatingLink->autoAreaCreateDefaults;
-    xscatprintf(&newAC, "%s%s", (acDef) ? " " : "", (acDef) ? acDef : "");
 
     fileName = creatingLink->autoAreaCreateFile;
     if (fileName == NULL) fileName = cfgFile ? cfgFile : getConfigFileName();
@@ -81,88 +165,63 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	fprintf(stderr,"autocreate: cannot open config file\n");
 	return 9;
     }
+   
+    if(config->areafixQueueFile)
+    {
+        areaNode = af_CheckAreaInQuery(c_area, &pktOrigAddr, NULL, FIND);
+        if( areaNode ) // if area in query
+        {
+            if( stricmp(areaNode->type,czKillArea) == 0 )
+                return 11;  // area already unsubscribed
+            if( stricmp(areaNode->type,czFreqArea) == 0 && 
+                addrComp(pktOrigAddr, areaNode->downlinks[0])!=0)
+                return 4;  // wrong link to autocreate from
+            // removinq area from query. it is autocreated now
+            queryAreasHead->areaDate.year = 1; // query was changed
+            areaNode->type[0] = '\0';          // mark as deleted
+            
+            // setting up msgbase dir
+            if (config->createFwdNonPass==0)
+                msgbDir = pass;
+            else
+                msgbDir = creatingLink->msgBaseDir;
+            // try to find our aka in links of queried area
+            // if not foun area will be passthrough
+            for (i = 1; i < areaNode->linksCount; i++)
+                for(j = 0; j < config->addrCount; j++)
+                    if (addrComp(areaNode->downlinks[i],config->addr[j])==0)
+                    {
+                        msgbDir = creatingLink->msgBaseDir; break;
+                    }
+        }
+    }
 
     // making address of uplink
     xstrcat(&hisaddr, aka2str(pktOrigAddr));
+        
+    buff = makeAreaParam(creatingLink , c_area, msgbDir);
 
-    // write new line in config file
-    msgbtype = hpt_stristr(newAC, "-b ");
-
-    msgbDir=(creatingLink->msgBaseDir) ? creatingLink->msgBaseDir : config->msgBaseDir;
-
-    if (stricmp(msgbDir, "passthrough")!=0 && NULL==hpt_stristr(newAC,"passthrough"))
-	{
-	    // we have to find a file name
-	    int need_dos_file;
-
-#ifndef MSDOS                            
-	    need_dos_file = hpt_stristr(newAC, "-dosfile")!=NULL;
-#else
-	    need_dos_file = 1;
-#endif
-
-	    if (creatingLink->autoAreaCreateSubdirs && !need_dos_file)
-		{
-		    // "subdirify" the message base path if the
-		    // user wants this. this currently does not
-		    // work with the -dosfile option
-		    for (cp = msgbFileName; *cp; cp++)
-			{
-			    if (*cp == '.')
-				{
-				    *cp = PATH_DELIM;
-				}
-			}
-		}
-
-	    if (!need_dos_file)
-		xscatprintf(&buff, "EchoArea %s %s%s%s", c_area,
-			    msgbDir, msgbFileName,
-			    (msgbtype) ? "" : " -b Squish");
-	    else {
-		sleep(1); // to prevent time from creating equal numbers
-		xscatprintf(&buff,"EchoArea %s %s%8lx%s", c_area,
-			    msgbDir, (long)time(NULL),
-			    (msgbtype) ? "" : " -b Squish");
-	    }
-
-	} else {
-	    // passthrough
-	    xscatprintf(&buff, "EchoArea %s passthrough", c_area);
-       
-	    del_tok(&newAC, "passthrough");
-	    del_tok(&newAC, "-b ");  // del "-b msgbtype" from autocreate defaults
-	    del_tok(&newAC, "-$m "); // del "-$m xxx" from autocreate defaults
-	    del_tok(&newAC, "-p ");  // del "-p xxx" from autocreate defaults
-       
-	    del_tok(&newAC, "-killsb");
-	    del_tok(&newAC, "-tinysb");
-	    del_tok(&newAC, "-nopack");
-	    del_tok(&newAC, "-nolink");
-	    del_tok(&newAC, "-killread");
-	    del_tok(&newAC, "-keepunread");
-	}
-   
-    nfree(msgbFileName);
-
-    if (creatingLink->LinkGrp) {
-	if (hpt_stristr(newAC, " -g ")==NULL)
-	    xscatprintf(&newAC, " -g %s", creatingLink->LinkGrp);
+    // subscribe links
+    if(areaNode) // areaNode == NULL if areafixQueueFile isn't used
+    {
+        for(i = 0; i < areaNode->linksCount; i++)
+        {
+            xstrcat( &buff, " " );
+            xstrcat( &buff, aka2str(areaNode->downlinks[i]) );
+        }
     }
-
-    if (areaIsAvailable(c_area,creatingLink->forwardRequestFile,&desc,1)==1) {
-	if (desc) {
-	    if (hpt_stristr(newAC, " -d ")==NULL)
-		xscatprintf(&newAC, " -d \"%s\"", desc);
-	    nfree(desc);
-	}
+    else // subscribe uplink if he is not subscribed
+    {
+        xstrcat( &buff, " " );
+        xstrcat( &buff, hisaddr );
     }
-
-    if (*newAC) xstrcat(&buff, newAC);
-    nfree(newAC);
 
     // add new created echo to config in memory
     parseLine(buff, config);
+
+/* subscribed above -> xstrcat( &buff, hisaddr );
+    later, parseLine(buff, config); subscribed links nd uplink
+    the same way as as pointed below:
 
     // subscribe uplink if he is not subscribed
     area = &(config->echoAreas[config->echoAreaCount-1]);
@@ -170,14 +229,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	xscatprintf(&buff, " %s", hisaddr);
 	addlink(creatingLink, area);
     }
-
-    // fix if dummys del \n from the end of file
-    fseek (f, -1L, SEEK_END);
-    if (getc(f) != '\n') {
-	fseek (f, 0L, SEEK_END);  // not neccesary, but looks better ;)
-	putc ( '\n', f);
-    }
-
+*/
     fprintf(f, "%s\n", buff); // add line to config
     fclose(f);
    
@@ -213,7 +265,7 @@ void           af_AddLink(s_query_areas* node, s_addr *link);
 
 s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink, e_query_action act)
 {
-    int i = 0;
+    size_t i = 0;
     int bFind = 0;
     s_query_areas *areaNode = NULL;
     s_query_areas *tmpNode  = NULL;
@@ -343,7 +395,7 @@ int af_CloseQuery()
     char buf[nbufSize] = "";
     char *p;
     int nSpace = 0;
-    short i = 0;
+    size_t i = 0;
     int writeChanges = 0;
 
     FILE *queryFile;
