@@ -1073,7 +1073,7 @@ static char *do_delete(s_link *link, s_area *area) {
 
     /* delete msgbase and dupebase for the area */
     if (area->msgbType!=MSGTYPE_PASSTHROUGH)
-	MsgDeleteBase(area->fileName, area->msgbType);
+	MsgDeleteBase(area->fileName, (word) area->msgbType);
     if (area->dupeCheck != dcOff) {
 	char *dupename = createDupeFileName(area);
 	if (dupename) {
