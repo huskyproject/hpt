@@ -473,8 +473,10 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    rc = processCommandLine(argc, argv);
    if ((rc==1 || rc==EX_USAGE) && config!=NULL)
       if (config->lockfile) {
-         close(lock_fd);
-         remove(config->lockfile);
+          close(lock_fd);
+          remove(config->lockfile);
+          disposeConfig(config);
+          doneCharsets();
       }
    if (rc==1){ nfree(version); nfree(versionStr); exit(EX_OK); }
    if (rc==EX_USAGE){ nfree(version); nfree(versionStr); exit(EX_USAGE); }

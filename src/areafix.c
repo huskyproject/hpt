@@ -45,6 +45,7 @@
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/areatree.h>
+#include <fidoconf/afixcmd.h>
 
 #include <fcommon.h>
 #include <global.h>
@@ -137,108 +138,6 @@ int subscribeAreaCheck(s_area *area, char *areaname, s_link *link)
     // this is another area
     return rc;
 }
-#if 0
-// del link from area, return 0 on success, 1 on error
-int delLinkFromArea(FILE *f, char *fileName, char *str)
-{
-    long curpos, endpos, linelen=0, len;
-    char *buff, *sbuff, *ptr, *tmp, *line, *save = NULL;
-
-    curpos = ftell(f);
-    if (NULL == (buff = readLine(f))) return 1;
-    buff = trimLine(buff);
-    len = strlen(buff);
-
-    sbuff = buff;
-
-    while ( (ptr = strstr(sbuff, str)) != NULL ) {
-	if (isspace(*(ptr-1)) &&
-	    (isspace(ptr[strlen(str)]) ||
-	     ptr[strlen(str)]=='\000')) save=ptr;
-	sbuff = ptr+1;
-    }
-    ptr = save;
-    line = ptr;
-
-    if (ptr) {
-	curpos += (ptr-buff-1);
-	while (ptr) {
-	    tmp = strseparate(&ptr, " \t");
-	    if (ptr == NULL) {
-		linelen = (buff+len+1)-line;
-		break;
-	    }
-	    if (*ptr != '-') {
-		linelen = ptr-line;
-		break;
-	    }
-	    else {
-		if (strncasecmp(ptr, "-r", 2)) {
-		    if (strncasecmp(ptr, "-w", 2)) {
-			if (strncasecmp(ptr, "-mn", 3)) {
-			    linelen = ptr-line;
-			    break;
-			}
-		    }
-		}
-	    }
-	}
-	fseek(f, 0L, SEEK_END);
-	endpos = ftell(f);
-	len = endpos-(curpos+linelen);
-	buff = (char*) safe_realloc(buff, (size_t) (len+1));
-	memset(buff, '\0', (size_t) (len+1));
-	fseek(f, curpos+linelen, SEEK_SET);
-	len = fread(buff, sizeof(char), (size_t) len, f);
- 	fseek(f, curpos, SEEK_SET);
-	fwrite(buff, sizeof(char), (size_t) len, f);
-#if defined(__WATCOMC__) || defined(__MINGW32__)
-	fflush( f );
-	fTruncate( fileno(f), endpos-linelen );
-	fflush( f );
-#else
-	truncate(fileName, endpos-linelen);
-#endif
-    }
-    nfree(buff);
-    return (save ? 0 : 1);
-}
-
-// add string to file
-int addstring(FILE *f, char *aka)
-{
-    int rc = 0;
-    char *cfg, c;
-    long areapos,endpos,cfglen,len;
-
-    /* in dos and win32 by default \n translates into 2 chars */
-    fseek(f,-2L,SEEK_CUR);
-    c=(char) fgetc(f);
-    if (c==0x0D) fseek(f,-1L,SEEK_CUR);
-
-    areapos=ftell(f);
-	
-    // end of file
-    fseek(f,0L,SEEK_END);
-    endpos=ftell(f);
-    cfglen=endpos-areapos;
-	
-    // storing end of file...
-    cfg = (char*) safe_malloc((size_t) cfglen+1);
-    fseek(f,-cfglen,SEEK_END);
-    len = fread(cfg,sizeof(char),(size_t) cfglen,f);
-	
-    // write config
-    fseek(f,-cfglen,SEEK_END);
-    rc += (fputs(" ",f) == EOF) ? 1 : 0;
-    rc += (fputs(aka,f) == EOF) ? 1 : 0;
-    rc += (fwrite(cfg,sizeof(char),(size_t) len,f) < len) ? 1 : 0;
-    fflush(f);
-	
-    nfree(cfg);
-    return rc;
-}
-#endif // if 0
 
 void addlink(s_link *link, s_area *area)
 {
@@ -270,7 +169,7 @@ void addlink(s_link *link, s_area *area)
     if (link->level < area->levelread)	arealink->export=0;
     if (link->level < area->levelwrite) arealink->import=0;
     // paused link can't receive mail
-    if (link->Pause) arealink->export = 0;
+    if ((link->Pause & EPAUSE) == EPAUSE) arealink->export = 0;
 
     area->downlinkCount++;
 }
@@ -411,7 +310,7 @@ char *linked(s_link *link) {
     char *report = NULL;
 
     xscatprintf(&report, "\r%s areas on %s\r\r", 
-		link->Pause ? "Passive" : "Active", aka2str(link->hisAka));
+		((link->Pause & EPAUSE) == EPAUSE) ? "Passive" : "Active", aka2str(link->hisAka));
 							
     for (i=n=0; i<config->echoAreaCount; i++) {
 	rc=subscribeCheck(config->echoAreas[i], link);
@@ -616,14 +515,6 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
         else
             xscatprintf(&(msg->text), "-%s\r", areatag);
     }
-    return 0;
-}
-
-int testAddr(char *addr, s_addr hisAka)
-{
-    s_addr aka;
-    string2addr(addr, &aka);
-    if (addrComp(aka, hisAka)==0) return 1;
     return 0;
 }
 
@@ -1352,229 +1243,28 @@ char *unsubscribe(s_link *link, char *cmd) {
     return report;
 }
 
-int changepause(char *confName, s_link *link, int opt)
-{
-    // opt = 0 - AreaFix
-    // opt = 1 - AutoPause
-    char *cfgline, *token;
-    char *line;
-    long curpos, endpos, cfglen;
-    FILE *f_conf;
-    
-    if (init_conf(confName))
-	return 0;
-
-    while ((cfgline = configline()) != NULL) {
-	cfgline = trimLine(cfgline);
-	cfgline = stripComment(cfgline);
-	cfgline = shell_expand(cfgline);
-	cfgline = vars_expand(cfgline);
-	line = cfgline;
-	token = strseparate(&line, " \t");
-	if (token && stricmp(token, "link") == 0) {
-linkline:
-	    nfree(cfgline);
-	    for (;;) {
-		if ((cfgline = configline()) == NULL) { 
-		    close_conf();
-		    return 0;
-		}
-		cfgline = trimLine(cfgline);
-		cfgline = stripComment(cfgline);
-		cfgline = shell_expand(cfgline);
-		cfgline = vars_expand(cfgline);
-		if (!*cfgline) {
-		    nfree(cfgline);
-		    continue;
-		}
-		line = cfgline;
-		token = strseparate(&line, " \t");
-		if (!token) {
-		    nfree(cfgline);
-		    continue;
-		}
-		if (stricmp(token, "link") == 0)
-		    goto linkline;
-		if (stricmp(token, "aka") == 0) break;
-		nfree(cfgline);
-	    }
-	    token = strseparate(&line, " \t");
-	    if (token && testAddr(token, link->hisAka)) {
-		nfree(cfgline);
-		//curpos = ftell(hcfg);
-		curpos = get_hcfgPos();
-		confName = safe_strdup(getCurConfName());
-		close_conf();
-		f_conf = fopen(confName, "r+b");
-		if (f_conf == NULL) {
-		    fprintf(stderr,"%s: cannot open config file %s \n", opt ? "autopause" : "areafix", confName);
-		    nfree(confName);
-		    return 0;
-		}
-		nfree(confName);
-		fseek(f_conf, 0L, SEEK_END);
-		endpos = ftell(f_conf);
-
-		cfglen=endpos-curpos;
-
-		line = (char*) safe_malloc((size_t) cfglen+1);
-		fseek(f_conf, curpos, SEEK_SET);
-		cfglen = fread(line, sizeof(char), cfglen, f_conf);
-		line[cfglen]='\0';
-
-		fseek(f_conf, curpos, SEEK_SET);
-		fprintf(f_conf, "Pause%s%s", cfgEol(), line);
-		fclose(f_conf);
-		nfree(line);
-		link->Pause = 1;
-		w_log('8', "%s: system %s set passive", opt ? "autopause" : "areafix", aka2str(link->hisAka));
-		return 1;
-	    }
-	}
-	nfree(cfgline);
-    }
-    close_conf();
-    return 0;
-}
 
 char *pause_link(s_link *link)
 {
-    char *tmp, *report = NULL;
-    
-    if (link->Pause == 0) {
-	if (changepause((cfgFile) ? cfgFile : getConfigFileName(), link, 0) == 0)
-	    return NULL;
-    }
-
-    xstrcat(&report, " System switched to passive\r");
-    tmp = linked (link);
-    xstrcat(&report, tmp);
-    nfree(tmp);
-
-    return report;
+   char *tmp, *report = NULL;
+   
+   if ((link->Pause & EPAUSE) != EPAUSE) {
+      if (Changepause((cfgFile) ? cfgFile : getConfigFileName(), link, 0,EPAUSE) == 0)
+         return NULL;
+   }
+   xstrcat(&report, " System switched to passive\r");
+   tmp = linked (link);
+   xstrcat(&report, tmp);
+   nfree(tmp);
+   
+   return report;
 }
-
-int changeresume(char *confName, s_link *link)
-{
-    char *cfgline, *token;
-    char *line;
-    long curpos, endpos, cfglen, remstr;
-    FILE *f_conf;
-    
-    if (init_conf(confName))
-	return 0;
-
-    while ((cfgline = configline()) != NULL) {
-	cfgline = trimLine(cfgline);
-	cfgline = stripComment(cfgline);
-	cfgline = shell_expand(cfgline);
-	cfgline = vars_expand(cfgline);
-	line = cfgline;
-	token = strseparate(&line, " \t");
-	if (!token || stricmp(token, "link")) {
-	    nfree(cfgline);
-	    continue;
-	}
-linkliner:
-	nfree(cfgline);
-	for (;;) {
-	    if ((cfgline = configline()) == NULL) { 
-		close_conf();
-		return 0;
-	    }
-	    cfgline = trimLine(cfgline);
-	    cfgline = stripComment(cfgline);
-	    cfgline = shell_expand(cfgline);
-	    cfgline = vars_expand(cfgline);
-	    if (!*cfgline) {
-		nfree(cfgline);
-		continue;
-	    }
-	    line = cfgline;
-	    token = strseparate(&line, " \t");
-	    if (!token) {
-		nfree(cfgline);
-		continue;
-	    }
-	    if (stricmp(token, "link") == 0)
-		goto linkliner;
-	    if (stricmp(token, "aka") == 0) break;
-	    nfree(cfgline);
-	}
-	token = strseparate(&line, " \t");
-	if (!token || testAddr(token, link->hisAka) == 0) {
-	    nfree(cfgline);
-	    continue;
-	}
-	nfree(cfgline);
-	for (;;) {
-	    if ((cfgline = configline()) == NULL) { 
-		close_conf();
-		return 0;
-	    }
-	    cfgline = trimLine(cfgline);
-	    cfgline = stripComment(cfgline);
-	    cfgline = shell_expand(cfgline);
-	    cfgline = vars_expand(cfgline);
-	    if (!*cfgline) {
-		nfree(cfgline);
-		continue;
-	    }
-	    line = cfgline;
-	    token = strseparate(&line, " \t");
-	    if (token && stricmp(token, "link") == 0)
-		goto linkliner;
-	    if (token && stricmp(token, "pause") == 0) break;
-	    nfree(cfgline);
-	}
-	// remove line
-	nfree(cfgline);
-	//remstr = ftell(hcfg);
-	remstr = get_hcfgPos();
-	curpos = getCurConfPos();
-	confName = safe_strdup(getCurConfName());
-	close_conf();
-	if ((f_conf=fopen(confName,"r+")) == NULL)
-	    {
-		fprintf(stderr,"areafix: cannot open config file %s \n", confName);
-		nfree(confName);
-		return 0;
-	    }
-	fseek(f_conf, 0, SEEK_END);
-	endpos = ftell(f_conf);
-	cfglen=endpos-remstr;
-
-	line = (char*) safe_malloc((size_t) cfglen+1);
-	fseek(f_conf, remstr, SEEK_SET);
-	cfglen = fread(line, sizeof(char), (size_t) cfglen, f_conf);
-				
-	fseek(f_conf, curpos, SEEK_SET);
-	fwrite(line, sizeof(char), (size_t) cfglen, f_conf);
-// remove after 15-03-2002
-//#if defined(__WATCOMC__) || defined(__MINGW32__)
-//	fflush( f_conf );
-//	fTruncate( fileno(f_conf), endpos-(remstr-curpos) );
-//	fflush( f_conf );
-//#else
-//	truncate(confName, endpos-(remstr-curpos));
-//#endif
-	setfsize( fileno(f_conf), endpos-(remstr-curpos) );
-	nfree(line);
-	nfree(confName);
-	link->Pause = 0;
-	w_log('8', "areafix: system %s set active",	aka2str(link->hisAka));
-	return 1;
-    }
-    close_conf();
-    return 0;
-}
-
 char *resume_link(s_link *link)
 {
     char *tmp, *report = NULL;
     
-    if (link->Pause) {
-	if (changeresume((cfgFile) ? cfgFile : getConfigFileName(), link) == 0)
+    if ((link->Pause & EPAUSE) == EPAUSE) {
+	if (Changepause((cfgFile) ? cfgFile : getConfigFileName(), link,0,EPAUSE) == 0)
 	    return NULL;
     }
 
@@ -1606,7 +1296,7 @@ char *info_link(s_link *link)
 	xscatprintf(&report, "%s%s", config->pack[i].packer,
 		    (i+1 == config->packCount) ? "" : ", ");
     
-    xscatprintf(&report, ")\r\rYour system is %s\r", link->Pause?"passive":"active");
+    xscatprintf(&report, ")\r\rYour system is %s\r", ((link->Pause & EPAUSE) == EPAUSE)?"passive":"active");
     ptr = linked (link);
     xstrcat(&report, ptr);
     nfree(ptr);
@@ -2417,7 +2107,8 @@ void autoPassive()
 
   for (i = 0; i < config->linkCount; i++) {
 
-      if (config->links[i].autoPause==0 || config->links[i].Pause) continue;
+      if (config->links[i].autoPause==0 || ((config->links[i].Pause & EPAUSE) == EPAUSE)
+         ) continue;
 
       if (createOutboundFileName(&(config->links[i]),
 				 config->links[i].echoMailFlavour,
@@ -2445,9 +2136,9 @@ void autoPassive()
 
 			  if (time_test >= (time_t)(config->links[i].autoPause*24)) {
 			      w_log('8', "autopause: the file %s is %d days old", path, time_test/24);
-			      if (changepause((cfgFile) ? cfgFile :
+			      if (Changepause((cfgFile) ? cfgFile :
 					      getConfigFileName(),
-					      &(config->links[i]), 1)) {    
+					      &(config->links[i]), 1,EPAUSE)) {    
 				  msg = makeMessage(config->links[i].ourAka,
 						    &(config->links[i].hisAka),
 						    versionStr,config->links[i].name,
