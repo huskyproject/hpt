@@ -1,3 +1,12 @@
+2004-01-09 Friday 18:40  andrew_ladutsko
+
+	* doc/hpt.texi (1.145): fix misprint
+
+2004-01-09 Friday 16:48  andrew_ladutsko
+
+	* doc/hpt.texi (1.144): added description of allowRemoteControl
+	token
+
 2004-01-07 Wednesday 23:22  d_sergienko
 
 	* TODO (1.202): yet another update
