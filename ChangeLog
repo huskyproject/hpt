@@ -1,3 +1,21 @@
+2003-02-03 Monday 21:00  d_sergienko
+
+	* doc/hpt.texi (1.100): added info about ForwardRequestsFile and
+	auto-adding descriptions during  autocreate.
+
+2003-02-03 Monday 18:32  mche
+
+	* src/dupe.c (1.75): fix free dupememory
+
+2003-02-03 Monday 11:32  mche
+
+	* src/dupe.c (1.74): use tree_deinit for free memory alocated by
+	tree
+
+2003-02-03 Monday 09:34  mche
+
+	* src/dupe.c (1.73): fix compilation
+
 2003-02-01 Saturday 21:30  stas_degteff
 
 	* make/makefile.cyg (1.9): Allow build dll version of hpt/mingw
