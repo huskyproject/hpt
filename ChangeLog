@@ -1,6 +1,11 @@
 hpt 0.9.7
 ---------
-(released on Tue Jul 18 20:52:29 MEST 2000)
+(released on Tue Jul 18 23:33:57 MEST 2000)
+
+----- cvs ci ------
+Tue Jul 18 23:33:57 MEST 2000
+tobi (migrated from a stable fix from max)
+* fixed subjects in file attach messages
 
 ----- cvs ci ------
 Fri Jul 14 15:35:18 NOVST 2000

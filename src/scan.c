@@ -249,20 +249,17 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 void processAttachs(s_link *link, s_message *msg)
 {
    FILE *flo;
-   char *running;
-   char *token;
+   char *p, *running, *token;
    char *newSubjectLine = NULL;
 
    flo = fopen(link->floFile, "a");
 
    running = msg->subjectLine;
-   //token = strtok_r(msg->subjectLine, " \t", &running);
    token = strseparate(&running, " \t");
 
    while (token != NULL) {
 #if defined(UNIX) || defined(__linux__)
-      if (!fexist(token))
-          strLower(token);
+	   if (!fexist(token)) strLower(token);
 #endif
       if (flo != NULL) {
           if (msg->text && strstr(msg->text, "\001FLAGS KFS"))
@@ -272,15 +269,11 @@ void processAttachs(s_link *link, s_message *msg)
           else
 	      fprintf(flo, "%s\n", token);
       }
-      if (strrchr(token, PATH_DELIM)!= NULL)
-         xstrcat(&newSubjectLine, strrchr(token, PATH_DELIM)+1);
-      else
-         xstrcat(&newSubjectLine, token);
-
-      xstrcat(&newSubjectLine, " ");
-
+	  if (newSubjectLine!=NULL) xstrcat(&newSubjectLine, " ");
+      if (NULL != (p=strrchr(token, PATH_DELIM)))
+		  xstrcat(&newSubjectLine, p+1);
+	  else xstrcat(&newSubjectLine, token);
       token = strseparate(&running, " \t");
-      //token = strtok_r(NULL, " \t", &running);
    }
 
    if (flo!= NULL) {
@@ -302,20 +295,17 @@ void processRequests(s_link *link, s_message *msg)
 
    running = msg->subjectLine;
    token = strseparate(&running, " \t");
-   //token = strtok_r(msg->subjectLine, " \t", &running);
 
    while (token != NULL) {
      if (flo != NULL) fprintf(flo, "%s\015\012", token); // #13#10 to create dos LFCR which ends a line
 
       token = strseparate(&running, " \t");
-      //token = strtok_r(NULL, " \t", &running);
    }
    if (flo!= NULL) {
       fclose(flo);
    } else writeLogEntry(hpt_log, '9', "Could not open FloFile");
 
 }
-
 
 int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 {
@@ -342,8 +332,41 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
       strcpy(virtualLink->name, msg.toUserName);
       freeVirtualLink = 1;  //virtualLink is a temporary link, please free it..
    }
+   if ((xmsg->attr & MSGFILE) == MSGFILE) {
+	   // file attach
+	   prio = NORMAL;
+	   if ((xmsg->attr & MSGCRASH)==MSGCRASH) prio = CRASH; 
+	   if ((xmsg->attr & MSGHOLD)==MSGHOLD) prio = HOLD;
 
-   // note: link->floFile used for create 12345678.?ut mail packets & ...
+	   // we need route mail
+	   if (prio==NORMAL) {
+		   route = findRouteForNetmail(msg);
+		   link = getLinkForRoute(route, &msg);
+		   if ((route != NULL) && (link != NULL)) {
+			   prio = cvtFlavour2Prio(route->flavour);
+			   if (createOutboundFileName(link, prio, FLOFILE) == 0) {
+				   processAttachs(link, &msg);
+				   remove(link->bsyFile);
+				   nfree(link->bsyFile);
+				   // mark Mail as sent
+				   xmsg->attr |= MSGSENT;
+				   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+				   nfree(link->floFile);
+				   writeLogEntry(hpt_log, '7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
+			   }
+		   }
+	   }
+	   else if (createOutboundFileName(virtualLink, prio, FLOFILE) == 0) {
+		   processAttachs(virtualLink, &msg);
+		   remove(virtualLink->bsyFile);
+		   nfree(virtualLink->bsyFile);
+		   // mark Mail as sent
+		   xmsg->attr |= MSGSENT;
+		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+		   nfree(virtualLink->floFile);
+		   writeLogEntry(hpt_log, '7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+	   }
+   } /* endif file attach */
 
    if ((xmsg->attr & MSGFRQ) == MSGFRQ) {
 	   prio = NORMAL;
@@ -431,42 +454,6 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   }
 	   } else writeLogEntry(hpt_log, '7', "no route found or no-pack for %s - leave mail untouched", aka2str(msg.destAddr));
    }
-
-   if ((xmsg->attr & MSGFILE) == MSGFILE) {
-	   // file attach
-	   prio = NORMAL;
-	   if ((xmsg->attr & MSGCRASH)==MSGCRASH) prio = CRASH;
-	   if ((xmsg->attr & MSGHOLD)==MSGHOLD) prio = HOLD;
-
-	   // we need route mail
-	   if (prio==NORMAL) {
-		   route = findRouteForNetmail(msg);
-		   link = getLinkForRoute(route, &msg);
-		   if ((route != NULL) && (link != NULL)) {
-			   prio = cvtFlavour2Prio(route->flavour);
-			   if (createOutboundFileName(link, prio, FLOFILE) == 0) {
-				   processAttachs(link, &msg);
-				   remove(link->bsyFile);
-				   nfree(link->bsyFile);
-				   // mark Mail as sent
-				   xmsg->attr |= MSGSENT;
-				   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-				   nfree(link->floFile);
-				   writeLogEntry(hpt_log, '7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
-			   }
-		   }
-	   }
-	   else if (createOutboundFileName(virtualLink, prio, FLOFILE) == 0) {
-		   processAttachs(virtualLink, &msg);
-		   remove(virtualLink->bsyFile);
-		   nfree(virtualLink->bsyFile);
-		   // mark Mail as sent
-		   xmsg->attr |= MSGSENT;
-		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-		   nfree(virtualLink->floFile);
-		   writeLogEntry(hpt_log, '7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-	   }
-   } /* endif file attach */
 
    // process carbon copy
    if (config->carbonOut) carbonCopy(&msg, area);
