@@ -726,6 +726,7 @@ int af_OpenQuery()
             } else {
                 tr.tm_year -= 1900;
                 tr.tm_mon--;
+                tr.tm_isdst =- 1;
                 areaNode->bTime = mktime(&tr);
             }
             token = strtok( NULL, seps );
@@ -743,6 +744,7 @@ int af_OpenQuery()
             } else {
                 tr.tm_year -= 1900;
                 tr.tm_mon--;
+                tr.tm_isdst =- 1;
                 areaNode->eTime = mktime(&tr);
             }
 

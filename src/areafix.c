@@ -1480,7 +1480,6 @@ char *add_rescan(s_link *link, char *line) {
 char *packer(s_link *link, char *cmdline) {
     char *report=NULL;
     char *was=NULL;
-    char Arch[]="Compression: ";
     char *pattern = NULL;
     int reversed;
     UINT i;
