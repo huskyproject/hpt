@@ -57,6 +57,9 @@ sub route
 # $addr = dest addr
 # $from = orig addr
 # $text = message text
+# $attr = message attributes
+# $route = default route address (by config rules)
+# $flavour = default route flavour (by config rules)
 # set $flavour to hold|normal|crash|direct|immediate
 # return route addr or "" for default routing
 
