@@ -1733,12 +1733,18 @@ char *processcmd(s_link *link, char *line, int cmd) {
     return report;
 }
 
-void preprocText(char *split, s_message *msg)
+void preprocText(char *split, s_message *msg, char *reply)
 {
     char *orig = (config->areafixOrigin) ? config->areafixOrigin : config->origin;
 
     msg->text = createKludges(config, NULL, &msg->origAddr,
         &msg->destAddr, versionStr);
+    if (reply) {
+        reply = strchr(reply, ' ');
+        if (reply) reply++;
+        if (reply[0])
+            xscatprintf(&(msg->text), "\001REPLY: %s\r", reply);
+    }
     /* xstrcat(&(msg->text), "\001FLAGS NPD DIR\r"); */
     xstrcat(&(msg->text), "\001FLAGS NPD\r");
     xscatprintf(&split, "\r--- %s areafix\r", versionStr);
@@ -1775,13 +1781,14 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
     char *splitStr = config->areafixSplitStr;
     int len, msgsize = config->areafixMsgSize * 1024, partnum=0;
     s_message *tmpmsg;
+    char *reply = NULL;
 
     /* val: silent mode - don't write messages */
     if (silent_mode) return;
 
     config->intab = NULL;
-
     text = report;
+    reply = GetCtrlToken(msg->ctl, "MSGID");
 
     while (text) {
 
@@ -1826,7 +1833,8 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
             config->areafixReportsAttr);
 
 
-        preprocText(split, tmpmsg);
+        preprocText(split, tmpmsg, reply);
+        nfree(reply);
         processNMMsg(tmpmsg, NULL, getNetMailArea(config,config->robotsArea),
             0, MSGLOCAL);
 
@@ -1918,7 +1926,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     s_link *tmplink = NULL;
     /* s_message *linkmsg; */
     s_pktHeader header;
-    char *token, *report=NULL, *preport = NULL;
+    char *token = NULL, *report = NULL, *preport = NULL;
     char *textBuff = NULL,*tmp;
     int nr;
 
@@ -1972,6 +1980,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
             }
         } else security=2; /* areafix is turned off */
     }
+
     /*  remove kluges */
     tmp = msg->text;
     token = strseparate (&tmp,"\n\r");

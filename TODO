@@ -3,7 +3,8 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- split posting messages
+- check for @REPLY kludge in messages to areafix and don't process messages
+	which contain it.
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
@@ -16,9 +17,6 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - templates
 - remote change areafixpwd, pktpwd, ticpwd, filefixpwd by links
 - add areafix %users command which sends list of links, subscribed to echo
-- EchoAreaGroupDefaults
-- ListEcho sorted | unsorted | grouped - for areafix list reports
-- configurable areafix reply flavour for link (areafixflavour token)
 - specify log file for hptlink in command line (or config?)
 - advanced perl hooks: hook on putMsgInArea, processAreafix etc.
 
@@ -36,3 +34,4 @@ Category 4: Will not be implemented
 - unpack all bundles before toss -> carc
 - afterUnpackBundle, afterUnpackAll -> carc
 - UnpackAllBeforeToss -> carc
+- split posting messages -> any external tool
