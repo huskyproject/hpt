@@ -1069,7 +1069,7 @@ void perl_setvars(void) {
      VK_ADD_HASH_int(hv, sv, "keepTrsMail", config->keepTrsMail);
      VK_ADD_HASH_int(hv, sv, "keepTrsFiles", config->keepTrsFiles);
      VK_ADD_HASH_str(hv, sv, "fileBoxesDir", config->fileBoxesDir);
-     VK_ADD_HASH_str(hv, sv, "rulesDir", config->rulesDir);
+     VK_ADD_HASH_str(hv, sv, "rulesDir", robot->rulesDir);
      if (config->packCount) {
        char *packlist = NULL;
        for (j = 0; j < config->packCount; j++)
@@ -1120,7 +1120,7 @@ void perl_setvars(void) {
         VK_ADD_HASH_str(hv2, sv, "forwreqsFile", config->links[i]->areafix.fwdFile);
         VK_ADD_HASH_int(hv2, sv, "forwreqsPrio", config->links[i]->areafix.forwardPriority);
         VK_ADD_HASH_int(hv2, sv, "reducedSeenBy", config->links[i]->reducedSeenBy);
-        VK_ADD_HASH_int(hv2, sv, "noRules", config->links[i]->noRules);
+        VK_ADD_HASH_int(hv2, sv, "noRules", config->links[i]->areafix.noRules);
         VK_ADD_HASH_int(hv2, sv, "pktSize", config->links[i]->pktSize);
         VK_ADD_HASH_int(hv2, sv, "arcmailSize", (config->links[i]->arcmailSize ?
                                                    config->links[i]->arcmailSize :
