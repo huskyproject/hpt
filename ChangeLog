@@ -1,6 +1,13 @@
 hpt 0.28
 --------
 
+----- cvs ci ------	
+Mon May 17 13:23:56 CEST 1999
+mtt:
+* fixed the bug, when pkts has no pwd...
+  this is a temporal solution, expect a new config verb and
+  additional code soon.
+	
 ----- cvs ci ------
 Sun May 16 23:54:17 CEST 1999
 mtt:
