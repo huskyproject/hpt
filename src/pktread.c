@@ -234,6 +234,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
           intl_to.point = msg->destAddr.point;
 
           valid_intl_kludge = 1;
+	  break;
       }
    }
 
