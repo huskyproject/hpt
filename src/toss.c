@@ -234,10 +234,11 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 			   nfree(subject);
 			   if (outbounds[i] && *outbounds[i]) xstrcat(&subject, *outbounds[i]);
 			   xstrcat (&subject, token);
+			   if (fexist(subject)) break;
 #if defined(__linux__) || defined(UNIX)
 			   subject = strLower(subject);
-#endif
 			   if (fexist(subject)) break;
+#endif
 		   }
 		   if (newSubj) xstrcat(&newSubj, " ");
 		   xstrcat (&newSubj, subject);

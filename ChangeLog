@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Thu Dec  7 00:13:18 NOVT 2000
+max:
+* file attach: try to use original file name from subject
+
+----- cvs ci ------
 Tue Dec  5 03:17:40 UTC 2000
 sms:
 ! using enum for linkWithImportLog instead of strings
