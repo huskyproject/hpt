@@ -62,7 +62,7 @@ int checkRefuse(char *areaName)
 
     fp = fopen(config->newAreaRefuseFile, "r+b");
     if (fp == NULL) {
-        w_log(LL_ERR, "Can't open newAreaRefuseFile \"%s\" : %d\n",
+        w_log(LL_ERR, "Can't open newAreaRefuseFile \"%s\" : %s\n",
               config->newAreaRefuseFile, strerror(errno));
         return 0;
     }
