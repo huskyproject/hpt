@@ -8,7 +8,6 @@ Category 1: Will certainly be implemented until next release
 - don't make paths with forbidden symbols
 - killsb for links
 - don't print avail list on subscribe/unsubscribe (areafixQueryReports)
-- autocreate filebox dirs
 - write badmail to areas summary
 
 Category 2: Might be implemented, but volunteers are always very welcome!
