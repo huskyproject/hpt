@@ -698,13 +698,15 @@ int scanByName(char *name) {
 
 void scanExport(int type, char *str) {
 	
-   int i;
+   int i = 0;
    FILE *f = NULL;
    FILE *ftmp = NULL;
    char *tmplogname = NULL, *tmppath = NULL;
-   char *line;
+   char *line = NULL;
    struct stat st;
    
+   w_log( LL_FUNC, "scanExport() begin" );
+
    // zero statScan   
    memset(&statScan, '\0', sizeof(s_statScan));
    w_log('1', "Start %s%s...",
@@ -712,12 +714,17 @@ void scanExport(int type, char *str) {
 		   type & SCN_FILE ? " with -f " : 
 		   type & SCN_NAME ? " with -a " : "");
 
-   tmppath = (char *) safe_malloc(strlen(config->echotosslog)+1);
-   memset(tmppath, 0, strlen(config->echotosslog)+1);
-   strncpy(tmppath, config->echotosslog,
-           (strrchr(config->echotosslog, PATH_DELIM) - config->echotosslog));
-   tmplogname = makeUniqueDosFileName(tmppath, "tmp", config);
-   nfree(tmppath);
+   if (config->echotosslog)
+   {
+     tmppath = (char *) safe_malloc(strlen(config->echotosslog)+1);
+     memset(tmppath, 0, strlen(config->echotosslog)+1);
+     strncpy(tmppath, config->echotosslog,
+             (strrchr(config->echotosslog, PATH_DELIM) - config->echotosslog));
+     tmplogname = makeUniqueDosFileName(tmppath, "tmp", config);
+     nfree(tmppath);
+   }
+
+ w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
 
    if (type & SCN_ALL) {
        if (config->echotosslog)
@@ -733,6 +740,9 @@ void scanExport(int type, char *str) {
 	   }
        }
    }
+
+ w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
+
    if (type & SCN_FILE) {
        f = fopen(str, "r");
        if (f != NULL) {
@@ -744,6 +754,8 @@ void scanExport(int type, char *str) {
            }
        }
    }
+
+ w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
 
    if (type & SCN_NAME) {
        scanByName(str);
@@ -799,6 +811,8 @@ void scanExport(int type, char *str) {
        }
    }
 
+ w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
+
    if (f != NULL) {
        fclose(f);
        if (ftmp != NULL) fclose(ftmp);
@@ -838,4 +852,7 @@ void scanExport(int type, char *str) {
 
    writeDupeFiles();
    writeScanStatToLog();
+
+   w_log( LL_FUNC, "scanExport() end" );
+
 }
