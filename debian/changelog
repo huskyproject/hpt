@@ -1,3 +1,11 @@
+hpt (1.2.1-1) stable; urgency=low
+
+  * Hpt 1.2 release
+  * Add hpt-FAQ.russian to package
+  * Add misc/hpt_ro to package
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Tue, 15 Oct 2002 00:08:12 +0600
+
 hpt (1.2.0-20020918-1) stable; urgency=low
 
   * New cvs version (1.2-RC2)
