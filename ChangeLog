@@ -1,6 +1,11 @@
 hpt 0.30
 --------
 
+----- cvs ci -----
+Tue Dec  7 19:31:12 CET 1999
+mtt:
+* removed last wrong bugfix. The month number was correctly interpreted. fixed :-)
+
 ----- cvs ci ------
 Tue Dec  7 20:57:05 NOVT 1999
 max:
