@@ -150,7 +150,7 @@ void post(int c, unsigned int *n, char *params[])
     
     memset(&msg, 0, sizeof(s_message));
     
-    for (quit = 0;*n < c && !quit; (*n)++) {
+    for (quit = 0;*n < (unsigned int)c && !quit; (*n)++) {
         if (*params[*n] == '-' && params[*n][1] != '\0') {
             switch(params[*n][1]) {
             case 'a':    // address
@@ -220,10 +220,16 @@ void post(int c, unsigned int *n, char *params[])
                     case 'z':
                         tearl = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
                         strcpy(tearl, params[*n]);
+#ifdef __NT__
+                        CharToOem(tearl, tearl);
+#endif
                         break;
                     case 'o':
                         origin = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
                         strcpy(origin, params[*n]);
+#ifdef __NT__
+                        CharToOem(origin, origin);
+#endif
                         break;
                     default:
                         w_log(LL_ERROR, "post: unknown switch %s", params[*n]);
