@@ -1,3 +1,23 @@
+2002-09-29 Sunday 19:20  pgul
+
+	* src/toss.c (1.449): fix previous patches again
+
+2002-09-29 Sunday 14:57  pgul
+
+	* src/toss.c (1.448): remove comment
+
+2002-09-29 Sunday 14:53  pgul
+
+	* src/toss.c (1.447): fix previous patches
+
+2002-09-29 Sunday 14:10  d_sergienko
+
+	* src/toss.c (1.446): fixed searching for old arcmail bundles
+
+2002-09-29 Sunday 13:59  d_sergienko
+
+	* src/toss.c (1.445): do not toss files beginning with `-' sign
+
 2002-09-27 Friday 09:31  andrews42
 
 	* misc/hpt_ro/ro_readme_rus.txt (1.3): Minor rectifications
