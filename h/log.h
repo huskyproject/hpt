@@ -1,33 +1,33 @@
 /*****************************************************************************
- * HTICK --- FTN Ticker / Request Processor
+ * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
- * Copyright (C) 1999 by
+ * Copyright (C) 1997-1999
  *
- * Gabriel Plutzar
+ * Matthias Tichy
  *
- * Fido:     2:31/1
- * Internet: gabriel@hit.priv.at
+ * Fido:     2:2433/1245 2:2433/1247 2:2432/605.14
+ * Internet: mtt@tichy.de
  *
- * Vienna, Austria, Europe
+ * Grimmestr. 12         Buchholzer Weg 4
+ * 33098 Paderborn       40472 Duesseldorf
+ * Germany               Germany
  *
- * This file is part of HTICK, which is based on HPT by Matthias Tichy, 
- * 2:2432/605.14 2:2433/1245, mtt@tichy.de
+ * This file is part of HPT.
  *
- * HTICK is free software; you can redistribute it and/or modify it
+ * HPT is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; either version 2, or (at your option) any
  * later version.
  *
- * HTICK is distributed in the hope that it will be useful, but
+ * HPT is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with HTICK; see the file COPYING.  If not, write to the Free
+ * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *****************************************************************************/
-
 #ifndef LOG_H
 #define LOG_H
 
@@ -37,6 +37,7 @@
 struct hpt_log {
 // char *fileName;       // name of the file where the log will be stored.
    char *keysAllowed;    // only log-data with one of these keys will be stored
+   char *keysPrinted;    // only log-data with these keys will be printed to screen
    char *appName;        // name of the application which has created this log entry
    FILE *logFile;        // in this logFile
    char open;            // is the log-file open?

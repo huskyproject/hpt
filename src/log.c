@@ -52,7 +52,7 @@ static char *wdnames[] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 #endif
 #endif
 
-s_log *openLog(char *fileName, char *appN, char *keys, unsigned int echoLog)
+s_log *openLog(char *fileName, char *appN, char *keys, UINT echoLog)
 {
    s_log      *temp;
 
@@ -69,6 +69,8 @@ s_log *openLog(char *fileName, char *appN, char *keys, unsigned int echoLog)
    /* copy all informations */
    xstrcat(&temp->appName, appN);
    xstrcat(&temp->keysAllowed, keys);
+
+   if (config->loglevels) return NULL;
 
    temp->firstLinePrinted=0;
 
@@ -97,7 +99,7 @@ void writeLogEntry(s_log *hpt_log, char key, char *logString, ...)
 {
 	time_t     currentTime;
 	struct tm  *locTime;
-	va_list	  ap;
+	va_list	   ap;
 
 	if (hpt_log) {
 		if (hpt_log->open && strchr(hpt_log->keysAllowed, key)) {
