@@ -305,9 +305,17 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	fseek (f, 0L, SEEK_END);  /*  not neccesary, but looks better ;) */
 	fputs (cfgEol(), f);
     } else {
-    fseek (f, 0L, SEEK_END);
+	fseek (f, 0L, SEEK_END);
     }
-    fprintf(f, "%s%s", buff, cfgEol()); /*  add line to config */
+    i = ftell(f); /* config length */
+    /*  add line to config */
+    if (fprintf(f, "%s%s", buff, cfgEol()) != strlen(buff)+strlen(cfgEol()) ||
+        fflush(f) != 0) {
+	w_log(LL_ERR, "Error creating area %s, config write failed: %s!",
+	      c_area, strerror(errno));
+	fseek(f, i, SEEK_SET);
+	setfsize(fileno(f), i);
+    }
     fclose(f);
 
     nfree(buff);
