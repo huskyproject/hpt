@@ -1,4 +1,9 @@
 ----- cvs ci ------
+Mon Oct 18 22:22:12 NOVST 1999                                                  
+max:
+- transit mail with SNT flag are lost. fixed. (Alexander V Popaduck)
+
+----- cvs ci ------
 Thu Oct 16 13:40:00 MET DST 1999
 sms:
 - reorganized Makefiles, please read README.Makefiles in the husky-common

@@ -155,7 +155,10 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, UINT16 forceattr) {
 			msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD
 			  | MSGFRQ | MSGSCANNED | MSGLOCKED | MSGFWD); // kill these flags
 			msgHeader.attr |= MSGPRIVATE; // set this flags
-		} else if (header!=NULL) msgHeader.attr |= MSGFWD; // set TRS flag, if the mail is not to us
+		} else	if (header!=NULL) {
+			    msgHeader.attr |= MSGFWD; // set TRS flag, if the mail is not to us
+			    msgHeader.attr &= ~MSGSENT; // and clear SENT flag
+			}
 
       // Check if we must remap
       remapit=0;
