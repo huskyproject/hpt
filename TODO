@@ -20,6 +20,8 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - add areafix %users command which sends list of links, subscribed to echo
 - EchoAreaGroupDefaults
 - ListEcho sorted | unsorted | grouped - for areafix list reports
+- configurable areafix reply flavour for link (areafixflavour token)
+- specify log file for hptlink in command line (or config?)
 
 Category 3: Will only be included if volunteers send patches
 ============================================================
