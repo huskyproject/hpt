@@ -90,6 +90,8 @@ else
 	gzip -c man/hpt.1 > hpt.1.gz
 	gzip -c man/hptlink.1 > hptlink.1.gz
 	gzip -c man/hpttree.1 > hpttree.1.gz
+	-$(MKDIR) $(MKDIROPT) $(MANDIR)
+	-$(MKDIR) $(MKDIROPT) $(MANDIR)/man1
 	$(INSTALL) $(IMOPT) hpt.1.gz $(MANDIR)/man1
 	$(INSTALL) $(IMOPT) hptlink.1.gz $(MANDIR)/man1
 	$(INSTALL) $(IMOPT) hpttree.1.gz $(MANDIR)/man1
