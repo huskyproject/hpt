@@ -29,5 +29,4 @@ Category 4: Will not be implemented
 - unpack all bundles before toss -> carc
 - afterUnpackBundle, afterUnpackAll -> carc
 - UnpackAllBeforeToss -> carc
-- pack netmail in pkt/arcmail bundles -> bsopack (implemented)
 - pack several pkt's at once -> bsopack
