@@ -1,3 +1,48 @@
+2003-09-28 Sunday 18:41  d_sergienko
+
+	* src/toss.c (1.525): revert previous patch about closeOpenedPkt()
+
+2003-09-28 Sunday 17:31  d_sergienko
+
+	* src/toss.c (1.524): 1. fixed tossing time calculations 2. speedup
+	tossing by avoid explicit closeOpenedPkt() calls
+
+2003-09-28 Sunday 15:27  d_sergienko
+
+	* src/post.c (1.111): use address from area definition instead
+	global our 1st address when -af is missing
+
+2003-09-28 Sunday 14:31  d_sergienko
+
+	* doc/hpt.texi (1.134), man/hpt.1 (1.18), src/scan.c (1.196): if
+	scanning from echotoss.log did not make any scanning, scan all
+	areas (like echotoss.log is missing)
+
+2003-09-28 Sunday 12:31  d_sergienko
+
+	* doc/hpt.texi (1.133): updated docs about echotoss.log
+
+2003-09-28 Sunday 12:21  d_sergienko
+
+	* src/: hpt.c (1.183), scan.c (1.195): parameter after -f is now
+	opional. if it is not defined, echotosslog name is taken from
+	config, but hpt scans only areas from echotosslog anyway, if it is
+	not found, just stop scanning.
+
+2003-09-28 Sunday 11:14  d_sergienko
+
+	* man/hpt.1 (1.17), src/hpt.c (1.182), src/scan.c (1.194): in hpt
+	scan/pack -a pattern can be specified instead of just areaname like
+	this: hpt scan -a "*"
+
+2003-09-28 Sunday 07:22  mche
+
+	* src/toss.c (1.523): fix compiler warning
+
+2003-09-27 Saturday 23:12  d_sergienko
+
+	* src/toss.c (1.522): fix incorrect total count under MSVC
+
 2003-09-27 Saturday 19:34  d_sergienko
 
 	* doc/hpt.texi (1.132): fixed description of EchoTossLog
