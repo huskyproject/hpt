@@ -4,48 +4,109 @@ husky-common (huskybse) package FIRST! If you don't have this package you
 should download it from http://husky.sourceforge.net/
 
 
-Unix:
------
+Instructions to build hpt from sources.
+---------------------------------------
 
-0. The smapi and the fidoconfig package is required for the hpt package. They
-   must be already compiled and installed.
-   These libraries must be the exactly same version as hpt.
+0. The smapi and the fidoconfig packages is required for the hpt package. They
+   must be already compiled (and installed if uses shared libraries).
+   These libraries must be the exactly same version as hpt (and date for
+   -current branch).
 
 1. Put the hpt package in the directory where the other packages of fido
-   linux reside:
+   husky reside:
 
-   /usr/src/husky/           -> smapi/
-                             -> fidoconf/
+   unix, beos, cygwin:
+   -------------------
+   /usr/src/packages/        -> huskybse/
+                             -> smapi/
+                             -> fidoconfig/
                              -> hpt/
+                             ...some other
 
-2. Compile smapi, fidoconf, hpt
+   windows, dos, os/2 & etc:
+   -------------------------
+   d:\husky\                 -> smapi\
+                             -> fidoconf\
+                             -> hpt\
+                             ...some other
 
-If you use huskymak.cfg, edit it to suit your preferences and invoke:
-
+2. Determine which makefile you need to use then compile (and install if need)
+   fidoconfig using selected makefile, as following examples:
+   Example 1 (use common makefile (named 'Makefile'): require huskymak.cfg (see
+              huskybse); unixes only):
 	$ make
-        (or `gmake' on some systems)
-        
-        $ su
-        # make install
-        
-otherwise type
-	
-        $ make -f makefile.XXX
-        
-        where `XXX' depends on your platform and compiler 
-        (refer to fidoconf/README)
-        
-        $ su
-        # make -f makefile.XXX install
-        
-You're ready. Now edit your config as you need and run hpt :)
+	$ make install
+   Example 2 (use platfom-specific makefile from make subdirectory):
+   linux:
+        $ cd make
+	$ make -f makefile.lnx
+	$ make -f makefile.lnx install
+   dos (DJGPP GCC):
+        d:\husky\hpt\make>make -f makefile.djg
+   windows (MS Visual C/C++):
+        d:\husky\hpt\make>nmake -f makefile.mvc
+
+5. Write a fido config according to the documentation of fidoconfig and hpt.
+   Always test the config after changes with the tparser tool (from fidoconfig
+   package).
+
+You're ready.
 
 
-Win32, OS/2:
-------------
+Instructions to use precompiled binary packages.
+------------------------------------------------
 
-There is a lot of win32 compilers, so refer to your compiler's manual how to
-use makefiles for compiling projects.
+0. The smapi and the fidoconfig packages is required for the hpt package. They
+   must be already compiled (and installed if uses shared libraries).
+   These libraries must be the exactly same version as hpt (and date for
+   -current branch).
 
-If you already have precompiled binaries - just unpack packages, edit your
-config and run hpt :)
+1. If you already have precompiled binaries - just unpack packages:
+   smapi, fidoconfig and hpt. All unpack into same directory!
+
+2. Copy config example into binaries directory, edit your config and test the
+config with the tparser tool (from fidoconfig package).
+
+You're ready.
+
+
+Appendix A. Supported compilers
+-------------------------------
+
+The following makefiles can be used to compile this release of HPT:
+
+Makefile          Compiler and platform
+------------      ------------------------------------------------------------
+Makefile          Any (huskymak.cfg required), use GNU make
+makefile.aix      XLC on IBM AIX
+makefile.bcd      Borland C++ 3.1 for DOS
+makefile.bco      Borland C++ 1.0 for OS/2
+makefile.bcw      Borland C++ 4.0 for Windows
+makefile.be       GNU C 2.7.x for BeOS
+makefile.bsd      GNU C 2.9.x for BSD clones
+makefile.cyg      GNU C 2.9.3-3.2.1 for Cygwin (mingw32 binaries, static & dll)
+makefile.djg      GNU C 2.7.x for MS-DOS (DJGPP)
+makefile.emo      GNU C 2.7.x for OS/2 (EMX 0.9) with OMF-Style linkage
+makefile.emx      GNU C 2.7.x for OS/2 (EMX 0.9) a.out-style linkage (EMX rt)
+makefile.lnx      GNU C 2.7.x for Linux
+makefile.mgw      Mingw32 for NT
+makefile.mvc      Microsoft Visual C/C++ 6.0
+makefile.mvcdll   Microsoft Visual C/C++ 6.0 (using shared libraries)
+makefile.osf      cc on OSF/Motif (DEC UNIX)
+makefile.rxw      GNU C 2.7.x for Windows NT (RSXNT/EMX)
+makefile.sun      GNU C 2.7.x for Solaris
+makefile.unx      Generic Unix Makefile
+makefile.wcd      WATCOM C/C++ 10.x for 16-bit DOS
+makefile.wco      WATCOM C/C++ 10.x for 32-bit OS/2
+makefile.wcw      WATCOM C/C++ 10.x for 32-bit Windows
+makefile.wcx      WATCOM C/C++ 10.x for 32-bit DOS (DOS4G extender)
+------------      ------------------------------------------------------------
+Builds with embedded perl:
+------------      ------------------------------------------------------------
+makeperl.emo      GNU C 2.7.x for OS/2 (EMX 0.9) with OMF-Style linkage
+makeperl.emx      GNU C 2.7.x for OS/2 (EMX 0.9) a.out-style linkage (EMX rt)
+makeperl.mvc      Microsoft Visual C/C++ 6.0
+makeperl.mvcdll   Microsoft Visual C/C++ 6.0 (using shared libraries)
+------------      ------------------------------------------------------------
+
+$Id$
