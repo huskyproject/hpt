@@ -979,16 +979,25 @@ char *subscribe(s_link *link, char *cmd) {
 	    else if (rc==0) {
 		xscatprintf(&report, " %s %s  request forwarded\r",
 			    line, print_ch(49-strlen(line), '.'));
-		w_log('8', "areafix: %s - request forwarded", line);
+		w_log( LL_AREAFIX, "areafix: %s - request forwarded", line);
         if( !config->areafixQueueFile && isOurAka(link->hisAka)==0)
         {
 		    if ( !isLinkOfArea(link, area) ) {
-			changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3);
+		      if(changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==ADD_OK) {
 			addlink(link, area);
 			fixRules (link, area);
-		    }
-		    w_log('8', "areafix: %s subscribed to area %s",
-			  aka2str(link->hisAka),line);
+                        w_log( LL_AREAFIX, "areafix: %s subscribed to area %s",
+                              aka2str(link->hisAka),line);
+                      } else {
+                        xscatprintf( &report," %s %s  error. report to sysop!\r",
+                                     an, print_ch(49-strlen(an),'.') );
+                        w_log( LL_AREAFIX, "areafix: %s not subscribed to %s",
+                              aka2str(link->hisAka),an);
+                        w_log(LL_ERR, "areafix: can't change config file!");
+                      }
+		    } else w_log( LL_AREAFIX, "areafix: %s already subscribed to area %s",
+			          aka2str(link->hisAka), line );
+
 		}
 	    }
 	}
