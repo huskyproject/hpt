@@ -1,7 +1,7 @@
 DEBUG   = 1
 CC      = gcc 
 INSTDIR = /usr/local/bin
-MANDIR  = /usr/local/man/man1
+MANDIR  = /usr/local/man
 
 OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o patmat.o scan.o scanarea.o seenby.o dupe.o tree.o 
 SRC_DIR = ../src/
@@ -19,6 +19,7 @@ all: $(OBJS) \
      tlog \
      tpkt \
      hpt \
+     purgeDupes \
      install
 
 %.o: $(SRC_DIR)%.c
@@ -36,11 +37,14 @@ tpkt: tpkt.o pktwrite.o fcommon.o pktread.o
 hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) -lsmapilnx -lfidoconfig
 
+purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o 
+	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o -lfidoconfig -lsmapilnx
+
 clean:
 	rm -f *.o
 
 install:
-	install -s hpt pktinfo $(INSTDIR)
-	gzip hpt.1
-	install hpt.1.gz $(MANDIR)
-	gunzip hpt.1.gz
+	install -s hpt pktinfo purgeDupes $(INSTDIR)
+	gzip -c hpt.1 > hpt.1.gz
+	gzip -c purgeDupes.1 > purgeDupes.1.gz
+	install hpt.1.gz purgeDupes.1.gz $(MANDIR)/man1

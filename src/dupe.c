@@ -26,6 +26,21 @@ char *createDupeFileName(s_area *area) {
    return name;
 }
 
+void addIndex(s_area *area, UINT32 offset) {
+
+   FILE *f;
+   char *fileName = createDupeFileName(area);
+
+   fileName = realloc(fileName, strlen(fileName)+6+1);
+   strcat(fileName, ".index");
+
+   f = fopen(fileName, "a");
+   fwrite(&offset, sizeof(long), 1, f);
+   fclose(f);
+   
+   free(fileName);
+}
+
 int compareEntries(const void *e1, const void *e2) {
    s_dupeEntry *a, *b;
    int rc;
@@ -86,6 +101,7 @@ void doReading(FILE *f, s_dupeMemory *mem) {
 
       // process all entries
       for (j = 0; j < packHeader->noOfEntries; j++) {
+         if (feof(f)) break;
          entry = malloc(sizeof(s_dupeEntry));
          
          length = getc(f);
@@ -132,12 +148,12 @@ s_dupeMemory *readDupeFile(s_area *area) {
    return dupeMemory;
 }
 
-int appendToDupeFile(char *name, s_dupeMemory newDupeEntries) {
+int appendToDupeFile(s_area *area, char *name, s_dupeMemory newDupeEntries) {
    FILE *f;
    UINT16 fileHeaderSize;
    s_dupeFileHeader *fileHeader;
    s_dupePackHeader packHeader;
-   
+   UINT32 index;
 
    f = fopen(name, "rb+");
 
@@ -156,6 +172,9 @@ int appendToDupeFile(char *name, s_dupeMemory newDupeEntries) {
 
    // add new packet to end of file
    fseek(f, 0, SEEK_END);
+   // and write index
+   index = ftell(f);
+   addIndex(area, index);
    packHeader.noOfEntries = tree_count(&(newDupeEntries.avlTree));
    packHeader.time_tSize  = sizeof(time_t);
    packHeader.packTime    = time(NULL);
@@ -171,10 +190,11 @@ int appendToDupeFile(char *name, s_dupeMemory newDupeEntries) {
    return 0;
 }
 
-int createDupeFile(char *name, s_dupeMemory newDupeEntries) {
+int createDupeFile(s_area *area, char *name, s_dupeMemory newDupeEntries) {
    FILE *f;
    s_dupeFileHeader fileHeader;
    s_dupePackHeader packHeader;
+   UINT32 index;
 
    f = fopen(name, "wb");
    if (f!= NULL) {
@@ -190,6 +210,9 @@ int createDupeFile(char *name, s_dupeMemory newDupeEntries) {
       fwrite(&fileHeader, sizeof(s_dupeFileHeader), 1, f);
 
       // create only one pack, since this is a new dupeFile
+      // and write index
+      index = ftell(f);
+      addIndex(area, index);
       packHeader.noOfEntries   = tree_count(&(newDupeEntries.avlTree));
       packHeader.time_tSize    = sizeof(time_t);
       packHeader.packTime      = time(NULL);
@@ -216,8 +239,8 @@ int writeToDupeFile(s_area *area) {
 
          fileName = createDupeFileName(area);
 
-         if(fexist(fileName)) rc = appendToDupeFile(fileName, *newDupes);
-         else rc = createDupeFile(fileName, *newDupes);
+         if(fexist(fileName)) rc = appendToDupeFile(area, fileName, *newDupes);
+         else rc = createDupeFile(area, fileName, *newDupes);
 
          free(fileName);
       }

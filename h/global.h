@@ -3,7 +3,6 @@
 
 #include <fidoconfig.h>
 #include <log.h>
-//#include <common.h>
 
 extern s_log     *log;
 extern s_fidoconfig *config;

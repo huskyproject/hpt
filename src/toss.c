@@ -292,7 +292,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       // create pktfile if necessary
       if (echo->downlinks[i]->pktFile == NULL) {
          // pktFile does not exist
-         name = tempnam(config->outbound, NULL);
+         name = createTempPktFileName();
          echo->downlinks[i]->pktFile = (char *) malloc(strlen(name)+4+1); // 4 == strlen(".pkt");
          strcpy(echo->downlinks[i]->pktFile, name);
          strcat(echo->downlinks[i]->pktFile, ".pkt");
@@ -416,7 +416,7 @@ void processNMMsg(s_message *msg)
    XMSG   msgHeader;
    char   buff[36];               // buff for sprintf
 
-   netmail = MsgOpenArea((unsigned char *) config->netMailArea.fileName, MSGAREA_CRIFNEC, MSGTYPE_SDM);
+   netmail = MsgOpenArea((unsigned char *) config->netMailArea.fileName, MSGAREA_CRIFNEC, config->netMailArea.msgbType);
 
    if (netmail != NULL) {
       msgHandle = MsgOpenMsg(netmail, MOPEN_CREATE, 0);

@@ -8,7 +8,7 @@
 /* This header file contains the structures of the dupe file */
 
 #define DUPE_MAJOR_VER 0
-#define DUPE_MINOR_VER 1
+#define DUPE_MINOR_VER 2
 
 struct dupeFileHeader {
    UINT16  fileHeaderSize;
@@ -43,7 +43,7 @@ typedef struct dupeEntry s_dupeEntry;
   char  subject[subjectLength+1];
   UCHAR msgidLength
   char  msgid[msgidLength+1];
-*/
+  */
 
 struct dupeMemory {
   tree *avlTree;
@@ -51,7 +51,17 @@ struct dupeMemory {
 
 typedef struct dupeMemory s_dupeMemory;
 
+/* the index file consists of several offsets
+the first long is the offset of the first dupePack :
+
+1st long ->  offset(1st dupepackheader)
+2nd long ->  offset(2nd dupePackheader)
+...
+*/
+
 int writeToDupeFile(s_area *area);
 int dupeDetection(s_area *area, const s_message msg);
+char *createDupeFileName(s_area *area);
+void addIndex(s_area *echo, UINT32 index);
 
 #endif
