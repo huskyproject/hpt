@@ -404,7 +404,7 @@ void post(int c, unsigned int *n, char *params[])
             if(!msg.netMail) memset(&msg.destAddr, '\0', sizeof(hs_addr));
 
             msg.text = createKludges(config,
-                                     (area == NULL) ? NULL : strUpper(area),
+                                     (area == 0) ? NULL : strUpper(area),
                                      &msg.origAddr,
                                      &msg.destAddr,
                                      versionStr);
@@ -433,6 +433,7 @@ void post(int c, unsigned int *n, char *params[])
                         break;
                     }
                 }
+                xscatprintf(&msg.text,"section %d end\r",part+1);
                 part++;
             }
             else
