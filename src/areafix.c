@@ -816,6 +816,22 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 
 	line = cmd;
 	
+	if (line[0]=='+') line++;
+	while (*line==' ') line++;
+
+        if (!strncasecmp(line, "/R",2)) {
+            for (i=0; line[i] != '\0'; i++) {
+                if (isspace(line[i])) {
+                    char *line2;
+                    line2 = "%rescan ";
+                    strcat(line2, line);
+                    rescan(link, msg, line2);
+                    line[i] = '\0';
+                    break;
+                }
+            }
+        }
+
 	if (*line=='+') line++; while (*line==' ') line++;
 	
 	if (strchr(line,' ') || strchr(line,'\t') || strchr(line,PATH_DELIM) ||
