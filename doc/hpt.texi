@@ -2909,6 +2909,8 @@ This statement can only be repeated for different links.
 * DupeArea::                    definition of dupearea
 * EchoArea::                    definition of echoarea
 * EchoAreaDefaults::            defaults for echoarea
+* AreaGroup::			definition of areagroup
+* AreaGroupDefaults::           default options for areas in group
 * LocalArea::                   definition of localarea
 * NetArea::                     same as netmailarea
 * NetMailArea::                 definition of netmailarea
@@ -3091,7 +3093,7 @@ use tokens ReadOnly & WriteOnly for seting permissions on arealinks.
 
 This statement can be repeated.
 
-@node EchoAreaDefaults, LocalArea, EchoArea, Area Definition
+@node EchoAreaDefaults, AreaGroup, EchoArea, Area Definition
 @subsection EchoAreaDefaults
 @findex EchoAreaDefaults
 @table @asis
@@ -3151,7 +3153,54 @@ EchoAreaDefaults [OFF]
 
 The word 'OFF' is not needed but makes it more readable.
 
-@node LocalArea, NetArea, EchoAreaDefaults, Area Definition
+@node AreaGroup, AreaGroupDefaults, EchoAreaDefaults, Area Definition
+@subsection AreaGroup
+@findex AreaGroup
+@table @asis
+@item Syntax:
+@code{AreaGroup <group name> <pattern list>}
+@item Example:
+@code{AreaGroup RUSSIAN ru.* su.*}
+@end table
+
+You can group areas by their names and then apply some default options to such
+areas. <group name> is a unique handle for every group. <pattern list> is a
+list of patterns with wich area names will be compared. If area name equals
+to some of patterns in group it will be assigned to this group.
+Pattern lookup will be performed in order you wrote them.
+
+If you define AreaGroup once and then define it again with the same name 
+patterns from these two definitions will be splitted.
+
+@example
+AreaGroup DN dn.*
+AreaGroup DN dnepr.* 464.*
+
+will produce patterns as if you define
+
+AreaGroup DN dn.* dnepr.* 464.*
+@end example
+
+This statement can be repeated.
+
+@node AreaGroupDefaults, LocalArea, AreaGroup, Area Definition
+@subsection AreaGroupDefaults
+@findex AreaGroupDefaults
+@table @asis
+@item Syntax:
+@code{AreaGroupDefaults <group name> <options>}
+@item Example:
+@code{AreaGroup RUSSIAN -p 14 -dupehistory 11}
+@end table
+
+This token defines default options for areas in group (see @code{AreaGroup}
+token). Options are the same as in EchoArea or EchoAreaDefaults.
+Parsing priority:
+EchoAreaDefaults (if defined)
+AreaGroupDefaults (if areaName suits pattern from one of groups)
+EchoArea
+
+@node LocalArea, NetArea, AreaGroupDefaults, Area Definition
 @subsection LocalArea
 @findex LocalArea
 @table @asis
