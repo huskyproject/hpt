@@ -3,12 +3,15 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
+- fix optgrp
+- link with level lower than -lr & -lw can't subscribe to echo
 - fix INTL kludge treatment for zone gated netmail
+- fix parsing boolean tokens in fidoconfig
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 
-- seen-by stripping
+- seen-by stripping (stripSeenBy)
 - document each loglevels
 - add scanned msgs to dupebase
 - del empty .sep catalogues
@@ -19,7 +22,8 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - add option "run with another config"
 - fileboxes
 - templates
-- strip kludges
+- delete attaches (kfs flag)
+- autocreate from badArea
 
 Category 3: Will only be included if volunteers send patches
 ============================================================

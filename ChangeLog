@@ -2,7 +2,7 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
-Sun Apr 16 22:38:28 MEST 2000~
+Sun Apr 16 22:38:28 MEST 2000
 tobi:
 * Changed the filename generation algorithm to use the functions from
   fidoconfig. This fixes problems with multi-zone links where the

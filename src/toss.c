@@ -2263,9 +2263,6 @@ void tossFromBadArea()
    dword highestMsg, currentMsg, i;
    int   delmsg;
    
-   // load recoding tables
-//   if (config->outtab != NULL) getctab(outtab, (UCHAR *) config->outtab);
-
    area = MsgOpenArea((UCHAR *) config->badArea.fileName, MSGAREA_NORMAL, (word)(config->badArea.msgbType | MSGTYPE_ECHO));
    if (area != NULL) {
 //      statScan.areas++;
