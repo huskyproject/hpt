@@ -218,7 +218,7 @@ void linkAreas(void)
 
       /* link all echomail areas */
       for (i = 0; i < config -> echoAreaCount; i++)
-         if (config -> echoAreas[i].dupeCheck != dcOff)
+//         if (config -> echoAreas[i].dupeCheck != dcOff)
             linkArea(&(config -> echoAreas[i]), 0);
       /* link NetMailAreas */
       for (i = 0; i < config -> netMailAreaCount; i++)
