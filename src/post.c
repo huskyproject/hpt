@@ -93,7 +93,7 @@ void print_help(void) {
     fprintf(stdout,"        -at \"address to\"\n");
     fprintf(stdout,"            message receiver's address, *MUST BE PRESENT FOR NETMAIL*\n\n");
     fprintf(stdout,"         -s \"subject\"\n");
-    fprintf(stdout,"            subject line, if not dfined then assumed to be empty\n\n");
+    fprintf(stdout,"            subject line, if not defined then assumed to be empty\n\n");
     fprintf(stdout,"         -e \"echo area\"\n");
     fprintf(stdout,"            area to post echomail message into, if not\n");
     fprintf(stdout,"            defined message is posted to netmail\n\n");
