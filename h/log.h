@@ -62,10 +62,9 @@ void closeLog(s_log *hpt_log);
   FZ:     closes the logFile and frees all mem use by log.
 */
 
-void writeLogEntry(s_log *hpt_log, char key, char *logString, ...);
+void log(char key, char *logString, ...);
 /*DOC
-  Input:  log is a pointer to a s_log
-          key is the key under which the log-entry will be stored
+  Input:  key is the key under which the log-entry will be stored
           logString is the logEntry
   Output: ./. 
   FZ:     if the key is in keysAllowed the logString will be written to the log.

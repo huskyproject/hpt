@@ -109,6 +109,6 @@ INT in,on,count;
 	}
 	fclose(fp);
 	
-	writeLogEntry(hpt_log,'2',"read recoding table from %s", charMapFileName);
+	log('2',"read recoding table from %s", charMapFileName);
 	return ;
 }

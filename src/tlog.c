@@ -37,8 +37,8 @@ int main()
    hpt_log = openLog("tlog.log", "tlog v0.0.7", "abc123",1);
    if (NULL == hpt_log) { printf( "asdf\n" ); return 1; }
 
-   writeLogEntry(hpt_log, '1', "this goes into the log");
-   writeLogEntry(hpt_log, 'd', "and this not");
+   log('1', "this goes into the log");
+   log('d', "and this not");
 
    closeLog(hpt_log);
    return 0;

@@ -72,12 +72,12 @@ s_log *openLog(char *fileName, char *appN)
    if (config->loglevels != NULL) 
 	   xstrcat(&temp->keysAllowed, config->loglevels);
    else
-	   xstrcat(&temp->keysAllowed, "123456789");
+	   xstrcat(&temp->keysAllowed, "1234567890");
 
    if (config->screenloglevels != NULL) 
 	   xstrcat(&temp->keysPrinted, config->screenloglevels);
    else
-	   xstrcat(&temp->keysPrinted, "123456789");
+	   xstrcat(&temp->keysPrinted, "1234567890");
 
    temp->firstLinePrinted=0;
 
@@ -102,7 +102,7 @@ void closeLog(s_log *hpt_log)
    }
 }
 
-void writeLogEntry(s_log *hpt_log, char key, char *logString, ...)
+void log(char key, char *logString, ...)
 {
 	time_t     currentTime;
 	struct tm  *locTime;

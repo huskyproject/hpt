@@ -1,7 +1,14 @@
 hpt 0.9.8 (development version)
 ---------	
 
------ cvs ci ------
+---- cvs ci ------
+Sun Mar  4 14:42:00 NOVT 2001
+max:
+* checking return value of MsgWriteMsg() in processEMMsg() and
+  processNMMsg() for new smapi
+* writeLogEntry() changed to log()
+
+---- cvs ci ------
 Sat Mar  3 16:12:28 NOVT 2001
 max:
 * fixed .bsy checks under win32 (watcom)

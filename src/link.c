@@ -141,7 +141,7 @@ int linkArea(s_area *area, int netMail)
    if (area->msgbType == MSGTYPE_PASSTHROUGH) return 0;
 
    if (area->nolink) {
-     writeLogEntry(hpt_log, '3', "%s has nolink option, ignoring", area->areaName);
+     log('3', "%s has nolink option, ignoring", area->areaName);
      return 0;
    }
 
@@ -149,7 +149,7 @@ int linkArea(s_area *area, int netMail)
 /*							  area->fperm, area->uid, area->gid,*/
                        (word)(area->msgbType | (netMail ? 0 : MSGTYPE_ECHO)));
    if (harea) {
-      writeLogEntry(hpt_log, '3', "linking area %s", area->areaName);
+      log('3', "linking area %s", area->areaName);
       msgsNum = MsgGetHighMsg(harea);
       if (msgsNum < 2) { /* Really nothing to link */
 	      MsgCloseArea(harea);
@@ -184,7 +184,7 @@ int linkArea(s_area *area, int netMail)
 		  if( ctlen == 0 )
 			  {
 				  MsgCloseMsg(hmsg);
-				  writeLogEntry(hpt_log, '6', "msg %ld has no control information: trown from reply chain", i);
+				  log('6', "msg %ld has no control information: trown from reply chain", i);
 				  continue;
 			  }
 
@@ -194,7 +194,7 @@ int linkArea(s_area *area, int netMail)
 		  };
 
 		  if (ctl == NULL) {
-			  writeLogEntry(hpt_log, '9', "out of memory while linking on msg %ld", i);
+			  log('9', "out of memory while linking on msg %ld", i);
 			  // try to free as much as possible
 			  // FIXME : remove blocks themselves
 			  nfree(ctl);
@@ -207,13 +207,13 @@ int linkArea(s_area *area, int netMail)
 		  ctl[ctlen] = '\0';
 		  msgId   = GetKludgeText(ctl, "MSGID");
 		  if (msgId == NULL) {
-			  writeLogEntry(hpt_log, '6', "msg %ld haven't got any MSGID, replying is not possible", i);
+			  log('6', "msg %ld haven't got any MSGID, replying is not possible", i);
 			  MsgCloseMsg(hmsg);
 			  continue;
 		  }
 		  curr = findMsgId(msgs, hash, hashNums, msgId, i);
 		  if (curr == NULL) {
-			  writeLogEntry(hpt_log, '6', "hash table overflow. Tell it to the developers !"); 
+			  log('6', "hash table overflow. Tell it to the developers !"); 
 			  // try to free as much as possible
 			  // FIXME : remove blocks themselves
 			  nfree(msgId);
@@ -222,7 +222,7 @@ int linkArea(s_area *area, int netMail)
 			  return 0;
 		  };
 		  if (curr -> msgId != NULL) {
-			  writeLogEntry(hpt_log, '6', "msg %ld has dupes in msgbase :" \
+			  log('6', "msg %ld has dupes in msgbase :" \
 							" trown from reply chain", i);
 			  MsgCloseMsg(hmsg);
 			  nfree(msgId);
@@ -270,7 +270,7 @@ int linkArea(s_area *area, int netMail)
 				      msgs[i].relinked = 1;
 			      }
 		      } else {
-			      writeLogEntry(hpt_log, '6', "msg %ld: replies count for msg %ld exceeds %d, rest of the replies won't be linked",i+1, curr-msgs+1,MAX_REPLY);
+			      log('6', "msg %ld: replies count for msg %ld exceeds %d, rest of the replies won't be linked",i+1, curr-msgs+1,MAX_REPLY);
 		      }
 	      }
       }
@@ -306,7 +306,7 @@ int linkArea(s_area *area, int netMail)
       nfree(ctl);
       MsgCloseArea(harea);
    } else {
-      writeLogEntry(hpt_log, '9', "could not open area %s", area->areaName);
+      log('9', "could not open area %s", area->areaName);
       return 0;
    }
    return 1;
@@ -326,7 +326,7 @@ void linkAreas(char *name)
 	   } else {
 		   area = getArea(config, name);
 		   if (area->areaName != config->badArea.areaName) linkArea(area,0);
-		   else writeLogEntry(hpt_log, '9', "area %s not found for link",name);
+		   else log('9', "area %s not found for link",name);
 	   }
 	   return;
    }
@@ -340,7 +340,7 @@ void linkAreas(char *name)
 
    if (f == NULL) {
       // if importlog does not exist link all areas
-      writeLogEntry(hpt_log, '3', "Linking all Areas.");
+      log('3', "Linking all Areas.");
 
       /* link all echomail areas */
       for (i = 0; i < config -> echoAreaCount; i++)
@@ -353,7 +353,7 @@ void linkAreas(char *name)
          linkArea(&(config -> netMailAreas[i]), 1);
 
    } else {
-      writeLogEntry(hpt_log, '3', "Using importlogfile -> linking only listed Areas");
+      log('3', "Using importlogfile -> linking only listed Areas");
 
       while (!feof(f)) {
          line = readLine(f);

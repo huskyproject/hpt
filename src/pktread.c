@@ -341,7 +341,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
       free(msg->text);
       msg->text = text;
       
-      writeLogEntry(hpt_log, '7', "Mail without INTL-Kludge. Assuming %i:%i/%i.%i -> %i:%i/%i.%i",
+      log('7', "Mail without INTL-Kludge. Assuming %i:%i/%i.%i -> %i:%i/%i.%i",
 		    msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
 		    msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
    } /* endif */
@@ -617,7 +617,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    if (badmsg) {
 	   freeMsgBuffers(msg);
 	   *message = NULL;
-	   writeLogEntry(hpt_log, '9', "wrong msg header, renaming pkt to bad.");
+	   log('9', "wrong msg header, renaming pkt to bad.");
 	   return 2; // exit with error
    }
 

@@ -213,7 +213,7 @@ void scanEMArea(s_area *echo)
    if (area != NULL) {
       statScan.areas++;
       echo->scn = 1;
-      writeLogEntry(hpt_log, '1', "Scanning area: %s", echo->areaName);
+      log('1', "Scanning area: %s", echo->areaName);
       if (noHighWaters) i = highWaterMark = 0;
       else i = highWaterMark = MsgGetHighWater(area);
       highestMsg    = MsgGetHighMsg(area);
@@ -238,6 +238,6 @@ void scanEMArea(s_area *echo)
 
       MsgCloseArea(area);
    } else {
-      writeLogEntry(hpt_log, '9', "Could not open %s", echo->fileName);
+      log('9', "Could not open %s", echo->fileName);
    } /* endif */
 }

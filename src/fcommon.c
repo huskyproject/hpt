@@ -97,8 +97,8 @@ void exit_hpt(char *logstr, int print) {
 
     writeDupeFiles();
     if (config->lockfile != NULL) remove(config->lockfile);
-    writeLogEntry(hpt_log, '9', logstr);
-    writeLogEntry(hpt_log, '1', "End");
+    log('9', logstr);
+    log('1', "End");
     closeLog(hpt_log);
     disposeConfig(config);
     doneCharsets();
@@ -112,7 +112,7 @@ int createLockFile(char *lockfile) {
         if ( (fd=open(lockfile, O_CREAT | O_RDWR | O_EXCL, S_IREAD | S_IWRITE)) < 0 )
            {
                    fprintf(stderr,"createLockFile: cannot create lock file\"%s\"\n",lockfile);
-                   writeLogEntry(hpt_log, '9', "createLockFile: cannot create lock file \"%s\"m", lockfile);
+                   log('9', "createLockFile: cannot create lock file \"%s\"m", lockfile);
                    return 1;
            }
 
@@ -307,7 +307,7 @@ int createTempPktFileName(s_link *link)
 
 		if (counter<=255) break;
 		else {
-			writeLogEntry(hpt_log,'7',"created 256 pkt's/sec!");
+			log('7',"created 256 pkt's/sec!");
 			sleep(1);
 			aTime = time(NULL);
 			aTime %= 0xffffff;
@@ -391,7 +391,7 @@ int createTempPktFileName(s_link *link)
 				&& minFreeExt>=0) {
 				counter = minFreeExt;
 			} else {
-				writeLogEntry(hpt_log,'7',"Can't use more than %d extensions for bundle names",numExt);
+				log('7',"Can't use more than %d extensions for bundle names",numExt);
 				nfree(fileName);
 				nfree(pfileName);
 				nfree(tmp);
@@ -418,12 +418,12 @@ int createTempPktFileName(s_link *link)
 		} while ((fexist(pfileName) || fileNameAlreadyUsed(NULL, pfileName))
 				 && (counter < numExt));
 
-		if (counter >= numExt) writeLogEntry(hpt_log,'7',"created %d bundles/sec!", numExt);
+		if (counter >= numExt) log('7',"created %d bundles/sec!", numExt);
 
 		break;
 
 	default:
-		writeLogEntry(hpt_log, '9', "Unknown bundleNameStyle (non-compatible fidoconfig library?)");
+		log('9', "Unknown bundleNameStyle (non-compatible fidoconfig library?)");
 		exit(-1);
 		break;
 	}
@@ -439,7 +439,7 @@ int createTempPktFileName(s_link *link)
     else {
         nfree(fileName);
         nfree(pfileName);
-		writeLogEntry(hpt_log,'7',"can't create arcmail bundles any more!");
+		log('7',"can't create arcmail bundles any more!");
         return 1;
     }
 }
@@ -556,7 +556,7 @@ int createDirectoryTree(const char *pathName) {
       if (stat(start, &buf) != 0) {
          // this part of the path does not exist, create it
          if (mymkdir(start) != 0) {
-            writeLogEntry(hpt_log, '9', "Could not create directory %s", start);
+            log('9', "Could not create directory %s", start);
             nfree(start);
             return 1;
          }
@@ -566,7 +566,7 @@ int createDirectoryTree(const char *pathName) {
 #else
       } else if(!S_ISDIR(buf.st_mode)) {
 #endif
-         writeLogEntry(hpt_log, '9', "%s is a file not a directory", start);
+         log('9', "%s is a file not a directory", start);
          nfree(start);
          return 1;
       }
@@ -669,12 +669,12 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 #else
 	   if (save_errno != EEXIST) {
 #endif
-		   writeLogEntry(hpt_log, '7', "cannot create *.bsy file \"%s\" for %s (errno %d)\n", link->bsyFile, link->name, (int)save_errno);
+		   log('7', "cannot create *.bsy file \"%s\" for %s (errno %d)\n", link->bsyFile, link->name, (int)save_errno);
 		   exit_hpt("cannot create *.bsy file!",0);
 
 	   } else {
 
-		   writeLogEntry(hpt_log, '7', "link %s is busy.", link->name);
+		   log('7', "link %s is busy.", link->name);
 		   nfree(link->floFile);
 		   nfree(link->bsyFile);
 		   

@@ -30,7 +30,7 @@
  *****************************************************************************/
 #include <global.h>
 
-s_log        *hpt_log;
+s_log        *hpt_log = NULL;
 s_fidoconfig *config  = NULL;
 char         *cfgFile = NULL;
 

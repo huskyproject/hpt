@@ -310,16 +310,16 @@ void processConfig()
 		   exit(1);
 	   }
    }
-
+	   
    // open Logfile
-   hpt_log = NULL;
-   if (config->logFileDir != NULL) {
-     xstrscat(&buff, config->logFileDir, "hpt.log", NULL);
-	 hpt_log = openLog(buff, versionStr);
-   } else printf("You have no logFileDir in your config, there will be no log created");
-   if (hpt_log==NULL) printf("Could not open logfile: \"%s\"\n", buff);
-   writeLogEntry(hpt_log, '1', "Start");
-   nfree(buff);
+   if (config->logFileDir) {
+	   xstrscat(&buff, config->logFileDir, "hpt.log", NULL);
+	   hpt_log = openLog(buff, versionStr);
+	   if (hpt_log==NULL) fprintf(stderr,"Could not open logfile: %s\n", buff);
+	   nfree(buff);
+   } else printf("logFileDir not defined, there will be no log created!\n");
+   
+   log('1', "Start");
 
    if (config->addrCount == 0) exit_hpt("at least one addr must be defined",1);
    if (config->linkCount == 0) exit_hpt("at least one link must be specified",1);
@@ -448,7 +448,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    // deinit SMAPI
    MsgCloseApi();
    
-   writeLogEntry(hpt_log, '1', "End");
+   log('1', "End");
    closeLog(hpt_log);
    doneCharsets();
    nfree(versionStr);
