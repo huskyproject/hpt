@@ -1036,8 +1036,10 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    
    nfree(squishFileName);
 
+   //remove after 16-Sep-01
+   //if (hpt_stristr(newAC, " -a ")==NULL)
    // add "-a ourAka" to echoarea
-   xstrscat(&buff, " -a ", myaddr, NULL);
+   //xstrscat(&buff, " -a ", myaddr, NULL);
 
    if (creatingLink->LinkGrp) {
 	   if (hpt_stristr(newAC, " -g ")==NULL)
@@ -1087,16 +1089,12 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
    // create flag
    if (config->aacFlag) {
-	   if (NULL == (f = fopen(config->aacFlag,"a")))
-		   w_log('9',
-						 "Could not open autoAreaCreate flag: %s",
-						 config->aacFlag);
-	   else {
-		   w_log('0',
-						 "Created autoAreaCreate flag: %s",
-						 config->aacFlag);
-		   fclose(f);
-	   }
+       if (NULL == (f = fopen(config->aacFlag,"a")))
+	   w_log('9', "Could not open autoAreaCreate flag: %s", config->aacFlag);
+       else {
+	   w_log('0', "Created autoAreaCreate flag: %s", config->aacFlag);
+	   fclose(f);
+       }
    }
    
    return 0;

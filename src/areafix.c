@@ -207,35 +207,36 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 
 // add string to file
 int addstring(FILE *f, char *aka) {
-	char *cfg, c;
-	long areapos,endpos,cfglen,len;
+    int rc = 0;
+    char *cfg, c;
+    long areapos,endpos,cfglen,len;
 
-	/* in dos and win32 by default \n translates into 2 chars */
-	fseek(f,-2L,SEEK_CUR);
-	c=(char) fgetc(f);
-	if (c==0x0D) fseek(f,-1L,SEEK_CUR);
+    /* in dos and win32 by default \n translates into 2 chars */
+    fseek(f,-2L,SEEK_CUR);
+    c=(char) fgetc(f);
+    if (c==0x0D) fseek(f,-1L,SEEK_CUR);
 
-	areapos=ftell(f);
+    areapos=ftell(f);
 	
-	// end of file
-	fseek(f,0L,SEEK_END);
-	endpos=ftell(f);
-	cfglen=endpos-areapos;
+    // end of file
+    fseek(f,0L,SEEK_END);
+    endpos=ftell(f);
+    cfglen=endpos-areapos;
 	
-	// storing end of file...
-	cfg = (char*) safe_malloc((size_t) cfglen+1);
-	fseek(f,-cfglen,SEEK_END);
-	len = fread(cfg,sizeof(char),(size_t) cfglen,f);
+    // storing end of file...
+    cfg = (char*) safe_malloc((size_t) cfglen+1);
+    fseek(f,-cfglen,SEEK_END);
+    len = fread(cfg,sizeof(char),(size_t) cfglen,f);
 	
-	// write config
-	fseek(f,-cfglen,SEEK_END);
-	fputs(" ",f);
-	fputs(aka,f);
-	fwrite(cfg,sizeof(char),(size_t) len,f);
-	fflush(f);
+    // write config
+    fseek(f,-cfglen,SEEK_END);
+    rc += (fputs(" ",f) == EOF) ? 1 : 0;
+    rc += (fputs(aka,f) == EOF) ? 1 : 0;
+    rc += (fwrite(cfg,sizeof(char),(size_t) len,f) < len) ? 1 : 0;
+    fflush(f);
 	
-	nfree(cfg);
-	return 0;
+    nfree(cfg);
+    return rc;
 }
 
 void addlink(s_link *link, s_area *area) {
@@ -602,23 +603,22 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 	}
 	close_conf();
 	if (pos == -1) {
-		return 1; // impossible
+	    return 1; // impossible
 	}
 	nfree(buff);
 
-	if ((f=fopen(fileName,"r+b")) == NULL)
-		{
-			fprintf(stderr, "areafix: cannot open config file %s \n", fileName);
-			w_log('9',"areafix: cannot open config file \"%s\"",fileName);
-			nfree(fileName);
-			return 1;
-		}
+	if ((f=fopen(fileName,"r+b")) == NULL) {
+	    fprintf(stderr, "areafix: cannot open config file %s for reading and writing\n", fileName);
+	    w_log('9',"areafix: cannot open config file \"%s\" for reading and writing", fileName);
+	    nfree(fileName);
+	    return 1;
+	}
 	fseek(f, pos, SEEK_SET);
 	cfgline = readLine(f);
 	if (cfgline == NULL) {
-		fclose(f);
-		nfree(fileName);
-		return 1;
+	    fclose(f);
+	    nfree(fileName);
+	    return 1;
 	}
 
 	switch (action) {
@@ -628,10 +628,12 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 			(area->downlinks[0]->link->hisAka.point == 0)) {
 			forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 0);
 		}
-		addstring(f, aka2str(link->hisAka));
+		if (addstring(f, aka2str(link->hisAka)))
+		    w_log('9',"areafix: can't write to file %s", fileName);
 		break;
-	    case 3: 
-		addstring(f, aka2str(link->hisAka));
+	    case 3:
+		if (addstring(f, aka2str(link->hisAka)))
+		    w_log('9',"areafix: can't write to file %s", fileName);
 		break;
  	    case 1:
 		fseek(f, pos, SEEK_SET);
@@ -810,103 +812,109 @@ int limitCheck(s_link *link, s_message *msg) {
 }
 
 char *subscribe(s_link *link, s_message *msg, char *cmd) {
-	unsigned int i, rc=4, found=0, j, from_us=0;
-	char *line, *an, *report = NULL;
-	s_area *area;
+    unsigned int i, rc=4, found=0, j, from_us=0;
+    char *line, *an, *report = NULL;
+    s_area *area;
 
-	line = cmd;
+    line = cmd;
 	
-	if (line[0]=='+') line++;
-	while (*line==' ') line++;
+    if (line[0]=='+') line++;
+    while (*line==' ') line++;
 
-	if (*line=='+') line++; while (*line==' ') line++;
+    if (*line=='+') line++; while (*line==' ') line++;
 	
-	if (strchr(line,' ') || strchr(line,'\t') || strchr(line,PATH_DELIM) ||
-		strchr(line,config->CommentChar) || strchr(line,':')) return errorRQ(line);
+    if (strchr(line,' ') || strchr(line,'\t') || strchr(line,PATH_DELIM) ||
+	strchr(line,config->CommentChar) || strchr(line,':')) return errorRQ(line);
 
-	for (i=0; rc!=6 && i<config->echoAreaCount; i++) {
-	    area = &(config->echoAreas[i]);
-	    an = area->areaName;
+    for (i=0; rc!=6 && i<config->echoAreaCount; i++) {
+	area = &(config->echoAreas[i]);
+	an = area->areaName;
 
-	    rc=subscribeAreaCheck(area, msg, line, link);
-	    if (rc==4) continue;
- 		if (rc==1 && mandatoryCheck(*area, link)) rc = 5;
-
-		if (rc!=0 && limitCheck(link, msg)) rc = 6;
-
-		switch (rc) {
-		case 0: 
-			xscatprintf(&report, " %s %s  already linked\r",
-						an,	print_ch(49-strlen(an), '.'));
-			w_log('8', "areafix: %s already linked to %s",
-						  aka2str(link->hisAka), an);
-		    if (strstr(line, "*") == NULL) i = config->echoAreaCount;
-        	break;
-		case 1: 
-			changeconfig ((cfgFile) ? cfgFile : getConfigFileName(), area, link, 0);
-			addlink(link, area);
-			xscatprintf(&report, " %s %s  added\r", an, print_ch(49-strlen(an), '.'));
-			w_log('8', "areafix: %s subscribed to %s",
-						  aka2str(link->hisAka),an);
-			if (strstr(line, "*") == NULL) i = config->echoAreaCount;
-			break;
-		case 6:
-			break;
-		default :
-			if (!area->hide && strstr(line,"*")==NULL) {
-				w_log('8', "areafix: area %s -- no access for %s",
-					  an, aka2str(link->hisAka));
-				xscatprintf(&report," %s %s  no access\r", an,
-							print_ch(49-strlen(an), '.'));
-			}
-			found = 1;
-			break;
-		}
-	}
+	rc=subscribeAreaCheck(area, msg, line, link);
+	if (rc==4) continue;
+	if (rc==1 && mandatoryCheck(*area, link)) rc = 5;
 
 	if (rc!=0 && limitCheck(link, msg)) rc = 6;
+
+	switch (rc) {
+	case 0: 
+	    xscatprintf(&report, " %s %s  already linked\r",
+			an,	print_ch(49-strlen(an), '.'));
+	    w_log('8', "areafix: %s already linked to %s",
+		  aka2str(link->hisAka), an);
+	    if (strstr(line, "*") == NULL) i = config->echoAreaCount;
+	    break;
+	case 1: 
+	    if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==0) {
+		addlink(link, area);
+		xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
+		w_log('8', "areafix: %s subscribed to %s",aka2str(link->hisAka),an);
+	    } else {
+		xscatprintf(&report," %s %s  error. report to sysop!\r",
+			    an,print_ch(49-strlen(an),'.'));
+		w_log('8', "areafix: %s not subscribed to %s",
+		      aka2str(link->hisAka),an);
+		w_log('9', "areafix: can't write to config file!");
+	    }
+	    if (strstr(line, "*") == NULL) i = config->echoAreaCount;
+	    break;
+	case 6:
+	    break;
+	default :
+	    if (!area->hide && strstr(line,"*")==NULL) {
+		w_log('8', "areafix: area %s -- no access for %s",
+		      an, aka2str(link->hisAka));
+		xscatprintf(&report," %s %s  no access\r", an,
+			    print_ch(49-strlen(an), '.'));
+	    }
+	    found = 1;
+	    break;
+	}
+    }
+
+    if (rc!=0 && limitCheck(link, msg)) rc = 6;
 	
-	if ((rc==4) && (strstr(line,"*") == NULL) && !found) {
-	    if (link->denyFRA==0) {
-			// try to forward request
-			if ((rc=forwardRequest(line, link))==2)
-				xscatprintf(&report, " %s %s  no uplinks to forward\r",
-							line, print_ch(49-strlen(line), '.'));
-			else if (rc==0) {
-				xscatprintf(&report, " %s %s  request forwarded\r",
-							line, print_ch(49-strlen(line), '.'));
-				for (j=0; j < config->addrCount; j++)
-				    if (addrComp(link->hisAka,config->addr[j])==0) {from_us=1;break;}
-				if (from_us==0) {
-				    area = getArea(config, line);
+    if ((rc==4) && (strstr(line,"*") == NULL) && !found) {
+	if (link->denyFRA==0) {
+	    // try to forward request
+	    if ((rc=forwardRequest(line, link))==2)
+		xscatprintf(&report, " %s %s  no uplinks to forward\r",
+			    line, print_ch(49-strlen(line), '.'));
+	    else if (rc==0) {
+		xscatprintf(&report, " %s %s  request forwarded\r",
+			    line, print_ch(49-strlen(line), '.'));
+		for (j=0; j < config->addrCount; j++)
+		    if (addrComp(link->hisAka,config->addr[j])==0) {from_us=1;break;}
+		if (from_us==0) {
+		    area = getArea(config, line);
 
-					for (j=0; j < area->downlinkCount; j++)
-						if (addrComp(link->hisAka,
-									 area->downlinks[j]->link->hisAka)==0) break;
+		    for (j=0; j < area->downlinkCount; j++)
+			if (addrComp(link->hisAka,
+				     area->downlinks[j]->link->hisAka)==0) break;
 
-					if (j == area->downlinkCount) {
-						changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3);
-						addlink(link, area);
-					}
-				    w_log('8', "areafix: %s subscribed to area %s",
-						  aka2str(link->hisAka),line);
-				}
-			}
+		    if (j == area->downlinkCount) {
+			changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3);
+			addlink(link, area);
+		    }
+		    w_log('8', "areafix: %s subscribed to area %s",
+			  aka2str(link->hisAka),line);
+		}
 	    }
 	}
+    }
 
-	if (rc == 6) {
-		w_log('8',"areafix: area %s -- no access (full limit) for %s",
-			  line, aka2str(link->hisAka));
-		xscatprintf(&report," %s %s  no access (full limit)\r",
-					line, print_ch(49-strlen(line), '.'));
-	}
+    if (rc == 6) {
+	w_log('8',"areafix: area %s -- no access (full limit) for %s",
+	      line, aka2str(link->hisAka));
+	xscatprintf(&report," %s %s  no access (full limit)\r",
+		    line, print_ch(49-strlen(line), '.'));
+    }
 
-	if (report == NULL && found==0) {
-	    xscatprintf(&report," %s %s  not found\r",line,print_ch(49-strlen(line),'.'));
-	    w_log('8', "areafix: area %s is not found",line);
-	}
-	return report;
+    if (report == NULL && found==0) {
+	xscatprintf(&report," %s %s  not found\r",line,print_ch(49-strlen(line),'.'));
+	w_log('8', "areafix: area %s is not found",line);
+    }
+    return report;
 }
 
 char *errorRQ(char *line)
@@ -1006,69 +1014,82 @@ char *delete(s_link *link, s_message *msg, char *cmd) {
 }
 
 char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
-	int i, rc = 2, j, from_us=0;
-	char *line, *an, *report = NULL;
-	s_area *area;
+    int i, rc = 2, j, from_us=0;
+    char *line, *an, *report = NULL;
+    s_area *area;
 	
-	line = cmd;
+    line = cmd;
 	
-	if (line[1]=='-') return NULL;
-	line++;
-	while (*line==' ') line++;
+    if (line[1]=='-') return NULL;
+    line++;
+    while (*line==' ') line++;
 	
-	for (i = 0; i< config->echoAreaCount; i++) {
-		area = &(config->echoAreas[i]);
-		an = area->areaName;
+    for (i = 0; i< config->echoAreaCount; i++) {
+	area = &(config->echoAreas[i]);
+	an = area->areaName;
 
-		rc = subscribeAreaCheck(area, msg, line, link);
-		if (rc==4) continue;
-		if (rc==0 && mandatoryCheck(*area,link)) rc = 5;
+	rc = subscribeAreaCheck(area, msg, line, link);
+	if (rc==4) continue;
+	if (rc==0 && mandatoryCheck(*area,link)) rc = 5;
 
-		for (j = 0; j < config->addrCount; j++)
-		    if (addrComp(link->hisAka, config->addr[j])==0) { from_us = 1; rc = 0; break; }
+	for (j = 0; j < config->addrCount; j++)
+	    if (addrComp(link->hisAka, config->addr[j])==0) { from_us = 1; rc = 0; break; }
 
-		switch (rc) {
-		case 0: xscatprintf(&report, " %s %s  unlinked\r", an, print_ch(49-strlen(an), '.'));
-			if (from_us == 0) {
-			   int i;
-			   for (i=0; i<area->downlinkCount; i++)
-			   	if (addrComp(link->hisAka, area->downlinks[i]->link->hisAka) == 0 &&
-			   	    area->downlinks[i]->defLink)
-					return do_delete(link, msg, area);
-			   removelink(link, area);
-			   changeconfig ((cfgFile) ? cfgFile : getConfigFileName(),  area, link, 1);
-			   w_log('8', "areafix: %s unlinked from %s",aka2str(link->hisAka),an);
-			} else {
-			if ((area->downlinkCount==1) && (area->downlinks[0]->link->hisAka.point == 0))
-				forwardRequestToLink(area->areaName, area->downlinks[0]->link, NULL, 1);
-			}
-			break;
-		case 1: if (strstr(line, "*")) continue;
-			xscatprintf(&report, " %s %s  not linked\r", an, print_ch(49-strlen(an), '.'));
-			w_log('8', "areafix: area %s is not linked to %s",
-					area->areaName, aka2str(link->hisAka));
-			break;
-		case 5: xscatprintf(&report, " %s %s  unlink is not possible\r", an, print_ch(49-strlen(an), '.'));
-			w_log('8', "areafix: area %s -- unlink is not possible for %s",
-					area->areaName, aka2str(link->hisAka));
-			break;
-		default:
-			//w_log('8', "areafix: area %s -- no access for %s",
-			//area->areaName, aka2str(link->hisAka));
-			continue;
-		}
+	switch (rc) {
+	case 0:
+	    if (from_us == 0) {
+		int i;
+		for (i=0; i<area->downlinkCount; i++)
+		    if (addrComp(link->hisAka, area->downlinks[i]->link->hisAka)==0 &&
+			area->downlinks[i]->defLink)
+			return do_delete(link, msg, area);
+		removelink(link, area);
+		j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,1);
+		if (j) {
+		    w_log('8', "areafix: %s doesn't unlinked from %s",
+			  aka2str(link->hisAka), an);
+		    w_log('9',"areafix: can't write to config file!");
+		} else
+		  w_log('8', "areafix: %s unlinked from %s",aka2str(link->hisAka),an);
+	    } else {
+		j=0; // always success
+		if ((area->downlinkCount==1) &&
+		    (area->downlinks[0]->link->hisAka.point == 0))
+		    forwardRequestToLink(area->areaName,
+					 area->downlinks[0]->link, NULL, 1);
+	    }
+	    if (j==0)
+              xscatprintf(&report," %s %s  unlinked\r",an,print_ch(49-strlen(an),'.'));
+	    else
+              xscatprintf(&report," %s %s  error. report to sysop!\r",
+			 an, print_ch(49-strlen(an),'.'));
+	    break;
+	case 1: if (strstr(line, "*")) continue;
+	    xscatprintf(&report, " %s %s  not linked\r", an, print_ch(49-strlen(an), '.'));
+	    w_log('8', "areafix: area %s is not linked to %s",
+		  area->areaName, aka2str(link->hisAka));
+	    break;
+	case 5: xscatprintf(&report, " %s %s  unlink is not possible\r", an, print_ch(49-strlen(an), '.'));
+	    w_log('8', "areafix: area %s -- unlink is not possible for %s",
+		  area->areaName, aka2str(link->hisAka));
+	    break;
+	default:
+	    //w_log('8', "areafix: area %s -- no access for %s",
+	    //area->areaName, aka2str(link->hisAka));
+	    continue;
 	}
-	if (report == NULL) {
-		if (strstr(line, "*")) {
-			xscatprintf(&report, " %s %s  no areas to unlink\r",
-						line, print_ch(49-strlen(line), '.'));
-			w_log('8', "areafix: no areas to unlink");
-		} else {
-			xscatprintf(&report, " %s %s  not found\r", line, print_ch(49-strlen(line), '.'));
-			w_log('8', "areafix: area %s is not found", line);
-		}
+    }
+    if (report == NULL) {
+	if (strstr(line, "*")) {
+	    xscatprintf(&report, " %s %s  no areas to unlink\r",
+			line, print_ch(49-strlen(line), '.'));
+	    w_log('8', "areafix: no areas to unlink");
+	} else {
+	    xscatprintf(&report, " %s %s  not found\r", line, print_ch(49-strlen(line), '.'));
+	    w_log('8', "areafix: area %s is not found", line);
 	}
-	return report;
+    }
+    return report;
 }
 
 int testAddr(char *addr, s_addr hisAka)
