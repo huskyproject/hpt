@@ -44,6 +44,7 @@
 #include <global.h>
 #include <fcommon.h>
 #include <pkt.h>
+#include <recode.h>
 
 typedef unsigned long flag_t;  /* for at least 32 bit flags */
 #define FTSC_FLAWY  1           /* FTSC field has correctable errors */
@@ -573,7 +574,7 @@ static void make_ftsc_date(char *pdate, const struct tm *ptm)
 int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 {
    s_message *msg;
-   int len, badmsg=0;
+   int len; //, badmsg=0;
    struct tm tm;
    char *p, *q;
 #if defined(MSDOS)
@@ -605,23 +606,42 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    }
 
    len = fgetsUntil0 ((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
-   if (len > XMSG_TO_SIZE+1) badmsg=1;
-   else xstrcat(&msg->toUserName, (char *) globalBuffer);
+   if (len > XMSG_TO_SIZE) {
+       if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
+       w_log('9', "wrong msg header: toUserName (%s) longer than %d bytes.",
+	     globalBuffer, XMSG_TO_SIZE-1);
+       if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
+       globalBuffer[XMSG_TO_SIZE-1]='\0';
+   }
+   xstrcat(&msg->toUserName, (char *) globalBuffer);
 
    fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
-   if (len > XMSG_FROM_SIZE+1) badmsg=1;
-   else xstrcat(&msg->fromUserName, (char *) globalBuffer);
+   if (len > XMSG_FROM_SIZE) {
+       if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
+       w_log('9', "wrong msg header: fromUserName (%s) longer than %d bytes.",
+	     globalBuffer, XMSG_FROM_SIZE-1);
+       if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
+       globalBuffer[XMSG_FROM_SIZE-1]='\0';
+   }
+   xstrcat(&msg->fromUserName, (char *) globalBuffer);
 
    len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
-   if (len > XMSG_SUBJ_SIZE+1) badmsg=1;
-   else xstrcat(&msg->subjectLine, (char *) globalBuffer);
-
-   if (badmsg) {
-	   freeMsgBuffers(msg);
-	   *message = NULL;
-	   w_log('9', "wrong msg header, renaming pkt to bad.");
-	   return 2; // exit with error
+   if (len > XMSG_SUBJ_SIZE) {
+       if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
+       w_log('9', "wrong msg header: subectLine (%s) longer than %d bytes.",
+	     globalBuffer, XMSG_SUBJ_SIZE-1);
+       if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
+       globalBuffer[XMSG_SUBJ_SIZE-1]='\0';
    }
+   xstrcat(&msg->subjectLine, (char *) globalBuffer);
+
+// remove after 26-Nov-01
+//   if (badmsg) {
+//	   freeMsgBuffers(msg);
+//	   *message = NULL;
+//	   w_log('9', "wrong msg header, renaming pkt to bad.");
+//	   return 2; // exit with error
+//   }
 
 #if !defined(MSDOS)
    do {

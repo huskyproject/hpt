@@ -780,6 +780,10 @@ This statement cannot be repeated.
 Create file-flag after unpacking netmail msg. This feature can be used
 for execute netmail trackers after tossing.
 
+This file also created after scannig @code{NetmailArea} without route
+definition. Scanning is stopped but file-flag created for netmail
+tracker.
+
 This statement cannot be repeated.
 
 @node NoProcessBundles, Origin, NetmailFlag, Keywords

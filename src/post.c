@@ -102,7 +102,7 @@ void post(int c, unsigned int *n, char *params[])
    char *area = NULL, *tearl = NULL, *origin = NULL;
    FILE *text = NULL;
    s_area *echo = NULL;
-   FILE *f = NULL;
+//   FILE *f = NULL;
    long attr;
    struct _minf m;
 
@@ -307,25 +307,20 @@ void post(int c, unsigned int *n, char *params[])
 			  cmPack = 1;
 		  }
 		  else {
-// remove after 26-Apr-01
-//			  msg.attributes = 0;
-//			  xscatprintf(&msg.text, "SEEN-BY: %u/%u\r\001PATH: %u/%u\r",
-//						  echo->useAka->net, echo->useAka->node,
-//						  echo->useAka->net, echo->useAka->node);
-//			  msg.textLength = strlen(msg.text);
 			  processEMMsg(&msg, msg.origAddr, 1, (MSGSCANNED|MSGSENT|MSGLOCAL));
 		  }
       }
 
-      if ((config->echotosslog) && (!export)) {
-        f=fopen(config->echotosslog, "a");
-        if (f==NULL)
-          w_log('9', "Could not open or create EchoTossLogFile.");
-        else {
-          fprintf(f,"%s\n", (area) ? area : echo->areaName);
-          fclose(f);
-        }
-      }
+// remove after 23-Nov-01
+//      if ((config->echotosslog) && (!export)) {
+//        f=fopen(config->echotosslog, "a");
+//        if (f==NULL)
+//          w_log('9', "Could not open or create EchoTossLogFile.");
+//        else {
+//          fprintf(f,"%s\n", echo->areaName);
+//          fclose(f);
+//        }
+//      }
 
    };
 

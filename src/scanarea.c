@@ -12,6 +12,9 @@
  * 33098 Paderborn       40472 Duesseldorf
  * Germany               Germany
  *
+ * Copyright (c) 1999-2001
+ * Max Levenkov, sackett@mail.ru
+ *
  * This file is part of HPT.
  *
  * HPT is free software; you can redistribute it and/or modify it

@@ -12,6 +12,9 @@
  * 33098 Paderborn       40472 Duesseldorf
  * Germany               Germany
  *
+ * Copyright (c) 1999-2001
+ * Max Levenkov, sackett@mail.ru
+ *
  * This file is part of HPT.
  *
  * HPT is free software; you can redistribute it and/or modify it
@@ -333,10 +336,12 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    char        freeVirtualLink = 0;
    char        *flags=NULL;
 
-   if (config->routeCount == 0) {
-      w_log('7', "no routing - leave mail untouched");
-      return 0;
-   }
+
+// remove after 29-Nov-01
+//   if (config->routeCount == 0) {
+//       w_log('7', "no routing - leave msg untouched");
+//       return 1;
+//   }
 
    memset(&msg,'\0',sizeof(s_message));
    convertMsgHeader(*xmsg, &msg);
@@ -505,80 +510,88 @@ void scanNMArea(s_area *area)
    // do not scan one area twice
    if (area->scn) return;
 
-   // FIXME: workaround for not netmail packing when there's no any routing
-//   if (config->routeFileCount == 0 && config->routeMailCount == 0 && config->routeCount == 0) {
-//      w_log('7', "no route at all - leave mail untouched");
-//      return;
-//   }
+   if (config->routeCount == 0) {
+       w_log('7', "No routing -> Scanning stop");
+       // create flag for netmail trackers
+       if (config->netmailFlag) {
+	   if (NULL == (f = fopen(config->netmailFlag,"a")))
+	       w_log('9', "Could not create netmail flag: %s", config->netmailFlag);
+	   else {
+	       w_log('0', "Created netmail flag: %s", config->netmailFlag);
+	       fclose(f);
+	   }
+       }
+       return;
+   }
 
    netmail = MsgOpenArea((unsigned char *) area -> fileName, MSGAREA_NORMAL, 
-/*								 config->netMailArea.fperm, 
-								 config->netMailArea.uid, 
-								 config->netMailArea.gid, */
-								 (word)area -> msgbType);
+			 /* config->netMailArea.fperm, 
+			    config->netMailArea.uid, 
+			    config->netMailArea.gid, */
+			 (word)area -> msgbType);
    if (netmail != NULL) {
 
-      statScan.areas++;
-      area->scn++;
-      w_log('1', "Scanning NetmailArea %s", area -> areaName);
+       statScan.areas++;
+       area->scn++;
+       w_log('1', "Scanning NetmailArea %s", area -> areaName);
 
-      if (area->msgbType == MSGTYPE_SDM) noHighWaters = 1;
-      i = (noHighWaters) ? 0 : MsgGetHighWater(netmail);
-	  highestMsg = MsgGetHighMsg(netmail);
+       if (area->msgbType == MSGTYPE_SDM) noHighWaters = 1;
+       i = (noHighWaters) ? 0 : MsgGetHighWater(netmail);
+       highestMsg = MsgGetHighMsg(netmail);
 
-	  //FIXME: we needs for smapi fix to equivalent work of squish, sdm and jam
-	  if (area->msgbType == MSGTYPE_JAM) {
-		  num = MsgGetNumMsg(netmail);
-		  if (highestMsg>num && i>=num) i=0;
-		  highestMsg = num;
-	  }
+       //FIXME: we needs for smapi fix to equivalent work of squish, sdm and jam
+       if (area->msgbType == MSGTYPE_JAM) {
+	   num = MsgGetNumMsg(netmail);
+	   if (highestMsg>num && i>=num) i=0;
+	   highestMsg = num;
+       }
 
-      // scan all Messages and test if they are already sent.
-	  while (i < highestMsg) {
-         msg = MsgOpenMsg(netmail, MOPEN_RW, ++i);
+       // scan all Messages and test if they are already sent.
+       while (i < highestMsg) {
+	   msg = MsgOpenMsg(netmail, MOPEN_RW, ++i);
 
-         // msg does not exist
-         if (msg == NULL) continue;
-         statScan.msgs++;
+	   // msg does not exist
+	   if (msg == NULL) continue;
+	   statScan.msgs++;
 
-         MsgReadMsg(msg, &xmsg, 0, 0, NULL, 0, NULL);
-         cvtAddr(xmsg.dest, &dest);
-         for_us = 0;
-         for (j=0; j < config->addrCount; j++)
-            if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
+	   MsgReadMsg(msg, &xmsg, 0, 0, NULL, 0, NULL);
+	   cvtAddr(xmsg.dest, &dest);
+	   for_us = 0;
+	   for (j=0; j < config->addrCount; j++)
+	       if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
                 
-         // if not sent and not for us -> pack it
-         if (((xmsg.attr & MSGSENT) != MSGSENT) && (for_us==0)) {
-	     if (packMsg(msg, &xmsg, area) == 0) {
-		 statScan.exported++;
-		 area->scn++;
-	     }
-         }
+	   // if not sent and not for us -> pack it
+	   if (((xmsg.attr & MSGSENT) != MSGSENT) && (for_us==0)) {
+	       if (packMsg(msg, &xmsg, area) == 0) {
+		   statScan.exported++;
+		   area->scn++;
+	       }
+	   }
 
-         MsgCloseMsg(msg);
+	   MsgCloseMsg(msg);
 
-         cvtAddr(xmsg.orig, &orig);
-         from_us = 0;
-         for (j=0; j < config->addrCount; j++)
-            if (addrComp(orig, config->addr[j])==0) {from_us = 1; break;}
+	   cvtAddr(xmsg.orig, &orig);
+	   from_us = 0;
+	   for (j=0; j < config->addrCount; j++)
+	       if (addrComp(orig, config->addr[j])==0) {from_us = 1; break;}
 
-		 //  non transit messages without k/s flag not killed
-		 if (!(xmsg.attr & MSGKILL) && !(xmsg.attr & MSGFWD)) from_us = 1;
+	   //  non transit messages without k/s flag not killed
+	   if (!(xmsg.attr & MSGKILL) && !(xmsg.attr & MSGFWD)) from_us = 1;
 
-		 // transit messages from us will be killed
-		 if (from_us && (xmsg.attr & MSGFWD)) from_us = 0;
+	   // transit messages from us will be killed
+	   if (from_us && (xmsg.attr & MSGFWD)) from_us = 0;
 
-		 if (((!for_us && !from_us) || (xmsg.attr&MSGKILL)) && (xmsg.attr&MSGSENT)) {
-			 MsgKillMsg(netmail, i);
-			 i--;
-		 }
-         
-      } /* endfor */
+	   if (((!for_us && !from_us) || (xmsg.attr&MSGKILL)) && (xmsg.attr&MSGSENT)) {
+	       MsgKillMsg(netmail, i);
+	       i--;
+	   }
 
-      if (noHighWaters==0) MsgSetHighWater(netmail, i);
-      MsgCloseArea(netmail);
+       } /* endfor */
+
+       if (noHighWaters==0) MsgSetHighWater(netmail, i);
+       MsgCloseArea(netmail);
    } else {
-      w_log('9', "Could not open NetmailArea %s", area -> areaName);
+       w_log('9', "Could not open NetmailArea %s", area -> areaName);
    } /* endif */
 }
 

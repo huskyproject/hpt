@@ -617,8 +617,6 @@ int createTempPktFileName(s_link *link)
 #endif
 
 int createDirectoryTree(const char *pathName) {
-
-   struct stat buf;
    char *start, *slash;
 
    char limiter=PATH_DELIM;
