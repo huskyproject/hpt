@@ -925,7 +925,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
          writeLogEntry(log, '6', buff);
          statToss.pkts++;
          link = getLinkFromAddr(*config, header->origAddr);
-	 if ((strcmp(link->pktPwd, "")==0) && (strcmp(header->pktPassword, "")!=0))
+	 if ((link!=NULL) && (link->pktPwd==NULL) && (header->pktPassword[0]!='\000'))
 	 {
 		 sprintf(buff, "Unexpected Password %s.", header->pktPassword);
 		 writeLogEntry(log, '3', buff);
@@ -937,17 +937,16 @@ int processPkt(char *fileName, e_tossSecurity sec)
                break;
 
             case secProtInbound:
-               if ((link != NULL) && (link->pktPwd != NULL) && ((strcmp(link->pktPwd, "")==0) || (stricmp(link->pktPwd, header->pktPassword) == 0)))
-                  processIt = 1;
-               else if ((link == NULL) || (stricmp(link->pktPwd, "")==0)) {
-		  sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
-                          fileName, header->origAddr.zone, header->origAddr.net,
-                          header->origAddr.node, header->origAddr.point);
-                  writeLogEntry(log, '9', buff);
-
-                  processIt = 2;
-               } else {
-                  sprintf(buff, "pkt: %s Password Error or no link for %i:%i/%i.%i",
+				if ((link != NULL) && (link->pktPwd != NULL) && (stricmp(link->pktPwd, header->pktPassword)==0) ) processIt = 1;
+				else if ((link != NULL) && (link->pktPwd==NULL)) processIt=1;
+				else if (link == NULL) {	
+					sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
+							fileName, header->origAddr.zone, header->origAddr.net,
+							header->origAddr.node, header->origAddr.point);
+					writeLogEntry(log, '9', buff);
+					processIt = 2;
+				} else {
+					sprintf(buff, "pkt: %s Password Error or no link for %i:%i/%i.%i",
                           fileName, header->origAddr.zone, header->origAddr.net,
                           header->origAddr.node, header->origAddr.point);
                   writeLogEntry(log, '9', buff);
@@ -955,17 +954,17 @@ int processPkt(char *fileName, e_tossSecurity sec)
                }
                break;
 
-            case secInbound:
-               if ((link != NULL) && ((link->pktPwd == NULL) || (stricmp(link->pktPwd, header->pktPassword) == 0))) {
-                  processIt = 1;
-               } else {
-                  sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
-                          fileName, header->origAddr.zone, header->origAddr.net,
-                          header->origAddr.node, header->origAddr.point);
-                  writeLogEntry(log, '9', buff);
-                  processIt = 2;
-               }
-               break;
+		 case secInbound:
+			 if ((link != NULL) && (link->pktPwd != NULL) && (stricmp(link->pktPwd, header->pktPassword)==0) ) processIt = 1;
+			 else if ((link != NULL) && (link->pktPwd==NULL)) processIt=1;
+			 else if (link == NULL) {
+				 sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
+						 fileName, header->origAddr.zone, header->origAddr.net,
+						 header->origAddr.node, header->origAddr.point);
+				 writeLogEntry(log, '9', buff);
+				 processIt = 2;
+			 }
+			 break;
          }
 
          if (processIt != 0) {
