@@ -69,6 +69,8 @@
 
 unsigned char RetFix;
 static int rescanMode = 0;
+static int rulesCount = 0;
+static char **rulesList = NULL;
 
 int isOurAka(s_addr link)
 {
@@ -808,6 +810,32 @@ int isPatternLine(char *s) {
     return 0;
 }
 
+void fixRules (s_link *link, s_area *area) {
+    char *fileName = NULL, *fn, *fn1;
+
+    if (!config->rulesDir) return;
+    if (link->noRules) return;
+
+    if (area->fileName) {
+	fn = area->fileName;
+	for (fn1 = fn; *fn1; fn1++) if (*fn1=='/' || *fn1=='\\') fn = fn1+1;
+	xscatprintf(&fileName, "%s%c%s.rul", config->rulesDir, PATH_DELIM, fn);
+    } else {
+	fn = makeMsgbFileName(area->areaName);
+	xscatprintf(&fileName, "%s%c%s.rul", config->rulesDir, PATH_DELIM, fn);
+	nfree (fn); // allocated by makeMsgbFileName()
+    }
+
+    if (fexist(fileName)) {
+	rulesCount++;
+	rulesList = safe_realloc (rulesList, rulesCount * sizeof (char*));
+	rulesList[rulesCount-1] = safe_strdup (area->areaName);
+	// don't simply copy pointer because area may be
+	// removed while processing other commands
+    }
+    nfree (fileName);
+}
+
 char *subscribe(s_link *link, char *cmd) {
     unsigned int i, rc=4, found=0;
     char *line, *an, *report = NULL;
@@ -843,6 +871,7 @@ char *subscribe(s_link *link, char *cmd) {
 	case 1: 
 	    if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==0) {
 		addlink(link, area);
+		fixRules (link, area);
 		xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
 		w_log('8', "areafix: %s subscribed to %s",aka2str(link->hisAka),an);
 	    } else {
@@ -889,6 +918,7 @@ char *subscribe(s_link *link, char *cmd) {
 		    if ( !isLinkOfArea(link, area) ) {
 			changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3);
 			addlink(link, area);
+			fixRules (link, area);
 		    }
 		    w_log('8', "areafix: %s subscribed to area %s",
 			  aka2str(link->hisAka),line);
@@ -1741,6 +1771,55 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
     config->intab = tab;
 }
 
+void RetRules (s_message *msg, s_link *link, char *areaName)
+{
+    FILE *f;
+    char *fileName = NULL, *fn, *fn1;
+    char *text, *subj=NULL;
+    long len;
+    s_area *area;
+
+
+    if ((area=getArea(config, areaName)) == &(config->badArea)) {
+	w_log('9', "areafix: can't find area '%s'", areaName);
+	return;
+    }
+
+    if (area->fileName) {
+	fn = area->fileName;
+	for (fn1 = fn; *fn1; fn1++) if (*fn1=='/' || *fn1=='\\') fn = fn1+1;
+	xscatprintf(&fileName, "%s%c%s.rul", config->rulesDir, PATH_DELIM, fn);
+    } else {
+	fn = makeMsgbFileName(area->areaName);
+	xscatprintf(&fileName, "%s%c%s.rul", config->rulesDir, PATH_DELIM, fn);
+	nfree (fn); // allocated by makeMsgbFileName()
+    }
+
+    if (f = fopen (fileName, "rb")) {
+
+	len = fsize (fileName);
+	text = safe_malloc (len+1);
+	fread (text, len, 1, f);
+	fclose (f);
+
+	text[len] = '\0';
+	xscatprintf(&subj, "Rules of %s", areaName);
+	
+	RetMsg(msg, link, text, subj);
+
+	w_log('7', "areafix: sent file '%s' as rules for area '%s'",
+	      fileName, areaName);
+
+	nfree (subj);
+	nfree (text);
+
+    } else {
+	w_log('9', "areafix: can't open file '%s' for reading", fileName);
+    }
+    nfree (fileName);
+
+}
+
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
@@ -1751,6 +1830,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     s_message *linkmsg;
     s_pktHeader header;
     char *token, *textBuff, *report=NULL, *preport = NULL;
+    int nr;
 
     RetFix = NOTHING;
 
@@ -1888,6 +1968,14 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 	    nfree(preport);
 	}
 	RetMsg(msg, link, report, "areafix reply: node change request");
+    }
+
+    if (rulesCount) {
+	for (nr=0; nr < rulesCount; nr++) {
+	    RetRules (msg, link, rulesList[nr]);
+	    nfree (rulesList[nr]);
+	}
+	nfree (rulesList);
     }
 
     w_log('8', "areafix: sucessfully done for %s",aka2str(link->hisAka));

@@ -447,13 +447,13 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    }
 
    if ( initSMAPI == -1 ) {
-	   // init SMAPI
-	   initSMAPI = 0;
-	   m.req_version = 0;
-	   m.def_zone = (UINT16) config->addr[0].zone;
-	   if (MsgOpenApi(&m) != 0) {
-		   exit_hpt("MsgApiOpen Error",1);
-	   }
+       // init SMAPI
+       initSMAPI = 0;
+       m.req_version = 2;
+       m.def_zone = (UINT16) config->addr[0].zone;
+       if (MsgOpenApi(&m) != 0) {
+	   exit_hpt("MsgApiOpen Error",1);
+       }
    }
 
    msgToSysop = (s_message**) safe_malloc(config->addrCount * sizeof(s_message*));

@@ -1164,6 +1164,7 @@ This statement can be repeated.
 * Outbound::                    outbound path
 * Outtab::                      file for recoding outgoing msgs
 * ProtInbound::                 protected inbound
+* RulesDir::                    directory with area rules
 * StatLog::                     file whith counter of personal net- and echo mails
 * TempInbound::                 temporary inbound path
 * TempOutbound::                temporary outbound path
@@ -1556,7 +1557,7 @@ If you do not use this statement no recoding will be done.
 
 This statement cannot be repeated.
 
-@node ProtInbound, StatLog, Outtab, Files and Paths
+@node ProtInbound, RulesDir, Outtab, Files and Paths
 @subsection ProtInbound
 @findex ProtInbound
 @table @asis
@@ -1573,7 +1574,26 @@ before.
 
 This statement cannot be repeated.
 
-@node StatLog, TempInbound, ProtInbound, Files and Paths
+@node RulesDir, StatLog, ProtInbound, Files and Paths
+@subsection RulesDir
+@findex RulesDir
+@table @asis
+@item Syntax:
+@code{rulesdir <path>}
+@item Example:
+@code{rulesdir /home/ftn/rules}
+@end table
+
+This statement specifies where areafix searches for files with echoarea
+rules which are sent to link via netmail when link is subscribed to
+areas. File name is the same as message base file with trailing
+".rul". Areaname is used when no message base file is set.
+See also @code{NoRules} statement to avoid areafix from sending rules to
+link.
+
+This statement cannot be repeated.
+
+@node StatLog, TempInbound, RulesDir, Files and Paths
 @subsection StatLog 
 @findex StatLog
 @table @asis
@@ -1676,6 +1696,7 @@ This statement cannot be repeated.
 * LinkGrp::			add this group to autoareacreatedefaults
 * LinkMsgBaseDir::              base directory of areas for link
 * Mandatory::                   rules for echoarea access
+* NoRules::                     don't send area rules to link on subscription
 * OptGrp::                      groups for export/import/mandatory
 * OurAka::                      our aka for link
 * Packer::                      default packer for link
@@ -2327,7 +2348,7 @@ This statement can only be repeated for different links.
 
 @xref{MsgBaseDir}.
 
-@node Mandatory, OptGrp, LinkMsgBaseDir, Link Keywords
+@node Mandatory, NoRules, LinkMsgBaseDir, Link Keywords
 @subsection Mandatory
 @findex Mandatory
 @table @asis
@@ -2343,7 +2364,25 @@ This statament do not allow the link to subscribe/unsubscribe areas via areafix.
 
 This statement can only be repeated for different links.
 
-@node OptGrp, OurAka, Mandatory, Link Keywords
+@node NoRules, OptGrp, Mandatory, Link Keywords
+@subsection NoRules
+@findex NoRules
+@table @asis
+@item Syntax:
+@code{norules <bool>}
+@item Example:
+@code{norules on}
+@end table
+
+By default "norules off" i.e. send rules.
+
+This statament points to areafix to not send area rules to link when
+link is subscribed to area and corresponding file is found in
+@code{RulesDir}.
+
+This statement can only be repeated for different links.
+
+@node OptGrp, OurAka, NoRules, Link Keywords
 @subsection OptGrp
 @findex OptGrp
 @table @asis
