@@ -7,8 +7,20 @@ hpt \- toss pkt files to squish/msg bases and export messages
 hpt toss
 .br
 .TP
+.B Toss messages from badarea
+hpt toss -b
+.br
+.TP
 .B Scan echomail messages
 hpt scan
+.br
+.TP
+.B Scan echomail messages from alternative echotoss file
+hpt scan -f <echotoss.log>
+.br
+.TP
+.B Scan echomail messages from <areaname> area
+hpt scan -a <areaname>
 .br
 .TP
 .B Pack netmail messages

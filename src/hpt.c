@@ -36,6 +36,8 @@
 #ifndef __IBMC__
 #include <unistd.h>
 #endif
+#include <time.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <signal.h>
 
@@ -148,8 +150,13 @@ void processCommandLine(int argc, char **argv)
 
 void processConfig()
 {
+#if !defined(__OS2__) && !defined(UNIX)
+   time_t   time_cur, locklife = 0;
+   struct   stat stat_file;
+#endif
    char *buff = NULL;
    unsigned long pid;
+   
    FILE *f;
 
    config = readConfig();
@@ -169,7 +176,11 @@ void processConfig()
 #elif UNIX
       if (kill(pid, 0) == 0) {
 #else
-      if (1) {
+      if (stat(config->lockfile, &stat_file) != -1) {
+          time_cur = time(NULL);
+	  locklife = (time_cur - stat_file.st_mtime)/60;
+      }
+      if (locklife < 180) {	// more 3 hour?
 #endif
            printf("lock file found! exit...\n");
            disposeConfig(config);

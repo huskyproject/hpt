@@ -538,8 +538,13 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 		
 		msg->netMail = 1;
 		
-		msg->toUserName = (char *) malloc(8);
-		strcpy(msg->toUserName, "areafix");
+		if (uplink->RemoteRobotName) {
+		    msg->toUserName = (char *)calloc(strlen(uplink->RemoteRobotName)+1, sizeof(char));
+		    strcpy(msg->toUserName, uplink->RemoteRobotName);
+		} else {
+		    msg->toUserName = (char *)calloc(8, sizeof(char));
+		    strcpy(msg->toUserName, "areafix");
+		}
 		
 		msg->fromUserName = (char *) malloc(strlen(config->sysop)+1);
 		strcpy(msg->fromUserName, config->sysop);
@@ -607,7 +612,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 					if ((area->msgbType==MSGTYPE_PASSTHROUGH)
 						&& (area->downlinkCount==1) &&
 						(area->downlinks[0]->link->hisAka.point == 0)) {
-					    forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 0);
+						forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 0);
 					}
 					addstring(f,aka2str(link->hisAka));
 					break;
@@ -741,6 +746,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	}
 	
 	if ((rc==4) && (strstr(line,"*") == NULL)) {
+	    if (link->fReqFromUpLink) {
 		// try to forward request
 		if (forwardRequest(line, link)!=0)
 			sprintf(addline,"%s no uplinks to forward\r",line);
@@ -754,6 +760,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		}
 		report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
 		strcat(report, addline);
+	    }
 	}
 	
 	if (*report == 0) {
