@@ -64,9 +64,10 @@
 #include <smapi/stamp.h>
 #include <smapi/progprot.h>
 
-void exit_hpt(char *logstr, int print) {
+void writeDupeFiles(void)
+{
 	unsigned i;
-
+	
 	// write dupeFiles
 	for (i = 0 ; i < config->echoAreaCount; i++) {
 		writeToDupeFile(&(config->echoAreas[i]));
@@ -76,7 +77,12 @@ void exit_hpt(char *logstr, int print) {
 		writeToDupeFile(&(config->netMailAreas[i]));
 		freeDupeMemory(&(config->netMailAreas[i]));
 	}
+}
 
+void exit_hpt(char *logstr, int print) {
+
+	writeDupeFiles();
+	
     if (config->lockfile != NULL) remove(config->lockfile);
     if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
     writeLogEntry(hpt_log, '9', logstr);

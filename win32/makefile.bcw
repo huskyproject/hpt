@@ -75,6 +75,9 @@ recode.obj
 pktwrite.obj
 global.obj
 xstr.obj
+dupe.obj
+tree.obj
+crc.obj
 fconfbcw.lib
 smapibcw.lib
 !

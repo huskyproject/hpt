@@ -47,6 +47,6 @@ extern int       cmPack;
 extern int       cmLink;
 extern int       cmAfix;
 extern int       noHighWaters;
-extern int	 count; // pkt counter
+extern int       count; // pkt counter
 
 #endif

@@ -41,7 +41,7 @@ tpkt$(EXE): tpkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
               recode$(OBJ) log$(OBJ) global$(OBJ) 
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) tpkt$(EXE) log$(OBJ) tpkt$(OBJ) fcommon$(OBJ) \
               pktread$(OBJ) recode$(OBJ) pktwrite$(OBJ) global$(OBJ) xstr$(OBJ) \
-              $(LIBS)
+              dupe$(OBJ) tree$(OBJ) crc$(OBJ) $(LIBS)
 
 txt2pkt$(EXE): txt2pkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
                recode$(OBJ) log$(OBJ) global$(OBJ) xstr$(OBJ)

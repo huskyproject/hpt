@@ -2056,7 +2056,6 @@ void tossTempOutbound(char *directory)
    return;
 }
 
-
 void toss()
 {
    int i;
@@ -2069,15 +2068,7 @@ void toss()
    processDir(config->protInbound, secProtInbound);
    processDir(config->inbound, secInbound);
 
-   // write dupeFiles
-   for (i = 0 ; i < config->echoAreaCount; i++) {
-	   writeToDupeFile(&(config->echoAreas[i]));
-	   freeDupeMemory(&(config->echoAreas[i]));
-   }
-   for (i = 0 ; i < config->netMailAreaCount; i++) {
-	   writeToDupeFile(&(config->netMailAreas[i]));
-	   freeDupeMemory(&(config->netMailAreas[i]));
-   }
+   writeDupeFiles();
 
    if (config->importlog != NULL) {
       // write importlog

@@ -62,10 +62,9 @@ clean:
 distclean: clean
 	del *.exe
 
-install: hpt.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe hpttree.exe
+install: hpt.exe pktinfo.exe tlog.exe hptlink.exe hpttree.exe
 	copy hpt.exe $(BINDIR)
 	copy pktinfo.exe $(BINDIR)
-	copy tpkt.exe $(BINDIR)
 	copy tlog.exe $(BINDIR)
 	copy hptlink.exe $(BINDIR)
 	copy hpttree.exe $(BINDIR)
