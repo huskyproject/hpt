@@ -2257,7 +2257,10 @@ void autoPassive()
 				  nfree(msg);
 
 				  /*  unsubscribe link from areas without non-paused links */
+                  /* use "hptkill -y" or "hptkill -yp" to fulfill this purpose
 				  unsubscribeFromPausedEchoAreas(&(config->links[i]));
+                  */
+
 			      } /*  end changepause */
 			      nfree(line);
 			      /* fclose(f); file closed after endwhile */
