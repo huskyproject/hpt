@@ -6,13 +6,14 @@ Category 1: Will certainly be implemented until next release
 - autofwdareacreatedefaults
 - AllowEchoAreaDelete
 - don't make paths with forbidden symbols
+- killsb for links
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 - optimize packing (several files)
 - don't open/close on each msg when writing to pkt files (through ifdef)
 - areafix file with forwarded echo areas
-- fileboxes
+- advanced fileboxes
 - templates
 
 Category 3: Will only be included if volunteers send patches
