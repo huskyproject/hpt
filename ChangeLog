@@ -1,3 +1,8 @@
+2001-07-09 Monday 09:20  mhaase
+
+	* src/scan.c (1.131): changed 'fileroute' to 'routeFile' (right
+	keyword) in error message
+
 2001-07-08 Sunday 21:28  joerg.jaspert
 
 	* debian/: README.Debian (1.2), changelog (1.7), control (1.5),
