@@ -515,6 +515,8 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    closeLog(hpt_log);
    doneCharsets();
    nfree(versionStr);
+   // save forvard requests info
+   af_CloseQuery();
 
    if (config->lockfile) {
 	   close(lock_fd);
