@@ -1,3 +1,11 @@
+2003-09-18 Thursday 10:36  sfpavel
+
+	* Makefile (hpt-1_4-stable.1): Fix static building
+
+2003-09-18 Thursday 06:25  sfpavel
+
+	* debian/changelog (hpt-1_4-stable.6): New stable version: 1.4-RC2
+
 2003-08-20 Wednesday 20:44  d_sergienko
 
 	* src/query.c (hpt-1_4-stable.7): fix again description in badmail
