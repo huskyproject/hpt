@@ -1,3 +1,8 @@
+2004-01-23 Friday 04:29  andr_lukyanov
+
+	* src/: hptlink.c, hpttree.c, pktinfo.c, tpkt.c, txt2pkt.c
+	(hpt-1_4-stable.[1,1,1,2,3]): Fix stdout version strings
+
 2004-01-21 Wednesday 01:58  andr_lukyanov
 
 	* make/: makeperl.mvc, makeperl.mvcdll (hpt-1_4-stable.[1,1]): Fix
