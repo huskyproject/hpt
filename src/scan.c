@@ -232,6 +232,8 @@ int packMsg(HMSG SQmsg, XMSG xmsg)
    // prepare virtual link...
    virtualLink = malloc(sizeof(s_link));
    virtualLink->hisAka = msg.destAddr;
+   virtualLink->name = (char *) malloc(strlen(msg.toUserName)+1);
+   strcpy(virtualLink->name, msg.toUserName);
 
    // note: link->floFile used for create 12345678.?ut mail packets & ...
 
@@ -274,8 +276,9 @@ int packMsg(HMSG SQmsg, XMSG xmsg)
 			   fprintf(flo, msg.subjectLine);
 			   fprintf(flo, "\n");
 			   fclose(flo);
-		   } else writeLogEntry(log, '9', "Could not open FloFile");
-
+                   } else writeLogEntry(log, '9', "Could not open FloFile");
+                   if (strrchr(msg.subjectLine, PATH_DELIM)!= NULL)
+                      strcpy(msg.subjectLine, strrchr(msg.subjectLine, PATH_DELIM)+1);
 		   remove(virtualLink->bsyFile);
 		   free(virtualLink->bsyFile);
 		   // mark Mail as sent
@@ -350,13 +353,13 @@ int packMsg(HMSG SQmsg, XMSG xmsg)
 	   }
    }
 
+   freeMsgBuffers(&msg);
+   free(virtualLink->name);
+   free(virtualLink);
+
    if ((xmsg.attr & MSGSENT) == MSGSENT) {
-	   freeMsgBuffers(&msg);
-	   free(virtualLink);
 	   return 0;
    } else {
-	   freeMsgBuffers(&msg);
-	   free(virtualLink);
 	   return 1;
    }
 }

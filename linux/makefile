@@ -42,6 +42,7 @@ purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o log.o recode.o
 clean:
 	-rm -f *.o
 	-rm *~
+	-rm core
 
 distclean: clean
 	-rm tpkt pktinfo hpt purgeDupes tlog

@@ -98,6 +98,9 @@ int createTempPktFileName(s_link *link)
 #else
    char limiter='\\';
 #endif
+   char zoneSuffix[6] = "\0";
+
+   char *zoneOutbound; // this contains the correct outbound directory including zones
 
    time_t tr;
    char *wday;
@@ -106,19 +109,33 @@ int createTempPktFileName(s_link *link)
    
    tr=time(NULL);
    tp=localtime(&tr);
+   counter = 0;
    
    wday=wdays[tp->tm_wday];
 
    aTime %= 0xffffff;   // only last 24 bit count
+
+   if (link->hisAka.zone != config->addr[0].zone) {
+      sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
+      zoneOutbound = malloc(strlen(config->outbound)-1+strlen(zoneSuffix)+1);
+      strcpy(zoneOutbound, config->outbound);
+      strcpy(zoneOutbound+strlen(zoneOutbound)-1, zoneSuffix);
+   } else
+      zoneOutbound = strdup(config->outbound);
+
+
+   // There is a problem here: Since we use the tmpOutbound fileName for duplicate checking, links with different zones who does not
+   // have problems with duplicate pfileName´s increment the counter. Has anybody understand that? :-)
+   // This is no big problem, but a big system with many links and many zones may encounter problems
 
    do {
 	   
 	   sprintf(fileName, "%s%06lx%02x.pkt", config->tempOutbound, aTime, counter);
 
 	   if ( link->hisAka.point == 0 )
-		   sprintf(tmpPFileName,"%s%06lx%02x.%s",config->outbound,aTime,counter,wday);
+		   sprintf(tmpPFileName,"%s%06lx%02x.%s",zoneOutbound,aTime,counter,wday);
 	   else
-		   sprintf(tmpPFileName, "%s%04x%04x.pnt%c%06lx%02x.%s", config->outbound, link->hisAka.net, link->hisAka.node, limiter, aTime, counter, wday);
+		   sprintf(tmpPFileName, "%s%04x%04x.pnt%c%06lx%02x.%s", zoneOutbound, link->hisAka.net, link->hisAka.node, limiter, aTime, counter, wday);
 	   counter++;
 
    } while ((fexist(fileName) || fileNameAlreadyUsed(fileName, NULL)) && (counter<=255));
@@ -211,7 +228,7 @@ int createDirectoryTree(const char *pathName) {
 int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 {
    FILE *f; // bsy file for current link
-   char name[13], bsyname[13], zoneSuffix[5], pntDir[14], *tolog;
+   char name[13], bsyname[13], zoneSuffix[6], pntDir[14], *tolog;
 
 #ifdef UNIX
    char limiter='/';
@@ -256,7 +273,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 
    // create floFile
    link->floFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
-    link->bsyFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
+   link->bsyFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
    strcpy(link->floFile, config->outbound);
    if (zoneSuffix[0] != 0) strcpy(link->floFile+strlen(link->floFile)-1, zoneSuffix);
    strcat(link->floFile, pntDir);
