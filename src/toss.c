@@ -97,8 +97,8 @@
 #define _A_HIDDEN A_HIDDEN
 #endif
 
-#ifdef USE_HPT_ZLIB
-#   include "hpt_zlib/hptzip.h"
+#ifdef USE_HPTZIP
+#   include <hptzip/hptzip.h>
 #endif
 
 /* hpt */
@@ -1092,161 +1092,161 @@ int processPkt(char *fileName, e_tossSecurity sec)
 
     if ((pktlen = fsize(fileName)) > 60) {
 
-	statToss.inBytes += pktlen;
+        statToss.inBytes += pktlen;
 
-	/* +AS+ */
-	if (config->processPkt)
-	    {
-		extcmd = safe_malloc(strlen(config->processPkt)+strlen(fileName)+2);
-		sprintf(extcmd,"%s %s",config->processPkt,fileName);
-		w_log(LL_EXEC, "ProcessPkt: execute string \"%s\"",extcmd);
-		if ((cmdexit = cmdcall(extcmd)) != 0)
-		    w_log(LL_ERR, "exec failed, code %d", cmdexit);
-		nfree(extcmd);
-	    }
-	/* -AS- */
+        /* +AS+ */
+        if (config->processPkt)
+        {
+            extcmd = safe_malloc(strlen(config->processPkt)+strlen(fileName)+2);
+            sprintf(extcmd,"%s %s",config->processPkt,fileName);
+            w_log(LL_EXEC, "ProcessPkt: execute string \"%s\"",extcmd);
+            if ((cmdexit = cmdcall(extcmd)) != 0)
+                w_log(LL_ERR, "exec failed, code %d", cmdexit);
+            nfree(extcmd);
+        }
+        /* -AS- */
 #ifdef DO_PERL
-	if (perlpkt(fileName, (sec==secLocalInbound || sec==secProtInbound) ? 1 : 0))
-	    return 6;
+        if (perlpkt(fileName, (sec==secLocalInbound || sec==secProtInbound) ? 1 : 0))
+            return 6;
 #endif
 
-	pkt = fopen(fileName, "rb");
-	if (pkt == NULL) return 2;
+        pkt = fopen(fileName, "rb");
+        if (pkt == NULL) return 2;
         w_log(LL_FILE,"toss.c:processPkt(): opened '%s' (\"rb\" mode)",fileName);
 
-	header = openPkt(pkt);
-	if (header != NULL) {
-	    /* if ((to_us(header->destAddr)==0) || (sec == secLocalInbound)) { */
-        if ( isOurAka(config,header->destAddr) || (sec == secLocalInbound)) {
-		w_log(LL_PKT, "pkt: %s [%s]", fileName, aka2str(header->origAddr));
-		statToss.pkts++;
-		link = getLinkFromAddr(config, header->origAddr);
-		if ((link!=NULL) && (link->pktPwd==NULL) && (header->pktPassword[0]!='\000'))
-		    w_log(LL_ERR, "Unexpected Password %s.", header->pktPassword);
+        header = openPkt(pkt);
+        if (header != NULL) {
+            /* if ((to_us(header->destAddr)==0) || (sec == secLocalInbound)) { */
+            if ( isOurAka(config,header->destAddr) || (sec == secLocalInbound)) {
+                w_log(LL_PKT, "pkt: %s [%s]", fileName, aka2str(header->origAddr));
+                statToss.pkts++;
+                link = getLinkFromAddr(config, header->origAddr);
+                if ((link!=NULL) && (link->pktPwd==NULL) && (header->pktPassword[0]!='\000'))
+                    w_log(LL_ERR, "Unexpected Password %s.", header->pktPassword);
 
-		switch (sec) {
-		case secLocalInbound:
-		    processIt = 1;
-		    break;
-	
-		case secProtInbound:
-		    if ((link != NULL) && (link->pktPwd != NULL) && link->pktPwd[0]) {
-			if (stricmp(link->pktPwd, header->pktPassword)==0) {
-			    processIt = 1;
-			} else {
-			    if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (eSecure | eOn)) ) {
-				w_log(LL_WARN, "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
-				      fileName, header->origAddr.zone, header->origAddr.net,
-				      header->origAddr.node, header->origAddr.point);
-				processIt = 1;
-			    } else {
-				w_log(LL_WARN, "pkt: %s Password Error for %i:%i/%i.%i",
-				      fileName, header->origAddr.zone, header->origAddr.net,
-				      header->origAddr.node, header->origAddr.point);
-				if (header->pktPassword == NULL || header->pktPassword[0] == '\0')
-				    processIt = 2;
-				else
-				    rc = 1;
-			    }
-			}
-		    } else if ((link != NULL) && ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "")==0))) {
-			processIt=1;
-		    } else /* if (link == NULL) */ {	
-			w_log(LL_ERR, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
-			      fileName, header->origAddr.zone, header->origAddr.net,
-			      header->origAddr.node, header->origAddr.point);
-			processIt = 2;
-		    }
-		    break;
+                switch (sec) {
+        case secLocalInbound:
+            processIt = 1;
+            break;
 
-		case secInbound:
-		    if ((link != NULL) && (link->pktPwd != NULL) && link->pktPwd[0]) {
+        case secProtInbound:
+            if ((link != NULL) && (link->pktPwd != NULL) && link->pktPwd[0]) {
+                if (stricmp(link->pktPwd, header->pktPassword)==0) {
+                    processIt = 1;
+                } else {
+                    if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (eSecure | eOn)) ) {
+                        w_log(LL_WARN, "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
+                            fileName, header->origAddr.zone, header->origAddr.net,
+                            header->origAddr.node, header->origAddr.point);
+                        processIt = 1;
+                    } else {
+                        w_log(LL_WARN, "pkt: %s Password Error for %i:%i/%i.%i",
+                            fileName, header->origAddr.zone, header->origAddr.net,
+                            header->origAddr.node, header->origAddr.point);
+                        if (header->pktPassword == NULL || header->pktPassword[0] == '\0')
+                            processIt = 2;
+                        else
+                            rc = 1;
+                    }
+                }
+            } else if ((link != NULL) && ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "")==0))) {
+                processIt=1;
+            } else /* if (link == NULL) */ {	
+                w_log(LL_ERR, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
+                    fileName, header->origAddr.zone, header->origAddr.net,
+                    header->origAddr.node, header->origAddr.point);
+                processIt = 2;
+            }
+            break;
 
-			if (header->pktPassword && stricmp(link->pktPwd, header->pktPassword)==0) {
-			    processIt = 1;
-			} else {
-			    if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (eOn)) ) {
-				w_log(LL_ERR, "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
-				      fileName, header->origAddr.zone, header->origAddr.net,
-				      header->origAddr.node, header->origAddr.point);
-				processIt = 2; /* Unsecure inbound, do not process echomail */
-			    } else {
-				w_log(LL_ERR, "pkt: %s Password Error for %i:%i/%i.%i",
-				      fileName, header->origAddr.zone, header->origAddr.net,
-				      header->origAddr.node, header->origAddr.point);
-				rc = 1;
-			    }
-			}
-		    } else if ((link != NULL) && ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "")==0))) {
-			processIt=1;
-		    } else /* if (link == NULL) */ {	
-			w_log(LL_ERR, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
-			      fileName, header->origAddr.zone, header->origAddr.net,
-			      header->origAddr.node, header->origAddr.point);
-			processIt = 2;
-		    }
-		    break;
-	
-		}
+        case secInbound:
+            if ((link != NULL) && (link->pktPwd != NULL) && link->pktPwd[0]) {
 
-		if (processIt != 0) {
-		    realtime = time(NULL);
-		    while ((msgrc = readMsgFromPkt(pkt, header, &msg)) == 1) {
-			if (msg != NULL) {
-			    if ((processIt == 1) || ((processIt==2) && (msg->netMail==1))) {
-				if (processMsg(msg, header,
-					       (sec==secLocalInbound ||
-						sec==secProtInbound ||
-						processIt == 1) ? 1 : 0) != 1 )
-				    if (putMsgInBadArea(msg, header->origAddr, BM_MSGAPI_ERROR)==0)
-					rc = 5; /*  can't write to badArea - rename to .err */
-			    } else rc = 1;
-			    freeMsgBuffers(msg);
-			    nfree(msg);
-			}
-		    }
-		    if (msgrc==2) rc = 3; /*  rename to .bad (wrong msg format) */
-		    /*  real time of process pkt & msg without external programs */
-		    statToss.realTime += time(NULL) - realtime;
-		}
-	
-	    } else {
-		realtime = time(NULL);
-		while ((msgrc = readMsgFromPkt(pkt, header, &msg)) == 1) {
-		    if (msg != NULL) {
-			if (msg->netMail==1)
-			    {   if (processMsg(msg, header, (sec==secLocalInbound || sec==secProtInbound) ? 1 : 0) !=1 )
-				rc=5;
-			    } else
-				break;
-			freeMsgBuffers(msg);
-			nfree(msg);
-		    }
-		}
-		if (msg)
-		    {	/* echomail pkt not for us */
-			freeMsgBuffers(msg);
-			nfree(msg);
-	
-	  		/* PKT is not for us - try to forward it to our links */
+                if (header->pktPassword && stricmp(link->pktPwd, header->pktPassword)==0) {
+                    processIt = 1;
+                } else {
+                    if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (eOn)) ) {
+                        w_log(LL_ERR, "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
+                            fileName, header->origAddr.zone, header->origAddr.net,
+                            header->origAddr.node, header->origAddr.point);
+                        processIt = 2; /* Unsecure inbound, do not process echomail */
+                    } else {
+                        w_log(LL_ERR, "pkt: %s Password Error for %i:%i/%i.%i",
+                            fileName, header->origAddr.zone, header->origAddr.net,
+                            header->origAddr.node, header->origAddr.point);
+                        rc = 1;
+                    }
+                }
+            } else if ((link != NULL) && ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "")==0))) {
+                processIt=1;
+            } else /* if (link == NULL) */ {	
+                w_log(LL_ERR, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
+                    fileName, header->origAddr.zone, header->origAddr.net,
+                    header->origAddr.node, header->origAddr.point);
+                processIt = 2;
+            }
+            break;
 
-			w_log(LL_ERR, "pkt: %s addressed to %d:%d/%d.%d but not for us",
-			      fileName, header->destAddr.zone, header->destAddr.net,
-			      header->destAddr.node, header->destAddr.point);
-	
-			fclose(pkt); pkt = NULL;
-			rc = forwardPkt(fileName, header, sec);	
-		    }
-	    }
-	
-	    nfree(header);
-	
-	} else { /*  header == NULL */
-	    w_log(LL_ERR, "pkt: %s wrong pkt-file", fileName);
-	    rc = 3;
-	}
+                }
 
-	if (pkt) fclose(pkt);
+                if (processIt != 0) {
+                    realtime = time(NULL);
+                    while ((msgrc = readMsgFromPkt(pkt, header, &msg)) == 1) {
+                        if (msg != NULL) {
+                            if ((processIt == 1) || ((processIt==2) && (msg->netMail==1))) {
+                                if (processMsg(msg, header,
+                                    (sec==secLocalInbound ||
+                                    sec==secProtInbound ||
+                                    processIt == 1) ? 1 : 0) != 1 )
+                                    if (putMsgInBadArea(msg, header->origAddr, BM_MSGAPI_ERROR)==0)
+                                        rc = 5; /*  can't write to badArea - rename to .err */
+                            } else rc = 1;
+                            freeMsgBuffers(msg);
+                            nfree(msg);
+                        }
+                    }
+                    if (msgrc==2) rc = 3; /*  rename to .bad (wrong msg format) */
+                    /*  real time of process pkt & msg without external programs */
+                    statToss.realTime += time(NULL) - realtime;
+                }
+
+            } else {
+                realtime = time(NULL);
+                while ((msgrc = readMsgFromPkt(pkt, header, &msg)) == 1) {
+                    if (msg != NULL) {
+                        if (msg->netMail==1)
+                        {   if (processMsg(msg, header, (sec==secLocalInbound || sec==secProtInbound) ? 1 : 0) !=1 )
+                        rc=5;
+                        } else
+                            break;
+                        freeMsgBuffers(msg);
+                        nfree(msg);
+                    }
+                }
+                if (msg)
+                {	/* echomail pkt not for us */
+                    freeMsgBuffers(msg);
+                    nfree(msg);
+
+                    /* PKT is not for us - try to forward it to our links */
+
+                    w_log(LL_ERR, "pkt: %s addressed to %d:%d/%d.%d but not for us",
+                        fileName, header->destAddr.zone, header->destAddr.net,
+                        header->destAddr.node, header->destAddr.point);
+
+                    fclose(pkt); pkt = NULL;
+                    rc = forwardPkt(fileName, header, sec);	
+                }
+            }
+
+            nfree(header);
+
+        } else { /*  header == NULL */
+            w_log(LL_ERR, "pkt: %s wrong pkt-file", fileName);
+            rc = 3;
+        }
+
+        if (pkt) fclose(pkt);
 
     } else statToss.empty++;
 
@@ -1268,59 +1268,62 @@ int  processArc(char *fileName, e_tossSecurity sec)
     char cmd[256];
 
     if (sec == secInbound) {
-	w_log(LL_ERR, "bundle %s: tossing in unsecure inbound, security violation", fileName);
-	return 1;
+        w_log(LL_ERR, "bundle %s: tossing in unsecure inbound, security violation", fileName);
+        return 1;
     };
 
     /*  find what unpacker to use */
     for (i = 0, found = 0; (i < config->unpackCount) && !found; i++) {
-	bundle = fopen(fileName, "rb");
-	if (bundle == NULL) return 2;
+        bundle = fopen(fileName, "rb");
+        if (bundle == NULL) return 2;
         w_log(LL_FILE,"toss.c:processArc(): opened '%s' (\"rb\" mode)",fileName);
 
-	/*  is offset is negative we look at the end */
-	fseek(bundle, config->unpack[i].offset, config->unpack[i].offset >= 0 ? SEEK_SET : SEEK_END);
-	if (ferror(bundle)) { fclose(bundle); continue; };
-	for (found = 1, j = 0; j < config->unpack[i].codeSize; j++) {
-	    if ((getc(bundle) & config->unpack[i].mask[j]) != config->unpack[i].matchCode[j])
-		found = 0;
-	}
-	fclose(bundle);
+        /*  is offset is negative we look at the end */
+        fseek(bundle, config->unpack[i].offset, config->unpack[i].offset >= 0 ? SEEK_SET : SEEK_END);
+        if (ferror(bundle)) { fclose(bundle); continue; };
+        for (found = 1, j = 0; j < config->unpack[i].codeSize; j++) {
+            if ((getc(bundle) & config->unpack[i].mask[j]) != config->unpack[i].matchCode[j])
+                found = 0;
+        }
+        fclose(bundle);
     }
 
     /*  unpack bundle */
     if (found) {
-	fillCmdStatement(cmd,config->unpack[i-1].call,fileName,"",config->tempInbound);
-	if( fc_stristr(config->unpack[i-1].call, "zipInternal") )
-	    {
-                w_log(LL_BUNDLE, "bundle %s: unpacking with zlib", fileName);
-#ifdef USE_HPT_ZLIB
-		cmdexit = UnPackWithZlib(fileName, config->tempInbound);
+        fillCmdStatement(cmd,config->unpack[i-1].call,fileName,"",config->tempInbound);
+        if( fc_stristr(config->unpack[i-1].call, ZIPINTERNAL) )
+        {
+            w_log(LL_BUNDLE, "bundle %s: unpacking with zlib", fileName);
+#ifdef USE_HPTZIP
+            cmdexit = UnPackWithZlib(fileName, NULL, config->tempInbound);
 #else
-		cmdexit = 1;
-                w_log(LL_ERR, "zlib not compiled into hpt", fileName);
+            cmdexit = 1;
+            w_log(LL_ERR, "zlib not compiled into hpt", fileName);
 #endif
-	    }
-	else
-	    {
-                w_log(LL_EXEC, "bundle %s: unpacking with \"%s\"", fileName, cmd);
-		if ((cmdexit = cmdcall(cmd)) != 0) {
-		    w_log(LL_ERR, "exec failed, code %d", cmdexit);
-		    return 3;
-		}
-	    }
-	if (config->afterUnpack) {
-	    w_log(LL_EXEC, "afterUnpack: execute string \"%s\"", config->afterUnpack);
-	    if ((cmdexit = cmdcall(config->afterUnpack)) != 0) {
-		w_log(LL_ERR, "exec failed, code %d", cmdexit);
-	    };
-	}
+        }
+        else
+        {
+            w_log(LL_EXEC, "bundle %s: unpacking with \"%s\"", fileName, cmd);
+            cmdexit = cmdcall(cmd);
+        }
+
+        if (cmdexit != 0) {
+            w_log(LL_ERR, "exec failed, code %d", cmdexit);
+            return 3;
+        }
+
+        if (config->afterUnpack) {
+            w_log(LL_EXEC, "afterUnpack: execute string \"%s\"", config->afterUnpack);
+            if ((cmdexit = cmdcall(config->afterUnpack)) != 0) {
+                w_log(LL_ERR, "exec failed, code %d", cmdexit);
+            };
+        }
 #ifdef DO_PERL
-	perlafterunp();
+        perlafterunp();
 #endif
     } else {
-	w_log(LL_ERR, "bundle %s: cannot find unpacker", fileName);
-	return 3;
+        w_log(LL_ERR, "bundle %s: cannot find unpacker", fileName);
+        return 3;
     };
     statToss.arch++;
     remove(fileName);
@@ -1689,9 +1692,9 @@ void arcmail(s_link *tolink) {
 			  link->name, get_filename(link->pktFile),
 			  get_filename(link->packFile));
 		    w_log(LL_EXEC, "cmd: %s", cmd);
-		    if( stricmp(link->packerDef->call, "zipInternal") == 0 )
+		    if( stricmp(link->packerDef->call, ZIPINTERNAL) == 0 )
 		    {
-#ifdef USE_HPT_ZLIB
+#ifdef USE_HPTZIP
 		      cmdexit = PackWithZlib(link->packFile, link->pktFile);
 #else
 		      cmdexit = -1;
@@ -1756,18 +1759,18 @@ void arcmail(s_link *tolink) {
 			      get_filename(link->pktFile),
 			      get_filename(link->packFile));
 			w_log(LL_EXEC, "cmd: %s", cmd);
-			if( stricmp(link->packerDef->call, "zipInternal") == 0 )
-			    {
-#ifdef USE_HPT_ZLIB
-				cmdexit = PackWithZlib(link->packFile, link->pktFile);
+            if( stricmp(link->packerDef->call, ZIPINTERNAL) == 0 )
+            {
+#ifdef USE_HPTZIP
+                cmdexit = PackWithZlib(link->packFile, link->pktFile);
 #else
-				cmdexit = -1;
+                cmdexit = -1;
 #endif
-			    }
-			else
-			    {
-				cmdexit = cmdcall(cmd);
-			    }
+            }
+            else
+            {
+                cmdexit = cmdcall(cmd);
+            }
 			if (cmdexit==0) {
 			    if (foa==0) {
 				if (bundleNameStyle == eAddrDiff ||

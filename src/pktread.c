@@ -571,7 +571,6 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
     s_message *msg;
     int len, badmsg=0;
     struct tm tm;
-    char *p, *q;
     long unread;
     
     if (2 != getUINT16(pkt)) {
@@ -685,12 +684,15 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 #endif
     
     correctAddr(msg, header);
-#ifndef DO_PERL   
-    /*  del "\001FLAGS" from message text */
-    if (NULL != (p=strstr(msg->text,"\001FLAGS"))) {
-        for (q=p; *q && *q!='\r'; q++);
-        memmove(p,q+1,msg->textLength-(q-msg->text));
-        msg->textLength -= (q-p+1);
+#ifndef DO_PERL 
+    {
+        char *p, *q;
+        /*  del "\001FLAGS" from message text */
+        if (NULL != (p=strstr(msg->text,"\001FLAGS"))) {
+            for (q=p; *q && *q!='\r'; q++);
+            memmove(p,q+1,msg->textLength-(q-msg->text));
+            msg->textLength -= (q-p+1);
+        }
     }
 #endif    
     *message = msg;

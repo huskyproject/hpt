@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
-	Name="hpt"
+	Name="hptz"
 	ProjectGUID="{18B5038B-9EF7-45B7-853B-612F589EE448}"
 	SccProjectName=""
 	SccLocalPath="">
@@ -14,7 +14,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="..\..\nd_r\bin"
-			IntermediateDirectory="..\..\nd_r\obj\hpt"
+			IntermediateDirectory="..\..\nd_r\obj\hptz"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -25,15 +25,15 @@
 				Optimization="1"
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;f:\compilation\perl\lib\core"
-				PreprocessorDefinitions="NDEBUG;NO_STRICT;DO_PERL;PERL_MSVCRT_READFIX;NO_STRICT;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_MAKE_DLL;WIN32;_CONSOLE"
+				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;..\..\hptzip;f:\compilation\perl\lib\core"
+				PreprocessorDefinitions="NDEBUG;NO_STRICT;DO_PERL;PERL_MSVCRT_READFIX;NO_STRICT;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_MAKE_DLL;WIN32;_CONSOLE;USE_HPTZIP"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				PrecompiledHeaderFile=""
 				AssemblerListingLocation=""
-				ObjectFile="..\..\nd_r\obj\hpt/"
-				ProgramDataBaseFileName="..\..\nd_r\obj\hpt/"
+				ObjectFile="..\..\nd_r\obj\hptz/"
+				ProgramDataBaseFileName="..\..\nd_r\obj\hptz/"
 				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
@@ -43,18 +43,18 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="fidoconf.lib smapi.lib huskylib.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib msvcrt.lib"
-				OutputFile="..\..\nd_r\bin/hpt.exe"
+				AdditionalDependencies="fidoconf.lib smapi.lib huskylib.lib hptzip.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib msvcrt.lib"
+				OutputFile="..\..\nd_r\bin/hptz.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\nd_r\lib,F:\compilation\perl\lib\CORE"
 				IgnoreAllDefaultLibraries="TRUE"
 				DelayLoadDLLs="perl56.dll"
-				ProgramDatabaseFile="..\..\nd_r\obj\hpt/hpt.pdb"
+				ProgramDatabaseFile="..\..\nd_r\obj\hptz/hptz.pdb"
 				SubSystem="1"/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\..\nd_r\bin/hpt.tlb"/>
+				TypeLibraryName=".\..\nd_r\bin/hptz.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
@@ -73,21 +73,21 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="..\..\nd_d\bin"
-			IntermediateDirectory="..\..\nd_d\obj\hpt"
+			IntermediateDirectory="..\..\nd_d\obj\hptz"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;f:\compilation\perl\lib\core"
-				PreprocessorDefinitions="DO_PERL;PERL_MSVCRT_READFIX;NO_STRICT;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_MAKE_DLL;WIN32;_CONSOLE"
+				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;..\..\hptzip;f:\compilation\perl\lib\core"
+				PreprocessorDefinitions="DO_PERL;PERL_MSVCRT_READFIX;NO_STRICT;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_MAKE_DLL;WIN32;_CONSOLE;USE_HPTZIP"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				PrecompiledHeaderFile=""
 				AssemblerListingLocation=""
-				ObjectFile="..\..\nd_d\obj\hpt/"
-				ProgramDataBaseFileName="..\..\nd_d\obj\hpt/"
+				ObjectFile="..\..\nd_d\obj\hptz/"
+				ProgramDataBaseFileName="..\..\nd_d\obj\hptz/"
 				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
@@ -98,19 +98,19 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="msvcrtd.lib huskylib.lib fidoconf.lib smapi.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib"
-				OutputFile="..\..\nd_d\bin/hpt.exe"
+				AdditionalDependencies="msvcrtd.lib huskylib.lib hptzip.lib fidoconf.lib smapi.lib Kernel32.lib delayimp.lib perl56.lib OLDNAMES.lib"
+				OutputFile="..\..\nd_d\bin/hptz.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\nd_d\lib,F:\compilation\perl\lib\CORE"
 				IgnoreAllDefaultLibraries="TRUE"
 				DelayLoadDLLs="perl56.dll"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="..\..\nd_d\bin/hpt.pdb"
+				ProgramDatabaseFile="..\..\nd_d\bin/hptz.pdb"
 				SubSystem="1"/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\..\nd_d\bin/hpt.tlb"/>
+				TypeLibraryName=".\..\nd_d\bin/hptz.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
