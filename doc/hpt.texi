@@ -1206,7 +1206,7 @@ When PackNetMailOnScan is "on" (default) hpt packs netmail when doing
 "off" hpt leaves netmail area(s) in EchoTossLog file until "hpt pack" is
 invoked.
 
-This statement can be repeated (overwrides old setting).
+This statement can be repeated (overrides old setting).
 
 @node ProcessPkt, PublicGroup, PackNetMailOnScan, Keywords
 @subsection ProcessPkt
@@ -1218,7 +1218,7 @@ This statement can be repeated (overwrides old setting).
 @code{processPkt pktdate}
 @end table
 
-The <string> willl be executed before tossing each pkt file. You are able to
+The <string> willl be executed before tossing each pkt file. You can
 fix your pkts using pktdate or any other tool before tossing them. Note that
 pkt file may be renamed depending of @code{tossingExt} token value.
 
@@ -1234,7 +1234,7 @@ This statement cannot be repeated.
 @code{PublicGroup local,a,b,othernet}
 @end table
 
-This is a list of groups for public echo acess.
+Specifies groups for public echo acess.
 
 This statement cannot be repeated.
 
@@ -1263,7 +1263,7 @@ This statement can be repeated.
 @code{ReportTo netmail}
 @end table
 
-Set name of echoarea or netmailarea for autocreate reports.
+Set name of echoarea or netmailarea to place autocreate reports.
 
 This statement cannot be repeated.
 
@@ -1277,7 +1277,7 @@ This statement cannot be repeated.
 @code{robotsArea SecondNetMail}
 @end table
 
-This area used for areafix scanning. Replyes from areafix will be also
+Specifies area used for areafix scanning. Replies from areafix will be also
 stored here. @strong{RobotsArea must be NetmailArea for security purposes!}
 
 This statement cannot be repeated.
@@ -1287,7 +1287,7 @@ This statement cannot be repeated.
 @findex Route
 @table @asis
 @item Syntax:
-@code{route <flavour> <target> <linkWW> [<linkWW> ...]}
+@code{route [<flavour>] <target> <linkWW> [<linkWW> ...]}
 @item Example:
 @code{route crash 2:2433/1245 2:2433/* 2:2432/*}
 @end table
@@ -1296,27 +1296,30 @@ This statement defines a route.
 
 @strong{flavour:}
 @enumerate
-@item hold (.hlo)
-@item normal (.out)
-@item crash (.clo)
-@item direct (.dlo)
-@item immediate (.ilo)
+@item hold (.hut/.hlo)
+@item normal (.out/.flo)
+@item crash (.cut/.clo)
+@item direct (.dut./dlo)
+@item immediate (.iut/.ilo)
 @end enumerate
+
+Flavour can be omitted if target is a link defined by @code{Link} section.
+In this case the link's @code{netMailFlavour} is used as flavour.
 
 @strong{target:}
 @enumerate
-@item <addr> - mail routed to this address
-@item host - mail routed to zone:net/0.0 address
-@item hub - hub-routing does not use the hubs defined in the nodelist
+@item <addr> - mail is routed to this address
+@item host - mail is routed to zone:net/0.0 address
+@item hub - hub-routing, does not use the hubs defined in the nodelist
 but uses the nodes: addr - (addr.node %100). e.g.: a mail to node
 2:2433/1245 is send to 2:2433/1200, but a mail to node 2:2433/355 is
 send to 2:2433/300 which currently does not exist. BE CAREFUL!
-@item boss - mail routed to zone:net/node.0 address
+@item boss - mail is routed to zone:net/node.0 address
 @item no-route (noroute) - direct route according to current flavour
 @item no-pack (nopack) - don't process this mail
 @end enumerate
 
-linkWW is a dos pattern with ? and *.
+linkWW is a DOS-style pattern with ? and *.
 
 Route statements are parsed in descending order:
 Pseudo-code:
@@ -1334,7 +1337,7 @@ Pseudo-code:
 
 @end example
 
-NOTE! This statement defined after "links" section.
+NOTE! This statement must occur after "link" sections.
 
 This statement can be repeated.
 
@@ -1348,8 +1351,8 @@ This statement can be repeated.
 @code{routeFile crash 2:2433/1245 2:2433/* 2:2432/*}
 @end table
 
-This statement is the same as the @code{Route} statement, but considers
-only msgs with file attaches. Files are routed with netmail msgs. If
+This statement is the same as the @code{Route} statement, but applies
+only to msgs with file attaches. Files are routed with netmail msgs. If
 no @code{RouteFile} defined, then files will be not routed at all!
 
 This statement can be repeated.
@@ -2109,6 +2112,7 @@ This statement cannot be repeated.
 * LinkMsgBaseDir::              base directory of areas for link
 * Mandatory::                   disable unsubscribing from all echoareas
 * Manual::                      disable subscribing to all echoareas
+* NetMailFlavour::              flavour for outgoing netmail
 * NoRules::                     don't send area rules to link on subscription
 * OptGrp::                      groups for export/import/mandatory
 * OurAka::                      our aka for link
@@ -2766,13 +2770,18 @@ This statement can be repeated. New definitions overwrite old ones.
 @code{linkgrp Fido}
 @end table
 
-String @code{Fido} adds to @code{AutoAreaCreateDefaults}, if there is
-no group defined.
+Specifies a group to use for areas auto-created from this link. Also link
+can delete echo areas in his @code{LinkGrp} group.
 
-Links without access to group @code{Fido} can't forward requests to
-uplink with @code{LinkGrp Fido}.
+In this exmaple:
 
-This link can delete echo areas with @code{-g Fido} group.
+1) string @code{Fido} will be added to a new area record unless 
+@code{AutoAreaCreateDefaults} defines implicit group;
+
+2) links that have no access to group @code{Fido} can't forward requests 
+to uplink with @code{LinkGrp Fido};
+
+3) this link can delete echo areas with @code{-g Fido} group.
 
 This statement can only be repeated for different links.
 
@@ -2805,11 +2814,11 @@ This statement can only be repeated for different links.
 
 By default "mandatory off".
 
-This statement do not allow the link to unsubscribe areas via areafix.
+This statement disallows the link to unsubscribe areas via areafix.
 
 This statement can only be repeated for different links.
 
-@node Manual, NoRules, Mandatory, Link Keywords
+@node Manual, NetMailFlavour, Mandatory, Link Keywords
 @subsection Manual
 @findex Manual
 @table @asis
@@ -2821,11 +2830,25 @@ This statement can only be repeated for different links.
 
 By default "manual off".
 
-This statement do not allow the link to subscribe areas via areafix.
+This statement disallows the link to subscribe areas via areafix.
 
 This statement can only be repeated for different links.
 
-@node NoRules, OptGrp, Manual, Link Keywords
+@node NetMailFlavour, NoRules, Manual, Link Keywords
+@subsection NetMailFlavour
+@findex NetMailFlavour
+@table @asis
+@item Syntax:
+@code{netMailFlavour <hold | normal | crash | direct | immediate>}
+@item Example:
+@code{netMailFlavour crash}
+@end table
+
+This statement sets the flavour for outgoing netmail routed via this link.
+
+This statement can only be repeated for different links.
+
+@node NoRules, OptGrp, NetMailFlavour, Link Keywords
 @subsection NoRules
 @findex NoRules
 @table @asis
