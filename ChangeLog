@@ -1,3 +1,7 @@
+2004-01-09 Friday 16:55  d_sergienko
+
+	* doc/hpt.texi (hpt-1_4-stable.8): fix spelling
+
 2004-01-08 Thursday 00:46  d_sergienko
 
 	* HISTORY, src/areafix.c (hpt-1_4-stable.[10,7]): Fix old bug with
