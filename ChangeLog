@@ -1,3 +1,12 @@
+2004-01-23 Friday 07:39  andrew_ladutsko
+
+	* src/hptafix.c (1.7): fixed making reports on autocreate
+
+2004-01-23 Friday 07:27  mche
+
+	* src/dupe.c (1.80): improve dupe detection on messages without
+	MSGID
+
 2004-01-21 Wednesday 02:34  andr_lukyanov
 
 	* make/: makefile.mvc (1.14), makefile.mvcdll (1.18): Fix MSVC
