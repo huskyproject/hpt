@@ -838,7 +838,7 @@ char *errorRQ(char *line)
 
 static char *do_delete(s_link *link, s_message *msg, s_area *area)
 {
-    char *report = NULL, *an = area->fileName;
+    char *report = NULL, *an = area->areaName;
     int i;
 
     /* unsubscribe from downlinks */
@@ -852,7 +852,7 @@ static char *do_delete(s_link *link, s_message *msg, s_area *area)
 
     /* delete msgbase and dupebase for the area */
     if (area->msgbType!=MSGTYPE_PASSTHROUGH)
-	MsgDeleteBase(an, area->msgbType);
+	MsgDeleteBase(area->fileName, area->msgbType);
     if (area->dupeCheck != dcOff) {
 	char *dupename = createDupeFileName(area);
 	if (dupename) {
@@ -909,11 +909,13 @@ char *delete(s_link *link, s_message *msg, char *cmd) {
 		writeLogEntry(hpt_log, '8', "areafix: area %s is not linked to %s",
 			      an, aka2str(link->hisAka));
 		return report;
-	case 2:	writeLogEntry(hpt_log, '8', "areafix: area %s -- no access for %s",
+	case 2:	xscatprintf(&report, " %s %s  no access\r", an, print_ch(49-strlen(an), '.'));
+		writeLogEntry(hpt_log, '8', "areafix: area %s -- no access for %s",
 			      an, aka2str(link->hisAka));
 		return report;
     }
     if (link->LinkGrp == NULL || strcmp(link->LinkGrp, area->group)) {
+	xscatprintf(&report, " %s %s  delete not allowed\r", an, print_ch(49-strlen(an), '.'));
 	writeLogEntry(hpt_log, '8', "areafix: area %s delete not allowed for %s",
 		      an, aka2str(link->hisAka));
 	return report;
@@ -1766,13 +1768,9 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		xscatprintf(&(linkmsg->text), " \r--- %s areafix\r", versionStr);
 		linkmsg->textLength = strlen(linkmsg->text);
 		
-		makePktHeader(NULL, &header);
-		header.origAddr = *(link->ourAka);
-		header.destAddr = link->hisAka;
-		
 		writeLogEntry(hpt_log, '8', "areafix: write netmail msg for %s", aka2str(link->hisAka));
 
-		processNMMsg(linkmsg, &header,
+		processNMMsg(linkmsg, NULL,
 					 getNetMailArea(config,config->robotsArea),
 					 0, MSGLOCAL);
 

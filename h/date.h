@@ -1,1 +1,1 @@
-char hpt_date[]="20-12-00";
+char hpt_date[]="08-01-01";

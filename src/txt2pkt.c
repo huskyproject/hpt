@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
    header.capabilityWord = 1;
    header.prodData = 0;
 
-   strcpy(tmp,dir);
+   strcpy(tmp, (dir) ? dir : "./");
 #ifdef UNIX
    if (tmp[strlen(tmp)-1] != '/') strcat(tmp,"/");
 #else
@@ -235,6 +235,7 @@ int main(int argc, char *argv[])
       nfree(textBuffer);
       nfree(versionStr);
 
+/*
       if (config->outtab != NULL) {
          // load recoding tables
          getctab(outtab, config->outtab);
@@ -244,7 +245,7 @@ int main(int argc, char *argv[])
          recodeToTransportCharset(msg.fromUserName);
          recodeToTransportCharset(msg.toUserName);
       }
-
+*/
       writeMsgToPkt(pkt, msg);
 
       closeCreatedPkt(pkt);
