@@ -290,7 +290,7 @@ s_message *readMsgFromPkt(FILE *pkt, s_pktHeader *header)
    free(textBuffer);                   // free mem space
 
    textBuffer = (UCHAR *) malloc(TEXTBUFFERSIZE+1); /* reserve 512kb + 1 (or 32kb+1) text Buffer */
-   msg->textLength = fgetsUntil0((char *) textBuffer, TEXTBUFFERSIZE+1 , pkt);
+   msg->textLength = fgetsUntil0((unsigned char *) textBuffer, TEXTBUFFERSIZE+1 , pkt);
 
    msg->text = (char *) malloc(msg->textLength); /* reserve mem for the real text */
    strcpy(msg->text, textBuffer);

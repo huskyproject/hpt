@@ -545,7 +545,7 @@ void scanExport(int type, char *str) {
    char *line;
    
    // load recoding tables
-   if (config->outtab != NULL) getctab(outtab, config->outtab);
+   if (config->outtab != NULL) getctab(outtab, (unsigned char *)config->outtab);
    
    // zero statScan   
    memset(&statScan, 0, sizeof(s_statScan));

@@ -59,7 +59,7 @@
 #include <toss.h>
 #include <scan.h>
 #include <fcommon.h>
-#include <dir.h>
+#include <dirlayer.h>
 #include <patmat.h>
 #include <post.h>
 #include <link.h>

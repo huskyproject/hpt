@@ -169,7 +169,7 @@ void post(int c, unsigned int *n, char *params[])
       /* reserve mem for the real text */
       /* !!! warning - I suppose that 512 bytes will be enough
       for kludges and tearline + origin */
-      msg.text = (UCHAR *) malloc(msg.textLength + 1 + 512);
+      msg.text = (char *) malloc(msg.textLength + 1 + 512);
       createKludges(msg.text, area, &msg.origAddr, &msg.destAddr);
 
       strcat(msg.text, textBuffer);

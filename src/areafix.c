@@ -1484,7 +1484,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	char tmp[80], *token, *textBuff, *report=NULL, *preport;
 	
 	// load recoding tables
-	if (config->outtab != NULL) getctab(outtab, (char*) config->outtab);
+	if (config->outtab != NULL) getctab(outtab, (unsigned char*) config->outtab);
 
 	// 1st security check
 	if (pktHeader) security=addrComp(msg->origAddr, pktHeader->origAddr);

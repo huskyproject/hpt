@@ -82,18 +82,18 @@ INT in,on,count;
 	while (fgets((char*)buf,sizeof(buf),fp))
 	{
 		line++;
-		p=strtok((char*)buf," \t\n#");
-		q=strtok(NULL," \t\n#");
+		p=(unsigned char *)strtok((char*)buf," \t\n#");
+		q=(unsigned char *)strtok(NULL," \t\n#");
 
 		if (p && q)
 		{
-			in = ctoi(p);
+			in = ctoi((char *)p);
 			if (in > 255) {
 				fprintf(stderr, "getctab: %s: line %d: char val too big\n", charMapFileName, line);
 				break;
 			}
 
-			on=ctoi(q);
+			on=ctoi((char *)q);
 			if (in && on) 
 			 if( count++ < 256 ) dest[in]=on; 
 			 else 

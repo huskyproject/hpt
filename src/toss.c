@@ -46,7 +46,7 @@
 #include <fidoconfig.h>
 #include <common.h>
 
-#include <dir.h>
+#include <dirlayer.h>
 #include <pkt.h>
 #include <scan.h>
 #include <toss.h>
@@ -225,7 +225,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, UINT16 forceattr) {
    msgHeader.replyto = 0;
    memset(msgHeader.replies, 0, MAX_REPLY * sizeof(UMSGID));   // no replies
    strcpy((char *) msgHeader.__ftsc_date, msg->datetime);
-   ASCII_Date_To_Binary(msg->datetime, (union stamp_combo *) &(msgHeader.date_written));
+   ASCII_Date_To_Binary((char *)msg->datetime, (union stamp_combo *) &(msgHeader.date_written));
 
    currentTime = time(NULL);
    date = localtime(&currentTime);

@@ -10,9 +10,9 @@ OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scan
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
-  CFLAGS     = -c -I$(INCDIR) -I../h -O2 -ggdb -DUNIX
+  CFLAGS     = -c -I$(INCDIR) -I../h -I../../smapi -O2 -g -DUNIX
 else
-  CFLAGS     = -c -I$(INCDIR) -I../h -O2 -s -DUNIX
+  CFLAGS     = -c -I$(INCDIR) -I../h -I../../smapi -O2 -s -DUNIX
 endif
 
 LFLAGS     = -L$(LIBDIR)

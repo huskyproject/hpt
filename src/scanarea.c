@@ -77,7 +77,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
 
    msg->attributes = xmsg.attr & ~MSGLOCAL; // msg should not have MSGLOCAL bit set
    //strcpy(msg->datetime, xmsg.__ftsc_date);
-   sc_time((union stamp_combo *) &(xmsg.date_written), msg->datetime);
+   sc_time((union stamp_combo *) &(xmsg.date_written), (char *)msg->datetime);
 
    msg->toUserName   = (char *) malloc(strlen((char*)xmsg.to)+1);
    strcpy(msg->toUserName, (char*)xmsg.to);
@@ -177,7 +177,6 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
    UINT32       i,j=0;
    s_pktHeader  header;
    FILE         *pkt;
-   
    makeMsg(hmsg, xmsg, &msg, echo, 0);
 
    //translating name of the area to uppercase
