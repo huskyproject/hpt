@@ -626,6 +626,7 @@ int delLinkFromString(char **lineOut, char *line, char *linkAddr)
 
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     char *cfgline=NULL, *token=NULL, *tmpPtr=NULL, *line=NULL, *buff=0;
+    char *strbegfileName = fileName;
     long strbeg = 0, strend = -1;
     int rc=0;
 
@@ -656,13 +657,14 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
                 if (stricmp(token, areaName)==0) {
                     fileName = safe_strdup(getCurConfName());
                     strend = get_hcfgPos();
-                    if(strbeg > strend) strbeg = 0;
+                    if (strcmp(strbegfileName, fileName) != 0) strbeg = 0;
                     break;
                 }
             }
         }
         strbeg = get_hcfgPos();
-        w_log(LL_DEBUGF, __FILE__ ":%u:changeconfig() strbeg=%l", __LINE__, strbeg);
+        strbegfileName = safe_strdup(getCurConfName());
+        w_log(LL_DEBUGF, __FILE__ ":%u:changeconfig() strbeg=%ld", __LINE__, strbeg);
         nfree(line);
         nfree(cfgline);
     }
@@ -739,7 +741,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     default: break;
     } /*  switch (action) */
 
-    w_log(LL_DEBUGF, __FILE__ ":%u:changeconfig() call InsertCfgLine(\"%s\",<cfgline>,%l,%l)", __LINE__, fileName, strbeg, strend);
+    w_log(LL_DEBUGF, __FILE__ ":%u:changeconfig() call InsertCfgLine(\"%s\",<cfgline>,%ld,%ld)", __LINE__, fileName, strbeg, strend);
     InsertCfgLine(fileName, cfgline, strbeg, strend);
     nfree(cfgline);
     nfree(fileName);
