@@ -1,3 +1,9 @@
+hpt (0.9.8-3) unstable; urgency=low
+
+  * doc-base was missing.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Tue, 10 Apr 2001 22:22:13 +0200
+
 hpt (0.9.8-2) unstable; urgency=low
 
   * Fehler in der Huskymak.cfg (CFGDIR)

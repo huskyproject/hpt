@@ -1,0 +1,12 @@
+Document: hpt
+Title: Debian hpt Manual
+Author: The Husky-Team
+Abstract: This manual describes what hpt is
+ and all of its keywords.
+Section: devel
+
+Format: HTML
+Index: /usr/share/doc/hpt/html/hpt.html
+Files: /usr/share/doc/hpt/html/*.html
+
+  
