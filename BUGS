@@ -1,8 +1,4 @@
 1) jam echo area with manually deleted messages scans only with -w parameter
    (whithout highwaters)
-2) when hpt coudn't write msg (or open area) hpt renames .pkt to .err
-   but message, which wasn't written to msgbase will be in dupeArea,
-   because hpt saved its dupeEntry to dupeBase in first tossing...
-3) under win32 & watcom c (others compilers didn't tested for this problem)
-   system() returns 0 if unpacker does not found, so arcmail will be lost...
-4) hptlink not link jam areas with deleted messages
+2) hptlink not links jam areas with deleted messages
+3) hpt link don't links some msgs

@@ -5,6 +5,10 @@ hpt 0.9.8 (development version)
 Sun Oct 22 16:01:25 NOVST 2000
 max:
 * when scanning netmail for file attach, creates only .req (no mail packets)
+* if can't open msgbase put msg in badArea, if can't open badArea -
+  rename .pkt to .err (then tossed through "toss -b" such msgs not checks
+  for dupes and don't forwards to links)
+* use spawn() instead of system() in WATCOMC (so, arcmail shouldn't be lost)
 
 ----- cvs ci ------
 Sat Oct 21 19:41:45 NOVST 2000

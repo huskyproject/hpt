@@ -2007,11 +2007,11 @@ void autoPassive()
    } /* endfor */
 }
 
-struct _minf m;
 int relink (char *straddr) {
 	s_link          *researchLink = NULL;
 	unsigned int    count, areasArraySize;
 	s_area          **areasIndexArray = NULL;
+	struct _minf m;
 
 	// parse config
 	if (config==NULL) processConfig();

@@ -311,9 +311,9 @@ void processConfig()
    if (config->intab) getctab(intab, (unsigned char*) config->intab);
 }
 
-struct _minf m;
 int main(int argc, char **argv)
 {
+   struct _minf m;
    int i;
    char *version = NULL;
 #if defined ( __NT__ )

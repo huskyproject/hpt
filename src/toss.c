@@ -75,6 +75,7 @@
 
 #if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
 #include <dos.h>
+#include <process.h>
 #endif
 
 #if defined(__MINGW32__) && defined(__NT__)
@@ -1152,6 +1153,9 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 	case 5:
 		xstrcat(&textBuff, "Rejected by filter\r");
 		break;
+	case 6:
+		xstrcat(&textBuff, "Can't open msgbase\r");
+		break;
 	default :
 		xstrcat(&textBuff,"Another error\r");
 		break;
@@ -1396,7 +1400,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 				   echo->imported++;  // area has got new messages
 				   if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
 					   rc = putMsgInArea(echo, msg, 1, forceattr);
-					   statToss.saved++;
+					   statToss.saved += rc;
 				   } 
 				   else {
 					   statToss.passthrough++;
@@ -1647,15 +1651,18 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	   if (processIt != 0) {
 		   realtime = time(NULL);
 		   while ((msgrc = readMsgFromPkt(pkt, header, &msg)) == 1) {
-		   	if (msg != NULL) {
-				   if ((processIt == 1) || ((processIt==2) && (msg->netMail==1)))
-				   {   if (processMsg(msg, header, (sec==secLocalInbound || sec==secProtInbound || processIt == 1) ? 1 : 0) !=1 )
-					       rc=5;
-				   } else
-				       rc = 1;
+			   if (msg != NULL) {
+				   if ((processIt == 1) || ((processIt==2) && (msg->netMail==1))) {
+					   if (processMsg(msg, header,
+									  (sec==secLocalInbound ||
+									   sec==secProtInbound ||
+									   processIt == 1) ? 1 : 0) != 1 )
+						   if (putMsgInBadArea(msg, header->origAddr, 6)==0)
+							   rc = 5; // can't write to badArea - rename to .err
+				   } else rc = 1;
 				   freeMsgBuffers(msg);
 				   nfree(msg);
-			}
+			   }
 		   }
 		   if (msgrc==2) rc = 3; // rename to .bad (wrong msg format)
 		   // real time of process pkt & msg without external programs
@@ -1728,11 +1735,39 @@ void fillCmdStatement(char *cmd, const char *call, const char *archiv, const cha
    strcat(cmd, tmp);
 }
 
+#ifdef __WATCOMC__
+void *mk_lst(char *a) {
+	char *p=a, *q=a, **list=NULL, end=0, num=0;
+
+	while (*p && !end) {
+		while (*q && !isspace(*q)) q++;
+		if (*q=='\0') end=1;
+		*q ='\0';
+		list = (char **) realloc(list, ++num*sizeof(char*));
+		list[num-1]=(char*)p;
+		if (!end) {
+			p=q+1;
+			while(isspace(*p)) p++;
+		}
+		q=p;
+	}
+	list = (char **) realloc(list, (++num)*sizeof(char*));
+	list[num-1]=NULL;
+
+	return list;
+}
+#endif
+
 int  processArc(char *fileName, e_tossSecurity sec)
 {
-   int  i, j, found, cmdexit;
+   int  i, j, found;
+   signed int cmdexit;
    FILE  *bundle;
    char cmd[256];
+
+#ifdef __WATCOMC__
+   char **list;
+#endif
 
    if (sec == secInbound) {
       writeLogEntry(hpt_log, '9', "bundle %s: tossing in unsecure inbound, security violation", fileName);
@@ -1757,10 +1792,20 @@ int  processArc(char *fileName, e_tossSecurity sec)
    if (found) {
 	  fillCmdStatement(cmd,config->unpack[i-1].call,fileName,"",config->tempInbound);
       writeLogEntry(hpt_log, '6', "bundle %s: unpacking with \"%s\"", fileName, cmd);
+#ifdef __WATCOMC__
+      list = mk_lst(cmd);
+      cmdexit = spawnv(P_WAIT, cmd, list);
+      nfree(list);
+      if (cmdexit == -1) {
+		  writeLogEntry(hpt_log, '9', "exec failed: %s", strerror(errno));
+		  return 3;
+      }
+#else
       if ((cmdexit = system(cmd)) != 0) {
-         writeLogEntry(hpt_log, '9', "exec failed, code %d", cmdexit);
-         return 3;
-      };
+		  writeLogEntry(hpt_log, '9', "exec failed, code %d", cmdexit);
+		  return 3;
+      }
+#endif
 	  if (config->afterUnpack) {
 		  writeLogEntry(hpt_log, '6', "afterUnpack: execute string \"%s\"", config->afterUnpack);
 		  if ((cmdexit = system(config->afterUnpack)) != 0) {
@@ -2364,7 +2409,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
    s_message   msg;
    s_area	*echo = &(config -> badArea);
    s_addr	pktOrigAddr;
-   char 	*tmp, *ptmp, *line, *areaName, *area=NULL;
+   char 	*tmp, *ptmp, *line, *areaName, *area=NULL, noexp=0;
    s_link   *link;
    
    makeMsg(hmsg, xmsg, &msg, &(config->badArea), 2);
@@ -2378,9 +2423,13 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
        if (strncmp(ptmp, "FROM: ", 6) == 0 || 
 	   strncmp(ptmp, "REASON: ", 8) == 0 || 
 	   strncmp(ptmp, "AREANAME: ", 10) == 0) {
-		   /* It's from address */
+		   // It's from address
 		   if (*ptmp == 'F') string2addr(ptmp + 6, &pktOrigAddr);
-		   /* Cut this kludges */
+		   // Don't export to links
+		   if (*ptmp == 'R') {
+			   if (strstr(ptmp, "Can't open msgbase")!=NULL) noexp=1;
+		   }
+		   // Cut this kludges
 		   if (*ptmp=='A') {
 			   if (area==NULL) {
 				   echo = getArea(config, ptmp+10);
@@ -2424,8 +2473,8 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
    }
    
    if (checkAreaLink(echo, pktOrigAddr, 0) == 0) {
-	   if (dupeDetection(echo, msg)==1) {
-		   // no dupe
+	   if (dupeDetection(echo, msg)==1 || noexp) {
+		   // no dupe or toss whithout export to links
 		   
 		   if (config->carbonCount != 0) carbonCopy(&msg, echo);
 		   
@@ -2437,22 +2486,24 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
 		       rc = 1; // passthrough always work
 		   }
 
-		   // recoding from internal to transport charSet
-		   if (config->outtab) {
-		       if (msg.recode & REC_HDR) {
-			   recodeToTransportCharset((CHAR*)msg.fromUserName);
-			   recodeToTransportCharset((CHAR*)msg.toUserName);
-			   recodeToTransportCharset((CHAR*)msg.subjectLine);
-			   msg.recode &= ~REC_HDR;
-		       }
-		       if (msg.recode & REC_TXT) {
-			   recodeToTransportCharset((CHAR*)msg.text);
-			   msg.recode &= ~REC_TXT;
-		       }
-		   }
+		   if (noexp==0) { // recode & export to links
+			   // recoding from internal to transport charSet
+			   if (config->outtab) {
+				   if (msg.recode & REC_HDR) {
+					   recodeToTransportCharset((CHAR*)msg.fromUserName);
+					   recodeToTransportCharset((CHAR*)msg.toUserName);
+					   recodeToTransportCharset((CHAR*)msg.subjectLine);
+					   msg.recode &= ~REC_HDR;
+				   }
+				   if (msg.recode & REC_TXT) {
+					   recodeToTransportCharset((CHAR*)msg.text);
+					   msg.recode &= ~REC_TXT;
+				   }
+			   }
    
-		   if (echo->downlinkCount > 0) {
-			   forwardMsgToLinks(echo, &msg, pktOrigAddr);
+			   if (echo->downlinkCount > 0) {
+				   forwardMsgToLinks(echo, &msg, pktOrigAddr);
+			   }
 		   }
 
 	   } else {
@@ -2482,8 +2533,6 @@ void tossFromBadArea()
 	   writeLogEntry(hpt_log, '1', "Scanning area: %s", config->badArea.areaName);
 	   highestMsg = MsgGetHighMsg(area);
 //	   writeLogEntry(hpt_log, '1', "hiest msg: %i", highestMsg );
-
-	   //FIXME: the problem in smapi... msgnum update must be identical.
 
 	   if (config->badArea.msgbType==MSGTYPE_SDM) {
 	

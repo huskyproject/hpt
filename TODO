@@ -13,6 +13,7 @@ Category 1: Will certainly be implemented until next release
 - areafix from cmd line (like hpt afix <addr> %command)
 - del pass areas after unsubscribing
 - del "-$m 200 -dosfile -keepsb" from autocreatedefaults when create passthrough
+- write statistics when tossing from badArea
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
@@ -22,9 +23,7 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 
 Category 3: Will only be included if volunteers send patches
 ============================================================
-- use spawn() instead of system() under win32
 - remove areafix from hpt, make hptfix (areafix & filefix)
-- area-deletion etc. via areafix (external utility)
 
 Category 4: Will not be implemented
 ===================================
@@ -34,3 +33,4 @@ Category 4: Will not be implemented
 - afterUnpackBundle, afterUnpackAll -> carc
 - UnpackAllBeforeToss -> carc
 - pack netmail in pkt/arcmail bundles -> carc
+- area-deletion etc. via areafix -> hptkill

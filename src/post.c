@@ -95,7 +95,6 @@ void print_help(void) {
    exit(0);
 }
 
-struct _minf m;
 void post(int c, unsigned int *n, char *params[])
 {
    char *area = NULL, *tearl = NULL, *origin = NULL;
@@ -103,6 +102,7 @@ void post(int c, unsigned int *n, char *params[])
    s_area *echo = NULL;
    FILE *f = NULL;
    long attr;
+   struct _minf m;
 
    s_message msg;
 
