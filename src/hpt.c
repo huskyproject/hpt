@@ -197,7 +197,7 @@ int processCommandLine(int argc, char **argv)
 		  continue;
       } else if (stricmp(argv[i], "-h") == 0) {
 		  start_help();
-		  continue;
+		  return 1;
       } else if (stricmp(argv[i], "pause") == 0) {
 		  cmPause = 1;
 		  continue;
@@ -419,8 +419,8 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    xscatprintf(&versionStr,"hpt %s", version);
 
    rc = processCommandLine(argc, argv);
-   if (rc==1) exit(EX_OK);
-   if (rc==EX_USAGE) exit(EX_USAGE);
+   if (rc==1){ nfree(version); nfree(versionStr); exit(EX_OK); }
+   if (rc==EX_USAGE){ nfree(version); nfree(versionStr); exit(EX_USAGE); }
 
 //   if (quiet==0) fprintf(stdout, "Highly Portable Tosser %s\n", version);
 
