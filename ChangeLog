@@ -1,3 +1,14 @@
+2003-02-13 Thursday 21:10  it-dienste
+
+	* src/areafix.c (1.384): added another rescan possibility: +area
+	R=xx  (mhaase)
+
+2003-02-13 Thursday 20:37  d_sergienko
+
+	* HISTORY (1.19), h/pkt.h (1.32), src/pktwrite.c (1.41), src/tpkt.c
+	(1.29), src/txt2pkt.c (1.46): write FTSC ProdCode and ProdRev into
+	pkt headers
+
 2003-02-12 Wednesday 22:04  d_sergienko
 
 	* HISTORY (1.18): added info about AreaGroup*
