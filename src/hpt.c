@@ -471,6 +471,11 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    if (strcmp(VER_BRANCH,"-stable")!=0) xscatprintf(&version, " %s", cvs_date);
    xscatprintf(&versionStr,"hpt %s", version);
    rc = processCommandLine(argc, argv);
+   if ((rc==1 || rc==EX_USAGE) && config!=NULL)
+      if (config->lockfile) {
+         close(lock_fd);
+         remove(config->lockfile);
+      }
    if (rc==1){ nfree(version); nfree(versionStr); exit(EX_OK); }
    if (rc==EX_USAGE){ nfree(version); nfree(versionStr); exit(EX_USAGE); }
 
