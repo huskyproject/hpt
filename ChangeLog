@@ -1,3 +1,25 @@
+2002-10-07 Monday 12:55  mche
+
+	* src/query.c (1.67): fix bug with createFwdNonPass
+
+2002-10-07 Monday 12:31  stas_degteff
+
+	* doc/: faqfmt.pl (1.4), perlwin32.rus (1.5), perlwin32.txt (1.3):
+	Fix color for "Q:" strings; fix multi-line Q:
+
+2002-10-07 Monday 12:24  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.38): Spell fix
+
+2002-10-07 Monday 12:14  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.37): Update FAQ date
+
+2002-10-07 Monday 12:12  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.36): Update FAQ: add question about
+	mktemp() unsafety warning
+
 2002-10-04 Friday 11:32  sfpavel
 
 	* debian/: changelog (1.16), control (1.13), doc-base (1.2), docs
