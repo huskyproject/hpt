@@ -109,7 +109,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
 
    time(&tm);
    dt = gmtime(&tm);
-   sprintf(viaLine, "\001Via %u:%u/%u.%u @%04u%02u%02u.%02u%02u%02u.UTC %s",
+   sprintf(viaLine, "\001Via %u:%u/%u.%u @%04u%02u%02u.%02u%02u%02u.UTC %s\r",
            ourAka.zone, ourAka.net, ourAka.node, ourAka.point,
            dt->tm_year + 1900, dt->tm_mon + 1, dt->tm_mday, dt->tm_hour, dt->tm_min, dt->tm_sec, versionStr);
 

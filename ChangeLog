@@ -1,36 +1,16 @@
 hpt 0.27
 --------
 
-Sun Apr 18 15:45:09 NOVST 1999
-Max:
-+ hpt separate bundles now.
-
-Sat Apr 17 23:00:43 NOVST 1999
-Max:
-- fixed link pause (now it is working)
-
-Sat Apr 17 12:10
-Antonio:
-+ fixed a bug in description code of autoCreate. Someone that had segfaults,
-  please test it!.
+----- cvs ci ------
+Sun Apr 18 20:47:51 CEST 1999
+Mtt:
+- via lines are now finished with a \r.
 
 ----- cvs ci ------
-Thu Apr 15 16:57
-Antonio:
-+ hpt now changes subject line in attach netmails. Add the inbound path
-  before attached file's name.
-+ config.sample updates for area descriptions and -dosfile option.
-
------ cvs ci ------
-Thu Apr 15
-Gabriel:
-   + Added a loglevels into sample.config
-
---------------
 Wed Apr  14 04:50
 Antonio:
 - fixed overrun that cause 'segmentation faults' if scan one message with a
-  large kludge line. Electric Fence Power! :)
+large kludge line. Electric Fence Power! :)
 
 ----- cvs ci ------
 Sun Apr  11 15:46
