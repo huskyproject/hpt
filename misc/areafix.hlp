@@ -44,3 +44,6 @@ Example:
  %RESCAN                      <- turn on rescanning of following subscription
  NSK.SYSOP /r			<- subscribe & rescan area
  NSK.PARTY /r=100		<- subscribe & rescan the last 100 mails
+%PACKER              <- ask for list of packers   
+%PACKER  zip         <- switch current packer for 'zip' 
+%PACKER  none        <- switch off packing your mail

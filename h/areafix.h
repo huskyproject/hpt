@@ -18,7 +18,8 @@
 #define INFO    10
 #define RESCAN  11
 #define REMOVE  12
-#define ADD_RSC 13 
+#define ADD_RSC 13
+#define PACKER  14  
 #define DONE    100
 #define STAT    101
 #define ERROR   255

@@ -1477,109 +1477,177 @@ char *add_rescan(s_link *link, char *line) {
     return report;
 }
 
+char *packer(s_link *link, char *cmdline) {
+    char *report=NULL;
+    char *was=NULL;
+    char Arch[]="Compression: ";
+    char *pattern = NULL;
+    int reversed;
+    UINT i;
+    pattern = getPatternFromLine(cmdline, &reversed);
+    if(pattern)
+    {
+        char *packerString=NULL;
+        ps_pack packerDef = NULL;
+        char *confName = NULL;
+        long  strbeg=0;
+        long  strend=0; 
+
+        for (i=0; i < config->packCount; i++)
+        {
+            if (stricmp(config->pack[i].packer,pattern) == 0)
+            {
+                packerDef = &(config->pack[i]);
+                break;
+            }
+        }
+        if( (i == config->packCount) && (stricmp("none",pattern) != 0) )
+        {
+            xscatprintf(&report, "Packer '%s' was not found\r", pattern);
+            return report;
+        }
+        if (link->packerDef==NULL)
+            xstrcat(&was, "none");
+        else
+            xstrcat(&was, link->packerDef->packer);
+
+        xstrcat(&confName,(cfgFile) ? cfgFile : getConfigFileName());
+        FindTokenPos4Link(&confName, "Packer", link, &strbeg, &strend);
+        xscatprintf(&packerString,"Packer %s",pattern);
+        if( InsertCfgLine(confName, packerString, strbeg, strend) )
+        {
+           link->packerDef = packerDef;
+        }
+        nfree(confName);
+        nfree(packerString);
+    }
+
+    xstrcat(  &report, "Here is some information about current & availables packers:\r\r"); 
+    xstrcat(  &report,       "Compression: ");
+    if (link->packerDef==NULL)
+        xscatprintf(&report, "none (");
+    else
+        xscatprintf(&report, "%s (", link->packerDef->packer);
+    
+    for (i=0; i < config->packCount; i++)
+        xscatprintf(&report, "%s%s", config->pack[i].packer,(i+1 == config->packCount) ? "" : ", ");
+
+    xscatprintf(&report, "%snone)\r", (i == 0) ? "" : ", ");
+    if(was)
+    {
+        xscatprintf(&report, "        was: %s\r", was);
+    }
+    return report;
+}
+
+
 int tellcmd(char *cmd) {
     char *line;
-
+    
     if (strncmp(cmd, "* Origin:", 9) == 0) return NOTHING;
-
+    
     line = cmd;
     if (line && *line && (line[1]==' ' || line[1]=='\t')) return ERROR;
-
+    
     switch (line[0]) {
     case '%':
-	line++;
-	if (*line == '\000') return ERROR;
-	if (strncasecmp(line,"list",4)==0) return LIST;
-	if (strncasecmp(line,"help",4)==0) return HELP;
-	if (strncasecmp(line,"avail",5)==0) return AVAIL;
-	if (strncasecmp(line,"all",3)==0) return AVAIL;
-	if (strncasecmp(line,"unlinked",8)==0) return UNLINK;
-	if (strncasecmp(line,"linked",6)==0) return QUERY;
-	if (strncasecmp(line,"query",5)==0) return QUERY;
-	if (strncasecmp(line,"pause",5)==0) return PAUSE;
-	if (strncasecmp(line,"resume",6)==0) return RESUME;
-	if (strncasecmp(line,"info",4)==0) return INFO;
-	if (strncasecmp(line, "rescan", 6)==0) {
-	    if (line[6] == '\0') {
-		rescanMode=1;
-		return NOTHING;
-	    } else {
-		return RESCAN;
-	    }
-	}
-	return ERROR;
+        line++;
+        if (*line == '\000') return ERROR;
+        if (strncasecmp(line,"list",4)==0) return LIST;
+        if (strncasecmp(line,"help",4)==0) return HELP;
+        if (strncasecmp(line,"avail",5)==0) return AVAIL;
+        if (strncasecmp(line,"all",3)==0) return AVAIL;
+        if (strncasecmp(line,"unlinked",8)==0) return UNLINK;
+        if (strncasecmp(line,"linked",6)==0) return QUERY;
+        if (strncasecmp(line,"query",5)==0) return QUERY;
+        if (strncasecmp(line,"pause",5)==0) return PAUSE;
+        if (strncasecmp(line,"resume",6)==0) return RESUME;
+        if (strncasecmp(line,"info",4)==0) return INFO;
+        if (strncasecmp(line,"packer",6)==0) return PACKER;
+        if (strncasecmp(line,"rescan", 6)==0) {
+            if (line[6] == '\0') {
+                rescanMode=1;
+                return NOTHING;
+            } else {
+                return RESCAN;
+            }
+        }
+        return ERROR;
     case '\001': return NOTHING;
     case '\000': return NOTHING;
     case '-'  :
-	if (line[1]=='-' && line[2]=='-') return DONE;
-	if (line[1]=='\000') return ERROR;
-	if (strchr(line,' ') || strchr(line,'\t')) return ERROR;
-	return DEL;
+        if (line[1]=='-' && line[2]=='-') return DONE;
+        if (line[1]=='\000') return ERROR;
+        if (strchr(line,' ') || strchr(line,'\t')) return ERROR;
+        return DEL;
     case '~'  : return REMOVE;
     case '+':
-	if (line[1]=='\000') return ERROR;
+        if (line[1]=='\000') return ERROR;
     default:
-	if (hpt_stristr(line, " /R")!=NULL) return ADD_RSC; // add & rescan
-	return ADD;
+        if (hpt_stristr(line, " /R")!=NULL) return ADD_RSC; // add & rescan
+        return ADD;
     }
-//	return 0; - Unreachable
+    return 0;// - Unreachable
 }
 
 char *processcmd(s_link *link, char *line, int cmd) {
-	
+    
     char *report;
-
+    
     w_log(LL_FUNC,"areafix.c::processcmd()");
-
+    
     switch (cmd) {
-
+        
     case NOTHING: return NULL;
-
+        
     case DONE: RetFix=DONE;
-	return NULL;
-
+        return NULL;
+        
     case LIST: report = list (link, line);
-	RetFix=LIST;
-	break;
+        RetFix=LIST;
+        break;
     case HELP: report = help (link);
-	RetFix=HELP;
-	break;
+        RetFix=HELP;
+        break;
     case ADD: report = subscribe (link, line);
-	RetFix=ADD;
-	break;
+        RetFix=ADD;
+        break;
     case DEL: report = unsubscribe (link, line);
-	RetFix=STAT;
-	break;
+        RetFix=STAT;
+        break;
     case REMOVE: report = delete (link, line);
-	RetFix=STAT;
-	break;
+        RetFix=STAT;
+        break;
     case AVAIL: report = available (link, line);
-	RetFix=AVAIL;
-	break;
+        RetFix=AVAIL;
+        break;
     case UNLINK: report = unlinked (link);
-	RetFix=UNLINK;
-	break;
+        RetFix=UNLINK;
+        break;
     case QUERY: report = linked (link);
-	RetFix=QUERY;
-	break;
+        RetFix=QUERY;
+        break;
     case PAUSE: report = pause_link (link);
-	RetFix=PAUSE;
-	break;
+        RetFix=PAUSE;
+        break;
     case RESUME: report = resume_link (link);
-	RetFix=RESUME;
-	break;
+        RetFix=RESUME;
+        break;
+    case PACKER: report = packer (link, line);
+        RetFix=PACKER;
+        break;
     case INFO: report = info_link(link);
-	RetFix=INFO;
-	break;
+        RetFix=INFO;
+        break;
     case RESCAN: report = rescan(link, line);
-	RetFix=STAT;
-	break;
+        RetFix=STAT;
+        break;
     case ADD_RSC: report = add_rescan(link, line);
-	RetFix=STAT;
-	break;
+        RetFix=STAT;
+        break;
     case ERROR: report = errorRQ(line);
-	RetFix=STAT;
-	break;
+        RetFix=STAT;
+        break;
     default: return NULL;
     }
     w_log(LL_FUNC,"areafix.c::processcmd() OK");
@@ -1589,13 +1657,13 @@ char *processcmd(s_link *link, char *line, int cmd) {
 void preprocText(char *split, s_message *msg)
 {
     char *orig = (config->areafixOrigin) ? config->areafixOrigin : config->origin;
-
+    
     msg->text = createKludges(config->disableTID,NULL, &msg->origAddr,
-                              &msg->destAddr, versionStr);
+        &msg->destAddr, versionStr);
     xstrcat(&(msg->text), "\001FLAGS NPD\r");
     xscatprintf(&split, "\r--- %s areafix\r", versionStr);
     if (orig && orig[0]) {
-	xscatprintf(&split, " * Origin: %s (%s)\r", orig, aka2str(msg->origAddr));
+        xscatprintf(&split, " * Origin: %s (%s)\r", orig, aka2str(msg->origAddr));
     }
     xstrcat(&(msg->text), split);
     msg->textLength=(int)strlen(msg->text);
@@ -1645,6 +1713,7 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 		text = NULL;
 		nfree(report);
 	    }
+        xscatprintf(&split,"\r\rFollowing is the original message text\r--------------------------------------\r%s\r\r",msg->text);
 	} else {
 	    p = text + msgsize;
 	    while (*p != '\r') p--;
@@ -1759,7 +1828,8 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     s_link *tmplink = NULL;
     //s_message *linkmsg;
     s_pktHeader header;
-    char *token, *textBuff, *report=NULL, *preport = NULL;
+    char *token, *report=NULL, *preport = NULL;
+    char *textBuff = NULL,*tmp;
     int nr;
 
     w_log(LL_FUNC, "areafix.c::processAreaFix()");
@@ -1805,17 +1875,28 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 
     // 2nd security check. link, areafixing & password.
     if (!security && !force_pwd) {
-	if (link->AreaFix==1) {
-	    if (link->areaFixPwd!=NULL) {
-		if (stricmp(link->areaFixPwd,msg->subjectLine)==0) security=0;
-		else security=3; /* password error */
-	    }
-	} else security=2; /* areafix is turned off */
+        if (link->AreaFix==1) {
+            if (link->areaFixPwd!=NULL) {
+                if (stricmp(link->areaFixPwd,msg->subjectLine)==0) security=0;
+                else security=3; /* password error */
+            }
+        } else security=2; /* areafix is turned off */
     }
+    // remove kluges
+    tmp = msg->text;
+	token = strseparate (&tmp,"\n\r");
+    while(token != NULL) {
+        if( token[0] != '\001' && token[0]!='-' && token[1]!='-' && token[2]!='-' )
+        xstrscat(&textBuff,token,"\r",NULL);
+        token = strseparate (&tmp,"\n\r");
+    }
+    nfree(msg->text);
+    msg->text = textBuff;   
 
     if (!security) {
-	textBuff = msg->text;
-	token = strseparate (&textBuff, "\n\r");
+	textBuff = safe_strdup(msg->text);
+    tmp = textBuff;
+	token = strseparate (&tmp, "\n\r");
 	while(token != NULL) {
 	    while ((*token == ' ') || (*token == '\t')) token++;
 	    while(isspace(token[strlen(token)-1])) token[strlen(token)-1]='\0';
@@ -1854,15 +1935,19 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 		case INFO:
 		    RetMsg(msg, link, preport, "areafix reply: link information");
 		    break;
+		case PACKER:
+		    RetMsg(msg, link, preport, "areafix reply: packer change request");
+		    break;
 		case STAT:
 		    report = areaStatus(report, preport);
 		    break;
 		default: break;
 		}
 	    } /* end if (preport != NULL) */
-	    token = strseparate (&textBuff, "\n\r");
+	    token = strseparate (&tmp, "\n\r");
 	    if (RetFix==DONE) token=NULL;
 	} /* end while (token != NULL) */
+    nfree(textBuff);
     } else {
 	if (link == NULL) {
 	    tmplink = (s_link*) safe_malloc(sizeof(s_link));
@@ -1905,20 +1990,20 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     }
 
     if ( report != NULL ) {
-	if (config->areafixQueryReports) {
-	    preport = linked (link);
-	    xstrcat(&report, preport);
-	    nfree(preport);
-	}
-	RetMsg(msg, link, report, "areafix reply: node change request");
+        if (config->areafixQueryReports) {
+            preport = linked (link);
+            xstrcat(&report, preport);
+            nfree(preport);
+        }
+        RetMsg(msg, link, report, "areafix reply: node change request");
     }
 
     if (rulesCount) {
-	for (nr=0; nr < rulesCount; nr++) {
-	    RetRules (msg, link, rulesList[nr]);
-	    nfree (rulesList[nr]);
-	}
-	nfree (rulesList);
+        for (nr=0; nr < rulesCount; nr++) {
+            RetRules (msg, link, rulesList[nr]);
+            nfree (rulesList[nr]);
+        }
+        nfree (rulesList);
     }
 
     w_log(LL_AREAFIX, "areafix: successfully done for %s",aka2str(link->hisAka));
