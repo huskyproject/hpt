@@ -2741,7 +2741,9 @@ required level for read access (see also @code{Level} in link options)
 @item -lw <integer>
 required level for write access
 @item -mandatory
-forbid to subscibe/unsubscribe from this echo
+forbid to unsubscribe from this echo
+@item -manual
+disallow remote subscribe (only manual connect).
 @item -p <integer>
 purge after n days: used by purging utilities like sqpack (*)
 @item -$m <integer>
@@ -2764,8 +2766,6 @@ keep seen-bys (used in CarbonCopy)
 no seen-by kludges stores in message base (*)
 @item -killsb
 no seen-by & path kludges stores in message base (*)
-@item -manual
-disallow remote changes (only manual connect/disconnect). same as mandatory.
 @item -dosfile
 file name of area is in dos style (8+3). Please be aware of the fact that
 this will currently automatically disable the autoAreaCreateSubdirs feature.
