@@ -1670,7 +1670,7 @@ void preprocText(char *split, s_message *msg)
                               &msg->destAddr, versionStr);
     xstrcat(&(msg->text), "\001FLAGS NPD\r");
     xscatprintf(&split, "\r--- %s areafix\r", versionStr);
-    if (orig) {
+    if (orig && orig[0]) {
 	xscatprintf(&split, " * Origin: %s (%s)\r", orig, aka2str(msg->origAddr));
     }
     xstrcat(&(msg->text), split);
