@@ -359,12 +359,12 @@ char *list(s_link *link, char *cmdline) {
     if (list) xstrcat(&report,list);
     nfree(list);
     freeAreaList(al);
-    
+
     xstrcat(&report,      "\r'R' = area rescanable");
     xstrcat(&report,      "\r'*' = area active");
     xscatprintf(&report,  "\r %i areas available, %i areas active",avail, active);
     xscatprintf(&report,  "\r for link:%s\r", aka2str(link->hisAka));
-    
+
     if (link->afixEchoLimit) xscatprintf(&report, "\rYour limit is %u areas for subscribe\r", link->afixEchoLimit);
 
     w_log(LL_AREAFIX, "areafix: list sent to %s", aka2str(link->hisAka));
@@ -800,9 +800,9 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         break;
     default: break;
     } // switch (action)
-    
+
     w_log(LL_SRCLINE,"areafix.c:%u:changeconfig()", __LINE__);
-    
+
     fseek(f_conf, 0L, SEEK_END);
     endpos = ftell(f_conf);
     cfglen = endpos - strend;
@@ -936,12 +936,12 @@ int isPatternLine(char *s) {
 
 void fixRules (s_link *link, char *area) {
     char *fileName = NULL;
-    
+
     if (!config->rulesDir) return;
     if (link->noRules) return;
-    
+
     xscatprintf(&fileName, "%s%s.rul", config->rulesDir, makeMsgbFileName(config, area));
-    
+
     if (fexist(fileName)) {
         rulesCount++;
         rulesList = safe_realloc (rulesList, rulesCount * sizeof (char*));
@@ -1219,7 +1219,7 @@ char *delete(s_link *link, char *cmd) {
 }
 
 char *unsubscribe(s_link *link, char *cmd) {
-    unsigned int i, rc = 2, j, from_us=0, matched = 0;
+    unsigned int i, rc = 2, j=(unsigned int)I_ERR, from_us=0, matched = 0;
     char *line, *an, *report = NULL;
     s_area *area;
 	
@@ -1232,17 +1232,17 @@ char *unsubscribe(s_link *link, char *cmd) {
     for (i = 0; i< config->echoAreaCount; i++) {
         area = &(config->echoAreas[i]);
         an = area->areaName;
-        
+
         rc = subscribeAreaCheck(area, line, link);
         if (rc==4) continue;
         if (rc==0 && mandatoryCheck(*area,link)) rc = 5;
-        
+
         if (isOurAka(config,link->hisAka))
         {
             from_us = 1;
             rc = area->msgbType == MSGTYPE_PASSTHROUGH ? 1 : 0 ;
         }
-        
+
         switch (rc) {
         case 0:
             if (from_us == 0) {
@@ -1266,7 +1266,7 @@ char *unsubscribe(s_link *link, char *cmd) {
                             j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,1);
                         }
                     } else {
-                        
+
                         j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,7);
                     }
                     if (j != DEL_OK) {
@@ -2100,31 +2100,31 @@ void afix(s_addr addr, char *cmd)
         } else w_log(LL_ERR, "areafix: no such link in config: %s!", aka2str(addr));
     }
     else for (k = startarea; k < endarea; k++) {
-        
+
         netmail = MsgOpenArea((unsigned char *) config->netMailAreas[k].fileName,
             MSGAREA_NORMAL,
             /*config -> netMailArea.fperm,
             config -> netMailArea.uid,
             config -> netMailArea.gid,*/
             (word)config -> netMailAreas[k].msgbType);
-        
+
         if (netmail != NULL) {
-            
+
             highmsg = MsgGetHighMsg(netmail);
             w_log(LL_INFO,"Scanning %s",config->netMailAreas[k].areaName);
-            
+
             // scan all Messages and test if they are already sent.
             for (i=1; i<= highmsg; i++) {
                 SQmsg = MsgOpenMsg(netmail, MOPEN_RW, i);
-                
+
                 // msg does not exist
                 if (SQmsg == NULL) continue;
-                
+
                 MsgReadMsg(SQmsg, &xmsg, 0, 0, NULL, 0, NULL);
                 cvtAddr(xmsg.dest, &dest);
-                
+
                 w_log(LL_INFO,"message %d from %s was read" ,i,xmsg.from);
-                
+
                 // if not read and for us -> process AreaFix
                 striptwhite((char*)xmsg.to);
                 if (((xmsg.attr & MSGREAD) != MSGREAD) &&
@@ -2148,9 +2148,9 @@ void afix(s_addr addr, char *cmd)
                     freeMsgBuffers(&msg);
                 }
                 else MsgCloseMsg(SQmsg);
-                
+
             }
-            
+
             MsgCloseArea(netmail);
         } else {
             w_log(LL_ERR, "Could not open %s", config->netMailAreas[k].areaName);
