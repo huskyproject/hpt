@@ -1,3 +1,34 @@
+2002-04-24 Wednesday 12:20  pavel.gulchouck
+
+	* src/areafix.c (1.289): Improve errors reporting
+
+2002-04-24 Wednesday 11:49  d.sergienko
+
+	* h/: areafix.h (1.28), arealist.h (1.3), dupe.h (1.19), fcommon.h
+	(1.40), global.h (1.31), hpt.h (1.7), hptperl.h (1.5), link.h
+	(1.6), pkt.h (1.22), post.h (1.4), query.h (1.14), scan.h (1.15),
+	scanarea.h (1.4), seenby.h (1.8), toss.h (1.46), version.h (1.8):
+	added rcs_id.
+
+2002-04-24 Wednesday 11:28  d.sergienko
+
+	* src/: areafix.c (1.288), arealist.c (1.6), dupe.c (1.60),
+	fcommon.c (1.126), getfree.c (1.17), global.c (1.43), hpt.c
+	(1.146), hptlink.c (1.34), hpttree.c (1.21), link.c (1.51), perl.c
+	(1.29), pktinfo.c (1.15), pktread.c (1.83), pktwrite.c (1.34),
+	post.c (1.72), query.c (1.40), scan.c (1.151), scanarea.c (1.79),
+	seenby.c (1.21), tlog.c (1.10), tpkt.c (1.26): added rcs_id.
+
+2002-04-24 Wednesday 11:13  d.sergienko
+
+	* src/areafix.c (1.287): 
+	fixed bug in unsubscribe() when last link unsubscribing.
+
+2002-04-24 Wednesday 10:59  pavel.gulchouck
+
+	* src/areafix.c (1.286): do not report all already linked areas for
+	pattern subscribing
+
 2002-04-23 Tuesday 23:48  pavel.gulchouck
 
 	* src/query.c (1.39): preserving EOL config style fix
