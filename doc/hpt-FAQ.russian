@@ -60,8 +60,9 @@ A: (ML, SR, SD)
    или на CVS, инструкция тут: http://husky.sourceforge.net/cvs.html
    Debian packages: http://husky.sourceforge.net/debian
 
-2. husky пакет под BeOS - BeFTN - живет на http://www.qube.ru (Собирает Иван
-   Матвеев) и http://www.bebits.com (Paul Galashin)
+2. husky пакет под BeOS - BeFTN - живет на http://walther.sourceforge.net/,
+   http://www.qube.ru (Собирает Иван Матвеев) и
+   http://www.bebits.com (Paul Galashin), 
 
 3. Бинарники для win32 - в файлэхе NFTN, архив на Демосе:
    ftp://ddt.demos.su/pub/fileecho/NFTN/
