@@ -3,6 +3,13 @@ hpt 0.26
 --------
 
 ----- cvs ci ------
+Sat Jan 23 16:01:49 CET 1999
+- fixed the first FIX-ME in link.c when trying to access a msg which does not
+  exist.
+Fri Jan 22 19:07:24 CET 1999
+- included gerald´s last patch about linking the netmail ares
+
+----- cvs ci ------
 Thu Jan 21 23:52:47 CET 1999
 - included gerald´s patches. linkWithImportLog
 

@@ -119,7 +119,10 @@ int linkArea(s_area *area, int netMail)
 
       for (i = 1, curr = prv = NULL; i <= msgsNum; i++, prv = curr) {
          hmsg  = MsgOpenMsg(harea, MOPEN_READ, i);
-         // FIXME: what if MsgOpenMsg fails
+	 if (hmsg == NULL) {
+            curr = prv;
+	    continue;
+	 }
          ctlen = MsgGetCtrlLen(hmsg);
          ctl   = (byte *) malloc(ctlen);
          curr  = calloc(1, sizeof(s_msginfo));
@@ -205,22 +208,28 @@ void linkAreas(void)
 
    if (f == NULL) {
       // if importlog does not exist link all areas
-      writeLogEntry(log, '3', "Linking all echoAreas.");
+      writeLogEntry(log, '3', "Linking all Areas.");
 
       /* link all echomail areas */
       for (i = 0; i < config -> echoAreaCount; i++)
          if (config -> echoAreas[i].dupeCheck != off)
             linkArea(&(config -> echoAreas[i]), 0);
+      /* link NetMailArea */
+      linkArea(&(config->netMailArea),1);
+
    } else {
-      writeLogEntry(log, '3', "Using importlogfile -> linking listed echos only");
+      writeLogEntry(log, '3', "Using importlogfile -> linking only listed Areas");
 
       while (!feof(f)) {
          line = readLine(f);
 
          if (line != NULL) {
-            area = getArea(config, line);
-            if ((area->dupeCheck != off) && (area->areaName != config->badArea.areaName)) linkArea(area,0);
-            free(line);
+            if(strcmp(config->netMailArea.areaName,line)==0) linkArea(&(config->netMailArea),1);
+            else {
+               area = getArea(config, line);
+               if ((area->dupeCheck != off) && (area->areaName != config->badArea.areaName)) linkArea(area,0);
+               free(line);
+            }
          }
       }
       fclose(f);
