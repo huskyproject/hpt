@@ -1,3 +1,12 @@
+2004-01-06 Tuesday 20:27  d_sergienko
+
+	* src/pktread.c (1.103): fix INTL parsing while reading message
+	from pkt (patch by Alex Woick)
+
+2004-01-06 Tuesday 10:21  d_sergienko
+
+	* src/scanarea.c (1.101): fixed crash when scanning empty SDM area.
+
 2004-01-05 Monday 05:20  d_sergienko
 
 	* src/toss.c (1.533): fixed renaming files when they are need to be
