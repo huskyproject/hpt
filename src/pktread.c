@@ -296,8 +296,10 @@ void freeMsgBuffers(s_message *msg)
   free(msg->subjectLine);
   free(msg->toUserName);
   free(msg->fromUserName);
-  free(msg->origAddr.domain);
-  free(msg->destAddr.domain);
+// THERE IS A MEMORY BUG, WHEN FREEING THE DOMAIN ADRESS.
+// It should be 0x0 all the time :-(
+//  free(msg->origAddr.domain);
+//  free(msg->destAddr.domain);
 }
 
 char *getKludge(s_message msg, char *what) {

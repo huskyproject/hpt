@@ -2,6 +2,14 @@
 hpt 0.26
 --------
 
+----- cvs ci ------
+Mon Feb  1 23:07:56 CET 1999
+- work around for a memory bug which is floating around the source, see
+  freeMsgBuffers in pktread.c
+Mon Feb  1 21:45:42 CET 1999
+- created netmail messages now have correct TOPT and FMPT Kludges.
+
+----- cvs ci ------
 Mon Feb  1 18:08:33 CET 1999
 - pktInfo now displays all pkt's which are given on the commandline
 - now correctEMAddr also understands \n as line separator

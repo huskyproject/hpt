@@ -8,8 +8,8 @@ SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
   CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -ggdb -O3 -s -DUNIX
-# LFLAGS  = -L../../smapi -L../../fidoconfig -static 
-  LFLAGS  = 
+# LFLAGS  = -L../../smapi -L../../fidoconfig 
+  LFLAGS  =
 else
   CFLAGS  = -c -I../h -I../../smapi -Wall -O3 -s -DUNIX
 # LFLAGS  = -L../../smapi -L../../fidoconfig
