@@ -2,11 +2,13 @@ Credits:
 --------
 
 - the most part of the code is written by Matthias Tichy <mtt@tichy.de>
-- there were patches from Max Levenkov <ml@nsk.uland.com>
+  2:2433/1245
+- there were patches from Max Levenkov <ml@nsk.uland.com> 2:5000/117
 - areafix by Max Levenkov 
 - group code by Max Levenkov
 - carbon copy code by Max Levenkov
-- some patches by Sven
+- areafix testing and recoding done by Dmitry Borowskoy 2:5000/117.7
+- some patches by Sven <yoda@unidui.uni-duisburg.de>
 - some code was taken from ifmail by Eugene G. Crosser <crosser@pccross.msk.su>
 - some inspiration on createDirectoryTree was taken from the GNU Fileutils.
 

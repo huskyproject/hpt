@@ -16,14 +16,10 @@
 
 
 int subscribeCheck(s_area area, s_message *msg) {
-	int i,rc;
+	int i;
 	
-	for (i = 0; i<area.downlinkCount;i++) {
-		rc = msg->origAddr.zone - area.downlinks[i]->hisAka.zone;
-		rc += msg->origAddr.net - area.downlinks[i]->hisAka.net;
-		rc += msg->origAddr.node - area.downlinks[i]->hisAka.node;
-		rc += msg->origAddr.point - area.downlinks[i]->hisAka.point;
-		if (rc==0) return 0;
+        for (i = 0; i<area.downlinkCount;i++) {
+           if (addrComp(msg->origAddr, area.downlinks[i]->hisAka)==0) return 0;
 	}
 	
 	return 1;
@@ -44,7 +40,7 @@ int subscribeAreaCheck(s_area area, s_message *msg, char *areaname) {
 	return 2;
 }
 
-int securityCheck(s_message *msg, s_addr *pktOrigAddr) {
+/* int securityCheck(s_message *msg, s_addr *pktOrigAddr) {
 	
 	int rc;
 
@@ -69,7 +65,8 @@ int for_me_Check (s_message *msg, s_link *link) {
 	rc += msg->destAddr.point - ourAka->point;
 
 	return rc;
-}
+        }
+        */
 
 int addAka(FILE *f, s_link *link) {
 	char straka[20], *cfg;
@@ -105,7 +102,7 @@ int addAka(FILE *f, s_link *link) {
 
 int delAka(FILE *f, s_link *link) {
 	int al,i=1;
-	char straka[20], *cfg, c;
+        char straka[20], *cfg, c, j='\40';
 	long areapos,endpos,cfglen;
 	
 	if (link->hisAka.point!=0) {
@@ -116,11 +113,11 @@ int delAka(FILE *f, s_link *link) {
 	al=strlen(straka);
 
 	// search for the aka string
-	while (i!=0) {
+	while ((i!=0) || (j!='\40')) {
 		for (i=al; i>0; i--) {
 			fseek(f,-2,SEEK_CUR);
 			c=fgetc(f);
-			if (straka[i-1]!=c) break;
+                        if (straka[i-1]!=c) {j = c; break;}
 		}
 	}
 	
@@ -148,16 +145,12 @@ int delAka(FILE *f, s_link *link) {
 }
 
 void removelink (s_link *link, s_area *area) {
-	int i, rc;
+	int i;
 	s_link *links;
 
 	for (i=0; i < area->downlinkCount; i++) {
-		links = area->downlinks[i];
-		rc = link->hisAka.zone - links->hisAka.zone;
-		rc += link->hisAka.net - links->hisAka.net;
-		rc += link->hisAka.node - links->hisAka.node;
-		rc += link->hisAka.point - links->hisAka.point;
-		if (rc==0) break;
+           links = area->downlinks[i];
+           if (addrComp(link->hisAka, links->hisAka)==0) break;
 	}
 	
 	area->downlinks[i] = area->downlinks[area->downlinkCount-1];
@@ -418,27 +411,19 @@ void createmsgid(char *msgid, s_link *link) {
 
 int processAreaFix(s_message *msg, s_addr *pktOrigAddr)
 {
-	int i, rc, security=1, forme = 0;
+	int i, security=1, forme = 0;
 	s_link *link = NULL;
 	char *tmp, *textBuff, *report, *preport, logmsg[256];
 	INT32 textlength;
 
 	// 1st security check
-	security=securityCheck(msg, pktOrigAddr);
+	security=addrComp(msg->origAddr, *pktOrigAddr);
 		
-	// find link
-	for (i=0,rc=0; i< config->linkCount; i++) {
-		rc = msg->origAddr.zone - config->links[i].hisAka.zone;
-		rc += msg->origAddr.net - config->links[i].hisAka.net;
-		rc += msg->origAddr.node - config->links[i].hisAka.node;
-		rc += msg->origAddr.point - config->links[i].hisAka.point;
-		if (rc == 0) {
-			link=&(config->links[i]);
-		}
-	}
+        // find link
+        link=getLinkFromAddr(*config, msg->origAddr);
 
 	//this is for me?
-	if (link!=NULL)	forme=for_me_Check(msg, link);
+	if (link!=NULL)	forme=addrComp(msg->destAddr, *link->ourAka);
 	if (forme || link==NULL) {
 		processNMMsg(msg, *pktOrigAddr);
 		return 0;

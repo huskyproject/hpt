@@ -489,6 +489,47 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    return 0;
 }
 
+int carbonCopy(s_message *msg, s_area *echo)
+{
+	int i;
+	char *kludge;
+	s_area *area;
+
+	if (echo->ccoff==1) return 1;
+
+	for (i=0; i<config->carbonCount; i++) {
+
+		area = config->carbons[i].area;
+
+		switch (config->carbons[i].type) {
+
+		case 0:
+			if (strcasecmp(msg->toUserName, config->carbons[i].str)==0) {
+				putMsgInArea(area,msg,0);
+				return 0;
+			}
+			break;
+		case 1:
+			if (strcasecmp(msg->fromUserName, config->carbons[i].str)==0) {
+				putMsgInArea(area,msg,0);
+				return 0;
+			}
+			break;
+		case 2:
+			kludge=getKludge(*msg, config->carbons[i].str);
+			if (kludge!=NULL) {
+				putMsgInArea(area,msg,0);
+				free(kludge);
+				return 0;
+			}
+			break;
+		default: break;
+		}
+	}
+
+	return 1;
+}
+
 void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 {
    char   *area, *textBuff;
@@ -524,6 +565,8 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
             echo->imported = 1;  // area has got new messages
 	    statToss.saved++;
          } else statToss.passthrough++;
+
+         if (config->carbonCount != 0) carbonCopy(msg, echo);
    
       } else {
          // msg is dupe
@@ -535,6 +578,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
    }
 
    if (echo == &(config->badArea)) {
+      if (config->carbonCount != 0) carbonCopy(msg, echo);
       // checking for autocreate option
       link = getLinkFromAddr(*config, pktOrigAddr);
       if ((link != NULL) && (link->autoAreaCreate != 0) &&(writeAccess == 0)) {
