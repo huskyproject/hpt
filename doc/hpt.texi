@@ -477,6 +477,8 @@ To: Sysop
 
 @end example
 
+Also this value is being used when creating reports by qrep command.
+
 @node AreafixOrigin, AreafixReportsAttr, AreafixFromName, Keywords
 @subsection AreafixOrigin
 @findex AreafixOrigin
