@@ -74,11 +74,11 @@ Level		200
 LinkGrp		A
 AccessGrp	ABCDE
 ForwardRequestFile /home/fido/hpt/misc/echoareas.477
-#autoCreateFile /home/fido/config.area
+#autoAreaCreateFile /home/fido/config.area
 forwardRequests on
 autoAreaCreate	on
 RemoteRobotName MsgMgr
-AutoCreateDefaults -lr 100 -lw 150 -g A -dosfile -p 14 -dupeCheck move -dupeHistory 11 -d "Autocreated Area"
+AutoAreaCreateDefaults -lr 100 -lw 150 -g A -dosfile -p 14 -dupeCheck move -dupeHistory 11 -d "Autocreated Area"
 Packer		zip
 
 Link		Vadim
@@ -89,7 +89,7 @@ Level		200
 LinkGrp		B
 AccessGrp	ABCDE
 autoAreaCreate	on
-AutoCreateDefaults -lr 100 -lw 150 -g B -p 14 -dupeCheck move -dupeHistory 11 -d "This is a default description"
+AutoAreaCreateDefaults -lr 100 -lw 150 -g B -p 14 -dupeCheck move -dupeHistory 11 -d "This is a default description"
 Packer		zip
 
 Route hold  noroute 2:5020/960.*
