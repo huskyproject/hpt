@@ -86,13 +86,19 @@ char *print_ch(int len, char ch)
     return tmp;
 }
 
+int mandatoryCheck(s_area area, s_link *link) {
+    if (grpInArray(area.group,link->optGrp,link->numOptGrp) && link->mandatory) return 1;
+    if (link->numOptGrp==0 && link->mandatory) return 1;
+    if (area.mandatory) return 1;
+    return 0;
+}
+
 int subscribeCheck(s_area area, s_message *msg, s_link *link)
 {
   int i;
   int found = 0;
 
-  for (i = 0; i<area.downlinkCount;i++)
-  {
+  for (i = 0; i<area.downlinkCount;i++) {
     if (addrComp(msg->origAddr, area.downlinks[i]->link->hisAka)==0) return 0;
   }
 
@@ -104,8 +110,7 @@ int subscribeCheck(s_area area, s_message *msg, s_link *link)
   } else found = 1;
 
   if (!found) return 2;
-  if (grpInArray(area.group,link->optGrp,link->numOptGrp) && link->mandatory) return 2;
-  if (link->numOptGrp==0 && link->mandatory) return 2;
+  if (mandatoryCheck(area,link)) return 5;
   if (area.hide) return 3;
   return 1;
 }
@@ -119,8 +124,9 @@ int subscribeAreaCheck(s_area *area, s_message *msg, char *areaname, s_link *lin
 		rc=subscribeCheck(*area, msg, link);
 		// 0 - already subscribed
 		// 1 - need subscribe
-		// 2 - no access group
+		// 2 - no access
 		// 3 - area is hidden
+		// 5 - area is mandatory
 	} else rc = 4;
 	
 	// this is another area
@@ -713,7 +719,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 }
 
 char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
-	int i, c, rc = 2, j, from_us=0;
+	int i, rc = 2, j, from_us=0;
 	char *line, *an, *report = NULL;
 	s_area *area;
 	
@@ -723,23 +729,17 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 	line++;
 	
 	for (i = 0; i< config->echoAreaCount; i++) {
-		rc=subscribeAreaCheck(&(config->echoAreas[i]),msg,line, link);
-		if ( rc==4 ) continue;
-	
 		area = &(config->echoAreas[i]);
 		an = area->areaName;
+
+		rc = subscribeAreaCheck(area, msg, line, link);
+		if ( rc==4 ) continue;
 		
-		for (c = 0; c<area->downlinkCount; c++) {
-		    if (link == area->downlinks[c]->link) {
-			if (area->downlinks[c]->mandatory) rc=5;
-			break;
-		    }
-		}
+		if (rc==0 && mandatoryCheck(*area,link)) rc = 5;
+		
 		for (j = 0; j < config->addrCount; j++)
 		    if (addrComp(link->hisAka, config->addr[j])==0) { from_us = 1; rc = 0; break; }
 
-		if (area->mandatory) rc=5;
-		
 		switch (rc) {
 		case 0: xscatprintf(&report, " %s %s  unlinked\r", an, print_ch(49-strlen(an), '.'));
 			if (from_us == 0) {

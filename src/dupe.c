@@ -113,6 +113,8 @@ char *createDupeFileName(s_area *area) {
      case textDupes:
           strcat(name,".dpt");
  	  break;
+     case commonDupeBase:
+ 	  break;
   }
 
    return name;
@@ -128,7 +130,7 @@ int compareEntries(const void *e1, const void *e2) {
    const s_textDupeEntry  *atxt,   *btxt;
    const s_hashDupeEntry  *ahash,  *bhash;
    const s_hashMDupeEntry *ahashM, *bhashM;
-   int rc;
+   int rc = 1;
 
    switch (config->typeDupeBase) {
       case hashDupes:
