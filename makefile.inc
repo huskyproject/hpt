@@ -68,4 +68,5 @@ distclean: clean
 	-$(RM) $(RMOPT) hpt.1.gz
 	-$(RM) $(RMOPT) hptlink.1.gz
 	-$(RM) $(RMOPT) hpttree.1.gz
+	-$(RM) $(RMOPT) txt2pkt.1.gz
 
