@@ -1,3 +1,28 @@
+2002-09-26 Thursday 19:13  stas_degteff
+
+	* TODO (1.197), src/hptlink.c (1.43): change log file name to
+	hptlink.log and update TODO
+
+2002-09-26 Thursday 18:25  pgul
+
+	* src/scanarea.c (1.94): segfault on rescan fixed (win32)
+
+2002-09-26 Thursday 08:34  pgul
+
+	* src/query.c (1.66): Bugfix for rev.1.63 changes
+
+2002-09-26 Thursday 06:18  stas_degteff
+
+	* misc/hpt_ro/ro.cfg (1.2): Change comment
+
+2002-09-25 Wednesday 22:20  pgul
+
+	* src/toss.c (1.444): security fix
+
+2002-09-25 Wednesday 21:28  pgul
+
+	* src/query.c (1.65): fix autosubscribe when autocreate areas
+
 2002-09-25 Wednesday 19:00  pgul
 
 	* src/: toss.c (1.443), post.c (1.94): add TID for messages posted
@@ -628,7 +653,7 @@
 
 	* misc/hpt_ro/: Hpt_ro.pm (1.1), ro.cfg (1.1), ro_parser.pl (1.1),
 	ro_purge.pl (1.1), ro_readme_rus.txt (1.1): New perl module: hpt
-	read-only manager. Written by Andrew Sagulin 2:6073/1
+	read-only manager. Written by Andrew Sagulin 2:6073/1.38
 
 2002-07-05 Friday 08:50  mche
 
