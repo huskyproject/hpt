@@ -169,11 +169,11 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 	int i;
 	char *subject=NULL;
        
-        //init outbounds
-        outbounds[0] = &tossDir;
-        outbounds[1] = &config->protInbound;
-        outbounds[2] = &config->inbound;
-        outbounds[3] = NULL;
+	//init outbounds
+	outbounds[0] = &tossDir;
+	outbounds[1] = &config->protInbound;
+	outbounds[2] = &config->inbound;
+	outbounds[3] = NULL;
 
 	// clear msgheader
 	memset(&msgHeader, '\0', sizeof(XMSG));
@@ -559,6 +559,7 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
 	if (*newLinks==NULL || *zoneLinks==NULL) exit_hpt("out of memory",1);
 
 	for (i=0; i < echo->downlinkCount; i++) {
+		// is the link in SEEN-BYs?
 		if (checkLink(seenBys,seenByCount,
 					  echo->downlinks[i]->link,
 					  pktOrigAddr)!=0) continue;
@@ -584,7 +585,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	char *start, *seenByText = NULL, *pathText = NULL;
 	char *debug=NULL;
 
-	if (newLinks[0] == NULL) return;
+	if (newLinks==NULL || newLinks[0] == NULL) return;
 
 	if (echo->debug) {
 		xstrscat(&debug, config->logFileDir,
@@ -603,13 +604,22 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	}
 
 	// add our aka to seen-by (zonegating link must strip our aka)
-	if (*seenByCount==0 && echo->useAka->point==0) {
-		(*seenBys) = (s_seenBy*) safe_realloc((*seenBys), sizeof(s_seenBy) * (*seenByCount+1));
-		(*seenBys)[*seenByCount].net = (UINT16) echo->useAka->net;
-		(*seenBys)[*seenByCount].node = (UINT16) echo->useAka->node;
-		(*seenByCount)++;
+	if (echo->useAka->point==0) {
+
+		for (i=0; i < *seenByCount; i++) {
+			if ((*seenBys)[i].net == echo->useAka->net &&
+				(*seenBys)[i].node == echo->useAka->node) break;
+		}
+		
+		if (*seenByCount==i) {
+			(*seenBys) = (s_seenBy*)
+				safe_realloc((*seenBys), sizeof(s_seenBy) * (*seenByCount+1));
+			(*seenBys)[*seenByCount].net = (UINT16) echo->useAka->net;
+			(*seenBys)[*seenByCount].node = (UINT16) echo->useAka->node;
+			(*seenByCount)++;
+		}
 	}
-	
+
 	// add seenBy for newLinks
 	for (i=0; i<echo->downlinkCount; i++) {
 		

@@ -2,6 +2,14 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Oct 21 19:41:45 NOVST 2000
+max:
+* add ourAka to SEEN-BYs if not exist
+* when areafix process %rescan to link -- msgs exported like in normal tossing,
+  but there is no SEEN-BYs checking (only export) -- so if link in SEEN-BYs
+  he gets the mail & second SEEN-BY is added.
+
+----- cvs ci ------
 Wed Oct 18 23:01:50 NOVST 2000
 max:
 * calculate packet orig zone if zero

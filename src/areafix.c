@@ -1246,6 +1246,7 @@ char *info_link(s_message *msg, s_link *link)
     return report;
 }
 
+/* remove after 21-Nov-00
 int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
 {
    s_message    msg;
@@ -1284,13 +1285,12 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
 		   exit_hpt("Could not create new pkt!",1);
 	   }
 	   
-   } /* endif */
+   }
    
    makePktHeader(NULL, &header);
    header.origAddr = *(link->ourAka);
    header.destAddr = link->hisAka;
-   if (link->pktPwd != NULL)
-   strcpy(header.pktPassword, link->pktPwd);
+   if (link->pktPwd != NULL) strcpy(header.pktPassword, link->pktPwd);
    pkt = openPktForAppending(link->pktFile, &header);
 
    // an echomail messages must be adressed to the link
@@ -1307,8 +1307,49 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
    freeMsgBuffers(&msg);
    return 1;
 }
+*/
 
-int rescanEMArea(s_area *echo, s_link *link, long rescanCount)
+int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
+{
+   s_message    msg;
+   UINT32       j=0;
+   s_seenBy     *seenBys = NULL, *path = NULL;
+   UINT         seenByCount = 0, pathCount = 0;
+   s_arealink   **links;
+
+   links = (s_arealink **) calloc(2, sizeof(s_arealink*));
+   if (links==NULL) exit_hpt("out of memory",1);
+   links[0] = arealink;
+   
+   makeMsg(hmsg, xmsg, &msg, echo, 1);
+
+   //translating name of the area to uppercase
+   while (msg.text[j] != '\r') {msg.text[j]=(char)toupper(msg.text[j]);j++;}
+
+   if (strncmp(msg.text+j+1,"NOECHO",6)==0) {
+	   freeMsgBuffers(&msg);
+	   return 0;
+   }
+
+   createSeenByArrayFromMsg(&msg, &seenBys, &seenByCount);
+   createPathArrayFromMsg(&msg, &path, &pathCount);
+
+   forwardToLinks(&msg, echo, links, &seenBys, &seenByCount, &path, &pathCount);
+
+   // mark msg as sent and scanned
+   xmsg.attr |= MSGSENT;
+   xmsg.attr |= MSGSCANNED;
+   MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+
+   freeMsgBuffers(&msg);
+   nfree(links);
+   nfree(seenBys);
+   nfree(path);
+
+   return 1;
+}
+
+int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount)
 {
    HAREA area;
    HMSG  hmsg;
@@ -1333,7 +1374,7 @@ int rescanEMArea(s_area *echo, s_link *link, long rescanCount)
 			  hmsg = MsgOpenMsg(area, MOPEN_RW, i);
 			  if (hmsg != NULL) {     // msg# does not exist
 				  MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-				  rc += repackEMMsg(hmsg, xmsg, echo, link);
+				  rc += repackEMMsg(hmsg, xmsg, echo, arealink);
 				  MsgCloseMsg(hmsg);
 			  }
 		  }
@@ -1349,12 +1390,13 @@ int rescanEMArea(s_area *echo, s_link *link, long rescanCount)
    return rc;
 }
 
-char *rescan(s_link *link, s_message *msg, char *cmd)
-{
-    int i, c, rc = 0;
+char *rescan(s_link *link, s_message *msg, char *cmd) {
+    
+	int i, c, rc = 0;
     long rescanCount = -1, rcc;
     char *report = NULL, *line, *countstr, *an, *end;
     s_area *area;
+	s_arealink *arealink;
     
     line = cmd+strlen("%rescan");
     
@@ -1386,19 +1428,31 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 		an = area->areaName;
 		
 		switch (rc) {
-		case 0: 
+		case 0:
 			if (area->msgbType == MSGTYPE_PASSTHROUGH) {
-				xscatprintf(&report," %s %s  no rescan possible\r", an, print_ch(49-strlen(an), '.'));
-				writeLogEntry(hpt_log, '8', "areafix: %s area no rescan possible to %s",
-						area->areaName, aka2str(link->hisAka));
+				xscatprintf(&report," %s %s  no rescan possible\r",
+							an, print_ch(49-strlen(an), '.'));
+				writeLogEntry(hpt_log, '8',
+							  "areafix: %s area no rescan possible to %s",
+							  an, aka2str(link->hisAka));
 			} else {
-
-			  rcc = rescanEMArea(area, link, rescanCount);
-			  xscatprintf(&report," %s %s  rescanned %lu mails\r",
-			      an, print_ch(49-strlen(an), '.'), rcc);
-			  writeLogEntry(hpt_log,'8',"areafix: %s rescanned %lu mails to %s",
-			      area->areaName, rcc, aka2str(link->hisAka));
-			  tossTempOutbound(config->tempOutbound);
+				
+				arealink = getAreaLink(area, link->hisAka);
+				if (arealink->export) {
+					rcc = rescanEMArea(area, arealink, rescanCount);
+					tossTempOutbound(config->tempOutbound);
+				} else {
+					rcc = 0;
+					xscatprintf(&report," %s %s  no access to export\r",
+								an, print_ch(49-strlen(an), '.'));
+					writeLogEntry(hpt_log, '8', 
+								  "areafix: %s -- no access to export for %s",
+								  an, aka2str(link->hisAka));
+				}
+				xscatprintf(&report," %s %s  rescanned %lu mails\r",
+							an, print_ch(49-strlen(an), '.'), rcc);
+				writeLogEntry(hpt_log,'8',"areafix: %s rescanned %lu mails to %s",
+							  an, rcc, aka2str(link->hisAka));
 			}
 			break;
 		case 1: if (strstr(line, "*")) continue;
@@ -1412,8 +1466,9 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 		}
 	}
     if (report == NULL) {
-	xscatprintf(&report," %s %s  not linked for rescan\r", line, print_ch(49-strlen(line), '.'));
-	writeLogEntry(hpt_log, '8', "areafix: %s area not linked for rescan", line);
+		xscatprintf(&report," %s %s  not linked for rescan\r",
+					line, print_ch(49-strlen(line), '.'));
+		writeLogEntry(hpt_log, '8', "areafix: %s area not linked for rescan", line);
     }
     return report;
 }
@@ -1421,7 +1476,7 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 int tellcmd(char *cmd) {
 	char *line;
 
-	if (strncasesearch(cmd, " * Origin:", 10) == 0) return NOTHING;
+	if (strncmp(cmd, "* Origin:", 9) == 0) return NOTHING;
 
 	line = cmd;
 	if (line && *line && (line[1]==' ' || line[1]=='\t')) return ERROR;

@@ -31,6 +31,7 @@
 #ifndef TOSS_H
 #define TOSS_H
 #include <pkt.h>
+#include <seenby.h>
 
 struct statToss {
    int arch, pkts, msgs;
@@ -59,8 +60,14 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr);
 void tossFromBadArea(void);
 void writeMsgToSysop(void);
 int checkAreaLink(s_area *area, s_addr aka, int type);
+void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
+					s_seenBy **seenBys, UINT *seenByCount,
+					s_seenBy **path, UINT *pathCount);
 void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr);
 int carbonCopy(s_message *msg, s_area *echo);
+s_arealink *getAreaLink(s_area *area, s_addr aka);
+void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount);
+void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount);
 
 #define REC_HDR 0x0001
 #define REC_TXT 0x0002
