@@ -1,4 +1,7 @@
+- prove temp code
+- leave mails with no route defined untouched
 - link patch from Kolya
+- include -b flag to toss from badarea
 - divide hpt into several programs:
   tosser
   packer
