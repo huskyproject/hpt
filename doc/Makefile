@@ -29,7 +29,8 @@ info:
 endif
 
 hpt_toc.html: hpt.texi
-	texi2html -split_node -number -menu hpt.texi
+#	texi2html -split_node -number -menu hpt.texi
+	export LC_ALL=C; makeinfo --html --no-split hpt.texi
 
 hpt.dvi: hpt.texi
 	texi2dvi hpt.texi

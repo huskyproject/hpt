@@ -1,3 +1,11 @@
+hpt (1.2.0-20020905-1) stable; urgency=low
+
+  * New cvs version
+  * Install configs into /etc/husky
+  * Fix docs installation
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Thu,  5 Sep 2002 07:36:45 +0600
+
 hpt (1.2.0-20020826-1) stable; urgency=low
 
   * New cvs version

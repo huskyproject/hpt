@@ -2,7 +2,7 @@
 @c %**start of header
 @setfilename hpt.info
 @set HPT HPT
-@set VERSION 1.1.0
+@set VERSION 1.2.0
 @settitle @value{HPT} @value{VERSION} - Highly Portable Tosser
 @setchapternewpage odd
 @c %**end of header
@@ -16,7 +16,7 @@
 @c{empty page to get the page numbering right}
 @end titlepage
 
-@ifinfo
+@c @ifinfo
 @dircategory Fidonet Software
 @direntry
 * HPT: (hpt).               HPT is the fidonet tosser
@@ -34,7 +34,7 @@ Tosser for OS/2, Windows, BeOS and Unix.
 * Advanced Concepts::           Advanced features and concepts.
 * Keyword Index::               Configuration File Keywords Index
 @end menu
-@end ifinfo
+@c @end ifinfo
 
 @node Overview, Installation, Top, Top
 @chapter An Overview on @value{HPT}
@@ -96,7 +96,7 @@ groups for @code{EchoAreas})
 @section Download the Source Code & Binary Files
 
 @table @asis
-@item Main page (source code, win32 & os/2 releases) - @url{http://husky.physcip.uni-stuttgart.de/hpt.html}
+@item Main page (source code, win32 & os/2 releases) - @url{http://husky.sourceforge.net/hpt.html}
 @item Win32 bins (current, russian) - @url{www.chat.ru/~sirevtov/files}
 @item Win32 bins (current, russian) - @url{www.sirevtov.narod.ru}
 @end table
