@@ -60,19 +60,35 @@
 s_statToss statToss; 
 
 void changeFileSuffix(char *fileName, char *newSuffix) {
+
+   int   i = 1;
+   char  buff[200];
+   
    char *beginOfSuffix = strrchr(fileName, '.')+1;
    char *newFileName;
    int  length = strlen(fileName)-strlen(beginOfSuffix)+strlen(newSuffix);
 
-   newFileName = (char *) calloc(length+1, 1);
+   newFileName = (char *) calloc(length+1+2, 1);
    strncpy(newFileName, fileName, length-strlen(newSuffix));
    strcat(newFileName, newSuffix);
   
-   #ifdef DEBUG_HPT
+#ifdef DEBUG_HPT
    printf("old: %s      new: %s\n", fileName, newFileName);
-   #endif
-   
-   rename(fileName, newFileName);
+#endif
+
+   while (fexist(newFileName) && (i<255)) {
+      sprintf(buff, "%02x", i);
+      beginOfSuffix = strrchr(newFileName, '.')+1;
+      strncpy(beginOfSuffix+1, buff, 2);
+      i++;
+   }
+
+   if (!fexist(newFileName))
+      rename(fileName, newFileName);
+   else {
+      sprintf(buff, "Could not change suffix for %s. File already there and the 255 files after", fileName);
+      writeLogEntry(log, '9', buff);
+   }
 }
 
 int to_us(s_pktHeader header)
@@ -541,7 +557,9 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
 {
    FILE *f;
    char buff[255], myaddr[20], hisaddr[20];
-   int i=0,j=0;
+   int i=0;
+   s_link *creatingLink;
+   s_addr *aka;
    
    //translating name of the area to lowercase, much better imho.
    while (*c_area != '\0') {
@@ -557,17 +575,20 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
 	   {
 		   fprintf(stderr,"autocreate: cannot open config file\n");
 		   return 1;
-	   }
+           }
+
+   creatingLink = getLinkFromAddr(*config, pktOrigAddr);
+   aka = creatingLink->ourAka;
    
    // making local address and address of uplink
-   sprintf(myaddr, "%u:%u/%u",config->addr[j].zone,config->addr[j].net,
-           config->addr[j].node);
+   sprintf(myaddr, "%u:%u/%u",aka->zone,aka->net,
+           aka->node);
    sprintf(hisaddr,"%u:%u/%u",pktOrigAddr.zone,pktOrigAddr.net,
             pktOrigAddr.node);
    
    //if you are point...
-   if (config->addr[j].point != 0)  {
-	   sprintf(buff,".%u",config->addr[j].point);
+   if (aka->point != 0)  {
+	   sprintf(buff,".%u",aka->point);
 	   strcat(myaddr,buff);
    }
    
