@@ -3,7 +3,8 @@
 #include <string.h>
 #include <stdio.h>
 
-int inline compare(const void *first, const void *second)
+
+int compare(const void *first, const void *second)
 {
    if ( ((s_seenBy*) first)->net < ((s_seenBy*) second)->net) return -1;
    else
