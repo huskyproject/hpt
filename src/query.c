@@ -199,6 +199,7 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
     size_t i;
     unsigned int j;
     char pass[] = "passthrough";
+    char CR; 
 
     w_log( LL_FUNC, "%s::autoCreate() begin", __FILE__ );
 
@@ -308,24 +309,31 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
     }
 
     /*  fix if dummys del \n from the end of file */
-    fseek (f, -1L, SEEK_END);
+    fseek (f, -2L, SEEK_END);
+    CR = getc (f); /*   may be it is CR aka '\r'  */
     if (getc(f) != '\n') {
-	fseek (f, 0L, SEEK_END);  /*  not neccesary, but looks better ;) */
-	fputs (cfgEol(), f);
+        fseek (f, 0L, SEEK_END);  /*  not neccesary, but looks better ;) */
+        fputs (cfgEol(), f);
     } else {
-	fseek (f, 0L, SEEK_END);
+        fseek (f, 0L, SEEK_END);
     }
     i = ftell(f); /* config length */
+    
+    /* correct EOL in memory */
+    if(CR == '\r')
+        xstrcat(&buff,"\r\n"); /* DOS EOL */
+    else
+        xstrcat(&buff,"\n");   /* UNIX EOL */
+
     /*  add line to config */
-    if (fprintf(f, "%s%s", buff, cfgEol()) != (int)(strlen(buff)+strlen(cfgEol())) ||
-        fflush(f) != 0) {
-	w_log(LL_ERR, "Error creating area %s, config write failed: %s!",
-	      c_area, strerror(errno));
-	fseek(f, i, SEEK_SET);
-	setfsize(fileno(f), i);
+    if ( fprintf(f, "%s", buff) != (int)(strlen(buff)) || fflush(f) != 0) 
+    {
+        w_log(LL_ERR, "Error creating area %s, config write failed: %s!",
+            c_area, strerror(errno));
+        fseek(f, i, SEEK_SET);
+        setfsize(fileno(f), i);
     }
     fclose(f);
-
     nfree(buff);
 
     /*  echoarea addresses changed by safe_reallocating of config->echoAreas[] */
