@@ -558,8 +558,12 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
     }
 
     if(otherLinks)
-        forwardToLinks(msg, echo, otherLinks, &path, &pathCount, &path, &pathCount);
-
+    {
+        nfree(seenBys);
+        seenBys = memdup( path, sizeof(s_seenBy) * pathCount );
+        seenByCount = pathCount;
+        forwardToLinks(msg, echo, otherLinks, &seenBys, &seenByCount, &path, &pathCount);
+    }
 
     nfree(seenBys);
     nfree(path);
