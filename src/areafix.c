@@ -593,10 +593,15 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 	buff = trimLine(buff);
 	buff = stripComment(buff);
 	if (buff[0] != 0) {
-	    buff = cfgline = shell_expand(buff);
+	    buff = shell_expand(buff);
+	    buff = cfgline = vars_expand(buff);
 	    token = strseparate(&cfgline, " \t");
 	    if (stricmp(token, "echoarea")==0) {
 		token = strseparate(&cfgline, " \t"); 
+		if (*token=='\"' && token[strlen(token)-1]=='\"' && token[1]) {
+		    token++;
+		    token[strlen(token)-1]='\0';
+		}
 		if (stricmp(token, areaName)==0) {
 		    fileName = safe_strdup(getCurConfName());
 		    pos = getCurConfPos();
@@ -1196,6 +1201,7 @@ int changepause(char *confName, s_link *link, int opt)
 	cfgline = trimLine(cfgline);
 	cfgline = stripComment(cfgline);
 	cfgline = shell_expand(cfgline);
+	cfgline = vars_expand(cfgline);
 	line = cfgline;
 	token = strseparate(&line, " \t");
 	if (token && stricmp(token, "link") == 0) {
@@ -1209,7 +1215,8 @@ linkline:
 		cfgline = trimLine(cfgline);
 		cfgline = stripComment(cfgline);
 		cfgline = shell_expand(cfgline);
-		if (!*cfgline || *cfgline == '#') {
+		cfgline = vars_expand(cfgline);
+		if (!*cfgline) {
 		    nfree(cfgline);
 		    continue;
 		}
@@ -1295,6 +1302,7 @@ int changeresume(char *confName, s_link *link)
 	cfgline = trimLine(cfgline);
 	cfgline = stripComment(cfgline);
 	cfgline = shell_expand(cfgline);
+	cfgline = vars_expand(cfgline);
 	line = cfgline;
 	token = strseparate(&line, " \t");
 	if (!token || stricmp(token, "link")) {
@@ -1311,7 +1319,8 @@ linkliner:
 	    cfgline = trimLine(cfgline);
 	    cfgline = stripComment(cfgline);
 	    cfgline = shell_expand(cfgline);
-	    if (!*cfgline || *cfgline == '#') {
+	    cfgline = vars_expand(cfgline);
+	    if (!*cfgline) {
 		nfree(cfgline);
 		continue;
 	    }
@@ -1340,7 +1349,8 @@ linkliner:
 	    cfgline = trimLine(cfgline);
 	    cfgline = stripComment(cfgline);
 	    cfgline = shell_expand(cfgline);
-	    if (!*cfgline || *cfgline == '#') {
+	    cfgline = vars_expand(cfgline);
+	    if (!*cfgline) {
 		nfree(cfgline);
 		continue;
 	    }
