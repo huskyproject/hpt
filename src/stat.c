@@ -1,3 +1,31 @@
+/* $Id$
+ *****************************************************************************
+ * HPT --- FTN NetMail/EchoMail Tosser
+ *****************************************************************************
+ * Copyright (C) 2002-2003
+ *
+ * Husky development team
+ *
+ * http://husky.sf.net
+ *
+ * This file is part of HPT.
+ *
+ * HPT is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * HPT is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with HPT; see the file COPYING.  If not, write to the Free
+ * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *****************************************************************************
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -59,7 +87,7 @@ stat_echo *read_echo(FILE *F);
 void free_echo(stat_echo *e);
 void debug_out(stat_echo *e);
 
-static stat_echo *stat = NULL;  /* first echo in echoes chain */
+static stat_echo *statecho = NULL;  /* first echo in echoes chain */
 static int do_stat = 1;                /* drop to 0 if critical error */
 
 int acmp(hs_addr *a1, st_addr *a2)
@@ -83,7 +111,7 @@ int acmp2(st_addr *a1, st_addr *a2)
 void put_stat(s_area *echo, hs_addr *link, st_type type, long len)
 {
     
-    stat_echo *cur = stat, *prev = NULL, *me;
+    stat_echo *cur = statecho, *prev = NULL, *me;
     chain_link *curl, *prevl;
     int res;
     
@@ -97,7 +125,7 @@ void put_stat(s_area *echo, hs_addr *link, st_type type, long len)
             me->tag_len = strlen(echo->areaName);
             memcpy(me->tag, echo->areaName, me->tag_len+1);
             me->links = 0; me->chain = NULL;
-            if (prev != NULL) prev->next = me; else stat = me;
+            if (prev != NULL) prev->next = me; else statecho = me;
             me->next = cur; cur = me; break;
         }
         else { prev = cur; cur = cur->next; }
@@ -145,7 +173,7 @@ void upd_stat(char *file)
     } hdr = {"vk", REV_CUR, 0, {0,0,0,0,0,0,0,0}}, ohdr;
     
     if (!do_stat) { msg("stat was disabled"); return; }
-    if (stat == NULL) { 
+    if (statecho == NULL) { 
 #ifdef STAT_DEBUG
         msg("Nothing new to stat");
 #endif
@@ -177,7 +205,7 @@ void upd_stat(char *file)
     hdr.t0 = OLD ? ohdr.t0 : time(NULL);
     fwrite(&hdr, sizeof(hdr), 1, NEW);
     /* main loop */
-    cur = stat;
+    cur = statecho;
     while (do_stat && OLD && !feof(OLD)) {
         stat_echo *old/* = read_echo(OLD)*/;
         old = read_echo(OLD);
@@ -228,12 +256,12 @@ void upd_stat(char *file)
     }
     /* write new echoes to the end of base */
     while (do_stat && cur != NULL) { write_echo(NEW, cur); cur = cur->next; }
-    cur = stat;
+    cur = statecho;
     while (cur != NULL) { next = cur->next; free_echo(cur); cur = next; }
     /* unlink old and rename new */
     fclose(NEW); if (OLD) fclose(OLD);
-    if (do_stat) { unlink(oldf); rename(newf, oldf); }
-    else { unlink(newf); msg("New stat base is not written"); }
+    if (do_stat) { remove(oldf); rename(newf, oldf); }
+    else { remove(newf); msg("New stat base is not written"); }
 }
 
 int write_echo(FILE *F, stat_echo *e) 
@@ -298,7 +326,7 @@ void free_echo(stat_echo *e) {
 
 void debug_out(stat_echo *e) {
 #ifdef STAT_DEBUG
-    stat_echo *cur = e ? e : stat;
+    stat_echo *cur = e ? e : statecho;
     chain_link *curl;
     while (cur != NULL) {
         curl = cur->chain;
@@ -306,7 +334,7 @@ void debug_out(stat_echo *e) {
 #ifdef STAT_ALONE
             fprintf(stderr, "%s, %d:%d/%d.%d: i=%d/o=%d/b=%d/d=%d ib=%d/ob=%d\n",
 #else
-                w_log('s', "%s, %d:%d/%d.%d: i=%d/o=%d/b=%d/d=%d ib=%d/ob=%d",
+                w_log(LL_DEBUGS, "%s, %d:%d/%d.%d: i=%d/o=%d/b=%d/d=%d ib=%d/ob=%d",
 #endif
                 cur->tag,
                 curl->link.addr.zone, curl->link.addr.net, curl->link.addr.node, curl->link.addr.point,
