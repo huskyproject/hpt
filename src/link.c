@@ -362,9 +362,9 @@ int linkArea(s_area *area, int netMail)
             if (jam) {
                 if ((msgs[i].replyto   != msgs[i].hdr.jamhdr->ReplyTo) ||
                     (msgs[i].replynext != msgs[i].hdr.jamhdr->ReplyNext) ||
-                    (msgs[i].hdr.jamhdr->Reply1st != msgs[i].replies[0]) ||
+                    (msgs[i].hdr.jamhdr->Reply1st && !msgs[i].freeReply) ||
                     msgs[i].relinked) {
-                    msgs[i].hdr.jamhdr->Reply1st   = msgs[i].replies[0];
+                    if (!msgs[i].freeReply) msgs[i].hdr.jamhdr->Reply1st = 0;
                     msgs[i].hdr.jamhdr->ReplyTo   = msgs[i].replyto;
                     msgs[i].hdr.jamhdr->ReplyNext = msgs[i].replynext;
                     Jam_WriteHdr(harea, msgs[i].hdr.jamhdr, i+1);
