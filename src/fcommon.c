@@ -290,6 +290,7 @@ int createPackFileName(s_link *link)
     e_bundleFileNameStyle bundleNameStyle = eTimeStamp;
 
     tr=aTime=time(NULL);
+    aTime %= 0xffffff;
     tp=localtime(&tr);
     counter = pkt_count;
 
