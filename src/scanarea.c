@@ -122,12 +122,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
    {
       if (echo->downlinks[i]->pktFile == NULL) {
 
-/*         // pktFile does not exist
-         name = tempnam(outboundDir, NULL);
-         echo->downlinks[i]->pktFile = (char *) malloc(strlen(name)+4+1); // 4 == strlen(".pkt");
-         strcpy(echo->downlinks[i]->pktFile, name);
-         strcat(echo->downlinks[i]->pktFile, ".pkt");
-         */
+         // pktFile does not exist
          name = createTempPktFileName();
          if (name == NULL) {
             writeLogEntry(log, '9', "Could not create new pkt.");
