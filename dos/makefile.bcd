@@ -1,7 +1,5 @@
-#you should copy this file to ../src directory and run make in it 
-
-# include Husky-Makefile-Config
-include ..\..\huskymak.cfg
+# It is NOT necessary any more to copy this file into the ../src directory
+# and run make there. You can now run make here in the dos subdirectory.
 
 CC      = bcc
 
@@ -26,16 +24,20 @@ OBJS    = pktinfo.obj \
 	  crc.obj \
 	  xstr.obj \
 	  hptlink.obj \
-          hpttree.obj
+          hpttree.obj \
+	  link.obj \
+	  strsep.obj \
+	  post.obj  \
+	  txt2pkt.obj
 
 SRC_DIR = ..\src
 
 !IF $(DEBUG) == 1
-CFLAGS  = -DDEBUG_HPT -v -w -ml -I..\h -I$(INCDIR) -DMSDOS -DHAS_JUNK_AFTER_SEEK
-LFLAGS  = -v -w -ml -L$(LIBDIR)
+CFLAGS  = -ml -v -w -O2 -DDEBUG_HPT -I..\h -I..\.. -I..\..\smapi -I..\..\fidoconf -DMSDOS
+LFLAGS  = -ml -v -w -L..\..\smapi -L..\..\fidoconf
 !ELSE
-CFLAGS  = -w -ml -I..\h -I$(INCDIR) -DMSDOS -DHAS_JUNK_AFTER_SEEK
-LFLAGS  = -w -ml -L$(LIBDIR)
+CFLAGS  = -ml -v -w -O2 -I..\h -I..\.. -I..\..\smapi  -I..\..\fidoconf -DMSDOS
+LFLAGS  = -ml -w -L..\..\smapi -L..\..\fidoconf
 !ENDIF
 
 all: $(OBJS) \
@@ -44,7 +46,8 @@ all: $(OBJS) \
      tpkt.exe \
      hpt.exe \
      hptlink.exe \
-     hpttree.exe
+     hpttree.exe \
+     txt2pkt.exe
 
 pktinfo.exe: pktinfo.obj $(OBJS)
 	$(CC) $(LFLAGS) @&&!
@@ -54,14 +57,15 @@ recode.obj
 pktread.obj
 fcommon.obj
 global.obj
-fidoconf.lib
+xstr.obj
+fconfbcd.lib
 smapibcd.lib
 !
 
 tlog.exe: tlog.obj log.obj
 	$(CC) $(LFLAGS) tlog.obj log.obj
 
-tpkt.exe: tpkt.obj pktwrite.obj fcommon.obj pktread.obj recode.obj log.obj global.obj
+tpkt.exe: tpkt.obj pktwrite.obj fcommon.obj pktread.obj recode.obj log.obj global.obj xstr.obj
 	$(CC) $(LFLAGS) @&&!
 tpkt.obj
 log.obj
@@ -70,8 +74,9 @@ pktread.obj
 recode.obj
 pktwrite.obj
 global.obj
-fidoconf.lib
-smapibcd.lib
+xstr.obj
+fconfbcw.lib
+smapibcw.lib
 !
 
 hpt.exe: $(OBJS)
@@ -86,30 +91,48 @@ scan.obj
 areafix.obj
 seenby.obj
 toss.obj
+link.obj
 log.obj
 scanarea.obj
 dupe.obj
 tree.obj
 crc.obj
-smapibcd.lib
-fidoconf.lib
+xstr.obj
+strsep.obj
+post.obj
+fconfbcw.lib
+smapibcw.lib
 !
 
 hptlink.exe: hptlink.obj
 	$(CC) $(LFLAGS) @&&!
 hptlink.obj
-fidoconf.lib
-smapibcd.lib
+fconfbcw.lib
+smapibcw.lib
 ! 
 
 hpttree.exe: hpttree.obj
 	$(CC) $(LFLAGS) @&&!
 hpttree.obj
-fidoconf.lib
-smapibcd.lib
+fconfbcw.lib
+smapibcw.lib
 ! 
 
-.c.obj:
+txt2pkt.exe: $(OBJS)
+	$(CC) $(LFLAGS) @&&!
+txt2pkt.obj
+pktwrite.obj
+fcommon.obj
+pktread.obj
+recode.obj
+log.obj
+xstr.obj
+global.obj
+fconfbcw.lib
+smapibcw.lib
+!
+
+{..\src}.c.obj:
 	$(CC) $(CFLAGS) -c $<
 
 clean:
@@ -118,11 +141,5 @@ clean:
 distclean: clean
 	del *.exe
 
-install: hpt.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe hpttree.exe
-	copy hpt.exe $(BINDIR)
-	copy hptlink.exe $(BINDIR)
-	copy hpttree.exe $(BINDIR)
-	copy pktinfo.exe $(BINDIR)
-	copy tpkt.exe $(BINDIR)
-	copy tlog.exe $(BINDIR)
+
 
