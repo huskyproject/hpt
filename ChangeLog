@@ -1,3 +1,20 @@
+2003-01-14 Tuesday 13:35  stas_degteff
+
+	* make/: makefile.mvc (1.6), makefile.mvcdll (1.8), makeperl.mvc
+	(1.13), makeperl.mvcdll (1.10): Remove obsolete macroses
+
+2003-01-14 Tuesday 12:35  mche
+
+	* src/carbon.c (1.10): fix kluge location in carbon copied messages
+
+2003-01-14 Tuesday 11:24  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.65): Small update
+
+2003-01-14 Tuesday 10:55  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.64): New question: learning CVS an russian
+
 2003-01-13 Monday 14:52  stas_degteff
 
 	* src/perl.c (1.47): Remove obsolete check
