@@ -1,3 +1,9 @@
+2004-02-06 Friday 07:20  andr_lukyanov
+
+	* src/: hpt.c (1.191), hptlink.c (1.54), hpttree.c (1.29),
+	pktinfo.c (1.20), tpkt.c (1.32), txt2pkt.c (1.53): Fix version and
+	usage strings info
+
 2004-02-05 Thursday 12:46  andrew_ladutsko
 
 	* doc/hpt.texi (1.148): fixed description of sendNotifyMessages
