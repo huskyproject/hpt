@@ -2,6 +2,11 @@ hpt 0.9.5
 ---------
 
 ----- cvs ci ------
+Fri Jan  7 11:30:05 NOVT 2000
+max:
+* fixed bug in makeMsg
+
+----- cvs ci ------
 Thu Jan  6 19:51:30 NOVT 2000                                                   
 max (patch from Kolya):
 - added string functions xstralloc, xstrcat, xstrscat, xscatprintf to

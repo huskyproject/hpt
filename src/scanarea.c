@@ -133,12 +133,13 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    // create text
    msg->textLength = MsgGetTextLen(hmsg);
    msg->text=NULL;
-   if (action != 2) 
-       xscatprintf(&(msg->text), "AREA:%s\r", strUpper(echo->areaName));
+   if (action!=2) xscatprintf(&(msg->text),"AREA:%s\r",strUpper(echo->areaName));
    xstrcat(&(msg->text), kludgeLines);
-   xstralloc(&(msg->text), strlen(msg->text) + msg->textLength);
+   ctrlLen = strlen(msg->text);
+   xstralloc(&(msg->text), ctrlLen + msg->textLength);
    MsgReadMsg(hmsg, NULL, (dword) 0, (dword) msg->textLength,
-              (byte *)(msg->text+strlen(msg->text)), (dword) 0, (byte *)NULL);
+              (byte *)(msg->text+ctrlLen), (dword) 0, (byte *)NULL);
+   msg->text[msg->textLength + ctrlLen]='\0';
    if (msg->text[strlen(msg->text)-1] != '\r')  // if origin has no ending \r add it
       xstrcat(&(msg->text), "\r");
    free(kludgeLines);

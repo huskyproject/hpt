@@ -124,7 +124,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
    xstralloc(&(msg->text), msg->textLength + ctrlLen);
 
    MsgReadMsg(SQmsg, NULL, 0, msg->textLength, (unsigned char *) msg->text+ctrlLen, 0, NULL);
-   msg->text[msg->textLength + ctrlLen] = '\0'; /* MsgReadMsg doesn't do zero termination */
+   msg->text[msg->textLength+ctrlLen] = '\0'; /* MsgReadMsg doesn't do zero termination */
 
    xscatprintf(&(msg->text), "\001Via %u:%u/%u.%u @%04u%02u%02u.%02u%02u%02u.UTC %s\r",
            ourAka.zone, ourAka.net, ourAka.node, ourAka.point,
