@@ -228,7 +228,8 @@ void cleanEmptyBundles(char *pathName, size_t npos, char *wday)
    nfree(tmpfile);
 }
 
-int createTempPktFileName(s_link *link)
+/* old algorythm, use it if used didn't set SeqDir */
+int createTempPktFileName_legasy(s_link *link)
 {
     char *fileName=NULL; /*  pkt file in tempOutbound */
     time_t aTime = time(NULL);  /* get actual time */
@@ -261,6 +262,30 @@ int createTempPktFileName(s_link *link)
     }
     pkt_count = counter;
     pkt_aTime = aTime;
+
+    nfree(link->pktFile);
+    link->pktFile = fileName;
+    w_log(LL_CREAT,"pktFile %s created for [%s]",
+          link->pktFile,
+          aka2str(link->hisAka));
+    return 0;
+}
+
+int createTempPktFileName(s_link *link)
+{
+    char *fileName=NULL; /*  pkt file in tempOutbound */
+
+    if (config->seqDir == NULL)
+        return createTempPktFileName_legasy(link);
+
+    /* Making pkt name */
+    do {
+        nfree(fileName);
+        xscatprintf(&fileName, "%s%08x.pkt",
+                    config->tempOutbound,
+                    GenMsgId(config->seqDir, config->seqOutrun)
+                   );
+    } while (fexist(fileName) || fileNameAlreadyUsed(fileName, NULL));
 
     nfree(link->pktFile);
     link->pktFile = fileName;
