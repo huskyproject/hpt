@@ -594,7 +594,7 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 	w_log(LL_ECHOMAIL, "Badmail reason: Rejected by filter");
 	break;
     case 6:   /* MSGAPI error */
-	reason = strncat( strcpy(buff,"MSGAPIERR: "), strmerr(msgapierr), sizeof(buff) );
+	reason = strncat( strcpy(buff,"MSGAPIERR: "), strmerr(msgapierr), sizeof(buff)-sizeof("MSGAPIERR: ") );
 	w_log(LL_ECHOMAIL, "Badmail reason: %s", reason);
 	break;
     case 7:
