@@ -1905,14 +1905,31 @@ int filesComparer(const void *elem1, const void *elem2) {
     return 1;
 }
 
-char *validExt[] = {"*.MO?", "*.TU?", "*.TH?", "*.WE?", "*.FR?", "*.SA?", "*.SU?"};
+static char *validExt[] = { "su", "mo", "tu", "we", "th", "fr", "sa" };
+
+static int isArcMail(char *fname)
+{
+	char *p;
+	int i;
+	p=strrchr(fname, PATH_DELIM);
+	if (p) p++;
+	else p=fname;
+	for (i=0; i<8; i++)
+		if (!isalnum(*p++)) return 0;
+	if (*p++!='.') return 0;
+	for (i=0; i<sizeof(validExt)/sizeof(validExt[0]); i++)
+		if (strncasecmp(p, validExt[i], 2) == 0)
+			break;
+	if (i == sizeof(validExt)/sizeof(*validExt)) return 0;
+	return (isalnum(p[2]) && (p[3] == '\0'));
+}
 
 void processDir(char *directory, e_tossSecurity sec)
 {
     DIR            *dir = NULL;
     struct dirent  *file = NULL;
     char           *dummy = NULL;
-    int            rc, i;
+    int            rc;
     int            pktFile,
 	arcFile;
     s_fileInDir *files = NULL;
@@ -1992,9 +2009,8 @@ void processDir(char *directory, e_tossSecurity sec)
 	printf("testing sorted %s\n", dummy);
 #endif
 	if (!(pktFile = patimat(dummy+dirNameLen, "*.pkt") == 1))
-	    for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
-		if (patimat(dummy+dirNameLen, validExt[i]) == 1)
-		    arcFile = 1;
+	    if (isArcMail(dummy+dirNameLen))
+		arcFile = 1;
 
 	if (pktFile || (arcFile && !config->noProcessBundles)) {
 
@@ -2129,24 +2145,18 @@ void writeTossStatsToLog(void) {
 
 int find_old_arcmail(s_link *link, FILE *flo)
 {
-    char *line = NULL, *bundle=NULL, *p=NULL;
+    char *line = NULL, *bundle=NULL;
     ULONG len;
-    unsigned i, as;
+    unsigned as;
 
     while ((line = readLine(flo)) != NULL) {
 #ifndef UNIX
 	line = trimLine(line);
 #endif
-	for (i = 0; i < sizeof(validExt) / sizeof(char *); i++) {
-	    p = strrchr(line, PATH_DELIM);
-	    if (p && patimat(p+1, validExt[i]) == 1) {
-		if (*line!='~') {
-		    nfree(bundle);
-		    // One char for first symbol in flo file
-		    bundle = safe_strdup(line + 1);
-		}
-		break;
-	    }
+	if (isArcMail(line) && (*line == '^' || *line == '#')) {
+	    nfree(bundle);
+	    /* One char for first symbol in flo file */
+	    bundle = safe_strdup(line + 1);
 	}
 	nfree(line);
     }
