@@ -1,3 +1,4 @@
+@c $Id$
 @c adopted from msged.texi, written by Tobias Ernst
 @c %**start of header
 @setfilename hpt.info
@@ -70,7 +71,7 @@ The advantages of @value{HPT} is:
 @node Installation, Configuration Reference, Overview, Top
 @chapter Installation Procedures and Release Notes
 This chapter provides you with information that is necessary to successfully
-install and use @value{HPT}. 
+install and use @value{HPT}.
 
 I suppose, that you already has compiled binaries. If not - read "Download"
 or "Compile the Source Code" chapters.
@@ -128,7 +129,7 @@ groups for @code{EchoAreas})
 You should use the _same_ makefiles in smapi, fidoconf and hpt.
 
 @node Support, Credits, Compiling, Installation
-@section Support, Contacting the Author, Reporting Bugs, Contributing Code 
+@section Support, Contacting the Author, Reporting Bugs, Contributing Code
 
 There are numerous reasons why you might wish to establish contact with me,
 the author of @value{HPT}.
@@ -267,6 +268,7 @@ FIDOCONFIG about location of config file and keywords ideology.
 * AreafixNames::                set additional areafix names
 * AreafixOrigin::		set origin for areafix reports
 * AreafixSplitStr::             set split string for splitted areafix messages
+* AreafixQueryReports::         insert linked areas list into areafix reports
 * AreasFileNameCase::           case of filenames of autocreated areas
 * AutoAreaCreateFlag::          create this file-flag after auto-area-create
 * AutoPassive::                 set pause for links who don't poll our system
@@ -426,7 +428,7 @@ This statement cannot be repeated.
 @code{AreafixNames SqaFix, hptfix}
 @end table
 
-Set additional names for areafix robot. Default is "areafix", "areamgr", 
+Set additional names for areafix robot. Default is "areafix", "areamgr",
 "hpt".
 
 This statement cannot be repeated.
@@ -446,7 +448,7 @@ the origin string in areafix reports will be like this:
 
 This statement cannot be repeated.
 
-@node AreafixSplitStr, AreasFileNameCase, AreafixOrigin, Keywords
+@node AreafixSplitStr, AreafixQueryReports, AreafixOrigin, Keywords
 @subsection AreafixSplitStr
 @findex AreafixSplitStr
 @table @asis
@@ -460,7 +462,23 @@ This string added after splitted areafix messages.
 
 This statement cannot be repeated.
 
-@node AreasFileNameCase, AutoAreaCreateFlag, AreafixSplitStr, Keywords
+
+@node AreafixQueryReports, AreasFileNameCase, AreafixSplitStr, Keywords
+@subsection AreafixQueryReports
+@findex AreafixQueryReports
+@table @asis
+@item Syntax:
+@code{areafixQueryReports <bool>}
+@item Example:
+@code{areafixQueryReports off}
+@end table
+
+This statement enable/disable include linked areas list into all areafix
+replies. Default: enable.
+
+This statement cannot be repeated.
+
+@node AreasFileNameCase, AutoAreaCreateFlag, AreafixQueryReports, Keywords
 @subsection AreasFileNameCase
 @findex AreasFileNameCase
 @table @asis
@@ -517,7 +535,7 @@ This statement cannot be repeated.
 @code{beforePack pktpack /home/fido/out.tmp/*.pkt}
 @end table
 
-This <string> executes before packing pkt files to arcmail bundles. You 
+This <string> executes before packing pkt files to arcmail bundles. You
 may process your pkt files in @code{tempOutbound} directory with
 external utility.
 
@@ -546,13 +564,13 @@ the same filename for every pair of links. Automatically  switched to
 the same as addrDiff but tryes to use lower free numbers of extension in
 case when all higher numbers are already busy.
 @item Amiga
-Amiga Style Outbound (ASO). Bundles creates in @code{Outbound} directory 
+Amiga Style Outbound (ASO). Bundles creates in @code{Outbound} directory
 like this:
 @example
 2.5000.117.1.hut
 2.5000.117.1.mo0
 @end example
-If @code{SeparateBundles on} and @code{Packer} not defined pkt moves to 
+If @code{SeparateBundles on} and @code{Packer} not defined pkt moves to
 @code{2.5000.117.1.sep} directory.
 @end table
 
@@ -646,7 +664,7 @@ This statement cannot be repeated.
 @code{IgnoreSeen 99/150}
 @end table
 
-Ignore this SEEN-BY & pack mail for link.      
+Ignore this SEEN-BY & pack mail for link.
 But no pack it back if the mail was from him.
 
 This statement can be repeated.
@@ -662,10 +680,10 @@ This statement can be repeated.
 @end table
 
 Leave transit (routed) files in @code{Inbound} directory. If this
-statement is ommitted transit files wouldn't be kept. 
+statement is ommitted transit files wouldn't be kept.
 Default is "off".
 
-File route possible with "Att" attribute in message header and file name 
+File route possible with "Att" attribute in message header and file name
 in subject line.
 
 This statement cannot be repeated.
@@ -708,7 +726,7 @@ If message started with "AREA:NETMAIL" we have three ways:
 This statement cannot be repeated.
 
 @node LinkWithImportLog, LogEchoToScreen, KludgeAreaNetmail, Keywords
-@subsection LinkWithImportLog 
+@subsection LinkWithImportLog
 @findex LinkWithImportLog
 @table @asis
 @item Syntax:
@@ -1026,7 +1044,7 @@ Pseudo-code:
   2b) else actual = next statement
 
   3) jump to 2)
-  
+
 @end example
 
 NOTE! This statement defined after "links" section.
@@ -1144,7 +1162,7 @@ This statement cannot be repeated.
 @end table
 
 Extension of bundle & packet files will be changed to <string> before
-tossing (and before processPkt string executed if set). That may be used 
+tossing (and before processPkt string executed if set). That may be used
 for preventing of permanent tossing fault because of bad file in inbound.
 Default extension: tos.
 @code{TossingExt} without parameter disables files renaming in tossing.
@@ -1281,9 +1299,9 @@ This statement cannot be repeated.
 @table @asis
 @item TextDupes
 stores from, to, subj & msgid as text lines.
-@item HashDupes 
+@item HashDupes
 stores src32 of from + to + subj + msgid.
-@item HashDupesWMsgId 
+@item HashDupesWMsgId
 same as HashDupes, but stores also msgid as text.
 @item CommonDupeBase
 stores hashes of from + to + subj + areatag + msgid in one file (hpt_base.dpa)
@@ -1642,7 +1660,7 @@ link.
 This statement cannot be repeated.
 
 @node StatLog, TempInbound, RulesDir, Files and Paths
-@subsection StatLog 
+@subsection StatLog
 @findex StatLog
 @table @asis
 @item Syntax:
@@ -1748,7 +1766,7 @@ This statement cannot be repeated.
 * OptGrp::                      groups for export/import/mandatory
 * OurAka::                      our aka for link
 * Packer::                      default packer for link
-* Password::                    links default password 
+* Password::                    links default password
 * Pause::                       don't export mail for this link
 * PktSize::			max size of pkt in arcmail bundle
 * PktPwd::                      pktpassword for this link
@@ -1807,7 +1825,7 @@ This statement can only be repeated for different links.
 @code{aka 2:2433/1245}
 @end table
 
-This statement sets the aka for the current link. 
+This statement sets the aka for the current link.
 
 This statement can only be repeated for different links.
 
@@ -2099,7 +2117,7 @@ This statement can only be repeated for different links.
 @end table
 
 Don't allow unconditional forward requests from this link (via areafix)
-to your links. 
+to your links.
 
 This statement can only be repeated for different links.
 
@@ -2147,7 +2165,7 @@ This statement can only be repeated for different links.
 @end table
 
 By default forward requests processing for links in order as they
-defined in config. But you can set priority for some links... "1" is the 
+defined in config. But you can set priority for some links... "1" is the
 first link to forward requests, "2" is the second, etc.
 
 This statement can only be repeated for different links.
@@ -2621,7 +2639,7 @@ This statement specifies the echoareas.
 @item name:
 area-tag
 @item file:
-filename(s) for this area without extension; 
+filename(s) for this area without extension;
 should be the area-tag (as far as possible). if file == Passthrough then
 [-b <msgbase>] is skipped and msgarea is set as an passthrough area.
 @item msgbase:
@@ -2811,7 +2829,7 @@ This statement can be repeated.
 
 This statement specifies the @code{NetMailArea}. @xref{EchoArea},
 for details on @code{Options}. Like all areas NetmailAreas is *.msg
-bases per default. 
+bases per default.
 
 This statement can be repeated to use different netmailareas.
 
@@ -2889,7 +2907,7 @@ This statement can be repeated.
 @code{carbonCopy mail.from.100}
 @end table
 
-If an echomail is tossed whose from address field is the same as <addr>, 
+If an echomail is tossed whose from address field is the same as <addr>,
 the echomail is copied to the area specified by the @code{carbonCopy}
 keyword.
 
@@ -2921,7 +2939,7 @@ before the action:
      CarbonExtern *<command line>
 @end example
 
-This '*' does not work for CarbonDelete of course.     
+This '*' does not work for CarbonDelete of course.
 
 This statement cannot be repeated.
 
@@ -2938,7 +2956,7 @@ This statement cannot be repeated.
 This statement sets the area for the previous
 carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
 
-If no @code{EchoArea} defined to copy, the carbon msgs goes to the 
+If no @code{EchoArea} defined to copy, the carbon msgs goes to the
 @code{BadArea}.
 
 This statement can be placed after different
@@ -2956,7 +2974,7 @@ carbon@{Addr|To|From|Kludge|Subj|Text@} statements.
 @code{carbonDelete}
 @end table
 
-This statement specifies that selected by previous 
+This statement specifies that selected by previous
 carbon@{Addr|To|From|Kludge|Subj|Text@} statement msgs should not be
 stored into @code{EchoArea}.
 
@@ -2987,10 +3005,10 @@ This statement cannot be repeated.
 @code{carbonExtern douuedecode}
 @end table
 
-This statement specifies external program to run for the previous 
+This statement specifies external program to run for the previous
 carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
 
-If this statement is ommitted and no @code{EchoArea} defined for move or 
+If this statement is ommitted and no @code{EchoArea} defined for move or
 copy, the carbon msgs gets copyed to the @code{BadArea}.
 
 If program name is prepended with '|' sign, hpt tries to pass data thru
@@ -3186,7 +3204,7 @@ carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
 With this keyword you can make it possible to have more than 1 selection
 criteria for a message. The default rule is AND. So without using CarbonRule,
 all expressions will be AND-ed.
-With Carbonrule AND, the two expressions above and below the AND must be 
+With Carbonrule AND, the two expressions above and below the AND must be
 true or else a message will not be copied.
 With Carbonrule you can define how the expressions are joined together.
 
@@ -3235,7 +3253,7 @@ The above example can also be written as:
 Messages that have 'female' in the text, but not the word 'connector',
 will be copied to the my.mail area.
 
-Also messages with 'beer' in the text AND 'drink' in the text AND 'holliday' 
+Also messages with 'beer' in the text AND 'drink' in the text AND 'holliday'
 in the text, will be copied to the my.mail area.
 
 A set of expressions is true when they are OR-ed and at least one
@@ -3338,10 +3356,10 @@ This statement specifies external program to run for the previous
 carbon@{Addr|To|From|Kludge|Subj|Text@} statement for netmail
 messages...
 
-If this statement is ommitted and no @code{NetMailArea} defined for move or 
+If this statement is ommitted and no @code{NetMailArea} defined for move or
 copy, the carbon msgs gets copyed to the @code{BadArea}.
 
-If program name is prepended with '|' sign, hpt tries to pass data thru the 
+If program name is prepended with '|' sign, hpt tries to pass data thru the
 pipe, not temporary file.
 
 This statement can be repeated for each different
@@ -3352,10 +3370,10 @@ carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
 @chapter Advanced Concepts in @value{HPT}
 
 This chapter describes how to use some features...
-After you have managed to perform basic functions with @value{HPT}, like 
+After you have managed to perform basic functions with @value{HPT}, like
 defining paths & areas, this chapter will introduce you into some
 advanced concepts in @value{HPT} that deserve special attention, like
-how to use several netmail areas and similar. 
+how to use several netmail areas and similar.
 
 @menu
 * Exit::        hpt exit codes
@@ -3452,7 +3470,7 @@ c) scan works the same: first sending to z2 links, adding to seen-by's
 
 @node Perl support, , ZoneGating , Advanced Concepts
 @section Perl support in HPT
-HPT may be compiled with support for calling Perl subs in some parts of its 
+HPT may be compiled with support for calling Perl subs in some parts of its
 work. In this case it also provides API for such subs (Perl hooks).
 Perl subs are located in file filter.pl, which usually located
 in same directory as HPT's executable file but it's name and location
@@ -3486,10 +3504,10 @@ The following Perl hooks are supported:
 @end table
 @end table
 @item 5.
-  hpt_exit - called before hpt completely exit if any other Perl hook was called 
-  during this session. 
+  hpt_exit - called before hpt completely exit if any other Perl hook was called
+  during this session.
 @item 6.
-  route - called just before routing netmail message, the following variables 
+  route - called just before routing netmail message, the following variables
   availble:
 @table @asis
 @item $addr - message destination address,
