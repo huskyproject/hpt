@@ -3,19 +3,20 @@ Hpt_ro English readme: $Id$
      ABOUT
      -----
 In most cases, readonly restriction abilities of the HPT are enough.
-Sometimes however an echoarea should be protected from a group of links with some
-exceptions only or a readonly restriction period should expire. In these situations
-HPT cannot offer anything convenient.
-Fortunately HPT has a very powerful feature named perl hooks. If you need complex 
-readonly but you don't know perl or you are too lazy to grub about in perl 
-scripts, this program package is for you.
+Sometimes however an echoarea should be protected from a group of links with 
+some exceptions only or a readonly restriction period should expire. In these 
+situations HPT cannot offer anything convenient.
+Fortunately HPT has a very powerful feature named perl hooks. If you need 
+complex readonly but you don't know perl or you are too lazy to grub about in 
+perl scripts, this program package is for you.
 
     FILES
     ------
 
 Hpt_ro.pm - program library. It is a core of the package.
 
-ro_parser.pl - similar to tparser.exe: it prints result of config-files processing.
+ro_parser.pl - similar to tparser.exe: it prints result of config-files 
+               processing.
 
 ro_purge.pl - to clear hpt_ro config-file of expired rules. Execute this script
               sometimes (by task scheduler or manually).
@@ -34,8 +35,8 @@ Before setup make sure you have installed HPT with perl hooks enabled and perl
 (v5.6.0 or newer).
 
 1. Copy the files to a destination directory. It can be HPT directory but it 
-is not a must. The only requirement is that ro_parser.pl, ro_purge.pl and Hpt_ro.pm 
-must be in the same directory.
+is not a must. The only requirement is that ro_parser.pl, ro_purge.pl and 
+Hpt_ro.pm must be in the same directory.
 
 2. Adjust the paths in Hpt_ro.pm to your actual configuration:
 
@@ -45,8 +46,8 @@ must be in the same directory.
 The first string defines the HPT config-file name. The FIDOCONFIG environment 
 variable overrides this definition. 
 The second string contains hpt_ro config-file name. This file can have any name 
-and can be placed anywhere you want. I will refer to this file as 'ro.cfg' in this 
-document.
+and can be placed anywhere you want. I will refer to this file as 'ro.cfg' in 
+this document.
 
 Notice: you should use double back slashes instead of single ones.
 
@@ -67,8 +68,8 @@ filter.pl. Insert the following lines at the beginning of the filter.pl:
   use lib "n:\\bin\\hpt";
   use Hpt_ro;
 
-Specify the full path to the Hpt_ro.pm in the double quotes after 'use lib' statement.
-Don't forget to use double back slashes instead of single ones.
+Specify the full path to the Hpt_ro.pm in the double quotes after 'use lib' 
+statement. Don't forget to use double back slashes instead of single ones.
 
 Add the following lines to the filter() function:
 
@@ -93,8 +94,8 @@ After each time you change ro.cfg you should execute ro_parser.pl to make sure
 the config-file is free of errors. An incorrect config-file will cause 
 filter.pl run-time error. 
 If HPT detects error(s) during filter.pl compilation or 
-execution it will disable perl hooks. So one stupid misprint may crash down all your 
-security settings.
+execution it will disable perl hooks. So one stupid misprint may crash down 
+all your security settings.
 
 
      ro.cfg format
@@ -119,8 +120,8 @@ useful:
    echomaskn-1 echomaskn
  endechogroup
 
-You can define several groups with the same name. In this case echo 
-lists are merged. Example:
+You can define several groups with the same name. In this case echo lists are 
+merged. Example:
 
  echogroup sysops R50.SYSOP*
  echogroup sysops N5020.SYSOP*
@@ -144,8 +145,8 @@ or
  endlinkgroup
 
 The linkmask format is d:d/d[.d], where 'd' is a number or an asterisk (*).
-Link 'd:d/d.0' is an equivalent of 'd:d/d', so the point with zero number and the 
-node addresses are the same.
+Link 'd:d/d.0' is an equivalent of 'd:d/d', so the point with zero number and 
+the node addresses are the same.
 
 NOTES:
 - group names are CASE SENSITIVE (sysops and SYSOPS groups are different).
@@ -164,7 +165,8 @@ linkmask - link or link mask;
 echogroup - previously defined echo group. You must add the symbol '@' before
   the group name. A group name beginning with hyphen ('-') refers to a HPT 
   echo group ('-g' options in an echo area definition). I.e., '@-A' means 'all 
-  echoes that are defined as 'A' echo group members according to the HPT config-file'.
+  echoes that are defined as 'A' echo group members according to the HPT 
+  config-file'.
 echomask - echo name or mask;
 expiration date - last date of the rule validity. After this date the rule is 
   ignored and can be erased by ro_purge.pl. Date format is 'dd.mm.yy', where 
@@ -188,13 +190,13 @@ Examples:
 echogroup sysopechoes R50.SYSOP* N5020.SYSOP*
 deny 2:6037/1.* @sysopechoes
 
-- Moderator prohibited 2:6037/1.* to write to SUPER.ECHO till 31st December 2001
-inclusively:
+- Moderator prohibited 2:6037/1.* to write to SUPER.ECHO till 31st December 
+2001 inclusively:
 
   deny 2:6037/1.* SUPER.ECHO 31.12.01
 
-- A node has some uplinks and downlinks. The node receives some readonly echoes 
-from the uplinks. We must forbid our downlinks to write to the echoes.
+- A node has some uplinks and downlinks. The node receives some readonly 
+echoes from the uplinks. We must forbid our downlinks to write to the echoes.
 
   # The mask '*:*/*.*' means 'all links'. The mask '*:*/*' is not applicable
   # because it means 'all nodes' and is equivalent to the mask '*:*/*.0'.
@@ -215,13 +217,14 @@ from the uplinks. We must forbid our downlinks to write to the echoes.
   #  ...but forbid other links
   deny @all @readonly
 
-Theoretically in the example above one uplink has write access to the readonly echo,
-received from another uplink. Some action should be done to prevent this security breach.
-First of all, in HPT config-file the same unique group should be configured for each
-echoes received from the same uplink. Let's assume for example that echoes
-from 2:5020/52 have group 'A', from 2:5025/3 group 'B' and from 2:6037/9 group 'C'.
-Appropriate 'linkgrp' configuration also should be done to provide correct groups for
-autocreated echoes. After the HPT config-file was properly changed it is time to change ro.cfg:
+Theoretically in the example above one uplink has write access to the readonly 
+echo, received from another uplink. Some action should be done to prevent this 
+security breach. First of all, in HPT config-file the same unique group should 
+be configured for each echoes received from the same uplink. Let's assume for 
+example that echoes from 2:5020/52 have group 'A', from 2:5025/3 group 'B' and 
+from 2:6037/9 group 'C'. Appropriate 'linkgrp' configuration also should be 
+done to provide correct groups for autocreated echoes. After the HPT 
+config-file was properly changed it is time to change ro.cfg:
 
   linkgroup all *:*/*.*
   echogroup readonly
@@ -256,7 +259,8 @@ circumstances:
 letter to the echo straightway.
 
 The 1st, 2nd and 3rd cases could be processed by HPT itself without Hpt_ro help.
-The config-file rereading is necessary only for the correct processing of the 4th case.
+The config-file rereading is necessary only for the correct processing of the 
+4th case.
 
 
      LICENSE
