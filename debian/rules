@@ -34,6 +34,8 @@ clean:
 
 	# Add here commands to clean up after the build process.
 	-$(MAKE) clean
+	-cd doc ;\
+	$(MAKE) clean
 
 	dh_clean
 
