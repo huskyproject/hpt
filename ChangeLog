@@ -1,3 +1,8 @@
+2002-01-18 Friday 05:14  ml
+
+	* src/post.c (1.60.2.2): convert AREA:CONFERENCE to upper case if
+	needed when -x option is used in post
+
 2002-01-13 Sunday 19:57  ml
 
 	* src/areafix.c (1.232.2.3): removing trailing \r from the end of
