@@ -227,6 +227,9 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 		  tempLink.hisAka.node -= (tempLink.hisAka.node % 100);
 		  tempLink.hisAka.point = 0;
 		  break;
+	  case route_extern:
+	          string2addr(route->viaStr, &tempLink.hisAka);
+	          break;
       }
 
       getLink = getLinkFromAddr(*config, tempLink.hisAka);

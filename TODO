@@ -6,6 +6,8 @@ Category 1: Will certainly be implemented until next release
 - excludePassthroughCarbon
 - don't open/close on each msg when writing to pkt files.
 - add pkt from to dupe messages
+- msgbasedir for each link
+- tossIgnoreSeenBy <address>
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
