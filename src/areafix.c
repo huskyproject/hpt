@@ -1503,10 +1503,13 @@ int tellcmd(char *cmd) {
 	case '\000': return NOTHING;
 	case '-'  :
 		if (line[1]=='-' && line[2]=='-') return DONE;
-		else if (line[1]=='\000') return ERROR;
-		else return DEL;
+		if (line[1]=='\000') return ERROR;
+		if (strchr(line,' ') || strchr(line,'\t')) return ERROR;
+		return DEL;
 	case '~'  : return REMOVE;
-	case '+': if (line[1]=='\000') return ERROR;
+	case '+':
+		if (line[1]=='\000') return ERROR;
+		if (strchr(line,' ') || strchr(line,'\t')) return ERROR;
 	default: return ADD;
 	}
 	

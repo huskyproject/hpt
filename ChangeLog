@@ -2,6 +2,13 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Nov 12 13:48:07 NOVT 2000
+max:
+* fixed segfault when run "hpt -c"
+* fixed "-q" cmd arg parsing
+* areafix print error for subscribe & unsibscribe cmds with spaces
+
+----- cvs ci ------
 Wed Nov  8 22:22:17 NOVT 2000
 max:
 * in carbon msgs kludges stripped only after Origin

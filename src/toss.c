@@ -900,6 +900,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 		   else *msgbtype='\0'; // "-b msgbtype" defaults
 	   }
 	}
+
    }
    
    nfree(squishFileName);

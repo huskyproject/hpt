@@ -112,7 +112,7 @@ int  processExportOptions(unsigned int *i, int argc, char **argv)
 
 void start_help(void) {
   fprintf(stdout,"%s",versionStr);
-  fprintf(stdout,"\nUsage: hpt [options] [-c config]\n");
+  fprintf(stdout,"\nUsage: hpt [-c config] [options]\n");
   fprintf(stdout,"   hpt toss    - tossing mail\n");
   fprintf(stdout,"   hpt toss -b - tossing mail from badarea\n");
   fprintf(stdout,"   hpt scan    - scanning echomail\n");
@@ -164,13 +164,15 @@ int processCommandLine(int argc, char **argv)
          i++; relink(argv[i]);
 	 continue;
       } else if (stricmp(argv[i], "-c") == 0) {
-         ++i; xstrcat(&cfgFile, argv[i]);
-	 continue;
+		  i++;
+		  if (argv[i]!=NULL) xstrcat(&cfgFile, argv[i]);
+		  else printf("parameter missing after \"%s\"!\n", argv[i-1]);
+		  continue;
       } else if (stricmp(argv[i], "-q") == 0) {
-		  ++i; quiet = 1;
+		  quiet = 1;
 		  continue;
       } else if (stricmp(argv[i], "-h") == 0) {
-		  ++i; start_help();
+		  start_help();
 		  continue;
       } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
 
@@ -245,7 +247,7 @@ void processConfig()
    // lock...
    if (config->lockfile!=NULL && fexist(config->lockfile)) {
 	   if ((f = fopen(config->lockfile, "rt"))==NULL) {
-		   fprintf(stderr,"Can't open file: %s\n",config->lockfile);
+		   fprintf(stderr,"Can't open file: \"%s\"\n",config->lockfile);
 		   exit_hpt("Can't open lock-file",0);
 	   }
 	   fscanf(f, "%lu\n", &pid);
@@ -279,7 +281,7 @@ void processConfig()
      xstrscat(&buff, config->logFileDir, "hpt.log", NULL);
 	 hpt_log = openLog(buff, versionStr);
    } else printf("You have no logFileDir in your config, there will be no log created");
-   if (hpt_log==NULL) printf("Could not open logfile: %s\n", buff);
+   if (hpt_log==NULL) printf("Could not open logfile: \"%s\"\n", buff);
    writeLogEntry(hpt_log, '1', "Start");
    nfree(buff);
 
