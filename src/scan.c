@@ -249,6 +249,28 @@ void processAttachs(s_link *link, s_message *msg)
    msg->subjectLine = newSubjectLine;
 }
 
+void processRequests(s_link *link, s_message *msg)
+{
+   FILE *flo;
+   char *running = msg->subjectLine;
+   char *token;
+   
+   flo = fopen(link->floFile, "a");
+
+   token = strsep(&running, " \t");
+
+   while (token != NULL) {
+      if (flo != NULL) fprintf(flo, "%s\n", token);
+
+      token = strsep(&running, " \t");
+   }
+   if (flo!= NULL) {
+      fclose(flo);
+   } else writeLogEntry(log, '9', "Could not open FloFile");
+
+}
+
+
 int packMsg(HMSG SQmsg, XMSG xmsg)
 {
    FILE        *pkt, *req;
@@ -270,22 +292,18 @@ int packMsg(HMSG SQmsg, XMSG xmsg)
    // note: link->floFile used for create 12345678.?ut mail packets & ...
 
    if ((xmsg.attr & MSGFRQ) == MSGFRQ) {
-	   // if msg has request flag then put the subjectline into request file.
-	   if (createOutboundFileName(virtualLink, NORMAL, REQUEST) == 0) {
-		   req = fopen(virtualLink->floFile, "a");
-		   if (req!=NULL) {
-			   fprintf(req, msg.subjectLine);
-			   fprintf(req, "\n");
-			   fclose(req);
-		   } else writeLogEntry(log, '9', "Could not open Request File");
+      // if msg has request flag then put the subjectline into request file.
+      if (createOutboundFileName(virtualLink, NORMAL, REQUEST) == 0) {
 
-		   remove(virtualLink->bsyFile);
-		   free(virtualLink->bsyFile);
-		   // mark Mail as sent
-		   xmsg.attr |= MSGSENT;
-		   MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
-		   free(virtualLink->floFile);
-	   }
+         processRequests(virtualLink, &msg);
+         
+         remove(virtualLink->bsyFile);
+         free(virtualLink->bsyFile);
+         // mark Mail as sent
+         xmsg.attr |= MSGSENT;
+         MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+         free(virtualLink->floFile);
+      }
    } /* endif */
 
    if ((xmsg.attr & MSGFILE) == MSGFILE) {
