@@ -86,7 +86,7 @@ int useSubj = 1;
 int useReplyId = 1;
 int loglevel = 10;
 int linkNew = 0;
-char *version = "1.7";
+char *version = "1.8";
 HAREA harea;
 int maxreply;
 
@@ -126,6 +126,24 @@ char *skipReSubj ( char *subjstr )
 
 }
 
+int cmpMsgIdReply (register char *str1, register char *str2)
+{
+
+    while (*str1==*str2 && *str1) {
+	str1++;
+	str2++;
+    }
+    if (*str1=='\0' && *str2=='\0') return 0;
+    if (*str1=='@') {
+	while (*str1 && *str1!=' ') str1++;
+	return (strcmp (str1, str2));
+    } else if(*str2=='@') {
+	while (*str2 && *str2!=' ') str2++;
+	return (strcmp (str1, str2));
+    } else {
+	return 1;
+    }
+}
 
 void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo *replmap )
 {
@@ -392,8 +410,8 @@ void linkArea(s_area *area)
 		  replFound = 0;
 
 		  if (!replFound &&
-		     (crepl -> msgId) && (srepl -> replyId) &&
-		     strcmp(crepl -> msgId, srepl -> replyId) == 0 ) {
+		      (crepl -> msgId) && (srepl -> replyId) &&
+		      cmpMsgIdReply (crepl -> msgId, srepl -> replyId) == 0 ) {
 
 		       replFound++;
 		       links_msgid++;
@@ -416,30 +434,30 @@ void linkArea(s_area *area)
 
 		  if ( !replFound &&
 		       (crepl -> treeId == 0 || srepl -> treeId == 0) &&
-		      crepl -> replyId && srepl -> replyId) {
-		     if ( strcmp(crepl -> replyId, srepl -> replyId) == 0 &&
-			    strcmp(crepl -> replyId, "  ffffffff")) {
+		       crepl -> replyId && srepl -> replyId) {
+		      if ( cmpMsgIdReply (crepl -> replyId, srepl -> replyId) == 0 &&
+			   strcmp(crepl -> replyId, "  ffffffff")) {
 
-		       replFound++;
-		       links_replid++;
+			  replFound++;
+			  links_replid++;
 
-		       if ( ! crepl -> treeId ) { // *crepl isn't linked
-			  if (srepl -> treeId ) { // *srepl linked already
-			     crepl -> treeId = srepl -> treeId;
-			  } else {
-                             crepl -> treeId = i; // top of new tree
+			  if ( ! crepl -> treeId ) { // *crepl isn't linked
+			      if (srepl -> treeId ) { // *srepl linked already
+				  crepl -> treeId = srepl -> treeId;
+			      } else {
+				  crepl -> treeId = i; // top of new tree
+			      }
 			  }
-		       }
-		       srepl -> treeId = crepl -> treeId;
+			  srepl -> treeId = crepl -> treeId;
 
-		       treeLinks++;
-		     }
+			  treeLinks++;
+		      }
 		  }
 
 		  if (!replFound && (srepl -> msgId) && (crepl -> replyId)) {
-		     if ( strcmp(srepl -> msgId, crepl -> replyId) == 0 ) {
-		       replFound++;
-		       links_revmsgid++;
+		      if ( cmpMsgIdReply (srepl -> msgId, crepl -> replyId) == 0 ) {
+			  replFound++;
+			  links_revmsgid++;
 
 		       if ( ! crepl -> treeId ) { // *crepl isn't linked
 			  if (srepl -> treeId ) { // *srepl linked already
