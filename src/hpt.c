@@ -249,22 +249,22 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef __linux__
-   sprintf(versionStr, "hpt v%u.%u.%u/LNX", VER_MAJOR, VER_MINOR, VER_PATCH);
+   sprintf(versionStr, "hpt %u.%u.%u/LNX", VER_MAJOR, VER_MINOR, VER_PATCH);
 #elif __freebsd__
-   sprintf(versionStr, "hpt v%u.%u.%u/BSD", VER_MAJOR, VER_MINOR, VER_PATCH);
+   sprintf(versionStr, "hpt %u.%u.%u/BSD", VER_MAJOR, VER_MINOR, VER_PATCH);
 #elif __OS2__
-    sprintf(versionStr, "hpt v%u.%u.%u/OS2", VER_MAJOR, VER_MINOR, VER_PATCH);
+    sprintf(versionStr, "hpt %u.%u.%u/OS2", VER_MAJOR, VER_MINOR, VER_PATCH);
 #elif __NT__
-    sprintf(versionStr, "hpt v%u.%u.%u/NT", VER_MAJOR, VER_MINOR, VER_PATCH);
+    sprintf(versionStr, "hpt %u.%u.%u/NT", VER_MAJOR, VER_MINOR, VER_PATCH);
 #elif __sun__
-    sprintf(versionStr, "hpt v%u.%u.%u/SUN", VER_MAJOR, VER_MINOR, VER_PATCH);
+    sprintf(versionStr, "hpt %u.%u.%u/SUN", VER_MAJOR, VER_MINOR, VER_PATCH);
 #else
-    sprintf(versionStr, "hpt v%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
+    sprintf(versionStr, "hpt %u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
 #endif
 
-   printf("Highly Portable Toss v%u.%u.%u\n", VER_MAJOR, VER_MINOR, VER_PATCH);
+   printf("Highly Portable Toss %u.%u.%u\n", VER_MAJOR, VER_MINOR, VER_PATCH);
 #if defined ( __WATCOMC__ ) && defined ( __NT__ )
-   sprintf( title, "Highly Portable Toss v%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
+   sprintf( title, "Highly Portable Toss %u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
    SetConsoleTitleA( title );
 #endif
    initCharsets();
