@@ -219,7 +219,7 @@ void correctNMAddr(s_message *msg, UINT16 def_zone)
       sprintf(buff, "Mail without INTL-Kludge. Assuming %i:%i/%i.%i -> %i:%i/%i.%i",
               msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
               msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
-      writeLogEntry(log, '2', buff);
+      writeLogEntry(hpt_log, '2', buff);
    } /* endif */
 }
 

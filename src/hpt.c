@@ -131,19 +131,19 @@ void processConfig()
    
 
    // open Logfile
-   log = NULL;
+   hpt_log = NULL;
    if (config->logFileDir != NULL) {
      buff = (char *) malloc(strlen(config->logFileDir)+7+1); /* 7 for hpt.log */
      strcpy(buff, config->logFileDir),
      strcat(buff, "hpt.log");
      if (config->loglevels==NULL)                           
-        log = openLog(buff, versionStr, "123456789", config->logEchoToScreen);
+        hpt_log = openLog(buff, versionStr, "123456789", config->logEchoToScreen);
        else                                                 
-        log = openLog(buff, versionStr, config->loglevels, config->logEchoToScreen);
+        hpt_log = openLog(buff, versionStr, config->loglevels, config->logEchoToScreen);
      free(buff);
    } else printf("You have no logFileDir in your config, there will be no log created");
-   if (log==NULL) printf("Could not open logfile: %s\n", buff);
-   writeLogEntry(log, '1', "Start");
+   if (hpt_log==NULL) printf("Could not open logfile: %s\n", buff);
+   writeLogEntry(hpt_log, '1', "Start");
 
    if (config->addrCount == 0) printf("at least one addr must be defined\n");
    if (config->linkCount == 0) printf("at least one link must be specified\n");
@@ -157,9 +157,9 @@ void processConfig()
        config->tempInbound == NULL ||
        config->tempOutbound == NULL) {
       if (config->lockfile != NULL) remove(config->lockfile);
-      writeLogEntry(log, '9', "wrong config file");
-      writeLogEntry(log, '1', "End");
-      closeLog(log);
+      writeLogEntry(hpt_log, '9', "wrong config file");
+      writeLogEntry(hpt_log, '1', "End");
+      closeLog(hpt_log);
       disposeConfig(config);
       exit(1);
    }
@@ -200,9 +200,9 @@ int main(int argc, char **argv)
    m.req_version = 0;
    m.def_zone = config->addr[0].zone;
    if (MsgOpenApi(&m) != 0) {
-      writeLogEntry(log, '9', "MsgApiOpen Error");
+      writeLogEntry(hpt_log, '9', "MsgApiOpen Error");
           if (config->lockfile != NULL) remove(config->lockfile);
-      closeLog(log);
+      closeLog(hpt_log);
       disposeConfig(config);
       exit(1);
    } /*endif */
@@ -233,8 +233,8 @@ int main(int argc, char **argv)
    MsgCloseApi();
 
    if (config->lockfile != NULL) remove(config->lockfile);
-   writeLogEntry(log, '1', "End");
-   closeLog(log);
+   writeLogEntry(hpt_log, '1', "End");
+   closeLog(hpt_log);
    disposeConfig(config);
    return 0;
 }

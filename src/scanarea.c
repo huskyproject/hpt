@@ -188,10 +188,10 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 		   
 		  // pktFile does not exist
 		  if ( createTempPktFileName(echo->downlinks[i]->link) ) {
-			  writeLogEntry(log, '9', "Could not create new pkt.");
+			  writeLogEntry(hpt_log, '9', "Could not create new pkt.");
 			  printf("Could not create new pkt.\n");
 			  disposeConfig(config);
-			  closeLog(log);
+			  closeLog(hpt_log);
 			  exit(1);
 		  }
 		   
@@ -231,7 +231,7 @@ void scanEMArea(s_area *echo)
    if (area != NULL) {
       statScan.areas++;
       sprintf(buff, "Scanning area: %s", echo->areaName);
-      writeLogEntry(log, '1', buff);
+      writeLogEntry(hpt_log, '1', buff);
       i = highWaterMark = MsgGetHighWater(area);
       highestMsg    = MsgGetHighMsg(area);
 
@@ -253,6 +253,6 @@ void scanEMArea(s_area *echo)
       MsgCloseArea(area);
    } else {
       sprintf(buff, "Could not open %s", echo->fileName);
-      writeLogEntry(log, '9', buff);
+      writeLogEntry(hpt_log, '9', buff);
    } /* endif */
 }

@@ -31,11 +31,11 @@
  *****************************************************************************/
 #include <global.h>
 
-s_log     *log;
+s_log     *hpt_log;
 s_fidoconfig *config;
 
 const int VER_MAJOR = 0;
-const int VER_MINOR = 27;
+const int VER_MINOR = 28;
 char      versionStr[20];
 
 int       cmToss = 0;

@@ -35,7 +35,7 @@
 #include <fidoconfig.h>
 #include <log.h>
 
-extern s_log     *log;
+extern s_log     *hpt_log;
 extern s_fidoconfig *config;
 
 // variables for config statements

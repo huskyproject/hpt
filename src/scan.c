@@ -256,7 +256,7 @@ void processAttachs(s_link *link, s_message *msg)
    
    if (flo!= NULL) {
       fclose(flo);
-   } else writeLogEntry(log, '9', "Could not open FloFile");
+   } else writeLogEntry(hpt_log, '9', "Could not open FloFile");
 
    // replace subjectLine
    free(msg->subjectLine);
@@ -283,7 +283,7 @@ void processRequests(s_link *link, s_message *msg)
    }
    if (flo!= NULL) {
       fclose(flo);
-   } else writeLogEntry(log, '9', "Could not open FloFile");
+   } else writeLogEntry(hpt_log, '9', "Could not open FloFile");
 
 }
 
@@ -363,7 +363,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
 		   writeMsgToPkt(pkt, msg);
 		   closeCreatedPkt(pkt);
 		   sprintf(buff, "Crash-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   writeLogEntry(log, '7', buff);
+		   writeLogEntry(hpt_log, '7', buff);
 
 		   remove(virtualLink->bsyFile);
 		   free(virtualLink->bsyFile);
@@ -383,7 +383,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
 		   writeMsgToPkt(pkt, msg);
 		   closeCreatedPkt(pkt);
 		   sprintf(buff, "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   writeLogEntry(log, '7', buff);
+		   writeLogEntry(hpt_log, '7', buff);
 		   
 		   remove(virtualLink->bsyFile);
 		   free(virtualLink->bsyFile);
@@ -414,7 +414,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
 
 
 , link->hisAka.net, link->hisAka.node, link->hisAka.point);
-                 writeLogEntry(log, '7', buff);
+                 writeLogEntry(hpt_log, '7', buff);
                  remove(link->bsyFile);
                  free(link->bsyFile);
                  // mark Mail as sent
@@ -424,7 +424,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
               }
            } else {
               sprintf(buff, "no route for mail to %u:%u/%u.%u found - leave mail untouched", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-              writeLogEntry(log, '8', buff);
+              writeLogEntry(hpt_log, '8', buff);
            }
    }
 
@@ -454,7 +454,7 @@ void scanNMArea(void)
    if (netmail != NULL) {
 
       highMsg = MsgGetHighMsg(netmail);
-      writeLogEntry(log, '1', "Scanning NetmailArea");
+      writeLogEntry(hpt_log, '1', "Scanning NetmailArea");
 
       // scan all Messages and test if they are already sent.
       for (i=1; i<= highMsg; i++) {
@@ -497,7 +497,7 @@ void scanNMArea(void)
 
       MsgCloseArea(netmail);
    } else {
-      writeLogEntry(log, '9', "Could not open NetmailArea");
+      writeLogEntry(hpt_log, '9', "Could not open NetmailArea");
    } /* endif */
 }
 
@@ -510,11 +510,11 @@ void writeScanStatToLog(void) {
      else
       logchar='4';
 
-   writeLogEntry(log, logchar, "Statistics");
+   writeLogEntry(hpt_log, logchar, "Statistics");
    sprintf(buff, "    areas: % 4d   msgs: % 6d", statScan.areas, statScan.msgs);
-   writeLogEntry(log, logchar, buff);
+   writeLogEntry(hpt_log, logchar, buff);
    sprintf(buff, "    exported: % 4d", statScan.exported);
-   writeLogEntry(log, logchar, buff);
+   writeLogEntry(hpt_log, logchar, buff);
 }
 
 void pack(void) {
@@ -522,7 +522,7 @@ void pack(void) {
    if (config->outtab != NULL) getctab(outtab, config->outtab);
    
    memset(&statScan, 0, sizeof(s_statScan));
-   writeLogEntry(log, '1', "Start packing...");
+   writeLogEntry(hpt_log, '1', "Start packing...");
    scanNMArea();
    statScan.areas++;
    writeScanStatToLog();
@@ -540,14 +540,14 @@ void scan(void)
 
    // zero statScan
    memset(&statScan, 0, sizeof(s_statScan));
-   writeLogEntry(log,'1', "Start scanning...");
+   writeLogEntry(hpt_log,'1', "Start scanning...");
 
    // open echotoss file
    f = fopen(config->echotosslog, "r");
 
    if (f == NULL) {
       // if echotoss file does not exist scan all areas
-      writeLogEntry(log, '3', "EchoTossLogFile not found -> Scanning all echoAreas.");
+      writeLogEntry(hpt_log, '3', "EchoTossLogFile not found -> Scanning all echoAreas.");
       for (i = 0; i< config->echoAreaCount; i++) {
          if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
             scanEMArea(&(config->echoAreas[i]));
@@ -556,7 +556,7 @@ void scan(void)
       }
    } else {
       // else scan only those areas which are listed in the file
-      writeLogEntry(log, '3', "EchoTossLogFile found -> Scanning only listed areas");
+      writeLogEntry(hpt_log, '3', "EchoTossLogFile found -> Scanning only listed areas");
 
       while (!feof(f)) {
          line = readLine(f);

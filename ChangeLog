@@ -1,6 +1,14 @@
 hpt 0.28
 --------
 
+
+----- cvs ci ------
+Mon May 10 13:14:47 CEST 1999
+mtt:
++ replaced all occurences of log to hpt_log because log is defined on pgcc/emx
++ inserted include <sys/types.h> whereever necessary for pgcc/emx
++ made some other changes (makefiles etc.) for pgcc/emx
+	
 ----- cvs ci ------
 Sun May  9 21:06:02 CEST 1999
 mtt:

@@ -89,7 +89,7 @@ static int checkEntry(void *e)
    char buff[256];
    sprintf(buff, "msg %ld has dupes in msgbase : trown from reply chain",
                  ((s_msginfo *) e) -> msgNum);
-   writeLogEntry(log, '6', buff);
+   writeLogEntry(hpt_log, '6', buff);
    return 1;
 }
 
@@ -113,7 +113,7 @@ int linkArea(s_area *area, int netMail)
                        area->msgbType | (netMail ? 0 : MSGTYPE_ECHO));
    if (harea) {
       sprintf(buff, "linking area %s", area->areaName);
-      writeLogEntry(log, '6', buff);
+      writeLogEntry(hpt_log, '6', buff);
       tree_init(&avlTree);
       msgsNum = MsgGetHighMsg(harea);
       /* Area linking is done in three passes */
@@ -130,7 +130,7 @@ int linkArea(s_area *area, int netMail)
          {
              MsgCloseMsg(hmsg);
              sprintf(buff, "msg %ld has no control information: trown from reply chain", i);
-             writeLogEntry(log, '6', buff);
+             writeLogEntry(hpt_log, '6', buff);
              continue;
          }
 
@@ -139,7 +139,7 @@ int linkArea(s_area *area, int netMail)
 
 	 if (ctl == NULL || curr == NULL) {
 	    sprintf(buff, "out of memory while linking on msg %ld", i);
-	    writeLogEntry(log, '9', buff);
+	    writeLogEntry(hpt_log, '9', buff);
 	    // try to free as much as possible
 	    // FIXME : remove blocks themselves
 	    tree_mung(&avlTree, NULL);
@@ -169,7 +169,7 @@ int linkArea(s_area *area, int netMail)
            if (orig -> freeReply >= MAX_REPLY) {
               sprintf(buff, "replies count for msg %ld exceeds %d, rest of the\
  replies won't be linked", orig -> msgNum, MAX_REPLY);
-              writeLogEntry(log, '6', buff);
+              writeLogEntry(hpt_log, '6', buff);
            } else {
               orig -> replies[(orig -> freeReply)++] = curr -> msgPos;
               curr -> replyToPos = orig -> msgPos;
@@ -195,7 +195,7 @@ int linkArea(s_area *area, int netMail)
       MsgCloseArea(harea);
    } else {
       sprintf(buff, "could not open area %s", area->areaName);
-      writeLogEntry(log, '9', buff);
+      writeLogEntry(hpt_log, '9', buff);
       return 0;
    };
    return 1;
@@ -218,7 +218,7 @@ void linkAreas(void)
 
    if (f == NULL) {
       // if importlog does not exist link all areas
-      writeLogEntry(log, '3', "Linking all Areas.");
+      writeLogEntry(hpt_log, '3', "Linking all Areas.");
 
       /* link all echomail areas */
       for (i = 0; i < config -> echoAreaCount; i++)
@@ -228,7 +228,7 @@ void linkAreas(void)
       linkArea(&(config->netMailArea),1);
 
    } else {
-      writeLogEntry(log, '3', "Using importlogfile -> linking only listed Areas");
+      writeLogEntry(hpt_log, '3', "Using importlogfile -> linking only listed Areas");
 
       while (!feof(f)) {
          line = readLine(f);

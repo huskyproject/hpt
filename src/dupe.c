@@ -213,7 +213,7 @@ s_dupeMemory *readDupeFile(s_area *area) {
 
    buff = (char *) malloc(strlen(area->areaName)+1+18);
    sprintf(buff, "Reading dupes of %s.", area->areaName);
-   writeLogEntry(log, '2', buff);
+   writeLogEntry(hpt_log, '2', buff);
    free(buff);
    
    dupeMemory = malloc(sizeof(s_dupeMemory));
@@ -225,7 +225,7 @@ s_dupeMemory *readDupeFile(s_area *area) {
       // readFile
       doReading(f, dupeMemory);
       fclose(f);
-   } else writeLogEntry(log, '2', "Error reading dupes.");
+   } else writeLogEntry(hpt_log, '2', "Error reading dupes.");
    
    free(fileName);
 

@@ -33,6 +33,9 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <ctype.h>
+#ifdef __EMX__
+#include <sys/types.h>
+#endif
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -98,7 +101,7 @@ void changeFileSuffix(char *fileName, char *newSuffix) {
       rename(fileName, newFileName);
    else {
       sprintf(buff, "Could not change suffix for %s. File already there and the 255 files after", fileName);
-      writeLogEntry(log, '9', buff);
+      writeLogEntry(hpt_log, '9', buff);
    }
 }
 
@@ -260,12 +263,12 @@ void putMsgInArea(s_area *echo, s_message *msg, int strip)
 
       } else {
          sprintf(buff, "Could not create new msg in %s!", echo->fileName);
-         writeLogEntry(log, '9', buff);
+         writeLogEntry(hpt_log, '9', buff);
       } /* endif */
       MsgCloseArea(harea);
    } else {
       sprintf(buff, "Could not open/create EchoArea %s!", echo->fileName);
-      writeLogEntry(log, '9', buff);
+      writeLogEntry(hpt_log, '9', buff);
    } /* endif */
 }
 
@@ -600,7 +603,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       if (newLinks[i]->pktFile == NULL) {
          // pktFile does not exist
          if ( createTempPktFileName(newLinks[i]) ) {
-            writeLogEntry(log, '9', "Could not create new pkt!\n");
+            writeLogEntry(hpt_log, '9', "Could not create new pkt!\n");
             printf("Could not create new pkt!\n");
             exit(1);
          }
@@ -653,7 +656,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    creatingLink = getLinkFromAddr(*config, pktOrigAddr);
 
    if (creatingLink == NULL) {
-      writeLogEntry(log, '!', "creatingLink == NULL !!!");
+      writeLogEntry(hpt_log, '!', "creatingLink == NULL !!!");
       return 1;
    }
 
@@ -773,7 +776,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    parseLine(buff,config);
 
    sprintf(buff, "Area '%s' autocreated by %s", c_area, hisaddr);
-   writeLogEntry(log, '8', buff);
+   writeLogEntry(hpt_log, '8', buff);
    
    if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr);
    else makeMsgToSysop(c_area, *forwardAddr);
@@ -1134,16 +1137,16 @@ void processNMMsg(s_message *msg,s_pktHeader *pktHeader)
 
          sprintf(buff, "Tossed Netmail: %u:%u/%u.%u -> %u:%u/%u.%u", msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
                          msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
-         writeLogEntry(log, '7', buff);
+         writeLogEntry(hpt_log, '7', buff);
          statToss.netMail++;
       } else {
-         writeLogEntry(log, '9', "Could not write message to NetmailArea");
+         writeLogEntry(hpt_log, '9', "Could not write message to NetmailArea");
       } /* endif */
 
       MsgCloseArea(netmail);
    } else {
       printf("%u\n", msgapierr);
-      writeLogEntry(log, '9', "Could not open NetmailArea");
+      writeLogEntry(hpt_log, '9', "Could not open NetmailArea");
    } /* endif */
 }
 
@@ -1186,13 +1189,13 @@ int processPkt(char *fileName, e_tossSecurity sec)
    if (header != NULL) {
       if (to_us(header->destAddr)==0) {
          sprintf(buff, "pkt: %s", fileName);
-         writeLogEntry(log, '6', buff);
+         writeLogEntry(hpt_log, '6', buff);
          statToss.pkts++;
          link = getLinkFromAddr(*config, header->origAddr);
 	 if ((link!=NULL) && (link->pktPwd==NULL) && (header->pktPassword[0]!='\000'))
 	 {
 		 sprintf(buff, "Unexpected Password %s.", header->pktPassword);
-		 writeLogEntry(log, '3', buff);
+		 writeLogEntry(hpt_log, '3', buff);
 	 }
 
          switch (sec) {
@@ -1207,13 +1210,13 @@ int processPkt(char *fileName, e_tossSecurity sec)
 					sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
 							fileName, header->origAddr.zone, header->origAddr.net,
 							header->origAddr.node, header->origAddr.point);
-					writeLogEntry(log, '9', buff);
+					writeLogEntry(hpt_log, '9', buff);
 					processIt = 2;
 				} else {
 					sprintf(buff, "pkt: %s Password Error or no link for %i:%i/%i.%i",
                           fileName, header->origAddr.zone, header->origAddr.net,
                           header->origAddr.node, header->origAddr.point);
-                  writeLogEntry(log, '9', buff);
+                  writeLogEntry(hpt_log, '9', buff);
                   rc = 1;
                }
                break;
@@ -1225,7 +1228,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 				 sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
 						 fileName, header->origAddr.zone, header->origAddr.net,
 						 header->origAddr.node, header->origAddr.point);
-				 writeLogEntry(log, '9', buff);
+				 writeLogEntry(hpt_log, '9', buff);
 				 processIt = 2;
 			 }
 			 break;
@@ -1255,7 +1258,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 
    } else {
       sprintf(buff, "pkt: %s wrong pkt-file", fileName);
-      writeLogEntry(log, '9', buff);
+      writeLogEntry(hpt_log, '9', buff);
       rc = 3;
    }
 
@@ -1293,7 +1296,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
 
    if (sec == secInbound) {
       sprintf(buff, "bundle %s: tossing in unsecure inbound, security violation", fileName);
-      writeLogEntry(log, '6', buff);
+      writeLogEntry(hpt_log, '6', buff);
       return 3;
    };
 
@@ -1319,15 +1322,15 @@ int  processArc(char *fileName, e_tossSecurity sec)
       fillCmdStatement(cmd, config->unpack[i-1].call, fileName, "", config->tempInbound);
 #endif
       sprintf(buff, "bundle %s: unpacking with \"%s\"", fileName, cmd);
-      writeLogEntry(log, '6', buff);
+      writeLogEntry(hpt_log, '6', buff);
       if ((cmdexit = system(cmd)) != 0) {
          sprintf(buff, "exec failed, code %d", cmdexit);
-         writeLogEntry(log, '6', buff);
+         writeLogEntry(hpt_log, '6', buff);
          return 3;
       };
    } else {
       sprintf(buff, "bundle %s: cannot find unpacker", fileName);
-      writeLogEntry(log, '6', buff);
+      writeLogEntry(hpt_log, '6', buff);
       return 3;
    };
    processDir(config->tempInbound, sec);
@@ -1413,17 +1416,17 @@ void writeTossStatsToLog(void) {
    outMailsec = ((float)(statToss.exported)) / diff;
    inKBsec = ((float)(statToss.inBytes)) / diff / 1024;
 
-   writeLogEntry(log, logchar, "Statistics:");
+   writeLogEntry(hpt_log, logchar, "Statistics:");
    sprintf(buff, "   pkt's: % 3d   msgs: % 5d   echoMail: % 5d   netmail: % 5d", statToss.pkts, statToss.msgs, statToss.echoMail, statToss.netMail);
-   writeLogEntry(log, logchar, buff);
+   writeLogEntry(hpt_log, logchar, buff);
    sprintf(buff, "   saved: % 5d   passthrough: % 5d   exported: % 5d", statToss.saved, statToss.passthrough, statToss.exported);
-   writeLogEntry(log, logchar, buff);
+   writeLogEntry(hpt_log, logchar, buff);
    sprintf(buff, "   dupes: % 5d   bad: % 5d", statToss.dupes, statToss.bad);
-   writeLogEntry(log, logchar, buff);
+   writeLogEntry(hpt_log, logchar, buff);
    sprintf(buff, "   Input: % 8.2f mails/sec   Output: % 8.2f mails/sec", inMailsec, outMailsec);
-   writeLogEntry(log, logchar, buff);
+   writeLogEntry(hpt_log, logchar, buff);
    sprintf(buff, "          % 8.2f kb/sec", inKBsec);
-   writeLogEntry(log, logchar, buff);
+   writeLogEntry(hpt_log, logchar, buff);
 }
 
 void arcmail() {
@@ -1450,7 +1453,7 @@ void arcmail() {
 			 if (flo == NULL) {
 			   buff = (char *) malloc(strlen(config->links[i].floFile)+ 1 + 21);
 			   sprintf(buff, "Cannot open flo file %s", config->links[i].floFile);
-			   writeLogEntry(log, '!', buff);
+			   writeLogEntry(hpt_log, '!', buff);
 			   free(buff);
 			   return;
 			 }
@@ -1502,7 +1505,7 @@ void arcmail() {
 								  link->packFile,
 								  link->pktFile, "");
 				 sprintf(logmsg,"Packing mail for %s", link->name);
-				 writeLogEntry(log, '7', logmsg);
+				 writeLogEntry(hpt_log, '7', logmsg);
 				 cmdexit = system(cmd);
 				 remove(link->pktFile);
 			 }
@@ -1548,7 +1551,7 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 		    
 		sprintf(logmsg,"Forwarding %s to %s as %s",
 		        fileName, config->links[i].name, newfn + strlen(config->tempOutbound));
-		writeLogEntry(log, '7', logmsg);
+		writeLogEntry(hpt_log, '7', logmsg);
 
 		free(newfn);
 		forwardedPkts = 1;
@@ -1558,7 +1561,7 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 	    {
 		sprintf (logmsg, "Failure moving %s to %s (%s)", fileName,
 			 newfn, strerror(errno));
-		writeLogEntry (log, '9', logmsg);
+		writeLogEntry (hpt_log, '9', logmsg);
 		free(newfn);
 		return 4;
 	    }
@@ -1648,7 +1651,7 @@ void tossTempOutbound(char *directory)
 			   fclose(pkt);
 			   arcmail();
 		   } else {
-			   writeLogEntry(log, '9', "found non packed mail without matching link in tempOutbound");
+			   writeLogEntry(hpt_log, '9', "found non packed mail without matching link in tempOutbound");
 			   fclose(pkt);
 		   }
            }
@@ -1677,7 +1680,7 @@ void toss()
    // set stats to 0
    memset(&statToss, 0, sizeof(s_statToss));
    statToss.startTossing = time(NULL);
-   writeLogEntry(log, '1', "Start tossing...");
+   writeLogEntry(hpt_log, '1', "Start tossing...");
    processDir(config->localInbound, secLocalInbound);
    processDir(config->protInbound, secProtInbound);
    processDir(config->inbound, secInbound);
@@ -1700,7 +1703,7 @@ void toss()
             if (config->echoAreas[i].imported == 1) fprintf(f, "%s\n", config->echoAreas[i].areaName);
 
          fclose(f);
-      } else writeLogEntry(log, '5', "Could not open importlogfile");
+      } else writeLogEntry(hpt_log, '5', "Could not open importlogfile");
    }
 
    if (forwardedPkts) {
@@ -1820,7 +1823,7 @@ void tossFromBadArea()
    if (area != NULL) {
 //      statScan.areas++;
       sprintf(buff, "Scanning area: %s", config->badArea.areaName);
-      writeLogEntry(log, '1', buff);
+      writeLogEntry(hpt_log, '1', buff);
       i = MsgGetHighWater(area);
       highestMsg    = MsgGetHighMsg(area);
 
@@ -1848,6 +1851,6 @@ void tossFromBadArea()
       
    } else {
       sprintf(buff, "Could not open %s", config->badArea.fileName);
-      writeLogEntry(log, '9', buff);
+      writeLogEntry(hpt_log, '9', buff);
    } /* endif */
 }

@@ -33,14 +33,14 @@
 
 int main()
 {
-   s_log *log;
+   s_log *hpt_log;
 
-   log = openLog("tlog.log", "tlog v0.0.7", "abc123",1);
-   if (NULL == log) { printf( "asdf\n" ); return 1; }
+   hpt_log = openLog("tlog.log", "tlog v0.0.7", "abc123",1);
+   if (NULL == hpt_log) { printf( "asdf\n" ); return 1; }
 
-   writeLogEntry(log, '1', "this goes into the log");
-   writeLogEntry(log, 'd', "and this not");
+   writeLogEntry(hpt_log, '1', "this goes into the log");
+   writeLogEntry(hpt_log, 'd', "and this not");
 
-   closeLog(log);
+   closeLog(hpt_log);
    return 0;
 }

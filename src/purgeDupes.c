@@ -32,7 +32,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef __EMX__
+#include <sys/types.h>
+#endif
 #include <sys/stat.h>
+
 
 #if !defined(MSDOS) || defined(__DJGPP__)
 #include <fidoconfig.h>
