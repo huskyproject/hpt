@@ -1,3 +1,7 @@
+2002-09-14 Saturday 13:42  d_sergienko
+
+	* misc/areafix.hlp (1.20): replaced %PACKER by %COMPRESS
+
 2002-09-10 Tuesday 10:14  mche
 
 	* src/scanarea.c (1.93): fix cygwin warnings and code cleanup
