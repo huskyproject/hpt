@@ -97,8 +97,9 @@ groups for @code{EchoAreas})
 
 @table @asis
 @item Main page (source code, win32 & os/2 releases) - @url{http://husky.physcip.uni-stuttgart.de/hpt.html}
-@item Win32 bins (unstable) - @url{www.chat.ru/~sirevtov/files}
-@item Win32 bins (unstable) - @url{ftp://bbs.ogo.ru/pub/fileecho/nftn}
+@item Win32 bins, tools, faqs (current, russian) - @url{http://hpt-tosser.narod.ru}
+@item Win32 bins (current, russian) - @url{www.chat.ru/~sirevtov/files}
+@item Win32 bins (current, russian) - @url{www.sirevtov.narod.ru}
 @end table
 
 @node Compiling, Support, Download, Installation
