@@ -1,3 +1,14 @@
+2002-11-03 Sunday 04:45  d_sergienko
+
+	* doc/hpt.texi (hpt-1_2-stable.4): import token descriptions from
+	current branch for AreafixQueryReports, AreafixQueueFile,
+	IdlePassthruTimeout, ForwardRequestTimeout, KilledRequestTimeout.
+
+2002-11-03 Sunday 04:21  d_sergienko
+
+	* BUG-REPORTING, BUGS, INSTALL, README (hpt-1_2-stable.[1,1,1,1]):
+	update docs
+
 2002-10-30 Wednesday 09:20  stas_degteff
 
 	* doc/hpt-FAQ.russian (hpt-1_2-stable.19): Update FAQ-stable
