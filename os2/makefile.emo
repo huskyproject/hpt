@@ -1,19 +1,18 @@
-# makefile for PGCC/EMX 1.1.1
-
-# include Husky-Makefile-Config
-include ../../huskymak.cfg
+# makefile for EMX 0.9d or PGCC/EMX 1.1.1
 
 CC      = gcc
 
-OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj seenby.obj dupe.obj tree.obj recode.obj areafix.obj post.obj link.obj strsep.obj crc.obj xstr.obj
+OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj seenby.obj dupe.obj tree.obj recode.obj areafix.obj post.obj link.obj strsep.obj crc.obj xstr.obj txt2pkt.obj
 SRC_DIR = ../src/
+
+INCDIR=../..
 
 ifeq ($(DEBUG), 1)
   CFLAGS  = -c -Zomf -Zcrtdll -I../h -I$(INCDIR) -Wall -ggdb -DOS2
-  LFLAGS  = -Zomf -Zcrtdll -L$(LIBDIR) -lwrap
+  LFLAGS  = -Zomf -Zsys -L../../smapi -L../../fidoconfig -lwrap
 else
-  CFLAGS  = -c -fomit-frame-pointer -fstrength-reduce -Zomf -Zcrtdll -I../h -I$(INCDIR) -Wall -s -DOS2 -O3
-  LFLAGS  = -Zomf -Zcrtdll -L$(LIBDIR) -lwrap
+  CFLAGS  = -c -fomit-frame-pointer -fstrength-reduce -Zomf -Zsys -I../h -I$(INCDIR) -Wall -s -DOS2 -O3
+  LFLAGS  = -Zomf -Zsys -L../../smapi -L../../fidoconfig -lwrap
 endif
 
 all: $(OBJS) \
@@ -22,40 +21,37 @@ all: $(OBJS) \
      tpkt.exe \
      hpt.exe \
      hptlink.exe \
-     hpttree.exe
+     hpttree.exe \
+     txt2pkt.exe
 
 %.obj: $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
 
 pktinfo.exe: pktinfo.obj $(OBJS)
-	$(CC) $(LFLAGS) -Os -o pktinfo.exe log.obj recode.obj pktinfo.obj pktread.obj fcommon.obj global.obj -lsmapiemo -lfidoconfig
+	$(CC) $(LFLAGS) -Os -o pktinfo.exe log.obj recode.obj pktinfo.obj pktread.obj fcommon.obj global.obj xstr.obj -lfconfemo -lsmapiemo 
 
 tlog.exe: tlog.obj log.obj
 	$(CC) $(LFLAGS) -Os -o tlog.exe tlog.obj log.obj
 
-tpkt.exe: tpkt.obj pktwrite.obj fcommon.obj pktread.obj recode.obj log.obj global.obj 
-	$(CC) $(LFLAGS) -Os -o tpkt.exe log.obj tpkt.obj fcommon.obj pktread.obj recode.obj pktwrite.obj global.obj -lsmapiemo  -lfidoconfig
+tpkt.exe: tpkt.obj pktwrite.obj fcommon.obj pktread.obj recode.obj log.obj global.obj xstr.obj
+	$(CC) $(LFLAGS) -Os -o tpkt.exe log.obj tpkt.obj fcommon.obj pktread.obj recode.obj pktwrite.obj global.obj xstr.obj -lfconfemo -lsmapiemo 
 
 hpt.exe: $(OBJS)
-	$(CC) $(LFLAGS) -O3 -o hpt.exe $(OBJS) -lsmapiemo -lfidoconfig
+	$(CC) $(LFLAGS) -O3 -o hpt.exe hpt.obj pktread.obj pktwrite.obj fcommon.obj global.obj recode.obj scan.obj areafix.obj seenby.obj toss.obj link.obj log.obj scanarea.obj dupe.obj tree.obj crc.obj xstr.obj strsep.obj post.obj -lfconfemo -lsmapiemo
 
 hptlink.exe: hptlink.obj
-	$(CC) $(LFLAGS) -Os -o hptlink.exe hptlink.obj -lfidoconfig -lsmapiemo
+	$(CC) $(LFLAGS) -Os -o hptlink.exe hptlink.obj -lfconfemo -lsmapiemo
 
 hpttree.exe: hpttree.obj
-	$(CC) $(LFLAGS) -Os -o hpttree.exe hpttree.obj -lfidoconfig -lsmapiemo
+	$(CC) $(LFLAGS) -Os -o hpttree.exe hpttree.obj -lfconfemo -lsmapiemo
+
+txt2pkt.exe: $(OBJS)
+	$(CC) $(LFLAGS) -Os -o txt2pkt.exe txt2pkt.obj pktwrite.obj fcommon.obj pktread.obj recode.obj log.obj global.obj xstr.obj -lfconfemo -lsmapiemo
 
 clean:
-	-del *.obj *.bak
+	-cmd /c del *.obj *.bak
 
 distclean: clean
-	-del *.exe
+	-cmd /c del *.exe
 
-install: hpt.exe pktinfo.exe tpkt.exe tlog.exe hptlink.exe hpttree.exe
-	copy hpt.exe $(BINDIR)
-	copy pktinfo.exe $(BINDIR)
-	copy tpkt.exe $(BINDIR)
-	copy tlog.exe $(BINDIR)
-	copy hptlink.exe $(BINDIR)
-	copy hpttree.exe $(BINDIR)
 
