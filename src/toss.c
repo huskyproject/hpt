@@ -62,6 +62,9 @@
 #include <version.h>
 #include <scanarea.h>
 #include <hpt.h>
+#ifdef DO_PERL
+#include <hptperl.h>
+#endif
 
 #include <smapi/msgapi.h>
 #include <smapi/stamp.h>
@@ -257,15 +260,19 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 
    // create Directory Tree if necessary
    if (echo->msgbType == MSGTYPE_SDM)
-      createDirectoryTree(echo->fileName);
-   else {
-      // squish or jam area
-      slash = strrchr(echo->fileName, PATH_DELIM);
-      if (slash) {
-          *slash = '\0';
-          createDirectoryTree(echo->fileName);
-          *slash = PATH_DELIM;
-      }
+	   createDirectoryTree(echo->fileName);
+   else if (echo->msgbType==MSGTYPE_PASSTHROUGH) {
+	   writeLogEntry(hpt_log, '9', "Can't put message to passthrough area %s!",
+					 echo->areaName);
+	   return rc;
+   } else {
+	   // squish or jam area
+	   slash = strrchr(echo->fileName, PATH_DELIM);
+	   if (slash) {
+		   *slash = '\0';
+		   createDirectoryTree(echo->fileName);
+		   *slash = PATH_DELIM;
+	   }
    }
    
    if (!msg->netMail) {
@@ -277,7 +284,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 
    harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, 
 /*			echo->fperm, echo->uid, echo->gid,*/
-			(word)(echo->msgbType | MSGTYPE_ECHO));
+			(word)(echo->msgbType | (msg->netMail ? 0 : MSGTYPE_ECHO)));
    if (harea != NULL) {
       hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
       if (hmsg != NULL) {
@@ -991,44 +998,42 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
     // get real name area
     line = strchr(msg->text, '\r');
     *line = 0;
-//    areaName = (char*) calloc(strlen(msg->text)+13, sizeof(char));
-    xscatprintf(&areaName, "AREANAME: %s\r\r", msg->text+5);
+    if (strncmp(msg->text,"AREA:",5)==0)
+		xscatprintf(&areaName, "AREANAME: %s\r\r", msg->text+5);
     *line = '\r';
-	 
+
     tmp = msg->text;
-	 
-	 
+
     while ((line = strchr(tmp, '\r')) != NULL) {
 	if (*(line+1) == '\x01') tmp = line+1;
 	else { tmp = line+1; *line = 0; break; }
     }
 	 
-//    textBuff = (char *)calloc(strlen(msg->text)+strlen(areaName)+80, sizeof(char));
-    
-//    xscatprintf(&textBuff, "%s\rFROM: %s\rREASON: ", msg->text, aka2str(pktOrigAddr));
-    xstrscat(&textBuff, msg->text, "\rFROM: ", aka2str(pktOrigAddr), "\rREASON: ",NULL);
+    xstrscat(&textBuff,msg->text,"\rFROM: ",aka2str(pktOrigAddr),"\rREASON: ",NULL);
     switch (writeAccess) {
 	case 0: 
-		xstrcat(&textBuff, "System not allowed to create new area\r");
+		xstrcat(&textBuff,"System not allowed to create new area\r");
 		break;
 	case 1: 
-		xstrcat(&textBuff, "Sender not allowed to post in this area (access group)\r");
+		xstrcat(&textBuff,"Sender not allowed to post in this area (access group)\r");
 		break; 
 	case 2: 
-		xstrcat(&textBuff, "Sender not allowed to post in this area (access level)\r");
-	        break;
+		xstrcat(&textBuff,"Sender not allowed to post in this area (access level)\r");
+		break;
 	case 3: 
-		xstrcat(&textBuff, "Sender not allowed to post in this area (access import)\r");
-	        break;
+		xstrcat(&textBuff,"Sender not allowed to post in this area (access import)\r");
+        case 5:
+                xstrcat(&textBuff, "Rejected by filter\r");
+                break;
+		break;
 	case 4: 
-		xstrcat(&textBuff, "Sender not active for this area\r");
-	        break;
+		xstrcat(&textBuff,"Sender not active for this area\r");
+		break;
 	default :
-		xstrcat(&textBuff, "Another error\r");
+		xstrcat(&textBuff,"Another error\r");
 		break;
     }
-//    textBuff = (char*)safe_realloc(textBuff, strlen(areaName)+strlen(textBuff)+strlen(tmp)+1);
-    xstrcat(&textBuff, areaName);
+    if (areaName) xstrcat(&textBuff, areaName);
     xstrcat(&textBuff, tmp);
     nfree(areaName);
     nfree(msg->text);
@@ -1403,11 +1408,17 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
    return rc;
 }
 
-int processMsg(s_message *msg, s_pktHeader *pktHeader)
+int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
 {
   int rc;
 
   statToss.msgs++;
+#ifdef DO_PERL
+  if ((rc = perlfilter(msg, pktHeader->origAddr, secure)) == 1)
+    return putMsgInBadArea(msg, pktHeader->origAddr, 5);
+  else if (rc == 2)
+    return 1;
+#endif
   if (msg->netMail == 1) {
     if (config->areafixFromPkt && 
 	(stricmp(msg->toUserName,"areafix")==0 ||
@@ -1454,6 +1465,10 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	   nfree(extcmd);
 	 }
        /* -AS- */
+#ifdef DO_PERL
+       if (perlpkt(fileName, (sec==secLocalInbound || sec==secProtInbound) ? 1 : 0))
+         return 6;
+#endif
        
        pkt = fopen(fileName, "rb");
        if (pkt == NULL) return 2;
@@ -1473,10 +1488,11 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	     break;
 	     
 	   case secProtInbound:
-	     if ((link != NULL) && (link->pktPwd != NULL)) {
-               if (stricmp(link->pktPwd, header->pktPassword)==0) {
-                  processIt = 1;
-               } else {
+		   if ((link != NULL) && (link->pktPwd != NULL) && link->pktPwd[0]) {
+               if (header->pktPassword &&
+				   stricmp(link->pktPwd, header->pktPassword)==0)
+				   processIt = 1;
+			   else {
                   if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (eSecure | eOn)) ) {
                       writeLogEntry(hpt_log, '9', "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
                               fileName, header->origAddr.zone, header->origAddr.net,
@@ -1534,7 +1550,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 		   while ((msgrc = readMsgFromPkt(pkt, header, &msg)) == 1) {
                if (msg != NULL) {
 				   if ((processIt == 1) || ((processIt==2) && (msg->netMail==1)))
-					   if (processMsg(msg, header)!=1) rc=5;
+					   if (processMsg(msg, header, (sec==secLocalInbound || sec==secProtInbound || processIt == 1) ? 1 : 0) !=1 ) rc=5;
 				   freeMsgBuffers(msg);
 				   nfree(msg);
                }
@@ -1566,6 +1582,10 @@ int processPkt(char *fileName, e_tossSecurity sec)
        if (pkt) fclose(pkt);
 
    } else statToss.empty++;
+
+#ifdef DO_PERL
+   perlpktdone(fileName, rc);
+#endif
 
    return rc;
 }
@@ -1628,6 +1648,9 @@ int  processArc(char *fileName, e_tossSecurity sec)
 			  writeLogEntry(hpt_log, '9', "exec failed, code %d", cmdexit);
 		  };
 	  }
+#ifdef DO_PERL
+      perlafterunp();
+#endif
    } else {
       writeLogEntry(hpt_log, '9', "bundle %s: cannot find unpacker", fileName);
       return 3;
@@ -1635,7 +1658,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
    statToss.arch++;
    remove(fileName);
    processDir(config->tempInbound, sec);
-   return 6;
+   return 7;
 }
 
 
@@ -1667,7 +1690,7 @@ void processDir(char *directory, e_tossSecurity sec)
    int dirNameLen;
    int filenum;
    char *newFileName=NULL;
-   char *ext[]={NULL, "sec", "asc", "bad", "ntu", "err"};
+   char *ext[]={NULL, "sec", "asc", "bad", "ntu", "err", "flt"};
 
 #ifndef UNIX
    unsigned fattrs;
@@ -1744,11 +1767,11 @@ void processDir(char *directory, e_tossSecurity sec)
          else // if (arcFile)
             rc = processArc(dummy, sec);
 
-        if (rc>=1 && rc<=5) {
+        if (rc>=1 && rc<=6) {
 	    writeLogEntry(hpt_log, '9', "Renaming pkt/arc to .%s",ext[rc]);
             newFileName=changeFileSuffix(dummy, ext[rc]);
 	} else {
-	    if (rc!=6) remove(dummy);
+	    if (rc!=7) remove(dummy);
 	}
 
 /*         switch (rc) {
@@ -1767,7 +1790,10 @@ void processDir(char *directory, e_tossSecurity sec)
             case 5:  // msg tossing problem
                newFileName=changeFileSuffix(dummy, "err");
                break;
-            case 6:  // bundle already removed
+            case 6:  // perl filter
+               newFileName=changeFileSuffix(dummy, "flt");
+               break;
+            case 7:  // bundle already removed
                break;
             default:
                remove (dummy);
@@ -1901,6 +1927,9 @@ void arcmail(s_link *tolink) {
 		   writeLogEntry(hpt_log, '9', "exec failed, code %d", cmdexit);
 	   };
    }
+#ifdef DO_PERL
+   perlbeforepack();
+#endif
    
    for (i = startlink ; i < endlink; i++) {
 	   
@@ -2307,7 +2336,7 @@ void tossFromBadArea()
 	   }
       
 	   highestMsg = MsgGetHighMsg(area);
-	   MsgSetHighWater(area, highestMsg + 1);
+	   if (config->badArea.msgbType!=MSGTYPE_JAM) MsgSetHighWater(area,highestMsg+1);
 
 	   MsgCloseArea(area);
       

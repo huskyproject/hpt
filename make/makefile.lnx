@@ -7,7 +7,13 @@ DEBUG=-s
 CC=gcc
 EXENAMEFLAG=-o
 SRC_DIR=../src/
+ifdef PERL
+CFLAGS=-DDO_PERL -I../h -I../.. -c -O3 $(DEBUG) `perl -MExtUtils::Embed -e ccopts`
+PERLLIBS=`perl -MExtUtils::Embed -e ldopts`
+PERLOBJ=perl$(OBJ)
+else
 CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
+endif
 LFLAGS=$(DEBUG)
 CDEFS =-DUNIX
 

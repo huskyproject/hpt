@@ -8,7 +8,13 @@ DEBUG=-s
 OBJ    =.o
 RM     =rm
 DIRSEP =/
+ifdef PERL
+CFLAGS =-DDO_PERL -I../h -I../.. -c -O3 $(DEBUG) `perl -MExtUtils::Embed -e ccopts`
+PERLLIBS=`perl -MExtUtils::Embed -e ldopts`
+PERLOBJ=perl$(OBJ)
+else
 CFLAGS =-I../h -I../.. -c -O3 $(DEBUG)
+endif
 LFLAGS =$(DEBUG)
 CDEFS  =-DUNIX
 CC     =cc

@@ -36,8 +36,8 @@
 #include <unistd.h>
 #endif
 #include <time.h>
-#include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <signal.h>
 
 #include <smapi/msgapi.h>

@@ -51,7 +51,7 @@ sub Import {
     dbmopen(%stat,$stat_hash,0666) || die "Can't open $stat_hash";
     dbmopen(%la,$la_hash,0666) || die "Can't open $la_hash";
     while (<IN>) {
-	if (/^----------\s+\S+\s+(\d+)\s+(\w+)\s+(\d+), hpt v0.29\/LNX$/) {
+	if (/^----------\s+\S+\s+(\d+)\s+(\w+)\s+(\d+),.*/) {
 		$date_access = timelocal(0, 0, 0, $1, $months{$2}, $3)/$sec_in_day;
 	};
 	if (/echo area (\S+) - (\d+) msgs/) {

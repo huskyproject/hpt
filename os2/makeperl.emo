@@ -1,0 +1,37 @@
+# EMX OS/2 OMF STYLE MAKEFILE WITH PERL HOOKS SUPPORT
+# no support for the husky build environment
+
+DEBUG=-s
+# set to -g for debugging
+
+PERL   =D:/PERL5/LIB/5.00553/os2
+
+.SUFFIXES:
+.SUFFIXES: .c .obj
+
+OBJ    =.obj
+EXE    =.exe
+RM     =cmd /c del
+DIRSEP =/
+CFLAGS =-Zomf -I../h -I../.. -c -O3 $(DEBUG) -funsigned-char -Wall -Wno-char-subscripts \
+        -DDO_PERL -DDOSISH -DEMBED -I$(PERL)/CORE
+LFLAGS =-Zomf -Zcrtdll -Zlinker /PM:VIO $(DEBUG)
+CDEFS  =-DOS2=2
+CC     =gcc
+EXENAMEFLAG=-o
+SRC_DIR=../src/
+LIBS   =../../fidoconf/fconfemo.lib ../../smapi/smapiemo.lib
+PERLLIBS=\
+        $(PERL)/auto/DB_File/DB_File.lib \
+        $(PERL)/auto/SDBM_File/SDBM_File.lib \
+        $(PERL)/auto/Fcntl/Fcntl.lib \
+        $(PERL)/auto/IO/IO.lib \
+        $(PERL)/auto/POSIX/POSIX.lib \
+        $(PERL)/auto/OS2/Process/Process.lib \
+        $(PERL)/auto/OS2/ExtAttr/ExtAttr.lib \
+        $(PERL)/auto/OS2/REXX/REXX.lib \
+        $(PERL)/auto/DynaLoader/DynaLoader.lib \
+        -L$(PERL)/CORE -llibperl -lsocket -lm -lbsd -ldb -o $@
+PERLOBJ=perl$(OBJ)
+
+include ../makefile.inc

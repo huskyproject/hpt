@@ -53,6 +53,10 @@
 #include <smapi/compiler.h>
 #include <smapi/progprot.h>
 
+#ifdef DO_PERL
+#include <hptperl.h>
+#endif
+
 // create seen-by's & path
 char *createSeenByPath(s_area *echo) {
 	int i, seenByCount = 0;
@@ -166,6 +170,13 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 
    // msg is dupe -- return
    if (dupeDetection(echo, msg)!=1) return;
+
+#ifdef DO_PERL
+   if (perlscanmsg(echo->areaName, &msg))
+   {   freeMsgBuffers(&msg);
+       return;
+   }
+#endif
 
    //translating name of the area to uppercase
    while (msg.text[j] != '\r') {

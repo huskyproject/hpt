@@ -49,7 +49,7 @@ typedef enum tossSecurity e_tossSecurity;
 int  to_us(const s_addr destAddr);
 int  processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceattr);
 int  processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontdocc, dword forceattr);
-int  processMsg(s_message *msg, s_pktHeader *pktHeader);
+int  processMsg(s_message *msg, s_pktHeader *pktHeader, int secure);
 int  processPkt(char *fileName, e_tossSecurity sec);
 int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr);
 void toss(void);

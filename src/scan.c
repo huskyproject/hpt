@@ -50,6 +50,10 @@
 #include <smapi/progprot.h>
 #include <smapi/patmat.h>
 
+#ifdef DO_PERL
+#include <hptperl.h>
+#endif
+
 s_statScan statScan;
 
 void cvtAddr(const NETADDR aka1, s_addr *aka2)
@@ -167,6 +171,12 @@ s_route *findRouteForNetmail(s_message msg)
    // FIX ME - we need a better solution here...
    sprintf(addrStr, "%u:%u/%u.%u", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 
+#ifdef DO_PERL
+   { s_route *route;
+     if ((route = perlroute(&msg)) != NULL)
+       return route;
+   }
+#endif
    if ((msg.attributes & MSGFILE) == MSGFILE) {
       // if msg has file attached
       for (i=0; i < config->routeFileCount; i++) {
@@ -229,8 +239,8 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 		  tempLink.hisAka.point = 0;
 		  break;
 	  case route_extern:
-	          string2addr(route->viaStr, &tempLink.hisAka);
-	          break;
+		  string2addr(route->viaStr, &tempLink.hisAka);
+		  break;
       }
 
       getLink = getLinkFromAddr(*config, tempLink.hisAka);
@@ -327,7 +337,6 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
       strcpy(virtualLink->name, msg.toUserName);
       freeVirtualLink = 1;  //virtualLink is a temporary link, please free it..
    }
-
    if ((xmsg->attr & MSGFILE) == MSGFILE) {
 	   // file attach
 	   prio = NORMAL;
@@ -367,6 +376,20 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    if ((xmsg->attr & MSGFRQ) == MSGFRQ) {
 	   prio = NORMAL;
 	   if ((xmsg->attr & MSGCRASH)==MSGCRASH) prio = CRASH; 
+#ifdef DO_PERL
+		   if (perlscanmsg(area->areaName, &msg)) {
+perlscanexit:
+			remove(virtualLink->bsyFile);
+			nfree(virtualLink->bsyFile);
+			xmsg->attr |= MSGSENT;
+			freeMsgBuffers(&msg);
+			if (freeVirtualLink==1) {
+				nfree(virtualLink->name);
+				nfree(virtualLink);
+			}
+			return 0;
+		   }
+#endif
 	   if ((xmsg->attr & MSGHOLD)==MSGHOLD) prio = HOLD;
 	   
 	   if (prio!=NORMAL) {
@@ -386,6 +409,10 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 	   }
    } /* endif */
    
+#ifdef DO_PERL
+		   if (perlscanmsg(area->areaName, &msg))
+			goto perlscanexit;
+#endif
    if ((xmsg->attr & MSGCRASH) == MSGCRASH) {
 	   // crash-msg -> make CUT
 	   if (createOutboundFileName(virtualLink, CRASH, PKT) == 0) {
@@ -409,6 +436,10 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 	   if (createOutboundFileName(virtualLink, HOLD, PKT) == 0) {
 		   makePktHeader(virtualLink, &header);
 		   pkt = openPktForAppending(virtualLink->floFile, &header);
+#ifdef DO_PERL
+			   if (perlscanmsg(area->areaName, &msg))
+				goto perlscanexit;
+#endif
 		   writeMsgToPkt(pkt, msg);
 		   closeCreatedPkt(pkt);
 		   writeLogEntry(hpt_log, '7', "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);

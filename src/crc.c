@@ -76,3 +76,13 @@ unsigned long strcrc32(char *str, unsigned long initcrc)
   return crc;
 }
 
+unsigned long memcrc32(char *str, int size, unsigned long initcrc)
+{
+  unsigned long crc;
+
+  for (crc = initcrc; size; str++, size--)
+    crc = crc32tab[((int) crc ^ (*str)) & 0xff] ^ ((crc >> 8) & 0x00ffffffUL);
+
+  return crc;
+}
+

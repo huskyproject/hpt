@@ -12,7 +12,8 @@ Category 1: Will certainly be implemented until next release
 - createForwardNonPass
 - correctEMAddr: take node from path if no origin in message
 - unpack all bundles before toss
-- afterUnpackBundle, afterUnpackAll
+- afterUnpackBundle, afterUnpackAll ???
+- UnpackAllBeforeToss ???
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

@@ -1,0 +1,36 @@
+# EMX A.OUT STYLE MAKEFILE WITH PERL HOOKS SUPPORT (REQ. EMXRT.DLL)
+# no support for the husky build environment
+
+DEBUG=-g
+# set to -g for debugging
+
+PERL   =D:/PERL5/LIB/5.00553/os2
+
+OBJ    =.o
+EXE    =.exe
+RM     =cmd /c del
+DIRSEP =/
+CFLAGS =-I../h -I../.. -c -O3 $(DEBUG) -funsigned-char -Wall -Wno-char-subscripts\
+        -DDO_PERL -DDOSISH -DEMBED -I$(PERL)/CORE
+LFLAGS =-Zcrtdll $(DEBUG) -Zstack 4096 \
+        -L$(PERL)/CORE -o $@
+CDEFS  =-DOS2
+CC     =gcc
+EXENAMEFLAG=-o
+SRC_DIR=../src/
+# DynaLoader does not work :(
+LIBS   =../../fidoconf/fconfemx.a ../../smapi/smapiemx.a
+PERLOBJ=perl$(OBJ)
+PERLLIBS=\
+        $(PERL)/auto/DB_File/DB_File.a \
+        $(PERL)/auto/SDBM_File/SDBM_File.a \
+        $(PERL)/auto/Fcntl/Fcntl.a \
+        $(PERL)/auto/IO/IO.a \
+        $(PERL)/auto/POSIX/POSIX.a \
+        $(PERL)/auto/Socket/Socket.a \
+        $(PERL)/auto/OS2/Process/Process.a \
+        $(PERL)/auto/OS2/ExtAttr/ExtAttr.a \
+        $(PERL)/auto/OS2/REXX/REXX.a \
+        $(PERL)/auto/DynaLoader/DynaLoader.a \
+        -llibperl -lsocket -lm -lbsd -ldb
+include ../makefile.inc

@@ -14,7 +14,7 @@ EXENAMEFLAG=-o
 OBJS    = fcommon$(OBJ) hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) log$(OBJ) \
           global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) seenby$(OBJ) \
           crc$(OBJ) dupe$(OBJ) tree$(OBJ) recode$(OBJ) areafix$(OBJ) arealist$(OBJ) \
-          post$(OBJ) link$(OBJ) strsep$(OBJ)
+          post$(OBJ) link$(OBJ) strsep$(OBJ) $(PERLOBJ)
 
 
 all: $(OBJS) \
@@ -52,7 +52,7 @@ hpttree$(EXE): hpttree$(OBJ)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) hpttree$(EXE) hpttree$(OBJ) $(LIBS)
 
 hpt$(EXE): $(OBJS)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG) hpt$(EXE) $(OBJS) $(LIBS)
+	$(CC) $(LFLAGS) $(EXENAMEFLAG) hpt$(EXE) $(OBJS) $(LIBS) $(PERLLIBS)
 
 clean:
 	-$(RM) *$(OBJ)
