@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# hptstat ver.0.73.1, (c)opyright 2002-03, by val khokhlov
+# hptstat ver.0.8, (c)opyright 2002-03, by val khokhlov
 %areas;                       # areas found in stat (tag=>id), id=1,2,3,...
 @area_tag;                    # ...reverse array (id=>tag)
 %links;                       # links found in stat
@@ -109,13 +109,15 @@ sub parse_config {
     next if /^\s*$/;
     # parse stat file
     if (/^\s*advStatisticsFile\s+/i) {
-      ($stat_file) = /^\s*\S+\s+(\S+)/;
+      my @s = /^\s*\S+\s+(?:"(.*?)(?<!\\)"|(\S+))/;
+      $stat_file = $s[0].$s[1];
       $stat_file =~ s/\[([^\]]+)\]/$SET{$1} or $ENV{$1}/eg;
       print STDERR " * found advStatisticsFile: $stat_file\n" if $DBG;
     }
     # parse area
     elsif (/^\s*echoarea\s+/i) {
-      my ($tag) = /^\s*\S+\s+(\S+)/;
+      my @s = /^\s*\S+\s+(?:"(.*?)(?<!\\)"|(\S+))/;
+      my $tag = $s[0].$s[1];
       $config_areas{$tag} = {uplink=>undef, links=>[]};
       s/-[Aa]\s+\S+//;
       s/-[Dd]\s+\"[^\"]+\"//;
@@ -135,14 +137,15 @@ sub parse_config {
     }
     # parse set
     elsif (/^\s*set\s+/i) {
-      my ($s1, $s2) = /^\s*\S+\s+(\S+)[^=]*=\s*(.*?)\s*$/o;
+      my ($s1, $s2) = /^\s*\S+\s+(\S+)[^=]*=\s*"?(.*?)"?\s*$/o;
       $s2 =~ s/\[([^\]]+)\]/$SET{$1} or $ENV{$1}/eg;
       print STDERR " * found set: $s1=$s2\n" if $DBG;
       $SET{$s1} = $s2;
     }
     # parse include
     elsif (/^\s*include\s+/i) {
-      my ($s) = /^\s*\S+\s+(\S+)/o;
+      my @s = /^\s*\S+\s+(?:"(.*?)(?<!\\)"|(\S+))/o;
+      my $s = $s[0].$s[1];
       $s =~ s/\[([^\]]+)\]/$SET{$1} or $ENV{$1}/eg;
       parse_config($s) if -r $s;
     }
@@ -518,7 +521,7 @@ sub init {
 }
 
 sub USAGE () { return <<EOF
-advhptstat ver.0.6, (c)opyright 2002-03, by val khokhlov
+advhptstat ver.0.8, (c)opyright 2002-03, by val khokhlov
 
   Usage: advhptstat [options] [stat file...]
   Options are:
