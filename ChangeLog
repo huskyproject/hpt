@@ -1,3 +1,8 @@
+2002-06-30 Sunday 09:46  mche
+
+	* src/: scan.c (1.166.2.1), scanarea.c (1.83.2.1): fixed bug with
+	scaning locked messages
+
 2002-06-25 Tuesday 18:02  stas
 
 	* src/global.c (1.43.2.1): Change version number
