@@ -18,6 +18,18 @@
 #include <compiler.h>
 #include <progprot.h>
 
+void changeFileSuffix(char *fileName, char *newSuffix) {
+   char *beginOfSuffix = strrchr(fileName, '.')+1;
+   char *newFileName;
+   int  length = strlen(fileName)-strlen(beginOfSuffix)+strlen(newSuffix);
+
+   newFileName = (char *) malloc(length+1);
+   strncpy(newFileName, fileName, length-strlen(newSuffix));
+   strcat(newFileName, newSuffix);
+
+   rename(fileName, newFileName);
+}
+
 int to_us(s_pktHeader header)
 {
    int i = 0;
@@ -393,7 +405,7 @@ void processMsg(s_message *msg, s_addr pktOrigAddr)
    } /* endif */
 }
 
-void processPkt(char *fileName, int onlyNetmail)
+int processPkt(char *fileName, int onlyNetmail)
 {
    FILE        *pkt;
    s_pktHeader *header;
@@ -401,31 +413,36 @@ void processPkt(char *fileName, int onlyNetmail)
    char        buff[265];
    s_link      *link;
    char        pwdOK = !0;
+   int         rc = 0;
 
    pkt = fopen(fileName, "rb");
-   if (pkt == NULL) return;
+   if (pkt == NULL) return 2;
 
    header = openPkt(pkt);
-   if ((header != NULL) && (to_us(*header)==0)){
-      sprintf(buff, "pkt: %s", fileName);
-      writeLogEntry(log, '6', buff);
-      
-      link = getLinkFromAddr(*config, header->origAddr);
-      if (link != NULL)
-         // if passwords aren't the same don't process pkt
-         // if pkt is from a System we don't have a link (incl. pwd) with
-         // we process it.
-         if (stricmp(link->pktPwd, header->pktPassword) != 0) pwdOK = 0;
-      if (pwdOK != 0) {
-         while ((msg = readMsgFromPkt(pkt,config->addr[0].zone)) != NULL) {
-            if ((onlyNetmail == 0) || (msg->netMail == 1))
-               processMsg(msg, header->origAddr);
-            freeMsgBuffers(msg);
-         } /* endwhile */
-      } /* endif */
-   } /*endif */
+   if (header != NULL) {
+      if (to_us(*header)==0){
+         sprintf(buff, "pkt: %s", fileName);
+         writeLogEntry(log, '6', buff);
+         
+         link = getLinkFromAddr(*config, header->origAddr);
+         if (link != NULL)
+            // if passwords aren't the same don't process pkt
+            // if pkt is from a System we don't have a link (incl. pwd) with
+            // we process it.
+            if (stricmp(link->pktPwd, header->pktPassword) != 0) pwdOK = 0;
+         if (pwdOK != 0) {
+            while ((msg = readMsgFromPkt(pkt,config->addr[0].zone)) != NULL) {
+               if ((onlyNetmail == 0) || (msg->netMail == 1))
+                  processMsg(msg, header->origAddr);
+               freeMsgBuffers(msg);
+            } /* endwhile */
+         } /* endif */
+         else rc = 1;
+      } /*endif */
+   } else rc = 3;
 
    fclose(pkt);
+   return rc;
 }
 
 void processDir(char *directory, int onlyNetmail)
@@ -433,6 +450,7 @@ void processDir(char *directory, int onlyNetmail)
    DIR            *dir;
    struct dirent  *file;
    char           *dummy;
+   int            rc;
 
    dir = opendir(directory);
 
@@ -442,9 +460,22 @@ void processDir(char *directory, int onlyNetmail)
          dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
          strcpy(dummy, directory);
          strcat(dummy, file->d_name);
-         processPkt(dummy, onlyNetmail);
+         rc = processPkt(dummy, onlyNetmail);
 
-         remove (dummy);
+         switch (rc) {
+            case 1:   // pktpwd problem
+               changeFileSuffix(dummy, "sec");
+               break;
+            case 2:  // could not open pkt
+               changeFileSuffix(dummy, "acs");
+               break;
+            case 3:  // not/wrong pkt
+               changeFileSuffix(dummy, "bad");
+               break;
+            default:
+               remove (dummy);
+               break;
+         }
          free(dummy);
       }
    }
