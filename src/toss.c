@@ -584,6 +584,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	// find start of seenBys in Msg
 	start = strstr(msg->text, ")\rSEEN-BY: ");
 	if (start == NULL) start = strstr(msg->text, "\rSEEN-BY: ");
+	if (start == NULL) start = strstr(msg->text, "SEEN-BY: ");
 	if (start != NULL) {
 		while(*start != 'S') start++; // to jump over )\r
 		*start='\0';
@@ -595,7 +596,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	// create new seenByText
 	seenByText = createControlText((*seenBys), *seenByCount, "SEEN-BY: ");
 	pathText   = createControlText((*path), *pathCount, "\001PATH: ");
-	xstrscat(&msg->text, seenByText, pathText, NULL);
+	xstrscat(&msg->text, (start) ? "" : "\r", seenByText, pathText, NULL);
 	nfree(seenByText);
 	nfree(pathText);
 	
