@@ -961,15 +961,15 @@ void scanExport(int type, char *str) {
                     /* exclude NetmailAreas in echoTossLogFile */
                    if (type & SCN_ECHOMAIL) {
                        if (getNetMailArea(config, line) == NULL) {
-                           scanByName(line);
-                           processed |= 2;
+                           if(scanByName(line))
+                               processed |= 2;
                        }
                        else
                            fprintf(ftmp, "%s\n", line);
                     } else {
                        if (getNetMailArea(config, line) != NULL) {
-                           scanByName(line);
-                           processed |= 2;
+                           if(scanByName(line))
+                               processed |= 2;
                        }
                         else
                             fprintf(ftmp, "%s\n", line);
