@@ -1,3 +1,9 @@
+2001-12-10 Monday 21:29  ml
+
+	* doc/hpt.texi (1.43), h/areafix.h (1.21), src/areafix.c (1.224),
+	src/dupe.c (1.44), src/hpt.c (1.117), src/toss.c (1.368): new
+	funtions in areafix from Max Chernogor and code cleanup by me
+
 2001-12-09 Sunday 19:38  ml
 
 	* doc/: hpt-FAQ.russian (1.11), hpt.texi (1.42): doc updates
