@@ -369,9 +369,9 @@ int isFreeSpace(char *path) {
 	unsigned long sp;
 
 	sp = getfree(path);	
-	if (sp < config->minDiskFreeSpace*1024*1024) {
+	if (sp < config->minDiskFreeSpace*1024) {
 		fprintf(stderr, "no free space in %s! (needed %d mb, available %d mb).\n",
-				path, config->minDiskFreeSpace, (unsigned)(sp/(1024*1024)));
+				path, config->minDiskFreeSpace, (unsigned)(sp/1024));
 		exit_hpt("no free disk space!",0);
 	}
 

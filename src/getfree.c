@@ -77,7 +77,11 @@ BOOL rc;
     w_log ('9', "GetDiskFreeSpace error: return code = %lu", GetLastError());
     return ULONG_MAX;		    /* Assume enough disk space */
   } else {
-    return (unsigned long) (BPS * SPC * FC);
+    //return (unsigned long) (BPS * SPC * FC);
+    if (BPS * SPC >= 1024)
+      return (unsigned long) ((BPS * SPC / 1024l) * FC);
+    else
+      return (unsigned long) (FC / (1024 / (BPS * SPC)));
   }
 }
 #elif defined(__OS2__) || defined(OS2)
@@ -115,7 +119,11 @@ unsigned long getfree (char *path)
   }
   else
   {
-    return fsa.cSectorUnit * fsa.cUnitAvail * fsa.cbSector;
+    //return fsa.cSectorUnit * fsa.cUnitAvail * fsa.cbSector;
+    if (fsa.cSectorUnit * fsa.cbSector >= 1024)
+      return fsa.cUnitAvail * (fsa.cSectorUnit * fsa.cbSector / 1024);
+    else
+      return fsa.cUnitAvail / (1024 / (fsa.cSectorUnit * fsa.cbSector));
   }
 }
 #elif defined(UNIX) || defined (__linux__)
@@ -188,8 +196,14 @@ unsigned long getfree (char *path)
     return ULONG_MAX;
   }
   else
-	  /* return (sfs.f_bsize * sfs.f_bfree); */
-	  return (sfs.f_bsize * sfs.f_bavail);
+  {
+    /* return (sfs.f_bsize * sfs.f_bfree); */
+    //return (sfs.f_bsize * sfs.f_bavail);
+    if (sfs.f_bsize >= 1024)
+      return ((sfs.f_bsize / 1024l) * sfs.f_bavail);
+    else
+      return (sfs.f_bavail / (1024l / sfs.f_bsize));
+  }
 }
 
 #else
