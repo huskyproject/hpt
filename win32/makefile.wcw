@@ -7,9 +7,10 @@ SRC_DIR = ..\src
 
 !IF $(DEBUG) == 1
 CFLAGS= -zq -wx -bt=nt -i=..\..;..\h; -oneatx -5 -d2
-LFLAGS= DEBUG watcom all
+LFLAGS= DEBUG watcom all SYSTEM nt
 !ELSE
 CFLAGS= -zq -wx -bt=nt -i=..\..;..\h; -oneatx -5
+LFLAGS=SYSTEM nt
 !ENDIF
 
 all: $(OBJS) pktinfo.exe hptlink.exe hpttree.exe txt2pkt.exe hpt.exe
