@@ -2652,6 +2652,7 @@ void tossFromBadArea(char force)
 			   MsgCloseMsg(hmsg);
 	 
 			   if (delmsg) MsgKillMsg(area, i);
+			   else { i++; highestMsg++; }
 		   }
 	   }
 	   

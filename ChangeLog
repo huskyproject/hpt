@@ -1,5 +1,12 @@
 hpt 0.9.8 (development version)
 ---------	
+
+----- cvs ci ------
+Wed Dec 20 23:54:18 NOVT 2000
+max:
+* fixed bug in "toss -b" with squish & jam areas - "normal" msgs didn't
+  scanned after "bad" msg (report by Eugene Barbashin, 2:5030/920.1)
+
 ----- cvs ci ------
 Wed Dec 13 18:42:21 UTC 2000
 sms:
