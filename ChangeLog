@@ -2,6 +2,13 @@ hpt 0.27
 --------
 
 ----- cvs ci ------	
+Wed Mar  10 04:55:00
+
+Max (patches from Fedor Lizunkov):
+- fixed areafix bug when send mail to uunknown link
+- fixed echo access (readCheck, writeCheck)
+
+----- cvs ci ------	
 Tue Mar  9 15:30:17 MET 1999
 mtt:
 - changed the routing code back, so a netmail to a node (like 2:2433/1245) is 
