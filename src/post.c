@@ -149,6 +149,8 @@ void post(int c, unsigned int *n, char *params[])
     if (params[*n]!='\0' && params[*n][1]=='h') print_help();
     
     if (config==NULL) processConfig();
+    /* init areafix */
+    if ( !init_hptafix() ) exit_hpt("Can't init Areafix library", 1);
     if ( initSMAPI == -1 ) {
         /*  init SMAPI */
         initSMAPI = 0;
