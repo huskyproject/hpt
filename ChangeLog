@@ -1,3 +1,29 @@
+2002-08-30 Friday 13:51  mche
+
+	* src/toss.c (1.437): prevent sorting in PATH kluge
+
+2002-08-30 Friday 13:10  mche
+
+	* src/scan.c (1.170): fix tmpfile creation.  Now you need to define
+	token 'tempDir' for scaning echos by command 'hpt scan -f
+	<filename> - scanning echomail from alternative echotoss file' and
+	if you have defined 'packNetMailOnScan off'
+
+2002-08-30 Friday 12:14  mche
+
+	* make/makefile.mgw (1.5): minGW makefiles corrected
+
+2002-08-30 Friday 09:27  sfpavel
+
+	* debian/changelog (1.15), debian/control (1.12), debian/dirs
+	(1.4), debian/info (1.1), debian/rules (1.11), misc/filefix.hlp
+	(1.2): New debian version
+
+2002-08-30 Friday 08:03  sfpavel
+
+	* config/: areas (1.2), config (1.5), config.win (1.1), links
+	(1.1), path (1.2), path.win (1.1): Update config samples
+
 2002-08-28 Wednesday 11:13  mche
 
 	* src/query.c (1.61): fix hpt qupd hanging
