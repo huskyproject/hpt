@@ -35,7 +35,7 @@ clean:
 	rm -f build-stamp configure-stamp
 	-$(MAKE) distclean
 	-cd doc ;\
-	$(MAKE) distclean
+	$(MAKE) clean
 	dh_clean
 
 install: build
