@@ -143,18 +143,30 @@ void convertMsgText(HMSG SQmsg, s_message *msg)
 void addViaToMsg(s_message *msg, s_addr ourAka) {
 	time_t  tm;
 	struct tm *dt;
+        char buf[2];
 
 	time(&tm);
 	dt = gmtime(&tm);
 
+        /* 
+         * OG: If the last char of the message isn't a \r, so it is a good
+	 * idea to add the \r.
+        */
+        buf[0] = buf[1] = 0;
+        if (msg->text)
+        {
+          if (msg->text[strlen(msg->text)-1] != '\r')
+             buf[0] = '\r';
+        }
+
 	if (ourAka.point==0)
-	xscatprintf(&(msg->text),"\001Via %u:%u/%u @%04u%02u%02u.%02u%02u%02u.UTC %s\r",
-				ourAka.zone, ourAka.net, ourAka.node,
+	xscatprintf(&(msg->text),"%s\001Via %u:%u/%u @%04u%02u%02u.%02u%02u%02u.UTC %s\r",
+				buf, ourAka.zone, ourAka.net, ourAka.node,
 				dt->tm_year + 1900, dt->tm_mon + 1, dt->tm_mday,
 				dt->tm_hour, dt->tm_min, dt->tm_sec, versionStr);
 	else
-	xscatprintf(&(msg->text),"\001Via %u:%u/%u.%u @%04u%02u%02u.%02u%02u%02u.UTC %s\r",
-				ourAka.zone, ourAka.net, ourAka.node, ourAka.point,
+	xscatprintf(&(msg->text),"%s\001Via %u:%u/%u.%u @%04u%02u%02u.%02u%02u%02u.UTC %s\r",
+				buf, ourAka.zone, ourAka.net, ourAka.node, ourAka.point,
 				dt->tm_year + 1900, dt->tm_mon + 1, dt->tm_mday,
 				dt->tm_hour, dt->tm_min, dt->tm_sec, versionStr);
 }
