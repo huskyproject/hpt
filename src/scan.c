@@ -517,6 +517,7 @@ void scanNMArea(s_area *area)
       area->scn = 1;
       w_log('1', "Scanning NetmailArea %s", area -> areaName);
 
+      if (area->msgbType == MSGTYPE_SDM) noHighWaters = 1;
       i = (noHighWaters) ? 0 : MsgGetHighWater(netmail);
 	  highestMsg = MsgGetHighMsg(netmail);
 
@@ -566,7 +567,7 @@ void scanNMArea(s_area *area)
          
       } /* endfor */
 
-	  MsgSetHighWater(netmail, i);
+      if (noHighWaters==0) MsgSetHighWater(netmail, i);
       MsgCloseArea(netmail);
    } else {
       w_log('9', "Could not open NetmailArea %s", area -> areaName);

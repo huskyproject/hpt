@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Fri Mar 23 10:32:34 NOVT 2001
+max:
+* turn off high waters in netmail for SDM areas
+
+----- cvs ci ------
 Thu Mar 22 20:20:25 NOVT 2001
 max:
 * areafix.c cleanup (thanx to Kees Bergwerf)
