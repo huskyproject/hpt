@@ -105,7 +105,10 @@ int afRescanArea(char **report, s_link *link, s_area *area, long rescanCount) {
                 w_log(LL_AREAFIX, "areafix: %s area no rescan possible to %s",
                       an, aka2str(link->hisAka));
             } else {
-
+                if (link->rescanLimit) {
+                  if (rescanCount < 0 || rescanCount > link->rescanLimit)
+                    rescanCount = link->rescanLimit;
+                }
                 if (arealink->export) {
                     rcc = rescanEMArea(area, arealink, rescanCount);
                     tossTempOutbound(config->tempOutbound);
