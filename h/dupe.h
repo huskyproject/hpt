@@ -2,6 +2,7 @@
 #define DUPE_H
 #include <typesize.h>
 #include <fidoconfig.h>
+#include <pkt.h>
 
 /* This header file contains the structures of the dupe file */
 
@@ -39,7 +40,8 @@ struct dupeMemory {
 
 typedef struct dupeMemory s_dupeMemory;
 
-s_dupeMemory *readDupeFile(s_area *area);
+//s_dupeMemory *readDupeFile(s_area *area);
 int writeToDupeFile(s_area *area, s_dupeMemory newDupeEntries);
+int dupeDetection(s_area *area, const s_message msg);
 
 #endif

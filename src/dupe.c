@@ -30,12 +30,12 @@ void doReading(FILE *f, s_dupeMemory *mem) {
    // read Header
    s_dupeFileHeader *fileHeader;
    s_dupePackHeader *packHeader;
-   UINT16 headerSize, entrySize;
+   UINT16 headerSize;
    UINT32 i, j;
-   void *temp;    // buffer for storing the rest of the entry struct
 
    // read correct size
    fread(&headerSize, sizeof(UINT16), 1, f);
+   fseek(f, 0, SEEK_SET);
 
    // alloc memory and read struct
    fileHeader = malloc(headerSize);
@@ -44,14 +44,13 @@ void doReading(FILE *f, s_dupeMemory *mem) {
    // process all packs
    for (i = 0; i < fileHeader->noOfPacks; i++) {
       packHeader = malloc(fileHeader->dupePackHeaderSize);
-      mem->entries = realloc(mem->entries, mem->noOfEntries * sizeof(s_dupeEntry));
-      temp = malloc(entrySize - sizeof(s_dupeEntry));
+      fread(packHeader, fileHeader->dupePackHeaderSize, 1, f);
+      
+      mem->entries = realloc(mem->entries, (mem->noOfEntries + packHeader->noOfEntries) * packHeader->entrySize);
       // process all entries in a pack
       for (j = 0; j < packHeader->noOfEntries; i++) {
-         // read the part of the entry struct we know
-         fread(&(mem->entries[mem->noOfEntries]), sizeof(s_dupeEntry), 1, f);
-         // read rest
-         fread(temp, entrySize-sizeof(s_dupeEntry), 1, f);
+         // read the entry Struct
+         fread(&(mem->entries[mem->noOfEntries + j]), packHeader->entrySize, 1, f);
          
          mem->noOfEntries++;
       }
@@ -76,7 +75,7 @@ s_dupeMemory *readDupeFile(s_area *area) {
    char *fileName;
    s_dupeMemory *dupeMemory;
    
-   dupeMemory = malloc(sizeof(s_dupeMemory));;
+   dupeMemory = malloc(sizeof(s_dupeMemory));
    dupeMemory->entries = NULL;
    dupeMemory->noOfEntries = 0;
 
@@ -95,14 +94,41 @@ s_dupeMemory *readDupeFile(s_area *area) {
    }
    free(fileName);
 
-
    return dupeMemory;
 }
 
 int appendToDupeFile(char *name, s_dupeMemory newDupeEntries) {
    FILE *f;
-
+   UINT32 packs;
+   s_dupePackHeader packHeader;
    
+
+   f = fopen(name, "rb+");
+
+   if (f == NULL) return 1;
+
+   // seek for noOfPacks
+   fseek(f, 8, SEEK_SET);
+   // read noOfPacks
+   fread(&packs, sizeof(UINT32), 1, f);
+   // seek for noOfPacks
+   fseek(f, 8, SEEK_SET);
+   // write noOfPacks+1
+   packs++;
+   fwrite(&packs, sizeof(UINT32), 1, f);
+
+   // add new packet to end of file
+   fseek(f, 0, SEEK_END);
+   packHeader.entrySize   = sizeof(s_dupeEntry);
+   packHeader.noOfEntries = newDupeEntries.noOfEntries;
+   packHeader.time_tSize  = sizeof(time_t);
+   packHeader.packTime    = time(NULL);
+   fwrite(&packHeader, sizeof(s_dupePackHeader), 1, f);
+
+   // add entries
+   fwrite(&(newDupeEntries.entries), newDupeEntries.entrySize, newDupeEntries.noOfEntries, f);
+         
+   fclose(f);
 
    return 0;
 }
@@ -165,12 +191,12 @@ UINT32 msgHash(s_message msg) {
    msgId[0] = 0;
    start = strstr(msg.text, "MSGID: ");
    if (start!=NULL)
-      while(*start != '\n') {
+      while(*start != '\r') {
          msgId[i] = *start;
          start++; i++;
          if (i > 118) break;
       }
-   msgId[119] = 0;
+   msgId[i] = 0;
 
    hashstr = malloc(strlen(msg.fromUserName) + strlen(msg.toUserName) + strlen(msg.subjectLine) + strlen(msgId) + 1);
 
@@ -184,5 +210,50 @@ UINT32 msgHash(s_message msg) {
    free(hashstr);
 
    return hashCode;
+}
+
+int binSearch(s_dupeMemory *mem, UINT32 hashCode, UINT32 left, UINT32 right) {
+   UINT32 middle = (right - left) / 2;
+   // test if middle is positiv
+   if (hashCode == mem->entries[middle].hash) return 1;
+   else if (left == right) return 0;
+   // else recurse
+   else if (hashCode < middle) return binSearch(mem, hashCode, left, middle-1);
+   else return binSearch(mem, hashCode, middle+1, right);
+}
+
+int isDupe(s_area area, const s_message msg) {
+   UINT32 hashCode = msgHash(msg);
+   s_dupeMemory *mem = area.dupes, *newMem = area.newDupes;
+
+   return ((binSearch(mem, hashCode, 0, mem->noOfEntries-1)==1) || (binSearch(newMem, hashCode, 0, newMem->noOfEntries-1)==1));;
+}
+
+int dupeDetection(s_area *area, const s_message msg) {
+   s_dupeMemory *newDupes;
    
+   // test if dupeDatabase is already read
+   if (area->dupes == NULL) {
+      //read Dupes
+      readDupeFile(area);
+   }
+   // test if newDupes area already built up
+   if (area->newDupes == NULL) {
+      //make newDupes "NULL-struct"
+      newDupes = malloc(sizeof(s_dupeMemory));
+      newDupes->noOfEntries = 0;
+      newDupes->entrySize = sizeof(s_dupeEntry);
+      newDupes->entries = NULL;
+      area->newDupes = newDupes;
+   }
+   if (!isDupe(*area, msg)) {
+      // add to newDupes
+      newDupes = area->newDupes;
+      newDupes->noOfEntries++;
+      newDupes->entries = realloc(newDupes->entries, newDupes->noOfEntries * sizeof(s_dupeEntry));
+      newDupes->entries[newDupes->noOfEntries-1].hash = msgHash(msg);
+      return 1;
+   }
+   // it is a dupe do nothing but return 0
+   else return 0;
 }
