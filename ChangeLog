@@ -1,3 +1,22 @@
+2002-07-05 Friday 22:45  stas
+
+	* src/areafix.c (1.321): Don't include Origin into areafix reply if
+	origin is empty string
+
+2002-07-05 Friday 22:22  stas
+
+	* doc/hpt.texi (1.67): Desribe token AreafixQueryReports.
+
+2002-07-05 Friday 21:56  stas
+
+	* misc/hpt_ro/: Hpt_ro.pm (1.1), ro.cfg (1.1), ro_parser.pl (1.1),
+	ro_purge.pl (1.1), ro_readme_rus.txt (1.1): New perl module: hpt
+	read-only manager. Written by Andrew Sagulin 2:6073/1
+
+2002-07-05 Friday 10:50  mche
+
+	* src/areafix.c (1.320): fix config braking while area is deleted
+
 2002-07-04 Thursday 08:14  stas
 
 	* debian/: README.Debian (1.4), changelog (1.12), control (1.10),
