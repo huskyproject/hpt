@@ -56,7 +56,7 @@ sub Import {
 	};
 	if (/echo area (\S+) - (\d+) msgs/) {
 	        $stat{$1}+=$2;
-        	$la{$area}=$date_access
+        	$la{$1}=$date_access
 	};
     }
     dbmclose(%la);
@@ -178,8 +178,8 @@ if ($result && !$opts{"help"}) {
 	    Purge();
 	    print STDOUT "\nPurge shutdown\n" if ($opts{"verbose"});
 	};
-	if ($opts{"stat", "import", "checkdead", "purge"} == qw(0, 0, 0, 0)) {
-	    print $usage, "rerfwe";
+	if (!$opts{"stat"} && !$opts{"import"} && !$opts{"checkdead"} && !$opts{"purge"}) {
+	    print $usage;
 	};
 } else {
 	print $usage;
