@@ -31,7 +31,7 @@
 #include <global.h>
 
 s_log     *hpt_log;
-s_fidoconfig *config;
+s_fidoconfig *config=NULL;
 
 const int VER_MAJOR = 0;
 const int VER_MINOR = 9;

@@ -2,6 +2,11 @@ hpt 0.9.5
 ---------
 
 ----- cvs ci ------
+Sun Dec 19 10:36:32 NOVT 1999                                                   
+max:
+* fixed bug in my last change 'bout "don't read config..."
+
+----- cvs ci ------
 Sat Dec 18 17:55:05 NOVT 1999
 max:
 * don't read config if no command line arguments

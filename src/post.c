@@ -48,6 +48,7 @@
 #include <global.h>
 #include <version.h>
 #include <areafix.h>
+#include <hpt.h>
 
 /* Warning : the code is totaly untested */
 
@@ -67,6 +68,8 @@ void post(int c, unsigned int *n, char *params[])
 
    time_t t = time (NULL);
    struct tm *tm;
+
+   if (config==NULL) processConfig();
 
    memset(&msg, 0, sizeof(s_message));
 

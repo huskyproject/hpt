@@ -272,7 +272,7 @@ int main(int argc, char **argv)
    initCharsets();
 
    if (processCommandLine(argc, argv)==1) exit(0);
-   processConfig();
+   if (config==NULL) processConfig();
 
    // init SMAPI
    m.req_version = 0;
