@@ -980,6 +980,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	    recodeToTransportCharset((CHAR*)msg->subjectLine);
 	    msg->recode &= ~REC_HDR;
 	}
+	if (reason) recodeToTransportCharset((CHAR*)reason);
     }
 	
     i = old_textLength;
@@ -1028,6 +1029,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
     msg->textLength = old_textLength;
     msg->text = old_text;
     msg->recode &= ~REC_TXT; // old text is always in Transport Charset
+    if (config->intab && reason) recodeToInternalCharset((CHAR*)reason);
 
     return rc;
 }
