@@ -1,7 +1,32 @@
-2003-02-21 Friday 22:02  stas_degteff
+2003-02-22 Saturday 13:43  pgul
 
-	* src/toss.c (1.492): Use symbolic names for autoCreate() return
-	values; use reason strings from array; Fix memory leak
+	* misc/filter.pl (1.9): Improve %list and %avail replies processing
+
+2003-02-21 Friday 22:59  stas_degteff
+
+	* h/global.h (1.38), src/global.c (1.50), src/toss.c (1.495): Use
+	symbolic names for putMsgInBadArea() calls
+
+2003-02-21 Friday 22:39  stas_degteff
+
+	* h/toss.h (1.54): Specify own badmail reasons for 'refused by
+	NewAreaRefuseFile' and 'wrong link to autocreate from'
+
+2003-02-21 Friday 22:34  stas_degteff
+
+	* h/fcommon.h (1.53), src/query.c (1.93), src/toss.c (1.494):
+	Specify own badmail reasons for 'refused by NewAreaRefuseFile' and
+	'wrong link to autocreate from'
+
+2003-02-21 Friday 22:22  stas_degteff
+
+	* src/toss.c (1.493): Use symbolic names for autoCreate() return
+	values; use reason strings from array
+
+2003-02-21 Friday 22:14  stas_degteff
+
+	* src/query.c (1.92): Use symbolic names for autoCreate() return
+	values
 
 2003-02-21 Friday 21:59  stas_degteff
 
