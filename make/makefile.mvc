@@ -2,19 +2,27 @@
 #
 
 DEBUG=0
+HPTZIP=0
+
+!if $(HPTZIP) == 1
+HPTZIPL = ..\..\hptzip\make\hptzip.lib
+HPTZIPI = -I..\..\hptzip
+HPTZIPD = -DUSE_HPTZIP
+!endif
+
 CC=cl
 EXENAMEFLAG=-Fe
 SRC_DIR=..\src\
 
-CFLAGS=-nologo -Zp1 -O2 -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib -c
+CFLAGS=-nologo -Zp1 -O2 -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib $(HPTZIPI) -c
 LFLAGS=
-CDEFS =-D__NT__ -D_CONSOLE
+CDEFS =-D__NT__ -D_CONSOLE $(HPTZIPD)
 
 OBJ=.obj
 EXE=.exe
 RM=del
 
-LIBS=..\..\fidoconf\fconfmvc.lib ..\..\smapi\make\smapimvc.lib ..\..\huskylib\make\huskymvc.lib USER32.LIB
+LIBS=..\..\fidoconf\fconfmvc.lib ..\..\smapi\make\smapimvc.lib ..\..\huskylib\make\huskymvc.lib $(HPTZIPL) USER32.LIB
 
 default: all
 

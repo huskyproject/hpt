@@ -71,6 +71,10 @@
 #include <fidoconf/version.h>
 #include <fidoconf/stat.h>
 
+#ifdef USE_HPTZIP
+#   include <hptzip/hptzip.h>
+#endif
+
 #include "version.h"
 #include "cvsdate.h"
 #include "pkt.h"
@@ -515,6 +519,40 @@ int main(int argc, char **argv)
 	   exit_hpt("MsgApiOpen Error",1);
        }
    }
+#ifdef USE_HPTZIP
+{
+   int zi_pack = config->packCount, zi_unpack = config->unpackCount;
+   for (i = 0; i < config->unpackCount; i++)
+     if (fc_stristr(config->unpack[i].call, ZIPINTERNAL) == 0) {
+       zi_unpack = i; break;
+     }
+   for (i = 0; i < config->packCount; i++)
+     if (fc_stristr(config->pack[i].call, ZIPINTERNAL) == 0) {
+       zi_pack = i; break;
+     }
+   if ((zi_pack < config->packCount || zi_unpack < config->unpackCount) && !init_hptzip()) {
+     w_log(LL_ERR, "can't load zlib.dll, zipInternal disabled");
+     if (zi_pack < config->packCount) {
+       nfree(config->pack[zi_pack].packer);
+       nfree(config->pack[zi_pack].call);
+       if (zi_pack != config->packCount) 
+         memmove(config->pack+zi_pack, config->pack+zi_pack+1, sizeof(s_pack)*(config->packCount-zi_pack-1));
+       config->packCount--;
+       /*config->pack = srealloc(config->pack, config->packCount * sizeof(s_pack));*/
+     }
+     if (zi_unpack < config->unpackCount) {
+       nfree(config->unpack[zi_unpack].call); 
+       nfree(config->unpack[zi_unpack].matchCode);
+       nfree(config->unpack[zi_unpack].mask);
+       if (zi_unpack != config->unpackCount) 
+         memmove(config->unpack+zi_unpack, config->unpack+zi_unpack+1, sizeof(s_unpack)*(config->unpackCount-zi_unpack-1));
+       config->unpackCount--;
+       /*config->unpack = srealloc(config->unpack, config->unpackCount * sizeof(s_unpack));*/
+     }
+   }
+}
+#endif
+
 #ifdef _MSC_VER
 #ifdef DO_PERL
 #if _MSC_VER>=1300
