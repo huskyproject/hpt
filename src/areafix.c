@@ -237,7 +237,6 @@ char *list(s_link *link, char *cmdline) {
         return errorRQ(cmdline);
     }
 
-
     xscatprintf(&report, "Available areas for %s\r\r", aka2str(link->hisAka));
 
     al = newAreaList();
@@ -1458,7 +1457,7 @@ char *packer(s_link *link, char *cmdline) {
 
 char *rsb(s_link *link, char *cmdline)
 {
-    UINT mode; // 1 = RSB on, 0 - RSB off.
+    int mode; // 1 = RSB on, 0 - RSB off.
     char *param=NULL; // RSB value.
     char *report=NULL;
     char *confName = NULL;
@@ -1489,7 +1488,7 @@ char *rsb(s_link *link, char *cmdline)
         }
     }
     nfree(param);
-    if (link->reducedSeenBy == mode)
+    if (link->reducedSeenBy == (UINT)mode)
     {
         xscatprintf(&report, "Redused SEEN-BYs had not been changed.\rCurrent value is '%s'\r\r",
                     mode?"on":"off");
