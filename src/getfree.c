@@ -158,12 +158,16 @@ unsigned long getfree (char *path)
 #if defined( __svr4__ ) || defined( __SVR4 )
 #include <sys/statvfs.h>
 #else
-#include <sys/statfs.h>
+//#include <sys/statfs.h>
+#include <sys/vfs.h>
 #endif
 #endif
 #include <limits.h>
 #endif
 
+//#if !(defined(_SYS_STATFS_H) || defined(_SYS_STATVFS_H))
+//#error no statfs() or statvfs() in your system!
+//#endif
 
 extern void w_log (char key, char *logString, ...);
 
@@ -191,10 +195,11 @@ unsigned long getfree (char *path)
 #else
 unsigned long getfree (char *path)
 {
+  w_log ('9', "warning: free space doesn't checked in %s.",path);
   return ULONG_MAX;
 }
 
-#endif /* defined(HAVE_STATFS) | defined(HAVE_STATVFS) */
+#endif
 
 #else
 

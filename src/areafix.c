@@ -851,10 +851,13 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			break;
 		case 6:
 			break;
-		default :
-			w_log('8', "areafix: area %s -- no access for %s",
-						  an, aka2str(link->hisAka));
-			xscatprintf(&report," %s %s  no access\r", an, print_ch(49-strlen(an), '.'));
+		default : 
+			if (!area->hide) {
+				w_log('8', "areafix: area %s -- no access for %s",
+					  an, aka2str(link->hisAka));
+				xscatprintf(&report," %s %s  no access\r", an,
+							print_ch(49-strlen(an), '.'));
+			}
 			found = 1;
 			break;
 		}
