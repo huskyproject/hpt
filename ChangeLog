@@ -1,3 +1,12 @@
+2002-05-28 Tuesday 17:45  mche
+
+	* src/query.c (1.45): do not create tmp-file when saving queryFile
+
+2002-05-28 Tuesday 09:18  pavel.gulchouck
+
+	* src/scan.c (1.157): Bugfix in rename() and remove() retcode
+	analysis
+
 2002-05-26 Sunday 07:47  ml
 
 	* make/makefile.inc (1.8): $(RMOPT) in HPT Makefile
