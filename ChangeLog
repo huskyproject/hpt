@@ -1,3 +1,7 @@
+2003-02-24 Monday 11:08  pgul
+
+	* doc/hpt-FAQ.russian (1.81): Fixed elif -> elseif
+
 2003-02-23 Sunday 19:26  d_sergienko
 
 	* doc/hpt.texi (1.109), src/query.c (1.94): Use AreafixFromName
