@@ -883,7 +883,7 @@ char *subscribe(s_link *link, char *cmd) {
 			    line, print_ch(49-strlen(line), '.'));
 		w_log('8', "areafix: %s - request forwarded\r", line);
 
-		if (isOurAka(link->hisAka)) {
+		if (isOurAka(link->hisAka)==0) {
 		    area = getArea(config, line);
 
 		    if ( !isLinkOfArea(link, area) ) {

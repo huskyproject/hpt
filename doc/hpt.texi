@@ -1461,8 +1461,8 @@ This statement cannot be repeated.
 @code{NotValidFileNameChars :;<>=*?\/}
 @end table
 
-This characters from paths of EchoAreas will be replaced with %hex
-analogs. If not defined, default string used: "*/:;<=>?\|%`'&+
+This characters in message and dupebase filenames will be replaced
+with %hex analogs. If not defined, default string used: "*/:;<=>?\|%`'&+
 
 This statement cannot be repeated.
 

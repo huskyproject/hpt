@@ -968,7 +968,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 {
     FILE *f;
     char *fileName, *msgbFileName=NULL, *acDef;
-    char *buff=NULL, *myaddr=NULL, *hisaddr=NULL;
+    char *buff=NULL, *hisaddr=NULL;
     char *msgbtype, *newAC=NULL, *desc, *msgbDir;
     char *cp;                    /* temp. usage */
     s_link *creatingLink;
@@ -1007,8 +1007,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	return 9;
     }
 
-    // making local address and address of uplink
-    xstrcat(&myaddr, aka2str(*creatingLink->ourAka));
+    // making address of uplink
     xstrcat(&hisaddr, aka2str(pktOrigAddr));
 
     // write new line in config file
@@ -1098,26 +1097,9 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
     // subscribe uplink if he is not subscribed
     area = &(config->echoAreas[config->echoAreaCount-1]);
-    for (i = 0; i<area->downlinkCount; i++) {
-	if (addrComp(pktOrigAddr, area->downlinks[i]->link->hisAka)==0)
-	    break;
-    }
-    if (i == area->downlinkCount) {
+    if ( isLinkOfArea(creatingLink,area)==0 ) {
 	xscatprintf(&buff, " %s", hisaddr);
 	addlink(creatingLink, area);
-    }
-
-    if (forwardAddr &&
-        (creatingLink=getLinkFromAddr(*config, *forwardAddr))!=NULL) {
-        // subscribe downlink if he is not subscribed
-        for (i = 0; i<area->downlinkCount; i++) {
-	    if (addrComp(*forwardAddr, area->downlinks[i]->link->hisAka)==0)
-	        break;
-        }
-        if (i == area->downlinkCount) {
-	    xscatprintf(&buff, " %s", aka2str(*forwardAddr));
-	    addlink(creatingLink, area);
-        }
     }
 
     fprintf(f, "%s\n", buff); // add line to config
@@ -1133,7 +1115,6 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr, NULL);
     else makeMsgToSysop(c_area, *forwardAddr, &pktOrigAddr);
    
-    nfree(myaddr);
     nfree(hisaddr);
 
     // create flag
