@@ -269,7 +269,7 @@ int deleteEntry(char *entry) {
         
     case commonDupeBase:
         enhash = (s_hashDupeEntry *)entry;
-        nfree((s_hashDupeEntry*)enhash);
+        nfree(enhash);
         break;
     }
     
