@@ -93,6 +93,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    ctrlLen = MsgGetCtrlLen(hmsg);
    ctrlBuff = (UCHAR *) malloc(ctrlLen+1+6+strlen(versionStr)+1); // 6 == "\001TID: " // 1 == "\r"
    MsgReadMsg(hmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
+   ctrlBuff[ctrlLen] = '\0'; /* MsgReadMsg does not do zero termination! */
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
    
    if (action == 0) {

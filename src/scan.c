@@ -103,6 +103,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
    ctrlLen = MsgGetCtrlLen(SQmsg);
    ctrlBuff = (unsigned char *) malloc(ctrlLen+1);
    MsgReadMsg(SQmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
+   ctrlBuff[ctrlLen] = '\0'; /* MsgReadMsg does not do zero termination! */
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
    free(ctrlBuff);
 

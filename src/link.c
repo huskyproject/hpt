@@ -134,7 +134,7 @@ int linkArea(s_area *area, int netMail)
              continue;
          }
 
-         ctl   = (byte *) malloc(ctlen);
+         ctl   = (byte *) malloc(ctlen + 1);
          curr  = calloc(1, sizeof(s_msginfo));
 
 	 if (ctl == NULL || curr == NULL) {
@@ -150,6 +150,7 @@ int linkArea(s_area *area, int netMail)
 
          curr -> prev = prv;
          MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, ctlen, ctl);
+	 ctl[ctlen] = '\0';
          curr -> msgNum = i;
          curr -> msgId   = (char *) GetCtrlToken(ctl, (byte *) "MSGID");
          curr -> replyId = (char *) GetCtrlToken(ctl, (byte *) "REPLY");
