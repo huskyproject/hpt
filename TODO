@@ -3,6 +3,7 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
+- packnetmail on (create netmail as pkt)
 - supporting mask in echoArea links
 - msgbasedir for each link
 - -sbadd(<addr>,<addr>,...) -sbdel(<addr>,<addr>,...)

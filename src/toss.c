@@ -1028,7 +1028,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	msg->textLength = strlen(msg->text);
 
 	if (!export) {
-		if (msg->netMail) rc = putMsgInArea(area,msg,0,MSGSENT|MSGLOCAL);
+		if (msg->netMail) rc = putMsgInArea(area,msg,0,MSGSENT);
 		else rc = putMsgInArea(area,msg,0,0);
 		area->imported++;  // area has got new messages
 	}
