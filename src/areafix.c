@@ -382,7 +382,7 @@ char *list(s_link *link, char *cmdline) {
     pattern = getPatternFromLine(cmdline, &reversed);
     if ((pattern) && (strlen(pattern)>60 || !isValidConference(pattern))) {
         w_log(LL_FUNC, "areafix::list() FAILED (error request line)");
-        return errorRQ(line);
+        return errorRQ(cmdline);
     }
 
 
@@ -521,7 +521,7 @@ char *available(s_link *link, char *cmdline)
     pattern = getPatternFromLine(cmdline, &reversed);
     if ((pattern) && (strlen(pattern)>60 || !isValidConference(pattern))) {
         w_log(LL_FUNC, "areafix::avail() FAILED (error request line)");
-        return errorRQ(line);
+        return errorRQ(cmdline);
     }
 
     for (j = 0; j < config->linkCount; j++) {
