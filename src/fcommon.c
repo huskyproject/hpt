@@ -242,6 +242,7 @@ int createTempPktFileName(s_link *link)
 	char *fileName=NULL; // pkt file in tempOutbound
 	char *pfileName=NULL; // name of the arcmail bundle
 	char *tmp=NULL; // temp name of the arcmail bundle
+    char *tmp2=NULL;    //temp string
     time_t aTime = time(NULL);  /* get actual time */
     int counter, minFreeExt, npos;
     char limiter=PATH_DELIM;
@@ -339,9 +340,10 @@ int createTempPktFileName(s_link *link)
 						 config->addr[0].point- link->hisAka.point);
 		}
 */
-                xscatprintf( &tmp, "hpt %s ", aka2str(config->addr[0]) );
-		xstrcat( &tmp, aka2str(link->hisAka) );
-		xscatprintf(&tmp,"%8x", strcrc32(tmp,0xFFFFFFFFUL) );
+                xscatprintf( &tmp2, "hpt %s ", aka2str(config->addr[0]) );
+		xstrcat( &tmp2, aka2str(link->hisAka) );
+		xscatprintf(&tmp,"%08x.", strcrc32(tmp2,0xFFFFFFFFUL) );
+		w_log(LL_FILENAME, "bundle name generating: %s", tmp);
 
     case eAmiga:
                 npos = strlen(tmp);
