@@ -766,7 +766,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    //write new line in config file
    msgbtype = hpt_stristr(newAC, "-b ");
 
-   if (config->msgBaseDir && stricmp(config->msgBaseDir, "passthrough")!=0) {
+   if (stricmp(config->msgBaseDir, "passthrough")!=0) {
 #ifndef MSDOS
 	   if (hpt_stristr(newAC, "-dosfile")==NULL)
 		   xscatprintf(&buff, "EchoArea %s %s%s -a %s%s", c_area,
@@ -784,7 +784,20 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 				   config->msgBaseDir, (long)time(NULL), myaddr,
 				   (msgbtype) ? "" : " -b Squish");
 #endif
-   } else xscatprintf(&buff, "EchoArea %s passthrough -a %s", c_area, myaddr);
+   } else {
+	xscatprintf(&buff, "EchoArea %s passthrough -a %s", c_area, myaddr);
+
+	// del "-b msgbtype " from autocreate defaults
+	if (msgbtype) {
+	   p = msgbtype + 3;
+	   while (*p && !isspace(*p)) p++;
+	   if (*p) memmove(msgbtype, p+1, strlen(p+1)+1);
+	   else {
+		   if (msgbtype>newAC) *(msgbtype-1)='\0';
+		   else *msgbtype='\0'; // "-b msgbtype" defaults
+	   }
+	}
+   }
    
    nfree(squishFileName);
 
@@ -798,17 +811,6 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 		   if (hpt_stristr(newAC, " -d ")==NULL)
 			   xscatprintf(&newAC, " -d \"%s\"", desc);
 		   nfree(desc);
-	   }
-   }
-
-   // del "-b msgbtype " from autocreate defaults
-   if (msgbtype) {
-	   p = msgbtype + 3;
-	   while (*p && !isspace(*p)) p++;
-	   if (*p) memmove(msgbtype, p+1, strlen(p+1)+1);
-	   else {
-		   if (msgbtype>newAC) *(msgbtype-1)='\0';
-		   else *msgbtype='\0'; // "-b msgbtype" defaults
 	   }
    }
 
