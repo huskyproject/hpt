@@ -9,7 +9,7 @@ EXENAMEFLAG=-o
 SRC_DIR=../src/
 CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
 LFLAGS=$(DEBUG)
-CDEFS =-DMSDOS
+CDEFS =-DMSDOS -DNOSEMAPHORES -mcpu=i486
 
 OBJ=.o
 EXE=.exe
