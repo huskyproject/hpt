@@ -1,3 +1,8 @@
+2002-08-26 Monday 06:09  sfpavel
+
+	* debian/: changelog, control, copyright (hpt-1_2-stable.[6,3,2]):
+	Update http location
+
 2002-08-23 Friday 07:24  mche
 
 	* src/link.c (hpt-1_2-stable.1): limit on max linked messages
