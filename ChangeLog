@@ -1,3 +1,8 @@
+2003-04-09 Wednesday 12:11  val_khokhlov
+
+	* src/: areafix.c (1.400), toss.c (1.507): areafixReportsAttr can
+	be applied to individual links
+
 2003-04-08 Tuesday 07:21  val_khokhlov
 
 	* src/scan.c (1.191): bugfix: crash (bus error) on
