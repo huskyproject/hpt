@@ -31,10 +31,11 @@
 #include <io.h>
 #endif
 
-#include <fcntl.h>
 #ifdef __EMX__
 #include <share.h>
 #include <sys/types.h>
+#else
+#include <fcntl.h>
 #endif
 #include <sys/stat.h>
 
@@ -62,7 +63,7 @@ struct msginfo {
    UMSGID replies[MAX_REPLY];
    UMSGID treeId;
    int freeReply;
-   UMSGID msgPos; 
+   UMSGID msgPos;
 
 };
 typedef struct msginfo s_msginfo;
@@ -165,7 +166,7 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
 
         srepl -> replyToPos = crepl->msgPos;
         links_total++;
-        if (crepl->reply1st == 0) { 
+        if (crepl->reply1st == 0) {
             crepl->reply1st = srepl->msgPos;
             (crepl -> freeReply)++;
         } else {

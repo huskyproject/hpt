@@ -30,10 +30,11 @@
 #include <io.h>
 #endif
 
-#include <fcntl.h>
 #ifdef __EMX__
 #include <share.h>
 #include <sys/types.h>
+#else
+#include <fcntl.h>
 #endif
 #include <sys/stat.h>
 
@@ -213,7 +214,7 @@ void buildAreaTree(s_area *area)
 		   if (text == NULL) return;
 
                    ttime = mktime(&tmTime);
-              
+
 		   MsgReadMsg(hmsg, &xmsg, 0, textLength, (unsigned char *) text, 0, NULL);
 
 		   /* check time period */
@@ -226,7 +227,7 @@ void buildAreaTree(s_area *area)
 		   MsgCloseMsg(hmsg);
 
 		   /* check time period */
-                   if ( (tperiod) && ( abs(actualTime - ttime) >= ( tperiod * 24 *60 * 60)) ) 
+                   if ( (tperiod) && ( abs(actualTime - ttime) >= ( tperiod * 24 *60 * 60)) )
                      continue;
 
 		   start = text;
