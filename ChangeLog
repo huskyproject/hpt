@@ -1,3 +1,7 @@
+2002-02-24 Sunday 11:26  ml
+
+	* src/query.c (1.22): include prorotype for sleep()
+
 2002-02-22 Friday 13:25  ml
 
 	* h/hptperl.h (1.4): remove compilation warning
