@@ -541,11 +541,11 @@ int tellcmd(char *cmd) {
                 if (stricmp(line,"all")==0) return 5;       	
                 break;
 	case '\01': return 0;
-//		break;
-	case '-'  : return 4;
-//		break;
+	case '-'  : if (line[1]!='-')
+                       return 4;
+                      else
+                       return 0;
 	default: return 3;
-//		break;
         }
         return 0;
 }
@@ -594,7 +594,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		return 0;
 	}
 
-	// 2nd security ckeck. link,araefixing & password.
+	// 2nd security ckeck. link,areafixing & password.
 	if (!security) {
 		if (link != NULL) {
 			if (link->AreaFix==1) {
@@ -607,7 +607,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	}
 	
 	tmp=(char*) calloc(128,sizeof(char));
-	createKludges(tmp, NULL, link->ourAka, &(pktHeader->origAddr));
+	createKludges(tmp, NULL, link->ourAka, &msg->origAddr);
 	report=(char*) calloc(strlen(tmp)+1,sizeof(char));
 	strcpy(report,tmp);
 	
