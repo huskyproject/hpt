@@ -1,3 +1,7 @@
+2002-04-17 Wednesday 13:24  mche
+
+	* src/areafix.c (1.280): fixed bug with unsubscribing
+
 2002-04-15 Monday 18:54  pavel.gulchouck
 
 	* doc/: hpt-FAQ.russian (1.20), hpt.texi (1.62): perlSupport token
