@@ -309,7 +309,7 @@ int main(int argc, char *argv[])
 
       if (msg.fromUserName==NULL) xstrcat(&msg.fromUserName, "Sysop");
       if (msg.toUserName==NULL)  xstrcat(&msg.toUserName, "All");
-      if (msg.subjectLine==NULL) xstrcat(&msg.subjectLine, "(none)");
+      if (msg.subjectLine==NULL) xstrcat(&msg.subjectLine, "");
 
       /*  load recoding tables */
       initCharsets();
