@@ -1162,10 +1162,12 @@ char *unsubscribe(s_link *link, char *cmd) {
 }
 
 /* if act==0 pause area, if act==1 unpause area */
-void pauseAreas(int act, s_link *searchLink, s_area *searchArea) {
+/* returns 0 if no messages to links were created */
+int pauseAreas(int act, s_link *searchLink, s_area *searchArea) {
   unsigned int i, j, k, linkCount;
+  unsigned int rc = 0;
 
-  if (!searchLink && !searchArea) return;
+  if (!searchLink && !searchArea) return rc;
 
   for (i=0; i < config->echoAreaCount; i++) {
     s_link *uplink;
@@ -1228,7 +1230,10 @@ void pauseAreas(int act, s_link *searchLink, s_area *searchArea) {
     else if (act==1)
       xscatprintf(&(msg->text), "+%s\r", area->areaName);
 
+    rc = 1;
   }
+
+  return rc;
 }
 
 char *pause_link(s_link *link)
@@ -2384,7 +2389,7 @@ void autoPassive()
   s_message *msg;
   FILE *f;
   char *line, *path;
-  unsigned int i;
+  unsigned int i, rc = 0;
 
   for (i = 0; i < config->linkCount; i++) {
 
@@ -2448,7 +2453,7 @@ void autoPassive()
 
 				  /* pause areas with one link alive while others are paused */
 				  if (config->autoAreaPause)
-                                      pauseAreas(0,config->links[i],NULL);
+                                      rc += pauseAreas(0,config->links[i],NULL);
 
 			      } /*  end changepause */
 			      nfree(line);
@@ -2468,6 +2473,9 @@ void autoPassive()
       nfree(config->links[i]->pktFile);
       nfree(config->links[i]->packFile);
   } /* endfor */
+
+  /* send created messages to links */
+  if (rc) sendAreafixMessages();
 }
 
 int relink (char *straddr) {

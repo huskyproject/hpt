@@ -3331,11 +3331,11 @@ describe area (for areafix reports & etc.);
 %PAUSE has effect to this area if disabled in echoareadefaults;
 @item -paused
 Area is paused (unsubscribed at uplink). This flag is automatically set and
-cleared by hpt if (@xref{AutoAreaPause}) enabled.
+cleared by hpt if ,@xref{AutoAreaPause}, enabled.
 @item -noautoareapause
-Do not automatically pause area even if (@xref{AutoAreaPause}) is enabled.
+Do not automatically pause area even if ,@xref{AutoAreaPause}, is enabled.
 @item -autoareapause
-Automatically pause area (if (@xref{AutoAreaPause}) is enabled).
+Automatically pause area (if ,@xref{AutoAreaPause}, is enabled).
 @item -ccoff
 disables carbonCopies for this area;
 @item -noccoff or -ccon

@@ -1177,6 +1177,7 @@ void perl_setvars(void) {
       VK_ADD_HASH_int(hv2, sv, "manual", config->echoAreas[i].manual);
       VK_ADD_HASH_int(hv2, sv, "lvl_r", config->echoAreas[i].levelread);
       VK_ADD_HASH_int(hv2, sv, "lvl_w", config->echoAreas[i].levelwrite);
+      VK_ADD_HASH_int(hv2, sv, "paused", config->echoAreas[i].paused);
       if (config->echoAreas[i].downlinks) {
         hv3 = newHV();
         for (j = 0; j < config->echoAreas[i].downlinkCount; j++) {

@@ -367,6 +367,11 @@ e_BadmailReasons autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAd
 
     nfree(hisaddr);
 
+    /* check if downlinks are already paused, pause area if it is so */
+    if (config->autoAreaPause && area->msgbType == MSGTYPE_PASSTHROUGH)
+        if (pauseAreas(0, NULL, area))
+             sendAreafixMessages();
+
 #ifdef DO_PERL
     /* val: update perl structures */
     perl_setvars();
