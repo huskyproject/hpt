@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <fcommon.h>
 #include <global.h>
 #include <seenby.h>
@@ -313,7 +314,6 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
                        s_addr pktOrigAddr) 
 {
     UINT i, lFound = 0, zFound = 0, oFound = 0;
-    int nRet = 0;
     
     *newLinks =  (s_arealink **)safe_calloc(echo->downlinkCount,sizeof(s_arealink*));
     *zoneLinks = (s_arealink **)safe_calloc(echo->downlinkCount,sizeof(s_arealink*));

@@ -538,8 +538,8 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 
 void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 {
-    s_seenBy *rseenBys = NULL,*seenBys = NULL, *path = NULL;
-    UINT     seenByCount = 0 , rseenByCount = 0, pathCount = 0;
+    s_seenBy *seenBys = NULL, *path = NULL;
+    UINT     seenByCount = 0 , pathCount = 0;
 
     // links who does not have their aka in seenBys and thus have not got the echomail
     s_arealink **newLinks = NULL, **zoneLinks = NULL, **otherLinks = NULL;
