@@ -1,1 +1,2 @@
 1) jam bases damages when no free disk space available and the mail is lost
+2) carbon rules sometimes break fidoconfig logic

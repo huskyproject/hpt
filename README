@@ -3,14 +3,3 @@
   if the new msg in the end of message base, scanning will be started from this
   msg, else - from 1-st msg (new msg at the begin or if no new msg at all).
   Thats why you should always use EchoTossLog file!
-
-Renaming suffixes:
-
-.tos - hpt crashes on this pkt, report to developers!
-.sec - pktpwd problem or link not found, bundles in unsecure inbound
-.acs - could not open pkt
-.bad - not/wrong pkt, bundle unpacking problems
-.ntu - not to us
-.err - msg tossing problem (couldn't open badArea/couldn't write msg)
-.flt - perl filter (process_pkt()) returns bad retcode
-

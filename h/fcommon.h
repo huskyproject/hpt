@@ -101,7 +101,7 @@ int    createOutboundFileName(s_link *link, e_prio prio, e_type typ);
           0 else
           */
 
-#if defined (__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__)
+#if defined (__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
  int truncate(const char *fileName, long length);
  /*DOC
    Truncates the file at given position

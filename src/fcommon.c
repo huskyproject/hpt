@@ -60,6 +60,7 @@
 
 #include <io.h>
 #include <fcntl.h>
+#include <process.h>
 
 #if !defined(S_ISDIR)
 #define S_ISDIR(a) (((a) & S_IFDIR) != 0)

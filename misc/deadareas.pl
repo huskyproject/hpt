@@ -33,22 +33,25 @@ $curtime=time;
  $logtime="$hour:$min:$sec $mday-$month[$mon]-".(1900+$year);
 
  print LOG "--- $logtime ---\n";
-foreach $i ( @dps ) {
- ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat($i);
- $i=~m/\/(.+)\/(.+)\.dpd/g;
- $fname=$2;
-    if ( $curtime >= $mtime ) {
-        if ( ( $curtime - $mtime ) > ($DEADTIME*24*60*60) ) {
-            if ( $EXCAREA{lc($fname)} != 1 ) {
-                print LOG uc($fname)," dead for ",int(($curtime - $mtime)/60/60/24)," days\n";
-                print DEADF uc($fname)," ",int(($curtime - $mtime)/60/60/24),"\n";
+ foreach $i ( @dps ) {
+    if ( length($i) > 1 ) {
+       
+($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat($i);
+        $i=~m/\/(.+)\/(.+)\.dpd/g;
+        $fname=$2;
+        if ( $curtime >= $mtime ) {
+            if ( ( $curtime - $mtime ) > ($DEADTIME*24*60*60) ) {
+                if ( $EXCAREA{lc($fname)} != 1 ) {
+                    print LOG uc($fname)," dead for ",int(($curtime - $mtime)/60/60/24)," days\n";
+                    print DEADF uc($fname)," ",int(($curtime - $mtime)/60/60/24),"\n";
+                }
             }
-        }
 
-    } else {
-        print LOG uc($fname)," has future time\n";
+        } else {
+            print LOG uc($fname)," has future time\n";
+        }
     }
-}
+ }
  ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
  if ( length($mday) < 2 ) { $mday="0".$mday; }
  if ( length($hour) < 2 ) { $hour="0".$hour; }

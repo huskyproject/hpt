@@ -964,9 +964,9 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     if (strchr(c_area,' ') || strchr(c_area,'\t') ||
 	strchr(c_area,PATH_DELIM) || strchr(c_area,config->CommentChar) ||
 	strchr(c_area,':')) return 7;
-   
+
     xstrcat(&squishFileName, c_area);
-   
+
     // translating name of the area to lowercase/uppercase
     if (config->createAreasCase == eUpper) strUpper(c_area);
     else strLower(c_area);
@@ -974,7 +974,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     // translating filename of the area to lowercase/uppercase
     if (config->areasFileNameCase == eUpper) strUpper(squishFileName);
     else strLower(squishFileName);
-	   
+
     creatingLink = getLinkFromAddr(*config, pktOrigAddr);
 
     if (creatingLink == NULL) {
@@ -984,7 +984,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
     acDef = creatingLink->autoAreaCreateDefaults;
     xscatprintf(&newAC, "%s%s", (acDef) ? " " : "", (acDef) ? acDef : "");
-   
+
     fileName = creatingLink->autoAreaCreateFile;
     if (fileName == NULL) fileName = cfgFile ? cfgFile : getConfigFileName();
 
@@ -997,7 +997,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     // making local address and address of uplink
     xstrcat(&myaddr, aka2str(*creatingLink->ourAka));
     xstrcat(&hisaddr, aka2str(pktOrigAddr));
-   
+
     // write new line in config file
     msgbtype = hpt_stristr(newAC, "-b ");
 
@@ -1005,7 +1005,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
     if (stricmp(msgbDir, "passthrough")!=0 && NULL==hpt_stristr(newAC,"passthrough"))
 	{
-                                // we have to find a file name
+	    // we have to find a file name
 	    int need_dos_file;
 
 #ifndef MSDOS                            
@@ -1013,7 +1013,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 #else
 	    need_dos_file = 1;
 #endif       
-      
+
 	    if (creatingLink->autoAreaCreateSubdirs && !need_dos_file)
 		{
 		    // "subdirify" the message base path if the
@@ -1046,7 +1046,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	    }
 
 	} else {
-                                // passthrough
+	    // passthrough
 	    xscatprintf(&buff, "EchoArea %s passthrough", c_area);
        
 	    del_tok(&newAC, "passthrough");

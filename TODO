@@ -3,17 +3,15 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- document exit() values
-- autofwdareacreatedefaults
-- AllowEchoAreaDelete
 - don't make paths with forbidden symbols
-- killsb for links
-- don't print avail list on subscribe/unsubscribe (areafixQueryReports)
-- write badmail to areas summary
-- check for dublicate links if mask is used (fidoconf)
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
+- jam link speedup (pavel gulchouk)
+- check for dublicate links if mask is used (fidoconf)
+- killsb for links
+- autofwdareacreatedefaults
+- AllowEchoAreaDelete
 - optimize packing (several files)
 - don't open/close on each msg when writing to pkt files (through ifdef)
 - areafix file with forwarded echo areas
