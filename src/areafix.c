@@ -546,7 +546,7 @@ int delLinkFromString(char **lineOut, char *line, char *linkAddr)
     ptr=strchr(linkStr, '.');
     if (ptr==NULL) {
 	nodeAddr = 1;
-	ptr=linkStr+strlen(linkStr);
+        ptr=linkStr+strlen(linkStr);
     }
     strcpy(ptr, ".*");
 
@@ -554,34 +554,35 @@ int delLinkFromString(char **lineOut, char *line, char *linkAddr)
     do {
 	ptr = strstr(tmp+1, linkAddr);
 	endLen = 0;
-	if (ptr && comment && ptr>=comment) ptr=NULL;
+        if (ptr && comment && ptr>=comment) ptr = NULL;
+        if (ptr) tmp = ptr + strlen(linkAddr);
 	if (ptr && isspace(*(ptr-1))) {
-	    eptr = ptr+strlen(linkAddr);
+            eptr = ptr+strlen(linkAddr);
 	    if (isspace(*eptr) || *eptr=='\0' ||
-	        (nodeAddr && *eptr=='.' && eptr[1]=='0' && (isspace(eptr[2]) || eptr[2]=='\0'))) {
-		tmp = ptr;
+                (nodeAddr && *eptr=='.' && eptr[1]=='0' && (isspace(eptr[2]) || eptr[2]=='\0'))) {
+                startLink = ptr;
 		endLen = eptr + 1 - line;
 		rc = 0; // all ok
 	    }
 	}
 	ptr = strstr(tmp+1, linkStr);
-	if (ptr && comment && ptr>=comment) ptr=NULL;
+        if (ptr && comment && ptr>=comment) ptr = NULL;
+        if (ptr) tmp = ptr + strlen(linkAddr);
 	if (ptr && isspace(*(ptr-1))) {
 	    eptr = ptr+strlen(linkStr);
-	    if (isspace(*eptr) || *eptr=='\0') {
-		tmp = ptr;
+            if (isspace(*eptr) || *eptr=='\0') {
+                startLink = ptr;
 		endLen = eptr + 1 - line;
 		rc = 2; // found, but cannot unsubscribe
 	    }
 	}
-    } while (endLen);
+    } while (!endLen && tmp);
 
     if (rc == 0) {
-	eptr = tmp+strlen(linkAddr);
+	eptr = tmp;
 	if (*eptr == '.' && eptr[1] == '0') eptr+=2;
 	if (*eptr && isspace(*eptr)) eptr++;
 	endLen = eptr - line;
-	startLink = tmp;
 	ptr = line + endLen;
         while (ptr) {
             tmp = strseparate(&ptr, " \t"); // looking for link options...
