@@ -24,7 +24,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -33,7 +33,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#ifndef __IBMC__
 #include <unistd.h>
+#endif
 
 #include <msgapi.h>
 #include <progprot.h>
@@ -84,7 +86,7 @@ void processCommandLine(int argc, char **argv)
       } else if (stricmp(argv[i], "post") == 0) {
          ++i; post(argc, &i, argv);
       } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
-      
+
    } /* endwhile */
 }
 
@@ -100,10 +102,10 @@ void processConfig()
 
    // lock...
    if (config->lockfile!=NULL && fexist(config->lockfile)) {
-	   printf("lock file found! exit...\n");
-	   disposeConfig(config);
-	   exit(1);
-   } 
+           printf("lock file found! exit...\n");
+           disposeConfig(config);
+           exit(1);
+   }
    else if (config->lockfile!=NULL) createLockFile(config->lockfile);
 
    // open Logfile
@@ -120,15 +122,15 @@ void processConfig()
    if (config->tempOutbound == NULL) printf("you must set tempOutbound in fidoconfig first\n");
 
    if (config->addrCount == 0 ||
-	   config->linkCount == 0 || 
-	   config->linkCount == 0 ||
-	   config->tempOutbound == NULL) {
-	   if (config->lockfile != NULL) remove(config->lockfile);
-	   writeLogEntry(log, '9', "wrong config file");
-	   writeLogEntry(log, '1', "End");
-	   closeLog(log);
-	   disposeConfig(config);
-	   exit(1);
+           config->linkCount == 0 ||
+           config->linkCount == 0 ||
+           config->tempOutbound == NULL) {
+           if (config->lockfile != NULL) remove(config->lockfile);
+           writeLogEntry(log, '9', "wrong config file");
+           writeLogEntry(log, '1', "End");
+           closeLog(log);
+           disposeConfig(config);
+           exit(1);
    }
 }
 
@@ -146,24 +148,24 @@ void tossTempOutbound(char *directory)
    dir = opendir(directory);
 
    while ((file = readdir(dir)) != NULL) {
-	   if ((patmat(file->d_name, "*.pkt") == 1) || (patmat(file->d_name, "*.PKT") == 1)) {
-		   dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
-		   strcpy(dummy, directory);
-		   strcat(dummy, file->d_name);
+           if ((patmat(file->d_name, "*.pkt") == 1) || (patmat(file->d_name, "*.PKT") == 1)) {
+                   dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
+                   strcpy(dummy, directory);
+                   strcat(dummy, file->d_name);
 
-		   pkt = fopen(dummy, "rb");
+                   pkt = fopen(dummy, "rb");
 
-		   header = openPkt(pkt);
-		   link = getLinkFromAddr (*config, header->destAddr);
-		   createTempPktFileName(link);
+                   header = openPkt(pkt);
+                   link = getLinkFromAddr (*config, header->destAddr);
+                   createTempPktFileName(link);
 
-		   free(link->pktFile);
-		   link->pktFile = dummy;
-		   
-		   writeLogEntry(log, '7', "found non packed mail in tempOutbound");
-		   fclose(pkt);
-		   arcmail();
-	   }
+                   free(link->pktFile);
+                   link->pktFile = dummy;
+
+                   writeLogEntry(log, '7', "found non packed mail in tempOutbound");
+                   fclose(pkt);
+                   arcmail();
+           }
    }
 
    closedir(dir);
@@ -186,7 +188,7 @@ int main(int argc, char **argv)
    m.def_zone = config->addr[0].zone;
    if (MsgOpenApi(&m) != 0) {
       writeLogEntry(log, '9', "MsgApiOpen Error");
-	  if (config->lockfile != NULL) remove(config->lockfile);
+          if (config->lockfile != NULL) remove(config->lockfile);
       closeLog(log);
       disposeConfig(config);
       exit(1);

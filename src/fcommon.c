@@ -24,7 +24,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -36,6 +36,12 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#ifdef __IBMC__
+#include <direct.h>
+#endif
+#ifdef __WATCOMC__
+#include <fcntl.h>
+#endif
 
 #include <global.h>
 #include <fidoconfig.h>
@@ -46,34 +52,38 @@
 #include <progprot.h>
 
 int createLockFile(char *lockfile) {
-	FILE *f;
-	
-	if ((f=fopen(lockfile,"a")) == NULL)
-	   {
-		   fprintf(stderr,"createLockFile: cannot create lock file\"%s\"\n",lockfile);
-		   writeLogEntry(log, '9', "createLockFile: cannot create lock file");
-		   return 1;
-	   }
-	
-	fclose(f);
-	return 0;
+        FILE *f;
+
+        if ((f=fopen(lockfile,"a")) == NULL)
+           {
+                   fprintf(stderr,"createLockFile: cannot create lock file\"%s\"\n",lockfile);
+                   writeLogEntry(log, '9', "createLockFile: cannot create lock file");
+                   return 1;
+           }
+
+        fclose(f);
+        return 0;
 }
 
-#ifdef __TURBOC__
+#if defined(__TURBOC__) || defined(__IBMC__)
 
 #include <io.h>
 #include <fcntl.h>
 
 #define S_ISDIR(a) (((a) & S_IFDIR) != 0)
 
+#endif
+
+#if defined(__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__)
+
 int truncate(const char *fileName, long length)
 {
    int fd = open(fileName, O_RDWR | O_BINARY);
    if (fd != -1) {
-	  lseek(fd, length, SEEK_SET);
-	  chsize(fd, tell(fd));
-	  close(fd);
-	  return 1;
+          lseek(fd, length, SEEK_SET);
+          chsize(fd, tell(fd));
+          close(fd);
+          return 1;
    };
    return 0;
 }
@@ -127,11 +137,11 @@ int createTempPktFileName(s_link *link)
    char *wday;
    struct tm *tp;
 
-   
+
    tr=time(NULL);
    tp=localtime(&tr);
    counter = 0;
-   
+
    wday=wdays[tp->tm_wday];
 
    aTime %= 0xffffff;   // only last 24 bit count
@@ -150,14 +160,14 @@ int createTempPktFileName(s_link *link)
    // This is no big problem, but a big system with many links and many zones may encounter problems
 
    do {
-	   
-	   sprintf(fileName, "%s%06lx%02x.pkt", config->tempOutbound, aTime, counter);
 
-	   if ( link->hisAka.point == 0 )
-		   sprintf(tmpPFileName,"%s%06lx%02x.%s",zoneOutbound,aTime,counter,wday);
-	   else
-		   sprintf(tmpPFileName, "%s%04x%04x.pnt%c%06lx%02x.%s", zoneOutbound, link->hisAka.net, link->hisAka.node, limiter, aTime, counter, wday);
-	   counter++;
+           sprintf(fileName, "%s%06lx%02x.pkt", config->tempOutbound, aTime, counter);
+
+           if ( link->hisAka.point == 0 )
+                   sprintf(tmpPFileName,"%s%06lx%02x.%s",zoneOutbound,aTime,counter,wday);
+           else
+                   sprintf(tmpPFileName, "%s%04x%04x.pnt%c%06lx%02x.%s", zoneOutbound, link->hisAka.net, link->hisAka.node, limiter, aTime, counter, wday);
+           counter++;
 
    } while ((fexist(fileName) || fileNameAlreadyUsed(fileName, NULL)) && (counter<=255));
 
@@ -170,7 +180,7 @@ int createTempPktFileName(s_link *link)
    free(tmpPFileName);
 
    if ((!fexist(fileName)) && (!fexist(pfileName))) {
-	   link->packFile = pfileName;
+           link->packFile = pfileName;
            link->pktFile = fileName;
            return 0;
    }
@@ -186,7 +196,7 @@ int createDirectoryTree(const char *pathName) {
    struct stat buf;
    char *start, *slash;
    char *buff;
-   
+
 #ifdef UNIX
    char limiter='/';
 #else
@@ -211,7 +221,7 @@ int createDirectoryTree(const char *pathName) {
 
    // jump over first limiter
    slash++;
-   
+
    while ((slash = strchr(slash, limiter)) != NULL) {
       *slash = '\0';
 
@@ -302,39 +312,39 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    strcpy(bsyname, name);
    bsyname[9]='b';bsyname[10]='s';bsyname[11]='y';
    strcat(link->bsyFile, bsyname);
-   
+
    // maybe we have session with this link?
    if (fexist(link->bsyFile)) {
 
-	   tolog = (char*) malloc (strlen(link->name)+40+1);
-	   sprintf(tolog,"link %s is busy. hold mail in tempOutbound", link->name);
+           tolog = (char*) malloc (strlen(link->name)+40+1);
+           sprintf(tolog,"link %s is busy. hold mail in tempOutbound", link->name);
 
-	   writeLogEntry(log, '7', tolog);
-	   free (link->floFile); link->floFile = NULL;
-	   free (link->bsyFile); link->bsyFile = NULL;
-	   free (tolog);
+           writeLogEntry(log, '7', tolog);
+           free (link->floFile); link->floFile = NULL;
+           free (link->bsyFile); link->bsyFile = NULL;
+           free (tolog);
 
-	   return 1;
+           return 1;
 
    } else {
-	   
-	   if ((f=fopen(link->bsyFile,"a")) == NULL)
-		   {
-			   fprintf(stderr,"cannot create *.bsy file for %s\n",link->name);
-			   if (config->lockfile != NULL) {
-				   remove(link->bsyFile);
-				   free(link->bsyFile);
-				   link->bsyFile=NULL;
-			   }
-			   writeLogEntry(log, '9', "cannot create *.bsy file");
-			   writeLogEntry(log, '1', "End");
-			   closeLog(log);
-			   disposeConfig(config);
-			   exit(1);
-		   }
-	   fclose(f);
+
+           if ((f=fopen(link->bsyFile,"a")) == NULL)
+                   {
+                           fprintf(stderr,"cannot create *.bsy file for %s\n",link->name);
+                           if (config->lockfile != NULL) {
+                                   remove(link->bsyFile);
+                                   free(link->bsyFile);
+                                   link->bsyFile=NULL;
+                           }
+                           writeLogEntry(log, '9', "cannot create *.bsy file");
+                           writeLogEntry(log, '1', "End");
+                           closeLog(log);
+                           disposeConfig(config);
+                           exit(1);
+                   }
+           fclose(f);
    }
-   
+
    return 0;
 }
 

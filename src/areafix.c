@@ -27,17 +27,18 @@
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *****************************************************************************/
 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 #include <fidoconfig.h>
 #include <common.h>
 
 #include <fcommon.h>
 #include <global.h>
 #include <pkt.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
 #include <version.h>
 #include <toss.h>
 #include <patmat.h>

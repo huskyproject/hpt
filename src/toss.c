@@ -24,7 +24,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -57,13 +57,13 @@
 #include <compiler.h>
 #include <progprot.h>
 
-s_statToss statToss; 
+s_statToss statToss;
 
 void changeFileSuffix(char *fileName, char *newSuffix) {
 
    int   i = 1;
    char  buff[200];
-   
+
    char *beginOfSuffix = strrchr(fileName, '.')+1;
    char *newFileName;
    int  length = strlen(fileName)-strlen(beginOfSuffix)+strlen(newSuffix);
@@ -71,7 +71,7 @@ void changeFileSuffix(char *fileName, char *newSuffix) {
    newFileName = (char *) calloc(length+1+2, 1);
    strncpy(newFileName, fileName, length-strlen(newSuffix));
    strcat(newFileName, newSuffix);
-  
+
 #ifdef DEBUG_HPT
    printf("old: %s      new: %s\n", fileName, newFileName);
 #endif
@@ -171,25 +171,25 @@ void putMsgInArea(s_area *echo, s_message *msg, int strip)
          if (msg->recode == 0 && config->intab != NULL) {
             recodeToInternalCharset(msg->subjectLine);
             recodeToInternalCharset(msg->text);
-			msg->recode = 1;
+                        msg->recode = 1;
          }
 
          textWithoutArea = msg->text;
-         
+
          if ((strncmp(msg->text, "AREA:", 5) == 0) && (strip==1)) {
             // jump over AREA:xxxxx\r
             while (*(textWithoutArea) != '\r') textWithoutArea++;
             textWithoutArea++;
          }
-         
+
          ctrlBuff = CopyToControlBuf((UCHAR *) textWithoutArea, (UCHAR **) &textStart, &textLength);
          // textStart is a pointer to the first non-kludge line
          xmsg = createXMSG(msg);
-		 
+
          MsgWriteMsg(hmsg, 0, &xmsg, textStart, strlen(textStart), strlen(textStart), strlen(ctrlBuff), ctrlBuff);
-		 
+
          MsgCloseMsg(hmsg);
-		 
+
       } else {
          sprintf(buff, "Could not create new msg in %s!", echo->fileName);
          writeLogEntry(log, '9', buff);
@@ -209,7 +209,7 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
    #ifdef DEBUG_HPT
    int i;
    #endif
-   
+
    *seenByCount = 0;
    start = msg->text;
 
@@ -234,7 +234,7 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
          // get new memory
          (*seenByCount)++;
          *seenBys = (s_seenBy*) realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
-         
+
          // parse token
          temp = strtoul(token, &endptr, 10);
          if ((*endptr) == '\0') {
@@ -267,14 +267,14 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
 
    // DON'T GET MESSED UP WITH THE VARIABLES NAMED SEENBY...
    // THIS FUNCTION READS PATH!!!
-   
+
    char *seenByText, *start, *token;
    char *endptr;
    unsigned long temp;
    #ifdef DEBUG_HPT
    int i;
    #endif
-   
+
    *seenByCount = 0;
    start = msg->text;
    // find beginning of path lines
@@ -295,7 +295,7 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
       if (isdigit(*token)) {
          (*seenByCount)++;
          *seenBys = (s_seenBy*) realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
-         
+
          // parse token
          temp = strtoul(token, &endptr, 10);
          if ((*endptr) == '\0') {
@@ -325,75 +325,75 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
 }
 
 int readCheck(s_area *echo, s_link *link) {
-	int i, rc=0;
-	char *denygrp;
+        int i, rc=0;
+        char *denygrp;
 
-	// read for all
-	if (echo->rgrp==NULL) return 0;
+        // read for all
+        if (echo->rgrp==NULL) return 0;
 
-	denygrp = link->DenyGrp;
+        denygrp = link->DenyGrp;
 
-	if (echo->rgrp!=NULL && denygrp!=NULL) {
-		// is this link allowed to read messages from this area?
-		for (i=0; i< strlen(echo->rgrp); i++) {
-			if ( strchr( denygrp, echo->rgrp[i]) != NULL) {
+        if (echo->rgrp!=NULL && denygrp!=NULL) {
+                // is this link allowed to read messages from this area?
+                for (i=0; i< strlen(echo->rgrp); i++) {
+                        if ( strchr( denygrp, echo->rgrp[i]) != NULL) {
 #ifdef DEBUG_HPT
-				printf("read!\n");
+                                printf("read!\n");
 #endif
-				return 0;
-			} else if ( i == strlen (echo->rgrp) - 1 ) rc++;
-		}
-	} else rc++;
+                                return 0;
+                        } else if ( i == strlen (echo->rgrp) - 1 ) rc++;
+                }
+        } else rc++;
 
-	if (echo->rwgrp!=NULL && denygrp!=NULL) {
-		// maybe he have r/w acess?
-		for (i=0; i< strlen(echo->rwgrp); i++) {
-			if ( strchr( denygrp, echo->rwgrp[i]) != NULL) {
+        if (echo->rwgrp!=NULL && denygrp!=NULL) {
+                // maybe he have r/w acess?
+                for (i=0; i< strlen(echo->rwgrp); i++) {
+                        if ( strchr( denygrp, echo->rwgrp[i]) != NULL) {
 #ifdef DEBUG_HPT
-				printf("read/write!\n");
+                                printf("read/write!\n");
 #endif
-				return 0;
-			} else if ( i == strlen (echo->rwgrp) - 1 ) rc++;
-		}
-	} else rc++;
-	
-	return rc;
+                                return 0;
+                        } else if ( i == strlen (echo->rwgrp) - 1 ) rc++;
+                }
+        } else rc++;
+
+        return rc;
 }
 
 int writeCheck(s_area *echo, s_link *link) {
-	int i, rc=0;
-	char *denygrp;
+        int i, rc=0;
+        char *denygrp;
 
-	// read/write for all
-	if ((echo->wgrp==NULL) && (echo->rwgrp==NULL)) return 0;
+        // read/write for all
+        if ((echo->wgrp==NULL) && (echo->rwgrp==NULL)) return 0;
 
-	denygrp = link->DenyGrp;
+        denygrp = link->DenyGrp;
 
-	if (echo->wgrp!=NULL && denygrp!=NULL) {
-		// is this link allowed to post messages to this area?
-		for (i=0; i< strlen(echo->wgrp); i++) {
-			if ( strchr( denygrp, echo->wgrp[i]) != NULL) {
+        if (echo->wgrp!=NULL && denygrp!=NULL) {
+                // is this link allowed to post messages to this area?
+                for (i=0; i< strlen(echo->wgrp); i++) {
+                        if ( strchr( denygrp, echo->wgrp[i]) != NULL) {
 #ifdef DEBUG_HPT
-				printf("write!\n");
+                                printf("write!\n");
 #endif
-				return 0;
-			} else if ( i == strlen (echo->wgrp) - 1 ) rc++;
-		}
-	} else rc++;
+                                return 0;
+                        } else if ( i == strlen (echo->wgrp) - 1 ) rc++;
+                }
+        } else rc++;
 
-	if (echo->rwgrp!=NULL && denygrp!=NULL) {
-		// maybe he have r/w acess?
-		for (i=0; i< strlen(echo->rwgrp); i++) {
-			if ( strchr( denygrp, echo->rwgrp[i]) != NULL) {
+        if (echo->rwgrp!=NULL && denygrp!=NULL) {
+                // maybe he have r/w acess?
+                for (i=0; i< strlen(echo->rwgrp); i++) {
+                        if ( strchr( denygrp, echo->rwgrp[i]) != NULL) {
 #ifdef DEBUG_HPT
-				printf("read/write!\n");
+                                printf("read/write!\n");
 #endif
-				return 0;
-			} else if ( i == strlen (echo->rwgrp) - 1 ) rc++;
-		}
-	} else rc++;
-	
-	return rc;
+                                return 0;
+                        } else if ( i == strlen (echo->rwgrp) - 1 ) rc++;
+                }
+        } else rc++;
+
+        return rc;
 }
 
 /**
@@ -420,7 +420,7 @@ int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link)
 void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount, s_area *echo, s_link ***newLinks)
 {
    UINT i, j=0;
-   
+
    *newLinks = (s_link **) calloc(echo->downlinkCount, sizeof(s_link*));
 
    for (i=0; i < echo->downlinkCount; i++) {
@@ -436,7 +436,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    s_seenBy *seenBys = NULL, *path = NULL;
    UINT     seenByCount, pathCount, i;
    char     *start, *c, *newMsgText, *seenByText = NULL, *pathText = NULL;
-   
+
    FILE     *pkt;
    s_pktHeader header;
    s_link   **newLinks;  // links who does not have their aka in seenBys and thus have not got the echomail.
@@ -445,13 +445,13 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    createPathArrayFromMsg(msg, &path, &pathCount);
 
    createNewLinkArray(seenBys, seenByCount, echo, &newLinks);
-   
+
    // add seenBy for newLinks
    for (i=0; i<echo->downlinkCount; i++) {
 
       if (newLinks[i] == NULL) break;               // no link at this index -> break
       if (newLinks[i]->hisAka.point != 0) continue; // don't include points in SEEN-BYS
-      
+
       seenBys = (s_seenBy*) realloc(seenBys, sizeof(s_seenBy) * (seenByCount)+1);
       seenBys[seenByCount].net = newLinks[i]->hisAka.net;
       seenBys[seenByCount].node = newLinks[i]->hisAka.node;
@@ -493,10 +493,10 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       // create new seenByText
       seenByText = createControlText(seenBys, seenByCount, "SEEN-BY: ");
       pathText   = createControlText(path, pathCount, "\001PATH: ");
-   
+
       // reserve space for msg-body - old seenbys&path + new seenbys + new path
       newMsgText = (char *) malloc(strlen(msg->text) - strlen(start) + strlen(seenByText) + strlen(pathText) + 1);
-   
+
       // replace msg's seen-bys and path with our new generated
       c = msg->text;
       i = 0;
@@ -518,18 +518,18 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    {
 
       if (newLinks[i] == NULL) break;           // no link at this index -> break;
-      
+
       // does the link has read access for this echo?
       if (readCheck(echo, newLinks[i])!=0) continue;
-      
+
       // create pktfile if necessary
       if (newLinks[i]->pktFile == NULL) {
          // pktFile does not exist
          if ( createTempPktFileName(newLinks[i]) ) {
-	    writeLogEntry(log, '9', "Could not create new pkt!\n");
-	    printf("Could not create new pkt!\n");
-	    exit(1);
-	 }
+            writeLogEntry(log, '9', "Could not create new pkt!\n");
+            printf("Could not create new pkt!\n");
+            exit(1);
+         }
       } /* endif */
 
       makePktHeader(NULL, &header);
@@ -560,7 +560,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    int i=0;
    s_link *creatingLink;
    s_addr *aka;
-   
+
    //translating name of the area to lowercase, much better imho.
    while (*c_area != '\0') {
       *c_area=tolower(*c_area);
@@ -570,37 +570,37 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    }
 
    while (i>0) {c_area--;i--;};
-   
+
    if ((f=fopen(getConfigFileName(),"a")) == NULL)
-	   {
-		   fprintf(stderr,"autocreate: cannot open config file\n");
-		   return 1;
+           {
+                   fprintf(stderr,"autocreate: cannot open config file\n");
+                   return 1;
            }
 
    creatingLink = getLinkFromAddr(*config, pktOrigAddr);
    aka = creatingLink->ourAka;
-   
+
    // making local address and address of uplink
    sprintf(myaddr, "%u:%u/%u",aka->zone,aka->net,
            aka->node);
    sprintf(hisaddr,"%u:%u/%u",pktOrigAddr.zone,pktOrigAddr.net,
             pktOrigAddr.node);
-   
+
    //if you are point...
    if (aka->point != 0)  {
-	   sprintf(buff,".%u",aka->point);
-	   strcat(myaddr,buff);
+           sprintf(buff,".%u",aka->point);
+           strcat(myaddr,buff);
    }
-   
+
    //autocreating from point...
    if (pktOrigAddr.point != 0)  {
-	   sprintf(buff,".%u",pktOrigAddr.point);
-	   strcat(hisaddr,buff);
+           sprintf(buff,".%u",pktOrigAddr.point);
+           strcat(hisaddr,buff);
    }
-   
+
    //write new line in config file
    if (stricmp(config->msgBaseDir, "passthrough")!=0) {
-     #ifndef MSDOS 
+     #ifndef MSDOS
      sprintf(buff, "EchoArea %s %s%s -a %s Squish %s ", c_area, config->msgBaseDir, c_area, myaddr, hisaddr);
      #else
      sleep(1); // to prevent time from creating equal numbers
@@ -614,12 +614,12 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    }
    fprintf(f, buff);
    fprintf(f, "\n");
-   
+
    fclose(f);
 
    // add new created echo to config in memory
    parseLine(buff,config);
-   
+
    sprintf(buff, "Area '%s' autocreated by %s", c_area, hisaddr);
    writeLogEntry(log, '8', buff);
    return 0;
@@ -627,43 +627,43 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
 
 int carbonCopy(s_message *msg, s_area *echo)
 {
-	int i;
-	char *kludge;
-	s_area *area;
+        int i;
+        char *kludge;
+        s_area *area;
 
-	if (echo->ccoff==1) return 1;
+        if (echo->ccoff==1) return 1;
 
-	for (i=0; i<config->carbonCount; i++) {
+        for (i=0; i<config->carbonCount; i++) {
 
-		area = config->carbons[i].area;
+                area = config->carbons[i].area;
 
-		switch (config->carbons[i].type) {
+                switch (config->carbons[i].type) {
 
-		case 0:
-			if (stricmp(msg->toUserName, config->carbons[i].str)==0) {
-				putMsgInArea(area,msg,0);
-				return 0;
-			}
-			break;
-		case 1:
-			if (stricmp(msg->fromUserName, config->carbons[i].str)==0) {
-				putMsgInArea(area,msg,0);
-				return 0;
-			}
-			break;
-		case 2:
-			kludge=getKludge(*msg, config->carbons[i].str);
-			if (kludge!=NULL) {
-				putMsgInArea(area,msg,0);
-				free(kludge);
-				return 0;
-			}
-			break;
-		default: break;
-		}
-	}
+                case 0:
+                        if (stricmp(msg->toUserName, config->carbons[i].str)==0) {
+                                putMsgInArea(area,msg,0);
+                                return 0;
+                        }
+                        break;
+                case 1:
+                        if (stricmp(msg->fromUserName, config->carbons[i].str)==0) {
+                                putMsgInArea(area,msg,0);
+                                return 0;
+                        }
+                        break;
+                case 2:
+                        kludge=getKludge(*msg, config->carbons[i].str);
+                        if (kludge!=NULL) {
+                                putMsgInArea(area,msg,0);
+                                free(kludge);
+                                return 0;
+                        }
+                        break;
+                default: break;
+                }
+        }
 
-	return 1;
+        return 1;
 }
 
 void processEMMsg(s_message *msg, s_addr pktOrigAddr)
@@ -677,7 +677,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 
    textBuff = (char *) malloc(strlen(msg->text)+1);
    strcpy(textBuff, msg->text);
-   
+
    area = strtok(textBuff, "\r");
    area += 5;
 
@@ -699,17 +699,17 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
          if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
             putMsgInArea(echo, msg,1);
             echo->imported = 1;  // area has got new messages
-	    statToss.saved++;
+            statToss.saved++;
          } else statToss.passthrough++;
 
          if (config->carbonCount != 0) carbonCopy(msg, echo);
-   
+
       } else {
          // msg is dupe
          if (echo->dupeCheck == move) {
             putMsgInArea(&(config->dupeArea), msg, 0);
          }
-	 statToss.dupes++;
+         statToss.dupes++;
       }
    }
 
@@ -724,7 +724,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
       } else {
          // no autoareaCreate -> msg to bad
          statToss.bad++;
-      
+
          putMsgInArea(&(config->badArea), msg, 0);
       }
    }
@@ -772,7 +772,7 @@ void processNMMsg(s_message *msg,s_addr pktOrigAddr)
             recodeToInternalCharset(msg->text);
             recodeToInternalCharset(msg->subjectLine);
          }
-         
+
          msgHeader = createXMSG(msg);
          /* Create CtrlBuf for SMAPI */
          ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
@@ -784,7 +784,7 @@ void processNMMsg(s_message *msg,s_addr pktOrigAddr)
          sprintf(buff, "Tossed Netmail: %u:%u/%u.%u -> %u:%u/%u.%u", msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
                          msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
          writeLogEntry(log, '7', buff);
-	 statToss.netMail++;
+         statToss.netMail++;
       } else {
          writeLogEntry(log, '9', "Could not write message to NetmailArea");
       } /* endif */
@@ -801,12 +801,12 @@ void processMsg(s_message *msg, s_addr pktOrigAddr)
 
    statToss.msgs++;
    if (msg->netMail == 1) {
-	   if (stricmp(msg->toUserName,"areafix")==0) {
-		   processAreaFix(msg, &pktOrigAddr);
-	   } else
-		   processNMMsg(msg,pktOrigAddr);
+           if (stricmp(msg->toUserName,"areafix")==0) {
+                   processAreaFix(msg, &pktOrigAddr);
+           } else
+                   processNMMsg(msg,pktOrigAddr);
    } else {
-	   processEMMsg(msg, pktOrigAddr);
+           processEMMsg(msg, pktOrigAddr);
    } /* endif */
 }
 
@@ -840,7 +840,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
             case secLocalInbound:
                processIt = 1;
                break;
-               
+
             case secProtInbound:
                if ((link != NULL) && ((link->pktPwd == NULL) || (stricmp(link->pktPwd, header->pktPassword) == 0))) {
                   processIt = 1;
@@ -852,7 +852,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
                   rc = 1;
                }
                break;
-               
+
             case secInbound:
                if ((link != NULL) && ((link->pktPwd == NULL) || (stricmp(link->pktPwd, header->pktPassword) == 0))) {
                   processIt = 1;
@@ -869,17 +869,17 @@ int processPkt(char *fileName, e_tossSecurity sec)
          if (processIt != 0) {
             while ((msg = readMsgFromPkt(pkt, header->origAddr.zone)) != NULL) {
                if (msg != NULL) {
-                  if ((processIt = 1) || ((processIt==2) && (msg->netMail==1)))
+                  if ((processIt == 1) || ((processIt==2) && (msg->netMail==1)))
                      processMsg(msg, header->origAddr);
                   freeMsgBuffers(msg);
                }
             }
          }
-         
+
       }
 
       free(header);
-      
+
    } else {
       sprintf(buff, "pkt: %s wrong pkt-file", fileName);
       writeLogEntry(log, '9', buff);
@@ -908,8 +908,8 @@ int processPkt(char *fileName, e_tossSecurity sec)
       if (to_us(*header)==0){
          sprintf(buff, "pkt: %s", fileName);
          writeLogEntry(log, '6', buff);
-	 statToss.pkts++;
-         
+         statToss.pkts++;
+
          link = getLinkFromAddr(*config, header->origAddr);
          if (link != NULL) {
             // if passwords aren't the same don't process pkt
@@ -964,7 +964,7 @@ void fillCmdStatement(char *cmd, const char *call, const char *archiv, const cha
    *cmd = '\0';  start = NULL;
    for (tmp = call; (start = strchr(tmp, '$')) != NULL; tmp = start + 2) {
       switch(*(start + 1)) {
-       	 case 'a': add = archiv; break;
+         case 'a': add = archiv; break;
          case 'p': add = path; break;
          case 'f': add = file; break;
          default:
@@ -996,16 +996,16 @@ int  processArc(char *fileName, e_tossSecurity sec)
    for (i = 0, found = 0; (i < config->unpackCount) && !found; i++) {
       bundle = fopen(fileName, "rb");
       if (bundle == NULL) return 2;
-      // is offset is negative we look at the end 
+      // is offset is negative we look at the end
       fseek(bundle, config->unpack[i].offset, config->unpack[i].offset >= 0 ? SEEK_SET : SEEK_END);
       if (ferror(bundle)) { fclose(bundle); continue; };
       for (found = 1, j = 0; j < config->unpack[i].codeSize; j++) {
-         if ((getc(bundle) & config->unpack[i].mask[j]) != config->unpack[i].matchCode[j]) 
+         if ((getc(bundle) & config->unpack[i].mask[j]) != config->unpack[i].matchCode[j])
             found = 0;
       }
       fclose(bundle);
    }
-   
+
    // unpack bundle
    if (found) {
       fillCmdStatement(cmd, config->unpack[--i].call, fileName, "*.pkt", config->tempInbound);
@@ -1013,7 +1013,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
       writeLogEntry(log, '6', buff);
       if ((cmdexit = system(cmd)) != 0) {
          sprintf(buff, "exec of %s failed, code %d", cmd, errno);
-	 writeLogEntry(log, '6', buff);
+         writeLogEntry(log, '6', buff);
          return 3;
       };
    } else {
@@ -1033,8 +1033,8 @@ void processDir(char *directory, e_tossSecurity sec)
    struct dirent  *file;
    char           *dummy;
    int            rc, i;
-   int		  pktFile,
-   		  arcFile;
+   int            pktFile,
+                  arcFile;
 
 
    if (directory==NULL) return;
@@ -1058,10 +1058,10 @@ void processDir(char *directory, e_tossSecurity sec)
          for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
             if (patmat(file->d_name, validExt[i]) == 1)
                arcFile = 1;
-	
+
       if (pktFile || arcFile) {
 
-         if (pktFile) 
+         if (pktFile)
             rc = processPkt(dummy, sec);
          else if (arcFile)
             rc = processArc(dummy, sec);
@@ -1099,7 +1099,7 @@ void writeTossStatsToLog(void) {
 
    writeLogEntry(log, '4', "Statistics:");
    sprintf(buff, "   pkt's: % 3d   msgs: % 5d   echoMail: % 5d   netmail: % 5d", statToss.pkts, statToss.msgs, statToss.echoMail, statToss.netMail);
-   writeLogEntry(log, '4', buff); 
+   writeLogEntry(log, '4', buff);
    sprintf(buff, "   saved: % 5d   passthrough: % 5d   exported: % 5d", statToss.saved, statToss.passthrough, statToss.exported);
    writeLogEntry(log, '4', buff);
    sprintf(buff, "   dupes: % 5d   bad: % 5d", statToss.dupes, statToss.bad);
@@ -1111,52 +1111,52 @@ void writeTossStatsToLog(void) {
 }
 
 void arcmail() {
-	int i;
-	char cmd[256], logmsg[256], *pkt;
-	int cmdexit;
-	FILE *flo;
-	
-	for (i = 0 ; i < config->linkCount; i++) {
-		
-		// only create floFile if we have mail for this link
-		if (config->links[i].pktFile != NULL) {
-			// process if the link not busy, else do not create 12345678.?lo
-			if (createOutboundFileName(&(config->links[i]), cvtFlavour2Prio(config->links[i].echoMailFlavour), FLOFILE) == 0) {
-				flo = fopen(config->links[i].floFile, "a");
-				if (config->links[i].packerDef != NULL)
-					// there is a packer defined -> put packFile into flo
-					fprintf(flo, "^%s\n", config->links[i].packFile);
-				else {
-					// there is no packer defined -> put pktFile into flo
-					pkt = (char*) malloc(strlen(config->outbound)+1+12);
-					config->links[i].pktFile += strlen(config->tempOutbound);
-					strcpy(pkt, config->outbound);
-					strcat(pkt, config->links[i].pktFile);
-					config->links[i].pktFile -= strlen(config->tempOutbound);
-					fprintf(flo, "^%s\n", pkt);
-					sprintf(cmd,"mv %s %s",config->links[i].pktFile,config->outbound);
-					cmdexit = system(cmd);
-					free(pkt);
-				}
-				fclose(flo);
-				free(config->links[i].floFile); config->links[i].floFile=NULL;
-				
-				// pack mail
-				if (config->links[i].packerDef != NULL) {
-					fillCmdStatement(cmd,config->links[i].packerDef->call,config->links[i].packFile, config->links[i].pktFile, "");
-					sprintf(logmsg,"Packing mail for %s",config->links[i].name);
-					writeLogEntry(log, '7', logmsg);
-					cmdexit = system(cmd);
-					remove(config->links[i].pktFile);
-				}
-				remove(config->links[i].bsyFile);
-				free(config->links[i].bsyFile); config->links[i].bsyFile=NULL;
-			}
-		}
-		free(config->links[i].pktFile); config->links[i].pktFile=NULL;
-		free(config->links[i].packFile); config->links[i].packFile=NULL;
-	}
-	return;
+        int i;
+        char cmd[256], logmsg[256], *pkt;
+        int cmdexit;
+        FILE *flo;
+
+        for (i = 0 ; i < config->linkCount; i++) {
+
+                // only create floFile if we have mail for this link
+                if (config->links[i].pktFile != NULL) {
+                        // process if the link not busy, else do not create 12345678.?lo
+                        if (createOutboundFileName(&(config->links[i]), cvtFlavour2Prio(config->links[i].echoMailFlavour), FLOFILE) == 0) {
+                                flo = fopen(config->links[i].floFile, "a");
+                                if (config->links[i].packerDef != NULL)
+                                        // there is a packer defined -> put packFile into flo
+                                        fprintf(flo, "^%s\n", config->links[i].packFile);
+                                else {
+                                        // there is no packer defined -> put pktFile into flo
+                                        pkt = (char*) malloc(strlen(config->outbound)+1+12);
+                                        config->links[i].pktFile += strlen(config->tempOutbound);
+                                        strcpy(pkt, config->outbound);
+                                        strcat(pkt, config->links[i].pktFile);
+                                        config->links[i].pktFile -= strlen(config->tempOutbound);
+                                        fprintf(flo, "^%s\n", pkt);
+                                        sprintf(cmd,"mv %s %s",config->links[i].pktFile,config->outbound);
+                                        cmdexit = system(cmd);
+                                        free(pkt);
+                                }
+                                fclose(flo);
+                                free(config->links[i].floFile); config->links[i].floFile=NULL;
+
+                                // pack mail
+                                if (config->links[i].packerDef != NULL) {
+                                        fillCmdStatement(cmd,config->links[i].packerDef->call,config->links[i].packFile, config->links[i].pktFile, "");
+                                        sprintf(logmsg,"Packing mail for %s",config->links[i].name);
+                                        writeLogEntry(log, '7', logmsg);
+                                        cmdexit = system(cmd);
+                                        remove(config->links[i].pktFile);
+                                }
+                                remove(config->links[i].bsyFile);
+                                free(config->links[i].bsyFile); config->links[i].bsyFile=NULL;
+                        }
+                }
+                free(config->links[i].pktFile); config->links[i].pktFile=NULL;
+                free(config->links[i].packFile); config->links[i].packFile=NULL;
+        }
+        return;
 }
 
 void toss()
@@ -1189,7 +1189,7 @@ void toss()
 
    if (config->importlog != NULL) {
       // write importlog
-      
+
       f = fopen(config->importlog, "a");
       if (f != NULL) {
          if (config->netMailArea.imported == 1) fprintf(f, "%s\n", config->netMailArea.areaName);
