@@ -1,3 +1,12 @@
+2002-10-18 Friday 12:31  stas_degteff
+
+	* src/toss.c (hpt-1_2-stable.7): Prevent EMX compilation warnings
+
+2002-10-18 Friday 12:30  stas_degteff
+
+	* doc/bugreport.rus (hpt-1_2-stable.2): Change bugreport form
+	(russian)
+
 2002-10-17 Thursday 12:56  stas_degteff
 
 	* make/makefile.inc (hpt-1_2-stable.1): Fix 'commonclean' tag bug:
