@@ -304,11 +304,12 @@ void post(int c, unsigned int *n, char *params[])
 			  cmPack = 1;
 		  }
 		  else {
-			  msg.attributes = 0;
-			  xscatprintf(&msg.text, "SEEN-BY: %u/%u\r\001PATH: %u/%u\r",
-						  echo->useAka->net, echo->useAka->node,
-						  echo->useAka->net, echo->useAka->node);
-			  msg.textLength = strlen(msg.text);
+// remove after 26-Apr-01
+//			  msg.attributes = 0;
+//			  xscatprintf(&msg.text, "SEEN-BY: %u/%u\r\001PATH: %u/%u\r",
+//						  echo->useAka->net, echo->useAka->node,
+//						  echo->useAka->net, echo->useAka->node);
+//			  msg.textLength = strlen(msg.text);
 			  processEMMsg(&msg, msg.origAddr, 1, (MSGSCANNED|MSGSENT|MSGLOCAL));
 		  }
       }
