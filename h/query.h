@@ -23,11 +23,12 @@ typedef struct query_areas
 //    struct query_areas *prev;
 } s_query_areas;
 
-enum  query_action{ FIND, ADDFREQ, ADDDEL };
+enum  query_action{ FIND, ADDFREQ, ADDDELETED };
 typedef enum query_action e_query_action;
 
 enum  changeConfigRet{ I_ERR=-2, // read config error
                        O_ERR=-1, // write config error
+                       IO_OK,    // config file rewrited
                        ADD_OK,   // link successfully added
                        DEL_OK    // link removed
 };

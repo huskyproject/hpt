@@ -206,28 +206,12 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
         
     buff = makeAreaParam(creatingLink , c_area, msgbDir);
 
-    // subscribe links
-/*
-    if(areaNode) // areaNode == NULL if areafixQueueFile isn't used
-    {
-        for(i = 0; i < areaNode->linksCount; i++)
-        {
-            xstrcat( &buff, " " );
-            xstrcat( &buff, aka2str(areaNode->downlinks[i]) );
-        }
-    }
-    else // subscribe uplink if he is not subscribed
-    {
-        xstrcat( &buff, " " );
-        xstrcat( &buff, hisaddr );
-    }
-*/
     // add new created echo to config in memory
     parseLine(buff, config);
 
     // subscribe uplink if he is not subscribed
     area = &(config->echoAreas[config->echoAreaCount-1]);
-    if ( isLinkOfArea(creatingLink,area)==0 ) {
+    if ( isAreaLink(creatingLink->hisAka,area)==-1 ) {
 	xscatprintf(&buff, " %s", hisaddr);
 	addlink(creatingLink, area);
     }
@@ -236,16 +220,17 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     if(areaNode) { // areaNode == NULL if areafixQueueFile isn't used
         // prevent subscribing of defuault links
         // or not existing links
-        for(i = 1; i < areaNode->linksCount; i++) 
-            if( ( isAreaLink( areaNode->downlinks[i],area ) != -1 ) &&
-                ( getLinkFromAddr(config,areaNode->downlinks[i]) )
+        for(i = 1; i < areaNode->linksCount; i++) {
+            if( ( isAreaLink( areaNode->downlinks[i],area ) == -1 ) &&
+                ( getLinkFromAddr(config,areaNode->downlinks[i])) &&
+                ( !isOurAka(areaNode->downlinks[i]) )
             ) {
             xstrcat( &buff, " " );
             xstrcat( &buff, aka2str(areaNode->downlinks[i]) );
             addlink(getLinkFromAddr(config,areaNode->downlinks[i]), area);
+            }
         }
     }
-
 
     // fix if dummys del \n from the end of file
     fseek (f, -1L, SEEK_END);
@@ -295,9 +280,6 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
     s_query_areas *areaNode = NULL;
     s_query_areas *tmpNode  = NULL;
 
-//    const int tbSize =  22;       
-//    char timebuf[22] = "";
-
     if( !queryAreasHead ) af_OpenQuery();
     tmpNode = queryAreasHead;
     while(tmpNode->next && !bFind)
@@ -314,25 +296,23 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
             tmpNode = NULL;
         break;
     case ADDFREQ:
-        if( bFind )
-        {
+        if( bFind ) {
             if( stricmp(tmpNode->type,czFreqArea) == 0 )
             {
                 for (i = 1; i < tmpNode->linksCount && addrComp(*dwlink, tmpNode->downlinks[i])!=0; i++);
                 if(i == tmpNode->linksCount) {
                     af_AddLink( tmpNode, dwlink ); // add link to queried area
-                }
-                else 
+                } else {
                     tmpNode = NULL;  // link already in query
+                }
             } else {
                 strcpy(tmpNode->type,czFreqArea); // change state to @freq"
                 af_AddLink( tmpNode, dwlink );
             }
-        }
-        else { // area not found, so add it
+        } else { // area not found, so add it
             areaNode = af_MakeAreaListNode();
             areaNode->name = safe_strdup(areatag);
-            if(strlen( areaNode->name ) > queryAreasHead->linksCount)
+            if(strlen( areaNode->name ) > queryAreasHead->linksCount) //max areanane lenght
                 queryAreasHead->linksCount = strlen( areaNode->name );
             strncpy( areaNode->type ,czFreqArea, 4);
             af_AddLink( areaNode, uplink );
@@ -340,7 +320,19 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
             tmpNode->next = areaNode;
         }
         break;
-    case ADDDEL:
+    case ADDDELETED:
+        if( bFind ) {
+        } else {
+            areaNode = af_MakeAreaListNode();
+            areaNode->name = safe_strdup(areatag);
+            if(strlen( areaNode->name ) > queryAreasHead->linksCount)
+                queryAreasHead->linksCount = strlen( areaNode->name );
+            strncpy( areaNode->type ,czKillArea, 4);
+            af_AddLink( areaNode, uplink );
+            af_AddLink( areaNode, dwlink );
+            tmpNode->next = areaNode;
+        }
+
         break;
     }
     return tmpNode;
@@ -416,41 +408,34 @@ int af_OpenQuery()
 
 int af_CloseQuery()
 {
-    char *czTmpQueryFile;
     char buf[nbufSize] = "";
     char *p;
     int nSpace = 0;
     size_t i = 0;
     int writeChanges = 0;
-
-    FILE *queryFile;
+    char *tmpFileName=NULL;
+    
+    FILE *queryFile=NULL, *resQF;
     s_query_areas *areaNode = NULL;
     s_query_areas *tmpNode  = NULL;
-
-    if( !queryAreasHead )  // list does not exist
-    {
+    
+    if( !queryAreasHead ) {  // list does not exist
         return 0;
     }
-    if(queryAreasHead->areaDate.year == 1)
-    {
+    if(queryAreasHead->areaDate.year == 1) {
         writeChanges = 1;
     }
-    czTmpQueryFile = safe_strdup(config->tempOutbound);
-    if(czTmpQueryFile[strlen(czTmpQueryFile)-1] == PATH_DELIM)
-        czTmpQueryFile[strlen(czTmpQueryFile)-1] = '\0';
-    xstrcat( &czTmpQueryFile, tmpnam(NULL) );
-    if ((queryFile=fopen(czTmpQueryFile,"a")) == NULL)
-    {
-        w_log('9',"areafix: cannot create tmp file %s",czTmpQueryFile);
+    if((tmpFileName=tmpnam(tmpFileName)) != NULL) {
+        if (writeChanges) queryFile = fopen(tmpFileName,"w");
+    } else {
+        w_log('9',"areafix: cannot create tmp file");
         writeChanges = 0;
     }
     tmpNode = queryAreasHead->next;
     nSpace = queryAreasHead->linksCount+1;
     p = buf+nSpace;
-    while(tmpNode)
-    {
-        if(writeChanges && tmpNode->type[0] != '\0')
-        {
+    while(tmpNode) {
+        if(writeChanges && tmpNode->type[0] != '\0')    {
             memset(buf, ' ' ,nSpace); 
             memcpy(buf, tmpNode->name, strlen(tmpNode->name));
             sprintf( p , "%s %d-%02d-%02d@%02d:%02d" , tmpNode->type,
@@ -460,8 +445,7 @@ int af_CloseQuery()
                 tmpNode->areaTime.hour,
                 tmpNode->areaTime.min);
             p = p + strlen(p);
-            for(i = 0; i < tmpNode->linksCount; i++)
-            {
+            for(i = 0; i < tmpNode->linksCount; i++) {
                 strcat(p," ");
                 strcat(p,aka2str(tmpNode->downlinks[i]));
             }
@@ -475,13 +459,20 @@ int af_CloseQuery()
     }
     af_DelAreaListNode(queryAreasHead);
     queryAreasHead = NULL;
-    if(writeChanges)
-    {
+    if(writeChanges)  {
         fclose(queryFile);
-        remove(config->areafixQueueFile);
-        rename(czTmpQueryFile,config->areafixQueueFile);
+        queryFile = fopen(tmpFileName,"r");
+        resQF     = fopen(config->areafixQueueFile,"w");
+    if ( !queryFile && !resQF ) {
+	if (!quiet) fprintf(stderr, "areafix: cannot write to Queue File \"%s\" \n", config->areafixQueueFile);
+	w_log(LL_ERR,"areafix: cannot write to Queue File \"%s\" ", config->areafixQueueFile);
+    } else {
+        char ch;
+        while( (ch=getc(queryFile)) != EOF ) putc(ch, resQF); 
+        fclose(queryFile); fclose(resQF); 
     }
-    nfree(czTmpQueryFile);
+    }
+    if(writeChanges) remove(tmpFileName);
     return 0;
 }
 
