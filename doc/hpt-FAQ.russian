@@ -1,6 +1,6 @@
 
                          Highly Portable Tosser FAQ
-                    (версия от 20.11.2002 для hpt-stable)
+                    (версия от 26.11.2002 для hpt 1.2.x-stable)
 
 Постарайтесь прочесть ВЕСЬ FAQ перед тем, как задавать вопросы в конференции,
 особенно, если Вы подозреваете, что Ваш вопрос - один из регулярно задаваемых.
@@ -18,39 +18,41 @@
  Q1.  Где взять свежие версии?
  Q2.  А где можно стянуть исходники?
 >Q3.  Что означают буквы в скобках в начале ответа?
- Q4.  Кому присылать патчи?
- Q5.  Я скачал *-current-(дата).tar.gz, а там баг! (архив ~месячной давности)
- Q6.  Кому прислать и как правильно оформить багрепорт?
- Q7.  В чем заключается поддержка перла и как его использовать?
- Q8.  Как пpописать флаги для совместной pаботы golded & hpt?
- Q9.  Как линковать только те арии, в которые пришли свежие сообщения?
- Q10. Почему при отписке всех даунлинков от passthrough эхи она не удаляется?
- Q11. Как удалять passthrough эхи без трафика?
- Q12. Куда пропадает почта???
- Q13. Так как насчет фичи "X"?
- Q14. Что такое HighWater?
- Q15. Почему JAM временами сканируется только через "hpt scan -w"?
- Q16. Почему на одну и ту же эху к аплинку сфорвардилось много запросов?
- Q17. Как постить через pipe под win32?
- Q18. А как собирать latest версии под win32?
- Q19. Чем отличаются линковщики?
- Q20. Как работает удаление эх через areafix?
- Q21. Кaк поинтам ставить на некоторые эхи Read Only?
- Q22. В чем разница между версиями cygwin и mingw32?
- Q23. А чем фиксить базы если с ними действительно траблы?
- Q24. Отсутствие доки сильно мешает! (Где взять документацию на русском?)
- Q25. Как разделить отчеты от areafix и filefix?
- Q26. Почему нельзя допаковывать почту в FileBox?
- Q27. Не могу настроить winzip!
- Q28. А как паковать netmail?
- Q29. Как у hpt отрубить внутренний трекер нетмэйла?
- Q30. Как ускорить работу тоссера?
- Q31. Зачем переменную окружения [module] нужно брать в кавычки?
- Q32. А как собрать версию с поддержкой Perl под Win32?
- Q33. А можно как-нибудь получать диффы на e-mail/netmail?
- Q34. Как победить ошибки компиляции под Red Hat и ASP Linux?
- Q35. Компилятор под FreeBSD ругается: warning: mktemp() possibly used unsafely
->Q36. Как связаться с разработчиками?
+ Q4.  Как связаться с разработчиками?
+ Q5.  Кому присылать патчи?
+ Q6.  Я скачал *-current-(дата).tar.gz, а там баг! (архив ~месячной давности)
+ Q7.  Кому прислать и как правильно оформить багрепорт?
+ Q8.  В чем заключается поддержка перла и как его использовать?
+>Q9.  А где GoldEd'у брать список доступных эхоарий?
+ Q10. Как пpописать флаги для совместной pаботы golded & hpt?
+ Q11. Как линковать только те арии, в которые пришли свежие сообщения?
+ Q12. Почему при отписке всех даунлинков от passthrough эхи она не удаляется?
+ Q13. Как удалять passthrough эхи без трафика?
+ Q14. Куда пропадает почта???
+ Q15. Так как насчет фичи "X"?
+ Q16. Что такое HighWater?
+ Q17. Почему JAM временами сканируется только через "hpt scan -w"?
+ Q18. Почему на одну и ту же эху к аплинку сфорвардилось много запросов?
+ Q19. Как постить через pipe под win32?
+ Q20. А как собирать latest версии под win32?
+ Q21. Чем отличаются линковщики?
+ Q22. Как работает удаление эх через areafix?
+ Q23. Кaк поинтам ставить на некоторые эхи Read Only?
+ Q24. В чем разница между версиями cygwin и mingw32?
+ Q25. А чем фиксить базы если с ними действительно траблы?
+ Q26. Отсутствие доки сильно мешает! (Где взять документацию на русском?)
+ Q27. Как разделить отчеты от areafix и filefix?
+ Q28. Почему нельзя допаковывать почту в FileBox?
+ Q29. Не могу настроить winzip!
+ Q30. А как паковать netmail?
+ Q31. Как у hpt отрубить внутренний трекер нетмэйла?
+ Q32. Как ускорить работу тоссера?
+ Q33. Зачем переменную окружения [module] нужно брать в кавычки?
+ Q34. А как собрать версию с поддержкой Perl под Win32?
+>Q35. А можно как-нибудь получать диффы на e-mail/netmail?
+ Q36. Как победить ошибки компиляции под Red Hat и ASP Linux?
+ Q37. Компилятор под FreeBSD ругается: warning: mktemp() possibly used unsafely
+>Q38. Почему hpt не понимает стандартный эхолист, к-рый ходит по фэхе?
 
 /---------------------------------------------------------------------/
 
@@ -126,7 +128,43 @@ A: (ML)
 
 /------/
 
-[4] Q: Кому присылать патчи?
+[4] Q: Как связаться с разработчиками
+
+A: (SD)
+   1. Задать интересующий вопрос в эхоконференциях: русскоязычной RU.HUSKY
+      или международной FIDOSOFT.HUSKY
+   2. Найти разработчика нужного модуля на страничке HUSKY TEAM:
+      http://husky.sf.net/team.html
+   3. Вот нынешние участники проекта c http://sourceforge.net/projects/husky/
+      (данные на ноябрь 2002):
+
+Andy U. Luk'yanov  Packager            andr_lukyanov at users.sourceforge.net
+Andrew Sagulin     Developer           andrews42 at users.sourceforge.net
+Dmitry Sergienko   Project Manager     d_sergienko at users.sourceforge.net
+Georgi Fofanov     Developer           georgi at users.sourceforge.net
+Gerrit Kьhn        Developer           gerritkuehn at users.sourceforge.net
+Igor Zakharoff     Doc Translator      i_zkh at users.sourceforge.net
+Michael Haase      Developer           it-dienste at users.sourceforge.net
+Joerg Stadelhoff   Developer           joergstadelhoff at users.sourceforge.net
+Max Levenkov       Developer           max_levenkov at users.sourceforge.net
+Max Chernogor      Project Manager     mche at users.sourceforge.net
+Matthias Tichy                         mtt at users.sourceforge.net
+Nestyurkin Nikolay Developer           nikn at users.sourceforge.net
+Ivan Fedorov       Support Manager     nssoft at users.sourceforge.net
+Tobias Ernst       Project Manager     os2tobi at users.sourceforge.net
+Pavel Gulchouck    Project Manager     pgul at users.sourceforge.net
+Volker Quetschke   Developer           quetschke at users.sourceforge.net
+Sascha Silbe                           sascha_silbe at users.sourceforge.net
+Pavel Andreew      Packager            sfpavel at users.sourceforge.net
+Shilov Vladimir    Packager            shivn at users.sourceforge.net
+Stas Degteff       Developer           stas_degteff at users.sourceforge.net
+Tema Zelikin       Doc Translator      tema31 at users.sourceforge.net
+
+Чтобы получить email-адрес, " at " нужно заменить на "@".
+
+/------/
+
+[5] Q: Кому присылать патчи?
 
 A: (ML,SD)
 
@@ -161,7 +199,7 @@ A: (ML,SD)
 
 /------/
 
-[5] Q: Я скачал *-current-(дата).tar.gz, а там баг! (архив ~месячной давности)
+[6] Q: Я скачал *-current-(дата).tar.gz, а там баг! (архив ~месячной давности)
 
 A: (PA)
    Стоит обновиться.
@@ -176,7 +214,7 @@ A: (PA)
 
 /------/
 
-[6] Q: Кому прислать и как правильно оформить багрепорт?
+[7] Q: Кому прислать и как правильно оформить багрепорт?
 
 A: (SD)
    Багрепорт можно запостить в эхоконференции RU.HUSKY или FIDOSOFT.HUSKY
@@ -201,7 +239,7 @@ A: (SD)
 
 /------/
 
-[7] Q: В чем заключается поддержка перла?
+[8] Q: В чем заключается поддержка перла?
 
 A: (PG)
 
@@ -342,7 +380,21 @@ A: (SD)  поскольку разработка продолжается, появляются новые функции, доступные
 
 /------/
 
-[8] Q: Как пpописать флаги для совместной pаботы golded & hpt?
+[9] Q: А где GoldEd'у брать список доступных эхоарий?
+
+A: (PS)
+
+    В конфиге Golded+:
+
+AREAFILE Fidoconfig -lame ..\husky\areas
+
+    путь к списку арий фидоконфига!
+
+    Для ранних версий Golded в комплекте fidoconfig есть конвертер.
+
+/------/
+
+[10] Q: Как пpописать флаги для совместной pаботы golded & hpt?
 
 A (SR):
 
@@ -370,7 +422,7 @@ golded if exist \bink\flags\echotoss.log hpt scan pack
 
 /------/
 
-[9] Q: Как линковать только те арии, в которые пришли свежие сообщения?
+[11] Q: Как линковать только те арии, в которые пришли свежие сообщения?
 
 A: (SR)
 
@@ -383,7 +435,7 @@ LinkWithImportLog kill
 
 /------/
 
-[10] Q: Почему при отписке всех даунлинков от passthrough эхи она не удаляется?
+[12] Q: Почему при отписке всех даунлинков от passthrough эхи она не удаляется?
 
 A: (FL)
 
@@ -403,7 +455,7 @@ A: (SD)
 
 /------/
 
-[11] Q: Как удалять passthrough эхи без трафика?
+[13] Q: Как удалять passthrough эхи без трафика?
 
 A: (SR)
 
@@ -427,7 +479,7 @@ hpt начиная с версии 1.2 корректно удаляет эхи без линков - поэтому можно
 
 /------/
 
-[12] Q: Куда пропадает почта???
+[14] Q: Куда пропадает почта???
 
 A: (ML, PG, SD)
 
@@ -465,7 +517,7 @@ command.com все равно вернет 0).
 
 /------/
 
-[13] Q: Так как насчет фичи "X"?
+[15] Q: Так как насчет фичи "X"?
 
 A: (FL)
 
@@ -486,7 +538,7 @@ think that OpenSource developers are your personal slaves. (c) FreeAmp FAQ
 
 /------/
 
-[14] Q: Что такое HighWater?
+[16] Q: Что такое HighWater?
 
 A: (ML)
 
@@ -496,7 +548,7 @@ HighWater  - это такой счетчик; после сканирования он ставится в конец базы,
 
 /------/
 
-[15] Q: Почему JAM временами сканируется только через "hpt scan -w"?
+[17] Q: Почему JAM временами сканируется только через "hpt scan -w"?
 
 A: (ML)
 
@@ -521,7 +573,7 @@ HighWater.
 
 /------/
 
-[16] Q: Почему на одну и ту же эху к аплинку сфорвардилось много запросов?
+[18] Q: Почему на одну и ту же эху к аплинку сфорвардилось много запросов?
 
 A: (FL)
 
@@ -537,7 +589,7 @@ AutoAreaCreateFile /path/file_areas.name
 
 /------/
 
-[17] Q: Как постить через pipe под win32?
+[19] Q: Как постить через pipe под win32?
 
 A: (SR)
 
@@ -551,7 +603,7 @@ type T.BAT |hpt\hpt post -nf "Daemon" -s "subject" -e "my.robot" -
 
 /------/
 
-[18] Q: А как собирать latest версии под win32?
+[20] Q: А как собирать latest версии под win32?
 
 A: (DK)
 
@@ -578,7 +630,7 @@ smapi/fidoconf  -  latest  от 9.10.2002  то совать туда,  например,  hpt  от
 
 /------/
 
-[19] Q: Чем отличаются линковщики?
+[21] Q: Чем отличаются линковщики?
 
 A: (SR)
 
@@ -606,7 +658,7 @@ hptlink умеет линковать по сабжам, может делать обычную цепочку, а не дерево.
 
 /------/
 
-[20] Q: Как работает удаление эх через areafix?
+[22] Q: Как работает удаление эх через areafix?
 
 A: (PG)
 
@@ -633,7 +685,7 @@ ForwardRequestTimeout, IdlePassthruTimeout, KilledRequestTimeout, hpt qupd.
 
 /------/
 
-[21] Q: Кaк поинтам ставить на некоторые эхи Read Only?
+[23] Q: Кaк поинтам ставить на некоторые эхи Read Only?
 
 A: (SR)
 
@@ -656,7 +708,7 @@ A: (SD)
 
 /------/
 
-[22] Q: В чем разница между версиями cygwin и mingw32?
+[24] Q: В чем разница между версиями cygwin и mingw32?
 
 A: (PG)
 
@@ -680,7 +732,7 @@ cygwin1.dll. Применяются для той же цели (портирование unix utils), но требуют
 
 /------/
 
-[23] Q: А чем фиксить базы если с ними действительно траблы?
+[25] Q: А чем фиксить базы если с ними действительно траблы?
 
 A: (ML,SR)
 
@@ -701,7 +753,7 @@ Q: Почему бы не сделать наоборот?
 
 /------/
 
-[24] Q: Отсутствие доки сильно мешает! (Где взять документацию на русском?)
+[26] Q: Отсутствие доки сильно мешает! (Где взять документацию на русском?)
 
 A: (ML,VS)
 
@@ -738,7 +790,7 @@ A: (SD)
 
 /------/
 
-[25] Q: Как разделить отчеты от areafix и filefix?
+[27] Q: Как разделить отчеты от areafix и filefix?
 
 A: (PG)
 
@@ -763,7 +815,7 @@ endif
 
 /------/
 
-[26] Q: Почему нельзя допаковывать почту в FileBox?
+[28] Q: Почему нельзя допаковывать почту в FileBox?
 
 A: (PG)
 
@@ -789,7 +841,7 @@ Q: допаковываем и только после этого кладём его обратно в бокс...
 
 /------/
 
-[27] Q: Не могу настроить winzip!
+[29] Q: Не могу настроить winzip!
 
 A: (mk,SR,ML)
 
@@ -800,7 +852,7 @@ pack zip pkzip25 -add -max -dir=none -nozip $a $f
 
 /------/
 
-[28] Q: А как паковать netmail?
+[30] Q: А как паковать netmail?
 
 A: (ML)
 
@@ -815,7 +867,7 @@ A: (PG)
 
 /------/
 
-[29] Q: Как у hpt отрубить внутренний трекер нетмэйла?
+[31] Q: Как у hpt отрубить внутренний трекер нетмэйла?
 
 A: (SD)
 Паковка нетмэйла не будет производиться при выполнении одного из следующих
@@ -830,7 +882,7 @@ A: (SD)
 
 /------/
 
-[30] Q: Как ускорить работу тоссера?
+[32] Q: Как ускорить работу тоссера?
 
 A: (ML)
 
@@ -868,7 +920,7 @@ HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SessionManager\KnownDLLs
 
 /------/
 
-[31] Q: Зачем переменную окружения [module] нужно брать в кавычки?
+[33] Q: Зачем переменную окружения [module] нужно брать в кавычки?
 
 A: (PG)
 
@@ -886,22 +938,22 @@ if x[module]==xhpt
 
 /------/
 
-[32] Q: А как собрать версию с поддержкой Perl под Win32?
+[34] Q: А как собрать версию с поддержкой Perl под Win32?
 
 A: (DK)
-   Hам потребуется:MSVC6/MSVC7(Watcom/BCC не подойдет),ActivePerl,
+   Hам потребуется:MSVC6sp5/MSVC7(Watcom/mingw/BCC не подойдет),ActivePerl,
    (+Texi2Html для документации) и архивы с исходниками(либо с CVS)
    Распаковываем архивы с исходниками smapi,fidoconf и hpt(это обязательный
-   минимум),архивы должны быть от одной даты.
-   затем в hpt\make\make\makeperl.mvcdll правим PERL_DIR на тот каталог где
-   поставлен ActivePerl,и собираем сначала smapi(cd smapi,
-   nmake -f makefile.mvcdll),fidoconf(аналогично),затем hpt(cd hpt
-   nmake -f makeperl.mvcdll),если остальные утилиты собирать
-   то через makefile.mvcdll.Получим dll-версии всего добра.
+   минимум),архивы должны быть от одной даты если это -current.
+   затем в hpt\make\makeperl.mvcdll правим PERL_DIR на тот каталог где
+   поставлен ActivePerl и собираем сначала smapi (cd smapi,
+   nmake -f makefile.mvcdll), fidoconf (аналогично), затем hpt (cd hpt
+   nmake -f makeperl.mvcdll). Если нужны остальные модули/утилиты - собирать
+   их также надо используюя makefile.mvcdll. Получим dll-версии всего добра.
 
 /------/
 
-[33] Q: А можно как-нибудь получать диффы на e-mail/netmail?
+[35] Q: А можно как-нибудь получать диффы на e-mail/netmail?
 
 A: (DK)
    Можно, https://lists.sourceforge.net/lists/listinfo/husky-diffs -
@@ -919,7 +971,7 @@ A: (SD)
 
 /------/
 
-[34] Q: Как победить ошибки компиляции под Red Hat и ASP Linux?
+[36] Q: Как победить ошибки компиляции под Red Hat и ASP Linux?
 
 A: (PG)
    Если стянуть с gnu.org и поставить там нормальный gcc (2.95.3 или 3.xx) -
@@ -929,7 +981,7 @@ A: (PG)
    2.95.3 сразу идет 3.0.
 
 
-[35] Q: Компилятор под FreeBSD ругается: warning: mktemp() possibly used
+[37] Q: Компилятор под FreeBSD ругается: warning: mktemp() possibly used
    unsafely; consider using mkstemp()
 
 A: (SD, PG)
@@ -956,40 +1008,21 @@ A: (PG)
    Все написано совершенно корректно, и менять код только ради того, чтобы
    убрать warning, IMHO смысла нет.
 
+/------/
 
-[36] Q: Как связаться с разработчиками
+[38] Q: Почему hpt не понимает стандартный эхолист, к-рый ходит по фэхе?
 
 A: (SD)
-   1. Задать интересующий вопрос в эхоконференциях: русскоязычной RU.HUSKY
-      или международной FIDOSOFT.HUSKY
-   2. Найти разработчика нужного модуля на страничке HUSKY TEAM:
-      http://husky.sf.net/team.html
-   3. Вот нынешние участники проекта c http://sourceforge.net/projects/husky/
-      (данные на ноябрь 2002):
 
-Andy U. Luk'yanov  Packager            andr_lukyanov at users.sourceforge.net
-Andrew Sagulin     Developer           andrews42 at users.sourceforge.net
-Dmitry Sergienko   Project Manager     d_sergienko at users.sourceforge.net
-Georgi Fofanov     Developer           georgi at users.sourceforge.net
-Gerrit Kьhn        Developer           gerritkuehn at users.sourceforge.net
-Igor Zakharoff     Doc Translator      i_zkh at users.sourceforge.net
-Michael Haase      Developer           it-dienste at users.sourceforge.net
-Joerg Stadelhoff   Developer           joergstadelhoff at users.sourceforge.net
-Max Levenkov       Developer           max_levenkov at users.sourceforge.net
-Max Chernogor      Project Manager     mche at users.sourceforge.net
-Matthias Tichy                         mtt at users.sourceforge.net
-Nestyurkin Nikolay Developer           nikn at users.sourceforge.net
-Ivan Fedorov       Support Manager     nssoft at users.sourceforge.net
-Tobias Ernst       Project Manager     os2tobi at users.sourceforge.net
-Pavel Gulchouck    Project Manager     pgul at users.sourceforge.net
-Volker Quetschke   Developer           quetschke at users.sourceforge.net
-Sascha Silbe                           sascha_silbe at users.sourceforge.net
-Pavel Andreew      Packager            sfpavel at users.sourceforge.net
-Shilov Vladimir    Packager            shivn at users.sourceforge.net
-Stas Degteff       Developer           stas_degteff at users.sourceforge.net
-Tema Zelikin       Doc Translator      tema31 at users.sourceforge.net
+"Стандартный" говоришь? Покажи FTS, FSP или хотя бы FSC, FRL.
+Этот эхолист прекрасно конвертируется скриптом в стандартный *bone:
+"AREATAG description". Напpимеp на авке 1 стpока :)
 
-Чтобы получить email-адрес, " at " нужно заменить на "@".
+Вот два _работающих_ примера (AWK и PERL):
+
+awk -F "," '{printf "%-30s %s\n",$2, $3;}' <echolist.txt >echobone.txt
+
+perl -e 'while(<>){split /,/; printf "%-30s %s\n",$_[1],$_[2];}' <echolist.txt
 
 
 /--------------------------------------------------------------------------/
