@@ -15,24 +15,24 @@ OBJS    = pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.
 {..\src}.c.obj:
 	$(CC) $(CFLAGS) $(CDEFS) $(COPT) -c $<
 
-all: $(HPTL) hpt.exe hptlink.exe hpttree.exe pktinfo.exe txt2pkt.exe
+all: hpt.exe hptlink.exe hpttree.exe pktinfo.exe txt2pkt.exe
 
 $(HPTL): $(OBJS)
 	$(TLIB) /out:$@ $(OBJS)
 
-hpt.exe:
+hpt.exe: $(HPTL)
         $(CC) $(CFLAGS) $(COPT) $(CDEFS) -Fe$@ ..\src\hpt.c $(FCONFL) $(SMAPIL) $(HPTL) USER32.LIB
 
-hptlink.exe:
+hptlink.exe: $(HPTL)
         $(CC) $(CFLAGS) $(COPT) $(CDEFS) -Fe$@ ..\src\hptlink.c $(FCONFL) $(SMAPIL) $(HPTL)
 
-hpttree.exe:
+hpttree.exe: $(HPTL)
         $(CC) $(CFLAGS) $(COPT) $(CDEFS) -Fe$@ ..\src\hpttree.c $(FCONFL) $(SMAPIL) $(HPTL)
 
-pktinfo.exe:
+pktinfo.exe: $(HPTL)
         $(CC) $(CFLAGS) $(COPT) $(CDEFS) -Fe$@ ..\src\pktinfo.c $(FCONFL) $(SMAPIL) $(HPTL)
 
-txt2pkt.exe:
+txt2pkt.exe: $(HPTL)
         $(CC) $(CFLAGS) $(COPT) $(CDEFS) -Fe$@ ..\src\txt2pkt.c $(FCONFL) $(SMAPIL) $(HPTL) USER32.LIB
 
 clean:

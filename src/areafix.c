@@ -88,9 +88,13 @@ char *print_ch(int len, char ch)
 }
 
 int mandatoryCheck(s_area area, s_link *link) {
+    int i;
+
     if (grpInArray(area.group,link->optGrp,link->numOptGrp) && link->mandatory) return 1;
     if (link->numOptGrp==0 && link->mandatory) return 1;
     if (area.mandatory) return 1;
+    for (i = 0; i < area.downlinkCount; i++)
+	if (area.downlinks[i]->link==link) return area.downlinks[i]->mandatory;
     return 0;
 }
 
