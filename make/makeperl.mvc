@@ -4,9 +4,10 @@
 DEBUG=0
 CC=cl
 EXENAMEFLAG=-Fe
+PERL_DIR=c:\pub\perl
 SRC_DIR=..\src\
 
-CFLAGS=-nologo -Zp1 -O1 -I..\.. -I..\h -I"D:\Perl\lib\CORE" -c -O1 -MD -DNDEBUG
+CFLAGS=-nologo -Zp1 -O1 -I..\.. -I..\h -I"$(PERL_DIR)\lib\CORE" -c -O1 -MD -DNDEBUG
 LFLAGS=
 CDEFS =  -DDO_PERL -D__NT__ -DNT -DWINNT -D_CONSOLE -DUSE_STAT_MACROS -DNDEBUG -DWIN32 -D_CONSOLE -DNO_STRICT -DHAVE_DES_FCRYPT -DPERL_IMPLICIT_CONTEXT -DPERL_IMPLICIT_SYS -DPERL_MSVCRT_READFIX
 
@@ -14,7 +15,7 @@ OBJ=.obj
 EXE=.exe
 RM=del
 PERLOBJ = perl.obj
-LIBS=..\..\fidoconf\fconfmvc.lib ..\..\smapi\smapimvc.lib USER32.LIB d:\perl\lib\core\perl56.lib
+LIBS=..\..\fidoconf\fconfmvc.lib ..\..\smapi\smapimvc.lib USER32.LIB $(PERL_DIR)\lib\core\perl56.lib
 
 default: all
 
