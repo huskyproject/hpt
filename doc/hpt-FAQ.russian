@@ -640,7 +640,7 @@ Q: допаковываем и только после этого кладём его обратно в бокс...
 
 A: (mk,SR,ML)
 
-unpack "pkzip25 -ext -dir=none -over=all -nozip -nofix $a $p" 0  504b0304
+unpack "pkzip25 -ext -over=all -nozip -nofix $a $p" 0 504b0304
 pack zip pkzip25 -add -max -dir=none -nozip $a $f
 
 И никаких кавычек после pack!

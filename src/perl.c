@@ -66,7 +66,7 @@ extern "C" {
 #endif
 
 #ifndef min
-#define min(a, b)	((a) < (b) ? (a) : (b))
+#define min(a, b)      ((a) < (b) ? (a) : (b))
 #endif
 
 #ifdef __GNUC__
@@ -442,11 +442,10 @@ static void xs_init(void)
   newXS("myaddr",        perl_myaddr,        file);
   newXS("nodelistDir",   perl_nodelistDir,   file);
   newXS("crc32",         perl_crc32,         file);
-  newXS("alike",	 perl_alike,	     file);	
+  newXS("alike",         perl_alike,         file);     
 }
-
-static void exitperl(void)
-{
+void perldone(void)
+{ 
   if (perl)
   { dSP;
     ENTER;
@@ -590,7 +589,6 @@ int PerlStart(void)
      do_perl=0;
      return 1;
    }
-   atexit(exitperl);
    return 0;
 }
 
@@ -736,20 +734,20 @@ s_route *perlroute(s_message *msg, s_route *defroute)
      sv_setpv(svtext,     msg->text);
      if (defroute)
      {
-	if (defroute->target)
- 		sv_setpv(svroute, aka2str(defroute->target->hisAka));
-	else /* noroute */
- 		sv_setpv(svroute, aka2str(msg->destAddr));
-	if (defroute->flavour==normal)
-	    sv_setpv(svflv, "normal");
-	else if (defroute->flavour==hold)
-	    sv_setpv(svflv, "hold");
-	else if (defroute->flavour==direct)
-	    sv_setpv(svflv, "direct");
-	else if (defroute->flavour==crash)
-	    sv_setpv(svflv, "crash");
-	else if (defroute->flavour==immediate)
-	    sv_setpv(svflv, "immediate");
+        if (defroute->target)
+                sv_setpv(svroute, aka2str(defroute->target->hisAka));
+        else /* noroute */
+                sv_setpv(svroute, aka2str(msg->destAddr));
+        if (defroute->flavour==normal)
+            sv_setpv(svflv, "normal");
+        else if (defroute->flavour==hold)
+            sv_setpv(svflv, "hold");
+        else if (defroute->flavour==direct)
+            sv_setpv(svflv, "direct");
+        else if (defroute->flavour==crash)
+            sv_setpv(svflv, "crash");
+        else if (defroute->flavour==immediate)
+            sv_setpv(svflv, "immediate");
      }
      sv_setiv(svattr, msg->attributes);
      ENTER;

@@ -572,6 +572,9 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 	   } else linkAreas(linkName);
    }
    nfree(linkName);
+#ifdef DO_PERL        
+   perldone();
+#endif
 
    writeMsgToSysop();
 
@@ -586,7 +589,6 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 
    // save forward requests info
    af_CloseQuery();
-   
    nfree(msgToSysop);
    
    // deinit SMAPI
