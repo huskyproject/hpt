@@ -2,6 +2,12 @@ hpt 0.29
 --------
 
 ----- cvs ci ------
+Sun Aug 15 23:42:08 NOVST 1999
+max:
+* fixed small bug with header->origAddr.net
++ netmailarea packed when found in echotoss.log
+	
+----- cvs ci ------
 Sat Aug 14 23:34:49 NOVST 1999
 max:
 * areafix can split messages (areafixmsgSize)

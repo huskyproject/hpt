@@ -82,7 +82,7 @@ s_pktHeader *openPkt(FILE *pkt)
   header->destAddr.domain = NULL;
   header->pktCreated = readPktTime(pkt); // 12 bytes
 
-  getc(pkt); getc(pkt); /* read 2 bytes for the unused baud field */
+  getUINT16(pkt); /* read 2 bytes for the unused baud field */
 
   pktVersion = getUINT16(pkt);
   if (pktVersion != 2) {
@@ -93,7 +93,6 @@ s_pktHeader *openPkt(FILE *pkt)
 
   header->origAddr.net = getUINT16(pkt);
   header->destAddr.net = getUINT16(pkt);
-  if (header->origAddr.net == 65535) header->origAddr.net = header->destAddr.net; // bugfix for some braindead point software
   
   header->loProductCode = getc(pkt);
   header->majorProductRev = getc(pkt);
@@ -103,7 +102,7 @@ s_pktHeader *openPkt(FILE *pkt)
   header->origAddr.zone = getUINT16(pkt);
   header->destAddr.zone = getUINT16(pkt);
 
-  getc(pkt); getc(pkt); /* read 2 fill bytes */
+  header->auxNet = getUINT16(pkt);
 
   header->capabilityWord = fgetc(pkt) * 256 + fgetc(pkt);
   header->hiProductCode = getc(pkt);
@@ -118,12 +117,17 @@ s_pktHeader *openPkt(FILE *pkt)
     return NULL;
   } /* endif */
 
-  getc(pkt); getc(pkt); getc(pkt); getc(pkt); /* read the additional zone info */
+  getUINT16(pkt); getUINT16(pkt); /* read the additional zone info */
 
   header->origAddr.point = getUINT16(pkt);
   header->destAddr.point = getUINT16(pkt);
 
-  getc(pkt); getc(pkt); getc(pkt); getc(pkt); /* read ProdData */
+  getUINT16(pkt); getUINT16(pkt); /* read ProdData */
+
+  if (header->origAddr.net == 65535) {
+	  if (header->origAddr.point) header->origAddr.net = header->auxNet;
+	  else header->origAddr.net = header->destAddr.net; // not in FSC !
+  }
 
   return header;
 }

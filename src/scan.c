@@ -564,6 +564,7 @@ void scan(void)
          line = readLine(f);
 
          if (line != NULL) {
+			if (stricmp(config->netMailArea.areaName,line)==0) cmPack=1;
             area = getArea(config, line);
             if (area == &(config->badArea)) {
                sprintf(buff, "Area \'%s\' is not found -> Scanning stop.", line);

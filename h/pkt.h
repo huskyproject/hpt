@@ -49,6 +49,8 @@ struct pktHeader {
    /* Address block */
    s_addr destAddr, origAddr;
 
+   UINT16 auxNet;
+
    /* product specific */
    UCHAR  hiProductCode,
           loProductCode;
