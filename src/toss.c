@@ -1849,25 +1849,6 @@ int processPkt(char *fileName, e_tossSecurity sec)
     return rc;
 }
 
-void fillCmdStatement(char *cmd, const char *call, const char *archiv, const char *file, const char *path) {
-    const char *start, *tmp, *add;
-
-    *cmd = '\0';  start = NULL;
-    for (tmp = call; (start = strchr(tmp, '$')) != NULL; tmp = start + 2) {
-	switch(*(start + 1)) {
-	case 'a': add = archiv; break;
-	case 'p': add = path; break;
-	case 'f': add = file; break;
-	default:
-            strncat(cmd, tmp, (size_t) (start - tmp + 1));
-            start--; continue;
-	};
-	strncat(cmd, tmp, (size_t) (start - tmp));
-	strcat(cmd, add);
-    };
-    strcat(cmd, tmp);
-}
-
 #if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
 void *mk_lst(char *a) {
     char *p=a, *q=a, **list=NULL, end=0, num=0;
