@@ -343,24 +343,28 @@ char *list(s_link *link, char *cmdline) {
                 /* if matches pattern and not reversed (or vise versa) */
                 if (patimat(area.areaName, pattern)!=reversed)
                 {
-                    addAreaListItem(al,rc==0,area.areaName,area.description);
+                    addAreaListItem(al,rc==0, area.msgbType!=MSGTYPE_PASSTHROUGH, area.areaName,area.description);
                     if (rc==0) active++; avail++;
                 }
             } else
             {
-                addAreaListItem(al,rc==0,area.areaName,area.description);
+                addAreaListItem(al,rc==0, area.msgbType!=MSGTYPE_PASSTHROUGH, area.areaName,area.description);
                 if (rc==0) active++; avail++;
             }
 	} /* end add line */
 
     } /* end for */
     sortAreaList(al);
-    list = formatAreaList(al,78," *");
+    list = formatAreaList(al,78," *R");
     if (list) xstrcat(&report,list);
     nfree(list);
     freeAreaList(al);
-
-    xscatprintf(&report, "\r'*' = area active for %s\r%i areas available, %i areas active\r", aka2str(link->hisAka), avail, active);
+    
+    xstrcat(&report,      "\r'R' = area rescanable");
+    xstrcat(&report,      "\r'*' = area active");
+    xscatprintf(&report,  "\r %i areas available, %i areas active",avail, active);
+    xscatprintf(&report,  "\r for link:%s\r", aka2str(link->hisAka));
+    
     if (link->afixEchoLimit) xscatprintf(&report, "\rYour limit is %u areas for subscribe\r", link->afixEchoLimit);
 
     w_log(LL_AREAFIX, "areafix: list sent to %s", aka2str(link->hisAka));
@@ -507,10 +511,10 @@ char *available(s_link *link, char *cmdline)
                     {
                         /* if matches pattern and not reversed (or vise versa) */
                         if ((rc==0) &&(patimat(token, pattern)!=reversed))
-                            addAreaListItem(al,0,token,running);
+                            addAreaListItem(al,0,0,token,running);
                     } else
                     {
-                        if (rc==0) addAreaListItem(al,0,token,running);
+                        if (rc==0) addAreaListItem(al,0,0,token,running);
                     }
 
 		}
