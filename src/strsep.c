@@ -31,15 +31,9 @@
  * SUCH DAMAGE.
  */
 
-#if !defined (__EMX__) && !defined (__osf__)
-#include <sys/cdefs.h>
-#endif
 #include <string.h>
 #include <stdio.h>
 
-#if defined(LIBC_SCCS) && !defined(lint)
-static const char sccsid[] = "@(#)strsep.c	5.4 (Berkeley) 1/26/91";
-#endif /* LIBC_SCCS and not lint */
 
 /*
  * Get next token from string *stringp, where tokens are nonempty
@@ -52,8 +46,8 @@ static const char sccsid[] = "@(#)strsep.c	5.4 (Berkeley) 1/26/91";
  *
  * If *stringp is NULL, strtoken returns NULL.
  */
-char *
-strsep(stringp, delim)
+
+char *strseparate(stringp, delim)
 	register char **stringp;
 	register const char *delim;
 {

@@ -98,7 +98,7 @@ s_pktHeader *openPkt(FILE *pkt)
   header->loProductCode = getc(pkt);
   header->majorProductRev = getc(pkt);
 
-  readPktPassword(pkt, header->pktPassword);
+  readPktPassword(pkt, (UCHAR *)header->pktPassword);
 
   header->origAddr.zone = getUINT16(pkt);
   header->destAddr.zone = getUINT16(pkt);
@@ -276,6 +276,16 @@ s_message *readMsgFromPkt(FILE *pkt,UINT16 def_zone)
    textBuffer = (CHAR *) malloc(TEXTBUFFERSIZE+1); /* reserve 512kb + 1 (or 32kb+1) text Buffer */
    msg->textLength = fgetsUntil0(textBuffer, TEXTBUFFERSIZE+1 , pkt);
 
+   {
+     int i;
+     for (i = 0; i < 100 && i < msg->textLength; i++)
+       {
+	 fprintf (stderr, "%c", textBuffer[i] >32 ? textBuffer[i] : '#');
+       }
+     fprintf (stderr, "\n");
+   }
+     
+
    msg->text = (CHAR *) malloc(msg->textLength); /* reserve mem for the real text */
    strcpy(msg->text, textBuffer);
 
@@ -311,7 +321,7 @@ char *getKludge(s_message msg, char *what) {
         found = (char *) strstr((char *) where, (char *) what);
     }
 
-    if (where != NULL && found != NULL && found[-1] == '\x01')
+    if (where != NULL && found != NULL && found[-1] == '\001')
     {
         end = (char *) strchr((char *) found, '\r');
 

@@ -17,6 +17,7 @@ OBJS    = pktinfo.obj \
           log.obj \
           hpt.obj \
           seenby.obj \
+          strsep.obj \
           purged~1.obj \
 	  dupe.obj \
           tree.obj

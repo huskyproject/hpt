@@ -1,6 +1,6 @@
 DEBUG   = 1
 
-OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj recode.obj seenby.obj dupe.obj areafix.obj tree.obj post.obj
+OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj recode.obj seenby.obj dupe.obj areafix.obj tree.obj post.obj strsep.obj
 SRC_DIR = ..\src
 LIBS    = ..\..\smapi\smapiibo.lib ..\..\fidoconfig\fidoconfig.lib
 

@@ -141,10 +141,10 @@ int linkArea(s_area *area, int netMail)
          curr -> prev = prv;
          MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, ctlen, ctl);
          curr -> msgNum = i;
-         curr -> msgId = GetCtrlToken(ctl, "MSGID");
-         curr -> replyId = GetCtrlToken(ctl, "REPLY");
+         curr -> msgId   = (char *) GetCtrlToken(ctl, (byte *) "MSGID");
+         curr -> replyId = (char *) GetCtrlToken(ctl, (byte *) "REPLY");
          curr -> subject = strdup(xmsg.subj);
-         curr -> msgPos = MsgMsgnToUid(harea, i);
+         curr -> msgPos  = MsgMsgnToUid(harea, i);
          free(ctl);
          if (curr -> msgId != NULL)  // This msg would don't have reply links
             tree_add(&avlTree, &compareEntries, (char *) curr, &checkEntry);
@@ -157,8 +157,8 @@ int linkArea(s_area *area, int netMail)
         if (curr -> replyId != NULL && (orig = (s_msginfo *) tree_srch(
             &avlTree, &findEntry, (char *) curr)) != NULL)
            if (orig -> freeReply >= MAX_REPLY) {
-              sprintf(buff, "replies count for msg %ld exceeds %d, rest of the"\
-                      "replies won't be linked", orig -> msgNum, MAX_REPLY);
+              sprintf(buff, "replies count for msg %ld exceeds %d, rest of the\
+replies won't be linked", orig -> msgNum, MAX_REPLY);
               writeLogEntry(log, '6', buff);
            } else {
               orig -> replies[(orig -> freeReply)++] = curr -> msgPos;
@@ -169,7 +169,7 @@ int linkArea(s_area *area, int netMail)
       for (curr = tail; curr != NULL; ) {
          hmsg  = MsgOpenMsg(harea, MOPEN_READ, curr -> msgNum);
          MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-         memcpy(&(xmsg.replies), &(curr->replies), sizeof(UMSGID) * MAX_REPLY);
+         memcpy(xmsg.replies, curr->replies, sizeof(UMSGID) * MAX_REPLY);
          xmsg.replyto = curr->replyToPos;
          MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
          MsgCloseMsg(hmsg);

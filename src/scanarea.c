@@ -89,7 +89,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
    ctrlLen = MsgGetCtrlLen(hmsg);
    ctrlBuff = (UCHAR *) malloc(ctrlLen+1+6+strlen(versionStr)+1); // 6 == "\001TID: " // 1 == "\r"
    MsgReadMsg(hmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
-   kludgeLines = CvtCtrlToKludge(ctrlBuff);
+   kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
    strcat(kludgeLines, "\001TID: ");
    strcat(kludgeLines, versionStr);
    strcat(kludgeLines, "\r");
@@ -132,7 +132,8 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
    strcat(msg->text, strUpper(echo->areaName));
    strcat(msg->text, "\r");
    strcat(msg->text, kludgeLines);
-   MsgReadMsg(hmsg, NULL, 0, msg->textLength, msg->text+strlen(msg->text), 0, NULL);
+   MsgReadMsg(hmsg, NULL, (dword) 0, (dword) msg->textLength,
+              (byte *)(msg->text+strlen(msg->text)), (dword) 0, (byte *)NULL);
    if (msg->text[strlen(msg->text)-1] != '\r')  // if origin has no ending \r add it
       strcat(msg->text, "\r");
    free(kludgeLines);

@@ -48,6 +48,7 @@
 
 #include <recode.h>
 #include <toss.h>
+#include <strsep.h>
 
 s_statScan statScan;
 
@@ -140,7 +141,7 @@ void makePktHeader(s_message *msg, s_pktHeader *header)
    header->majorProductRev = VER_MAJOR;
    header->hiProductCode   = 0;
    header->loProductCode   = 0xfe;
-   memset(&(header->pktPassword), 0, 9); // no password
+   memset(header->pktPassword, 0, sizeof(header->pktPassword)); // no password
    time(&(header->pktCreated));
    header->capabilityWord  = 1;
    header->prodData        = 0;
@@ -231,9 +232,9 @@ void processAttachs(s_link *link, s_message *msg)
    
    flo = fopen(link->floFile, "a");
   
-   //running = msg->subjectLine;
-   token = strtok_r(msg->subjectLine, " \t", &running);
-   //token = strsep(&running, " \t");
+   running = msg->subjectLine;
+   //token = strtok_r(msg->subjectLine, " \t", &running);
+   token = strseparate(&running, " \t");
 
    while (token != NULL) {
       if (flo != NULL) fprintf(flo, "%s\n", token);
@@ -244,7 +245,8 @@ void processAttachs(s_link *link, s_message *msg)
 
       strcat(newSubjectLine, " ");
 
-      token = strtok_r(NULL, " \t", &running);
+      token = strseparate(&running, " \t");
+      //token = strtok_r(NULL, " \t", &running);
    }
    
    if (flo!= NULL) {
@@ -264,15 +266,15 @@ void processRequests(s_link *link, s_message *msg)
    
    flo = fopen(link->floFile, "a");
 
-   //running = msg->subjectLine;
-   //token = strsep(&running, " \t");
-   token = strtok_r(msg->subjectLine, " \t", &running);
+   running = msg->subjectLine;
+   token = strseparate(&running, " \t");
+   //token = strtok_r(msg->subjectLine, " \t", &running);
 
    while (token != NULL) {
       if (flo != NULL) fprintf(flo, "%s\n", token);
 
-      //token = strsep(&running, " \t");
-      token = strtok_r(NULL, " \t", &running);
+      token = strseparate(&running, " \t");
+      //token = strtok_r(NULL, " \t", &running);
    }
    if (flo!= NULL) {
       fclose(flo);

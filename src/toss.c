@@ -125,7 +125,7 @@ XMSG createXMSG(s_message *msg)
 
    msgHeader.utc_ofs = 0;
    msgHeader.replyto = 0;
-   memset(&(msgHeader.replies), 0, 40);   // no replies
+   memset(msgHeader.replies, 0, MAX_REPLY * sizeof(UMSGID));   // no replies
    strcpy((char *) msgHeader.__ftsc_date, msg->datetime);
    ASCII_Date_To_Binary(msg->datetime, (union stamp_combo *) &(msgHeader.date_written));
 
@@ -182,11 +182,13 @@ void putMsgInArea(s_area *echo, s_message *msg, int strip)
             textWithoutArea++;
          }
 
-         ctrlBuff = CopyToControlBuf((UCHAR *) textWithoutArea, (UCHAR **) &textStart, &textLength);
+         ctrlBuff = (char *) CopyToControlBuf((UCHAR *) textWithoutArea,
+				              (UCHAR **) &textStart,
+				              &textLength);
          // textStart is a pointer to the first non-kludge line
          xmsg = createXMSG(msg);
 
-         MsgWriteMsg(hmsg, 0, &xmsg, textStart, strlen(textStart), strlen(textStart), strlen(ctrlBuff), ctrlBuff);
+         MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword) strlen(textStart), (dword) strlen(textStart), (dword)strlen(ctrlBuff), (byte *)ctrlBuff);
 
          MsgCloseMsg(hmsg);
          free(ctrlBuff);
@@ -227,7 +229,7 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
    seenByText = malloc(strlen(start)+1);
    strcpy(seenByText, start);
 
-   token = strtok(seenByText, " \r\t\xfe");
+   token = strtok(seenByText, " \r\t\376");
    while (token != NULL) {
       if (strcmp(token, "\001PATH:")==0) break;
       if (isdigit(*token)) {
@@ -251,7 +253,7 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
             (*seenBys)[*seenByCount-1].node = atoi(endptr);
          }
       }
-      token = strtok(NULL, " \r\t\xfe");
+      token = strtok(NULL, " \r\t\376");
    }
 
    //test output for reading of seenBys...
@@ -291,7 +293,7 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
    seenByText = malloc(strlen(start)+1);
    strcpy(seenByText, start);
 
-   token = strtok(seenByText, " \r\t\xfe");
+   token = strtok(seenByText, " \r\t\376");
    while (token != NULL) {
       if (isdigit(*token)) {
          (*seenByCount)++;
@@ -313,7 +315,7 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
          }
 
       }
-      token = strtok(NULL, " \r\t\xfe");
+      token = strtok(NULL, " \r\t\376");
    }
 
    // test output for reading of paths...
