@@ -137,7 +137,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    ctrlBuff[ctrlLen] = '\0';
    if (action == 0 && config->disableTID == 0)
    {
-       while(msgtid = GetCtrlToken(ctrlBuff, "TID"))
+       while ((msgtid = GetCtrlToken(ctrlBuff, "TID")) != NULL)
            MsgRemoveToken(ctrlBuff, "TID");
        xstrscat((char **) &ctrlBuff, "\001TID: ", versionStr, NULL);
    }
