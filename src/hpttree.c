@@ -37,20 +37,20 @@
 #endif
 #include <sys/stat.h>
 
-#include <msgapi.h>
-#include <fidoconfig.h>
-#include <common.h>
+#include <smapi/msgapi.h>
+#include <fidoconfig/fidoconfig.h>
+#include <fidoconfig/common.h>
 
 #include <string.h>
 
 #if defined ( __WATCOMC__ )
-#include <prog.h>
+#include <smapi/prog.h>
 #include <share.h>
 #endif
 
 #include <stdlib.h>
 #include <time.h>
-#include <progprot.h>
+#include <smapi/progprot.h>
 
 s_fidoconfig *cfg;
 

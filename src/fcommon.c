@@ -48,12 +48,12 @@
 #endif
 
 #include <global.h>
-#include <fidoconfig.h>
+#include <fidoconfig/fidoconfig.h>
 
-#include <typedefs.h>
-#include <compiler.h>
-#include <stamp.h>
-#include <progprot.h>
+#include <smapi/typedefs.h>
+#include <smapi/compiler.h>
+#include <smapi/stamp.h>
+#include <smapi/progprot.h>
 
 int createLockFile(char *lockfile) {
         FILE *f;

@@ -32,15 +32,15 @@
 #include <string.h>
 #include <time.h>
 
-#include <msgapi.h>
+#include <smapi/msgapi.h>
 
-#include <fidoconfig.h>
-#include <common.h>
+#include <fidoconfig/fidoconfig.h>
+#include <fidoconfig/common.h>
 
 #include <xstr.h>
 #include <fcommon.h>
 #include <pkt.h>
-#include <patmat.h>
+#include <smapi/patmat.h>
 #include <scan.h>
 #include <log.h>
 #include <global.h>

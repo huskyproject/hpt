@@ -37,7 +37,7 @@
 #include <log.h>
 #include <global.h>
 #include <fcommon.h>
-#include <prog.h>
+#include <smapi/prog.h>
 
 static char *mnames[] = {
 "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"

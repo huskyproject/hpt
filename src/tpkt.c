@@ -29,7 +29,7 @@
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *****************************************************************************/
 #include <pkt.h>
-#include <typesize.h>
+#include <fidoconfig/typesize.h>
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>

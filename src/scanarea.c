@@ -32,8 +32,8 @@
 #include <string.h>
 #include <ctype.h>
 
-#include <fidoconfig.h>
-#include <common.h>
+#include <fidoconfig/fidoconfig.h>
+#include <fidoconfig/common.h>
 
 #include <xstr.h>
 #include <pkt.h>
@@ -44,12 +44,12 @@
 #include <version.h>
 #include <recode.h>
 
-#include <msgapi.h>
+#include <smapi/msgapi.h>
 
-#include <stamp.h>
-#include <typedefs.h>
-#include <compiler.h>
-#include <progprot.h>
+#include <smapi/stamp.h>
+#include <smapi/typedefs.h>
+#include <smapi/compiler.h>
+#include <smapi/progprot.h>
 #include <toss.h>
 
 // create seen-by's & path

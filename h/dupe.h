@@ -43,8 +43,8 @@
 #define DUPE_H
 
 #include <tree.h>
-#include <typesize.h>
-#include <fidoconfig.h>
+#include <fidoconfig/typesize.h>
+#include <fidoconfig/fidoconfig.h>
 #include <pkt.h>
 
 /* This header file contains the structures of the dupe file */

@@ -34,8 +34,8 @@
 #include <time.h>
 #include <stdio.h>
 
-#include <fidoconfig.h>
-#include <typesize.h>
+#include <fidoconfig/fidoconfig.h>
+#include <fidoconfig/typesize.h>
 #include <fcommon.h>
 
 #if !defined(__DOS__) && !defined(__MSDOS__)

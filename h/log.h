@@ -32,7 +32,7 @@
 #define LOG_H
 
 #include <stdio.h>
-#include <typesize.h>
+#include <fidoconfig/typesize.h>
 
 struct hpt_log {
 // char *fileName;       // name of the file where the log will be stored.

@@ -39,16 +39,16 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <fidoconfig.h>
+#include <fidoconfig/fidoconfig.h>
 #include <xstr.h>
-#include <common.h>
+#include <fidoconfig/common.h>
 
 #include <pkt.h>
 
-#include <stamp.h>
-#include <typedefs.h>
-#include <compiler.h>
-#include <progprot.h>
+#include <smapi/stamp.h>
+#include <smapi/typedefs.h>
+#include <smapi/compiler.h>
+#include <smapi/progprot.h>
 #include <version.h>
 
 FILE *createPkt(char *filename, s_pktHeader *header)

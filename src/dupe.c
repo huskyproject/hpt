@@ -49,12 +49,12 @@
 
 #include <global.h>
 
-#include <compiler.h>
+#include <smapi/compiler.h>
 #include <dupe.h>
 
-#include <msgapi.h>
-#include <stamp.h>
-#include <progprot.h>
+#include <smapi/msgapi.h>
+#include <smapi/stamp.h>
+#include <smapi/progprot.h>
 
 FILE *fDupe;
 

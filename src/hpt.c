@@ -40,16 +40,18 @@
 #include <sys/types.h>
 #include <signal.h>
 
-#include <msgapi.h>
-#include <progprot.h>
+#include <smapi/msgapi.h>
+#include <smapi/progprot.h>
 
 #include <version.h>
 #include <pkt.h>
 
 #if !defined(MSDOS) || defined(__DJGPP__)
-#include <fidoconfig.h>
+#include <fidoconfig/fidoconfig.h>
+#include <fidoconfig/dirlayer.h>
 #else
-#include <fidoconf.h>
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/dirlayer.h>
 #endif
 
 #include <log.h>
@@ -59,8 +61,7 @@
 #include <toss.h>
 #include <scan.h>
 #include <fcommon.h>
-#include <dirlayer.h>
-#include <patmat.h>
+#include <smapi/patmat.h>
 #include <post.h>
 #include <link.h>
 #include <areafix.h>

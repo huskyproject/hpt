@@ -39,21 +39,22 @@
 #include <unistd.h>
 
 #if !defined(MSDOS) || defined(__DJGPP__)
-#include <fidoconfig.h>
+#include <fidoconfig/fidoconfig.h>
+#include <fidoconfig/common.h>
 #else
-#include <fidoconf.h>
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
 #endif
 
-#include <common.h>
 #include <fcommon.h>
 #include <xstr.h>
 #include <global.h>
 #include <pkt.h>
 #include <version.h>
 #include <toss.h>
-#include <patmat.h>
+#include <smapi/patmat.h>
 #include <ctype.h>
-#include <progprot.h>
+#include <smapi/progprot.h>
 #include <strsep.h>
 #include <seenby.h>
 #include <scan.h>

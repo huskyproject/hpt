@@ -4,13 +4,14 @@
 #include <unistd.h>
 
 #if !defined(MSDOS) || defined(__DJGPP__)
-#include <fidoconfig.h>
+#include <fidoconfig/fidoconfig.h>
+#include <fidoconfig/common.h>
 #else
-#include <fidoconf.h>
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
 #endif
 
 #include <global.h>
-#include <common.h>
 #include <version.h>
 #include <pkt.h>
 #include <xstr.h>

@@ -30,7 +30,7 @@
  *****************************************************************************/
 #ifndef SEENBY_H
 #define SEENBY_H
-#include <typesize.h>
+#include <fidoconfig/typesize.h>
 
 struct seenBy {
    UINT16 net, node;

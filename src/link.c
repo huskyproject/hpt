@@ -46,13 +46,15 @@
 #include <string.h>
 
 #if !defined(MSDOS) || defined(__DJGPP__)
-#include <fidoconfig.h>
+#include <fidoconfig/fidoconfig.h>
+#include <fidoconfig/common.h>
+#include <fidoconfig/typesize.h>
 #else
-#include <fidoconf.h>
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
+#include <fidoconf/typesize.h>
 #endif
-#include <common.h>
-#include <typesize.h>
-#include <msgapi.h>
+#include <smapi/msgapi.h>
 #include <log.h>
 #include <global.h>
 #include <tree.h>

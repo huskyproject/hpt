@@ -31,7 +31,7 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#include <fidoconfig.h>
+#include <fidoconfig/fidoconfig.h>
 #include <log.h>
 
 extern s_log     *hpt_log;

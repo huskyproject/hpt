@@ -43,16 +43,16 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include <fidoconfig.h>
-#include <common.h>
-#include <dirlayer.h>
+#include <fidoconfig/fidoconfig.h>
+#include <fidoconfig/common.h>
+#include <fidoconfig/dirlayer.h>
 
 #include <xstr.h>
 #include <pkt.h>
 #include <scan.h>
 #include <toss.h>
 #include <global.h>
-#include <patmat.h>
+#include <smapi/patmat.h>
 #include <seenby.h>
 #include <dupe.h>
 
@@ -61,11 +61,11 @@
 #include <version.h>
 #include <scanarea.h>
 
-#include <msgapi.h>
-#include <stamp.h>
-#include <typedefs.h>
-#include <compiler.h>
-#include <progprot.h>
+#include <smapi/msgapi.h>
+#include <smapi/stamp.h>
+#include <smapi/typedefs.h>
+#include <smapi/compiler.h>
+#include <smapi/progprot.h>
 
 #ifdef __WATCOMC__
 #include <dos.h>
