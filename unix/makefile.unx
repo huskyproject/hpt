@@ -1,5 +1,6 @@
-# Linux legacy makefile
-
+# Generic UNIX makefile
+# this file requires GNU make
+# no support for the husky build environment
 
 DEBUG=-s
 # set to -g for debugging
@@ -10,10 +11,10 @@ DIRSEP =/
 CFLAGS =-I../h -I../.. -c -O3 $(DEBUG)
 LFLAGS =$(DEBUG)
 CDEFS  =-DUNIX
-CC     =gcc
+CC     =cc
 EXENAMEFLAG=-o 
 SRC_DIR=../src/
-LIBS   =../../fidoconf/libfidoconfiglnx.a ../../smapi/libsmapilnx.a
+LIBS   =../../fidoconf/libfidoconfigunix.a ../../smapi/libsmapiunix.a
 
 include ../makefile.inc
 

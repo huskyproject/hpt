@@ -1,57 +1,22 @@
-# include Husky-Makefile-Config
-include ../../huskymak.cfg
+# FreeBSD/NetBSD/OpenBSD Intel/Alpha/... legacy makefile
+# This file requires gmake. If anybody finds out how to do it with BSD's 
+# own make, please tell me.
 
-CC    = gcc -Wall
+DEBUG=-s
+# set to -g for debugging
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o crc.o xstr.o
-SRC_DIR = ../src/
-CDIR = ../man
+OBJ    =.o
+RM     =rm
+DIRSEP =/
+CFLAGS =-I../h -I../.. -c -O3 $(DEBUG)
+LFLAGS =$(DEBUG)
+CDEFS  =-DUNIX
+CC     =gcc
+EXENAMEFLAG=-o 
+SRC_DIR=../src/
+LIBS   =../../fidoconf/libfidoconfigbsd.a ../../smapi/libsmapibsd.a
 
-ifeq ($(DEBUG), 1)
- CFLAGS     = -c -I $(INCDIR) -I ../h -O2 -pipe -DUNIX -g
-else
- CFLAGS     = -c -I $(INCDIR) -I ../h -O2 -pipe -DUNIX -s
-endif
-LFLAGS     = -L $(LIBDIR)
-FIDOCONFIG = -lfidoconfig
-SMAPI      = -lsmapibsd
+include ../makefile.inc
 
-ALLBIN = pktinfo tlog tpkt hpt hptlink hpttree
 
-all: $(ALLBIN)
-
-%.o: $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
-
-pktinfo: pktinfo.o $(OBJS)
-	$(CC) $(LFLAGS) -o pktinfo log.o pktinfo.o pktread.o fcommon.o global.o recode.o xstr.o $(FIDOCONFIG) $(SMAPI)
-
-tlog: tlog.o log.o
-	$(CC) $(LFLAGS) -o tlog tlog.o log.o
-
-tpkt: tpkt.o pktwrite.o log.o fcommon.o pktread.o recode.o
-	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o pktread.o pktwrite.o global.o recode.o log.o xstr.o $(FIDOCONFIG) $(SMAPI)
-
-hpt: $(OBJS)
-	$(CC) $(LFLAGS) -o hpt $(OBJS) $(FIDOCONFIG) $(SMAPI) 
-
-hptlink: hptlink.o
-	$(CC) $(LFLAGS) -o hptlink hptlink.o $(FIDOCONFIG) $(SMAPI)
-
-hpttree: hpttree.o
-	$(CC) $(LFLAGS) -o hpttree hpttree.o $(FIDOCONFIG) $(SMAPI)
-
-clean:
-	-rm -f *.o *.1.gz
-	-rm *~
-
-distclean:
-	-rm $(ALLBIN)
-
-install: $(ALLBIN) $(CDIR)/hpt.1
-	install $(IBOPT) $(ALLBIN) $(BINDIR)
-	gzip -c $(CDIR)/hpt.1 > hpt.1.gz
-	gzip -c $(CDIR)/hptlink.1 > hptlink.1.gz
-	gzip -c $(CDIR)/hpttree.1 > hpttree.1.gz
-	install $(IMOPT) hpt.1.gz hptlink.1.gz hpttree.1.gz $(MANDIR)/man1
 
