@@ -529,7 +529,7 @@ int af_CloseQuery()
         return 0;
     }
 
-    af_UpdateQuery();
+//    af_UpdateQuery();
 
     if(queryAreasHead->nFlag == 1) {
         writeChanges = 1;
