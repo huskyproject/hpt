@@ -524,35 +524,58 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
     return 0;
 }
 
-char* findLinkInString(char *line, s_addr addr)
+int delLinkFromString(char **lineOut, char *line, char *linkAddr)
 {
-    char* linkpos = NULL;
-    char *lineptr = NULL;
+    char *startLink, *ptr, *tmp, *origLine;
+    int endLen=0; // length of string where link ends
 
-    // let's skip description which possibly contains address
-    lineptr = line;
-    while((lineptr = strstr(lineptr, "-d")) != NULL)
-    {
-        lineptr+=2;
-        if (isspace(*lineptr))
+    origLine = safe_strdup(line);
+    startLink = line;
+    tmp = line;
+    while ( (ptr = strstr(tmp, linkAddr)) != NULL ) {
+        if (isspace(*(ptr-1)) && (strchr(ptr, '"')==NULL) &&
+            (isspace(ptr[strlen(linkAddr)]) || ptr[strlen(linkAddr)]=='\000'))
         {
-            while((*lineptr) && (*lineptr!='"')) lineptr++;
-            if (*lineptr=='"') lineptr++;
-            while((*lineptr) && (*lineptr!='"')) lineptr++;
-            // now only right addresses (not from desc.) have left.
-            linkpos = lineptr;
-            break;
+            endLen = ptr - line + strlen(linkAddr)+1;
+            startLink = ptr;
         }
+        tmp = ptr + 1;
     }
-    if (lineptr == NULL) linkpos = line;
-    // find position of link address
-    while ( (linkpos = strstr(linkpos, aka2str(addr))) != NULL )
-    {
-        if((linkpos!=NULL) && testAddr(linkpos,addr))
-            break;
-        linkpos++;
+    ptr = line + endLen;
+
+//    startLink --; // skip spaces
+    if (endLen) {
+        while (ptr) {
+            tmp = strseparate(&ptr, " \t"); // looking for link options...
+            if (tmp == NULL)  break; // nothing found
+            if (ptr == NULL) // got EOL
+            {
+                endLen = strlen(origLine);
+                break;
+            }
+            if (*tmp != '-') break; // this is not option
+            else { // found link option
+                if (!strncasecmp(tmp, "-r", 2) ||
+                    !strncasecmp(tmp, "-w", 2) ||
+                    !strncasecmp(tmp, "-mn", 3) ||
+                    !strncasecmp(tmp, "-def", 4))
+                {
+                    endLen = ptr - line;
+                    continue;
+                }
+            }
+        }
+        nfree(*lineOut);
+        *lineOut = (char *) safe_calloc(strlen(line) + 1, 1);
+        strncpy(*lineOut, origLine, startLink - line);
+        if (endLen < strlen(origLine))
+            xscatprintf(lineOut, "%s", origLine + endLen);
+        nfree(origLine);
+        return 0; // all ok
     }
-    return linkpos;
+    // else
+    nfree(origLine);
+    return 1; // not found
 }
 
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
@@ -563,6 +586,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     int rc=0;
     e_changeConfigRet nRet = I_ERR;
     char* areaName = area->areaName;
+    char *addr = NULL, *rewrittenLine = NULL;
 
     w_log(LL_FUNC,"areafix.c::changeconfig()");
 
@@ -584,8 +608,9 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 		    token++;
 		    token[strlen(token)-1]='\0';
 		}
-		if (stricmp(token, areaName)==0) {
-		    fileName = safe_strdup(getCurConfName());
+                if (stricmp(token, areaName)==0) {
+                    // why do you need to redefine the same filename?
+//		    fileName = safe_strdup(getCurConfName());
 		    pos = getCurConfPos();
 		    break;
 		}
@@ -643,19 +668,18 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
                 forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 1);
             }
         case 7:
-            cfgline = findLinkInString(cfgInline , link->hisAka );
-            rc = 0;
-            while(cfgline[rc] && !isspace(cfgline[rc++])); // search for end of addr string
-            while(cfgline[rc] && !isdigit(cfgline[rc])) rc++; // search for next addrr string
-            cfgline[0] = '\0';
-            if(cfgline[rc]) {
-                strcat(cfgInline, cfgline+rc);
-            }
-            else {
-                rc = -1;
-                while( isspace(cfgline[rc])) { cfgline[rc] = '\0'; rc--;}
-            }
-            fprintf(cfgout, "%s%s", cfgInline, cfgEol()); // add line to config 
+            if ((rc = delLinkFromString(&rewrittenLine, cfgInline, (char *) aka2str(link->hisAka))) == 1)
+                if (link->hisAka.point==0) { // fix for node addr with trailing .0
+                    xscatprintf(&addr,"%u:%u/%u.%u",
+                                link->hisAka.zone,link->hisAka.net,
+                                link->hisAka.node,link->hisAka.point);
+                    rc = delLinkFromString(&rewrittenLine, cfgInline, addr);
+                    nfree(addr);
+                }
+            if (rc) w_log('9',"areafix: can't del link %s from echo area %s",
+                          aka2str(link->hisAka), areaName);
+            rewrittenLine = trimLine(rewrittenLine);
+            fprintf(cfgout, "%s%s", rewrittenLine, cfgEol()); // add line to config
             nRet = DEL_OK;
             break;
         case 2:
@@ -1201,60 +1225,59 @@ char *unsubscribe(s_link *link, char *cmd) {
 	switch (rc) {
 	case 0:
 	    if (from_us == 0) {
-        unsigned int k;
-        for (k=0; k<area->downlinkCount; k++) {
-            if (addrComp(link->hisAka, area->downlinks[k]->link->hisAka)==0 &&
-                area->downlinks[k]->defLink)
-                return do_delete(link, area);
-        }
-        removelink(link, area);
-        if ((area->msgbType == MSGTYPE_PASSTHROUGH) &&
-            (area->downlinkCount == 1) &&
-            (area->downlinks[0]->link->hisAka.point == 0) &&
-            (config->areafixQueueFile)) {
-            af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
-            j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,7);
-        } else {
-		    j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,1);
-        }
-		if (j != DEL_OK) {
-		    w_log('8', "areafix: %s doesn't unlinked from %s",
-			  aka2str(link->hisAka), an);
-		} else
-		    w_log('8',"areafix: %s unlinked from %s",aka2str(link->hisAka),an);
-        } else { // unsubscribing from own address
-            if ((area->downlinkCount==1) &&
-                (area->downlinks[0]->link->hisAka.point == 0)) {
-                if(config->areafixQueueFile) {
+                unsigned int k;
+                for (k=0; k<area->downlinkCount; k++)
+                    if (addrComp(link->hisAka, area->downlinks[k]->link->hisAka)==0 &&
+                        area->downlinks[k]->defLink)
+                        return do_delete(link, area);
+                removelink(link, area);
+                if ((area->msgbType == MSGTYPE_PASSTHROUGH) &&
+                    (area->downlinkCount == 1) &&
+                    (area->downlinks[0]->link->hisAka.point == 0) &&
+                    (config->areafixQueueFile)) {
                     af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
+                    j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,1);
                 } else {
-                    forwardRequestToLink(area->areaName,
-                        area->downlinks[0]->link, NULL, 1);
+                    j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,7);
                 }
+                if (j != DEL_OK) {
+                    w_log('8', "areafix: %s doesn't unlinked from %s",
+                          aka2str(link->hisAka), an);
+                } else
+                    w_log('8',"areafix: %s unlinked from %s",aka2str(link->hisAka),an);
+            } else { // unsubscribing from own address
+                if ((area->downlinkCount==1) &&
+                    (area->downlinks[0]->link->hisAka.point == 0)) {
+                    if(config->areafixQueueFile) {
+                        af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
+                    } else {
+                        forwardRequestToLink(area->areaName,
+                                             area->downlinks[0]->link, NULL, 1);
+                    }
+                }
+                j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
             }
-            j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
-        }
 	    if (j == DEL_OK)
-		xscatprintf(&report," %s %s  unlinked\r",an,print_ch(49-strlen(an),'.'));
-	    else
-		xscatprintf(&report," %s %s  error. report to sysop!\r",
-			    an, print_ch(49-strlen(an),'.'));
-	    break;
-	case 1:
-	    if (isPatternLine(line)) {
-		matched = 1;
-		continue;
-	    }
-	    if (area->hide) {
-		i = config->echoAreaCount;
-		break;
-	    }
-	    xscatprintf(&report, " %s %s  not linked\r",
-			an, print_ch(49-strlen(an), '.'));
-	    w_log('8', "areafix: area %s is not linked to %s",
-		  area->areaName, aka2str(link->hisAka));
-	    break;
-	case 5: 
+                xscatprintf(&report," %s %s  unlinked\r",an,print_ch(49-strlen(an),'.'));
+            else
+                xscatprintf(&report," %s %s  error. report to sysop!\r",
+                            an, print_ch(49-strlen(an),'.'));
+            break;
+        case 1:
+            if (isPatternLine(line)) {
+                matched = 1;
+                continue;
+            }
+            if (area->hide) {
+                i = config->echoAreaCount;
+                break;
+            }
+            xscatprintf(&report, " %s %s  not linked\r",
+                        an, print_ch(49-strlen(an), '.'));
+            w_log('8', "areafix: area %s is not linked to %s",
+                  area->areaName, aka2str(link->hisAka));
+            break;
+        case 5:
 	    xscatprintf(&report, " %s %s  unlink is not possible\r",
 			an, print_ch(49-strlen(an), '.'));
 	    w_log('8', "areafix: area %s -- unlink is not possible for %s",
