@@ -338,15 +338,17 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
 #endif
 
    *seenByCount = 0;
-   start = msg->text;
+
+   start = strrstr(msg->text, " * Origin:"); // jump over Origin
+   if (start == NULL) start = msg->text;
 
    // find beginning of seen-by lines
    do {
-      start = strstr(start, "SEEN-BY:");
-      if (start == NULL) return;
-      start += 8; // jump over SEEN-BY:
+	   start = strstr(start, "SEEN-BY:");
+	   if (start == NULL) return;
+	   start += 8; // jump over SEEN-BY:
 
-      while (*start == ' ') start++; // find first word after SEEN-BY:
+	   while (*start == ' ') start++; // find first word after SEEN-BY:
    } while (!isdigit(*start));
 
    // now that we have the start of the SEEN-BY's we can tokenize the lines and read them in
@@ -1174,7 +1176,6 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
    while (*area == ' ') area++;
 
    echo = getArea(config, area);
-   statToss.echoMail++;
 
    if (echo == &(config->badArea)) writeAccess = 0;
    else writeAccess = checkAreaLink(echo, pktOrigAddr, 0);
@@ -1183,6 +1184,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
    if (echo != &(config->badArea)) {
 	  if (dupeDetection(echo, *msg)==1) {
 		  // no dupe
+		  statToss.echoMail++;
 
 		  // if only one downlink, we've got the mail from him
 		  if ((echo->downlinkCount > 1) ||
@@ -1229,16 +1231,18 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 	       rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
 	   } else {
 	     if (dupeDetection(echo, *msg)==1) {
-	       // nodupe
-               echo->imported++;  // area has got new messages
-               if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-        	  rc = putMsgInArea(echo, msg, 1, forceattr);
-		  statToss.saved++;
-               }
-               if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
-          	  forwardMsgToLinks(echo, msg, pktOrigAddr);
-        	  statToss.exported++;
-               }
+			 // nodupe
+			 statToss.echoMail++;
+			 echo->imported++;  // area has got new messages
+			 if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
+				 rc = putMsgInArea(echo, msg, 1, forceattr);
+				 statToss.saved++;
+			 }
+			 // if only one downlink, we've got the mail from him
+			 if (echo->downlinkCount > 1) {
+				 forwardMsgToLinks(echo, msg, pktOrigAddr);
+				 statToss.exported++;
+			 }
 	     } else {
 	       // msg is dupe
 	       if (echo->dupeCheck == dcMove) 

@@ -1578,7 +1578,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		writeLogEntry(hpt_log, '8', "areafix: security violation from %s", aka2str(link->hisAka));
 		free(tmplink);
 		
-		return 0;
+		return 1;
 	}
 
 	if ( report != NULL ) {

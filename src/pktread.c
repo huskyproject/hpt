@@ -143,28 +143,29 @@ s_pktHeader *openPkt(FILE *pkt)
 
 void correctEMAddr(s_message *msg)
 {
-   char *start = NULL, buffer[47];
+   char *start = NULL, buffer[48];
    int i;
 
    start = strrstr(msg->text, " * Origin:");
-   if (NULL != start) {
-      while ((*(start) !='\r') && (*(start) != '\n')) start++;  // get to end of line
 
-      if (*(start-1) == ')') {                        // if there is no ')', there is no origin
-         while (*(--start)!='(');                     // find beginning '('
-         start++;                                     // and skip it
-         i=0;
+   if (start) {
+	   while ((*start != '\r') && (*start != '\n')) start++;  // get to end of line
+
+	   if (*(start-1) == ')') {         // if there is no ')', there is no origin
+		   while (*(--start)!='('); // find beginning '('
+		   start++;                     // and skip it
+		   i=0;
    
-         while ((*start != ')') && (*start != '\r') && (*start != '\n') && (i < 47)) {
-	    if (isdigit(*start) || *start==':' || *start=='/' || *start=='.') {
-	        buffer[i] = *start;
-    		i++;
-	    }
-	    start++;
-         } /* endwhile */
-         buffer[i]   = '\0';
-         string2addr(buffer, &(msg->origAddr));
-      }
+		   while ((*start!=')') && (*start!='\r') && (*start!='\n') && (i<47)) {
+			   if (isdigit(*start) || *start==':' || *start=='/' || *start=='.') {
+				   buffer[i] = *start;
+				   i++;
+			   }
+			   start++;
+		   } /* endwhile */
+		   buffer[i]   = '\0';
+		   string2addr(buffer, &(msg->origAddr));
+	   }
    } 
 }
 
@@ -569,6 +570,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    if (badmsg) {
 	   freeMsgBuffers(msg);
 	   *message = NULL;
+	   writeLogEntry(hpt_log, '9', "wrong msg header, renaming pkt to bad.");
 	   return 2; // exit with error
    }
 
