@@ -1,3 +1,44 @@
+2003-06-26 Thursday 11:11  val_khokhlov
+
+	* misc/adv-stat-hpt.pl (1.10): possible bug when parsing date with
+	daylight saving time
+
+2003-06-26 Thursday 01:41  andr_lukyanov
+
+	* doc/hpt.texi (1.129): Fixed info about internal packer (hptzip)
+
+2003-06-25 Wednesday 08:16  andr_lukyanov
+
+	* doc/hpt.texi (1.128): Add info about internal packer (hptzip)
+
+2003-06-25 Wednesday 07:27  andr_lukyanov
+
+	* make/: makefile.mvcdll (1.11), makeperl.mvcdll (1.14): Add
+	internal zip (hptzip) support
+
+2003-06-25 Wednesday 03:53  andr_lukyanov
+
+	* doc/hpt.texi (1.127): Add info about internal packer (hptzip)
+
+2003-06-21 Saturday 11:03  mche
+
+	* make/: hpt.vcproj (1.4), txt2pkt.vcproj (1.2): documentation
+	build added
+
+2003-06-21 Saturday 10:25  mche
+
+	* src/areafix.c (1.417): new area option  -pass define area as
+	passthrough even if msgbase type or filename is defined
+
+2003-06-21 Saturday 08:59  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.86): Add Q/A about lockfile ([47])
+
+2003-06-21 Saturday 08:23  mche
+
+	* doc/hpt.texi (1.126): new area option  -pass define area as
+	passthrough even if msgbase type or filename is defined
+
 2003-06-20 Friday 13:55  nssoft
 
 	* Makefile (1.20), src/toss.c (1.520): Fix support hptzip
