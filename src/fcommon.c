@@ -94,7 +94,7 @@ int createLockFile(char *lockfile) {
 #include <io.h>
 #include <fcntl.h>
 
-#if !defined(__TURBOC__) || !defined(__NT__)  /* Borland C for NT has S_ISDIR! */
+#if !defined(__TURBOC__) 
 #define S_ISDIR(a) (((a) & S_IFDIR) != 0)
 #endif
 
