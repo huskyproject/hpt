@@ -1745,10 +1745,17 @@ This statement cannot be repeated.
 @end table
 
 This statement specifies the file which is filled by a message editor
-or "hpt post" with the names of the areas where new echomails have been
-entered. A tosser will only scan those areas which leads to a great
-speed-up. After scanning the tosser will remove the file.
-@strong{Netmail areas will be packed too.}
+or "hpt post" with the names of the areas where new netmails or echomails 
+have been entered. Each line contains one areaname.
+When "hpt scan" is invoked, only echomail areas listed in this file will be
+scanned, when we start "hpt pack" - the same is for netmail areas.
+If area was processed, its name is removed from echotosslog file.
+When hpt has finished processing all listed areas and this file became
+empty, it is removed, otherwise kept for futher processing (maybe by other programs).
+If you do not want to process netmail with hpt pack, you can just delete this
+file after running hpt scan. If this file is not found - all areas will be
+scaned (depending on value of PackNetMailOnScan).
+@xref{PackNetMailOnScan}.
 
 This statement cannot be repeated.
 
