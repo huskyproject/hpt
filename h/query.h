@@ -18,7 +18,7 @@ typedef struct query_areas
       int hour, min;
     } areaTime;
     ps_addr downlinks;
-    int linksCount;        
+    size_t linksCount;        
     struct query_areas *next;
 //    struct query_areas *prev;
 } s_query_areas;
