@@ -49,8 +49,8 @@ typedef struct statToss s_statToss;
 enum tossSecurity {secLocalInbound, secProtInbound, secInbound};
 typedef enum tossSecurity e_tossSecurity;
 
-/* int  to_us(const s_addr destAddr); */
-int  processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceattr);
+
+int  processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forceattr);
 int  processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontdocc, dword forceattr);
 int  processMsg(s_message *msg, s_pktHeader *pktHeader, int secure);
 int  processPkt(char *fileName, e_tossSecurity sec);
@@ -58,16 +58,16 @@ int  putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr);
 void toss(void);
 void tossTempOutbound(char *directory); 
 void arcmail(s_link *link);
-int  autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr);
+int  autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr);
 void tossFromBadArea(char force);
 void writeMsgToSysop(void);
-int  checkAreaLink(s_area *area, s_addr aka, int type);
+int  checkAreaLink(s_area *area, hs_addr aka, int type);
 void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 					s_seenBy **seenBys, UINT *seenByCount,
 					s_seenBy **path, UINT *pathCount);
-void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr);
+void forwardMsgToLinks(s_area *echo, s_message *msg, hs_addr pktOrigAddr);
 int  carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo);
-s_arealink *getAreaLink(s_area *area, s_addr aka);
+s_arealink *getAreaLink(s_area *area, hs_addr aka);
 void closeOpenedPkt(void);
 int  isArcMail(char *fname);
 

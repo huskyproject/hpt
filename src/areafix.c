@@ -2057,13 +2057,13 @@ void MsgToStruct(HMSG SQmsg, XMSG xmsg, s_message *msg)
 
 }
 
-void afix(s_addr addr, char *cmd)
+void afix(hs_addr addr, char *cmd)
 {
     HAREA           netmail;
     HMSG            SQmsg;
     unsigned long   highmsg, i;
     XMSG            xmsg;
-    s_addr          dest;
+    hs_addr         dest;
     s_message	    msg, *tmpmsg;
     int             k, startarea = 0, endarea = config->netMailAreaCount;
     s_area          *area;

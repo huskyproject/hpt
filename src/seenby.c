@@ -255,7 +255,7 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
   */
 
 int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link,
-	      s_addr pktOrigAddr, s_area *area)
+	      hs_addr pktOrigAddr, s_area *area)
 {
     UINT i,j;
 
@@ -309,7 +309,7 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
                        s_arealink ***newLinks,
 			           s_arealink ***zoneLinks,
                        s_arealink ***otherLinks,
-                       s_addr pktOrigAddr) 
+                       hs_addr pktOrigAddr) 
 {
     UINT i, lFound = 0, zFound = 0, oFound = 0;
     

@@ -71,7 +71,7 @@ int       pkt_count = 0;
 int       pkt_aTime = 0;
 int	  quiet = 0;
 
-s_addr afixAddr = {0,0,0,0};
+hs_addr afixAddr = {0,0,0,0};
 char *afixCmd = NULL;
 
 int lock_fd;

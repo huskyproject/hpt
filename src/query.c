@@ -179,7 +179,7 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
     return buff;
 }
 
-int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
+int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
 {
     FILE *f;
     char *fileName;
@@ -347,9 +347,9 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
 s_query_areas*  af_AddAreaListNode(char *areatag, const char *type);
 void            af_DelAreaListNode(s_query_areas* node);
-void            af_AddLink(s_query_areas* node, s_addr *link);
+void            af_AddLink(s_query_areas* node, ps_addr link);
 
-s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink, e_query_action act)
+s_query_areas* af_CheckAreaInQuery(char *areatag, ps_addr uplink, ps_addr dwlink, e_query_action act)
 {
     size_t i = 0;
     int bFind = 0;
@@ -424,7 +424,7 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
     return tmpNode;
 }
 
-char* af_Req2Idle(char *areatag, char* report, s_addr linkAddr)
+char* af_Req2Idle(char *areatag, char* report, hs_addr linkAddr)
 {
     size_t i;
     s_query_areas *tmpNode  = NULL;
@@ -449,7 +449,7 @@ char* af_Req2Idle(char *areatag, char* report, s_addr linkAddr)
             {
                 if( i != areaNode->linksCount-1 )
                     memmove(&(areaNode->downlinks[i]),&(areaNode->downlinks[i+1]),
-                    sizeof(s_addr)*(areaNode->linksCount-i));
+                    sizeof(hs_addr)*(areaNode->linksCount-i));
                 areaNode->linksCount--;
                 queryAreasHead->nFlag = 1; /*  query was changed */
                 if(areaNode->linksCount == 1)
@@ -808,7 +808,7 @@ int af_OpenQuery()
                 areaNode->linksCount++;
                 areaNode->downlinks =
                 safe_realloc( areaNode->downlinks,
-                              sizeof(s_addr)*areaNode->linksCount );
+                              sizeof(hs_addr)*areaNode->linksCount );
                 string2addr(token ,
                             &(areaNode->downlinks[areaNode->linksCount-1]));
                 token = strtok( NULL, seps );
@@ -961,12 +961,12 @@ void af_DelAreaListNode(s_query_areas* node)
     }
 }
 
-void af_AddLink(s_query_areas* node, s_addr *link)
+void af_AddLink(s_query_areas* node, ps_addr link)
 {
     node->linksCount++;
     node->downlinks =
-        safe_realloc( node->downlinks, sizeof(s_addr)*node->linksCount );
-    memcpy( &(node->downlinks[node->linksCount-1]) ,link, sizeof(s_addr) );
+        safe_realloc( node->downlinks, sizeof(hs_addr)*node->linksCount );
+    memcpy( &(node->downlinks[node->linksCount-1]) ,link, sizeof(hs_addr) );
     node->bTime = tnow;
     queryAreasHead->nFlag = 1; /*  query was changed */
 }

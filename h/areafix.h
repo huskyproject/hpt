@@ -27,13 +27,13 @@
 
 char *print_ch(int len, char ch);
 int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd);
-void afix(s_addr addr, char *cmd);
+void afix(hs_addr addr, char *cmd);
 void autoPassive(void);
 int relink (char *straddr);
 char *rescan(s_link *link, char *cmd);
 char *errorRQ(char *line);
 int isPatternLine(char *s);
-void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr);
+void makeMsgToSysop(char *areaName, hs_addr fromAddr, hs_addr *uplinkAddr);
 int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink);
 int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act);
 void sendAreafixMessages();

@@ -67,7 +67,7 @@ extern int       pkt_count; /*  pkt counter */
 extern int       pkt_aTime;
 extern int   	  quiet;
 
-extern s_addr afixAddr;
+extern hs_addr afixAddr;
 extern char *afixCmd;
 
 extern int lock_fd;

@@ -60,7 +60,7 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
                        s_arealink ***newLinks,
 			           s_arealink ***zoneLinks,
                        s_arealink ***otherLinks,
-                       s_addr pktOrigAddr);
+                       hs_addr pktOrigAddr);
 
 
 

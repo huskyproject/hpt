@@ -409,7 +409,7 @@ void post(int c, unsigned int *n, char *params[])
         do
         {
             
-            if(!msg.netMail) memset(&msg.destAddr, '\0', sizeof(s_addr));
+            if(!msg.netMail) memset(&msg.destAddr, '\0', sizeof(hs_addr));
 
             msg.text = createKludges(config,
                                      (area == NULL) ? NULL : strUpper(area),

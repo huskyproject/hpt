@@ -74,7 +74,7 @@
 
 s_statScan statScan;
 
-void cvtAddr(const NETADDR aka1, s_addr *aka2)
+void cvtAddr(const NETADDR aka1, hs_addr *aka2)
 {
   aka2->zone = aka1.zone;
   aka2->net  = aka1.net;
@@ -142,7 +142,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg)
    if (config->outtab != NULL) recodeToTransportCharset((CHAR*)msg->text);
 }
 
-void addViaToMsg(s_message *msg, s_addr ourAka) {
+void addViaToMsg(s_message *msg, hs_addr ourAka) {
 	time_t  tm;
 	struct tm *dt;
         char buf[2];
@@ -571,7 +571,7 @@ void scanNMArea(s_area *area)
    HMSG            msg;
    dword           highestMsg, i, j;
    XMSG            xmsg;
-   s_addr          dest, orig;
+   hs_addr         dest, orig;
    int             for_us, from_us;
    FILE            *f = NULL;
 

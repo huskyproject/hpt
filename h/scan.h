@@ -51,6 +51,6 @@ extern s_statScan statScan;
 void scanExport(int type, char *str);
 void scanEMArea(s_area *echo);
 void makePktHeader(s_link *link, s_pktHeader *header);
-void cvtAddr(const NETADDR aka1, s_addr *aka2);
+void cvtAddr(const NETADDR aka1, ps_addr aka2);
 
 #endif

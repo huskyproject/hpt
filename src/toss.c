@@ -121,7 +121,7 @@ static int nopenpkt, maxopenpkt;
 s_statToss statToss;
 int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec);
 void processDir(char *directory, e_tossSecurity sec);
-void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr);
+void makeMsgToSysop(char *areaName, hs_addr fromAddr, ps_addr uplinkAddr);
 static void setmaxopen(void);
 
 static char *get_filename(char *pathname)
@@ -512,7 +512,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
     return;
 }
 
-void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
+void forwardMsgToLinks(s_area *echo, s_message *msg, hs_addr pktOrigAddr)
 {
     s_seenBy *seenBys = NULL, *path = NULL;
     UINT     seenByCount = 0 , pathCount = 0;
@@ -548,7 +548,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 }
 
 /* return value: 1 if success, 0 if fail */
-int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
+int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr, int writeAccess)
 {
     char *tmp = NULL, *line = NULL, *textBuff=NULL, *areaName=NULL, *reason=NULL;
     char buff[128] = "";
@@ -652,7 +652,7 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
     return 0;
 }
 
-void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
+void makeMsgToSysop(char *areaName, hs_addr fromAddr, ps_addr uplinkAddr)
 {
     s_area *echo = NULL;
     unsigned int i, netmail=0;
@@ -801,7 +801,7 @@ void writeMsgToSysop()
 
 }
 
-s_arealink *getAreaLink(s_area *area, s_addr aka)
+s_arealink *getAreaLink(s_area *area, hs_addr aka)
 {
     UINT i;
 
@@ -814,7 +814,7 @@ s_arealink *getAreaLink(s_area *area, s_addr aka)
 
 /*  import: type == 0, export: type != 0 */
 /*  return value: 0 if access ok, 3 if import/export off, 4 if not linked */
-int checkAreaLink(s_area *area, s_addr aka, int type)
+int checkAreaLink(s_area *area, hs_addr aka, int type)
 {
     s_arealink *arealink = NULL;
     int writeAccess = 0;
@@ -834,7 +834,7 @@ int checkAreaLink(s_area *area, s_addr aka, int type)
     return writeAccess;
 }
 
-int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceattr)
+int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forceattr)
 {
     char   *area=NULL, *p = NULL, *q = NULL;
     s_message* messCC = NULL;
@@ -2124,12 +2124,12 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
     int		rc = 0;
     s_message   msg;
     s_area	*echo = &(config -> badArea);
-    s_addr	pktOrigAddr;
+    hs_addr	pktOrigAddr;
     char 	*ptmp = NULL, *line = NULL, *areaName = NULL, *area=NULL, noexp=0;
     s_link	*link = NULL;
 
     makeMsg(hmsg, xmsg, &msg, &(config->badArea), 2);
-    memset(&pktOrigAddr,'\0',sizeof(s_addr));
+    memset(&pktOrigAddr,'\0',sizeof(hs_addr));
     statToss.msgs++; /*  really processed one more msg */
 
     /*  deleting valet string - "FROM:" and "REASON:" */

@@ -135,7 +135,7 @@ static s_msginfo *findMsgId(s_msginfo *entries, struct hashinfo *hash, dword has
 static char *GetKludgeText(byte *ctl, char *kludge)
 {
     char *pKludge, *pToken;
-    s_addr addr;
+    hs_addr addr;
     
     pToken = (char *) GetCtrlToken(ctl, (byte *)kludge);
     if (pToken) {

@@ -228,7 +228,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
    char *start, *copy, *text=NULL, buffer[35]; /* FIXME: static buffer */
    int valid_intl_kludge = 0;
    int zonegated = 0;
-   s_addr intl_from, intl_to;
+   hs_addr intl_from, intl_to;
    UINT i;
 
    copy = buffer;

@@ -275,7 +275,7 @@ FILE *openPktForAppending(char *fileName, s_pktHeader *header)
  * Imho it is not necessary to create better msgid for this purpose.
  */
 /*
-char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAka) {
+char *createKludges(const char *area, const ps_addr ourAka, const ps_addr destAka) {
    
    char *buff = NULL;
 	
