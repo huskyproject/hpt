@@ -1457,7 +1457,7 @@ areafix about link's requests status (this is default behavior).
 
 This statement can be repeated only for different links.
 
-@node SeparateBundles, SetConsoleTitle, ScreenLogLevels, Keywords
+@node SeparateBundles, SetConsoleTitle, SendNotifyMessages, Keywords
 @subsection SeparateBundles
 @findex SeparateBundles
 @table @asis
