@@ -81,6 +81,7 @@
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/dirlayer.h>
+#include <fidoconf/crc.h>
 
 #include <smapi/typedefs.h>
 #include <smapi/compiler.h>
@@ -313,7 +314,7 @@ int createTempPktFileName(s_link *link)
 
 		// separate bundles
 		if (config->separateBundles) {
-			if (link->hisAka.point) xscatprintf(&tmp, "%08x.sep%c", 
+			if (link->hisAka.point) xscatprintf(&tmp, "%08x.sep%c",
 												link->hisAka.point, limiter);
 			else xscatprintf(&tmp, "%04x%04x.sep%c", link->hisAka.net,
 							 link->hisAka.node, limiter);
@@ -322,15 +323,13 @@ int createTempPktFileName(s_link *link)
 
     } // link->fileBox
 
-    npos = strlen(tmp);
-
     /* bundle file name */
     switch ( bundleNameStyle ) {
 
     case eAddrDiff:
     case eAddrDiffAlways:
 
-		if ( link->hisAka.point == 0 && config->addr[0].point == 0) {
+/*		if ( link->hisAka.point == 0 && config->addr[0].point == 0) {
 			xscatprintf (&tmp, "%04hx%04hx.",
 						 config->addr[0].net - link->hisAka.net,
 						 config->addr[0].node - link->hisAka.node);
@@ -339,8 +338,13 @@ int createTempPktFileName(s_link *link)
 						 config->addr[0].node - link->hisAka.node,
 						 config->addr[0].point- link->hisAka.point);
 		}
+*/
+                xscatprintf( &tmp, "hpt %s ", aka2str(config->addr[0]) );
+		xstrcat( &tmp, aka2str(link->hisAka) );
+		xscatprintf(&tmp,"%8x", strcrc32(tmp,0xFFFFFFFFUL) );
 
     case eAmiga:
+                npos = strlen(tmp);
 		if (bundleNameStyle==eAmiga) {
 			xscatprintf (&tmp, "%u.%u.%u.%u.",
 						 link->hisAka.zone, link->hisAka.net,
@@ -570,7 +574,7 @@ int createDirectoryTree(const char *pathName) {
 int createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ)
 {
    int nRet = NCreateOutboundFileName(config,link,prio,typ);
-   if(nRet == -1) 
+   if(nRet == -1)
       exit_hpt("cannot create *.bsy file!",0);
    return nRet;
 }
