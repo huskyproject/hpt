@@ -68,6 +68,7 @@ extern long curconfpos;
 extern FILE *hcfg;
 
 unsigned char RetFix;
+static int rescanMode = 0;
 
 int strncasesearch(char *strL, char *strR, int len)
 {
@@ -1340,7 +1341,8 @@ char *rescan(s_link *link, s_message *msg, char *cmd) {
     s_area *area;
 	s_arealink *arealink;
     
-    line = cmd+strlen("%rescan");
+    line = cmd;
+    if (strncasecmp(cmd, "%rescan", 7)==0) line += strlen("%rescan");
     
     if (*line == 0) return errorRQ(cmd);
     
@@ -1439,7 +1441,14 @@ int tellcmd(char *cmd) {
 		if (strncasecmp(line,"pause",5)==0) return PAUSE;
 		if (strncasecmp(line,"resume",6)==0) return RESUME;
 		if (strncasecmp(line,"info",4)==0) return INFO;
-		if (strncasesearch(line, "rescan", 6)==0) return RESCAN;
+		if (strncasesearch(line, "rescan", 6)==0) {
+                   if (line[6] == '\0') {
+                      rescanMode=1;
+                      return NOTHING;
+                   } else {
+                      return RESCAN;
+                   }
+                }
 		return ERROR;
 	case '\001': return NOTHING;
 	case '\000': return NOTHING;
@@ -1455,7 +1464,7 @@ int tellcmd(char *cmd) {
 	default: return ADD;
 	}
 	
-	return 0;
+//	return 0; - Unreachable
 }
 
 char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
@@ -1673,6 +1682,11 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 					break;
 				case ADD:
 					report = areaStatus(report, preport);
+					if (rescanMode) {
+					   preport = processcmd( link, msg, token, RESCAN );
+					   if (preport != NULL)
+					      report = areaStatus(report, preport);
+					}
 					break;
 				case DEL:
 				case REMOVE:

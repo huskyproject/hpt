@@ -33,3 +33,5 @@ Example:
  %RESCAN 541.LOCAL            <- Rescan area
  %RESCAN OS2.*                <- same
  %RESCAN linux.develop.ger 200  <- rescan the last 200 mails
+ %RESCAN                      <- turn on rescanning of following subscription
+

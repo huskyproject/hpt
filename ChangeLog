@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Tue Jan  9 20:03:11 NOVT 2001
+max (patch from Serguei Revtov):
+* areafix: %rescan command without argument
+
+----- cvs ci ------
 Mon Jan  8 01:02:02 NOVT 2001
 max (patch from Pavel Gulchouck):
 * delete() & do_detele() fixes
