@@ -49,6 +49,10 @@
 # include <process.h>
 #endif
 
+#if defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) /* || defined(__MINGW32__)*/
+#define HAVE_SPAWNVP 1
+#endif
+
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
    /* we can't include windows.h for several reasons ... */
 #  define CharToOem CharToOemA
@@ -61,40 +65,6 @@
 #if defined(OS2)
 #include <os2.h>
 #endif
-
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
-#include <fidoconf/dirlayer.h>
-#include <fidoconf/xstr.h>
-#include <fidoconf/afixcmd.h>
-#include <fidoconf/temp.h>
-
-#if defined(A_HIDDEN) && !defined(_A_HIDDEN)
-#define _A_HIDDEN A_HIDDEN
-#endif
-
-#include <pkt.h>
-#include <scan.h>
-#include <toss.h>
-#include <global.h>
-#include <seenby.h>
-#include <dupe.h>
-#include <fidoconf/recode.h>
-#include <areafix.h>
-#include <version.h>
-#include <scanarea.h>
-#include <hpt.h>
-#ifdef DO_PERL
-#include <hptperl.h>
-#endif
-
-#include <smapi/msgapi.h>
-#include <smapi/stamp.h>
-#include <smapi/typedefs.h>
-#include <smapi/compiler.h>
-#include <smapi/progprot.h>
-#include <smapi/patmat.h>
-
 
 #if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
 #include <dos.h>
@@ -110,13 +80,46 @@
 #define GetFileAttributes GetFileAttributesA
 #endif
 
-#if defined(__MINGW32__) || (defined(__WATCOMC__) && (__WATCOMC__ < 1100))
-#define NOSLASHES
-#endif
+#include <smapi/compiler.h>
+#include <smapi/progprot.h>
+#include <smapi/typedefs.h>
+#include <smapi/msgapi.h>
+#include <smapi/stamp.h>
+#include <smapi/patmat.h>
 
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
+#include <fidoconf/dirlayer.h>
+#include <fidoconf/xstr.h>
+#include <fidoconf/afixcmd.h>
+#include <fidoconf/temp.h>
+#include <fidoconf/recode.h>
+
+#if defined(A_HIDDEN) && !defined(_A_HIDDEN)
+#define _A_HIDDEN A_HIDDEN
+#endif
 
 #ifdef USE_HPT_ZLIB
 #   include "hpt_zlib/hptzip.h"
+#endif
+
+#include <pkt.h>
+#include <scan.h>
+#include <toss.h>
+#include <global.h>
+#include <seenby.h>
+#include <dupe.h>
+#include <areafix.h>
+#include <version.h>
+#include <scanarea.h>
+#include <hpt.h>
+#ifdef DO_PERL
+#include <hptperl.h>
+#endif
+
+
+#if defined(__MINGW32__) || (defined(__WATCOMC__) && (__WATCOMC__ < 1100))
+#define NOSLASHES
 #endif
 
 
@@ -1252,11 +1255,13 @@ int processPkt(char *fileName, e_tossSecurity sec)
     return rc;
 }
 
-#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
-void *mk_lst(char *a)
+#if HAVE_SPAWNVP
+/* make parameters list for spawnvp() */
+char **mk_lst(const char *a)
 {
-    char *p=a, *q=a, **list=NULL, end=0, num=0;
+    char *p, *q, *t, **list=NULL, end=0, num=0;
 
+    p=q=t=sstrdup(a);
     while (*p && !end) {
 	while (*q && !isspace(*q)) q++;
 	if (*q=='\0') end=1;
@@ -1271,7 +1276,8 @@ void *mk_lst(char *a)
     }
     list = (char **) safe_realloc(list, (++num)*sizeof(char*));
     list[num-1]=NULL;
-
+    nfree(t);
+    
     return list;
 }
 #endif
@@ -1321,11 +1327,11 @@ int  processArc(char *fileName, e_tossSecurity sec)
 	else
 	    {
                 w_log(LL_EXEC, "bundle %s: unpacking with \"%s\"", fileName, cmd);
-#if defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) /*|| defined(__MINGW32__)*/
-              { const char * const *list;
+#if HAVE_SPAWNVP
+              { char **list;
 		list = mk_lst(cmd);
 		cmdexit = spawnvp(P_WAIT, cmd, list);
-		nfree((char **)list);
+		nfree(list);
 		if (cmdexit != 0) {
 		    w_log(LL_ERR, "exec failed: %s, return code: %d", strerror(errno), cmdexit);
 		    return 3;
@@ -1653,9 +1659,6 @@ void arcmail(s_link *tolink) {
     int startlink=0;
     int endlink = config->linkCount;
     e_bundleFileNameStyle bundleNameStyle;
-#ifdef __WATCOMC__
-    const char * const *list;
-#endif
 
     if (tolink != NULL) {
 	startlink = tolink - config->links;
@@ -1706,10 +1709,11 @@ void arcmail(s_link *tolink) {
 			    cmdexit = PackWithZlib(link->packFile, link->pktFile);
 #endif
 			} else {
-#ifdef __WATCOMC__
+#if HAVE_SPAWNVP
+			    char **list;
 			    list = mk_lst(cmd);
 			    cmdexit = spawnvp(P_WAIT, cmd, list);
-			    nfree((char **)list);
+			    nfree(list);
 #else
 			    cmdexit = system(cmd);
 #endif
@@ -1775,10 +1779,11 @@ void arcmail(s_link *tolink) {
 			    }
 			else
 			    {
-#ifdef __WATCOMC__
+#if HAVE_SPAWNVP
+				char **list;
 				list = mk_lst(cmd);
 				cmdexit = spawnvp(P_WAIT, cmd, list);
-				nfree((char **)list);
+				nfree(list);
 #else
 				cmdexit = system(cmd);
 #endif
