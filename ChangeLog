@@ -1,3 +1,13 @@
+2002-10-10 Thursday 19:16  sfpavel
+
+	* src/toss.c (hpt-1_2-stable.5): Drop patch from pgul (2002-09-25
+	22:23): this version use 'old' patmat from smapi
+
+2002-10-10 Thursday 12:39  sfpavel
+
+	* src/query.c (hpt-1_2-stable.3): Apply fixes from mche (bug with
+	createFwdNonPass; bug with autocreation)
+
 2002-10-08 Tuesday 14:32  stas_degteff
 
 	* doc/hpt-FAQ.russian (hpt-1_2-stable.9): FAQ fix
