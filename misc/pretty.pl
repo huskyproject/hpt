@@ -3,6 +3,9 @@
 # $Id$
 #
 # $Log$
+# Revision 1.3  2002/11/17 01:39:00  stas_degteff
+# Use spawnvp() instead system() always if possible
+#
 # Revision 1.2  2002/01/27 14:38:17  stas
 # Add the '-c' option (copy mode) and change temp & old file names.
 #
@@ -22,6 +25,7 @@ N: foreach (@ARGV) {
     $stopat=3, next N if (/^-nfa$/);
     $no=1,  next N if (/^-no$/);
     $nl=1,  next N if (/^-nl$/);
+    $pl=1,  next N if (/^-pl$/);
     $alst=$_ if (-f $_);
     $c=1, next if (/^-c$/);
 }
@@ -67,6 +71,7 @@ print ":: Начинаем сортировку. Возможно это займет много времени.\n";
 my @ml;
 
 $ln=0;
+$pln=0;
 foreach $line (<LIST>) {
    chomp $line;
    if (($type,$name,$file,$rest) = $line=~/^(\w+)\s+(\S+)\s+(\S+)\s+(.+)/i) {
@@ -122,14 +127,24 @@ foreach $line (<LIST>) {
       &max(3, $file);
       &max(4, $rest);
       &max(5, $desc);
-      $lines[$ln] = [ (1, $type, $name, $file, $rest, $desc, $links) ];
+      if ($pl and $file eq "passthrough") {
+        $plines[$pln] = [ (1, $type, $name, $file, $rest, $desc, $links) ];
+        print ".";
+        $pln++;
+      } else {
+        $lines[$ln] = [ (1, $type, $name, $file, $rest, $desc, $links) ];
+        print ".";
+        $ln++;
+      }
    } else {
       $lines[$ln] = [ (0, $line) ];
+      print ".";
+      $ln++;
    }
-   print ".";
-   $ln++;
 }
 print "\n";
+
+if ($pl) {for ($i=0;$i<$pln;$i++) {$lines[$ln] = $plines[$i]; $ln++;} }
 
 sub max() {
         my ($i, $s);
@@ -231,6 +246,7 @@ sub help() {
         print "::  -nfa   -nf + don't justify options & links\n";
         print "::  -no    don't sort options for area\n";
         print "::  -nl    don't sort links for area\n";
+        print "::  -pl    move passthrough areas at the end of file.\n";
         print "::  -desc [-na] [-set]\n";
         print "::         add descriptions from comma-delimeted arealist\n";
         print "::         '-desc -na' - from 'FILEBONE.NA'-like file\n";
@@ -252,6 +268,7 @@ sub rushelp() {
         print "::  Ключ -nf запрещает выравнивание (с -nfa не выравниваются опции/линки).\n";
         print "::  Ключ -no запрещает сортировать опции.\n";
         print "::  Ключ -nl запрещает сортировать линков.\n";
+        print "::  Ключ -pl перемещает passthrough арии в конец файла.\n";
         print "::  Ключ -c  оставляет исходный файл без изменений, новый записывается\n";
         print "::    в файл с расширением '$$$'\n";
         print "::  Ключ -desc позволяет добавлять описания арий из файла типа\n";
