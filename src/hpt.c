@@ -130,7 +130,7 @@ void start_help(void) {
   fprintf(stdout,"   hpt pack - packing netmail\n");
   fprintf(stdout,"   hpt link [areamask] - links messages\n");
   fprintf(stdout,"   hpt afix [<addr> command] - process areafix\n");
-  fprintf(stdout,"   hpt relink <addr> - refresh area subsription\n");
+  fprintf(stdout,"   hpt relink <addr> - refresh area subscription\n");
   fprintf(stdout,"   hpt pause - set pause for links who don't poll our system\n");
   fprintf(stdout,"   hpt -q [options] - quiet mode (no screen output)\n");
 }
