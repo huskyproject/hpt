@@ -1,3 +1,8 @@
+2001-10-17 Wednesday 13:10  pavel.gulchouck
+
+	* src/fcommon.c (1.96): bugfix: creating bundle names (timestamp
+	method)
+
 2001-09-29 Saturday 05:45  ml
 
 	* doc/hpt.texi (1.41), src/fcommon.c (1.95), src/pktread.c (1.77),
