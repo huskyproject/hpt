@@ -33,5 +33,6 @@ char *rescan(s_link *link, char *cmd);
 char *errorRQ(char *line);
 int isPatternLine(char *s);
 int isAreaLink(s_addr link, s_area *area);
+int isOurAka(s_addr link);
 
 #endif
