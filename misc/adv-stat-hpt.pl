@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # hptstat (c)opyright 2002-03, by val khokhlov
-$VERSION = "0.91";
+$VERSION = "0.92";
 %areas;                       # areas found in stat (tag=>id), id=1,2,3,...
 @area_tag;                    # ...reverse array (id=>tag)
 %links;                       # links found in stat
@@ -489,7 +489,7 @@ sub str2time {
       else { $h = $a[1]; }
     }
   }
-  return POSIX::mktime(0, 0, $h, $d, $m, $y, $w);
+  return POSIX::mktime(0, 0, $h, $d, $m, $y, $w, -1, -1);
 }
 # --------------------------------------------------------------------
 # command line parser
