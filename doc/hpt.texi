@@ -2225,6 +2225,7 @@ This statement cannot be repeated.
 * ReducedSeenBY::               reduced seen-by mode (FSC-0093)
 * RemoteRobotName::             remote "areafix" name
 * SendNotifyMessages::          send messages about query changes, bad posts and so on
+* UnsubscribeOnAreaDelete::     send unsubscribe request when subscribed area is deleted
 @end menu
 
 @node AccessGrp, AdvancedAreafix, Link Keywords, Link Keywords
@@ -3178,7 +3179,7 @@ to subscribing/unsubscribing of new areas forwarded to this link.
 
 This statement can only be repeated for different links.
 
-@node SendNotifyMessages, , RemoteRobotName, Link Keywords
+@node SendNotifyMessages, UnsubscribeOnAreaDelete, RemoteRobotName, Link Keywords
 @subsection SendNotifyMessages
 @findex SendNotifyMessages
 @table @asis
@@ -3192,6 +3193,23 @@ If sendNotifyMessages is true, link will receive notification messages from
 areafix about link's requests status or bad posts.
 
 By default is off, i.e. do not send any notification messages.
+
+This statement can only be repeated for different links.
+
+@node UnsubscribeOnAreaDelete, , SendNotifyMessages, Link Keywords
+@subsection UnsubscribeOnAreaDelete
+@findex UnsubscribeOnAreaDelete
+@table @asis
+@item Syntax:
+@code{unsubscribeOnAreaDelete <bool>}
+@item Example:
+@code{unsubscribeOnAreaDelete yes}
+@end table
+
+If unsubscribeOnAreaDelete is true, link will receive unsubscribe request
+("-area") to his areafix when subscribed area is deleted.
+
+By default is off, i.e. do not send unsubscribe request.
 
 This statement can only be repeated for different links.
 

@@ -17,6 +17,10 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
     - added ability to automatically pause area when all links but uplink
       (determined by "-def" flag) are in pause (see description of "autoAreaPause"
       token in documentation for details).
+    - Note! Hpt behavior changed: previously hpt sent "-area" requests to all
+      subscribed links on area delete, no matter if it was point or link;
+      now unsubscribe message will be sent only if unsubscribeOnAreaDelete
+      token is "on" for link.
 
 2. CONFIG changes:
     - new option for echoArea or netmailArea: -scan (specifies when area
@@ -30,7 +34,8 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
     - -b <msgtype> is not placed when autocreating area and when it is not
       defined in AutoAreaCreateDefaults. Use EchoAreaDefaults also.
     - added ability to control if areafix should send notification messages
-      about queue changes to link (token sendNotifyMessages)
+      about queue changes, bad posts, subscribed area deletion to link
+      (token sendNotifyMessages)
     - added area pause algorythm (see "autoAreaPause" token), "-paused" and
       "-noautoareapause" options for areas.
 
