@@ -1,3 +1,8 @@
+2001-05-09 Wednesday 18:47  ml
+
+	* src/scan.c (1.127): disable any netmail packing without any
+	routing
+
 2001-05-07 Monday 17:56  ml
 
 	* BUGS (1.13), h/date.h (1.177), src/hpt.c (1.110), src/scan.c
