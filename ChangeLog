@@ -2,6 +2,14 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Fri Jun 30 23:25:08 NOVST 2000
+max:
+* disable auto packing netmail after relink
+* fixed processing msg without SEEN-BY's but with PATH
+* fixed linkgrp & forward request bug
+* changed /NT to /w32
+
+----- cvs ci ------
 Wed Jun 28 17:22:41 NOVST 2000
 max:
 * fixed returning message without SEEN-BY's

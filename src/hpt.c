@@ -256,7 +256,7 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
 #elif defined(__OS2__) || defined(OS2)
    xstrcat(&version, "/os2");
 #elif defined(__NT__)
-   xstrcat(&version, "/NT");
+   xstrcat(&version, "/w32");
 #elif defined(__sun__)
    xstrcat(&version, "/sun");
 #elif defined(MSDOS)

@@ -581,7 +581,11 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	if (start != NULL) {
 		while(*start != 'S') start++; // to jump over )\r
 		*start='\0';
-	} 
+	} else {
+	    // find start of PATH in Msg
+	    start = strstr(msg->text, "\001PATH: ");
+	    if (start != NULL) *start='\0';
+	}
 	// create new seenByText
 	seenByText = createControlText((*seenBys), *seenByCount, "SEEN-BY: ");
 	pathText   = createControlText((*path), *pathCount, "\001PATH: ");

@@ -682,7 +682,9 @@ int forwardRequest(char *areatag, s_link *dwlink) {
 
     for (i = 0; i < Requestable; i++) {
 		uplink = &(config->links[Indexes[i]]);
-		if (uplink->forwardRequests) {
+		if (uplink->forwardRequests &&
+		    grpInArray(uplink->LinkGrp, 
+		    dwlink->AccessGrp, dwlink->numAccessGrp)) {
 			
 			if (uplink->forwardRequestFile!=NULL) {
 				// first try to find the areatag in forwardRequestFile
@@ -1844,8 +1846,7 @@ int relink (char *straddr) {
 		freeMsgBuffers(msg);
 		nfree(msg);
 		writeLogEntry(hpt_log, '8', "Total request relink %i area(s)",areasArraySize);
-
-		cmPack = 1;
+//		cmPack = 1;
 	}
 
 	nfree(areasIndexArray);

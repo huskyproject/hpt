@@ -8,6 +8,7 @@ Category 1: Will certainly be implemented until next release
 - add pkt from to dupe messages
 - msgbasedir for each link
 - tossIgnoreSeenBy <address>
+- -sbadd <addr>, -sbdel <addr>
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
