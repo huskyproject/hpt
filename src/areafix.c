@@ -2185,7 +2185,9 @@ int relink (char *straddr) {
 
 		xscatprintf(&(msg->text), " \r--- %s areafix\r", versionStr);
 		msg->textLength = strlen(msg->text);
-		w_log('8', "'Refresh' message created to `AreaFix`");
+		w_log('8', "'Refresh' message created to `%s`",
+		    researchLink->RemoteRobotName ?
+		    researchLink->RemoteRobotName : "areafix");
 		processNMMsg(msg, NULL,
 					 getNetMailArea(config,config->robotsArea),
 					 1, MSGLOCAL|MSGKILL);
