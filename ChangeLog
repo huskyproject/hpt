@@ -2,6 +2,22 @@ hpt 0.27
 --------
 
 ----- cvs ci ------
+Mon Mar  8 21:36:00
+Max (areafix updates) :
+- core dumped at %info
+- fixed small bugz in %pause & %resume
+- small changes in available code
+- delLinkFromArea: unsubscribed other links than needed
+- %rescan: fixed core dump if no area defined.
+	
+----- cvs ci ------
+Sun Mar  7 23:20:17
+Max:
++ applied patches from Fedor Lizunkov 2:5020/960 for new echo acess policy
++ write "REASON..." in message tossed to bad area (Fedor Lizunkov)
++ areafix patch from Fedor (added %rescan and other...)
+
+----- cvs ci ------
 Thu Mar  4 12:13:49 CET 1999
 - fixed a bug in processDir, when no pkt files are recognized.
 
