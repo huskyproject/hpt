@@ -1,3 +1,11 @@
+2002-09-20 Friday 19:34  pgul
+
+	* src/scan.c (1.172): minor bugfix
+
+2002-09-20 Friday 13:32  mche
+
+	* make/makefile.cyg (1.5): try to build hpt with perl
+
 2002-09-19 Thursday 16:22  mche
 
 	* make/makefile.cyg (1.4): try to build hpt with perl
