@@ -1,3 +1,9 @@
+2002-10-09 Wednesday 09:02  mche
+
+	* src/areafix.c (1.350), src/query.c (1.68), src/toss.c (1.451),
+	h/areafix.h (1.33): functions addlink and removelink are moved to
+	fidoconfig
+
 2002-10-08 Tuesday 14:31  stas_degteff
 
 	* doc/hpt-FAQ.russian (1.40): FAQ fix
