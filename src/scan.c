@@ -484,12 +484,9 @@ void scanNMArea(s_area *area)
          for (j=0; j < config->addrCount; j++)
             if (addrComp(orig, config->addr[j])==0) {from_us = 1; break;}
          
-/*         if ((!for_us) && (!from_us)) MsgKillMsg(netmail, i);
-
-         // kill/sent flag
-         if ((xmsg.attr & MSGKILL) == MSGKILL) MsgKillMsg(netmail, i);
-         */
-
+	 //  non transit messages without k/s flag not killed
+	 if (!(xmsg.attr & MSGKILL) && !(xmsg.attr & MSGFWD)) from_us = 1;
+	 
          if ( (((!for_us) && (!from_us)) || (xmsg.attr & MSGKILL)) &&(xmsg.attr & MSGSENT) ){
               MsgKillMsg(netmail, i);
               i--;

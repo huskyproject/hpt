@@ -3,8 +3,6 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- date to PID:
-- pktsize
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
@@ -13,6 +11,7 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - clean autoCreate code
 - use spanwn() insted of system() under win32
 - do not open/close files on each msg
+- pktsize
 - add option "run with another config"
 - fileboxes
 - templates

@@ -2,6 +2,12 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Sun Mar 19 18:49:25 NOVT 2000
+max:
+* areafix: hidden & mandatory fixes
+* non transit messages without k/s flag not killed
+
+----- cvs ci ------
 Fri Mar 17 11:30:14 NOVT 2000
 max:
 * print error messages & exit with wrong inbound settings

@@ -110,8 +110,6 @@ int subscribeCheck(s_area area, s_message *msg, s_link *link)
   } else found = 1;
 
   if (!found) return 2;
-  if (mandatoryCheck(area,link)) return 5;
-  if (area.hide) return 3;
   return 1;
 }
 
@@ -122,11 +120,9 @@ int subscribeAreaCheck(s_area *area, s_message *msg, char *areaname, s_link *lin
 	
 	if (patimat(area->areaName,areaname)==1) {
 		rc=subscribeCheck(*area, msg, link);
-		// 0 - already subscribed
-		// 1 - need subscribe
+		// 0 - already subscribed / linked
+		// 1 - need subscribe / not linked
 		// 2 - no access
-		// 3 - area is hidden
-		// 5 - area is mandatory
 	} else rc = 4;
 	
 	// this is another area
@@ -334,7 +330,7 @@ char *list(s_message *msg, s_link *link) {
 	    area = config->echoAreas[i];
 
 	    rc=subscribeCheck(area, msg, link);
-	    if (rc < 2) { /* add line */
+	    if (rc < 2 && !area.hide) { /* add line */
 			if (area.description) desclen=strlen(config->echoAreas[i].description);
 			else desclen=0;
 			
@@ -385,21 +381,21 @@ char *unlinked(s_message *msg, s_link *link)
 {
     int i, rc;
     char *report = NULL;
-    s_area *EchoAreas;
+    s_area *areas;
     
-    EchoAreas=config->echoAreas;
+    areas=config->echoAreas;
     
     xscatprintf(&report, "Unlinked areas to %s\r\r", 
-		    aka2str(link->hisAka));
+				aka2str(link->hisAka));
     
     for (i=0; i<config->echoAreaCount; i++) {
-	rc=subscribeCheck(EchoAreas[i], msg, link);
-	if (rc == 1) {
-	    xscatprintf(&report, " %s\r", EchoAreas[i].areaName);
-	}
+		rc=subscribeCheck(areas[i], msg, link);
+		if (rc == 1 && !areas[i].hide) {
+			xscatprintf(&report, " %s\r", areas[i].areaName);
+		}
     }
     writeLogEntry(hpt_log, '8', "areafix: unlinked areas list sent to %s", aka2str(link->hisAka));
-
+	
     return report;
 }
 
@@ -608,7 +604,7 @@ int areaIsAvailable(char *areaName, char *fileName) {
 			running = line;
 			token = strseparate(&running, " \t\r\n");
 
-			if (token && stricmp(token, areaName)==0) {
+			if (token && areaName && stricmp(token, areaName)==0) {
 				free(line);
 				fclose(f);
 				return 1;
@@ -658,18 +654,20 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	if (line[0]=='+') line++;
 	
 	for (i=0; i<config->echoAreaCount; i++) {
-	    rc=subscribeAreaCheck(&(config->echoAreas[i]),msg,line, link);
-	    if (rc == 4) continue;
-		
 	    area = &(config->echoAreas[i]);
 	    an = area->areaName;
+
+	    rc=subscribeAreaCheck(area, msg, line, link);
+	    if (rc==4) continue;
+ 		if (rc==1 && mandatoryCheck(*area, link)) rc = 5;
 
 //		writeLogEntry(hpt_log, '8', "areafix: rc = %u",rc);
 		switch (rc) {
 		case 0: 
-			xscatprintf(&report, " %s %s  already linked\r", an, print_ch(49-strlen(an), '.'));
+			xscatprintf(&report, " %s %s  already linked\r",
+						an,	print_ch(49-strlen(an), '.'));
 			writeLogEntry(hpt_log, '8', "areafix: %s already linked to %s",
-					aka2str(link->hisAka), area->areaName);
+						  aka2str(link->hisAka), an);
 		    if (strstr(line, "*") == NULL) i = config->echoAreaCount;
         	break;
 		case 1: 
@@ -677,13 +675,13 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			addlink(link, area);
 			xscatprintf(&report, " %s %s  added\r", an, print_ch(49-strlen(an), '.'));
 			writeLogEntry(hpt_log, '8', "areafix: %s subscribed to %s",
-							  aka2str(link->hisAka),area->areaName);
+						  aka2str(link->hisAka),an);
 			if (strstr(line, "*") == NULL) i = config->echoAreaCount;
 			break;
 		default :
 			writeLogEntry(hpt_log, '8', "areafix: area %s -- no access for %s",
-						  area->areaName, aka2str(link->hisAka));
-			xscatprintf(&report," %s %s  no access\r", line, print_ch(49-strlen(line), '.'));
+						  an, aka2str(link->hisAka));
+			xscatprintf(&report," %s %s  no access\r", an, print_ch(49-strlen(an), '.'));
 			found = 1;
 			break;
 		}
@@ -733,10 +731,9 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		an = area->areaName;
 
 		rc = subscribeAreaCheck(area, msg, line, link);
-		if ( rc==4 ) continue;
-		
+		if (rc==4) continue;
 		if (rc==0 && mandatoryCheck(*area,link)) rc = 5;
-		
+
 		for (j = 0; j < config->addrCount; j++)
 		    if (addrComp(link->hisAka, config->addr[j])==0) { from_us = 1; rc = 0; break; }
 
@@ -766,8 +763,14 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		}
 	}
 	if (report == NULL) {
-		xscatprintf(&report, " %s %s  not found\r", line, print_ch(49-strlen(line), '.'));
-		writeLogEntry(hpt_log, '8', "areafix: area %s is not found", line);
+		if (strstr(line, "*")) {
+			xscatprintf(&report, " %s %s  no areas to unlink\r",
+						line, print_ch(49-strlen(line), '.'));
+			writeLogEntry(hpt_log, '8', "areafix: no areas to unlink");
+		} else {
+			xscatprintf(&report, " %s %s  not found\r", line, print_ch(49-strlen(line), '.'));
+			writeLogEntry(hpt_log, '8', "areafix: area %s is not found", line);
+		}
 	}
 	return report;
 }

@@ -148,51 +148,44 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, UINT16 forceattr)
 	struct tm *date;
 	time_t    currentTime;
 	union stamp_combo dosdate;
-	int i,remapit;
-        char *subject;
+	int i;
+	char *subject;
 	
 	if (msg->netMail == 1) {
+		// Check if we must remap
+		for (i=0;i<config->remapCount;i++)
+			if ((config->remaps[i].toname==NULL ||
+				 stricmp(config->remaps[i].toname,msg->toUserName)==0) &&
+				(config->remaps[i].oldaddr.zone==0 ||
+				 addrComp(config->remaps[i].oldaddr,msg->destAddr)==0) ) 
+				{
+					msg->destAddr.zone=config->remaps[i].newaddr.zone;
+					msg->destAddr.net=config->remaps[i].newaddr.net;
+					msg->destAddr.node=config->remaps[i].newaddr.node;
+					msg->destAddr.point=config->remaps[i].newaddr.point;
+					break;
+				}
+		
 		// attributes of netmail must be fixed
 		msgHeader.attr = msg->attributes;
-
-		msgHeader.attr &= ~(MSGCRASH | MSGHOLD); // always kill crash and hold flag
 		
 		if (to_us(msg->destAddr)==0) {
-			msgHeader.attr &= ~(MSGREAD | MSGSENT | MSGKILL | MSGLOCAL
-			  | MSGFRQ | MSGSCANNED | MSGLOCKED | MSGFWD); // kill these flags
-			msgHeader.attr |= MSGPRIVATE; // set this flags
-		} else	if (header!=NULL) {
-			    msgHeader.attr |= MSGFWD; // set TRS flag, if the mail is not to us
-			    msgHeader.attr &= ~MSGSENT; // and clear SENT flag
-			}
-
-      // Check if we must remap
-      remapit=0;
-
-      for (i=0;i<config->remapCount;i++)
-          if ((config->remaps[i].toname==NULL ||
-               stricmp(config->remaps[i].toname,msg->toUserName)==0) &&
-              (config->remaps[i].oldaddr.zone==0 ||
-               (config->remaps[i].oldaddr.zone==msg->destAddr.zone &&
-                config->remaps[i].oldaddr.net==msg->destAddr.net &&
-                config->remaps[i].oldaddr.node==msg->destAddr.node &&
-                config->remaps[i].oldaddr.point==msg->destAddr.point) ) )
-             {
-             remapit=1;
-             break;
-             }
-
-      if (remapit) {
-         msg->destAddr.zone=config->remaps[i].newaddr.zone;              
-         msg->destAddr.net=config->remaps[i].newaddr.net;
-         msg->destAddr.node=config->remaps[i].newaddr.node;   
-         msg->destAddr.point=config->remaps[i].newaddr.point;             
-         }                                                               
-
+		    // kill these flags
+		    msgHeader.attr &= ~(MSGREAD | MSGKILL | MSGLOCAL | MSGFRQ | MSGSCANNED | MSGLOCKED | MSGFWD);
+		    // set this flags
+		    msgHeader.attr |= MSGPRIVATE;
+		} else
+		// set TRS flag, if the mail is not to us
+		if (header!=NULL) msgHeader.attr |= MSGFWD;
+		
    } else {
        msgHeader.attr = msg->attributes;
-       msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD | MSGFRQ | MSGSCANNED | MSGLOCKED); // kill these flags
-     }
+       // kill these flags
+       msgHeader.attr &= ~(MSGREAD | MSGKILL | MSGLOCAL | MSGFRQ | MSGSCANNED | MSGLOCKED); 
+   }
+   
+   // always kill crash, hold & sent flags
+   msgHeader.attr &= ~(MSGCRASH | MSGHOLD | MSGSENT);
 
    /* FORCED ATTRIBUTES !!! */
    msgHeader.attr |= forceattr;
@@ -1168,9 +1161,10 @@ void writeMsgToSysop()
    			xscatprintf(&seenByPath, "\001PATH: %u/%u\r", echo->useAka->net, echo->useAka->node);
 		    xstrcat(&(msgToSysop[i]->text), seenByPath);
 		    free(seenByPath);
-		    if (echo->downlinkCount > 0)
+		    if (echo->downlinkCount > 0) {
 			forwardMsgToLinks(echo, msgToSysop[i], msgToSysop[i]->origAddr);
 			arcmail();
+		    }
 		} else {
 		    putMsgInBadArea(msgToSysop[i], msgToSysop[i]->origAddr, 0);
 		}
@@ -2076,14 +2070,11 @@ void toss()
    processDir(config->protInbound, secProtInbound);
    processDir(config->inbound, secInbound);
 
-#ifndef HASHDUPE
    // write dupeFiles
-
    for (i = 0 ; i < config->echoAreaCount; i++) {
       writeToDupeFile(&(config->echoAreas[i]));
       freeDupeMemory(&(config->echoAreas[i]));
    }
-#endif
 
    if (config->importlog != NULL) {
       // write importlog
