@@ -1,3 +1,7 @@
+2002-09-05 Thursday 08:26  mche
+
+	* src/scanarea.c (1.89): fix MSGAPI function usage
+
 2002-09-04 Wednesday 14:10  mche
 
 	* src/post.c (1.89): removed usless scan function in posting
