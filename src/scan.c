@@ -817,41 +817,41 @@ void scanExport(int type, char *str) {
            }
        }
    }
-
- w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
-
+   
+   w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
+   
    if (f != NULL) {
        fclose(f);
        if (ftmp != NULL) fclose(ftmp);
-       st.st_size = 0;
-       if (tmplogname) stat(tmplogname, &st);
-       if (type & SCN_ALL) {
-           if (st.st_size == 0) { // all entries was processed
-               remove(config->echotosslog);
-               if (tmplogname)
-                   if (remove(tmplogname) != 0)
-                       w_log(LL_ERR, "Couldn't remove temporary file\"%s\"", tmplogname);
-           } else { // we still have areas
-               remove(config->echotosslog);
-               if (rename(tmplogname, config->echotosslog) != 0)
-                   w_log(LL_ERR, "Couldn't rename \"%s\" -> \"%s\"", tmplogname, config->echotosslog);
+       memset(&st, 0, sizeof(st));
+       if ( tmplogname && (stat(tmplogname, &st) == 0)) {
+           if (type & SCN_ALL) {
+               if (st.st_size == 0) { // all entries was processed
+                   remove(config->echotosslog);
+                   if (tmplogname)
+                       if (remove(tmplogname) != 0)
+                           w_log(LL_ERR, "Couldn't remove temporary file\"%s\"", tmplogname);
+               } else { // we still have areas
+                   remove(config->echotosslog);
+                   if (rename(tmplogname, config->echotosslog) != 0)
+                       w_log(LL_ERR, "Couldn't rename \"%s\" -> \"%s\"", tmplogname, config->echotosslog);
+               }
+           }
+           else if (type & SCN_FILE) {
+               if (st.st_size == 0) {
+                   remove(str);
+                   if (tmplogname)
+                       if (remove(tmplogname) != 0)
+                           w_log(LL_ERR, "Couldn't remove temporary file\"%s\"", tmplogname);
+               } else {
+                   remove(str);
+                   if (rename(tmplogname, str) != 0)
+                       w_log(LL_ERR, "Couldn't rename \"%s\" -> \"%s\"", tmplogname, str);
+               }
            }
        }
-       else if (type & SCN_FILE) {
-           if (st.st_size == 0) {
-               remove(str);
-               if (tmplogname)
-                   if (remove(tmplogname) != 0)
-                       w_log(LL_ERR, "Couldn't remove temporary file\"%s\"", tmplogname);
-           } else {
-               remove(str);
-               if (rename(tmplogname, str) != 0)
-                   w_log(LL_ERR, "Couldn't rename \"%s\" -> \"%s\"", tmplogname, str);
-           }
-       }
-   };
-   if (tmplogname) nfree (tmplogname);
-
+       if (tmplogname) nfree (tmplogname);
+   }
 //   if (type & SCN_ECHOMAIL) arcmail(NULL);
 //   if (type & SCN_ECHOMAIL)
 // pack tempOutbound after scan Echomail, Netmail or EchoTossLogFile
@@ -863,4 +863,3 @@ void scanExport(int type, char *str) {
    w_log( LL_FUNC, "scanExport() end" );
 
 }
-
