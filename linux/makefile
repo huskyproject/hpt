@@ -10,7 +10,7 @@ SRC_DIR = ../src/
 ifeq ($(HASHDUPE), 1)
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../fidoconfig -I../h -I../../smapi -Wall -ggdb -O3 -DUNIX -DHASHDUPE
+  CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -ggdb -O3 -DUNIX -DHASHDUPE
   LFLAGS  =
 else
   CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -O3 -s -DUNIX -DHASHDUPE
@@ -20,7 +20,7 @@ endif
 else
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../fidoconfig -I../h -I../../smapi -Wall -ggdb -O6 -DUNIX
+  CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -ggdb -O6 -DUNIX
   LFLAGS  =
 else
   CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -O3 -s -DUNIX
