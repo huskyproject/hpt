@@ -70,9 +70,9 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
       seenBys[i].node = echo->downlinks[0]->hisAka.node;
    }
    seenByCount = echo->downlinkCount;
-   if (echo->useAka.point == 0) {      // only include if system is node
-      seenBys[i].net = echo->useAka.net;
-      seenBys[i].node = echo->useAka.node;
+   if (echo->useAka->point == 0) {      // only include if system is node
+      seenBys[i].net = echo->useAka->net;
+      seenBys[i].node = echo->useAka->node;
       seenByCount++;
    }
    sortSeenBys(seenBys, seenByCount);
@@ -82,8 +82,8 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
    
    // path line
    // only include node-akas in path
-   if (echo->useAka.point == 0) {
-      sprintf(addr2d, "%u/%u", echo->useAka.net, echo->useAka.node);
+   if (echo->useAka->point == 0) {
+      sprintf(addr2d, "%u/%u", echo->useAka->net, echo->useAka->node);
       seenByPath = (char *) realloc(seenByPath, strlen(seenByPath)+strlen(addr2d)+1+8); // 8 == strlen("\001PATH: \r")
       strcat(seenByPath, "\001PATH: ");
       strcat(seenByPath, addr2d);
@@ -92,9 +92,9 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
 
    // create text
    msg->textLength = MsgGetTextLen(hmsg);
-   msg->text = (char *) malloc(msg->textLength+strlen(seenByPath)+strlen(kludgeLines)+strlen(echo->name)+strlen("AREA:\r")+1+1); // second 1 for \r at the end of the origin line
+   msg->text = (char *) malloc(msg->textLength+strlen(seenByPath)+strlen(kludgeLines)+strlen(echo->areaName)+strlen("AREA:\r")+1+1); // second 1 for \r at the end of the origin line
    strcpy(msg->text, "AREA:");
-   strcat(msg->text, echo->name);
+   strcat(msg->text, echo->areaName);
    strcat(msg->text, "\r");
    strcat(msg->text, kludgeLines);
    MsgReadMsg(hmsg, NULL, 0, msg->textLength, msg->text+strlen(msg->text), 0, NULL);
@@ -143,9 +143,9 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
       } /* endif */
 
       makePktHeader(NULL, &header);
-      header.origAddr = echo->downlinks[i]->ourAka;
+      header.origAddr = *(echo->downlinks[i]->ourAka);
       header.destAddr = echo->downlinks[i]->hisAka;
-      strcpy(header.pktPassword, echo->downlinks[i]->pwd);
+      strcpy(header.pktPassword, echo->downlinks[i]->pktPwd);
       pkt = openPktForAppending(echo->downlinks[i]->pktFile, &header);
 
       writeMsgToPkt(pkt, msg);
@@ -165,11 +165,13 @@ void scanEMArea(s_area *echo)
    HAREA area;
    HMSG  hmsg;
    XMSG  xmsg;
-   char  buff[40];
+   char  buff[50];
    dword highWaterMark, highestMsg, i;
    
-   area = MsgOpenArea((UCHAR *) echo->filename, MSGAREA_NORMAL, echo->msgbType | MSGTYPE_ECHO);
+   area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, echo->msgbType | MSGTYPE_ECHO);
    if (area != NULL) {
+      sprintf(buff, "Scanning area: %s", echo->areaName);
+      writeLogEntry(log, '1', buff);
       i = highWaterMark = MsgGetHighWater(area);
       highestMsg    = MsgGetHighMsg(area);
 
@@ -187,7 +189,7 @@ void scanEMArea(s_area *echo)
 
       MsgCloseArea(area);
    } else {
-      sprintf(buff, "Could not open %s", echo->filename);
+      sprintf(buff, "Could not open %s", echo->fileName);
       writeLogEntry(log, '9', buff);
    } /* endif */
 }

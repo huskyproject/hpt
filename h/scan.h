@@ -1,6 +1,6 @@
 #ifndef SCAN_H
 #define SCAN_H
-#include <area.h>
+#include <fidoconfig.h>
 
 void scan(void);
 void scanEMArea(s_area *echo);

@@ -290,7 +290,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       } /* endif */
 
       makePktHeader(NULL, &header);
-      header.origAddr = echo->downlinks[i]->ourAka;
+      header.origAddr = *(echo->downlinks[i]->ourAka);
       header.destAddr = echo->downlinks[i]->hisAka;
       strcpy(header.pktPassword, echo->downlinks[i]->pktPwd);
       pkt = openPktForAppending(echo->downlinks[i]->pktFile, &header);
