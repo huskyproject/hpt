@@ -1,8 +1,27 @@
+2002-12-30 Monday 14:52  stas_degteff
+
+	* VERSION, src/global.c (hpt-1_2-stable.[3,5]): Set version to
+	1.2.2-stable
+
+2002-12-30 Monday 14:50  stas_degteff
+
+	* VERSION, src/global.c (hpt-1_2-stable.[2,4]) (utags:
+	hpt-1_2_2-release): 1.2.2-release
+
+2002-12-30 Monday 14:25  stas_degteff
+
+	* misc/areafix.866 (tags: hpt-1_2_2-release) (hpt-1_2-stable.1):
+	MFC: russian areafix help
+
+2002-12-30 Monday 13:58  stas_degteff
+
+	* misc/areafix.866 (1.1): Add russian areafix help
+
 2002-12-27 Friday 13:03  sfpavel
 
-	* debian/changelog, doc/hpt.texi, src/global.c
-	(hpt-1_2-stable.[14,5,3]) (utags: hpt-1_2_2-release): hpt 1.2.2
-	release
+	* debian/changelog (tags: hpt-1_2_2-release), doc/hpt.texi (tags:
+	hpt-1_2_2-release), src/global.c (hpt-1_2-stable.[14,5,3]): hpt
+	1.2.2 release
 
 2002-12-26 Thursday 12:34  stas_degteff
 
@@ -604,8 +623,8 @@
 
 2002-06-25 Tuesday 16:00  stas
 
-	* VERSION (tags: hpt-1_2_2-release, hpt-1_2-release)
-	(hpt-1_2-stable.1): Set version number and dependences
+	* VERSION (tags: hpt-1_2-release) (hpt-1_2-stable.1): Set version
+	number and dependences
 
 2002-06-25 Tuesday 15:53  stas
 
