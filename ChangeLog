@@ -1,3 +1,7 @@
+2003-03-12 Wednesday 05:06  stas_degteff
+
+	* VERSION (1.6): Add huskylib into 'require' list
+
 2003-03-11 Tuesday 21:22  d_sergienko
 
 	* Makefile (1.14): fix linking
