@@ -1,3 +1,15 @@
+2002-07-07 Sunday 23:46  stas
+
+	* HISTORY (1.1.2.1): Add changes log for user's attention
+
+2002-07-07 Sunday 23:04  stas
+
+	* HISTORY (1.1): Add changes log for user's attention
+
+2002-07-07 Sunday 22:10  stas
+
+	* src/query.c (1.50.2.1): Cosmetic fix (mfc)
+
 2002-07-05 Friday 10:52  mche
 
 	* src/areafix.c (1.316.2.3): fix config braking while area is
