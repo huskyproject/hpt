@@ -1,3 +1,16 @@
+2002-04-14 Sunday 20:48  ml
+
+	* doc/hpt-FAQ.russian (1.19): update
+
+2002-04-14 Sunday 19:52  ml
+
+	* misc/make_rules (1.1): bash script for making rules dir from
+	fileecho's xofcerules dir
+
+2002-04-14 Sunday 19:42  ml
+
+	* make/makeperl.mvc (1.8): delayload perl56.dll
+
 2002-04-13 Saturday 16:47  mche
 
 	* src/hpt.c (1.142): Some internal features added.  Now we can set
