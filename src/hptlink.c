@@ -43,7 +43,8 @@
 #include <smapi/msgapi.h>
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
-
+#include <fidoconf/log.h>
+#include <fidoconf/xstr.h>
 #include <string.h>
 
 #if defined ( __WATCOMC__ )
@@ -52,6 +53,10 @@
 #endif
 
 #include <stdlib.h>
+
+#include <version.h>
+#include <global.h>
+#include <cvsdate.h>
 
 
 /* internal structure holding msg's related to link information */
@@ -79,15 +84,17 @@ struct origlinks {
 };
 typedef struct origlinks s_origlinks;
 
+#define LOGFILENAME "hpt.log"
+s_log         *log = NULL;
+s_fidoconfig *cfg;
+char *version = NULL;
 
-FILE *outlog;
 int singleRepl = 1;
 int hardSearch = 0;
 int useSubj = 1;
 int useReplyId = 1;
 int loglevel = 10;
 int linkNew = 0;
-char *version = "1.10";
 HAREA harea;
 int maxreply;
 
@@ -145,33 +152,26 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
 
     if (crepl -> msgId && srepl -> msgId &&
         strcmp ( crepl -> msgId, srepl -> msgId) == 0) {
-        if (loglevel >= 15)
-            fprintf(outlog, "Warning: msg %ld is dupe to %ld\n",
-                    (long)i, (long)j);
+        w_log( LL_WARN, "Warning: msg %ld is dupe to %ld", (long)i, (long)j);
         links_ignored++;
         return;
     }
 
     if (maxreply == MAX_REPLY) { // Squish
-        if (crepl -> freeReply >= maxreply)
-        {
-            if ( loglevel >= 15) {
-                fprintf(outlog, "replies count for msg %ld exceeds %d,",
-                        (long)j, maxreply);
-                fprintf(outlog, "rest of the replies won't be linked\n");
-            }
-            links_ignored++;
-        } else {
-            links_total++;
-            (crepl -> replies)[(crepl -> freeReply)++] = srepl->msgPos;
-            srepl -> replyToPos = crepl->msgPos;
-        }
+      if (crepl -> freeReply >= maxreply)
+      {
+        w_log( LL_WARN, "replies count for msg %ld exceeds %d, rest of the replies won't be linked", (long)j, maxreply);
+        links_ignored++;
+      } else {
+          links_total++;
+          (crepl -> replies)[(crepl -> freeReply)++] = srepl->msgPos;
+          srepl -> replyToPos = crepl->msgPos;
+      }
 
     } else { // Jam, maybe something else?
 
         if(srepl -> replyToPos) {
-           if (loglevel >= 15)
-              fprintf(outlog, "Thread linking broken because of dupes\n");
+           w_log( LL_WARN, "Thread linking broken because of dupes\n");
            links_ignored++;
            return;
         }
@@ -184,8 +184,7 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
         } else {
             linkTo = MsgUidToMsgn(harea, crepl->reply1st, UID_EXACT) - 1;
 	    if(linkTo == -1) {
-		if (loglevel >= 15)
-		    fprintf(outlog, "Thread linking broken. MsgUidToMsgn() returned -1\n");
+		w_log( LL_WARN, "Thread linking broken. MsgUidToMsgn() returned -1");
 		links_ignored++;
 		return;
 	    }
@@ -193,18 +192,15 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
             while (replmap[linkTo].replyNxt) {
 		linkTo = MsgUidToMsgn(harea, replmap[linkTo].replyNxt, UID_EXACT) - 1;
 		if(linkTo == -1) {
-		    if (loglevel >= 15)
-			fprintf(outlog, "Thread linking broken. MsgUidToMsgn() returned -1\n");
+		    w_log( LL_WARN, "Thread linking broken. MsgUidToMsgn() returned -1\n");
 		    links_ignored++;
 		    return;
 		}
 	    }
             replmap[linkTo].replyNxt = srepl->msgPos;
             replmap[linkTo].freeReply++;
-
         }
     }
-
 }
 
 static char *GetCtrlValue (char *ctl, char *kludge)
@@ -254,25 +250,21 @@ void linkArea(s_area *area)
    s_origlinks *links;
    s_origlinks *linksptr;
    dword treeLinks=0;
-
-
    int replFound;
    int replDone;
    char *ptr;
 
-
-
-   if (loglevel>=10) fprintf(outlog, "linking area %s...", area->areaName);
-
    if ((area->msgbType & MSGTYPE_PASSTHROUGH) == MSGTYPE_PASSTHROUGH) {
-     if (loglevel>=10) fprintf(outlog, "PASSTHROUGH, ignoring\n");
+     w_log( LL_LINKING, "PASSTHROUGH area %s, skip", area->areaName);
      return;
    }
 
    if (area->nolink) {
-     if (loglevel>=10) fprintf(outlog, "has nolink option, ignoring\n");
+     w_log( LL_LINKING, "area %s has nolink option, skip", area->areaName);
      return;
    }
+
+   w_log( LL_LINKING, "linking area %s...", area->areaName);
 
    if (area->msgbType & MSGTYPE_JAM || area->msgbType & MSGTYPE_SDM) {
       maxreply = 2;
@@ -287,25 +279,29 @@ void linkArea(s_area *area)
 	   highMsg = MsgGetHighMsg(harea);
 
 	   if ( highMsg < 2 ) {
-	      if (loglevel>=10) fprintf(outlog, "nothing to link (%ld messages)\n", (long)highMsg);
+	      w_log( LL_LINKING, "nothing to link (%ld messages)\n", (long)highMsg);
 	      MsgCloseArea(harea);
 	      return;
 	   }
 
 	   if ( (replmap = (s_msginfo *) scalloc (highMsg, sizeof(s_msginfo))) == NULL){
-	      if (loglevel>0) fprintf(outlog,"Out of memory. Want %ld bytes\n",  (long) sizeof(s_msginfo)*highMsg);
+	      w_log( LL_CRIT,"Out of memory. Want %ld bytes\n",  (long) sizeof(s_msginfo)*highMsg);
 	      MsgCloseArea(harea);
+	      closeLog();
+              disposeConfig(cfg);
 	      exit(EX_SOFTWARE);
 	   }
 
 	   if ( (links = (s_origlinks *) scalloc (highMsg, sizeof(s_origlinks))) == NULL){
-	      if (loglevel>0) fprintf(outlog,"Can't get %ld bytes\n",  (long) sizeof(s_origlinks)*highMsg);
+	      w_log( LL_CRIT, "Out of memory: can't get %ld bytes\n",  (long) sizeof(s_origlinks)*highMsg);
 	      MsgCloseArea(harea);
+	      closeLog();
+              disposeConfig(cfg);
 	      exit(EX_SOFTWARE);
 	   }
 
 	   /* Pass 1: read all message information in memory */
-	   if ( loglevel >= 11 ) fprintf ( outlog, "\nPass 1 - reading\n");
+	   w_log( LL_LINKING, "\nPass 1 - reading\n");
 
 	   for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++) {
 	      hmsg  = MsgOpenMsg(harea, MOPEN_READ, i);
@@ -313,7 +309,7 @@ void linkArea(s_area *area)
 		 ctlen = MsgGetCtrlLen(hmsg);
 		 if( ctlen == 0 )
 		 {
-		    if ( loglevel >= 15) fprintf(outlog, "msg %ld has no control information\n", (long) i);
+		    w_log( LL_WARN, "msg %ld has no control information\n", (long) i);
 		    MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
 
 		 } else {
@@ -321,8 +317,10 @@ void linkArea(s_area *area)
 
 		      ctl = (byte *) srealloc(ctl, ctlen + 1);
 		      if (ctl == NULL) {
-			if ( loglevel > 0) fprintf(outlog,"out of memory while linking on msg %ld\n", (long) i);
+			w_log( LL_CRIT,"out of memory while linking on msg %ld\n", (long) i);
 			MsgCloseArea(harea);
+                        closeLog();
+                        disposeConfig(cfg);
 			exit(EX_SOFTWARE);
 		      }
 
@@ -383,11 +381,10 @@ void linkArea(s_area *area)
 
 	   /* Pass 2: building relations tree, & filling tree IDs */
 	   if ( loglevel >= 11 ) {
-              fprintf (outlog, "Pass 2: building relations for %ld messages", (long) i-1);
               if (linkNew)
-                 fprintf (outlog, ", new from %ld\n", (long) newStart);
+                 w_log(LL_LINKING, "Pass 2: building relations for %ld messages, new from %ld\n", (long) i-1, (long) newStart);
               else
-                 fprintf (outlog, "\n");
+                 w_log(LL_LINKING, "Pass 2: building relations for %ld messages", (long) i-1);
            }
 
 	   for (i = 1, crepl=replmap; i < highMsg; i++, crepl++) {
@@ -508,7 +505,7 @@ void linkArea(s_area *area)
 	   /* Pass 3: finding unlinked messages with filled tree IDs, and link
 	    * them to the tree where possible
 	    */
-	   if ( loglevel >= 11 ) fprintf (outlog, "Pass 3: buildng relations by treeIds\n");
+	   w_log(LL_LINKING, "Pass 3: buildng relations by treeIds\n");
 
 	   for (i = 1, crepl=replmap; i <= highMsg && treeLinks; i++, crepl++) {
 	      if ( crepl->replyToPos == 0 && crepl->freeReply == 0 &&
@@ -517,7 +514,9 @@ void linkArea(s_area *area)
 
 		 linkTo = (replmap[crepl -> treeId -1 ]).treeId;
 		 if (linkTo > highMsg || linkTo <= 0 ) {
-		    if ( loglevel > 5) fprintf(outlog,"\nProgramming error 1 while linking linkTo=%ld\n", (long)linkTo);
+		    w_log(LL_CRIT,"Programming error 1 while linking linkTo=%ld", (long)linkTo);
+		    closeLog();
+                    disposeConfig(cfg);
 		    exit(EX_SOFTWARE);
 		 }
 
@@ -525,7 +524,9 @@ void linkArea(s_area *area)
                     while ( (replmap[linkTo-1]).freeReply >= maxreply) {
                        linkTo = MsgUidToMsgn(harea,(replmap[linkTo-1]).replies[0], UID_EXACT );
                        if (linkTo > highMsg || linkTo <= 0 ) {
-                          if ( loglevel > 5) fprintf(outlog,"\nProgramming error 2 while linking linkTo=%ld\n", (long)linkTo);
+                          w_log(LL_CRIT,"Programming error 2 while linking linkTo=%ld", (long)linkTo);
+      	                  closeLog();
+                          disposeConfig(cfg);
                           exit(EX_SOFTWARE);
                        }
                     }
@@ -538,7 +539,7 @@ void linkArea(s_area *area)
 
 
 	   /* Pass 4: write information back to msgbase */
-	   if ( loglevel >= 11 ) fprintf ( outlog, "Pass 4: writing\n");
+	   w_log(LL_LINKING, "Pass 4: writing\n");
 
 	   for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++) {
 
@@ -590,41 +591,61 @@ void linkArea(s_area *area)
 	   nfree(replmap);
 	   nfree(links);
 
-	   if ( loglevel >= 10) fprintf(outlog, "done\n");
+	   w_log( LL_LINKING, "Linking area \"%s\" done", area->areaName);
    } else {
-	   if ( loglevel > 5) fprintf(outlog,"\nCould not open area %s\n", area->areaName);
+	   w_log( LL_ERR, "Could not open area %s", area->areaName);
    }
 }
 
 void usage(void) {
 
-   fprintf(outlog, "hptlink %s\n", version);
-   fprintf(outlog, "Usage:\n hptlink [-t] [-s] [-a] [-r] [-l loglevel] [areaname ...]\n");
-   fprintf(outlog, "   -t - build reply TREE\n");
-   fprintf(outlog, "   -s - do not use Subject\n");
-   fprintf(outlog, "   -a - search in all messages (for singlethread only)\n");
-   fprintf(outlog, "   -r - do not use REPLY:/MSGID:\n");
-   fprintf(outlog, "   -l loglevel - log output level >=0. Edge values: 0,5,10,11,15. Default 10.\n");
-   fprintf(outlog, "   -n Link with 'new' messages only ('new' start from last linked + 1)\n");
-
-
+   printf( "%s\n", versionStr );
+   printf( "Usage:\n hptlink [-t] [-s] [-a] [-r] [areaname ...]\n"
+          "   -t - build reply TREE\n"
+          "   -s - do not use Subject\n"
+          "   -a - search in all messages (for singlethread only)\n"
+          "   -r - do not use REPLY:/MSGID:\n"
+          "   -n Link with 'new' messages only ('new' start from last linked + 1)\n"
+         );
 }
 
 int main(int argc, char **argv) {
 
-   s_fidoconfig *cfg;
    int i, j;
    struct _minf m;
    char **argareas=NULL;
-   char *line;
+   char *line=NULL;
    int nareas=0;
    int found;
    FILE *f;
    s_area *area;
 
-   outlog=stderr;
+   setvar("module", "hpt");
+   xscatprintf(&line, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
+   setvar("version", line);
+   nfree(line);
+   SetAppModule(M_HPT);
 
-   setbuf(outlog, NULL);
+   xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVICE, VER_BRANCH);
+
+#ifdef __linux__
+   xstrcat(&version, "/lnx");
+#elif defined(__FreeBSD__) || defined(__NetBSD__)
+   xstrcat(&version, "/bsd");
+#elif defined(__OS2__) || defined(OS2)
+   xstrcat(&version, "/os2");
+#elif defined(__NT__)
+   xstrcat(&version, "/w32");
+#elif defined(__sun__)
+   xstrcat(&version, "/sun");
+#elif defined(MSDOS)
+   xstrcat(&version, "/dos");
+#elif defined(__BEOS__)
+   xstrcat(&version, "/beos");
+#endif
+
+   if (strcmp(VER_BRANCH,"-stable")!=0) xscatprintf(&version, " %s", cvs_date);
+   xscatprintf(&versionStr,"hptlink %s", version);
 
    for (i=1; i<argc; i++) {
      if ( argv[i][0] == '-' ) {
@@ -649,20 +670,7 @@ int main(int argc, char **argv) {
 		break;
 	     case 'l':
 	     case 'L':
-	       loglevel = -1;
-	       i++;
-
-	       if ( argv[i] == NULL || argv[i][0] == '\0') {
-		  usage();
-		  exit(EX_USAGE);
-	       }
-
-	       sscanf ( argv[i], "%d", &loglevel);
-	       if ( loglevel < 0 ) {
-		  usage();
-		  exit(EX_USAGE);
-	       }
-	     break;
+	        break; /* obsolete */
 	     case 'n': /* link with 'new' messages only */
 	     case 'N':
 		linkNew = 1;
@@ -679,26 +687,34 @@ int main(int argc, char **argv) {
      }
    }
 
-   if ( loglevel > 0) fprintf(outlog,"hptlink %s\n", version);
-
    cfg = readConfig(NULL);
 
    if (!cfg) {
-      fprintf(outlog, "Could not read fido config\n");
+      fprintf(stderr, "Could not read fido config!\n");
       return (1);
    }
+
+   if (cfg->logFileDir) {
+	xstrscat(&line, cfg->logFileDir, LOGFILENAME, NULL);
+	log = openLog(line, versionStr, cfg);
+	nfree(line);
+   }
+
+   w_log(LL_PRG, "%s", versionStr);
 
    m.req_version = 0;
    m.def_zone = (UINT16) cfg->addr[0].zone;
    if (MsgOpenApi(&m)!= 0) {
-      if ( loglevel > 0) fprintf(outlog, "MsgOpenApi Error.\n");
+      w_log(LL_CRIT, "MsgOpenApi Error.\n");
+      closeLog();
+      disposeConfig(cfg);
       exit(EX_SOFTWARE);
    }
 
    if ( argareas )
    {
      // link only specified areas
-     if ( loglevel >= 11 ) fprintf (outlog, "Linking areas specified by args\n");
+     w_log(LL_LINKING, "Link areas specified by args");
 
      for ( j=0; j<nareas; j++) {
 
@@ -743,7 +759,7 @@ int main(int argc, char **argv) {
 	    }
 	}
 
-	if (loglevel>0 && !found) fprintf(outlog, "Couldn't find area \"%s\"\n", argareas[j]);
+	w_log(LL_WARN, "Couldn't find area \"%s\"", argareas[j]);
      }
 
    } else {
@@ -755,7 +771,7 @@ int main(int argc, char **argv) {
       }
 
       if ( f ) {
-	 if ( loglevel >= 11 ) fprintf (outlog, "Using importlogfile -> linking only listed Areas");
+	 w_log(LL_INFO, "Using importlogfile -> linking only listed Areas");
 	 while (!feof(f)) {
 	    line = readLine(f);
 
@@ -800,7 +816,7 @@ int main(int argc, char **argv) {
 		   }
 	       }
 
-	       if (loglevel>0 && !found && strlen(line)) fprintf(outlog, "Couldn't find area \"%s\"\n", line);
+	       w_log(LL_ERR, "Couldn't find area \"%s\"\n", line);
 	       nfree(line);
 	    }
 
@@ -809,7 +825,7 @@ int main(int argc, char **argv) {
 	 if (cfg->LinkWithImportlog == lwiKill) remove(cfg->importlog);
       } else {
 	 // importlog does not exist link all areas
-	 if (loglevel>=10) fprintf(outlog, "No ImportLog file, linking all Areas\n");
+	 w_log(LL_INFO, "No ImportLog file, linking all Areas\n");
 
 	 // NetMails
 	 for (i = 0; i < cfg -> netMailAreaCount; i++)
@@ -823,17 +839,15 @@ int main(int argc, char **argv) {
       }
    }
 
+   w_log(LL_STAT, "Linked by msgid/reply: %ld, replid: %ld, subj: %ld, revmsgid: %ld\n", (long)links_msgid, (long)links_replid, (long)links_subj, (long)links_revmsgid);
+   if (links_ignored)
+      w_log(LL_SUMMARY, "Linked total: %ld, Ignored: %ld\n\n", (long) links_total, (long) links_ignored);
+   else
+      w_log(LL_SUMMARY, "Linked total: %ld", (long) links_total);
+
+   w_log(LL_STOP, "Done\n");
+
+   closeLog();
    disposeConfig(cfg);
-
-   if ( loglevel >= 11 ) fprintf (outlog, "\nLinked by msgid/reply: %ld, replid: %ld, subj: %ld, revmsgid: %ld\n", (long)links_msgid, (long)links_replid, (long)links_subj, (long)links_revmsgid);
-   if ( loglevel >= 10 ) {
-     fprintf (outlog, "\nLinked total: %ld", (long) links_total);
-     if (links_ignored)
-	fprintf (outlog, ", Ignored: %ld\n\n", (long) links_ignored);
-     else
-	fprintf (outlog, "\n\n");
-   }
-
-   if ( loglevel > 0) fprintf(outlog,"Done\n");
    return (0);
 }

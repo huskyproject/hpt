@@ -15,8 +15,8 @@ tpkt$(EXE): tpkt$(OBJ) fcommon$(OBJ) pktread$(OBJ) pktwrite$(OBJ) global$(OBJ) d
 txt2pkt$(EXE): txt2pkt$(OBJ) fcommon$(OBJ) pktread$(OBJ) pktwrite$(OBJ) global$(OBJ) dupe$(OBJ)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG)txt2pkt$(EXE) txt2pkt$(OBJ) fcommon$(OBJ) pktread$(OBJ) pktwrite$(OBJ) global$(OBJ) dupe$(OBJ) $(LIBS)
 
-hptlink$(EXE): hptlink$(OBJ)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG)hptlink$(EXE) hptlink$(OBJ) $(LIBS)
+hptlink$(EXE): hptlink$(OBJ) global$(OBJ)
+	$(CC) $(LFLAGS) $(EXENAMEFLAG)hptlink$(EXE) hptlink$(OBJ) global$(OBJ) $(LIBS)
 
 hpttree$(EXE): hpttree$(OBJ)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG)hpttree$(EXE) hpttree$(OBJ) $(LIBS)
