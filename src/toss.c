@@ -213,14 +213,14 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
    if (subject != msg->subjectLine)
      free(subject);
        
-   msgHeader.orig.zone  = msg->origAddr.zone;
-   msgHeader.orig.node  = msg->origAddr.node;
-   msgHeader.orig.net   = msg->origAddr.net;
-   msgHeader.orig.point = msg->origAddr.point;
-   msgHeader.dest.zone  = msg->destAddr.zone;
-   msgHeader.dest.node  = msg->destAddr.node;
-   msgHeader.dest.net   = msg->destAddr.net;
-   msgHeader.dest.point = msg->destAddr.point;
+   msgHeader.orig.zone  = (word) msg->origAddr.zone;
+   msgHeader.orig.node  = (word) msg->origAddr.node;
+   msgHeader.orig.net   = (word) msg->origAddr.net;
+   msgHeader.orig.point = (word) msg->origAddr.point;
+   msgHeader.dest.zone  = (word) msg->destAddr.zone;
+   msgHeader.dest.node  = (word) msg->destAddr.node;
+   msgHeader.dest.net   = (word) msg->destAddr.net;
+   msgHeader.dest.point = (word) msg->destAddr.point;
 
    memset(&(msgHeader.date_written), 0, 8);    // date to 0
 
@@ -270,7 +270,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 
    harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, 
 /*			echo->fperm, echo->uid, echo->gid,*/
-			echo->msgbType | MSGTYPE_ECHO);
+			(word)(echo->msgbType | MSGTYPE_ECHO));
    if (harea != NULL) {
       hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
       if (hmsg != NULL) {
@@ -357,15 +357,15 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
          temp = strtoul(token, &endptr, 10);
          if ((*endptr) == '\0') {
             // only node aka
-            (*seenBys)[*seenByCount-1].node = temp;
+            (*seenBys)[*seenByCount-1].node = (UINT16) temp;
             // use net aka of last seenBy
             (*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
          } else {
             // net and node aka
-            (*seenBys)[*seenByCount-1].net = temp;
+            (*seenBys)[*seenByCount-1].net = (UINT16) temp;
             // eat up '/'
             endptr++;
-            (*seenBys)[*seenByCount-1].node = atoi(endptr);
+            (*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
          }
       }
       token = strtok(NULL, " \r\t\376");
@@ -418,15 +418,15 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
          temp = strtoul(token, &endptr, 10);
          if ((*endptr) == '\0') {
             // only node aka
-            (*seenBys)[*seenByCount-1].node = temp;
+            (*seenBys)[*seenByCount-1].node = (UINT16) temp;
             // use net aka of last seenBy
             (*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
          } else {
             // net and node aka
-            (*seenBys)[*seenByCount-1].net = temp;
+            (*seenBys)[*seenByCount-1].net = (UINT16) temp;
             // eat up '/'
             endptr++;
-            (*seenBys)[*seenByCount-1].node = atoi(endptr);
+            (*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
          }
 
       }
@@ -507,8 +507,8 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       if (newLinks[i]->link->hisAka.point != 0) continue; // don't include points in SEEN-BYS
 
       seenBys = (s_seenBy*) realloc(seenBys, sizeof(s_seenBy) * (seenByCount+1));
-      seenBys[seenByCount].net = newLinks[i]->link->hisAka.net;
-      seenBys[seenByCount].node = newLinks[i]->link->hisAka.node;
+      seenBys[seenByCount].net = (UINT16) newLinks[i]->link->hisAka.net;
+      seenBys[seenByCount].node = (UINT16) newLinks[i]->link->hisAka.node;
       seenByCount++;
    }
 
@@ -523,15 +523,15 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       if ((path[pathCount-1].net != echo->useAka->net) || (path[pathCount-1].node != echo->useAka->node)) {
          // add our aka to path
          path = (s_seenBy*) realloc(path, sizeof(s_seenBy) * (pathCount+1));
-         path[pathCount].net = echo->useAka->net;
-         path[pathCount].node = echo->useAka->node;
+         path[pathCount].net = (UINT16) echo->useAka->net;
+         path[pathCount].node = (UINT16) echo->useAka->node;
          pathCount++;
       }
    } else {
       pathCount = 0;
       path = (s_seenBy*) malloc(sizeof(s_seenBy) * 1);
-      path[pathCount].net = echo->useAka->net;
-      path[pathCount].node = echo->useAka->node;
+      path[pathCount].net = (UINT16) echo->useAka->net;
+      path[pathCount].node = (UINT16) echo->useAka->node;
       pathCount = 1;
    }
 
@@ -634,17 +634,17 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    strcpy(squishFileName, c_area);
 
    if (config->createAreasCase == eUpper) {
-      for (fileName = c_area; *fileName; fileName++) *fileName=toupper(*fileName);
+      for (fileName = c_area; *fileName; fileName++) *fileName=(char)toupper(*fileName);
    } else {
-      for (fileName = c_area; *fileName; fileName++) *fileName=tolower(*fileName);
+      for (fileName = c_area; *fileName; fileName++) *fileName=(char)tolower(*fileName);
    }
 
    fileName = squishFileName;
 
    //translating name of the area to lowercase/uppercase
    while (*fileName != '\0') {
-      if (config->areasFileNameCase == eUpper) *fileName=toupper(*fileName);
-         else *fileName=tolower(*fileName);
+      if (config->areasFileNameCase == eUpper) *fileName=(char)toupper(*fileName);
+         else *fileName=(char)tolower(*fileName);
       if ((*fileName=='/') || (*fileName=='\\')) *fileName = '_'; // convert any path delimiters to _
       fileName++;
    }
@@ -849,8 +849,8 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 
 /* area - area to carbon messages, echo - original echo area */
 int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carbon) {
-	char *p, *old_text, *reason = carbon.reason, rc = 0;
-	int i, old_textLength, reasonLen = 0, export = carbon.export;
+	char *p, *old_text, *reason = carbon.reason;
+	int i, old_textLength, reasonLen = 0, export = carbon.export, rc = 0;
 
 	statToss.CC++;
 
@@ -1037,7 +1037,7 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
 	if (echo->useAka == &(config->addr[i])) {
 	    if (msgToSysop[i] == NULL) {
 
-		msgToSysop[i] = makeMessage(echo->useAka, echo->useAka, versionStr, netmail ? config->sysop : "All", "Created new areas", netmail);
+		msgToSysop[i] = makeMessage(echo->useAka, echo->useAka, versionStr, netmail ? config->sysop : "All", "Created new areas", (char)netmail);
 		msgToSysop[i]->text = createKludges(netmail ? NULL : config->ReportTo, echo->useAka, echo->useAka);
 
 		xstrscat(&(msgToSysop[i]->text), "Action   Name", 
@@ -1119,8 +1119,8 @@ void writeMsgToSysop()
 		    }
 
 		    seenBys = (s_seenBy*) calloc(echo->downlinkCount+1,sizeof(s_seenBy));
-		    seenBys[0].net = echo->useAka->net;
-		    seenBys[0].node = echo->useAka->node;
+		    seenBys[0].net = (UINT16) echo->useAka->net;
+		    seenBys[0].node = (UINT16) echo->useAka->node;
 		    sortSeenBys(seenBys, 1);
    
 		    seenByPath = createControlText(seenBys, 1, "SEEN-BY: ");
@@ -1321,7 +1321,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 
    netmail = MsgOpenArea((unsigned char *) area -> fileName, MSGAREA_CRIFNEC,
 /*								 config->netMailArea.fperm, config->netMailArea.uid,
-								 config->netMailArea.gid, */area -> msgbType);
+								 config->netMailArea.gid, */(word) area -> msgbType);
    
    if (netmail != NULL) {
       msgHandle = MsgOpenMsg(netmail, MOPEN_CREATE, 0);
@@ -1392,7 +1392,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
    s_pktHeader *header;
    s_message   *msg;
    s_link      *link;
-   char        rc = 0;
+   int         rc = 0;
    struct stat statBuff;
    time_t      realtime;
    /* +AS+ */
@@ -2127,7 +2127,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
    
    // deleting valet string - "FROM:" and "REASON:"
    ptmp = msg.text;
-   while ((line = strchr(ptmp, '\r'))) {
+   while ((line = strchr(ptmp, '\r')) != NULL) {
        /* Temporary make it \0 terminated string */
        *line = '\000';
        if (strncmp(ptmp, "FROM: ", 6) == 0 || 
@@ -2143,7 +2143,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
 	   if (strncmp(ptmp, "AREA:", 5)==0 || strncmp(ptmp, "\001AREA:", 6)==0) {
 		//translating name of the area to uppercase
 		for (tmp = ptmp; *tmp != '\0'; tmp++) 
-			*tmp=toupper(*tmp);
+			*tmp=(char)toupper(*tmp);
 		areaName = *ptmp == '\001' ? ptmp + 4 : ptmp + 5;
 		while (*areaName == ' ') areaName++;    // if the areaname begins with a space
            	echo = getArea(config, areaName);
@@ -2210,7 +2210,7 @@ void tossFromBadArea()
    // load recoding tables
 //   if (config->outtab != NULL) getctab(outtab, (UCHAR *) config->outtab);
 
-   area = MsgOpenArea((UCHAR *) config->badArea.fileName, MSGAREA_NORMAL, config->badArea.msgbType | MSGTYPE_ECHO);
+   area = MsgOpenArea((UCHAR *) config->badArea.fileName, MSGAREA_NORMAL, (word)(config->badArea.msgbType | MSGTYPE_ECHO));
    if (area != NULL) {
 //      statScan.areas++;
       writeLogEntry(hpt_log, '1', "Scanning area: %s", config->badArea.areaName);

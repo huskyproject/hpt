@@ -55,7 +55,7 @@
 #include <scanarea.h>
 #include <xstr.h>
 
-void print_help() {
+void print_help(void) {
    fprintf(stdout,"\n       Post a message to area:\n");
    fprintf(stdout,"              hpt post [options] file\n\n");
    fprintf(stdout,"              options are:\n\n");
@@ -184,7 +184,12 @@ void post(int c, unsigned int *n, char *params[])
             /* reserve 512kb + 1 (or 32kb+1) text Buffer */
             textBuffer = (UCHAR *) malloc(TEXTBUFFERSIZE+1); 
             for (msg.textLength = 0; msg.textLength < (long) TEXTBUFFERSIZE; msg.textLength++) {
-               if ((textBuffer[msg.textLength] = getc(text)) == 0)
+	       int c = getc(text);
+	       if (c == EOF) {
+		   textBuffer[msg.textLength] = 0;
+		   break;
+	       }
+               if ((textBuffer[msg.textLength] = (char)c) == 0)
                   break;
                if (feof(text)) {
                   textBuffer[++msg.textLength] = 0;
@@ -207,7 +212,7 @@ void post(int c, unsigned int *n, char *params[])
    };
    // won't be set in the msgbase, because the mail is processed if it were received
    (*n)--; tm = localtime(&t);
-   strftime(msg.datetime, 21, "%d %b %y  %T", tm);
+   strftime((char *)msg.datetime, 21, "%d %b %y  %T", tm);
    if ((msg.destAddr.zone != 0 || area) && (textBuffer != NULL) && !quit) {
       // Dumbchecks
       if (msg.origAddr.zone == 0) // maybe origaddr isn't specified ?
@@ -219,12 +224,12 @@ void post(int c, unsigned int *n, char *params[])
       if (msg.subjectLine == NULL)
           msg.subjectLine = strdup("");
 
-      msg.netMail = area == NULL;
+      msg.netMail = (char)(area == NULL);
       /*FIXME*/
       if (msg.netMail) echo=&(config->netMailAreas[0]);
 
       msg.text = createKludges(area, &msg.origAddr, &msg.destAddr);
-      xstrcat(&(msg.text), textBuffer);
+      xstrcat((char *)msg.text, (char *)textBuffer);
       
       free(textBuffer);
 

@@ -153,7 +153,7 @@ static char *GetCtrlValue (char *ctl, char *kludge)
 
    if ( !ctl || !kludge ) return (NULL);
 
-   if ( !(value = strstr( ctl, kludge)) ) return (NULL);
+   if ( (value = strstr( ctl, kludge)) == NULL ) return (NULL);
 
    if ( value[-1] != '\001') return (NULL);
 
@@ -208,7 +208,7 @@ void linkArea(s_area *area)
      return;
    }
 
-   harea = MsgOpenArea((byte *) area->fileName, MSGAREA_NORMAL, area->msgbType);
+   harea = MsgOpenArea((byte *) area->fileName, MSGAREA_NORMAL, (word)area->msgbType);
 
    if (harea)
    {
@@ -220,13 +220,13 @@ void linkArea(s_area *area)
 	      return;
 	   }
 
-	   if ( !(replmap = (s_msginfo *) calloc (highMsg, sizeof(s_msginfo)))){
+	   if ( (replmap = (s_msginfo *) calloc (highMsg, sizeof(s_msginfo))) == NULL){
 	      if (loglevel>0) fprintf(outlog,"Out of memory. Want %ld bytes\n",  (long) sizeof(s_msginfo)*highMsg);
 	      MsgCloseArea(harea);
 	      exit(-1);
 	   }
 
-	   if ( !(links = (s_origlinks *) calloc (highMsg, sizeof(s_origlinks)))){
+	   if ( (links = (s_origlinks *) calloc (highMsg, sizeof(s_origlinks))) == NULL){
 	      if (loglevel>0) fprintf(outlog,"Can't get %ld bytes\n",  (long) sizeof(s_origlinks)*highMsg);
 	      MsgCloseArea(harea);
 	      exit(-1);
@@ -284,7 +284,8 @@ void linkArea(s_area *area)
 		  crepl -> subject
 		) {
 
-		if ( !(ptr1 = skipReSubj (crepl -> subject) ) ) ptr1 = crepl -> subject;
+		if ( (ptr1 = skipReSubj (crepl -> subject) ) == NULL)
+		    ptr1 = crepl -> subject;
 
 		replDone = 0;
 
@@ -326,7 +327,8 @@ void linkArea(s_area *area)
 		  if ( !replFound &&
 		       (srepl -> treeId == 0) &&
 		       crepl -> subject && srepl -> subject ) {
-		     if ( !(ptr2 = skipReSubj (srepl -> subject) ) ) ptr2 = srepl -> subject;
+		     if ( (ptr2 = skipReSubj (srepl -> subject) ) == NULL)
+		         ptr2 = srepl -> subject;
 
 		     if ( strcmp ( ptr1, ptr2 ) == 0 ) {
 
@@ -427,7 +429,7 @@ void linkArea(s_area *area)
    }
 }
 
-void usage() {
+void usage(void) {
 
    fprintf(outlog, "hptlink %s\n", version);
    fprintf(outlog, "Usage:\n hptlink [-t] [-s] [-a] [-r] [-l loglevel] [areaname ...]\n");
@@ -514,7 +516,7 @@ int main(int argc, char **argv) {
    }
 
    m.req_version = 0;
-   m.def_zone = cfg->addr[0].zone;
+   m.def_zone = (UINT16) cfg->addr[0].zone;
    if (MsgOpenApi(&m)!= 0) {
       if ( loglevel > 0) fprintf(outlog, "MsgOpenApi Error.\n");
       exit(1);

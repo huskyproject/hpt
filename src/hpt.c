@@ -277,7 +277,7 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
 
    // init SMAPI
    m.req_version = 0;
-   m.def_zone = config->addr[0].zone;
+   m.def_zone = (UINT16) config->addr[0].zone;
    if (MsgOpenApi(&m) != 0) {
       exit_hpt("MsgApiOpen Error",1);
    } /*endif */

@@ -22,12 +22,12 @@ char *strseparate(char **pp, const char *delim)
 {
   char *p, *q;
 
-  if (!(p = *pp))
+  if ((p = *pp) == '\0')
     return 0;
     
   if (!*p) return 0;
   
-  if ((q = strpbrk (p, delim)))
+  if ((q = strpbrk (p, delim)) != NULL)
     {
       *pp = q + 1;
       *q = '\0';

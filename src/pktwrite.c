@@ -63,19 +63,19 @@ FILE *createPkt(char *filename, s_pktHeader *header)
   pkt = fopen(filename, "wb");
   if (pkt != NULL) {
 
-     fputUINT16(pkt, header->origAddr.node);
-     fputUINT16(pkt, header->destAddr.node);
+     fputUINT16(pkt, (UINT16)header->origAddr.node);
+     fputUINT16(pkt, (UINT16)header->destAddr.node);
 
      // create pkt time
      pktTime = localtime(&(header->pktCreated));
 
      // write time
-     fputUINT16(pkt, pktTime->tm_year + 1900);  // struct tm stores the years since 1900
-     fputUINT16(pkt, pktTime->tm_mon);
-     fputUINT16(pkt, pktTime->tm_mday);
-     fputUINT16(pkt, pktTime->tm_hour);
-     fputUINT16(pkt, pktTime->tm_min);
-     fputUINT16(pkt, pktTime->tm_sec);
+     fputUINT16(pkt, (UINT16)(pktTime->tm_year + 1900));  // struct tm stores the years since 1900
+     fputUINT16(pkt, (UINT16) pktTime->tm_mon);
+     fputUINT16(pkt, (UINT16) pktTime->tm_mday);
+     fputUINT16(pkt, (UINT16) pktTime->tm_hour);
+     fputUINT16(pkt, (UINT16) pktTime->tm_min);
+     fputUINT16(pkt, (UINT16) pktTime->tm_sec);
 
      // write unused baud field
      fputUINT16(pkt, 0);
@@ -84,8 +84,8 @@ FILE *createPkt(char *filename, s_pktHeader *header)
      fputUINT16(pkt, 2);
 
      // write net info
-     fputUINT16(pkt, header->origAddr.net);
-     fputUINT16(pkt, header->destAddr.net);
+     fputUINT16(pkt, (UINT16) header->origAddr.net);
+     fputUINT16(pkt, (UINT16) header->destAddr.net);
 
      fputc(header->loProductCode, pkt);   // put lowByte of Prod-Id
      fputc(header->majorProductRev, pkt); // put major version number
@@ -95,15 +95,15 @@ FILE *createPkt(char *filename, s_pktHeader *header)
      for (i=strlen((char *) header->pktPassword); i<8; i++) fputc(0, pkt);
 
      // write qzone info
-     fputUINT16(pkt, header->origAddr.zone);
-     fputUINT16(pkt, header->destAddr.zone);
+     fputUINT16(pkt, (UINT16) header->origAddr.zone);
+     fputUINT16(pkt, (UINT16) header->destAddr.zone);
 
      fputUINT16(pkt, 0); // filler
 
      // write byte swapped capability Word
-     dummy = header->capabilityWord / 256;
+     dummy = (UCHAR)(header->capabilityWord / 256);
      fputc(dummy, pkt);
-     dummy = header->capabilityWord % 256;
+     dummy = (UCHAR)(header->capabilityWord % 256);
      fputc(dummy, pkt);
 
      fputc(header->hiProductCode, pkt);      // put hiByte of Prod-Id
@@ -111,11 +111,11 @@ FILE *createPkt(char *filename, s_pktHeader *header)
 
      fputUINT16(pkt, header->capabilityWord);
 
-     fputUINT16(pkt, header->origAddr.zone);
-     fputUINT16(pkt, header->destAddr.zone);
+     fputUINT16(pkt, (UINT16) header->origAddr.zone);
+     fputUINT16(pkt, (UINT16) header->destAddr.zone);
 
-     fputUINT16(pkt, header->origAddr.point);
-     fputUINT16(pkt, header->destAddr.point);
+     fputUINT16(pkt, (UINT16) header->origAddr.point);
+     fputUINT16(pkt, (UINT16) header->destAddr.point);
 
      fputUINT16(pkt, 0); fputUINT16(pkt, 0); // write prodData
 
@@ -132,13 +132,13 @@ int writeMsgToPkt(FILE *pkt, s_message msg)
   fputc(0, pkt);
 
   // write net/node info
-  fputUINT16(pkt, msg.origAddr.node);
-  fputUINT16(pkt, msg.destAddr.node);
-  fputUINT16(pkt, msg.origAddr.net);
-  fputUINT16(pkt, msg.destAddr.net);
+  fputUINT16(pkt, (UINT16) msg.origAddr.node);
+  fputUINT16(pkt, (UINT16) msg.destAddr.node);
+  fputUINT16(pkt, (UINT16) msg.origAddr.net);
+  fputUINT16(pkt, (UINT16) msg.destAddr.net);
 
   // write attribute info
-  fputUINT16(pkt, msg.attributes);
+  fputUINT16(pkt, (UINT16) msg.attributes);
 
   // write cost info
   fputUINT16(pkt, 0);

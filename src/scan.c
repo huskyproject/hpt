@@ -77,7 +77,7 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
    msg->destAddr.node  = xmsg.dest.node;
    msg->destAddr.point = xmsg.dest.point;
 
-   strcpy(msg->datetime, (char *) xmsg.__ftsc_date);
+   strcpy((char *)msg->datetime, (char *) xmsg.__ftsc_date);
    xstrcat(&(msg->subjectLine), (char *) xmsg.subj);
    xstrcat(&(msg->toUserName), (char *) xmsg.to);
    xstrcat(&(msg->fromUserName), (char *) xmsg.from);
@@ -139,8 +139,8 @@ void makePktHeader(s_link *link, s_pktHeader *header)
       header->origAddr = *(link->ourAka);
       header->destAddr = link->hisAka;
    }
-   header->minorProductRev = VER_MINOR;
-   header->majorProductRev = VER_MAJOR;
+   header->minorProductRev = (UCHAR)VER_MINOR;
+   header->majorProductRev = (UCHAR)VER_MAJOR;
    header->hiProductCode   = 0;
    header->loProductCode   = 0xfe;
    memset(header->pktPassword, 0, sizeof(header->pktPassword)); // no password
@@ -479,7 +479,7 @@ void scanNMArea(s_area *area)
 /*								 config->netMailArea.fperm, 
 								 config->netMailArea.uid, 
 								 config->netMailArea.gid, */
-								 area -> msgbType);
+								 (word)area -> msgbType);
    if (netmail != NULL) {
 
       statScan.areas++;

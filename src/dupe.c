@@ -121,18 +121,19 @@ char *createDupeFileName(s_area *area) {
    return name;
 }
 
-int compareEntriesBlank(const void *e1, const void *e2) {
+int compareEntriesBlank(char *e1, char *e2) {
    int rc=1;
    unused(e1); unused(e2);
    return rc;
 }
 
 
-int compareEntries(const void *e1, const void *e2) {
+int compareEntries(char *p_e1, char *p_e2) {
    const s_textDupeEntry  *atxt,   *btxt;
    const s_hashDupeEntry  *ahash,  *bhash;
    const s_hashMDupeEntry *ahashM, *bhashM;
    int rc = 1;
+   const void *e1 = (const void *)p_e1, *e2 = (const void *)p_e2;
 
    switch (config->typeDupeBase) {
       case hashDupes:
@@ -171,12 +172,13 @@ int compareEntries(const void *e1, const void *e2) {
    return rc;
 }
 
-int writeEntry(const void *entry) {
+int writeEntry(char *p_entry) {
    const s_textDupeEntry  *entxt;
    const s_hashDupeEntry  *enhash;
    const s_hashMDupeEntry *enhashM;
    UINT32 diff=0;
    time_t currtime;
+   const void *entry = (const void *)p_entry;
 
    currtime = time(NULL);
 
@@ -242,25 +244,25 @@ int writeEntry(const void *entry) {
    return 1;
 }
  
-int deleteEntry(const void *entry) {
+int deleteEntry(char *entry) {
    const s_textDupeEntry  *entxt;
    const s_hashDupeEntry  *enhash;
    const s_hashMDupeEntry *enhashM;
 
    switch (config->typeDupeBase) {
       case hashDupes:
-           enhash = entry;
+           enhash = (s_hashDupeEntry *)entry;
            free((s_hashDupeEntry*) enhash);
  	   break;
 
       case hashDupesWmsgid:
-           enhashM = entry;
+           enhashM = (s_hashMDupeEntry *)entry;
            free((s_hashMDupeEntry*)enhashM->msgid);
            free((s_hashMDupeEntry*)enhashM);
  	   break;
 
       case textDupes:
-           entxt = entry;
+           entxt = (s_textDupeEntry *)entry;
            free((s_textDupeEntry*)entxt->to);
            free((s_textDupeEntry*)entxt->from);
            free((s_textDupeEntry*)entxt->subject);
@@ -269,7 +271,7 @@ int deleteEntry(const void *entry) {
  	   break;
 
       case commonDupeBase:
-           enhash = entry;
+           enhash = (s_hashDupeEntry *)entry;
            free((s_hashDupeEntry*)enhash);
            break;
    }
@@ -302,7 +304,7 @@ void doReading(FILE *f, s_dupeMemory *mem) {
           case hashDupesWmsgid:
                enhashM = (s_hashMDupeEntry*) malloc(sizeof(s_hashMDupeEntry));
                fread(enhashM, sizeof(time_t)+sizeof(UINT32), 1, f);
-               if ((length = getc(f)) > 0) {
+               if ((length = (UCHAR)getc(f)) > 0) {  /* no EOF check :-( */
                   enhashM->msgid = malloc(length+1);
                   fread((UCHAR*)enhashM->msgid, length, 1, f);     
                   enhashM->msgid[length]='\0';
@@ -316,22 +318,22 @@ void doReading(FILE *f, s_dupeMemory *mem) {
                fread(&timedupe, sizeof(time_t), 1, f);     
                entxt->TimeStampOfDupe=timedupe;
 
-               if ((length = getc(f)) > 0) {
+               if ((length = (UCHAR)getc(f)) > 0) { /* no EOF check :-( */
                   entxt->from = malloc(length+1);
                   fread((UCHAR*)entxt->from, length, 1, f);     
                   entxt->from[length]='\0';
                } else entxt->from = NULL;
-               if ((length = getc(f)) > 0) {
+               if ((length = (UCHAR) getc(f)) > 0) { /* no EOF check :-( */
                   entxt->to = malloc(length+1);
                   fread((UCHAR*)entxt->to, length, 1, f);     
                   entxt->to[length]='\0';
                } else entxt->to = NULL;
-               if ((length = getc(f)) > 0) {
+               if ((length = (UCHAR)getc(f)) > 0) { /* no EOF check :-( */
                   entxt->subject = malloc(length+1);
                   fread((UCHAR*)entxt->subject, length, 1, f);     
                   entxt->subject[length]='\0';
 	       } else entxt->subject = NULL;
-               if ((length = getc(f)) > 0) {
+               if ((length = (UCHAR)getc(f)) > 0) { /* no EOF check :-( */
                   entxt->msgid = malloc(length+1);
                   fread((UCHAR*)entxt->msgid, length, 1, f);     
                   entxt->msgid[length]='\0';
@@ -516,7 +518,7 @@ int dupeDetection(s_area *area, const s_message msg) {
            }
            // it is a dupe do nothing but return 0; and free dupe entry
            else {
-           deleteEntry(enhash);
+           deleteEntry((char *)enhash);
            return 0;
            }
  	   break;
@@ -540,7 +542,7 @@ int dupeDetection(s_area *area, const s_message msg) {
               return 1;
            }
            else {
-              deleteEntry(enhashM);
+              deleteEntry((char *)enhashM);
               return 0;
            }
  	   break;
@@ -563,7 +565,7 @@ int dupeDetection(s_area *area, const s_message msg) {
               return 1;
            }
            else {
-              deleteEntry(entxt);
+              deleteEntry((char *)entxt);
               return 0;
            }
    	   break;
@@ -586,7 +588,7 @@ int dupeDetection(s_area *area, const s_message msg) {
               return 1;
            }
            else {
-              deleteEntry(enhash);
+              deleteEntry((char *)enhash);
               return 0;
            }
            break;

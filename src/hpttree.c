@@ -180,7 +180,7 @@ void buildAreaTree(s_area *area)
    linksOnLevel = NULL;
    allNodes = NULL;
 
-   harea = MsgOpenArea((byte *) area->fileName, MSGAREA_NORMAL, area->msgbType);
+   harea = MsgOpenArea((byte *) area->fileName, MSGAREA_NORMAL, (word)area->msgbType);
 
    if (harea)
    {
@@ -319,7 +319,7 @@ void buildAreaTree(s_area *area)
    }
 }
 
-void usage() {
+void usage(void) {
 
    fprintf(outlog, "hptTree %s\n", version);
    fprintf(outlog, "Usage:\n hpttree [-p] [-d NUM] [areaname ...]\n");
@@ -384,7 +384,7 @@ int main(int argc, char **argv) {
    }
 
    m.req_version = 0;
-   m.def_zone = cfg->addr[0].zone;
+   m.def_zone = (UINT16) cfg->addr[0].zone;
    if (MsgOpenApi(&m)!= 0) {
       fprintf(outlog, "MsgOpenApi Error.\n");
       exit(1);

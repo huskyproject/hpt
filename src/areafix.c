@@ -1099,7 +1099,7 @@ int rescanEMArea(s_area *echo, s_link *link, long rescanCount)
 
    /*FIXME: the code in toss.c does createDirectoryTree. We don't*/
    area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, /*echo -> fperm, 
-                      echo -> uid, echo -> gid,*/ echo->msgbType | MSGTYPE_ECHO);
+                    echo -> uid, echo -> gid,*/ (word)(echo->msgbType | MSGTYPE_ECHO));
    if (area != NULL) {
      //      i = highWaterMark = MsgGetHighWater(area);
      i = 0;
@@ -1311,7 +1311,7 @@ void preprocText(char *split, s_message *msg)
     free(split);
 }
 
-char *textHead()
+char *textHead(void)
 {
     char *text_head = NULL;
     
@@ -1581,7 +1581,7 @@ void MsgToStruct(HMSG SQmsg, XMSG xmsg, s_message *msg)
     msg->destAddr.node  = xmsg.dest.node;
     msg->destAddr.point = xmsg.dest.point;
 
-    strcpy(msg->datetime, (char *) xmsg.__ftsc_date);
+    strcpy((char *)msg->datetime, (char *) xmsg.__ftsc_date);
     xstrcat(&(msg->subjectLine), (char *) xmsg.subj);
     xstrcat(&(msg->toUserName), (char *) xmsg.to);
     xstrcat(&(msg->fromUserName), (char *) xmsg.from);
@@ -1606,10 +1606,10 @@ void afix(void)
     writeLogEntry(hpt_log, '1', "Start AreaFix...");
     
     netmail = MsgOpenArea((unsigned char *) config->netMailAreas[0].fileName, MSGAREA_NORMAL, 
-								  /*config -> netMailArea.fperm, 
-								  config -> netMailArea.uid,
-								  config -> netMailArea.gid,*/
-								  config -> netMailAreas[0].msgbType);
+						  /*config -> netMailArea.fperm, 
+						  config -> netMailArea.uid,
+						  config -> netMailArea.gid,*/
+						  (word)config -> netMailAreas[0].msgbType);
     if (netmail != NULL) {
 
 	highmsg = MsgGetHighMsg(netmail);
@@ -1670,7 +1670,7 @@ void autoPassive()
          if (createOutboundFileName(&(config->links[i]), cvtFlavour2Prio(config->links[i].echoMailFlavour), FLOFILE) == 0) {
             f = fopen(config->links[i].floFile, "rt");
             if (f) {
-               while ((line = readLine(f))) {
+               while ((line = readLine(f)) != NULL) {
 	          line = trimLine(line);
                   path = line;
                   if (*path && (*path == '^' || *path == '#')) {

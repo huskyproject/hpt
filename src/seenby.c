@@ -46,7 +46,7 @@ int compare(const void *first, const void *second)
 
 void sortSeenBys(s_seenBy *seenBys, UINT count)
 {
-   qsort(seenBys, count, sizeof(s_seenBy), &compare);
+   qsort(seenBys, count, sizeof(s_seenBy), compare);
 }
 
 char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)

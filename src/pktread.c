@@ -65,7 +65,7 @@ void readPktPassword(FILE *pkt, UCHAR *password)
    int i;
 
    for (i=0 ;i<8 ;i++ ) {
-     password[i] = getc(pkt);
+     password[i] = (UCHAR) getc(pkt); /* no EOF check :-( */
    } /* endfor */
    password[8] = 0;
 }
@@ -94,8 +94,8 @@ s_pktHeader *openPkt(FILE *pkt)
   header->origAddr.net = getUINT16(pkt);
   header->destAddr.net = getUINT16(pkt);
   
-  header->loProductCode = getc(pkt);
-  header->majorProductRev = getc(pkt);
+  header->loProductCode = (UCHAR) getc(pkt);
+  header->majorProductRev = (UCHAR) getc(pkt);
 
   readPktPassword(pkt, (UCHAR *)header->pktPassword); // 8 bytes
 
@@ -104,9 +104,9 @@ s_pktHeader *openPkt(FILE *pkt)
 
   header->auxNet = getUINT16(pkt);
 
-  header->capabilityWord = (fgetc(pkt) << 8) + fgetc(pkt);
-  header->hiProductCode = getc(pkt);
-  header->minorProductRev = getc(pkt);
+  header->capabilityWord = (UINT16)((fgetc(pkt) << 8) + fgetc(pkt));
+  header->hiProductCode = (UCHAR) getc(pkt);
+  header->minorProductRev = (UCHAR) getc(pkt);
 
   capWord = getUINT16(pkt);
 
@@ -298,15 +298,15 @@ s_message *readMsgFromPkt(FILE *pkt, s_pktHeader *header)
    textBuffer = (UCHAR *) malloc(74);   // reserve mem space
    len = fgetsUntil0 ((UCHAR *) textBuffer, 37, pkt);
    msg->toUserName = (char *) malloc(len);
-   strcpy(msg->toUserName, (UCHAR *) textBuffer);
+   strcpy((char *)msg->toUserName, (char *) textBuffer);
 
    len = fgetsUntil0((UCHAR *) textBuffer, 37, pkt);
    msg->fromUserName = (char *) malloc(len);
-   strcpy(msg->fromUserName, (UCHAR *) textBuffer);
+   strcpy((char *)msg->fromUserName, (char *) textBuffer);
 
    len = fgetsUntil0((UCHAR *) textBuffer, 73, pkt);
    msg->subjectLine = (char *) malloc(len);
-   strcpy(msg->subjectLine, textBuffer);
+   strcpy((char *)msg->subjectLine, (char *)textBuffer);
 
    free(textBuffer);                   // free mem space
 
@@ -314,7 +314,7 @@ s_message *readMsgFromPkt(FILE *pkt, s_pktHeader *header)
    msg->textLength = fgetsUntil0((unsigned char *) textBuffer, TEXTBUFFERSIZE+1 , pkt);
 
    msg->text = (char *) malloc(msg->textLength); /* reserve mem for the real text */
-   strcpy(msg->text, textBuffer);
+   strcpy((char *)msg->text, (char *)textBuffer);
 
    free(textBuffer);
 

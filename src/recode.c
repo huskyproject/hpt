@@ -73,7 +73,7 @@ UCHAR buf[512],*p,*q;
 INT in,on,count;
 	INT line;
 
-	if ((fp=fopen(charMapFileName,"r")) == NULL)
+	if ((fp=fopen((char *)charMapFileName,"r")) == NULL)
 	 {
 		fprintf(stderr,"getctab: cannot open mapchan file \"%s\"\n", charMapFileName);
 		return ;
@@ -98,7 +98,7 @@ INT in,on,count;
 			on=ctoi((char *)q);
 			if (in && on)
                         {
-                                if( count++ < 256 ) dest[in]=on; 
+                                if( count++ < 256 ) dest[in]=(char)on; 
                                 else 
                                 { 
                                         fprintf(stderr,"getctab: char map table \"%s\" is big\n",charMapFileName); 

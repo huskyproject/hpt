@@ -40,6 +40,10 @@
 #if !defined(__TURBOC__)
 #include <unistd.h>
 #endif
+#if defined (__TURBOC__)
+#include <process.h>
+#include <dir.h>
+#endif
 #ifdef __IBMC__
 #include <direct.h>
 #endif
@@ -90,7 +94,9 @@ int createLockFile(char *lockfile) {
 #include <io.h>
 #include <fcntl.h>
 
+#if !defined(__TURBOC__) || !defined(__NT__)  /* Borland C for NT has S_ISDIR! */
 #define S_ISDIR(a) (((a) & S_IFDIR) != 0)
+#endif
 
 #endif
 

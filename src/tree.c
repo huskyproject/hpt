@@ -42,10 +42,7 @@ tree	**ppr_tree;
 }
 	
 
-char *tree_srch(ppr_tree, pfi_compare, pc_user)
-tree	**ppr_tree;
-int	(*pfi_compare)();
-char	*pc_user;
+char *tree_srch(tree **ppr_tree, int (*pfi_compare)(char *, char *), char *pc_user)
 {
 	register int	i_comp;
 
@@ -78,12 +75,8 @@ char	*pc_user;
 }
 
 
-static void sprout(ppr, pc_data, pi_balance, pfi_compare, pfi_delete)
-tree	**ppr;
-char	*pc_data;
-int	*pi_balance;
-int	(*pfi_compare)();
-int	(*pfi_delete)();
+static void sprout(tree **ppr, char *pc_data, int *pi_balance,
+		   int (*pfi_compare)(char *, char *), int (*pfi_delete)(char *))
 {
 	tree	*p1, *p2;
 	int	cmp;
@@ -233,11 +226,8 @@ int	(*pfi_delete)();
 }
 
 
-void tree_add(ppr_tree, pfi_compare, pc_user, pfi_delete)
-tree	**ppr_tree;
-int	(*pfi_compare)();
-char	*pc_user;
-int	(*pfi_delete)();
+void tree_add(tree **ppr_tree, int (*pfi_compare)(char *, char *),
+	      char *pc_user, int (*pfi_delete)(char *))
 {
 	void	sprout();
 	int	i_balance = FALSE;
@@ -248,9 +238,7 @@ int	(*pfi_delete)();
 }
 
 
-static void balanceR(ppr_p, pi_balance)
-tree	**ppr_p;
-int	*pi_balance;
+static void balanceR(tree **ppr_p, int *pi_balance)
 {
 	tree	*p1, *p2;
 	int	b1, b2;
@@ -308,12 +296,8 @@ int	*pi_balance;
 }
 
 
-static void del(ppr_r, pi_balance, ppr_q, pfi_uar, pi_uar_called)
-tree	**ppr_r;
-int	*pi_balance;
-tree	**ppr_q;
-int	(*pfi_uar)();
-int	*pi_uar_called;
+static void del(tree **ppr_r, int *pi_balance, tree **ppr_q,
+		int (*pfi_uar)(char *), int *pi_uar_called)
 {
 	void	balanceR();
 
@@ -338,9 +322,7 @@ int	*pi_uar_called;
 }
 
 
-static void balanceL(ppr_p, pi_balance)
-tree	**ppr_p;
-int	*pi_balance;
+static void balanceL(tree **ppr_p, int *pi_balance)
 {
 	tree	*p1, *p2;
 	int	b1, b2;
@@ -399,14 +381,8 @@ int	*pi_balance;
 }
 
 
-static int delete(ppr_p, pfi_compare, pc_user, pfi_uar,
-						pi_balance, pi_uar_called)
-tree	**ppr_p;
-int	(*pfi_compare)();
-char	*pc_user;
-int	(*pfi_uar)();
-int	*pi_balance;
-int	*pi_uar_called;
+static int delete(tree **ppr_p, int (*pfi_compare)(char *, char *), char *pc_user, int (*pfi_uar)(char *),
+		  int *pi_balance, int *pi_uar_called)
 {
 	void	del(), balanceL(), balanceR();
 	tree	*pr_q;
@@ -463,11 +439,7 @@ int	*pi_uar_called;
 }
 
 
-int tree_delete(ppr_p, pfi_compare, pc_user, pfi_uar)
-tree	**ppr_p;
-int	(*pfi_compare)();
-char	*pc_user;
-int	(*pfi_uar)();
+int tree_delete(tree **ppr_p, int (*pfi_compare)(char *, char *), char *pc_user, int (*pfi_uar)(char *))
 {
 	int	i_balance = FALSE, i_uar_called = FALSE;
 
@@ -477,9 +449,7 @@ int	(*pfi_uar)();
 }
 
 
-int tree_trav(ppr_tree, pfi_uar)
-tree	**ppr_tree;
-int	(*pfi_uar)();
+int tree_trav(tree **ppr_tree, int (*pfi_uar)(char *))
 {
 	ENTER("tree_trav")
 
@@ -496,9 +466,7 @@ int	(*pfi_uar)();
 }
 
 
-void tree_mung(ppr_tree, pfi_uar)
-tree	**ppr_tree;
-int	(*pfi_uar)();
+void tree_mung(tree **ppr_tree, int (*pfi_uar)(char *))
 {
 	ENTER("tree_mung")
 	if (*ppr_tree)
@@ -513,26 +481,21 @@ int	(*pfi_uar)();
 	EXITV
 }
 
-int countEach(pc_data)
-char *pc_data;
+int countEach(char *pc_data)
 {
    ENTER("count")
    count++;
    EXIT(TRUE)
 }
 
-unsigned long tree_count(ppr_tree)
-tree **ppr_tree;
+unsigned long tree_count(tree **ppr_tree)
 {
    count = 0;
-   tree_trav(ppr_tree, &countEach);
+   tree_trav(ppr_tree, countEach);
    return count;
 }
 
-int tree_srchall(ppr_tree, pfi_compare, pc_user)
-tree	**ppr_tree;
-int	(*pfi_compare)();
-char	*pc_user;
+int tree_srchall(tree **ppr_tree, int (*pfi_compare)(char *, char *), char *pc_user)
 {
 	ENTER("tree_srchall")
 

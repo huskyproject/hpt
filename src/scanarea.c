@@ -63,13 +63,13 @@ char *createSeenByPath(s_area *echo) {
 	for (i = 0;i < echo->downlinkCount; i++) {
 		// only include nodes in SEEN-BYS
 		if (echo->downlinks[i]->link->hisAka.point != 0) continue;
-		seenBys[seenByCount].net  = echo->downlinks[i]->link->hisAka.net;
-		seenBys[seenByCount].node = echo->downlinks[i]->link->hisAka.node;
+		seenBys[seenByCount].net  = (UINT16)echo->downlinks[i]->link->hisAka.net;
+		seenBys[seenByCount].node = (UINT16)echo->downlinks[i]->link->hisAka.node;
 		seenByCount++;
 	}
 	if (echo->useAka->point == 0) {      // only include if system is node
-		seenBys[seenByCount].net = echo->useAka->net;
-		seenBys[seenByCount].node = echo->useAka->node;
+		seenBys[seenByCount].net = (UINT16) echo->useAka->net;
+		seenBys[seenByCount].node = (UINT16) echo->useAka->node;
 		seenByCount++;
 	}
 	sortSeenBys(seenBys, seenByCount);
@@ -176,7 +176,9 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
    makeMsg(hmsg, xmsg, &msg, echo, 0);
 
    //translating name of the area to uppercase
-   while (msg.text[j] != '\r') {msg.text[j]=toupper(msg.text[j]);j++;}
+   while (msg.text[j] != '\r') {
+       msg.text[j]=(char)toupper(msg.text[j]);j++;
+   }
 
    // scan msg to downlinks
    
@@ -236,7 +238,7 @@ void scanEMArea(s_area *echo)
    
    if (echo->scn) return;
    
-   area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, echo->msgbType | MSGTYPE_ECHO);
+   area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, (word)(echo->msgbType | MSGTYPE_ECHO));
    if (area != NULL) {
       statScan.areas++;
       echo->scn = 1;

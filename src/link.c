@@ -126,7 +126,7 @@ int linkArea(s_area *area, int netMail)
 
    harea = MsgOpenArea((UCHAR *) area->fileName, MSGAREA_NORMAL,
 /*							  area->fperm, area->uid, area->gid,*/
-                       area->msgbType | (netMail ? 0 : MSGTYPE_ECHO));
+                       (word)(area->msgbType | (netMail ? 0 : MSGTYPE_ECHO)));
    if (harea) {
       writeLogEntry(hpt_log, '2', "linking area %s", area->areaName);
       msgsNum = MsgGetHighMsg(harea);
