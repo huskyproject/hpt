@@ -48,13 +48,6 @@
 #define MAXPATHLEN 255
 #endif
 
-#ifdef MSG
-#undef MSG
-#endif
-#ifdef EXPENTRY
-#undef EXPENTRY
-#endif
-
 #include <windows.h>
 #include <stdio.h>
 #include <limits.h>
