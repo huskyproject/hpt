@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Mar  3 16:12:28 NOVT 2001
+max:
+* fixed .bsy checks under win32 (watcom)
+
+----- cvs ci ------
 Fri Mar  2 12:53:15 NOVT 2001
 max:
 * return back save_errno in .bsy checks

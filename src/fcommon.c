@@ -663,10 +663,12 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    // maybe we have session with this link?
    if ( (fd=open(link->bsyFile, O_CREAT | O_RDWR | O_EXCL, S_IREAD | S_IWRITE)) < 0 ) {
 
-	   save_errno = errno;
-	   
+           save_errno = errno;
+#if defined(__WATCOMC__)	   
+	   if (save_errno != ENOENT) {
+#else
 	   if (save_errno != EEXIST) {
-
+#endif
 		   writeLogEntry(hpt_log, '7', "cannot create *.bsy file \"%s\" for %s (errno %d)\n", link->bsyFile, link->name, (int)save_errno);
 		   exit_hpt("cannot create *.bsy file!",0);
 
