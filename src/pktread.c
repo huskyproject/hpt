@@ -91,8 +91,7 @@ s_pktHeader *openPkt(FILE *pkt)
 
   pktVersion = getUINT16(pkt);
   if (pktVersion != 2) {
-    free(header);
-    header = NULL;
+    nfree(header);
     return NULL;
   } /* endif */
 
@@ -119,8 +118,7 @@ s_pktHeader *openPkt(FILE *pkt)
 	  /* if both capabilitywords aren't the same, abort */
 	  /* but read stone-age pkt */
 	  if (capWord!=header->capabilityWord && header->capabilityWord!=0) {
-		  free(header);
-		  header = NULL;
+		  nfree(header);
 		  return NULL;
 	  } /* endif */
   }

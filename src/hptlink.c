@@ -424,9 +424,9 @@ void linkArea(s_area *area)
 
 	   MsgCloseArea(harea);
 
-	   if (ctl) free (ctl);
-	   free (replmap);
-	   free (links);
+	   nfree(ctl);
+	   nfree(replmap);
+	   nfree(links);
 
 	   if ( loglevel >= 10) fprintf(outlog, "done\n");
    } else {
@@ -603,7 +603,7 @@ int main(int argc, char **argv) {
 	       }
 
 	       if (loglevel>0 && !found && strlen(line)) fprintf(outlog, "Couldn't find area \"%s\"\n", line);
-	       free(line);
+	       nfree(line);
 	    }
 
 	 }

@@ -39,6 +39,7 @@
 #include <fcommon.h>
 
 #include <fidoconf/xstr.h>
+#include <fidoconf/common.h>
 #include <smapi/prog.h>
 
 static char *mnames[] = {
@@ -60,7 +61,7 @@ s_log *openLog(char *fileName, char *appN)
    memset(temp, '\0', sizeof(s_log));
    temp->logFile = fopen(fileName, "a");
    if (NULL == temp->logFile) {
-      free(temp);
+      nfree(temp);
       return NULL;
    } /* endif */
 
@@ -95,11 +96,10 @@ void closeLog(s_log *hpt_log)
          fclose(hpt_log->logFile);
          hpt_log->open = 0;
       } /* endif */
-      free(hpt_log->appName);
-      free(hpt_log->keysAllowed);
-      free(hpt_log->keysPrinted);
-      free(hpt_log);
-      hpt_log = NULL;
+      nfree(hpt_log->appName);
+      nfree(hpt_log->keysAllowed);
+      nfree(hpt_log->keysPrinted);
+      nfree(hpt_log);
    }
 }
 

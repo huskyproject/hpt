@@ -112,7 +112,7 @@ char *createDupeFileName(s_area *area) {
 		name = strLower(name);
 
 	xstrscat(&retname, config->dupeHistoryDir, name, NULL);
-	free(name);
+	nfree(name);
 	
 	return retname;
 }
@@ -248,13 +248,13 @@ int deleteEntry(char *entry) {
    switch (config->typeDupeBase) {
       case hashDupes:
            enhash = (s_hashDupeEntry *)entry;
-           free((s_hashDupeEntry*) enhash);
+           nfree((s_hashDupeEntry*) enhash);
  	   break;
 
       case hashDupesWmsgid:
            enhashM = (s_hashMDupeEntry *)entry;
            free((s_hashMDupeEntry*)enhashM->msgid);
-           free((s_hashMDupeEntry*)enhashM);
+           nfree((s_hashMDupeEntry*)enhashM);
  	   break;
 
       case textDupes:
@@ -263,12 +263,12 @@ int deleteEntry(char *entry) {
            free((s_textDupeEntry*)entxt->from);
            free((s_textDupeEntry*)entxt->subject);
            free((s_textDupeEntry*)entxt->msgid);
-           free((s_textDupeEntry*)entxt);
+           nfree((s_textDupeEntry*)entxt);
  	   break;
 
       case commonDupeBase:
            enhash = (s_hashDupeEntry *)entry;
-           free((s_hashDupeEntry*)enhash);
+           nfree((s_hashDupeEntry*)enhash);
            break;
    }
 
@@ -373,7 +373,7 @@ s_dupeMemory *readDupeFile(s_area *area) {
       fclose(f);
    } else writeLogEntry(hpt_log, '2', "Error reading dupes.");
    
-   free(fileName);
+   nfree(fileName);
 
    return dupeMemory;
 }
@@ -437,7 +437,7 @@ int writeToDupeFile(s_area *area) {
       }
    }
 
-   free(fileName);
+   nfree(fileName);
 
    return rc;
 }
@@ -456,10 +456,10 @@ void freeDupeMemory(s_area *area) {
    if (dupes != NULL) {
       tree_mung(&(dupes -> avlTree), deleteEntry);
       if (config->typeDupeBase != commonDupeBase) {
-         free(area -> dupes); area -> dupes = NULL;
+         nfree(area -> dupes);
       }
       else {
-         free(CommonDupes); CommonDupes = NULL;
+         nfree(CommonDupes);
       }
    };
 }
@@ -502,10 +502,10 @@ int dupeDetection(s_area *area, const s_message msg) {
            strcat(str1, msg.toUserName);
            strcat(str1, msg.subjectLine);
            strcat(str1, str+7);
-           free(str);
+           nfree(str);
            enhash->CrcOfDupe       = strcrc32(str1, 0xFFFFFFFFL);
            enhash->TimeStampOfDupe = time (NULL);
-           free(str1);
+           nfree(str1);
 
            if (tree_srchall(&(Dupes->avlTree), compareEntries, (char *) enhash)) {
               // add to Dupes
@@ -528,10 +528,10 @@ int dupeDetection(s_area *area, const s_message msg) {
            strcat(str1, str+7);
            enhashM->msgid = safe_malloc(strlen(str)+1-7); 
            strcpy(enhashM->msgid, str+7);
-           free(str);
+           nfree(str);
            enhashM->CrcOfDupe       = strcrc32(str1, 0xFFFFFFFFL);
            enhashM->TimeStampOfDupe = time (NULL);
-           free(str1);
+           nfree(str1);
 
            if (tree_srchall(&(Dupes->avlTree), compareEntries, (char *) enhashM)) {
               tree_add(&(Dupes->avlTree), compareEntriesBlank, (char *) enhashM, deleteEntry);
@@ -554,7 +554,7 @@ int dupeDetection(s_area *area, const s_message msg) {
            entxt->subject = safe_malloc(strlen(msg.subjectLine)+2); 
            if (0==strlen(msg.subjectLine)) strcpy(entxt->subject," "); else strcpy(entxt->subject, msg.subjectLine);
            entxt->msgid   = safe_malloc(strlen(str)+2-7); strcpy(entxt->msgid, str+7);
-           free(str);
+           nfree(str);
 
            if (tree_srchall(&(Dupes->avlTree), compareEntries, (char *) entxt)) {
               tree_add(&(Dupes->avlTree), compareEntriesBlank, (char *) entxt, deleteEntry);
@@ -574,10 +574,10 @@ int dupeDetection(s_area *area, const s_message msg) {
            strcat(str1, msg.toUserName);
            strcat(str1, msg.subjectLine);
            strcat(str1, str+7);
-           free(str);
+           nfree(str);
            enhash->CrcOfDupe       = strcrc32(str1, 0xFFFFFFFFL);
            enhash->TimeStampOfDupe = time (NULL);
-           free(str1);
+           nfree(str1);
 
            if (tree_srchall(&(CommonDupes->avlTree), compareEntries, (char *) enhash)) {
               tree_add(&(CommonDupes->avlTree), compareEntriesBlank, (char *) enhash, deleteEntry);

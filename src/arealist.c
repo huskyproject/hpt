@@ -35,6 +35,7 @@
 
 #include <ctype.h>
 #include <arealist.h>
+#include <fidoconf/common.h>
 
 #define LIST_PAGE_SIZE	256
 
@@ -56,12 +57,12 @@ void freeAreaList(ps_arealist al)
 	if(al) {
 		if(al->areas && al->maxcount) {
 			for(i = 0; i < al->count; i++) {
-				if(al->areas[i].tag) free(al->areas[i].tag);
-				if(al->areas[i].desc) free(al->areas[i].desc);
+				nfree(al->areas[i].tag);
+				nfree(al->areas[i].desc);
 			}
-			free(al->areas);
+			nfree(al->areas);
 		}
-		free(al);
+		nfree(al);
 	}
 	return;
 }

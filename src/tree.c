@@ -25,6 +25,7 @@
 #include "tree.h"
 
 #include <fcommon.h>
+#include <fidoconf/common.h>
 
 #ifdef DEBUG
 #define		PRMSG(msg)	printf("DEBUG: '%s'\n", msg);
@@ -431,7 +432,7 @@ static int delete(tree **ppr_p, int (*pfi_compare)(char *, char *), char *pc_use
 			if (*pi_balance)
 				balanceL(ppr_p, pi_balance);
 		}
-		free(pr_q);
+		nfree(pr_q);
 		if (!*pi_uar_called && pfi_uar)
 			(*pfi_uar)(pr_q->tree_p);
 		i_ret = TRUE;
@@ -476,8 +477,8 @@ void tree_mung(tree **ppr_tree, int (*pfi_uar)(char *))
 		tree_mung(&(**ppr_tree).tree_r, pfi_uar);
 		if (pfi_uar)
 			(*pfi_uar)((**ppr_tree).tree_p);
-		free(*ppr_tree);
-		*ppr_tree = NULL;
+		nfree(*ppr_tree);
+//		*ppr_tree = NULL;
 	}
 	EXITV
 }

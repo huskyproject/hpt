@@ -75,7 +75,7 @@ char *createSeenByPath(s_area *echo) {
 	sortSeenBys(seenBys, seenByCount);
 	
 	seenByPath = createControlText(seenBys, seenByCount, "SEEN-BY: ");
-	free(seenBys);
+	nfree(seenBys);
 	
 	// path line only include node-akas in path
 	if (echo->useAka->point == 0)
@@ -125,7 +125,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    // add '\r' after each kludge
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
    
-   free(ctrlBuff);
+   nfree(ctrlBuff);
 
    // added SEEN-BY and PATH from scan area only
    if (action == 0)// seenByPath = createSeenByPath(echo);
@@ -143,7 +143,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    msg->text[msg->textLength + ctrlLen]='\0';
    // if origin has no ending \r add it
    if (msg->text[strlen(msg->text)-1] != '\r') xstrcat(&(msg->text), "\r");
-   free(kludgeLines);
+   nfree(kludgeLines);
    if (action == 0) xstrcat(&(msg->text), seenByPath);
    
    // recoding from internal to transport charSet
@@ -154,7 +154,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
       recodeToTransportCharset((CHAR*)msg->text);
    }
 
-   if (action == 0) free(seenByPath);
+   if (action == 0) nfree(seenByPath);
 }
 
 void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)

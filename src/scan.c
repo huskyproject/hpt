@@ -104,7 +104,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
    MsgReadMsg(SQmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
    ctrlBuff[ctrlLen] = '\0'; /* MsgReadMsg does not do zero termination! */
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
-   free(ctrlBuff);
+   nfree(ctrlBuff);
 
    // make text
    msg->textLength = MsgGetTextLen(SQmsg);
@@ -130,7 +130,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
    // recoding text to TransportCharSet
    if (config->outtab != NULL) recodeToTransportCharset((CHAR*)msg->text);
 
-   free(kludgeLines);
+   nfree(kludgeLines);
 }
 
 void makePktHeader(s_link *link, s_pktHeader *header)
@@ -276,7 +276,7 @@ void processAttachs(s_link *link, s_message *msg)
    } else writeLogEntry(hpt_log, '9', "Could not open FloFile");
 
    // replace subjectLine
-   free(msg->subjectLine);
+   nfree(msg->subjectLine);
    msg->subjectLine = newSubjectLine;
 }
 
@@ -344,11 +344,11 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
 			   processRequests(virtualLink, &msg);
 			   
 			   remove(virtualLink->bsyFile);
-			   free(virtualLink->bsyFile);
+			   nfree(virtualLink->bsyFile);
 			   // mark Mail as sent
 			   xmsg->attr |= MSGSENT;
 			   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-			   free(virtualLink->floFile);
+			   nfree(virtualLink->floFile);
 			   writeLogEntry(hpt_log, '7', "Request %s from %u:%u/%u.%u", msg.subjectLine, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 		   }
 	   }
@@ -365,11 +365,11 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
 		   writeLogEntry(hpt_log, '7', "Crash-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 
 		   remove(virtualLink->bsyFile);
-		   free(virtualLink->bsyFile);
+		   nfree(virtualLink->bsyFile);
 		   // mark Mail as sent
 		   xmsg->attr |= MSGSENT;
 		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-		   free(virtualLink->floFile);
+		   nfree(virtualLink->floFile);
 	   }
    } else
    
@@ -384,11 +384,11 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
 		   writeLogEntry(hpt_log, '7', "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 		   
 		   remove(virtualLink->bsyFile);
-		   free(virtualLink->bsyFile);
+		   nfree(virtualLink->bsyFile);
 		   // mark Mail as sent
 		   xmsg->attr |= MSGSENT;
 		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-		   free(virtualLink->floFile);
+		   nfree(virtualLink->floFile);
 	   }
    } else {
       
@@ -446,19 +446,19 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
 	   else if (createOutboundFileName(virtualLink, prio, FLOFILE) == 0) {
 		   processAttachs(virtualLink, &msg);
 		   remove(virtualLink->bsyFile);
-		   free(virtualLink->bsyFile);
+		   nfree(virtualLink->bsyFile);
 		   // mark Mail as sent
 		   xmsg->attr |= MSGSENT;
 		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-		   free(virtualLink->floFile);
+		   nfree(virtualLink->floFile);
 		   writeLogEntry(hpt_log, '7', "File %s from %u:%u/%u.%u -> %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 	   }
    } /* endif file attach */
 
    freeMsgBuffers(&msg);
    if (freeVirtualLink==1) {
-      free(virtualLink->name);
-      free(virtualLink);
+      nfree(virtualLink->name);
+      nfree(virtualLink);
    }
 
    if ((xmsg->attr & MSGSENT) == MSGSENT) {
@@ -632,7 +632,7 @@ void scanExport(int type, char *str) {
 	    if (*line && line[strlen(line)-1] == '\r')
 	       line[strlen(line)-1] = '\0';  /* fix for DOSish echotoss.log */
     	    scanByName(line);
-            free(line);
+            nfree(line);
          }
       }
    };

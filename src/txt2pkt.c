@@ -224,8 +224,8 @@ int main(int argc, char *argv[])
       }
       
       msg.textLength=strlen(textBuffer);
-      free(textBuffer);
-      free(versionStr);
+      nfree(textBuffer);
+      nfree(versionStr);
 
       if (config->outtab != NULL) {
          // load recoding tables

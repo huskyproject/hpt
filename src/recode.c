@@ -5,6 +5,7 @@
 #include <recode.h>
 #include <log.h>
 #include <global.h>
+#include <fidoconf/common.h>
 
 CHAR *intab  = NULL;
 
@@ -20,8 +21,8 @@ VOID initCharsets(VOID)
 
 VOID doneCharsets(VOID)
 {
-	free(intab);
-	free(outtab);
+	nfree(intab);
+	nfree(outtab);
 }
 
 VOID recodeToInternalCharset(CHAR *string)

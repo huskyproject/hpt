@@ -140,7 +140,7 @@ char *changeFileSuffix(char *fileName, char *newSuffix) {
       return newFileName;
    } else {
       writeLogEntry(hpt_log, '9', "Could not change suffix for %s. File already there and the 255 files after", fileName);
-      free (newFileName);
+      nfree(newFileName);
       return NULL;
    }
    
@@ -222,7 +222,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
    }
    strcpy((char *) msgHeader.subj,subject);
    if (subject != msg->subjectLine)
-     free(subject);
+       nfree(subject);
        
    msgHeader.orig.zone  = (word) msg->origAddr.zone;
    msgHeader.orig.node  = (word) msg->origAddr.node;
@@ -317,7 +317,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
          MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword) strlen(textStart), (dword) strlen(textStart), (dword)strlen(ctrlBuff), (byte *)ctrlBuff);
 
          MsgCloseMsg(hmsg);
-         free(ctrlBuff);
+         nfree(ctrlBuff);
 		 rc = 1;
 
       } else 
@@ -395,7 +395,7 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
 #endif
 //   exit(2);
 
-   free(seenByText);
+   nfree(seenByText);
 }
 
 void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCount)
@@ -457,7 +457,7 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
 #endif
    //exit(2);
 
-   free(seenByText);
+   nfree(seenByText);
 }
 
 /**
@@ -585,8 +585,8 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		seenByText = createControlText((*seenBys), *seenByCount, "SEEN-BY: ");
 		pathText   = createControlText((*path), *pathCount, "\001PATH: ");
 		xstrscat(&msg->text, seenByText, pathText, NULL);
-		free(seenByText);
-		free(pathText);
+		nfree(seenByText);
+		nfree(pathText);
 	}
 	
 	// add msg to the pkt's of the downlinks
@@ -649,10 +649,10 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
        forwardToLinks(msg, echo, zoneLinks, &seenBys, &seenByCount, &path, &pathCount);
    }
 
-   free(seenBys);
-   free(path);
-   free(newLinks);
-   free(zoneLinks);
+   nfree(seenBys);
+   nfree(path);
+   nfree(newLinks);
+   nfree(zoneLinks);
 }
 
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
@@ -731,7 +731,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 #endif
    } else xscatprintf(&buff, "EchoArea %s Passthrough -a %s", c_area, myaddr);
    
-   free(squishFileName);
+   nfree(squishFileName);
 
    if (creatingLink->LinkGrp) {
 	   if (hpt_stristr(newAC, " -g ")==NULL)
@@ -742,19 +742,19 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	   if (desc) {
 		   if (hpt_stristr(newAC, " -d ")==NULL)
 			   xscatprintf(&newAC, " -d \"%s\"", desc);
-		   free(desc);
+		   nfree(desc);
 	   }
    }
 
    xscatprintf(&buff, "%s %s", newAC, hisaddr);
-   free(newAC);
+   nfree(newAC);
 
    fprintf(f, "%s\n", buff); // add line to config
    fclose(f);
    
    // add new created echo to config in memory
    parseLine(buff,config);
-   free(buff);
+   nfree(buff);
 
    // echoarea addresses changed by safe_reallocating of config->echoAreas[]
    carbonNames2Addr(config);
@@ -764,8 +764,8 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr, NULL);
    else makeMsgToSysop(c_area, *forwardAddr, &pktOrigAddr);
    
-   free(myaddr);
-   free(hisaddr);
+   nfree(myaddr);
+   nfree(hisaddr);
    
    return 0;
 }
@@ -819,7 +819,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 		execstr = safe_malloc(strlen(progname)+strlen(fname)+2);
 		sprintf(execstr, "%s %s", progname, fname);
 		rc = system(execstr);
-		free(execstr);
+		nfree(execstr);
 		unlink(fname);
 	};
 	if (rc == -1 || rc == 127) {
@@ -877,7 +877,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	} else 
 		rc = processNMMsg(msg, NULL, area, 1, 0);
 	
-	free (msg->text);
+	nfree(msg->text);
 	msg->textLength = old_textLength;
 	msg->text = old_text;
 	if (recode == 0) msg->recode &= ~REC_TXT;
@@ -919,7 +919,7 @@ int carbonCopy(s_message *msg, s_area *echo)
 			break;
 		case 2:
 			kludge=getKludge(*msg, config->carbons[i].str);
-			str=kludge; if (kludge) free(kludge);
+			str=kludge; if (kludge) nfree(kludge);
 			break;
 		case 3:	str=hpt_stristr(msg->subjectLine,config->carbons[i].str);
 			break;
@@ -1047,8 +1047,7 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
             if (echo->description) {
                if (strlen(strbeg) + strlen(echo->description) >=77) {
                   xstrscat(&(msgToSysop[i]->text), strbeg, "\r", NULL);
-                  free(strbeg);
-                  strbeg = NULL;
+                  nfree(strbeg);
                   xstrcat(&strbeg, print_ch(9, ' '));
                } else {
                   xstrcat(&strbeg, " ");
@@ -1065,8 +1064,8 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
             } else { 
               xstrscat(&(msgToSysop[i]->text), print_ch(79-strlen(strbeg)-strlen(buff), ' '), buff, "\r", NULL);
             }
-            free(buff);
-            free(strbeg);
+            nfree(buff);
+            nfree(strbeg);
 
 //          Old report generation
 //	    xscatprintf(&(msgToSysop[i]->text), "Created  %-53s%s\r", 
@@ -1113,14 +1112,14 @@ void writeMsgToSysop()
 		    sortSeenBys(seenBys, 1);
    
 		    seenByPath = createControlText(seenBys, 1, "SEEN-BY: ");
-		    free(seenBys);
+		    nfree(seenBys);
    
 		    // path line
 		    // only include node-akas in path
 		    if (echo->useAka->point == 0) 
    			xscatprintf(&seenByPath, "\001PATH: %u/%u\r", echo->useAka->net, echo->useAka->node);
 		    xstrcat(&(msgToSysop[i]->text), seenByPath);
-		    free(seenByPath);
+		    nfree(seenByPath);
 		    if (echo->downlinkCount > 0) {
 			// recoding from internal to transport charSet
 			if (config->outtab) {
@@ -1268,7 +1267,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
       }
    }
 
-   free(textBuff);
+   nfree(textBuff);
    return rc;
 }
 
@@ -1341,7 +1340,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
          ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
          /* write message */
          MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *) bodyStart, len, len, strlen(ctrlBuf)+1, (UCHAR *) ctrlBuf);
-         free(ctrlBuf);
+         nfree(ctrlBuf);
          MsgCloseMsg(msgHandle);
 	 rc = 1;
 
@@ -1408,7 +1407,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	   writeLogEntry(hpt_log, '6', "ProcessPkt: execute string \"%s\"",extcmd);
 	   if ((cmdexit = system(extcmd)) != 0)
 	   writeLogEntry(hpt_log, '9', "exec failed, code %d", cmdexit);
-	   free(extcmd);
+	   nfree(extcmd);
 	 }
        /* -AS- */
        
@@ -1493,7 +1492,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 				   if ((processIt == 1) || ((processIt==2) && (msg->netMail==1)))
 					   if (processMsg(msg, header)!=1) rc=5;
 				   freeMsgBuffers(msg);
-				   free(msg);
+				   nfree(msg);
                }
 		   }
 		   if (msgrc==2) rc = 3; // rename to .bad (wrong msg format)
@@ -1513,7 +1512,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	     rc = forwardPkt(fileName, header, sec);	   
 	 }
 	 
-	 free(header);
+	 nfree(header);
 	 
        } else { // header == NULL
 		   writeLogEntry(hpt_log, '9', "pkt: %s wrong pkt-file", fileName);
@@ -1655,7 +1654,7 @@ void processDir(char *directory, e_tossSecurity sec)
       fattrs = file->d_attr;
 #endif
       if(fattrs & _A_HIDDEN) {
-          free(dummy);
+          nfree(dummy);
       } else
 #endif
       {
@@ -1691,7 +1690,7 @@ void processDir(char *directory, e_tossSecurity sec)
          rc = 3; // nonsence, but compiler warns
          if (config->tossingExt != NULL &&
              (newFileName=changeFileSuffix(dummy, config->tossingExt)) != NULL){
-            free(dummy);
+            nfree(dummy);
             dummy = newFileName;
             newFileName=NULL;
          }
@@ -1726,7 +1725,7 @@ void processDir(char *directory, e_tossSecurity sec)
       nfree(dummy);
       nfree(newFileName);
    }
-   free (files);
+   nfree(files);
 }
 
 void writeTossStatsToLog(void) {
@@ -1785,11 +1784,11 @@ int find_old_arcmail(s_link *link, FILE *flo)
 #endif
  	     	for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
 	            if (patimat(line, validExt[i]) == 1) {
-			if (bundle != NULL) free(bundle);
+			nfree(bundle);
 			bundle = strdup(line + 1); // One char for first symbol in flo file
 			break;
 		}
-		free(line);
+		nfree(line);
 	}
 	if (bundle == NULL) return 0;
 	if (*bundle != '\000') {
@@ -1804,12 +1803,12 @@ int find_old_arcmail(s_link *link, FILE *flo)
 			if (len < as * 1024L) {
 				link->packFile=(char*) safe_realloc(link->packFile,strlen(bundle)+1);
 				strcpy(link->packFile,bundle);
-				free(bundle);
+				nfree(bundle);
 				return 1;
 			}
 		}
 	}
-	free(bundle);
+	nfree(bundle);
 	return 0;
 }
 
@@ -1908,11 +1907,11 @@ void arcmail(s_link *tolink) {
 				   
 				 fprintf(flo, "^%s\n", pkt);
 				 rename(link->pktFile, pkt);
-				 free(pkt);
+				 nfree(pkt);
 				 
 			 }
 			 fclose(flo);
-			 free(link->floFile); link->floFile=NULL;
+			 nfree(link->floFile);
 			 
 			 // pack mail
 			 if (link->packerDef != NULL) {
@@ -1926,11 +1925,11 @@ void arcmail(s_link *tolink) {
 				 if (!cmdexit) remove(link->pktFile);
 			 }
 			 remove(link->bsyFile);
-			 free(link->bsyFile); link->bsyFile=NULL;
+			 nfree(link->bsyFile);
 		  }
 	  }
-	  free(link->pktFile); link->pktFile=NULL;
-	  free(link->packFile); link->packFile=NULL;
+	  nfree(link->pktFile);
+	  nfree(link->packFile);
    }
    return;
 }
@@ -1964,7 +1963,7 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 		writeLogEntry(hpt_log, '7', "Forwarding %s to %s as %s",
 		        fileName, config->links[i].name, newfn + strlen(config->tempOutbound));
 
-		free(newfn);
+		nfree(newfn);
 		forwardedPkts = 1;
 		return 0;
 	    }
@@ -1972,7 +1971,7 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 	    {
 		writeLogEntry (hpt_log, '9', "Failure moving %s to %s (%s)", fileName,
 			 newfn, strerror(errno));
-		free(newfn);
+		nfree(newfn);
 		return 4;
 	    }
 
@@ -2014,7 +2013,7 @@ void fix_qqq(char *filename)
 				fclose(f);
 			}
 		}
-		free(newname);
+		nfree(newname);
 	}
 }
 
@@ -2060,13 +2059,13 @@ void tossTempOutbound(char *directory)
                                createTempPktFileName(link);
                            }
 
-			   if (link->pktFile!=NULL) free(link->pktFile);
+			   nfree(link->pktFile);
 			   link->pktFile = dummy;
 
 			   fclose(pkt);
 			   arcmail(link);
 		   } else {
- 			   free(dummy);
+ 			   nfree(dummy);
 			   writeLogEntry(hpt_log, '9', "found non packed mail without matching link in tempOutbound");
 			   fclose(pkt);
 		   }

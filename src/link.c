@@ -99,7 +99,7 @@ static char *GetKludgeText(byte *ctl, char *kludge)
    pToken = (char *) GetCtrlToken(ctl, (byte *)kludge);
    if (pToken) {
       pKludge = strdup(pToken+1+strlen(kludge));
-      free(pToken);
+      nfree(pToken);
       return pKludge;
    } else
       return NULL;
@@ -168,7 +168,7 @@ int linkArea(s_area *area, int netMail)
 		writeLogEntry(hpt_log, '9', "out of memory while linking on msg %ld", i);
 		// try to free as much as possible
 		// FIXME : remove blocks themselves
-		free(ctl);
+		nfree(ctl);
 		MsgCloseMsg(hmsg);
 		MsgCloseArea(harea);
 		return 0;
@@ -187,7 +187,7 @@ int linkArea(s_area *area, int netMail)
  		writeLogEntry(hpt_log, '6', "hash table overflow. Tell it to the developers !"); 
 		// try to free as much as possible
 		// FIXME : remove blocks themselves
-		free(msgId);
+		nfree(msgId);
 		MsgCloseMsg(hmsg);
 		MsgCloseArea(harea);
 		return 0;
@@ -196,7 +196,7 @@ int linkArea(s_area *area, int netMail)
  		writeLogEntry(hpt_log, '6', "msg %ld has dupes in msgbase :" \
 			" trown from reply chain", i);
 		MsgCloseMsg(hmsg);
-		free(msgId);
+		nfree(msgId);
 		continue;
 	 }
 	 curr -> msgId = msgId; curr -> msgh = hmsg; 
@@ -237,14 +237,14 @@ int linkArea(s_area *area, int netMail)
 	        MsgCloseMsg(msgs[i].msgh);
 	 
          /* free this node */
-		free(msgs[i].msgId);
-		free(msgs[i].replyId);
-		free(msgs[i].xmsg);
+		nfree(msgs[i].msgId);
+		nfree(msgs[i].replyId);
+		nfree(msgs[i].xmsg);
 	};
       }
       /* close everything, free all allocated memory */
-      free(msgs);
-      free(ctl);
+      nfree(msgs);
+      nfree(ctl);
       MsgCloseArea(harea);
    } else {
       writeLogEntry(hpt_log, '9', "could not open area %s", area->areaName);
@@ -295,7 +295,7 @@ void linkAreas(void)
 	    } else {
                area = getArea(config, line);
                if /*(area->dupeCheck != dcOff) && */ (area->areaName != config->badArea.areaName) linkArea(area,0);
-               free(line);
+               nfree(line);
             }
          }
       }

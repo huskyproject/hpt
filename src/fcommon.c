@@ -111,7 +111,7 @@ int createLockFile(char *lockfile) {
         write (fd, pidstr, strlen(pidstr));
 
         close(fd);
-	free(pidstr);
+	nfree(pidstr);
         return 0;
 }
 
@@ -284,7 +284,7 @@ int createTempPktFileName(s_link *link)
 			counter=0;
 		}
 	}
-	free(zoneOutbound);
+	nfree(zoneOutbound);
 	count = counter;
 
 	counter = 0;
@@ -293,24 +293,20 @@ int createTempPktFileName(s_link *link)
 		counter++;
 	} while ((fexist(pfileName) || fileNameAlreadyUsed(NULL, pfileName)) &&
 			 (counter <= 15));
-	free(tmpPFileName);
+	nfree(tmpPFileName);
 
 	if (counter > 15) writeLogEntry(hpt_log,'7',"created 16 bundles/sec!");
     
     if ((!fexist(fileName)) && (!fexist(pfileName))) {
-        if (link->packFile != NULL) {
-            free(link->packFile);
-        }
-        if (link->pktFile != NULL) {
-            free(link->pktFile);
-        }
+        nfree(link->packFile);
+        nfree(link->pktFile);
         link->packFile = pfileName;
         link->pktFile = fileName;
         return 0;
     }
     else {
-        free(fileName);
-        free(pfileName);
+        nfree(fileName);
+        nfree(pfileName);
 		writeLogEntry(hpt_log,'7',"can't create arcmail bundles any more!");
         return 1;
     }
@@ -350,10 +346,7 @@ int createTempPktFileName(s_link *link)
 
     do
     {
-        if (filename != NULL)
-        {
-            free(filename);
-        }
+        nfree(filename);
         filename = makeUniqueDosFileName(config->tempOutbound, "pkt", config);
         memcpy(uniquestring, filename + strlen(config->tempOutbound), 8);
         uniquestring[8] = '\0';
@@ -387,14 +380,10 @@ int createTempPktFileName(s_link *link)
         }
     } while (fexist(filename) || fexist(pfilename));
 
-    free(zoneOutbound);
+    nfree(zoneOutbound);
 
-    if (link->packFile != NULL) {
-        free(link->packFile);
-    }
-    if (link->pktFile != NULL) {
-        free(link->pktFile);
-    }
+    nfree(link->packFile);
+    nfree(link->pktFile);
 
     link->packFile = pfilename;
     link->pktFile = filename;
@@ -436,7 +425,7 @@ int createDirectoryTree(const char *pathName) {
          // this part of the path does not exist, create it
          if (mymkdir(start) != 0) {
             writeLogEntry(hpt_log, '9', "Could not create directory %s", start);
-            free(start);
+            nfree(start);
             return 1;
          }
 /*    by AW 27.09.99    */
@@ -446,14 +435,14 @@ int createDirectoryTree(const char *pathName) {
       } else if(!S_ISDIR(buf.st_mode)) {
 #endif
          writeLogEntry(hpt_log, '9', "%s is a file not a directory", start);
-         free(start);
+         nfree(start);
          return 1;
       }
 
       *slash++ = limiter;
    }
 
-   free(start);
+   nfree(start);
 
    return 0;
 }
@@ -525,7 +514,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 	   sprintf(sepDir,"%s%s%c",link->bsyFile,sepname,limiter);
 
 	   createDirectoryTree(sepDir);
-	   free(sepDir);
+	   nfree(sepDir);
    }
 
    // create bsyFile
@@ -537,8 +526,8 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    if (fexist(link->bsyFile)) {
 
            writeLogEntry(hpt_log, '7', "link %s is busy.", link->name);
-           nfree (link->floFile);
-           nfree (link->bsyFile);
+           nfree(link->floFile);
+           nfree(link->bsyFile);
 
            return 1;
 
@@ -553,8 +542,8 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
               } else {
 
                  writeLogEntry(hpt_log, '7', "link %s is busy (2nd check).", link->name);
-                 nfree (link->floFile);
-                 nfree (link->bsyFile);
+                 nfree(link->floFile);
+                 nfree(link->bsyFile);
 
                  return 1;
               }

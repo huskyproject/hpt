@@ -217,7 +217,7 @@ void processConfig()
    } else printf("You have no logFileDir in your config, there will be no log created");
    if (hpt_log==NULL) printf("Could not open logfile: %s\n", buff);
    writeLogEntry(hpt_log, '1', "Start");
-   free(buff);
+   nfree(buff);
 
    if (config->addrCount == 0) exit_hpt("at least one addr must be defined",1);
    if (config->linkCount == 0) exit_hpt("at least one link must be specified",1);
@@ -269,7 +269,7 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
 
    fprintf(stdout, "Highly Portable Toss %s\n", version);
    xscatprintf(&versionStr,"hpt %s", version);
-   free(version);
+   nfree(version);
 
    if (processCommandLine(argc, argv)==1) exit(0);
 
@@ -318,9 +318,9 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
    
    for (i = 0; i < config->addrCount; i++) {
        if (msgToSysop[i]) freeMsgBuffers(msgToSysop[i]);
-       free(msgToSysop[i]);
+       nfree(msgToSysop[i]);
    }
-   free(msgToSysop);
+   nfree(msgToSysop);
 
    autoPassive();
 
@@ -332,7 +332,7 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
    closeLog(hpt_log);
    disposeConfig(config);
    doneCharsets();
-   free(versionStr);
+   nfree(versionStr);
 #if defined ( __NT__ )
    if (config->setConsoleTitle) SetConsoleTitleA(oldtitle);
 #endif

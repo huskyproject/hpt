@@ -94,11 +94,11 @@ int displayPkt(char *name, int showHeader, int showText)
 	 printf("--Text----\n%s\n", msg->text);
       freeMsgBuffers(msg);
       
-      free(msg);
+      nfree(msg);
    } /* endwhile */
    nfree(globalBuffer); // free msg->text global buffer
 
-   free (header);
+   nfree(header);
    fclose(pkt);
 
    printf("\n\n");

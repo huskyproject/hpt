@@ -32,8 +32,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <fidoconf/xstr.h>
 #include <fcommon.h>
+#include <fidoconf/xstr.h>
+#include <fidoconf/common.h>
 
 int compare(const void *first, const void *second)
 {
@@ -87,7 +88,7 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
 	  // reserve only needed space + ending \r
           text = (char *) safe_realloc(text, strlen(text)+strlen(line)+2);
 	  strcat(text,line);
-	  free(line);
+	  nfree(line);
    }
                            
    strcat(text, "\r");

@@ -2,6 +2,12 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Jun 11 18:25:29 NOVST 2000
+max:
+* areafix strip " bla bla bla" after "%command bla bla bla"
+* free -> nfree
+
+----- cvs ci ------
 Wed Jun  7 09:44:09 MSD 2000
 max:
 * fixed "hpt scan -a"

@@ -72,7 +72,7 @@ int strncasesearch(char *strL, char *strR, int len)
     strcpy(str, strL);
     if (strlen(str) > len) str[len] = 0;
     ret = stricmp(str, strR);
-    free(str);
+    nfree(str);
     return ret;
 }
 
@@ -194,7 +194,7 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 	truncate(fileName, endpos-linelen);
 #endif
     }
-    free(buff);
+    nfree(buff);
     return 0;
 }
 
@@ -227,7 +227,7 @@ int addstring(FILE *f, char *aka) {
 	fwrite(cfg,sizeof(char),(size_t) len,f);
 	fflush(f);
 	
-	free(cfg);
+	nfree(cfg);
 	return 0;
 }
 
@@ -274,7 +274,7 @@ void removelink(s_link *link, s_area *area) {
            if (addrComp(link->hisAka, links->hisAka)==0) break;
 	}
 	
-	free(area->downlinks[i]);
+	nfree(area->downlinks[i]);
 	area->downlinks[i] = area->downlinks[area->downlinkCount-1];
 	area->downlinkCount--;
 }
@@ -475,7 +475,7 @@ char *available(s_link *link) {
 					addAreaListItem(al,0,token,running);
 
 				}
-				free(line);
+				nfree(line);
 			}
 			fclose(f);
 
@@ -484,7 +484,7 @@ char *available(s_link *link) {
 				line = formatAreaList(al,78,NULL);
 				xstrcat(&report,"\r");
 				xstrcat(&report,line);
-				free(line);
+				nfree(line);
 			}
 
 			freeAreaList(al);
@@ -601,7 +601,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 			}
 			
 		}
-		free(cfgline);
+		nfree(cfgline);
 	}
 	
 	fclose(f);
@@ -645,12 +645,12 @@ int areaIsAvailable(char *areaName, char *fileName, char **desc, int retd) {
 						xstrcat(&(*desc), running);
 					}
 				}
-				free(line);
+				nfree(line);
 				fclose(f);
 				return 1;
 			}			
 		}
-		free(line);
+		nfree(line);
 	}	
 	
 	// not found
@@ -688,12 +688,12 @@ int forwardRequest(char *areatag, s_link *dwlink) {
 				// first try to find the areatag in forwardRequestFile
 				if (areaIsAvailable(areatag,uplink->forwardRequestFile,NULL,0)!=0) {
 					forwardRequestToLink(areatag,uplink,dwlink,0);
-					free(Indexes);
+					nfree(Indexes);
 					return 0;
 				}
 			} else {
 				forwardRequestToLink(areatag,uplink,dwlink,0);
-				free(Indexes);
+				nfree(Indexes);
 				return 0;
 			}
 		}
@@ -701,7 +701,7 @@ int forwardRequest(char *areatag, s_link *dwlink) {
     }
 	
 	// link with "forwardRequests on" not found
-	free(Indexes);
+	nfree(Indexes);
 	return 1;	
 }
 
@@ -871,7 +871,7 @@ int changepause(char *confName, s_link *link, int opt)
 			changepause(token, link, opt);
 		}			
 		if (stricmp(token, "link") == 0) {
-			free(cfgline);
+			nfree(cfgline);
 			for (rc = 0; rc == 0; ) {
 				fseek(f_conf, 0L, SEEK_CUR);
 				curpos = ftell(f_conf);
@@ -888,7 +888,7 @@ int changepause(char *confName, s_link *link, int opt)
 					rc = 1;
 				}
 				if (stricmp(token, "aka") == 0) break;
-				free(cfgline);
+				nfree(cfgline);
 			}
 			if (rc == 2) return 0;
 			if (rc == 1) continue;
@@ -910,14 +910,14 @@ int changepause(char *confName, s_link *link, int opt)
 				fseek(f_conf, curpos, SEEK_SET);
 				fputs("Pause\n", f_conf);
 				fputs(line, f_conf);
-				free(line);
-				free(cfgline);
+				nfree(line);
+				nfree(cfgline);
 				link->Pause = 1;
 				writeLogEntry(hpt_log, '8', "%s: system %s set passive", opt ? "autopause" : "areafix", aka2str(link->hisAka));
 				break;
 			}
 		}
-		free(cfgline);
+		nfree(cfgline);
     }
     fclose(f_conf);
     return 1;
@@ -934,7 +934,7 @@ char *pause_link(s_message *msg, s_link *link)
     xstrcat(&report, " System switched to passive\r");
     tmp = linked(msg, link);
     xstrcat(&report, tmp);
-    free(tmp);
+    nfree(tmp);
 
     return report;
 }
@@ -963,7 +963,7 @@ int changeresume(char *confName, s_link *link)
 			changeresume(token, link);
 		}			
 		if (stricmp(token, "link") == 0) {
-			free(cfgline);
+			nfree(cfgline);
 			for (rc = 0; rc == 0; ) {
 				fseek(f_conf, 0L, SEEK_CUR);
 				curpos = ftell(f_conf);
@@ -980,13 +980,13 @@ int changeresume(char *confName, s_link *link)
 					rc = 1;
 				}
 				if (stricmp(token, "aka") == 0) break;
-				free(cfgline);
+				nfree(cfgline);
 			}
 			if (rc == 2) break;
 			if (rc == 1) continue;
 			token = strseparate(&line, " \t");
 			if (testAddr(token, link->hisAka)) {
-				free(cfgline);
+				nfree(cfgline);
 				for (rc = 0; rc == 0; ) {
 					fseek(f_conf, 0L, SEEK_CUR);
 					curpos = ftell(f_conf);
@@ -1003,7 +1003,7 @@ int changeresume(char *confName, s_link *link)
 						break;
 					}
 					if (stricmp(token, "pause") == 0) break;
-					free(cfgline);
+					nfree(cfgline);
 				}
 				if (rc) break;
 				
@@ -1027,14 +1027,14 @@ int changeresume(char *confName, s_link *link)
 #else
 				truncate(confName, endpos-(remstr-curpos));
 #endif
-				free(line);
-				free(cfgline);
+				nfree(line);
+				nfree(cfgline);
 				link->Pause = 0;
 				writeLogEntry(hpt_log, '8', "areafix: system %s set active",	aka2str(link->hisAka));
 				break;
     	    }
 		}
-		free(cfgline);
+		nfree(cfgline);
     }
     fclose(f_conf);
     if (rc) return 0;
@@ -1052,7 +1052,7 @@ char *resume_link(s_message *msg, s_link *link)
     xstrcat(&report, " System switched to active\r");
     tmp = linked(msg, link);
     xstrcat(&report, tmp);
-    free(tmp);
+    nfree(tmp);
 
     return report;
 }
@@ -1081,7 +1081,7 @@ char *info_link(s_message *msg, s_link *link)
     xscatprintf(&report, ")\r\rYour system is %s\r", link->Pause ? "passive" : "active");
     ptr = linked(msg, link);
     xstrcat(&report, ptr);
-    free(ptr);
+    nfree(ptr);
     writeLogEntry(hpt_log, '8', "areafix: link information sent to %s", aka2str(link->hisAka));
     return report;
 }
@@ -1107,10 +1107,8 @@ void repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
    if (link->pktFile != NULL && link->pktSize != 0) { // check packet size
 	   len = fsize(link->pktFile);
 	   if (len >= link->pktSize * 1024L) { // Stop writing to pkt
-		   free(link->pktFile);
-		   link->pktFile=NULL;
-		   free(link->packFile);
-		   link->packFile=NULL;
+		   nfree(link->pktFile);
+		   nfree(link->packFile);
 	   }
    }
    
@@ -1279,17 +1277,17 @@ int tellcmd(char *cmd) {
 	case '%': 
 		line++;
 		if (*line == 0) return ERROR;
-		if (stricmp(line,"list")==0) return LIST;
-		if (stricmp(line,"help")==0) return HELP;
-		if (stricmp(line,"avail")==0) return AVAIL;
-		if (stricmp(line,"available")==0) return AVAIL;
-		if (stricmp(line,"all")==0) return AVAIL;
-		if (stricmp(line,"unlinked")==0) return UNLINK;
-		if (stricmp(line,"linked")==0) return QUERY;
-		if (stricmp(line,"query")==0) return QUERY;
-		if (stricmp(line,"pause")==0) return PAUSE;
-		if (stricmp(line,"resume")==0) return RESUME;
-		if (stricmp(line,"info")==0) return INFO;
+		if (strncasecmp(line,"list",4)==0) return LIST;
+		if (strncasecmp(line,"help",4)==0) return HELP;
+		if (strncasecmp(line,"avail",5)==0) return AVAIL;
+//		if (stricmp(line,"available")==0) return AVAIL;
+		if (strncasecmp(line,"all",3)==0) return AVAIL;
+		if (strncasecmp(line,"unlinked",8)==0) return UNLINK;
+		if (strncasecmp(line,"linked",6)==0) return QUERY;
+		if (strncasecmp(line,"query",5)==0) return QUERY;
+		if (strncasecmp(line,"pause",5)==0) return PAUSE;
+		if (strncasecmp(line,"resume",6)==0) return RESUME;
+		if (strncasecmp(line,"info",4)==0) return INFO;
 		if (strncasesearch(line, "rescan", 6)==0) return RESCAN;
 		return ERROR;
 	case '\001': return NOTHING;
@@ -1363,7 +1361,7 @@ void preprocText(char *split, s_message *msg)
     }
     xstrcat(&(msg->text), split);
     msg->textLength=(int)strlen(msg->text);
-    free(split);
+    nfree(split);
 }
 
 char *textHead(void)
@@ -1379,11 +1377,11 @@ char *areaStatus(char *report, char *preport)
 {
     if (report == NULL) report = textHead();
     xstrcat(&report, preport);
-    free(preport);
+    nfree(preport);
     return report;
 }
 
-/* report already free() after this function */
+/* report already nfree() after this function */
 void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 {
     char *tab = config->intab, *text, *split, *p, *newsubj = NULL;
@@ -1406,7 +1404,7 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 			    xstrcat(&text,split);
 			    split = text;
 			    text = NULL;
-			    free (report);
+			    nfree(report);
 			}
 		} else {
 			p = text + msgsize;
@@ -1433,11 +1431,8 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 		processNMMsg(tmpmsg, NULL, NULL, 0, MSGLOCAL);
 
 		freeMsgBuffers(tmpmsg);
-		free(tmpmsg);
-		if (partnum) {
-		    free(newsubj);
-		    newsubj=NULL;
-		}
+		nfree(tmpmsg);
+		if (partnum) nfree(newsubj);
 	}
 
     config->intab = tab;
@@ -1583,7 +1578,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		
 		RetMsg(msg, link, report, "areafix reply: security violation");
 		writeLogEntry(hpt_log, '8', "areafix: security violation from %s", aka2str(link->hisAka));
-		free(tmplink);
+		nfree(tmplink);
 		
 		return 1;
 	}
@@ -1591,7 +1586,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	if ( report != NULL ) {
 		preport=linked(msg, link);
 		xstrcat(&report, preport);
-		free(preport);
+		nfree(preport);
 		RetMsg(msg, link, report, "areafix reply: node change request");
 	}
 	
@@ -1615,7 +1610,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		processNMMsg(linkmsg, &header, NULL, 0, MSGLOCAL);
 
 		freeMsgBuffers(linkmsg);
-		free(linkmsg);
+		nfree(linkmsg);
 		link->msg = NULL;
 	}
 	
@@ -1745,9 +1740,9 @@ void autoPassive()
                                  msg->textLength = strlen(msg->text);
                                  processNMMsg(msg, NULL, NULL, 0, MSGLOCAL);
                                  freeMsgBuffers(msg);
-				 free(msg);
+				 nfree(msg);
                               }
-			      free(line);
+			      nfree(line);
                               fclose(f);
                               break;
                            }
@@ -1755,16 +1750,16 @@ void autoPassive()
                         } /* endif */
                      } /* endif */
                   } /* endif */
-		  free(line);
+		  nfree(line);
                } /* endwhile */
                fclose(f);
             } /* endif */
-            free(config->links[i].floFile); config->links[i].floFile=NULL;
+            nfree(config->links[i].floFile);
             remove(config->links[i].bsyFile);
-            free(config->links[i].bsyFile); config->links[i].bsyFile=NULL;
+            nfree(config->links[i].bsyFile);
          }
-         free(config->links[i].pktFile); config->links[i].pktFile=NULL;
-         free(config->links[i].packFile); config->links[i].packFile=NULL;
+         nfree(config->links[i].pktFile);
+         nfree(config->links[i].packFile);
       } else {
       } /* endif */
    } /* endfor */
@@ -1845,13 +1840,13 @@ int relink (char *straddr) {
 		writeLogEntry(hpt_log, '8', "'Refresh' message created to `AreaFix`");
 		processNMMsg(msg, NULL, NULL, 0, 0);
 		freeMsgBuffers(msg);
-		free(msg);
+		nfree(msg);
 		writeLogEntry(hpt_log, '8', "Total request relink %i area(s)",areasArraySize);
 
 		cmPack = 1;
 	}
 
-	free (areasIndexArray);
+	nfree(areasIndexArray);
 
 	return 0;
 }
