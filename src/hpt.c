@@ -1,4 +1,3 @@
-/*:ts=8*/
 /*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
@@ -79,7 +78,7 @@ char *scanParmF;
 /* kn: I've really tried not to break it. 
    FIXME: if there is pack and scan options on cmd line - one set 
    of options are lost */
-int  processExportOptions(int *i, int argc, char **argv)
+int  processExportOptions(unsigned int *i, int argc, char **argv)
 { 
   int rc = 0;
   while ((*i) < argc-1) {

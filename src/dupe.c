@@ -1,4 +1,3 @@
-/*:ts=8*/
 /*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
@@ -499,8 +498,13 @@ int CheckDupe(s_area *area, const s_message msg) {
       sqhh.lastUMSGID = sqhh.maxdupes = 1 << sqhh.size;
       fwrite(&sqhh, sizeof(SQHheader), 1, SQHf);
       memset(&sqheNew, 0, sizeof(SQHentry));
+#ifndef HAS_JUNK_AFTER_SEEK
       fseek(SQHf, (sqhh.maxdupes*2 - 1)*sizeof(SQHentry)+sizeof(SQHheader), SEEK_SET);
       fwrite(&sqheNew, sizeof(SQHentry), 1, SQHf);
+#else
+      for (currententry = 0; currententry < sqhh.maxdupes*2; currententry++)
+       fwrite(&sqheNew, sizeof(SQHentry), 1, SQHf);
+#endif
     }
   }
 

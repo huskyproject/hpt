@@ -29,10 +29,10 @@ OBJS    = pktinfo.obj \
 SRC_DIR = ..\src
 
 !IF $(DEBUG) == 1
-CFLAGS  = -DDEBUG_HPT -v -w -ml -I..\h -I$(INCDIR) -DMSDOS
+CFLAGS  = -DDEBUG_HPT -v -w -ml -I..\h -I$(INCDIR) -DMSDOS -DHAS_JUNK_AFTER_SEEK
 LFLAGS  = -v -w -ml -L$(LIBDIR)
 !ELSE
-CFLAGS  = -w -ml -I..\h -I$(INCDIR) -DMSDOS
+CFLAGS  = -w -ml -I..\h -I$(INCDIR) -DMSDOS -DHAS_JUNK_AFTER_SEEK
 LFLAGS  = -w -ml -L$(LIBDIR)
 !ENDIF
 

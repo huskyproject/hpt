@@ -267,12 +267,17 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, UINT16 forceattr)
       if (hmsg != NULL) {
 
          // recode from TransportCharset to internal Charset
-         if (msg->recode == 0 && config->intab != NULL) {
-            recodeToInternalCharset((CHAR*)msg->fromUserName);
-            recodeToInternalCharset((CHAR*)msg->toUserName);
-            recodeToInternalCharset((CHAR*)msg->subjectLine);
-            recodeToInternalCharset((CHAR*)msg->text);
-			msg->recode = 1;
+         if (config->intab != NULL) {
+            if ((msg->recode & REC_HDR)==0) {
+		recodeToInternalCharset((CHAR*)msg->fromUserName);
+                recodeToInternalCharset((CHAR*)msg->toUserName);
+                recodeToInternalCharset((CHAR*)msg->subjectLine);
+	        msg->recode |= REC_HDR;
+            }
+	    if ((msg->recode & REC_TXT)==0) {
+		recodeToInternalCharset((CHAR*)msg->text);
+		msg->recode |= REC_TXT;
+	    }
          }
 
          textWithoutArea = msg->text;
@@ -937,6 +942,8 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	free (msg->text);
 	msg->textLength = old_textLength;
 	msg->text = old_text;
+	msg->recode &= ~REC_TXT;
+	
 	return rc;
 }
 
@@ -1296,11 +1303,18 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
       if (msgHandle != NULL) {
          area -> imported++; // area has got new messages
 
+         // recode from TransportCharset to internal Charset
          if (config->intab != NULL) {
-            recodeToInternalCharset((CHAR*)msg->fromUserName);
-            recodeToInternalCharset((CHAR*)msg->toUserName);
-            recodeToInternalCharset((CHAR*)msg->subjectLine);
-            recodeToInternalCharset((CHAR*)msg->text);
+            if ((msg->recode & REC_HDR)==0) {
+		recodeToInternalCharset((CHAR*)msg->fromUserName);
+                recodeToInternalCharset((CHAR*)msg->toUserName);
+                recodeToInternalCharset((CHAR*)msg->subjectLine);
+	        msg->recode |= REC_HDR;
+            }
+	    if ((msg->recode & REC_TXT)==0) {
+		recodeToInternalCharset((CHAR*)msg->text);
+		msg->recode |= REC_TXT;
+	    }
          }
 
          msgHeader = createXMSG(msg, pktHeader, 0);

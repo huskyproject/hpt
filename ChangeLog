@@ -2,6 +2,12 @@ hpt 0.30
 --------
 
 ----- cvs ci -----	
+Thu Nov  4 23:10:31 NOVT 1999
+max:
+* fixed wrong recoding carbon messages
+* patch from Kolya Nesterov for HASHDUPEs (for dos & win32)
+
+----- cvs ci -----	
 Thu Nov  4 10:15:38 MET 1999 
 mtt:
 * fixed buffer overflow bug in seenby.c (thanks to Alex Semenyaka)

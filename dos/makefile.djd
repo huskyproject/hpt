@@ -7,10 +7,10 @@ OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scan
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -I../h -I$(INCDIR) -Wall -ggdb -O3
+  CFLAGS  = -I../h -I$(INCDIR) -Wall -ggdb -O3  -DHAS_JUNK_AFTER_SEEK
   LFLAGS  = -L$(LIBDIR)
 else
-  CFLAGS  = -I../h -I$(INCDIR) -Wall -O3 -s
+  CFLAGS  = -I../h -I$(INCDIR) -Wall -O3 -s -DHAS_JUNK_AFTER_SEEK
   LFLAGS  = -L$(LIBDIR)
 endif
 

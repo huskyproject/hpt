@@ -8,9 +8,9 @@ OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.o
 SRC_DIR = ..\src
 
 !IF $(DEBUG) == 1
-CFLAGS = -d2 -zq -wx -bt=nt -i=$(INCDIR);..\h; -oneatx -5 -DHASHDUPE
+CFLAGS = -d2 -zq -wx -bt=nt -i=$(INCDIR);..\h; -oneatx -5 -DHASHDUPE -DHAS_JUNK_AFTER_SEEK
 !ELSE
-CFLAGS = -zq -wx -bt=nt -i=$(INCDIR);..\h; -oneatx -5 -DHASHDUPE
+CFLAGS = -zq -wx -bt=nt -i=$(INCDIR);..\h; -oneatx -5 -DHASHDUPE -DHAS_JUNK_AFTER_SEEK
 !ENDIF
 
 all: $(OBJS) pktinfo.exe tlog.exe hpt.exe

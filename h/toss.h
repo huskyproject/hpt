@@ -73,4 +73,7 @@ int writeCheck(s_area *echo, s_addr *aka);
 // '\x0003' no access import
 // '\x0004' not linked
 
+#define REC_HDR 0x0001
+#define REC_TXT 0x0002
+
 #endif
