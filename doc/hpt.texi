@@ -3000,6 +3000,8 @@ will be stored in the outbound.
 
 This statement can only be repeated for different links.
 
+If you use hptzip (Zlib) library, you can set <packer> - zipinternal.
+
 @node Password, Pause, Packer, Link Keywords
 @subsection Password
 @findex Password
