@@ -3,6 +3,10 @@ hpt 0.26
 --------
 
 ----- cvs ci ------
+Wed Jan 20 09:24:50 CET 1999
+- pkt´s nor really going to pnt-dir not to some weired place in tempOutbound
+
+----- cvs ci ------
 Tue Jan 19 21:53:14 CET 1999
 - cosmetical prob if a netmail has no route, the log-msg was wrong
 - there was a bug in sven's patch
