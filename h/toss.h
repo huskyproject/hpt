@@ -69,7 +69,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr);
 int  carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo);
 s_arealink *getAreaLink(s_area *area, s_addr aka);
 void closeOpenedPkt(void);
-
+int  isArcMail(char *fname);
 
 s_message* MessForCC(s_message *msg);
 

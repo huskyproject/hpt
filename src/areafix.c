@@ -84,17 +84,6 @@ char *print_ch(int len, char ch)
     return tmp;
 }
 
-int isarcmail (char *name)
-{
-    char *ext = name + strlen(name) - 4;
-
-    if (strncasecmp(ext, ".mo", 3) == 0 || strncasecmp(ext, ".tu", 3) == 0||
-        strncasecmp(ext, ".we", 3) == 0 || strncasecmp(ext, ".th", 3) == 0||
-        strncasecmp(ext, ".fr", 3) == 0 || strncasecmp(ext, ".sa", 3) == 0||
-        strncasecmp(ext, ".su", 3) == 0) return 1;
-    else return 0;
-}
-
 /* test area-link pair to mandatory
  */
 int mandatoryCheck(s_area area, s_link *link) {
@@ -2240,7 +2229,7 @@ void autoPassive()
 	      while ((line = readLine(f)) != NULL) {
 		  line = trimLine(line);
 		  path = line;
-		  if (!isarcmail(path)) {
+		  if (!isArcMail(path)) {
 		      nfree(line);
 		      continue;
 		  }

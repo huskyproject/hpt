@@ -1336,22 +1336,43 @@ int filesComparer(const void *elem1, const void *elem2) {
     return strcasecmp(((s_fileInDir *) elem1) -> fileName, ((s_fileInDir *) elem2) -> fileName);
 }
 
-char *validExt[] = {
- "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].SU[0-9A-Z]",
- "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].MO[0-9A-Z]",
- "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].TU[0-9A-Z]",
- "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].WE[0-9A-Z]",
- "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].TH[0-9A-Z]",
- "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].FR[0-9A-Z]",
- "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].SA[0-9A-Z]"
-};
+static char *validExt[] = { "su", "mo", "tu", "we", "th", "fr", "sa" };
+
+int isArcMail(char *fname)
+{
+	char *p;
+	int i;
+	p=strrchr(fname, PATH_DELIM);
+	if (p) p++;
+	else p=fname;
+	/* Amiga? */
+	for (i=0; i<8; i++)
+		if (!isalnum(p[i]))
+			break;
+	if (i<8) {
+		/* Amiga? */
+		for (i=0; i<4; i++) {
+			if (!isdigit(*p++)) return 0;
+			while (isdigit(*p)) p++;
+			if (*p++ != '.') return 0;
+		}
+	} else {
+		p += i;
+		if (*p++ != '.') return 0;
+	}
+	for (i=0; i<sizeof(validExt)/sizeof(validExt[0]); i++)
+		if (strncasecmp(p, validExt[i], 2) == 0)
+			break;
+	if (i == sizeof(validExt)/sizeof(*validExt)) return 0;
+	return (isalnum(p[2]) && (p[3] == '\0'));
+}
 
 void processDir(char *directory, e_tossSecurity sec)
 {
     DIR            *dir = NULL;
     struct dirent  *file = NULL;
     char           *dummy = NULL;
-    int            rc, i;
+    int            rc;
     int            pktFile,
 	arcFile;
     s_fileInDir *files = NULL;
@@ -1431,9 +1452,8 @@ void processDir(char *directory, e_tossSecurity sec)
 	w_log(LL_DEBUGV,"testing sorted %s\n", dummy);
 #endif
 	if (!(pktFile = patimat(dummy+dirNameLen, "*.pkt") == 1))
-	    for (i = 0; i < sizeof(validExt) / sizeof(validExt[0]); i++)
-		if (patimat(dummy+dirNameLen, validExt[i]) == 1)
-		    arcFile = 1;
+	    if (isArcMail(dummy+dirNameLen)) 
+		arcFile = 1;
 
 	if (pktFile || (arcFile && !config->noProcessBundles)) {
 
@@ -1568,24 +1588,17 @@ void writeTossStatsToLog(void) {
 
 int find_old_arcmail(s_link *link, FILE *flo)
 {
-    char *line = NULL, *bundle=NULL, *p=NULL;
+    char *line = NULL, *bundle=NULL;
     ULONG len;
-    unsigned i, as;
+    unsigned as;
 
     while ((line = readLine(flo)) != NULL) {
 #ifndef UNIX
 	line = trimLine(line);
 #endif
-	for (i = 0; i < sizeof(validExt) / sizeof(validExt[0]); i++) {
-	    p = strrchr(line, PATH_DELIM);
-	    if (p && patimat(p+1, validExt[i]) == 1) {
-		if (*line!='~') {
-		    nfree(bundle);
-		    /*  One char for first symbol in flo file */
-		    bundle = safe_strdup(line + 1);
-		}
-		break;
-	    }
+	if ((*line=='^' || *line=='#') && isArcMail(line + 1)) {
+	    nfree(bundle);
+	    bundle = safe_strdup(line + 1);
 	}
 	nfree(line);
     }
