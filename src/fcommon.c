@@ -317,7 +317,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    if (fexist(link->bsyFile)) {
 
            tolog = (char*) malloc (strlen(link->name)+40+1);
-           sprintf(tolog,"link %s is busy. hold mail in tempOutbound", link->name);
+           sprintf(tolog,"link %s is busy.", link->name);
 
            writeLogEntry(log, '7', tolog);
            free (link->floFile); link->floFile = NULL;

@@ -123,15 +123,16 @@ void processConfig()
    if (config->tempInbound == NULL) printf("you must set tempInbound in fidoconfig first\n");
 
    if (config->addrCount == 0 ||
-           config->linkCount == 0 ||
-           config->linkCount == 0 ||
-           config->tempOutbound == NULL) {
-           if (config->lockfile != NULL) remove(config->lockfile);
-           writeLogEntry(log, '9', "wrong config file");
-           writeLogEntry(log, '1', "End");
-           closeLog(log);
-           disposeConfig(config);
-           exit(1);
+       config->linkCount == 0 ||
+       config->linkCount == 0 ||
+       config->tempInbound == NULL ||
+       config->tempOutbound == NULL) {
+      if (config->lockfile != NULL) remove(config->lockfile);
+      writeLogEntry(log, '9', "wrong config file");
+      writeLogEntry(log, '1', "End");
+      closeLog(log);
+      disposeConfig(config);
+      exit(1);
    }
 }
 

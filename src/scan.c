@@ -273,7 +273,7 @@ void processRequests(s_link *link, s_message *msg)
 
 int packMsg(HMSG SQmsg, XMSG xmsg)
 {
-   FILE        *pkt, *req;
+   FILE        *pkt;
    char        buff[90];
    e_prio      prio;
    s_message   msg;
