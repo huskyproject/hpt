@@ -1,3 +1,37 @@
+2002-07-24 Wednesday 22:36  stas
+
+	* src/areafix.c (1.327): Initialize variable 'j' in unsubscribe(),
+	line 1222 (prevent compiler varning)
+
+2002-07-24 Wednesday 22:27  stas
+
+	* doc/hpt-FAQ.russian (1.26): Update for patch 2002-07-22 Monday
+	23:27  stas: change TOPT kludgetoo
+
+2002-07-24 Wednesday 18:18  mche
+
+	* TODO (1.195): no message
+
+2002-07-24 Wednesday 17:35  mche
+
+	* src/: link.c (1.56), query.c (1.54): link warnings log level
+	changed
+
+2002-07-24 Wednesday 17:00  mche
+
+	* src/areafix.c (1.326): report about rescanable areas by %list
+	command to areafix rescanable areas will have mark 'R'
+
+2002-07-24 Wednesday 15:48  mche
+
+	* src/areafix.c (1.325): fix core when unsubscribe from own addres
+	from area that has no links and non-passthroughtþ in this case area
+	will be removed from config file
+
+2002-07-24 Wednesday 13:20  mche
+
+	* src/link.c (1.55): do not link areas twice
+
 2002-07-23 Tuesday 09:15  pavel.gulchouck
 
 	* misc/filter.pl (1.8): routing a bit improved
