@@ -279,7 +279,7 @@ void processRequests(s_link *link, s_message *msg)
    //token = strtok_r(msg->subjectLine, " \t", &running);
 
    while (token != NULL) {
-     if (flo != NULL) fprintf(flo, "%s\f\r", token); // \f\r to create dos LFCR which ends a line
+     if (flo != NULL) fprintf(flo, "%s\015\012", token); // #13#10 to create dos LFCR which ends a line
 
       token = strseparate(&running, " \t");
       //token = strtok_r(NULL, " \t", &running);
