@@ -1,3 +1,18 @@
+2003-01-23 Thursday 11:28  mche
+
+	* src/carbon.c (1.17): undo previous patch
+	
+	2Stas: а подумать прежде чем ломать работающий код???
+
+2003-01-23 Thursday 11:14  stas_degteff
+
+	* src/carbon.c (1.16): Fix AREA for carboned messages. Path from
+	Alexander N. Skovpen 2:5020/9696 (modified).
+
+2003-01-23 Thursday 09:21  mche
+
+	* src/dupe.c (1.69): optimization on dupe detection
+
 2003-01-22 Wednesday 09:23  mche
 
 	* doc/hpt.texi (1.99): Doc for AdvStatisticsFile
