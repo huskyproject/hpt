@@ -1,3 +1,16 @@
+2002-06-25 Tuesday 18:04  stas
+
+	* VERSION (1.4), src/global.c (1.44): Change -current version
+	number after 1.2-stable branch starting.
+
+2002-06-25 Tuesday 17:53  stas
+
+	* INSTALL (1.11), TODO (1.191): Change documentation.
+
+2002-06-25 Tuesday 12:10  mche
+
+	* src/hptlink.c (1.40): fix msvc static compilation
+
 2002-06-24 Monday 21:07  stas
 
 	* src/toss.c (1.417): Fix loglevel for "Packing for ..." message
