@@ -1,3 +1,16 @@
+2002-02-26 Tuesday 15:48  mche
+
+	* src/query.c (1.23): add sorting to queryfile
+
+2002-02-26 Tuesday 15:34  mche
+
+	* h/query.h (1.8): added variable for report string
+
+2002-02-26 Tuesday 09:07  ml
+
+	* make/makeperl.mvc (1.6), make/makeperl.mvcdll (1.1), src/perl.c
+	(1.24): changes for compiling mscv6 dll version with perl support
+
 2002-02-25 Monday 21:55  pavel.gulchouck
 
 	* src/: scan.c (1.140), scanarea.c (1.76): jam special highwater
