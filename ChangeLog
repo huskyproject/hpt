@@ -2,6 +2,11 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Jul  9 20:01:16 NOVST 2000
+max:
+* fixed processing forward requests (bug from 30 Jun)
+
+----- cvs ci ------
 Thu Jul  6 23:14:39 NOVST 2000
 max:
 * exit if not defined or passthrough dupeArea & badArea

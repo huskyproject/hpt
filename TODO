@@ -10,6 +10,10 @@ Category 1: Will certainly be implemented until next release
 - tossIgnoreSeenBy <address>
 - -sbadd <addr>, -sbdel <addr>
 - reduces Seen-BYs (fsc-0093)
+- createForwardNonPass
+- correctEMAddr: take node from path if no origin in message
+- unpack all bundles before toss
+- afterUnpackBundle, afterUnpackAll
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
