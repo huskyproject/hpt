@@ -371,6 +371,7 @@ define links and areas before any carbone definitions
 * PackNetMailOnScan::           pack netmail found in EchoTossLog file when scan
 * ProcessPkt::                  execute string before tossing pkts
 * PublicGroup::                 this is a list of groups for public echo acess
+* RecodeMsgBase::               allow recoding of message base
 * Remap::                       remap mail to other address
 * ReportTo::                    set area or netmail for autocreate reports
 * RobotsArea::                  area for areafix scanning
@@ -1228,7 +1229,7 @@ pkt file may be renamed depending of @code{tossingExt} token value.
 
 This statement cannot be repeated.
 
-@node PublicGroup, Remap, ProcessPkt, Keywords
+@node PublicGroup, RecodeMsgBase, ProcessPkt, Keywords
 @subsection PublicGroup
 @findex PublicGroup
 @table @asis
@@ -1242,7 +1243,25 @@ Specifies groups for public echo acess.
 
 This statement cannot be repeated.
 
-@node Remap, ReportTo, PublicGroup, Keywords
+@node RecodeMsgBase, Remap, PublicGroup, Keywords
+@subsection RecodeMsgBase
+@findex RecodeMsgBase
+@table @asis
+@item Syntax:
+@code{recodeMsgBase <bool>}
+@item Example:
+@code{recodeMsgBase off}
+@item Defaults:
+@code{recodeMsgBase on}
+@end table
+
+This statement specifies if we should recode messages when put/get them 
+to/from message base. So you can keep message base in transport charset and
+configs/other local files in local one.
+
+This statement cannot be repeated.
+
+@node Remap, ReportTo, RecodeMsgBase, Keywords
 @subsection Remap
 @findex Remap
 @table @asis
