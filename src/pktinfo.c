@@ -37,12 +37,18 @@
 #include <pkt.h>
 #include <version.h>
 
+static char *attrStr[] = { "pvt", "crash", "read", "sent", "att",
+                       "fwd", "orphan", "k/s", "loc", "hld",
+                       "xx2",  "frq", "rrq", "cpt", "arq", "urq" };
+
 int displayPkt(char *name, int showHeader, int showText)
 {
    s_pktHeader *header;
    s_message   *msg;
    FILE *pkt;
    char *p;
+   int i;
+
    pkt = fopen(name, "rb");
    if (pkt==NULL) {
       printf("couldn't open %s\n", name);
@@ -76,6 +82,11 @@ int displayPkt(char *name, int showHeader, int showText)
 	 printf("Written at %s\n", msg->datetime);
          printf("From:    %s\nTo:      %s\nSubject: %s\n", msg->fromUserName, 
 			 msg->toUserName, msg->subjectLine);
+         printf("Attr:   ");
+         for (i=0; i < sizeof(attrStr) / sizeof(char *); i++) {
+            if ((1 << i & msg->attributes) != 0) printf(" %s", attrStr[i]);
+         }
+         printf("\n");
       };
       if (showText) 
 	 printf("--Text----\n%s\n", msg->text);

@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Wed Apr 12 13:57:24 MSD 2000
+max (patch from Serguei Revtov):
+* print message attributes in pktinfo
+
+----- cvs ci ------
 Sun Apr 10 16:40:00 CET 2000
 sms:
 * some changes to fidoconfig.h and affected files needed to automatically
