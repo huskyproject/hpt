@@ -6,8 +6,8 @@ OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.o
 
 SRC_DIR = ..\src
 
-CFLAGS = -d2 -hw -i=..\..;..\h; -oneatx -zq -5
-LFLAGS  = DEBUG Watcom
+CFLAGS = -d2 -hw -i=..\..;..\h; -oneatx -zq -5 -bt=os2v2 -DOS2
+LFLAGS  = system os2v2 DEBUG Watcom
 
 all: $(OBJS) pktinfo.exe hpt.exe hptlink.exe hpttree.exe
 
@@ -19,23 +19,23 @@ pktinfo.obj: $(SRC_DIR)\*.c
   @echo compiling $*.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
-pktinfo.exe: pktinfo.obj fcommon.obj pktread.obj
+pktinfo.exe: pktinfo.obj fcommon.obj pktread.obj fcommon.obj recode.obj
   @echo linking pktinfo
-  $(LINK) $(LFLAGS) FILE pktinfo.obj, log.obj, pktread.obj, global.obj, dupe.obj, tree.obj, crc.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fconfwcw.lib NAME pktinfo.exe
+  $(LINK) $(LFLAGS) FILE pktinfo.obj, log.obj, pktread.obj, global.obj, recode.obj, dupe.obj, tree.obj, crc.obj, fcommon.obj LIBRARY ..\..\smapi\smapiwco.lib, ..\..\fidoconf\fconfwco.lib NAME pktinfo.exe
 
 hptlink.exe:
   $(CC) $(CFLAGS) $(SRC_DIR)\hptlink.c
   @echo linking hptlink
-  $(LINK) $(LFLAGS) FILE hptlink.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fconfwcw.lib NAME hptlink.exe
+  $(LINK) $(LFLAGS) FILE hptlink.obj LIBRARY ..\..\smapi\smapiwco.lib,  ..\..\fidoconf\fconfwco.lib NAME hptlink.exe
 
 hpttree.exe:
   $(CC) $(CFLAGS) $(SRC_DIR)\hpttree.c
   @echo linking hpttree
-  $(LINK) $(LFLAGS) FILE hpttree.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fconfwcw.lib NAME hpttree.exe
+  $(LINK) $(LFLAGS) FILE hpttree.obj LIBRARY ..\..\smapi\smapiwco.lib, ..\..\fidoconf\fconfwco.lib NAME hpttree.exe
 
 hpt.exe: $(OBJS)
   @echo linking hpt
-  $(LINK) $(LFLAGS) FILE hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, post.obj, areafix.obj, dupe.obj, recode.obj, tree.obj, seenby.obj, strsep.obj, link.obj, crc.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fconfwcw.lib NAME hpt.exe
+  $(LINK) $(LFLAGS) FILE hpt.obj, arealist.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, post.obj, areafix.obj, dupe.obj, recode.obj, tree.obj, seenby.obj, strsep.obj, link.obj, crc.obj LIBRARY ..\..\smapi\smapiwco.lib, ..\..\fidoconf\fconfwco.lib NAME hpt.exe
 
 clean:
 	del *.obj
