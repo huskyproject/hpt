@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Jan 27 15:22:41 NOVT 2001
+max:
+* autoAreaCreateMask in forwardRequests
+
+----- cvs ci ------
 Sat Jan 20 21:56:54 NOVT 2001
 max:
 * hpt pause - set pause for links who don't poll our system

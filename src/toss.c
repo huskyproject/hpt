@@ -2304,6 +2304,7 @@ void arcmail(s_link *tolink) {
 					 fprintf(flo, "^%s\n", pkt);
 					 rename(link->pktFile, pkt);
 					 nfree(pkt);
+					 writeLogEntry(hpt_log, '7', "Leave non-packed mail for %s %s, %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile));
 				 }
 
 				 fclose(flo);

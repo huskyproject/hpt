@@ -701,6 +701,16 @@ static int compare_links_priority(const void *a, const void *b) {
 	else return 0;
 }
 
+int tag_mask(char *tag, s_link *link) {
+	unsigned int i;
+
+	for (i = 0; i < link->numAacMask; i++) {
+		if (patimat(tag,link->aacMask[i])) return 1;
+	}
+
+	return 0;
+}
+
 int forwardRequest(char *areatag, s_link *dwlink) {
     int i, rc = 1;
     s_link *uplink;
@@ -723,7 +733,8 @@ int forwardRequest(char *areatag, s_link *dwlink) {
 			
 			if (uplink->forwardRequestFile!=NULL) {
 				// first try to find the areatag in forwardRequestFile
-				if (areaIsAvailable(areatag,uplink->forwardRequestFile,NULL,0)!=0) {
+				if (areaIsAvailable(areatag,uplink->forwardRequestFile,NULL,0)!=0
+					|| tag_mask(areatag, uplink)) {
 					forwardRequestToLink(areatag,uplink,dwlink,0);
 					nfree(Indexes);
 					return 0;

@@ -1,3 +1,2 @@
 1) jam echo area with manually deleted messages scans only with -w parameter
    (whithout highwaters)
-2) -tinysb with JAM areas doesn't works (kills the PATH)
