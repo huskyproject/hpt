@@ -101,6 +101,8 @@ int    createOutboundFileName(s_link *link, e_prio prio, e_type typ);
           0 else
           */
 
+// remove after 15-03-2002 (use setfsize() from smapi)
+#if 0
 #if defined (__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
  int truncate(const char *fileName, long length);
  /*DOC
@@ -110,6 +112,7 @@ int    createOutboundFileName(s_link *link, e_prio prio, e_type typ);
  /*DOC
    Truncates the file at given position
  */
+#endif
 #endif
 
 #if (defined ( __WATCOMC__ ) || defined ( __MINGW32__ )) && defined ( __NT__ )

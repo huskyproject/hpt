@@ -12,7 +12,7 @@ CDEFS =  -DDO_PERL -D__NT__ -DNT -DWINNT -D_CONSOLE -DUSE_STAT_MACROS -DNDEBUG -
 
 OBJ=.obj
 EXE=.exe
-RMÏl
+RM=del
 PERLOBJ = perl.obj
 LIBS=..\..\fidoconf\fconfmvc.lib ..\..\smapi\smapimvc.lib USER32.LIB d:\perl\lib\core\perl56.lib
 

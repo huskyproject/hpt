@@ -139,6 +139,8 @@ int createLockFile(char *lockfile) {
         return 0;
 }
 
+// remove after 15-03-2002 (use setfsize() from smapi)
+#if 0
 #if defined(__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
 
 int truncate(const char *fileName, long length)
@@ -180,6 +182,7 @@ int fTruncate (int fd, long length)
    return 0;
 }
 #endif
+#endif // ifdef 0
 
 e_prio cvtFlavour2Prio(e_flavour flavour)
 {

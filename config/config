@@ -28,7 +28,7 @@ AutoFileCreate on
 AccessGrp E,F
 AutoAreaCreateDefaults -g F -b squish -$m 100 
 AutoAreaCreateFile c:\fido\config\areas
-AutoFileCreateFile c:\fido\config\fileareas
+AutoFileCreateFile c:\fido\config\fareas
 password	password
 packer 		zip
 
@@ -50,4 +50,4 @@ CarbonCopy Carbon.Area
 PublicGroup F,G,H # etc
 
 include 		c:\fido\config\areas
-include 		c:\fido\config\fileareas
+include 		c:\fido\config\fareas
