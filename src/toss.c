@@ -109,6 +109,7 @@ XMSG createXMSG(s_message *msg)
    union stamp_combo dosdate;
 
    msgHeader.attr = MSGPRIVATE;
+//   msgHeader.attr = msg.attributes;
    strcpy((char *) msgHeader.from,msg->fromUserName);
    strcpy((char *) msgHeader.to, msg->toUserName);
    strcpy((char *) msgHeader.subj,msg->subjectLine);

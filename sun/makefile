@@ -3,11 +3,11 @@ CC      = gcc
 INSTDIR = /usr/local/bin
 MANDIR  = /usr/local/man
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o areafix.o log.o global.o recode.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o 
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o areafix.o log.o global.o recode.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o link.o post.o strsep.o
 SRC_DIR = ../src/
 
-FIDOCONFIG = ../../fidoconfig/fidoconfig.a
-SMAPI      = ../../smapi/smapisun.a
+FIDOCONFIG = ../../fidoconfig/libfidoconfig.a
+SMAPI      = ../../smapi/libsmapisun.a
 
 ifeq ($(DEBUG), 1)
   CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -g -O2 -s -DUNIX -D_POSIX_C_SOURCE

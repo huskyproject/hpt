@@ -72,7 +72,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
    msg->destAddr.point = xmsg.dest.point;
    msg->destAddr.domain = NULL;
 
-   msg->attributes = xmsg.attr & !MSGLOCAL; // msg should not have MSGLOCAL bit set
+   msg->attributes = xmsg.attr & ~MSGLOCAL; // msg should not have MSGLOCAL bit set
    //strcpy(msg->datetime, xmsg.__ftsc_date);
    sc_time((union stamp_combo *) &(xmsg.date_written), msg->datetime);
 

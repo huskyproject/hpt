@@ -2,6 +2,9 @@
 hpt 0.26
 --------
 
+Mon Feb  1 13:10:49 MET 1999
+- fixed !MSGLOCAL to ~MSGLOCAL in makeMsg scanarea.c
+	
 ----- cvs ci ------
 Wed Jan 27 18:36:53 CET 1999
 - changed all occurences of strsep to strtok_r
