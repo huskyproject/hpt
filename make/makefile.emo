@@ -1,0 +1,34 @@
+# EMX OS/2 OMF STYLE MAKEFILE
+#
+
+DEBUG=-s
+# set to -g for debugging
+
+.SUFFIXES:
+.SUFFIXES: .c .obj
+
+CC=gcc
+EXENAMEFLAG=-o
+SRC_DIR=../src/
+CFLAGS=-Zomf -I../h -I../.. -c -O3 $(DEBUG)
+LFLAGS=-Zomf -Zsys $(DEBUG)
+CDEFS =-DOS2
+
+OBJ=.obj
+EXE=.exe
+RM=cmd /c del
+
+LIBS=../../fidoconf/fconfemo.lib ../../smapi/smapiemo.lib
+
+default: all
+
+%$(OBJ): $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+
+include makefile.inc
+
+all: commonprogs
+
+clean: commonclean
+
+distclean: commondistclean

@@ -1,0 +1,30 @@
+# Microsoft Visual C++ Makefile
+#
+
+DEBUG=0
+CC=cl
+EXENAMEFLAG=-Fe
+SRC_DIR=..\src\
+
+CFLAGS=-nologo -Zp1 -O2 -I..\.. -I..\h -c
+LFLAGS=
+CDEFS =-D__NT__ -DNT -DWINNT -D_CONSOLE
+
+OBJ=.obj
+EXE=.exe
+RM=del
+
+LIBS=..\..\fidoconf\fconfmvc.obj ..\..\smapi\smapimvc.obj USER32.LIB
+
+default: all
+
+{$(SRC_DIR)}.c$(OBJ):
+	$(CC) $(CFLAGS) $(CDEFS) $<
+
+!include makefile.inc
+
+all: commonprogs
+
+clean: commonclean
+
+distclean: commondistclean

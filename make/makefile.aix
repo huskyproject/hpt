@@ -1,0 +1,38 @@
+# Generic UNIX makefile
+#
+
+DEBUG=0
+
+# for gcc, use this:
+# CC = gcc -Wall
+# for xlc, use this:
+CC=cc -qcpluscmt
+
+EXENAMEFLAG=-o
+SRC_DIR=../src/
+LFLAGS=
+CDEFS =-DUNIX
+
+ifeq ($(DEBUG), 1)
+ CFLAGS     = -c -I ../.. -I ../h -O2 -ggdb
+else
+ CFLAGS     = -c -I ../.. -I ../h -O2 -s
+endif
+
+OBJ=.o
+RM=rm
+
+LIBS=../../fidoconf/fidoconfig.a ../../smapi/smapiunix.a
+
+default: all
+
+%$(OBJ): $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+
+include makefile.inc
+
+all: commonprogs
+
+clean: commonclean
+
+distclean: commondistclean

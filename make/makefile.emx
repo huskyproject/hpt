@@ -1,0 +1,31 @@
+# EMX A.OUT STYLE MAKEFILE (REQ. EMXRT.DLL)
+#
+
+DEBUG=-s
+# set to -g for debugging
+
+CC=gcc
+EXENAMEFLAG=-o
+SRC_DIR=../src/
+CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
+LFLAGS=-Zcrtdll $(DEBUG)
+CDEFS =-DOS2
+
+OBJ=.o
+EXE=.exe
+RM=cmd /c del
+
+LIBS=../../fidoconf/fconfemx.a ../../smapi/smapiemx.a
+
+default: all
+
+%$(OBJ): $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+
+include makefile.inc
+
+all: commonprogs
+
+clean: commonclean
+
+distclean: commondistclean

@@ -1,0 +1,35 @@
+# Makefile for Borland C (DOS)
+#
+
+DEBUG=0
+CC=bcc
+EXENAMEFLAG=-e
+SRC_DIR=..\src\
+
+!IF $(DEBUG) == 1
+CFLAGS=-ml -v -w -O2 -I..\h -I..\.. -c
+LFLAGS=-ml -v -w
+CDEFS =-DMSDOS -DDEBUG_HPT
+!ELSE
+CFLAGS=-ml -v -w -O2 -I..\h -I..\.. -c
+LFLAGS=-ml -w
+CDEFS =-DMSDOS
+!ENDIF
+
+OBJ=.obj
+RM=del
+
+LIBS=..\..\fidoconf\fconfbcd.lib ..\..\smapi\smapibcd.lib
+
+default: all
+
+{$(SRC_DIR)}.c$(OBJ):
+	$(CC) $(CFLAGS) $(CDEFS) $<
+
+!include makefile.inc
+
+all: commonprogs
+
+clean: commonclean
+
+distclean: commondistclean

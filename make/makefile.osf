@@ -1,0 +1,30 @@
+# DEC UNIX DEC CC makefile (for gcc, use makefile.unx)
+#
+
+DEBUG=-s
+# set to -g for debugging
+
+CC=cc
+EXENAMEFLAG=-o
+SRC_DIR=../src/
+CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
+LFLAGS=$(DEBUG)
+CDEFS =-DUNIX
+
+OBJ=.o
+RM=rm
+
+LIBS=../../fidoconf/libfidoconfigosf.a ../../smapi/libsmapiosf.a
+
+default: all
+
+%$(OBJ): $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+
+include makefile.inc
+
+all: commonprogs
+
+clean: commonclean
+
+distclean: commondistclean

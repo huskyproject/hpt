@@ -1,0 +1,30 @@
+# Linux legacy makefile
+#
+
+DEBUG=-s
+# set to -g for debugging
+
+CC=gcc
+EXENAMEFLAG=-o
+SRC_DIR=../src/
+CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
+LFLAGS=$(DEBUG)
+CDEFS =-DUNIX
+
+OBJ=.o
+RM=rm
+
+LIBS=../../fidoconf/libfidoconfiglnx.a ../../smapi/libsmapilnx.a
+
+default: all
+
+%$(OBJ): $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+
+include makefile.inc
+
+all: commonprogs
+
+clean: commonclean
+
+distclean: commondistclean

@@ -1,0 +1,35 @@
+# Makefile for Borland C (Win32)
+#
+
+DEBUG=0
+CC=bcc32
+EXENAMEFLAG=-e
+SRC_DIR=..\src\
+
+!IF $(DEBUG) == 1
+CFLAGS=-WC -v -w -O2 -I..\h -I..\.. -c
+LFLAGS=-WC -v -w
+CDEFS =-DNT -D__NT__ -DWINNT -DDEBUG_HPT
+!ELSE
+CFLAGS=-WC -v -w -O2 -I..\h -I..\.. -c
+LFLAGS=-WC -w
+CDEFS =-DNT -D__NT__ -DWINNT
+!ENDIF
+
+OBJ=.obj
+RM=del
+
+LIBS=..\..\fidoconf\fconfbcw.lib ..\..\smapi\smapibcw.lib
+
+default: all
+
+{$(SRC_DIR)}.c$(OBJ):
+	$(CC) $(CFLAGS) $(CDEFS) $<
+
+!include makefile.inc
+
+all: commonprogs
+
+clean: commonclean
+
+distclean: commondistclean

@@ -1,0 +1,31 @@
+# RSXNT makefile
+#
+
+DEBUG=-s
+# set to -g for debugging
+
+CC=gcc
+EXENAMEFLAG=-o
+SRC_DIR=../src/
+CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
+LFLAGS=$(DEBUG) -Zwin32
+CDEFS =-DNT -D__NT__ -DWINNT
+
+OBJ=.o
+EXE=.exe
+RM=del
+
+LIBS=../../fidoconf/fconfrxw.a ../../smapi/smapirxw.a
+
+default: all
+
+%$(OBJ): $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+
+include makefile.inc
+
+all: commonprogs
+
+clean: commonclean
+
+distclean: commondistclean

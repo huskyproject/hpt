@@ -1,0 +1,31 @@
+# DJGPP makefile
+#
+
+DEBUG=-s
+# set to -g for debugging
+
+CC=cc
+EXENAMEFLAG=-o
+SRC_DIR=../src/
+CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
+LFLAGS=$(DEBUG)
+CDEFS =-DMSDOS
+
+OBJ=.o
+EXE=.exe
+RM=del
+
+LIBS=../../fidoconf/fconfdjg.a ../../smapi/smapidjg.a
+
+default: all
+
+%$(OBJ): $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+
+include makefile.inc
+
+all: commonprogs
+
+clean: commonclean
+
+distclean: commondistclean

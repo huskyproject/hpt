@@ -1,0 +1,43 @@
+# Makefile for Watcom C (OS/2)
+#
+
+DEBUG=0
+CC=wcl386
+EXENAMEFLAG=-fe=
+SRC_DIR=..\src\
+
+!IF $(DEBUG) == 1
+CFLAGS=-zq -wx -i=..\..;..\h -oneatx -5 -d2 -hw -c
+LFLAGS=-bt=os2 -l=os2 /"DEBUG Watcom"
+CDEFS =-DDEBUG_HPT
+!ELSE
+CFLAGS=-zq -wx -i=..\..;..\h -oneatx -5 -c
+LFLAGS=-bt=os2 -l=os2
+CDEFS =
+!ENDIF
+
+OBJ=.obj
+EXE=.exe
+RM=del
+
+NULL=%null
+SYMBOLIC=.SYMBOLIC
+
+LIBS=..\..\fidoconf\fconfwco.lib ..\..\smapi\smapiwco.lib
+
+default: all
+
+.c: $(SRC_DIR)
+.c$(OBJ):
+	$(CC) $(CFLAGS) $(CDEFS) $<
+
+!include makefile.inc
+
+all: commonprogs $(SYMBOLIC)
+	$(NULL)
+
+clean: commonclean $(SYMBOLIC)
+	$(NULL)
+
+distclean: commondistclean $(SYMBOLIC)
+	$(NULL)
