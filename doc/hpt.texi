@@ -3170,7 +3170,7 @@ to some of patterns in group it will be assigned to this group.
 Pattern lookup will be performed in order you wrote them.
 
 If you define AreaGroup once and then define it again with the same name 
-patterns from these two definitions will be splitted.
+patterns from these two definitions will be joined.
 
 @example
 AreaGroup DN dn.*
