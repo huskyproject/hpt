@@ -1,3 +1,8 @@
+2001-09-06 Thursday 16:50  ml
+
+	* src/areafix.c (1.220): fixed bug with very long lines in areafix
+	requests
+
 2001-09-05 Wednesday 07:39  ml
 
 	* doc/hpt.texi (1.38): documented echomail zonegating
