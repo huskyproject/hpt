@@ -947,24 +947,6 @@ static void xs_init(void)
   newXS("flv2str",       perl_flv2str,       file);
   newXS("attr2str",      perl_attr2str,      file);
 }
-void perldone(void)
-{
-  if (perl)
-  { dSP;
-    ENTER;
-    SAVETMPS;
-    PUSHMARK(SP);
-    PUTBACK;
-    perl_call_pv(PERLEXIT, G_EVAL|G_SCALAR);
-    SPAGAIN;
-    PUTBACK;
-    FREETMPS;
-    LEAVE;
-    perl_destruct(perl);
-    perl_free(perl);
-    perl=NULL;
-  }
-}
 
 #if defined(__OS2__)
 static void perlthread(ULONG arg)
@@ -1350,6 +1332,28 @@ int PerlStart(void)
      return ret;                                                 \
    w_log(LL_SRCLINE, "%s:%d starting Perl hook "#name, __FILE__, __LINE__); \
    if (perl_vars_invalid) perl_setvars();
+
+void perldone(void)
+{
+  static int do_perldone=1;
+
+  VK_START_HOOK(perldone, SUB_HPT_EXIT, )
+
+  { dSP;
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    PUTBACK;
+    perl_call_pv(PERLEXIT, G_EVAL|G_SCALAR);
+    SPAGAIN;
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
+    perl_destruct(perl);
+    perl_free(perl);
+    perl=NULL;
+  }
+}
 
 int perlscanmsg(char *area, s_message *msg)
 {
