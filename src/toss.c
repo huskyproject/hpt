@@ -650,6 +650,11 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
    creatingLink = getLinkFromAddr(*config, pktOrigAddr);
 
+   if (creatingLink == NULL) {
+      writeLogEntry(log, '!', "creatingLink == NULL !!!");
+      return 1;
+   }
+
    if (creatingLink->autoCreateDefaults == NULL) {
      // make an empty autocreateDefaults
      NewAutoCreate = (char *) malloc(1);
@@ -1421,7 +1426,7 @@ void writeTossStatsToLog(void) {
 
 void arcmail() {
    int i;
-   char logmsg[256], cmd[256], *pkt, *lastPathDelim, saveChar, sepDir[14];
+   char logmsg[256], cmd[256], *pkt, *lastPathDelim, saveChar, sepDir[14], *buff;
    int cmdexit;
    FILE *flo;
    s_link *link;
@@ -1435,10 +1440,19 @@ void arcmail() {
 		  
 		  // process if the link not busy, else do not create 12345678.?lo
 		  if (createOutboundFileName(link,
-									 cvtFlavour2Prio(link->echoMailFlavour),
-									 FLOFILE) == 0) {
+					     cvtFlavour2Prio(link->echoMailFlavour),
+					     FLOFILE) == 0) {
 			  
 			 flo = fopen(link->floFile, "a");
+			 
+			 if (flo == NULL) {
+			   buff = (char *) malloc(strlen(config->links[i].floFile)+ 1 + 21);
+			   sprintf(buff, "Cannot open flo file %s", config->links[i].floFile);
+			   writeLogEntry(log, '!', buff);
+			   free(buff);
+			   return;
+			 }
+
 			 if (link->packerDef != NULL)
 				 // there is a packer defined -> put packFile into flo
 				 fprintf(flo, "^%s\n", link->packFile);
@@ -1622,9 +1636,6 @@ void tossTempOutbound(char *directory)
 	              link = NULL;
 	           }
 		             
-		   
-                   link = getLinkFromAddr (*config, header->destAddr);
-
 		   if (link != NULL) {
 
 			   createTempPktFileName(link);
