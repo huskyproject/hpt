@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Mon Apr 24 19:25:03 NOVST 2000
+max:
+* link with level lower than -lr & -lw can't subscribe to echo
+
+----- cvs ci ------
 Sun Apr 16 22:38:28 MEST 2000
 tobi:
 * Changed the filename generation algorithm to use the functions from

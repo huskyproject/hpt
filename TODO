@@ -3,13 +3,12 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- link with level lower than -lr & -lw can't subscribe to echo
-- fix INTL kludge treatment for zone gated netmail
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 
 - seen-by stripping (stripSeenBy)
+- fix INTL kludge treatment for zone gated netmail
 - document each loglevels
 - add scanned msgs to dupebase
 - del empty .sep catalogues

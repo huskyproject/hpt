@@ -115,6 +115,7 @@ int subscribeCheck(s_area area, s_message *msg, s_link *link)
   } else found = 1;
 
   if (!found) return 2;
+  if (area.levelwrite > link->level && area.levelread > link->level) return 2;
   return 1;
 }
 
