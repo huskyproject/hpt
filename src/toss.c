@@ -426,22 +426,22 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 
     text = strrstr(msg->text, " * Origin:"); /*  jump over Origin */
     if (text) { /*  origin was found */
-	start = strrchr(text, ')');
-	if (start) start++; /*  normal origin */
-	else {
-	    start = text; /*  broken origin */
-	    while(*start && *start!='\r') start++;
-	}
-	*start='\0';
-    } else { /*  no Origin founded */
-	text = msg->text;
-	start = strstr(text, "\rSEEN-BY: ");
-	if (start == NULL) start = strstr(text, "SEEN-BY: ");
-	if (start) *start='\0';
-	/*  find start of PATH in Msg */
-	start = strstr(text, "\001PATH: ");
-	if (start) *start='\0';
-	else start = text+strlen(text);
+        start = strrchr(text, ')');
+        if (start) start++; /*  normal origin */
+        else {
+            start = text; /*  broken origin */
+            while(*start && *start!='\r') start++;
+        }
+        *start='\0';
+    } else { /*  no Origin found */
+        text = msg->text;
+        start = strstr(text, "\rSEEN-BY: ");
+        if (start == NULL) start = strstr(text, "SEEN-BY: ");
+        if (start) *start='\0';
+        /*  find start of PATH in Msg */
+        start = strstr(text, "\001PATH: ");
+        if (start) *start='\0';
+        else start = text+strlen(text);
     }
     msg->textLength = (size_t) (start - msg->text);
 
@@ -528,7 +528,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
         if (rc==0) statToss.exported++;
         else rc=0;
 #ifdef ADV_STAT
-        if (config->advStatisticsFile != NULL) put_stat(echo, &(header.destAddr), stOUT, msg->textLength);
+        if (config->advStatisticsFile != NULL) put_stat(echo, &(header.destAddr), stOUT, strlen(msg->text));
 #endif
     }
 
@@ -1080,7 +1080,8 @@ int processPkt(char *fileName, e_tossSecurity sec)
     s_link      *link = NULL;
     int         rc = 0, msgrc = 0;
     long	pktlen;
-    time_t      realtime;
+    hs_time     timer;
+
     /* +AS+ */
     char        *extcmd = NULL;
     int         cmdexit;
