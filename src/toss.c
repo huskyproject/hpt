@@ -421,7 +421,7 @@ void processPkt(char *fileName, int onlyNetmail)
          // if passwords aren't the same don't process pkt
          // if pkt is from a System we don't have a link (incl. pwd) with
          // we process it.
-         if (strcmp(link->pwd, header->pktPassword) != 0) pwdOK = 0;
+         if (stricmp(link->pwd, header->pktPassword) != 0) pwdOK = 0;
       if (pwdOK != 0) {
          while ((msg = readMsgFromPkt(pkt,addr[0].zone)) != NULL) {
             if ((onlyNetmail == 0) || (msg->netMail == 1))
