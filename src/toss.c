@@ -2140,11 +2140,10 @@ void writeStatLog(void) {
    statNetmail = statToss.netMail; /* number of just received netmails */
    statCC = statToss.CC; /* number of just received personal echo mails */
 
-   /* if there are new personal mails */
-   if ((statNetmail > 0) || (statCC > 0)) {
-      /* and statLog is defined in config */
+   /* if there are new personal mails and statLog is defined in config */
+   if (((statNetmail > 0) || (statCC > 0)) && (config->statlog != NULL)) {
       f = fopen(config->statlog, "r");
-      if (f != NULL) {
+      if (f != NULL) {  /* and statLog file is readable */
         /* then read last personal mail counter and add to actual counter */
         while(fgets(buffer,sizeof(buffer),f)) {
           len = strlen(buffer);
