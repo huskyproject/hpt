@@ -339,9 +339,9 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
             if(strlen( areatag ) > queryAreasHead->linksCount)
                 queryAreasHead->linksCount = strlen( areatag );
             af_AddLink( areaNode, uplink );
-            tmpNode->eTime = tnow + config->idlePassthruTimeout*secInDay;
+            areaNode->eTime = tnow + config->idlePassthruTimeout*secInDay;
             w_log(LL_AREAFIX, "areafix: make request idle for area: %s", areaNode->name);
-
+            tmpNode =areaNode;
         }
         break;
     case DELIDLE:
