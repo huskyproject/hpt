@@ -3050,6 +3050,9 @@ this link is write only
 @item -mn
 this link is mandatory subscribed,
 you may also set: "<aka> -r -mn" or "<aka> -w -r" and so on...
+
+Link Options -r -w are left for backward compatibility. We strongly recommend to
+use tokens ReadOnly & WriteOnly for seting permissions on arealinks.
 @end table
 
 This statement can be repeated.
@@ -3176,6 +3179,19 @@ This statement can be repeated.
 
 This statement set link(s) to readonly for specified ares(s).
 If you write node address do it *without* trailing .0!
+
+If areaMask begins with '!' symbol it means that links won't be set 
+readonly for areas that match areaMask
+
+@item Example:
+@code{ReadOnly 2:5021/19.* tver.sysop*}
+@code{ReadOnly 2:5021/19.1 !tver.sysop*}
+@code{ReadOnly 2:5021/19.2 !tver.sysop.talks}
+@end table
+
+It means that all points if 2:5021/19 set r/o for tver.sysop* 
+areas except 2:5021/19.1 for all areas and 2:5021/19.2 can write 
+only to tver.sysop.talks from tver.sysop* areagroup
 
 This statement can be repeated.
 
