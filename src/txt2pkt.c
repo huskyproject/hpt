@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
 		 header.origAddr.net,header.origAddr.node);
          strcat(textBuffer, tmp);
       }
-      strcpy(versionStr,"txt2pkt");
+      xstrcat(&versionStr,"txt2pkt");
       msg.text = createKludges(area, &msg.origAddr, &msg.destAddr);
       xstrcat(&(msg.text), textBuffer);
       if (area == NULL) {
@@ -206,6 +206,7 @@ int main(int argc, char *argv[])
       }
       
       free(textBuffer);
+      free(versionStr);
       msg.textLength=strlen(textBuffer);
 
       if (config->outtab != NULL) {

@@ -66,6 +66,8 @@
 #include <link.h>
 #include <areafix.h>
 #include <recode.h>
+#include <xstr.h>
+#include <date.h>
 
 s_message **msgToSysop = NULL;
 char *scanParmA;
@@ -246,21 +248,25 @@ int main(int argc, char **argv)
    char title[ 256 ];
 #endif
 
+xscatprintf(&versionStr, "hpt %u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
+
 #ifdef __linux__
-   sprintf(versionStr, "hpt %u.%u.%u/lnx", VER_MAJOR, VER_MINOR, VER_PATCH);
+   xstrcat(&versionStr, "/lnx");
 #elif __freebsd__
-   sprintf(versionStr, "hpt %u.%u.%u/BSD", VER_MAJOR, VER_MINOR, VER_PATCH);
+   xstrcat(&versionStr, "/bsd");
 #elif __OS2__
-    sprintf(versionStr, "hpt %u.%u.%u/OS2", VER_MAJOR, VER_MINOR, VER_PATCH);
+   xstrcat(&versionStr, "/os2");
 #elif __NT__
-    sprintf(versionStr, "hpt %u.%u.%u/NT", VER_MAJOR, VER_MINOR, VER_PATCH);
+   xstrcat(&versionStr, "/NT");
 #elif __sun__
-    sprintf(versionStr, "hpt %u.%u.%u/SUN", VER_MAJOR, VER_MINOR, VER_PATCH);
-#else
-    sprintf(versionStr, "hpt %u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
+   xstrcat(&versionStr, "/sun");
 #endif
 
-   printf("Highly Portable Toss %u.%u.%u\n", VER_MAJOR, VER_MINOR, VER_PATCH);
+#ifndef RELEASE
+   xscatprintf(&versionStr, " %s", hpt_date);
+#endif
+
+   fprintf(stdout, "Highly Portable Toss %u.%u.%u\n", VER_MAJOR, VER_MINOR, VER_PATCH);
 #if defined ( __WATCOMC__ ) && defined ( __NT__ )
    sprintf( title, "Highly Portable Toss %u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
    SetConsoleTitleA( title );
@@ -323,5 +329,6 @@ int main(int argc, char **argv)
    closeLog(hpt_log);
    disposeConfig(config);
    doneCharsets();
+   free(versionStr);
    return 0;
 }
