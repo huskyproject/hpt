@@ -480,7 +480,13 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    int i=0,j=0;
    
    //translating name of the area to lowercase, much better imho.
-   while (*c_area != '\0') {*c_area=tolower(*c_area);c_area++;i++;}
+   while (*c_area != '\0') {
+      *c_area=tolower(*c_area);
+      if (*c_area=='/') || *c_area=='\\') *c_area = '_'; // convert any path delimiters to _
+      c_area++;
+      i++;
+   }
+
    while (i>0) {c_area--;i--;};
    
    if ((f=fopen(getConfigFileName(),"a")) == NULL)
