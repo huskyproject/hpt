@@ -111,7 +111,7 @@ char *hpt_stristr(char *str, char *find)
 	return ((char *)str);
 }
 
-void changeFileSuffix(char *fileName, char *newSuffix) {
+char *changeFileSuffix(char *fileName, char *newSuffix) {
 
    int   i = 1;
    char  buff[200];
@@ -135,10 +135,14 @@ void changeFileSuffix(char *fileName, char *newSuffix) {
       i++;
    }
 
-   if (!fexist(newFileName))
+   if (!fexist(newFileName)) {
       rename(fileName, newFileName);
-   else 
+      return newFileName;
+   } else {
       writeLogEntry(hpt_log, '9', "Could not change suffix for %s. File already there and the 255 files after", fileName);
+      free (newFileName);
+      return NULL;
+   }
    
 }
 
@@ -1611,6 +1615,7 @@ void processDir(char *directory, e_tossSecurity sec)
    struct stat st;
    int dirNameLen;
    int filenum;
+   char *newFileName=NULL;
 
 #ifndef UNIX
    unsigned fattrs;
@@ -1675,26 +1680,31 @@ void processDir(char *directory, e_tossSecurity sec)
       if (pktFile || (arcFile && !config->noProcessBundles)) {
 
          rc = 3; // nonsence, but compiler warns
+         if ((newFileName=changeFileSuffix(dummy, "tos")) != NULL){
+            free(dummy);
+            dummy = newFileName;
+            newFileName=NULL;
+         }
          if (pktFile)
             rc = processPkt(dummy, sec);
-         else if (arcFile)
+         else // if (arcFile)
             rc = processArc(dummy, sec);
 
          switch (rc) {
             case 1:   // pktpwd problem
-               changeFileSuffix(dummy, "sec");
+               newFileName=changeFileSuffix(dummy, "sec");
                break;
             case 2:  // could not open pkt
-               changeFileSuffix(dummy, "acs");
+               newFileName=changeFileSuffix(dummy, "acs");
                break;
             case 3:  // not/wrong pkt
-               changeFileSuffix(dummy, "bad");
+               newFileName=changeFileSuffix(dummy, "bad");
                break;
             case 4:  // not to us
-               changeFileSuffix(dummy, "ntu");
+               newFileName=changeFileSuffix(dummy, "ntu");
                break;
             case 5:  // tossing problem
-               changeFileSuffix(dummy, "err");
+               newFileName=changeFileSuffix(dummy, "err");
                break;
             default:
                remove (dummy);
@@ -1702,6 +1712,7 @@ void processDir(char *directory, e_tossSecurity sec)
          }
       };
       free(dummy);
+      free(newFileName);
    }
    free (files);
 }

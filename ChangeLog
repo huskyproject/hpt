@@ -2,6 +2,14 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Sat May  7 13:30:43 MSD 2000
+max (patch from Serguei Revtov):
+* fixed coredump in area autocreation
+* changing of pkt & bundle files extension while tossing (prevents of
+  tossing the same bad packet many times)
+* fixed memory leak in changeFileSuffix()
+
+----- cvs ci ------
 Fri May  6 13:02:59 NOVST 2000
 max:
 * if no carbonArea defined msg really goes to BadArea now

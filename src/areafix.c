@@ -600,6 +600,8 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 int areaIsAvailable(char *areaName, char *fileName, char **desc, int retd) {
 	FILE *f;
 	char *line, *token, *running;
+
+        if (fileName==NULL || areaName==NULL) return 0;
 	
 	if ((f=fopen(fileName,"r")) == NULL)
 		{
