@@ -60,12 +60,12 @@ install: info html dvi
 	@echo .
 ifdef INFODIR
 	-$(MKDIR) $(MKDIROPT) $(INFODIR)
-	$(INSTALL)  hpt.info $(INFODIR)
+	$(INSTALL) $(IMOPT) hpt.info $(INFODIR)
 	-install-info --info-dir=$(INFODIR)  $(INFODIR)$(DIRSEP)hpt.info
 endif
 ifdef HTMLDIR
 	-$(MKDIR) $(MKDIROPT) $(HTMLDIR)
-	$(INSTALL)  hpt*html $(HTMLDIR)
+	$(INSTALL) $(IMOPT) hpt*html $(HTMLDIR)
 endif
 ifdef DVIDIR
 	-$(MKDIR) $(MKDIROPT) $(DVIDIR)
