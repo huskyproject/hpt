@@ -1,3 +1,20 @@
+2001-12-26 Wednesday 18:33  mche
+
+	* src/: pktread.c (1.79), pktwrite.c (1.31): moved functions
+	fputUINT16, fgetsUntil0, getUINT16 from fidoconfig to pktread.c
+	pktwrite.c to avoid error with I/O file operations when HPT is made
+	with dlls
+
+2001-12-26 Wednesday 17:33  mche
+
+	* src/areafix.c (1.229): added functions getCurConfName();
+	getCurConfPos(); get_hcfgPos(); to avoid external variables
+
+2001-12-26 Wednesday 08:54  mche
+
+	* src/fcommon.c (1.107): redesign of functions safe_malloc
+	safe_realloc safe_strdup
+
 2001-12-24 Monday 22:16  pavel.gulchouck
 
 	* src/perl.c (1.16): $kill and $change make sense whith any
