@@ -249,9 +249,11 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
    else {
       // squish or jam area
       slash = strrchr(echo->fileName, PATH_DELIM);
-      *slash = '\0';
-      createDirectoryTree(echo->fileName);
-      *slash = PATH_DELIM;
+      if (slash) {
+          *slash = '\0';
+          createDirectoryTree(echo->fileName);
+          *slash = PATH_DELIM;
+      }
    }
    
    if (!msg->netMail) {
@@ -1308,11 +1310,6 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
    XMSG   msgHeader;
    char   *slash;
    int rc = 0, ccrc = 0;
-#ifdef UNIX
-   char limiter = '/';
-#else
-   char limiter = '\\';
-#endif
 /*
    if (!correctDateTime(msg->datetime)) {
        writeLogEntry(hpt_log, '6', "wrong msg datetime: renaming .pkt to .err");
@@ -1330,11 +1327,13 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
    if (area -> msgbType == MSGTYPE_SDM)
       createDirectoryTree(area -> fileName);
    else {
-      // squish area
-      slash = strrchr(area -> fileName, limiter);
-      *slash = '\0';
-      createDirectoryTree(area -> fileName);
-      *slash = limiter;
+      // squish or jam area
+      slash = strrchr(area -> fileName, PATH_DELIM);
+      if (slash) {
+          *slash = '\0';
+          createDirectoryTree(area -> fileName);
+          *slash = PATH_DELIM;
+      }
    }
 
    netmail = MsgOpenArea((unsigned char *) area -> fileName, MSGAREA_CRIFNEC,

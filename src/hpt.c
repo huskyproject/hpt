@@ -244,33 +244,36 @@ int main(int argc, char **argv)
 {
    struct _minf m;
    int i;
+   char *version = NULL;
 #if defined ( __WATCOMC__ ) && defined ( __NT__ )
    char title[ 256 ];
 #endif
 
-xscatprintf(&versionStr, "hpt %u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
+xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
 
 #ifdef __linux__
-   xstrcat(&versionStr, "/lnx");
+   xstrcat(&version, "/lnx");
 #elif __freebsd__
-   xstrcat(&versionStr, "/bsd");
+   xstrcat(&version, "/bsd");
 #elif __OS2__
-   xstrcat(&versionStr, "/os2");
+   xstrcat(&version, "/os2");
 #elif __NT__
-   xstrcat(&versionStr, "/NT");
+   xstrcat(&version, "/NT");
 #elif __sun__
-   xstrcat(&versionStr, "/sun");
+   xstrcat(&version, "/sun");
 #endif
 
 #ifndef RELEASE
-   xscatprintf(&versionStr, " %s", hpt_date);
+   xscatprintf(&version, " %s", hpt_date);
 #endif
 
-   fprintf(stdout, "Highly Portable Toss %u.%u.%u\n", VER_MAJOR, VER_MINOR, VER_PATCH);
+   fprintf(stdout, "Highly Portable Toss %s\n", version);
 #if defined ( __WATCOMC__ ) && defined ( __NT__ )
-   sprintf( title, "Highly Portable Toss %u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
+   sprintf( title, "Highly Portable Toss %s", version);
    SetConsoleTitleA( title );
 #endif
+   xscatprintf(&versionStr,"hpt %s", version);
+   free(version);
    initCharsets();
 
    if (processCommandLine(argc, argv)==1) exit(0);

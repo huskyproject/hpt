@@ -2,10 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
-
+Thu Mar 23 16:10:45 NOVT 2000
 max:
 * fixed statistic afrer autocreate (report from Alex Belozuerov)
 * under __linux__ & UNIX attach files must be in lowercase
+* fixed bug when tossing to area without PATH_DELIM in area->fileName
 
 ----- cvs ci ------
 Wed Mar 22 13:31:29 NOVT 2000
