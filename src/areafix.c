@@ -40,13 +40,8 @@
 #include <unistd.h>
 #endif
 
-#if !defined(SHORTNAMES)
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
-#else
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
-#endif
 
 #include <fcommon.h>
 #include <xstr.h>
@@ -1739,4 +1734,82 @@ void autoPassive()
       } else {
       } /* endif */
    } /* endfor */
+}
+
+int relink (char *straddr) {
+	s_link          *researchLink = NULL;
+	unsigned int    count, areasArraySize;
+	s_area          **areasIndexArray = NULL;
+
+	// parse config
+	if (config==NULL) processConfig();
+
+	researchLink = getLink(*config, straddr);
+
+	if ( researchLink == NULL ) {
+		writeLogEntry(hpt_log, '9', "Unknown link address %s", straddr);
+		return 1;
+	}
+
+	areasArraySize = 0;
+	areasIndexArray = (s_area **) malloc 
+		(sizeof(s_area *) * (config->echoAreaCount  +
+							 config->localAreaCount + 1));
+
+	if ( areasIndexArray == NULL ) {
+		writeLogEntry(hpt_log, '9', "No mem (to work RELINK)");
+		return 1;
+	}
+
+	for (count = 0; count < config->echoAreaCount; count++) {
+		if ( isLinkOfArea(researchLink, &config->echoAreas[count]) ) {
+			areasIndexArray[areasArraySize] = &config->echoAreas[count];
+			areasArraySize++;
+			writeLogEntry(hpt_log, '4', "Echo %s from link %s refresh",
+						  config->echoAreas[count].areaName,
+						  aka2str(researchLink->hisAka));
+		}
+	}
+
+	for ( count = 0; count < config->localAreaCount; count++) {
+		if ( isLinkOfArea(researchLink, &config->localAreas[count]) ) {
+			areasIndexArray[areasArraySize] = &config->localAreas[count];
+			areasArraySize++;
+			// to log area name (low priority)
+			writeLogEntry(hpt_log, '4', "LocalEcho %s link %s refresh",
+						  config->localAreas[count].areaName,
+						  aka2str(researchLink->hisAka));
+		}
+	}
+
+	if ( areasArraySize > 0 ) {
+		s_message *msg;
+
+		msg = makeMessage(researchLink->ourAka,
+						  &researchLink->hisAka,
+						  versionStr,
+						  researchLink->RemoteRobotName ?
+						  researchLink->RemoteRobotName : "AreaFix",
+						  researchLink->areaFixPwd, 1);
+
+		msg->text = createKludges( NULL,researchLink->ourAka,&researchLink->hisAka);
+
+		for ( count = 0 ; count < areasArraySize; count++ ) {
+			xscatprintf(&(msg->text), "+%s\r",areasIndexArray[count]->areaName);
+		}
+
+		xscatprintf(&(msg->text), " \r--- %s areafix\r", versionStr);
+		msg->textLength = strlen(msg->text);
+		writeLogEntry(hpt_log, '9', "'Refresh' message created to `AreaFix`");
+		processNMMsg(msg, NULL, NULL, 0, 0);
+		freeMsgBuffers(msg);
+		free(msg);
+		writeLogEntry(hpt_log, '9', "Total request relink %i area(s)",areasArraySize);
+
+		cmPack = 1;
+	}
+
+	free (areasIndexArray);
+
+	return 0;
 }

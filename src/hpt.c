@@ -123,6 +123,7 @@ int processCommandLine(int argc, char **argv)
       printf("   hpt pack    - packing netmail\n");
       printf("   hpt link    - links messages\n");
       printf("   hpt afix    - process areafix\n");
+      printf("   hpt relink <addr> - refresh area subsription\n");
    }
 
    while (i < argc-1) {
@@ -149,6 +150,8 @@ int processCommandLine(int argc, char **argv)
          continue;
       } else if (stricmp(argv[i], "post") == 0) {
          ++i; post(argc, &i, argv);
+      } else if (stricmp(argv[i], "relink") == 0) {
+         ++i; relink(argv[i]); i=argc;
       } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
 
    } /* endwhile */
