@@ -104,17 +104,37 @@ e_prio cvtFlavour2Prio(e_flavour flavour)
 }
 
 int fileNameAlreadyUsed(char *pktName, char *packName) {
-   int i;
+   int i, j;
 
    for (i=0; i < config->linkCount; i++) {
       if ((config->links[i].pktFile != NULL) && (pktName != NULL))
          if ((stricmp(pktName, config->links[i].pktFile)==0)) return 1;
       if ((config->links[i].packFile != NULL) && (packName != NULL))
          if ((stricmp(packName, config->links[i].packFile)==0)) return 1;
+#ifdef PACKET_FORWARDING      
+      if (config->links[i].nPktFiles) {
+	 for (j = 1; j < config->links[i].nPktFiles; j++) {
+	    if ((stricmp(packName, config->links[i].pktFiles[j])==0)) return 1;
+	 }
+      }
+#endif	    
    }
 
    return 0;
 }
+
+#ifdef PKT_FORWARDING
+void addAnotherPktFile(s_link *link, char *filename)
+{
+   if (link->nPktFiles == 0)
+      link->pktFiles = (char**) malloc (sizeof(char *));
+   else
+      link->pktFiles = (char**) realloc (link->pktFiles,
+					 sizeof(char *)*(link->nPktFiles+1));
+
+   link->pktFiles[link->nPktFiles++] = filename;
+}
+#endif
 
 int createTempPktFileName(s_link *link)
 {

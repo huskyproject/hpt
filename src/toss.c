@@ -957,7 +957,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	  /* PKT is not for us - try to forward it to our links */
 
 	  fclose(pkt); pkt = NULL;
-	  rc = forwardPkt(fileName, header);
+	  rc = forwardPkt(fileName, header, sec);
       }
 	      
       free(header);
@@ -993,7 +993,7 @@ void fillCmdStatement(char *cmd, const char *call, const char *archiv, const cha
    strcat(cmd, tmp);
 }
 
-int forwardPkt(const char *fileName, s_pktHeader *header);
+int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec);
 void processDir(char *directory, e_tossSecurity sec);
 
 int  processArc(char *fileName, e_tossSecurity sec)
@@ -1191,23 +1191,69 @@ void arcmail() {
         return;
 }
 
-int forwardPkt(const char *fileName, s_pktHeader *header)
+int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 {
-        int i;
-        char logmsg[256], cmd[256], *pkt, *lastPathDelim, saveChar;
-        int cmdexit;
-        FILE *flo;
+    int i;
+    char logmsg[256], cmd[256], *pkt, *lastPathDelim, saveChar;
+    int cmdexit;
+    s_link *link;
+    char *newfn;
+    char zoneSuffix[4];
+    char *zoneOutbound;
+    
+    for (i = 0 ; i < config->linkCount; i++) {
+	if (addrComp(header->destAddr, config->links[i].hisAka) == 0) {
+	    /* we found a link to forward the pkt file to */
+	    
+	    link = config->links+i;
+			
+	    /* security checks */
+			
+	    switch (link->forwardPkts) {
+	    case fOff:
+		return 4;
+	    case fSecure:
+		if (sec != secProtInbound &&
+		    sec != secLocalInbound)
+		    return 4;
+	    }
+	    
+            /* as we have feature freeze currently, */
+	    /* I enclose the following code with an ifdef ... */
+#ifdef PACKET_FORWARDING
+	    
+	    if (link->hisAka.zone != config->addr[0].zone) {
+		sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
+		zoneOutbound = malloc(strlen(config->outbound)-1+strlen(zoneSuffix)+1);
+		strcpy(zoneOutbound, config->outbound);
+		strcpy(zoneOutbound+strlen(zoneOutbound)-1, zoneSuffix);
+	    } else
+		zoneOutbound = strdup(config->outbound);
 
-        for (i = 0 ; i < config->linkCount; i++) {
-		if (addrComp(header->destAddr, config->links[i].hisAka) == 0) {
-			/* we found a link to forward the pkt file to */
+	    newfn = makeUniqueDosFileName(zoneOutbound, "pkt", config);
+	    free(zoneOutbound);
 
-			/* not yet implemented */
-		}
+
+	    if (rename(fileName, newfn) == 0) {  /* move successful ! */
+
+		addAnotherPktFile(link, newfn);
+		return 0;
+	    }
+	    else
+	    {
+		sprintf (logmsg, "Failure moving %s to %s.", fileName, newfn);
+		writeLogEntry (log, '9', logmsg);
+		free(newfn);
+		return 4;
+	    }
+
+#endif /* PACKET_FORWARDING */
+		  
 	}
-
-        return 4;       /* PKT is not for us and we did not find a link to
-			   forward the pkt file to */
+    }
+    
+    return 4;       /* PKT is not for us and we did not find a link to
+		       forward the pkt file to */
 }
 
 
