@@ -1,0 +1,128 @@
+# Sample of config
+
+Name		*L*F*A* BBS
+Sysop		Fedor Lizunkov
+Location 	Moscow, Russia
+Address		2:5020/960
+#Address	2:5020/158.28
+Version		0.15
+
+PublicGroup 	A
+#AreaFixFromPkt
+
+Unpack		"unzip -j -Loqq $a $f -d $p" 0 504b0304
+Pack		zip zip -9 -j -q $a $f
+
+#Unpack  "pkunpak /r $a $p $f" 0 1a
+#Pack  arc pkpak -oct a $a $f
+ 
+#Unpack  "pak e /wn $a $p $f" -2 fe
+#Pack  pak pak a $a $f
+ 
+#Unpack  "lha e /m $a $p $f" 2 2d6c68
+#Pack  lha lha a /o /m $a $f
+ 
+#Unpack  "zoo e:O $a $p $f" 0 5a4f4f
+#Pack  zoo zoo a: $a $f
+ 
+#Unpack  "arj e -+ -y $a $p $f" 0 60ea
+#Pack  arj arj a -+ -e -y $a $f
+
+Unpack  "unrar e -y  $a $f $p > /dev/null"   0 52617221
+#Pack  rar rar a -std -ep $a $f
+ 
+#Unpack  "jar e -y $a $p $f" 14 1a4a61721b
+#Pack  jar jar a -y $a $f
+ 
+#Unpack  "ha eyq $a $f"  0 4841
+#Pack  ha ha a21eq $a $f
+
+Link		Fedor
+AKA		2:5020/960.1
+ourAka		2:5020/960
+Password	pass1
+LinkGrp		C
+AccessGrp	ABCDE
+#Export		off
+#Import		off
+#Mandatory	on
+#OptGrp		C
+Level		200
+EchoMailFlavour Hold
+Packer		zip
+
+Link		Andrew
+AKA		2:5020/960.2
+ourAka		2:5020/960
+Password	pass2
+LinkGrp		D
+AccessGrp	ABCD
+Level		200
+EchoMailFlavour Hold
+Packer		zip
+
+Link		Mike
+AKA		2:5020/477
+ourAka		2:5020/960
+Password	pass3
+Level		200
+LinkGrp		A
+AccessGrp	ABCDE
+ForwardRequestFile /home/fido/hpt/misc/echoareas.477
+#autoCreateFile /home/fido/config.area
+forwardRequests on
+autoAreaCreate	on
+AutoCreateDefaults -lr 100 -lw 150 -g A -p 14 -dupeCheck move -dupeHistory 11
+Packer		zip
+
+Link		Vadim
+AKA		2:5020/158
+ourAka		2:5020/960
+Password	19lfa65
+Level		200
+LinkGrp		B
+AccessGrp	ABCDE
+autoAreaCreate	on
+AutoCreateDefaults -lr 100 -lw 150 -g B -p 14 -dupeCheck move -dupeHistory 11
+Packer		zip
+
+Route hold  noroute 2:5020/960.*
+route crash 2:5020/477 *
+
+Inbound		/home/fido/files/in
+ProtInbound	/home/fido/files/in.sec
+Outbound	/home/fido/files/out
+tempOutbound	/home/fido/files/out.tmp
+tempInbound	/home/fido/files/in.tmp
+LogFileDir	/home/fido/log
+DupeHistoryDir	/home/fido/files/dupes
+NodeListDir	/home/fido/nodelist
+MsgBaseDir	/home/fido/msgBase
+public		/home/mtt/fido/public
+
+#lockFile	/home/fido/log/hpt.lock
+
+intab           /home/fido/hpt/misc/outaltkoi8
+outtab          /home/fido/hpt/misc/outkoi8alt
+     
+areafixhelp	/home/fido/hpt/misc/areafix.hlp
+
+echotosslog     /home/fido/files/echotoss.log
+importlog       /home/fido/files/import.log
+
+############################################################################
+# Report about autocreation areas
+# to netMail
+ReportTo	netmail
+
+# or to EchoArea
+#ReportTo	960.pvt.robot
+############################################################################
+
+NetMailArea NetMailArea /home/fido/msgBase/netmail
+BadArea     Badarea     /home/fido/msgBase/bad     squish
+DupeArea    DupeArea    /home/fido/msgBase/dupe    squish
+
+EchoArea 960.pvt /home/fido/msgBase/960.pvt -g C -lr 100 -lw 150 -$m 2000 -nopause Squish -dupeCheck move -dupeHistory 11 2:5020/960.1 2:5020/960.2 2:5020/477 2:5020/158
+EchoArea 960.pvt.robot /home/fido/msgBase/960.pvt.robot -g C -lr 100 -lw 150 Squish -dupeCheck move -dupeHistory 11 2:5020/960.2 2:5020/477 2:5020/158
+EchoArea mo.ramenki /home/fido/msgBase/mo.ramenki -g A -lr 100 -lw 200 Squish -p 14 -$m 2000 -dupeCheck move -dupeHistory 11 2:5020/477 2:5020/960.2 -r -mn
