@@ -3,6 +3,11 @@ hpt 0.26
 --------
 
 ----- cvs ci ------
+Sun Feb 14 12:57:04 CET 1999
+- applied max patch. the first echomail to an autocreated area was not
+  forwarded to links
+
+----- cvs ci ------
 Wed Feb 10 20:38:22 CET 1999
 - fixed a bug i introduced in (3), so autoareacreate does not work...
 

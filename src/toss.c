@@ -746,6 +746,11 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
          echo = getArea(config, area);
          if (echo->msgbType != MSGTYPE_PASSTHROUGH)
             putMsgInArea(echo, msg, 1);
+         if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
+            forwardMsgToLinks(echo, msg, pktOrigAddr);
+            statToss.exported++;
+         }
+
       } else {
          // no autoareaCreate -> msg to bad
          statToss.bad++;
