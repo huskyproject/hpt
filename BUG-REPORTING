@@ -1,0 +1,33 @@
+BUG-REPORTING
+-------------
+
+Please try to reproduce the bug before contacting me.
+
+Things to do when i encountered a bug:
+
+If a core-dump was created:
+- start gdb with
+   gdb hpt core
+- type where
+   where
+- try to get all information out of the core file which could be interesting
+  for me. (this is for people who are familiar with c-programming)
+
+send me the following things:
+- an extensive description of the situation where the bug happened.
+- version of husky-software (stable version or date of checkout)
+- your config-files
+- all SMALL files hpt was using when the bug happened. (pkt's/dupe-files)
+  only send me complete msgbases when the problem did not arise with a small
+  one.
+- a short description what system you are using.
+  (OS - Distribution - compiler - etc. i do NOT need to know what kind of
+  monitor do you use :-)
+
+I prefer getting the things per fido crashmail to my boss (for what am i
+hacking hpt? :-) ), but if you plan to send me your complete msgbase of one
+year or you live not in germany, please use e-mail, because it will be cheaper for both of us..
+
+Matthias Tichy
+2:2432/605.14 2:2433/1245
+mtt@tichy.de
