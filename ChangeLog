@@ -1,3 +1,7 @@
+2002-12-21 Saturday 10:39  stas_degteff
+
+	* src/query.c (1.83): Add debug output.
+
 2002-12-17 Tuesday 16:44  pgul
 
 	* src/seenby.c (1.29): Optimize previous patch
