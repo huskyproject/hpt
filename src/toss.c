@@ -974,7 +974,8 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 	 
 //    textBuff = (char *)calloc(strlen(msg->text)+strlen(areaName)+80, sizeof(char));
     
-    xscatprintf(&textBuff, "%s\rFROM: %s\rREASON: ", msg->text, aka2str(pktOrigAddr));
+//    xscatprintf(&textBuff, "%s\rFROM: %s\rREASON: ", msg->text, aka2str(pktOrigAddr));
+    xstrscat(&textBuff, msg->text, "\rFROM: ", aka2str(pktOrigAddr), "\rREASON: ",NULL);
     switch (writeAccess) {
 	case 0: 
 		xstrcat(&textBuff, "System not allowed to create new area\r");
@@ -2254,6 +2255,7 @@ void tossFromBadArea()
 
 	   MsgCloseArea(area);
       
+	   writeDupeFiles();
 	   tossTempOutbound(config->tempOutbound);
       
    } else writeLogEntry(hpt_log, '9', "Could not open %s", config->badArea.fileName);

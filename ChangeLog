@@ -2,6 +2,13 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Wed Jun 14 23:52:05 NOVST 2000
+max:
+* write dupe indexes to dupebase after "toss -b"
+* fixed buffers overflow while toss to badArea
+* fixed areafix: requests like " + AREATAG" worked now
+
+----- cvs ci ------
 Tue Jun 13 21:04:54 MEZ 2000
 tobi:
 * Fix: netmail area tag is now added to echotoss.log for "hpt post", instead

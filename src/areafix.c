@@ -713,6 +713,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	line = cmd;
 	
 	if (line[0]=='+') line++;
+	while (*line==' ') line++;
 	
 	for (i=0; i<config->echoAreaCount; i++) {
 	    area = &(config->echoAreas[i]);
@@ -786,6 +787,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 	
 	if (line[1]=='-') return NULL;
 	line++;
+	while (*line==' ') line++;
 	
 	for (i = 0; i< config->echoAreaCount; i++) {
 		area = &(config->echoAreas[i]);

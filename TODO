@@ -7,7 +7,8 @@ Category 1: Will certainly be implemented until next release
 - fix reading long messages under ms-dos (path & seen-by)
 - tearline. origin tokens...
 - fix for err + dupes
-- document renaming suffixes
+- document renaming suffixes (and log them)
+- fix toss -b & farbon bug
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
