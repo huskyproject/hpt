@@ -100,7 +100,6 @@ void writeDupeFiles(void)
 void exit_hpt(char *logstr, int print) {
 
     w_log('9', logstr);
-    _lockfile = config->lockfile;
     if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
 
     writeDupeFiles();
