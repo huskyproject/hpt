@@ -1,0 +1,26 @@
+#! /bin/sh
+set -e
+
+case "$1" in
+    configure)
+	#
+	# Setuid/setgid hpt binary
+	#
+	OVERRIDEN=
+	OVERRIDEN=`dpkg-statoverride --list /usr/bin/hpt` || true
+	[ "${OVERRIDEN}" = "" ] && dpkg-statoverride --update --add ftn ftn 6755 /usr/bin/hpt
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0
