@@ -1,3 +1,24 @@
+2003-01-08 Wednesday 09:14  stas_degteff
+
+	* src/areafix.c (1.379): Skip areafix for empty command; write
+	message to log
+
+2003-01-08 Wednesday 08:59  stas_degteff
+
+	* src/: areafix.c (1.378), fcommon.c (1.155): Bugfix: out of memory
+	if areafix command not present (Bugreport from Egor Glukhov
+	2:5061/120)
+
+2003-01-08 Wednesday 06:59  mche
+
+	* src/query.c (1.86): fix bug on empty cfg file: AutoAreaCreate
+	adds wrong line feed in Win32
+
+2003-01-07 Tuesday 23:11  i_zkh
+
+	* misc/areafix.866 (1.5): Fix spelling (thanks to Michael Dukelsky
+	2:5020/1042)
+
 2003-01-06 Monday 22:51  i_zkh
 
 	* doc/: bugreport.rus (1.5), bugreport.txt (1.4), perlwin32.txt
