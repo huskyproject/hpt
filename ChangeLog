@@ -1,3 +1,14 @@
+2003-04-13 Sunday 21:31  d_sergienko
+
+	* HISTORY (1.27), doc/hpt.texi (1.120), src/areafix.c (1.402):
+	don't use Origin value if areafixOrigin is not defined.
+
+2003-04-13 Sunday 21:23  d_sergienko
+
+	* HISTORY (1.26), config/packer (1.8), src/toss.c (1.509): Loop
+	tossing until there is no new pkt/arcmail in inbounds; add -X flag
+	to zip call in config sample
+
 2003-04-13 Sunday 20:38  d_sergienko
 
 	* HISTORY (1.25): sync updates
