@@ -261,9 +261,10 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
    tempbefore = (char *) scalloc(j+1, 1);
    tempbefore = (char *)strncpy(tempbefore, msg.text, j);
    tempafter = (char *)sstrdup(msg.text+j+1);
-   memset(msg.text, 0, strlen(msg.text)+1);
-   xscatprintf((char **) &msg.text, "%s\r\001RESCANNED %s\r%s", tempbefore,
-            (addrstr=aka2str5d(*arealink->link->ourAka)), tempafter);
+   nfree(msg.text);
+   xstrscat((char **) &msg.text, tempbefore, "\r\001RESCANNED ", 
+            (addrstr=aka2str5d(*arealink->link->ourAka)), "\r", tempafter,
+            NULL);
    nfree(tempbefore);
    nfree(tempafter);
    nfree(addrstr);
