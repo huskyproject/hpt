@@ -1,3 +1,27 @@
+2002-07-26 Friday 18:36  mche
+
+	* src/: areafix.c (1.331), query.c (1.55): fixed bug with time
+	adjusting
+
+2002-07-26 Friday 17:44  d.sergienko
+
+	* src/toss.c (1.429): open NewAreaRefuseFile as "r+b" instead of
+	"rt"
+
+2002-07-26 Friday 15:58  d.sergienko
+
+	* doc/hpt.texi (1.76), src/toss.c (1.428): added NewAreaRefuseFile
+	processing
+
+2002-07-26 Friday 14:29  stas
+
+	* src/scanarea.c (1.86): Insert include directive for errno
+
+2002-07-26 Friday 12:01  mche
+
+	* src/areafix.c (1.330), h/areafix.h (1.31), misc/areafix.hlp
+	(1.17): remote packer changing
+
 2002-07-25 Thursday 16:17  mche
 
 	* src/areafix.c (1.329): some code improvement of  function
