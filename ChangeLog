@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Thu Apr  5 23:09:57 NOVST 2001
+max:
+* code cleanup from yesterday fix
+
+----- cvs ci ------
 Wed Apr  4 23:29:55 NOVST 2001
 max:
 * fixed packing to empty bundles with ~ prefix in ?lo.

@@ -969,7 +969,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    // echoarea addresses changed by safe_reallocating of config->echoAreas[]
    carbonNames2Addr(config);
 
-   w_log('8', "Area '%s' autocreated by %s", c_area, hisaddr);
+   w_log('8', "Area %s autocreated by %s", c_area, hisaddr);
    
    if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr, NULL);
    else makeMsgToSysop(c_area, *forwardAddr, &pktOrigAddr);
@@ -2237,9 +2237,11 @@ int find_old_arcmail(s_link *link, FILE *flo)
 #endif
  	     	for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
 	            if (patimat(line, validExt[i]) == 1) {
-			nfree(bundle);
-			// One char for first symbol in flo file
-			if (*line!='~') bundle = safe_strdup(line + 1);
+			if (*line!='~') {
+			    nfree(bundle);
+			    // One char for first symbol in flo file
+			    bundle = safe_strdup(line + 1);
+			}
 			break;
 		}
 		nfree(line);
