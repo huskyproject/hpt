@@ -24,6 +24,7 @@ endif
 
 ifeq ($(USE_HPTZIP), 1)
   LIBS+= -lhptzip
+  CFLAGS += -DUSE_HPTZIP
 endif
 
 ifeq ($(PERL), 1)

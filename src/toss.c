@@ -1697,6 +1697,7 @@ void arcmail(s_link *tolink) {
 		      cmdexit = PackWithZlib(link->packFile, link->pktFile);
 #else
 		      cmdexit = -1;
+              w_log(LL_ERR, "zlib not compiled into hpt");
 #endif
 		    }else
                       cmdexit = cmdcall(cmd);
@@ -1764,6 +1765,7 @@ void arcmail(s_link *tolink) {
                 cmdexit = PackWithZlib(link->packFile, link->pktFile);
 #else
                 cmdexit = -1;
+                w_log(LL_ERR, "zlib not compiled into hpt");
 #endif
             }
             else
