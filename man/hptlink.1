@@ -17,10 +17,6 @@ search in all messages (for singlethread only)
 .B \-r
 do not use REPLY:/MSGID:
 .TP
-.B \-l loglevel
-log output level. Must be greater or equal to 0.
-Edge values: 0,5,10,11,15. Default is 10.
-.TP
 .B \-n
 Link with 'new' messages only ('new' start from last linked + 1). Great speedup
 in repeated linkings, but doesn't relink anything already linked.
@@ -31,3 +27,24 @@ Area list can be obtained from \fIimportlog\fP file when \fILinkWithImportlog\fP
 isn't set to \fI'no'\fP.
 All areas are linked when \fIimportlog\fP file doesn't exist and no \fIareaname\fP
 are set by arguments.
+
+.SH FILES
+.I /path/to/config
+The husky config file.
+.sp 1
+.I hpt.log
+Log file, shared with hpt. Placed into "logfiledir" directory defined in config file.
+.sp 1
+.I importlog
+List of areas for linking.
+
+.SH SEE ALSO
+hpt(1), info fidoconfig
+
+.SH AUTORS
+Serguei Revtov 2:5021/11.10 or/and 2:5021/19.1
+.sp 1
+Kolya Nesterov
+.sp 1
+other members of the Husky developers team.
+
