@@ -1245,14 +1245,12 @@ int carbonCopy(s_message *msg, s_area *echo)
 
         area = cb->area;
 		
-	// dont CC to the echo the mail comes from
-        if(!cb->rule&CC_AND)
-            if (!cb->extspawn &&
-             // fix for extspawn
-            !stricmp(echo->areaName,area->areaName)
-            // fix for carbonDelete
-            && cb->areaName != NULL)
-                    continue;
+	if(!cb->rule&CC_AND)
+            if (!cb->extspawn && // fix for extspawn
+                cb->areaName != NULL && // fix for carbonDelete
+		// dont CC to the echo the mail comes from
+        	!stricmp(echo->areaName,area->areaName)
+            ) continue;
 
         switch (cb->ctype) {
         case ct_to:
@@ -1333,7 +1331,8 @@ int carbonCopy(s_message *msg, s_area *echo)
                         if (!processCarbonCopy(area,echo,msg,*cb))
                             rc &= 1;
                 if (config->carbonAndQuit)
-                    if(*cb->areaName!='*' || cb->move==2) /* not skip quit or delete */
+		    /* not skip quit or delete */
+                    if ((cb->areaName && *cb->areaName!='*') || cb->move==2) 
                         return rc;
             }
             break;
