@@ -120,10 +120,13 @@ int __stdcall GetFileAttributesA(char *);
 extern s_message **msgToSysop;
 int save_err;
 
+static int nopenpkt, maxopenpkt;
+
 s_statToss statToss;
 int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec);
 void processDir(char *directory, e_tossSecurity sec);
 void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr);
+static void setmaxopen(void);
 
 static char *get_filename(char *pathname)
 {
@@ -676,12 +679,23 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
     }
 }
 
+static void closeOpenedPkt(void) {
+    int i;
+    for (i=0; i<config->linkCount; i++)
+	if (config->links[i].pkt) {
+	    if (closeCreatedPkt(config->links[i].pkt))
+		w_log('9',"can't close pkt: %s", config->links[i].pktFile);
+	    config->links[i].pkt = NULL;
+	    nopenpkt--;
+	}
+}
+
 void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks, 
 		    s_seenBy **seenBys, UINT *seenByCount,
 		    s_seenBy **path, UINT *pathCount) {
     unsigned  int i, rc=0;
     long len;
-    FILE *pkt, *f=NULL;
+    FILE *f=NULL;
     s_pktHeader header;
     char *start, *text, *seenByText = NULL, *pathText = NULL;
     char *debug=NULL;
@@ -817,6 +831,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
     }
 
     // add msg to the pkt's of the downlinks
+    if (maxopenpkt == 0) setmaxopen();
     for (i = 0; i<echo->downlinkCount; i++) {
 
 	// no link at this index -> break;
@@ -824,8 +839,13 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 
 	// check packet size
 	if (newLinks[i]->link->pktFile != NULL && newLinks[i]->link->pktSize != 0) {
-	    len = fsize(newLinks[i]->link->pktFile);
+	    len = newLinks[i]->link->pkt ? ftell(newLinks[i]->link->pkt) : fsize(newLinks[i]->link->pktFile);
 	    if (len >= (newLinks[i]->link->pktSize * 1024L)) { // Stop writing to pkt
+		if (newLinks[i]->link->pkt) {
+		    fclose(newLinks[i]->link->pkt);
+		    newLinks[i]->link->pkt = NULL;
+		    nopenpkt--;
+		}
 		nfree(newLinks[i]->link->pktFile);
 		nfree(newLinks[i]->link->packFile);
 	    }
@@ -843,18 +863,26 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	header.destAddr = newLinks[i]->link->hisAka;
 	if (newLinks[i]->link->pktPwd != NULL)
 	    strcpy(header.pktPassword, newLinks[i]->link->pktPwd);
-	pkt = openPktForAppending(newLinks[i]->link->pktFile, &header);
+	if (newLinks[i]->link->pkt == NULL) {
+	    newLinks[i]->link->pkt = openPktForAppending(newLinks[i]->link->pktFile, &header);
+	    nopenpkt++;
+	}
 
 	// an echomail msg must be adressed to the link
 	msg->destAddr = header.destAddr;
 	// .. and must come from us
 	msg->origAddr = header.origAddr;
-	rc += writeMsgToPkt(pkt, *msg);
+	rc += writeMsgToPkt(newLinks[i]->link->pkt, *msg);
 	if (rc) w_log('9',"can't write msg to pkt: %s",
 		      newLinks[i]->link->pktFile);
-	rc += closeCreatedPkt(pkt);
-	if (rc) w_log('9',"can't close pkt: %s",
-		      newLinks[i]->link->pktFile);
+	if (nopenpkt >= maxopenpkt-12 || // std streams, in pkt, msgbase, log
+	    (newLinks[i]->link->pktSize && ftell(newLinks[i]->link->pkt)>=newLinks[i]->link->pktSize * 1024L)) {
+	    rc += closeCreatedPkt(newLinks[i]->link->pkt);
+	    if (rc) w_log('9',"can't close pkt: %s",
+		          newLinks[i]->link->pktFile);
+	    newLinks[i]->link->pkt = NULL;
+	    nopenpkt--;
+	}
 	if (f) {
 	    if (rc) fputs(" failed: ",f);
 	    fputs(aka2str(header.destAddr),f);
@@ -1861,6 +1889,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 #ifdef DO_PERL
     perlpktdone(fileName, rc);
 #endif
+    closeOpenedPkt();
     w_log(LL_FUNC,"toss.c::processPkt() OK");
     return rc;
 }
@@ -2647,6 +2676,74 @@ void writeImportLog(void) {
 	}
 	
     }
+}
+
+#define MAXOPEN_DEFAULT 512
+
+#if defined(OS2)
+
+#define INCL_DOS
+#include <os2.h>
+
+static void setmaxopen(void) {
+    ULONG cur, add;
+    maxopenpkt = MAXOPEN_DEFAULT;
+    cur = add = 0;
+    if (DosSetRelMaxFH(&add, &cur) == 0)
+	if (cur>=maxopenpkt) return;
+    if (DosSetMaxFH(maxopenpkt))
+	while (cur<maxopenpkt) {
+	    add = 1;
+	    if (DosSetRelMaxFH(&add, &cur))
+		break;
+	}
+#ifdef __WATCOMC__
+    _grow_handles(maxopenpkt);
+#endif
+    cur = add = 0;
+    if (DosSetRelMaxFH(&add, &cur) == 0) {
+	maxopenpkt = cur;
+	// return;
+    }
+
+#elif defined(UNIX)
+
+#include <sys/resource.h>
+#include <unistd.h>
+
+static void setmaxopen(void) {
+    struct rlimit rl;
+    maxopenpkt = MAXOPEN_DEFAULT;
+    if (getrlimit(RLIMIT_NOFILE, &rl) == 0)
+	if (rl.rlim_cur >= MAXOPEN_DEFAULT)
+	    return;
+    // try to set max open
+    rl.rlim_cur = rl.rlim_max;
+    if (setrlimit(RLIMIT_NOFILE, &rl) == 0 && rl.rlim_cur >= MAXOPEN_DEFAULT)
+	return;
+    rl.rlim_cur = rl.rlim_max = maxopenpkt;
+    setrlimit(RLIMIT_NOFILE, &rl);
+    if (getrlimit(RLIMIT_NOFILE, &rl) == 0) {
+	maxopenpkt = rl.rlim_cur;
+	return;
+    }
+
+#else // windows or unknown OS, just test
+
+static void setmaxopen(void) {
+
+#endif
+
+    {
+	int i, handles[MAXOPEN_DEFAULT];
+	for (i=0; i<MAXOPEN_DEFAULT; i++)
+	    if ((handles[i]=dup(1)) == -1)
+		break;
+	maxopenpkt = i;
+	for (i=0; i<maxopenpkt; i++)
+	    close(handles[i]);
+    }
+    if (maxopenpkt == 0) maxopenpkt = 1;
 }
 
 void toss()

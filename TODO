@@ -7,7 +7,6 @@ Category 1: Will certainly be implemented until next release
 - split posting messages
 - areafix file with forwarded echo areas
 
-
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 - check for dublicate links if mask is used (fidoconf)
@@ -15,12 +14,10 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - autofwdareacreatedefaults 
 - AllowEchoAreaDelete
 - optimize packing (several files)
-- don't open/close on each msg when writing to pkt files (through ifdef)
 - advanced fileboxes
 - templates
-- speedup getArea by using b-tree
 - change uplinks from command line
-- remote change areafixpwd, pktpwd, ticpwd,filefixpwd and paáker by links
+- remote change areafixpwd, pktpwd, ticpwd, filefixpwd and packer by links
 
 Category 3: Will only be included if volunteers send patches
 ============================================================
@@ -35,4 +32,3 @@ Category 4: Will not be implemented
 - unpack all bundles before toss -> carc
 - afterUnpackBundle, afterUnpackAll -> carc
 - UnpackAllBeforeToss -> carc
-- pack several pkt's at once -> bsopack
