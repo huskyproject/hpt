@@ -220,7 +220,7 @@ void post(int c, unsigned int *n, char *params[])
    };
    // won't be set in the msgbase, because the mail is processed if it were received
    (*n)--; tm = localtime(&t);
-   strftime((char *)msg.datetime, 21, "%d %b %y  %T", tm);
+   strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", tm);
    if ((msg.destAddr.zone != 0 || area) && (textBuffer != NULL) && !quit) {
       // Dumbchecks
       if (msg.origAddr.zone == 0) // maybe origaddr isn't specified ?

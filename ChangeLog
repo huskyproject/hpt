@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Mon May  8 17:40:14 NOVST 2000
+max (patch from Alex Bronin):
+* MS Visual C porting
+
+----- cvs ci ------
 Mon May  8 13:26:01 NOVST 2000
 max:
 * return back seen-by processing

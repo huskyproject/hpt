@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#if !defined(__TURBOC__)
+#if !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
 #endif
 
@@ -310,7 +310,7 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
     }
     if (config->areafixKillReports) msg->attributes |= MSGKILL;
     
-    strftime((char*)msg->datetime, 21, "%d %b %y  %T", localtime(&time_cur));
+    strftime((char*)msg->datetime, 21, "%d %b %y  %H:%M:%S", localtime(&time_cur));
 
     return msg;
 }

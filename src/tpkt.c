@@ -79,7 +79,7 @@ int main()
 
       t = time (NULL);
       tm = localtime(&t);
-      strftime((char *)msg.datetime, 21, "%d %b %y  %T", tm);
+      strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", tm);
 
       msg.netMail = 1;
       msg.text = (char *) malloc(300);

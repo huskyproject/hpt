@@ -37,7 +37,7 @@
 #include <dos.h>
 #endif
 #include <string.h>
-#if !defined(__TURBOC__)
+#if !defined(__TURBOC__) && !(defined (_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
 #endif
 

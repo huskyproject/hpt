@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifndef __TURBOC__
+#if !defined (__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
 #else
 #include <dos.h>
@@ -195,12 +195,14 @@ int main(int argc, char *argv[])
 
       t = time (NULL);
       tm = localtime(&t);
-      strftime((char *)msg.datetime, 21, "%d %b %y  %T", tm);
+      strftime((char *)msg.datetime, 21, "%d %b %y  %H:%M:%S", tm);
 
       msg.netMail = 1;
 
-      sprintf(tmp, "--- %s\r", tearl);
-      strcat((char *)textBuffer, (char *)tmp);
+      if (tearl != NULL) {
+         sprintf(tmp, "\r--- %s\r", tearl);
+         strcat((char *)textBuffer, (char *)tmp);
+      }
       if (area != NULL) {
          sprintf(tmp, " * Origin: %s (%d:%d/%d.%d)\r",
                  orig, msg.origAddr.zone, msg.origAddr.net,
@@ -222,9 +224,9 @@ int main(int argc, char *argv[])
                  tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, versionStr);
       }
       
+      msg.textLength=strlen(textBuffer);
       free(textBuffer);
       free(versionStr);
-      msg.textLength=strlen(textBuffer);
 
       if (config->outtab != NULL) {
          // load recoding tables

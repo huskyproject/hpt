@@ -37,7 +37,7 @@
 #include <sys/types.h>
 #endif
 #include <sys/stat.h>
-#if !defined(__TURBOC__)
+#if !defined(__TURBOC__) && !(defined (_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
 #endif
 #if defined (__TURBOC__)
@@ -110,7 +110,7 @@ int createLockFile(char *lockfile) {
         return 0;
 }
 
-#if defined(__TURBOC__) || defined(__IBMC__)
+#if defined(__TURBOC__) || defined(__IBMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
 
 #include <io.h>
 #include <fcntl.h>
@@ -121,7 +121,7 @@ int createLockFile(char *lockfile) {
 
 #endif
 
-#if defined(__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__)
+#if defined(__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
 
 int truncate(const char *fileName, long length)
 {

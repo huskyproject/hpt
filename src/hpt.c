@@ -32,7 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#if !defined(__IBMC__) && !defined(__TURBOC__)
+#if !defined(__IBMC__) && !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
 #endif
 #include <time.h>
