@@ -12,4 +12,92 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
 3. IMPORTANT bugfixes:
 
 
+
+HPT 1.4 stable
+Changes between hpt-1.2-stable and hpt-1.4-stable
+
+1. MAJOR feature improvements:
+   - new parameter for bundlenamestyle: addrsCRC32 - for generate more unique
+     bundle file names for every link pair (thanks to Igor Romanovsky);
+   - Don't include Origin into areafix reply if areafixorigin is empty string;
+   - reduces SEEN-BY (FSC-0093)
+   - new areafix command: %rsb on/off - turns on/off reduced SEEN-BY mode.
+   - @RESCANNED kludge on rescanned messages (FSC-0057)
+
+2. CONFIG changes:
+   - area definition options -manual & -mandatory are different:
+     '-mandatory' prevent unsubscribe, '-manual' disable subscribe;
+   - remove round quotes from origin & areafixorigin; for define empty origin
+     set to "";
+   - new feature: NewAreaRefuseFile - file with masks of areas which we don't
+     want to autocreate;
+   - new keyword: disablePID: Same as disableTID, but works only for messages
+     being posted;
+   - new keyword: AvailList (link section): specify variant for reply to %avail
+     command.
+
+3. IMPORTANT bugfixes:
+   - deadareas.pl: Change dupebase files suffix: 'dpd' to 'dph' ('dpd' is
+     obsolete);
+   - do not scan messages with flag 'LOK' set;
+   - set 'DIR' flag in areafix's messages - prevent send areafix reports and
+     requests via routing;
+   - If message is being scanned (i.e. has 'Loc' flag and doesn't have 'Snt'
+     flag) and contains one or more @TID kludges all of them will be
+     replaced by one kludge with info about hpt;
+   - Posted message doesn't contain @TID anymore. It will be added only during
+     scan;
+   - Fix trap for messages with illegal date field value: begin of epoch or
+     very big (<1.1.1970 and >n.n.2038)
+   - Check netmailarea presence in config (before: trap)
+   - ImportLog will not contain passthrough areas any more.
+
+
+HPT 1.2.3-release
+(1.2-stable branch started 25.06.2002)
+Changes between hpt-1.0-stable and hpt-1.2-stable
+
+1. MAJOR feature improvements:
+   - new areafix code; idle forward requests (track new echoes requests
+     from uplinks);
+   - 'hpt qupd' - check requested echoes queue,
+   - 'hpt qrep' - report queue status (send requested echoes status to links)
+   - areafix: report about already linked areas
+   - areafix: send echoarea rules on subscribe (token sendRules)
+   - areafix: new syntax of %list and %avail
+   - toss speedup
+   - win32 binary with dll (MS Visual C/C++ compiler)
+   - Compile HPT with Perl support on MS VisualC & VisualC.NET
+   - new perl hook tossbad(), called when put message to badarea
+   - vars $fromname, $toname, $date, $subj for route() func in filter.pl
+   - flags 'dir', 'imm', 'kfs', 'tfs', 'cfm' and 'npd' support
+   - hpt post: uue-multipart posting
+   - hptlink use hpt.log for logging
+   - misc/hptlogstat.pl: new version
+   - misc/pretty.pl: sort & format area definitions
+   - misc/hpt_ro: New perl module for filter.pl: hpt read-only manager
+     (written by Andrew Sagulin 2:6073/1).
+   - added hpt link -j switch, link jam areas by msgid/reply crc -- speedup
+
+2. CONFIG changes:
+   - the 'pause' keyword syntax expanded: on, off, 1, 0, earea or farea
+     possible ('pause earea': echoes paused, 'pause farea': fileareas paused)
+   - change loglevels (see fidoconf & hpt documentation)
+   - new keyword for link: NoRules
+   - add sample configs to distribution
+
+3. IMPORTANT bugfixes:
+   - do not autoadd tearline & origin in netmail;
+   - do not scan messages with flag 'LOK' set (mfc);
+   - Clear trs, loc & k/s attributes after scan() perl hook;
+   - translates origin & tirline to OEM-defined character set (win32);
+   - HighWaterMark fix where scan jam area with deleted messages;
+   - hptlink: ignore characters case and .0 at the end of node address
+     in msgid/reply fields;
+   - Fix remap (replace INTL kludge);
+   - Fix trap on messages with illegal date field value: begin of epoch or
+     very big (<1.1.1970 and >n.n.2038);
+   - Check netmailarea presence in config (before: trap)
+   - ImportLog will not contain passthrough areas any more.
+
 $Id$
