@@ -1,3 +1,21 @@
+2003-01-13 Monday 14:52  stas_degteff
+
+	* src/perl.c (1.47): Remove obsolete check
+
+2003-01-13 Monday 08:50  stas_degteff
+
+	* h/fcommon.h (1.50), src/fcommon.c (1.156): Move cmdcall() from
+	hpt into fidoconfig
+
+2003-01-13 Monday 08:10  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.63): Update people list
+
+2003-01-13 Monday 08:09  stas_degteff
+
+	* doc/Makefile (1.6): Set permissions to documentation files at
+	install
+
 2003-01-12 Sunday 15:11  mche
 
 	* hpt.dsp (1.6), src/perl.c (1.46): define INTEL for MSVC in
