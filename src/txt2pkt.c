@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
       exit(1);
    }
 
-   config = readConfig();
+   config = readConfig(NULL);
    if (NULL == config) {
       printf("Config not found\n");
       exit(1);

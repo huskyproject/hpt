@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  config = readConfig();
+  config = readConfig(NULL);
   
   for (i = 1; i < argc; i++)
   {

@@ -380,7 +380,7 @@ int main(int argc, char **argv) {
      }
    }
 
-   cfg = readConfig();
+   cfg = readConfig(NULL);
 
    if (!cfg) {
       fprintf(outlog, "Could not read fido config\n");

@@ -513,7 +513,7 @@ int main(int argc, char **argv) {
 
    if ( loglevel > 0) fprintf(outlog,"hptlink %s\n", version);
 
-   cfg = readConfig();
+   cfg = readConfig(NULL);
 
    if (!cfg) {
       fprintf(outlog, "Could not read fido config\n");

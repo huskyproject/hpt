@@ -49,6 +49,7 @@
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/dirlayer.h>
 #include <fidoconf/xstr.h>
+#include <fidoconf/common.h>
 
 #include <log.h>
 
@@ -67,7 +68,7 @@
 s_message **msgToSysop = NULL;
 char *scanParmA;
 char *scanParmF;
-
+char *cfgFile = NULL;
 
 /* kn: I've really tried not to break it. 
    FIXME: if there is pack and scan options on cmd line - one set 
@@ -133,7 +134,6 @@ int processCommandLine(int argc, char **argv)
          if (i < argc-1) if (stricmp(argv[i+1], "-b") == 0) {
              cmToss = 2;
              break;
-//             i++;
          }
          continue;
       } else if (stricmp(argv[i], "scan") == 0) {
@@ -151,7 +151,11 @@ int processCommandLine(int argc, char **argv)
       } else if (stricmp(argv[i], "post") == 0) {
          ++i; post(argc, &i, argv);
       } else if (stricmp(argv[i], "relink") == 0) {
-         ++i; relink(argv[i]); i=argc;
+         i++; relink(argv[i]);
+	 continue;
+      } else if (stricmp(argv[i], "-c") == 0) {
+         ++i; xstrcat(&cfgFile, argv[i]);
+	 continue;
       } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
 
    } /* endwhile */
@@ -170,7 +174,8 @@ void processConfig()
    
    FILE *f;
 
-   config = readConfig();
+   config = readConfig(cfgFile);
+   nfree(cfgFile);
    if (NULL == config) {
       printf("Config not found\n");
       exit(1);
