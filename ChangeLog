@@ -1,3 +1,17 @@
+2004-03-20 Saturday 18:36  andrew_ladutsko
+
+	* src/link.c (hpt-1_4-stable.2): fixed misprint (thanks to Michael
+	Dukelsky, 2:5020/1042)
+
+2004-03-19 Friday 06:03  sfpavel
+
+	* src/post.c (hpt-1_4-stable.3): Fix UUE posting, prevent treating
+	tearline as UUE code (patch by mche)
+
+2004-03-19 Friday 05:59  sfpavel
+
+	* src/toss.c (hpt-1_4-stable.10): Log total tossing time in seconds
+
 2004-02-03 Tuesday 08:52  andr_lukyanov
 
 	* make/: makeperl.mvc, makeperl.mvcdll (hpt-1_4-stable.[2,2]):
