@@ -1,3 +1,9 @@
+hpt (1.4.0+beta2-1) unstable; urgency=low
+
+  * New cvs version
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Tue, 25 Feb 2003 14:52:43 +0500
+
 hpt (1.4.0+beta1-2) unstable; urgency=low
 
   * Place hpt package to main. Now smapi has LGPL license and hpt does
