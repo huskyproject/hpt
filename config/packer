@@ -1,7 +1,8 @@
 #Unpack  "unzip -joLqq $a -d $p" 0 504b0304
 #Pack 	zip zip -9jgq $a $f
-
-Unpack  "pkunzip -nojCL $a -d $p" 0 504b0304
+Unpack "\path\pkzipc -ext -dir=none -over=all -nozip -silent $a $p $f" 0 504b0304
+#Unpack "pkunzip -njCL $a -d $p $f" 0 504b0304
+#Unpack "pkzip25 -ext -silent -over=all -nofix -nozip $a $p $f" 0
 Pack  zip pkzip -ex $a $f
 
 # *.rar
