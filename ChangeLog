@@ -1,3 +1,7 @@
+2003-09-27 Saturday 19:45  d_sergienko
+
+	* doc/hpt.texi (hpt-1_4-stable.5): fixed description of EchoTossLog
+
 2003-09-18 Thursday 10:36  sfpavel
 
 	* Makefile (hpt-1_4-stable.1): Fix static building
