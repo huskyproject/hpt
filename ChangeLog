@@ -1,3 +1,20 @@
+2002-05-17 Friday 21:23  pavel.gulchouck
+
+	* src/areafix.c (1.304): fix spelling
+
+2002-05-17 Friday 17:06  mche
+
+	* src/post.c (1.83): do not post "\n\r" in uue posting
+
+2002-05-17 Friday 17:05  mche
+
+	* src/query.c (1.44): make report only if queue file changed
+
+2002-05-17 Friday 08:50  d.sergienko
+
+	* TODO (1.190): 
+	add %users afix command
+
 2002-05-16 Thursday 14:33  d.sergienko
 
 	* src/areafix.c (1.303): 
