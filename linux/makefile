@@ -7,7 +7,7 @@ OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scan
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -g -pg -O2 -s -DUNIX
+  CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -g -O2 -s -DUNIX
   LFLAGS  = 
 else
   CFLAGS  = -c -I../h -I../../smapi -Wall -O2 -s -DUNIX $(CADDFLAGS)
@@ -41,7 +41,8 @@ purgeDupes: purgeDupes.o global.o dupe.o tree.o pktread.o
 	$(CC) $(LFLAGS) -o purgeDupes purgeDupes.o tree.o pktread.o dupe.o global.o -lfidoconfig -lsmapilnx
 
 clean:
-	rm -f *.o
+	-rm -f *.o
+	-rm *~
 
 install:
 	install -s hpt pktinfo purgeDupes $(INSTDIR)

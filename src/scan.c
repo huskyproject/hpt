@@ -250,6 +250,7 @@ void scanNMArea(void)
 
          // msg does not exist
          if (msg == NULL) continue;
+         statScan.msgs++;
 
          MsgReadMsg(msg, &xmsg, 0, 0, NULL, 0, NULL);
          cvtAddr(xmsg.dest, &dest);
@@ -258,8 +259,10 @@ void scanNMArea(void)
             if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
                 
          // if not sent and not for us -> pack it
-         if (((xmsg.attr & MSGSENT) != MSGSENT) && (for_us==0))
+         if (((xmsg.attr & MSGSENT) != MSGSENT) && (for_us==0)) {
             packMsg(msg, xmsg);
+            statScan.exported++;
+         }
 
          MsgCloseMsg(msg);
 
@@ -291,9 +294,12 @@ void scan(void)
    memset(&statScan, sizeof(s_statScan), 0);
    writeLogEntry(log,'4', "Start scanning...");
    scanNMArea();
+   statScan.areas++;
    for (i = 0; i< config->echoAreaCount; i++) {
-      if (config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH)
+      if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downLinkCount > 0)) {
          scanEMArea(&(config->echoAreas[i]));
+         statScan.areas++;
+      }
    }
 
    writeScanStatToLog();

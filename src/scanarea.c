@@ -166,6 +166,7 @@ void scanEMArea(s_area *echo)
    
    area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, echo->msgbType | MSGTYPE_ECHO);
    if (area != NULL) {
+      statScan.areas++;
       sprintf(buff, "Scanning area: %s", echo->areaName);
       writeLogEntry(log, '1', buff);
       i = highWaterMark = MsgGetHighWater(area);
@@ -174,9 +175,12 @@ void scanEMArea(s_area *echo)
       while (i <= highestMsg) {
          hmsg = MsgOpenMsg(area, MOPEN_RW, i++);
          if (hmsg == NULL) continue;      // msg# does not exist
+         statScan.msgs++;
          MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-         if (((xmsg.attr & MSGSENT) != MSGSENT) && ((xmsg.attr & MSGLOCAL) == MSGLOCAL))
-             packEMMsg(hmsg, xmsg, echo);
+         if (((xmsg.attr & MSGSENT) != MSGSENT) && ((xmsg.attr & MSGLOCAL) == MSGLOCAL)) {
+            packEMMsg(hmsg, xmsg, echo);
+            statScan.exported++;
+         }
 
          MsgCloseMsg(hmsg);
       }
