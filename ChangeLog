@@ -1,3 +1,17 @@
+2003-01-15 Wednesday 12:11  mche
+
+	* misc/adv-stat-hpt.pl (1.1): # hptstat ver.0.3, (c)opyright
+	2002-03, by val khokhlov
+
+2003-01-15 Wednesday 11:32  mche
+
+	* make/: makeperl.mvc (1.14), makeperl.mvcdll (1.11): fix
+	compilation
+
+2003-01-15 Wednesday 07:01  stas_degteff
+
+	* src/carbon.c (1.11): Concatenate two if{}
+
 2003-01-14 Tuesday 13:35  stas_degteff
 
 	* make/: makefile.mvc (1.6), makefile.mvcdll (1.8), makeperl.mvc
