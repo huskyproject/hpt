@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Tue Dec  5 03:17:40 UTC 2000
+sms:
+! using enum for linkWithImportLog instead of strings
+
+----- cvs ci ------
 Sun Dec  3 18:45:03 UTC 2000
 sms:
 * forcing KFS on intransit mails with file attaches

@@ -332,7 +332,7 @@ void linkAreas(char *name)
    }
 
    // open importlog file
-   if ((config->LinkWithImportlog != NULL) && (stricmp(config->LinkWithImportlog, "no")!=0)){
+   if (config->LinkWithImportlog != lwiNo) {
       f = fopen(config->importlog, "r");
    } else {
       f = NULL;
@@ -370,6 +370,6 @@ void linkAreas(char *name)
          }
       }
       fclose(f);
-      if (stricmp(config->LinkWithImportlog, "kill")==0) remove(config->importlog);
+      if (config->LinkWithImportlog == lwiKill) remove(config->importlog);
    }
 }

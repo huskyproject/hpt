@@ -691,7 +691,7 @@ int main(int argc, char **argv) {
 
    } else {
 
-      if ((cfg->LinkWithImportlog != NULL) && (stricmp(cfg->LinkWithImportlog, "no")!=0)){
+      if (cfg->LinkWithImportlog != lwiNo){
 	 f = fopen(cfg->importlog, "r");
       } else {
 	 f = NULL;
@@ -734,7 +734,7 @@ int main(int argc, char **argv) {
 
 	 }
 	 fclose(f);
-	 if (stricmp(cfg->LinkWithImportlog, "kill")==0) remove(cfg->importlog);
+	 if (cfg->LinkWithImportlog == lwiKill) remove(cfg->importlog);
       } else {
 	 // importlog does not exist link all areas
 	 if (loglevel>=10) fprintf(outlog, "No ImportLog file, linking all Areas\n");
