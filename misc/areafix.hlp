@@ -18,6 +18,7 @@ Example:
  %LIST                        <- List available areas
  %QUERY			      <- List of areas to which you are currently
  				 linked
+ %LINKED		      <- same as %QUERY
  %UNLINKED                    <- List available areas to which
                                  you are currently not linked
  %AVAIL                       <- List all areas that are available at

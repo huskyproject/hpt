@@ -96,10 +96,10 @@ int subscribeCheck(s_area area, s_message *msg, s_link *link)
   }
 
   if (strcmp(area.group, "0")) {
-	  if (link->numAccessGrp) 
-		  found = grpInArray(area.group,link->AccessGrp,link->numAccessGrp);
-	  else if (config->numPublicGroup)
+	  if (config->numPublicGroup)
 		  found = grpInArray(area.group,config->PublicGroup,config->numPublicGroup);
+	  if (!found && link->numAccessGrp) 
+		  found = grpInArray(area.group,link->AccessGrp,link->numAccessGrp);
   } else found = 1;
 
   if (!found) return 2;
@@ -370,6 +370,7 @@ char *linked(s_message *msg, s_link *link)
 	}
     }
     xscatprintf(&report, "\r%u areas linked\r", n);
+    writeLogEntry(hpt_log, '8', "areafix: linked areas list sent to %s", aka2str(link->hisAka));
     return report;
 }
 
@@ -1188,6 +1189,8 @@ int tellcmd(char *cmd) {
 		if (stricmp(line,"available")==0) return AVAIL;
 		if (stricmp(line,"all")==0) return AVAIL;
 		if (stricmp(line,"unlinked")==0) return UNLINK;
+		if (stricmp(line,"linked")==0) return QUERY;
+		if (stricmp(line,"query")==0) return QUERY;
 		if (stricmp(line,"pause")==0) return PAUSE;
 		if (stricmp(line,"resume")==0) return RESUME;
 		if (stricmp(line,"info")==0) return INFO;
@@ -1228,6 +1231,9 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 		break;
 	case UNLINK: report = unlinked (msg, link);
 		RetFix=UNLINK;
+		break;
+	case QUERY: report = linked (msg, link);
+		RetFix=QUERY;
 		break;
 	case PAUSE: report = pause_link (msg, link);
 		RetFix=PAUSE;
@@ -1414,6 +1420,9 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 					break;
 				case UNLINK:
 					RetMsg(msg, link, preport, "unlinked request");
+					break;
+				case QUERY:
+					RetMsg(msg, link, preport, "linked request");
 					break;
 				case PAUSE:
 					RetMsg(msg, link, preport, "node change request");
