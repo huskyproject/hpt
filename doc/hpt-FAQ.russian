@@ -549,7 +549,7 @@ A: (DK)
 1.  Распаковываешь архив  (если  нету tar/gzip, то либо www.cygnus.com, либо
 www.winzip.com).
 
-2. Компилятор.  Реально под Win32 надо взять MSVC, Watcom C, Borland C) либо
+2. Компилятор.  Реально под Win32 надо взять MSVC, Watcom C, Borland C либо
 поставить Cygwin и запускать (n)make -f makefile.(mvc|mvcdllwcw|bcw|cyg)
 
 3. Распаковать и собрать последовательно:
