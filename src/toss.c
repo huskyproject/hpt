@@ -596,7 +596,7 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
     case 6:
 	strcpy(buff, "MSGAPIERR: ");
 	strncat(buff, strmerr(msgapierr), sizeof(buff)-strlen(buff));
-	buff[sizeof(buf)-1] = '\0';
+	buff[sizeof(buff)-1] = '\0';
 	reason = buff;
 	w_log(LL_ECHOMAIL, "Badmail reason: %s", reason);
 	break;
