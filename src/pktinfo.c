@@ -33,6 +33,7 @@
 #include <time.h>
 #include <string.h>
 
+#include <global.h>
 #include <pkt.h>
 #include <version.h>
 
@@ -100,6 +101,8 @@ int main(int argc, char *argv[])
 	   "       -t means display msg text\n");
     return 1;
   }
+
+  config = readConfig();
   
   for (i = 1; i < argc; i++)
   {

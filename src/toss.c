@@ -152,9 +152,11 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, UINT16 forceattr) {
 	if (msg->netMail == 1) {
 		// attributes of netmail must be fixed
 		msgHeader.attr = msg->attributes;
+
+		msgHeader.attr &= ~(MSGCRASH | MSGHOLD); // always kill crash and hold flag
 		
 		if (to_us(msg->destAddr)==0) {
-			msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD
+			msgHeader.attr &= ~(MSGREAD | MSGSENT | MSGKILL | MSGLOCAL
 			  | MSGFRQ | MSGSCANNED | MSGLOCKED | MSGFWD); // kill these flags
 			msgHeader.attr |= MSGPRIVATE; // set this flags
 		} else	if (header!=NULL) {
@@ -1384,7 +1386,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
        
        header = openPkt(pkt);
        if (header != NULL) {
-	 if (to_us(header->destAddr)==0) {
+	 if ((to_us(header->destAddr)==0) || (sec == secLocalInbound)) {
 	   writeLogEntry(hpt_log, '6', "pkt: %s", fileName);
 	   statToss.pkts++;
 	   link = getLinkFromAddr(*config, header->origAddr);
@@ -1466,10 +1468,13 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	 } else {
 	   
 	   /* PKT is not for us - try to forward it to our links */
+
+	     writeLogEntry(hpt_log, '9', "pkt: %s addressed to %d:%d/%d.%d but not for us", 
+			   fileName, header->destAddr.zone, header->destAddr.net,       
+			   header->destAddr.node, header->destAddr.point);
 	   
-	   fclose(pkt); pkt = NULL;
-	   rc = forwardPkt(fileName, header, sec);
-	   
+	     fclose(pkt); pkt = NULL;
+	     rc = forwardPkt(fileName, header, sec);	   
 	 }
 	 
 	 free(header);
@@ -1890,7 +1895,9 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 
 	}
     }
-    
+
+    writeLogEntry(hpt_log, '9', "Packet %s is not to us or our links",fileName);
+
     return 4;       /* PKT is not for us and we did not find a link to
 		       forward the pkt file to */
 }

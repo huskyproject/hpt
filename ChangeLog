@@ -1,6 +1,15 @@
 hpt 0.9.5
 ---------
 
+
+----- cvs ci ------
+Wed Dec 22 14:10:55 CET 1999
+mtt (inspired by Alex):
+* crash and hold flags are removed on every netmail tossed in. 
+* pakets in localinbound are tossed now even they are not adressed to us.
+* some additional log messages when packets are not to us.
+* made pktinfo working again. Fixed a segmentation fault.
+
 ----- cvs ci ------
 Sun Dec 19 10:36:32 NOVT 1999                                                   
 max:
@@ -12,7 +21,9 @@ max:
 * don't read config if no command line arguments
 * changes in correctNMAddr() - was coredumps on some broken pkt files
 
-On Thu Dec 16 i renamed the 0.29 release to 0.31 because of some lists which say0.29 and 0.30 are not y2k compliant. They are only smapi was not compliant that day. The beta 0.30 is renamed to 0.9.5.
+On Thu Dec 16 i renamed the 0.29 release to 0.31 because of some lists which say
+0.29 and 0.30 are not y2k compliant. They are only smapi was not compliant that day.
+The beta 0.30 is renamed to 0.9.5.
 
 ----- cvs ci ------
 Tue Dec 14 19:30:14 NOVT 1999
