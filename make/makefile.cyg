@@ -1,132 +1,59 @@
 # $Id$
-# Mingw32 CPD makefile for crosscompiling for NT under Unix
-#
-# tested with Mingw32 CPD on Linux
+# Makefile to build HPT/win32 with Mingw32 from Cygwin.
+# No support for the Husky build environment.
 
-# Uncomment this for compile info for gdb and display more compiler warnings
-# DEBUG	= -g -pedantic
-
-# Uncomment this for strip all simbols from binaries to reduce file sizes
-STRIP	= -s
-
-PERL=0
-PERL_DIR=
-
-ifeq (~$(PERL)~, ~1~)
-PERLFLAGS =`$(PERL_DIR)perl -MExtUtils::Embed -e ccopts`
-PERLDEFS  =-DDO_PERL
-PERLLIBS  =`$(PERL_DIR)perl -MExtUtils::Embed -e ldopts`
-PERLOBJ   = perl$(OBJ)
-endif
-
-SRC_DIR=../src/
-
-## programs ##
-
-#use this line if you are using MINGW32 on a Windows box
-CC	= gcc
-AR	= ar
-RANLIB	= ranlib
-
-#use this line if you are using MINGW32 CPD on a Unix box as cross compiler
-#CC	= i386-mingw32-gcc
-#AR	= i386-mingw32-ar
-#RANLIB	= i386-mingw32-ranlib
-RM	= rm
-
-## file suffixes ("extensions") ##
-
-C	= .c
-OBJ	= .o
-LIB	= .a
-EXE	= .exe
-DLL	= .dll
-
-# Prefix to construct static library name
-LIBPREFIX=lib
-# Prefix to construct dll name
-DLLPREFIX=
-# Suffix to construct library name
-LIBSUFFIX=cyg
-# Suffix to construct dll name
-DLLSUFFIX=
-
-## program options ##
-
-# compiler defines
-override CDEFS	+= $(PERLDEFS)
-# common compiler options
-override CFLAGS	+= -I../h -I../.. -Wall -mno-cygwin -O3
-# common linker options
-override LFLAGS	+= -mno-cygwin
-# options for compile only (link is off)
-OBJOPT	= -c
-# options for build static library
-override LIBOPT	+= -static
-# options for build dll
-override DLLOPT	+= -shared
-# option for specify output file name
-NAMEOPT	= -o
-# options for $(AR) program
-override AROPTS	+= rs
-
-# husky libraries:
-# static versions of husky libraries to build this module
-STATICLIBS	+=../../fidoconf/$(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(LIB)
-STATICLIBS	+=../../smapi/$(LIBPREFIX)smapi$(LIBSUFFIX)$(LIB)
-
-# DLL versions of husky libraries need to build this module
-DLL_LIBS	+=../../fidoconf/$(DLLPREFIX)fidoconf$(DLLSUFFIX)$(DLL)
-DLL_LIBS	+=../../smapi/$(DLLPREFIX)smapi$(DLLSUFFIX)$(DLL)
-
-# libraries need to build binary file
-LIBS	?=
-
-## other ##
-CYGWIN_VERSION	= $(shell uname -r)
-
-ifeq ( , $(findstring "1.3.9", $(CYGWIN_VERSION)) )
-ifeq ( , $(findstring "1.3.10", $(CYGWIN_VERSION)) )
-ifeq ( , $(findstring "1.3.11", $(CYGWIN_VERSION)) )
- # new cygwin require library mingwex for build with '-mno-cygwin' option
-LIBS	+= -lmingwex
-endif
-endif
-endif
-
-
-override CFLAGS	+= $(DEBUG)
-override LFLAGS	+= $(DEBUG)
-
-###########
-
-EXENAMEFLAG	= $(NAMEOPT)
-
-PROGRAMS	= commonprogs
-
-.PHONY:	distclean clean all static dll programs default dllprograms
-
-default:
-	@echo Run 'make dll' to build dll version of programs
-	@echo Run 'make static' to build static version of programs
-#	@echo Run 'make all' to build all above
-
-%$(OBJ): $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(CDEFS) $(OBJOPT) $^
-
-$(PERLOBJ): $(SRC_DIR)perl.c
-	$(CC) $(CFLAGS) $(PERLFLAGS) $(OBJOPT) $(CDEFS) $^
+# include Husky-Makefile-Config,
+# copy this file from ../../huskybse/huskymak.cfg.cyg
+include ../../huskymak.cfg
 
 include makefile.inc
 
-all: default
+# includes directories
+CINCL	= -I$(H_DIR) -I../../fidoconf -I../../smapi/ -I../../huskylib/
 
-static:
-	$(MAKE) -f makefile.cyg $(PROGRAMS) LIBS="$< $(STATICLIBS)"
+# libraries need to build binary file
+LIBS	= ../../fidoconf/make/$(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(_LIB) \
+	  ../../smapi/make/$(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
+	  ../../huskylib/make/$(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB)
 
-dll:
-	$(MAKE) -f makefile.cyg $(PROGRAMS) LIBS="$< $(DLL_LIBS)"
+READMEFILES= ../BUG-REPORTING ../BUGS ../ChangeLog ../COPYING ../CREDITS \
+	     ../INSTALL ../README ../TODO ../VERSION ../filter.pl 
 
-clean: commonclean
+default:
+	@echo
+	@echo Run \'make programs\' to build static version of programs
+	@echo \($(PROGRAMS)\)
+	@echo
+	@echo Run \'make all\' to build all above
 
-distclean: commondistclean
+all:	programs
+
+programs: $(PROGRAMS)
+
+%$(_OBJ): $(_SRC_DIR)%$(_C)
+	@echo Compiling $<
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(OPTCFLAGS) $<
+
+$(PKTINFO): $(PKTINFOOBJS)
+	@echo Create $(PKTINFO)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
+$(TPKT): $(TPKTOBJS)
+	@echo Create $(TPKT)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
+$(TXT2PKT): $(TXT2PKTOBJS)
+	@echo Create $(TXT2PKT)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
+$(HPTLINK): $(HPTLINKOBJS)
+	@echo Create $(HPTLINK)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
+$(HPTTREE): $(HPTTREEOBJS)
+	@echo Create $(HPTTREE)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
+$(HPT): $(HPTOBJS)
+	@echo Create $(HPT)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)

@@ -1,37 +1,62 @@
-# common rules for all platforms
+# $Id$
+#
+# Common makefiles part (include-file) for hpt
 
-VER = 0.2
-VERH = 0
+# Use defines before including this file:
+# _OBJ	object files suffix begins with point (".o", ".obj", ... )
+# _LIB	library files suffix begins with point (".a", ".lib", ... )
+# _DLL	dinamic linking library files suffix begins with point (".dll", ".so", ...)
+# LIBPREFIX  library filename prefix ("lib", "", ...)
+# LIBSUFFIX  library filename suffix (compiler ID, three characters, somewhere empty)
+# DLLPREFIX  dinamic linking library prefix (usually empty)
+# DLLSUFFIX  dinamic linking library suffix (compiler ID or empty)
+# _SRC_DIR  sources dir
 
-commonprogs: pktinfo$(EXE) tpkt$(EXE) txt2pkt$(EXE) hptlink$(EXE) hpttree$(EXE) hpt$(EXE) $(SYMBOLIC)
-	$(NULL)
+LIBNAME = hpt
 
-pktinfo$(EXE): pktinfo$(OBJ) pktread$(OBJ) fcommon$(OBJ) global$(OBJ) dupe$(OBJ)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG)pktinfo$(EXE) pktinfo$(OBJ) pktread$(OBJ) fcommon$(OBJ) global$(OBJ) dupe$(OBJ) $(LIBS)
+# Version
+VERMAJOR= 1
+VERMINOR= 9
+VERPATCH= 0
+VERH	= $(VERMAJOR).$(VERMINOR)
+VER	= $(VERH).$(VERPATCH)
 
-tpkt$(EXE): tpkt$(OBJ) fcommon$(OBJ) pktread$(OBJ) pktwrite$(OBJ) global$(OBJ) dupe$(OBJ)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG)tpkt$(EXE) tpkt$(OBJ) fcommon$(OBJ) pktread$(OBJ) pktwrite$(OBJ) global$(OBJ) dupe$(OBJ) $(LIBS)
+# Programms name
+PKTINFO	= pktinfo$(_EXE)
+TPKT	= tpkt$(_EXE)
+TXT2PKT	= txt2pkt$(_EXE)
+HPTLINK = hptlink$(_EXE)
+HPTTREE	= hpttree$(_EXE)
+HPT	= hpt$(_EXE)
 
-txt2pkt$(EXE): txt2pkt$(OBJ) fcommon$(OBJ) pktread$(OBJ) pktwrite$(OBJ) global$(OBJ) dupe$(OBJ)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG)txt2pkt$(EXE) txt2pkt$(OBJ) fcommon$(OBJ) pktread$(OBJ) pktwrite$(OBJ) global$(OBJ) dupe$(OBJ) $(LIBS)
+# Object files: programs
+OBJS	   = 
+PKTINFOOBJS= pktinfo$(_OBJ) dupe$(_OBJ)  pktread$(_OBJ) fcommon$(_OBJ) \
+	     global$(_OBJ) 
+TPKTOBJS   = tpkt$(_OBJ) fcommon$(_OBJ) pktread$(_OBJ) pktwrite$(_OBJ) \
+	     global$(_OBJ) dupe$(_OBJ)
+TXT2PKTOBJS= txt2pkt$(_OBJ) pktwrite$(_OBJ) dupe$(_OBJ) pktread$(_OBJ) \
+	     fcommon$(_OBJ) global$(_OBJ)
+HPTLINKOBJS= hptlink$(_OBJ) global$(_OBJ)
+HPTTREEOBJS= hpttree$(_OBJ)
+HPTOBJS    = hpt$(_OBJ) pktread$(_OBJ) pktwrite$(_OBJ) fcommon$(_OBJ) \
+	     global$(_OBJ) query$(_OBJ) toss$(_OBJ) scan$(_OBJ) \
+	     scanarea$(_OBJ) post$(_OBJ) areafix$(_OBJ) dupe$(_OBJ) \
+	     seenby$(_OBJ) link$(_OBJ) carbon$(_OBJ) $(PERLOBJ)
 
-hptlink$(EXE): hptlink$(OBJ) global$(OBJ)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG)hptlink$(EXE) hptlink$(OBJ) global$(OBJ) $(LIBS)
+# Header files
+HEADERS	= areafix.h cvsdate.h dupe.h fcommon.h global.h hpt.h hptperl.h \
+	  link.h pkt.h post.h query.h scan.h scanarea.h seenby.h toss.h \
+	  version.h
 
-hpttree$(EXE): hpttree$(OBJ)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG)hpttree$(EXE) hpttree$(OBJ) $(LIBS)
+# Sources directory
+_SRC_DIR= ../src/
 
-hpt$(EXE): hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) global$(OBJ) query$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) post$(OBJ) areafix$(OBJ) dupe$(OBJ) seenby$(OBJ) link$(OBJ) carbon$(OBJ) $(PERLOBJ)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG)hpt$(EXE) hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) global$(OBJ) query$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) post$(OBJ) areafix$(OBJ) dupe$(OBJ) seenby$(OBJ) link$(OBJ) carbon$(OBJ) $(PERLOBJ) $(LIBS) $(PERLLIBS)
+# Headers directory
+H_DIR	= ../h/
 
-commonclean: $(SYMBOLIC)
-	-$(RM) $(RMOPT) *$(OBJ)
-	-$(RM) $(RMOPT) core
+# Binary files(s) to bild from sources
+PROGRAMS  = $(PKTINFO) $(TPKT) $(TXT2PKT) $(HPTLINK) $(HPTTREE) $(HPT)
 
-commondistclean: clean $(SYMBOLIC)
-	-$(RM) $(RMOPT) tpkt$(EXE)
-	-$(RM) $(RMOPT) txt2pkt$(EXE)
-	-$(RM) $(RMOPT) pktinfo$(EXE)
-	-$(RM) $(RMOPT) hpt$(EXE)
-	-$(RM) $(RMOPT) hptlink$(EXE)
-	-$(RM) $(RMOPT) hpttree$(EXE)
+# List of libraries required to build binary file(s)
+LIBS	=

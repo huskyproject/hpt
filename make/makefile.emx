@@ -1,32 +1,57 @@
-# EMX A.OUT STYLE MAKEFILE (REQ. EMXRT.DLL)
-#
+# $Id$
+# Makefile to build HPT/OS2 with gcc 3.x.x from EMX v0.9d.
+# No support for the Husky build environment.
 
-DEBUG=-s
-# set to -g for debugging
-
-CC=gcc
-# there must be a spaces after this "-o"!!! Make sure your editor does not trash it when saving!!!
-EXENAMEFLAG=-o 
-SRC_DIR=../src/
-CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
-LFLAGS=-Zcrtdll $(DEBUG)
-CDEFS =-DOS2
-
-OBJ=.o
-EXE=.exe
-RM=cmd /c del
-
-LIBS=../../fidoconf/fconfemx.a ../../smapi/smapiemx.a
-
-default: all
-
-%$(OBJ): $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+# include Husky-Makefile-Config,
+# copy this file from ../../huskybse/huskymak.cfg.emx
+include ../../huskymak.cfg
 
 include makefile.inc
 
-all: commonprogs
+# includes directories
+CINCL	= -I$(H_DIR) -I../../fidoconf -I../../smapi/ -I../../huskylib/
 
-clean: commonclean
+# libraries need to build binary file
+LIBS	= ../../fidoconf/make/$(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(_LIB) \
+	  ../../smapi/make/$(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
+	  ../../huskylib/make/$(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB)
 
-distclean: commondistclean
+READMEFILES= ../BUG-REPORTING ../BUGS ../ChangeLog ../COPYING ../CREDITS \
+	     ../INSTALL ../README ../TODO ../VERSION ../filter.pl 
+
+default:
+	@echo Run 'make programs' to build static version of programs
+	@echo ($(PROGRAMS))
+	@echo Run 'make all' to build all above
+
+all:	programs
+
+programs: $(PROGRAMS)
+
+%$(_OBJ): $(_SRC_DIR)%$(_C)
+	@echo Compiling $<
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(OPTCFLAGS) $<
+
+$(PKTINFO): $(PKTINFOOBJS)
+	@echo Create $(PKTINFO)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
+$(TPKT): $(TPKTOBJS)
+	@echo Create $(TPKT)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
+$(TXT2PKT): $(TXT2PKTOBJS)
+	@echo Create $(TXT2PKT)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
+$(HPTLINK): $(HPTLINKOBJS)
+	@echo Create $(HPTLINK)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
+$(HPTTREE): $(HPTTREEOBJS)
+	@echo Create $(HPTTREE)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
+$(HPT): $(HPTOBJS)
+	@echo Create $(HPT)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
