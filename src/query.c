@@ -3,12 +3,13 @@
  * $Id$
  */
 
-
+#include <stdio.h>
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/areatree.h>
 #include <fidoconf/afixcmd.h>
+#include <smapi/progprot.h>
 #include <global.h>
 #include <toss.h>
 #include <areafix.h>
@@ -31,7 +32,8 @@ const   long    secInDay = 3600*24;
 const char czFreqArea[] = "freq";
 const char czIdleArea[] = "idle";
 const char czKillArea[] = "kill";
-const int  cnDaysToKeepFreq = 5;
+const char czChangFlg[] = "changed.qfl";
+
 
 extern s_query_areas *queryAreasHead;
 extern s_message **msgToSysop;
@@ -410,6 +412,23 @@ char* af_Req2Idle(char *areatag, char* report, s_addr linkAddr)
     return report;
 }
 
+char* af_GetQFlagName()
+{
+    char *chanagedflag = sstrdup(config->echotosslog);
+    char *logdir       = strrchr(chanagedflag, PATH_DELIM);
+    if(logdir)
+    {
+        logdir[1] = '\0';
+        xstrcat(&chanagedflag,(char*)czChangFlg); 
+    }
+    else
+    {
+        nfree(chanagedflag);
+        chanagedflag = sstrdup(czChangFlg);
+    }
+    return chanagedflag;
+}
+
 void af_QueueReport()
 {
     s_query_areas *tmpNode  = NULL;
@@ -420,9 +439,16 @@ void af_QueueReport()
     char link2[17]="";
     char* report = NULL;
     char* header = NULL;
-    
     int netmail=0;
-    w_log('1', "Start generating queue report");
+    
+    char *reportFlg = af_GetQFlagName();
+    
+    if(!fexist(reportFlg))
+    {
+        w_log('1', "Queue file wasn't changed. Exiting...");
+        nfree(reportFlg);
+        return;
+    }
     if( !queryAreasHead ) af_OpenQuery();
 
     tmpNode = queryAreasHead;
@@ -508,6 +534,8 @@ void af_QueueReport()
     }
     if(!report)
         return;
+
+    w_log('1', "Start generating queue report");
     xscatprintf(&header,rmask,"Area","Act","From","By","Details");
     xscatprintf(&header,"%s\r", print_ch(79,'-'));
     xstrcat(&header, report);
@@ -532,11 +560,14 @@ void af_QueueReport()
 
     xstrcat( &(msgToSysop[0]->text), "\001FLAGS NPD\r");
     xstrcat( &(msgToSysop[0]->text), report );
+
+    w_log('1', "End generating queue report");
     
     writeMsgToSysop();
     freeMsgBuffers(msgToSysop[0]);
     nfree(msgToSysop[0]);
-    w_log('1', "End generating queue report");
+    remove(reportFlg);
+    nfree(reportFlg);
 }
 
 void af_QueueUpdate()
@@ -719,6 +750,14 @@ int af_CloseQuery()
     } else {
         w_log('9',"areafix: cannot create tmp file");
         writeChanges = 0;
+    }
+
+    if(writeChanges)
+    {
+        char *chanagedflag = af_GetQFlagName();
+        FILE *QFlag        = fopen(chanagedflag,"w");
+        if(QFlag) fclose(QFlag);
+        nfree(chanagedflag);
     }
 
     tmpNode = queryAreasHead->next;
