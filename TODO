@@ -3,8 +3,6 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- denyFwdMask <masklist>
-- denyFwdFile <file>
 - correctEMAddr: take node from path if no origin in message
 - del "-$m 200 -dosfile -keepsb" from autocreatedefaults when create passthrough
 - write statistics when tossing from badArea

@@ -4,7 +4,9 @@ hpt 0.9.8 (development version)
 ----- cvs ci ------
 Sat Jan 27 15:22:41 NOVT 2001
 max:
-* autoAreaCreateMask in forwardRequests
+* forwardRequestMask
+* denyFwdMask
+* denyFwdFile
 
 ----- cvs ci ------
 Sat Jan 20 21:56:54 NOVT 2001

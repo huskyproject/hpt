@@ -651,7 +651,7 @@ int areaIsAvailable(char *areaName, char *fileName, char **desc, int retd) {
 	
 	if ((f=fopen(fileName,"r")) == NULL)
 		{
-			writeLogEntry(hpt_log,'8',"areafix: cannot open forwardRequestFile \"%s\"",fileName);
+			writeLogEntry(hpt_log,'8',"areafix: cannot open file \"%s\"",fileName);
 			return 0;
 		}
 	
@@ -701,11 +701,11 @@ static int compare_links_priority(const void *a, const void *b) {
 	else return 0;
 }
 
-int tag_mask(char *tag, s_link *link) {
+int tag_mask(char *tag, char **mask, unsigned num) {
 	unsigned int i;
 
-	for (i = 0; i < link->numAacMask; i++) {
-		if (patimat(tag,link->aacMask[i])) return 1;
+	for (i = 0; i < num; i++) {
+		if (patimat(tag,mask[i])) return 1;
 	}
 
 	return 0;
@@ -730,19 +730,40 @@ int forwardRequest(char *areatag, s_link *dwlink) {
 		if (uplink->forwardRequests && (uplink->LinkGrp) ? 
 			grpInArray(uplink->LinkGrp, dwlink->AccessGrp,
 					   dwlink->numAccessGrp) : 1) {
+
+			if (uplink->numDfMask) {
+				if (tag_mask(areatag, uplink->dfMask, uplink->numDfMask)) {
+					rc = 2;
+					continue;
+				}
+			}
 			
+			if (uplink->denyFwdFile!=NULL) {
+				if (areaIsAvailable(areatag,uplink->denyFwdFile,NULL,0)) {
+					rc = 2;
+					continue;
+				}
+			}
+
 			if (uplink->forwardRequestFile!=NULL) {
 				// first try to find the areatag in forwardRequestFile
-				if (areaIsAvailable(areatag,uplink->forwardRequestFile,NULL,0)!=0
-					|| tag_mask(areatag, uplink)) {
+				if (tag_mask(areatag, uplink->frMask, uplink->numFrMask) || 
+					areaIsAvailable(areatag,uplink->forwardRequestFile,NULL,0)) {
 					forwardRequestToLink(areatag,uplink,dwlink,0);
 					nfree(Indexes);
 					return 0;
 				} else rc = 2; // found link with freqfile, but there is no areatag
 			} else {
-				forwardRequestToLink(areatag,uplink,dwlink,0);
-				nfree(Indexes);
-				return 0;
+				rc = 0;
+				if (uplink->numFrMask) { // found mask
+					if (tag_mask(areatag, uplink->frMask, uplink->numFrMask))
+						forwardRequestToLink(areatag,uplink,dwlink,0);
+					else rc = 2;
+				} else forwardRequestToLink(areatag,uplink,dwlink,0);
+				if (rc==0) {
+					nfree(Indexes);
+					return rc;
+				}
 			}
 		}
 		
