@@ -2,7 +2,7 @@ Source: hpt
 Section: contrib/mail
 Priority: optional
 Maintainer: Pavel Andreew <pavel@collage.etel.ru>
-Build-Depends: debhelper (>> 4.0.0), libsmapi2-dev (>=2.3-1), libfidoconf1-dev (>= 1.3-1), libperl-dev, texinfo
+Build-Depends: debhelper (>> 4.0.0), libsmapi2-dev (>=2.4-1), libfidoconf1-dev (>= 1.4-1), libperl-dev, texinfo
 Standards-Version: 3.5.8
 
 Package: hpt
