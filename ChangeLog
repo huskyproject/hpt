@@ -1,3 +1,12 @@
+2001-12-29 Saturday 16:07  pavel.gulchouck
+
+	* misc/filter.pl (1.6): hub & region routing bugfix
+
+2001-12-29 Saturday 13:43  pavel.gulchouck
+
+	* src/: link.c (1.44), toss.c (1.379): link 4D<->5D addresses in
+	MSGID/REPLY with "hpt link"
+
 2001-12-28 Friday 18:22  ml
 
 	* TODO (1.180), doc/hpt-FAQ.russian (1.15), doc/hpt.texi (1.49),
