@@ -3,7 +3,7 @@ INSTDIR = /usr/local/bin
 MANDIR  = /usr/local/man
 LIBDIR  = /usr/local/lib
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o link.o
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o
 SRC_DIR = ../src/
 CDIR = ../linux
 
