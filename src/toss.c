@@ -671,7 +671,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    FILE *f;
    char *fileName, *squishFileName=NULL, *acDef;
    char *buff=NULL, *myaddr=NULL, *hisaddr=NULL;
-   char *msgbtype, *newAC=NULL, *desc;
+   char *msgbtype, *newAC=NULL, *desc, *p;
    s_link *creatingLink;
    
    xstrcat(&squishFileName, c_area);
@@ -740,7 +740,19 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 				   config->msgBaseDir, (long)time(NULL), myaddr,
 				   (msgbtype) ? "" : " -b Squish");
 #endif
-   } else xscatprintf(&buff, "EchoArea %s Passthrough -a %s", c_area, myaddr);
+   } else {
+	   xscatprintf(&buff, "EchoArea %s Passthrough -a %s", c_area, myaddr);
+	   // del "-b msgbtype " from autocreate defaults
+	   if (msgbtype) {
+		   p = msgbtype + 3;
+		   while (*p && !isspace(*p)) p++;
+		   if (*p) memmove(msgbtype, p+1, strlen(p+1)+1);
+		   else {
+			   if (msgbtype>newAC) *(msgbtype-1)='\0';
+			   else *msgbtype='\0'; // "-b msgbtype" defaults
+		   }
+	   }
+   }
    
    nfree(squishFileName);
 
@@ -893,7 +905,8 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	msg->textLength = strlen(msg->text);
 	
 	if (!export) {
-		rc = putMsgInArea(area,msg,0,0);
+		if (msg->netMail) rc = putMsgInArea(area,msg,0,MSGSENT|MSGLOCAL);
+		else rc = putMsgInArea(area,msg,0,0);
 		area->imported++;  // area has got new messages
 	}
 	else if (!msg->netMail) {
@@ -1333,7 +1346,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 	   return rc;
    }
 
-   if (config->carbonCount != 0) ccrc = carbonCopy(msg, area);
+   if ((config->carbonCount != 0) && (!dontdocc)) ccrc = carbonCopy(msg, area);
    if (ccrc > 1) return 1;
 
    // create Directory Tree if necessary

@@ -1,3 +1,11 @@
+
+----- cvs ci ------
+Thu 28 Sep 2000 23:34:03 MEZ
+tobi (patch from max)
+* cut "-b msgbtype" from autocreate defaults when creating passthrugh area
+* don't carbon relink msg
+* fixed carbon of netmail msgs (don't export again)
+
 ----- cvs ci ------
 Thu 28 Sep 2000 23:34:03 MEZ
 tobi (patch from max)

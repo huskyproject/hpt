@@ -1737,8 +1737,10 @@ void autoPassive()
                   if (*path && (*path == '^' || *path == '#')) {
                      path++;
 					 // set Pause if files stored only in outbound
-					 if (*path && strncmp(path, config->outbound,
-										  strlen(config->outbound)-1)!=0) { nfree(line); continue; }
+					 if (*path && 
+						 strncmp(config->outbound,path,
+								 strlen(config->outbound)-1)!=0)
+						 { nfree(line); continue; }
                      if (stat(path, &stat_file) != -1) {
                         time_cur = time(NULL);
                         time_test = (time_cur - stat_file.st_mtime)/3600;
@@ -1849,7 +1851,7 @@ int relink (char *straddr) {
 		xscatprintf(&(msg->text), " \r--- %s areafix\r", versionStr);
 		msg->textLength = strlen(msg->text);
 		writeLogEntry(hpt_log, '8', "'Refresh' message created to `AreaFix`");
-		processNMMsg(msg, NULL, NULL, 0, MSGLOCAL);
+		processNMMsg(msg, NULL, NULL, 1, MSGLOCAL);
 		freeMsgBuffers(msg);
 		nfree(msg);
 		writeLogEntry(hpt_log, '8', "Total request relink %i area(s)",areasArraySize);
