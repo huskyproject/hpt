@@ -8,7 +8,7 @@ DEBUG=
 CC=gcc
 EXENAMEFLAG=-o 
 SRC_DIR=../src/
-CFLAGS=-I../h -I../.. -c -O3 $(DEBUG) -mno-cygwin
+CFLAGS=-I../h -I../.. -c -O3 -Wall -pedantic $(DEBUG) -mno-cygwin
 LFLAGS=$(DEBUG) -mno-cygwin
 CDEFS =-DNT -D__NT__ -DWINNT -D__CYG__
 
