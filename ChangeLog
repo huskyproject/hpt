@@ -1,3 +1,11 @@
+2002-04-20 Saturday 14:49  mche
+
+	* src/dupe.c (1.59): dupe search improvement
+
+2002-04-20 Saturday 13:40  mche
+
+	* src/areafix.c (1.282): fixed bug in usubscribe()
+
 2002-04-19 Friday 16:20  mche
 
 	* src/: areafix.c (1.281), hpt.c (1.145): pause statement expanded
