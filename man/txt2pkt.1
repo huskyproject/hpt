@@ -1,0 +1,79 @@
+.TH TXT2PKT 1 "txt2pkt" "05 April 2001" "Husky - Portable Fidonet Software"
+.SH NAME
+txt2paket \- Posts a Textfile in an Echoarea
+.SH SYNOPSIS
+.B txt2pkt
+-xf "<pkt from address>" 
+-xt "<pkt to address>" 
+-af "<from address>" 
+-at "<to address>" 
+-nf "<from name>" 
+-nt "<to name>" 
+-e "echo name" 
+-p "password" 
+-t "tearline" 
+-o "origin" 
+-s "subject" 
+-d "<directory>" 
+<text file>
+.SH "DESCRIPTION"
+.B txt2pkt
+posts a given Textfile into an EchoArea. Every Information
+txt2pkt needs (From, To, Origin,...) must be given to txt2pkt via
+commandline.
+.br
+.sp 2
+This manual page was written for the Debian GNU/Linux distribution
+because the original program does not have a manual page.
+.SH OPTIONS
+.B -xf "<pkt from address>" 
+The FROM-Aka for the Packet.
+.br
+.B -xt "<pkt to address>" 
+The TO-Aka for the Packet.
+.br
+.B -af "<from address>" 
+The FROM-Aka for the Message.
+.br
+.B -at "<to address>" 
+The TO-Aka for the Message.
+.br
+.B -nf "<from name>" 
+The FROM-Name for the Message.
+.br
+.B -nt "<to name>" 
+The TO-Name for the Message.
+.br
+.B -e "echo name" 
+The EchoArea where to put the File contents.
+.br
+.B -p "password" 
+The Password for the Packet.
+.br
+.B -t "tearline" 
+Every Message should have one.
+.br
+.B -o "origin" 
+Every Message should have one.
+.br
+.B -s "subject" 
+Could be nice to have.
+.br
+.B -d "<directory>" 
+Where to create the Packet.
+.br
+.B <text file> The Textfile to post.
+.SH FILES
+.br
+.nf
+.\" set tabstop to longest possible filename, plus a wee bit
+.ta \w'/fido/etc/config   'u
+\fI/fido/etc/config\fR  Default Fidoconfig.
+.SH NOTES
+All Husky-Software is written by various developers. For detailed information
+about the Husky-Team take a look at 
+http://husky.physcip.uni-stuttgart.de/team.html.
+.SH AUTHOR
+This manual page was written by Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>,
+for the Debian GNU/Linux system (but may be used by others).
+
