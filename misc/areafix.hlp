@@ -20,9 +20,9 @@ Example:
  %LIST DN.*                   <- List available areas that match pattern
  %LIST ! DN.*                 <- List all available areas except 
                                  areas that match pattern
- %QUERY			      <- List of areas which you are currently
+ %QUERY                       <- List of areas which you are currently
                                  linked to
- %LINKED		      <- same as %QUERY
+ %LINKED                      <- same as %QUERY
  %UNLINKED                    <- List available areas which you are not
                                  currently linked to
  %AVAIL                       <- List all areas that are available at
