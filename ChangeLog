@@ -1,3 +1,12 @@
+2003-08-05 Tuesday 12:42  nssoft
+
+	* src/areafix.c (1.421): Fix old bug with corrupting of first line
+	in included files
+
+2003-08-05 Tuesday 12:31  nssoft
+
+	* src/areafix.c (1.420): Fix longs output
+
 2003-07-28 Monday 06:39  mche
 
 	* src/query.c (1.103): undo buggy patch
