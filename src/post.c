@@ -219,8 +219,8 @@ void post(int c, unsigned int *n, char *params[])
                     case 'e':    // echo name
                         area = params[++(*n)];
                         echo = getArea(config, area);
-                        strUpper(area);
-                        strUpper(echo->areaName);
+                        //strUpper(area);
+                        //strUpper(echo->areaName);
                         if (echo == &(config->badArea)) {
                             w_log(LL_ERROR, "post: wrong area to post: %s" , area);
                             *n = (unsigned int)c;
@@ -405,17 +405,22 @@ void post(int c, unsigned int *n, char *params[])
 
             if( uuepost )
             {
-                char *res;
+                //char *res;
                 int i; 
                 xscatprintf(&msg.text, "\rsection %d of %d of file %s < %s >\r\r",
                             part+1,sections,fname,versionStr);
                 for(i = 0; i < linesPerSec; i++)
                 {
-                    res = fgets(textBuffer,4*(MAX_LINELEN/3 + 1),tmpfile);
+                    char *res = readLine(tmpfile);
                     if(res)
-                        xscatprintf(&msg.text,"%s\r",textBuffer);
+                    {
+                        xscatprintf(&msg.text,"%s\r",res);
+                        nfree(res);
+                    }
                     else
+                    {
                         break;
+                    }
                 }
                 part++;
             }
