@@ -1048,7 +1048,7 @@ void perl_invalidate(e_perlconftype confType) { perl_vars_invalid |= confType; }
 void perl_setvars(void) {
    UINT i, j;
    struct sv 		*sv;
-   struct hv 		*hv = NULL, *hv2, *hv3;
+   struct hv 		*hv, *hv2, *hv3;
    struct av 		*av;
 
    if (!do_perl || perl == NULL) return;
@@ -1099,7 +1099,7 @@ void perl_setvars(void) {
        #elif defined(__BEOS__)
           xstrcat(&vers, "/beos");
        #endif
-       sv_setpv(sv, vers); SvREADONLY_on(sv);
+       SvREADONLY_off(sv); sv_setpv(sv, vers); SvREADONLY_on(sv);
      }
      if ((sv = get_sv("hpt_version", TRUE)) != NULL) {
        SvREADONLY_off(sv); sv_setpv(sv, versionStr); SvREADONLY_on(sv);
@@ -1142,12 +1142,14 @@ void perl_setvars(void) {
      sv = newRV_noinc((struct sv*)av); 
      /*SvPOK_on(sv); sv_setpv(aka2str(config->addr[0]), 0); SvREADONLY_on(sv);*/
      VK_ADD_HASH_sv(hv, sv, "addr");
+     SvREADONLY_on(hv);
 
      hv = perl_get_hv("groups", TRUE);
      SvREADONLY_off(hv); hv_clear(hv);
      for (i = 0; i < config->groupCount; i++) {
         VK_ADD_HASH_str(hv, sv, config->group[i].name, config->group[i].desc);
      }
+     SvREADONLY_on(hv);
    }
 
    /* set links config */
@@ -1192,6 +1194,7 @@ void perl_setvars(void) {
         sv = newRV_noinc((struct sv*)hv2);
         VK_ADD_HASH_sv(hv, sv, aka2str(config->links[i]->hisAka));
      }
+     SvREADONLY_on(hv);
    }
 
    /* set areas config */
@@ -1233,9 +1236,8 @@ void perl_setvars(void) {
         sv = newRV_noinc((struct sv*)hv2);
         VK_ADD_HASH_sv(hv, sv, config->echoAreas[i].areaName);
      }
+     SvREADONLY_on(hv);
    }
-
-   if (hv) SvREADONLY_on(hv);
 
    perl_vars_invalid = 0;
 }
