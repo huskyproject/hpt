@@ -60,8 +60,11 @@ int checkRefuse(char *areaName)
         return 0;
 
     fp = fopen(config->newAreaRefuseFile, "r+b");
-    if (fp == NULL) w_log(LL_ERR, "Can't open newAreaRefuseFile \"%s\" : %d\n",
-                          config->newAreaRefuseFile, strerror(errno));
+    if (fp == NULL) {
+        w_log(LL_ERR, "Can't open newAreaRefuseFile \"%s\" : %d\n",
+              config->newAreaRefuseFile, strerror(errno));
+        return 0;
+    }
     while((line = readLine(fp)) != NULL)
     {
         line = trimLine(line);
