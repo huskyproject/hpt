@@ -95,109 +95,6 @@ char *print_ch(int len, char ch)
     return tmp;
 }
 
-/* test area-link pair to mandatory
- */
-int mandatoryCheck(s_area area, s_link *link) {
-    int i;
-
-    w_log(LL_FUNC, __FILE__ "::mandatoryCheck()");
-
-    if (grpInArray(area.group,link->optGrp,link->numOptGrp)&&link->mandatory){
-      w_log(LL_FUNC, __FILE__ "::mandatoryCheck() rc=1");
-      return 1;
-    }
-    if (link->numOptGrp==0 && link->mandatory){
-      w_log(LL_FUNC, __FILE__ "::mandatoryCheck() rc=1");
-      return 1;
-    }
-    if (area.mandatory){
-      w_log(LL_FUNC, __FILE__ "::mandatoryCheck() rc=1");
-      return 1;
-    }
-    if ((i=isAreaLink(link->hisAka, &area))!=-1){
-      w_log(LL_FUNC, __FILE__ "::mandatoryCheck() rc=%d", area.downlinks[i]->mandatory);
-      return area.downlinks[i]->mandatory;
-    }
-      w_log(LL_FUNC, __FILE__ "::mandatoryCheck() rc=0");
-    return 0;
-}
-
-/* test area-link pair to manual
- */
-int manualCheck(s_area area, s_link *link) {
-    int i;
-
-    w_log(LL_FUNC, __FILE__ "::manualCheck()");
-
-    if (grpInArray(area.group,link->optGrp,link->numOptGrp)&&link->manual){
-      w_log(LL_FUNC, __FILE__ "::manualCheck() rc=1");
-      return 1;
-    }
-    if (link->numOptGrp==0 && link->manual){
-      w_log(LL_FUNC, __FILE__ "::manualCheck() rc=1");
-      return 1;
-    }
-    if (area.manual){
-      w_log(LL_FUNC, __FILE__ "::manualCheck() rc=1");
-      return 1;
-    }
-    if ((i=isAreaLink(link->hisAka, &area))!=-1){
-      w_log(LL_FUNC, __FILE__ "::manualCheck() rc=%d", area.downlinks[i]->manual);
-      return area.downlinks[i]->manual;
-    }
-      w_log(LL_FUNC, __FILE__ "::manualCheck() rc=0");
-    return 0;
-}
-
-
-int subscribeCheck(s_area area, s_link *link)
-{
-    int found = 0;
-
-    w_log( LL_FUNC, "%s::subscribeCheck() begin", __FILE__ );
-
-    if (isLinkOfArea(link, &area)) return 0;
-
-    if (area.group) {
-	if (config->numPublicGroup)
-	    found = grpInArray(area.group,config->PublicGroup,config->numPublicGroup);
-	if (!found && link->numAccessGrp)
-	    found = grpInArray(area.group,link->AccessGrp,link->numAccessGrp);
-    } else found = 1;
-
-    if (!found){
-      w_log( LL_FUNC, "%s::subscribeCheck() end, rc=2", __FILE__ );
-      return 2;
-    }
-    if (area.levelwrite > link->level && area.levelread > link->level){
-      w_log( LL_FUNC, "%s::subscribeCheck() end, rc=2", __FILE__ );
-      return 2;
-    }
-    w_log( LL_FUNC, "%s::subscribeCheck() end, rc=1", __FILE__ );
-    return 1;
-}
-
-int subscribeAreaCheck(s_area *area, char *areaname, s_link *link)
-{
-    int rc=4;
-
-    w_log( LL_SRCLINE, "%s::subscribeAreaCheck()", __FILE__ );
-
-    if( (!areaname)||(!areaname[0]) ){
-      w_log( LL_SRCLINE, "%s::subscribeAreaCheck() Failed (areaname empty) rc=%d", __FILE__, rc );
-      return rc;
-    }
-    if (patimat(area->areaName,areaname)==1) {
-	rc=subscribeCheck(*area, link);
-	/*  0 - already subscribed / linked */
-	/*  1 - need subscribe / not linked */
-	/*  2 - no access */
-    }
-    /*  else: this is another area */
-    w_log( LL_SRCLINE, "%s::subscribeAreaCheck() end rc=%d", __FILE__, rc );
-    return rc;
-}
-
 char *getPatternFromLine(char *line, int *reversed)
 {
 
@@ -229,7 +126,7 @@ char *list(s_listype type, s_link *link, char *cmdline) {
     char *pattern = NULL;
     int reversed;
     ps_arealist al;
-    s_area area;
+    ps_area area;
     int grps = (config->listEcho == lemGroup) || (config->listEcho == lemGroupName);
 
     if (cmdline) pattern = getPatternFromLine(cmdline, &reversed);
@@ -254,24 +151,24 @@ char *list(s_listype type, s_link *link, char *cmdline) {
     al = newAreaList(config);
     for (i=active=avail=0; i< config->echoAreaCount; i++) {
 		
-	area = config->echoAreas[i];
+	area = &(config->echoAreas[i]);
 	rc = subscribeCheck(area, link);
 
-        if ( (type == lt_all && rc < 2 && (!area.hide || (area.hide && rc==0)))
+        if ( (type == lt_all && rc < 2)
              || (type == lt_linked && rc == 0)
-             || (type == lt_unlinked && rc == 1 && !area.hide)
+             || (type == lt_unlinked && rc == 1)
            ) { /*  add line */
             if (pattern)
             {
                 /* if matches pattern and not reversed (or vise versa) */
-                if (patimat(area.areaName, pattern)!=reversed)
+                if (patimat(area->areaName, pattern)!=reversed)
                 {
-                    addAreaListItem(al,rc==0, area.msgbType!=MSGTYPE_PASSTHROUGH, area.areaName,area.description,area.group);
+                    addAreaListItem(al,rc==0, area->msgbType!=MSGTYPE_PASSTHROUGH, area->areaName,area->description,area->group);
                     if (rc==0) active++; avail++;
                 }
             } else
             {
-                addAreaListItem(al,rc==0, area.msgbType!=MSGTYPE_PASSTHROUGH, area.areaName,area.description,area.group);
+                addAreaListItem(al,rc==0, area->msgbType!=MSGTYPE_PASSTHROUGH, area->areaName,area->description,area->group);
                 if (rc==0) active++; avail++;
             }
 	} /* end add line */
@@ -881,24 +778,6 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
     return rc;
 }
 
-/* test link for areas quantity limit exceed
- * return 0 if not limit exceed
- * else return not zero
- */
-int limitCheck(s_link *link) {
-    register unsigned int i,n;
-
-    w_log(LL_FUNC, __FILE__ "::limitCheck()");
-
-    if (link->afixEchoLimit==0) return 0;
-    for (i=n=0; i<config->echoAreaCount; i++)
-	if (0==subscribeCheck(config->echoAreas[i], link))	
-	    n++;
-    i = n >= link->afixEchoLimit ;
-    w_log(LL_FUNC, __FILE__ "::limitCheck() rc=%u", i);
-    return i;
-}
-
 int isPatternLine(char *s) {
     if (strchr(s,'*') || strchr(s,'?')) return 1;
     return 0;
@@ -948,7 +827,7 @@ char *subscribe(s_link *link, char *cmd) {
 
 	rc=subscribeAreaCheck(area, line, link);
 	if (rc==4) continue;        /* not match areatag, try next */
-	if (rc==1 && manualCheck(*area, link)) rc = 5; /* manual area/group/link */
+	if (rc==1 && manualCheck(area, link)) rc = 5; /* manual area/group/link */
 
 	if (rc!=0 && limitCheck(link)) rc = 6; /* areas limit exceed for link */
 
@@ -1163,7 +1042,7 @@ char *delete(s_link *link, char *cmd) {
 	w_log(LL_AREAFIX, "areafix: area %s is not found", line);
 	return report;
     }
-    rc = subscribeCheck(*area, link);
+    rc = subscribeCheck(area, link);
     an = area->areaName;
 
     switch (rc) {
@@ -1207,7 +1086,7 @@ char *unsubscribe(s_link *link, char *cmd) {
 
         rc = subscribeAreaCheck(area, line, link);
         if (rc==4) continue;
-        if (rc==0 && mandatoryCheck(*area,link)) rc = 5;
+        if (rc==0 && mandatoryCheck(area,link)) rc = 5;
 
         if (isOurAka(config,link->hisAka))
         {
