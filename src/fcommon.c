@@ -605,7 +605,7 @@ int createDirectoryTree(const char *pathName) {
 
 int createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ)
 {
-   int nRet = CreateOutboundFileName(config,link,prio,typ);
+   int nRet = NCreateOutboundFileName(config,link,prio,typ);
    if(nRet == -1) 
       exit_hpt("cannot create *.bsy file!",0);
    return nRet;
