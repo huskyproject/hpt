@@ -1,3 +1,13 @@
+2002-07-25 Thursday 16:17  mche
+
+	* src/areafix.c (1.329): some code improvement of  function
+	changeconfig() using InsertCfgLine()
+
+2002-07-25 Thursday 09:16  mche
+
+	* src/areafix.c (1.328), h/fcommon.h (1.42), src/scanarea.c (1.85),
+	h/scanarea.h (1.5): rescan functions moved to scanarea.c
+
 2002-07-24 Wednesday 22:36  stas
 
 	* src/areafix.c (1.327): Initialize variable 'j' in unsubscribe(),
@@ -5,8 +15,8 @@
 
 2002-07-24 Wednesday 22:27  stas
 
-	* doc/hpt-FAQ.russian (1.26): Update for patch 2002-07-22 Monday
-	23:27  stas: change TOPT kludgetoo
+	* doc/hpt-FAQ.russian (1.26): Add question about disable netmail
+	packing
 
 2002-07-24 Wednesday 18:18  mche
 
