@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Tue Mar 20 17:36:41 NOVT 2001
+max (patch from Serguei Revtov):
+* use spawn() instead of system() in WATCOMC on packing
+
+----- cvs ci ------
 Sat Mar 17 12:55:45 NOVT 2001
 max:
 * closing lockfile before remove (fix win32 trouble)

@@ -2292,6 +2292,9 @@ void arcmail(s_link *tolink) {
    int startlink=0;
    int endlink = config->linkCount;
    e_bundleFileNameStyle bundleNameStyle;
+#ifdef __WATCOMC__
+   const char * const *list;
+#endif
 
    if (tolink != NULL) {
       startlink = tolink - config->links;
@@ -2344,7 +2347,15 @@ void arcmail(s_link *tolink) {
 									  link->packFile,
 									  link->pktFile, "");
 					 w_log('7', "Packing for %s %s, %s > %s", aka2str(link->hisAka), link->name, get_filename(link->pktFile), get_filename(link->packFile));
+
+#ifdef __WATCOMC__
+					 list = mk_lst(cmd);
+					 cmdexit = spawnv(P_WAIT, cmd, list);
+					 free((char **)list);
+#else
 					 cmdexit = system(cmd);
+#endif
+
 					 //w_log('6', "cmd: %s",cmd);
 					 if (cmdexit==0) {
 						 if (foa==0) {
