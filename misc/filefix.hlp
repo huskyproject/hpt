@@ -1,14 +1,12 @@
 
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-areafix help:
+filefix help:
 
-%list		list of areas avialable
+%list		list of fileareas avialable
 %help		what are you reading, pal? :)
-%avail          list of all areas available 
-                including other fido systems
-+<echotag>	subscribe area
++<echotag>	subscribe filearea
 <echotag>	the same
--<echotag>	unsubscribe area
+-<echotag>	unsubscribe filearea
 
 attention!	all other lines are *ignored*
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
