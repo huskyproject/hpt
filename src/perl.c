@@ -735,49 +735,59 @@ int perlfilter(s_message *msg, s_addr pktOrigAddr, int secure)
        if (area) free(area);
        return 0;
      }
+     svkill = perl_get_sv("kill", FALSE);
+     if (svkill && SvTRUE(svkill))
+     { // kill
+       if (area)
+         w_log('8', "PerlFilter: Area %s from %s %s killed%s%s",
+                       area, msg->fromUserName, aka2str(msg->origAddr),
+                       msg->origAddr.zone, msg->origAddr.net,
+                       msg->origAddr.node, msg->origAddr.point,
+                       prc ? ": " : "", prc ? prc : "");
+       else
+         w_log('8', "PerlFilter: NetMail from %s %s to %s %s killed%s%s",
+                       msg->fromUserName, aka2str(msg->origAddr),
+                       msg->toUserName, aka2str(msg->destAddr),
+                       prc ? ": " : "", prc ? prc : "");
+       if (prc) free(prc);
+       if (area) free(area);
+       return 2;
+     }
      svchange = perl_get_sv("change", FALSE);
+     if (svchange && SvTRUE(svchange))
+     { // change
+       char *ptr;
+       freeMsgBuffers(msg);
+       ptr = SvPV(perl_get_sv("text", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->text = safe_strdup(ptr);
+       msg->textLength = strlen(msg->text);
+       ptr = SvPV(perl_get_sv("toname", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->toUserName = safe_strdup(ptr);
+       ptr = SvPV(perl_get_sv("fromname", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->fromUserName = safe_strdup(ptr);
+       ptr = SvPV(perl_get_sv("subject", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->subjectLine = safe_strdup(ptr);
+       ptr = SvPV(perl_get_sv("toaddr", FALSE), n_a);
+       if (n_a > 0) string2addr(ptr, &(msg->destAddr));
+       ptr = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
+       if (n_a > 0) string2addr(ptr, &(msg->origAddr));
+       msg->attributes = SvIV(perl_get_sv("attr", FALSE));
+     }
      if (prc)
      {
        if (area)
-         w_log('8', "PerlFilter: Area %s from %s %u:%u/%u.%u: %s",
-                       area, msg->fromUserName,
-                       msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
-                       prc);
+         w_log('8', "PerlFilter: Area %s from %s %s: %s",
+                       area, msg->fromUserName, aka2str(msg->origAddr), prc);
        else
-         w_log('8', "PerlFilter: NetMail from %s %u:%u/%u.%u to %s %u:%u/%u.%u: %s",
-                       msg->fromUserName,
-                       msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
-                       msg->toUserName,
-                       msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point,
-                       prc);
-       svkill = perl_get_sv("kill", FALSE);
-       if (svkill && SvTRUE(svkill))
-         rc = 2;
-       else
-         rc = 1;
+         w_log('8', "PerlFilter: NetMail from %s %s to %s %s: %s",
+                       msg->fromUserName, aka2str(msg->origAddr),
+                       msg->toUserName, aka2str(msg->destAddr), prc);
+       rc = 1;
        free(prc);
-     }
-     else if (svchange && SvTRUE(svchange))
-     { // change
-       freeMsgBuffers(msg);
-       prc = SvPV(perl_get_sv("text", FALSE), n_a);
-       if (n_a == 0) prc = "";
-       msg->text = safe_strdup(prc);
-       msg->textLength = strlen(msg->text);
-       prc = SvPV(perl_get_sv("toname", FALSE), n_a);
-       if (n_a == 0) prc = "";
-       msg->toUserName = safe_strdup(prc);
-       prc = SvPV(perl_get_sv("fromname", FALSE), n_a);
-       if (n_a == 0) prc = "";
-       msg->fromUserName = safe_strdup(prc);
-       prc = SvPV(perl_get_sv("subject", FALSE), n_a);
-       if (n_a == 0) prc = "";
-       msg->subjectLine = safe_strdup(prc);
-       prc = SvPV(perl_get_sv("toaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(prc, &(msg->destAddr));
-       prc = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(prc, &(msg->origAddr));
-       msg->attributes = SvIV(perl_get_sv("attr", FALSE));
      }
    }
    if (area) free(area);
