@@ -848,38 +848,35 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
             rc = 2;
             continue;
         }
+	rc = 0;
         if (uplink->forwardRequestFile!=NULL) {
             /*  first try to find the areatag in forwardRequestFile */
             if (tag_mask(areatag, uplink->frMask, uplink->numFrMask) ||
                 IsAreaAvailable(areatag,uplink->forwardRequestFile,NULL,0))
             {
-                forwardRequestToLink(areatag,uplink,dwlink,0);
-                rc = 0;
+		break;
             }
             else
             { rc = 2; }/*  found link with freqfile, but there is no areatag */
         } else {
-            rc = 0;
             if (uplink->numFrMask) /*  found mask */
             {
                 if (tag_mask(areatag, uplink->frMask, uplink->numFrMask))
-                    forwardRequestToLink(areatag,uplink,dwlink,0);
+		    break;
                 else rc = 2;
             } else { /*  unconditional forward request */
                 if (dwlink->denyUFRA==0)
-                    forwardRequestToLink(areatag,uplink,dwlink,0);
+		    break;
                 else rc = 2;
             }
         }/* (uplink->forwardRequestFile!=NULL) */
-        if (rc==0) { /*  ? */
-            nfree(Indexes);
-            return rc;
-        }
 
     }/*  if (uplink->forwardRequests && (uplink->LinkGrp) ? */
     }/*  for (i = 0; i < Requestable; i++) { */
 
-    /*  link with "forwardRequests on" not found */
+    if(rc == 0)
+	forwardRequestToLink(areatag, uplink, dwlink, 0);
+
     nfree(Indexes);
     return rc;
 }
