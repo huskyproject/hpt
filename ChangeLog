@@ -1,3 +1,8 @@
+2002-10-23 Wednesday 08:13  stas_degteff
+
+	* src/getfree.c (hpt-1_2-stable.1): Prevent EMX compilation
+	warnings (OS/2); optimise preprocessor directives
+
 2002-10-22 Tuesday 11:00  sfpavel
 
 	* debian/: changelog, docs (hpt-1_2-stable.[12,4]): New debian
