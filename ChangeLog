@@ -1,3 +1,8 @@
+2003-12-28 Sunday 22:19  d_sergienko
+
+	* src/toss.c (hpt-1_4-stable.5): use areafixFromName when sending
+	reports to sysop (i.e. when autocreating area)
+
 2003-12-27 Saturday 21:42  d_sergienko
 
 	* doc/hpt.texi, h/seenby.h, man/hpt.1, src/global.c, src/hpt.c,
