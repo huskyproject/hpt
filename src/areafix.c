@@ -2091,7 +2091,7 @@ void afix(s_addr addr, char *cmd)
 		    processAreaFix(&msg, NULL, 0);
 		    if (config->areafixKillRequests) {
 			MsgCloseMsg(SQmsg);
-			MsgKillMsg(netmail, i);
+			MsgKillMsg(netmail, i--);
 		    } else {
 			xmsg.attr |= MSGREAD;
 			MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
