@@ -344,6 +344,11 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    char        freeVirtualLink = 0;
    char        *flags=NULL;
 
+   if (config->routeCount == 0) {
+      w_log('7', "no routing - leave mail untouched");
+      return 0;
+   }
+
    memset(&msg,'\0',sizeof(s_message));
    convertMsgHeader(*xmsg, &msg);
    convertMsgText(SQmsg, &msg);
