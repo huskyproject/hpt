@@ -1,3 +1,7 @@
+2005-03-20 Sunday 01:46  sfpavel
+
+	* debian/changelog (hpt-1_4-stable.8): 1.4-RC3 release
+
 2004-11-28 Sunday 16:19  d_sergienko
 
 	* src/: seenby.c, toss.c (hpt-1_4-stable.[10,15]): patches from
