@@ -196,6 +196,11 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
         w_log( LL_FUNC, "%s::autoCreate() rc=9", __FILE__ );
 	return 9;
     }
+    // setting up msgbase dir
+    if (config->createFwdNonPass==0)
+        msgbDir = pass;
+    else
+        msgbDir = creatingLink->msgBaseDir;
 
     if(config->areafixQueueFile)
     {
@@ -218,11 +223,6 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
                 queryAreasHead->nFlag = 1; // query was changed
                 areaNode->type[0] = '\0';  // mark as deleted
             }
-            // setting up msgbase dir
-            if (config->createFwdNonPass==0)
-                msgbDir = pass;
-            else
-                msgbDir = creatingLink->msgBaseDir;
             // try to find our aka in links of queried area
             // if not foun area will be passthrough
             for (i = 1; i < areaNode->linksCount; i++)
