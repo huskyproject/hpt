@@ -82,7 +82,7 @@ typedef struct origlinks s_origlinks;
 #define LOGFILENAME "hptlink.log"
 
 s_log        *hptlink_log = NULL;
-s_fidoconfig *cfg;
+s_fidoconfig *config;
 
 char *version = NULL;
 
@@ -285,7 +285,7 @@ void linkArea(s_area *area)
 	      w_log( LL_CRIT,"Out of memory. Want %ld bytes",  (long) sizeof(s_msginfo)*highMsg);
 	      MsgCloseArea(harea);
 	      closeLog();
-              disposeConfig(cfg);
+              disposeConfig(config);
 	      exit(EX_SOFTWARE);
 	   }
 
@@ -293,7 +293,7 @@ void linkArea(s_area *area)
 	      w_log( LL_CRIT, "Out of memory: can't get %ld bytes",  (long) sizeof(s_origlinks)*highMsg);
 	      MsgCloseArea(harea);
 	      closeLog();
-              disposeConfig(cfg);
+              disposeConfig(config);
 	      exit(EX_SOFTWARE);
 	   }
 
@@ -317,7 +317,7 @@ void linkArea(s_area *area)
 			w_log( LL_CRIT,"out of memory while linking on msg %ld", (long) i);
 			MsgCloseArea(harea);
                         closeLog();
-                        disposeConfig(cfg);
+                        disposeConfig(config);
 			exit(EX_SOFTWARE);
 		      }
 
@@ -513,7 +513,7 @@ void linkArea(s_area *area)
 		 if (linkTo > highMsg || linkTo <= 0 ) {
 		    w_log(LL_CRIT,"Programming error 1 while linking linkTo=%ld", (long)linkTo);
 		    closeLog();
-                    disposeConfig(cfg);
+                    disposeConfig(config);
 		    exit(EX_SOFTWARE);
 		 }
 
@@ -523,7 +523,7 @@ void linkArea(s_area *area)
                        if (linkTo > highMsg || linkTo <= 0 ) {
                           w_log(LL_CRIT,"Programming error 2 while linking linkTo=%ld", (long)linkTo);
       	                  closeLog();
-                          disposeConfig(cfg);
+                          disposeConfig(config);
                           exit(EX_SOFTWARE);
                        }
                     }
@@ -666,27 +666,28 @@ int main(int argc, char **argv) {
      }
    }
 
-   cfg = readConfig(NULL);
+   config = readConfig(NULL);
 
-   if (!cfg) {
+   if (!config) {
       fprintf(stderr, "Could not read fido config!\n");
       return (1);
    }
 
-   if (cfg->logFileDir) {
-	xstrscat(&line, cfg->logFileDir, LOGFILENAME, NULL);
-	hptlink_log = openLog(line, versionStr, cfg);
+   if (config->logFileDir) {
+        xstrscat(&line, config->logFileDir, LOGFILENAME, NULL);
+        initLog(config->logFileDir, config->logEchoToScreen, config->loglevels, config->screenloglevels);
+	hptlink_log = openLog(line, versionStr, config);
 	nfree(line);
    }
 
    w_log(LL_PRG, "%s", versionStr);
 
    m.req_version = 0;
-   m.def_zone = (UINT16) cfg->addr[0].zone;
+   m.def_zone = (UINT16) config->addr[0].zone;
    if (MsgOpenApi(&m)!= 0) {
       w_log(LL_CRIT, "MsgOpenApi Error.");
       closeLog();
-      disposeConfig(cfg);
+      disposeConfig(config);
       exit(EX_SOFTWARE);
    }
 
@@ -700,8 +701,8 @@ int main(int argc, char **argv) {
 	found=0;
 
 	/*  EchoAreas */
-	for (i=0, area=cfg->echoAreas;
-	     i < cfg->echoAreaCount && !found;
+	for (i=0, area=config->echoAreas;
+	     i < config->echoAreaCount && !found;
 	     i++, area++) {
 	    if (stricmp(area->areaName, argareas[j])==0){
 		if (!area->scn) {
@@ -713,8 +714,8 @@ int main(int argc, char **argv) {
 	}
 
 	/*  Local Areas */
-	for (i=0, area=cfg->localAreas;
-	     i < cfg->localAreaCount && !found;
+	for (i=0, area=config->localAreas;
+	     i < config->localAreaCount && !found;
 	     i++, area++) {
 	    if (stricmp(area->areaName, argareas[j])==0){
 		if (!area->scn) {
@@ -726,8 +727,8 @@ int main(int argc, char **argv) {
 	}
 
 	/*  NetMail areas */
-	for (i=0, area=cfg->netMailAreas;
-	     i < cfg->netMailAreaCount && !found;
+	for (i=0, area=config->netMailAreas;
+	     i < config->netMailAreaCount && !found;
 	     i++, area++) {
 	    if (stricmp(area->areaName, argareas[j])==0){
 		if (!area->scn) {
@@ -743,8 +744,8 @@ int main(int argc, char **argv) {
 
    } else {
 
-      if (cfg->LinkWithImportlog != lwiNo){
-	 f = fopen(cfg->importlog, "r");
+      if (config->LinkWithImportlog != lwiNo){
+	 f = fopen(config->importlog, "r");
       } else {
 	 f = NULL;
       }
@@ -758,8 +759,8 @@ int main(int argc, char **argv) {
 
 	       found=0;
 	       /*  EchoAreas */
-	       for (i=0, area=cfg->echoAreas;
-		    i < cfg->echoAreaCount && !found;
+	       for (i=0, area=config->echoAreas;
+		    i < config->echoAreaCount && !found;
 		    i++, area++) {
 		   if (stricmp(area->areaName, line)==0){
 		       if (!area->scn) {
@@ -770,8 +771,8 @@ int main(int argc, char **argv) {
 		   }
 	       }
 	       /*  Local Areas */
-	       for (i=0, area=cfg->localAreas;
-		    i < cfg->localAreaCount && !found;
+	       for (i=0, area=config->localAreas;
+		    i < config->localAreaCount && !found;
 		    i++, area++) {
 		   if (stricmp(area->areaName, line)==0){
 		       if (!area->scn) {
@@ -783,8 +784,8 @@ int main(int argc, char **argv) {
 	       }
 
 	       /*  NetMail areas */
-	       for (i=0, area=cfg->netMailAreas;
-		    i < cfg->netMailAreaCount && !found;
+	       for (i=0, area=config->netMailAreas;
+		    i < config->netMailAreaCount && !found;
 		    i++, area++) {
 		   if (stricmp(area->areaName, line)==0){
 		       if (!area->scn) {
@@ -801,20 +802,20 @@ int main(int argc, char **argv) {
 
 	 }
 	 fclose(f);
-	 if (cfg->LinkWithImportlog == lwiKill) remove(cfg->importlog);
+	 if (config->LinkWithImportlog == lwiKill) remove(config->importlog);
       } else {
 	 /*  importlog does not exist link all areas */
 	 w_log(LL_INFO, "No ImportLog file, linking all Areas");
 
 	 /*  NetMails */
-	 for (i = 0; i < cfg -> netMailAreaCount; i++)
-	    linkArea (&(cfg->netMailAreas[i]));
+	 for (i = 0; i < config -> netMailAreaCount; i++)
+	    linkArea (&(config->netMailAreas[i]));
 
 	 /*  EchoAreas */
-	 for (i=0; i < cfg->echoAreaCount; i++) linkArea(&(cfg->echoAreas[i]));
+	 for (i=0; i < config->echoAreaCount; i++) linkArea(&(config->echoAreas[i]));
 
 	 /*  Local Areas */
-	 for (i=0; i < cfg->localAreaCount; i++) linkArea(&(cfg->localAreas[i]));
+	 for (i=0; i < config->localAreaCount; i++) linkArea(&(config->localAreas[i]));
       }
    }
 
@@ -828,6 +829,6 @@ int main(int argc, char **argv) {
 
    MsgCloseApi();
    closeLog();
-   disposeConfig(cfg);
+   disposeConfig(config);
    return (0);
 }

@@ -36,6 +36,7 @@ int main()
 {
    s_log *hpt_log = NULL;
 
+   initLog("./", 1, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
    hpt_log = openLog("tlog.log", "tlog v0.0.7", "abc123",1);
    if (NULL == hpt_log) { printf( "asdf\n" ); return 1; }
 
