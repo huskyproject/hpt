@@ -1,3 +1,8 @@
+2003-02-23 Sunday 19:26  d_sergienko
+
+	* doc/hpt.texi (1.109), src/query.c (1.94): Use AreafixFromName
+	when posting reports by hpt qrep
+
 2003-02-22 Saturday 13:43  pgul
 
 	* misc/filter.pl (1.9): Improve %list and %avail replies processing
