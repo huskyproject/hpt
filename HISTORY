@@ -9,6 +9,7 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
     - perl hooks were noticeably revised (see doc/perlhooks.rus)
     - vtrack: tracker written on perl
     - Add @REPLY kludge in areafix reply message
+    - Loop tossing until there is no new pkt/arcmail in inbounds
 
 2. CONFIG changes:
     - new option for echoArea or netmailArea: -scan (specifies when area

@@ -131,7 +131,7 @@ static ULONG nopenpkt, maxopenpkt;
 
 s_statToss statToss;
 int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec);
-void processDir(char *directory, e_tossSecurity sec);
+int processDir(char *directory, e_tossSecurity sec);
 void makeMsgToSysop(char *areaName, hs_addr fromAddr, ps_addr uplinkAddr);
 static void setmaxopen(void);
 
@@ -1372,14 +1372,15 @@ int isArcMail(char *fname)
 	return (isalnum(p[2]) && (p[3] == '\0'));
 }
 
-void processDir(char *directory, e_tossSecurity sec)
+int processDir(char *directory, e_tossSecurity sec)
 {
     husky_DIR      *dir = NULL;
     char           *filename = NULL;
     char           *dummy = NULL;
     int            rc;
     int            pktFile,
-	arcFile;
+        arcFile;
+    int pktCount = 0;
     s_fileInDir *files = NULL;
     int nfiles=0;
     struct stat st;
@@ -1392,7 +1393,7 @@ void processDir(char *directory, e_tossSecurity sec)
     unsigned fattrs;
 #endif
 
-    if (directory==NULL) return;
+    if (directory==NULL) return 0;
 
     tossDir = directory;
 
@@ -1404,8 +1405,10 @@ void processDir(char *directory, e_tossSecurity sec)
 
     if (NULL == (dir = husky_opendir(directory))) {
 	printf("Can't open dir: %s!\n",directory);
-	return;
+	return 0;
     }
+
+    w_log(LL_FUNC, "%s::processDir() begin", __FILE__);
 
 #ifdef NOSLASHES
     directory[dirNameLen-1]='\\';
@@ -1463,7 +1466,7 @@ void processDir(char *directory, e_tossSecurity sec)
 		arcFile = 1;
 
 	if (pktFile || (arcFile && !config->noProcessBundles)) {
-
+            pktCount++;
 	    rc = 3; /*  nonsence, but compiler warns */
 	    if (config->tossingExt != NULL &&
 		(newFileName=changeFileSuffix(dummy, config->tossingExt,1)) != NULL){
@@ -1487,6 +1490,8 @@ void processDir(char *directory, e_tossSecurity sec)
 	nfree(newFileName);
     }
     nfree(files);
+    w_log(LL_FUNC, "%s::processDir() returns %d", __FILE__, pktCount);
+    return pktCount;
 }
 
 void writeStatLog(void) {
@@ -2119,9 +2124,9 @@ void toss()
     /*  set stats to 0 */
     memset(&statToss, '\0', sizeof(s_statToss));
     w_log(LL_START, "Start tossing...");
-    processDir(config->localInbound, secLocalInbound);
-    processDir(config->protInbound, secProtInbound);
-    processDir(config->inbound, secInbound);
+    while (processDir(config->localInbound, secLocalInbound));
+    while (processDir(config->protInbound, secProtInbound));
+    while (processDir(config->inbound, secInbound));
     nfree(globalBuffer); /*  free msg->text global buffer */
 
     writeDupeFiles();
