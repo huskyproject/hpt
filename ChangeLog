@@ -1,3 +1,8 @@
+2003-05-08 Thursday 23:34  d_sergienko
+
+	* src/toss.c (hpt-1_4-stable.3): fix description in badmail when
+	refusing autocreate by NewAreaRefuseFile
+
 2003-04-27 Sunday 20:12  d_sergienko
 
 	* src/areafix.c (hpt-1_4-stable.4): yet another rules sending fix
