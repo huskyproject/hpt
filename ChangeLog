@@ -2,6 +2,11 @@ hpt 0.27
 --------
 
 ----- cvs ci ------
+Mon Apr 19 22:35:21 CEST 1999
+mtt:
+- fixed a bug in autoareacreatecode
+
+----- cvs ci ------
 Sun Apr 18 20:47:51 CEST 1999
 Mtt:
 - via lines are now finished with a \r.

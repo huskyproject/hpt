@@ -646,8 +646,14 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
    creatingLink = getLinkFromAddr(*config, pktOrigAddr);
 
-   NewAutoCreate=(char *) calloc (strlen(creatingLink->autoCreateDefaults)+1,sizeof(char));
-   strcpy (NewAutoCreate,creatingLink->autoCreateDefaults);
+   if (creatingLink->autoCreateDefaults == NULL) {
+     // make an empty autocreateDefaults
+     NewAutoCreate = (char *) malloc(1);
+     strcpy(NewAutoCreate, "");
+   } else {
+     NewAutoCreate=(char *) calloc (strlen(creatingLink->autoCreateDefaults)+1,sizeof(char));
+     strcpy (NewAutoCreate,creatingLink->autoCreateDefaults);
+   }
    
    fileName = creatingLink->autoCreateFile;
    if (fileName == NULL) fileName = getConfigFileName();
@@ -671,7 +677,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    //write new line in config file
    if (stricmp(config->msgBaseDir, "passthrough")!=0) {
 #ifndef MSDOS
-   if ((fileName=strstr(creatingLink->autoCreateDefaults, "-dosfile "))==NULL)
+   if ((fileName=strstr(NewAutoCreate, "-dosfile "))==NULL)
      sprintf(buff, "EchoArea %s %s%s -a %s Squish", c_area, config->msgBaseDir, c_area, myaddr);
    else {
      sleep(1); // to prevent time from creating equal numbers
