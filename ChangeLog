@@ -1,3 +1,7 @@
+2002-11-01 Friday 23:48  stas_degteff
+
+	* src/link.c (1.65): Prevent compiler varning
+
 2002-10-30 Wednesday 10:28  nssoft
 
 	* doc/hpt-FAQ.russian (1.50): Small correction
