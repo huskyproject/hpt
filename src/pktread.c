@@ -157,11 +157,9 @@ void correctEMAddr(s_message *msg)
    } 
 }
 
-void correctNMAddr(s_message *msg, UINT16 def_zone)
+void correctNMAddr(s_message *msg, s_pktHeader *header)
 {
-   char *start, *copy;
-   char buffer[35];
-   char buff[200];
+   char *start, *copy, *text, buffer[35], buff[200];
 
    copy = buffer;
    start = strstr(msg->text, "FMPT");
@@ -220,19 +218,31 @@ void correctNMAddr(s_message *msg, UINT16 def_zone)
       msg->origAddr.zone = atoi(buffer);
    } else {
 
-      msg->destAddr.zone = def_zone;     // FIX-ME! there seems a problem here
-      msg->origAddr.zone = def_zone;     //
+      msg->destAddr.zone = header->destAddr.zone;
+      msg->origAddr.zone = header->origAddr.zone;
+
+	  // hint: 42 bytes - maximum INTL lenght
+	  text = (char*) malloc(strlen(msg->text)+42+1);
+
+	  sprintf(text,"\1INTL %u:%u/%u %u:%u/%u\r",msg->destAddr.zone,msg->destAddr.net,
+	   msg->destAddr.node,msg->origAddr.zone,msg->origAddr.net,msg->origAddr.node);
+
+	  strcat(text,msg->text);
+	  free(msg->text);
+	  msg->text = text;
+
       sprintf(buff, "Mail without INTL-Kludge. Assuming %i:%i/%i.%i -> %i:%i/%i.%i",
-              msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
-              msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
+       msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
+       msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
+
       writeLogEntry(hpt_log, '2', buff);
    } /* endif */
 }
 
-void correctAddr(s_message *msg,UINT16 def_zone)
+void correctAddr(s_message *msg,s_pktHeader *header)
 {
    if (strncmp(msg->text, "AREA:",5) != 0) {
-      correctNMAddr(msg,def_zone);
+      correctNMAddr(msg,header);
       msg->netMail = 1;
    } else {
       correctEMAddr(msg);
@@ -240,7 +250,7 @@ void correctAddr(s_message *msg,UINT16 def_zone)
    } /* endif */
 }
 
-s_message *readMsgFromPkt(FILE *pkt,UINT16 def_zone)
+s_message *readMsgFromPkt(FILE *pkt, s_pktHeader *header)
 {
    s_message *msg;
    CHAR      *textBuffer;
@@ -289,9 +299,7 @@ s_message *readMsgFromPkt(FILE *pkt,UINT16 def_zone)
 
    free(textBuffer);
 
-   correctAddr(msg,def_zone);
-
-//   msg->recode = 0;
+   correctAddr(msg, header);
 
    return msg;
 }

@@ -1348,7 +1348,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	   }
 	   
 	   if (processIt != 0) {
-	     while ((msg = readMsgFromPkt(pkt, header->origAddr.zone)) != NULL) {
+	     while ((msg = readMsgFromPkt(pkt, header)) != NULL) {
                if (msg != NULL) {
 		 if ((processIt == 1) || ((processIt==2) && (msg->netMail==1)))
 		   rc = !processMsg(msg, header) || rc == 5 ? 5 : 0;

@@ -2,6 +2,11 @@ hpt 0.29
 --------
 
 ----- cvs ci ------
+Fri Aug 27 00:44:58 NOVST 1999
+max:
+* fixed a bug with nemail without INTL-Kludge
+
+----- cvs ci ------
 Fri Aug 20 14:42:16 NOVST 1999
 max:
 + changes in areafix.c (patch from Serguei Revtov)

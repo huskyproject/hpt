@@ -129,12 +129,12 @@ s_pktHeader *openPkt(FILE *pkt);
           it reads the data as an 2+ packet.
 */
 
-s_message   *readMsgFromPkt(FILE *pkt, UINT16 def_zone);
+s_message   *readMsgFromPkt(FILE *pkt, s_pktHeader *header);
 /*DOC
   Input:  pkt is a pointer to a FILE which is already open.
           readMsgFromPkt will read from the current position of the filepointer
-          def_zone, when in a netmail no intl kludge is found, def_zone will be used
-          as zone-info for both directions (from & to).
+          header, when in a netmail no intl kludge is found, header will be used
+          to assume intl kludge
   Output: readMsgFromPkt returns a pointer to a s_message struct or NULL if
           pkt does not include a message or a wrong message.
   FZ:     readMsgFromPkt reads a message out of the pkt and transforms the data
