@@ -554,7 +554,7 @@ int dupeDetection(s_area *area, const s_message msg) {
            enhash->CrcOfDupe       = strcrc32(str1, 0xFFFFFFFFL);
            enhash->TimeStampOfDupe = time (NULL);
            nfree(str1);
-           return tree_add(&(Dupes->avlTree), compareEntries, (char *) enhash, deleteEntry);
+           return tree_add(&(CommonDupes->avlTree), compareEntries, (char *) enhash, deleteEntry);
            break;
    }
 
