@@ -1,3 +1,26 @@
+2002-11-21 Thursday 15:59  pgul
+
+	* src/toss.c (hpt-1_2-stable.9): Fixed pack mail into existing
+	amiga-style arcmail bundles
+
+2002-11-21 Thursday 13:05  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.25): Update developers list;
+	remove question about htick
+
+2002-11-21 Thursday 09:26  pgul
+
+	* src/toss.c (hpt-1_2-stable.8): Bugfix: hang on corrupted pkt
+
+2002-11-21 Thursday 09:11  pgul
+
+	* src/pktread.c (hpt-1_2-stable.2): Fixed segfault on incorrect pkt
+
+2002-11-21 Thursday 08:03  stas_degteff
+
+	* src/perl.c (hpt-1_2-stable.3): Fix constants redefinition
+	(prevent comiper warnings)
+
 2002-11-20 Wednesday 11:50  stas_degteff
 
 	* doc/hpt-FAQ.russian (hpt-1_2-stable.24): Fix FAQ date
