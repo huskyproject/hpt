@@ -14,6 +14,7 @@
 
 #include <version.h>
 #include <toss.h>
+#include <patmat.h>
 
 
 int subscribeCheck(s_area area, s_message *msg) {
@@ -26,48 +27,30 @@ int subscribeCheck(s_area area, s_message *msg) {
 	return 1;
 }
 
-int subscribeAreaCheck(s_area area, s_message *msg, char *areaname) {
-	int rc;
+int subscribeAreaCheck(s_area *area, s_message *msg, char *areaname) {
+   int rc;
+   char *upName, *upAreaName;
 
-	if (stricmp(area.areaName,areaname)==0) {
-		rc=subscribeCheck(area, msg);
+        upName = (char *) malloc(strlen(areaname)+1);
+        upAreaName = (char *) malloc(strlen(area->areaName)+1);
+        strcpy(upName, areaname);
+        strcpy(upAreaName, area->areaName);
 
+        upName = strUpper(upName);
+        upAreaName = strUpper(upAreaName);
+
+	if (patmat(upAreaName,upName)==1) {
+		rc=subscribeCheck(*area, msg);
 		// 0 - already subscribed
 		// 1 - need subscribe
-		return rc;
-	}
+        } else rc = 2;
+
+        free(upName);
+        free(upAreaName);
 
 	// this is another area
-	return 2;
-}
-
-/* int securityCheck(s_message *msg, s_addr *pktOrigAddr) {
-	
-	int rc;
-
-	rc = pktOrigAddr->zone - msg->origAddr.zone;
-	rc += pktOrigAddr->net - msg->origAddr.net;
-	rc += pktOrigAddr->node - msg->origAddr.node;
-	rc += pktOrigAddr->point - msg->origAddr.point;
-
 	return rc;
 }
-
-int for_me_Check (s_message *msg, s_link *link) {
-
-	int rc;
-	s_addr *ourAka;
-
-	ourAka=link->ourAka;
-
-	rc = msg->destAddr.zone - ourAka->zone;
-	rc += msg->destAddr.net - ourAka->net;
-	rc += msg->destAddr.node - ourAka->node;
-	rc += msg->destAddr.point - ourAka->point;
-
-	return rc;
-        }
-        */
 
 int addAka(FILE *f, s_link *link) {
 	char straka[20], *cfg;
@@ -282,71 +265,82 @@ int strip(char *text) {
 
 char *subscribe(s_link *link, s_message *msg, char *line) {
 	int i, rc=2;
-	char *report, addline[256], logmsg[256];
+	char *report, addline[256], logmsg[256], *header = "Result of your query: ";
 	s_area *area;
 
 	if (line[0]=='+') line++;
 
-	report=(char*) calloc(1,sizeof(char*));
+        report=(char*) malloc(strlen(header)+strlen(line)+1+1);
+        strcpy(report, header);
+        strcat(report, line);
+        report[strlen(report)] = '\r';
+
 	
 	for (i = 0; i< config->echoAreaCount; i++) {
-		rc=subscribeAreaCheck(config->echoAreas[i],msg,line);
-		if ( rc==0 || rc ==1 ) break;
-	}
-	
-	switch (rc) {
-	case 0: sprintf(addline,"you are already linked to area %s\r",line);
-		break;
-	case 2:	sprintf(addline,"no area '%s' in my config\r",line);
-		break;
-	case 1:	changeconfig (line, link, 0);
-		area = &(config->echoAreas[i]);
-		area->downlinks = realloc(area->downlinks, sizeof(s_link*)*(area->downlinkCount+1));
-		area->downlinks[area->downlinkCount] = link;
-		area->downlinkCount++;
-		sprintf(addline,"area %s subscribed\r",line);
-		sprintf(logmsg,"areafix: %s subscribed to %s",link->name,line);
-		writeLogEntry(log, '8', logmsg);
-		break;
-	}
+		rc=subscribeAreaCheck(&(config->echoAreas[i]),msg,line);
+                if ( rc==2 ) continue;
 
-	report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
-	strcpy(report, addline);
+                area = &(config->echoAreas[i]);
+
+                switch (rc) {
+                case 0: sprintf(addline,"you are already linked to area %s\r", area->areaName);
+                        break;
+                case 2:	sprintf(addline,"no area '%s' in my config\r",area->areaName);
+                        break;
+                case 1:	changeconfig (area->areaName, link, 0);
+                        area->downlinks = realloc(area->downlinks, sizeof(s_link*)*(area->downlinkCount+1));
+                        area->downlinks[area->downlinkCount] = link;
+                        area->downlinkCount++;
+                        sprintf(addline,"area %s subscribed\r",area->areaName);
+                        sprintf(logmsg,"areafix: %s subscribed to %s",link->name,area->areaName);
+                        writeLogEntry(log, '8', logmsg);
+                        break;
+                }
+        
+                report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
+                strcat(report, addline);
+
+        }
 	return report;
 }
 
 char *unsubscribe(s_link *link, s_message *msg, char *line) {
 	int i, rc = 2;
-	char *report, addline[256], logmsg[256];
+        char *report, addline[256], logmsg[256], *header = "Result of your query: ";
 	s_area *area;
 
 	if (line[1]=='-') return NULL;
 	line++;
 
-	report=(char*) calloc(1,sizeof(char*));
-	
+        report=(char*) malloc(strlen(header)+strlen(line)+1+1);
+        strcpy(report, header);
+        strcat(report, line);
+        report[strlen(report)] = '\r';
+        
 	for (i = 0; i< config->echoAreaCount; i++) {
-		rc=subscribeAreaCheck(config->echoAreas[i],msg,line);
-		if ( rc==0 || rc ==1 ) break;
-	}
-	
-	switch (rc) {
-	case 1: sprintf(addline,"you are dont't subscribed to area %s\r",line);
-		break;
-	case 2: sprintf(addline,"no area '%s' in my config\r",line);
-		break;
-	case 0: changeconfig ( line, link, 1);
-		area = &(config->echoAreas[i]);
-		removelink(link, area);
-		sprintf(addline,"area %s unsubscribed\r",line);
-		sprintf(logmsg,"areafix: %s unsubscribed from %s",link->name,line);
-		writeLogEntry(log, '8', logmsg);
+		rc=subscribeAreaCheck(&(config->echoAreas[i]),msg,line);
+		if ( rc==2 ) continue;
 
-		break;
-	}
+                area = &(config->echoAreas[i]);
+                
+                switch (rc) {
+                case 1: sprintf(addline,"you are not linked to area %s\r",area->areaName);
+                        break;
+                case 2: sprintf(addline,"no area '%s' in my config\r",area->areaName);
+                        break;
+                case 0: changeconfig ( area->areaName, link, 1);
+                        removelink(link, area);
+                        sprintf(addline,"area %s unsubscribed\r",area->areaName);
+                        sprintf(logmsg,"areafix: %s unsubscribed from %s",link->name,area->areaName);
+                        writeLogEntry(log, '8', logmsg);
+        
+                        break;
+          	}
 
-	report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
-	strcpy(report, addline);
+          	report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
+                strcat(report, addline);
+
+        }
 	return report;
 }
 

@@ -1,7 +1,5 @@
 The following things of fidoconfig are currently not implemented in HPT:
 ------------------------------------------------------------------------
 
-- group definition
 - hub host routing no-route routing (you can simulate the latest feature using
   Route crash 2:2432/601 2:2432/601 )
-
