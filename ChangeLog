@@ -1,3 +1,8 @@
+2004-10-23 Saturday 19:07  i_zkh
+
+	* doc/hpt.texi (1.154): Added a note that you can't
+	carbon[copy|move] from echoarea to netmail and vice versa
+
 2004-10-13 Wednesday 19:09  i_zkh
 
 	* doc/hpt.texi (1.153): Fixed spelling
