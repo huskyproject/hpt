@@ -37,11 +37,7 @@
 #include <string.h>
 #include <time.h>
 #include <errno.h>
-
-#if defined (__EMX__)
-  #include <sys/types.h>
-#endif
-
+#include <sys/types.h>
 #include <sys/stat.h>
 
 #if defined (UNIX) 
