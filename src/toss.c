@@ -87,6 +87,23 @@ void putMsgInArea(s_area *echo, s_message *msg)
    HAREA harea;
    HMSG  hmsg;
    XMSG  xmsg;
+   char *slash;
+#ifdef UNIX
+   char limiter = '/';
+#else
+   char limiter = '\\';
+#endif
+
+   // create Directory Tree if necessary
+   if (echo->msgbType == MSGTYPE_SDM)
+      createDirectoryTree(echo->fileName);
+   else {
+      // squish area
+      slash = strrchr(echo->fileName, limiter);
+      *slash = '\0';
+      createDirectoryTree(echo->fileName);
+      *slash = limiter;
+   }
 
    harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, echo->msgbType | MSGTYPE_ECHO);
    if (harea != NULL) {
@@ -451,6 +468,23 @@ void processNMMsg(s_message *msg)
    char   *ctrlBuf;               // Kludgelines
    XMSG   msgHeader;
    char   buff[36];               // buff for sprintf
+   char *slash;
+#ifdef UNIX
+   char limiter = '/';
+#else
+   char limiter = '\\';
+#endif
+
+   // create Directory Tree if necessary
+   if (config->netMailArea.msgbType == MSGTYPE_SDM)
+      createDirectoryTree(config->netMailArea.fileName);
+   else {
+      // squish area
+      slash = strrchr(config->netMailArea.fileName, limiter);
+      *slash = '\0';
+      createDirectoryTree(config->netMailArea.fileName);
+      *slash = limiter;
+   }
 
    netmail = MsgOpenArea((unsigned char *) config->netMailArea.fileName, MSGAREA_CRIFNEC, config->netMailArea.msgbType);
 

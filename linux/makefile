@@ -19,20 +19,19 @@ all: $(OBJS) \
      tlog \
      tpkt \
      hpt \
-     purgeDupes \
-     install
+     purgeDupes 
 
 %.o: $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
 
 pktinfo: pktinfo.o $(OBJS)
-	$(CC) $(LFLAGS) -o pktinfo recode.o pktinfo.o pktread.o fcommon.o global.o -lsmapilnx -lfidoconfig
+	$(CC) $(LFLAGS) -o pktinfo log.o recode.o pktinfo.o pktread.o fcommon.o global.o -lsmapilnx -lfidoconfig
 
 tlog: tlog.o log.o
 	$(CC) $(LFLAGS) -o tlog tlog.o log.o
 
-tpkt: tpkt.o pktwrite.o fcommon.o pktread.o recode.o
-	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o pktread.o recode.o pktwrite.o global.o -lsmapilnx  -lfidoconfig
+tpkt: tpkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o 
+	$(CC) $(LFLAGS) -o tpkt log.o tpkt.o fcommon.o pktread.o recode.o pktwrite.o global.o -lsmapilnx  -lfidoconfig
 
 hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) -lsmapilnx -lfidoconfig
