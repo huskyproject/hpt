@@ -1,3 +1,31 @@
+2002-09-10 Tuesday 10:14  mche
+
+	* src/scanarea.c (1.93): fix cygwin warnings and code cleanup
+
+2002-09-10 Tuesday 05:26  d_sergienko
+
+	* misc/areafix.hlp (1.19), src/areafix.c (1.346): %COMPRESS is
+	alias for %PACKER, but conforming FSC-0057
+
+2002-09-10 Tuesday 05:21  d_sergienko
+
+	* HISTORY (1.10), src/scanarea.c (1.92): info about @RESCANNED
+
+2002-09-10 Tuesday 05:17  d_sergienko
+
+	* src/scanarea.c (1.91): fixed 'Snt' and 'Scn' flags after rescan;
+	If message is being rescanned, it will be added @RESCANNED kludge
+	inside (FSC-0057)
+
+2002-09-10 Tuesday 01:39  d_sergienko
+
+	* HISTORY (1.9): info about @PID and @TID
+
+2002-09-10 Tuesday 01:34  d_sergienko
+
+	* doc/hpt.texi (1.80), src/post.c (1.90): when posting a message
+	and 'disablePID' is false @PID kludge will be added.
+
 2002-09-09 Monday 19:40  pgul
 
 	* src/link.c (1.58): Enabled MAX_INCORE again (with bugfix)
