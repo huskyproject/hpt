@@ -1,4 +1,3 @@
-/*:ts=8*/
 /*****************************************************************************
  * AreaFix for HPT (FTN NetMail/EchoMail Tosser)
  *****************************************************************************
@@ -286,13 +285,13 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
 
 	
 
-    msg->fromUserName = (char*)calloc(strlen(fromName)+1, sizeof(char));
+    msg->fromUserName = (char*) malloc(strlen(fromName)+1);
     strcpy(msg->fromUserName, fromName);
     
-    msg->toUserName = (char*)calloc(strlen(toName)+1, sizeof(char));
+    msg->toUserName = (char*) malloc(strlen(toName)+1);
     strcpy(msg->toUserName, toName);
     
-    msg->subjectLine = (char*)calloc(strlen(subject)+1, sizeof(char));
+    msg->subjectLine = (char*) malloc(strlen(subject)+1);
     strcpy(msg->subjectLine, subject);
 
     msg->attributes = MSGLOCAL;
@@ -302,9 +301,8 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
     }
     if (config->areafixKillReports) msg->attributes |= MSGKILL;
     
-    strftime(msg->datetime, 21, "%d %b %y  %T", localtime(&time_cur));
-    
-    
+    strftime((char*)msg->datetime, 21, "%d %b %y  %T", localtime(&time_cur));
+
     return msg;
 }
 
@@ -1480,7 +1478,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	char tmp[80], *token, *textBuff, *report=NULL, *preport;
 	
 	// load recoding tables
-	if (config->outtab != NULL) getctab(outtab, config->outtab);
+	if (config->outtab != NULL) getctab(outtab, (char*) config->outtab);
 
 	// 1st security check
 	if (pktHeader) security=addrComp(msg->origAddr, pktHeader->origAddr);

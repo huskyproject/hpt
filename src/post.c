@@ -61,7 +61,7 @@ void post(int c, unsigned int *n, char *params[])
 
    s_message msg;
 
-   CHAR *textBuffer = NULL;
+   UCHAR *textBuffer = NULL;
 
    int quit;
    int export=0;
@@ -122,7 +122,7 @@ void post(int c, unsigned int *n, char *params[])
       } else {
          if ((text = fopen(params[*n], "rt")) != NULL) {
             /* reserve 512kb + 1 (or 32kb+1) text Buffer */
-            textBuffer = (CHAR *) malloc(TEXTBUFFERSIZE+1); 
+            textBuffer = (UCHAR *) malloc(TEXTBUFFERSIZE+1); 
             for (msg.textLength = 0; msg.textLength < (long) TEXTBUFFERSIZE; msg.textLength++) {
                if ((textBuffer[msg.textLength] = getc(text)) == 0)
                   break;
@@ -159,7 +159,7 @@ void post(int c, unsigned int *n, char *params[])
       /* reserve mem for the real text */
       /* !!! warning - I suppose that 512 bytes will be enough
       for kludges and tearline + origin */
-      msg.text = (CHAR *) malloc(msg.textLength + 1 + 512);
+      msg.text = (UCHAR *) malloc(msg.textLength + 1 + 512);
       createKludges(msg.text, area, &msg.origAddr, &msg.destAddr);
 
       strcat(msg.text, textBuffer);

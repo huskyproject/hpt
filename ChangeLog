@@ -6,6 +6,8 @@ Sat Sep 19 17:40:33 NOVST 1999
 max:
 * fixed areafix bug (NULL areas in forwardrequest file)
 * local carbon areas added to import.log
+* porting to win32 (changed default char to unsigned)
+* recode toUserName & fromUserName fixing
 	
 ----- cvs ci ------
 Sat Sep 18 21:53:03 NOVST 1999                                                  

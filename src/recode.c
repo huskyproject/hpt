@@ -75,7 +75,7 @@ INT c;
 }
 
 
-INT ctoi(CHAR *s)
+INT ctoi(char *s)
 {
 	char *foo;
 	INT res = strtoul(s, &foo, 0);
@@ -84,10 +84,10 @@ INT ctoi(CHAR *s)
 	return res;
 }
 
-void getctab(CHAR *dest, CHAR *charMapFileName )
+void getctab(CHAR *dest, UCHAR *charMapFileName )
 {
 FILE *fp;
-CHAR buf[512],*p,*q;
+UCHAR buf[512],*p,*q;
 INT in,on,count;
 	INT line;
 
@@ -99,10 +99,10 @@ INT in,on,count;
 
 	count=0;	 
 	line = 0;
-	while (fgets(buf,sizeof(buf),fp))
+	while (fgets((char*)buf,sizeof(buf),fp))
 	{
 		line++;
-		p=strtok(buf," \t\n#");
+		p=strtok((char*)buf," \t\n#");
 		q=strtok(NULL," \t\n#");
 
 		if (p && q)

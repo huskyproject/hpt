@@ -254,8 +254,8 @@ void correctAddr(s_message *msg,s_pktHeader *header)
 s_message *readMsgFromPkt(FILE *pkt, s_pktHeader *header)
 {
    s_message *msg;
-   CHAR      *textBuffer;
-   INT       len;
+   UCHAR     *textBuffer;
+   int       len;
 
    if (2 != getUINT16(pkt)) {
       return NULL;              /* no packed msg */
@@ -277,25 +277,25 @@ s_message *readMsgFromPkt(FILE *pkt, s_pktHeader *header)
    getc(pkt); getc(pkt);                // read unused cost fields (2bytes)
    fgets(msg->datetime, 21, pkt);
 
-   textBuffer = (CHAR *) malloc(74);   // reserve mem space
-   len = fgetsUntil0(textBuffer, 37, pkt);
-   msg->toUserName = (CHAR *) malloc(len);
-   strcpy(msg->toUserName, textBuffer);
+   textBuffer = (UCHAR *) malloc(74);   // reserve mem space
+   len = fgetsUntil0 ((UCHAR *) textBuffer, 37, pkt);
+   msg->toUserName = (char *) malloc(len);
+   strcpy(msg->toUserName, (UCHAR *) textBuffer);
 
-   len = fgetsUntil0(textBuffer, 37, pkt);
-   msg->fromUserName = (CHAR *) malloc(len);
-   strcpy(msg->fromUserName, textBuffer);
+   len = fgetsUntil0((UCHAR *) textBuffer, 37, pkt);
+   msg->fromUserName = (char *) malloc(len);
+   strcpy(msg->fromUserName, (UCHAR *) textBuffer);
 
-   len = fgetsUntil0(textBuffer, 73, pkt);
-   msg->subjectLine = (CHAR *) malloc(len);
+   len = fgetsUntil0((UCHAR *) textBuffer, 73, pkt);
+   msg->subjectLine = (char *) malloc(len);
    strcpy(msg->subjectLine, textBuffer);
 
    free(textBuffer);                   // free mem space
 
-   textBuffer = (CHAR *) malloc(TEXTBUFFERSIZE+1); /* reserve 512kb + 1 (or 32kb+1) text Buffer */
-   msg->textLength = fgetsUntil0(textBuffer, TEXTBUFFERSIZE+1 , pkt);
+   textBuffer = (UCHAR *) malloc(TEXTBUFFERSIZE+1); /* reserve 512kb + 1 (or 32kb+1) text Buffer */
+   msg->textLength = fgetsUntil0((char *) textBuffer, TEXTBUFFERSIZE+1 , pkt);
 
-   msg->text = (CHAR *) malloc(msg->textLength); /* reserve mem for the real text */
+   msg->text = (char *) malloc(msg->textLength); /* reserve mem for the real text */
    strcpy(msg->text, textBuffer);
 
    free(textBuffer);

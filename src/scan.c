@@ -1,4 +1,3 @@
-/*:ts=8*/
 /*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
@@ -86,9 +85,9 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
    strcpy(msg->fromUserName, (char *) xmsg.from);
 
    // recoding subjectLine to TransportCharset
-   if (config->outtab != NULL) recodeToTransportCharset(msg->subjectLine);
-   if (config->outtab != NULL) recodeToTransportCharset(msg->fromUserName);
-   if (config->outtab != NULL) recodeToTransportCharset(msg->toUserName);
+   if (config->outtab != NULL) recodeToTransportCharset((CHAR*)msg->subjectLine);
+   if (config->outtab != NULL) recodeToTransportCharset((CHAR*)msg->fromUserName);
+   if (config->outtab != NULL) recodeToTransportCharset((CHAR*)msg->toUserName);
 }
 
 void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
@@ -129,7 +128,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
    strcat(msg->text, viaLine);
 
    // recoding text to TransportCharSet
-   if (config->outtab != NULL) recodeToTransportCharset(msg->text);
+   if (config->outtab != NULL) recodeToTransportCharset((CHAR*)msg->text);
 
    free(kludgeLines);
 }

@@ -168,8 +168,10 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    
    // recoding from internal to transport charSet
    if (config->outtab != NULL && action != 2) {
-      recodeToTransportCharset(msg->text);
-      recodeToTransportCharset(msg->subjectLine);
+      recodeToTransportCharset((CHAR*)msg->fromUserName);
+      recodeToTransportCharset((CHAR*)msg->toUserName);
+      recodeToTransportCharset((CHAR*)msg->subjectLine);
+      recodeToTransportCharset((CHAR*)msg->text);
    }
 
    free(seenByPath);

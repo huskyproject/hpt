@@ -264,10 +264,10 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, UINT16 forceattr)
 
          // recode from TransportCharset to internal Charset
          if (msg->recode == 0 && config->intab != NULL) {
-            recodeToInternalCharset(msg->subjectLine);
-            recodeToInternalCharset(msg->text);
-            recodeToInternalCharset(msg->toUserName);
-            recodeToInternalCharset(msg->fromUserName);
+            recodeToInternalCharset((CHAR*)msg->fromUserName);
+            recodeToInternalCharset((CHAR*)msg->toUserName);
+            recodeToInternalCharset((CHAR*)msg->subjectLine);
+            recodeToInternalCharset((CHAR*)msg->text);
 			msg->recode = 1;
          }
 
@@ -1196,8 +1196,10 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader)
          config->netMailArea.imported = 1; // area has got new messages
 
          if (config->intab != NULL) {
-            recodeToInternalCharset(msg->text);
-            recodeToInternalCharset(msg->subjectLine);
+            recodeToInternalCharset((CHAR*)msg->fromUserName);
+            recodeToInternalCharset((CHAR*)msg->toUserName);
+            recodeToInternalCharset((CHAR*)msg->subjectLine);
+            recodeToInternalCharset((CHAR*)msg->text);
          }
 
          msgHeader = createXMSG(msg, pktHeader, 0);
@@ -1862,7 +1864,7 @@ void toss()
 */
 
    // load recoding tables if needed
-   if (config->intab != NULL) getctab(intab, config->intab);
+   if (config->intab != NULL) getctab(intab, (UCHAR*) config->intab);
    
    // set stats to 0
    memset(&statToss, 0, sizeof(s_statToss));
@@ -1982,8 +1984,10 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
 
 	 // recoding from internal to transport charSet
 	 if (config->outtab != NULL) {
-	     recodeToTransportCharset(msg.text);
-	     recodeToTransportCharset(msg.subjectLine);
+	     recodeToTransportCharset((CHAR*)msg.fromUserName);
+	     recodeToTransportCharset((CHAR*)msg.toUserName);
+	     recodeToTransportCharset((CHAR*)msg.subjectLine);
+	     recodeToTransportCharset((CHAR*)msg.text);
 	 }
    
 	 if (echo->downlinkCount > 0) {
@@ -2013,7 +2017,7 @@ void tossFromBadArea()
    int   delmsg;
    
    // load recoding tables
-   if (config->outtab != NULL) getctab(outtab, config->outtab);
+   if (config->outtab != NULL) getctab(outtab, (UCHAR *) config->outtab);
 
    area = MsgOpenArea((UCHAR *) config->badArea.fileName, MSGAREA_NORMAL, config->badArea.msgbType | MSGTYPE_ECHO);
    if (area != NULL) {
