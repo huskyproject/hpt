@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sysexits.h>
 
 #include <version.h>
 #include <toss.h>
@@ -94,7 +95,7 @@ void print_help(void) {
    fprintf(stdout,"              -d erase input file after posting\n\n");
    fprintf(stdout,"              -h get help\n\n");
    fprintf(stdout,"              file - text file to post into echo or \"-\" for stdin\n\n");
-   exit(0);
+   exit(EX_OK);
 }
 
 void post(int c, unsigned int *n, char *params[])

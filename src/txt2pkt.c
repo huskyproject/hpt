@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sysexits.h>
 #if !defined (__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
 #else
@@ -47,13 +48,13 @@ int main(int argc, char *argv[])
    if (argc == 1) {
       printf("\nUsage:\n");
       printf("txt2pkt -xf \"<pkt from address>\" -xt \"<pkt to address>\" -af \"<from address>\" -at \"<to address>\" -nf \"<from name>\" -nt \"<to name>\" -e \"echo name\" -p \"password\" -t \"tearline\" -o \"origin\" -s \"subject\" -d \"<directory>\" <text file>\n");
-      exit(1);
+      exit(EX_OK);
    }
 
    config = readConfig(NULL);
    if (NULL == config) {
       printf("Config not found\n");
-      exit(1);
+      exit(EX_UNAVAILABLE);
    }
 
    for (quit = 0;n < argc && !quit; n++) {
@@ -167,7 +168,7 @@ int main(int argc, char *argv[])
             fclose(text);
          } else {
 	    printf("Text file not found\n");
-	    exit(1);
+	    exit(EX_NOINPUT);
 	 }
       }
    }

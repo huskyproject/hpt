@@ -32,6 +32,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <sysexits.h>
+
 #ifdef __EMX__
 #include <sys/types.h>
 #endif
@@ -515,7 +517,7 @@ int createTempPktFileName(s_link *link)
 
     default:
 		w_log('9', "Unknown bundleNameStyle (non-compatible fidoconfig library?)");
-		exit(-1);
+		exit(EX_SOFTWARE);
 		break;
     }
     nfree(tmp);

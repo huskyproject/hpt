@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <sysexits.h>
 
 #ifdef UNIX
 #include <unistd.h>
@@ -393,7 +394,7 @@ int main(int argc, char **argv) {
    m.def_zone = (UINT16) cfg->addr[0].zone;
    if (MsgOpenApi(&m)!= 0) {
       fprintf(outlog, "MsgOpenApi Error.\n");
-      exit(1);
+      exit(EX_SOFTWARE);
    }
 
    if ( argareas )

@@ -3,6 +3,7 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
+- document exit() values
 - autofwdareacreatedefaults
 - AllowEchoAreaDelete
 - don't make paths with forbidden symbols

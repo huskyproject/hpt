@@ -33,6 +33,8 @@
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include <sysexits.h>
+
 #if !defined(__IBMC__) && !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
 #endif
@@ -197,7 +199,7 @@ int processCommandLine(int argc, char **argv)
 		  continue;
       } else {
 		  printf("Unrecognized commandline option \"%s\"!\n", argv[i]);
-		  return 1;
+		  return EX_USAGE;
 	  }
 
    } /* endwhile */
@@ -264,7 +266,7 @@ void processConfig()
    if (NULL == config) {
        nfree(cfgFile);
        printf("Config not found\n");
-       exit(1);
+       exit(EX_UNAVAILABLE);
    }
 
 /*
@@ -303,17 +305,17 @@ void processConfig()
 	   if ((lock_fd=open(config->lockfile,O_CREAT|O_RDWR,S_IREAD|S_IWRITE))<0) {
 	       fprintf(stderr,"cannot open/create lock file: %s\n",config->lockfile);
 	       disposeConfig(config);
-	       exit(1);
+	       exit(EX_CANTCREAT);
 	   } else {
 	       if (write(lock_fd," ", 1)!=1) {
 		   fprintf(stderr,"can't write lo lock file! exit...\n");
 		   disposeConfig(config);
-		   exit(1);
+		   exit(EX_IOERR);
 	       }
 	       if (lock(lock_fd,0,1)<0) {
 		   fprintf(stderr,"lock file used by another process! exit...\n");
 		   disposeConfig(config);
-		   exit(1);
+		   exit(EX_TEMPFAIL);
 	       }
 	   }
        } else { // normal locking
@@ -322,7 +324,7 @@ void processConfig()
 	       fprintf(stderr,"cannot create new lock file: %s\n",config->lockfile);
 	       fprintf(stderr,"lock file probably used by another process! exit...\n");
 	       disposeConfig(config);
-	       exit(1);
+	       exit(EX_CANTCREAT);
 	   }
        }
    }   
@@ -381,7 +383,7 @@ int isFreeSpace(char *path) {
 int main(int argc, char **argv)
 {
    struct _minf m;
-   int i;
+   int i, rc;
    char *version = NULL;
 #if defined ( __NT__ )
    char title[ 256 ], oldtitle[ 256 ];
@@ -411,7 +413,9 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 
    xscatprintf(&versionStr,"hpt %s", version);
 
-   if (processCommandLine(argc, argv)==1) exit(0);
+   rc = processCommandLine(argc, argv);
+   if (rc==1) exit(EX_OK);
+   if (rc==EX_USAGE) exit(EX_USAGE);
 
 //   if (quiet==0) fprintf(stdout, "Highly Portable Toss %s\n", version);
    nfree(version);
