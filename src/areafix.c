@@ -1084,7 +1084,7 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 {
     int i, c, rc = 0;
     long rescanCount = -1;
-    char *report = NULL, *line, *countstr, *an;
+    char *report = NULL, *line, *countstr, *an, *end;
     s_area *area, **areas=NULL;
     
     line = cmd+strlen("%rescan");
@@ -1104,8 +1104,8 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
          rescanCount = strtol(countstr, NULL, 10);
       }
     
-    report = strpbrk(line, " \t");
-    if (report) *report = 0;
+    end = strpbrk(line, " \t");
+    if (end) *end = 0;
     
     if (*line == 0) return errorRQ(cmd);
 

@@ -198,12 +198,11 @@ void linkArea(s_area *area)
      return;
    }
 
-#ifndef __NT__
+   // JAM linking is not supported by smapi
    if ((area->msgbType & MSGTYPE_JAM) == MSGTYPE_JAM) {
      if (loglevel>=10) fprintf(outlog, "JAM, ignoring\n");
      return;
    }
-#endif
 
    harea = MsgOpenArea((byte *) area->fileName, MSGAREA_NORMAL, area->msgbType);
 
