@@ -1,9 +1,29 @@
-DEBUG   = 0
+HASHDUPE = 0
+DEBUG   = 1
 CC      = wcc386
 LINK    = WLINK
 
-OBJS    = hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, seenby.obj, dupe.obj, tree.obj, recode.obj, areafix.obj, post.obj, link.obj, strsep.obj crc.obj
+OBJS    = hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, seenby.obj, dupe.obj, tree.obj, recode.obj, areafix.obj, post.obj, link.obj, strsep.obj, crc.obj
 SRC_DIR = ..\src
+
+!IF $(HASHDUPE) == 1
+
+!IF $(DEBUG) == 1
+CFLAGS  = -d2 -hw -i=..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq -5 -dHASHDUPE
+LFLAGS  = DEBUG Watcom
+!ELSE
+CFLAGS  = -i..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq -5 -dHASHDUPE
+LFLAGS  =
+!ENDIF
+
+all: $(OBJS) \
+     pktinfo.exe \
+     tlog.exe \
+     tpkt.exe \
+     txt2pkt.exe \
+     hpt.exe
+
+!ELSE
 
 !IF $(DEBUG) == 1
 CFLAGS  = -d2 -hw -i=..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq -5
@@ -20,6 +40,8 @@ all: $(OBJS) \
      tpkt.exe \
      txt2pkt.exe \
      hpt.exe
+
+!ENDIF
 
 $(OBJS): $(SRC_DIR)\$*.c
   @echo compiling $*.c
@@ -45,9 +67,11 @@ txt2pkt.exe: txt2pkt.obj pktwrite.obj fcommon.obj pktread.obj recode.obj log.obj
   @echo linking txt2pkt
   $(LINK) $(LFLAGS) FILE log.obj, txt2pkt.obj, fcommon.obj, pktread.obj, recode.obj, pktwrite.obj, global.obj LIBRARY ..\..\smapi\smapiwco, ..\..\fidoconfig\fidoconfig NAME txt2pkt.exe
 
-purgedup.exe: purgeDupes.obj global.obj dupe.obj tree.obj pktread.obj log.obj recode.obj
+!IF $(HASJDUPE) == 0
+purgedup.exe: purgedupes.obj global.obj dupe.obj tree.obj pktread.obj log.obj recode.obj
   @echo linking purgedup
-  $(LINK) $(LFLAGS) FILE purgeDupes.obj, global.obj, dupe.obj, tree.obj, pktread.obj, log.obj, recode.obj LIBRARY ..\..\smapi\smapiwco, ..\..\fidoconfig\fidoconfig NAME purgedup.exe
+  $(LINK) $(LFLAGS) FILE purgedupes.obj, global.obj, dupe.obj, tree.obj, pktread.obj, log.obj, recode.obj LIBRARY ..\..\smapi\smapiwco, ..\..\fidoconfig\fidoconfig NAME purgedup.exe
+!ENDIF
 
 hpt.exe: $(OBJS)
   @echo linking hpt

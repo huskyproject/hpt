@@ -242,11 +242,12 @@ void scanEMArea(s_area *echo)
       statScan.areas++;
       sprintf(buff, "Scanning area: %s", echo->areaName);
       writeLogEntry(hpt_log, '1', buff);
-      i = highWaterMark = MsgGetHighWater(area);
+      if (noHighWaters) i = highWaterMark = 0;
+      else i = highWaterMark = MsgGetHighWater(area);
       highestMsg    = MsgGetHighMsg(area);
 
-      while (i <= highestMsg) {
-         hmsg = MsgOpenMsg(area, MOPEN_RW, i++);
+      while (i < highestMsg) {
+         hmsg = MsgOpenMsg(area, MOPEN_RW, ++i);
          if (hmsg == NULL) continue;      // msg# does not exist
          statScan.msgs++;
          MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);

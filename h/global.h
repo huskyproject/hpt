@@ -47,5 +47,6 @@ extern int       cmScan;
 extern int       cmPack;
 extern int       cmLink;
 extern int       cmAfix;
+extern int       noHighWaters;
 
 #endif

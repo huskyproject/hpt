@@ -1,6 +1,10 @@
 hpt 0.29
 --------
 
+----- cvs ci ------
+Tue Sep  7  18:28:00
+Fedor:
+* fixed buf with HighWaters position
 
 ----- cvs ci ------
 Thu Sep  2 22:11:30 CEST 1999
