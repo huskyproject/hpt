@@ -241,7 +241,7 @@ int main(int argc, char **argv)
    struct _minf m;
    int i;
    char *version = NULL;
-#if defined ( __WATCOMC__ ) && defined ( __NT__ )
+#if (defined ( __WATCOMC__ ) || defined(__TURBOC__)) && defined ( __NT__ )
    char title[ 256 ];
 #endif
 
@@ -264,7 +264,7 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
 #endif
 
    fprintf(stdout, "Highly Portable Toss %s\n", version);
-#if defined ( __WATCOMC__ ) && defined ( __NT__ )
+#if (defined ( __WATCOMC__ ) || defined(__TURBOC__)) && defined ( __NT__ )
    sprintf( title, "Highly Portable Toss %s", version);
    SetConsoleTitleA( title );
 #endif
