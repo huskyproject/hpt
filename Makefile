@@ -23,7 +23,7 @@ else
 endif
 
 ifeq ($(USE_HPTZIP), 1)
-  LIBS+= -lhptzip
+  LIBS+= -lhptzip -lz
   CFLAGS += -DUSE_HPTZIP
 endif
 
