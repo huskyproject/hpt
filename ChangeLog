@@ -1,3 +1,14 @@
+2001-05-17 Thursday 07:38  ml
+
+	* src/areafix.c (1.210): don't print 'no access' to areafix reports
+	when  is used in request
+
+2001-05-17 Thursday 07:21  ml
+
+	* src/: areafix.c (1.209), getfree.c (1.7): trying to fix getfree.c
+	to compiling with libc5. don't print 'no access' to areafix reports
+	when area is hided
+
 2001-05-15 Tuesday 14:32  ml
 
 	* make/makefile.wcw (1.3), src/scan.c (1.128), src/toss.c (1.344):
