@@ -46,16 +46,17 @@
 #include <string.h>
 #include <ctype.h>
 
+#include <smapi/compiler.h>
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/afixcmd.h>
-
 #include <fidoconf/log.h>
+#include <fidoconf/recode.h>
+
 #include <global.h>
 #include <fcommon.h>
 #include <pkt.h>
-#include <fidoconf/recode.h>
 
 typedef unsigned long flag_t;  /* for at least 32 bit flags */
 #define FTSC_FLAWY  1           /* FTSC field has correctable errors */
@@ -589,7 +590,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    struct tm tm;
    char *p, *q;
    long unread;
-#if defined(MSDOS)
+#if defined(MSDOS) && !defined(__FLAT__) || !defined(__DJGPP__)
    char *origin;
 #endif
 
@@ -667,25 +668,47 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
        return 2; /*  exit with error */
    }
 
-#if !defined(MSDOS)
+#if !defined(MSDOS) || defined(__FLAT__) || defined(__DJGPP__)
+#ifdef DEBUG_HPT
+w_log(LL_DEBUG, "32bit");
+#endif
    do {
 	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
 	   xstrcat(&msg->text, (char*)globalBuffer);
 	   msg->textLength+=len-1; /*  trailing \0 is not the text */
    } while (len == BUFFERSIZE+1);
 #else
+#ifdef DEBUG_HPT
+w_log(LL_DEBUG, "DOS-16");
+#endif
+   /* DOS: read only one segment of message */
    len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
    xstrcat(&msg->text, globalBuffer);
    msg->textLength+=len-1; /*  trailing \0 is not the text */
-   while (len == BUFFERSIZE+1) {
-	   /*  skip msg text */
-	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
+
+   if(strrstr(msg->text, " * Origin"))
+   {  /* Read rest of kludges SEEN-BY & PATH */
+      len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
+      xstrcat(&msg->text, (char*)globalBuffer);
+      msg->textLength+=len-1; /*  trailing \0 is not the text */
    }
-   /*  add origin, seen-by's & path */
-   origin = strrstr(globalBuffer, " * Origin");
-   if (origin) {
+   else
+   { badmsg++;
+     strncpy( globalBuffer, aka2str(msg->destAddr), BUFFERSIZE );
+     w_log(LL_ERR, "Message from %s to %s too big!", aka2str(msg->origAddr),
+                                                     globalBuffer);
+     /*  Message too big, skip msg text */
+     for (len=-1; len == BUFFERSIZE+1; ) {
+	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
+     }
+     if(len>=0)
+     { /*  add origin, seen-by's & path */
+       origin = strrstr(globalBuffer, " * Origin");
+       if (origin) {
 	   xstrscat(&msg->text, "\r", origin, NULL);
 	   msg->textLength+=strlen(origin);
+       }
+     }
    }
 #endif
 

@@ -210,7 +210,6 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 		textWithoutArea++;
 		textLength -= (size_t) (textWithoutArea - msg->text);
 	    }
-
 	    if (echo->killSB) {
 		tiny = strrstr(textWithoutArea, " * Origin:");
 		if (tiny == NULL) tiny = textWithoutArea;
@@ -888,6 +887,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 
             if (dupeDetection(echo, *msg)==1) {
                 /*  no dupe */
+
                 messCC = MessForCC(msg); // make copy of original message
 
                 statToss.echoMail++;
@@ -898,17 +898,17 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
                     /*  mail from us */
                     (addrComp(pktOrigAddr,*echo->useAka)==0)))
                     forwardMsgToLinks(echo, msg, pktOrigAddr);
-
+#ifdef DEBUG_HPT
                 w_log( LL_SRCLINE, "%s::processEMMsg():%d", __FILE__, __LINE__);
-
+#endif
                 /* todo: remove TID from local-generated msgs by hpt post -x
                 * (if (addrComp(pktOrigAddr,*echo->useAka)==0)) */
 
                 if (messCC && !dontdocc)
                     ccrc=carbonCopy(messCC, NULL, echo);
-
+#ifdef DEBUG_HPT
                 w_log( LL_SRCLINE, "%s::processEMMsg():%d", __FILE__, __LINE__);
-
+#endif
                 if (ccrc <= 1) {
                     echo->imported++;  /*  area has got new messages */
                     if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
@@ -1387,7 +1387,7 @@ void processDir(char *directory, e_tossSecurity sec)
 
     while ((file = readdir(dir)) != NULL) {
 #ifdef DEBUG_HPT
-	printf("testing %s\n", file->d_name);
+	w_log(LL_DEBUGV, "testing %s\n", file->d_name);
 #endif
 
 	dummy = (char *) safe_malloc(dirNameLen + strlen(file->d_name) + 1);
@@ -1428,7 +1428,7 @@ void processDir(char *directory, e_tossSecurity sec)
 	arcFile = pktFile = 0;
 	dummy = (files[filenum]).fileName;
 #ifdef DEBUG_HPT
-	printf("testing sorted %s\n", dummy);
+	w_log(LL_DEBUGV,"testing sorted %s\n", dummy);
 #endif
 	if (!(pktFile = patimat(dummy+dirNameLen, "*.pkt") == 1))
 	    for (i = 0; i < sizeof(validExt) / sizeof(validExt[0]); i++)
