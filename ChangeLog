@@ -1,3 +1,15 @@
+2003-09-29 Monday 17:39  d_sergienko
+
+	* src/scan.c (1.197): fixed scanning with -f - now if it is defined
+	- all areas will not be scanned (like echotoss.log is absent or
+	contains no needed areas)
+
+2003-09-29 Monday 08:16  val_khokhlov
+
+	* make/makefile.mvc (1.8), make/makeperl.mvc (1.17), src/hpt.c
+	(1.184): * static hptzip library support * manual zlib.dll loading
+	support (for hptzip)
+
 2003-09-28 Sunday 18:41  d_sergienko
 
 	* src/toss.c (1.525): revert previous patch about closeOpenedPkt()
