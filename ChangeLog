@@ -1,3 +1,12 @@
+2003-05-18 Sunday 05:53  d_sergienko
+
+	* src/toss.c (1.518): process inbounds if they contains files more
+	than 32k
+
+2003-05-18 Sunday 05:22  d_sergienko
+
+	* src/pktread.c (1.102): CRLF->LF
+
 2003-05-17 Saturday 12:06  d_sergienko
 
 	* src/areafix.c (1.415): fix typo
