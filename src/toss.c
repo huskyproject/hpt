@@ -1407,12 +1407,14 @@ void processDir(char *directory, e_tossSecurity sec)
 	strcat(dummy,filename);
 
 #if !defined(__UNIX__)
-#if defined(__TURBOC__) || defined(__DJGPP__)
-	_dos_getfileattr(dummy, &fattrs);
-#elif defined(__MINGW32__)
+#ifndef HAS_DIRENT_H    /* FFindInfo() and FFindNext() store attributes */
+	fattrs = dir->d_attr;
+#elif defined(__TURBOC__) || defined(__DJGPP__)
+	_dos_getfileattr(dummy, &fattrs);   /*unused, but stay for information*/
+#elif defined(__MINGW32__) /* May be move to dirlayer.c ? */
 	fattrs = (GetFileAttributes(dummy) & 0x2) ? _A_HIDDEN : 0;
 #else
-	fattrs = file->d_attr;
+	fattrs = dir->d_attr;
 #endif
 	if(fattrs & _A_HIDDEN) {
 	    nfree(dummy);
