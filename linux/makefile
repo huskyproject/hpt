@@ -20,6 +20,7 @@ all: $(OBJS) \
      pktinfo \
      tlog \
      tpkt \
+     txt2pkt \
      hpt \
      purgeDupes 
 
@@ -35,6 +36,9 @@ tlog: tlog.o log.o
 tpkt: tpkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o 
 	$(CC) $(LFLAGS) -o tpkt log.o tpkt.o fcommon.o pktread.o recode.o pktwrite.o global.o -lsmapilnx  -lfidoconfig
 
+txt2pkt: txt2pkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o 
+	$(CC) $(LFLAGS) -o txt2pkt log.o txt2pkt.o fcommon.o pktread.o recode.o pktwrite.o global.o -lsmapilnx  -lfidoconfig
+
 hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) -lsmapilnx -lfidoconfig 
 
@@ -47,12 +51,12 @@ clean:
 	-rm core
 
 distclean: clean
-	-rm tpkt pktinfo hpt purgeDupes tlog
+	-rm tpkt txt2pkt pktinfo hpt purgeDupes tlog
 	-rm *.1.gz
 	-rm *.log
 
 install:
-	install -s hpt pktinfo purgeDupes $(INSTDIR)
+	install -s hpt pktinfo purgeDupes txt2pkt $(INSTDIR)
 	gzip -c hpt.1 > hpt.1.gz
 	gzip -c purgeDupes.1 > purgeDupes.1.gz
 	install hpt.1.gz purgeDupes.1.gz $(MANDIR)/man1
