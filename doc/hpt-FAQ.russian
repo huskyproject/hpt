@@ -915,7 +915,7 @@ pack zip pkzip25 -add -max -dir=none -nozip $a $f
 A: (ML)
 
 BSOpack by Dmitry Sergienko.
-Бинарники для win32 & OS/2 доступны на http://www.unity.net/~trooper/fido
+Входит в состав husky.
 
 A: (PG)
 
@@ -934,7 +934,6 @@ A: (SD)
 2. Не запускать hpt pack;
    И если есть базы сообщений (т.е. не passthrough) - указать при этом
     в конфиге packNetmailOnScan off;
-   И не определен echotosslog в конфиге.
 
 Первое условие проще :)
 
