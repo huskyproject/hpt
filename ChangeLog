@@ -1,3 +1,7 @@
+2003-10-02 Thursday 19:17  i_zkh
+
+	* doc/hpt.texi (1.135): Fixed spelling
+
 2003-09-30 Tuesday 19:18  i_zkh
 
 	* src/toss.c (1.526): Minor spelling fix
@@ -2101,12 +2105,12 @@
 
 2002-10-17 Thursday 08:51  stas_degteff
 
-	* doc/bugreport.txt (1.1): file bugreport.txt was initially added
+	* doc/bugreport.rus (1.1): file bugreport.rus was initially added
 	on branch hpt-1_2-stable.
 
 2002-10-17 Thursday 08:51  stas_degteff
 
-	* doc/bugreport.rus (1.1): file bugreport.rus was initially added
+	* doc/bugreport.txt (1.1): file bugreport.txt was initially added
 	on branch hpt-1_2-stable.
 
 2002-10-17 Thursday 07:41  mche
