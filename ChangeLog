@@ -6,6 +6,7 @@ Sat May 27 10:21:30 NOVST 2000
 max:
 * set default dupebase type to hashDupesWmsgid (read documentation)
 * changed loglevels (rtfm)
+* added pktdate code to fix msg datetime headers
 
 ----- cvs ci ------
 Fri May 26 14:37:15 NOVST 2000

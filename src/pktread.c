@@ -45,6 +45,12 @@
 #include <pkt.h>
 #include <xstr.h>
 
+typedef unsigned long flag_t;  /* for at least 32 bit flags */
+#define FTSC_FLAWY  1           /* FTSC field has correctable errors */
+#define FTSC_BROKEN 2           /* FTSC field can't even be parsed   */
+#define FTSC_SEADOG 16          /* Seadog style string in the FTSC   */
+#define FTSC_TS_BROKEN 128      /* Only timestamp broken, date is OK */
+
 time_t readPktTime(FILE *pkt)
 {
   struct tm time;
@@ -315,20 +321,204 @@ void correctAddr(s_message *msg,s_pktHeader *header)
    } /* endif */
 }
 
-int correctDateTime(char *msgdate) {
-    int dd, yy, mo, hh, mm, ss;
-    char temp[22];
-    
-    if (sscanf(msgdate, "%d %s %d %d:%d:%d", &dd, temp, &yy, &hh, &mm, &ss) == 6)
-	return 1;
-    else if (sscanf(msgdate, "%d %s %d %d:%d", &dd, temp, &yy, &hh, &mm) == 5)
-	return 1;
-    else if (sscanf(msgdate, "%*s %d %s %d %d:%d", &dd, temp, &yy, &hh, &mm) == 5)
-	return 1;
-    else if (sscanf(msgdate, "%d/%d/%d %d:%d:%d", &mo, &dd, &yy, &hh, &mm, &ss) == 6)
-	return 1;
+/* Some toupper routines crash when they get invalid input. As this program
+   is intended to be portable and deal with any sort of malformed input,
+   we have to provide our own toupper routine. */
+char safe_toupper(char c)
+{
+    const char *from_table = "abcdefghijklmnopqrstuvwxyz";
+    const char *to_table   = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const char *p;
 
-    else return 0;
+    if ((p = strchr(from_table, c)) != NULL)
+    {
+        return (to_table[p - from_table]);
+    }
+
+    return c;
+}
+
+static const char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+int get_month(const char *pmon, flag_t *flag)
+{
+    int i;
+
+    if (strlen(pmon) != 3 && flag != NULL)
+    {
+        (*flag) |= FTSC_FLAWY;
+    }
+
+    for (i=0; i < 12; i++)
+    {
+        if (pmon[0] == months[i][0] &&
+            pmon[1] == months[i][1] &&
+            pmon[2] == months[i][2])
+        {
+            return i;
+        }
+    }
+
+    for (i=0; i < 12; i++)
+    {
+        if (safe_toupper(pmon[0]) == safe_toupper(months[i][0]) &&
+            safe_toupper(pmon[1]) == safe_toupper(months[i][1]) &&
+            safe_toupper(pmon[2]) == safe_toupper(months[i][2]))
+        {
+            (*flag) |= FTSC_FLAWY;
+            return i;
+        }
+    }
+
+    (*flag) |= FTSC_BROKEN;
+    return 0;
+}
+
+static flag_t parse_ftsc_date(struct tm * ptm, char *pdatestr)
+{
+    const char *pday, *pmon, *pyear, *phour, *pminute, *psecond;
+    flag_t rval;
+    char buf[22];
+	int fixseadog=0;
+	struct tm *pnow;
+    time_t t_now;
+
+    time(&t_now);
+    pnow = localtime(&t_now);   /* get the current time */
+
+    pday = pmon = pyear = phour = pminute = psecond = NULL;
+
+    rval = FTSC_BROKEN;
+
+    memcpy(buf, pdatestr, 21); buf[21] = 0;
+
+    if ((pday = strtok(pdatestr, " ")) != NULL)
+        if ((pmon = strtok(NULL, " ")) != NULL)
+            if ((pyear = strtok(NULL, " ")) != NULL)
+                if ((phour = strtok(NULL, ":")) != NULL)
+                    if ((pminute = strtok(NULL, ":")) != NULL)
+                        if ((psecond = strtok(NULL, " ")) != NULL)
+                            rval = 0;
+
+    if (rval == FTSC_BROKEN)
+    {
+                 /* let's try and see if it might be the old SeaDog format */
+
+        rval = FTSC_BROKEN;
+
+        if ((strtok(buf, " ")) != NULL)
+            if ((pday = strtok(NULL, " ")) != NULL)
+                if ((pmon = strtok(NULL, " ")) != NULL)
+                    if ((pyear = strtok(NULL, " ")) != NULL)
+                        if ((phour = strtok(NULL, ": ")) != NULL)
+                            if ((pminute = strtok(NULL, ": ")) != NULL)
+                            {
+                                psecond = NULL;
+                                if (fixseadog)
+                                    rval = FTSC_SEADOG;
+                                else
+                                    rval = 0;
+                            }
+    }
+
+
+    ptm->tm_sec = ptm->tm_min = ptm->tm_hour = ptm->tm_mday = ptm->tm_mon =
+        ptm->tm_year = 0;
+
+    while (rval != FTSC_BROKEN)    /* at least we could tokenize it! */
+    {
+        if (psecond != NULL)
+        {
+            ptm->tm_sec = atoi(psecond);   /* Is the number of seconds valid? */
+            if (strlen(psecond) == 1)
+            {
+                rval |= FTSC_FLAWY;
+                if (ptm->tm_sec < 6) (ptm->tm_sec *= 10);
+            }
+            if (ptm->tm_sec < 0 || ptm->tm_sec > 59)
+            {
+                rval |= FTSC_TS_BROKEN; ptm->tm_sec = 0;
+            }
+        }
+        else
+        {
+            ptm->tm_sec = 0;
+        }
+
+        ptm->tm_min = atoi(pminute);   /* Is the number of minutes valid? */
+        if (ptm->tm_min < 0 || ptm->tm_min > 59)
+        {
+            rval |= FTSC_TS_BROKEN; ptm->tm_min = 0;
+        }
+
+        ptm->tm_hour = atoi(phour);    /* Is the number of hours valid? */
+        if (ptm->tm_hour < 0 || ptm->tm_hour>23)
+        {
+            rval |= FTSC_TS_BROKEN; ptm->tm_hour = 0;
+        }
+
+        ptm->tm_mday = atoi(pday);     /* Is the day in the month valid? */
+        if (ptm->tm_mday < 1 || ptm->tm_mday>31) { rval |= FTSC_BROKEN; break; }
+
+        ptm->tm_mon = get_month(pmon, &rval); /* Is the month valid? */
+
+        if (strlen(pyear) != 2)        /* year field format check */
+        {
+            rval |= FTSC_FLAWY;
+        }
+
+        if (*pyear)
+        {
+            ptm->tm_year = (*pyear - '0'); /* allows for the ":0" bug */
+            for (pyear++; isdigit((int)(*pyear)); pyear++)
+            {
+                ptm->tm_year *= 10;
+                ptm->tm_year += (*pyear - '0');
+            }
+            if (*pyear)
+            {
+                rval |= FTSC_BROKEN;
+                break;
+            }
+        }
+        else
+        {
+            rval |= FTSC_BROKEN;
+            break;
+        }
+
+        if (ptm->tm_year < 100)  /* correct date field! */
+        {
+            while (pnow->tm_year - ptm->tm_year > 50)
+            {                         /* sliding window adaption */
+                ptm->tm_year += 100;
+            }
+        }
+        else if (ptm->tm_year < 1900) /* probably the field directly */
+                                      /* contains tm_year, like produced */
+                                      /* by the Timed/Netmgr bug and others */
+        {
+            rval |= FTSC_FLAWY;
+        }
+        else                          /* 4 digit year field, not correct! */
+        {
+            ptm->tm_year -= 1900;
+            rval |= FTSC_FLAWY;
+        }
+        break;
+    }
+
+
+    return rval;
+
+}
+
+static void make_ftsc_date(char *pdate, const struct tm *ptm)
+{
+    sprintf(pdate, "%02d %-3.3s %02d  %02d:%02d:%02d",
+            ptm->tm_mday % 100, months[ptm->tm_mon], ptm->tm_year % 100,
+            ptm->tm_hour % 100, ptm->tm_min % 100, ptm->tm_sec % 100);
 }
 
 s_message *readMsgFromPkt(FILE *pkt, s_pktHeader *header)
@@ -336,6 +526,7 @@ s_message *readMsgFromPkt(FILE *pkt, s_pktHeader *header)
    s_message *msg;
    UCHAR     *textBuffer;
    int       len;
+   struct tm tm;
 
    if (2 != getUINT16(pkt)) {
       return NULL;              /* no packed msg */
@@ -358,6 +549,10 @@ s_message *readMsgFromPkt(FILE *pkt, s_pktHeader *header)
 
 //   fgets(msg->datetime, 21, pkt);
    fgetsUntil0 (msg->datetime, 22, pkt);
+//   writeLogEntry(hpt_log, 'd', "msg datetime: %s", msg->datetime);
+   parse_ftsc_date(&tm, msg->datetime);
+   make_ftsc_date(msg->datetime, &tm);
+//   writeLogEntry(hpt_log, 'd', "new datetime: %s", msg->datetime);
 
    textBuffer = (UCHAR *) malloc(74);   // reserve mem space
    len = fgetsUntil0 ((UCHAR *) textBuffer, 37, pkt);

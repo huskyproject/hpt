@@ -42,7 +42,6 @@
 static char *mnames[] = {
 "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"
 };
-
 static char *wdnames[] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 
 #ifdef __MINGW32__
