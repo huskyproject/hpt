@@ -1251,7 +1251,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 #ifdef DO_PERL
     perlpktdone(fileName, rc);
 #endif
-//    closeOpenedPkt();
+    closeOpenedPkt();
     w_log(LL_FUNC,"toss.c::processPkt() OK");
     return rc;
 }
@@ -1951,7 +1951,6 @@ void tossTempOutbound(char *directory)
     directory[dirNameLen-1]='\0';
 #endif
 
-    closeOpenedPkt();
     if (NULL == (dir = husky_opendir(directory))) {
         printf("Can't open dir: %s!\n",directory);
 	return;
