@@ -2,6 +2,11 @@ hpt 0.27
 --------
 
 ----- cvs ci ------
+Wed Apr 21 11:23:59 MET DST 1999
+mtt:
++ fixed some pointer == null in autoareacreate and arcmail
+	
+----- cvs ci ------
 Max:
 Tue Apr 20 09:31:53 NOVST 1999
 - change rindex() to strrchr() in description code
