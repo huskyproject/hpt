@@ -871,7 +871,8 @@ static XS(perl_gmtoff)
   if (items) t = (time_t)SvUV(ST(0)); else t = time(NULL);
   memcpy(&loc, localtime(&t), sizeof(loc));
   memcpy(&gmt, gmtime(&t), sizeof(gmt));
-  offs = loc.tm_hour-gmt.tm_hour; if (offs > 12) offs -= 24;
+  offs = loc.tm_hour-gmt.tm_hour;
+  if (offs > 12) offs -= 24; else if (offs < -12) offs += 24;
   if (loc.tm_min != gmt.tm_min) offs = offs + (double)(loc.tm_min-gmt.tm_min)/60;
   XSRETURN_NV(offs);
 }
