@@ -1,3 +1,20 @@
+2003-04-28 Monday 18:59  d_sergienko
+
+	* HISTORY (1.29): fix spelling
+
+2003-04-28 Monday 08:36  d_sergienko
+
+	* src/perl.c (1.61): prevent scrambled report if $report is
+	unchanged and return code = 1
+
+2003-04-28 Monday 08:21  d_sergienko
+
+	* filter.pl (1.14): add warning about locally redefined variables
+
+2003-04-28 Monday 08:16  d_sergienko
+
+	* src/areafix.c (1.407): fix scrambled reports
+
 2003-04-27 Sunday 20:10  d_sergienko
 
 	* src/areafix.c (1.406): yet another rules sending fix
