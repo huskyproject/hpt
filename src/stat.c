@@ -35,6 +35,7 @@
 #include <fidoconf/xstr.h>
 #include <fidoconf/log.h>
 
+
 #include "stat.h"
 
 #define REV_MIN 1            /* min revision we can read */
@@ -42,7 +43,7 @@
 #define REV_MAX 1            /* max revision we can read */
 
 /*#define STAT_ALONE*/         /* complie stat.c w/o hpt */
-/*#define STAT_DEBUG*/         /* output stat info each write */
+#define STAT_DEBUG
 
 #ifdef STAT_ALONE
 #  define msg(s) fprintf(stderr,      __FILE__ ":%u: %s %s", __LINE__, s)
@@ -192,14 +193,20 @@ void upd_stat(char *file)
     oldf = file;
     OLD = fopen(oldf, "rb");
     if (OLD != NULL) {
-        fread(&ohdr, sizeof(ohdr), 1, OLD); 
-        if (ohdr.rev < REV_MIN || ohdr.rev > REV_MAX) {
+        int rc = fread(&ohdr, sizeof(ohdr), 1, OLD); 
+        if (rc < 1) {
+#ifdef STAT_DEBUG
+            msg2("Ignoring empty or corrupt stat base", oldf);
+#endif
+            fclose(OLD); OLD = NULL;
+        }
+        else if (ohdr.rev < REV_MIN || ohdr.rev > REV_MAX) {
             msg2("Incompatible stat base", oldf); fclose(OLD); 
-            OLD = NULL; /*do_stat = 0; return;*/ 
+            do_stat = 0; return;
         }
     }
     /* make new base: hpt.st$ */
-    if((newf = sstrdup(oldf))) newf[strlen(newf)-1] = '$';
+    if ( (newf = sstrdup(oldf)) ) newf[strlen(newf)-1] = '$';
     else { msg("Out of memory"); if (OLD != NULL) fclose(OLD); return; }
     NEW = fopen(newf, "wb");
     if (NEW == NULL) {
@@ -273,12 +280,15 @@ int write_echo(FILE *F, stat_echo *e)
 {
     chain_link *cl;
     int tst;
+    short real_links = 0;
     
     if (!e || !e->links) return 0;
 #ifdef STAT_DEBUG
     debug_out(e);
 #endif
-    tst = fwrite(&(e->links), sizeof(e->links), 1, F);
+    cl = e->chain; while (cl) { real_links++; cl = cl->next; }
+/*    tst = fwrite(&(e->links), sizeof(e->links), 1, F); */
+    tst = fwrite(&(real_links), sizeof(e->links), 1, F);
     tst += fwrite(&(e->tag_len), sizeof(e->tag_len), 1, F);
     tst += fwrite(e->tag, e->tag_len, 1, F);
     if (tst < 3) { msg("Write error"); do_stat = 0; return 0; }
