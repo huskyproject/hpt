@@ -398,34 +398,33 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCo
 
    token = strtok(seenByText, " \r\t\376");
    while (token != NULL) {
-      if (strcmp(token, "\001PATH:")==0) break;
-      if (isdigit(*token)) {
+	   if (strcmp(token, "\001PATH:")==0) break;
+	   if (isdigit(*token)) {
 
-         // get new memory
-         (*seenByCount)++;
-         (*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
-		parsetok:
-         // parse token
-         temp = strtoul(token, &endptr, 10);
-         if ((*endptr) == '\0') {
-            // only node aka
-            (*seenBys)[*seenByCount-1].node = (UINT16) temp;
-            // use net aka of last seenBy
-            (*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
-         } else {
-            // net and node aka
-            (*seenBys)[*seenByCount-1].net = (UINT16) temp;
-			if (*endptr==':') {
-				endptr++;
-				token = endptr;
-				goto parsetok;
-			}
-            // eat up '/'
-            endptr++;
-            (*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
-         }
-      }
-      token = strtok(NULL, " \r\t\376");
+		   // get new memory
+		   (*seenByCount)++;
+		   (*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
+
+		   // parse token
+		   temp = strtoul(token, &endptr, 10);
+		   if (*endptr==':') {
+			   token = endptr+1;
+			   temp = strtoul(token, &endptr, 10);
+		   }
+		   if ((*endptr) == '\0') {
+			   // only node aka
+			   (*seenBys)[*seenByCount-1].node = (UINT16) temp;
+			   // use net aka of last seenBy
+			   (*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
+		   } else {
+			   // net and node aka
+			   (*seenBys)[*seenByCount-1].net = (UINT16) temp;
+			   // eat up '/'
+			   endptr++;
+			   (*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
+		   }
+	   }
+	   token = strtok(NULL, " \r\t\376");
    }
 
    //test output for reading of seenBys...
