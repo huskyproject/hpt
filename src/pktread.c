@@ -264,7 +264,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
           copy = buffer;
           while (*start && !isspace(*start)) *copy++ = *start++;
           *copy='\0';
-          if (strchr(start,':')==NULL || strchr(start,'/')==NULL) break;
+          if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
           string2addr(buffer, &intl_to);
           
           while (*start && isspace(*start)) start++;
@@ -273,7 +273,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
           copy = buffer;
           while (*start && !isspace(*start)) *copy++ = *start++;
           *copy='\0';
-          if (strchr(start,':')==NULL || strchr(start,'/')==NULL) break;
+          if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
           string2addr(buffer, &intl_from);
 
           intl_from.point = msg->origAddr.point;
