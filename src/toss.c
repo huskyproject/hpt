@@ -508,7 +508,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    }
    
    //write new line in config file
-   if (stricmp(config->msgBaseDir, "passthrough")==0)
+   if (stricmp(config->msgBaseDir, "passthrough")!=0)
       sprintf(buff, "EchoArea %s %s%s -a %s Squish %s ", c_area, config->msgBaseDir, c_area, myaddr, hisaddr);
    else
       sprintf(buff, "EchoArea %s Passthrough -a %s %s ", c_area, myaddr, hisaddr);
@@ -719,6 +719,83 @@ int processPkt(char *fileName, e_tossSecurity sec)
    FILE        *pkt;
    s_pktHeader *header;
    s_message   *msg;
+   s_link      *link;
+   char        rc = 0;
+   char        buff[256];
+   char        processIt = 0; // processIt = 1, process all mails
+                              // processIt = 2, process only Netmail
+                              // processIt = 0, do not process pkt
+
+   pkt = fopen(fileName, "rb");
+   if (pkt == NULL) return 2;
+
+   header = openPkt(pkt);
+   if (header != NULL) {
+      if (to_us(*header)==0) {
+         sprintf(buff, "pkt: %s", fileName);
+         writeLogEntry(log, '6', buff);
+         statToss.pkts++;
+         link = getLinkFromAddr(*config, header->origAddr);
+
+         switch (sec) {
+            case secLocalInbound:
+               processIt = 1;
+               break;
+               
+            case secProtInbound:
+               if ((link != NULL) && ((link->pktPwd == NULL) || (stricmp(link->pktPwd, header->pktPassword) == 0))) {
+                  processIt = 1;
+               } else {
+                  sprintf(buff, "pkt: %s Password Error or no link for %i:%i/%i.%i",
+                          fileName, header->origAddr.zone, header->origAddr.net,
+                          header->origAddr.node, header->origAddr.point);
+                  writeLogEntry(log, '9', buff);
+                  rc = 1;
+               }
+               break;
+               
+            case secInbound:
+               if ((link != NULL) && ((link->pktPwd == NULL) || (stricmp(link->pktPwd, header->pktPassword) == 0))) {
+                  processIt = 1;
+               } else {
+                  sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
+                          fileName, header->origAddr.zone, header->origAddr.net,
+                          header->origAddr.node, header->origAddr.point);
+                  writeLogEntry(log, '9', buff);
+                  processIt = 2;
+               }
+               break;
+         }
+
+         if (processIt != 0) {
+            while ((msg = readMsgFromPkt(pkt, header->origAddr.zone)) != NULL) {
+               if (msg != NULL) {
+                  if ((processIt = 1) || ((processIt==2) && (msg->netMail==1)))
+                     processMsg(msg, header->origAddr);
+                  freeMsgBuffers(msg);
+               }
+            }
+         }
+         
+      }
+
+      free(header);
+      
+   } else {
+      sprintf(buff, "pkt: %s wrong pkt-file", fileName);
+      writeLogEntry(log, '9', buff);
+      rc = 3;
+   }
+
+   fclose(pkt);
+   return rc;
+}
+
+/* int processPkt(char *fileName, e_tossSecurity sec)
+{
+   FILE        *pkt;
+   s_pktHeader *header;
+   s_message   *msg;
    char        buff[265];
    s_link      *link;
    char        pwdOK = !0;
@@ -752,8 +829,8 @@ int processPkt(char *fileName, e_tossSecurity sec)
                      sprintf(buff, "pkt: %s mails found", fileName);
                      writeLogEntry(log, '1', buff);
                   }
-               } /* endwhile */
-            } /* endif */
+               }
+            }
             else {
                sprintf(buff, "pkt: %s Password Error for %i:%i/%i.%i",
                        fileName, header->origAddr.zone, header->origAddr.net,
@@ -770,7 +847,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
             writeLogEntry(log, '9', buff);
             rc = 1;
          }
-      } /*endif */
+      }
    } else {
       sprintf(buff, "pkt: %s wrong pkt-file", fileName);
       writeLogEntry(log, '9', buff);
@@ -780,6 +857,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
    fclose(pkt);
    return rc;
 }
+*/
 
 void processDir(char *directory, e_tossSecurity sec)
 {

@@ -12,4 +12,5 @@ Unix:
 
 2. compile hpt
 
-You're ready. Now you can install hpt, and other software which uses fidoconfig. 
+You're ready. If you have a working fidoconfig, you can now use fido under
+unix.

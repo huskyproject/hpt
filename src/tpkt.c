@@ -56,8 +56,7 @@ int main()
    header.hiProductCode  = 0;
    header.loProductCode  = 0xfe;
    header.majorProductRev = 0;
-   header.minorProductRev = 24;
-
+   header.minorProductRev = 25;
    //header.pktPassword[0] = 0;
    strcpy(header.pktPassword, "irkutsk");
    header.pktCreated = time(NULL);
@@ -85,11 +84,11 @@ int main()
 
       msg.netMail = 1;
       msg.text = (char *) malloc(300);
-      strcpy(msg.text, "\001INTL 2:2432/601 2:2432/601\r\001TOPT 29\r+LinUxasd*");
+      strcpy(msg.text, "AREA:TERROR\r\001INTL 2:2432/601 2:2432/601\r\001TOPT 29\raslödkjasdlöjkaslödj");
       msg.toUserName = (char *) malloc(15);
-      strcpy(msg.toUserName, "Matthias Tichy");
-      msg.fromUserName = (char *) malloc(10);
-      strcpy(msg.fromUserName, "Hpt Test");
+      strcpy(msg.toUserName, "edde");
+      msg.fromUserName = (char *) malloc(20);
+      strcpy(msg.fromUserName, "Dirk Fischer");
       msg.subjectLine = (char *) malloc(5);
       strcpy(msg.subjectLine, "irkutsk");
       msg.textLength = strlen(msg.text);

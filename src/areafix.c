@@ -174,7 +174,10 @@ char *list(s_message *msg, s_link *link) {
 
 	report=(char*) calloc(1,sizeof(char*));
 
-	for (i=0,n=0; i< config->echoAreaCount; i++) {
+        for (i=0,n=0; i< config->echoAreaCount; i++) {
+
+                if (config->echoAreas[i].hide==1) continue; // do not display hidden areas..
+
 		report=(char*) realloc(report, strlen(report)+
 							   strlen(config->echoAreas[i].areaName)+3);
 		rc=subscribeCheck(config->echoAreas[i],msg);
