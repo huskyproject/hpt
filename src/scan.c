@@ -175,6 +175,44 @@ s_route *findRouteForNetmail(s_message msg)
    return &(config->route[config->routeCount-1]);
 }
 
+s_link *getLinkForRoute(s_route *route, s_message *msg) {
+   static s_link tempLink;
+   s_link *getLink;
+    
+   if (route->target == NULL) {
+      memset(&tempLink, 0, sizeof(s_link));
+
+      tempLink.hisAka = msg->destAddr;
+      tempLink.ourAka = &(config->addr[0]);
+       
+      switch (route->routeVia) {
+          
+         case host:
+            tempLink.hisAka.node  = 0;
+            tempLink.hisAka.point = 0;
+            break;
+
+         case boss:
+            tempLink.hisAka.point = 0;
+            break;
+
+         case noroute:
+            break;
+
+         case hub:
+            tempLink.hisAka.node -= (tempLink.hisAka.node % 100);
+            tempLink.hisAka.point = 0;
+            break;
+      }
+
+      getLink = getLinkFromAddr(*config, tempLink.hisAka);
+
+      if (getLink != NULL) return getLink;
+      else return &tempLink;
+      
+   } else return route->target;
+}
+
 void packMsg(HMSG SQmsg, XMSG xmsg)
 {
    FILE        *flo, *pkt, *req;
@@ -183,6 +221,7 @@ void packMsg(HMSG SQmsg, XMSG xmsg)
    s_message   msg;
    s_pktHeader header;
    s_route     *route;
+   s_link      *link;
 
    convertMsgHeader(xmsg,  &msg);
 
@@ -207,8 +246,9 @@ void packMsg(HMSG SQmsg, XMSG xmsg)
          fileName = createOutboundFileName(msg.destAddr, prio, FLOFILE);
       } else {
          route = findRouteForNetmail(msg);
+         link = getLinkForRoute(route, &msg);
          prio = cvtFlavour2Prio(route->flavour);
-         fileName = createOutboundFileName(route->target->hisAka, prio, FLOFILE);
+         fileName = createOutboundFileName(link->hisAka, prio, FLOFILE);
       } /* endif */
       flo = fopen(fileName, "a");
       if (flo!= NULL) {
@@ -249,20 +289,21 @@ void packMsg(HMSG SQmsg, XMSG xmsg)
       
       // no crash, no hold flag -> route netmail
       route = findRouteForNetmail(msg);
+      link = getLinkForRoute(route, &msg);
 
       prio = cvtFlavour2Prio(route->flavour);
-      fileName = createOutboundFileName(route->target->hisAka, prio, PKT);
-      convertMsgText(SQmsg, &msg, *(route->target->ourAka));
+      fileName = createOutboundFileName(link->hisAka, prio, PKT);
+      convertMsgText(SQmsg, &msg, *(link->ourAka));
       makePktHeader(NULL, &header);
-      header.destAddr = route->target->hisAka;
-      header.origAddr = *(route->target->ourAka);
-      if (route->target->pktPwd != NULL) strcpy(&(header.pktPassword[0]), route->target->pktPwd);
+      header.destAddr = link->hisAka;
+      header.origAddr = *(link->ourAka);
+      if (link->pktPwd != NULL) strcpy(&(header.pktPassword[0]), link->pktPwd);
       pkt = openPktForAppending(fileName, &header);
       writeMsgToPkt(pkt, msg);
       closeCreatedPkt(pkt);
       sprintf(buff, "Msg from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point,
               msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point,
-              route->target->hisAka.zone, route->target->hisAka.net, route->target->hisAka.node, route->target->hisAka.point);
+              link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
       writeLogEntry(log, '7', buff);
       free(fileName);
    }

@@ -273,8 +273,6 @@ s_message *readMsgFromPkt(FILE *pkt,UINT16 def_zone)
    correctAddr(msg,def_zone);
 
    msg->recode = 0;
-   msg->destAddr.zone = def_zone;
-   msg->destAddr.point = 0;
 
    return msg;
 }

@@ -1,5 +1,9 @@
 The following things of fidoconfig are currently not implemented in HPT:
 ------------------------------------------------------------------------
 
-- hub host routing no-route routing (you can simulate the latest feature using
-  Route crash 2:2432/601 2:2432/601 )
+- hub-routing does not use the hubs defined in the nodelist but uses the nodes
+  aka - (aka.node %100)
+  e.g.: a mail to node 2:2433/1245 is send to 2:2433/1200
+  but   a mail to node 2:2433/355 is send to 2:2433/300 which currently does
+        not exist. 
+  BE CAREFUL!
