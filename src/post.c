@@ -400,11 +400,16 @@ void post(int c, unsigned int *n, char *params[])
                 xstrcat((char **)(&(msg.text)), (char *)textBuffer);
             }
 
-            xscatprintf(&msg.text, "\r--- %s\r * Origin: %s (%s)\r",
-                (tearl) ? tearl : (config->tearline) ? config->tearline : "",
-                (origin) ? origin : (config->origin) ? config->origin : config->name,
-                aka2str(msg.origAddr));
-            
+            if (msg.text[0] && msg.text[strlen(msg.text)-1] != '\r')
+                xscatprintf(&msg.text, "\r");
+            if (!msg.netMail || tearl)
+                xscatprintf(&msg.text, "--- %s\r",
+                  (tearl) ? tearl : (config->tearline) ? config->tearline : "");
+            if (!msg.netMail || origin)
+                xscatprintf(&msg.text, " * Origin: %s (%s)\r",
+                  (origin) ? origin : (config->origin) ? config->origin : config->name,
+                  aka2str(msg.origAddr));
+
             msg.textLength = strlen(msg.text);
 
             if ((msg.destAddr.zone + msg.destAddr.net +
