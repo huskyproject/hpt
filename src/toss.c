@@ -1480,6 +1480,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 		       fileName, header->origAddr.zone, header->origAddr.net,
 		       header->origAddr.node, header->origAddr.point);
 	       processIt = 2;
+	       rc = 5;
 	     }
 	     break;
 
