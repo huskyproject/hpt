@@ -1,7 +1,7 @@
 $Id$
 
 Улучшенные perl-хуки для hpt
-                 редакция 1.3
+                 редакция 1.4
 
 1. Предисловие
 2. Общие константы и функции
@@ -79,6 +79,9 @@ A_S, DIR, ZON, HUB, IMM, XMA, KFS, TFS, LOK, CFM, HIR, COV, SIG, LET
     $links{}{level}
     $links{}{advAfix}  - 1 если у линка advanced areafix, иначе неопределен
     $links{}{echoLimit}
+    $links{}{forwreqs} - 1 если разрешены forward-запросы к линку
+    $links{}{forwreqsFile} - список эх для forward-запросов
+    $links{}{forwreqsPrio} - приоритет forward-запросов
     $links{}{groups}   - список доступных линку групп, разделенных пробелами
   %areas       - хэш, в котором хранятся параметры эхообластей (ключ - эхотаг)
     $areas{}{desc}     - описание эхи
