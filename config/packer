@@ -3,12 +3,40 @@
 Unpack "\path\pkzipc -ext -dir=none -over=all -nozip -silent $a $p $f" 0 504b0304
 #Unpack "pkunzip -njCL $a -d $p $f" 0 504b0304
 #Unpack "pkzip25 -ext -silent -over=all -nofix -nozip $a $p $f" 0 504b0304
-Pack  zip pkzip -ex $a $f
+Pack  zip pkzip.exe -ex $a $f
 
 # *.rar
-Unpack  "c:\arc\unrar e -y -c- -o+ -inul $a $p $f"   0 52617221
+Unpack  "unrar e -y -c- -o+ -inul $a $p $f"   0 52617221
 # rar-sfx/DOS
-Unpack  "c:\arc\unrar e -y -c- -o+ -inul $a $p $f"  28 52534658
+Unpack  "unrar e -y -c- -o+ -inul $a $p $f"  28 52534658
+# rar 2.90 R sfxs
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 23040 52617221  # Default.sfx
+Unpack "rar e -y -c- -o+ -inul $a $p $f"  9573 52617221  # DOS.sfx
+Unpack "rar e -y -c- -o+ -inul $a $p $f"  9493 52617221  # Dos_US.sfx
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 25099 52617221  # Os2.sfx
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 13312 52617221  # WinCon.sfx
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 13824 52617221  # WinConUS.sfx
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 25088 52617221  # Zip.sfx
+# Rar 3.0 R sfxs
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 46592 52617221  # Default.sfx
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 93816 52617221  # Dos.sfx
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 37376 52617221  # WinCon.sfx
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 31232 52617221  # Zip.sfx
+# Rar 3.0 sfxs
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 47104 52617221  # Default.sfx
+# Rar 3.1b1 sfxs
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 50688 52617221  # Default.sfx
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 94128 52617221  # Dos.sfx
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 34816 52617221  # Zip.sfx
+# Rar 3.1b2 sfxs
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 49152 52617221  # Default.sfx
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 94016 52617221  # Dos.sfx
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 34304 52617221  # Zip.sfx
+# Rar 3.1b3 sfxs
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 49664 52617221  # Default.sfx
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 93932 52617221  # Dos.sfx
+Unpack "rar e -y -c- -o+ -inul $a $p $f" 37888 52617221  # WinCon.sfx
+
 Pack 	rar rar a -ep -md1024 -m5 -mm -inul -s $a $f
 
 Unpack  "arj e -+ -y $a $p >nul" 0 60ea
