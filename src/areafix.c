@@ -881,7 +881,7 @@ static int compare_links_priority(const void *a, const void *b) {
     else return 0;
 }
 
-int forwardRequest(char *areatag, s_link *dwlink) {
+int forwardRequest(char *areatag, s_link *dwlink, ps_addr lastRlink) {
     unsigned int i, rc = 1;
     s_link *uplink;
     int *Indexes;
@@ -1092,7 +1092,7 @@ char *subscribe(s_link *link, char *cmd) {
     if (rc==4 && !isPatternLine(line) && !found) { /* rc not equal 4 there! */
 	if (link->denyFRA==0) {
 	    // try to forward request
-	    if ((rc=forwardRequest(line, link))==2) {
+	    if ((rc=forwardRequest(line, link, NULL))==2) {
 		xscatprintf(&report, " %s %s  no uplinks to forward\r",
 			    line, print_ch(49-strlen(line), '.'));
 		w_log( LL_AREAFIX, "areafix: %s - no uplinks to forward", line);
@@ -1281,9 +1281,10 @@ char *unsubscribe(s_link *link, char *cmd) {
 	switch (rc) {
 	case 0:
 	    if (from_us == 0) {
-        for (i=0; i<area->downlinkCount; i++) {
-            if (addrComp(link->hisAka, area->downlinks[i]->link->hisAka)==0 &&
-                area->downlinks[i]->defLink)
+        int k;
+        for (k=0; i<area->downlinkCount; k++) {
+            if (addrComp(link->hisAka, area->downlinks[k]->link->hisAka)==0 &&
+                area->downlinks[k]->defLink)
                 return do_delete(link, area);
         }
         if ((area->msgbType == MSGTYPE_PASSTHROUGH) &&
