@@ -481,31 +481,31 @@ int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link, s_addr pktOrigA
 
 void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
 						s_area *echo, s_arealink ***newLinks,
-						s_arealink ***zoneLinks, s_addr pktOrigAddr)
+						s_addr pktOrigAddr)
 {
-	UINT i, j=0, k=0;
+	UINT i, j=0;//, k=0;
 	
 	*newLinks = (s_arealink **) calloc(echo->downlinkCount, sizeof(s_arealink*));
-	*zoneLinks = (s_arealink **) calloc(echo->downlinkCount, sizeof(s_arealink*));
+//	*zoneLinks = (s_arealink **) calloc(echo->downlinkCount, sizeof(s_arealink*));
 
 	for (i=0; i < echo->downlinkCount; i++) {
 		if (checkLink(seenBys,seenByCount,echo->downlinks[i]->link,pktOrigAddr)==0) {
-			if (pktOrigAddr.zone==echo->downlinks[i]->link->hisAka.zone) {
+//			if (pktOrigAddr.zone==echo->downlinks[i]->link->hisAka.zone) {
 				// links with same zone
 				(*newLinks)[j] = echo->downlinks[i];
 				j++;
-			} else {
+//			} else {
 				// links in different zones
-				(*zoneLinks)[k] = echo->downlinks[i];
-				k++;
-			}
+//				(*zoneLinks)[k] = echo->downlinks[i];
+//				k++;
+//			}
 		}
 	}
 }
 
 void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks, 
-					s_seenBy *seenBys[], UINT seenByCount,
-					s_seenBy *path[], UINT pathCount) {
+					s_seenBy *seenBys[], UINT *seenByCount,
+					s_seenBy *path[], UINT *pathCount) {
 	int i;
 	long len;
 	FILE *pkt;
@@ -513,11 +513,11 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	char *start, *seenByText = NULL, *pathText = NULL;
 
 	// add our aka to seen-by (zonegating link must strip our aka)
-	if (seenByCount==0) {
-		(*seenBys) = (s_seenBy*) realloc((*seenBys), sizeof(s_seenBy) * (seenByCount+1));
-		(*seenBys)[seenByCount].net = (UINT16) echo->useAka->net;
-		(*seenBys)[seenByCount].node = (UINT16) echo->useAka->node;
-		seenByCount++;
+	if (*seenByCount==0) {
+		(*seenBys) = (s_seenBy*) realloc((*seenBys), sizeof(s_seenBy) * (*seenByCount+1));
+		(*seenBys)[*seenByCount].net = (UINT16) echo->useAka->net;
+		(*seenBys)[*seenByCount].node = (UINT16) echo->useAka->node;
+		(*seenByCount)++;
 	}
 	
 	// add seenBy for newLinks
@@ -528,38 +528,38 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		// don't include points in SEEN-BYs
 		if (newLinks[i]->link->hisAka.point != 0) continue;
 		
-		(*seenBys) = (s_seenBy*) realloc((*seenBys), sizeof(s_seenBy) * (seenByCount+1));
-		(*seenBys)[seenByCount].net = (UINT16) newLinks[i]->link->hisAka.net;
-		(*seenBys)[seenByCount].node = (UINT16) newLinks[i]->link->hisAka.node;
-		seenByCount++;
+		(*seenBys) = (s_seenBy*) realloc((*seenBys), sizeof(s_seenBy) * (*seenByCount+1));
+		(*seenBys)[*seenByCount].net = (UINT16) newLinks[i]->link->hisAka.net;
+		(*seenBys)[*seenByCount].node = (UINT16) newLinks[i]->link->hisAka.node;
+		(*seenByCount)++;
 	}
 
-	sortSeenBys((*seenBys), seenByCount);
+	sortSeenBys((*seenBys), *seenByCount);
 
 #ifdef DEBUG_HPT
-	for (i=0; i< seenByCount;i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
+	for (i=0; i< *seenByCount;i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
 #endif
 	//exit(2);
 
-	if (pathCount > 0) {
-		if (((*path)[pathCount-1].net != echo->useAka->net) ||
-			((*path)[pathCount-1].node != echo->useAka->node)) {
+	if (*pathCount > 0) {
+		if (((*path)[*pathCount-1].net != echo->useAka->net) ||
+			((*path)[*pathCount-1].node != echo->useAka->node)) {
 			// add our aka to path
-			(*path) = (s_seenBy*) realloc((*path), sizeof(s_seenBy) * (pathCount+1));
-			(*path)[pathCount].net = (UINT16) echo->useAka->net;
-			(*path)[pathCount].node = (UINT16) echo->useAka->node;
-			pathCount++;
+			(*path) = (s_seenBy*) realloc((*path), sizeof(s_seenBy) * (*pathCount+1));
+			(*path)[*pathCount].net = (UINT16) echo->useAka->net;
+			(*path)[*pathCount].node = (UINT16) echo->useAka->node;
+			(*pathCount)++;
 		}
 	} else {
-		pathCount = 0;
+		(*pathCount) = 0;
 		(*path) = (s_seenBy*) realloc((*path),sizeof(s_seenBy) * 1);
-		(*path)[pathCount].net = (UINT16) echo->useAka->net;
-		(*path)[pathCount].node = (UINT16) echo->useAka->node;
-		pathCount = 1;
+		(*path)[*pathCount].net = (UINT16) echo->useAka->net;
+		(*path)[*pathCount].node = (UINT16) echo->useAka->node;
+		(*pathCount) = 1;
 	}
 	
 #ifdef DEBUG_HPT
-	for (i=0; i< pathCount;i++) printf("%u/%u ", (*path)[i].net, (*path)[i].node);
+	for (i=0; i< *pathCount;i++) printf("%u/%u ", (*path)[i].net, (*path)[i].node);
 #endif
    //exit(2);
 	
@@ -571,8 +571,8 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		*start='\0';
 		
 		// create new seenByText
-		seenByText = createControlText((*seenBys), seenByCount, "SEEN-BY: ");
-		pathText   = createControlText((*path), pathCount, "\001PATH: ");
+		seenByText = createControlText((*seenBys), *seenByCount, "SEEN-BY: ");
+		pathText   = createControlText((*path), *pathCount, "\001PATH: ");
 		xstrscat(&msg->text, seenByText, pathText, NULL);
 		free(seenByText);
 		free(pathText);
@@ -627,23 +627,23 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    s_seenBy *seenBys = NULL, *path = NULL;
    UINT     seenByCount, pathCount;
    // links who does not have their aka in seenBys and thus have not got the echomail
-   s_arealink **newLinks, **zoneLinks;
+   s_arealink **newLinks;//, **zoneLinks;
 
    createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
    createPathArrayFromMsg(msg, &path, &pathCount);
    
-   createNewLinkArray(seenBys, seenByCount, echo, &newLinks, &zoneLinks, pktOrigAddr);
+   createNewLinkArray(seenBys, seenByCount, echo, &newLinks, pktOrigAddr);
 
-   forwardToLinks(msg, echo, newLinks, &seenBys, seenByCount, &path, pathCount);
-   if (zoneLinks!=NULL) {
-	   seenByCount = 0;
-	   forwardToLinks(msg, echo, zoneLinks, &seenBys, seenByCount, &path, pathCount);
-   }
+   forwardToLinks(msg, echo, newLinks, &seenBys, &seenByCount, &path, &pathCount);
+//   if (zoneLinks!=NULL) {
+//	   seenByCount = 0;
+//	   forwardToLinks(msg, echo, zoneLinks, &seenBys, &seenByCount, &path, &pathCount);
+//   }
 
    free(seenBys);
    free(path);
    free(newLinks);
-   free(zoneLinks);
+//   free(zoneLinks);
 }
 
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)

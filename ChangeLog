@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Mon May  8 13:26:01 NOVST 2000
+max:
+* return back seen-by processing
+
+----- cvs ci ------
 Sat May  7 13:30:43 MSD 2000
 max (patch from Serguei Revtov):
 * fixed coredump in area autocreation
