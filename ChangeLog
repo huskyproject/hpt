@@ -1,6 +1,11 @@
+2002-06-08 Saturday 15:53  mche
+
+	* src/areafix.c (1.309), src/query.c (1.49), h/areafix.h (1.30):
+	IsAreaAvailable() moved to fidoconfig
+
 2002-06-06 Thursday 23:16  oliver.grimm
 
-	* src/scan.c (1.162): Fix a possible bug when adding via lines
+	* src/scan.c (1.162): OG: If a possible bug when adding via lines
 	to a *empty* (no body, no kludge) Message
 
 2002-06-06 Thursday 11:21  mche
