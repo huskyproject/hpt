@@ -1,3 +1,20 @@
+2003-05-14 Wednesday 20:52  d_sergienko
+
+	* HISTORY (1.33), doc/hpt.texi (1.123), src/scan.c (1.193),
+	src/toss.c (1.515): recodeMsgBase switch support
+
+2003-05-14 Wednesday 15:37  nssoft
+
+	* Makefile (1.17), makefile.inc (1.27): Change EXE to _EXE.
+
+2003-05-14 Wednesday 11:08  val_khokhlov
+
+	* src/perl.c (1.65): some read/only checks removed
+
+2003-05-14 Wednesday 10:35  nssoft
+
+	* doc/: bugreport.rus (1.7), bugreport.txt (1.6): Moved to huskybse
+
 2003-05-13 Tuesday 06:54  mche
 
 	* src/link.c (1.73): correct log message "linking area"
