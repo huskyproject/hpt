@@ -102,7 +102,7 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr);
  */
 char *hpt_stristr(char *str, char *find)
 {
-	char ch, sc, *str1, *find1;
+    char ch, sc, *str1, *find1;
 
 	find++;
 	if ((ch = *(find-1)) != 0) {
@@ -866,7 +866,7 @@ static int makealldirs(const char *basedir, const char *filename)
 
     l = strlen(basedir);
     if (!(*filename)) return 1;
-    if ((buffer = malloc(l + strlen(filename) + 1)) == NULL) return 0;
+    if ((buffer = safe_malloc(l + strlen(filename) + 1)) == NULL) return 0;
 
     memcpy(buffer, basedir, l);
     cpd = buffer + l;
@@ -2051,7 +2051,7 @@ void *mk_lst(char *a) {
 		while (*q && !isspace(*q)) q++;
 		if (*q=='\0') end=1;
 		*q ='\0';
-		list = (char **) realloc(list, ++num*sizeof(char*));
+		list = (char **) safe_realloc(list, ++num*sizeof(char*));
 		list[num-1]=(char*)p;
 		if (!end) {
 			p=q+1;
@@ -2059,7 +2059,7 @@ void *mk_lst(char *a) {
 		}
 		q=p;
 	}
-	list = (char **) realloc(list, (++num)*sizeof(char*));
+	list = (char **) safe_realloc(list, (++num)*sizeof(char*));
 	list[num-1]=NULL;
 
 	return list;
@@ -2179,8 +2179,8 @@ void processDir(char *directory, e_tossSecurity sec)
 #endif
 
    if (NULL == (dir = opendir(directory))) {
-        printf("Can't open dir: %s!\n",directory);
-	return;
+       printf("Can't open dir: %s!\n",directory);
+       return;
    }
 
 #ifdef NOSLASHES
@@ -2189,103 +2189,77 @@ void processDir(char *directory, e_tossSecurity sec)
 
    while ((file = readdir(dir)) != NULL) {
 #ifdef DEBUG_HPT
-      printf("testing %s\n", file->d_name);
+       printf("testing %s\n", file->d_name);
 #endif
 
-      //dummy = (char *)malloc(dirNameLen + strlen(file->d_name) + 1);
-      //strcpy(dummy,directory);
-      //strcat(dummy,file->d_name);
-      xstrscat(&dummy,directory,file->d_name,NULL);
+       dummy = (char *) safe_malloc(dirNameLen + strlen(file->d_name) + 1);
+       strcpy(dummy,directory);
+       strcat(dummy,file->d_name);
 
 #if !defined(UNIX)
 #if defined(__TURBOC__) || defined(__DJGPP__)
-      _dos_getfileattr(dummy, &fattrs);
+       _dos_getfileattr(dummy, &fattrs);
 #elif defined(__MINGW32__)
-      fattrs = (GetFileAttributes(dummy) & 0x2) ? _A_HIDDEN : 0;
+       fattrs = (GetFileAttributes(dummy) & 0x2) ? _A_HIDDEN : 0;
 #else
-      fattrs = file->d_attr;
+       fattrs = file->d_attr;
 #endif
-      if(fattrs & _A_HIDDEN) {
-          nfree(dummy);
-      } else
+       if(fattrs & _A_HIDDEN) {
+	   nfree(dummy);
+       } else
 #endif
-      {
-	 nfiles++;
-	 files = (s_fileInDir *) safe_realloc ( files, nfiles * sizeof(s_fileInDir));
-	 (files[nfiles-1]).fileName = dummy;
+	   {
+	       nfiles++;
+	       files = (s_fileInDir *) safe_realloc(files,nfiles*sizeof(s_fileInDir));
+	       (files[nfiles-1]).fileName = dummy;
 
-         if(stat((files[nfiles-1]).fileName, &st)==0) {
-            (files[nfiles-1]).fileTime = st.st_mtime;
-         } else {
-            (files[nfiles-1]).fileTime = 0L; // FixMe - don't know what to set :(
-         }
+	       if(stat((files[nfiles-1]).fileName, &st)==0) {
+		   (files[nfiles-1]).fileTime = st.st_mtime;
+	       } else {
+		   // FixMe - don't know what to set :(
+		   (files[nfiles-1]).fileTime = 0L;
+	       }
 
-      }
+	   }
    }
    closedir(dir);
 
    qsort (files, nfiles, sizeof(s_fileInDir), filesComparer);
 
    for ( filenum=0; filenum < nfiles; filenum++) {
-      arcFile = pktFile = 0;
-      dummy = (files[filenum]).fileName;
+       arcFile = pktFile = 0;
+       dummy = (files[filenum]).fileName;
 #ifdef DEBUG_HPT
-      printf("testing sorted %s\n", dummy);
+       printf("testing sorted %s\n", dummy);
 #endif
-      if (!(pktFile = patimat(dummy+dirNameLen, "*.pkt") == 1))
-         for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
-            if (patimat(dummy+dirNameLen, validExt[i]) == 1)
-               arcFile = 1;
+       if (!(pktFile = patimat(dummy+dirNameLen, "*.pkt") == 1))
+	   for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
+	       if (patimat(dummy+dirNameLen, validExt[i]) == 1)
+		   arcFile = 1;
 
-      if (pktFile || (arcFile && !config->noProcessBundles)) {
+       if (pktFile || (arcFile && !config->noProcessBundles)) {
 
-         rc = 3; // nonsence, but compiler warns
-         if (config->tossingExt != NULL &&
-             (newFileName=changeFileSuffix(dummy, config->tossingExt)) != NULL){
-            nfree(dummy);
-            dummy = newFileName;
-            newFileName=NULL;
-         }
-         if (pktFile)
-            rc = processPkt(dummy, sec);
-         else // if (arcFile)
-            rc = processArc(dummy, sec);
+	   rc = 3; // nonsence, but compiler warns
+	   if (config->tossingExt != NULL &&
+	       (newFileName=changeFileSuffix(dummy, config->tossingExt)) != NULL){
+	       nfree(dummy);
+	       dummy = newFileName;
+	       newFileName=NULL;
+	   }
+	   if (pktFile)
+	       rc = processPkt(dummy, sec);
+	   else // if (arcFile)
+	       rc = processArc(dummy, sec);
 
-        if (rc>=1 && rc<=6) {
-	    w_log('9', "Renaming pkt/arc to .%s",ext[rc]);
-            newFileName=changeFileSuffix(dummy, ext[rc]);
-	} else {
-	    if (rc!=7) remove(dummy);
-	}
-
-/*         switch (rc) {
-            case 1:   // pktpwd problem or link not found 
-               newFileName=changeFileSuffix(dummy, "sec");
-               break;
-            case 2:  // could not open pkt
-               newFileName=changeFileSuffix(dummy, "acs");
-               break;
-            case 3:  // not/wrong pkt
-               newFileName=changeFileSuffix(dummy, "bad");
-               break;
-            case 4:  // not to us
-               newFileName=changeFileSuffix(dummy, "ntu");
-               break;
-            case 5:  // msg tossing problem
-               newFileName=changeFileSuffix(dummy, "err");
-               break;
-            case 6:  // perl filter
-               newFileName=changeFileSuffix(dummy, "flt");
-               break;
-            case 7:  // bundle already removed
-               break;
-            default:
-               remove (dummy);
-               break;
-         } */
-      }
-      nfree(dummy);
-      nfree(newFileName);
+	   if (rc>=1 && rc<=6) {
+	       w_log('9', "Renaming pkt/arc to .%s",ext[rc]);
+	       newFileName=changeFileSuffix(dummy, ext[rc]);
+	   } else {
+	       if (rc!=7) remove(dummy);
+	   }
+       }
+       nfree(dummy);
+       nfree(newFileName);
    }
    nfree(files);
 }
