@@ -874,6 +874,9 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 	fprintf(msgfp, "From: \"%s\" %s\n", msg->fromUserName, aka2str(msg->origAddr));
 	fprintf(msgfp, "To:   \"%s\" %s\n", msg->toUserName, aka2str(msg->destAddr));
 	fprintf(msgfp, "Date: \"%s\"\n", msg->datetime);
+  	/* +AS+ */
+  	fprintf(msgfp, "Subject: \"%s\"\n\n", msg->subjectLine);
+  	/* -AS- */
 	/* Output msg text */
 	for (p = msg->text; *p ; p++) 
 		if (*p == '\r') 
@@ -1372,6 +1375,10 @@ int processPkt(char *fileName, e_tossSecurity sec)
    s_link      *link;
    char        rc = 0;
    struct stat statBuff;
+   /* +AS+ */
+   char        *extcmd;
+   int         cmdexit;
+   /* -AS- */
    char        processIt = 0; // processIt = 1, process all mails
                               // processIt = 2, process only Netmail
                               // processIt = 0, do not process pkt
@@ -1379,6 +1386,21 @@ int processPkt(char *fileName, e_tossSecurity sec)
    if ((stat(fileName, &statBuff) == 0) && (statBuff.st_size > 60)) {
 
        statToss.inBytes += statBuff.st_size;
+
+       /* +AS+ */
+       if (config->processPkt)
+	 {
+	   extcmd=calloc(strlen(config->processPkt)+strlen(fileName)+2,1);
+	   if (extcmd)
+	     {
+	       sprintf(extcmd,"%s %s",config->processPkt,fileName);
+	       writeLogEntry(hpt_log, '6', "ProcessPkt: execute string \"%s\"",extcmd);
+	       if ((cmdexit = system(extcmd)) != 0)
+		 writeLogEntry(hpt_log, '6', "exec failed, code %d", cmdexit);
+	       free(extcmd);
+	     }
+	 }
+       /* -AS- */
        
        pkt = fopen(fileName, "rb");
        if (pkt == NULL) return 2;

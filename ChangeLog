@@ -2,6 +2,13 @@ hpt 0.9.5
 ---------
 
 ----- cvs ci ------
+Thu Jan 27 18:42:50 CET 2000
+mtt (patch from Alex Semyanka)
+* added NetmailExtern (carbonExtern for netmails)
+- added subjectline for *extern commands
+* added processPkt for calling pktdate etc.
+	
+----- cvs ci ------
 Mon Jan 24 22:28:35 CET 2000
 mtt:
 * fixed file request generation
