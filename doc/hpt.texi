@@ -289,6 +289,7 @@ FIDOCONFIG about location of config file and keywords ideology.
 * CreateFwdNonPass::            autocreate non-passthru echoes in fwd.req. operations
 * DefArcmailSize::		default size for arcmail bundle
 * DisableTID::			disable adding TID to messages
+* DisablePID::			disable adding PID to messages
 * ForwardRequestTimeout::	requested from uplink echoarea traffic timeout (in days)
 * IdlePassthruTimeout:: 	timeout (in days) before unlink on uplink passthrough echo with one link (& some time later remove from config)
 * IgnoreCapWord::		ignore Capability Word in pkt files
@@ -708,7 +709,7 @@ default arcmail size in kb for all links.
 
 This statement cannot be repeated.
 
-@node DisableTID, ForwardRequestTimeout, DefArcmailSize, Keywords
+@node DisableTID, DisablePID, DefArcmailSize, Keywords
 @subsection DisableTID
 @findex DisableTID
 @table @asis
@@ -718,7 +719,21 @@ This statement cannot be repeated.
 @code{DisableTID}
 @end table
 
-Don't add TID-line to scanned messages and PID-line to generated messages.
+Don't add TID-line to scanned messages.
+
+This statement cannot be repeated.
+
+@node DisablePID, ForwardRequestTimeout, DisableTID, Keywords
+@subsection DisablePID
+@findex DisablePID
+@table @asis
+@item Syntax:
+@code{DisablePID <bool>}
+@item Example:
+@code{DisablePID}
+@end table
+
+Don't add PID-line to generated messages.
 
 This statement cannot be repeated.
 
