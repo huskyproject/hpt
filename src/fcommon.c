@@ -32,10 +32,12 @@ char *createTempPktFileName()
 
 int createDirectoryTree(char *pathName) {
 #ifdef UNIX
-   char limiter=´/´;
+   char limiter='/';
 #else
-   char limiter=´\\´;
+   char limiter='\\';
 #endif
+
+   
    return 0;
 }
 
