@@ -1559,11 +1559,11 @@ typedef struct fileInDir {
    time_t fileTime;
 } s_fileInDir;
  
-int filesComparer(s_fileInDir *elem1, s_fileInDir *elem2) {
-   // File times comparer for qsort
-   if ( elem1 -> fileTime < elem2 -> fileTime) return -1;
-   if ( elem1 -> fileTime == elem2 -> fileTime) return 0;
-   return 1;
+int filesComparer(const void *elem1, const void *elem2) {
+    // File times comparer for qsort
+    if (((s_fileInDir *) elem1) -> fileTime < ((s_fileInDir *) elem2) -> fileTime) return -1;
+    if (((s_fileInDir *) elem1) -> fileTime == ((s_fileInDir *) elem2) -> fileTime) return 0;
+    return 1;
 }
 
 char *validExt[] = {"*.MO?", "*.TU?", "*.TH?", "*.WE?", "*.FR?", "*.SA?", "*.SU?"};
