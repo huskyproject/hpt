@@ -174,9 +174,6 @@
 				RelativePath="..\h\seenby.h">
 			</File>
 			<File
-				RelativePath="..\h\stat.h">
-			</File>
-			<File
 				RelativePath="..\h\toss.h">
 			</File>
 			<File
@@ -230,9 +227,6 @@
 			</File>
 			<File
 				RelativePath="..\src\seenby.c">
-			</File>
-			<File
-				RelativePath="..\src\stat.c">
 			</File>
 			<File
 				RelativePath="..\src\toss.c">
