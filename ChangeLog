@@ -2287,7 +2287,7 @@
 2002-07-24 Wednesday 13:48  mche
 
 	* src/areafix.c (1.325): fix core when unsubscribe from own addres
-	from area that has no links and non-passthroughtÃ¾ in this case area
+	from area that has no links and non-passthroughtþ in this case area
 	will be removed from config file
 
 2002-07-24 Wednesday 11:20  mche
@@ -2578,8 +2578,8 @@
 2002-06-19 Wednesday 19:17  stas
 
 	* src/: getfree.c (1.22), hptlink.c (1.37): Fixes: remove unmatched
-	closing comment; remove \Ã²n from log messages.
-        
+	closing comment; remove \òn from log messages.
+
 2002-06-19 Wednesday 07:31  stas
 
 	* doc/hpt.texi (1.66): Loglevels description sinchronized with
