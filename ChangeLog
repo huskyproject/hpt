@@ -1,3 +1,14 @@
+2001-12-11 Tuesday 20:43  ml
+
+	* doc/hpt.texi (1.44), h/toss.h (1.42), src/scan.c (1.135),
+	src/toss.c (1.369): trying to delete messages on outgoing
+	carbonmove and carbondelete from netmail
+
+2001-12-11 Tuesday 11:39  ml
+
+	* src/dupe.c (1.45): fix for passthrough areas with PATH_DELIM in
+	AREATAG
+
 2001-12-10 Monday 21:29  ml
 
 	* doc/hpt.texi (1.43), h/areafix.h (1.21), src/areafix.c (1.224),
