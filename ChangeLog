@@ -1,3 +1,8 @@
+2002-02-07 Thursday 10:06  ml
+
+	* src/scanarea.c (1.72.2.2): don't convert interal echo area names
+	to upper case
+
 2002-02-04 Monday 09:19  ml
 
 	* src/toss.c (1.380.2.6): compiling under msvc6 and logical fix
