@@ -467,7 +467,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
         config->areafixKillReports);
 	msg->text = createKludges(config, NULL, uplink->ourAka, &(uplink->hisAka),
                               versionStr);
-        xstrcat(&(msg->text), "\001FLAGS DIR\r");
+        /* xstrcat(&(msg->text), "\001FLAGS DIR\r"); */ 
 	uplink->msg = msg;
     } else msg = uplink->msg;
 	
@@ -2207,7 +2207,7 @@ void autoPassive()
 					    config->links[i].ourAka,
 					    &(config->links[i].hisAka),
 					    versionStr);
-				  xstrcat(&(msg->text), "\001FLAGS DIR\r");
+				  /* xstrcat(&(msg->text), "\001FLAGS DIR\r"); */
 				  xstrcat(&msg->text, "\r System switched to passive, your subscription are paused.\r\r"
 					" You are being unsubscribed from echo areas with no downlinks besides you!\r\r"
 					" When you wish to continue receiving echomail, please send requests\r"
