@@ -331,35 +331,23 @@ int packMsg(HMSG SQmsg, XMSG *xmsg)
          free(virtualLink->floFile);
       }
    } /* endif */
-
    if ((xmsg->attr & MSGFILE) == MSGFILE) {
-	   // file attach
-	   route = findRouteForNetmail(msg);
-           link = getLinkForRoute(route, &msg);
+	// file attach
+	route = findRouteForNetmail(msg);
+	link = getLinkForRoute(route, &msg);
 
-           if ((route != NULL) && (link != NULL)) {
-	      prio = NORMAL;
-	      if ((xmsg->attr & MSGCRASH) == MSGCRASH) prio = CRASH;
-	      if ((xmsg->attr & MSGHOLD)  == MSGHOLD)  prio = HOLD;
-	      // routing of files is not possible for this time
-//	   if (prio != NORMAL) {
-//		   createOutboundFileName(virtualLink, prio, FLOFILE);
-//	   } else {
-//		   route = findRouteForNetmail(msg);
-//		   link = getLinkForRoute(route, &msg);
-//		   prio = cvtFlavour2Prio(route->flavour);
-//		   createOutboundFileName(virtualLink, prio, FLOFILE);
-//	   } /* endif */
-              if (createOutboundFileName(virtualLink, prio, FLOFILE) == 0) {
-                 processAttachs(virtualLink, &msg);
-                 remove(virtualLink->bsyFile);
-                 free(virtualLink->bsyFile);
-                 // mark Mail as sent
-                 xmsg->attr |= MSGSENT;
-                 MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
-                 free(virtualLink->floFile);
-	      }
-	   } /* endif check routing */
+	if ((route != NULL) && (link != NULL)) {
+	    prio = cvtFlavour2Prio(route->flavour);
+	    if (createOutboundFileName(link, prio, FLOFILE) == 0) {
+        	processAttachs(link, &msg);
+        	remove(link->bsyFile);
+        	free(link->bsyFile);
+                // mark Mail as sent
+                xmsg->attr |= MSGSENT;
+                MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+                free(link->floFile);
+	    }
+	} /* endif check routing */
    } /* endif */
    
    if ((xmsg->attr & MSGCRASH) == MSGCRASH) {

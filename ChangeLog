@@ -9,6 +9,8 @@ max:
 * some %rescan changes (code cleanup)
 * autocreate reports by default in netmail
 * now possible reports to echo & local areas, secondary netmail areas
+* file attachs with path processed without adding protInbound
+* changed file attach code in packMsg() (not tested)
 
 ----- cvs ci ------
 Mon Jan 31 01:32:43 NOVT 2000

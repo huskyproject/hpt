@@ -200,7 +200,8 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, UINT16 forceattr)
    strcpy((char *) msgHeader.from,msg->fromUserName);
    strcpy((char *) msgHeader.to, msg->toUserName);
    subject=msg->subjectLine;
-   if (((msgHeader.attr & MSGFILE) == MSGFILE) && (msg->netMail==1)) {
+   if (((msgHeader.attr & MSGFILE) == MSGFILE) && (msg->netMail==1)
+       && !strchr(msg->subjectLine, PATH_DELIM)) {
      int size=strlen(msg->subjectLine)+strlen(config->protInbound)+1;
      if (size < XMSG_SUBJ_SIZE) {
        subject = (char *) malloc (size);
