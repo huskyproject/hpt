@@ -1,3 +1,7 @@
+2001-06-15 Friday 07:48  pavel.gulchouck
+
+	* misc/filter.pl (1.4): Minor bugfix
+
 2001-06-14 Thursday 16:21  pavel.gulchouck
 
 	* filter.pl (1.5): Added descriptions of $route, $flavour and $attr
