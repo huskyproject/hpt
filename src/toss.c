@@ -997,7 +997,7 @@ int carbonCopy(s_message *msg, s_area *echo)
 			
 			if (config->carbons[i].extspawn) {
 				processExternal(echo,msg,config->carbons[i]); 
-			} else {
+			} else if (config->carbons[i].areaName) {
 				if (!processCarbonCopy(area,echo,msg,config->carbons[i]))
 					rc &= 1;
 			};
@@ -1279,6 +1279,11 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
    char limiter = '\\';
 #endif
 
+   if (!correctDateTime(msg->datetime)) {
+       writeLogEntry(hpt_log, '6', "wrong msg datetime: renaming .pkt to .err");
+       return rc;
+   }
+
    if (area == NULL) {
  	area = &(config->netMailAreas[0]);
    };
@@ -1322,7 +1327,6 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
          }
 
          msgHeader = createXMSG(msg, pktHeader, 0);
-//	   	 if ((msg->attributes & MSGKILL) == MSGKILL) msgHeader.attr |= MSGKILL;
          /* Create CtrlBuf for SMAPI */
          ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
          /* write message */

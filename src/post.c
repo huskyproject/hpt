@@ -102,7 +102,8 @@ void post(int c, unsigned int *n, char *params[])
                      break;
                }; break;
             case 'f':    // flags
-	       while ((attr = str2attr(params[++(*n)])) != -1L) 
+               for ((*n)++; params[*n] != NULL &&
+                    (attr = str2attr(params[*n])) != -1L; (*n)++)
 		       msg.attributes |= attr;
 	       (*n)--;		       
                break;

@@ -166,4 +166,6 @@ void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_a
  * Imho it is not necessary to create better msgid for this purpose.
  */
 
+int correctDateTime(char *datetime);
+
 #endif

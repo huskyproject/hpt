@@ -2,6 +2,17 @@ hpt 0.9.5
 ---------
 
 ----- cvs ci ------
+Mon Jan  3 17:45:54 NOVT 2000                                                   
+max:
+* added correctDateTime()
+(there may be coredumps with broken pkt's, but
+ my solution is not progressive for speed).
+
+patch from Kolya Nesterov:
+* fixed flags parsing in post.c
+* added carbonDelete
+
+----- cvs ci ------
 Sat Dec 25 19:27:26 NOVT 1999
 max:
 * del packet pkt's if cmdexit==0

@@ -251,6 +251,22 @@ void correctAddr(s_message *msg,s_pktHeader *header)
    } /* endif */
 }
 
+int correctDateTime(char *msgdate) {
+    int dd, yy, mo, hh, mm, ss;
+    char temp[22];
+    
+    if (sscanf(msgdate, "%d %s %d %d:%d:%d", &dd, temp, &yy, &hh, &mm, &ss) == 6)
+	return 1;
+    else if (sscanf(msgdate, "%d %s %d %d:%d", &dd, temp, &yy, &hh, &mm) == 5)
+	return 1;
+    else if (sscanf(msgdate, "%*s %d %s %d %d:%d", &dd, temp, &yy, &hh, &mm) == 5)
+	return 1;
+    else if (sscanf(msgdate, "%d/%d/%d %d:%d:%d", &mo, &dd, &yy, &hh, &mm, &ss) == 6)
+	return 1;
+
+    else return 0;
+}
+
 s_message *readMsgFromPkt(FILE *pkt, s_pktHeader *header)
 {
    s_message *msg;
