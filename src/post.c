@@ -461,17 +461,22 @@ void post(int c, unsigned int *n, char *params[])
                 }
                 if (msg.netMail) {
                     processNMMsg(&msg, NULL, NULL, 0, MSGLOCAL);
-                    if (export)
-                        scanExport((SCN_NAME & SCN_NETMAIL), (area) ? area : echo->areaName);
+                    cmPack = 1;
                 }
                 else {
                     processEMMsg(&msg, msg.origAddr, 1, (MSGSCANNED|MSGSENT|MSGLOCAL));
-                    if (export)
-                        scanExport((SCN_NAME & SCN_ECHOMAIL), (area) ? area : echo->areaName);
                 }
             }
             nfree(msg.text);
         } while (part < sections);
+
+        if (export) 
+        {
+            if (msg.netMail)
+                scanExport((SCN_NAME & SCN_NETMAIL), (area) ? area : echo->areaName);
+            else 
+                scanExport((SCN_NAME & SCN_ECHOMAIL), (area) ? area : echo->areaName);
+        }
 
         closeOpenedPkt();
         nfree(tearl); nfree(origin);
