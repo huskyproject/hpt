@@ -2,9 +2,10 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
-Sun Apr 22 20:21:19 NOVST 2001
+Tue Apr 24 20:40:02 NOVST 2001
 max:
 * don't add .0 in @Via address
+* CapabilityWord error log warning
 
 ----- cvs ci ------
 Tue Apr 17 23:59:14 NOVST 2001

@@ -91,8 +91,9 @@ s_pktHeader *openPkt(FILE *pkt)
 
   pktVersion = getUINT16(pkt);
   if (pktVersion != 2) {
-    nfree(header);
-    return NULL;
+	  nfree(header);
+	  w_log('9',"Invalid pkt version %u!",pktVersion);
+	  return NULL;
   } /* endif */
 
   header->origAddr.net = getUINT16(pkt);
@@ -119,6 +120,7 @@ s_pktHeader *openPkt(FILE *pkt)
 	  /* but read stone-age pkt */
 	  if (capWord!=header->capabilityWord && header->capabilityWord!=0) {
 		  nfree(header);
+		  w_log('9',"CapabilityWord error in following pkt! rtfm: IgnoreCapWord.");
 		  return NULL;
 	  } /* endif */
   }
