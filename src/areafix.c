@@ -1548,7 +1548,8 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
     /* val: silent mode - don't write messages */
     if (silent_mode) return;
 
-    config->intab = NULL;
+    /* dmitry: what is this for? */
+/*    config->intab = NULL; */
     text = report;
     reply = GetCtrlToken(msg->ctl, "MSGID");
 
@@ -1592,6 +1593,15 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
             link->areafixReportsAttr ? link->areafixReportsAttr : config->areafixReportsAttr);
   
         preprocText(split, tmpmsg, reply, link);
+
+        if (config->outtab != NULL) {
+            recodeToTransportCharset((CHAR*)tmpmsg->subjectLine);
+            recodeToTransportCharset((CHAR*)tmpmsg->fromUserName);
+            recodeToTransportCharset((CHAR*)tmpmsg->toUserName);
+            recodeToTransportCharset((CHAR*)tmpmsg->text);
+            msg->recode &= ~(REC_HDR|REC_TXT);
+        }
+
         nfree(reply);
         processNMMsg(tmpmsg, NULL, getNetMailArea(config,config->robotsArea),
             0, MSGLOCAL);
@@ -1602,7 +1612,7 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
         if (partnum) nfree(newsubj);
     }
 
-    config->intab = tab;
+/*    config->intab = tab; */
 }
 
 void RetRules (s_message *msg, s_link *link, char *areaName)

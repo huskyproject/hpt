@@ -164,6 +164,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
     i = old_textLength;
 
     /*  recoding from internal to transport charSet if needed */
+/* this must be jub of putMsgInArea.
     if (config->outtab) {
 	if (msg->recode & REC_TXT) {
 	    recodeToTransportCharset((CHAR*)msg->text);
@@ -177,7 +178,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	}
 	if (reason) recodeToTransportCharset((CHAR*)reason);
     }
-    
+*/
     msg->text = NULL;
     msg->textLength = 0;
 
