@@ -626,6 +626,7 @@ void scanNMArea(s_area *area)
 
        if (noHighWaters==0) MsgSetHighWater(netmail, i);
        MsgCloseArea(netmail);
+       closeOpenedPkt();
    } else {
        w_log('9', "Could not open NetmailArea %s", area -> areaName);
    } /* endif */

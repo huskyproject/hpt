@@ -470,6 +470,7 @@ void post(int c, unsigned int *n, char *params[])
             nfree(msg.text);
         } while (part < sections);
 
+        closeOpenedPkt();
         nfree(tearl); nfree(origin);
         if( uuepost )
         {

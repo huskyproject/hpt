@@ -247,6 +247,7 @@ void scanEMArea(s_area *echo)
 
        }
        MsgSetHighWater(area, i);
+       closeOpenedPkt();
 	  
        MsgCloseArea(area);
    } else {

@@ -72,6 +72,7 @@ void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy
 							  **seenBys, UINT *seenByCount);
 void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount);
 char *hpt_stristr(char *str, char *find);
+void closeOpenedPkt(void);
 
 #define REC_HDR 0x0001
 #define REC_TXT 0x0002

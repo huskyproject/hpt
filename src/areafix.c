@@ -1476,6 +1476,7 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount)
        MsgSetHighWater(area, i);
 
        MsgCloseArea(area);
+       closeOpenedPkt();
       
    } else w_log('9', "Could not open %s: %s", echo->fileName, strerror(errno));
 
@@ -1780,6 +1781,7 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 	processNMMsg(tmpmsg, NULL, getNetMailArea(config,config->robotsArea),
 		     0, MSGLOCAL);
 
+	closeOpenedPkt();
 	freeMsgBuffers(tmpmsg);
 	nfree(tmpmsg);
 	if (partnum) nfree(newsubj);
@@ -1866,11 +1868,11 @@ void sendAreafixMessages()
         processNMMsg(linkmsg, NULL, getNetMailArea(config,config->robotsArea),
             0, MSGLOCAL);
         
+        closeOpenedPkt();
         freeMsgBuffers(linkmsg);
         nfree(linkmsg);
         link->msg = NULL;
     }
-    
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -1917,7 +1919,9 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     // ignore msg for other link (maybe this is transit...)
     if (notforme || (link==NULL && security==1)) {
         w_log(LL_FUNC, "areafix.c::processAreaFix() call processNMMsg() and return");
-	return processNMMsg(msg, pktHeader, NULL, 0, 0);
+	nr = processNMMsg(msg, pktHeader, NULL, 0, 0);
+	closeOpenedPkt();
+	return nr;
     }
 
     // 2nd security check. link, areafixing & password.
@@ -2257,6 +2261,7 @@ void autoPassive()
 				  processNMMsg(msg, NULL,
 					       getNetMailArea(config,config->robotsArea),
 					       0, MSGLOCAL);
+				  closeOpenedPkt();
 				  freeMsgBuffers(msg);
 				  nfree(msg);
 
@@ -2355,6 +2360,7 @@ int relink (char *straddr) {
 	processNMMsg(msg, NULL,
 		     getNetMailArea(config,config->robotsArea),
 		     1, MSGLOCAL|MSGKILL);
+	closeOpenedPkt();
 	freeMsgBuffers(msg);
 	nfree(msg);
 	w_log('8', "Total request relink %i area(s)",areasArraySize);

@@ -679,7 +679,7 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
     }
 }
 
-static void closeOpenedPkt(void) {
+void closeOpenedPkt(void) {
     int i;
     for (i=0; i<config->linkCount; i++)
 	if (config->links[i].pkt) {
@@ -1461,6 +1461,7 @@ void writeMsgToSysop()
 			    }
 			}
 			forwardMsgToLinks(echo, msgToSysop[i], msgToSysop[i]->origAddr);
+			closeOpenedPkt();
 			tossTempOutbound(config->tempOutbound);
 		    }
 		} else {
@@ -2926,6 +2927,7 @@ void tossFromBadArea(char force)
 	   
 	MsgCloseArea(area);
 	   
+	closeOpenedPkt();
 	writeDupeFiles();
 	writeImportLog();
 
