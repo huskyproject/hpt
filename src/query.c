@@ -353,7 +353,7 @@ int af_OpenQuery()
 
     queryAreasHead = af_MakeAreaListNode();
 
-    strcpy( czQueryFile , getenv("FIDOCONFIG") );
+    strcpy( czQueryFile , getConfigFileName() );
     slash = strrchr(czQueryFile, PATH_DELIM);
     slash[1] = '\0';
     sprintf(czQueryFile,"%shpt_%u.que",czQueryFile,config->addr[0].node);
