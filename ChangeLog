@@ -1,3 +1,16 @@
+2003-01-11 Saturday 17:41  mche
+
+	* hpt.dsp (1.5), src/stat.c (1.9): fix advStatistic generation
+
+2003-01-11 Saturday 16:15  mche
+
+	* src/areafix.c (1.380): don't unsubscribe uplink in autoPassive()
+	to kill 'dead' areas use hptkill
+
+2003-01-10 Friday 23:44  i_zkh
+
+	* misc/hpt_ro/ro_readme_rus.txt (1.5): Fix misprints
+
 2003-01-09 Thursday 10:24  stas_degteff
 
 	* src/query.c (1.87): fix warning: 'i' might be used uninitialized
