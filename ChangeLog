@@ -2,6 +2,13 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Tue Jan 16 18:33:40 NOVT 2001
+max:
+* send avail list if "forwardrequests on"
+patch from Serguei Revtov:
+* prevent circling of hptlink on jam areas with dupes
+
+----- cvs ci ------
 Mon Jan 15 14:19:26 NOVT 2001
 max:
 * rescan when subscribe

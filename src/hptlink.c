@@ -85,7 +85,7 @@ int useSubj = 1;
 int useReplyId = 1;
 int loglevel = 10;
 int linkNew = 0;
-char *version = "1.4";
+char *version = "1.5";
 HAREA harea;
 int maxreply;
 
@@ -155,6 +155,13 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
         }
 
     } else { // Jam, maybe something else?
+
+        if(srepl -> replyToPos) {
+           if (loglevel >= 15)
+              fprintf(outlog, "Thread linking broken because of dupes\n");
+           links_ignored++;
+           return;
+        }
 
         srepl -> replyToPos = crepl->msgPos;
         links_total++;

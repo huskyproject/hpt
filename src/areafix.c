@@ -450,7 +450,7 @@ char *available(s_link *link) {
 		  if (strcmp(link->AccessGrp[k], uplink->LinkGrp) == 0)
 		    found = 1;
 
-		if ((uplink->forwardRequestFile!=NULL) &&
+		if ((uplink->forwardRequests && uplink->forwardRequestFile) &&
 		    ((uplink->LinkGrp == NULL) || (found != 0))) {
                    if ((f=fopen(uplink->forwardRequestFile,"r")) == NULL)
 				{
