@@ -277,7 +277,7 @@ void linkArea(s_area *area)
 		 // Save data for comparing
 		 memcpy(linksptr->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
 		 linksptr->replyToPos = xmsg.replyto;
-		 linksptr->replyNextPos = xmsg.replynext;
+		 linksptr->replyNextPos = xmsg.xmreplynext;
 
 		 MsgCloseMsg(hmsg);
 	      }
@@ -442,7 +442,7 @@ void linkArea(s_area *area)
 
 		    memcpy(xmsg.replies, crepl->replies, sizeof(UMSGID) * MAX_REPLY);
 		    xmsg.replyto = crepl->replyToPos;
-		    xmsg.replynext = crepl->replyNextPos;
+		    xmsg.xmreplynext = crepl->replyNextPos;
 		    MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
 
 		    MsgCloseMsg(hmsg);

@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Tue Oct  3 17:08:22 MSD 2000
+Fedor:
+* adapted link.c and hptlink.c for used xmreply1st and xmreplynext
+
+----- cvs ci ------
 Sat Sep 30 22:59:09 NOVST 2000
 max:
 * autopause works again (fixed bug in my last "autopause bugfix")

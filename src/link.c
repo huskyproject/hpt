@@ -258,8 +258,8 @@ int linkArea(s_area *area, int netMail)
 			      if (curr -> freeReply && (area->msgbType & MSGTYPE_JAM)) {
 					  int replyprev = curr -> replies[curr -> freeReply - 1];
 					  msgs[replyprev].replynext = msgs[i].msgPos;
-					  if (msgs[replyprev].xmsg -> replynext != msgs[i].msgPos) {
-						  msgs[replyprev].xmsg -> replynext = msgs[i].msgPos;
+					  if (msgs[replyprev].xmsg -> xmreplynext != msgs[i].msgPos) {
+						  msgs[replyprev].xmsg -> xmreplynext = msgs[i].msgPos;
 						  msgs[replyprev].relinked = 1;
 					  }
 			      }
@@ -282,13 +282,13 @@ int linkArea(s_area *area, int netMail)
 		for (j=0; j<MAX_REPLY && msgs[i].xmsg->replies[j]; j++);
 		if (msgs[i].relinked != 0 ||
 		    msgs[i].replyto != msgs[i].xmsg->replyto ||
-		    ((area->msgbType & MSGTYPE_JAM) && msgs[i].replynext != msgs[i].xmsg->replynext) ||
+		    ((area->msgbType & MSGTYPE_JAM) && msgs[i].replynext != msgs[i].xmsg->xmreplynext) ||
 		    ((area->msgbType & MSGTYPE_SQUISH) && msgs[i].freeReply != j) ||
 		    (msgs[i].freeReply == 0 && j)) {
 			if (msgs[i].freeReply<MAX_REPLY)
 				msgs[i].xmsg->replies[msgs[i].freeReply] = 0;
 			msgs[i].xmsg->replyto = msgs[i].replyto;
-			msgs[i].xmsg->replynext = msgs[i].replynext;
+			msgs[i].xmsg->xmreplynext = msgs[i].replynext;
 			MsgWriteMsg(msgs[i].msgh, 0, msgs[i].xmsg, NULL, 0, 0, 0, NULL);
 		}
 	        MsgCloseMsg(msgs[i].msgh);
