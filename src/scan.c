@@ -531,7 +531,7 @@ void pack(void) {
 void scan(void)
 {
    UINT i;
-   FILE *f;
+   FILE *f = NULL;
    char *line, buff[80];
    s_area *area;
 
@@ -543,7 +543,8 @@ void scan(void)
    writeLogEntry(hpt_log,'1', "Start scanning...");
 
    // open echotoss file
-   f = fopen(config->echotosslog, "r");
+   if (config->echotosslog)
+       f = fopen(config->echotosslog, "r");
 
    if (f == NULL) {
       // if echotoss file does not exist scan all areas
