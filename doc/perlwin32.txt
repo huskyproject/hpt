@@ -1,7 +1,7 @@
                           HPT with Perl support
                         Frequently Asked Questions
 
-Q: What files do hpt need to support perl?
+Q: What files does hpt need to support perl?
 A: (DK)
    ActiveState Perl library (Perl56.dll) and
    MS Visual C run-time library (msvcrt.dll)
