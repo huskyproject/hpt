@@ -1,3 +1,10 @@
+hpt (1.2.0-20020917-1) stable; urgency=low
+
+  * New cvs version (1.2-RC2)
+  * Make single html-doc and place it to /usr/share/doc/hpt
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Wed, 18 Sep 2002 15:57:53 +0600
+
 hpt (1.2.0-20020905-1) stable; urgency=low
 
   * New cvs version
