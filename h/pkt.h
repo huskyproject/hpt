@@ -105,7 +105,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message);
   FZ:     readMsgFromPkt reads a message out of the pkt and transforms the data
           to the struct.
 */
-
+/* moved to fidoconfig
 void        freeMsgBuffers(s_message *msg);
 /*DOC
   Input:  a pointer to a s_message which is created by readMsgFromPkt.
