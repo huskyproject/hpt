@@ -499,7 +499,10 @@ s_route *perlroute(s_message *msg, s_route *defroute)
      sv_setpv(svfrom, aka2str(msg->origAddr));
      if (defroute)
      {
- 	sv_setpv(svroute, aka2str(defroute->target->hisAka));
+	if (defroute->target)
+ 		sv_setpv(svroute, aka2str(defroute->target->hisAka));
+	else /* noroute */
+ 		sv_setpv(svroute, aka2str(msg->destAddr));
 	if (defroute->flavour==normal)
 	    sv_setpv(svflv, "normal");
 	else if (defroute->flavour==hold)
