@@ -40,6 +40,7 @@
 #if !defined(__TURBOC__) && !(defined (_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
 #endif
+#include <errno.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/xstr.h>
@@ -176,15 +177,29 @@ int closeCreatedPkt(FILE *pkt)
 
 FILE *openPktForAppending(char *fileName, s_pktHeader *header)
 {
-   FILE *pkt;
+   FILE *pkt = NULL;
    
    if (fexist(fileName)) {
-      pkt = fopen(fileName, "r+b");
-      openPkt(pkt);
-      fseek(pkt, -2, SEEK_END);        // go to \0\0 to add a new msg.
-   } else {
-      pkt = createPkt(fileName, header);
+	   if ((pkt = fopen(fileName, "r+b"))==NULL) {
+		   printf("can't open pkt: %s (%s)\n",fileName, strerror(errno));
+		   exit_hpt("can't open pkt for appending",0);
+	   }
+	   openPkt(pkt);
+	   fseek(pkt, -2, SEEK_END);        // go to \0\0 to add a new msg.
+	   if (ftell(pkt) <= 0) {    /* this was a zero length file ... */
+		   fclose(pkt);
+		   pkt = NULL;
+	   }
+   }
+
+   if (pkt == NULL) {
+	   pkt = createPkt(fileName, header);
    } /* endif */
+
+   if (pkt == NULL) {
+	   printf("can't create pkt: %s (%s)\n",fileName, strerror(errno));
+	   exit_hpt("can't create new pkt",0);
+   }
 
    return pkt;
 }

@@ -1,3 +1,8 @@
+----- cvs ci ------
+Fri Nov 17 10:23:21 MEZ 2000
+tobi:
+* migrated return code checks for pkt appending code from current
+
 hpt 0.9.7c-stable
 =================
 (released on Tue 31 Oct 2000 23:35:25 CET)
