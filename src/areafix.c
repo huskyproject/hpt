@@ -1,7 +1,7 @@
 /*****************************************************************************
  * AreaFix for HPT (FTN NetMail/EchoMail Tosser)
  *****************************************************************************
- * Copyright (C) 1998-1999
+ * Copyright (C) 1998-2000
  *
  * Max Levenkov
  *
@@ -1314,16 +1314,13 @@ char *areastatus(char *preport, char *text)
     return tmp;
 }
 
-void preprocText(char *preport, s_message *msg)
+void preprocText(char *split, s_message *msg)
 {
-    char *text = NULL, *kludge;
-	
-    xscatprintf(&preport, " \r--- %s areafix\r", versionStr);
-    kludge = createKludges(NULL, &msg->origAddr, &msg->destAddr);
-    xstrscat(&text, kludge, preport, NULL);
-    msg->textLength=(int)strlen(text);
-    msg->text=text;
-    free(kludge);
+    msg->text = createKludges(NULL, &msg->origAddr, &msg->destAddr);
+    xscatprintf(&split, " \r--- %s areafix\r", versionStr);
+    xstrcat(&(msg->text), split);
+    msg->textLength=(int)strlen(msg->text);
+    free(split);
 }
 
 char *textHead()
@@ -1337,9 +1334,9 @@ char *textHead()
 
 void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 {
-    char *tab = config->intab, *text, *split, *p, *newsubj;
+    char *tab = config->intab, *text, *split, *p, *newsubj = NULL;
     char splitted[]=" > message splitted...";
-	char *splitStr = config->areafixSplitStr;
+    char *splitStr = config->areafixSplitStr;
     int len, msgsize = config->areafixMsgSize * 1024, partnum=0;
     s_message *tmpmsg;
 
@@ -1352,7 +1349,13 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 		if (msgsize == 0 || len <= msgsize) {
 			split = text;
 			text = NULL;
-			if (partnum) partnum++;
+			if (partnum) { /* last part of splitted msg */
+			    partnum++;
+			    xstrcat(&text,split);
+			    split = text;
+			    text = NULL;
+			    free (report);
+			}
 		} else {
 			p = text + msgsize;
 			while (*p != '\r') p--;
@@ -1367,9 +1370,8 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 			partnum++;
 		}
 
-		if (partnum){
-			xscatprintf(&newsubj, "%s (%d)", subj, partnum);
-		} else newsubj = subj;
+		if (partnum) xscatprintf(&newsubj, "%s (%d)", subj, partnum);
+		else newsubj = subj;
 
 		tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
 				     msg->toUserName,
@@ -1380,8 +1382,10 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 
 		freeMsgBuffers(tmpmsg);
 		free(tmpmsg);
-		if (text) free(split);
-		if (partnum) free(newsubj);
+		if (partnum) {
+		    free(newsubj);
+		    newsubj=NULL;
+		}
 	}
 
     config->intab = tab;
@@ -1453,10 +1457,12 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 				case ADD:
 					if (report == NULL) report = textHead();
 					report = areastatus(preport, report);
+					free(preport);
 					break;
 				case DEL:
 					if (report == NULL) report = textHead();
 					report = areastatus(preport, report);
+					free(preport);
 					break;
 				case AVAIL:
 					RetMsg(msg, link, preport, "available areas");
@@ -1476,18 +1482,20 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 				case RESCAN:
 					if (report == NULL) report=textHead();
  					report=areastatus(preport, report);
+					free(preport);
  					break;
 				case ERROR:
 					if (report == NULL) report = textHead();
 					report = areastatus(preport, report);
+					free(preport);
 					break;
 				default: break;
-				}
+				} /* end switch */
 				
-				free(preport);
-			}
+			} /* end if (preport != NULL) */
+
 			token = strseparate (&textBuff, "\n\r");
-		}
+		} /* end while (token != NULL) */
 		
 	} else {
 
