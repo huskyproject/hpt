@@ -1,3 +1,12 @@
+2005-03-16 Wednesday 22:34  val_khokhlov
+
+	* doc/hpt.texi (1.161): fix cross-refs in previous patch
+
+2005-03-16 Wednesday 13:34  val_khokhlov
+
+	* doc/hpt.texi (1.160): corrected autoPassive and autoPause
+	descriptions (thanks to Michael Dukelsky)
+
 2005-03-06 Sunday 18:16  val_khokhlov
 
 	* src/post.c (1.118): init libareafix here (fix coredumps on hpt
