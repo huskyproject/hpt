@@ -433,6 +433,12 @@ void linkAreas(char *name)
     }
     
     if (f == NULL) {
+
+        if(config->LinkWithImportlog != lwiNo && config->importlog)
+        {
+            w_log(LL_CRIT, "Nothing to link. Use \"hpt link *\" to perform linking all areas");
+            return;
+        }
         // if importlog does not exist link all areas
         w_log(LL_LINKING, "Linking all Areas.");
         
