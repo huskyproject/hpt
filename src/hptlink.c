@@ -31,12 +31,12 @@
 #include <io.h>
 #endif
 
+#include <fcntl.h>
 #ifdef __EMX__
 #include <share.h>
 #include <sys/types.h>
 #endif
 #include <sys/stat.h>
-#include <fcntl.h>
 
 #include <smapi/msgapi.h>
 #include <fidoconf/fidoconf.h>
@@ -58,20 +58,34 @@ struct msginfo {
    char *replyId;
    char *msgId;
    char *subject;
-   UMSGID replyToPos, replyNextPos;
+   UMSGID replyToPos;
    UMSGID replies[MAX_REPLY];
    UMSGID treeId;
    int freeReply;
+   UMSGID msgPos; 
 
 };
 typedef struct msginfo s_msginfo;
 
+#define reply1st replies[0]
+#define replyNxt replies[1]
+
+
 struct origlinks {
-   UMSGID replyToPos, replyNextPos;
+   UMSGID replyToPos;
    UMSGID replies[MAX_REPLY];
 };
 typedef struct origlinks s_origlinks;
 
+/* Stable: Assure correct SMAPI revision for JAM!
+   We need api_jam.c 1.23.2.9 or later and msgapi.h 1.20.2.4 or later */
+#ifndef xmreplynext
+#define xmreply1st replies[0]
+#define xmreplynext replies[MAX_REPLY-1]
+const int jamlink_broken = 1;
+#else
+const int jamlink_broken = 0;
+#endif
 
 FILE *outlog;
 int singleRepl = 1;
@@ -79,12 +93,10 @@ int hardSearch = 0;
 int useSubj = 1;
 int useReplyId = 1;
 int loglevel = 10;
-char *version = "1.3";
+int linkNew = 0;
+char *version = "1.4";
 HAREA harea;
-
-/* stable method of getting JAM linking without changing XMSG */
-int isJam = 0;
-#define MAX_REPLY2 (isJam ? MAX_REPLY - 1 : MAX_REPLY)
+int maxreply;
 
 
 long links_msgid=0L;
@@ -125,6 +137,8 @@ char *skipReSubj ( char *subjstr )
 
 void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo *replmap )
 {
+    dword  linkTo;
+
 
     if (crepl -> msgId && srepl -> msgId &&
         strcmp ( crepl -> msgId, srepl -> msgId) == 0) {
@@ -135,22 +149,38 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
         return;
     }
 
+    if (maxreply == MAX_REPLY) { // Squish
+        if (crepl -> freeReply >= maxreply)
+        {
+            if ( loglevel >= 15) {
+                fprintf(outlog, "replies count for msg %ld exceeds %d,",
+                        (long)j, maxreply);
+                fprintf(outlog, "rest of the replies won't be linked\n");
+            }
+            links_ignored++;
+        } else {
+            links_total++;
+            (crepl -> replies)[(crepl -> freeReply)++] = srepl->msgPos;
+            srepl -> replyToPos = crepl->msgPos;
+        }
 
-    if (crepl -> freeReply >= MAX_REPLY2-1)
-    {
-        if ( loglevel >= 15)
-            fprintf(outlog, "replies count for msg %ld exceeds %d,\
-rest of the replies won't be linked\n",
-                    (long)j, MAX_REPLY2-1);
-        links_ignored++;
-    } else {
-        int msguid = MsgMsgnToUid(harea, j);
+    } else { // Jam, maybe something else?
+
+        srepl -> replyToPos = crepl->msgPos;
         links_total++;
-        if (crepl -> freeReply)
-		replmap[MsgUidToMsgn(harea, (crepl -> replies)[(crepl -> freeReply)-1], UID_EXACT)].replyNextPos = msguid;
-        (crepl -> replies)[(crepl -> freeReply)++] = msguid;
-        srepl -> replyToPos = MsgMsgnToUid(harea, i);
+        if (crepl->reply1st == 0) { 
+            crepl->reply1st = srepl->msgPos;
+            (crepl -> freeReply)++;
+        } else {
+            linkTo = MsgUidToMsgn(harea, crepl->reply1st, UID_EXACT) - 1;
+
+            while (replmap[linkTo].replyNxt) linkTo = MsgUidToMsgn(harea, replmap[linkTo].replyNxt, UID_EXACT) - 1;
+            replmap[linkTo].replyNxt = srepl->msgPos;
+            replmap[linkTo].freeReply++;
+
+        }
     }
+
 }
 
 static char *GetCtrlValue (char *ctl, char *kludge)
@@ -187,6 +217,7 @@ void linkArea(s_area *area)
    dword ctlen;
    dword highMsg;
    dword  i, j, linkTo;
+   dword newStart=0;
    HMSG  hmsg;
    XMSG  xmsg;
    s_msginfo *replmap;
@@ -209,11 +240,22 @@ void linkArea(s_area *area)
      return;
    }
 
-   isJam = (area->msgbType & MSGTYPE_JAM);
+   if (area->msgbType == MSGTYPE_JAM && jamlink_broken)
+   {
+       fprintf(outlog,"ERROR: smapi is too "
+                      "old (use 1.6.4b or newer 1.6.4*)\n");
+       return;
+   }
 
    if (area->nolink) {
      if (loglevel>=10) fprintf(outlog, "has nolink option, ignoring\n");
      return;
+   }
+
+   if (area->msgbType & MSGTYPE_JAM) {
+      maxreply = 2;
+   } else {
+      maxreply = MAX_REPLY;
    }
 
    harea = MsgOpenArea((byte *) area->fileName, MSGAREA_NORMAL, (word)area->msgbType);
@@ -280,18 +322,34 @@ void linkArea(s_area *area)
 		    crepl -> subject = strdup(ptr);
 		 }
 
+                 crepl->msgPos = MsgMsgnToUid(harea, i);
+
 		 // Save data for comparing
-		 memcpy(linksptr->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY2);
+		 memcpy(linksptr->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
 		 linksptr->replyToPos = xmsg.replyto;
-		 linksptr->replyNextPos =
-                   (isJam ? xmsg.replies[MAX_REPLY2] : 0);
+
+                 if (linkNew &&
+                      (xmsg.replyto || xmsg.replies[0] || xmsg.replies[1])
+                    ) {
+                    newStart = i+1;
+                    memcpy(crepl->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
+                    crepl->replyToPos = xmsg.replyto;
+                    for (j=0; xmsg.replies[j] && j<MAX_REPLY; j++);
+                    crepl->freeReply = j;
+                 }
 
 		 MsgCloseMsg(hmsg);
 	      }
 	   }
 
 	   /* Pass 2: building relations tree, & filling tree IDs */
-	   if ( loglevel >= 11 ) fprintf (outlog, "Pass 2: building relations for %ld messages\n", (long) i-1);
+	   if ( loglevel >= 11 ) {
+              fprintf (outlog, "Pass 2: building relations for %ld messages", (long) i-1);
+              if (linkNew)
+                 fprintf (outlog, ", new from %ld\n", (long) newStart);
+              else
+                 fprintf (outlog, "\n");
+           }
 
 	   for (i = 1, crepl=replmap; i < highMsg; i++, crepl++) {
 	     if (
@@ -302,7 +360,13 @@ void linkArea(s_area *area)
 
 		replDone = 0;
 
-		for ( j=i+1, srepl=crepl+1; j <= highMsg && !replDone; j++, srepl++ ) {
+                j=i+1;
+                srepl=crepl+1;
+                if (newStart > j) {
+                   j=newStart;
+                   srepl = &(replmap[j-1]);
+                }
+		for (; j <= highMsg && !replDone; j++, srepl++ ) {
 
 		  replFound = 0;
 
@@ -417,13 +481,15 @@ void linkArea(s_area *area)
 		    exit(-1);
 		 }
 
-		 while ( (replmap[linkTo-1]).freeReply >= MAX_REPLY2-1) {
-		    linkTo = MsgUidToMsgn(harea,(replmap[linkTo-1]).replies[0], UID_EXACT );
-		    if (linkTo > highMsg || linkTo <= 0 ) {
-		       if ( loglevel > 5) fprintf(outlog,"\nProgramming error 2 while linking linkTo=%ld\n", (long)linkTo);
-		       exit(-1);
-		    }
-		 }
+                 if (maxreply == MAX_REPLY) { // Find place to put link for Squish
+                    while ( (replmap[linkTo-1]).freeReply >= maxreply) {
+                       linkTo = MsgUidToMsgn(harea,(replmap[linkTo-1]).replies[0], UID_EXACT );
+                       if (linkTo > highMsg || linkTo <= 0 ) {
+                          if ( loglevel > 5) fprintf(outlog,"\nProgramming error 2 while linking linkTo=%ld\n", (long)linkTo);
+                          exit(-1);
+                       }
+                    }
+                 }
 		 linkMsgs ( &(replmap[linkTo-1]), crepl, linkTo, i , replmap );
 		 (replmap[crepl -> treeId - 1]).treeId = i; // where to link next message
 		 treeLinks--;
@@ -437,8 +503,7 @@ void linkArea(s_area *area)
 	   for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++) {
 
 	      if( ((linksptr->replyToPos) != (crepl->replyToPos)) ||
-	           ((linksptr->replyNextPos) != (crepl->replyNextPos) && (area->msgbType & MSGTYPE_JAM)) ||
-		   memcmp(linksptr->replies, crepl->replies, sizeof(UMSGID) * ((area->msgbType & MSGTYPE_SQUISH) ? MAX_REPLY2 : 1))) {
+		   (memcmp(linksptr->replies, crepl->replies, sizeof(UMSGID) * maxreply))) {
 
 		 hmsg  = MsgOpenMsg(harea, MOPEN_RW, i);
 
@@ -447,10 +512,8 @@ void linkArea(s_area *area)
 		    MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
 
 
-		    memcpy(xmsg.replies, crepl->replies, sizeof(UMSGID) * MAX_REPLY2);
+		    memcpy(xmsg.replies, crepl->replies, sizeof(UMSGID) * maxreply);
 		    xmsg.replyto = crepl->replyToPos;
-                    if (isJam)
-                      xmsg.replies[MAX_REPLY2] = crepl->replyNextPos;
 		    MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
 
 		    MsgCloseMsg(hmsg);
@@ -482,6 +545,7 @@ void usage(void) {
    fprintf(outlog, "   -a - search in all messages (for singlethread only)\n");
    fprintf(outlog, "   -r - do not use REPLY:/MSGID:\n");
    fprintf(outlog, "   -l loglevel - log output level >=0. Edge values: 0,5,10,11,15. Default 10.\n");
+   fprintf(outlog, "   -n Link with 'new' messages only ('new' start from last linked + 1)\n");
 
 
 }
@@ -538,6 +602,10 @@ int main(int argc, char **argv) {
 		  exit(-1);
 	       }
 	     break;
+	     case 'n': /* link with 'new' messages only */
+	     case 'N':
+		linkNew = 1;
+		break;
 	     default:
 		usage();
 		exit(-1);

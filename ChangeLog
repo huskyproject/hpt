@@ -1,4 +1,14 @@
 ----- cvs ci ------
+Sun Oct 22 00:33:21 MEZ 2000
+tobi:
+* Synchronized hpt link and hptlink code with current branch 
+  (link.c 1.38 from 15 Oct 2000, hptlink.c 1.18 from 11 Oct 2000)
+  in order to profit from the latest bugfixes.
+  ATTENTION: IF YOU WANT TO LINK JAM ECHOS, YOU MUST NOW ALSO UPGRADE SMAPI TO
+  A 1.6.4-stable VERSION FROM 22 OCT 2000 OR LATER 
+  (E.G. SMAPI 1.6.4b-stable) !!!
+
+----- cvs ci ------
 Sun Oct 15 23:56:09 MSZ 2000
 tobi (patch from Dmitry Sergienko via max):
 * process attaches in packed netmail (tossed from tempInbound)
