@@ -1,3 +1,21 @@
+2002-05-04 Saturday 23:17  d.sergienko
+
+	* src/areafix.c (1.297): 
+	fixed bug of overwriting main config when used inclusion file with
+	areas
+
+2002-05-04 Saturday 14:07  pavel.gulchouck
+
+	* src/toss.c (1.402): changed seen-by check logic
+
+2002-05-04 Saturday 09:54  mche
+
+	* src/areafix.c (1.296), src/getfree.c (1.18), src/perl.c (1.33),
+	src/post.c (1.74), src/query.c (1.42), src/toss.c (1.401),
+	src/txt2pkt.c (1.36), h/areafix.h (1.29), h/pkt.h (1.24):
+	makeMessage() moved to fidoconfig for common use in hpt htick
+	txt2pkt
+
 2002-05-03 Friday 14:30  mche
 
 	* h/pkt.h (1.23), src/areafix.c (1.295), src/perl.c (1.32),
