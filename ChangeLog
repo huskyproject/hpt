@@ -1,3 +1,13 @@
+2002-05-12 Sunday 16:51  d.sergienko
+
+	* src/post.c (1.80): fixed scanning during post with existing
+	echotoss.log
+
+2002-05-12 Sunday 13:46  d.sergienko
+
+	* src/scan.c (1.154): fixed temporary filenames creation
+	(echotoss.log.*) under DOS.
+
 2002-05-11 Saturday 12:16  mche
 
 	* src/toss.c (1.411): changeFileSuffix() moved to fidoconfig for
