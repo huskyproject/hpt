@@ -531,9 +531,9 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    if (cmAfix == 1) afix(afixAddr, afixCmd);
    nfree(afixCmd);
 
-   if (cmPack == 1) scanExport(SCN_NETMAIL, NULL);
+   if (cmPack == 1) scanExport(SCN_ALL  | SCN_NETMAIL, NULL);
    if (cmPack &  2) scanExport(SCN_FILE | SCN_NETMAIL, scanParmF);
-   if (cmPack &  4) scanExport(SCN_NAME | SCN_NETMAIL, scanParmA);
+   if ((cmPack &  4) && scanParmA) scanExport(SCN_NAME | SCN_NETMAIL, scanParmA);
 
    if (cmLink == 1) {
 	   if (linkName && (strstr(linkName,"*")||strstr(linkName,"?"))) {

@@ -34,6 +34,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <sys/stat.h>
+#include <errno.h>
+
+#if defined (UNIX) || (defined (_MSC_VER) && (_MSC_VER >= 1200))
+#include <unistd.h>
+#endif
+
+#if defined (__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__) || defined (__EMX__)
+  #include <process.h>
+  #include <io.h>
+#endif
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
@@ -687,7 +698,10 @@ void scanExport(int type, char *str) {
 	
    int i;
    FILE *f = NULL;
+   FILE *ftmp = NULL;
+   char *tmplogname;
    char *line;
+   struct stat st;
    
    // zero statScan   
    memset(&statScan, '\0', sizeof(s_statScan));
@@ -695,35 +709,58 @@ void scanExport(int type, char *str) {
 		   type & SCN_ECHOMAIL ? "scanning" : "packing",
 		   type & SCN_FILE ? " with -f " : 
 		   type & SCN_NAME ? " with -a " : "");
-   
-   if (type & SCN_ALL) {
-   	if (config->echotosslog)
-   		f = fopen(config->echotosslog, "r");
-   };
 
-   if (type & SCN_FILE) f = fopen(str, "r");
+   if (type & SCN_ALL) {
+       if (config->echotosslog)
+       {
+           tmplogname = (char *) smalloc(strlen(config->echotosslog)+7);
+           // assuming we have max. 5 digits pid + '.' and '\0'
+           sprintf(tmplogname, "%s.%u", config->echotosslog, getpid());
+           f = fopen(config->echotosslog, "r");
+           ftmp = fopen(tmplogname, "w");
+           if (ftmp == NULL) {
+               w_log('9', "Can't open file %s for writing : %s", tmplogname, strerror(errno));
+               // close file so all areas will be scanned instead of panic.
+               if (f != NULL) fclose(f);
+           }
+       }
+   }
+   if (type & SCN_FILE) {
+       tmplogname = (char *) smalloc(strlen(str)+7);
+       // assuming we have max. 5 digits pid + '.' and '\0'
+       sprintf(tmplogname, "%s.%d", str, getpid());
+       f = fopen(str, "r");
+       ftmp = fopen(tmplogname, "w");
+       if (ftmp == NULL) {
+           w_log('9', "Can't open file %s for writing : %s", tmplogname, strerror(errno));
+           // close file so all areas will be scanned instead of panic.
+           if (f != NULL) fclose(f); 
+       }
+   }
 
    if (type & SCN_NAME) {
       scanByName(str);   
    } else if (f == NULL) {
-	   if (type & SCN_FILE) {
-		   w_log('4', "EchoTossLogFile not found -> Scanning stop");
-		   return; 
-	   }
-	   if (type & SCN_ECHOMAIL) {
-		   // if echotoss file does not exist scan all areas
-		   w_log('4', "EchoTossLogFile not found -> Scanning all areas.");
-		   for (i = 0; i< config->echoAreaCount; i++) {
-			   if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
-				   scanEMArea(&(config->echoAreas[i]));
-			   }
-		   }
-	   };
-	   if (type & SCN_NETMAIL) {
-		   for (i = 0; i < config->netMailAreaCount; i++) {
-			   scanNMArea(&(config->netMailAreas[i]));
-		   }
-	   };
+       if (type & SCN_FILE) {
+           w_log('4', "EchoTossLogFile not found -> Scanning stop");
+           if (ftmp != NULL) fclose(ftmp);
+           nfree(tmplogname);
+           return;
+       }
+       if (type & SCN_ECHOMAIL) {
+           // if echotoss file does not exist scan all areas
+           w_log('4', "EchoTossLogFile not found -> Scanning all areas.");
+           for (i = 0; i< config->echoAreaCount; i++) {
+               if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
+                   scanEMArea(&(config->echoAreas[i]));
+               }
+           }
+       };
+       if (type & SCN_NETMAIL) {
+           for (i = 0; i < config->netMailAreaCount; i++) {
+               scanNMArea(&(config->netMailAreas[i]));
+           }
+       };
    } else {
    // else scan only those areas which are listed in the file
       w_log('4', "EchoTossLogFile found -> Scanning only listed areas");
@@ -736,16 +773,42 @@ void scanExport(int type, char *str) {
 	       line[strlen(line)-1] = '\0';  /* fix for DOSish echotoss.log */
             striptwhite(line);
             /* exclude NetmailAreas in echoTossLogFile */
-            if (getNetMailArea(config, line) == NULL)
-                scanByName(line);
+            if (type & SCN_ECHOMAIL) {
+                if (getNetMailArea(config, line) == NULL)
+                    scanByName(line);
+                else
+                    fprintf(ftmp, "%s\n", line);
+            } else {
+                if (getNetMailArea(config, line) != NULL)
+                    scanByName(line);
+                else
+                    fprintf(ftmp, "%s\n", line);
+            }
             nfree(line);
          }
       }
    };
    
    if (f != NULL) { 
-      fclose(f);
-      if (type & SCN_ALL) remove(config->echotosslog);
+       fclose(f);
+       if (ftmp != NULL) fclose(ftmp);
+       stat(tmplogname, &st);
+       if (type & SCN_ALL) {
+           if (st.st_size == 0) { // all entries was processed
+               remove(config->echotosslog);
+               remove(tmplogname);
+           } else { // we still have areas
+               rename(tmplogname, config->echotosslog);
+           }
+       } else {
+       if (type & SCN_FILE)
+           if (st.st_size == 0) {
+               remove(str);
+               remove(tmplogname);
+           } else {
+               rename(tmplogname, str);
+           }
+       }
    };
 
 //   if (type & SCN_ECHOMAIL) arcmail(NULL);
