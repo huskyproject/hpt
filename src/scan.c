@@ -52,6 +52,7 @@
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/afixcmd.h>
+#include <fidoconf/temp.h>
 
 #include <fcommon.h>
 #include <pkt.h>
@@ -728,6 +729,11 @@ void scanExport(int type, char *str) {
     char *line = NULL;
     struct stat st;
 
+    if ( !config->tempDir )
+    {
+        exit_hpt( "tempDir not defined in config. scanExport imposible" , 1 );
+    }
+
     w_log( LL_FUNC, "scanExport() begin" );
 
     // zero statScan
@@ -737,15 +743,6 @@ void scanExport(int type, char *str) {
         type & SCN_FILE ? " with -f " :
     type & SCN_NAME ? " with -a " : "");
 
-    if (config->echotosslog)
-    {
-        tmppath = (char *) safe_malloc(strlen(config->echotosslog)+1);
-        memset(tmppath, 0, strlen(config->echotosslog)+1);
-        strncpy(tmppath, config->echotosslog,
-            (strrchr(config->echotosslog, PATH_DELIM) - config->echotosslog));
-        tmplogname = makeUniqueDosFileName(tmppath, "tmp", config);
-        nfree(tmppath);
-    }
 
     w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ );
 
@@ -754,7 +751,7 @@ void scanExport(int type, char *str) {
         {
             f = fopen(config->echotosslog, "r");
             if (f != NULL && config->packNetMailOnScan == 0) {
-                ftmp = fopen(tmplogname, "w");
+                ftmp = createTempTextFile(config , &tmplogname);
                 if (ftmp == NULL) {
                     w_log(LL_ERR, "Can't open file %s for writing : %s", tmplogname, strerror(errno));
                     // close file so all areas will be scanned instead of panic.
@@ -769,7 +766,7 @@ void scanExport(int type, char *str) {
     if (type & SCN_FILE) {
         f = fopen(str, "r");
         if (f != NULL) {
-            ftmp = fopen(tmplogname, "w");
+            ftmp = createTempTextFile(config , &tmplogname);
             if (ftmp == NULL) {
                 w_log(LL_ERR, "Can't open file %s for writing : %s", tmplogname, strerror(errno));
                 // close file so all areas will be scanned instead of panic.
