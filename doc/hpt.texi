@@ -2015,7 +2015,7 @@ This statement can only be repeated for different links.
 
 By default forward requests processing for links in order as they
 defined in config. But you can set priority for some links... "1" is the 
-first link to forward requests.
+first link to forward requests, "2" is the second, etc.
 
 This statement can only be repeated for different links.
 
@@ -2502,7 +2502,7 @@ kill read msgs in area on purging (*)
 @item -keepUnread
 keep unread msgs in area on purging (*)
 @item -a <addr>
-aka to use
+aka to use (first address from config if not defined)
 @item -b <msgbase type>
 type of msgbase (Msg, Squish, Jam) (*)
 @item -g <group>

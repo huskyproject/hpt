@@ -727,8 +727,8 @@ int areaIsAvailable(char *areaName, char *fileName, char **desc, int retd) {
 static int compare_links_priority(const void *a, const void *b) {
 	int ia = *((int*)a);
 	int ib = *((int*)b);
-	if(config->links[ia].forwardAreaPriority > config->links[ib].forwardAreaPriority) return -1;
-	else if(config->links[ia].forwardAreaPriority < config->links[ib].forwardAreaPriority) return 1;
+	if(config->links[ia].forwardAreaPriority < config->links[ib].forwardAreaPriority) return -1;
+	else if(config->links[ia].forwardAreaPriority > config->links[ib].forwardAreaPriority) return 1;
 	else return 0;
 }
 
@@ -741,62 +741,60 @@ int forwardRequest(char *areatag, s_link *dwlink) {
     /* From Lev Serebryakov -- sort Links by priority */
     Indexes = safe_malloc(sizeof(int)*config->linkCount);
     for (i = 0; i < config->linkCount; i++) {
-		if (config->links[i].forwardRequests) Indexes[Requestable++] = i;
+	if (config->links[i].forwardRequests) Indexes[Requestable++] = i;
     }
     qsort(Indexes,Requestable,sizeof(Indexes[0]),compare_links_priority);
 
 
     for (i = 0; i < Requestable; i++) {
-		uplink = &(config->links[Indexes[i]]);
-		if (uplink->forwardRequests && (uplink->LinkGrp) ? 
-			grpInArray(uplink->LinkGrp, dwlink->AccessGrp,
-					   dwlink->numAccessGrp) : 1) {
+	uplink = &(config->links[Indexes[i]]);
+	if (uplink->forwardRequests && (uplink->LinkGrp) ?
+	    grpInArray(uplink->LinkGrp,dwlink->AccessGrp,dwlink->numAccessGrp) : 1) {
 
-			if (uplink->numDfMask) {
-				if (tag_mask(areatag, uplink->dfMask, uplink->numDfMask)) {
-					rc = 2;
-					continue;
-				}
-			}
-			
-			if (uplink->denyFwdFile!=NULL) {
-				if (areaIsAvailable(areatag,uplink->denyFwdFile,NULL,0)) {
-					rc = 2;
-					continue;
-				}
-			}
-
-			if (uplink->forwardRequestFile!=NULL) {
-				// first try to find the areatag in forwardRequestFile
-				if (tag_mask(areatag, uplink->frMask, uplink->numFrMask) || 
-					areaIsAvailable(areatag,uplink->forwardRequestFile,NULL,0)) {
-					forwardRequestToLink(areatag,uplink,dwlink,0);
-					nfree(Indexes);
-					return 0;
-				} else rc = 2; // found link with freqfile, but there is no areatag
-			} else {
-				rc = 0;
-				if (uplink->numFrMask) { // found mask
-					if (tag_mask(areatag, uplink->frMask, uplink->numFrMask))
-						forwardRequestToLink(areatag,uplink,dwlink,0);
-					else rc = 2;
-				} else { // unconditional forward request
-					if (dwlink->denyUFRA==0)
-						forwardRequestToLink(areatag,uplink,dwlink,0);
-					else rc = 2;
-				}
-				if (rc==0) {
-					nfree(Indexes);
-					return rc;
-				}
-			}
+	    if (uplink->numDfMask) {
+		if (tag_mask(areatag, uplink->dfMask, uplink->numDfMask)) {
+		    rc = 2;
+		    continue;
 		}
-		
+	    }
+			
+	    if (uplink->denyFwdFile!=NULL) {
+		if (areaIsAvailable(areatag,uplink->denyFwdFile,NULL,0)) {
+		    rc = 2;
+		    continue;
+		}
+	    }
+
+	    if (uplink->forwardRequestFile!=NULL) {
+		// first try to find the areatag in forwardRequestFile
+		if (tag_mask(areatag, uplink->frMask, uplink->numFrMask) || 
+		    areaIsAvailable(areatag,uplink->forwardRequestFile,NULL,0)) {
+		    forwardRequestToLink(areatag,uplink,dwlink,0);
+		    nfree(Indexes);
+		    return 0;
+		} else rc = 2; // found link with freqfile, but there is no areatag
+	    } else {
+		rc = 0;
+		if (uplink->numFrMask) { // found mask
+		    if (tag_mask(areatag, uplink->frMask, uplink->numFrMask))
+			forwardRequestToLink(areatag,uplink,dwlink,0);
+		    else rc = 2;
+		} else { // unconditional forward request
+		    if (dwlink->denyUFRA==0)
+			forwardRequestToLink(areatag,uplink,dwlink,0);
+		    else rc = 2;
+		}
+		if (rc==0) { // ?
+		    nfree(Indexes);
+		    return rc;
+		}
+	    }
+	}
     }
 	
-	// link with "forwardRequests on" not found
-	nfree(Indexes);
-	return rc;
+    // link with "forwardRequests on" not found
+    nfree(Indexes);
+    return rc;
 }
 
 int limitCheck(s_link *link, s_message *msg) {
