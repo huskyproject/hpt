@@ -1,3 +1,8 @@
+2003-01-15 Wednesday 07:04  stas_degteff
+
+	* src/toss.c (hpt-1_2-stable.10): MFC: fix kludge location in
+	carbon copied messages
+
 2003-01-08 Wednesday 13:11  stas_degteff
 
 	* src/query.c (hpt-1_2-stable.5): MFC: bugfix: AutoAreaCreate adds
