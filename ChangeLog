@@ -1,3 +1,8 @@
+2002-02-05 Tuesday 18:05  stas
+
+	* src/dupe.c (1.54): Unique dupe history file for passthou areas
+	with -dosfile option: filename generated as crc32 of area name.
+
 2002-02-04 Monday 18:43  stas
 
 	* src/dupe.c (1.53): Fix log message: remove message 'Dupe base not
@@ -1832,9 +1837,13 @@
 
 2000-03-12 Sunday 15:48  tobi
 
-	* src/: fcommon.c (1.36), toss.c (1.173), txt2pkt.c (1.9): 64 bit
+	* src/txt2pkt.c (1.9): 64 bit bug fixes
+
+2000-03-12 Sunday 15:48  tobi
+
+	* src/: fcommon.c (1.36), toss.c (1.173): 64 bit bug fixes64 bit
 	bug fixes64 bit bug fixes64 bit bug fixes64 bit bug fixes64 bit bug
-	fixes64 bit bug fixes
+	fixes
 
 2000-03-09 Thursday 17:48  sms
 
