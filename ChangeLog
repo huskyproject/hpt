@@ -1,3 +1,8 @@
+2004-11-05 Friday 14:18  mche
+
+	* make/: hpt.vcproj (1.6), hptz.vcproj (1.4): make files changed
+	for building with perl 5.8.*
+
 2004-10-23 Saturday 19:07  i_zkh
 
 	* doc/hpt.texi (1.154): Added a note that you can't
