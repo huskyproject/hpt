@@ -1919,6 +1919,7 @@ void afix(void)
 					if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
                 
 				// if not read and for us -> process AreaFix
+				striptwhite((char*)xmsg.to);
 				if (((xmsg.attr & MSGREAD) != MSGREAD) && (for_us==1) &&
 					((stricmp((char*)xmsg.to, "areafix")==0) || 
 					 (stricmp((char*)xmsg.to, "areamgr")==0) ||
