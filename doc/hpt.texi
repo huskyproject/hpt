@@ -2500,12 +2500,14 @@ This statement can only be repeated for different links.
 @findex Pause
 @table @asis
 @item Syntax:
-@code{pause <bool>}
-@item Example:
+@code{pause <bool>|earea|farea}
+@item Examples:
+@code{pause earea}
+@code{pause off}
 @code{pause}
 @end table
 
-Stop export echomail for this link.
+Stop export echomail and/or fileechoes for this link.
 
 This statement can only be repeated for different links.
 
