@@ -528,6 +528,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
     return 0;
 }
 
+/*
 int delLinkFromString(char **lineOut, char *line, char *linkAddr)
 {
     char *startLink, *ptr, *tmp, *origLine, *comment, *eptr=NULL, *linkStr;
@@ -592,7 +593,7 @@ int delLinkFromString(char **lineOut, char *line, char *linkAddr)
                 /* if (!strncasecmp(tmp, "-r", 2) ||
                     !strncasecmp(tmp, "-w", 2) ||
                     !strncasecmp(tmp, "-mn", 3) ||
-                    !strncasecmp(tmp, "-def", 4)) */
+                    !strncasecmp(tmp, "-def", 4)) 
                 {
                     endLen = ptr ? (ptr - line) : strlen(origLine);
                     continue;
@@ -609,7 +610,7 @@ int delLinkFromString(char **lineOut, char *line, char *linkAddr)
     nfree(linkStr);
     return rc;
 }
-
+*/
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     FILE *cfgin,*cfgout;
     char *cfgline=NULL, *token=NULL, *buff=NULL, *cfgInline=NULL;
@@ -702,16 +703,16 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
                 forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 1);
             }
         case 7:
-            if ((rc = delLinkFromString(&rewrittenLine, cfgInline, (char *) aka2str(link->hisAka))) == 1) {
-                    w_log('9',"areafix: can't del link %s from echo area %s",
-                          aka2str(link->hisAka), areaName);
-		    nRet = O_ERR;
-                    fprintf(cfgout, "%s%s", cfgInline, cfgEol());
-	    } else {
-                    rewrittenLine = trimLine(rewrittenLine);
-                    fprintf(cfgout, "%s%s", rewrittenLine, cfgEol()); // add line to config
-                    nRet = DEL_OK;
-	    }
+            if ((rc = DelLinkFromString(cfgInline, link->hisAka)) == 1) {
+                w_log('9',"areafix: can't del link %s from echo area %s",
+                    aka2str(link->hisAka), areaName);
+                nRet = O_ERR;
+                fprintf(cfgout, "%s%s", cfgInline, cfgEol());
+            } else {
+                //rewrittenLine = trimLine(rewrittenLine);
+                fprintf(cfgout, "%s%s", cfgInline, cfgEol()); // add line to config
+                nRet = DEL_OK;
+            }
             break;
         case 2:
         //makepass(f, fileName, areaName);
