@@ -1409,8 +1409,8 @@ char *rescan(s_link *link, s_message *msg, char *cmd) {
     countstr = line;
     while (*countstr && (!isspace(*countstr))) countstr++;
     while (*countstr && (*countstr == ' ' || *countstr == '\t')) countstr++;
-    if (!strncasecmp(buffer+x, "/R=",3)) countstr = countstr + 3;
-    if (!strncasecmp(buffer+x, "/R",2)) countstr = '99999'; /* rescan all mails */
+    if (!strncasecmp(countstr, "/R=",3)) countstr = countstr + 3;
+    if (!strncasecmp(countstr, "/R",2)) countstr = "99999"; /* rescan all mails */
 
     if (*countstr != 0)
       {
