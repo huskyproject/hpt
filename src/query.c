@@ -149,7 +149,7 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
     if (IsAreaAvailable(c_area,creatingLink->forwardRequestFile,&desc,1)==1) {
         if (desc) {
             if (fc_stristr(newAC, " -d ")==NULL)
-                xscatprintf(&newAC, " -d \"%s\"", desc);
+                xscatprintf(&buff, " -d \"%s\"", desc);
             nfree(desc);
         }
     }
