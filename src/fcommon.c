@@ -154,7 +154,7 @@ e_prio cvtFlavour2Prio(e_flavour flavour)
    return NORMAL;
 }
 
-#if 0
+#if 1
 /* This old code will be removed once the new one proves to be reliable */
 
 int fileNameAlreadyUsed(char *pktName, char *packName) {
@@ -261,6 +261,12 @@ int createTempPktFileName(s_link *link)
     free(tmpPFileName);
     
     if ((!fexist(fileName)) && (!fexist(pfileName))) {
+        if (link->packFile != NULL) {
+            free(link->packFile);
+        }
+        if (link->pktFile != NULL) {
+            free(link->pktFile);
+        }
         link->packFile = pfileName;
         link->pktFile = fileName;
         return 0;
@@ -273,6 +279,8 @@ int createTempPktFileName(s_link *link)
 }
 #endif
 
+#if 0
+/* filenames are not FTSC compliant, some links have problems :-( */
 int createTempPktFileName(s_link *link)
 {
     char  *filename = NULL;     /* pkt file in tempOutbound */
@@ -354,6 +362,8 @@ int createTempPktFileName(s_link *link)
     link->pktFile = filename;
     return 0;
 }
+
+#endif
 
 int createDirectoryTree(const char *pathName) {
 
