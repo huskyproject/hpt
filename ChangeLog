@@ -2,6 +2,12 @@ hpt 0.30
 --------
 
 ----- cvs ci -----	
+Thu Nov 18 23:28:29 NOVT 1999
+max (patch from Serguei Revtov): 
+* changed gmtime to localtime 
+* small fixed
+
+----- cvs ci -----	
 Thu Nov  4 23:10:31 NOVT 1999
 max:
 * fixed wrong recoding carbon messages

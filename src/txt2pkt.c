@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
       msg.attributes = 1;
 
       t = time (NULL);
-      tm = gmtime(&t);
+      tm = localtime(&t);
       strftime(msg.datetime, 21, "%d %b %y  %T", tm);
 
       msg.netMail = 1;

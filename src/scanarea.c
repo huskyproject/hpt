@@ -93,20 +93,12 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    ctrlBuff = (UCHAR *) malloc(ctrlLen+1+6+strlen(versionStr)+1); // 6 == "\001TID: " // 1 == "\r"
    MsgReadMsg(hmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
    ctrlBuff[ctrlLen] = '\0'; /* MsgReadMsg does not do zero termination! */
+   if (action == 0) {
+       strcat(ctrlBuff, "\001TID: ");
+       strcat(ctrlBuff, versionStr);
+   }
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
    
-#if 1
-   if (action == 0) {
-       // added TID from scan area only
-       kludgeLines=(char *) realloc (kludgeLines,strlen(kludgeLines)
-                                                 +strlen("\001TID: ")
-                                                 +strlen(versionStr)+2);
-       strcat(kludgeLines, "\001TID: ");
-       strcat(kludgeLines, versionStr);
-       strcat(kludgeLines, "\r");
-   }
-#endif
-
    free(ctrlBuff);
 
    if (action == 0) {

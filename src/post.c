@@ -148,7 +148,7 @@ void post(int c, unsigned int *n, char *params[])
    };
    // msg.attributes |= MSGLOCAL; // Always set bit for LOCAL
    // won't be set in the msgbase, because the mail is processed if it were received
-   (*n)--; tm = gmtime(&t);
+   (*n)--; tm = localtime(&t);
    strftime(msg.datetime, 21, "%d %b %y  %T", tm);
    if ((msg.destAddr.zone != 0 || area) && (textBuffer != NULL) && !quit) {
       // Dumbchecks
