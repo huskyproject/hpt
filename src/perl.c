@@ -1135,7 +1135,7 @@ void perl_setvars(void) {
         if (grplist) VK_ADD_HASH_str(hv2, sv, "groups", grplist+1);
         nfree(grplist);
       }
-      SvREADONLY_on(hv2);
+      /* val r/o: SvREADONLY_on(hv2); */
       sv = newRV_noinc((struct sv*)hv2);
       VK_ADD_HASH_sv(hv, sv, aka2str(config->links[i]->hisAka));
    }
@@ -1164,11 +1164,11 @@ void perl_setvars(void) {
                           | config->echoAreas[i].downlinks[j]->export << 5
                          );
         }
-        SvREADONLY_on(hv3);
+        /* val r/o: SvREADONLY_on(hv3); */
         sv = newRV_noinc((struct sv*)hv3);
         VK_ADD_HASH_sv(hv2, sv, "links");
       }
-      SvREADONLY_on(hv2);
+      /* val r/o: SvREADONLY_on(hv2); */
       sv = newRV_noinc((struct sv*)hv2);
       VK_ADD_HASH_sv(hv, sv, config->echoAreas[i].areaName);
    }
