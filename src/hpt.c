@@ -171,7 +171,7 @@ void start_help(void) {
   fprintf(stdout,"   hpt qupd - update queue file and do some areafix jobs\n");
   fprintf(stdout,"   hpt qrep - make report based on information from queue file\n");
   fprintf(stdout,"   hpt qrep -d - show in report changes only\n");
-  fprintf(stdout,"   hpt relink <addr> - refresh area subscription\n");
+  fprintf(stdout,"   hpt relink <pattern> <addr> - refresh matching pattern areas subscription\n");
   fprintf(stdout,"   hpt resubscribe <pattern> <fromaddr> <toaddr> - move subscription of \n");
   fprintf(stdout,"                        areas matching pattern from one link to another\n");
   fprintf(stdout,"   hpt pause - set pause for links who don't poll our system\n");
@@ -236,10 +236,6 @@ int processCommandLine(int argc, char **argv)
 		  continue;
       } else if (stricmp(argv[i], "post") == 0) {
          ++i; post(argc, (unsigned*)&i, argv);
-      } else if (stricmp(argv[i], "relink") == 0) {
-         i++; relink(argv[i]);
-      } else if (stricmp(argv[i], "resubscribe") == 0) {
-         resubscribe(argv[i+1], argv[i+2], argv[i+3]); i=i+3;
       } else if (stricmp(argv[i], "qupd") == 0) {
           cmQueue |= 2;
       } else if (stricmp(argv[i], "qrep") == 0) {
@@ -248,6 +244,30 @@ int processCommandLine(int argc, char **argv)
 		  i++;
 		  report_changes = 1;
 	  }
+      } else if (stricmp(argv[i], "relink") == 0) {
+	  if (i < argc-1) {
+              i++;
+              xstrcat(&relinkPattern, argv[i]);
+              if (i < argc-1) {
+                  i++;
+                  string2addr(argv[i], &relinkFromAddr);
+                  cmRelink = 1;
+              } else printf("address missing after \"%s\"!\n", argv[i]);
+	  } else printf("pattern missing after \"%s\"!\n", argv[i]);
+      } else if (stricmp(argv[i], "resubscribe") == 0) {
+	  if (i < argc-1) {
+              i++;
+              xstrcat(&relinkPattern, argv[i]);
+              if (i < argc-1) {
+                  i++;
+                  string2addr(argv[i], &relinkFromAddr);
+                  if (i < argc-1) {
+                      i++;
+                      string2addr(argv[i], &relinkToAddr);
+                      cmRelink = 2;
+                  } else printf("address missing after \"%s\"!\n", argv[i]);
+              } else printf("address missing after \"%s\"!\n", argv[i]);
+	  } else printf("pattern missing after \"%s\"!\n", argv[i]);
       } else if (stricmp(argv[i], "-c") == 0) {
 		  i++;
 		  if (argv[i]!=NULL) xstrcat(&cfgFile, argv[i]);
@@ -596,6 +616,10 @@ int main(int argc, char **argv)
 
    if (cmAfix == 1) afix(afixAddr, afixCmd);
    nfree(afixCmd);
+
+   if (cmRelink == 1) relink(0, relinkPattern, relinkFromAddr, relinkToAddr);
+   else if (cmRelink == 2) relink(1, relinkPattern, relinkFromAddr, relinkToAddr);
+   nfree(relinkPattern);
 
    if (cmPack == 1) scanExport(SCN_ALL  | SCN_NETMAIL, NULL);
    if (cmPack &  2) scanExport(SCN_FILE | SCN_NETMAIL, scanParmF);

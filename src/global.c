@@ -69,13 +69,18 @@ int       cmAfix = 0;
 int       cmNotifyLink = 0;
 int       cmPause = 0;
 int       cmQueue = 0;
+int       cmRelink = 0;
 int       noHighWaters = 0;
 int       pkt_count = 0;
 int       pkt_aTime = 0;
 int	  quiet = 0;
 
-hs_addr afixAddr = {0,0,0,0};
+hs_addr afixAddr   = {0,0,0,0};
 char *afixCmd = NULL;
+
+hs_addr relinkFromAddr = {0,0,0,0};
+hs_addr relinkToAddr = {0,0,0,0};
+char *relinkPattern = NULL;
 
 int lock_fd;
 int silent_mode = 0;

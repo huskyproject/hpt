@@ -63,6 +63,7 @@ extern int       cmAfix;
 extern int       cmNotifyLink;
 extern int       cmPause;
 extern int       cmQueue;
+extern int       cmRelink;
 extern int       noHighWaters;
 extern int       pkt_count; /*  pkt counter */
 extern int       pkt_aTime;
@@ -70,6 +71,10 @@ extern int   	  quiet;
 
 extern hs_addr afixAddr;
 extern char *afixCmd;
+
+extern hs_addr relinkFromAddr;
+extern hs_addr relinkToAddr;
+extern char *relinkPattern;
 
 extern int lock_fd;
 extern char *versionStr;

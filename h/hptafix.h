@@ -28,7 +28,5 @@
 int init_hptafix(void);
 
 void autoPassive(void);
-int relink(char *straddr);
-int resubscribe(char *pattern, char *strFromAddr, char *strToAddr);
 
 #endif
