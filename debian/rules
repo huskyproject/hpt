@@ -36,17 +36,17 @@ install: build
 	dh_clean -k
 	dh_installdirs
 	# Add here commands to install the package into debian/hpt.
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/hpt
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/$(PACKAGE)
 	-cp config/config config/path config/links config/areas \
-	    filter.pl debian/hpt/etc/husky
-	-cp misc/areafix.hlp $(CURDIR)/debian/hpt/etc/husky
-	-cp misc/* $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc
-	-cp misc/hpt_ro/* $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/hpt_ro
-	-cp misc/makeavl/* $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/makeavl
-	rm -f $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/*.hlp
+	    filter.pl debian/$(PACKAGE)/etc/husky
+	-cp misc/areafix.hlp $(CURDIR)/debian/$(PACKAGE)/etc/husky
+	-cp misc/* $(CURDIR)/debian/$(PACKAGE)/usr/share/doc/hpt/misc
+	-cp misc/hpt_ro/* $(CURDIR)/debian/$(PACKAGE)/usr/share/doc/hpt/misc/hpt_ro
+	-cp misc/makeavl/* $(CURDIR)/debian/$(PACKAGE)/usr/share/doc/hpt/misc/makeavl
+	rm -f $(CURDIR)/debian/$(PACKAGE)/usr/share/doc/hpt/misc/*.hlp
 	cd doc ; \
-	make all install DESTDIR=$(CURDIR)/debian/hpt 
-	rm -f $(CURDIR)/debian/hpt/usr/share/info/dir*
+	make all install DESTDIR=$(CURDIR)/debian/$(PACKAGE)
+	rm -f $(CURDIR)/debian/$(PACKAGE)/usr/share/info/dir*
 
 
 # Build architecture-independent files here.

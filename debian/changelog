@@ -1,3 +1,11 @@
+hpt (1.4.0+beta1-2) unstable; urgency=low
+
+  * Place hpt package to main. Now smapi has LGPL license and hpt does
+    not depends from non-free packages
+  * Minor fixes for debian/rules
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Wed, 19 Feb 2003 11:13:36 +0500
+
 hpt (1.4.0+beta1-1) unstable; urgency=low
 
   * New stable branch

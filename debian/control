@@ -1,5 +1,5 @@
 Source: hpt
-Section: contrib/mail
+Section: mail
 Priority: optional
 Maintainer: Pavel Andreew <pavel@collage.etel.ru>
 Build-Depends: debhelper (>> 4.0.0), libsmapi2-dev (>=2.4-1), libfidoconf1-dev (>= 1.4-1), libperl-dev, texinfo
