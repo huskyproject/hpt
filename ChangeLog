@@ -1,3 +1,12 @@
+2002-04-24 Wednesday 15:25  pavel.gulchouck
+
+	* src/post.c (1.60.2.4): Recoding tearline/origin fixed
+
+2002-04-24 Wednesday 13:43  ml
+
+	* src/areafix.c (1.232.2.8): small fixes and add-ons when printing
+	errors
+
 2002-04-23 Tuesday 13:41  ml
 
 	* src/global.c (1.38.2.5): set -stable version
