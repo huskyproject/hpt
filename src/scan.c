@@ -641,25 +641,24 @@ void scanExport(int type, char *str) {
    if (type & SCN_NAME) {
       scanByName(str);   
    } else if (f == NULL) {
-	   
-      if (type & SCN_FILE) {
-	  w_log('4', "EchoTossLogFile not found -> Scanning stop.");
-	  return; 
-      };
-   // if echotoss file does not exist scan all areas
-      w_log('4', "EchoTossLogFile not found -> Scanning all areas.");
-      if (type & SCN_ECHOMAIL) {
-         for (i = 0; i< config->echoAreaCount; i++) {
-            if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
-               scanEMArea(&(config->echoAreas[i]));
-            }
-         }
-      };
-      if (type & SCN_NETMAIL) {
-         for (i = 0; i < config->netMailAreaCount; i++) {
-            scanNMArea(&(config->netMailAreas[i]));
-         }
-      };
+	   if (type & SCN_FILE) {
+		   w_log('4', "EchoTossLogFile not found -> Scanning stop.");
+		   return; 
+	   }
+	   if (type & SCN_ECHOMAIL) {
+		   // if echotoss file does not exist scan all areas
+		   w_log('4', "EchoTossLogFile not found -> Scanning all areas.");
+		   for (i = 0; i< config->echoAreaCount; i++) {
+			   if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
+				   scanEMArea(&(config->echoAreas[i]));
+			   }
+		   }
+	   };
+	   if (type & SCN_NETMAIL) {
+		   for (i = 0; i < config->netMailAreaCount; i++) {
+			   scanNMArea(&(config->netMailAreas[i]));
+		   }
+	   };
    } else {
    // else scan only those areas which are listed in the file
       w_log('4', "EchoTossLogFile found -> Scanning only listed areas");
