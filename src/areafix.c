@@ -1162,7 +1162,8 @@ void rescanEMArea(s_area *echo, s_link *link)
       highestMsg    = MsgGetHighMsg(area);
 
       while (i <= highestMsg) {
-         hmsg = MsgOpenMsg(area, MOPEN_RW, i++);
+	 hmsg = MsgOpenMsg(area, MOPEN_RW, i);
+         i++;
          if (hmsg == NULL) continue;      // msg# does not exist
          MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
          repackEMMsg(hmsg, xmsg, echo, link);
@@ -1347,9 +1348,11 @@ char *areastatus(char *preport, char *text)
     tmp = preport;
     ptmp = strchr(tmp, '\r');
     while (ptmp) {
-		*(ptmp++)=0;
+		*ptmp=0;
+		ptmp++;
         report=strchr(tmp, ' ');
-		*(report++)=0;
+		*report=0;
+		report++;
         if (strlen(tmp) > 50) tmp[50] = 0;
 		if (50-strlen(tmp) == 0) sprintf(tmpBuff, " %s  %s\r", tmp, report);
         else if (50-strlen(tmp) == 1) sprintf(tmpBuff, " %s   %s\r", tmp, report);

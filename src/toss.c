@@ -83,11 +83,13 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr);
 char *stristr(char *str, char *find)
 {
 	char ch, sc, *str1, *find1;
-	
-	if ((ch = *find++) != 0) {
+
+	find++;
+	if ((ch = *(find-1)) != 0) {
 		do {
 			do {
-				if ((sc = *str++) == 0) return (NULL);
+				str++;
+				if ((sc = *(str-1)) == 0) return (NULL);
 			} while (tolower((unsigned char) sc) != tolower((unsigned char) ch));
 			
 			for(str1=str,find1=find; *find1 && *str1 && tolower(*find1)==tolower(*str1); str1++,find1++);

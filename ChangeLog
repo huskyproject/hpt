@@ -2,6 +2,11 @@ hpt 0.30
 --------
 
 ----- cvs ci -----	
+Tue Nov 30 22:08:29 CET 1999
+sms:
+* fixed some misuses of ++ in areafix.c and toss.c
+
+----- cvs ci -----	
 Thu Nov 18 23:28:29 NOVT 1999
 max (patch from Serguei Revtov): 
 * changed gmtime to localtime 
