@@ -38,6 +38,8 @@ tearline generation added
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #if defined(__BEOS__)
 #include <sys/sysexits.h>
@@ -148,6 +150,7 @@ void post(int c, unsigned int *n, char *params[])
     int export=0;
     int erasef=0;
     int uuepost=0;
+    int perms;
     
     time_t t = time (NULL);
     struct tm *tm;
@@ -287,7 +290,19 @@ void post(int c, unsigned int *n, char *params[])
                     }
                     fname = GetFilenameFromPathname(params[*n]);
                     /* Write the 'begin' line, giving it a mode of 0600 */
-                    fprintf (tmpfile, "begin 644 %s\n", fname);
+		    perms = 0644;
+#ifdef UNIX
+		    {
+			struct stat st;
+			if (fstat(fileno(text), &st) == 0)
+			    perms = st.st_mode & 0777;
+		    }
+#else
+		    if (patimat(fname, "*.exe") ||
+		        patimat(fname, "*.com"))
+			perms = 0755;
+#endif
+                    fprintf (tmpfile, "begin %03o %s\n", perms, fname);
                     do
                     {
                         
