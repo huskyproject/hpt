@@ -1,3 +1,29 @@
+2003-01-16 Thursday 13:19  mche
+
+	* misc/adv-stat-hpt.pl (1.2): # hptstat ver.0.4, (c)opyright
+	2002-03, by val khokhlov
+
+2003-01-16 Thursday 10:18  stas_degteff
+
+	* src/perl.c (1.48): Define WIN32 if needed. Use new defines from
+	compiler.h
+
+2003-01-16 Thursday 10:17  stas_degteff
+
+	* src/getfree.c (1.25): Use new defines from compiler.h
+
+2003-01-16 Thursday 10:13  stas_degteff
+
+	* doc/hpt.texi (1.95): Describe 'PackAka' token
+
+2003-01-16 Thursday 09:56  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.67): Add Q43: run hpt from cron
+
+2003-01-16 Thursday 09:25  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.66): Update A9: golded & fidoconfig
+
 2003-01-15 Wednesday 12:11  mche
 
 	* misc/adv-stat-hpt.pl (1.1): # hptstat ver.0.3, (c)opyright
