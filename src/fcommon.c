@@ -643,12 +643,21 @@ int isValidConference(const char *s) {
 
 
 #ifdef HAS_SPAWNVP
-/* make parameters list for spawnvp() */
+/* make parameters list for spawnvp(), spawnv()
+ * Return malloc()'ed array of pointers to difference parts of one string,
+ * 1st element points to string begin.
+ * Return NULL if argument is NULL
+ */
 char **mk_lst(const char *a)
 {
-    char *p, *q, *t, **list=NULL, end=0, num=0;
+    char *p, *q, **list=NULL, end=0, num=0;
 
-    p=q=t=sstrdup(a);
+    if(!a){
+      w_log(LL_ERR, "NULL command line!");
+      return NULL;
+    }
+    while (*a && isspace(*a)) a++; /* Left spaces trim */
+    p=q=sstrdup(a);
     while (*p && !end) {
 	while (*q && !isspace(*q)) q++;
 	if (*q=='\0') end=1;
@@ -668,13 +677,15 @@ char **mk_lst(const char *a)
 }
 
 int cmdcall(const char *cmd)
-{ int cmdexit=0;
+{ int cmdexit=-1;
   char **list;
 
-  list = mk_lst(cmd);
-  cmdexit = spawnvp(P_WAIT, list[0], list);
-  nfree(list[0]);
-  nfree(list);
+  if( (list = mk_lst(cmd)) ) {
+    w_log(LL_DEBUGV, "spawnvp(P_WAIT, %s, ...)", list[0] );
+    cmdexit = spawnvp(P_WAIT, list[0], list);
+    nfree(list[0]);
+    nfree(list);
+  }
 
   return cmdexit;
 }
