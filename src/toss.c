@@ -1982,7 +1982,7 @@ void writeTossStatsToLog(void) {
 
 int find_old_arcmail(s_link *link, FILE *flo)
 {
-    char *line = NULL, *bundle=NULL;
+    char *line = NULL, *bundle=NULL, *p=NULL;
     ULONG len;
     unsigned i, as;
 
@@ -1990,8 +1990,9 @@ int find_old_arcmail(s_link *link, FILE *flo)
 #ifndef UNIX
 	line = trimLine(line);
 #endif
-	for (i = 0; i < sizeof(validExt) / sizeof(validExt[0]); i++)
-	    if (strchr("~^#", *line) && patimat(line+1, validExt[i]) == 1) {
+	for (i = 0; i < sizeof(validExt) / sizeof(validExt[0]); i++) {
+	    p = strrchr(line, PATH_DELIM);
+	    if (p && patimat(p+1, validExt[i]) == 1) {
 		if (*line!='~') {
 		    nfree(bundle);
 		    // One char for first symbol in flo file
@@ -1999,6 +2000,7 @@ int find_old_arcmail(s_link *link, FILE *flo)
 		}
 		break;
 	    }
+	}
 	nfree(line);
     }
     if (bundle == NULL) return 0;
