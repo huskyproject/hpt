@@ -402,7 +402,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
             if(!result){
                 /* following expressions can be skipped until OR */
                 for (++i,++cb; i<config->carbonCount; i++,++cb)
-                    if(!cb->rule&CC_AND)  /* AND & AND-NOT */
+                    if(!(cb->rule&CC_AND))  /* AND & AND-NOT */
                         break; /* this is the last in the AND expr. chain */
             }
             /* else result==TRUE, so continue with next expr. */
