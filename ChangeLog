@@ -2,6 +2,12 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Mon Sep  4 12:56:12 NOVST 2000
+max (patch from Pavel Gulchouck):
+* hpt link & hptlink fixes for JAM
+* fix compiling errors under OS/2
+
+----- cvs ci ------
 Sun Sep  3 19:37:46 NOVST 2000
 max:
 * tearline & origin support in post

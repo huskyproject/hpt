@@ -109,25 +109,28 @@ int  processExportOptions(unsigned int *i, int argc, char **argv)
   return rc != 0 ? rc : 1;
 }
 
+void start_help(void) {
+  fprintf(stdout,"%s",versionStr);
+  fprintf(stdout,"\nUsage: hpt [options] [-c config]\n");
+  fprintf(stdout,"   hpt toss    - tossing mail\n");
+  fprintf(stdout,"   hpt toss -b - tossing mail from badarea\n");
+  fprintf(stdout,"   hpt scan    - scanning echomail\n");
+  fprintf(stdout,"   hpt scan -w - scanning echomail without highwaters\n");
+  fprintf(stdout,"   hpt scan -a <areaname> - scanning echomail from <areaname> area\n");
+  fprintf(stdout,"   hpt scan -f <filename> - scanning echomail from alternative echotoss file\n");
+  fprintf(stdout,"   hpt post [options] file - posting a mail (for details run \"hpt post -h\")\n");
+  fprintf(stdout,"   hpt pack    - packing netmail\n");
+  fprintf(stdout,"   hpt link    - links messages\n");
+  fprintf(stdout,"   hpt afix    - process areafix\n");
+  fprintf(stdout,"   hpt relink <addr> - refresh area subsription\n");
+  fprintf(stdout,"   hpt -q [options] - quiet mode (no screen output)\n");
+}
+
 int processCommandLine(int argc, char **argv)
 {
    unsigned int i = 0;
 
-   if (argc == 1) {
-      printf("\nUsage: hpt [options] [-c config]\n");
-      printf("   hpt toss    - tossing mail\n");
-      printf("   hpt toss -b - tossing mail from badarea\n");
-      printf("   hpt scan    - scanning echomail\n");
-      printf("   hpt scan -w - scanning echomail without highwaters\n");
-      printf("   hpt scan -a <areaname> - scanning echomail from <areaname> area\n");
-      printf("   hpt scan -f <filename> - scanning echomail from alternative echotoss file\n");
-      printf("   hpt post [options] file - posting a mail (for details run \"hpt post -h\")\n");
-      printf("   hpt pack    - packing netmail\n");
-      printf("   hpt link    - links messages\n");
-      printf("   hpt afix    - process areafix\n");
-      printf("   hpt relink <addr> - refresh area subsription\n");
-      printf("   hpt -q [options] - quiet mode (no screen output)\n");
-   }
+   if (argc == 1) start_help();
 
    while (i < argc-1) {
       i++;
@@ -160,6 +163,9 @@ int processCommandLine(int argc, char **argv)
 	 continue;
       } else if (stricmp(argv[i], "-q") == 0) {
 		  ++i; quiet = 1;
+		  continue;
+      } else if (stricmp(argv[i], "-h") == 0) {
+		  ++i; start_help();
 		  continue;
       } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
 
@@ -283,7 +289,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 
    if (processCommandLine(argc, argv)==1) exit(0);
 
-   if (quiet==0) fprintf(stdout, "Highly Portable Toss %s\n", version);
+//   if (quiet==0) fprintf(stdout, "Highly Portable Toss %s\n", version);
    nfree(version);
 
    if (config==NULL) processConfig();

@@ -58,7 +58,7 @@ struct msginfo {
    char *replyId;
    char *msgId;
    char *subject;
-   UMSGID replyToPos;
+   UMSGID replyToPos, replyNextPos;
    UMSGID replies[MAX_REPLY];
    UMSGID treeId;
    int freeReply;
@@ -67,7 +67,7 @@ struct msginfo {
 typedef struct msginfo s_msginfo;
 
 struct origlinks {
-   UMSGID replyToPos;
+   UMSGID replyToPos, replyNextPos;
    UMSGID replies[MAX_REPLY];
 };
 typedef struct origlinks s_origlinks;
@@ -119,7 +119,7 @@ char *skipReSubj ( char *subjstr )
 }
 
 
-void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j )
+void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo *replmap )
 {
 
     if (crepl -> msgId && srepl -> msgId &&
@@ -140,8 +140,11 @@ rest of the replies won't be linked\n",
                     (long)j, MAX_REPLY-1);
         links_ignored++;
     } else {
+        int msguid = MsgMsgnToUid(harea, j);
         links_total++;
-        (crepl -> replies)[(crepl -> freeReply)++] = MsgMsgnToUid(harea, j);
+        if (crepl -> freeReply)
+		replmap[MsgUidToMsgn(harea, (crepl -> replies)[(crepl -> freeReply)-1], UID_EXACT)].replyNextPos = msguid;
+        (crepl -> replies)[(crepl -> freeReply)++] = msguid;
         srepl -> replyToPos = MsgMsgnToUid(harea, i);
     }
 }
@@ -276,6 +279,7 @@ void linkArea(s_area *area)
 		   // Save data for comparing
 		   memcpy(linksptr->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
 		   linksptr->replyToPos = xmsg.replyto;
+		   linksptr->replyNextPos = xmsg.replynext;
 
 		   MsgCloseMsg(hmsg);
 		 }
@@ -317,7 +321,7 @@ void linkArea(s_area *area)
 		       if (singleRepl) {
 			  treeLinks++;
 		       } else {
-			  linkMsgs ( crepl, srepl, i, j );
+			  linkMsgs ( crepl, srepl, i, j, replmap );
 		       }
 		  }
 
@@ -360,7 +364,7 @@ void linkArea(s_area *area)
 		       if (singleRepl) {
 			  treeLinks++;
 		       } else {
-			  linkMsgs ( srepl, crepl, j, i );
+			  linkMsgs ( srepl, crepl, j, i, replmap );
 		       }
 		     }
 		  }
@@ -416,7 +420,7 @@ void linkArea(s_area *area)
 		       exit(-1);
 		    }
 		 }
-		 linkMsgs ( &(replmap[linkTo-1]), crepl, linkTo, i );
+		 linkMsgs ( &(replmap[linkTo-1]), crepl, linkTo, i , replmap );
 		 (replmap[crepl -> treeId - 1]).treeId = i; // where to link next message
 		 treeLinks--;
 	      }
@@ -429,7 +433,8 @@ void linkArea(s_area *area)
 	   for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++) {
 
 	      if( ((linksptr->replyToPos) != (crepl->replyToPos)) ||
-		   memcmp(linksptr->replies, crepl->replies, sizeof(UMSGID) * MAX_REPLY)) {
+	           ((linksptr->replyNextPos) != (crepl->replyNextPos) && (area->msgbType & MSGTYPE_JAM)) ||
+		   memcmp(linksptr->replies, crepl->replies, sizeof(UMSGID) * ((area->msgbType & MSGTYPE_SQUISH) ? MAX_REPLY : 1))) {
 
 		 hmsg  = MsgOpenMsg(harea, MOPEN_RW, i);
 
@@ -440,6 +445,7 @@ void linkArea(s_area *area)
 
 		    memcpy(xmsg.replies, crepl->replies, sizeof(UMSGID) * MAX_REPLY);
 		    xmsg.replyto = crepl->replyToPos;
+		    xmsg.replynext = crepl->replyNextPos;
 		    MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
 
 		    MsgCloseMsg(hmsg);

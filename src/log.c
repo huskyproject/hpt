@@ -34,7 +34,6 @@
 #include <string.h>
 #include <stdarg.h>
 
-#include <log.h>
 #include <global.h>
 #include <fcommon.h>
 

@@ -91,7 +91,8 @@ static s_msginfo *findMsgId(s_msginfo *entries, dword msgsNum, char *msgId)
 			return &(entries[h]);
 		} else {
 			/* Collision, resolve it */
-			h += d; 
+			h++; 
+			d++;
 		};
 	};
 	return NULL;
@@ -121,6 +122,7 @@ int linkArea(s_area *area, int netMail)
    dword msgsNum, hashNums, i, ctlen, cctlen;
    byte *ctl;
    char *msgId;
+   dword *num2hidx;
 
    s_msginfo *curr;
 
@@ -153,6 +155,7 @@ int linkArea(s_area *area, int netMail)
       hashNums = msgsNum + msgsNum / 10 + 10;
       msgs = safe_malloc(hashNums * sizeof(s_msginfo));
       memset(msgs, '\0', hashNums * sizeof(s_msginfo));
+      num2hidx = safe_malloc(msgsNum * sizeof(*num2hidx));
       ctl = (byte *) safe_malloc(ctlen = 1); /* Some libs don't accept relloc(NULL, ..
 					 * So let it be initalized
 					 */
@@ -218,6 +221,7 @@ int linkArea(s_area *area, int netMail)
          curr -> msgPos  = MsgMsgnToUid(harea, i);
 	 curr -> freeReply = 0;
          curr -> relinked = 0;
+         num2hidx[i] = (curr-msgs)/sizeof(*msgs);
       }
       /* Pass 2nd : going from the last msg to first search for reply links and
         build relations*/
@@ -228,7 +232,15 @@ int linkArea(s_area *area, int netMail)
 		      if (curr -> freeReply < MAX_REPLY) {
 			      if (curr -> xmsg -> replies[curr -> freeReply] != msgs[i].msgPos) {
 				      curr -> xmsg -> replies[curr -> freeReply] = msgs[i].msgPos;
-				      curr -> relinked = 1;
+				      if ((area->msgbType & MSGTYPE_SQUISH) || curr->freeReply == 0)
+					    curr -> relinked = 1;
+			      }
+			      if (curr -> freeReply && (area->msgbType & MSGTYPE_JAM)) {
+				  int replyprev = num2hidx[MsgUidToMsgn(harea, curr -> xmsg -> replies[curr -> freeReply - 1], UID_EXACT)];
+				  if (msgs[replyprev].xmsg -> replynext != curr -> msgPos) {
+				      msgs[replyprev].xmsg -> replynext = curr -> msgPos;
+				      msgs[replyprev].relinked = 1;
+				  }
 			      }
 			      (curr -> freeReply)++;
 			      if (msgs[i].xmsg -> replyto != curr -> msgPos) {
@@ -257,6 +269,7 @@ int linkArea(s_area *area, int netMail)
       }
       /* close everything, free all allocated memory */
       nfree(msgs);
+      nfree(num2hidx);
       nfree(ctl);
       MsgCloseArea(harea);
    } else {

@@ -17,7 +17,7 @@ CFLAGS =-Zomf -I../h -I../.. -c -O3 $(DEBUG) -funsigned-char -Wall -Wno-char-sub
 LFLAGS =-Zomf -Zcrtdll -Zlinker /PM:VIO $(DEBUG)
 CDEFS  =-DOS2=2
 CC     =gcc
-EXENAMEFLAG=-o
+EXENAMEFLAG=-o 
 SRC_DIR=../src/
 LIBS   =../../fidoconf/fconfemo.lib ../../smapi/smapiemo.lib
 PERLLIBS=\

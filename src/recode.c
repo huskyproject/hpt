@@ -1,10 +1,9 @@
-#include <fcommon.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <recode.h>
-#include <log.h>
 #include <global.h>
+#include <fcommon.h>
+#include <recode.h>
 #include <fidoconf/common.h>
 
 CHAR *intab  = NULL;

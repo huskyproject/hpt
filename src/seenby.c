@@ -28,12 +28,12 @@
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *****************************************************************************/
-#include <seenby.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <fcommon.h>
 #include <global.h>
+#include <seenby.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/common.h>
 

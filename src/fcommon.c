@@ -29,7 +29,6 @@
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *****************************************************************************/
 #include <time.h>
-#include <fcommon.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -68,6 +67,7 @@
 #endif
 
 #include <global.h>
+#include <fcommon.h>
 #include <recode.h>
 #include <dupe.h>
 #include <fidoconf/fidoconf.h>
