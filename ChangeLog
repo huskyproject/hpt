@@ -1,3 +1,8 @@
+2002-05-22 Wednesday 13:20  mche
+
+	* src/areafix.c (1.306): new version of DelLinkFromString() moved
+	from hpt to fidoconfig for common use in hpt & htick
+
 2002-05-21 Tuesday 14:41  mche
 
 	* make/makeperl.mvc (1.9): fix compilation
