@@ -1,6 +1,7 @@
 
 hpt 0.26
 --------
+----- cvs ci ------
 Sun Jan 17 21:46:12 CET 1999
 - added freebsd things and a rewrite of recoding
 - fixed a bug with wrong PATH-creation
