@@ -7,6 +7,7 @@ tobi:
 * Changed the filename generation algorithm to use the functions from
   fidoconfig. This fixes problems with multi-zone links where the
   link could reject his second arcmail bundle due to duplicate filename.
+* Pktfile and Packfile are now logged. This eases tracing of lost echomail.
 
 ----- cvs ci ------
 Sat Apr 15 10:47:38 NOVST 2000
