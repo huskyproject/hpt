@@ -1,3 +1,16 @@
+2005-03-26 Saturday 10:40  val_khokhlov
+
+	* src/: hptafix.c (1.21), perl.c (1.87), toss.c (1.543):
+	on_robotmsg perl hook (patch by abraham shapirus)
+
+2005-03-26 Saturday 10:40  val_khokhlov
+
+	* h/hptperl.h (1.19): on_robotmsg perl hook
+
+2005-03-26 Saturday 10:07  val_khokhlov
+
+	* src/scanarea.c (1.104): fix order of %rescanned messages
+
 2005-03-16 Wednesday 22:34  val_khokhlov
 
 	* doc/hpt.texi (1.161): fix cross-refs in previous patch
