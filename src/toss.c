@@ -635,7 +635,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 {
    FILE *f;
-   char *fileName;
+   char *fileName, *squishFileName;
    char buff[255], myaddr[25], hisaddr[25];
    int i=0;
    s_link *creatingLink;
@@ -643,15 +643,18 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    char *description=NULL;
    char *NewAutoCreate=NULL;
 
+   squishFileName = (char *) malloc(strlen(c_area)+1);
+   strcpy(squishFileName, c_area);
+
    //translating name of the area to lowercase, much better imho.
-   while (*c_area != '\0') {
-      *c_area=tolower(*c_area);
-      if ((*c_area=='/') || (*c_area=='\\')) *c_area = '_'; // convert any path delimiters to _
-      c_area++;
+   while (*squishFileName != '\0') {
+      *squishFileName=tolower(*squishFileName);
+      if ((*squishFileName=='/') || (*squishFileName=='\\')) *squishFileName = '_'; // convert any path delimiters to _
+      squishFileName++;
       i++;
    }
 
-   while (i>0) {c_area--;i--;};
+   while (i>0) {squishFileName--;i--;};
 
    creatingLink = getLinkFromAddr(*config, pktOrigAddr);
 
@@ -692,7 +695,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    if (stricmp(config->msgBaseDir, "passthrough")!=0) {
 #ifndef MSDOS
    if ((fileName=strstr(NewAutoCreate, "-dosfile "))==NULL)
-     sprintf(buff, "EchoArea %s %s%s -a %s Squish", c_area, config->msgBaseDir, c_area, myaddr);
+     sprintf(buff, "EchoArea %s %s%s -a %s Squish", c_area, config->msgBaseDir, squishFileName, myaddr);
    else {
      sleep(1); // to prevent time from creating equal numbers
      sprintf(buff,"EchoArea %s %s%8lx -a %s Squish", c_area, config->msgBaseDir, time(NULL), myaddr);
@@ -781,6 +784,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr);
    else makeMsgToSysop(c_area, *forwardAddr);
    
+   free(squishFileName);
    
    return 0;
 }

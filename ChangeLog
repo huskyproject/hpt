@@ -1,11 +1,18 @@
 hpt 0.28
 --------
 
+----- cvs ci ------
+Sun May 16 23:54:17 CEST 1999
+mtt:
+* fixed a bug when autocreateing areas like e/lf/e
+  ( i know that i have fixed this already :-) )
+
+----- cvs ci ------
 Sun May  16 20:45:02
 Fedor:
------ cvs ci ------
 + delete lockfile if terminated by SIGINT/SIGTERM (UNIX and OS/2).
 
+----- cvs ci ------
 mtt:
 Tue May 11 19:13:26 CEST 1999
 * if you write to AreaFix all leading space before a command is removed.
