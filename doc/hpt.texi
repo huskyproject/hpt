@@ -2706,7 +2706,8 @@ This statement can only be repeated for different links.
 @code{pause ([on]|off|earea|farea)}
 @item Examples:
 @code{pause}
-@code{pause farea}
+@code{pause earea}
+@code{pause}
 @end table
 
 Stop export echomail, fileechoes or both for this link.
