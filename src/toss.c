@@ -2001,12 +2001,12 @@ void writeStatLog(void) {
         while(fgets(buffer,sizeof(buffer),f)) {
           len = strlen(buffer);
           for (x=0; x!=len; x++) {
-            if (!strnicmp(buffer+x, "netmail: ",9)) {
+            if (!strncasecmp(buffer+x, "netmail: ",9)) {
               /* netmail found */
               statNetmail += atoi(buffer+9);
             }
 
-            if (!strnicmp(buffer+x, "CC: ",4)) {
+            if (!strncasecmp(buffer+x, "CC: ",4)) {
               /* personal echomail (CC) found */
               statCC += atoi(buffer+4);
             }
