@@ -1,3 +1,8 @@
+2002-07-22 Monday 23:27  stas
+
+	* HISTORY (1.1.2.2), src/toss.c (1.417.2.1): Fix remap (replace
+	INTL kludge)
+
 2002-07-15 Monday 22:47  stas
 
 	* src/hpt.c (1.153.2.1): Fix compiler warning (perldone())
