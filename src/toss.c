@@ -2284,9 +2284,9 @@ void arcmail(s_link *tolink) {
 	if (link->pktFile != NULL) {
       
 
-	    if (needUseFileBoxForLink(link)) {
+	    if (needUseFileBoxForLink(config,link)) {
 
-		if (!link->fileBox) link->fileBox = makeFileBoxName (link);
+		if (!link->fileBox) link->fileBox = makeFileBoxName (config,link);
 
 		_createDirectoryTree (link->fileBox);
 

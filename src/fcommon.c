@@ -275,88 +275,6 @@ void cleanEmptyBundles(char *pathName, int npos)
    nfree(tmpfile);
 }
 
-int needUseFileBoxForLink (s_link *link)
-{
-    char limiter=PATH_DELIM;
-    char *bsyFile = NULL;
-    e_bundleFileNameStyle bundleNameStyle = eUndef;
-
-    /* link->useFileBox means:
-     * 0 - unknown, need to check
-     * 1 - don't use
-     * 2 - use box
-     */
-
-    if (link->useFileBox == 1) return 0; // Don't use
-    if (link->useFileBox == 2) return 1; // Use
-
-    // link->useFileBox == 0 -> still don't know
-
-    if (link->fileBox==NULL && config->fileBoxesDir==NULL) {
-	link->useFileBox = 1;
-	return 0;
-    }
-
-    if (link->fileBoxAlways) {
-	link->useFileBox = 2;
-	return 1;
-    }
-
-    // check if can we use outbound
-    xstrcat(&bsyFile, config->outbound);
-
-    // add suffix for other zones
-    if (link->hisAka.zone != config->addr[0].zone && bundleNameStyle != eAmiga) {
-	bsyFile[strlen(bsyFile)-1]='\0';
-	xscatprintf(&bsyFile, ".%03x%c", link->hisAka.zone, limiter);
-    }
-
-    if (link->hisAka.point && bundleNameStyle != eAmiga)
-	xscatprintf(&bsyFile, "%04x%04x.pnt%c",
-		    link->hisAka.net, link->hisAka.node, limiter);
-   
-    _createDirectoryTree(bsyFile); // create directoryTree if necessary
-
-    if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
-    else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
-   
-    if (bundleNameStyle != eAmiga) {
-	if (link->hisAka.point) xscatprintf(&bsyFile, "%08x", link->hisAka.point);
-	else xscatprintf(&bsyFile, "%04x%04x", link->hisAka.net, link->hisAka.node);
-    } else {
-	xscatprintf(&bsyFile, "%u.%u.%u.%u", link->hisAka.zone,
-		    link->hisAka.net, link->hisAka.node, link->hisAka.point);
-    }
-
-    xstrscat(&bsyFile, ".bsy", NULL);
-    
-    if (fexist(bsyFile)) {
-	link->useFileBox = 2;
-    } else {
-	// link is not busy, use outrbound
-	link->useFileBox = 1;
-    }
-
-    nfree (bsyFile);
-
-    return link->useFileBox - 1;
-}
-
-char *makeFileBoxName (s_link *link)
-{
-    char *name=NULL;
-
-    xscatprintf (&name, "%s%d.%d.%d.%d%s%c",
-		 config->fileBoxesDir,
-		 link->hisAka.zone,
-		 link->hisAka.net,
-		 link->hisAka.node,
-		 link->hisAka.point,
-		 (link->echoMailFlavour==hold) ? ".h" : "",
-		 PATH_DELIM);
-    return name;
-}
-
 
 int createTempPktFileName(s_link *link)
 {
@@ -414,8 +332,8 @@ int createTempPktFileName(s_link *link)
     else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
 	
     // fileBoxes support
-    if (needUseFileBoxForLink(link)) {
-	if (!link->fileBox) link->fileBox = makeFileBoxName (link);
+    if (needUseFileBoxForLink(config,link)) {
+	if (!link->fileBox) link->fileBox = makeFileBoxName (config,link);
 	xstrcat(&tmp, link->fileBox);
 	_createDirectoryTree (tmp);
     } else {
@@ -469,7 +387,7 @@ int createTempPktFileName(s_link *link)
 						 link->hisAka.node, link->hisAka.point);
 		}
 
-		if (!needUseFileBoxForLink(link)) cleanEmptyBundles(tmp,npos);
+		if (!needUseFileBoxForLink(config,link)) cleanEmptyBundles(tmp,npos);
 
 		counter = 0;
 		minFreeExt = -1;
