@@ -1,3 +1,11 @@
+2002-05-21 Tuesday 14:41  mche
+
+	* make/makeperl.mvc (1.9): fix compilation
+
+2002-05-21 Tuesday 11:13  mche
+
+	* src/post.c (1.86): fix bug with posting to netmail
+
 2002-05-20 Monday 15:20  pavel.gulchouck
 
 	* src/hpt.c (1.150): fix spelling
