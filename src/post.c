@@ -53,6 +53,8 @@
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
 
+#include <smapi/progprot.h>
+
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
 /* we can't include windows.h for several reasons ... */
 #ifdef __MINGW32__

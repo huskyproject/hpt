@@ -16,6 +16,8 @@
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
 
+#include <smapi/progprot.h>
+
 #include <global.h>
 #include <version.h>
 #include <pkt.h>
