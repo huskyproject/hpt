@@ -49,13 +49,13 @@ all: commonall hpt.1.gz hptlink.1.gz hpttree.1.gz txt2pkt.1.gz
 endif
 
 ifeq ($(SHORTNAMES), 1)
-install: hpt$(EXE) pktinfo$(EXE) txt2pkt$(EXE) hptlink$(EXE) hpttree$(EXE)
+install: hpt$(_EXE) pktinfo$(_EXE) txt2pkt$(_EXE) hptlink$(_EXE) hpttree$(_EXE)
 	$(INSTALL) $(IMOPT) man/hpt.1 $(MANDIR)/man1
 	$(INSTALL) $(IMOPT) man/hptlink.1 $(MANDIR)/man1
 	$(INSTALL) $(IMOPT) man/hpttree.1 $(MANDIR)/man1
 	$(INSTALL) $(IMOPT) man/txt2pkt.1 $(MANDIR)/man1
 else
-install: hpt$(EXE) pktinfo$(EXE) txt2pkt$(EXE) hptlink$(EXE) hpttree$(EXE) hpt.1.gz hptlink.1.gz hpttree.1.gz txt2pkt.1.gz
+install: hpt$(_EXE) pktinfo$(_EXE) txt2pkt$(_EXE) hptlink$(_EXE) hpttree$(_EXE) hpt.1.gz hptlink.1.gz hpttree.1.gz txt2pkt.1.gz
 	-$(MKDIR) $(MKDIROPT) $(MANDIR)
 	-$(MKDIR) $(MKDIROPT) $(MANDIR)/man1
 	$(INSTALL) $(IMOPT) hpt.1.gz $(MANDIR)/man1
@@ -63,11 +63,11 @@ install: hpt$(EXE) pktinfo$(EXE) txt2pkt$(EXE) hptlink$(EXE) hpttree$(EXE) hpt.1
 	$(INSTALL) $(IMOPT) hpttree.1.gz $(MANDIR)/man1
 	$(INSTALL) $(IMOPT) txt2pkt.1.gz $(MANDIR)/man1
 endif
-	$(INSTALL) $(IBOPT) hpt$(EXE) $(BINDIR)
-	$(INSTALL) $(IBOPT) pktinfo$(EXE) $(BINDIR)
-	$(INSTALL) $(IBOPT) txt2pkt$(EXE) $(BINDIR)
-	$(INSTALL) $(IBOPT) hptlink$(EXE) $(BINDIR)
-	$(INSTALL) $(IBOPT) hpttree$(EXE) $(BINDIR)
+	$(INSTALL) $(IBOPT) hpt$(_EXE) $(BINDIR)
+	$(INSTALL) $(IBOPT) pktinfo$(_EXE) $(BINDIR)
+	$(INSTALL) $(IBOPT) txt2pkt$(_EXE) $(BINDIR)
+	$(INSTALL) $(IBOPT) hptlink$(_EXE) $(BINDIR)
+	$(INSTALL) $(IBOPT) hpttree$(_EXE) $(BINDIR)
 
 uninstall:
 	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpt.1
@@ -76,10 +76,10 @@ uninstall:
 	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpt.1.gz 
 	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hptlink.1.gz
 	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpttree.1.gz
-	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)hpt$(EXE)
-	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)pktinfo$(EXE)
-	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)txt2pkt$(EXE)
-	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)hptlink$(EXE)
-	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)hpttree$(EXE)
+	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)hpt$(_EXE)
+	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)pktinfo$(_EXE)
+	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)txt2pkt$(_EXE)
+	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)hptlink$(_EXE)
+	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)hpttree$(_EXE)
 
 
