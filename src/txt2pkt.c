@@ -221,6 +221,11 @@ int main(int argc, char *argv[])
       }
    }
 
+   if (!textBuffer) {
+	    fprintf(stderr,"Text file not specified, exit\n");
+	    exit(EX_NOINPUT);
+   }
+
    config = readConfig(NULL);
    if (NULL == config) {
       fprintf(stderr,"Config not found, exit\n");
