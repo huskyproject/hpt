@@ -1,3 +1,17 @@
+2003-03-09 Sunday 08:52  pgul
+
+	* misc/filter.pl (1.11): Bugfix
+
+2003-03-09 Sunday 04:26  nssoft
+
+	* src/: areafix.c (1.387), carbon.c (1.22), dupe.c (1.78),
+	fcommon.c (1.164), getfree.c (1.27), hpt.c (1.172), hptlink.c
+	(1.50), hpttree.c (1.28), link.c (1.70), perl.c (1.50), pktread.c
+	(1.97), pktwrite.c (1.44), post.c (1.108), query.c (1.96), scan.c
+	(1.186), scanarea.c (1.99), toss.c (1.497), txt2pkt.c (1.49):
+	Change "smapi/compiler.h" and "huskylib/typedefs.h" to
+	"huskylib/compiler.h"
+
 2003-03-03 Monday 08:28  d_sergienko
 
 	* Makefile (1.13): 
