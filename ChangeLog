@@ -1,3 +1,9 @@
+2004-05-07 Friday 18:45  andrew_ladutsko
+
+	* h/hptperl.h (1.17), src/hptafix.c (1.8), src/perl.c (1.76):
+	speedup updating of perl structures: do not update a whole config
+	but a part of it only
+
 2004-03-20 Saturday 18:35  andrew_ladutsko
 
 	* src/link.c (1.75): fixed misprint (thanks to Michael Dukelsky,
