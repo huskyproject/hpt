@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /Ob2 /I ".." /I ".\h" /I "D:\compilation\perl\lib\CORE" /D "NDEBUG" /D "_MBCS" /D "__NT__" /D "NO_STRICT" /D "HAVE_DES_FCRYPT" /D "PERL_IMPLICIT_CONTEXT" /D "PERL_IMPLICIT_SYS" /D "_MAKE_DLL" /D "WINNT" /D "WIN32" /D "_CONSOLE" /D "INTEL" /FR /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /Ob2 /I ".." /I ".\h" /I "D:\compilation\perl\lib\CORE" /D "NDEBUG" /D "_MBCS" /D "NO_STRICT" /D "HAVE_DES_FCRYPT" /D "PERL_IMPLICIT_CONTEXT" /D "PERL_IMPLICIT_SYS" /D "_MAKE_DLL" /D "__NT__" /D "WINNT" /D "WIN32" /D "_CONSOLE" /FR /FD /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x419 /d "NDEBUG"
 # ADD RSC /l 0x419 /d "NDEBUG"
@@ -68,7 +68,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /Zi /Od /I ".." /I ".\h" /I "D:\compilation\perl\lib\CORE" /D "DO_PERL" /D "PERL_MSVCRT_READFIX" /D "NO_STRICT" /D "HAVE_DES_FCRYPT" /D "PERL_IMPLICIT_CONTEXT" /D "PERL_IMPLICIT_SYS" /D "_MAKE_DLL" /D "__NT__" /D "WINNT" /D "WIN32" /D "_CONSOLE" /D "INTEL" /FR /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /Zi /Od /I ".." /I ".\h" /I "D:\compilation\perl\lib\CORE" /D "DO_PERL" /D "PERL_MSVCRT_READFIX" /D "NO_STRICT" /D "HAVE_DES_FCRYPT" /D "PERL_IMPLICIT_CONTEXT" /D "PERL_IMPLICIT_SYS" /D "_MAKE_DLL" /D "__NT__" /D "WINNT" /D "WIN32" /D "_CONSOLE" /FR /FD /GZ /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x419 /d "_DEBUG"
 # ADD RSC /l 0x419 /d "_DEBUG"

@@ -38,6 +38,10 @@
 extern "C" {
 #endif
 
+#ifdef    HAS_MKTIME		
+#   undef HAS_MKTIME		
+#endif
+
 #include <EXTERN.h>
 #include <perl.h>
 #ifdef _MSC_VER
