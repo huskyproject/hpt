@@ -1,3 +1,7 @@
+2003-03-11 Tuesday 21:22  d_sergienko
+
+	* Makefile (1.14): fix linking
+
 2003-03-09 Sunday 08:52  pgul
 
 	* misc/filter.pl (1.11): Bugfix
