@@ -86,7 +86,7 @@ int useSubj = 1;
 int useReplyId = 1;
 int loglevel = 10;
 int linkNew = 0;
-char *version = "1.5";
+char *version = "1.6";
 HAREA harea;
 int maxreply;
 
@@ -588,6 +588,7 @@ int main(int argc, char **argv) {
    int nareas=0;
    int found;
    FILE *f;
+   s_area *area;
 
    outlog=stderr;
 
@@ -672,27 +673,42 @@ int main(int argc, char **argv) {
 	found=0;
 
 	// EchoAreas
-	for (i=0; i < cfg->echoAreaCount && !found; i++) {
-	   if (stricmp(cfg->echoAreas[i].areaName, argareas[j])==0){
-	      linkArea(&(cfg->echoAreas[i]));
-	      found++;
-	   }
+	for (i=0, area=cfg->echoAreas;
+	     i < cfg->echoAreaCount && !found;
+	     i++, area++) {
+	    if (stricmp(area->areaName, argareas[j])==0){
+		if (!area->scn) {
+		    linkArea(area);
+		    area->scn=1;
+		}
+		found++;
+	    }
 	}
 
 	// Local Areas
-	for (i=0; i < cfg->localAreaCount && !found; i++) {
-	   if (stricmp(cfg->localAreas[i].areaName, argareas[j])==0){
-	      linkArea(&(cfg->localAreas[i]));
-	      found++;
-	   }
+	for (i=0, area=cfg->localAreas;
+	     i < cfg->localAreaCount && !found;
+	     i++, area++) {
+	    if (stricmp(area->areaName, argareas[j])==0){
+		if (!area->scn) {
+		    linkArea(area);
+		    area->scn=1;
+		}
+		found++;
+	    }
 	}
 
 	// NetMail areas
-	for (i=0; i < cfg->netMailAreaCount && !found; i++) {
-	   if (stricmp(cfg->netMailAreas[i].areaName, argareas[j])==0){
-	      linkArea(&(cfg->netMailAreas[i]));
-	      found++;
-	   }
+	for (i=0, area=cfg->netMailAreas;
+	     i < cfg->netMailAreaCount && !found;
+	     i++, area++) {
+	    if (stricmp(area->areaName, argareas[j])==0){
+		if (!area->scn) {
+		    linkArea(area);
+		    area->scn=1;
+		}
+		found++;
+	    }
 	}
 
 	if (loglevel>0 && !found) fprintf(outlog, "Couldn't find area \"%s\"\n", argareas[j]);
@@ -715,26 +731,41 @@ int main(int argc, char **argv) {
 
 	       found=0;
 	       // EchoAreas
-	       for (i=0; i < cfg->echoAreaCount && !found; i++) {
-		  if (stricmp(cfg->echoAreas[i].areaName, line)==0){
-		     linkArea(&(cfg->echoAreas[i]));
-		     found++;
-		  }
+	       for (i=0, area=cfg->echoAreas;
+		    i < cfg->echoAreaCount && !found;
+		    i++, area++) {
+		   if (stricmp(area->areaName, line)==0){
+		       if (!area->scn) {
+			   linkArea(area);
+			   area->scn=1;
+		       }
+		       found++;
+		   }
 	       }
 	       // Local Areas
-	       for (i=0; i < cfg->localAreaCount && !found; i++) {
-		  if (stricmp(cfg->localAreas[i].areaName, line)==0){
-		     linkArea(&(cfg->localAreas[i]));
-		     found++;
-		  }
+	       for (i=0, area=cfg->localAreas;
+		    i < cfg->localAreaCount && !found;
+		    i++, area++) {
+		   if (stricmp(area->areaName, line)==0){
+		       if (!area->scn) {
+			   linkArea(area);
+			   area->scn=1;
+		       }
+		       found++;
+		   }
 	       }
 
 	       // NetMail areas
-	       for (i=0; i < cfg->netMailAreaCount && !found; i++) {
-		  if (stricmp(cfg->netMailAreas[i].areaName, line)==0){
-		     linkArea(&(cfg->netMailAreas[i]));
-		     found++;
-		  }
+	       for (i=0, area=cfg->netMailAreas;
+		    i < cfg->netMailAreaCount && !found;
+		    i++, area++) {
+		   if (stricmp(area->areaName, line)==0){
+		       if (!area->scn) {
+			   linkArea(area);
+			   area->scn=1;
+		       }
+		       found++;
+		   }
 	       }
 
 	       if (loglevel>0 && !found && strlen(line)) fprintf(outlog, "Couldn't find area \"%s\"\n", line);

@@ -1,3 +1,7 @@
+Tue Jun  5 15:50:43 MSD 2001
+
+	* ignore repeating areas in hptlink
+
 2001-06-03 Sunday 12:45  tobi
 
 	* h/date.h (1.180): date.h has been replaced by cvsdate.h, which is
