@@ -272,9 +272,8 @@ int createTempPktFileName(s_link *link)
     time_t tr;
     char *wday;
     struct tm *tp;
-	//char *ptr;
 
-	int i;//, npos;
+	int i, npos;
 	struct stat stbuf;
 	static char *ext3 = "0123456789abcdefghijklmnopqrstuvwxyz";
 	int numExt = strlen(ext3);
@@ -341,7 +340,7 @@ int createTempPktFileName(s_link *link)
 		}
 	}
 	
-	//npos = strlen(tmp); // for cleanEmptyBundles()
+	npos = strlen(tmp); // for cleanEmptyBundles()
 	
 	/* bundle file name */
 	switch ( bundleNameStyle ) {
@@ -366,7 +365,7 @@ int createTempPktFileName(s_link *link)
 						 link->hisAka.node, link->hisAka.point);
 		}
 
-		//cleanEmptyBundles(tmp, npos);
+		cleanEmptyBundles(tmp, npos);
 
 		counter = 0;
 		minFreeExt = -1;
