@@ -139,12 +139,12 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
     nfree(msgbFileName);
     if (creatingLink->LinkGrp) {
         if (hpt_stristr(newAC, " -g ")==NULL)
-            xscatprintf(&newAC, " -g %s", creatingLink->LinkGrp);
+            xscatprintf(&buff, " -g %s", creatingLink->LinkGrp);
     }
     if (IsAreaAvailable(c_area,creatingLink->forwardRequestFile,&desc,1)==1) {
         if (desc) {
             if (hpt_stristr(newAC, " -d ")==NULL)
-                xscatprintf(&newAC, " -d \"%s\"", desc);
+                xscatprintf(&buff, " -d \"%s\"", desc);
             nfree(desc);
         }
     }
