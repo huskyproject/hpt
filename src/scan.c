@@ -367,11 +367,13 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    if ((xmsg->attr & MSGXX2)==MSGXX2 ||
 	   ((xmsg->attr & MSGHOLD)==MSGHOLD &&
 		(xmsg->attr & MSGCRASH)==MSGCRASH)) prio = DIRECT; // XX2 or Crash+Hold
-   if (msg.text) flags = (char *) GetCtrlToken(msg.text,(byte *)"FLAGS");
-   if (flags) {
-	   if (strstr(flags,"DIR")) prio = DIRECT;
-	   if (strstr(flags,"IMM")) prio = IMMEDIATE; // most priority
-	   nfree(flags);
+   if (msg.text) {
+	   flags = (char *) GetCtrlToken(msg.text,(byte *)"FLAGS");
+	   if (flags) {
+		   if (strstr(flags,"DIR")!=NULL) prio = DIRECT;
+		   if (strstr(flags,"IMM")!=NULL) prio = IMMEDIATE; // most priority
+		   nfree(flags);
+	   }
    }
 
    if ((xmsg->attr & MSGFILE) == MSGFILE) {

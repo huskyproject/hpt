@@ -3,7 +3,9 @@ hpt 0.9.8 (development version)
 
 ----- cvs ci ------
 Thu Apr 12 12:12:34 NOVST 2001
-max (patch from kees):
+max:
+* use current smapi! (fixed "direct" & "immediate" msg packing)
+patch from kees:
 * added CarbonRule, CarbonGroups, CarbonFromArea
 * changed CarbonText: skip kludges
 
