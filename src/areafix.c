@@ -467,7 +467,7 @@ char *available(s_link *link) {
     FILE *f;
     int j=0, found;
     unsigned int k, rc;
-    char *report = NULL, *line, *token, *running, linkAka[25];
+    char *report = NULL, *line, *token, *running, linkAka[SIZE_aka2str];
     s_link *uplink=NULL;
     ps_arealist al;
 
@@ -1410,7 +1410,7 @@ char *resume_link(s_link *link)
 
 char *info_link(s_link *link)
 {
-    char *report=NULL, *ptr, linkAka[25];
+    char *report=NULL, *ptr, linkAka[SIZE_aka2str];
     char hisAddr[]="Your address: ";
     char ourAddr[]="AKA used here: ";
     char Arch[]="Compression: ";
