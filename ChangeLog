@@ -2,6 +2,10 @@ hpt 0.27
 --------
 
 ----- cvs ci ------
+Thu Mar  4 12:13:49 CET 1999
+- fixed a bug in processDir, when no pkt files are recognized.
+
+----- cvs ci ------
 Wed Mar  3 23:47:30 CET 1999
 - applied Max areafix patch
 + new afix commandline option
