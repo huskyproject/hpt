@@ -644,8 +644,8 @@ int areaIsAvailable(char *areaName, char *fileName, char **desc, int retd) {
 						}
 						xstrcat(&(*desc), running);
 #ifdef FC_MAX_AREADESC_LEN
-                                                if (strlen(desc) > FC_MAX_AREADESC_LEN)
-                                                         desc[FC_MAX_AREADESC_LEN] = '\0';
+                                                if (strlen(*desc) > FC_MAX_AREADESC_LEN)
+                                                         (*desc)[FC_MAX_AREADESC_LEN] = '\0';
 #endif
 					}
 				}
