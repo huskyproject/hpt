@@ -887,7 +887,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
    > 1 if there was a carbon move or carbon delete*/
 int carbonCopy(s_message *msg, s_area *echo)
 {
-	int i, rc = 0;
+	int i, rc = 0, cmp = 0;
 	char *kludge, *str=NULL;
 	s_area *area;
 	
@@ -921,12 +921,12 @@ int carbonCopy(s_message *msg, s_area *echo)
 			break;
 		case 4:	str=hpt_stristr(msg->text+strlen(area->areaName)+6,config->carbons[i].str);
 			break;
-		case 5:	str=(char*) addrComp(msg->origAddr, config->carbons[i].addr);
+		case 5:	if (addrComp(msg->origAddr, config->carbons[i].addr)==0) cmp = 1;
 			break;
 
 		} /* end switch*/
 			
-		if (str) {
+		if (str || cmp) {
 			/* Set value: 1 if copy 3 if move */
 			rc |= config->carbons[i].move ? 3 : 1;
 			
@@ -939,7 +939,7 @@ int carbonCopy(s_message *msg, s_area *echo)
 			    }
 			}
 			if (config->carbonAndQuit) return rc;
-			str = NULL;
+			str = NULL; cmp = 0;
 		}
 		
 	} /* end for */

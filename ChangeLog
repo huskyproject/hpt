@@ -2,6 +2,11 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Mon Jun  5 11:04:32 NOVST 2000
+max:
+* fixed carbonAddr processing
+
+----- cvs ci ------
 Sun Jun  4 20:28:00 NOVST 2000
 Nestyurkin Nikolay:
 * added txt2pkt.exe & debug switch to makefile.wcw
