@@ -7,6 +7,11 @@ max:
 * fixed double posting in some cases
 
 ----- cvs ci ------
+Tue Apr  4 12:51:02 MSD 2000
+max (patch from Serguei Revtov):
+* createAreasCase & areasFileNameCase tokens
+
+----- cvs ci ------
 Sun Apr  2 11:04:29 NOVST 2000
 max:
 * fixing recoding in post.c when posting to netmailArea

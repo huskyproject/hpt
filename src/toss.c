@@ -720,12 +720,19 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
    squishFileName = (char *) malloc(strlen(c_area)+1);
    strcpy(squishFileName, c_area);
-   
+
+   if (config->createAreasCase == eUpper) {
+      for (fileName = c_area; *fileName; fileName++) *fileName=toupper(*fileName);
+   } else {
+      for (fileName = c_area; *fileName; fileName++) *fileName=tolower(*fileName);
+   }
+
    fileName = squishFileName;
 
-   //translating name of the area to lowercase, much better imho.
+   //translating name of the area to lowercase/uppercase
    while (*fileName != '\0') {
-      *fileName=tolower(*fileName);
+      if (config->areasFileNameCase == eUpper) *fileName=toupper(*fileName);
+         else *fileName=tolower(*fileName);
       if ((*fileName=='/') || (*fileName=='\\')) *fileName = '_'; // convert any path delimiters to _
       fileName++;
    }
