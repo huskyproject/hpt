@@ -156,7 +156,8 @@ int createTempPktFileName(s_link *link)
 
 
    // There is a problem here: Since we use the tmpOutbound fileName for duplicate checking, links with different zones who does not
-   // have problems with duplicate pfileName´s increment the counter. Has anybody understand that? :-)
+   // have problems with duplicate pfileName´s increment the counter. We can run out of counters without using them.
+   // Has anybody understand that? :-)
    // This is no big problem, but a big system with many links and many zones may encounter problems
 
    do {

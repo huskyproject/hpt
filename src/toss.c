@@ -1120,7 +1120,7 @@ void writeTossStatsToLog(void) {
 
 void arcmail() {
         int i;
-        char cmd[256], logmsg[256], *pkt;
+        char logmsg[256], cmd[256], *pkt;
         int cmdexit;
         FILE *flo;
 
@@ -1136,16 +1136,15 @@ void arcmail() {
                                         fprintf(flo, "^%s\n", config->links[i].packFile);
                                 else {
                                         // there is no packer defined -> put pktFile into flo
-                                        pkt = (char*) malloc(strlen(config->outbound)+1+12);
+                                        pkt = (char*) malloc(strlen(config->outbound)+1+4+12);
                                         config->links[i].pktFile += strlen(config->tempOutbound);
                                         strcpy(pkt, config->outbound);
                                         strcat(pkt, config->links[i].pktFile);
                                         config->links[i].pktFile -= strlen(config->tempOutbound);
                                         fprintf(flo, "^%s\n", pkt);
-//                                        sprintf(cmd,"mv %s %s",config->links[i].pktFile,config->outbound);
-//                                        cmdexit = system(cmd);
-                                        rename(config->links[i].pktFile, config->outbound);
+                                        rename(config->links[i].pktFile, pkt);
                                         free(pkt);
+                                                                      
                                 }
                                 fclose(flo);
                                 free(config->links[i].floFile); config->links[i].floFile=NULL;

@@ -68,12 +68,12 @@ int main()
    if (pkt != NULL) {
       msg.origAddr.zone  = 2;
       msg.origAddr.net   = 2433;
-      msg.origAddr.node  = 1245;
-      msg.origAddr.point = 100;
+      msg.origAddr.node  = 1247;
+      msg.origAddr.point = 0;
 
       msg.destAddr.zone  = 2;
-      msg.destAddr.net   = 2433;
-      msg.destAddr.node  = 1247;
+      msg.destAddr.net   = 2432;
+      msg.destAddr.node  = 605;
       msg.destAddr.point = 0;
 
       msg.attributes = 1;
