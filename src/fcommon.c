@@ -72,10 +72,24 @@ e_prio cvtFlavour2Prio(e_flavour flavour)
    return NORMAL;
 }
 
+int fileNameAlreadyUsed(char *pktName, char *packName) {
+   int i;
+
+   for (i=0; i < config->linkCount; i++) {
+      if ((config->links[i].pktFile != NULL) && (pktName != NULL))
+         if ((stricmp(pktName, config->links[i].pktFile)==0)) return 1;
+      if ((config->links[i].packFile != NULL) && (packName != NULL))
+         if ((stricmp(packName, config->links[i].packFile)==0)) return 1;
+   }
+
+   return 0;
+}
+
 int createTempPktFileName(s_link *link)
 {
    char   *fileName = (char *) malloc(strlen(config->tempOutbound)+1+12);
    char   *pfileName = (char *) malloc(strlen(config->outbound)+1+12+13);
+   char   *tmpPFileName = (char *) malloc(strlen(config->outbound)+1+12+13);
    time_t aTime = time(NULL);  // get actual time
    int counter = 0;
    char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
@@ -88,6 +102,8 @@ int createTempPktFileName(s_link *link)
    time_t tr;
    char *wday;
    struct tm *tp;
+
+   
    tr=time(NULL);
    tp=localtime(&tr);
    
@@ -100,17 +116,25 @@ int createTempPktFileName(s_link *link)
 	   sprintf(fileName, "%s%06lx%02x.pkt", config->tempOutbound, aTime, counter);
 
 	   if ( link->hisAka.point == 0 )
-		   sprintf(pfileName,"%s%06lx%02x.%s0",config->outbound,aTime,counter,wday);
+		   sprintf(tmpPFileName,"%s%06lx%02x.%s",config->outbound,aTime,counter,wday);
 	   else
-		   sprintf(pfileName, "%s%04x%04x.pnt%c%06lx%02x.%s0", config->outbound, link->hisAka.net, link->hisAka.node, limiter, aTime, counter, wday);
+		   sprintf(tmpPFileName, "%s%04x%04x.pnt%c%06lx%02x.%s", config->outbound, link->hisAka.net, link->hisAka.node, limiter, aTime, counter, wday);
 	   counter++;
 
-   } while (fexist(fileName) && (counter<=256));
+   } while ((fexist(fileName) || fileNameAlreadyUsed(fileName, NULL)) && (counter<=255));
 
-   if (!fexist(fileName)) {
+   counter = 0;
+   do {
+      sprintf(pfileName, "%s%0x", tmpPFileName, counter);
+      counter++;
+   } while ((fexist(pfileName) || fileNameAlreadyUsed(NULL, pfileName)) && (counter <= 15));
+
+   free(tmpPFileName);
+
+   if ((!fexist(fileName)) && (!fexist(pfileName))) {
 	   link->packFile = pfileName;
-	   link->pktFile = fileName;
-	   return 0;
+           link->pktFile = fileName;
+           return 0;
    }
    else {
       free(fileName);

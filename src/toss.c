@@ -508,7 +508,10 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    }
    
    //write new line in config file
-   sprintf(buff,"EchoArea %s %s%s -a %s Squish %s ", c_area, config->msgBaseDir, c_area, myaddr, hisaddr);
+   if (stricmp(config->msgBaseDir, "passthrough")==0)
+      sprintf(buff, "EchoArea %s %s%s -a %s Squish %s ", c_area, config->msgBaseDir, c_area, myaddr, hisaddr);
+   else
+      sprintf(buff, "EchoArea %s Passthrough -a %s %s ", c_area, myaddr, hisaddr);
    if ((config->autoCreateDefaults != NULL) &&
        (strlen(buff)+strlen(config->autoCreateDefaults))<255) {
       strcat(buff, config->autoCreateDefaults);
@@ -760,7 +763,8 @@ int processPkt(char *fileName, e_tossSecurity sec)
             } // pwdOk != 0
          } // link != NULL
          else {
-            sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i",
+            if (msg->netMail ==1) processMsg(msg, header->origAddr);
+            sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
                     fileName, header->origAddr.zone, header->origAddr.net,
                     header->origAddr.node, header->origAddr.point);
             writeLogEntry(log, '9', buff);
@@ -901,6 +905,12 @@ void toss()
 {
    int i;
    FILE *f;
+
+/*   createTempPktFileName(&config->links[0]);
+   createTempPktFileName(&config->links[1]);
+   printf("%s %s\n", config->links[0].pktFile, config->links[1].pktFile);
+   printf("%s %s\n", config->links[0].packFile, config->links[1].packFile);
+   exit(0);*/
 
    // load recoding tables if needed
    if (config->intab != NULL) getctab(&intab, config->intab);
