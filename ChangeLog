@@ -1,3 +1,8 @@
+2005-02-09 Wednesday 16:58  val_khokhlov
+
+	* src/pktread.c (1.105): fix a bug with incorrect pkt processing
+	when datetime is shorter than 20 chars
+
 2005-02-03 Thursday 19:01  val_khokhlov
 
 	* misc/: areafix.866 (1.8), areafix.hlp (1.23): update help files
