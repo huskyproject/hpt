@@ -71,7 +71,7 @@ char *strtolower(char *string) {
   l=strlen(string);
   tmp=(char *) malloc (l+1);
   for (cont=0;cont<=l;cont++)
-    tmp[cont]=tolower(string[cont]);
+    tmp[cont]=(char)tolower(string[cont]);
   
   return tmp;
 }
@@ -122,7 +122,8 @@ char *createDupeFileName(s_area *area) {
 
 int compareEntriesBlank(const void *e1, const void *e2) {
    int rc=1;
-  return rc;
+   unused(e1); unused(e2);
+   return rc;
 }
 
 
@@ -294,7 +295,7 @@ void doReading(FILE *f, s_dupeMemory *mem) {
           case hashDupes:
                enhash = (s_hashDupeEntry*) malloc(sizeof(s_hashDupeEntry));
                fread(enhash, sizeof(s_hashDupeEntry), 1, f);
-               tree_add(&(mem->avlTree), &compareEntriesBlank, (char *) enhash, &deleteEntry);
+               tree_add(&(mem->avlTree), compareEntriesBlank, (char *) enhash, deleteEntry);
      	       break;
 
           case hashDupesWmsgid:
@@ -305,7 +306,7 @@ void doReading(FILE *f, s_dupeMemory *mem) {
                   fread((UCHAR*)enhashM->msgid, length, 1, f);     
                   enhashM->msgid[length]='\0';
                } else enhashM->msgid = NULL;
-               tree_add(&(mem->avlTree), &compareEntriesBlank, (char *) enhashM, &deleteEntry);
+               tree_add(&(mem->avlTree), compareEntriesBlank, (char *) enhashM, deleteEntry);
  	       break;
 
           case textDupes:
@@ -335,13 +336,13 @@ void doReading(FILE *f, s_dupeMemory *mem) {
                   entxt->msgid[length]='\0';
 	       } else entxt->msgid = NULL;
 
-               tree_add(&(mem->avlTree), &compareEntriesBlank, (char *) entxt, &deleteEntry);
+               tree_add(&(mem->avlTree), compareEntriesBlank, (char *) entxt, deleteEntry);
  	       break;
 
           case commonDupeBase:
                enhash = (s_hashDupeEntry*) malloc(sizeof(s_hashDupeEntry));
                fread(enhash, sizeof(s_hashDupeEntry), 1, f);
-               tree_add(&(mem->avlTree), &compareEntriesBlank, (char *) enhash, &deleteEntry);
+               tree_add(&(mem->avlTree), compareEntriesBlank, (char *) enhash, deleteEntry);
                break;
        }
    
@@ -509,7 +510,7 @@ int dupeDetection(s_area *area, const s_message msg) {
 
            if (tree_srchall(&(Dupes->avlTree), &compareEntries, (char *) enhash)) {
               // add to Dupes
-              tree_add(&(Dupes->avlTree), &compareEntriesBlank, (char *) enhash, &deleteEntry);
+              tree_add(&(Dupes->avlTree), compareEntriesBlank, (char *) enhash, deleteEntry);
               return 1;
            }
            // it is a dupe do nothing but return 0; and free dupe entry
@@ -534,7 +535,7 @@ int dupeDetection(s_area *area, const s_message msg) {
            free(str1);
 
            if (tree_srchall(&(Dupes->avlTree), &compareEntries, (char *) enhashM)) {
-              tree_add(&(Dupes->avlTree), &compareEntriesBlank, (char *) enhashM, &deleteEntry);
+              tree_add(&(Dupes->avlTree), compareEntriesBlank, (char *) enhashM, deleteEntry);
               return 1;
            }
            else {
@@ -557,7 +558,7 @@ int dupeDetection(s_area *area, const s_message msg) {
            free(str);
 
            if (tree_srchall(&(Dupes->avlTree), &compareEntries, (char *) entxt)) {
-              tree_add(&(Dupes->avlTree), &compareEntriesBlank, (char *) entxt, &deleteEntry);
+              tree_add(&(Dupes->avlTree), compareEntriesBlank, (char *) entxt, deleteEntry);
               return 1;
            }
            else {
@@ -580,7 +581,7 @@ int dupeDetection(s_area *area, const s_message msg) {
            free(str1);
 
            if (tree_srchall(&(CommonDupes->avlTree), &compareEntries, (char *) enhash)) {
-              tree_add(&(CommonDupes->avlTree), &compareEntriesBlank, (char *) enhash, &deleteEntry);
+              tree_add(&(CommonDupes->avlTree), compareEntriesBlank, (char *) enhash, deleteEntry);
               return 1;
            }
            else {
