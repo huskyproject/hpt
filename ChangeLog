@@ -1,3 +1,20 @@
+2004-08-30 Monday 13:51  val_khokhlov
+
+	* h/hptperl.h (1.18), src/perl.c (1.82), src/toss.c (1.536):
+	filter2() perl hook [experimental] - called just before dupe
+	detection; return non-empty string to move message to dupearea with
+	that reason
+
+2004-08-30 Monday 11:16  val_khokhlov
+
+	* src/: perl.c (1.81), toss.c (1.535): fix: enforce attributes set
+	by perl filter() hook, don't change'em otherwise
+
+2004-08-30 Monday 10:58  val_khokhlov
+
+	* src/scan.c (1.204): fix: messages killed from perl scan() hook
+	actually might not be killed
+
 2004-08-03 Tuesday 18:23  pgul
 
 	* src/link.c (1.76): Some bugs fixed
