@@ -1127,6 +1127,9 @@ void perl_setvars(void) {
       VK_ADD_HASH_int(hv2, sv, "level", config->links[i]->level);
       VK_ADD_HASH_int(hv2, sv, "advAfix", config->links[i]->advancedAreafix);
       VK_ADD_HASH_int(hv2, sv, "echoLimit", config->links[i]->afixEchoLimit);
+      VK_ADD_HASH_int(hv2, sv, "forwreqs", config->links[i]->forwardRequests);
+      VK_ADD_HASH_str(hv2, sv, "forwreqsFile", config->links[i]->forwardRequestFile);
+      VK_ADD_HASH_int(hv2, sv, "forwreqsPrio", config->links[i]->forwardAreaPriority);
       if (config->links[i]->AccessGrp) {
         char *grplist = NULL;
         for (j = 0; j < config->links[i]->numAccessGrp; j++)
