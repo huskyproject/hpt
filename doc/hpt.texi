@@ -2741,6 +2741,7 @@ This statement can be repeated.
 @end table
 
 This statement set link(s) to readonly for specified ares(s).
+If you write node address do it *without* trailing .0!
 
 This statement can be repeated.
 
@@ -2755,6 +2756,7 @@ This statement can be repeated.
 @end table
 
 This statement set link(s) to writeonly for specified ares(s).
+If you write node address do it *without* trailing .0!
 
 This statement can be repeated.
 
