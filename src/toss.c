@@ -877,7 +877,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 
 /* Does carbon copying */
 /* Return value: 0 if nothing happend, 1 if there was a carbon copy, 
-   > 1 if there was a carbon move */
+   > 1 if there was a carbon move or carbon delete*/
 int carbonCopy(s_message *msg, s_area *echo)
 {
 	int i, rc = 0;
@@ -923,10 +923,12 @@ int carbonCopy(s_message *msg, s_area *echo)
 			
 			if (config->carbons[i].extspawn) {
 				processExternal(echo,msg,config->carbons[i]); 
-			} else if (config->carbons[i].areaName) {
+			} else { 
+			    if (config->carbons[i].areaName && config->carbons[i].move!=2) {
 				if (!processCarbonCopy(area,echo,msg,config->carbons[i]))
-					rc &= 1;
-			};
+				    rc &= 1;
+			    }
+			}
 			if (config->carbonAndQuit) return rc;
 			str = NULL;
 		}
@@ -1204,14 +1206,14 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 	       statToss.passthrough++;
 	       rc = 1; //passthrough does always work
 	   }
-	 };
+	 } else rc = 1; // normal exit for carbon move & delete
 
 
       } else {
          // msg is dupe
          if (echo->dupeCheck == dcMove) {
             rc = putMsgInArea(&(config->dupeArea), msg, 0, forceattr);
-         } else rc = 1; // quick fix. not sure.
+         } else rc = 1;
          statToss.dupes++;
       }
 
@@ -1251,10 +1253,11 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 	     }
 	   }
         } else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
-      };
+      }
    }
 
    free(textBuff);
+   printf("rc=%i\n",rc);
    return rc;
 }
 
@@ -1485,7 +1488,8 @@ int processPkt(char *fileName, e_tossSecurity sec)
 		   while ((msg = readMsgFromPkt(pkt, header)) != NULL) {
                if (msg != NULL) {
 				   if ((processIt == 1) || ((processIt==2) && (msg->netMail==1)))
-					   rc = !processMsg(msg, header) || rc == 5 ? 5 : 0;
+					   rc = processMsg(msg, header);
+					   if (rc==1) rc=0; else rc=5;
 				   freeMsgBuffers(msg);
 				   free(msg);
                }
@@ -1704,7 +1708,7 @@ void processDir(char *directory, e_tossSecurity sec)
             case 4:  // not to us
                newFileName=changeFileSuffix(dummy, "ntu");
                break;
-            case 5:  // tossing problem
+            case 5:  // msg tossing problem
                newFileName=changeFileSuffix(dummy, "err");
                break;
             default:

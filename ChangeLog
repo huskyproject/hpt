@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Sat May 13 20:29:59 NOVST 2000
+max:
+* carbonMove & carbonDelete works properly
+
+----- cvs ci ------
 Fri May 12 13:56:18 NOVST 2000
 max:
 * exit if inbound=protinbound
