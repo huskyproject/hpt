@@ -63,9 +63,9 @@
 #include <hpt.h>
 #include <dupe.h>
 
-extern char *curconfname;
-extern long curconfpos;
-extern FILE *hcfg;
+//extern char *curconfname;  /* replased with getCurConfName(); */
+//extern long curconfpos;    /* replased with getCurConfPos(); */
+//extern FILE *hcfg;
 
 unsigned char RetFix;
 static int rescanMode = 0;
@@ -589,8 +589,8 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 	    if (stricmp(token, "echoarea")==0) {
 		token = strseparate(&cfgline, " \t"); 
 		if (stricmp(token, areaName)==0) {
-		    fileName = safe_strdup(curconfname);
-		    pos = curconfpos;
+		    fileName = safe_strdup(getCurConfName());
+		    pos = getCurConfPos();
 		    break;
 		}
 	    }
@@ -1151,8 +1151,9 @@ linkline:
 	    token = strseparate(&line, " \t");
 	    if (token && testAddr(token, link->hisAka)) {
 		nfree(cfgline);
-		curpos = ftell(hcfg);
-		confName = safe_strdup(curconfname);
+		//curpos = ftell(hcfg);
+		curpos = get_hcfgPos();
+		confName = safe_strdup(getCurConfName());
 		close_conf();
 		f_conf = fopen(confName, "r+");
 		if (f_conf == NULL) {
@@ -1276,9 +1277,10 @@ linkliner:
 	}
 	// remove line
 	nfree(cfgline);
-	remstr = ftell(hcfg);
-	curpos = curconfpos;
-	confName = safe_strdup(curconfname);
+	//remstr = ftell(hcfg);
+	remstr = get_hcfgPos();
+	curpos = getCurConfPos();
+	confName = safe_strdup(getCurConfName());
 	close_conf();
 	if ((f_conf=fopen(confName,"r+")) == NULL)
 	    {
