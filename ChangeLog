@@ -1,3 +1,8 @@
+2002-05-16 Thursday 14:33  d.sergienko
+
+	* src/areafix.c (1.303): 
+	memory leak in delLinkFromString() fixed
+
 2002-05-15 Wednesday 19:11  mche
 
 	* src/link.c (1.52): linking log messages are grouped
