@@ -1,3 +1,8 @@
+2002-04-27 Saturday 09:35  ml
+
+	* src/hpt.c (1.147): Compile HPT with Perl support on VC.Net by
+	Dmitriy Kazimirow
+
 2002-04-26 Friday 17:19  mche
 
 	* src/toss.c (1.399): fillCmdStatement moved to fidoconfig for
