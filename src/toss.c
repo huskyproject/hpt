@@ -1769,7 +1769,18 @@ void processDir(char *directory, e_tossSecurity sec)
 
    dirNameLen = strlen(directory);
 
-   dir = opendir(directory);
+#ifdef __MINGW32__
+   directory[dirNameLen-1]='\0';
+#endif
+
+   if (NULL == (dir = opendir(directory))) {
+        printf("Can't open dir: %s!\n",directory);
+	return;
+   }
+
+#ifdef __MINGW32__
+   directory[dirNameLen-1]='\\';
+#endif
 
    while ((file = readdir(dir)) != NULL) {
 #ifdef DEBUG_HPT

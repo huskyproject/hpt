@@ -6,6 +6,7 @@ Sun Oct 15 15:06:03 NOVST 2000
 max:
 * set k/s flag to relink msg
 * use fexist() instead of fstat()
+* calculate packet dest zone if zero
 patch from PG:
 * fix jam linking (hpt link)
 
