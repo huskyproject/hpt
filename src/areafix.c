@@ -2330,19 +2330,16 @@ void autoPassive()
 					      getConfigFileName(),
 					      &(config->links[i]), 1,
 					      config->links[i].Pause^(ECHOAREA|FILEAREA))) {
+				  int mask = config->links[i].areafixReportsAttr ? config->links[i].areafixReportsAttr : config->areafixReportsAttr;
 				  msg = makeMessage(config->links[i].ourAka,
 					    &(config->links[i].hisAka),
 					    versionStr,config->links[i].name,
 					    "AutoPassive", 1,
-                                            config->links[i].areafixReportsAttr ? config->links[i].areafixReportsAttr : config->areafixReportsAttr);
+                                            MSGPRIVATE | MSGLOCAL | (mask & (MSGKILL|MSGCPT)) );
 				  msg->text = createKludges(config, NULL,
 					    config->links[i].ourAka,
 					    &(config->links[i].hisAka),
 					    versionStr);
-                                  if (config->links[i].areafixReportsFlags)
-                                        xstrscat(&msg->text, "\001FLAGS ", config->links[i].areafixReportsFlags, "\r", NULL);
-                                  else if (config->areafixReportsFlags)
-					xstrscat(&msg->text, "\001FLAGS ", config->areafixReportsFlags, "\r", NULL);
 				  xstrcat(&msg->text, "\r System switched to passive, your subscription are paused.\r\r"
 					" You are being unsubscribed from echo areas with no downlinks besides you!\r\r"
 					" When you wish to continue receiving echomail, please send requests\r"
