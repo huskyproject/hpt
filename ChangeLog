@@ -1,3 +1,25 @@
+2002-03-20 Wednesday 17:27  mche
+
+	* src/fcommon.c (1.121), src/toss.c (1.396), h/fcommon.h (1.36):
+	function makeMsgbFileName is removed from htick  and hpt to
+	fidoconfig function createDirectoryTree changed to
+	_createDirectoryTree from smapi
+
+2002-03-20 Wednesday 17:14  mche
+
+	* src/: areafix.c (1.273), dupe.c (1.55), query.c (1.36): function
+	makeMsgbFileName is removed from htick	and hpt to fidoconfig
+
+2002-03-20 Wednesday 15:28  mche
+
+	* h/areafix.h (1.27): functions isOurAka, isAreaLink are moved to
+	fidoconfig
+
+2002-03-20 Wednesday 15:16  mche
+
+	* src/: areafix.c (1.272), query.c (1.35), toss.c (1.395):
+	functions isOurAka, isAreaLink are moved to fidoconfig
+
 2002-03-19 Tuesday 17:02  mche
 
 	* src/toss.c (1.394): chenged call "system" for "spawnvp"
