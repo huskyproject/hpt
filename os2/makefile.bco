@@ -29,10 +29,10 @@ OBJS    = pktinfo.obj \
 SRC_DIR = ..\src
 
 !IF $(DEBUG) == 1
-CFLAGS = -v -w -O2 -DDEBUG_HPT -I..\h -I..\..  -I..\..\smapi -I..\..\fidoconf -DOS2
+CFLAGS = -v -w -O1 -DDEBUG_HPT -I..\h -I..\..  -I..\..\smapi -I..\..\fidoconf -DOS2
 LFLAGS  =  -v -w -L..\..\smapi -L..\..\fidoconf
 !ELSE
-CFLAGS  =  -v -w -O2 -I..\h -I..\.. -I..\..\smapi  -I..\..\fidoconf -DOS2
+CFLAGS  =  -v -w -O1 -I..\h -I..\.. -I..\..\smapi  -I..\..\fidoconf -DOS2
 LFLAGS  =  -w -L..\..\smapi -L..\..\fidoconf
 !ENDIF
 
@@ -89,6 +89,7 @@ seenby.obj
 toss.obj
 link.obj
 log.obj
+arealist.obj
 scanarea.obj
 dupe.obj
 tree.obj
