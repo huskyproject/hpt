@@ -1750,9 +1750,15 @@ int filesComparer(const void *elem1, const void *elem2) {
     return strcasecmp(((s_fileInDir *) elem1) -> fileName, ((s_fileInDir *) elem2) -> fileName);
 }
 
-char *validExt[] = { "[0-9A-Z]*.MO?", "[0-9A-Z]*.TU?", "[0-9A-Z]*.TH?",
-                     "[0-9A-Z]*.WE?", "[0-9A-Z]*.FR?", "[0-9A-Z]*.SA?",
-                     "[0-9A-Z]*.SU?"};
+char *validExt[] = {
+ "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].SU[0-9A-Z]",
+ "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].MO[0-9A-Z]",
+ "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].TU[0-9A-Z]",
+ "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].WE[0-9A-Z]",
+ "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].TH[0-9A-Z]",
+ "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].FR[0-9A-Z]",
+ "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].SA[0-9A-Z]"
+};
 /*
 "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].SU[0-9A-Z]",
 "[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z].MO[0-9A-Z]",
@@ -1994,7 +2000,7 @@ int find_old_arcmail(s_link *link, FILE *flo)
 	line = trimLine(line);
 #endif
 	for (i = 0; i < sizeof(validExt) / sizeof(validExt[0]); i++)
-	    if (patimat(line, validExt[i]) == 1) {
+	    if (strchr("~^#", *line) && patimat(line+1, validExt[i]) == 1) {
 		if (*line!='~') {
 		    nfree(bundle);
 		    // One char for first symbol in flo file
