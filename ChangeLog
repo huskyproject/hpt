@@ -1,3 +1,8 @@
+2004-02-05 Thursday 12:46  andrew_ladutsko
+
+	* doc/hpt.texi (1.148): fixed description of sendNotifyMessages
+	token
+
 2004-01-23 Friday 07:39  andrew_ladutsko
 
 	* src/hptafix.c (1.7): fixed making reports on autocreate
