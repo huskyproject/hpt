@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Sep  9 22:00:24 NOVST 2000
+max:
+* "toss -b" fixes (squish & jam areas)
+
+----- cvs ci ------
 Fri Sep  8 10:25:40 NOVST 2000
 max:
 * fixed bug with empty arealist (%list when no areas is available)
