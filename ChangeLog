@@ -1,3 +1,16 @@
+2002-11-26 Tuesday 13:32  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.58): A&Q about current with bugs
+
+2002-11-26 Tuesday 12:34  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.57): Add Q&A about echolist
+
+2002-11-26 Tuesday 11:17  stas_degteff
+
+	* config/packer (1.6): Add unpaker defines for many rar sfx
+	archives
+
 2002-11-25 Monday 15:37  stas_degteff
 
 	* src/link.c (1.68): Prevent compiler warning 'size mismatch'
