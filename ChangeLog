@@ -1,3 +1,12 @@
+2002-07-09 Tuesday 15:53  stas
+
+	* src/fcommon.c (1.133): Fix patch '2002-07-06 Saturday 18:54 
+	stas'
+
+2002-07-09 Tuesday 15:13  mche
+
+	* src/areafix.c (1.324): fix rules sending for passthrough areas
+
 2002-07-08 Monday 22:09  stas
 
 	* doc/hpt.texi (1.70): Describe new action for manual & mandatory
