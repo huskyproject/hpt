@@ -472,7 +472,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 			   nfree(link->floFile);
 		   }
 	   } else {
-		if ((xmsg->attr & MSGFILE) == MSGFILE) w_log('7', "no fileroute found or no-pack for %s - leave mail untouched", aka2str(msg.destAddr));
+                if ((xmsg->attr & MSGFILE) == MSGFILE) w_log('7', "no routeFile found or no-pack for %s - leave mail untouched", aka2str(msg.destAddr));
 		else w_log('7', "no route found or no-pack for %s - leave mail untouched", aka2str(msg.destAddr));
 	   }
    }
