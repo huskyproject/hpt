@@ -207,9 +207,9 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
    char *seenByText, *start, *token;
    unsigned long temp;
    char *endptr;
-   #ifdef DEBUG_HPT
+#ifdef DEBUG_HPT
    int i;
-   #endif
+#endif
 
    *seenByCount = 0;
    start = msg->text;
@@ -255,9 +255,9 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
    }
 
    //test output for reading of seenBys...
-   #ifdef DEBUG_HPT
+#ifdef DEBUG_HPT
    for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
-   #endif
+#endif
 //   exit(2);
 
    free(seenByText);
@@ -272,9 +272,9 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
    char *seenByText, *start, *token;
    char *endptr;
    unsigned long temp;
-   #ifdef DEBUG_HPT
+#ifdef DEBUG_HPT
    int i;
-   #endif
+#endif
 
    *seenByCount = 0;
    start = msg->text;
@@ -317,9 +317,9 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
    }
 
    // test output for reading of paths...
-   #ifdef DEBUG_HPT
+#ifdef DEBUG_HPT
    for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
-   #endif
+#endif
    //exit(2);
 
    free(seenByText);
@@ -608,12 +608,12 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
 
    //write new line in config file
    if (stricmp(config->msgBaseDir, "passthrough")!=0) {
-     #ifndef MSDOS
+#ifndef MSDOS
      sprintf(buff, "EchoArea %s %s%s -a %s Squish %s ", c_area, config->msgBaseDir, c_area, myaddr, hisaddr);
-     #else
+#else
      sleep(1); // to prevent time from creating equal numbers
      sprintf(buff,"EchoArea %s %s%8lx -a %s Squish %s ", c_area, config->msgBaseDir, time(NULL), myaddr, hisaddr);
-     #endif
+#endif
    } else
       sprintf(buff, "EchoArea %s Passthrough -a %s %s ", c_area, myaddr, hisaddr);
    if ((config->autoCreateDefaults != NULL) &&
