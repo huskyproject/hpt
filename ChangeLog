@@ -1,3 +1,23 @@
+2002-11-22 Friday 14:24  stas_degteff
+
+	* src/areafix.c (1.368): Fix for availlist feature. Patch from
+	Alexander Reznikov (2:4600/220).
+
+2002-11-22 Friday 14:00  stas_degteff
+
+	* src/query.c (1.75): changed.qfl place to one from thee locations:
+	to lockfile's directory, to echotosslog's directory, to semaDir or
+	current dir.
+
+2002-11-22 Friday 12:26  stas_degteff
+
+	* h/global.h (1.34), h/pkt.h (1.30), src/pktread.c (1.93): Another
+	fix for read big message on DOS-16
+
+2002-11-22 Friday 07:46  stas_degteff
+
+	* src/toss.c (1.477): Clean declarations
+
 2002-11-21 Thursday 16:27  pgul
 
 	* h/toss.h (1.52), src/toss.c (1.476), src/areafix.c (1.367):
