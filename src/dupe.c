@@ -114,50 +114,50 @@ char *createDupeFileName(s_area *area) {
 
 
 int compareEntries(char *p_e1, char *p_e2) {
-   const s_textDupeEntry  *atxt,   *btxt;
-   const s_hashDupeEntry  *ahash,  *bhash;
-   const s_hashMDupeEntry *ahashM, *bhashM;
-   int rc = 1;
-   const void *e1 = (const void *)p_e1, *e2 = (const void *)p_e2;
-
-   switch (config->typeDupeBase) {
-      case hashDupes:
-          ahash = e1; bhash = e2;
-          if (ahash->CrcOfDupe == bhash->CrcOfDupe)
-              rc = 0;
-          else if (ahash->CrcOfDupe > bhash->CrcOfDupe)
-              rc = 1;  
-          else
-              rc = -1;
- 	  break;
- 
-      case hashDupesWmsgid:
-          ahashM = e1; bhashM = e2;
-          if (ahashM->CrcOfDupe == bhashM->CrcOfDupe)
-              rc = strcmp(ahashM->msgid, bhashM->msgid);
-          else if (ahashM->CrcOfDupe > bhashM->CrcOfDupe)
-              rc = 1;  
-          else
-              rc = -1;
- 	  break;
-
-      case textDupes:
-          atxt = e1; btxt = e2;
-          if (rc == 0) rc = strcmp(atxt->msgid, btxt->msgid);
- 	  break;
-
-      case commonDupeBase:
-          ahash = e1; bhash = e2;
-          if (ahash->CrcOfDupe == bhash->CrcOfDupe)
-              rc=0;
-          else if (ahash->CrcOfDupe > bhash->CrcOfDupe)
-              rc = 1;  
-          else
-              rc = -1;
-      break;
-   }
-
-   return rc;
+    const s_textDupeEntry  *atxt,   *btxt;
+    const s_hashDupeEntry  *ahash,  *bhash;
+    const s_hashMDupeEntry *ahashM, *bhashM;
+    int rc = 0;
+    const void *e1 = (const void *)p_e1, *e2 = (const void *)p_e2;
+    
+    switch (config->typeDupeBase) {
+    case hashDupes:
+        ahash = e1; bhash = e2;
+        if (ahash->CrcOfDupe > bhash->CrcOfDupe)
+            rc =  1;  
+        else if (ahash->CrcOfDupe < bhash->CrcOfDupe)
+            rc = -1;
+        else
+            rc =  0;
+        break;
+        
+    case hashDupesWmsgid:
+        ahashM = e1; bhashM = e2;
+        if (ahashM->CrcOfDupe == bhashM->CrcOfDupe)
+            rc = strcmp(ahashM->msgid, bhashM->msgid);
+        else if (ahashM->CrcOfDupe > bhashM->CrcOfDupe)
+            rc = 1;  
+        else
+            rc = -1;
+        break;
+        
+    case textDupes:
+        atxt = e1; btxt = e2;
+        rc = strcmp(atxt->msgid, btxt->msgid);
+        break;
+        
+    case commonDupeBase:
+        ahash = e1; bhash = e2;
+        if (ahash->CrcOfDupe > bhash->CrcOfDupe)
+            rc =  1;  
+        else if (ahash->CrcOfDupe < bhash->CrcOfDupe)
+            rc = -1;
+        else
+            rc =  0;
+        break;
+    }
+    
+    return rc;
 }
 
 int writeEntry(char *p_entry) {
