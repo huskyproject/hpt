@@ -4,16 +4,18 @@
  *****************************************************************************
  * Copyright (C) 1998-1999
  *
- * Fedor Lizunkov
- *
- * Fido:     2:5020/960
- * Moscow, Russia
- *
  * Max Levenkov
  *
  * Fido:     2:5000/117
  * Internet: ml@nsk.uland.com
  * Novosibirsk, Russia
+ *
+ * Big thanks to:
+ *
+ * Fedor Lizunkov
+ *
+ * Fido:     2:5020/960
+ * Moscow, Russia
  *
  * This file is part of HPT.
  *
@@ -97,7 +99,9 @@ int subscribeCheck(s_area area, s_message *msg, s_link *link) {
 		    if (strchr(link->AccessGrp, area.group) == NULL &&
 			strchr(config->PublicGroup, area.group) == NULL) return 2;
 		} else if (strchr(link->AccessGrp, area.group) == NULL) return 2;
-	    } else return 2;
+	    } else if (config->PublicGroup) {
+		      if (strchr(config->PublicGroup, area.group) == NULL) return 2;
+		   } else return 2;
 	if (area.hide) return 3;
 	return 1;
 }
@@ -158,7 +162,7 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 	memset(buff, 0, len+1);
 	fseek(f, curpos+linelen, SEEK_SET);
 	fread(buff, len, sizeof(char), f);
-	fseek(f, curpos, SEEK_SET);
+ 	fseek(f, curpos, SEEK_SET);
 	fputs(buff, f);
 	truncate(fileName, endpos-linelen);
     }
@@ -1274,6 +1278,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 {
 	int i, security=1, notforme = 0;
 	s_link *link = NULL;
+	s_link *tmplink = NULL;
 	s_message *linkmsg, tmpmsg;
 	s_pktHeader header;
 	char tmp[80], *token, *textBuff, *report=NULL, *preport;
@@ -1365,6 +1370,15 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		
 	} else {
 
+		if (link == NULL) {
+    		    tmplink = (s_link*)calloc(1, sizeof(s_link));
+		    tmplink->ourAka = &(msg->destAddr);
+		    tmplink->hisAka.zone = msg->origAddr.zone;
+		    tmplink->hisAka.net = msg->origAddr.net;
+		    tmplink->hisAka.node = msg->origAddr.node;
+		    tmplink->hisAka.point = msg->origAddr.point;
+		    link = tmplink;
+		}
 		// security problem
 		
 		switch (security) {
@@ -1393,6 +1407,8 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		
 		sprintf(tmp,"areafix: security violation from %s", aka2str(link->hisAka));
 		writeLogEntry(log, '8', tmp);
+		
+		free(tmplink);
 		
 		return 1;
 	}

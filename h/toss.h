@@ -61,14 +61,14 @@ int readCheck(s_area *echo, s_link *link);
 // '\x0000' access o'k
 // '\x0001' no access group
 // '\x0002' no access level
-// '\x0004' no access export
-// '\x0008' not linked
+// '\x0003' no access export
+// '\x0004' not linked
 
 int writeCheck(s_area *echo, s_link *link);
 // '\x0000' access o'k
 // '\x0001' no access group
 // '\x0002' no access level
-// '\x0004' no access import
-// '\x0008' not linked
+// '\x0003' no access import
+// '\x0004' not linked
 
 #endif

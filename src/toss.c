@@ -373,30 +373,30 @@ int readCheck(s_area *echo, s_link *link) {
     // rc == '\x0000' access o'k
     // rc == '\x0001' no access group
     // rc == '\x0002' no access level
-    // rc == '\x0004' no access export
-    // rc == '\x0008' not linked
+    // rc == '\x0003' no access export
+    // rc == '\x0004' not linked
     
-    int i, rc=0;
+    int i;
     
     if (echo->group && echo->group != '\060') {
 	if (link->AccessGrp) {
 	    if (config->PublicGroup) {
 		if (strchr(link->AccessGrp, echo->group) == NULL &&
-		    strchr(config->PublicGroup, echo->group) == NULL) rc|=1;
-	    } else if (strchr(link->AccessGrp, echo->group) == NULL) rc|=1;
-	} else rc|=1;
+		    strchr(config->PublicGroup, echo->group) == NULL) return 1;
+	    } else if (strchr(link->AccessGrp, echo->group) == NULL) return 1;
+	} else if (config->PublicGroup) {
+		   if (strchr(config->PublicGroup, echo->group) == NULL) return 1;
+	       } else return 1;
     }
-    if (echo->levelread > link->level) rc|=2;
-    else {
-	for (i=0; i<echo->downlinkCount; i++) {
-	    if (link == echo->downlinks[i]->link) {
-		if (echo->downlinks[i]->export == 0) rc|=4;
-		break;
-	    }
+    if (echo->levelread > link->level) return 2;
+    for (i=0; i<echo->downlinkCount; i++) {
+	if (link == echo->downlinks[i]->link) {
+	    if (echo->downlinks[i]->export == 0) return 3;
+	    break;
 	}
-	if (i == echo->downlinkCount) rc|=8;
     }
-    return rc;
+    if (i == echo->downlinkCount) return 4;
+    return 0;
 }
 
 int writeCheck(s_area *echo, s_link *link) {
@@ -404,30 +404,30 @@ int writeCheck(s_area *echo, s_link *link) {
     // rc == '\x0000' access o'k
     // rc == '\x0001' no access group
     // rc == '\x0002' no access level
-    // rc == '\x0004' no access import
-    // rc == '\x0008' not linked
+    // rc == '\x0003' no access import
+    // rc == '\x0004' not linked
 
-    int i, rc=0;
+    int i;
     
-    if (echo->group && echo->group != '\060') {
+    if (echo->group != '\060') {
 	if (link->AccessGrp) {
 	    if (config->PublicGroup) {
 		if (strchr(link->AccessGrp, echo->group) == NULL &&
-		    strchr(config->PublicGroup, echo->group) == NULL) rc|=1;
-	    } else if (strchr(link->AccessGrp, echo->group) == NULL) rc|=1;
-	} else rc|=1;
+		    strchr(config->PublicGroup, echo->group) == NULL) return 1;
+	    } else if (strchr(link->AccessGrp, echo->group) == NULL) return 1;
+	} else if (config->PublicGroup) {
+		   if (strchr(config->PublicGroup, echo->group) == NULL) return 1;
+	       } else return 1;
     }
-    if (echo->levelwrite > link->level) rc|=2;
-    else {
-	for (i=0; i<echo->downlinkCount; i++) {
-	    if (link == echo->downlinks[i]->link) {
-		if (echo->downlinks[i]->import == 0) rc|=4;
-		break;
-	    }
+    if (echo->levelwrite > link->level) return 2;
+    for (i=0; i<echo->downlinkCount; i++) {
+	if (link == echo->downlinks[i]->link) {
+	    if (echo->downlinks[i]->import == 0) return 3;
+	    break;
 	}
-	if (i == echo->downlinkCount) rc|=8;
     }
-    return rc;
+    if (i == echo->downlinkCount) return 4;
+    return 0;
 }
 
 /**
@@ -812,11 +812,11 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 	         break; 
 	     case 2: strcat(textBuff, "Sender not allowed to post in this area\r");
 	         break;
-	     case 4: strcat(textBuff, "Sender not allowed to post in this area\r");
+	     case 3: strcat(textBuff, "Sender not allowed to post in this area\r");
 	         break;
-	     case 8: strcat(textBuff, "Sender not active for this area\r");
+	     case 4: strcat(textBuff, "Sender not active for this area\r");
 	         break;
-	     default :
+	     default : strcat(textBuff, "Another error\r");
 	         break;
 	 }							
 	 textBuff = (char*)realloc(textBuff, strlen(textBuff)+strlen(tmp)+1);
