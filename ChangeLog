@@ -1,6 +1,13 @@
 hpt 0.29
 --------
 
+
+----- cvs ci ------
+Thu Sep  2 22:11:30 CEST 1999
+Antonio:
+* fixed bug in correctEMAddr of pktread.c
++ now hpt can post msg in area without export it (default).
+
 ----- cvs ci ------
 Sun Aug 29 21:25:52 NOVST 1999
 max:

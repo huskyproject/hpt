@@ -56,12 +56,16 @@ void post(int c, unsigned int *n, char *params[])
 {
    char *area = NULL;
    FILE *text = NULL;
+   s_area *echo = NULL;
+   FILE *f = NULL;
 
    s_message msg;
 
    CHAR *textBuffer = NULL;
 
    int quit;
+   int export=0;
+   char buffer[256];
 
    time_t t = time (NULL);
    struct tm *tm;
@@ -102,10 +106,14 @@ void post(int c, unsigned int *n, char *params[])
                break;
             case 'e':    // echo name
                area = params[++(*n)];
+               echo = getArea(config, area);
                break;
             case 's':    // subject
                msg.subjectLine = (char *) malloc(strlen(params[++(*n)]) + 1);
                strcpy(msg.subjectLine, params[*n]);
+               break;
+            case 'x':    // export message
+               export=1; (*n)++;
                break;
 	    default:
                quit = 1;
@@ -160,11 +168,34 @@ void post(int c, unsigned int *n, char *params[])
               versionStr, config->name, aka2str(msg.origAddr));
 
       msg.textLength = strlen(msg.text);
+      
+      writeLogEntry (hpt_log, '1', "Start posting...");
 
-      if (msg.netMail)
-         processNMMsg(&msg, NULL);
-      else
-         processEMMsg(&msg, msg.origAddr, 0);
+      if (!export)
+        putMsgInArea(echo, &msg, 1, msg.attributes);
+      else {
+        if (msg.netMail)
+          processNMMsg(&msg, NULL);
+        else
+          processEMMsg(&msg, msg.origAddr, 1);
+      }
+      
+      /* Don't work very well... some code in putMsgInArea rewrite msg.destAddr */
+      sprintf (buffer,"Posting msg. from %s -> %s in area: %s",
+                      aka2str(msg.origAddr), aka2str(msg.destAddr), area);
+      writeLogEntry (hpt_log, '2', buffer);
+      
+      if ((config->echotosslog) && (!export)) {
+        f=fopen(config->echotosslog, "a");
+      
+        if (f==NULL)
+          writeLogEntry (hpt_log, '9', "Could not open or create EchoTossLogFile.");
+        else {
+          fprintf(f,"%s\n",area);
+          fclose(f);
+        }
+      }
+      
    };
    freeMsgBuffers(&msg);
 }

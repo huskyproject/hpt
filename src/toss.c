@@ -135,7 +135,7 @@ int to_us(const s_addr destAddr)
    return !0;
 }
 
-XMSG createXMSG(s_message *msg, const s_pktHeader *header) {
+XMSG createXMSG(s_message *msg, const s_pktHeader *header, UINT16 forceattr) {
 	XMSG  msgHeader;
 	struct tm *date;
 	time_t    currentTime;
@@ -183,6 +183,9 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header) {
        msgHeader.attr = msg->attributes;
        msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD | MSGFRQ | MSGSCANNED | MSGLOCKED); // kill these flags
      }
+
+   /* FORCED ATTRIBUTES !!! */
+   msgHeader.attr |= forceattr;
    
    strcpy((char *) msgHeader.from,msg->fromUserName);
    strcpy((char *) msgHeader.to, msg->toUserName);
@@ -223,7 +226,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header) {
    return msgHeader;
 }
 
-int putMsgInArea(s_area *echo, s_message *msg, int strip)
+int putMsgInArea(s_area *echo, s_message *msg, int strip, UINT16 forceattr)
 {
    char buff[70], *ctrlBuff, *textStart, *textWithoutArea;
    UINT textLength = (UINT) msg->textLength;
@@ -280,7 +283,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip)
 				              (UCHAR **) &textStart,
 				              &textLength);
          // textStart is a pointer to the first non-kludge line
-         xmsg = createXMSG(msg, NULL);
+         xmsg = createXMSG(msg, NULL, forceattr);
 
          MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword) strlen(textStart), (dword) strlen(textStart), (dword)strlen(ctrlBuff), (byte *)ctrlBuff);
 
@@ -871,7 +874,7 @@ void processCarbonCopy (s_area *area, s_area *echo, s_message *msg, int export) 
 	strncat(msg->text,old_text,i); // copy rest of msg (assumes old AREA:
 	msg->textLength = strlen(msg->text); // is at the very beginning
 	
-	if (!export) putMsgInArea(area,msg,0);	  
+	if (!export) putMsgInArea(area,msg,0,0);	  
 	else processEMMsg(msg, *area->useAka, 1);
 	
 	free (msg->text);
@@ -986,7 +989,7 @@ void putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
     free(msg->text);
     msg->text = textBuff;
     msg->textLength = strlen(msg->text)+1;
-    putMsgInArea(&(config->badArea), msg, 0);
+    putMsgInArea(&(config->badArea), msg, 0, 0);
 }
 
 void makeMsgToSysop(char *areaName, s_addr fromAddr)
@@ -1054,7 +1057,7 @@ void writeMsgToSysop()
 		echo = getArea(config, tmp);
 		if (echo != &(config->badArea)) {
 		    if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-        		putMsgInArea(echo, msgToSysop[i],1);
+        		putMsgInArea(echo, msgToSysop[i],1, 0);
         		echo->imported = 1;  // area has got new messages
 		    }
 		    if (config->carbonCount != 0) carbonCopy(msgToSysop[i], echo);
@@ -1125,7 +1128,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 	   }
 
          if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-            rc = putMsgInArea(echo, msg,1);
+            rc = putMsgInArea(echo, msg,1, 0);
             echo->imported = 1;  // area has got new messages
             statToss.saved++;
          } 
@@ -1139,7 +1142,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
       } else {
          // msg is dupe
          if (echo->dupeCheck == dcMove) {
-            rc = putMsgInArea(&(config->dupeArea), msg, 0);
+            rc = putMsgInArea(&(config->dupeArea), msg, 0, 0);
          }
          statToss.dupes++;
       }
@@ -1161,7 +1164,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 	   if (dupeDetection(echo, *msg)==1) {
 	     // nodupe
              if (echo->msgbType != MSGTYPE_PASSTHROUGH)
-        	rc = putMsgInArea(echo, msg, 1);
+        	rc = putMsgInArea(echo, msg, 1, 0);
              if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
         	forwardMsgToLinks(echo, msg, pktOrigAddr);
         	statToss.exported++;
@@ -1169,7 +1172,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
 	   } else {
 	     // msg is dupe
 	     if (echo->dupeCheck == dcMove) 
-	       rc = putMsgInArea(&(config->dupeArea), msg, 0);
+	       rc = putMsgInArea(&(config->dupeArea), msg, 0, 0);
 	     statToss.dupes++;
 	   }
 	 }
@@ -1181,7 +1184,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc)
    return rc;
 }
 
-int processNMMsg(s_message *msg,s_pktHeader *pktHeader)
+int processNMMsg(s_message *msg, s_pktHeader *pktHeader)
 {
    HAREA  netmail;
    HMSG   msgHandle;
@@ -1222,7 +1225,7 @@ int processNMMsg(s_message *msg,s_pktHeader *pktHeader)
             recodeToInternalCharset(msg->subjectLine);
          }
 
-         msgHeader = createXMSG(msg, pktHeader);
+         msgHeader = createXMSG(msg, pktHeader, 0);
 //	   	 if ((msg->attributes & MSGKILL) == MSGKILL) msgHeader.attr |= MSGKILL;
          /* Create CtrlBuf for SMAPI */
          ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
@@ -1981,7 +1984,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
 	 // no dupe
 
          if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-            putMsgInArea(echo, &msg,1);
+            putMsgInArea(echo, &msg,1, 0);
             echo->imported = 1;  // area has got new messages
 //            statToss.saved++;
          } else statToss.passthrough++;
@@ -2002,7 +2005,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
       } else {
          // msg is dupe
          if (echo->dupeCheck == dcMove) {
-            putMsgInArea(&(config->dupeArea), &msg, 0);
+            putMsgInArea(&(config->dupeArea), &msg, 0, 0);
          }
 //         statToss.dupes++;
       }
