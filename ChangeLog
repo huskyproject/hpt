@@ -1,3 +1,8 @@
+2003-04-24 Thursday 05:57  andr_lukyanov
+
+	* make/makefile.djg (1.5): Fixed DJGPP compilation with new library
+	structure
+
 2003-04-23 Wednesday 06:39  mche
 
 	* src/areafix.c (1.403): code improvement patch by Sergey A.
