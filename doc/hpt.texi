@@ -643,7 +643,7 @@ This statement cannot be repeated.
 @item Syntax:
 @code{AreafixQueueFile <string>}
 @item Example:
-@code{areafixQueueFile /fido/datafiles}
+@code{areafixQueueFile /fido/datafiles/areafix.queue}
 @end table
 
 This command specifies the queue file containing your delayed forward-requests.
@@ -870,6 +870,8 @@ for this echoarea not avaiable, @code{hpt qupd} removes echoarea from queue.
 
 To use this feature run @code{hpt qupd} daily.
 
+This token requires keyword AreaFixQueueFile. @xref{AreafixQueueFile}.
+
 Default is 7 days.
 
 This statement cannot be repeated.
@@ -889,6 +891,8 @@ This statement specifies time to wait (in days) before unsubscribing echoarea
 from uplink after the time last downlink unsubscribed (one uplink rest).
 
 To use this feature run @code{hpt qupd} daily.
+
+This token requires keyword AreaFixQueueFile. @xref{AreafixQueueFile}.
 
 Default is 3 days.
 
@@ -974,7 +978,10 @@ This statement cannot be repeated.
 
 This statement specified time wait (days) for delete from config echoarea after
 unsubscribe it from uplink (last link).
+
 Run @code{hpt qupd} daily for use this feature.
+
+This token requires keyword AreaFixQueueFile. @xref{AreafixQueueFile}.
 
 Default is 4 days.
 
