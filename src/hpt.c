@@ -83,8 +83,12 @@
 #if defined(__cplusplus)
 extern "C"
 #endif
-extern
-PfnDliHook   __pfnDliFailureHook;
+extern PfnDliHook
+#if (_MSC_VER>=1300)
+    __pfnDliFailureHook2;
+#else
+    __pfnDliFailureHook;
+#endif
 #endif
 #endif
 
@@ -520,7 +524,11 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    }
 #ifdef _MSC_VER
 #ifdef DO_PERL
+#if _MSC_VER>=1300
+   __pfnDliFailureHook2=ourhook;
+#else
    __pfnDliFailureHook=ourhook;
+#endif
    //attempt to start Perl
    PerlStart();
 #endif 
