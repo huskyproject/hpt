@@ -1766,7 +1766,7 @@ int relink (char *straddr) {
 	}
 
 	for (count = 0; count < config->echoAreaCount; count++) {
-		if ( isLinkOfArea(researchLink, &config->echoAreas[count]) ) {
+		if ( isLinkOfArea(researchLink, &config->echoAreas[count] ) {
 			areasIndexArray[areasArraySize] = &config->echoAreas[count];
 			areasArraySize++;
 			writeLogEntry(hpt_log, '8', "Echo %s from link %s refresh",

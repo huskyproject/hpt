@@ -2,6 +2,11 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun May 28 12:47:15 NOVST 2000
+max:
+* fixed bug when renaming to .ntu (.sec, etc) several packets
+
+----- cvs ci ------
 Sat May 27 10:21:30 NOVST 2000
 max:
 * set default dupebase type to hashDupesWmsgid (read documentation)

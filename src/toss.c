@@ -1709,8 +1709,8 @@ void processDir(char *directory, e_tossSecurity sec)
                break;
          }
       };
-      free(dummy);
-      free(newFileName);
+      nfree(dummy);
+      nfree(newFileName);
    }
    free (files);
 }
@@ -1926,11 +1926,8 @@ static int forwardedPkts = 0;
 int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 {
     int i;
-//    int cmdexit;
     s_link *link;
     char *newfn;
-//    char zoneSuffix[4];
-//    char *zoneOutbound;
     
     for (i = 0 ; i < config->linkCount; i++) {
 	if (addrComp(header->destAddr, config->links[i].hisAka) == 0) {

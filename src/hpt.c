@@ -123,7 +123,7 @@ int processCommandLine(int argc, char **argv)
       printf("   hpt pack    - packing netmail\n");
       printf("   hpt link    - links messages\n");
       printf("   hpt afix    - process areafix\n");
-      printf("   hpt relink <addr> - refresh area subsription\n");
+//      printf("   hpt relink <addr> - refresh area subsription\n");
    }
 
    while (i < argc-1) {
