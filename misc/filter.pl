@@ -412,10 +412,15 @@ EOF
       $kill = 1;
       return "Message to FaqServer";
     }
-    if ($fromname =~ /^(areafix|gecho)$/i && listname($fromaddr) ne "" &&
-        $subject =~ /^(List request|List of areas available|List of available areas|AreaFix list of areas|AreaFix response)/)
+    if (($fromname =~ /^(areafix|gecho|crashecho|areafix daemon|sqafix)$/i ||
+         $fromname =~ /echo manager/) &&
+        listname($fromaddr) ne "" &&
+        ($subject =~ /^(List request|List of areas available|List of available areas|AreaFix list of areas|AreaFix response|[Aa]reafix reply: (list request|available areas))/ ||
+         $subject =~ /^Your Areafix Request$/ && $text =~ /Areas available to|\001SPLITTED:/s && $text =~ /\r\n?      \S+\r/s ||
+         $subject =~ /^Remote request operation report/ && $text =~ /areas available for|continued from the previous message/s ||
+         $subject =~ /Reply from Parma Tosser Echo Manager, part/))
     {
-      if ($subject eq "AreaFix response" && $text =~ /--- CrashEcho's AreaFix/)
+      if ($subject eq "AreaFix response" && $text =~ /\r\n?%LIST.*\r\n?--- CrashEcho's AreaFix/s)
       { $kill = 1;
         return "CrashEcho's areafix response";
       }
@@ -437,34 +442,69 @@ EOF
             next;
           }
         }
+        elsif (/^ {15,}(\S.*)$/ && $areas[1] && $subject =~ /Parma Tosser/)
+        { $areas[@areas-1] .= " $1"; # or "$1", without space?
+          next;
+        }
         elsif (/^ {15,}(\S.*)$/ && $areas[1])
         { $areas[@areas-1] .= " $1";
           next;
         }
         if ($subject =~ /^List request/)
-        {
+        { # FastEcho
           next unless /^[\* ] (\S+)(?:(?: \.*)? (\S.*))?\s*$/;
           push (@areas, "$1 $2");
           next;
         }
         if ($subject =~ /^List of areas available/)
-        {
-          next unless /^([^() \*\'\-][^() *]*)(?: \.+ (\S.*))?\s*$/;
+        { # FastEcho
+          next unless /^([^() \*\'\-\[][^() *]*)(?: \.+ (\S.*))?\s*$/;
           push (@areas, "$1 $2");
           next;
         }
         if ($subject =~ /^List of available areas/)
-        {
-          next unless /^ (\S+)(?: +(\S.*))?\s*$/;
+        { # GEcho
+          next unless /^[+ ](\S+)(?: +(\S.*))?\s*$/;
+          next if /^ '[+-]'/;
           push (@areas, "$1 $2");
           next;
         }
         if ($subject =~ /^AreaFix list of areas/)
         { # CrashEcho
           next if /^ Group:/;
-          next unless /^ (\S+)(?:\s+(\S(?:.*\S)?)\s+(?:\?|\d+))?\s*$/;
+          next unless /^ (\S+)(?:\s+(\S(?:.*\S)?)?\s+(?:\?|\d+))?\s*$/;
           push (@areas, "$1 $2");
           next;
+        }
+        if ($subject =~ /^Your Areafix Request/)
+        { # 5020/52
+          next unless /^[ *] [ R]   (\S+)\s*$/;
+          push (@areas, $1);
+          next;
+        }
+        if ($subject =~ /^[Aa]reafix reply: list request/)
+        { # hpt
+          next unless /^[* ][R ]? (\S+)(?: \.* (\S.*))?\s*$/;
+          push (@areas, "$1 $2");
+          next;
+        }
+        if ($subject =~ /^[Aa]reafix reply: available areas/)
+        { # hpt
+          next unless /^ (\S+)(?: \.* (\S.*))?\s*$/;
+          push (@areas, "$1 $2");
+          next;
+        }
+        if ($subject =~ /^Remote request operation report/)
+        { # SqaFix
+          next unless /^(\S+) \.+ (?:Unlinked|Active  )   \[\S\](?: (\S.*\S))?\s*$/;
+          push (@areas, "$1 $2");
+        }
+        if ($subject =~ /Parma Tosser/)
+        { # Parma Tosser
+          next if /^(Splitted by|--- |UpLink |Available areas|List of|Hello |Parma )/;
+          if (/^([A-Za-z\.&\$0-9!'_\+\-]+)(?:(?: \.+)?\s+(\:Unlinked|Lined)\s+\[.\] (.*))?$/)
+          { push(@areas, "$1 $2");
+          }
         }
       }
       $kill=1;
@@ -727,7 +767,7 @@ sub process_pkt
 # $pktname - name of pkt
 # $secure  - defined for secure pkt
 # return non-empty string for rejecting pkt (don't process, rename to *.dup)
-  my($a, $crc, $a, $mtime, $size, $pktstart);
+  my($crc, $a, $mtime, $size, $pktstart);
   local(*F);
   $processpktname = "";
   %msgpkt = ();
@@ -739,7 +779,7 @@ sub process_pkt
     { return "";
     }
   }
-  ($a,$a,$a,$a,$a,$a,$a,$size,$a,$mtime) = stat($pktname);
+  ($size,$mtime) = (stat($pktname))[7,9];
   open(F, "<$pktname") || return;
   read(F, $pktstart, 58+178); # sizeof(pkthdr) + sizeof(msghdr) (max msghdr)
   close(F);
@@ -822,16 +862,16 @@ sub compileNL
   closedir(F);
   return unless @nlfiles;
   $curnodelist = pop(@nlfiles);
-  ($a,$a,$a,$a,$a,$a,$a,$a,$a,$curmtime,$curctime) = stat(nodelistDir() . "/$curnodelist");
+  ($curmtime,$curctime) = (stat(nodelistDir . "/$curnodelist"))[9,10];
   foreach(@nlfiles)
-  { ($a,$a,$a,$a,$a,$a,$a,$a,$a,$mtime,$ctime) = stat(nodelistDir() . "/$_");
+  { ($mtime,$ctime) = (stat(nodelistDir . "/$_"))[9,10];
     if ($mtime > $curmtime)
     { $curmtime = $mtime;
       $curctime = $ctime;
       $curnodelist = $_;
     }
   }
-  ($a,$a,$a,$a,$a,$a,$a,$a,$a,$mtime,$ctime) = stat(nldb);
+  ($mtime,$ctime) = (stat($nldb))[9,10];
   if (!defined($mtime) || $mtime < $curmtime)
   {
     unlink(nldb);
@@ -941,7 +981,7 @@ sub faqserv
       $skip = 1;
       next;
     }
-    ($a,$a,$a,$a,$a,$a,$a,$fsize) = stat(faq . "$_.faq");
+    $fsize = (stat(faq . "$_.faq"))[7];
     if (($size += $fsize) > 102400)
     { $reply .= "Size limit riched, rest skipped\r";
       $skip = 1;
