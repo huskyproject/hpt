@@ -4,8 +4,6 @@ TODO-List for HPT
 Category 1: Will certainly be implemented until next release
 ============================================================
 
-- fix HASHDUPEs under non unices
-
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 
@@ -14,6 +12,7 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - fileboxes
 - templates
 - clean autoCreate code
+- fix HASHDUPEs under non unices
 
 Category 3: Will only be included if volunteers send patches
 ============================================================

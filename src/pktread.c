@@ -43,6 +43,7 @@
 #include <global.h>
 
 #include <pkt.h>
+#include <xstr.h>
 
 time_t readPktTime(FILE *pkt)
 {
@@ -161,7 +162,7 @@ void correctEMAddr(s_message *msg)
 
 void correctNMAddr(s_message *msg, s_pktHeader *header)
 {
-   char *start, *copy, *text, buffer[35];
+   char *start, *copy, *text=NULL, buffer[35]; //FIXME: static buffer
 
    copy = buffer;
    start = strstr(msg->text, "FMPT");
@@ -223,13 +224,9 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
       msg->destAddr.zone = header->destAddr.zone;
       msg->origAddr.zone = header->origAddr.zone;
 
-      // hint: 42 bytes - maximum INTL lenght
-      text = (char*) malloc(msg->textLength+42+1);
-      
-      sprintf(text,"\1INTL %u:%u/%u %u:%u/%u\r",msg->destAddr.zone,msg->destAddr.net,
+      xscatprintf(&text,"\1INTL %u:%u/%u %u:%u/%u\r",msg->destAddr.zone,msg->destAddr.net,
 	      msg->destAddr.node,msg->origAddr.zone,msg->origAddr.net,msg->origAddr.node);
-      
-      strcat(text,msg->text);
+      xstrcat(&text,msg->text);
       free(msg->text);
       msg->text = text;
       msg->textLength=strlen(msg->text);

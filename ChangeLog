@@ -2,6 +2,12 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Fri Feb 11 22:17:03 NOVT 2000
+max:
+* some changes in pktread.c
+* some code cleanup
+
+----- cvs ci ------
 Wed Feb  9 23:20:55 NOVT 2000
 max (patch from Serguei Revtov):
 - small fixes in areafix.c (closing file, empty line comparation, memory leak)

@@ -1539,24 +1539,19 @@ void MsgToStruct(HMSG SQmsg, XMSG xmsg, s_message *msg)
     msg->origAddr.net   = xmsg.orig.net;
     msg->origAddr.node  = xmsg.orig.node;
     msg->origAddr.point = xmsg.orig.point;
-    msg->origAddr.domain =  NULL;
 
     msg->destAddr.zone  = xmsg.dest.zone;
     msg->destAddr.net   = xmsg.dest.net;
     msg->destAddr.node  = xmsg.dest.node;
     msg->destAddr.point = xmsg.dest.point;
-    msg->destAddr.domain = NULL;
 
     strcpy(msg->datetime, (char *) xmsg.__ftsc_date);
-    msg->subjectLine = (char *) malloc(strlen((char *)xmsg.subj)+1);
-    msg->toUserName  = (char *) malloc(strlen((char *)xmsg.to)+1);
-    msg->fromUserName = (char *) malloc(strlen((char *)xmsg.from)+1);
-    strcpy(msg->subjectLine, (char *) xmsg.subj);
-    strcpy(msg->toUserName, (char *) xmsg.to);
-    strcpy(msg->fromUserName, (char *) xmsg.from);
+    xstrcat(&(msg->subjectLine), (char *) xmsg.subj);
+    xstrcat(&(msg->toUserName), (char *) xmsg.to);
+    xstrcat(&(msg->fromUserName), (char *) xmsg.from);
 
     msg->textLength = MsgGetTextLen(SQmsg);
-    msg->text = (char *)calloc(msg->textLength+1, sizeof(char));
+    xstralloc(&(msg->text),msg->textLength+1);
     MsgReadMsg(SQmsg, NULL, 0, msg->textLength, (unsigned char *) msg->text, 0, NULL);
 
 }
@@ -1601,6 +1596,7 @@ void afix(void)
 			((stricmp((char*)xmsg.to, "areafix")==0) || 
 			 (stricmp((char*)xmsg.to, "areamgr")==0) ||
 			 (stricmp((char*)xmsg.to, "hpt")==0) ) ) {
+		    memset(&msg,0,sizeof(s_message));
 		    MsgToStruct(SQmsg, xmsg, &msg);
 		    processAreaFix(&msg, NULL);
 		    xmsg.attr |= MSGREAD;
