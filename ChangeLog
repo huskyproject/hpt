@@ -1,3 +1,13 @@
+2002-02-19 Tuesday 21:33  pavel.gulchouck
+
+	* doc/hpt.texi (1.59), src/post.c (1.64): "hpt post" add areaname
+	to echotosslog when run without -x switch
+
+2002-02-19 Tuesday 11:15  ml
+
+	* h/global.h (1.29), src/fcommon.c (1.120), src/global.c (1.41),
+	src/hpt.c (1.131): more safe exit_hpt()
+
 2002-02-17 Sunday 17:16  ml
 
 	* src/hptlink.c (1.33): ignore characters case and .0 at the end of
