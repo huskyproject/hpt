@@ -1,6 +1,12 @@
 hpt 0.29
 --------
 
+----- cvs ci ------
+Sat Aug 28 13:47:33 NOVST 1999
+max:
+* some fixes for last bugfix :)
+
+=======
 Sat Aug 28 02:03:49 CEST 1999
 Antonio:
 + added Jam to autoCreate

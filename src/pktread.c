@@ -222,7 +222,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
       msg->origAddr.zone = header->origAddr.zone;
 
 	  // hint: 42 bytes - maximum INTL lenght
-	  text = (char*) malloc(strlen(msg->text)+42+1);
+	  text = (char*) malloc(msg->textLength+42+1);
 
 	  sprintf(text,"\1INTL %u:%u/%u %u:%u/%u\r",msg->destAddr.zone,msg->destAddr.net,
 	   msg->destAddr.node,msg->origAddr.zone,msg->origAddr.net,msg->origAddr.node);
@@ -230,6 +230,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
 	  strcat(text,msg->text);
 	  free(msg->text);
 	  msg->text = text;
+	  msg->textLength=strlen(msg->text);
 
       sprintf(buff, "Mail without INTL-Kludge. Assuming %i:%i/%i.%i -> %i:%i/%i.%i",
        msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
