@@ -38,6 +38,7 @@ Changes between hpt-1.2-stable and hpt-1.4-stable
    - ImportLog will not contain passthrough areas any more.
    - Fix CarbonCopy processing: add end of line after kludges
    - Fix linking when ^AMSGID or ^AREPLY are in MiXeD cAsE
+   - keepTrsMail works now
 
 
 HPT 1.2.3-release
