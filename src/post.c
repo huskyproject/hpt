@@ -386,7 +386,7 @@ void post(int c, unsigned int *n, char *params[])
         if (msg.toUserName == NULL)
             msg.toUserName = safe_strdup("All");
         if (msg.subjectLine == NULL)
-            msg.subjectLine = safe_strdup("");
+            msg.subjectLine = safe_calloc(1, 1);
         
         msg.netMail = (char)(area == NULL);
         /*FIXME*/
