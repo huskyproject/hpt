@@ -9,7 +9,7 @@
 #ifndef _MSC_VER
 #include <sys/wait.h>
 #endif
-#ifdef OS2
+#ifdef __OS2__
 #define INCL_DOSPROCESS
 #include <os2.h>
 #endif
@@ -36,10 +36,6 @@
 
 #if defined(__cplusplus)
 extern "C" {
-#endif
-
-#ifdef    HAS_MKTIME		
-#   undef HAS_MKTIME		
 #endif
 
 #include <EXTERN.h>
@@ -432,7 +428,7 @@ static void xs_init(void)
 #endif
 {
   static char *file = __FILE__;
-#if defined(OS2)
+#if defined(__OS2__)
   newXS("DB_File::bootstrap", boot_DB_File, file);
   newXS("Fcntl::bootstrap", boot_Fcntl, file);
   newXS("POSIX::bootstrap", boot_POSIX, file);
@@ -472,7 +468,7 @@ void perldone(void)
   }
 }
 
-#if defined(OS2)
+#if defined(__OS2__)
 static void perlthread(ULONG arg)
 {
   FILE *f;
@@ -525,7 +521,7 @@ perl_fork:
      close(perlpipe[0]);
      return 0;
    }
-#elif defined(OS2)
+#elif defined(__OS2__)
    pipe(perlpipe);
    *saveerr=dup(fileno(stderr));
    dup2(perlpipe[1], fileno(stderr));
@@ -554,7 +550,7 @@ static void restoreperlerr(int saveerr, int pid)
      return;
 #if defined(UNIX)
    waitpid(pid, &pid, 0);
-#elif defined(OS2)
+#elif defined(__OS2__)
    DosWaitThread((PTID)&pid, DCWW_WAIT);
 #endif
 #endif /* _MSC_VER */
@@ -1232,7 +1228,7 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
 
 }
 
-#ifdef OS2
+#ifdef __OS2__
 char *strdup(const char *src)
 {
   char *dest = malloc(strlen(src)+1);
