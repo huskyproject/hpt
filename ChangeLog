@@ -5,6 +5,7 @@ hpt 0.29
 Sun Jun 27  17:16:00
 Fedor:
 * fixed small bug with intab when request %LIST (description of area)
++ added check group when request %AVAIL
 
 ----- cvs ci ------
 Wed Jun 23 09:13:20 CEST 1999
