@@ -1,3 +1,17 @@
+2002-10-29 Tuesday 08:50  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.18): Add info about Andy U.
+	Luk'yanov into A36
+
+2002-10-29 Tuesday 08:08  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.17): Update FAQ (where get
+	binary & sources)
+
+2002-10-29 Tuesday 06:17  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.16): Fix FAQ
+
 2002-10-25 Friday 12:05  stas_degteff
 
 	* doc/hpt.texi (hpt-1_2-stable.3): Change 'pause' token syntax and
