@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Wed Oct 18 23:01:50 NOVST 2000
+max:
+* calculate packet orig zone if zero
+
+----- cvs ci ------
 Tue Oct 17 14:51:55 NOVST 2000
 max:
 * checking return values of fopen
