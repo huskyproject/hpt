@@ -284,7 +284,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 
    sortSeenBys(seenBys, seenByCount);
 
-   //for (i=0; i< seenByCount;i++) printf("%u/%u ", seenBys[i].net, seenBys[i].node);
+   for (i=0; i< seenByCount;i++) printf("%u/%u ", seenBys[i].net, seenBys[i].node);
    //exit(2);
 
    createPathArrayFromMsg(msg, &path, &pathCount);
@@ -296,7 +296,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       pathCount++;
    }
 
-   //for (i=0; i< pathCount;i++) printf("%u/%u ", path[i].net, path[i].node);
+   for (i=0; i< pathCount;i++) printf("%u/%u ", path[i].net, path[i].node);
    //exit(2);
 
 
@@ -339,7 +339,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
       if (echo->downlinks[i]->pktFile == NULL) {
          // pktFile does not exist
 		 createTempPktFileName(echo->downlinks[i]);
-         name = createOutboundFileName(echo->downlinks[i]->hisAka, NORMAL, FLOFILE);
+         name = createOutboundFileName(echo->downlinks[i]->hisAka, cvtFlavour2Prio(echo->downlinks[i]->echoMailFlavour), FLOFILE);
          flo = fopen(name, "a");
          if (echo->downlinks[i]->packerDef != NULL)
             // there is a packer defined -> put packFile into flo
@@ -553,7 +553,7 @@ void processMsg(s_message *msg, s_addr pktOrigAddr)
    } /* endif */
 }
 
-int processPkt(char *fileName, int onlyNetmail)
+int processPkt(char *fileName, e_tossSecurity sec)
 {
    FILE        *pkt;
    s_pktHeader *header;
@@ -579,10 +579,11 @@ int processPkt(char *fileName, int onlyNetmail)
             // if pkt is from a System we don't have a link (incl. pwd) with
             // we process it.
             if ((link->pktPwd != NULL) && (stricmp(link->pktPwd, header->pktPassword) != 0)) pwdOK = 0;
+            if (sec==secLocalInbound) pwdOK = !0; // localInbound pkts don´t need pwd
             if (pwdOK != 0) {
                while ((msg = readMsgFromPkt(pkt,config->addr[0].zone)) != NULL) {
                   rc = 4;
-                  if ((onlyNetmail == 0) || (msg->netMail == 1))
+                  if ((sec==secProtInbound) || (msg->netMail == 1))
                      processMsg(msg, header->origAddr);
                   else rc = 3;
                   freeMsgBuffers(msg);
@@ -618,7 +619,7 @@ int processPkt(char *fileName, int onlyNetmail)
    return rc;
 }
 
-void processDir(char *directory, int onlyNetmail)
+void processDir(char *directory, e_tossSecurity sec)
 {
    DIR            *dir;
    struct dirent  *file;
@@ -633,7 +634,7 @@ void processDir(char *directory, int onlyNetmail)
          dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
          strcpy(dummy, directory);
          strcat(dummy, file->d_name);
-         rc = processPkt(dummy, onlyNetmail);
+         rc = processPkt(dummy, sec);
 
          switch (rc) {
             case 1:   // pktpwd problem
@@ -667,6 +668,26 @@ void writeTossStatsToLog() {
    writeLogEntry(log, '4', buff);
 }
 
+void fillPackStatement(char *cmd, char *call, const char *archiv, const char *file) {
+   char *start, *tmp, buff[256];
+
+   tmp = strdup(call);
+   
+   // replace $a by archiv-filename
+   start = strstr(tmp, "$a");
+   *start = '%';
+   *(start+1) = 's';
+   sprintf(buff, tmp, archiv);
+
+   // replace $f by fileName
+   start = strstr(buff, "$f");
+   *start = '%';
+   *(start+1) = 's';
+   sprintf(cmd, buff, file);
+
+   free(tmp);
+}
+
 void arcmail() {
 	int i;
 	char cmd[256], logmsg[256];
@@ -675,12 +696,14 @@ void arcmail() {
 	// packing mail
         for (i = 0 ; i < config->linkCount; i++) {
 
-                if ((config->links[i].pktFile != NULL) && (config->links[i].packerDef != NULL)) {
-			sprintf(cmd,config->links[i].packerDef->call,config->links[i].packFile,
+           if ((config->links[i].pktFile != NULL) && (config->links[i].packerDef != NULL)) {
+
+			fillPackStatement(cmd,config->links[i].packerDef->call,config->links[i].packFile,
 					config->links[i].pktFile);
 			sprintf(logmsg,"Packing mail for %s",config->links[i].name);
 			writeLogEntry(log, '7', logmsg);
-			cmdexit = system(cmd);
+                        cmdexit = system(cmd);
+                        remove(config->links[i].pktFile);
 			free(config->links[i].pktFile);
 			free(config->links[i].packFile);
 		}
@@ -700,10 +723,11 @@ void toss()
    // set stats to 0
    memset(&statToss, sizeof(s_statToss), 0);
    writeLogEntry(log, '4', "Start tossing...");
-   processDir(config->protInbound, 0);
+   processDir(config->localInbound, secLocalInbound);
+   processDir(config->protInbound, secProtInbound);
    arcmail();
    // only import Netmails from inboundDir
-   processDir(config->inbound, 1);
+   processDir(config->inbound, secInbound);
 
    // write dupeFiles
 

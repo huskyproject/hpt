@@ -6,6 +6,7 @@
  * vix 23jun86 [added delete uar to add for replaced nodes]
  * mtt 08aug98 [added tree_count for count of knots]
  */
+#include <stdlib.h>
 
 
 /* This program text was created by Paul Vixie using examples from the book:
@@ -46,7 +47,6 @@ int	(*pfi_compare)();
 char	*pc_user;
 {
 	register int	i_comp;
-	register tree	*pr_new;
 
 	ENTER("tree_srch")
 

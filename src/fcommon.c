@@ -14,6 +14,19 @@
 #include <stamp.h>
 #include <progprot.h>
 
+e_prio cvtFlavour2Prio(e_flavour flavour)
+{
+   switch (flavour) {
+      case hold:   return HOLD;;
+                   break;
+      case normal: return NORMAL;
+                   break;
+      default:     return CRASH;
+                   break;
+   }
+   return NORMAL;
+}
+
 int createTempPktFileName(s_link *link)
 {
    char   *fileName = (char *) malloc(strlen(config->outbound)+1+12);

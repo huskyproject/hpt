@@ -1,6 +1,6 @@
 DEBUG   = 1
 CC      = gcc 
-INSTDIR = $(HOME)/fido
+INSTDIR = /usr/local/bin
 MANDIR  = /usr/local/man
 
 OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include <common.h>
 
@@ -9,6 +10,7 @@
 #include <log.h>
 #include <global.h>
 #include <version.h>
+#include <recode.h>
 
 #include <msgapi.h>
 
@@ -116,7 +118,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
 void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 {
    s_message    msg;
-   char         *name;
+   char         *name = NULL;
    UINT32       i,j=0;
    s_pktHeader  header;
    FILE         *pkt, *flo;
@@ -139,9 +141,12 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
             exit(1);
          }
          
-         name = createOutboundFileName(echo->downlinks[i]->hisAka, NORMAL, FLOFILE);
+         name = createOutboundFileName(echo->downlinks[i]->hisAka, cvtFlavour2Prio(echo->downlinks[i]->echoMailFlavour), FLOFILE);
          flo = fopen(name, "a");
-         fprintf(flo, "^%s\n", echo->downlinks[i]->packFile);
+         if (echo->downlinks[i]->packerDef != NULL)
+            fprintf(flo, "^%s\n", echo->downlinks[i]->packFile);
+         else
+            fprintf(flo, "^%s\n", echo->downlinks[i]->pktFile);
          fclose(flo);
       } /* endif */
 
