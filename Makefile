@@ -16,9 +16,9 @@ else
   LFLAGS = $(OPTLFLAGS)
 endif
 
-ifneq ($(DYNLIBS), 1)
-  LFLAGS += -static -lc
-endif
+#ifneq ($(DYNLIBS), 1)
+#  LFLAGS += -static -lc
+#endif
 
 ifeq ($(SHORTNAME), 1)
   LIBS  = -L$(LIBDIR) -lfidoconf -lsmapi
