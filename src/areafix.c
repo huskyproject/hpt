@@ -837,7 +837,7 @@ char *errorRQ(char *line)
 
 static char *do_delete(s_link *link, s_message *msg, s_area *area)
 {
-    char *report = NULL, *an = area->areaName;
+    char *report = NULL, *an = area->fileName;
     int i;
 
     /* unsubscribe from downlinks */

@@ -19,6 +19,10 @@
 #include <unistd.h>
 #include <XSUB.h>
 
+#ifndef sv_undef
+#define sv_undef PL_sv_undef
+#endif
+
 static PerlInterpreter *perl = NULL;
 static int  do_perl=1;
 

@@ -52,6 +52,9 @@ const char *VER_SERVICE = "";
 char       *versionStr=NULL;
 
 char	  *tossDir=NULL;
+
+char      *linkName=NULL;
+
 UCHAR     *globalBuffer = NULL;
 
 int       cmToss = 0;

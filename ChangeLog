@@ -1,6 +1,13 @@
 hpt 0.9.8 (development version)
 ---------	
 
+
+----- cvs ci ------
+Thu Sep 21 11:31:52 NOVST 2000
+max:
+* fix for deleting msg bases (Serguei Revtov)
+* patch from PG to link.c (exceeds counter fix)
+
 ----- cvs ci ------
 Sat Sep 16 21:31:18 NOVST 2000
 max:

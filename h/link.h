@@ -28,5 +28,5 @@
 #ifndef __LINK_H
 #define __LINK_H
 
-void linkAreas(void);
+void linkAreas(char *name);
 #endif

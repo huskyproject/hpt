@@ -44,6 +44,9 @@ extern s_fidoconfig *config;
 // vriable for current tossing dir
 extern char *tossDir;
 
+// var for linkAreas() argument
+extern char *linkName;
+
 // buffer for msg->text
 extern UCHAR *globalBuffer;
 

@@ -121,7 +121,7 @@ void start_help(void) {
   fprintf(stdout,"   hpt scan -f <filename> - scanning echomail from alternative echotoss file\n");
   fprintf(stdout,"   hpt post [options] file - posting a mail (for details run \"hpt post -h\")\n");
   fprintf(stdout,"   hpt pack    - packing netmail\n");
-  fprintf(stdout,"   hpt link    - links messages\n");
+  fprintf(stdout,"   hpt link [areaname] - links messages\n");
   fprintf(stdout,"   hpt afix    - process areafix\n");
   fprintf(stdout,"   hpt relink <addr> - refresh area subsription\n");
   fprintf(stdout,"   hpt -q [options] - quiet mode (no screen output)\n");
@@ -149,8 +149,12 @@ int processCommandLine(int argc, char **argv)
          cmPack = processExportOptions(&i, argc, argv);
          continue;
       } else if (stricmp(argv[i], "link") == 0) {
-         cmLink = 1;
-         continue;
+		  if (i < argc-1) {
+			  i++;
+			  xstrcat(&linkName,argv[i]);
+		  }
+		  cmLink = 1;
+		  continue;
       } else if (stricmp(argv[i], "afix") == 0) {
          cmAfix = 1;
          continue;
@@ -385,7 +389,8 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    if (cmPack &  2) scanExport(SCN_FILE | SCN_NETMAIL, scanParmF);
    if (cmPack &  4) scanExport(SCN_NAME | SCN_NETMAIL, scanParmA);
    
-   if (cmLink == 1) linkAreas();
+   if (cmLink == 1) linkAreas(linkName);
+   nfree(linkName);
    
    writeMsgToSysop();
    
