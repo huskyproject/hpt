@@ -1752,10 +1752,11 @@ scanned, when we start "hpt pack" - the same is for netmail areas.
 If area was processed, its name is removed from echotosslog file.
 When hpt has finished processing all listed areas and this file became
 empty, it is removed, otherwise kept for futher processing (maybe by other programs).
-If you do not want to process netmail with hpt pack, you can just delete this
-file after running hpt scan. If this file is not found - all areas will be
-scaned (depending on value of PackNetMailOnScan).
-@xref{PackNetMailOnScan}.
+If this file is not found - all areas will be scaned 
+(depending on value of PackNetMailOnScan).
+@xref{PackNetMailOnScan}, but if '-f' command line flag specified, scanning
+will stop. Filename after -f is optional. If it is not set, value of
+EchoTossLogFile will be taken from config, and from command line otherwise.
 
 This statement cannot be repeated.
 
