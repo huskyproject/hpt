@@ -1,3 +1,9 @@
+2004-09-14 Tuesday 19:07  i_zkh
+
+	* src/: getfree.c (1.28), hpt.c (1.192), hptafix.c (1.11),
+	hpttree.c (1.30), link.c (1.77), pktread.c (1.104), post.c (1.116),
+	scan.c (1.205), toss.c (1.537): Fixed spelling
+
 2004-08-30 Monday 13:51  val_khokhlov
 
 	* h/hptperl.h (1.18), src/perl.c (1.82), src/toss.c (1.536):
