@@ -530,6 +530,7 @@ void af_QueueReport()
     
     msgToSysop[0]->recode |= (REC_HDR|REC_TXT);
 
+    xstrcat( &(msgToSysop[0]->text), "\001FLAGS NPD\r");
     xstrcat( &(msgToSysop[0]->text), report );
     
     writeMsgToSysop();

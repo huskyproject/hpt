@@ -1318,13 +1318,13 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
                                     netmail,
                                     config->areafixKillReports);
 		msgToSysop[i]->text = createKludges(
-            config->disableTID,
-            netmail ? NULL : config->ReportTo, 
-            echo->useAka, echo->useAka,
-            versionStr);
+                                    config->disableTID,
+                                    netmail ? NULL : config->ReportTo, 
+                                    echo->useAka, echo->useAka,
+                                    versionStr);
 
-		xstrscat(&(msgToSysop[i]->text), "Action   Name", 
-			 print_ch(49, ' '), "By\r", NULL);
+		xstrscat(&(msgToSysop[i]->text), "\001FLAGS NPD\r",
+		         "Action   Name", print_ch(49, ' '), "By\r", NULL);
 		// Shitty static variables ....
 		xstrscat(&(msgToSysop[i]->text), print_ch(79, '-'), "\r", NULL);
 		msgToSysop[i]->recode |= (REC_HDR|REC_TXT);
