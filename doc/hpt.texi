@@ -1212,7 +1212,7 @@ doesn't run command.com to execute external commands such as
 packers/unpackers. hpt calls OS function to execute them instead of
 command.com.
 
-If you use hptzip (Zlib) library, you can set packed by     
+If you use hptzip (winth Zlib) library, you can set default packer by     
 
 	Pack    zip zipInternal 
 
@@ -1570,7 +1570,7 @@ e.g.: unpack "unzip -joLqq $a -d $p $f" 0 504b0304
        they can be unpacked by
        "unzip -joLqq <filename> -d <path> <descrption_filename>"
 or
-       if you use hptzip (Zlib) library, you can set unpacked by     
+       if you use hptzip (with Zlib) library, you can set default unpacker by     
 
        unpack  zipInternal 0 504b0304
 
@@ -3007,7 +3007,7 @@ will be stored in the outbound.
 
 This statement can only be repeated for different links.
 
-If you use hptzip (Zlib) library, you can set <packer> - zipinternal.
+If you use hptzip (Zlib) library, you can set <packer> - zip.
 
 @node Password, Pause, Packer, Link Keywords
 @subsection Password
