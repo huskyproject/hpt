@@ -78,8 +78,10 @@ A: (ML, SR, SD)
 
 2. Персональные сборки (часто согласованы с официальными):
 
-2.2. husky пакет под BeOS - BeFTN - живет на http://walther.sourceforge.net/,
-     http://www.qube.ru и http://www.bebits.com (Собирает Paul Galashin),
+2.2. husky пакет под BeOS - BeFTN - живет на http://walther.sourceforge.net/
+     и http://www.bebits.com/app/1886/ (Собирают:
+     под BeOS5.1 Paul Galashin 2:5053/777.12
+     под BeOS5.0.3 Сергей Жарский 2:465/204.43)
 
 2.3. Бинаpники DOS-DPMI, OS/2, Win32, Win32-dll-Perl:
      http://hpt-bin.boom.ru/ (собирает Andy U. Luk'yanov 2:5001/7)
