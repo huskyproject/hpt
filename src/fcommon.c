@@ -35,38 +35,35 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <process.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
-#if defined(__BEOS__)
+
+#include <smapi/compiler.h>
+
+#ifdef HAS_UNISTD_H
+#   include <unistd.h>
+#endif
+
+#ifdef HAS_IO_H
+#   include <io.h>
+#endif
+
+#ifdef HAS_SYS_SYSEXITS_H
 #include <sys/sysexits.h>
-#elif defined(UNIX)
+#endif
+#ifdef HAS_SYSEXITS_H
 #include <sysexits.h>
 #endif
 
-#ifdef __EMX__
-#include <sys/types.h>
-#endif
-#include <sys/stat.h>
-#if !defined(__TURBOC__) && !(defined (_MSC_VER) && (_MSC_VER >= 1200))
-#include <unistd.h>
-#endif
-#if defined (__TURBOC__)
-#include <process.h>
-#endif
-#ifdef __WATCOMC__
-#include <fcntl.h>
-#define AW_S_ISDIR(a) (((a) & S_IFDIR) != 0)
-#include <process.h>
+#ifdef HAS_DOS_H
 #include <dos.h>
 #endif
-#include <fcntl.h>
-#include <errno.h>
 
 #if defined(__TURBOC__) || defined(__IBMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
-
-#include <io.h>
-#include <fcntl.h>
-
-#include <process.h>
 
 #if !defined(S_ISDIR)
 #define S_ISDIR(a) (((a) & S_IFDIR) != 0)
@@ -74,25 +71,20 @@
 
 #endif
 
-#if defined(__MINGW32__) || defined(__DJGPP__)
-# include <process.h>
-#endif
+#include <smapi/typedefs.h>
+#include <smapi/stamp.h>
+#include <smapi/progprot.h>
 
-
-#include <global.h>
-#include <fcommon.h>
-#include <fidoconf/recode.h>
-#include <dupe.h>
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/dirlayer.h>
+#include <fidoconf/recode.h>
 #include <fidoconf/crc.h>
 
-#include <smapi/typedefs.h>
-#include <smapi/compiler.h>
-#include <smapi/stamp.h>
-#include <smapi/progprot.h>
+#include <global.h>
+#include <fcommon.h>
+#include <dupe.h>
 
 void writeDupeFiles(void)
 {
