@@ -1,3 +1,8 @@
+2002-01-17 Thursday 09:15  mche
+
+	* src/query.c (1.5): set queryfile location same as main config
+	file location
+
 2002-01-14 Monday 17:18  d.sergienko
 
 	* src/query.c (1.4): fixes for compiling under linux and code
