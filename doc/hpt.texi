@@ -1523,6 +1523,8 @@ sort by group and name.
 When sorting is carried out by group, group descriptions
 (see grpDesc keyword) are printed before groups' areas.
 
+By default echolist is sorted by name.
+
 This statement cannot be repeated.
 
 
