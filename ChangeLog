@@ -1,3 +1,8 @@
+2001-11-08 Thursday 15:42  ml
+
+	* src/: fcommon.c (1.99), hpt.c (1.115), hpttree.c (1.17), post.c
+	(1.60), txt2pkt.c (1.28): define sysexits.h only for unix systems
+
 2001-11-06 Tuesday 08:57  ml
 
 	* make/makefile.cyg (1.1), src/toss.c (1.365): cygwin makefile
