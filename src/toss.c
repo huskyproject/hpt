@@ -28,10 +28,12 @@ void changeFileSuffix(char *fileName, char *newSuffix) {
    char *newFileName;
    int  length = strlen(fileName)-strlen(beginOfSuffix)+strlen(newSuffix);
 
-   newFileName = (char *) malloc(length+1);
+   newFileName = (char *) calloc(length+1, 1);
    strncpy(newFileName, fileName, length-strlen(newSuffix));
    strcat(newFileName, newSuffix);
 
+//   printf("old: %s      new: %s\n", fileName, newFileName);
+   
    rename(fileName, newFileName);
 }
 
@@ -339,8 +341,13 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 		 createTempPktFileName(echo->downlinks[i]);
          name = createOutboundFileName(echo->downlinks[i]->hisAka, NORMAL, FLOFILE);
          flo = fopen(name, "a");
-         fprintf(flo, "^%s\n", echo->downlinks[i]->packFile);
-		 fclose(flo);
+         if (echo->downlinks[i]->packerDef != NULL)
+            // there is a packer defined -> put packFile into flo
+            fprintf(flo, "^%s\n", echo->downlinks[i]->packFile);
+         else
+            // there is no packer defined -> put pktFile into flo
+            fprintf(flo, "^%s\n", echo->downlinks[i]->pktFile);
+       	 fclose(flo);
       } /* endif */
 
       makePktHeader(NULL, &header);
@@ -508,6 +515,10 @@ void processNMMsg(s_message *msg)
          msgHeader = createXMSG(msg);
          /* Create CtrlBuf for SMAPI */
          ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
+         if (config->intab != NULL) {
+            recodeToInternalCharset(bodyStart);
+            recodeToInternalCharset(msg->subjectLine);
+         }
          /* write message */
          MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *) bodyStart, len, len, strlen(ctrlBuf)+1, (UCHAR *) ctrlBuf);
          free(ctrlBuf);
@@ -563,21 +574,45 @@ int processPkt(char *fileName, int onlyNetmail)
 	 statToss.pkts++;
          
          link = getLinkFromAddr(*config, header->origAddr);
-         if (link != NULL)
+         if (link != NULL) {
             // if passwords aren't the same don't process pkt
             // if pkt is from a System we don't have a link (incl. pwd) with
             // we process it.
             if ((link->pktPwd != NULL) && (stricmp(link->pktPwd, header->pktPassword) != 0)) pwdOK = 0;
             if (pwdOK != 0) {
                while ((msg = readMsgFromPkt(pkt,config->addr[0].zone)) != NULL) {
+                  rc = 4;
                   if ((onlyNetmail == 0) || (msg->netMail == 1))
                      processMsg(msg, header->origAddr);
+                  else rc = 3;
                   freeMsgBuffers(msg);
+                  if (rc==3) {
+                     sprintf(buff, "pkt: %s mails found", fileName);
+                     writeLogEntry(log, '1', buff);
+                  }
                } /* endwhile */
             } /* endif */
-         else rc = 1;
+            else {
+               sprintf(buff, "pkt: %s Password Error for %i:%i/%i.%i",
+                       fileName, header->origAddr.zone, header->origAddr.net,
+                       header->origAddr.node, header->origAddr.point);
+               writeLogEntry(log, '9', buff);
+               rc = 1;
+            } // pwdOk != 0
+         } // link != NULL
+         else {
+            sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i",
+                    fileName, header->origAddr.zone, header->origAddr.net,
+                    header->origAddr.node, header->origAddr.point);
+            writeLogEntry(log, '9', buff);
+            rc = 1;
+         }
       } /*endif */
-   } else rc = 3;
+   } else {
+      sprintf(buff, "pkt: %s wrong pkt-file", fileName);
+      writeLogEntry(log, '9', buff);
+      rc = 3;
+   }
 
    fclose(pkt);
    return rc;
@@ -635,13 +670,13 @@ void writeTossStatsToLog() {
 void arcmail() {
 	int i;
 	char cmd[256], logmsg[256];
-	int cmdexit;
-	
+        int cmdexit;
+
 	// packing mail
-	for (i = 0 ; i < config->linkCount; i++) {
-		
-		if (config->links[i].pktFile != NULL) {
-			sprintf(cmd,config->pack[0].call,config->links[i].packFile,
+        for (i = 0 ; i < config->linkCount; i++) {
+
+                if ((config->links[i].pktFile != NULL) && (config->links[i].packerDef != NULL)) {
+			sprintf(cmd,config->links[i].packerDef->call,config->links[i].packFile,
 					config->links[i].pktFile);
 			sprintf(logmsg,"Packing mail for %s",config->links[i].name);
 			writeLogEntry(log, '7', logmsg);
