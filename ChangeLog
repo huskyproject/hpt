@@ -8,6 +8,7 @@ max:
 * strip spaces from end of lines in echotoss.log
 * fixed stripping areaname when carbon messages (carbonText)
 * now areaname is always skipped (in carbonextern too)
+* fixed processing areafix for @othernets (Mike Ivanov)
 patch from Alex Bronin:
 * use spawnvp() instead of spawnv()
 

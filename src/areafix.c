@@ -1934,6 +1934,7 @@ void afix(s_addr addr, char *cmd)
 	int             startarea = 0, endarea = config->netMailAreaCount;
 	s_area          *area;
 	char            *name = config->robotsArea;
+	s_link          *link;
 
     w_log('1', "Start AreaFix...");
 
@@ -1943,18 +1944,18 @@ void afix(s_addr addr, char *cmd)
 	}
 
 	if (cmd) {
-		
-		for (k=0; k < config->addrCount; k++) {
-			if (config->addr[k].zone==addr.zone &&
-				config->addr[k].net==addr.net) break;
-		} if (k==config->addrCount) k=0;
-
-		tmpmsg = makeMessage(&addr, &(config->addr[k]), "sysop",
-						  "areafix", "password", 1);
-		tmpmsg->text = cmd;
-		processAreaFix(tmpmsg, NULL, 1);
-		tmpmsg->text=NULL;
-		freeMsgBuffers(tmpmsg);
+		link = getLinkFromAddr(*config, addr);
+		if (link) {
+			tmpmsg = makeMessage(&addr, link->ourAka, link->name,
+								 link->RemoteRobotName ?
+								 link->RemoteRobotName : "areafix",
+								 link->areaFixPwd ?
+								 link->areaFixPwd : "", 1);
+			tmpmsg->text = cmd;
+			processAreaFix(tmpmsg, NULL, 0);
+			tmpmsg->text=NULL;
+			freeMsgBuffers(tmpmsg);
+		} else w_log('9', "no such link in config: %s!", aka2str(addr));
 	}
 
 	else for (k = startarea; k < endarea; k++) {
