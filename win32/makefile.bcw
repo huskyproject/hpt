@@ -28,11 +28,13 @@ OBJS    = pktinfo.obj \
 
 SRC_DIR = ..\src
 
+# -O2 does not work for win32, it fails in link.c with internal compiler error
+
 !IF $(DEBUG) == 1
-CFLAGS  = -WC -v -w -O2 -DDEBUG_HPT -I..\h -I..\.. -I..\..\smapi -I..\..\fidoconf -DNT -D__NT__ -DWINNT
+CFLAGS  = -WC -v -w -O1 -DDEBUG_HPT -I..\h -I..\.. -I..\..\smapi -I..\..\fidoconf -DNT -D__NT__ -DWINNT
 LFLAGS  = -WC -v -w -L..\..\smapi -L..\..\fidoconf
 !ELSE
-CFLAGS  = -WC -v -w -O2 -I..\h -I..\.. -I..\..\smapi  -I..\..\fidoconf -DNT -D__NT__ -DWINNT
+CFLAGS  = -WC -v -w -O1 -I..\h -I..\.. -I..\..\smapi  -I..\..\fidoconf -DNT -D__NT__ -DWINNT
 LFLAGS  = -WC -w -L..\..\smapi -L..\..\fidoconf
 !ENDIF
 
@@ -85,6 +87,7 @@ global.obj
 recode.obj
 scan.obj
 areafix.obj
+arealist.obj
 seenby.obj
 toss.obj
 link.obj
