@@ -250,6 +250,7 @@ int main(int argc, char *argv[])
       msg.netMail = 1;
 
       if (tearl || config->tearline) {
+         *tmp='\0';
          xscatprintf(&tmp, "\r--- %s\r", (tearl) ? tearl : config->tearline);
          xstrcat(&textBuffer, tmp);
       }
@@ -259,12 +260,14 @@ int main(int argc, char *argv[])
 	   msg.origAddr = config->addr[0];
 
       if (area != NULL) {
+         *tmp='\0';
          strUpper(area);
          xscatprintf(&tmp, " * Origin: %s (%d:%d/%d.%d)\r",
                  (orig) ? orig : (config->origin) ? config->origin : "",
 		 msg.origAddr.zone, msg.origAddr.net,
                  msg.origAddr.node, msg.origAddr.point);
          xstrcat(&textBuffer, tmp);
+         *tmp='\0';
          xscatprintf(&tmp,"SEEN-BY: %d/%d\r\1PATH: %d/%d\r",
 	         header.origAddr.net,header.origAddr.node,
 		 header.origAddr.net,header.origAddr.node);
