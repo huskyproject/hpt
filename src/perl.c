@@ -57,6 +57,10 @@ extern "C" {
 #define min(a, b)	((a) < (b) ? (a) : (b))
 #endif
 
+#ifdef __GNUC__
+#define Perl___notused Perl___notused __attribute__ ((unused))
+#endif
+
 /* for alike */
 #define MAX_LDIST_LEN      40 // max word len to compair
 #define ADDITION           1  // penality for needing to add a character
