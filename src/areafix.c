@@ -1776,6 +1776,9 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
     int len, msgsize = config->areafixMsgSize * 1024, partnum=0;
     s_message *tmpmsg;
 
+    /* val: silent mode - don't write messages */
+    if (silent_mode) return;
+
     config->intab = NULL;
 
     text = report;

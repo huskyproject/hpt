@@ -163,7 +163,7 @@ void start_help(void) {
   fprintf(stdout,"   hpt pack -f <filename> - packing netmail from alternative echotoss file\n");
   fprintf(stdout,"   hpt link [areamask] - links messages\n");
   fprintf(stdout,"   hpt link -j [areamask] - link jam areas using CRC (more quickly)\n");
-  fprintf(stdout,"   hpt afix [<addr> command] - process areafix\n");
+  fprintf(stdout,"   hpt afix [-f] [-s] [<addr> command] - process areafix\n");
   fprintf(stdout,"   hpt qupd - update queue file and do some areafix jobs\n");
   fprintf(stdout,"   hpt qrep - make report based on information from queue file\n");
   fprintf(stdout,"   hpt relink <addr> - refresh area subscription\n");
@@ -211,8 +211,14 @@ int processCommandLine(int argc, char **argv)
 		  cmLink = 1;
 		  continue;
       } else if (stricmp(argv[i], "afix") == 0) {
-		  if (i < argc-1) {
+		  i++;
+		  while ( i < argc && *(argv[i]) == '-' ) {
+			  if (stricmp(argv[i], "-f") == 0) cmNotifyLink = 1;
+			  else if (stricmp(argv[i], "-s") == 0) silent_mode = 1;
+			  else printf("unknown afix option \"%s\"!\n", argv[i]);
 			  i++;
+		  }
+		  if (i < argc) {
 			  string2addr(argv[i], &afixAddr);
 			  if (i < argc-1) {
 				  i++;
@@ -220,18 +226,6 @@ int processCommandLine(int argc, char **argv)
 			  } else printf("parameter missing after \"%s\"!\n", argv[i]);
 		  }
 		  cmAfix = 1;
-		  continue;
-      } else if (stricmp(argv[i], "afix!") == 0) {
-		  if (i < argc-1) {
-			  i++;
-			  string2addr(argv[i], &afixAddr);
-			  if (i < argc-1) {
-				  i++;
-				  xstrcat(&afixCmd,argv[i]);
-			  } else printf("parameter missing after \"%s\"!\n", argv[i]);
-		  }
-		  cmAfix = 1;
-          cmNotifyLink = 1;
 		  continue;
       } else if (stricmp(argv[i], "post") == 0) {
          ++i; post(argc, (unsigned*)&i, argv);
