@@ -1429,7 +1429,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	else if (!security) security=4; // link == NULL;
 	
 	// ignore msg for other link (maybe this is transit...)
-	if (notforme) {
+	if (notforme || (link==NULL && security==1)) {
 		return processNMMsg(msg, pktHeader, NULL, 0, 0);
 	}
 	

@@ -4,6 +4,7 @@ hpt 0.9.6
 ----- cvs ci ------
 Fri Apr 28 11:45:55 NOVST 2000
 * fixed bug in correctNMAddr()
+* fixed bug with processing transit messages by areafix (thanx to Valery Abeev)
 
 ----- cvs ci ------
 Wed Apr 26 22:15:08 MEZ 2000
