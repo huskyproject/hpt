@@ -540,7 +540,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
            if ( (fd=open(link->bsyFile, O_CREAT | O_RDWR | O_EXCL, S_IREAD | S_IWRITE)) < 0 ) {
               save_errno = errno;
 
-              if (!fexist(link->bsyFile)) {
+              if (!fexist(link->bsyFile) && save_errno != EEXIST) {
 
                  writeLogEntry(hpt_log, '7', "cannot create *.bsy file \"%s\" for %s (errno %d)\n", link->bsyFile, link->name, (int)save_errno);
                  exit_hpt("cannot create *.bsy file!",0);
