@@ -370,7 +370,7 @@ char *getPatternFromLine(char *line, int *reversed)
         return NULL;
 }
 
-char *list(s_link *link, char *line) {
+char *list(s_link *link, char *cmdline) {
     int i, active, avail, rc = 0;
     char *report = NULL;
     char *list = NULL;
@@ -379,7 +379,7 @@ char *list(s_link *link, char *line) {
     ps_arealist al;
     s_area area;
 
-    pattern = getPatternFromLine(line, &reversed);
+    pattern = getPatternFromLine(cmdline, &reversed);
     if ((pattern) && (strlen(pattern)>60 || !isValidConference(pattern))) {
         w_log(LL_FUNC, "areafix::list() FAILED (error request line)");
         return errorRQ(line);
@@ -507,13 +507,22 @@ int tag_mask(char *tag, char **mask, unsigned num) {
     return 0;
 }
 
-char *available(s_link *link) {
+char *available(s_link *link, char *cmdline)
+{
     FILE *f;
     int j=0, found;
     unsigned int k, rc;
     char *report = NULL, *line, *token, *running, linkAka[SIZE_aka2str];
+    char *pattern;
+    int reversed;
     s_link *uplink=NULL;
     ps_arealist al;
+
+    pattern = getPatternFromLine(cmdline, &reversed);
+    if ((pattern) && (strlen(pattern)>60 || !isValidConference(pattern))) {
+        w_log(LL_FUNC, "areafix::avail() FAILED (error request line)");
+        return errorRQ(line);
+    }
 
     for (j = 0; j < config->linkCount; j++) {
 	uplink = &(config->links[j]);
@@ -548,7 +557,15 @@ char *available(s_link *link) {
 		    if (uplink->denyFwdFile)
 			rc |= areaIsAvailable(token,uplink->denyFwdFile,NULL,0);
 
-		    if (rc==0) addAreaListItem(al,0,token,running);
+                    if (pattern)
+                    {
+                        /* if matches pattern and not reversed (or vise versa) */
+                        if ((rc==0) &&(patimat(token, pattern)!=reversed))
+                            addAreaListItem(al,0,token,running);
+                    } else
+                    {
+                        if (rc==0) addAreaListItem(al,0,token,running);
+                    }
 
 		}
 		nfree(line);
@@ -1854,7 +1871,7 @@ char *processcmd(s_link *link, char *line, int cmd) {
     case REMOVE: report = delete (link, line);
 	RetFix=STAT;
 	break;
-    case AVAIL: report = available (link);
+    case AVAIL: report = available (link, line);
 	RetFix=AVAIL;
 	break;
     case UNLINK: report = unlinked (link);
