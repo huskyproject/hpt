@@ -1725,7 +1725,7 @@ void arcmail(s_link *tolink) {
 		    xstrcat(&pkt, link->fileBox);
 		    xstrcat(&pkt, link->pktFile + strlen(config->tempOutbound));
 
-		    cmdexit = rename(link->pktFile, pkt);
+		    cmdexit = move_file(link->pktFile, pkt, 0);
 		    if (cmdexit==0) w_log(LL_BUNDLE, "Leave non-packed mail for %s %s, %s",
 					  aka2str(link->hisAka), link->name,
 					  get_filename(link->pktFile));
@@ -1836,7 +1836,7 @@ void arcmail(s_link *tolink) {
 
 			xstrcat(&pkt, link->pktFile + strlen(config->tempOutbound));
 
-			cmdexit = rename(link->pktFile, pkt);
+			cmdexit = move_file(link->pktFile, pkt, 0);
 			if (cmdexit==0) {
 			    fprintf(flo, "^%s\n", pkt);
 			    w_log(LL_BUNDLE, "Leave non-packed mail for %s %s, %s",
@@ -1932,7 +1932,7 @@ void fix_qqq(char *filename)
 	    newname = safe_strdup(filename);
 
 	    strcpy(newname + l - 3, "pkt");
-	    if (rename(newname, filename) == 0)
+	    if (move_file(newname, filename, 0) == 0)
 		{
 		    strcpy(filename, newname);
 
@@ -1941,7 +1941,9 @@ void fix_qqq(char *filename)
 			    fwrite(buffer, 2, 1, f);
 			    fclose(f);
 			}
-		}
+        } else
+		    w_log(LL_ERR, "Failure moving %s to %s (%s)", newname,
+			  filename, strerror(errno));
 	    nfree(newname);
 	}
 }
