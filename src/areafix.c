@@ -559,6 +559,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
         config->areafixKillReports);
 	msg->text = createKludges(config->disableTID,NULL, uplink->ourAka, &(uplink->hisAka),
                               versionStr);
+        xstrcat(&(msg->text), "\001FLAGS DIR\r");
 	uplink->msg = msg;
     } else msg = uplink->msg;
 	
@@ -1720,7 +1721,7 @@ void preprocText(char *split, s_message *msg)
     
     msg->text = createKludges(config->disableTID,NULL, &msg->origAddr,
         &msg->destAddr, versionStr);
-    xstrcat(&(msg->text), "\001FLAGS NPD\r");
+    xstrcat(&(msg->text), "\001FLAGS NPD DIR\r");
     xscatprintf(&split, "\r--- %s areafix\r", versionStr);
     if (orig && orig[0]) {
         xscatprintf(&split, " * Origin: %s (%s)\r", orig, aka2str(msg->origAddr));
@@ -2301,6 +2302,7 @@ void autoPassive()
 							    config->links[i].ourAka,
 							    &(config->links[i].hisAka)
                                 ,versionStr);
+				  xstrcat(&(msg->text), "\001FLAGS DIR\r");
 				  xstrcat(&msg->text, "\r System switched to passive\r\r You are being unsubscribed from echo and fileecho areas with no downlinks besides you!\r\r When you wish to continue receiving arcmail and fileechoes, please send requests to AreaFix and FileFix\r containing the \r %RESUME command.");
 				  xscatprintf(&msg->text, "\r\r--- %s autopause\r", versionStr);
 				  msg->textLength = strlen(msg->text);
@@ -2389,6 +2391,7 @@ int relink (char *straddr) {
 
 	msg->text = createKludges(config->disableTID,NULL,researchLink->ourAka,
                               &researchLink->hisAka,versionStr);
+	xstrcat(&(msg->text), "\001FLAGS DIR\r");
 
 	for ( count = 0 ; count < areasArraySize; count++ ) {
 	    if ((areasIndexArray[count]->downlinkCount  <= 1) &&
