@@ -751,7 +751,7 @@ static XS(perl_myaddr)
   { w_log(LL_ERR, "wrong params number to myaddr (need 0, exist %d)", items);
     XSRETURN_UNDEF;
   }
-  EXTEND(SP, config->addrCount);
+  EXTEND(SP, (int)config->addrCount);
   for (naddr=0; naddr<config->addrCount; naddr++)
   {
     ST(naddr) = sv_newmortal();
@@ -1034,7 +1034,7 @@ static void restoreperlerr(int saveerr, int pid)
 }
 /* set %config, %links */
 void perl_setvars(void) {
-   int i, j;
+   UINT i, j;
    struct sv 		*sv;
    struct hv 		*hv, *hv2, *hv3;
    struct av 		*av;
