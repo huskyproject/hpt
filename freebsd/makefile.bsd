@@ -1,6 +1,9 @@
 # FreeBSD/NetBSD/OpenBSD Intel/Alpha/... legacy makefile
-# This file requires gmake. If anybody finds out how to do it with BSD's 
-# own make, please tell me.
+
+# Update: I now found out how to do this with FreeBSD's own make. It was in 
+# /usr/share/doc/psd/12.make/paper.ascii.gz, chapter "Pmake for Gods" :-)
+
+# So this file now works with both BSD make and GNU make
 
 DEBUG=-s
 # set to -g for debugging
@@ -21,6 +24,16 @@ CC     =gcc
 EXENAMEFLAG=-o 
 SRC_DIR=../src/
 LIBS   =../../fidoconf/libfidoconfigbsd.a ../../smapi/libsmapibsd.a
+
+# this is the rule for BSD's own make
+.PATH.c :  $(SRC_DIR)
+.c.o:
+	$(CC) $(CFLAGS) $(CDEFS) $<
+
+# the rule for gmake is in makefile.inc.
+
+# luckily, the two rules doo not interfere with each other - BSD make
+# ignores the second one, gmake ignores the first one.
 
 include ../makefile.inc
 
