@@ -1,3 +1,16 @@
+2002-07-15 Monday 22:30  stas
+
+	* doc/hpt.texi (1.75): Fix 'areafixQueryReports' default
+
+2002-07-15 Monday 20:48  stas
+
+	* doc/hpt.texi (1.74): Correct english phrases
+
+2002-07-15 Monday 10:07  pavel.gulchouck
+
+	* doc/hpt.texi (1.73), src/fcommon.c (1.137), src/toss.c (1.425):
+	Added bundleNameStyle addrsCRC32Always
+
 2002-07-14 Sunday 23:26  pavel.gulchouck
 
 	* src/fcommon.c (1.136): removing sent empty arcmail fix again
