@@ -49,8 +49,8 @@
 #endif
 
 #include <stdlib.h>
-
-
+#include <time.h>
+#include <progprot.h>
 
 s_fidoconfig *cfg;
 
