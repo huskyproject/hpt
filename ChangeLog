@@ -1,3 +1,8 @@
+2003-02-06 Thursday 22:43  d_sergienko
+
+	* doc/hpt-FAQ.russian (1.76, hpt-1_4-stable): fixed location of
+	texi2html
+
 2003-02-06 Thursday 12:07  sfpavel
 
 	* Makefile (1.12), debian/changelog (1.19), debian/control (1.14),
