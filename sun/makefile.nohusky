@@ -21,13 +21,13 @@ all: $(OBJS) \
 	$(CC) $(CFLAGS) ../src/$*.c
 
 pktinfo: pktinfo.o $(OBJS)
-	$(CC) $(LFLAGS) -o pktinfo pktinfo.o pktread.o log.o fcommon.o global.o xstr.o $(LIBS)
+	$(CC) $(LFLAGS) -o pktinfo pktinfo.o pktread.o log.o fcommon.o global.o xstr.o recode.o $(LIBS)
 
 tlog: tlog.o log.o
 	$(CC) $(LFLAGS) -o tlog tlog.o log.o
 
 tpkt: tpkt.o pktwrite.o fcommon.o pktread.o
-	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o log.o pktread.o pktwrite.o global.o xstr.o $(LIBS)
+	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o log.o pktread.o pktwrite.o global.o xstr.o recode.o $(LIBS)
 
 hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) $(LIBS) 
