@@ -880,23 +880,23 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
     switch (writeAccess) {
     case 0:
 	reason = "System not allowed to create new area";
-	w_log(LL_ECHOMAIL, "Badmail reason: System not allowed to create new area");
+	w_log(LL_ECHOMAIL, "Badmail reason: System not allowed to create new area (%s)", areaName);
 	break;
     case 1:
 	reason = "Sender not allowed to post in this area (access group)";
-	w_log(LL_ECHOMAIL, "Badmail reason: Sender not allowed to post in this area (access group)");
+	w_log(LL_ECHOMAIL, "Badmail reason: Sender not allowed to post in area %s (access group)", areaName);
 	break;
     case 2:
 	reason = "Sender not allowed to post in this area (access level)";
-	w_log(LL_ECHOMAIL, "Badmail reason: Sender not allowed to post in this area (access level)");
+	w_log(LL_ECHOMAIL, "Badmail reason: Sender not allowed to post in area %s (access level)", areaName);
 	break;
     case 3:
 	reason = "Sender not allowed to post in this area (access import)";
-	w_log(LL_ECHOMAIL, "Badmail reason: Sender not allowed to post in this area (access import)");
+	w_log(LL_ECHOMAIL, "Badmail reason: Sender not allowed to post in area %s (access import)", areaName);
 	break;
     case 4:
 	reason = "Sender not active for this area";
-	w_log(LL_ECHOMAIL, "Badmail reason: Sender not active for this area");
+	w_log(LL_ECHOMAIL, "Badmail reason: Sender not active for area %s", areaName);
 	break;
     case 5:
 	reason = "Rejected by filter";
@@ -954,7 +954,7 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 	break;
     case 7:
 	reason = "Can't create echoarea with forbidden symbols in areatag";
-	w_log(LL_ECHOMAIL, "Badmail reason: Can't create echoarea with forbidden symbols in areatag");
+	w_log(LL_ECHOMAIL, "Badmail reason: Can't create echoarea with forbidden symbols in areatag: '%s'", areaName);
 	break;
     case 8:
 	reason = "Sender not found in config file";
@@ -966,11 +966,11 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 	break;
     case 10:
 	reason = "No downlinks for passthrough area";
-	w_log(LL_ECHOMAIL, "Badmail reason: No downlinks for passthrough area");
+	w_log(LL_ECHOMAIL, "Badmail reason: No downlinks for passthrough area '%s'", areaName);
 	break;
     case 11:
 	reason = "lenght of CONFERENCE name is more than 60 symbols";
-	w_log(LL_ECHOMAIL, "Badmail reason: lenght of CONFERENCE name (areatag) is more than 60 symbols");
+	w_log(LL_ECHOMAIL, "Badmail reason: lenght of CONFERENCE name (areatag) is more than 60 symbols: '%s'", areaName);
 	break;
     default :
 	reason = "Another error";
