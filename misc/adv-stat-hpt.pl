@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# hptstat ver.0.3, (c)opyright 2002-03, by val khokhlov
+# hptstat ver.0.4, (c)opyright 2002-03, by val khokhlov
 $areas = 0;                   # areas count
 @area_tag;                    # array of area tags ($tag -> $name)
 %links;                       # links found in stat
@@ -9,8 +9,8 @@ $areas = 0;                   # areas count
 $INB = $OUTB = 0;             # total input and output bytes
 %config_areas, @config_links; # parsed hpt config
 
-parse_stat("d:/fido/log/hpt.stat.bin");
-parse_config("D:/fido/soft/FTN.CFG");
+parse_config($ENV{FIDOCONFIG} or "/home/val/fido/hpt/hpt.conf");
+parse_stat($stat_file or "d:/fido/log/hpt.stat.bin");
 # header
 print center("hpt statistics"), 
       center(localtime($stat1)." - ".localtime($stat2)), "\n";
@@ -24,7 +24,7 @@ print center("Traffic by links"),
 print center("Areas summary"), "\n",
       join("\n", make_summary('Area', 0, 1)), "\n\n";
 # links summary
-print center("Areas summary"), "\n",
+print center("Links summary"), "\n",
       join("\n", make_summary('Link', 0, 1)), "\n\n";
 # zero traffic areas
 print center("Zero traffic areas"), "\n",
@@ -49,6 +49,7 @@ sub find_area {
 # parse stat file into $areas
 sub parse_stat {
   my ($name) = @_;
+  die "Please specify statfile in parse_stat() or advStatisticsFile config keyword\n" unless defined $name;
   open F, $name or die "Can't open stat file $name\n"; binmode F;
   read F, $_, 16;
   my ($rev, $t0) = unpack 'x2 S1 L1', $_;
@@ -79,6 +80,7 @@ sub parse_stat {
 sub parse_config {
   my $in_link;
   my ($name) = @_;
+  die "Please define FIDOCONFIG variable or specify husky config name\n" unless length $name > 0;
   open F, $name or die "Can't open husky config file $name\n";
   while (<F>) {
     chomp $_; study $_;
@@ -86,8 +88,12 @@ sub parse_config {
     next if /^#/;
     s/\s+#\s+.*$//;
     next if /^\s*$/;
+    # parse stat file
+    if (/^\s*advStatisticsFile\s+/i) {
+      ($stat_file) = /^\s*\S+\s+(\S+)/;
+    }
     # parse area
-    if (/^\s*echoarea\s+/i) {
+    elsif (/^\s*echoarea\s+/i) {
       my ($tag) = /^\s*\S+\s+(\S+)/;
       $config_areas{$tag} = {uplink=>undef, links=>[]};
       s/-[Aa]\s+\S+//;
