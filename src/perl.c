@@ -68,6 +68,14 @@ extern "C" {
 #  endif
 #endif
 
+/* perl prior to 5.6 support */
+#ifndef get_sv
+#define get_sv perl_get_sv
+#endif
+  
+#ifndef newSVuv
+#define newSVuv newSViv
+#endif
 
 #ifndef sv_undef
 # define sv_undef PL_sv_undef
@@ -96,10 +104,20 @@ extern "C" {
 static int l_dist_list(char *key, char **list, char **match, int dist[], int match_limit, int *threshold);
 static int l_dist_raw(char *str1, char *str2, int len1, int len2);
 
-
-
 static PerlInterpreter *perl = NULL;
 static int  do_perl=1;
+int skip_addvia = 0;			//val: skip via adding
+#define SUB_FILTER		0x0001
+#define SUB_PROCESS_PKT		0x0002
+#define SUB_PKT_DONE		0x0004
+#define SUB_AFTER_UNPACK	0x0008
+#define SUB_BEFORE_PACK		0x0010
+#define SUB_HPT_START		0x0020
+#define SUB_HPT_EXIT		0x0040
+#define SUB_ROUTE		0x0080
+#define SUB_SCAN		0x0100
+#define SUB_TOSSBAD		0x0200
+int perl_subs   = -1;			//val: defined subs
 #ifdef _MSC_VER
   EXTERN_C void xs_init (pTHXo);
   EXTERN_C void boot_DynaLoader (pTHXo_ CV* cv);
@@ -111,6 +129,171 @@ static int  do_perl=1;
   EXTERN_C void perl_crc32(pTHXo_ CV* cv);
   EXTERN_C void perl_alike(pTHXo_ CV* cv);
 #endif
+
+// ----- val: some utility functions
+// const for kludge processing
+typedef enum { MODE_NOADD=0, MODE_REPLACE=1, MODE_SMART=2, MODE_UPDATE=3 } mmode_t;
+// flag names
+char *flag_name[] = { "PVT", "CRA", "RCV", "SNT", "ATT", "TRS", "ORP", "K/S", 
+                      "LOC", "HLD", "RSV", "FRQ", "RRQ", "RRC", "ARQ", "URQ",
+                      // flags in ^aFLAGS
+                      "A/S", "DIR", "ZON", "HUB", "IMM", "XMA", "KFS", "TFS",
+                      "LOK", "CFM", "HIR", "COV", "SIG", "LET" };
+int reuse_line(char **ptext, char *pos, mmode_t mode);
+// flag to flavour
+static e_flavour flag2flv(unsigned long attr) {
+  if (attr & 0x100000) return immediate;
+  else if ((attr & 0x20000) || (attr & 0x202) == 0x202) return direct;
+  else if (attr & 0x200) return hold;
+  else if (attr & 2) return crash;
+  else return normal;
+}
+// flavour to flag
+static unsigned long flv2flag(e_flavour flv) {
+  switch (flv) {
+    case immediate: return 0x100000;
+    case direct:    return 0x20000;
+    case hold:      return 0x200;
+    case crash:     return 2;
+    default:        return 0;
+  }
+}
+// flavour to string
+static char* flv2str(e_flavour flv) {
+  switch (flv) {
+    case immediate: return "immediate";
+    case direct:    return "direct";
+    case hold:      return "hold";
+    case crash:     return "crash";
+    default:        return "normal";
+  }
+}
+// smart string flavour parsing
+static e_flavour str2flv(char *flv) {
+typedef struct flv_data_s { e_flavour f; char c; char *s1; char *s2; };
+const struct flv_data_s flv_data[] = { { normal, 'n', "norm", "normal" },
+                                       { hold, 'h', "hld", "hold" },
+                                       { crash, 'c', "cra", "crash" },
+                                       { direct, 'd', "dir", "direct" },
+                                       { immediate, 'i', "imm", "immediate" } 
+                                     };
+register unsigned char i;
+   for (i = 0; i < sizeof(flv_data)/sizeof(flv_data[0]); i++)
+      if ( ((*flv | 0x20) == flv_data[i].c) && (flv[1] == '\0') ) return flv_data[i].f;
+   for (i = 0; i < sizeof(flv_data)/sizeof(flv_data[0]); i++)
+      if (stricmp(flv, flv_data[i].s1) == 0 ||
+          stricmp(flv, flv_data[i].s2) == 0) return flv_data[i].f;
+   return -1;
+}
+// fts1 date to unixtime, 0 on failure
+static time_t fts2unix(const char *s, int *ret) {
+struct tm tm;
+int flags;
+char ss[32];
+  strncpy(ss, s, sizeof(ss)-1); ss[sizeof(ss)-1] = '\0';
+  flags = parse_ftsc_date(&tm, ss);
+  tm.tm_isdst = -1;
+  //free(ss);
+  if (ret != NULL) *ret = flags;
+  return (flags & FTSC_BROKEN) ? 0 : mktime(&tm);
+}
+// parse ^aflags into corresponding mask
+static unsigned long parse_flags(const char *s) {
+register unsigned char i;
+register char *flgs;
+register unsigned long attr = 0UL;
+  flgs = strstr(s, "\001FLAGS ");
+  if (flgs == NULL || (flgs != s && *(flgs-1) != '\r')) return 0;
+  flgs += 7;
+  while (*flgs && *flgs != '\r') {
+    while (*flgs == ' ' || *flgs == '\t') flgs++;
+    for (i = 16; i < sizeof(flag_name)/sizeof(flag_name[0]); i++)
+      if (memcmp(flgs, flag_name[i], 3) == 0) attr |= (1UL<<i);
+    while (*flgs && *flgs != '\r' && *flgs != ' ' && *flgs != '\t') flgs++;
+  }
+  return attr;
+}
+// make ^aflags value from flags
+static char* make_flags(const unsigned long attr) {
+register unsigned char i;
+char *flgs = NULL;
+  for (i = 16; i < sizeof(flag_name)/sizeof(flag_name[0]); i++)
+      if (attr & (1<<i)) xscatprintf(&flgs, " %s", flag_name[i]);
+  return flgs;
+}
+// update ^aflags only if binary flags differ from kludge, return new text
+// if mode == MODE_SMART then it's ok when (kludge=>attr) == 1
+static char* update_flags(char *s, const unsigned long a,
+                          mmode_t mode) {
+register unsigned long klattr, attr;
+char *news = NULL, *flags, *pos, ch;
+  klattr = parse_flags(s) & 0xffff0000UL;
+  attr = a & 0xffff0000UL;
+  if ((mode == MODE_REPLACE && klattr != attr) ||
+      (mode == MODE_SMART && ((klattr ^ attr) & ~klattr))) {
+    reuse_line(&s, pos = strstr(s, "\001FLAGS "), MODE_REPLACE);
+    if (!attr) return s;
+    flags = make_flags(mode == MODE_REPLACE ? attr : attr | klattr);
+    if (flags == NULL) return s;
+    // try to insert ^aflags to the same place or to the end of kludges
+    if (pos == NULL) {
+      pos = s;
+      if (strncmp(pos, "AREA:", 5) == 0) while (*pos && *(pos++) != '\r');
+      while (*pos) 
+        if (*pos == '\001') while (*pos && *(pos++) != '\r'); else break;
+    }
+    ch = *pos; *pos = '\0';
+
+    //xscatprintf(&news, "\001FLAGS%s\r%s", flags, s);
+    if (pos != s) xscatprintf(&news, "%s\r\001FLAGS%s\r", s, flags);
+      else  xscatprintf(&news, "\001FLAGS%s\r", flags);
+    if (ch != '\0') { *pos = ch; xscatprintf(&news, "%s", pos); }
+    free(flags);
+    return news;
+  }
+  else return NULL;
+}
+// insert a line into message to the specified place
+static void insert_line(char **s, char *sub, char *pos) {
+char ch, *news = NULL;
+  if (pos == NULL) {
+    pos = *s;
+    if (strncmp(pos, "AREA:", 5) == 0) while (*pos && *(pos++) != '\r');
+  }
+  ch = *pos; *pos = '\0';
+  xscatprintf(&news, "%s%s", *s, sub);
+  if (ch != '\0') { *pos = ch; xscatprintf(&news, "%s", pos); }
+  free(*s); *s = news;
+}
+// update addresses: ^aintl, ^afmpt, ^atopot
+static void update_addr(s_message *msg) {
+char *intl = NULL, *topt = NULL, *fmpt = NULL, *pos = NULL;
+  xscatprintf(&intl, "\001INTL %u:%u/%u %u:%u/%u\r",
+              msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node,
+              msg->origAddr.zone,  msg->origAddr.net,  msg->origAddr.node);
+  if (msg->destAddr.point) {
+    xscatprintf(&topt, "\001TOPT %d\r", msg->destAddr.point);
+    if (strstr(msg->text, topt) == NULL) {
+      reuse_line(&(msg->text), pos = strstr(msg->text, "\001TOPT "), MODE_REPLACE);
+      insert_line(&(msg->text), topt, pos);
+    }
+  }
+  if (msg->origAddr.point) {
+    xscatprintf(&fmpt, "\001FMPT %d\r", msg->origAddr.point);
+    if (strstr(msg->text, fmpt) == NULL) {
+      reuse_line(&(msg->text), pos = strstr(msg->text, "\001FMPT "), MODE_REPLACE);
+      insert_line(&(msg->text), fmpt, pos);
+    }
+  }
+  pos = strstr(msg->text, "\001INTL ");
+  if (strstr(msg->text, intl) == NULL && pos != NULL) {
+    reuse_line(&(msg->text), pos, MODE_REPLACE);
+    insert_line(&(msg->text), intl, pos);
+  }
+  msg->textLength = strlen(msg->text);
+}
+// ---- /val
+
 #ifdef _MSC_VER
   EXTERN_C void perl_log(pTHXo_ CV* cv)
 #else
@@ -118,16 +301,22 @@ static int  do_perl=1;
 #endif
 {
   dXSARGS;
-  char *level, *str;
+  char *level, *str, lvl;
   STRLEN n_a;
 
-  if (items != 2)
-  { w_log(LL_ERR, "wrong params number to log (need 2, exist %d)", items);
+  if (items != 1 && items != 2)
+  { w_log(LL_ERR, "wrong params number to log (need 1 or 2, exist %d)", items);
     XSRETURN_EMPTY;
   }
-  level = (char *)SvPV(ST(0), n_a); if (n_a == 0) level = "";
-  str   = (char *)SvPV(ST(1), n_a); if (n_a == 0) str   = "";
-  w_log(*level, "%s", str);
+  if (items == 2) {
+    level = (char *)SvPV(ST(0), n_a); if (n_a == 0) level = "";
+    lvl   = *level;
+    str   = (char *)SvPV(ST(1), n_a); if (n_a == 0) str   = "";
+  } else {
+    lvl   = LL_PERL;
+    str   = (char *)SvPV(ST(0), n_a); if (n_a == 0) str   = "";
+  }
+  w_log(lvl, "%s", str);
   XSRETURN_EMPTY;
 }
 
@@ -237,6 +426,103 @@ static XS(perl_alike)
   ldist = l_dist_raw(str1, str2, len1, len2);
   XSRETURN_IV(ldist);
 }
+// val: better create_kludges :)
+void copy_line(char **dest, char *s) {
+char *pos;
+int len;
+    pos = strchr(s, '\r');
+    len = (pos != NULL) ? pos-s : strlen(s);
+    if (pos != NULL) *pos = 0;
+    xscatprintf(dest, "%s\r", s);
+    if (pos != NULL) *pos = '\r';
+}
+
+int reuse_line(char **ptext, char *pos, mmode_t mode) {
+char *pos2;
+int  len, frg;
+    // not found - add
+    if (pos == NULL) return 0;
+    // found, but not at the line start - add
+    else if (pos != *ptext && *(pos-1) != '\r') return 0;
+    // found and keep - don't add
+    if (mode != MODE_REPLACE) return 1;
+    // found and replace - delete, then add
+    pos2 = strchr(pos, '\r');
+    if (pos2 != NULL) {
+        frg = ++pos2 - pos; len = strlen(pos2);
+        memcpy(pos, pos2, len+1);
+    }
+    else *pos = 0;
+    return 0;
+}
+
+char *create_kludges(s_message *msg, char **ptext, char *area, long attr, 
+                     mmode_t mode)
+{
+char *buff = NULL;
+char *flgs = NULL;
+char *pos, *text = *ptext, *pos2;
+int i;
+unsigned long msgid;
+   // echomail
+   if (area) {
+       pos = strstr(text, "AREA:");
+       if (reuse_line(ptext, pos, mode)) ;//copy_line(&buff, pos);
+         else xscatprintf(&buff, "AREA:%s\r", area);
+   }
+   // netmail
+   else {
+      pos = strstr(text, "\001INTL ");
+      if (reuse_line(ptext, pos, mode)) ;//copy_line(&buff, pos);
+      else
+	   xscatprintf(&buff, "\001INTL %u:%u/%u %u:%u/%u\r",
+			   msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node,
+			   msg->origAddr.zone,  msg->origAddr.net,  msg->origAddr.node);
+
+      pos = strstr(text, "\001FMPT ");
+      if (reuse_line(ptext, pos, mode)) ;//copy_line(&buff, pos);
+      else if (msg->origAddr.point) xscatprintf(&buff, "\001FMPT %d\r", msg->origAddr.point);
+
+      pos = strstr(text, "\001TOPT ");
+      if (reuse_line(ptext, pos, mode)) ;//copy_line(&buff, pos);
+      if (msg->destAddr.point) xscatprintf(&buff, "\001TOPT %d\r", msg->destAddr.point);
+
+      pos = strstr(text, "\001FLAGS ");
+      if (reuse_line(ptext, pos, mode)) { 
+          copy_line(&flgs, pos+6); *(pos2 = strchr(flgs, '\r')) = 0;
+          reuse_line(ptext, pos, MODE_REPLACE);
+      }
+      if (attr & 0xffff0000UL) {
+          for (i = 16; i < sizeof(flag_name)/sizeof(flag_name[0]); i++) {
+              if ((attr & (1<<i)) && (flgs == NULL || strstr(flgs, flag_name[i]) == NULL)) 
+                  xscatprintf(&flgs, " %s", flag_name[i]);
+          }
+      }
+      if (flgs != NULL) { xscatprintf(&buff, "\001FLAGS%s\r", flgs); free(flgs); }
+   }
+   // msgid
+   pos = strstr(text, "\001MSGID: ");
+   if (reuse_line(ptext, pos, mode)) ;//copy_line(&buff, pos);
+   else {
+       msgid = GenMsgId(config->seqDir, config->seqOutrun);
+       if (msg->origAddr.point)
+          xscatprintf(&buff, "\001MSGID: %u:%u/%u.%u %08lx\r",
+                  msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node,
+                  msg->origAddr.point, msgid);
+       else
+          xscatprintf(&buff, "\001MSGID: %u:%u/%u %08lx\r",
+                  msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node,
+                  msgid);
+   }
+   // tid
+   pos = strstr(text, "\001TID: ");
+   if (reuse_line(ptext, pos, mode)) ;//copy_line(&buff, pos);
+   else if (!config->disableTID) xscatprintf(&buff, "\001TID: %s\r", versionStr);
+
+   return buff;
+}
+
+// val: end
 #ifdef _MSC_VER
 EXTERN_C void perl_putMsgInArea(pTHXo_ CV* cv)
 #else
@@ -245,7 +531,8 @@ static XS(perl_putMsgInArea)
 {
   dXSARGS;
   char *area, *fromname, *toname, *fromaddr, *toaddr;
-  char *subject, *date, *sattr, *text;
+  char *subject, *sdate = NULL, *sattr = NULL, *text;
+  long attr = -1L, date = 0;
   int  addkludges;
   char *p;
   STRLEN n_a;
@@ -253,8 +540,8 @@ static XS(perl_putMsgInArea)
   s_area *echo;
   s_message msg;
 
-  if (items != 10)
-  { w_log(LL_ERR, "wrong params number to putMsgInArea (need 10, exist %d)", items);
+  if (items != 9 && items != 10)
+  { w_log(LL_ERR, "wrong params number to putMsgInArea (need 9 or 10, exist %d)", items);
     XSRETURN_PV("Invalid arguments");
   }
   area     = (char *)SvPV(ST(0), n_a); if (n_a == 0) area     = "";
@@ -263,10 +550,15 @@ static XS(perl_putMsgInArea)
   fromaddr = (char *)SvPV(ST(3), n_a); if (n_a == 0) fromaddr = "";
   toaddr   = (char *)SvPV(ST(4), n_a); if (n_a == 0) toaddr   = "";
   subject  = (char *)SvPV(ST(5), n_a); if (n_a == 0) subject  = "";
-  date     = (char *)SvPV(ST(6), n_a); if (n_a == 0) date     = "";
-  sattr    = (char *)SvPV(ST(7), n_a); if (n_a == 0) sattr    = "";
+  if (SvTYPE(ST(6)) == SVt_PV) {
+     sdate = (char *)SvPV(ST(6), n_a); if (n_a == 0) sdate    = "";
+  } else date = SvUV(ST(6));
+  if (SvTYPE(ST(7)) == SVt_PV) {
+     sattr = (char *)SvPV(ST(7), n_a); if (n_a == 0) sattr    = "";
+  } else attr = SvUV(ST(7));
   text     = (char *)SvPV(ST(8), n_a); if (n_a == 0) text     = "";
-  addkludges = SvTRUE(ST(9));
+  //addkludges = SvTRUE(ST(9));
+  addkludges = (items > 9) ? SvIV(ST(9)) : MODE_SMART;
 
   memset(&msg, '\0', sizeof(msg));
 #if 0
@@ -306,36 +598,46 @@ static XS(perl_putMsgInArea)
     memcpy(&msg.origAddr, echo->useAka, sizeof(msg.origAddr));
   if (msg.netMail)
     string2addr(toaddr, &(msg.destAddr));
-  if (!date || !*date)
-  { time_t t = time(NULL);
+
+  if (!sdate || !*sdate)
+  { time_t t = (date != 0) ? (time_t)date : time(NULL);
     fts_time((char *)msg.datetime, localtime(&t));
   }
   else
-  { strncpy(msg.datetime, date, sizeof(msg.datetime));
+  { strncpy(msg.datetime, sdate, sizeof(msg.datetime));
     msg.datetime[sizeof(msg.datetime)-1] = '\0';
   }
+
   msg.subjectLine = safe_strdup(subject);
   msg.toUserName  = safe_strdup(toname);
   msg.fromUserName= safe_strdup(fromname);
-  sattr=safe_strdup(sattr);
-  for (p=strtok(sattr, " "); p; p=strtok(NULL, " "))
-  { dword attr;
-    if ((attr = str2attr(p)) != (dword)-1)
-      msg.attributes |= attr;
-  }
-  nfree(sattr);
-  if (addkludges)
-    msg.text = createKludges(config,
-                msg.netMail ? NULL : area,
-                &msg.origAddr, &msg.destAddr,
-                versionStr);
   text = safe_strdup(text);
-  if (strchr(text, '\r') == NULL)
-    for (p=text; *p; p++)
-      if (*p == '\n')
-        *p = '\r';
-  xstrcat((char **)(&(msg.text)), text);
-  nfree(text);
+
+  if (attr != -1) msg.attributes = (dword) (attr & 0xffff);
+  else if (sattr && *sattr) {
+      sattr=safe_strdup(sattr);
+      for (p=strtok(sattr, " "); p; p=strtok(NULL, " "))
+      { dword _attr;
+        if ((_attr = str2attr(p)) != (dword)-1)
+          msg.attributes |= _attr;
+      }
+      free(sattr);
+  }
+
+  for (p = text; *p; p++) if (*p == '\n') *p = '\r';
+  if (addkludges == MODE_UPDATE) {
+    char *text2 = (attr != -1) ? update_flags(text, attr, MODE_REPLACE) : NULL;
+    msg.text = (text2 != NULL) ? text2 : text;
+    if (msg.text != text) nfree(text);
+    update_addr(&msg);
+  }
+  else if (addkludges != MODE_NOADD) {
+    msg.text = create_kludges(&msg, &text, msg.netMail ? NULL : area, attr, addkludges);
+    xstrcat((char **)(&(msg.text)), text);
+    nfree(text);
+  }
+  else msg.text = text;
+
   msg.textLength = strlen(msg.text);
   rc = putMsgInArea(echo, &msg, 1, msg.attributes);
   freeMsgBuffers(&msg);
@@ -354,6 +656,7 @@ static XS(perl_str2attr)
   dXSARGS;
   char *attr;
   STRLEN n_a;
+  w_log(LL_WARN, "str2attr() deprecated, use numeric attributes instead");
   if (items != 1)
   { w_log(LL_ERR, "wrong params number to str2attr (need 1, exist %d)", items);
     XSRETURN_IV(-1);
@@ -362,6 +665,83 @@ static XS(perl_str2attr)
   XSRETURN_IV(str2attr(attr));
 }
 #ifdef _MSC_VER
+EXTERN_C void perl_attr2str(pTHXo_ CV* cv)
+#else
+static XS(perl_attr2str)
+#endif
+{
+  dXSARGS;
+  char *s = NULL, buf[4];
+  register unsigned char i = 0;
+  register unsigned long attr;
+  if (items != 1)
+  { w_log(LL_ERR, "wrong params number to attr2str (need 1, exist %d)", items);
+    XSRETURN_UNDEF;
+  }
+  attr = SvUV(ST(0));
+  for (i = 0; i < sizeof(flag_name)/sizeof(flag_name[0]); i++)
+    if (attr & (1UL<<i)) { 
+      memcpy(buf, flag_name[i], 4); strLower(buf+1);
+      xstrscat(&s, " ", buf, NULL); 
+    }
+  XSRETURN_PV(s == NULL ? "" : s+1);
+}
+#ifdef _MSC_VER
+EXTERN_C void perl_flv2str(pTHXo_ CV* cv)
+#else
+static XS(perl_flv2str)
+#endif
+{
+  dXSARGS;
+  if (items != 1)
+  { w_log(LL_ERR, "wrong params number to flv2str (need 1, exist %d)", items);
+    XSRETURN_UNDEF;
+  }
+  XSRETURN_PV( flv2str( flag2flv(SvUV(ST(0))) ) );
+}
+
+#ifdef _MSC_VER
+EXTERN_C void perl_fts_date(pTHXo_ CV* cv)
+#else
+static XS(perl_fts_date)
+#endif
+{
+  dXSARGS;
+  char *date;
+  time_t t;
+  STRLEN n_a;
+  w_log(LL_WARN, "fts_date() deprecated, use numeric unixtime instead");
+  if (items != 1)
+  { w_log(LL_ERR, "wrong params number to fts_date (need 1, exist %d)", items);
+    XSRETURN_UNDEF;
+  }
+  date = (char *)SvPV(ST(0), n_a); 
+  if (!n_a || !(t = fts2unix(date, NULL))) XSRETURN_UNDEF;
+    else XSRETURN_IV( (unsigned long)t );
+}
+
+#ifdef _MSC_VER
+EXTERN_C void perl_date_fts(pTHXo_ CV* cv)
+#else
+static XS(perl_date_fts)
+#endif
+{
+  dXSARGS;
+  time_t t;
+  char date[21];
+  struct tm *tm;
+  w_log(LL_WARN, "date_fts() deprecated, use numeric unixtime instead");
+  if (items != 1)
+  { w_log(LL_ERR, "wrong params number to date_fts (need 1, exist %d)", items);
+    XSRETURN_UNDEF;
+  }
+  t = (time_t)SvUV(ST(0));
+  tm = localtime(&t);
+  make_ftsc_date(date, tm);
+  XSRETURN_PV(date);
+}
+
+#ifdef _MSC_VER
 EXTERN_C void perl_myaddr(pTHXo_ CV* cv)
 #else
 static XS(perl_myaddr)
@@ -369,6 +749,7 @@ static XS(perl_myaddr)
 {
   UINT naddr;
   dXSARGS;
+  w_log(LL_WARN, "myaddr() deprecated, use @{$config{addr}} instead");
   if (items != 0)
   { w_log(LL_ERR, "wrong params number to myaddr (need 0, exist %d)", items);
     XSRETURN_UNDEF;
@@ -388,6 +769,7 @@ static XS(perl_nodelistDir)
 #endif
 {
   dXSARGS;
+  w_log(LL_WARN, "nodelistDir() deprecated, use $config{nodelistDir} instead");
   if (items != 0)
   { w_log(LL_ERR, "wrong params number to nodelistDir (need 0, exist %d)", items);
     XSRETURN_UNDEF;
@@ -412,6 +794,88 @@ static XS(perl_crc32)
   }
   str = (char *)SvPV(ST(0), n_a);
   XSRETURN_IV(memcrc32(str, n_a, 0xFFFFFFFFul));
+}
+
+#ifdef _MSC_VER
+EXTERN_C void perl_mktime(pTHXo_ CV* cv)
+#else
+static XS(perl_mktime)
+#endif
+{
+  dXSARGS;
+  struct tm tm;
+  if (items < 6 || items > 9)
+  { w_log(LL_ERR, "wrong params number to mktime (need 6 to 9, exist %d)", items);
+    XSRETURN_UNDEF;
+  }
+  tm.tm_sec  = SvUV(ST(0));
+  tm.tm_min  = SvUV(ST(1));
+  tm.tm_hour = SvUV(ST(2));
+  tm.tm_mday = SvUV(ST(3));
+  tm.tm_mon  = SvUV(ST(4));
+  tm.tm_year = SvUV(ST(5)); 
+  if (tm.tm_year < 70) tm.tm_year += 100;
+  else if (tm.tm_year > 1900) tm.tm_year -= 1900;
+  tm.tm_wday  = (items > 6) ? SvIV(ST(6)) : -1;
+  tm.tm_yday  = (items > 7) ? SvIV(ST(7)) : -1;
+  tm.tm_isdst = -1/*(items > 8) ? SvIV(ST(8)) : -1*/;
+  XSRETURN_IV( mktime(&tm) );
+}
+
+#ifdef _MSC_VER
+EXTERN_C void perl_strftime(pTHXo_ CV* cv)
+#else
+static XS(perl_strftime)
+#endif
+{
+  dXSARGS;
+  struct tm tm;
+  char buf[64];
+  if (items != 1 && items != 2 && (items < 7 || items > 10))
+  { w_log(LL_ERR, "wrong params number to strftime (need 1, 2, 7..10, exist %d)", items);
+    XSRETURN_UNDEF;
+  }
+  if (items > 2) {
+    tm.tm_sec  = SvUV(ST(1));
+    tm.tm_min  = SvUV(ST(2));
+    tm.tm_hour = SvUV(ST(3));
+    tm.tm_mday = SvUV(ST(4));
+    tm.tm_mon  = SvUV(ST(5));
+    tm.tm_year = SvUV(ST(6)); 
+    if (tm.tm_year < 70) tm.tm_year += 100;
+    else if (tm.tm_year > 1900) tm.tm_year -= 1900;
+    tm.tm_wday  = (items > 7) ? SvIV(ST(8)) : -1;
+    tm.tm_yday  = (items > 8) ? SvIV(ST(9)) : -1;
+    tm.tm_isdst = -1 /*(items > 9) ? -1 SvIV(ST(10)) : -1*/;
+    mktime(&tm); // make it valid
+    strftime(buf, sizeof(buf), SvPV_nolen(ST(0)), &tm);
+  } else { 
+    time_t t = (items == 2) ? (time_t)SvUV(ST(1)) : time(NULL);
+    strftime(buf, sizeof(buf), SvPV_nolen(ST(0)), localtime(&t));
+  }
+  XSRETURN_PV(buf);
+}
+
+#ifdef _MSC_VER
+EXTERN_C void perl_gmtoff(pTHXo_ CV* cv)
+#else
+static XS(perl_gmtoff)
+#endif
+{
+  dXSARGS;
+  struct tm loc, gmt;
+  double offs;
+  time_t t;
+  if (items > 1)
+  { w_log(LL_ERR, "wrong params number to gmtoff (need 0 or 1, exist %d)", items);
+    XSRETURN_UNDEF;
+  }
+  if (items) t = (time_t)SvUV(ST(0)); else t = time(NULL);
+  memcpy(&loc, localtime(&t), sizeof(loc));
+  memcpy(&gmt, gmtime(&t), sizeof(gmt));
+  offs = loc.tm_hour-gmt.tm_hour; if (offs > 12) offs -= 24;
+  if (loc.tm_min != gmt.tm_min) offs = offs + (double)(loc.tm_min-gmt.tm_min)/60;
+  XSRETURN_NV(offs);
 }
 
 #ifdef _MSC_VER
@@ -455,6 +919,13 @@ static void xs_init(void)
   newXS("nodelistDir",   perl_nodelistDir,   file);
   newXS("crc32",         perl_crc32,         file);
   newXS("alike",         perl_alike,         file);
+  newXS("date_fts",      perl_date_fts,      file);
+  newXS("fts_date",      perl_fts_date,      file);
+  newXS("mktime",        perl_mktime,        file);
+  newXS("strftime",      perl_strftime,      file);
+  newXS("gmtoff",        perl_gmtoff,        file);
+  newXS("flv2str",       perl_flv2str,       file);
+  newXS("attr2str",      perl_attr2str,      file);
 }
 void perldone(void)
 {
@@ -562,12 +1033,95 @@ static void restoreperlerr(int saveerr, int pid)
 #endif
 #endif /* _MSC_VER */
 }
+/* set %config, %links */
+void perl_setvars(void) {
+   int i;
+   struct sv 		*sv;
+   struct hv 		*hv, *hv2;
+   struct av 		*av;
+
+   if (!do_perl || perl == NULL) return;
+
+#define VK_ADD_HASH_sv(_hv,_sv,_name)                  \
+    if (_sv != NULL) {                                 \
+      SvREADONLY_on(_sv);                              \
+      hv_store(_hv, _name, strlen(_name), _sv, 0);     \
+    }
+#define VK_ADD_HASH_str(_hv,_sv,_name,_value)                            \
+    if ( (_value != NULL) && (_sv = newSVpv(_value, 0)) != NULL ) {      \
+      SvREADONLY_on(_sv);                                                \
+      hv_store(_hv, _name, strlen(_name), _sv, 0);                       \
+    }
+#define VK_ADD_HASH_int(_hv,_sv,_name,_value)                            \
+    if ( (_sv = newSViv(_value)) != NULL ) {                             \
+      SvREADONLY_on(_sv);                                                \
+      hv_store(_hv, _name, strlen(_name), _sv, 0);                       \
+    }
+   if ((sv = get_sv("hpt_ver", TRUE)) != NULL) {
+     char *vers = NULL;
+     xscatprintf(&vers, "hpt %u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
+     #ifdef __linux__
+        xstrcat(&vers, "/lnx");
+     #elif defined(__FreeBSD__) || defined(__NetBSD__)
+        xstrcat(&vers, "/bsd");
+     #elif defined(__OS2__) || defined(OS2)
+        xstrcat(&vers, "/os2");
+     #elif defined(__NT__)
+        xstrcat(&vers, "/w32");
+     #elif defined(__sun__)
+        xstrcat(&vers, "/sun");
+     #elif defined(MSDOS)
+        xstrcat(&vers, "/dos");
+     #elif defined(__BEOS__)
+        xstrcat(&vers, "/beos");
+     #endif
+     sv_setpv(sv, vers); SvREADONLY_on(sv);
+   }
+   if ((sv = get_sv("hpt_version", TRUE)) != NULL) {
+     sv_setpv(sv, versionStr); SvREADONLY_on(sv);
+   }
+   hv = perl_get_hv("config", TRUE);
+   VK_ADD_HASH_str(hv, sv, "inbound", config->inbound);
+   VK_ADD_HASH_str(hv, sv, "protInbound", config->protInbound);
+   VK_ADD_HASH_str(hv, sv, "localInbound", config->localInbound);
+   VK_ADD_HASH_str(hv, sv, "outbound", config->outbound);
+   VK_ADD_HASH_str(hv, sv, "name", config->name);
+   VK_ADD_HASH_str(hv, sv, "sysop", config->sysop);
+   VK_ADD_HASH_str(hv, sv, "origin", config->origin);
+   VK_ADD_HASH_str(hv, sv, "dupeHistoryDir", config->dupeHistoryDir);
+   VK_ADD_HASH_str(hv, sv, "nodelistDir", config->nodelistDir);
+   VK_ADD_HASH_str(hv, sv, "tempDir", config->tempDir);
+   av = newAV();
+   for (i = 0; i < config->addrCount; i++)
+      if ( (sv = newSVpv(aka2str(config->addr[i]), 0)) != NULL ) {
+          SvREADONLY_on(sv); av_push(av, sv);
+      }
+   SvREADONLY_on(av);
+   sv = newRV_noinc((struct sv*)av); 
+   //SvPOK_on(sv); sv_setpv(aka2str(config->addr[0]), 0); SvREADONLY_on(sv);
+   VK_ADD_HASH_sv(hv, sv, "addr");
+
+   hv = perl_get_hv("links", TRUE);
+   for (i = 0; i < config->linkCount; i++) {
+      hv2 = newHV();
+      VK_ADD_HASH_str(hv2, sv, "name", config->links[i].name);
+      VK_ADD_HASH_str(hv2, sv, "aka", aka2str(*config->links[i].ourAka));
+      VK_ADD_HASH_str(hv2, sv, "password", config->links[i].defaultPwd);
+      VK_ADD_HASH_str(hv2, sv, "filebox", config->links[i].fileBox);
+      VK_ADD_HASH_int(hv2, sv, "flavour", flv2flag(config->links[i].echoMailFlavour));
+      SvREADONLY_on(hv2);
+      sv = newRV_noinc((struct sv*)hv2);
+      VK_ADD_HASH_sv(hv, sv, aka2str(config->links[i].hisAka));
+   }
+}
+
 int PerlStart(void)
 {
-   int rc;
+   int rc, i;
    char *perlfile;
    char *perlargs[]={"", NULL, NULL};
    int saveerr, pid;
+   STRLEN n_a;
 
    if (config->hptPerlFile != NULL)
       perlfile = config->hptPerlFile;
@@ -601,21 +1155,70 @@ int PerlStart(void)
      do_perl=0;
      return 1;
    }
+// val: start constants definition
+#define VK_MAKE_CONST(_name,_value)                       \
+      newCONSTSUB(PL_defstash, _name, newSVuv(_value));   \
+      sv_setuv( get_sv(_name, TRUE), _value );
+   for (i = 0; i < sizeof(flag_name)/sizeof(flag_name[0]); i++) {
+       char ss[4];
+       strcpy(ss, flag_name[i]); if (ss[1] == '/') ss[1] = '_'; ss[3] = 0;
+       VK_MAKE_CONST(ss, (unsigned long)1<<i);
+   }
+// val: start config importing
+   perl_setvars();
+// val: look which subs present
+   if (perl_get_cv(PERLFILT, NULL) == NULL) perl_subs &= ~SUB_FILTER;
+   if (perl_get_cv(PERLPKT, NULL) == NULL) perl_subs &= ~SUB_PROCESS_PKT;
+   if (perl_get_cv(PERLPKTDONE, NULL) == NULL) perl_subs &= ~SUB_PKT_DONE;
+   if (perl_get_cv(PERLAFTERUNP, NULL) == NULL) perl_subs &= ~SUB_AFTER_UNPACK;
+   if (perl_get_cv(PERLBEFOREPACK, NULL) == NULL) perl_subs &= ~SUB_BEFORE_PACK;
+   if (perl_get_cv(PERLSTART, NULL) == NULL) perl_subs &= ~SUB_HPT_START;
+   if (perl_get_cv(PERLEXIT, NULL) == NULL) perl_subs &= ~SUB_HPT_EXIT;
+   if (perl_get_cv(PERLROUTE, NULL) == NULL) perl_subs &= ~SUB_ROUTE;
+   if (perl_get_cv(PERLSCAN, NULL) == NULL) perl_subs &= ~SUB_SCAN;
+   if (perl_get_cv(PERLTOSSBAD, NULL) == NULL) perl_subs &= ~SUB_TOSSBAD;
+// val: run main program body
+   perl_run(perl);
+// val: run hpt_start()
+   if (perl_subs & SUB_HPT_START) {
+      pid = handleperlerr(&saveerr);
+      { dSP;
+        ENTER;
+        SAVETMPS;
+        PUSHMARK(SP);
+        PUTBACK;
+        perl_call_pv(PERLSTART, G_EVAL|G_VOID);
+        SPAGAIN;
+        PUTBACK;
+        FREETMPS;
+        LEAVE;
+      }
+      restoreperlerr(saveerr, pid);
+      if (SvTRUE(ERRSV))
+      {
+        w_log(LL_ERR, "Perl hpt_start() eval error: %s\n", SvPV(ERRSV, n_a));
+      }
+   }
+// val: end config importing
    return 0;
 }
 
 int perlscanmsg(char *area, s_message *msg)
 {
    static int do_perlscan = 1;
-   char *prc;
+   char *prc, *ptr;
    int pid, saveerr;
+   unsigned long attr;
+   time_t date;
    SV *svfromname, *svfromaddr, *svtoname, *svtoaddr, *svattr;
    SV *svdate, *svtext, *svarea, *svsubj, *svret, *svchange;
+   SV *svaddvia, *svkill;
    STRLEN n_a;
+   int result = 0;
 
    if (do_perl && perl == NULL)
      PerlStart();
-   if (!perl || !do_perlscan)
+   if (!perl || !do_perlscan || (perl_subs & SUB_SCAN) == 0)
      return 0;
 
    pid = handleperlerr(&saveerr);
@@ -627,17 +1230,26 @@ int perlscanmsg(char *area, s_message *msg)
      svsubj     = perl_get_sv("subject",  TRUE);
      svtext     = perl_get_sv("text",     TRUE);
      svchange   = perl_get_sv("change",   TRUE);
+     svkill     = perl_get_sv("kill",     TRUE);
      svarea     = perl_get_sv("area",     TRUE);
      svtoaddr   = perl_get_sv("toaddr",   TRUE);
      svattr     = perl_get_sv("attr",     TRUE);
+     svaddvia   = perl_get_sv("addvia",   TRUE);
      sv_setpv(svfromname, msg->fromUserName);
      sv_setpv(svfromaddr, aka2str(msg->origAddr));
      sv_setpv(svtoname,   msg->toUserName);
+
+     sv_setuv(svdate,     (unsigned long)fts2unix(msg->datetime, NULL) );
      sv_setpv(svdate,     msg->datetime);
+     SvIOK_on(svdate);
+
      sv_setpv(svsubj,     msg->subjectLine);
      sv_setpv(svtext,     msg->text);
      sv_setsv(svchange,   &sv_undef);
-     sv_setiv(svattr,     msg->attributes);
+     sv_setsv(svkill,     &sv_undef);
+     sv_setuv(svattr,     msg->attributes | parse_flags(msg->text));
+     sv_setiv(svaddvia, 1);
+
      if (area)
        sv_setpv(svarea,   area);
      else
@@ -668,6 +1280,56 @@ int perlscanmsg(char *area, s_message *msg)
        return 0;
      }
      svchange = perl_get_sv("change", FALSE);
+     if (svchange && SvTRUE(svchange))
+     { // change
+       freeMsgBuffers(msg);
+       ptr = SvPV(perl_get_sv("text", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->text = safe_strdup(ptr);
+       msg->textLength = strlen(msg->text);
+       ptr = SvPV(perl_get_sv("toname", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->toUserName = safe_strdup(ptr);
+       ptr = SvPV(perl_get_sv("fromname", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->fromUserName = safe_strdup(ptr);
+       ptr = SvPV(perl_get_sv("subject", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->subjectLine = safe_strdup(ptr);
+       ptr = SvPV(perl_get_sv("toaddr", FALSE), n_a);
+       if (n_a > 0) string2addr(ptr, &(msg->destAddr));
+       ptr = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
+       if (n_a > 0) string2addr(ptr, &(msg->origAddr));
+       // update message kludges, if needed
+       update_addr(msg);
+       // process flags, update message if needed
+       attr = SvUV(perl_get_sv("attr", FALSE));
+       msg->attributes = attr & 0xffff;
+       if ((ptr = update_flags(msg->text, attr, MODE_REPLACE)) != NULL) {
+           if (ptr != msg->text) { free(msg->text); msg->text = ptr; }
+           msg->textLength = strlen(msg->text);
+       }
+       // process date
+       svdate = perl_get_sv("date", FALSE);
+       if ( (SvIOK(svdate)) && (SvUV(svdate) > 0) ) {
+              date = SvUV(svdate);
+              make_ftsc_date(msg->datetime, localtime(&date));
+       }
+       else if ( SvPOK(svdate) ) {
+              ptr = SvPV(svdate, n_a); if (n_a == 0) ptr = "";
+              if (fts2unix(ptr, NULL) > 0) {
+                  strncpy(msg->datetime, ptr, sizeof(msg->datetime));
+                  msg->datetime[sizeof(msg->datetime)-1] = '\0';
+              }
+       }
+     }
+
+     skip_addvia = 0;
+     svaddvia = get_sv("addvia", FALSE);
+     if (svaddvia != NULL) skip_addvia = (SvIV(svaddvia) == 0);
+     /*  kill after processing */
+     if (msg->netMail && svkill && SvTRUE(svkill)) result |= 0x80;
+     /*  change route and flavour */
      if (prc)
      {
        if (msg->netMail)
@@ -683,32 +1345,10 @@ int perlscanmsg(char *area, s_message *msg)
                        msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
                        prc);
        nfree(prc);
-       return 1;
-     }
-     else if (svchange && SvTRUE(svchange))
-     { /*  change */
-       freeMsgBuffers(msg);
-       prc = SvPV(perl_get_sv("text", FALSE), n_a);
-       if (n_a == 0) prc = "";
-       msg->text = safe_strdup(prc);
-       msg->textLength = strlen(msg->text);
-       prc = SvPV(perl_get_sv("toname", FALSE), n_a);
-       if (n_a == 0) prc = "";
-       msg->toUserName = safe_strdup(prc);
-       prc = SvPV(perl_get_sv("fromname", FALSE), n_a);
-       if (n_a == 0) prc = "";
-       msg->fromUserName = safe_strdup(prc);
-       prc = SvPV(perl_get_sv("subject", FALSE), n_a);
-       if (n_a == 0) prc = "";
-       msg->subjectLine = safe_strdup(prc);
-       prc = SvPV(perl_get_sv("toaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(prc, &(msg->destAddr));
-       prc = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(prc, &(msg->origAddr));
-       msg->attributes = SvIV(perl_get_sv("attr", FALSE));
+       return result | 1;
      }
    }
-   return 0;
+   return result | 0;
 }
 
 s_route *perlroute(s_message *msg, s_route *defroute)
@@ -718,12 +1358,15 @@ s_route *perlroute(s_message *msg, s_route *defroute)
 
    if (do_perl && perl==NULL)
      PerlStart();
-   if (!perl || !do_perlroute)
+   if (!perl || !do_perlroute || !(perl_subs & SUB_ROUTE))
      return NULL;
    pid = handleperlerr(&saveerr);
    { SV *svaddr, *svattr, *svflv, *svfrom, *svret, *svroute;
      SV *svfromname, *svtoname, *svsubj, *svtext, *svdate;
-     char *routeaddr;
+     SV *svaddvia, *svchange;
+     char *routeaddr, *prc, *ptr;
+     unsigned long attr;
+     time_t date;
      STRLEN n_a;
      static s_route route;
      dSP;
@@ -737,13 +1380,20 @@ s_route *perlroute(s_message *msg, s_route *defroute)
      svdate  = perl_get_sv("date",    TRUE);
      svtoname= perl_get_sv("toname",  TRUE);
      svfromname = perl_get_sv("fromname", TRUE);
+     svchange   = perl_get_sv("change",   TRUE);
      sv_setpv(svaddr,     aka2str(msg->destAddr));
      sv_setpv(svfrom,     aka2str(msg->origAddr));
      sv_setpv(svfromname, msg->fromUserName);
      sv_setpv(svtoname,   msg->toUserName);
+
+     sv_setuv(svdate,     (unsigned long)fts2unix(msg->datetime, NULL) );
      sv_setpv(svdate,     msg->datetime);
+     SvIOK_on(svdate);
+
      sv_setpv(svsubj,     msg->subjectLine);
      sv_setpv(svtext,     msg->text);
+     sv_setuv(svattr,     msg->attributes | parse_flags(msg->text));
+     sv_setsv(svchange,   &sv_undef);
      if (defroute)
      {
         if (defroute->target)
@@ -761,7 +1411,6 @@ s_route *perlroute(s_message *msg, s_route *defroute)
         else if (defroute->flavour==immediate)
             sv_setpv(svflv, "immediate");
      }
-     sv_setiv(svattr, msg->attributes);
      ENTER;
      SAVETMPS;
      PUSHMARK(SP);
@@ -777,46 +1426,108 @@ s_route *perlroute(s_message *msg, s_route *defroute)
      FREETMPS;
      LEAVE;
      restoreperlerr(saveerr, pid);
+
+     svaddvia = get_sv("addvia", FALSE);
+     if (svaddvia != NULL) skip_addvia = (SvIV(svaddvia) == 0);
+
      if (SvTRUE(ERRSV))
      {
        w_log(LL_ERR, "Perl route eval error: %s\n", SvPV(ERRSV, n_a));
        do_perlroute = 0;
      }
-     else if (routeaddr)
-     {
-       char *flv = SvPV(perl_get_sv("flavour", FALSE), n_a);
-       static char srouteaddr[32];
-       if (n_a == 0) flv = "";
-       memset(&route, 0, sizeof(route));
-       if ((route.target = getLink(config, routeaddr)) == NULL) {
-         route.routeVia = route_extern;
-         route.viaStr = srouteaddr;
-         strncpy(srouteaddr, routeaddr, sizeof(srouteaddr));
-         srouteaddr[sizeof(srouteaddr)-1] = '\0';
-       }
-       if (flv == NULL || *flv == '\0')
-       {
-         if (route.target)
-           route.flavour = route.target->echoMailFlavour;
-         else
-           route.flavour = hold;
-       }
-       else if (stricmp(flv, "normal") == 0)
-         route.flavour = normal;
-       else if (stricmp(flv, "hold") == 0)
-         route.flavour = hold;
-       else if (stricmp(flv, "crash") == 0)
-         route.flavour = crash;
-       else if (stricmp(flv, "direct") == 0)
-         route.flavour = direct;
-       else if (stricmp(flv, "immediate") == 0)
-         route.flavour = immediate;
-       else {
-         w_log(LL_PERL, "Perl route unknown flavour %s, set to hold", flv);
-         route.flavour = hold;
-       }
-       nfree(routeaddr);
-       return &route;
+     else {
+         svchange = perl_get_sv("change", FALSE);
+         if (svchange && SvTRUE(svchange)) {
+           // change
+           freeMsgBuffers(msg);
+           prc = SvPV(perl_get_sv("text", FALSE), n_a);
+           if (n_a == 0) prc = "";
+           msg->text = safe_strdup(prc);
+           msg->textLength = strlen(msg->text);
+           prc = SvPV(perl_get_sv("toname", FALSE), n_a);
+           if (n_a == 0) prc = "";
+           msg->toUserName = safe_strdup(prc);
+           prc = SvPV(perl_get_sv("fromname", FALSE), n_a);
+           if (n_a == 0) prc = "";
+           msg->fromUserName = safe_strdup(prc);
+           prc = SvPV(perl_get_sv("subj", FALSE), n_a);
+           if (n_a == 0) prc = "";
+           msg->subjectLine = safe_strdup(prc);
+           prc = SvPV(perl_get_sv("addr", FALSE), n_a);
+           if (n_a > 0) string2addr(prc, &(msg->destAddr));
+           prc = SvPV(perl_get_sv("from", FALSE), n_a);
+           if (n_a > 0) string2addr(prc, &(msg->origAddr));
+           // update message kludges, if needed
+           update_addr(msg);
+           // process flags, update message if needed
+           attr = SvUV(perl_get_sv("attr", FALSE));
+           msg->attributes = attr & 0xffff;
+           if ((ptr = update_flags(msg->text, attr, MODE_REPLACE)) != NULL) {
+               if (ptr != msg->text) { free(msg->text); msg->text = ptr; }
+               msg->textLength = strlen(msg->text);
+           }
+           // process date
+           svdate = perl_get_sv("date", FALSE);
+           if ( (SvIOK(svdate)) && (SvUV(svdate) > 0) ) {
+                  date = SvUV(svdate);
+                  make_ftsc_date(msg->datetime, localtime(&date));
+           }
+           else if ( SvPOK(svdate) ) {
+                  ptr = SvPV(svdate, n_a); if (n_a == 0) ptr = "";
+                  if (fts2unix(ptr, NULL) > 0) {
+                      strncpy(msg->datetime, ptr, sizeof(msg->datetime));
+                      msg->datetime[sizeof(msg->datetime)-1] = '\0';
+                  }
+           }
+         }
+
+         if (routeaddr)
+         {
+           char *flv;
+           static char srouteaddr[32];
+           svflv = perl_get_sv("flavour", FALSE);
+
+           memset(&route, 0, sizeof(route));
+           if ((route.target = getLink(config, routeaddr)) == NULL) {
+             route.routeVia = route_extern;
+             route.viaStr = srouteaddr;
+             strncpy(srouteaddr, routeaddr, sizeof(srouteaddr));
+             srouteaddr[sizeof(srouteaddr)-1] = '\0';
+           }
+
+           if ((SvIOK(svflv)) && (SvUV(svflv) > 0)) route.flavour = flag2flv(SvUV(svflv));
+           else {
+               flv = SvPV(svflv, n_a); if (n_a == 0) flv = "";
+               if (flv == NULL || *flv == '\0')
+               {
+                 if (route.target)
+                   route.flavour = route.target->echoMailFlavour;
+                 else
+                   route.flavour = hold;
+               }
+    #if 1
+               else if ( (route.flavour = str2flv(flv)) != -1 ) ;
+    #else
+               else if (stricmp(flv, "normal") == 0)
+                 route.flavour = normal;
+               else if (stricmp(flv, "hold") == 0)
+                 route.flavour = hold;
+               else if (stricmp(flv, "crash") == 0)
+                 route.flavour = crash;
+               else if (stricmp(flv, "direct") == 0)
+                 route.flavour = direct;
+               else if (stricmp(flv, "immediate") == 0)
+                 route.flavour = immediate;
+    #endif
+               else {
+                 w_log(LL_PERL, "Perl route unknown flavour %s, set to hold", flv);
+                 route.flavour = hold;
+               }
+           }
+           free(routeaddr);
+           return &route;
+         }
+
      }
    }
    return NULL;
@@ -826,6 +1537,8 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
 {
    char *area = NULL, *prc;
    int rc = 0;
+   unsigned long attr;
+   time_t date;
    SV *svfromname, *svfromaddr, *svtoname, *svtoaddr, *svpktfrom, *svkill;
    SV *svdate, *svtext, *svarea, *svsubj, *svsecure, *svret;
    SV *svchange, *svattr;
@@ -837,8 +1550,8 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
    if (do_perl && perl==NULL)
      if (PerlStart())
        return 0;
-   if (!perl || !do_perlfilter)
-     return 0;
+   if (!perl || !do_perlfilter || !(perl_subs & SUB_FILTER))
+     return 0;                
 
    pid = handleperlerr(&saveerr);
    if (msg->netMail != 1) {
@@ -868,13 +1581,17 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      sv_setpv(svfromname, msg->fromUserName);
      sv_setpv(svfromaddr, aka2str(msg->origAddr));
      sv_setpv(svtoname,   msg->toUserName);
+
+     sv_setuv(svdate,     (unsigned long)fts2unix(msg->datetime, NULL) );
      sv_setpv(svdate,     msg->datetime);
+     SvIOK_on(svdate);
+
      sv_setpv(svsubj,     msg->subjectLine);
      sv_setpv(svtext,     msg->text);
      sv_setpv(svpktfrom,  aka2str(pktOrigAddr));
      sv_setsv(svkill,     &sv_undef);
      sv_setsv(svchange,   &sv_undef);
-     sv_setiv(svattr,     msg->attributes);
+     sv_setuv(svattr,     msg->attributes | parse_flags(msg->text));
      if (secure)
        sv_setiv(svsecure, 1);
      else
@@ -949,7 +1666,28 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
        if (n_a > 0) string2addr(ptr, &(msg->destAddr));
        ptr = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
        if (n_a > 0) string2addr(ptr, &(msg->origAddr));
-       msg->attributes = SvIV(perl_get_sv("attr", FALSE));
+       // update message kludges, if needed
+       update_addr(msg);
+       // process flags, update message if needed
+       attr = SvUV(perl_get_sv("attr", FALSE));
+       msg->attributes = attr & 0xffff;
+       if ((ptr = update_flags(msg->text, attr, MODE_REPLACE)) != NULL) {
+           if (ptr != msg->text) { free(msg->text); msg->text = ptr; }
+           msg->textLength = strlen(msg->text);
+       }
+       // process date
+       svdate = perl_get_sv("date", FALSE);
+       if ( (SvIOK(svdate)) && (SvUV(svdate) > 0) ) {
+              date = SvUV(svdate);
+              make_ftsc_date(msg->datetime, localtime(&date));
+       }
+       else if ( SvPOK(svdate) ) {
+              ptr = SvPV(svdate, n_a); if (n_a == 0) ptr = "";
+              if (fts2unix(ptr, NULL) > 0) {
+                  strncpy(msg->datetime, ptr, sizeof(msg->datetime));
+                  msg->datetime[sizeof(msg->datetime)-1] = '\0';
+              }
+       }
      }
      if (prc)
      {
@@ -981,7 +1719,7 @@ int perlpkt(const char *fname, int secure)
    if (do_perl && perl==NULL)
      if (PerlStart())
        return 0;
-   if (!perl || !do_perlpkt)
+   if (!perl || !do_perlpkt || !(perl_subs & SUB_PROCESS_PKT))
      return 0;
    pid = handleperlerr(&saveerr);
    svpktname = perl_get_sv("pktname", TRUE);
@@ -1033,7 +1771,7 @@ void perlpktdone(const char *fname, int rc)
    if (do_perl && perl==NULL)
      if (PerlStart())
        return;
-   if (!perl || !do_perlpktdone)
+   if (!perl || !do_perlpktdone || !(perl_subs & SUB_PKT_DONE))
      return;
    pid = handleperlerr(&saveerr);
    { dSP;
@@ -1073,7 +1811,7 @@ void perlafterunp(void)
    if (do_perl && perl==NULL)
      if (PerlStart())
        return;
-   if (!perl || !do_perlafterunp)
+   if (!perl || !do_perlafterunp || !(perl_subs & SUB_AFTER_UNPACK))
      return;
    pid = handleperlerr(&saveerr);
    { dSP;
@@ -1104,7 +1842,7 @@ void perlbeforepack(void)
    if (do_perl && perl==NULL)
      if (PerlStart())
        return;
-   if (!perl || !do_perlbeforepack)
+   if (!perl || !do_perlbeforepack || !(perl_subs & SUB_BEFORE_PACK))
      return;
    pid = handleperlerr(&saveerr);
    { dSP;
@@ -1129,6 +1867,8 @@ void perlbeforepack(void)
 int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reason)
 {
    char *prc, *sorig;
+   unsigned long attr;
+   time_t date;
    SV *svfromname, *svfromaddr, *svtoname, *svtoaddr, *svpktfrom;
    SV *svdate, *svtext, *svarea, *svsubj, *svret, *svchange, *svattr;
    STRLEN n_a;
@@ -1138,7 +1878,7 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
    if (do_perl && perl==NULL)
      if (PerlStart())
        return 0;
-   if (!perl || !do_perltossbad)
+   if (!perl || !do_perltossbad || !(perl_subs & SUB_TOSSBAD))
      return 0;
 
    pid = handleperlerr(&saveerr);
@@ -1157,12 +1897,16 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
      sv_setpv(svfromname, msg->fromUserName);
      sv_setpv(svfromaddr, aka2str(msg->origAddr));
      sv_setpv(svtoname,   msg->toUserName);
+
+     sv_setuv(svdate,     (unsigned long)fts2unix(msg->datetime, NULL) );
      sv_setpv(svdate,     msg->datetime);
+     SvIOK_on(svdate);
+
      sv_setpv(svsubj,     msg->subjectLine);
      sv_setpv(svtext,     msg->text);
      sv_setpv(svpktfrom,  aka2str(pktOrigAddr));
      sv_setsv(svchange,   &sv_undef);
-     sv_setiv(svattr,     msg->attributes);
+     sv_setuv(svattr,     msg->attributes | parse_flags(msg->text));
      if (areaName)
      { sv_setpv(svarea,   areaName);
        sv_setsv(svtoaddr, &sv_undef);
@@ -1228,7 +1972,28 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
        if (n_a > 0) string2addr(ptr, &(msg->destAddr));
        ptr = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
        if (n_a > 0) string2addr(ptr, &(msg->origAddr));
-       msg->attributes = SvIV(perl_get_sv("attr", FALSE));
+       // update message kludges, if needed
+       update_addr(msg);
+       // process flags, update message if needed
+       attr = SvUV(perl_get_sv("attr", FALSE));
+       msg->attributes = attr & 0xffff;
+       if ((ptr = update_flags(msg->text, attr, MODE_REPLACE)) != NULL) {
+           if (ptr != msg->text) { free(msg->text); msg->text = ptr; }
+           msg->textLength = strlen(msg->text);
+       }
+       // process date
+       svdate = perl_get_sv("date", FALSE);
+       if ( (SvIOK(svdate)) && (SvUV(svdate) > 0) ) {
+              date = SvUV(svdate);
+              make_ftsc_date(msg->datetime, localtime(&date));
+       }
+       else if ( SvPOK(svdate) ) {
+              ptr = SvPV(svdate, n_a); if (n_a == 0) ptr = "";
+              if (fts2unix(ptr, NULL) > 0) {
+                  strncpy(msg->datetime, ptr, sizeof(msg->datetime));
+                  msg->datetime[sizeof(msg->datetime)-1] = '\0';
+              }
+       }
      }
    }
    return 0;

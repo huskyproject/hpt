@@ -75,6 +75,10 @@
 #include <dupe.h>
 #include <query.h>
 
+#ifdef DO_PERL
+#include <hptperl.h>
+#endif
+
 unsigned char RetFix;
 static int rescanMode = 0;
 static int rulesCount = 0;
@@ -2048,6 +2052,10 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 
     /*  send msg to the links (forward requests to areafix) */
     sendAreafixMessages();
+#ifdef DO_PERL
+    /* val: update perl structures */
+    perl_setvars();
+#endif
     w_log(LL_FUNC, __FILE__ "::processAreaFix() end (rc=1)");
     return 1;
 }

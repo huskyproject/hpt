@@ -157,6 +157,10 @@ void addViaToMsg(s_message *msg, hs_addr ourAka) {
 	struct tm *dt;
         char buf[2];
 
+#ifdef DO_PERL
+	if (skip_addvia) return;
+#endif
+
 	time(&tm);
 	dt = gmtime(&tm);
 
@@ -205,17 +209,17 @@ void makePktHeader(s_link *link, s_pktHeader *header)
    header->prodData        = 0;
 }
 
-static s_route *findSelfRouteForNetmail(s_message msg)
+static s_route *findSelfRouteForNetmail(s_message *msg)
 {
     char *addrStr=NULL;
     UINT i;
 
     xscatprintf(&addrStr, "%u:%u/%u.%u",
-		msg.destAddr.zone, msg.destAddr.net,
-		msg.destAddr.node, msg.destAddr.point);
+		msg->destAddr.zone, msg->destAddr.net,
+		msg->destAddr.node, msg->destAddr.point);
 
     for (i=0; i < config->routeCount; i++) {
-	if ((msg.attributes & MSGFILE) == MSGFILE) { /*  routeFile */
+	if ((msg->attributes & MSGFILE) == MSGFILE) { /*  routeFile */
 	    if (config->route[i].id == id_routeFile)
 		if (patmat(addrStr, config->route[i].pattern))
 		    break;
@@ -231,7 +235,7 @@ static s_route *findSelfRouteForNetmail(s_message msg)
     return (i==config->routeCount) ? NULL : &(config->route[i]);
 }
 
-s_route *findRouteForNetmail(s_message msg)
+s_route *findRouteForNetmail(s_message *msg)
 {
 	s_route *route;
 
@@ -239,7 +243,7 @@ s_route *findRouteForNetmail(s_message msg)
 
 #ifdef DO_PERL
 	{ s_route *sroute;
-	  if ((sroute = perlroute(&msg, route)) != NULL)
+	  if ((sroute = perlroute(msg, route)) != NULL)
 		return sroute;
 	}
 #endif
@@ -428,8 +432,10 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    w_log(LL_DEBUGB, "%s::%u Msg from %u:%u/%u.%u to %u:%u/%u.%u",__FILE__,__LINE__, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point );
 
 #ifdef DO_PERL
-   if (perlscanmsg(area->areaName, &msg)) {
-	xmsg->attr |= MSGSENT;
+   r = perlscanmsg(area->areaName, &msg);
+   if (r & 0x80) xmsg->attr |= MSGKILL;
+   if (r & 0x0f) {
+	//xmsg->attr |= MSGSENT;
 	freeMsgBuffers(&msg);
         w_log( LL_FUNC, "packMsg() end: perl hook proceed");
 	return 0;
@@ -470,7 +476,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 	
        /*  we need route mail */
        if (prio==normal) {
-	   route = findRouteForNetmail(msg);
+	   route = findRouteForNetmail(&msg);
 	   link = getLinkForRoute(route, &msg);
 	   if ((route != NULL) && (link != NULL)) {
 	       if (createOutboundFileName(link,route->flavour,
@@ -557,7 +563,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    } else {
            /*  no crash, no hold flag -> route netmail */
            if (route == NULL) {                      /* val: don't call again! */
-	   	route = findRouteForNetmail(msg);
+	   	route = findRouteForNetmail(&msg);
 	   	link = getLinkForRoute(route, &msg);
            }
 
@@ -635,9 +641,10 @@ void scanNMArea(s_area *area)
 
    /*  do not scan one area twice */
    if (area->scn) return;
-
+#ifndef DO_PERL
    if (config->routeCount == 0) {
        w_log(LL_ROUTE, "No routing -> Scanning stop");
+#endif
        /*  create flag for netmail trackers */
        if (config->netmailFlag) {
 	   if (NULL == (f = fopen(config->netmailFlag,"a")))
@@ -647,8 +654,10 @@ void scanNMArea(s_area *area)
 	       fclose(f);
 	   }
        }
+#ifndef DO_PERL
        return;
    }
+#endif
 
    netmail = MsgOpenArea((unsigned char *) area -> fileName, MSGAREA_NORMAL,
 			 /* config->netMailArea.fperm,

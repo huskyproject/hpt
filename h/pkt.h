@@ -48,7 +48,7 @@
 #define BUFFERSIZE 30*1024         /*  work buffer for msg text in pktread */
 #else
 #define TEXTBUFFERSIZE 512*1024    /*  for real os */
-#define BUFFERSIZE 128*1024        /*  work buffer for msg text in pktread */
+#define BUFFERSIZE 512*1024        /*  work buffer for msg text in pktread */
 #endif
 
 FILE        *createPkt(char *filename, s_pktHeader *header);
@@ -110,5 +110,14 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message);
 
 
 int correctDateTime(char *datetime);
+
+typedef unsigned long flag_t;  /* for at least 32 bit flags */
+#define FTSC_FLAWY  1           /* FTSC field has correctable errors */
+#define FTSC_BROKEN 2           /* FTSC field can't even be parsed   */
+#define FTSC_SEADOG 16          /* Seadog style string in the FTSC   */
+#define FTSC_TS_BROKEN 128      /* Only timestamp broken, date is OK */
+
+flag_t parse_ftsc_date(struct tm * ptm, char *pdatestr);
+void make_ftsc_date(char *pdate, const struct tm *ptm);
 
 #endif

@@ -13,10 +13,15 @@
 #define PERLPKTDONE     "pkt_done"
 #define PERLAFTERUNP    "after_unpack"
 #define PERLBEFOREPACK  "before_pack"
+#define PERLSTART       "hpt_start"
 #define PERLEXIT        "hpt_exit"
 #define PERLROUTE       "route"
 #define PERLSCAN        "scan"
 #define PERLTOSSBAD     "tossbad"
+
+extern int skip_addvia;
+
+void perl_setvars(void);
 
 int perlscanmsg(char *area, s_message *msg);
 s_route *perlroute(s_message *msg, s_route *route);

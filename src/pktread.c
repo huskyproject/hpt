@@ -50,12 +50,6 @@
 #include <pkt.h>
 #include <global.h>
 
-typedef unsigned long flag_t;  /* for at least 32 bit flags */
-#define FTSC_FLAWY  1           /* FTSC field has correctable errors */
-#define FTSC_BROKEN 2           /* FTSC field can't even be parsed   */
-#define FTSC_SEADOG 16          /* Seadog style string in the FTSC   */
-#define FTSC_TS_BROKEN 128      /* Only timestamp broken, date is OK */
-
 time_t readPktTime(FILE *pkt)
 {
   struct tm time;
@@ -426,7 +420,7 @@ int get_month(const char *pmon, flag_t *flag)
     return 0;
 }
 
-static flag_t parse_ftsc_date(struct tm * ptm, char *pdatestr)
+flag_t parse_ftsc_date(struct tm * ptm, char *pdatestr)
 {
     const char *pday, *pmon, *pyear, *phour, *pminute, *psecond;
     flag_t rval;
@@ -565,7 +559,7 @@ static flag_t parse_ftsc_date(struct tm * ptm, char *pdatestr)
 
 }
 
-static void make_ftsc_date(char *pdate, const struct tm *ptm)
+void make_ftsc_date(char *pdate, const struct tm *ptm)
 {
     sprintf(pdate, "%02d %-3.3s %02d  %02d:%02d:%02d",
             ptm->tm_mday % 100, months_ab[ptm->tm_mon], ptm->tm_year % 100,
@@ -691,14 +685,14 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 #endif
     
     correctAddr(msg, header);
-    
+#ifndef DO_PERL   
     /*  del "\001FLAGS" from message text */
     if (NULL != (p=strstr(msg->text,"\001FLAGS"))) {
         for (q=p; *q && *q!='\r'; q++);
         memmove(p,q+1,msg->textLength-(q-msg->text));
         msg->textLength -= (q-p+1);
     }
-    
+#endif    
     *message = msg;
     return 1;
 }
