@@ -1,4 +1,4 @@
-# DJGPP makefile
+# EMX OS/2 A.OUT STYLE MAKEFILE
 # no support for the husky build environment
 
 DEBUG=-s
@@ -15,7 +15,7 @@ CFLAGS =-Zomf -I../h -I../.. -c -O3 $(DEBUG)
 LFLAGS =-Zomf -Zsys $(DEBUG)
 CDEFS  =-DOS2
 CC     =gcc
-EXENAMEFLAG=-o 
+EXENAMEFLAG=-o
 SRC_DIR=../src/
 LIBS   =../../fidoconf/fconfemo.lib ../../smapi/smapiemo.lib
 
