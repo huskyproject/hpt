@@ -7,7 +7,7 @@ DEBUG=-s
 CC=gcc
 EXENAMEFLAG=-o
 SRC_DIR=../src/
-CFLAGS=-I../h -c -O3 $(DEBUG)
+CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
 LFLAGS=$(DEBUG)
 CDEFS =-DUNIX
 
