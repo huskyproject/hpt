@@ -1,5 +1,7 @@
+- if a netmail has crash or hold flag, the pkt-password is not used...
 - include -b flag to toss from badarea
 - autocreateFile
+- netmailarea should be packed when found in echotoss.log
 - divide hpt into several programs:
   tosser
   packer

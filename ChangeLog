@@ -3,6 +3,12 @@ hpt 0.26
 --------
 
 ----- cvs ci ------
+Thu Jan 21 09:59:14 CET 1999
+- fixed the last bug in pkts going to pnt-dir
+Wed Jan 20 23:04:50 CET 1999
+- further work on sven's patch, it should be correct now
+
+----- cvs ci ------
 Wed Jan 20 09:24:50 CET 1999
 - pkt큦 nor really going to pnt-dir not to some weired place in tempOutbound
 
@@ -24,7 +30,7 @@ Mon Jan 18 17:00:20 CET 1999
 - changed logic of findRouteForNetmail (the aka-string now has no .0 if link is node)
 - fixed a bug with a non-correct generated link 
 Mon Jan 18 10:40:19 CET 1999
-- included sven큦 patch which leads to wrong scanning of Squish-Netmailbases
+- included sven큦 patch which leads to wrong scanning of Squish-Netmailbases and wrong killing of msgs
 - added .ntu suffix for pkt큦 which are Not To Us
 
 ----- cvs ci ------

@@ -176,7 +176,6 @@ s_route *findRouteForNetmail(s_message msg)
          return &(config->route[i]);
    }
 
-   
    // if no aka is found return no link
    return NULL;
 }
@@ -277,7 +276,7 @@ void processRequests(s_link *link, s_message *msg)
 }
 
 
-int packMsg(HMSG SQmsg, XMSG xmsg)
+int packMsg(HMSG SQmsg, XMSG *xmsg)
 {
    FILE        *pkt;
    char        buff[90];
@@ -287,7 +286,7 @@ int packMsg(HMSG SQmsg, XMSG xmsg)
    s_route     *route;
    s_link      *link, *virtualLink;
 
-   convertMsgHeader(xmsg, &msg);
+   convertMsgHeader(*xmsg, &msg);
 
    // prepare virtual link...
    virtualLink = calloc(1, sizeof(s_link));
@@ -297,7 +296,7 @@ int packMsg(HMSG SQmsg, XMSG xmsg)
 
    // note: link->floFile used for create 12345678.?ut mail packets & ...
 
-   if ((xmsg.attr & MSGFRQ) == MSGFRQ) {
+   if ((xmsg->attr & MSGFRQ) == MSGFRQ) {
       // if msg has request flag then put the subjectline into request file.
       if (createOutboundFileName(virtualLink, NORMAL, REQUEST) == 0) {
 
@@ -306,17 +305,17 @@ int packMsg(HMSG SQmsg, XMSG xmsg)
          remove(virtualLink->bsyFile);
          free(virtualLink->bsyFile);
          // mark Mail as sent
-         xmsg.attr |= MSGSENT;
-         MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+         xmsg->attr |= MSGSENT;
+         MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
          free(virtualLink->floFile);
       }
    } /* endif */
 
-   if ((xmsg.attr & MSGFILE) == MSGFILE) {
+   if ((xmsg->attr & MSGFILE) == MSGFILE) {
 	   // file attach
 	   prio = NORMAL;
-	   if ((xmsg.attr & MSGCRASH) == MSGCRASH) prio = CRASH;
-	   if ((xmsg.attr & MSGHOLD)  == MSGHOLD)  prio = HOLD;
+	   if ((xmsg->attr & MSGCRASH) == MSGCRASH) prio = CRASH;
+	   if ((xmsg->attr & MSGHOLD)  == MSGHOLD)  prio = HOLD;
 	   // routing of files is not possible for this time
 //	   if (prio != NORMAL) {
 //		   createOutboundFileName(virtualLink, prio, FLOFILE);
@@ -331,13 +330,13 @@ int packMsg(HMSG SQmsg, XMSG xmsg)
               remove(virtualLink->bsyFile);
               free(virtualLink->bsyFile);
               // mark Mail as sent
-              xmsg.attr |= MSGSENT;
-              MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+              xmsg->attr |= MSGSENT;
+              MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
               free(virtualLink->floFile);
 	   }
    } /* endif */
    
-   if ((xmsg.attr & MSGCRASH) == MSGCRASH) {
+   if ((xmsg->attr & MSGCRASH) == MSGCRASH) {
 	   // crash-msg -> make CUT
 	   if (createOutboundFileName(virtualLink, CRASH, PKT) == 0) {
 		   convertMsgText(SQmsg, &msg, msg.origAddr);
@@ -351,13 +350,13 @@ int packMsg(HMSG SQmsg, XMSG xmsg)
 		   remove(virtualLink->bsyFile);
 		   free(virtualLink->bsyFile);
 		   // mark Mail as sent
-		   xmsg.attr |= MSGSENT;
-		   MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+		   xmsg->attr |= MSGSENT;
+		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 		   free(virtualLink->floFile);
 	   }
    } else
    
-   if ((xmsg.attr & MSGHOLD) == MSGHOLD) {
+   if ((xmsg->attr & MSGHOLD) == MSGHOLD) {
 	   // hold-msg -> make HUT
 	   if (createOutboundFileName(virtualLink, HOLD, PKT) == 0) {
 		   convertMsgText(SQmsg, &msg, msg.origAddr);
@@ -371,8 +370,8 @@ int packMsg(HMSG SQmsg, XMSG xmsg)
 		   remove(virtualLink->bsyFile);
 		   free(virtualLink->bsyFile);
 		   // mark Mail as sent
-		   xmsg.attr |= MSGSENT;
-		   MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+		   xmsg->attr |= MSGSENT;
+		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 		   free(virtualLink->floFile);
 	   }
    } else {
@@ -398,8 +397,8 @@ int packMsg(HMSG SQmsg, XMSG xmsg)
                  remove(link->bsyFile);
                  free(link->bsyFile);
                  // mark Mail as sent
-                 xmsg.attr |= MSGSENT;
-                 MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+                 xmsg->attr |= MSGSENT;
+                 MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
                  free(link->floFile);
               }
            } else {
@@ -412,7 +411,7 @@ int packMsg(HMSG SQmsg, XMSG xmsg)
    free(virtualLink->name);
    free(virtualLink);
 
-   if ((xmsg.attr & MSGSENT) == MSGSENT) {
+   if ((xmsg->attr & MSGSENT) == MSGSENT) {
 	   return 0;
    } else {
 	   return 1;
@@ -450,7 +449,7 @@ void scanNMArea(void)
                 
          // if not sent and not for us -> pack it
          if (((xmsg.attr & MSGSENT) != MSGSENT) && (for_us==0)) {
-			 if (packMsg(msg, xmsg) == 0) statScan.exported++;
+			 if (packMsg(msg, &xmsg) == 0) statScan.exported++;
          }
 
          MsgCloseMsg(msg);

@@ -1078,7 +1078,7 @@ void arcmail() {
                                         fprintf(flo, "^%s\n", config->links[i].packFile);
                                 else {
                                         // there is no packer defined -> put pktFile into flo
-                                        pkt = (char*) malloc(strlen(config->outbound)+1+4+12);
+                                        pkt = (char*) malloc(strlen(config->links[i].floFile)+1);
                                         lastPathDelim = strrchr(config->links[i].floFile, PATH_DELIM);
 
                                         // change path of file to path of flofile
