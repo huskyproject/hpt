@@ -8,8 +8,8 @@ EXENAMEFLAG=-Fe
 SRC_DIR=..\src\
 
 PERL_DIR=d:\compilation\Perl
-#RERL_VER=56
-RERL_VER=58
+#PERL_VER=56
+PERL_VER=58
 
 CFLAGS=-nologo -Zp1 -Ob2 -c -MD -I..\h -I..\.. -I"$(PERL_DIR)\lib\core"
 LFLAGS=
@@ -20,7 +20,7 @@ EXE=.exe
 RM=del
 PERLOBJ = perl.obj
 
-LIBS= ..\..\fidoconf\fconfmvc.lib ..\..\smapi\smapimvc.lib USER32.LIB msvcrt.lib Kernel32.lib delayimp.lib $(PERL_DIR)\lib\core\perl$(RERL_VER).lib /link /nodefaultlib /opt:nowin98 /delayload:perl$(RERL_VER).dll
+LIBS= ..\..\fidoconf\fconfmvc.lib ..\..\smapi\smapimvc.lib USER32.LIB msvcrt.lib Kernel32.lib delayimp.lib $(PERL_DIR)\lib\core\perl$(PERL_VER).lib /link /nodefaultlib /opt:nowin98 /delayload:perl$(PERL_VER).dll
 
 default: all
 
