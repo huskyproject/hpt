@@ -51,6 +51,7 @@
 #include <fidoconf/dirlayer.h>
 #include <fidoconf/xstr.h>
 
+#include <strsep.h>
 #include <pkt.h>
 #include <scan.h>
 #include <toss.h>
@@ -168,7 +169,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 	time_t    currentTime;
 	union stamp_combo dosdate;
 	int i;
-	char *subject=NULL;
+	char *subject=NULL, *newSubj=NULL, *token, *running;
        
 	//init outbounds
 	outbounds[0] = &tossDir;
@@ -223,25 +224,39 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 
    if (((msgHeader.attr & MSGFILE) == MSGFILE) 
 	   && (msg->netMail==1)
-       && !strchr(msg->subjectLine, PATH_DELIM))
-	   for (i=0;i<4;i++) {
-		   int size=strlen(msg->subjectLine)+(outbounds[i]?strlen(*outbounds[i])+1:1);
-		   if (size < XMSG_SUBJ_SIZE) {
-			   subject = (char *) safe_malloc (size);
-			   sprintf (subject,"%s%s",(outbounds[i])?*outbounds[i]:"",msg->subjectLine);
+       && !strchr(msg->subjectLine, PATH_DELIM)) {
+
+	   running = msg->subjectLine;
+	   token = strseparate(&running, " \t");
+
+	   while (token != NULL) {
+		   for (i=0;i<4;i++) {
+			   nfree(subject);
+			   if (outbounds[i]) xstrcat(&subject, *outbounds[i]);
+			   xstrcat (&subject, token);
 #if defined(__linux__) || defined(UNIX)
 			   subject = strLower(subject);
 #endif
-			   if (strchr(subject, ' ')!=NULL)
-				   subject[(long int)strchr(subject, ' ') - (long int)subject] = '\0';
 			   if (fexist(subject)) break;
-			   nfree(subject);
 		   }
-	   }
+		   if (newSubj) xstrcat(&newSubj, " ");
+		   xstrcat (&newSubj, subject);
+		   token = strseparate(&running, " \t");
+	   } // end while
+	   nfree(subject);
+   }
 
-   strcpy((char *) msgHeader.subj,(subject)?subject:msg->subjectLine);
-   if (subject != msg->subjectLine) nfree(subject);
-       
+   if (newSubj) {
+	   if (strlen(newSubj) < XMSG_SUBJ_SIZE)
+		   strcpy((char *) msgHeader.subj, newSubj);
+	   else {
+		   strncpy((char *) msgHeader.subj, newSubj, XMSG_SUBJ_SIZE-1);
+		   writeLogEntry(hpt_log,'9',
+						 "Long subjectLine! Some files will be not routed.");
+	   }
+	   nfree(newSubj);
+   } else strcpy((char *) msgHeader.subj, msg->subjectLine);
+
    msgHeader.orig.zone  = (word) msg->origAddr.zone;
    msgHeader.orig.node  = (word) msg->origAddr.node;
    msgHeader.orig.net   = (word) msg->origAddr.net;
@@ -999,7 +1014,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 
 /* area - area to carbon messages, echo - original echo area */
 int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carbon) {
-	char *p, *old_text, *reason = carbon.reason;
+	char *p, *text, *old_text, *reason = carbon.reason;
 	int i, old_textLength, reasonLen = 0, export = carbon.export, rc = 0;
 
 	statToss.CC++;
@@ -1025,9 +1040,11 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 
 	if (!msg->netMail) {
 		if ((!config->carbonKeepSb) && (!area->keepsb)) {
-			if (NULL != (p = strstr(old_text,"\rSEEN-BY:"))) i -= strlen (p+1);
+			text = strrstr(old_text, " * Origin:");
+			if (NULL != (p = strstr(text ? text : old_text,"\rSEEN-BY:")))
+				i -= strlen (p+1);
 		}
-	};
+	}
 	
 	if (reason) reasonLen = strlen(reason)+1;  /* +1 for \r */
 
@@ -1793,7 +1810,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
 
    if (sec == secInbound) {
       writeLogEntry(hpt_log, '9', "bundle %s: tossing in unsecure inbound, security violation", fileName);
-      return 3;
+      return 1;
    };
 
    // find what unpacker to use

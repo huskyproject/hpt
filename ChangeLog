@@ -2,6 +2,15 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Wed Nov  8 22:22:17 NOVT 2000
+max:
+* in carbon msgs kludges stripped only after Origin
+* arcmail from unsecure inbound renames to .sec
+* route several files (this is dangerous, because subjectLine only 72 bytes,
+  and files stores with full paths).
+* del scanned echomail with k/s flag
+
+----- cvs ci ------
 Fri Nov  3 22:04:03 NOVT 2000
 max:
 * additional checking of SEEN-BY lines when parsing path

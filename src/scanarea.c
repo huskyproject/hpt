@@ -265,6 +265,10 @@ void scanEMArea(s_area *echo)
          }
 
          MsgCloseMsg(hmsg);
+		 
+		 // kill msg
+		 if ((xmsg.attr & MSGKILL) == MSGKILL) MsgKillMsg(area, i--);
+
       }
 
       MsgSetHighWater(area, i);
