@@ -599,7 +599,7 @@ int delLinkFromString(char **lineOut, char *line, char *linkAddr)
             }
         }
         nfree(*lineOut);
-        *lineOut = (char *) safe_calloc(strlen(line) + 1, 1);
+        *lineOut = (char *) safe_calloc(strlen(origLine) + 1, 1);
         strncpy(*lineOut, origLine, startLink - line);
         if (endLen < strlen(origLine))
 	    strcpy(*lineOut+(startLink-line), origLine+endLen);
