@@ -279,12 +279,15 @@ int write_echo(FILE *F, stat_echo *e)
 {
     chain_link *cl;
     int tst;
+    short real_links = 0;
     
     if (!e || !e->links) return 0;
 #ifdef STAT_DEBUG
     debug_out(e);
 #endif
-    tst = fwrite(&(e->links), sizeof(e->links), 1, F);
+    cl = e->chain; while (cl) { real_links++; cl = cl->next; }
+/*    tst = fwrite(&(e->links), sizeof(e->links), 1, F); */
+    tst = fwrite(&(real_links), sizeof(e->links), 1, F);
     tst += fwrite(&(e->tag_len), sizeof(e->tag_len), 1, F);
     tst += fwrite(e->tag, e->tag_len, 1, F);
     if (tst < 3) { msg("Write error"); do_stat = 0; return 0; }
