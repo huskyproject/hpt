@@ -2211,7 +2211,10 @@ void autoPassive()
 					    &(config->links[i].hisAka),
 					    versionStr);
 				  xstrcat(&(msg->text), "\001FLAGS DIR\r");
-				  xstrcat(&msg->text, "\r System switched to passive\r\r You are being unsubscribed from echo and fileecho areas with no downlinks besides you!\r\r When you wish to continue receiving arcmail and fileechoes, please send requests to AreaFix and FileFix\r containing the \r %RESUME command.");
+				  xstrcat(&msg->text, "\r System switched to passive, your subscription are paused.\r\r"
+					" You are being unsubscribed from echo areas with no downlinks besides you!\r\r"
+					" When you wish to continue receiving echomail, please send requests\r"
+					" to AreaFix containing the %RESUME command.");
 				  xscatprintf(&msg->text, "\r\r--- %s autopause\r", versionStr);
 				  msg->textLength = strlen(msg->text);
 				  processNMMsg(msg, NULL,
