@@ -1,3 +1,7 @@
+2001-08-18 Saturday 05:40  ml
+
+	* src/post.c (1.57): fixed typos in post.c
+
 2001-08-16 Thursday 16:03  ml
 
 	* src/: getfree.c (1.8), hpt.c (1.112): fixed mindiskfreespace
