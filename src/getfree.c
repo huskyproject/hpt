@@ -133,7 +133,24 @@ unsigned long getfree (char *path)
  */
 
 #include <sys/types.h>
-#ifndef __BEOS__
+
+
+
+/* TE: test for FreeBSD, NetBSD, OpenBSD or any other BSD 4.4 - derived OS */
+#if (defined(__unix__) || defined(unix)) && !defined(USG)
+#include <sys/param.h>
+#endif
+#if (defined(BSD) && (BSD >= 199103))
+  /* now we can be sure we are on BSD 4.4 */
+#include <sys/mount.h>
+  /* fake the following code to think we had a sys/statfs.h so it uses
+     the proper code segments */
+#ifndef _SYS_STATFS_H
+#define _SYS_STATFS_H
+#endif
+#else
+  /* we are not on any BSD-like OS */
+#ifndef __BEOS__ /* list other UNIX os'es without getfree mechanism here */
 #if defined( __svr4__ ) || defined( __SVR4 )
 #include <sys/statvfs.h>
 #else
@@ -141,6 +158,8 @@ unsigned long getfree (char *path)
 #endif
 #endif
 #include <limits.h>
+#endif
+
 
 extern void w_log (char key, char *logString, ...);
 
