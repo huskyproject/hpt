@@ -2213,7 +2213,7 @@ void arcmail(s_link *tolink) {
 		    fillCmdStatement(cmd, link->packerDef->call,
 				     link->packFile,
 				     link->pktFile, "");
-		    w_log(LL_EXEC, "Packing for %s %s, %s > %s",
+		    w_log(LL_BUNDLE, "Packing for %s %s, %s > %s",
 			  aka2str(link->hisAka),
 			  link->name, get_filename(link->pktFile),
 			  get_filename(link->packFile));
