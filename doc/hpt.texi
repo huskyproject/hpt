@@ -267,6 +267,7 @@ FIDOCONFIG about location of config file and keywords ideology.
 * AreafixMsgSize::              maximum areafix report size
 * AreafixNames::                set additional areafix names
 * AreafixOrigin::		set origin for areafix reports
+* AreafixQueryReports::		add linked areas to each report
 * AreafixSplitStr::             set split string for splitted areafix messages
 * AreasFileNameCase::           case of filenames of autocreated areas
 * AutoAreaCreateFlag::          create this file-flag after auto-area-create
@@ -431,7 +432,7 @@ Set additional names for areafix robot. Default is "areafix", "areamgr",
 
 This statement cannot be repeated.
 
-@node AreafixOrigin, AreafixSplitStr, AreafixNames, Keywords
+@node AreafixOrigin, AreafixQueryReports, AreafixNames, Keywords
 @subsection AreafixOrigin
 @findex AreafixOrigin
 @table @asis
@@ -446,7 +447,23 @@ the origin string in areafix reports will be like this:
 
 This statement cannot be repeated.
 
-@node AreafixSplitStr, AreasFileNameCase, AreafixOrigin, Keywords
+@node AreafixQueryReports, AreafixSplitStr, AreafixOrigin, Keywords
+@subsection AreafixQueryReports
+@findex AreafixQueryReports
+@table @asis
+@item Syntax:
+@code{AreafixQueryReports <bool>}
+@item Example:
+@code{AreafixQueryReports on}
+@end table
+
+If this statement is turned on areafix will add linked areas to the end of
+each report.
+Default is off.
+
+This statement cannot be repeated.
+
+@node AreafixSplitStr, AreasFileNameCase, AreafixQueryReports, Keywords
 @subsection AreafixSplitStr
 @findex AreafixSplitStr
 @table @asis
