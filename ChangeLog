@@ -1,6 +1,11 @@
 hpt 0.27
 --------
 
+----- cvs ci ------
+Tue Mar  2 12:11:04 MET 1999
+- removed old config code.
+
+----- cvs ci ------
 Mon Mar  1 22:00
   Gabriel Plutzar
 + included support for generic new keyword for LogLevels                       
