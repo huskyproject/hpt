@@ -1232,16 +1232,15 @@ char *add_rescan(s_link *link, char *line) {
     if (*line=='+') line++; while (*line==' ') line++;
 
     p = strchr(line, ' '); /* select only areaname */
-    if (p)
-        *p = '\0';
+    if (p) *p = '\0';
 
     report = subscribe (link, line);
-    *p = ' '; /* resume original string */
+    if (p) *p = ' '; /* resume original string */
 
     xstrscat(&line2,"%rescan ", line, NULL);
     xstrcat(&report, rescan(link, line2));
     nfree(line2);
-    *p = '\0';
+    if (p) *p = '\0';
 
     return report;
 }
