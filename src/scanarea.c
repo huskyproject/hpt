@@ -227,10 +227,12 @@ void scanEMArea(s_area *echo)
 	   }
 
        }
-       MsgSetHighWater(area, i);
+       if (i < highestMsg)
+           MsgSetHighWater(area, i);
+
        closeOpenedPkt();
-	  
        MsgCloseArea(area);
+
    } else {
        w_log(LL_START, "Could not open %s", echo->fileName);
    } /* endif */
