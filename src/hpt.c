@@ -109,24 +109,28 @@ int  processExportOptions(unsigned int *i, int argc, char **argv)
   return rc != 0 ? rc : 1;
 }
 
+void start_help(void) {
+  fprintf(stdout,"%s",versionStr);
+  fprintf(stdout,"\nUsage: hpt [-c config] [options]\n");
+  fprintf(stdout,"   hpt toss    - tossing mail\n");
+  fprintf(stdout,"   hpt toss -b - tossing mail from badarea\n");
+  fprintf(stdout,"   hpt scan    - scanning echomail\n");
+  fprintf(stdout,"   hpt scan -w - scanning echomail without highwaters\n");
+  fprintf(stdout,"   hpt scan -a <areaname> - scanning echomail from <areaname> area\n");
+  fprintf(stdout,"   hpt scan -f <filename> - scanning echomail from alternative echotoss file\n");
+  fprintf(stdout,"   hpt post [options] file - posting a mail (for details run \"hpt post -h\")\n");
+  fprintf(stdout,"   hpt pack    - packing netmail\n");
+  fprintf(stdout,"   hpt link [areaname] - links messages\n");
+  fprintf(stdout,"   hpt afix    - process areafix\n");
+  fprintf(stdout,"   hpt relink <addr> - refresh area subsription\n");
+  fprintf(stdout,"   hpt -q [options] - quiet mode (no screen output)\n");
+}
+
 int processCommandLine(int argc, char **argv)
 {
    unsigned int i = 0;
 
-   if (argc == 1) {
-      printf("\nUsage: hpt [options] [-c config]\n");
-      printf("   hpt toss    - tossing mail\n");
-      printf("   hpt toss -b - tossing mail from badarea\n");
-      printf("   hpt scan    - scanning echomail\n");
-      printf("   hpt scan -w - scanning echomail without highwaters\n");
-      printf("   hpt scan -a <areaname> - scanning echomail from <areaname> area\n");
-      printf("   hpt scan -f <filename> - scanning echomail from alternative echotoss file\n");
-      printf("   hpt post [options] file - posting a mail (for details run \"hpt post -h\")\n");
-      printf("   hpt pack    - packing netmail\n");
-      printf("   hpt link    - links messages\n");
-      printf("   hpt afix    - process areafix\n");
-      printf("   hpt relink <addr> - refresh area subsription\n");
-   }
+   if (argc == 1) start_help();
 
    while (i < argc-1) {
       i++;
@@ -155,8 +159,13 @@ int processCommandLine(int argc, char **argv)
          i++; relink(argv[i]);
 	 continue;
       } else if (stricmp(argv[i], "-c") == 0) {
-         ++i; xstrcat(&cfgFile, argv[i]);
-	 continue;
+                  i++;
+                  if (argv[i]!=NULL) xstrcat(&cfgFile, argv[i]);
+		  else printf("parameter missing after \"%s\"!\n", argv[i-1]);
+		  continue;
+      } else if (stricmp(argv[i], "-h") == 0) {
+		  start_help();
+		  continue;
       } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
 
    } /* endwhile */
@@ -184,9 +193,13 @@ void processConfig()
 
    // lock...
    if (config->lockfile!=NULL && fexist(config->lockfile)) {
-      f = fopen(config->lockfile, "rt");
-      fscanf(f, "%lu\n", &pid);
-      fclose(f);
+	   if ((f = fopen(config->lockfile, "rt"))==NULL) {
+		   fprintf(stderr,"Can't open file: \"%s\"\n",config->lockfile);
+		   exit_hpt("Can't open lock-file",0);
+	   }
+	   fscanf(f, "%lu\n", &pid);
+	   fclose(f);
+
       /* Checking process PID */
 #ifdef __OS2__
       if (DosKillProcess(DKP_PROCESSTREE, pid) == ERROR_NOT_DESCENDANT) {
@@ -216,7 +229,7 @@ void processConfig()
      xstrscat(&buff, config->logFileDir, "hpt.log", NULL);
 	 hpt_log = openLog(buff, versionStr);
    } else printf("You have no logFileDir in your config, there will be no log created");
-   if (hpt_log==NULL) printf("Could not open logfile: %s\n", buff);
+   if (hpt_log==NULL) printf("Could not open logfile: \"%s\"\n", buff);
    writeLogEntry(hpt_log, '1', "Start");
    nfree(buff);
 

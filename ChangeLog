@@ -1,4 +1,10 @@
 ----- cvs ci ------
+Mon Jan  1 17:06:19 MEZ 2001
+tobi (patch from max in current):
+* fixed segfault when run "hpt -c"
+* areafix print error for subscribe & unsibscribe cmds with spaces
+
+----- cvs ci ------
 Mon Jan  1 15:57:02 MET 2001
 tobi:
 * Use FC_MAX_AREADESC_LEN constant (present in stable fidoconfig since
