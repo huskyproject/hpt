@@ -93,6 +93,12 @@ void putMsgInArea(s_area *echo, s_message *msg)
       hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
       if (hmsg != NULL) {
 
+         // recode from TransportCharset to internal Charset
+         if (config->intab != NULL) {
+            recodeToInternalCharset(msg->subjectLine);
+            recodeToInternalCharset(msg->text);
+         }
+
          textWithoutArea = msg->text;
          
          if ((strncmp(msg->text, "AREA:", 5) == 0) && (echo != &(config->badArea)) && (echo != &(config->dupeArea))) {
@@ -581,7 +587,6 @@ void toss()
 
    // load recoding tables if needed
    if (config->intab != NULL) getctab(&intab, config->intab);
-   if (config->outtab != NULL) getctab(&outtab, config->outtab);
 
    // set stats to 0
    memset(&statToss, sizeof(s_statToss), 0);

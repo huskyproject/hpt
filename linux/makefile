@@ -1,5 +1,5 @@
 DEBUG   = 1
-CC      = egcc
+CC      = gcc
 INSTDIR = /usr/local/bin
 MANDIR  = /usr/local/man
 
@@ -10,7 +10,7 @@ ifeq ($(DEBUG), 1)
   CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -g -O2 -s -DUNIX
   LFLAGS  =
 else
-  CFLAGS  = -c -I../h -I../../smapi -Wall -O2 -s -DUNIX $(CADDFLAGS)
+  CFLAGS  = -c -I../h -I../../smapi -Wall -O2 -s -DUNIX
   LFLAGS  =  
 endif
 

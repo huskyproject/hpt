@@ -104,6 +104,12 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
    free(kludgeLines);
    strcat(msg->text, seenByPath);
 
+   // recoding from internal to transport charSet
+   if (config->outtab != NULL) {
+      recodeToTransportCharset(msg->text);
+      recodeToTransportCharset(msg->subjectLine);
+   }
+
    free(seenByPath);
 }
 

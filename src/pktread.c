@@ -5,8 +5,6 @@
 
 #include <pkt.h>
 
-#include <recode.h>
-
 time_t readPktTime(FILE *pkt)
 {
   struct tm time;
@@ -233,10 +231,6 @@ s_message *readMsgFromPkt(FILE *pkt,UINT16 def_zone)
 
    correctAddr(msg,def_zone);
 
-   // recoding from transport charset to internal charset
-   recodeToInternalCharset(msg->subjectLine);
-   recodeToInternalCharset(msg->text);
-   
    return msg;
 }
 
