@@ -3,7 +3,7 @@
 hptlink \- messages linker for hpt
 .SH SYNTAX
 .B hptlink
-[\-t] [\-s] [\-a] [\-r] [\-l loglevel] [areaname ...]
+[\-t] [\-s] [\-a] [\-r] [\-l loglevel] [\-n] [areaname ...]
 .TP
 .B \-t
 build reply TREE
@@ -20,6 +20,10 @@ do not use REPLY:/MSGID:
 .B \-l loglevel
 log output level. Must be greater or equal to 0.
 Edge values: 0,5,10,11,15. Default is 10.
+.TP
+.B \-n
+Link with 'new' messages only ('new' start from last linked + 1). Great speedup
+in repeated linkings, but doesn't relink anything already linked.
 
 .SH DESCRIPTION
 hptlink links messages in areas specified by arguments \fIareaname\fP.

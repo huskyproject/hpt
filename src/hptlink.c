@@ -84,7 +84,8 @@ int hardSearch = 0;
 int useSubj = 1;
 int useReplyId = 1;
 int loglevel = 10;
-char *version = "1.3";
+int linkNew = 0;
+char *version = "1.4";
 HAREA harea;
 int maxreply;
 
@@ -207,6 +208,7 @@ void linkArea(s_area *area)
    dword ctlen;
    dword highMsg;
    dword  i, j, linkTo;
+   dword newStart=0;
    HMSG  hmsg;
    XMSG  xmsg;
    s_msginfo *replmap;
@@ -310,12 +312,28 @@ void linkArea(s_area *area)
 		 memcpy(linksptr->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
 		 linksptr->replyToPos = xmsg.replyto;
 
+                 if (linkNew &&
+                      (xmsg.replyto || xmsg.replies[0] || xmsg.replies[1])
+                    ) {
+                    newStart = i+1;
+                    memcpy(crepl->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
+                    crepl->replyToPos = xmsg.replyto;
+                    for (j=0; xmsg.replies[j] && j<MAX_REPLY; j++);
+                    crepl->freeReply = j;
+                 }
+
 		 MsgCloseMsg(hmsg);
 	      }
 	   }
 
 	   /* Pass 2: building relations tree, & filling tree IDs */
-	   if ( loglevel >= 11 ) fprintf (outlog, "Pass 2: building relations for %ld messages\n", (long) i-1);
+	   if ( loglevel >= 11 ) {
+              fprintf (outlog, "Pass 2: building relations for %ld messages", (long) i-1);
+              if (linkNew)
+                 fprintf (outlog, ", new from %ld\n", (long) newStart);
+              else
+                 fprintf (outlog, "\n");
+           }
 
 	   for (i = 1, crepl=replmap; i < highMsg; i++, crepl++) {
 	     if (
@@ -326,7 +344,13 @@ void linkArea(s_area *area)
 
 		replDone = 0;
 
-		for ( j=i+1, srepl=crepl+1; j <= highMsg && !replDone; j++, srepl++ ) {
+                j=i+1;
+                srepl=crepl+1;
+                if (newStart > j) {
+                   j=newStart;
+                   srepl = &(replmap[j-1]);
+                }
+		for (; j <= highMsg && !replDone; j++, srepl++ ) {
 
 		  replFound = 0;
 
@@ -505,6 +529,7 @@ void usage(void) {
    fprintf(outlog, "   -a - search in all messages (for singlethread only)\n");
    fprintf(outlog, "   -r - do not use REPLY:/MSGID:\n");
    fprintf(outlog, "   -l loglevel - log output level >=0. Edge values: 0,5,10,11,15. Default 10.\n");
+   fprintf(outlog, "   -n Link with 'new' messages only ('new' start from last linked + 1)\n");
 
 
 }
@@ -561,6 +586,10 @@ int main(int argc, char **argv) {
 		  exit(-1);
 	       }
 	     break;
+	     case 'n': /* link with 'new' messages only */
+	     case 'N':
+		linkNew = 1;
+		break;
 	     default:
 		usage();
 		exit(-1);

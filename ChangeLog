@@ -3,6 +3,11 @@ hpt 0.9.8 (development version)
 
 
 ----- cvs ci ------
+Wed Oct 11 11:14:47 MSD 2000
+max (patch from Serguei Revtov):
+* -n switch for hptlink (test!)
+
+----- cvs ci ------
 Mon Oct  9 17:29:40 NOVST 2000
 max:
 * tearline stops areafix
