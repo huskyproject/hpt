@@ -1,6 +1,11 @@
 hpt 0.9.7
 ---------
-(released on Fri Jul 14 18:42:48 CEST 2000) 
+(released on ???)
+
+----- cvs ci ------
+Fri Jul 14 15:35:18 NOVST 2000
+max:
+* fixed @Via adding in routed messages
 
 ----- cvs ci ------
 Fr  14 Jul 2000 00:10:45 CEST
@@ -207,7 +212,7 @@ Tue May 23 22:36:28 NOVST 2000
 max (patch from Lev Serebryakov):
 * new areafix %list & %avail generation
 
------ cvs ci ------	
+----- cvs ci ------
 Mon May 22 14:03:38 CEST 2000
 mtt:
 * changed version number to 0.9.7
@@ -287,14 +292,14 @@ max:
 ----- cvs ci ------
 Wed Apr 26 22:15:08 MEZ 2000
 tobi:
-* Fixed handling of INTL kludges. Zonegated mails will now be routed to 
-  the zone gate (instead of directly) in all cases except for the special 
+* Fixed handling of INTL kludges. Zonegated mails will now be routed to
+  the zone gate (instead of directly) in all cases except for the special
   case that we are ourselves are the zone gate.
 
 ----- cvs ci ------
 Wed Apr 26 19:19:23 NOVST 2000
 max:
-* removed e_readCheck from hpt and fixed 
+* removed e_readCheck from hpt and fixed
   exporting mail to link with "export off"
 
 ----- cvs ci ------
@@ -308,7 +313,7 @@ tobi:
 * Changed the filename generation algorithm to use the functions from
   fidoconfig. This fixes problems with multi-zone links where the
   link could reject his second arcmail bundle due to duplicate filename.
-  [NOTE: THIS CHANGE WAS UNDONE SOON AFTER. ANOTHER QUICK FIX FOR THE 
+  [NOTE: THIS CHANGE WAS UNDONE SOON AFTER. ANOTHER QUICK FIX FOR THE
   PROBLEM WAS CHECKED IN. A NICE FINAL SOLUTION IS STILL PENDING.]
 * Pktfile and Packfile are now logged. This eases tracing of lost echomail.
 
@@ -592,7 +597,7 @@ my recomendation is to use latest versions from cvs
 ----- cvs ci ------
 Sun Jan 30 17:06:45 NOVT 2000
 max:
-* areafixOrigin supported by hpt 
+* areafixOrigin supported by hpt
 * fixed bug with reading arguments after -x in post.c
 * fixed bug when posting to passthrough area
 * correct printing to log and stderr in post.c
@@ -606,7 +611,7 @@ sms:
 * changed groups from chars to strings
 
 ----- cvs ci ------
-Thu Jan 27 19:16:42 CET 2000 
+Thu Jan 27 19:16:42 CET 2000
 mtt:
 - fixed my request bugfix
 
@@ -616,12 +621,12 @@ mtt (patch from Alex Semyanka)
 * added NetmailExtern (carbonExtern for netmails)
 - added subjectline for *extern commands
 * added processPkt for calling pktdate etc.
-	
+
 ----- cvs ci ------
 Mon Jan 24 22:28:35 CET 2000
 mtt:
 * fixed file request generation
-	
+
 ----- cvs ci ------
 Mon Jan 24 18:50:32 CET 2000
 mtt:
@@ -693,7 +698,7 @@ max:
 * added xstr.c & xstr.h to cvs-tree :)
 
 ----- cvs ci ------
-Thu Jan  6 19:51:30 NOVT 2000                                                   
+Thu Jan  6 19:51:30 NOVT 2000
 max (patch from Kolya):
 - added string functions xstralloc, xstrcat, xstrscat, xscatprintf to
  make text handling code more simple and reliable (uses vsnprintf and
@@ -709,7 +714,7 @@ max:
 ! there is some bugs in code: we try to fix them, but...
 
 ----- cvs ci ------
-Mon Jan  3 17:45:54 NOVT 2000                                                   
+Mon Jan  3 17:45:54 NOVT 2000
 max:
 * added correctDateTime()
 (there may be coredumps with broken pkt's, but
@@ -735,13 +740,13 @@ patch from Kolya Nesterov:
 ----- cvs ci ------
 Wed Dec 22 14:10:55 CET 1999
 mtt (inspired by Alex):
-* crash and hold flags are removed on every netmail tossed in. 
+* crash and hold flags are removed on every netmail tossed in.
 * pakets in localinbound are tossed now even they are not adressed to us.
 * some additional log messages when packets are not to us.
 * made pktinfo working again. Fixed a segmentation fault.
 
 ----- cvs ci ------
-Sun Dec 19 10:36:32 NOVT 1999                                                   
+Sun Dec 19 10:36:32 NOVT 1999
 max:
 * fixed bug in my last change 'bout "don't read config..."
 
@@ -772,7 +777,7 @@ max (patch from Kolya):
 * fixed bug in "area linking speed up!"
 
 ----- cvs ci ------
-Thu Dec  9 00:03:43 NOVT 1999                                                   
+Thu Dec  9 00:03:43 NOVT 1999
 max (patch from Kolya):
 * area linking speed up!
 
@@ -789,38 +794,38 @@ max:
 ----- cvs ci -----
 Mon Dec  6 18:55:17 mez 1999
 tobi:
-* Month number in PKT header was interpreted wrong, fixed. 
+* Month number in PKT header was interpreted wrong, fixed.
   (Patch by Eduard Dulich).
-	
+
 ----- cvs ci -----
-Thu Dec  2 11:32:02 CET 1999 
+Thu Dec  2 11:32:02 CET 1999
 mtt:
 * fixed a bug in my last change
 
 ----- cvs ci -----
-Tue Nov 30 22:58:33 CET 1999 
+Tue Nov 30 22:58:33 CET 1999
 mtt:
 * new rescan for a maximum of rescanned echomails.
 
------ cvs ci -----	
+----- cvs ci -----
 Tue Nov 30 22:08:29 CET 1999
 sms:
 * fixed some misuses of ++ in areafix.c and toss.c
 
------ cvs ci -----	
+----- cvs ci -----
 Thu Nov 18 23:28:29 NOVT 1999
-max (patch from Serguei Revtov): 
-* changed gmtime to localtime 
+max (patch from Serguei Revtov):
+* changed gmtime to localtime
 * small fixed
 
------ cvs ci -----	
+----- cvs ci -----
 Thu Nov  4 23:10:31 NOVT 1999
 max:
 * fixed wrong recoding carbon messages
 * patch from Kolya Nesterov for HASHDUPEs (for dos & win32)
 
------ cvs ci -----	
-Thu Nov  4 10:15:38 MET 1999 
+----- cvs ci -----
+Thu Nov  4 10:15:38 MET 1999
 mtt:
 * fixed buffer overflow bug in seenby.c (thanks to Alex Semenyaka)
 
@@ -855,15 +860,15 @@ max (patch from Kolya Nesterov):
 Thu Oct 21 22:44:42 NOVST 1999
 max:
 * areafix: areatags converted to uppercase (forwardRequests)
-	
------ cvs ci ------	
-Tue Oct 19 20:22:22 CEST 1999 
+
+----- cvs ci ------
+Tue Oct 19 20:22:22 CEST 1999
 mtt:
 * dirty fix for link.c when trying to link a non existing message.
-* version adjusted to 0.30 
-	
+* version adjusted to 0.30
+
 ----- cvs ci ------
-Mon Oct 18 22:22:12 NOVST 1999                                                  
+Mon Oct 18 22:22:12 NOVST 1999
 max:
 - transit mail with SNT flag are lost. fixed. (Alexander V Popaduck)
 
@@ -911,7 +916,7 @@ hpt 0.29
 (released on Thu Sep 23 23:05:24 CEST 1999)
 
 ----- cvs ci ------
-Wed Sep 15 21:26:46 CEST 1999 
+Wed Sep 15 21:26:46 CEST 1999
 mtt:
 * djgpp should compile again
 
@@ -922,15 +927,15 @@ max:
 * local carbon areas added to import.log
 * porting to win32 (changed default char to unsigned)
 * recode toUserName & fromUserName fixing
-	
+
 ----- cvs ci ------
-Sat Sep 18 21:53:03 NOVST 1999                                                  
+Sat Sep 18 21:53:03 NOVST 1999
 max:
 * fixed bug when pkt with dupes renames to .err if "dupecheck move"
 * autoCreate fixing
 
 ----- cvs ci ------
-Tue Sep 14 22:24:52 CEST 1999 
+Tue Sep 14 22:24:52 CEST 1999
 mtt:
 * applied patch from sven to fix the bug in post.c
 
@@ -942,7 +947,7 @@ max:
 * areafix.c %list - code cleanup & bugfixing (may be) :-)
 + added @NPD kludge for areafix reports
 * some statistix changes (to be continued)
-	
+
 ----- cvs ci ------
 Tue Sep  7  18:28:00
 Fedor:
@@ -958,7 +963,7 @@ Antonio:
 Sun Aug 29 21:25:52 NOVST 1999
 max:
 * fixed bug when packed mail for busy links
-	
+
 ----- cvs ci ------
 Sat Aug 28 13:47:33 NOVST 1999
 max:
@@ -990,7 +995,7 @@ Sun Aug 15 23:42:08 NOVST 1999
 max:
 * fixed small bug with header->origAddr.net
 + netmailarea packed when found in echotoss.log
-	
+
 ----- cvs ci ------
 Sat Aug 14 23:34:49 NOVST 1999
 max:
@@ -1030,7 +1035,7 @@ mtt:
 Tue Jun 29 23:43:34 NOVST 1999
 max:
 * fixed bug in areafix.c (%list and long area names)
-	
+
 ----- cvs ci ------
 Tue Jun 29 10:45:07 CEST 1999
 mtt:
@@ -1105,7 +1110,7 @@ hpt 0.28
 --------
 
 ----- cvs ci ------
-Mon Jun  7 16:08:10 CEST 1999 
+Mon Jun  7 16:08:10 CEST 1999
 mtt:
 * fixed small display bug (thanks to Matthias Duesterhoeft 2:2432/700.2)
 * applied patch from eike, so you can Carbon Copies to echoareas
@@ -1117,7 +1122,7 @@ Fedor:
 * bugfix %rescan to AreaFix (thanks to Serguei Revtov 2:5021/19.1)
 
 ----- cvs ci ------
-Tue Jun  1 18:07:24 CEST 1999 
+Tue Jun  1 18:07:24 CEST 1999
 mtt:
 * post works now for our own aka too (patch from eike)
 * messages without kludge are never treated as dupe. F*ck that old software
@@ -1128,21 +1133,21 @@ mtt:
 * bugfix for post, af and at parameterers are swapped.
 
 ----- cvs ci ------
-Tue May 25 20:12:09 CEST 1999 
+Tue May 25 20:12:09 CEST 1999
 mtt:
 * applied bugfix of (4) also for insecure inbound
 
 ----- cvs ci ------
-Thu May 20 11:03:49 MET DST 1999	
+Thu May 20 11:03:49 MET DST 1999
 mtt:
 * problem with err files while using passthrough areas should be fixed now
 
 ----- cvs ci ------
-Wed May 19 19:25:59 CEST 1999 
+Wed May 19 19:25:59 CEST 1999
 mtt:
-* pkt's which are only 60 byte long (empty packets) are not processed, 
+* pkt's which are only 60 byte long (empty packets) are not processed,
   but deleted.
-	
+
 ----- cvs ci ------
 Tue May 18 19:27:56 CEST 1999
 mtt:
@@ -1150,13 +1155,13 @@ mtt:
 * applied Kolyas patch so pkts are not deleted, when there are
   problems accessing the messagebase
 
------ cvs ci ------	
+----- cvs ci ------
 Mon May 17 13:23:56 CEST 1999
 mtt:
 * fixed the bug, when pkts has no pwd...
   this is a temporal solution, expect a new config verb and
   additional code soon.
-	
+
 ----- cvs ci ------
 Sun May 16 23:54:17 CEST 1999
 mtt:
@@ -1189,7 +1194,7 @@ mtt:
 - replaced all occurences of log to hpt_log because log is defined on pgcc/emx
 - inserted include <sys/types.h> whereever necessary for pgcc/emx
 - made some other changes (makefiles etc.) for pgcc/emx
-	
+
 ----- cvs ci ------
 Sun May  9 21:06:02 CEST 1999
 mtt:
@@ -1210,7 +1215,7 @@ mtt:
 Wed Apr 21 11:23:59 MET DST 1999
 mtt:
 + fixed some pointer == null in autoareacreate and arcmail
-	
+
 ----- cvs ci ------
 Max:
 Tue Apr 20 09:31:53 NOVST 1999
@@ -1266,7 +1271,7 @@ Antonio: (applied by mtt)
 + hpt now import description from ForwardResquestFile if found it, if
   not, take the the description from AutoCreateDefault, if not... take
   nothing... ;)
-+ Modifications in dupe-routines 
++ Modifications in dupe-routines
   All Dupedatebases are written in lowercase.
 
 ----- cvs ci ------
@@ -1302,26 +1307,26 @@ Thu Mar  18 22:23
 Max:
 - removed old code from areafix
 + remove all warnings for win32 version (thanx to Edgar)
-	
+
 ----- cvs ci ------
 Mon Mar  15 20:57
 Max:
 + win32 port by Edgar Chupit (chupit@mail.lv)
 + logEchoToScreen
 - fixed long seenby lines
-	
------ cvs ci ------	
+
+----- cvs ci ------
 Sat Mar  13 14:49:30
 Max:
 + toss -b (from Fedor)
 + small updates
 
------ cvs ci ------	
+----- cvs ci ------
 Wed Mar  10 19:56:00
 Max:
 - fixed segfault when pkt password is NULL (changes in processPkt code)
 
------ cvs ci ------	
+----- cvs ci ------
 Wed Mar  10 15:41:00
 
 Max (areafix updates):
@@ -1340,20 +1345,20 @@ mtt:
 - fixed a bug in the processPkt routine which leads to wrong recognition of
   pktPassword and so...
 
------ cvs ci ------	
+----- cvs ci ------
 Wed Mar  10 04:55:00
 Max (patches from Fedor Lizunkov):
 - fixed areafix bug when send mail to uunknown link
 - fixed echo access (readCheck, writeCheck)
 
------ cvs ci ------	
+----- cvs ci ------
 Tue Mar  9 15:30:17 MET 1999
 mtt:
-- changed the routing code back, so a netmail to a node (like 2:2433/1245) is 
+- changed the routing code back, so a netmail to a node (like 2:2433/1245) is
   matched to the routing statements using 2:2433/1245.0
   This means:
     route crash 2:2433/1245 2:2433/1245.* (matches the node and all points)
-	
+
 ----- cvs ci ------
 Mon Mar  8 21:36:00
 Max (areafix updates) :
@@ -1362,7 +1367,7 @@ Max (areafix updates) :
 - small changes in available code
 - delLinkFromArea: unsubscribed other links than needed
 - %rescan: fixed core dump if no area defined.
-	
+
 ----- cvs ci ------
 Sun Mar  7 23:20:17
 Max:
@@ -1378,7 +1383,7 @@ Thu Mar  4 12:13:49 CET 1999
 Wed Mar  3 23:47:30 CET 1999
 - applied Max areafix patch
 + new afix commandline option
-! autoareacreatedefaults moved to each link. Please change your config!  
+! autoareacreatedefaults moved to each link. Please change your config!
 + avaible areas file for each link
 
 ----- cvs ci ------
@@ -1388,11 +1393,11 @@ Tue Mar  2 12:11:04 MET 1999
 ----- cvs ci ------
 Mon Mar  1 22:00
   Gabriel Plutzar
-+ included support for generic new keyword for LogLevels                       
-  * LogLevels <string>                                               
-    You can specify all Loglevels you want in your log               
++ included support for generic new keyword for LogLevels
+  * LogLevels <string>
+    You can specify all Loglevels you want in your log
     Default is 123456789, use 23456789 if you don't want all the IDLE
-    sessions in your logfile (eg when you start hpt once a minute)   
+    sessions in your logfile (eg when you start hpt once a minute)
   + Major Changes in log.c & log.h were necessary to supress unwanted
     log file entries in IDLE only hpt sessions (like regularily scanning
     the netmail area without something happening worth logging)
@@ -1414,28 +1419,28 @@ Thu Feb 25 17:52:04 MET 1999
   before smapi Header Files are included -> patimat declared implicitly
   warning fixed
 * Unused variable warning in fcommon.c fixed
-	
+
 ----- cvs ci ------
 Sat Feb 20 20:48:03 MET 1999
   Tobias Ernst:
 + Added support for QQQ files. If found in the tempOutbound, they will be
   packed into the outgoing arcmail bundle. This is useful if you use
   CFRoute: You can point CFRoutes tempOutbound to the fidoconfig tempOut,
-  in order to pack netmail into arcmail bundles.	
+  in order to pack netmail into arcmail bundles.
 + Added support for packet forwarding. See the fidoconfig manual for
-  information.	 
-	
+  information.
+
 Fri Feb 19 16:47:14 MET 1999
   Tobias Ernst:
 - Added a log file entry for the case that a PKT file in the secure inbound
-  does not originate from a link of ours (i.E. only netmail from this 
+  does not originate from a link of ours (i.E. only netmail from this
   packet will be processed, and echomail will "vanish").
-	
+
 ----- cvs ci ------
-Wed Feb 17 20:07:00 CET 1999                                                
-  Gabriel Plutzar:                                                          
-+ added implementation of the new remap statment. It takes the parameters 
-  ToName,OldAddr,NewAddr, seperated by commas. ToName or OldAddr may be *.  
+Wed Feb 17 20:07:00 CET 1999
+  Gabriel Plutzar:
++ added implementation of the new remap statment. It takes the parameters
+  ToName,OldAddr,NewAddr, seperated by commas. ToName or OldAddr may be *.
   If a Netmail meets the ToName and OldAddr Criteria, it is sent to
   NewAddr.
 
@@ -1446,7 +1451,7 @@ Mon Feb 15 18:21:51 CET 1999
   Max Levenkov:
 + added TossGrp support for areafix
 - rewritten some dummy moments in areafix.c
-	
+
 ----- cvs ci ------
 Sun Feb 14 12:57:04 CET 1999
 - applied max patch. the first echomail to an autocreated area was not
@@ -1501,7 +1506,7 @@ Mon Feb  1 18:08:33 CET 1999
 ----- cvs ci ------
 Mon Feb  1 13:10:49 MET 1999
 - fixed !MSGLOCAL to ~MSGLOCAL in makeMsg scanarea.c
-	
+
 ----- cvs ci ------
 Wed Jan 27 18:36:53 CET 1999
 - changed all occurences of strsep to strtok_r
@@ -1545,7 +1550,7 @@ Mon Jan 18 17:34:18 CET 1999
 Mon Jan 18 17:00:20 CET 1999
 - fixed all warnings
 - changed logic of findRouteForNetmail (the aka-string now has no .0 if link is node)
-- fixed a bug with a non-correct generated link 
+- fixed a bug with a non-correct generated link
 Mon Jan 18 10:40:19 CET 1999
 - included sven´s patch which leads to wrong scanning of Squish-Netmailbases and wrong killing of msgs
 - added .ntu suffix for pkt´s which are Not To Us
