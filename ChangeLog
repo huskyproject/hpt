@@ -5,10 +5,6 @@ hpt 0.9.8 (development version)
 Mon Feb 12 00:44:02 NOVT 2001
 max:
 * doc dir included
-
------ cvs ci ------
-Sun Feb 11 18:07:47 NOVT 2001
-max:
 * select "right" netmail area for ourAka (patch from Kostya Krasavin)
 
 ----- cvs ci ------
