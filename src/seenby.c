@@ -59,7 +59,7 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
    #define size 81
    #define addr2dSize 13
    int  i;
-   char *text=NULL, *line, addr2d[addr2dSize];
+   char *text=NULL, *line = NULL, addr2d[addr2dSize];
 
    if (seenByCount==0) {              //return empty control line
       xstrcat(&text, lineHeading);
@@ -107,3 +107,4 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
 
    return text;
 }
+

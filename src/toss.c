@@ -130,7 +130,7 @@ static void setmaxopen(void);
 
 static char *get_filename(char *pathname)
 {
-    char *ptr;
+    char *ptr = NULL;
 
     if (pathname == NULL || !(*pathname))
         return pathname;
@@ -151,7 +151,7 @@ static char *get_filename(char *pathname)
  */
 char *hpt_stristr(char *str, char *find)
 {
-    char ch, sc, *str1, *find1;
+    char ch, sc, *str1 = NULL, *find1 = NULL;
 
     find++;
     if ((ch = *(find-1)) != 0) {
@@ -172,7 +172,7 @@ char *hpt_stristr(char *str, char *find)
 /* return value: 1 if success, 0 if fail */
 int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 {
-    char *ctrlBuff, *textStart, *textWithoutArea;
+    char *ctrlBuff = NULL, *textStart = NULL, *textWithoutArea = NULL;
     UINT textLength = (UINT) msg->textLength;
     //HAREA harea = NULL;
     HMSG  hmsg;
@@ -301,9 +301,9 @@ int putMsgInDupeArea(s_addr addr, s_message *msg, dword forceattr)
 
 void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, UINT *seenByCount)
 {
-    char *seenByText=NULL, *start, *token;
+    char *seenByText=NULL, *start = NULL, *token = NULL;
     unsigned long temp;
-    char *endptr;
+    char *endptr = NULL;
     UINT seenByAlloced;
 
     *seenByCount = seenByAlloced = 0;
@@ -373,8 +373,8 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
     // DON'T GET MESSED UP WITH THE VARIABLES NAMED SEENBY...
     // THIS FUNCTION READS PATH!!!
 
-    char *seenByText=NULL, *start, *token;
-    char *endptr;
+    char *seenByText=NULL, *start = NULL, *token = NULL;
+    char *endptr = NULL;
     unsigned long temp;
     UINT seenByAlloced;
 #ifdef DEBUG_HPT
@@ -526,6 +526,7 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
 
 void closeOpenedPkt(void) {
     unsigned int i;
+
     for (i=0; i<config->linkCount; i++)
 	if (config->links[i].pkt) {
 	    if (closeCreatedPkt(config->links[i].pkt))
@@ -570,7 +571,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
     ULONG len;
     FILE *f=NULL;
     s_pktHeader header;
-    char *start, *text, *seenByText = NULL, *pathText = NULL;
+    char *start = NULL, *text = NULL, *seenByText = NULL, *pathText = NULL;
     char *debug=NULL;
 
     if (newLinks[0] == NULL) return;
@@ -776,7 +777,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
     s_seenBy *seenBys = NULL, *path = NULL;
     UINT     seenByCount, pathCount;
     // links who does not have their aka in seenBys and thus have not got the echomail
-    s_arealink **newLinks, **zoneLinks;
+    s_arealink **newLinks = NULL, **zoneLinks = NULL;
 
     createSeenByArrayFromMsg(echo, msg, &seenBys, &seenByCount);
     createPathArrayFromMsg(msg, &path, &pathCount);
@@ -801,9 +802,9 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 
 int processExternal (s_area *echo, s_message *msg,s_carbon carbon) 
 { 
-    FILE *msgfp;
+    FILE *msgfp = NULL;
     char *fname = NULL;
-    char *progname, *execstr, *p;
+    char *progname = NULL, *execstr = NULL, *p = NULL;
     int  rc;
 
     progname = carbon.areaName;
@@ -942,8 +943,8 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
 {
     unsigned int i, rc = 0, result=0;
-    char *testptr, *testptr2, *kludge;
-    s_area *area;
+    char *testptr = NULL, *testptr2 = NULL, *kludge = NULL;
+    s_area *area = NULL;
     s_carbon *cb=&(config->carbons[0]);
     s_area **copiedTo = NULL;
     int copiedToCount = 0;
@@ -1085,7 +1086,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
 
 int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 {
-    char *tmp, *line, *textBuff=NULL, *areaName=NULL, *reason;
+    char *tmp = NULL, *line = NULL, *textBuff=NULL, *areaName=NULL, *reason = NULL;
     
     statToss.bad++;
 	 
@@ -1204,7 +1205,7 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 
 void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
 {
-    s_area *echo;
+    s_area *echo = NULL;
     unsigned int i, netmail=0;
     char *buff=NULL;
     char *strbeg=NULL;
@@ -1285,10 +1286,10 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
 
 void writeMsgToSysop()
 {
-    char	*ptr, *seenByPath;
-    s_area	*echo;
+    char	*ptr = NULL, *seenByPath = NULL;
+    s_area	*echo = NULL;
     unsigned int i, ccrc = 0;
-    s_seenBy	*seenBys;
+    s_seenBy	*seenBys = NULL;
     
     for (i = 0; i < config->addrCount; i++) {
 	if (msgToSysop[i]) {
@@ -1371,7 +1372,7 @@ s_arealink *getAreaLink(s_area *area, s_addr aka)
 // return value: 0 if access ok, 3 if import/export off, 4 if not linked
 int checkAreaLink(s_area *area, s_addr aka, int type)
 {
-    s_arealink *arealink;
+    s_arealink *arealink = NULL;
     int writeAccess = 0;
 	
     arealink = getAreaLink(area, aka);
@@ -1391,9 +1392,9 @@ int checkAreaLink(s_area *area, s_addr aka, int type)
 
 int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceattr)
 {
-    char   *area=NULL, *p, *q;
+    char   *area=NULL, *p = NULL, *q = NULL;
     s_area *echo=&(config->badArea);
-    s_link *link;
+    s_link *link = NULL;
     int    writeAccess = 0, rc = 0, ccrc = 0;
 
     p = strchr(msg->text,'\r');
@@ -1481,10 +1482,10 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
     HAREA  netmail;
     HMSG   msgHandle;
     UINT   len = msg->textLength;
-    char   *bodyStart;             // msg-body without kludgelines start
-    char   *ctrlBuf;               // Kludgelines
+    char   *bodyStart = NULL;             // msg-body without kludgelines start
+    char   *ctrlBuf = NULL;               // Kludgelines
     XMSG   msgHeader;
-//    char   *slash;
+//    char   *slash = NULL;
     unsigned int rc = 0, ccrc = 0, i;
 
     if (area == NULL) {
@@ -1566,6 +1567,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
 {
     int rc;
+
     w_log(LL_FUNC,"toss.c::processMsg()");
     statToss.msgs++;
 #ifdef DO_PERL
@@ -1595,15 +1597,15 @@ int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
 
 int processPkt(char *fileName, e_tossSecurity sec)
 {
-    FILE        *pkt;
-    s_pktHeader *header;
-    s_message   *msg;
-    s_link      *link;
+    FILE        *pkt = NULL;
+    s_pktHeader *header = NULL;
+    s_message   *msg = NULL;
+    s_link      *link = NULL;
     int         rc = 0, msgrc = 0;
     long	pktlen;
     time_t      realtime;
     /* +AS+ */
-    char        *extcmd;
+    char        *extcmd = NULL;
     int         cmdexit;
     /* -AS- */
     char        processIt = 0; // processIt = 1, process all mails
@@ -1781,7 +1783,8 @@ int processPkt(char *fileName, e_tossSecurity sec)
 }
 
 #if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
-void *mk_lst(char *a) {
+void *mk_lst(char *a)
+{
     char *p=a, *q=a, **list=NULL, end=0, num=0;
 
     while (*p && !end) {
@@ -1808,7 +1811,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
     unsigned int  i;
     int   found, j;
     signed int cmdexit;
-    FILE  *bundle;
+    FILE  *bundle = NULL;
     char cmd[256];
 
 #if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
@@ -1900,8 +1903,8 @@ char *validExt[] = {"*.MO?", "*.TU?", "*.TH?", "*.WE?", "*.FR?", "*.SA?", "*.SU?
 
 void processDir(char *directory, e_tossSecurity sec)
 {
-    DIR            *dir;
-    struct dirent  *file;
+    DIR            *dir = NULL;
+    struct dirent  *file = NULL;
     char           *dummy = NULL;
     int            rc, i;
     int            pktFile,
@@ -2018,7 +2021,7 @@ void writeStatLog(void) {
     /* write personal mail statistic logfile if statlog is defined in config */
     /* if the log file exists, the existing value is increased */
 
-    FILE *f;
+    FILE *f = NULL;
     char buffer[256];
     int len, x, statNetmail, statCC;
 
@@ -2120,7 +2123,7 @@ void writeTossStatsToLog(void) {
 
 int find_old_arcmail(s_link *link, FILE *flo)
 {
-    char *line, *bundle=NULL;
+    char *line = NULL, *bundle=NULL;
     ULONG len;
     unsigned i, as;
 
@@ -2162,10 +2165,10 @@ int find_old_arcmail(s_link *link, FILE *flo)
 }
 
 void arcmail(s_link *tolink) {
-    char cmd[256], *pkt=NULL, *lastPathDelim, saveChar;
+    char cmd[256], *pkt=NULL, *lastPathDelim = NULL, saveChar;
     int i, cmdexit, foa;
-    FILE *flo;
-    s_link *link;
+    FILE *flo = NULL;
+    s_link *link = NULL;
     int startlink=0;
     int endlink = config->linkCount;
     e_bundleFileNameStyle bundleNameStyle;
@@ -2371,8 +2374,8 @@ static int forwardedPkts = 0;
 int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 {
     unsigned int i;
-    s_link *link;
-    char *newfn;
+    s_link *link = NULL;
+    char *newfn = NULL;
     
     for (i = 0 ; i < config->linkCount; i++) {
 	if (addrComp(header->destAddr, config->links[i].hisAka) == 0) {
@@ -2424,7 +2427,7 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 
 void fix_qqq(char *filename)
 {
-    FILE *f;
+    FILE *f = NULL;
     char buffer[2] = { '\0', '\0' };
     size_t l = strlen(filename);
     char *newname=NULL;
@@ -2452,12 +2455,12 @@ void fix_qqq(char *filename)
 
 void tossTempOutbound(char *directory)
 {
-    DIR            *dir;
-    FILE           *pkt;
-    struct dirent  *file;
-    char           *dummy;
-    s_pktHeader    *header;
-    s_link         *link;
+    DIR            *dir = NULL;
+    FILE           *pkt = NULL;
+    struct dirent  *file = NULL;
+    char           *dummy = NULL;
+    s_pktHeader    *header = NULL;
+    s_link         *link = NULL;
     size_t         l;
 #ifdef NOSLASHES
     int 		  dirNameLen;
@@ -2526,7 +2529,7 @@ void tossTempOutbound(char *directory)
 
 void writeImportLog(void) {
     unsigned int i;
-    FILE *f;
+    FILE *f = NULL;
     struct stat buf;
 
     if (config->importlog) {
@@ -2575,6 +2578,7 @@ static void setmaxopen(void) {
     ULONG cur, add;
     maxopenpkt = MAXOPEN_DEFAULT;
     cur = add = 0;
+
     if (DosSetRelMaxFH(&add, &cur) == 0)
 	if (cur>=maxopenpkt) return;
     if (DosSetMaxFH(maxopenpkt))
@@ -2601,6 +2605,7 @@ static void setmaxopen(void) {
 #ifdef RLIMIT_NOFILE
     struct rlimit rl;
     maxopenpkt = MAXOPEN_DEFAULT;
+
     if (getrlimit(RLIMIT_NOFILE, &rl) == 0)
 	if (rl.rlim_cur >= MAXOPEN_DEFAULT)
 	    return;
@@ -2636,7 +2641,7 @@ static void setmaxopen(void) {
 
 void toss()
 {
-    FILE *f;
+    FILE *f = NULL;
 
     // set stats to 0
     memset(&statToss, '\0', sizeof(s_statToss));
@@ -2674,8 +2679,8 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
     s_message   msg;
     s_area	*echo = &(config -> badArea);
     s_addr	pktOrigAddr;
-    char 	*ptmp, *line, *areaName, *area=NULL, noexp=0;
-    s_link   *link;
+    char 	*ptmp = NULL, *line = NULL, *areaName = NULL, *area=NULL, noexp=0;
+    s_link	*link = NULL;
    
     makeMsg(hmsg, xmsg, &msg, &(config->badArea), 2);
     memset(&pktOrigAddr,'\0',sizeof(s_addr));
@@ -2826,3 +2831,4 @@ void tossFromBadArea(char force)
 	   
     } else w_log('9', "Could not open %s", config->badArea.fileName);
 }
+

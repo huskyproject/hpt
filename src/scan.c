@@ -224,7 +224,7 @@ s_route *findRouteForNetmail(s_message msg)
 
 s_link *getLinkForRoute(s_route *route, s_message *msg) {
    static s_link tempLink;
-   s_link *getLink;
+   s_link *getLink = NULL;
 
    if (route==NULL) return NULL;
    
@@ -274,8 +274,8 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 
 void processAttachs(s_link *link, s_message *msg, unsigned int attr)
 {
-   FILE *flo;
-   char *p, *running, *token, *flags=NULL;
+   FILE *flo = NULL;
+   char *p = NULL, *running = NULL, *token = NULL, *flags = NULL;
    char *newSubjectLine = NULL;
 
    flo = fopen(link->floFile, "a");
@@ -315,9 +315,9 @@ void processAttachs(s_link *link, s_message *msg, unsigned int attr)
 
 void processRequests(s_link *link, s_message *msg)
 {
-   FILE *flo;
-   char *running;
-   char *token;
+   FILE *flo = NULL;
+   char *running = NULL;
+   char *token = NULL;
    
    flo = fopen(link->floFile, "ab");
 
@@ -337,12 +337,12 @@ void processRequests(s_link *link, s_message *msg)
 
 int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 {
-   FILE        *pkt;
+   FILE        *pkt = NULL;
    e_flavour   prio = normal;
    s_message   msg;
    s_pktHeader header;
-   s_route     *route;
-   s_link      *link, *virtualLink;
+   s_route     *route = NULL;
+   s_link      *link = NULL, *virtualLink = NULL;
    char        freeVirtualLink = 0;
    char        *flags=NULL;
    int         r, arcNetmail;
@@ -548,7 +548,7 @@ void scanNMArea(s_area *area)
    XMSG            xmsg;
    s_addr          dest, orig;
    int             for_us, from_us;
-   FILE            *f;
+   FILE            *f = NULL;
 
    // do not scan one area twice
    if (area->scn) return;
@@ -671,8 +671,7 @@ s_area *getLocalArea(s_fidoconfig *config, char *areaName)
 
 
 int scanByName(char *name) {
-	
-    s_area *area;
+    s_area *area = NULL;
     
     if ((area = getNetMailArea(config, name)) != NULL) {
 	scanNMArea(area); 
@@ -856,3 +855,4 @@ void scanExport(int type, char *str) {
    w_log( LL_FUNC, "scanExport() end" );
 
 }
+

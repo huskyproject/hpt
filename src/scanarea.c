@@ -65,7 +65,7 @@
 // create seen-by's & path
 char *createSeenByPath(s_area *echo) {
 	int i, seenByCount = 0;
-	s_seenBy *seenBys;
+	s_seenBy *seenBys = NULL;
 	char *seenByPath = NULL;
 	
 	seenBys = (s_seenBy*) safe_malloc(sizeof(s_seenBy)*(echo->downlinkCount+1));
@@ -99,8 +99,8 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    // action == 0 - scan area
    // action == 1 - rescan area
    // action == 2 - rescan badarea
-   char   *kludgeLines, *seenByPath = NULL;
-   UCHAR  *ctrlBuff;
+   char   *kludgeLines = NULL, *seenByPath = NULL;
+   UCHAR  *ctrlBuff = NULL;
    UINT32 ctrlLen;
 
    memset(msg, '\0', sizeof(s_message));
@@ -254,3 +254,4 @@ void scanEMArea(s_area *echo)
        w_log('9', "Could not open %s", echo->fileName);
    } /* endif */
 }
+
