@@ -905,10 +905,11 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
         /* Temporary make it \0 terminated string */
         *p = '\0';
         xstrcat(&msg->text,line);
+        /* and then we *must* put '\r' back. */
+        xstrcat(&msg->text, "\r");
         *p = '\r';
         line = p+1;
     }
-
     text = line; /* may be old_text or old_text w/o begining kluges */
 
     if (!msg->netMail) {
@@ -918,7 +919,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 		i = (size_t) (p - old_text) + 1;
 	}
 	xstrscat(&msg->text,
-		 "\r",
+                 msg->text ? (msg->text[strlen(msg->text)-1] == '\r' ?"":"\r") : "" ,
 		 (export) ? "AREA:" : "",
 		 (export) ? area->areaName : "",
 		 (export) ? "\r" : "",
@@ -930,11 +931,10 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 		 NULL );
 	msg->textLength = strlen(msg->text);
     }
-
     xstralloc(&msg->text,i);   /* add i bytes */
-    strncat(msg->text,text,i); /*  copy rest of msg */
+    strncat(msg->text,line,i); /*  copy rest of msg */
     msg->textLength += i;
-    
+
     if (!export) {
 	if (msg->netMail) rc = putMsgInArea(area,msg,0,MSGSENT);
 	else rc = putMsgInArea(area,msg,0,0);
