@@ -1,3 +1,7 @@
+2002-07-23 Tuesday 09:15  pavel.gulchouck
+
+	* misc/filter.pl (1.8): routing a bit improved
+
 2002-07-22 Monday 23:00  stas
 
 	* src/toss.c (1.427): Fix remap bug: synchronise INTL kludge
