@@ -412,7 +412,6 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCo
 
    token = strtok(seenByText, " \r\t\376");
    while (token != NULL) {
-	   if (strcmp(token, "\001PATH:")==0) break;
 	   if (isdigit(*token)) {
 
 		   // get new memory
@@ -437,9 +436,10 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCo
 			   endptr++;
 			   (*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
 		   }
-	   }
+	   } else if (strcmp(token, "\001PATH:")==0) break;
+	   
 	   token = strtok(NULL, " \r\t\376");
-   }
+   } // end while
 
    //test output for reading of seenBys...
 #ifdef DEBUG_HPT
@@ -464,7 +464,10 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
 #endif
 
    *seenByCount = 0;
-   start = msg->text;
+
+   start = strrstr(msg->text, " * Origin:"); // jump over Origin
+   if (start == NULL) start = msg->text;
+
    // find beginning of path lines
    do {
       start = strstr(start, "\001PATH:");
@@ -480,27 +483,26 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
 
    token = strtok(seenByText, " \r\t\376");
    while (token != NULL) {
-      if (isdigit(*token)) {
-         (*seenByCount)++;
-         *seenBys = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
-
-         // parse token
-         temp = strtoul(token, &endptr, 10);
-         if ((*endptr) == '\0') {
-            // only node aka
-            (*seenBys)[*seenByCount-1].node = (UINT16) temp;
-            // use net aka of last seenBy
-            (*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
-         } else {
-            // net and node aka
-            (*seenBys)[*seenByCount-1].net = (UINT16) temp;
-            // eat up '/'
-            endptr++;
-            (*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
-         }
-
-      }
-      token = strtok(NULL, " \r\t\376");
+	   if (isdigit(*token)) {
+		   (*seenByCount)++;
+		   *seenBys = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
+		   
+		   // parse token
+		   temp = strtoul(token, &endptr, 10);
+		   if ((*endptr) == '\0') {
+			   // only node aka
+			   (*seenBys)[*seenByCount-1].node = (UINT16) temp;
+			   // use net aka of last seenBy
+			   (*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
+		   } else {
+			   // net and node aka
+			   (*seenBys)[*seenByCount-1].net = (UINT16) temp;
+			   // eat up '/'
+			   endptr++;
+			   (*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
+		   }
+	   } else if (strcmp(token, "SEEN-BY:")==0) break; // not digit & path
+	   token = strtok(NULL, " \r\t\376");
    }
 
    // test output for reading of paths...
@@ -583,7 +585,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	long len;
 	FILE *pkt, *f=NULL;
 	s_pktHeader header;
-	char *start, *seenByText = NULL, *pathText = NULL;
+	char *start, *text, *seenByText = NULL, *pathText = NULL;
 	char *debug=NULL;
 
 	if (newLinks[0] == NULL) return;
@@ -642,7 +644,6 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 #ifdef DEBUG_HPT
 	for (i=0; i< *seenByCount;i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
 #endif
-	//exit(2);
 
 	if (*pathCount > 0) {
 		if (((*path)[*pathCount-1].net != echo->useAka->net) ||
@@ -664,8 +665,28 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 #ifdef DEBUG_HPT
 	for (i=0; i< *pathCount;i++) printf("%u/%u ", (*path)[i].net, (*path)[i].node);
 #endif
-   //exit(2);
-	
+
+	text = strrstr(msg->text, " * Origin:"); // jump over Origin
+	if (text) { // origin was found
+		start = strrchr(text, ')');
+		if (start) start++; // normal origin
+		else {
+			start = text; // broken origin
+			while(*start && *start!='\r') start++;
+		}
+		if (*start=='\r') *(start+1)='\0'; else *start='\0';
+	} else { // no Origin founded
+		text = msg->text;
+		start = strstr(text, "\rSEEN-BY: ");
+		if (start == NULL) start = strstr(text, "SEEN-BY: ");
+		if (start) *start='\0';
+		// find start of PATH in Msg
+		start = strstr(text, "\001PATH: ");
+		if (start) *start='\0'; 
+		else start = text+strlen(text);
+	}
+
+/* remove after 03-Dec-00
 	// find start of seenBys in Msg
 	start = strstr(msg->text, ")\rSEEN-BY: ");
 	if (start == NULL) start = strstr(msg->text, "\rSEEN-BY: ");
@@ -678,10 +699,11 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	    start = strstr(msg->text, "\001PATH: ");
 	    if (start != NULL) *start='\0';
 	}
+*/
 	// create new seenByText
 	seenByText = createControlText((*seenBys), *seenByCount, "SEEN-BY: ");
 	pathText   = createControlText((*path), *pathCount, "\001PATH: ");
-	xstrscat(&msg->text, (start) ? "" : "\r", seenByText, pathText, NULL);
+	xstrscat(&msg->text, (*start=='\r') ? "" : "\r", seenByText, pathText, NULL);
 	nfree(seenByText);
 	nfree(pathText);
 
