@@ -1,3 +1,18 @@
+2001-07-03 Tuesday 15:41  ml
+
+	* doc/hpt.texi (1.31), src/perl.c (1.13), src/toss.c (1.353):
+	hptperlfile [patch by Serge N. Pokhodyaev]
+
+2001-07-03 Tuesday 11:13  pavel.gulchouck
+
+	* src/perl.c (1.12): segfault in perlroute() if 'noroute' rule is
+	in config
+
+2001-07-02 Monday 23:53  joerg.jaspert
+
+	* debian/: README.BUILD-DEB (1.2), changelog (1.6), control (1.4),
+	huskymak.cfg (1.6), rules (1.5): Rebuild hpt Package.
+
 2001-07-02 Monday 18:12  pavel.gulchouck
 
 	* misc/filter.pl (1.5): perl route(): process messages with
