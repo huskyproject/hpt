@@ -2127,6 +2127,7 @@ This statement cannot be repeated.
 * Pause::                       don't export mail for this link
 * PktSize::			max size of pkt in arcmail bundle
 * PktPwd::                      pktpassword for this link
+* ReducedSeenBY::               reduced seen-by mode (FSC-0093)
 * RemoteRobotName::             remote "areafix" name
 @end menu
 
@@ -3002,7 +3003,7 @@ Maximum pkt size in kb for this link. Default - unlimited.
 
 This statement can only be repeated for different links.
 
-@node PktPwd, RemoteRobotName, PktSize, Link Keywords
+@node PktPwd, ReducedSeenBY, PktSize, Link Keywords
 @subsection PktPwd
 @findex PktPwd
 @table @asis
@@ -3019,7 +3020,31 @@ An empty statement is allowed.
 
 This statement can only be repeated for different links.
 
-@node RemoteRobotName, , PktPwd, Link Keywords
+@node ReducedSeenBY, RemoteRobotName, PktPwd, Link Keywords
+@subsection ReducedSeenBY
+@findex ReducedSeenBY
+@table @asis
+@item Syntax:
+@code{ReducedSeenBY <bool>}
+@item Example:
+@code{ReducedSeenBY on}
+@end table
+
+This statement turns on/off reduced seen-by algorithm (FSC-0093)
+
+@example
+RSB algorithm
+-------------
+1) add own system to the PATH.
+2) all area links not contained in the RSB qualify as recipients.
+3) strip RSB addresses not matching an address in the PATH, then
+   add own address(es) to the RSB set if not already contained.
+4) add recipients to RSB, sort RSB and forward mail to recipients.
+@end example
+
+This statement can only be repeated for different links.
+
+@node RemoteRobotName, , ReducedSeenBY, Link Keywords
 @subsection RemoteRobotName
 @findex RemoteRobotName
 @table @asis
