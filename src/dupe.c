@@ -97,7 +97,7 @@ void addIndex(s_area *area, UINT32 offset) {
 }
 
 int compareEntries(const void *e1, const void *e2) {
-   s_dupeEntry *a, *b;
+   const s_dupeEntry *a, *b;
    int rc;
 
    a = e1; b = e2;

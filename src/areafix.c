@@ -235,27 +235,44 @@ char *help(s_link *link) {
 	return NULL;
 }
 
-int changeconfig(char *line, s_link *link, int i) {
+int changeconfig(char *fileName, char *areaName, s_link *link, int action) {
 	FILE *f;
-	char *cfgline;
+        char *cfgline;
+        char *token;
 	
-	if ((f=fopen(getConfigFileName(),"r+")) == NULL)
+	if ((f=fopen(fileName,"r+")) == NULL)
 		{
-			fprintf(stderr,"areafix: cannot open config file\n");
+			fprintf(stderr,"areafix: cannot open config file %s \n", fileName);
 			return 1;
 		}
 	
 	while ((cfgline = readLine(f)) != NULL) {
 		cfgline = trimLine(cfgline);
-		if ((cfgline[0] != '#') && (cfgline[0] != 0)) {
-			cfgline+=9;
-			if (!strncasecmp(cfgline,line,strlen(line))) {
-				cfgline-=9;
-				free(cfgline);
-				if (i) delAka(f,link); else addAka(f,link);
-			}
-		} else free(cfgline);
-	}
+                if ((cfgline[0] != '#') && (cfgline[0] != 0)) {
+
+                   token = strtok(cfgline, " \t");
+                   
+                   if (stricmp(token, "include")==0)
+                      changeconfig(strtok(NULL, " \t"), areaName, link, action);
+
+                   else
+                      
+                      token = strtok(NULL, " \t");
+                      if (stricmp(token, areaName)==0)
+                         if (action) delAka(f, link); else addAka(f, link);
+
+                   /*			cfgline+=9;
+                    if (!strncasecmp(cfgline,line,strlen(line))) {
+                    cfgline-=9;
+                    free(cfgline);
+                    if (i) delAka(f,link); else addAka(f,link);
+                    }
+                    */
+
+
+                }
+                free(cfgline);
+        }
 
 	fclose(f);
 	return 0;
@@ -317,7 +334,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
                         break;
                 case 2:	sprintf(addline,"no area '%s' in my config\r",area->areaName);
                         break;
-                case 1:	changeconfig (area->areaName, link, 0);
+                case 1:	changeconfig (getConfigFileName(), area->areaName, link, 0);
                         area->downlinks = realloc(area->downlinks, sizeof(s_link*)*(area->downlinkCount+1));
                         area->downlinks[area->downlinkCount] = link;
                         area->downlinkCount++;
@@ -364,7 +381,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 			sprintf(addline,"no area '%s' in my config\r",area->areaName);
 			break;
 		case 0:
-			changeconfig ( area->areaName, link, 1);
+			changeconfig (getConfigFileName(),  area->areaName, link, 1);
 			removelink(link, area);
 			sprintf(addline,"area %s unsubscribed\r",area->areaName);
 			sprintf(logmsg,"areafix: %s unsubscribed from %s",link->name,area->areaName);
