@@ -1,8 +1,25 @@
+2003-01-24 Friday 11:42  mche
+
+	* src/carbon.c (1.19): fix previous patch
+
+2003-01-24 Friday 11:15  mche
+
+	* h/dupe.h (1.21): no message
+
+2003-01-24 Friday 10:41  mche
+
+	* src/dupe.c (1.70): improved dupe detection
+	
+	2Developers: if you want to make changes in dupe detection let me
+	know first (mihz@ua.fm)
+
+2003-01-24 Friday 06:04  stas_degteff
+
+	* src/carbon.c (1.18): Optimise code: use strchr() instead for(){}
+
 2003-01-23 Thursday 11:28  mche
 
-	* src/carbon.c (1.17): undo previous patch
-	
-	2Stas: а подумать прежде чем ломать работающий код???
+	* src/carbon.c (1.17): 1.17
 
 2003-01-23 Thursday 11:14  stas_degteff
 
