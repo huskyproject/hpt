@@ -338,7 +338,7 @@ void linkArea(s_area *area)
 		 }
 
 		 if ( useSubj && xmsg.subj != NULL) {
-		    if ( (ptr=skipReSubj((char*)xmsg.subj)) == NULL) 
+		    if ( (ptr=skipReSubj((char*)xmsg.subj)) == NULL)
                   ptr = (char*) xmsg.subj;
 		    crepl -> subject = strdup(ptr);
 		 }
@@ -714,7 +714,7 @@ int main(int argc, char **argv) {
    if ( argareas )
    {
      // link only specified areas
-     w_log(LL_LINKING, "Link areas specified by args");
+     w_log(LL_INFO, "Link areas specified by args");
 
      for ( j=0; j<nareas; j++) {
 
@@ -759,7 +759,7 @@ int main(int argc, char **argv) {
 	    }
 	}
 
-	w_log(LL_WARN, "Couldn't find area \"%s\"", argareas[j]);
+	if (!found) w_log(LL_WARN, "Couldn't find area \"%s\"", argareas[j]);
      }
 
    } else {
@@ -816,7 +816,7 @@ int main(int argc, char **argv) {
 		   }
 	       }
 
-	       w_log(LL_ERR, "Couldn't find area \"%s\"", line);
+	       if (!found) w_log(LL_ERR, "Couldn't find area \"%s\"", line);
 	       nfree(line);
 	    }
 
