@@ -1,3 +1,8 @@
+2002-08-01 Thursday 13:45  mche
+
+	* src/areafix.c (1.336): now tearline brakes areafix message
+	processing
+
 2002-07-31 Wednesday 17:04  stas
 
 	* src/: perl.c (1.38), pktread.c (1.88), toss.c (1.432): replace
