@@ -1,2 +1,3 @@
 hpt 1.0.0-stable
 cvs tag: hpt-1_0-stable
+required: fidoconfig 0.12-stable, smapi 2.0.x-stable
