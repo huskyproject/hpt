@@ -1,5 +1,12 @@
 hpt 0.28
 --------
+	
+----- cvs ci ------
+Tue May 18 19:27:56 CEST 1999
+mtt:
+* fixed a bug with pkts without pwd and made it compilable again
+* applied Kolyas patch which so pkts are not deleted, when there are
+  problems accessing the messagebase
 
 ----- cvs ci ------	
 Mon May 17 13:23:56 CEST 1999

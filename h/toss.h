@@ -47,11 +47,11 @@ enum tossSecurity {secLocalInbound, secProtInbound, secInbound};
 typedef enum tossSecurity e_tossSecurity;
 
 int  to_us(const s_addr destAddr);
-void processEMMsg(s_message *msg, s_addr pktOrigAddr);
-void processNMMsg(s_message *msg, s_pktHeader *pktHeader);
-void processMsg(s_message *msg, s_pktHeader *pktHeader);
+int  processEMMsg(s_message *msg, s_addr pktOrigAddr);
+int  processNMMsg(s_message *msg, s_pktHeader *pktHeader);
+int  processMsg(s_message *msg, s_pktHeader *pktHeader);
 int  processPkt(char *fileName, e_tossSecurity sec);
-void putMsgInArea(s_area *echo, s_message *msg, int strip);
+int putMsgInArea(s_area *echo, s_message *msg, int strip);
 void toss(void);
 void tossTempOutbound(char *directory); 
 void arcmail(void);

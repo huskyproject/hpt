@@ -1,4 +1,3 @@
-/*:ts=8*/
 /*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
@@ -203,7 +202,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header) {
    return msgHeader;
 }
 
-void putMsgInArea(s_area *echo, s_message *msg, int strip)
+int putMsgInArea(s_area *echo, s_message *msg, int strip)
 {
    char buff[70], *ctrlBuff, *textStart, *textWithoutArea;
    UINT textLength = (UINT) msg->textLength;
@@ -211,6 +210,7 @@ void putMsgInArea(s_area *echo, s_message *msg, int strip)
    HMSG  hmsg;
    XMSG  xmsg;
    char *slash;
+   int rc = 0;
 #ifdef UNIX
    char limiter = '/';
 #else
@@ -260,6 +260,7 @@ void putMsgInArea(s_area *echo, s_message *msg, int strip)
 
          MsgCloseMsg(hmsg);
          free(ctrlBuff);
+	 rc = 1;
 
       } else {
          sprintf(buff, "Could not create new msg in %s!", echo->fileName);
@@ -270,6 +271,7 @@ void putMsgInArea(s_area *echo, s_message *msg, int strip)
       sprintf(buff, "Could not open/create EchoArea %s!", echo->fileName);
       writeLogEntry(hpt_log, '9', buff);
    } /* endif */
+   return rc;
 }
 
 void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCount)
@@ -1016,12 +1018,12 @@ void writeMsgToSysop()
     
 }
 
-void processEMMsg(s_message *msg, s_addr pktOrigAddr)
+int processEMMsg(s_message *msg, s_addr pktOrigAddr)
 {
    char   *area, *textBuff;
    s_area *echo;
    s_link *link;
-   int    writeAccess;
+   int    writeAccess, rc = 0;
 
    link = getLinkFromAddr(*config, pktOrigAddr);
 
@@ -1048,7 +1050,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
          }
 
          if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-            putMsgInArea(echo, msg,1);
+            rc = putMsgInArea(echo, msg,1);
             echo->imported = 1;  // area has got new messages
             statToss.saved++;
          } else statToss.passthrough++;
@@ -1058,10 +1060,11 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
       } else {
          // msg is dupe
          if (echo->dupeCheck == dcMove) {
-            putMsgInArea(&(config->dupeArea), msg, 0);
+            rc = putMsgInArea(&(config->dupeArea), msg, 0);
          }
          statToss.dupes++;
       }
+
    }
 
    if (echo == &(config->badArea)) {
@@ -1076,7 +1079,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 	     putMsgInBadArea(msg, pktOrigAddr, writeAccess);
 	 } else {
              if (echo->msgbType != MSGTYPE_PASSTHROUGH)
-        	putMsgInArea(echo, msg, 1);
+        	rc = putMsgInArea(echo, msg, 1);
              if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
         	forwardMsgToLinks(echo, msg, pktOrigAddr);
         	statToss.exported++;
@@ -1086,11 +1089,11 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
       } else putMsgInBadArea(msg, pktOrigAddr, writeAccess);
    }
 
-
    free(textBuff);
+   return rc;
 }
 
-void processNMMsg(s_message *msg,s_pktHeader *pktHeader)
+int processNMMsg(s_message *msg,s_pktHeader *pktHeader)
 {
    HAREA  netmail;
    HMSG   msgHandle;
@@ -1099,7 +1102,8 @@ void processNMMsg(s_message *msg,s_pktHeader *pktHeader)
    char   *ctrlBuf;               // Kludgelines
    XMSG   msgHeader;
    char   buff[256];               // buff for sprintf
-   char *slash;
+   char   *slash;
+   int rc = 0;
 #ifdef UNIX
    char limiter = '/';
 #else
@@ -1138,6 +1142,7 @@ void processNMMsg(s_message *msg,s_pktHeader *pktHeader)
          MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *) bodyStart, len, len, strlen(ctrlBuf)+1, (UCHAR *) ctrlBuf);
          free(ctrlBuf);
          MsgCloseMsg(msgHandle);
+	 rc = 1;
 
          sprintf(buff, "Tossed Netmail: %u:%u/%u.%u -> %u:%u/%u.%u", msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
                          msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
@@ -1152,23 +1157,26 @@ void processNMMsg(s_message *msg,s_pktHeader *pktHeader)
       printf("%u\n", msgapierr);
       writeLogEntry(hpt_log, '9', "Could not open NetmailArea");
    } /* endif */
+   return rc;
 }
 
-void processMsg(s_message *msg, s_pktHeader *pktHeader)
+int processMsg(s_message *msg, s_pktHeader *pktHeader)
 {
+  int rc;
 
-	statToss.msgs++;
-	if (msg->netMail == 1) {
-		if (config->areafixFromPkt && 
-			(stricmp(msg->toUserName,"areafix")==0 ||
-			 stricmp(msg->toUserName,"areamgr")==0 ||
-			 stricmp(msg->toUserName,"hpt")==0)) {
-			processAreaFix(msg, pktHeader);
-		} else
-			processNMMsg(msg, pktHeader);
-	} else {
-		processEMMsg(msg, pktHeader->origAddr);
-	} /* endif */
+  statToss.msgs++;
+  if (msg->netMail == 1) {
+    if (config->areafixFromPkt && 
+	(stricmp(msg->toUserName,"areafix")==0 ||
+	 stricmp(msg->toUserName,"areamgr")==0 ||
+	 stricmp(msg->toUserName,"hpt")==0)) {
+      rc = processAreaFix(msg, pktHeader);
+    } else
+      rc = processNMMsg(msg, pktHeader);
+  } else {
+    rc = processEMMsg(msg, pktHeader->origAddr);
+  } /* endif */
+  return rc;
 }
 
 int processPkt(char *fileName, e_tossSecurity sec)
@@ -1208,27 +1216,26 @@ int processPkt(char *fileName, e_tossSecurity sec)
                break;
 
             case secProtInbound:
-		if ((link != NULL) && (link->pktPwd != NULL) && (stricmp(link->pktPwd, header->pktPassword)==0) ) processIt = 1;
-		else if ((link != NULL) && ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "")==0)) processIt=1;
-
-		else if (link == NULL) {	
-		    sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
-			    fileName, header->origAddr.zone, header->origAddr.net,
-			    header->origAddr.node, header->origAddr.point);
-		    writeLogEntry(hpt_log, '9', buff);
-		    processIt = 2;
-		} else {
-		    sprintf(buff, "pkt: %s Password Error or no link for %i:%i/%i.%i",
-			    fileName, header->origAddr.zone, header->origAddr.net,
-			    header->origAddr.node, header->origAddr.point);
-		    writeLogEntry(hpt_log, '9', buff);
-		    rc = 1;
-               }
-               break;
-
-		 case secInbound:
-			 if ((link != NULL) && (link->pktPwd != NULL) && (stricmp(link->pktPwd, header->pktPassword)==0) ) processIt = 1;
-			 else if ((link != NULL) && (link->pktPwd==NULL)) processIt=1;
+	      if ((link != NULL) && (link->pktPwd != NULL) && (stricmp(link->pktPwd, header->pktPassword)==0)) processIt = 1;
+	      else if ((link != NULL) && ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "")==0))) processIt=1;
+	      else if (link == NULL) {	
+		sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
+			fileName, header->origAddr.zone, header->origAddr.net,
+			header->origAddr.node, header->origAddr.point);
+		writeLogEntry(hpt_log, '9', buff);
+		processIt = 2;
+	      } else {
+		  sprintf(buff, "pkt: %s Password Error or no link for %i:%i/%i.%i",
+			  fileName, header->origAddr.zone, header->origAddr.net,
+			  header->origAddr.node, header->origAddr.point);
+		  writeLogEntry(hpt_log, '9', buff);
+		  rc = 1;
+	      }
+	      break;
+	      
+	 case secInbound:
+	   if ((link != NULL) && (link->pktPwd != NULL) && (stricmp(link->pktPwd, header->pktPassword)==0) ) processIt = 1;
+	   else if ((link != NULL) && (link->pktPwd==NULL)) processIt=1;
 			 else if (link == NULL) {
 				 sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
 						 fileName, header->origAddr.zone, header->origAddr.net,
@@ -1243,7 +1250,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
             while ((msg = readMsgFromPkt(pkt, header->origAddr.zone)) != NULL) {
                if (msg != NULL) {
                   if ((processIt == 1) || ((processIt==2) && (msg->netMail==1)))
-                     processMsg(msg, header);
+		    rc = !processMsg(msg, header) || rc == 5 ? 5 : 0;
                   freeMsgBuffers(msg);
                   free(msg);
                }
@@ -1393,6 +1400,9 @@ void processDir(char *directory, e_tossSecurity sec)
                break;
             case 4:  // not to us
                changeFileSuffix(dummy, "ntu");
+	       break;
+            case 5:  // tossing problem
+               changeFileSuffix(dummy, "err");
 	       break;
             default:
                remove (dummy);
