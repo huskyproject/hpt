@@ -616,7 +616,7 @@ s_route *perlroute(s_message *msg, s_route *defroute)
        static char srouteaddr[32];
        if (n_a == 0) flv = "";
        memset(&route, 0, sizeof(route));
-       if ((route.target = getLink(*config, routeaddr)) == NULL) {
+       if ((route.target = getLink(config, routeaddr)) == NULL) {
          route.routeVia = route_extern;
          route.viaStr = srouteaddr;
          strncpy(srouteaddr, routeaddr, sizeof(srouteaddr));
