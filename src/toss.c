@@ -334,11 +334,16 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
    char *seenByText, *start, *token;
    unsigned long temp;
    char *endptr;
-#ifdef DEBUG_HPT
    int i;
-#endif
 
    *seenByCount = 0;
+
+   for (i=0; i<config->addToSeenCount; i++) {
+	   (*seenByCount)++;
+	   (*seenBys) = (s_seenBy*) realloc(*seenBys,sizeof(s_seenBy)*(*seenByCount));
+	   (*seenBys)[*seenByCount-1].net = (UINT16) config->addToSeen[i].net;
+	   (*seenBys)[*seenByCount-1].node = (UINT16) config->addToSeen[i].node;
+   }
 
    start = strrstr(msg->text, " * Origin:"); // jump over Origin
    if (start == NULL) start = msg->text;
@@ -363,7 +368,7 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
 
          // get new memory
          (*seenByCount)++;
-         *seenBys = (s_seenBy*) realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
+         (*seenBys) = (s_seenBy*) realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
 
          // parse token
          temp = strtoul(token, &endptr, 10);

@@ -19,6 +19,7 @@ max:
 * carbons when scan
 * support for "route flavour nopack ..."
 * delete & truncate file attaches
+* addToSeen <addr> (add addr to seen-by's)
 
 ----- cvs ci ------
 Sat Jun  3 23:25:14 NOVST 2000

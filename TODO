@@ -7,9 +7,6 @@ Category 1: Will certainly be implemented until next release
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 
-- add seen-by (-sb node in echoArea options)
-- do not open/close files on each msg
-
 Category 3: Will only be included if volunteers send patches
 ============================================================
 
