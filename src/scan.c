@@ -36,8 +36,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <sys/stat.h>
 #include <errno.h>
+
+#if defined (__EMX__)
+  #include <sys/types.h>
+#endif
+
+#include <sys/stat.h>
 
 #if defined (UNIX) 
 #include <unistd.h>
