@@ -3,6 +3,7 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
+- supporting mask in echoArea links
 - msgbasedir for each link
 - -sbadd(<addr>,<addr>,...) -sbdel(<addr>,<addr>,...)
 - reduces Seen-BYs (fsc-0093)
@@ -15,6 +16,7 @@ Category 1: Will certainly be implemented until next release
 - del "-$m 200 -dosfile -keepsb" from autocreatedefaults when create passthrough
 - write statistics when tossing from badArea
 - delete empty mail
+- DenyEchoRequest <masklist>
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

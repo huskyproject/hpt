@@ -586,7 +586,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	char *start, *seenByText = NULL, *pathText = NULL;
 	char *debug=NULL;
 
-	if (newLinks==NULL || newLinks[0] == NULL) return;
+	if (newLinks[0] == NULL) return;
 
 	if (echo->debug) {
 		xstrscat(&debug, config->logFileDir,
@@ -1766,7 +1766,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
    char cmd[256];
 
 #ifdef __WATCOMC__
-   char **list;
+   const char * const *list;
 #endif
 
    if (sec == secInbound) {
@@ -1795,7 +1795,7 @@ int  processArc(char *fileName, e_tossSecurity sec)
 #ifdef __WATCOMC__
       list = mk_lst(cmd);
       cmdexit = spawnv(P_WAIT, cmd, list);
-      nfree(list);
+      free((char **)list);
       if (cmdexit == -1) {
 		  writeLogEntry(hpt_log, '9', "exec failed: %s", strerror(errno));
 		  return 3;
