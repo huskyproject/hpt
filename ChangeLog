@@ -1,3 +1,19 @@
+2001-12-12 Wednesday 17:00  ml
+
+	* src/scanarea.c (1.72): fixed carbonCopy() parameters
+
+2001-12-12 Wednesday 13:22  ml
+
+	* src/areafix.c (1.226): code cleanup and reformat
+
+2001-12-12 Wednesday 12:48  ml
+
+	* TODO (1.176), doc/hpt-FAQ.russian (1.12), doc/hpt.texi (1.45),
+	h/toss.h (1.43), src/areafix.c (1.225), src/dupe.c (1.46),
+	src/hpt.c (1.118), src/hptlink.c (1.29), src/hpttree.c (1.19),
+	src/toss.c (1.370): don't make AREATAGs and PATHs with forbidden
+	symbols
+
 2001-12-11 Tuesday 20:43  ml
 
 	* doc/hpt.texi (1.44), h/toss.h (1.42), src/scan.c (1.135),
