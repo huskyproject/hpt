@@ -267,6 +267,8 @@ FIDOCONFIG about location of config file and keywords ideology.
 * AreafixNames::                set additional areafix names
 * AreafixOrigin::		set origin for areafix reports
 * AreafixSplitStr::             set split string for splitted areafix messages
+* AreafixQueryReports::         insert linked areas list into areafix reports
+* AreafixQueueFile::		idle requests queue file for areafix
 * AreasFileNameCase::           case of filenames of autocreated areas
 * AutoAreaCreateFlag::          create this file-flag after auto-area-create
 * AutoPassive::                 set pause for links who don't poll our system
@@ -276,10 +278,13 @@ FIDOCONFIG about location of config file and keywords ideology.
 * CreateFwdNonPass::            autocreate non-passthru echoes in fwd.req. operations
 * DefArcmailSize::		default size for arcmail bundle
 * DisableTID::			disable adding TID to messages
+* ForwardRequestTimeout::	requested from uplink echoarea traffic timeout (in days)
+* IdlePassthruTimeout:: 	timeout (in days) before unlink on uplink passthrough echo with one link (& some time later remove from config)
 * IgnoreCapWord::		ignore Capability Word in pkt files
 * IgnoreSeen::                  ignore SEEN-BYs and pack mail for link
 * KeepTrsFiles::                keep transit files
 * KeepTrsMail::                 keep transit netmail messages
+* KilledRequestTimeout::	wait time (in days) for kill echo without links
 * KludgeAreaNetmail::           how to process netmail with kludge "AREA:NETMAIL"
 * LinkWithImportLog::           list of areas only which should be linked
 * LogEchoToScreen::             set output to screen log information
@@ -446,7 +451,7 @@ the origin string in areafix reports will be like this:
 
 This statement cannot be repeated.
 
-@node AreafixSplitStr, AreasFileNameCase, AreafixOrigin, Keywords
+@node AreafixSplitStr, AreafixQueryReports, AreafixOrigin, Keywords
 @subsection AreafixSplitStr
 @findex AreafixSplitStr
 @table @asis
@@ -460,7 +465,42 @@ This string added after splitted areafix messages.
 
 This statement cannot be repeated.
 
-@node AreasFileNameCase, AutoAreaCreateFlag, AreafixSplitStr, Keywords
+@node AreafixQueryReports, AreafixQueueFile, AreafixSplitStr, Keywords
+@subsection AreafixQueryReports
+@findex AreafixQueryReports
+@table @asis
+@item Syntax:
+@code{areafixQueryReports <bool>}
+@item Example:
+@code{areafixQueryReports off}
+@end table
+
+This statement enables/disables including linked areas list into all areafix
+replies.
+
+Default: off.
+
+This statement cannot be repeated.
+
+
+@node AreafixQueueFile, AreasFileNameCase, AreafixQueryReports, Keywords
+@subsection AreafixQueueFile
+@findex AreafixQueueFile
+@table @asis
+@item Syntax:
+@code{AreafixQueueFile <string>}
+@item Example:
+@code{areafixQueueFile /fido/datafiles}
+@end table
+
+This command specifies the queue file containing your delayed forward-requests.
+Hpt must have read/write rights for this file.
+To use this feature run @code{hpt qupd} periodically.
+
+This statement cannot be repeated.
+
+
+@node AreasFileNameCase, AutoAreaCreateFlag, AreafixQueueFile, Keywords
 @subsection AreasFileNameCase
 @findex AreasFileNameCase
 @table @asis
@@ -607,7 +647,7 @@ default arcmail size in kb for all links.
 
 This statement cannot be repeated.
 
-@node DisableTID, IgnoreCapWord, DefArcmailSize, Keywords
+@node DisableTID, ForwardRequestTimeout, DefArcmailSize, Keywords
 @subsection DisableTID
 @findex DisableTID
 @table @asis
@@ -621,7 +661,49 @@ Don't add TID-line to scanned messages and PID-line to generated messages.
 
 This statement cannot be repeated.
 
-@node IgnoreCapWord, IgnoreSeen, DisableTID, Keywords
+@node ForwardRequestTimeout, IdlePassthruTimeout, DisableTID, Keywords
+@subsection ForwardRequestTimeout
+@findex ForwardRequestTimeout
+@table @asis
+@item Syntax:
+@code{ForwardRequestTimeout <number>}
+@item Example:
+@code{ForwardRequestTimeout 7}
+@end table
+
+This statement specifies time to wait (in days) for echoarea requested from
+uplink. If there is no traffic in this echoarea, @code{hpt qupd} unsubscribes
+area from this uplink and subscribes to it at next uplink. If next uplink
+for this echoarea not avaiable, @code{hpt qupd} removes echoarea from queue.
+
+To use this feature run @code{hpt qupd} daily.
+
+Default is 7 days.
+
+This statement cannot be repeated.
+
+
+@node IdlePassthruTimeout, IgnoreCapWord, ForwardRequestTimeout, Keywords
+@subsection IdlePassthruTimeout
+@findex IdlePassthruTimeout
+@table @asis
+@item Syntax:
+@code{IdlePassthruTimeout <number>}
+@item Example:
+@code{IdlePassthruTimeout 3}
+@end table
+
+This statement specifies time to wait (in days) before unsubscribing echoarea
+from uplink after the time last downlink unsubscribed (one uplink rest).
+
+To use this feature run @code{hpt qupd} daily.
+
+Default is 3 days.
+
+This statement cannot be repeated.
+
+
+@node IgnoreCapWord, IgnoreSeen, IdlePassthruTimeout, Keywords
 @subsection IgnoreCapWord
 @findex IgnoreCapWord
 @table @asis
@@ -672,7 +754,7 @@ This statement cannot be repeated.
 
 @xref{RouteFile}.
 
-@node KeepTrsMail, KludgeAreaNetmail, KeepTrsFiles, Keywords
+@node KeepTrsMail, KilledRequestTimeout, KeepTrsFiles, Keywords
 @subsection KeepTrsMail
 @findex KeepTrsMail
 @table @asis
@@ -687,7 +769,26 @@ transit messages wouldn't be kept in NetmailArea. Default is "off".
 
 This statement cannot be repeated.
 
-@node KludgeAreaNetmail, LinkWithImportLog, KeepTrsMail, Keywords
+@node KilledRequestTimeout, KludgeAreaNetmail, KeepTrsMail, Keywords
+@subsection KilledRequestTimeout
+@findex KilledRequestTimeout
+@table @asis
+@item Syntax:
+@code{KilledRequestTimeout <number>}
+@item Example:
+@code{KilledRequestTimeout 4}
+@end table
+
+This statement specified time wait (days) for delete from config echoarea after
+unsubscribe it from uplink (last link).
+Run @code{hpt qupd} daily for use this feature.
+
+Default is 4 days.
+
+This statement cannot be repeated.
+
+
+@node KludgeAreaNetmail, LinkWithImportLog, KilledRequestTimeout, Keywords
 @subsection KludgeAreaNetmail
 @findex KludgeAreaNetmail
 @table @asis
