@@ -1,3 +1,7 @@
+2003-07-16 Wednesday 16:08  mche
+
+	* src/hpt.c (1.180): alternative exception handling for win32
+
 2003-06-26 Thursday 11:11  val_khokhlov
 
 	* misc/adv-stat-hpt.pl (1.10): possible bug when parsing date with
