@@ -689,7 +689,7 @@ int af_OpenQuery()
 
     time( &tnow );
 
-    queryAreasHead = af_AddAreaListNode("HEAD","\0");
+    queryAreasHead = af_AddAreaListNode("\0","\0");
 
     if( !config->areafixQueueFile ) /* Queue File not defined in config */
     {
