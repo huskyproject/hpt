@@ -15,12 +15,17 @@
 #endif
 
 #ifdef _MSC_VER
-#undef __STDC__ 
+#undef __STDC__
 #include <sys/types.h>
 #endif
 
-#include <smapi/progprot.h>
 #include <smapi/compiler.h>
+
+#if defined(__NT__) && !defined(WIN32) /* WIN32 needed for perl-core include files */
+#  define WIN32
+#endif
+
+#include <smapi/progprot.h>
 
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
@@ -319,7 +324,7 @@ static XS(perl_putMsgInArea)
   nfree(sattr);
   if (addkludges)
     msg.text = createKludges(config,
-                msg.netMail ? NULL : area, 
+                msg.netMail ? NULL : area,
                 &msg.origAddr, &msg.destAddr,
                 versionStr);
   text = safe_strdup(text);
@@ -368,7 +373,7 @@ static XS(perl_myaddr)
   }
   EXTEND(SP, config->addrCount);
   for (naddr=0; naddr<config->addrCount; naddr++)
-  { 
+  {
     ST(naddr) = sv_newmortal();
     sv_setpv((SV*)ST(naddr), aka2str(config->addr[naddr]));
   }
@@ -447,10 +452,10 @@ static void xs_init(void)
   newXS("myaddr",        perl_myaddr,        file);
   newXS("nodelistDir",   perl_nodelistDir,   file);
   newXS("crc32",         perl_crc32,         file);
-  newXS("alike",         perl_alike,         file);     
+  newXS("alike",         perl_alike,         file);
 }
 void perldone(void)
-{ 
+{
   if (perl)
   { dSP;
     ENTER;
@@ -489,7 +494,7 @@ static int handleperlerr(int *saveerr)
 #ifndef _MSC_VER
    int perlpipe[2], pid;
 
-#if defined(UNIX)
+#if defined(__UNIX__)
    pipe(perlpipe);
 perl_fork:
    if ((pid=fork())>0)
@@ -511,7 +516,7 @@ perl_fork:
      }
      fclose(f);
      fflush(stdout);
-     _exit(0); 
+     _exit(0);
    }
    else
    { if (errno==EINTR)
@@ -537,7 +542,7 @@ perl_fork:
    pid=0;
 #endif
    return pid;
-#endif 
+#endif
    return 0;
 }
 
@@ -548,7 +553,7 @@ static void restoreperlerr(int saveerr, int pid)
    close(saveerr);
    if (pid == 0)
      return;
-#if defined(UNIX)
+#if defined(__UNIX__)
    waitpid(pid, &pid, 0);
 #elif defined(__OS2__)
    DosWaitThread((PTID)&pid, DCWW_WAIT);
@@ -561,14 +566,14 @@ int PerlStart(void)
    char *perlfile;
    char *perlargs[]={"", NULL, NULL};
    int saveerr, pid;
-   
+
    if (config->hptPerlFile != NULL)
       perlfile = config->hptPerlFile;
    else
    {
       do_perl=0;
       return 1;
-   }    
+   }
    perlargs[1] = perlfile;
 #ifdef _MSC_VER
    if (_access(perlfile, R_OK))
@@ -820,7 +825,7 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
    char *area = NULL, *prc;
    int rc = 0;
    SV *svfromname, *svfromaddr, *svtoname, *svtoaddr, *svpktfrom, *svkill;
-   SV *svdate, *svtext, *svarea, *svsubj, *svsecure, *svret; 
+   SV *svdate, *svtext, *svarea, *svsubj, *svsecure, *svret;
    SV *svchange, *svattr;
    STRLEN n_a;
    static int do_perlfilter=1;
