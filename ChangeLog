@@ -1,3 +1,8 @@
+2002-11-07 Thursday 07:16  mche
+
+	* src/query.c (hpt-1_2-stable.4): fix creating in passthrough when
+	using queueFile
+
 2002-11-03 Sunday 04:45  d_sergienko
 
 	* doc/hpt.texi (hpt-1_2-stable.4): import token descriptions from
