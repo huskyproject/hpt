@@ -1495,7 +1495,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 	
 	// this is for me?
 	if (link!=NULL)	notforme=addrComp(msg->destAddr, *link->ourAka);
-	else security=4; // link == NULL;
+	else if (!security) security=4; // link == NULL;
 	
 	// ignore msg for other link (maybe this is transit...)
 	if (notforme) {
