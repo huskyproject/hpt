@@ -1,3 +1,10 @@
+2003-12-27 Saturday 21:42  d_sergienko
+
+	* doc/hpt.texi, h/seenby.h, man/hpt.1, src/global.c, src/hpt.c,
+	src/post.c, src/scan.c, src/scanarea.c, src/seenby.c, src/toss.c
+	(hpt-1_4-stable.[6,1,1,1,1,1,2,1,1,4]): prevent compiler warnings
+	about unused variables
+
 2003-09-27 Saturday 19:45  d_sergienko
 
 	* doc/hpt.texi (hpt-1_4-stable.5): fixed description of EchoTossLog
