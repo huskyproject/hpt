@@ -709,7 +709,7 @@ char *subscribe(s_link *link, char *cmd) {
 
 	if (rc!=0 && limitCheck(link)) rc = 6; /* areas limit exceed for link */
 
-	switch (rc) {
+        switch (rc) {
 	case 0:         /* already linked */
 	    if (isPatternLine(line)) {
 		matched = 1;
@@ -760,7 +760,7 @@ char *subscribe(s_link *link, char *cmd) {
 	    if (!isPatternLine(line)) i = config->echoAreaCount;
 	    break;
 	case 6:         /* areas limit exceed for link */
-	    break;
+            break;
 	default : /*  rc = 2  not access */
 	    if (!area->hide && !isPatternLine(line)) {
 		w_log(LL_AREAFIX, "areafix: area %s -- no access for %s",
@@ -777,7 +777,13 @@ char *subscribe(s_link *link, char *cmd) {
     if (rc!=0 && limitCheck(link)) rc = 6; /*double!*/ /* areas limit exceed for link */
 
     if (rc==4 && !isPatternLine(line) && !found) { /* rc not equal 4 there! */
-	if (link->denyFRA==0) {
+        if (checkRefuse(line))
+        {
+            xscatprintf(&report, " %s %s  forwarding refused\r",
+			    line, print_ch(49-strlen(line), '.'));
+            w_log(LL_WARN, "Can't forward request for area %s : refused by NewAreaRefuseFile\n", line);
+        } else
+        if (link->denyFRA==0) {
 	    /*  try to forward request */
 	    if ((rc=forwardRequest(line, link, NULL))==2) {
 		xscatprintf(&report, " %s %s  no uplinks to forward\r",

@@ -41,6 +41,7 @@ int   af_CloseQuery();
 char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir);
 void  af_QueueUpdate();
 void  af_QueueReport();
+int checkRefuse(char *areaName);
 
 #endif
 

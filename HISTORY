@@ -18,6 +18,7 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
     - new link token netMailFlavour: you can omit flavour in route statement
       to use the link's default one
     - don't use Origin value if areafixOrigin is not defined.
+    - NewAreaRefuseFile refuses also subscription to prevent forward requests
 
 3. IMPORTANT bugfixes:
    - attach processing was changed: now hpt will try to guess actual attached

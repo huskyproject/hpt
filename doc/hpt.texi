@@ -1125,7 +1125,8 @@ This statement cannot be repeated.
 
 This token defines a file which will be used when autocreating echoarea.
 File contains list of areas which we don't allow to autocreate.
-Each line of this file is a mask of echotag.
+Subscribtion on such areas is also refused because such areas are marked as 
+dead. Each line of this file is a mask of echotag.
 
 Example:
 @table @asis
