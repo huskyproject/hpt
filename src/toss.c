@@ -637,30 +637,31 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 {
    FILE *f;
-   char *fileName, *squishFileName, *acDef;
+   char *fileName, *squishFileName=NULL, *acDef;
    char *buff=NULL, *myaddr=NULL, *hisaddr=NULL;
-   char *msgbtype;
+   char *msgbtype, *newAC=NULL, *desc;
    s_link *creatingLink;
-   s_addr *aka;
-   char *description=NULL, *newAutoCreate=NULL;
+   
+   xstrcat(&squishFileName, c_area);
 
-   squishFileName = (char *) malloc(strlen(c_area)+1);
-   strcpy(squishFileName, c_area);
-
+   //translating name of the area to lowercase/uppercase
    if (config->createAreasCase == eUpper) {
-      for (fileName = c_area; *fileName; fileName++) *fileName=(char)toupper(*fileName);
+	   for (fileName = c_area; *fileName; fileName++) *fileName=(char)toupper(*fileName);
    } else {
-      for (fileName = c_area; *fileName; fileName++) *fileName=(char)tolower(*fileName);
+	   for (fileName = c_area; *fileName; fileName++) *fileName=(char)tolower(*fileName);
    }
 
    fileName = squishFileName;
 
-   //translating name of the area to lowercase/uppercase
+   //translating filename of the area to lowercase/uppercase
    while (*fileName != '\0') {
-      if (config->areasFileNameCase == eUpper) *fileName=(char)toupper(*fileName);
-         else *fileName=(char)tolower(*fileName);
-      if ((*fileName=='/') || (*fileName=='\\')) *fileName = '_'; // convert any path delimiters to _
-      fileName++;
+	   if (config->areasFileNameCase == eUpper)
+		   *fileName=(char)toupper(*fileName);
+	   else
+		   *fileName=(char)tolower(*fileName);
+	   // convert any path delimiters to _
+	   if ((*fileName=='/') || (*fileName=='\\')) *fileName = '_'; 
+	   fileName++;
    }
 
    creatingLink = getLinkFromAddr(*config, pktOrigAddr);
@@ -671,8 +672,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    }
 
    acDef = creatingLink->autoAreaCreateDefaults;
-   newAutoCreate = (char *) calloc((acDef) ? strlen(acDef)+1 : 1, sizeof(char));
-   if (acDef) strcpy (newAutoCreate, acDef);
+   xscatprintf(&newAC, "%s%s", (acDef) ? " " : "", (acDef) ? acDef : "");
    
    fileName = creatingLink->autoAreaCreateFile;
    if (fileName == NULL) fileName = getConfigFileName();
@@ -683,18 +683,16 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	   return 1;
    }
 
-   aka = creatingLink->ourAka;
-
    // making local address and address of uplink
-   xstrcat(&myaddr, aka2str(*aka));
+   xstrcat(&myaddr, aka2str(*creatingLink->ourAka));
    xstrcat(&hisaddr, aka2str(pktOrigAddr));
 
    //write new line in config file
-   msgbtype = hpt_stristr(newAutoCreate, "-b ");
+   msgbtype = hpt_stristr(newAC, "-b ");
 
-   if (stricmp(config->msgBaseDir, "passthrough")!=0) {
+   if (config->msgBaseDir && stricmp(config->msgBaseDir, "passthrough")!=0) {
 #ifndef MSDOS
-	   if ((fileName=hpt_stristr(newAutoCreate, "-dosfile "))==NULL)
+	   if (hpt_stristr(newAC, "-dosfile ")==NULL)
 		   xscatprintf(&buff, "EchoArea %s %s%s -a %s%s", c_area,
 					   config->msgBaseDir, squishFileName, myaddr,
 					   (msgbtype) ? "" : " -b Squish");
@@ -710,94 +708,43 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 				   config->msgBaseDir, (long)time(NULL), myaddr,
 				   (msgbtype) ? "" : " -b Squish");
 #endif
-   } else
-	   xscatprintf(&buff, "EchoArea %s Passthrough -a %s", c_area, myaddr);
-           
-   if (creatingLink->forwardRequestFile!=NULL) {
-     FILE *fforw;
-     
-     if ((fforw=fopen(creatingLink->forwardRequestFile,"r")) == NULL) {
-       fprintf(stderr,"areafix: cannot open forwardRequestFile \"%s\"\n",creatingLink->forwardRequestFile);
-     }
-     else {
-       char *line, *copy = NULL;
-       int out=0;
-       
-       while ((line = readLine(fforw)) != NULL) {
-         line = trimLine(line);
-	 copy = (char*)calloc(strlen(line)+1, sizeof(char));
-	 strcpy(copy, line);
-	 if (*line) {
-	     description=strtok(line," \t");
-	     if (patimat(description,c_area)==1) {
-	         out=1;
-		 break;
-	     }
-	 }
-	 free(copy);
-	 free(line);
-       }
-       if (out) {
-         if (((description=strtok(NULL," \t"))!=NULL) && (description=strstr(copy,description))!=NULL) {
-           fileName=NULL;
-           if ((fileName=hpt_stristr(newAutoCreate, "-d "))==NULL) {
-               char *tmp;
-               tmp=(char *) calloc (strlen(newAutoCreate)+strlen(description)+7,sizeof(char));
-               sprintf (tmp,"%s -d \"%s\"",newAutoCreate,description);
-               free(newAutoCreate);
-               newAutoCreate=tmp;
-           }
-           else {
-             char *tmp;
-             
-             tmp=(char *) calloc (strlen(newAutoCreate)+strlen(description)+7,sizeof(char));
-             fileName[0]='\0';
-             sprintf (tmp,"%s-d \"%s\"",newAutoCreate,description);
-             fileName++;
-             fileName=strrchr(fileName,'\"')+1; /* "/ */
-             strcat(tmp,fileName);
-             free (newAutoCreate);
-             newAutoCreate=tmp;
-           }  
-         }
-	 free(line);
-	 free(copy);
-       }
-       fclose(fforw);
-     }
+   } else xscatprintf(&buff, "EchoArea %s Passthrough -a %s", c_area, myaddr);
+   
+   free(squishFileName);
+
+   if (creatingLink->LinkGrp) {
+	   if (hpt_stristr(newAC, " -g ")==NULL)
+		   xscatprintf(&newAC, " -g %s", creatingLink->LinkGrp);
    }
 
-   if (newAutoCreate) {
-	   if ((fileName=hpt_stristr(newAutoCreate, "-g")) == NULL) {
-	       if (creatingLink->LinkGrp) {
-	           xscatprintf(&buff, " -g %s", creatingLink->LinkGrp);
-	       }
+   if (areaIsAvailable(c_area,creatingLink->forwardRequestFile,&desc,1)==1) {
+	   if (desc) {
+		   if (hpt_stristr(newAC, " -d ")==NULL)
+			   xscatprintf(&newAC, " -d \"%s\"", desc);
+		   free(desc);
 	   }
-	   xscatprintf(&buff, " %s", newAutoCreate);
-   } else if (creatingLink->LinkGrp)
-	   xscatprintf(&buff, " -g %s", creatingLink->LinkGrp);
+   }
 
-   free(newAutoCreate);
+   xscatprintf(&buff, "%s %s", newAC, hisaddr);
+   free(newAC);
 
-   xscatprintf(&buff, " %s", hisaddr);
-   
    fprintf(f, "%s\n", buff); // add line to config
    fclose(f);
    
    // add new created echo to config in memory
    parseLine(buff,config);
+   free(buff);
 
-   carbonNames2Addr(config); // echoarea addresses changed by reallocating of config->echoAreas[]
+   // echoarea addresses changed by reallocating of config->echoAreas[]
+   carbonNames2Addr(config);
 
    writeLogEntry(hpt_log, '8', "Area '%s' autocreated by %s", c_area, hisaddr);
    
    if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr, NULL);
    else makeMsgToSysop(c_area, *forwardAddr, &pktOrigAddr);
    
-   free(squishFileName);
    free(myaddr);
    free(hisaddr);
-   free(buff);
    
    return 0;
 }

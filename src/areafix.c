@@ -598,16 +598,17 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 	return 0;
 }
 
-int areaIsAvailable(char *areaName, char *fileName) {
+int areaIsAvailable(char *areaName, char *fileName, char **desc, int retd) {
 	FILE *f;
 	char *line, *token, *running;
 	
 	if ((f=fopen(fileName,"r")) == NULL)
 		{
 			fprintf(stderr,"areafix: cannot open forwardRequestFile \"%s\"\n",fileName);
+			writeLogEntry(hpt_log,'8',"areafix: cannot open forwardRequestFile \"%s\"\n",fileName);
 			return 0;
 		}
-
+	
 	while ((line = readLine(f)) != NULL) {
 		line = trimLine(line);
 		if (line[0] != '\0') {
@@ -616,6 +617,23 @@ int areaIsAvailable(char *areaName, char *fileName) {
 			token = strseparate(&running, " \t\r\n");
 
 			if (token && areaName && stricmp(token, areaName)==0) {
+				// return description if needed
+				if (retd) {
+					*desc = NULL;
+					if (running) {
+						//strip "" at the beginning & end
+						if (running[0]=='"' && running[strlen(running)-1]=='"') {
+							running++; running[strlen(running)-1]='\0';
+						}
+						//change " -> '
+						token = running;
+						while (*token!='\0') {
+							if (*token=='"') *token='\'';
+							token++;
+						}
+						xstrcat(&(*desc), running);
+					}
+				}
 				free(line);
 				fclose(f);
 				return 1;
@@ -639,7 +657,7 @@ int forwardRequest(char *areatag, s_link *dwlink) {
 			
 			if (uplink->forwardRequestFile!=NULL) {
 				// first try to find the areatag in forwardRequestFile
-				if (areaIsAvailable(areatag,uplink->forwardRequestFile)!=0) {
+				if (areaIsAvailable(areatag,uplink->forwardRequestFile,NULL,0)!=0) {
 					forwardRequestToLink(areatag,uplink,dwlink,0);
 					return 0;
 				}

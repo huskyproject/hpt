@@ -208,6 +208,11 @@ void linkArea(s_area *area)
      return;
    }
 
+   if (area->nolink) {
+     if (loglevel>=10) fprintf(outlog, "has nolink option, ignoring\n");
+     return;
+   }
+
    harea = MsgOpenArea((byte *) area->fileName, MSGAREA_NORMAL, (word)area->msgbType);
 
    if (harea)

@@ -2,7 +2,16 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Mon May  1 17:01:13 NOVST 2000
+max:
+* clean autoCreate code
+patch from Alex Bronin:
+* Win32: restore old console title before exit
+* -nolink option disables reply linking for area
+
+----- cvs ci ------
 Fri Apr 28 11:45:55 NOVST 2000
+max:
 * fixed bug in correctNMAddr()
 * fixed bug with processing transit messages by areafix (thanx to Valery Abeev)
 

@@ -46,13 +46,8 @@
 #include <version.h>
 #include <pkt.h>
 
-#if !defined(MSDOS) || defined(__DJGPP__)
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/dirlayer.h>
-#else
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/dirlayer.h>
-#endif
 
 #include <log.h>
 
@@ -241,8 +236,8 @@ int main(int argc, char **argv)
    struct _minf m;
    int i;
    char *version = NULL;
-#if (defined ( __WATCOMC__ ) || defined(__TURBOC__)) && defined ( __NT__ )
-   char title[ 256 ];
+#if defined ( __NT__ )
+   char title[ 256 ], oldtitle[ 256 ];
 #endif
 
 xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
@@ -266,8 +261,9 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
 #endif
 
    fprintf(stdout, "Highly Portable Toss %s\n", version);
-#if (defined ( __WATCOMC__ ) || defined(__TURBOC__)) && defined ( __NT__ )
+#if defined ( __NT__ )
    sprintf( title, "Highly Portable Toss %s", version);
+   GetConsoleTitleA( oldtitle, 256 );
    SetConsoleTitleA( title );
 #endif
    xscatprintf(&versionStr,"hpt %s", version);
@@ -327,5 +323,8 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
    disposeConfig(config);
    doneCharsets();
    free(versionStr);
+#if defined ( __NT__ )
+   SetConsoleTitleA( oldtitle );
+#endif
    return 0;
 }
