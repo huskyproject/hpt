@@ -1,3 +1,7 @@
+2003-04-26 Saturday 10:01  d_sergienko
+
+	* src/carbon.c (1.27): yet another fix for carbon @AREA kludge
+
 2003-04-25 Friday 17:00  mche
 
 	* misc/extrules.pl (1.3): fix comments
