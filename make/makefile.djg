@@ -1,26 +1,29 @@
 # DJGPP makefile
 #
 
-DEBUG=-s
+DEBUG	= -s -g -pedantic 
 # set to -g for debugging
 
-CC=gcc
-EXENAMEFLAG=-o 
-SRC_DIR=../src/
-CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
-LFLAGS=$(DEBUG)
-CDEFS =-DMSDOS -DNOSEMAPHORES -mcpu=i486
+CC	= gcc
+EXENAMEFLAG = -o 
+CFLAGS	= -Wno-long-long -Wall -O3 -fomit-frame-pointer -fstrength-reduce $(DEBUG)
+LFLAGS	= $(DEBUG)
+CINCL	= -I../h -I../../huskylib -I../../smapi -I../../fidoconf
+CDEFS	= -DMSDOS -mcpu=i486
+OBJOPT	= -c 
 
-OBJ=.o
-EXE=.exe
-RM=del
+OBJ	= .o
+EXE	= .exe
+RM	= del
 
-LIBS=../../fidoconf/fconfdjg.a ../../smapi/smapidjg.a
+SRC_DIR	= ../src/
+
+LIBS	= ../../fidoconf/make/fconfdjg.a ../../smapi/make/smapidjg.a ../../huskylib/make/huskydjg.a 
 
 default: all
 
 %$(OBJ): $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+	$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(OBJOPT) $^
 
 include makefile.inc
 
