@@ -143,50 +143,6 @@ int createLockFile(char *lockfile) {
         return 0;
 }
 */
-// remove after 15-03-2002 (use setfsize() from smapi)
-#if 0
-#if defined(__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
-
-int truncate(const char *fileName, long length)
-{
-   int fd = open(fileName, O_RDWR | O_BINARY);
-   if (fd != -1) {
-          lseek(fd, length, SEEK_SET);
-          chsize(fd, tell(fd));
-          close(fd);
-          w_log(LL_TRUNC,"%s truncated", fileName);          
-          return 1;
-   };
-   w_log(LL_TRUNC,"Can't truncate %s: %s", fileName, strerror(errno));
-   return 0;
-}
-
-int fTruncate( int fd, long length )
-{
-   if( fd != -1 )
-   {
-      lseek(fd, length, SEEK_SET);
-      chsize(fd, tell(fd) );
-      return 1;
-   }
-   return 0;
-}
-
-#endif
-
-#ifdef __MINGW32__
-int fTruncate (int fd, long length)
-{
-   if( fd != -1 )
-   {
-      lseek(fd, length, SEEK_SET);
-      chsize(fd, tell(fd) );
-      return 1;
-   }
-   return 0;
-}
-#endif
-#endif // ifdef 0
 /*
 e_prio cvtFlavour2Prio(e_flavour flavour)
 {
