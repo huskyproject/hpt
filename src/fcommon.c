@@ -384,8 +384,6 @@ int createTempPktFileName(s_link *link)
 		else {
 			counter=0;
 			if (pkt_aTime==aTime) {
-				//FIXME: it can be false report about 256 pkts/sec
-				//w_log('7',"created 256 pkts/sec!");
 				sleep(1);
 				aTime = time(NULL);
 				aTime %= 0xffffff;

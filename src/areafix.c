@@ -1409,7 +1409,6 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount)
    dword highestMsg, i;
    unsigned int rc=0;
 
-   /*FIXME: the code in toss.c does createDirectoryTree. We don't*/
    area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, /*echo -> fperm, 
    echo -> uid, echo -> gid,*/ (word)(echo->msgbType | MSGTYPE_ECHO));
    if (area != NULL) {

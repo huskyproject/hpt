@@ -652,28 +652,44 @@ void writeScanStatToLog(void) {
 		 config->echoAreas[i].areaName, config->echoAreas[i].scn-1);
 }
 
+s_area *getLocalArea(s_fidoconfig *config, char *areaName)
+{
+   UINT i;
+
+   for (i=0; i < config->localAreaCount; i++) {
+      if (stricmp(config->localAreas[i].areaName, areaName)==0)
+         return &(config->localAreas[i]);
+   }
+
+   return NULL;
+}
+
+
 int scanByName(char *name) {
 	
     s_area *area;
     
     if ((area = getNetMailArea(config, name)) != NULL) {
-       scanNMArea(area); 
-       return 1;
+	scanNMArea(area); 
+	return 1;
     } else {
-       // maybe it's echo area    
-       area = getEchoArea(config, name);
-       if (area != &(config->badArea)) {
-          if (area && area->msgbType != MSGTYPE_PASSTHROUGH && 
-              area -> downlinkCount > 0) { 
-		  scanEMArea(area);
-		  return 1;
-	  }; 
-       } else {
-          w_log('4', "Area \'%s\' is not found -> Scanning stop", name);
-       };
-    } /* endif */
+	// maybe it's echo area    
+	area = getEchoArea(config, name);
+	if (area != &(config->badArea)) {
+	    if (area && area->msgbType != MSGTYPE_PASSTHROUGH && 
+		area -> downlinkCount > 0) { 
+		scanEMArea(area);
+		return 1;
+	    }
+	} else {
+	    if (NULL != getLocalArea(config,name))
+		w_log('4', "Area \'%s\' is local -> Skipped", name);
+	    else
+		w_log('4', "Area \'%s\' is not found -> Scanning stop", name);
+	}
+    }
     return 0;
-};
+}
 
 void scanExport(int type, char *str) {
 	

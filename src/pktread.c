@@ -574,17 +574,27 @@ static void make_ftsc_date(char *pdate, const struct tm *ptm)
 int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 {
    s_message *msg;
-   int len; //, badmsg=0;
+   int len, badmsg=0;
    struct tm tm;
    char *p, *q;
+   long unread;
 #if defined(MSDOS)
    char *origin;
 #endif
 
-   // WARNING: broken pkts may be lost!
    if (2 != getUINT16(pkt)) {
-	   *message = NULL;
-	   return 0;              /* end of pkt file */
+       *message = NULL;
+
+       unread = ftell(pkt);
+       fseek(pkt, 0L, SEEK_END);
+       unread = ftell(pkt) - unread; // unread bytes
+
+       if (unread) {
+	   w_log('9',"There is %d bytes of unknown data at the end of pkt file!",
+		 unread);
+	   return 2; // rename to bad
+       }
+       else return 0; // end of pkt file
    }
 
    msg = (s_message*) safe_malloc(sizeof(s_message));
@@ -613,6 +623,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 	     globalBuffer, XMSG_TO_SIZE-1);
        if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
        globalBuffer[XMSG_TO_SIZE-1]='\0';
+       badmsg++;
    }
    xstrcat(&msg->toUserName, (char *) globalBuffer);
 
@@ -623,6 +634,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 	     globalBuffer, XMSG_FROM_SIZE-1);
        if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
        globalBuffer[XMSG_FROM_SIZE-1]='\0';
+       badmsg++;
    }
    xstrcat(&msg->fromUserName, (char *) globalBuffer);
 
@@ -633,16 +645,16 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 	     globalBuffer, XMSG_SUBJ_SIZE-1);
        if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
        globalBuffer[XMSG_SUBJ_SIZE-1]='\0';
+       badmsg++;
    }
    xstrcat(&msg->subjectLine, (char *) globalBuffer);
 
-// remove after 26-Nov-01
-//   if (badmsg) {
-//	   freeMsgBuffers(msg);
-//	   *message = NULL;
-//	   w_log('9', "wrong msg header, renaming pkt to bad.");
-//	   return 2; // exit with error
-//   }
+   if (badmsg) {
+       freeMsgBuffers(msg);
+       *message = NULL;
+       w_log('9', "wrong msg header: renaming pkt to bad.");
+       return 2; // exit with error
+   }
 
 #if !defined(MSDOS)
    do {
