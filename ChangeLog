@@ -1,3 +1,8 @@
+2002-06-30 Sunday 09:43  mche
+
+	* src/: scan.c (1.167), scanarea.c (1.84): fixed bug with scaning
+	locked messages
+
 2002-06-29 Saturday 21:11  stas
 
 	* misc/deadareas.pl (1.3): Change dupebase files suffix: 'dpd' to
