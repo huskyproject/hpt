@@ -688,6 +688,8 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    char *buff=NULL, *myaddr=NULL, *hisaddr=NULL;
    char *msgbtype, *newAC=NULL, *desc;
    s_link *creatingLink;
+   s_area *area;
+   int i;
    
    xstrcat(&squishFileName, c_area);
 
@@ -772,14 +774,26 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	   }
    }
 
-   xscatprintf(&buff, "%s %s", newAC, hisaddr);
+   xstrcat(&buff, newAC);
    nfree(newAC);
+
+   // add new created echo to config in memory
+   parseLine(buff, config);
+
+   // subscribe uplink if he is not subscribed
+   area = &(config->echoAreas[config->echoAreaCount]);
+   for (i = 0; i<area->downlinkCount; i++) {
+      if (addrComp(pktOrigAddr, area->downlinks[i]->link->hisAka)==0)
+	  break;
+   }
+   if (i == area->downlinkCount) {
+	xscatprintf(&buff, " %s", hisaddr);
+	addlink(creatingLink, area);
+   }
 
    fprintf(f, "%s\n", buff); // add line to config
    fclose(f);
    
-   // add new created echo to config in memory
-   parseLine(buff,config);
    nfree(buff);
 
    // echoarea addresses changed by safe_reallocating of config->echoAreas[]

@@ -61,6 +61,7 @@
 #include <scanarea.h>
 #include <arealist.h>
 #include <hpt.h>
+#include <dupe.h>
 
 extern char *curconfname;
 extern long curconfpos;
@@ -837,14 +838,47 @@ static char *do_delete(s_link *link, s_message *msg, s_area *area)
     char *report = NULL, *an = area->areaName;
     int i;
 
+    /* unsubscribe from downlinks */
     xscatprintf(&report, " %s %s  deleted\r", an, print_ch(49-strlen(an), '.'));
     for (i=0; i<area->downlinkCount; i++) {
 	if (addrComp(area->downlinks[i]->link->hisAka, link->hisAka))
 	    forwardRequestToLink(an, area->downlinks[i]->link, NULL, 2);
     }
+    /* remove area from config-file */
     changeconfig (getConfigFileName(),  area, link, 4);
+
+    /* delete msgbase and dupebase for the area */
+    if (area->msgbType!=MSGTYPE_PASSTHROUGH)
+	MsgDeleteBase(an, area->msgbType);
+    if (area->dupeCheck != dcOff) {
+	char *dupename = createDupeFileName(area);
+	if (dupename) {
+	    unlink(dupename);
+	    nfree(dupename);
+	}
+    }
+
     writeLogEntry(hpt_log, '8', "areafix: area %s deleted by %s",
                   an, aka2str(link->hisAka));
+
+    /* delete the area from in-core config */
+    for (i=0; i<area->downlinkCount; i++)
+	nfree(area->downlinks[i]);
+    nfree(area->downlinks);
+    area->downlinkCount = 0;
+    for (i=0; i<config->echoAreaCount; i++)
+	if (stricmp(config->echoAreas[i].areaName, an)==0)
+	    break;
+    if (i<config->echoAreaCount && area==&(config->echoAreas[i])) {
+	nfree(area->areaName);
+	nfree(area->fileName);
+	nfree(area->description);
+	nfree(area->group);
+	for (; i<config->echoAreaCount-1; i++)
+	    memcpy(&(config->echoAreas[i]), &(config->echoAreas[i+1]),
+	           sizeof(s_area));
+	config->echoAreaCount--;
+    }
 
     return report;
 }

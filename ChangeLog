@@ -1,6 +1,12 @@
 hpt 0.9.7 (development version)
 ---------	
 
+----- cvs ci ------
+Mon Jul 31 12:18:23 NOVST 2000
+max (patch from Pavel Gulchouk):
+* delete msgbase and dupebase when area delete
+* fix: update in-core config when area deleting
+* you can now write "2:5020/238 -def" in AutoAreaCreateDefaults
 
 ----- cvs ci ------
 Fri Jul 28 19:29:14 NOVST 2000
@@ -10,9 +16,9 @@ max (patch from Pavel Gulchouk):
 ----- cvs ci ------
 Tue Jul 25 22:09:07 NOVST 2000
 max (patch from Pavel Gulchouk):
-* module=hpt
+* [module]=hpt
 * %delete areatag
-* areafix changes
+* areafix code cleanup
 
 ----- cvs ci ------
 Tue Jul 18 22:51:16 NOVST 2000
