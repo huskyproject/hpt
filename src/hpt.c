@@ -397,6 +397,11 @@ void processConfig()
    if (config->badArea.areaName==NULL) exit_hpt("you must define BadArea!",1);
    if (config->badArea.fileName==NULL) exit_hpt("BadArea can not be passthrough!",1);
 
+   if (config->netMailAreaCount>0) {
+     if (config->netMailAreas[0].fileName==NULL) exit_hpt("First NetmailArea can not be passthrough!",1);
+   }
+   else exit_hpt("You must define NetmailArea!",1);
+
    allDiff ( "Inbound",      config->inbound,
 			 "tempInbound",  config->tempInbound,
 			 "protInbound",  config->protInbound,

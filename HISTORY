@@ -42,7 +42,7 @@ This file describe changes between hpt-1.0-stable and hpt-1.2-stable
      in msgid/reply fields;
    - Fix remap (replace INTL kludge);
    - Fix trap on messages with illegal date field value: begin of epoch or
-     very big (<1.1.1970 and >n.n.2038)
-
+     very big (<1.1.1970 and >n.n.2038);
+   - Check netmailarea presence in config (before: trap)
 
 $Id$
