@@ -18,6 +18,8 @@ Example:
  %INFO                        <- Ask for general information
  %LIST                        <- List all available areas
  %LIST DN.*                   <- List available areas that match pattern
+ %LIST ! DN.*                 <- List all available areas except 
+                                 areas that match pattern
  %QUERY			      <- List of areas to which you are currently
  				 linked
  %LINKED		      <- same as %QUERY
@@ -25,6 +27,11 @@ Example:
                                  you are currently not linked
  %AVAIL                       <- List all areas that are available at
                                  this system's uplinks
+ %AVAIL DN.*                  <- List areas that are available at
+                                 this system's uplinks and match pattern
+ %AVAIL ! DN.*                <- List all areas that are available at
+                                 this system's uplinks except areas that
+                                 match pattern
  %PAUSE                       <- If you go to holiday you can
                                  stop receiving echomail for that
                                  time without manually removing each
