@@ -166,14 +166,22 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     unsigned int j;
     char pass[] = "passthrough";
 
+    w_log( LL_FUNC, "%s::autoCreate() begin", __FILE__ );
 
-    if (strlen(c_area)>60) return 11;
-    if (!isValidConference(c_area) || isPatternLine(c_area)) return 7;
+    if (strlen(c_area)>60){
+       w_log( LL_FUNC, "%s::autoCreate() rc=11", __FILE__ );
+       return 11;
+    }
+    if (!isValidConference(c_area) || isPatternLine(c_area)){
+       w_log( LL_FUNC, "%s::autoCreate() rc=7", __FILE__ );
+       return 7;
+    }
 
     creatingLink = getLinkFromAddr(config, pktOrigAddr);
 
     if (creatingLink == NULL) {
 	w_log(LL_ERR, "creatingLink == NULL !!!");
+        w_log( LL_FUNC, "%s::autoCreate() rc=8", __FILE__ );
 	return 8;
     }
 
@@ -183,6 +191,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     f = fopen(fileName, "a+b");
     if (f == NULL) {
 	fprintf(stderr,"autocreate: cannot open config file\n");
+        w_log( LL_FUNC, "%s::autoCreate() rc=9", __FILE__ );
 	return 9;
     }
    
@@ -191,11 +200,16 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
         areaNode = af_CheckAreaInQuery(c_area, &pktOrigAddr, NULL, FIND);
         if( areaNode ) // if area in query
         {
-            if( stricmp(areaNode->type,czKillArea) == 0 )
+            if( stricmp(areaNode->type,czKillArea) == 0 ){
+                w_log( LL_FUNC, "%s::autoCreate() rc=4", __FILE__ );
                 return 4;  // area already unsubscribed
+            }
             if( stricmp(areaNode->type,czFreqArea) == 0 && 
                 addrComp(pktOrigAddr, areaNode->downlinks[0])!=0)
+            {
+                w_log( LL_FUNC, "%s::autoCreate() rc=4", __FILE__ );
                 return 4;  // wrong link to autocreate from
+            }
             if( stricmp(areaNode->type,czFreqArea) == 0 )
             {
                 // removinq area from query. it is autocreated now
@@ -282,7 +296,8 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	    fclose(f);
 	}
     }
-   
+
+    w_log( LL_FUNC, "%s::autoCreate() end", __FILE__ );
     return 0;
 }
 
