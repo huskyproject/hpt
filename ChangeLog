@@ -1,4 +1,9 @@
 ----- cvs ci ------
+Sun Aug 13 12:51:13 MSZ 2000
+tobi (patch from max)
+* migrated areafix bugfixes from current branch
+
+----- cvs ci ------
 Mon Aug  7 10:06:33 MEZ 2000
 tobi (patch from serguei i. revtov)
 * migrated bugfix for hptlink from current branch: fixed hptlink to link
@@ -228,20 +233,8 @@ max:
 Tue May 23 22:36:28 NOVST 2000
 max (patch from Lev Serebryakov):
 * new areafix %list & %avail generation
-<<<<<<< ChangeLog
-
-=======
->>>>>>> 1.296.2.7
-
-<<<<<<< ChangeLog
-hpt 0.9.7
----------
-(released on Mon May 22 14:58:56 CEST 2000)
 
 ----- cvs ci ------
-=======
------ cvs ci ------
->>>>>>> 1.296.2.7
 Mon May 22 14:03:38 CEST 2000
 mtt:
 * changed version number to 0.9.7

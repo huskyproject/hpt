@@ -1271,20 +1271,17 @@ int tellcmd(char *cmd) {
 	char *line;
 
 	if (strncasesearch(cmd, " * Origin:", 10) == 0) return NOTHING;
-        while ((*cmd == ' ') || (*cmd == '\t')) cmd++;
-   	line = strpbrk(cmd, " \t");
-	if (line && *cmd != '%') *line = 0;
 
 	line = cmd;
-
+	if (line && *line && (line[1]==' ' || line[1]=='\t')) return ERROR;
+	
 	switch (line[0]) {
 	case '%': 
 		line++;
-		if (*line == 0) return ERROR;
+		if (*line == '\000') return ERROR;
 		if (strncasecmp(line,"list",4)==0) return LIST;
 		if (strncasecmp(line,"help",4)==0) return HELP;
 		if (strncasecmp(line,"avail",5)==0) return AVAIL;
-//		if (stricmp(line,"available")==0) return AVAIL;
 		if (strncasecmp(line,"all",3)==0) return AVAIL;
 		if (strncasecmp(line,"unlinked",8)==0) return UNLINK;
 		if (strncasecmp(line,"linked",6)==0) return QUERY;
@@ -1296,8 +1293,12 @@ int tellcmd(char *cmd) {
 		return ERROR;
 	case '\001': return NOTHING;
 	case '\000': return NOTHING;
-	case '-'  : return DEL;
-	case '+': line++; if (line[0]=='\000') return ERROR;
+	case '-'   :
+	    if (line[1]=='-') return NOTHING;
+            else if (line[1]=='\000') return ERROR;
+            else return DEL;
+	case '~'   : return REMOVE;
+	case '+'   : if (line[1]=='\000') return ERROR;
 	default: return ADD;
 	}
 	
@@ -1307,7 +1308,7 @@ int tellcmd(char *cmd) {
 char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 	
 	char *report;
-	
+
 	switch (cmd) {
 
 	case NOTHING: return NULL;
@@ -1501,7 +1502,8 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 		textBuff = msg->text;
 		token = strseparate (&textBuff, "\n\r");
 		while(token != NULL) {
-			preport = processcmd( link, msg,  stripLeadingChars(token, " \t"), tellcmd (token) );
+			while ((*token == ' ') || (*token == '\t')) token++;
+			preport = processcmd( link, msg, token, tellcmd (token) );
 			if (preport != NULL) {
 				switch (RetFix) {
 				case LIST:
