@@ -67,21 +67,19 @@ INT c;
 
 INT ctoi(CHAR *s)
 {
-INT i;
-
-	if (!strncmp(s,"0x",2)) sscanf(s+2,"%x",&i);
-	else if (*s == '0') sscanf(s,"%o",&i);
-	else if (strspn(s,"0123456789") == strlen(s)) sscanf(s,"%d",&i);
-	else i=0;
-	return i;
+	char *foo;
+	INT res = strtoul(s, &foo, 0);
+	if (*foo)	/* parse error */
+		return 0;
+	return res;
 }
 
-void getctab(CHAR **dest, CHAR *charMapFileName )
+void getctab(CHAR *dest, CHAR *charMapFileName )
 {
 FILE *fp;
 CHAR buf[512],*p,*q;
 INT in,on,count;
-
+	INT line;
 
 	if ((fp=fopen(charMapFileName,"r")) == NULL)
 	 {
@@ -90,17 +88,24 @@ INT in,on,count;
 	 }
 
 	count=0;	 
-	while (fgets(buf,sizeof(buf)-1,fp))
+	line = 0;
+	while (fgets(buf,sizeof(buf),fp))
 	{
+		line++;
 		p=strtok(buf," \t\n#");
 		q=strtok(NULL," \t\n#");
 
 		if (p && q)
 		{
-			in=ctoi(p);
+			in = ctoi(p);
+			if (in > 255) {
+				fprintf(stderr, "getctab: %s: line %d: char val too big\n", charMapFileName, line);
+				break;
+			}
+
 			on=ctoi(q);
 			if (in && on) 
-			 if( count++ < 256 ) ((char*)dest)[in]=on; 
+			 if( count++ < 256 ) dest[in]=on; 
 			 else 
 			  { 
 			  fprintf(stderr,"getctab: char map table \"%s\" is big\n",charMapFileName); 

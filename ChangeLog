@@ -1,6 +1,10 @@
 
 hpt 0.26
 --------
+Sun Jan 17 21:46:12 CET 1999
+- added freebsd things and a rewrite of recoding
+- fixed a bug with wrong PATH-creation
+----- cvs ci ------
 Thu Jan 14 19:24:49 CET 1999
 - fixed core dump while autocreating passthrough areas
 ----- cvs ci ------

@@ -469,7 +469,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    //exit(2);
 
    if (pathCount > 0) {
-      if ((path[pathCount-1].net != echo->useAka->net) && (path[pathCount-1].node != echo->useAka->node)) {
+      if ((path[pathCount-1].net != echo->useAka->net) || (path[pathCount-1].node != echo->useAka->node)) {
          // add our aka to path
          path = (s_seenBy*) realloc(path, sizeof(s_seenBy) * (pathCount)+1);
          path[pathCount].net = echo->useAka->net;
@@ -1078,7 +1078,10 @@ void arcmail() {
                                         // there is no packer defined -> put pktFile into flo
                                         pkt = (char*) malloc(strlen(config->outbound)+1+4+12);
                                         config->links[i].pktFile += strlen(config->tempOutbound);
+                                        
+                                        // change to createPktFileName
                                         strcpy(pkt, config->outbound);
+                                        
                                         strcat(pkt, config->links[i].pktFile);
                                         config->links[i].pktFile -= strlen(config->tempOutbound);
                                         fprintf(flo, "^%s\n", pkt);
@@ -1119,7 +1122,7 @@ void toss()
    exit(0);*/
 
    // load recoding tables if needed
-   if (config->intab != NULL) getctab(&intab, config->intab);
+   if (config->intab != NULL) getctab(intab, config->intab);
 
    // set stats to 0
    memset(&statToss, 0, sizeof(s_statToss));

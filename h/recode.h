@@ -5,7 +5,7 @@
 
 VOID recodeToInternalCharset( CHAR *string);
 VOID recodeToTransportCharset( CHAR *string);
-void getctab(CHAR **dest,  CHAR *charMapFileName);
+void getctab(CHAR *dest,  CHAR *charMapFileName);
 
 extern CHAR intab[], outtab[];
 

@@ -478,7 +478,7 @@ void writeScanStatToLog(void) {
 
 void pack(void) {
 
-   if (config->outtab != NULL) getctab(&outtab, config->outtab);
+   if (config->outtab != NULL) getctab(outtab, config->outtab);
    
    memset(&statScan, 0, sizeof(s_statScan));
    writeLogEntry(log, '4', "Start packing...");
@@ -495,7 +495,7 @@ void scan(void)
    s_area *area;
 
    // load recoding tables
-   if (config->outtab != NULL) getctab(&outtab, config->outtab);
+   if (config->outtab != NULL) getctab(outtab, config->outtab);
 
    // zero statScan
    memset(&statScan, 0, sizeof(s_statScan));
