@@ -1,8 +1,12 @@
+# $Id$
 # DJGPP makefile
 #
 
-DEBUG	= -s -g -pedantic 
+# DEBUG	= -g -pedantic 
 # set to -g for debugging
+
+# Uncomment this for strip all simbols from binaries to reduce file sizes
+STRIP	= -s
 
 CC	= gcc
 EXENAMEFLAG = -o 
