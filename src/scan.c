@@ -414,8 +414,8 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 	   }
    }
 
-   // no route, don't create .?ut packets for FileReq's
-   if (prio!=NORMAL && (xmsg->attr & MSGFRQ) != MSGFRQ) {
+   // no route
+   if (prio!=NORMAL || (xmsg->attr & MSGFRQ)==MSGFRQ) {
 	   // direct, crash, immediate, hold messages
 	   if (createOutboundFileName(virtualLink, prio, PKT) == 0) {
 		   addViaToMsg(&msg, msg.origAddr);
@@ -427,6 +427,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   else if (prio==HOLD) writeLogEntry(hpt_log, '7', "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 		   else if (prio==DIRECT) writeLogEntry(hpt_log, '7', "Direct-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 		   else if (prio==IMMEDIATE) writeLogEntry(hpt_log, '7', "Immediate-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+		   else if (prio==NORMAL) writeLogEntry(hpt_log, '7', "Normal-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 		   remove(virtualLink->bsyFile);
 		   nfree(virtualLink->bsyFile);
 		   // mark Mail as sent
@@ -434,7 +435,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
 		   nfree(virtualLink->floFile);
 	   }
-   } else if ((xmsg->attr & MSGFRQ) != MSGFRQ)
+   } else
 /*   remove after Nov 17 (2000)
    if ((xmsg->attr & MSGCRASH) == MSGCRASH) {
 	   // crash-msg -> make CUT

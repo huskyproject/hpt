@@ -130,7 +130,6 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
 {
     dword  linkTo;
 
-
     if (crepl -> msgId && srepl -> msgId &&
         strcmp ( crepl -> msgId, srepl -> msgId) == 0) {
         if (loglevel >= 15)
@@ -309,17 +308,33 @@ void linkArea(s_area *area)
                  crepl->msgPos = MsgMsgnToUid(harea, i);
 
 		 // Save data for comparing
-		 memcpy(linksptr->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
+                 if (area->msgbType & MSGTYPE_JAM) {
+                    linksptr->reply1st = xmsg.xmreply1st;
+                    linksptr->replyNxt = xmsg.xmreplynext;
+                 } else {
+                    memcpy(linksptr->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
+                 }
 		 linksptr->replyToPos = xmsg.replyto;
 
-                 if (linkNew &&
-                      (xmsg.replyto || xmsg.replies[0] || xmsg.replies[1])
-                    ) {
-                    newStart = i+1;
-                    memcpy(crepl->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
-                    crepl->replyToPos = xmsg.replyto;
-                    for (j=0; xmsg.replies[j] && j<MAX_REPLY; j++);
-                    crepl->freeReply = j;
+                 if (linkNew) {
+                    if (area->msgbType & MSGTYPE_JAM) {
+                       if (xmsg.replyto || xmsg.xmreply1st || xmsg.xmreplynext) {
+                          newStart = i+1;
+                          crepl->replyToPos = xmsg.replyto;
+                          crepl->reply1st = xmsg.xmreply1st;
+                          crepl->replyNxt = xmsg.xmreplynext;
+                       }
+
+                    } else {
+
+                       if (xmsg.replyto || xmsg.replies[0]) {
+                          newStart = i+1;
+                          memcpy(crepl->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
+                          crepl->replyToPos = xmsg.replyto;
+                          for (j=0; xmsg.replies[j] && j<MAX_REPLY; j++);
+                          crepl->freeReply = j;
+                       }
+                    }
                  }
 
 		 MsgCloseMsg(hmsg);
@@ -453,7 +468,7 @@ void linkArea(s_area *area)
 	   /* Pass 3: finding unlinked messages with filled tree IDs, and link
 	    * them to the tree where possible
 	    */
-	   if ( loglevel >= 11 ) fprintf (outlog, "Pass 3: buildng relations by teeIds\n");
+	   if ( loglevel >= 11 ) fprintf (outlog, "Pass 3: buildng relations by treeIds\n");
 
 	   for (i = 1, crepl=replmap; i <= highMsg && treeLinks; i++, crepl++) {
 	      if ( crepl -> replyToPos == 0 && crepl -> treeId && i != crepl -> treeId ) {
@@ -486,23 +501,43 @@ void linkArea(s_area *area)
 
 	   for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++) {
 
-	      if( ((linksptr->replyToPos) != (crepl->replyToPos)) ||
-		   (memcmp(linksptr->replies, crepl->replies, sizeof(UMSGID) * maxreply))) {
+              if (area->msgbType & MSGTYPE_JAM) {
 
-		 hmsg  = MsgOpenMsg(harea, MOPEN_RW, i);
+                 if( (linksptr->replyToPos != crepl->replyToPos) ||
+                     (linksptr->reply1st  != crepl->reply1st) ||
+                     (linksptr->replyNxt  != crepl->replyNxt) ) {
 
-		 if (hmsg) {
+                    hmsg  = MsgOpenMsg(harea, MOPEN_RW, i);
 
-		    MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+                    if (hmsg) {
 
+		       MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+                       xmsg.replyto = crepl->replyToPos;
+                       xmsg.xmreply1st = crepl->reply1st;
+                       xmsg.xmreplynext = crepl->replyNxt;
+		       MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+		       MsgCloseMsg(hmsg);
+		    }
+                 }
 
-		    memcpy(xmsg.replies, crepl->replies, sizeof(UMSGID) * maxreply);
-		    xmsg.replyto = crepl->replyToPos;
-		    MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+              } else { // Not Jam
 
-		    MsgCloseMsg(hmsg);
-		 }
+                 if ((linksptr->replyToPos != crepl->replyToPos) ||
+                     memcmp(linksptr->replies, crepl->replies, sizeof(UMSGID) * maxreply)) {
+
+                    hmsg  = MsgOpenMsg(harea, MOPEN_RW, i);
+
+                    if (hmsg) {
+
+                       MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+                       memcpy(xmsg.replies, crepl->replies, sizeof(UMSGID) * maxreply);
+                       xmsg.replyto = crepl->replyToPos;
+                       MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+                       MsgCloseMsg(hmsg);
+                    }
+                 }
 	      }
+
 	      if(crepl -> replyId) free(crepl -> replyId);
 	      if(crepl -> subject) free(crepl -> subject);
 	      if(crepl -> msgId  ) free(crepl -> msgId  );

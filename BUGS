@@ -1,4 +1,2 @@
 1) jam echo area with manually deleted messages scans only with -w parameter
    (whithout highwaters)
-2) hptlink not links jam areas with deleted messages
-3) hpt link don't links some msgs
