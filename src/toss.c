@@ -2360,7 +2360,7 @@ void arcmail(s_link *tolink) {
 #ifdef __WATCOMC__
 				list = mk_lst(cmd);
 				cmdexit = spawnvp(P_WAIT, cmd, list);
-				free((char **)list);
+				nfree((char **)list);
 #else
 				cmdexit = system(cmd);
 #endif

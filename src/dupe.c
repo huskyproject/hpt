@@ -242,38 +242,38 @@ int writeEntry(char *p_entry) {
 }
 
 int deleteEntry(char *entry) {
-   const s_textDupeEntry  *entxt;
-   const s_hashDupeEntry  *enhash;
-   const s_hashMDupeEntry *enhashM;
-
-   switch (config->typeDupeBase) {
-      case hashDupes:
-           enhash = (s_hashDupeEntry *)entry;
-           free((s_hashDupeEntry*) enhash);
- 	   break;
-
-      case hashDupesWmsgid:
-           enhashM = (s_hashMDupeEntry *)entry;
-           free((s_hashMDupeEntry*)enhashM->msgid);
-           free((s_hashMDupeEntry*)enhashM);
- 	   break;
-
-      case textDupes:
-           entxt = (s_textDupeEntry *)entry;
-           free((s_textDupeEntry*)entxt->to);
-           free((s_textDupeEntry*)entxt->from);
-           free((s_textDupeEntry*)entxt->subject);
-           free((s_textDupeEntry*)entxt->msgid);
-           free((s_textDupeEntry*)entxt);
- 	   break;
-
-      case commonDupeBase:
-           enhash = (s_hashDupeEntry *)entry;
-           free((s_hashDupeEntry*)enhash);
-           break;
-   }
-
-   return 1;
+    s_textDupeEntry  *entxt;
+    s_hashDupeEntry  *enhash;
+    s_hashMDupeEntry *enhashM;
+    
+    switch (config->typeDupeBase) {
+    case hashDupes:
+        enhash = (s_hashDupeEntry *)entry;
+        nfree((s_hashDupeEntry*) enhash);
+        break;
+        
+    case hashDupesWmsgid:
+        enhashM = (s_hashMDupeEntry *)entry;
+        nfree((s_hashMDupeEntry*)enhashM->msgid);
+        nfree((s_hashMDupeEntry*)enhashM);
+        break;
+        
+    case textDupes:
+        entxt = (s_textDupeEntry *)entry;
+        nfree((s_textDupeEntry*)entxt->to);
+        nfree((s_textDupeEntry*)entxt->from);
+        nfree((s_textDupeEntry*)entxt->subject);
+        nfree((s_textDupeEntry*)entxt->msgid);
+        nfree((s_textDupeEntry*)entxt);
+        break;
+        
+    case commonDupeBase:
+        enhash = (s_hashDupeEntry *)entry;
+        nfree((s_hashDupeEntry*)enhash);
+        break;
+    }
+    
+    return 1;
 }
 
 void doReading(FILE *f, s_dupeMemory *mem) {
