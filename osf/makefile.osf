@@ -57,9 +57,6 @@ clean:
 distclean: clean
 	-rm purgeDupes hpt tpkt tlog pktinfo hptlink
 
-install: hpt pktinfo purgeDupes ../man/hpt.1
+install: hpt pktinfo purgeDupes
 	cp hpt pktinfo purgeDupes $(BINDIR)
-	cp ../man/hpt.1 $(MANDIR)/man1
-	cp ../man/purgeDupes.1 $(MANDIR)/man1
-	cp ../man/hptlink.1 $(MANDIR)/man1
 
