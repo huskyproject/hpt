@@ -1,3 +1,13 @@
+2003-02-04 Tuesday 21:16  d_sergienko
+
+	* doc/hpt.texi (1.101): added info about `-kill' and `-nokill'
+	EchoArea parameters
+
+2003-02-04 Tuesday 08:16  d_sergienko
+
+	* src/dupe.c (1.76): 
+	returned to tree_mung()
+
 2003-02-03 Monday 21:00  d_sergienko
 
 	* doc/hpt.texi (1.100): added info about ForwardRequestsFile and
