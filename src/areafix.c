@@ -1096,25 +1096,23 @@ char *unsubscribe(s_link *link, char *cmd) {
                 {
                     return do_delete(getLinkFromAddr(config,*(area->useAka)), area);
                 }
-                else if ((area->downlinkCount==1) &&
-                    (area->downlinks[0]->link->hisAka.point == 0)) {
+                else if ( (area->downlinkCount==1) &&
+                          (area->downlinks[0]->link->hisAka.point == 0 ||
+                           area->downlinks[0]->defLink) ) {
                     if(config->areafixQueueFile) {
                         af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
                     } else {
                         forwardRequestToLink(area->areaName,
                             area->downlinks[0]->link, NULL, 1);
                     }
+                } else if (config->autoAreaPause && !area->paused) {
+                       area->msgbType = MSGTYPE_PASSTHROUGH;
+                       pauseAreas(0,NULL,area);
                 }
                 j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
 /*                if ( (j == DEL_OK) && area->msgbType!=MSGTYPE_PASSTHROUGH ) */
-                if (j == DEL_OK) {
-                   if (area->fileName && area->killMsgBase)
+                if (j == DEL_OK && area->fileName && area->killMsgBase)
                        MsgDeleteBase(area->fileName, (word) area->msgbType);
-                   if (config->autoAreaPause && !area->paused) {
-                       area->msgbType = MSGTYPE_PASSTHROUGH;
-                       pauseAreas(0,NULL,area);
-                   }
-                }
             }
             if (j == DEL_OK){
                 xscatprintf(&report," %s %s  unlinked\r",an,print_ch(49-strlen(an),'.'));
