@@ -45,11 +45,11 @@
 /*#define STAT_DEBUG*/         /* output stat info each write */
 
 #ifdef STAT_ALONE
-#  define msg(s) fprintf(stderr, "stat: %s (file %s, line %d)\n", s, __FILE__, __LINE__)
-#  define msg2(s,s2) fprintf(stderr, "stat: %s %s (file %s, line %d)\n", s, s2, __FILE__, __LINE__)
+#  define msg(s) fprintf(stderr,      __FILE__ ":%u: %s %s", __LINE__, s)
+#  define msg2(s,s2) fprintf(stderr,  __FILE__ ":%u: %s %s", __LINE__, s, s2)
 #else
-#  define msg(s) w_log(LL_ALERT, "stat: %s (file %s, line %d)", s, __FILE__, __LINE__)
-#  define msg2(s,s2) w_log(LL_ALERT, "stat: %s %s (file %s, line %d)", s, s2, __FILE__, __LINE__)
+#  define msg(s) w_log(LL_ALERT,  __FILE__ ":%u: %s", __LINE__, s)
+#  define msg2(s,s2) w_log(LL_ALERT,  __FILE__ ":%u: %s %s", __LINE__, s, s2)
 #endif
 
 /* internal address record */
