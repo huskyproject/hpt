@@ -1,4 +1,10 @@
 ----- cvs ci ------
+Mo   1 Jan 2001 17:47:45 CET
+tobi (patch from max from current):
+* fixed bug in "toss -b" with squish & jam areas - "normal" msgs didn't
+  scanned after "bad" msg (report by Eugene Barbashin, 2:5030/920.1)
+
+----- cvs ci ------
 Mo   1 Jan 2001 17:44:26 CET
 tobi (patch from max from current):
 * fixed bug with carbonExtern (report from Mike Ivanov)
