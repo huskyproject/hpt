@@ -930,28 +930,20 @@ int isPatternLine(char *s) {
     return 0;
 }
 
-void fixRules (s_link *link, s_area *area) {
-    char *fileName = NULL, *fn, *fn1;
-
+void fixRules (s_link *link, char *area) {
+    char *fileName = NULL;
+    
     if (!config->rulesDir) return;
     if (link->noRules) return;
-
-    if (area->fileName) {
-	fn = area->fileName;
-	for (fn1 = fn; *fn1; fn1++) if (*fn1=='/' || *fn1=='\\') fn = fn1+1;
-	xscatprintf(&fileName, "%s%s.rul", config->rulesDir, fn);
-    } else {
-	fn = makeMsgbFileName(config, area->areaName);
-	xscatprintf(&fileName, "%s%s.rul", config->rulesDir, fn);
-	nfree (fn); // allocated by makeMsgbFileName()
-    }
-
+    
+    xscatprintf(&fileName, "%s%s.rul", config->rulesDir, makeMsgbFileName(config, area));
+    
     if (fexist(fileName)) {
-	rulesCount++;
-	rulesList = safe_realloc (rulesList, rulesCount * sizeof (char*));
-	rulesList[rulesCount-1] = safe_strdup (area->areaName);
-	// don't simply copy pointer because area may be
-	// removed while processing other commands
+        rulesCount++;
+        rulesList = safe_realloc (rulesList, rulesCount * sizeof (char*));
+        rulesList[rulesCount-1] = safe_strdup (area);
+        // don't simply copy pointer because area may be
+        // removed while processing other commands
     }
     nfree (fileName);
 }
@@ -1022,7 +1014,7 @@ char *subscribe(s_link *link, char *cmd) {
         } else {
             if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==ADD_OK) {
                 addlink(link, area);
-                fixRules (link, area);
+                fixRules (link, area->areaName);
                 af_CheckAreaInQuery(an, NULL, NULL, DELIDLE);
                 xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
                 w_log(LL_AREAFIX, "areafix: %s subscribed to %s",aka2str(link->hisAka),an);
@@ -1069,7 +1061,7 @@ char *subscribe(s_link *link, char *cmd) {
             if ( !isLinkOfArea(link, area) ) {
                 if(changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==ADD_OK) {
                     addlink(link, area);
-                    fixRules (link, area);
+                    fixRules (link, area->areaName);
                     w_log( LL_AREAFIX, "areafix: %s subscribed to area %s",
                         aka2str(link->hisAka),line);
                 } else {
@@ -1083,9 +1075,7 @@ char *subscribe(s_link *link, char *cmd) {
                 aka2str(link->hisAka), line );
 
         } else {
-            // fixRules (link, line); there is no functionality  to send rules of area
-            //                        that  not exist in config.
-            //                        Patches are welcome!
+            fixRules (link, line);
         }
         }
 	}
@@ -1792,27 +1782,12 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 void RetRules (s_message *msg, s_link *link, char *areaName)
 {
     FILE *f;
-    char *fileName = NULL, *fn, *fn1;
+    char *fileName = NULL;
     char *text, *subj=NULL;
     long len;
-    s_area *area;
     int nrul;
 
-
-    if ((area=getArea(config, areaName)) == &(config->badArea)) {
-	w_log(LL_ERR, "areafix.c::RetRules(): can't find area '%s'", areaName);
-	return;
-    }
-
-    if (area->fileName) {
-	fn = area->fileName;
-	for (fn1 = fn; *fn1; fn1++) if (*fn1=='/' || *fn1=='\\') fn = fn1+1;
-	xscatprintf(&fileName, "%s%s.rul", config->rulesDir, fn);
-    } else {
-	fn = makeMsgbFileName(config, area->areaName);
-	xscatprintf(&fileName, "%s%s.rul", config->rulesDir, fn);
-	nfree (fn); // allocated by makeMsgbFileName()
-    }
+	xscatprintf(&fileName, "%s%s.rul", config->rulesDir, makeMsgbFileName(config, areaName));
 
     for (nrul=0; nrul<=9 && (f = fopen (fileName, "rb")); nrul++) {
 
