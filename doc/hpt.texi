@@ -270,7 +270,7 @@ FIDOCONFIG about location of config file and keywords ideology.
 * ProcessPkt::                  execute string before tossing pkts
 * PublicGroup::                 this is a list of groups for public echo acess
 * Remap::                       remap mail to other address
-* ReportTo::                    set area or netmail for areafix reports
+* ReportTo::                    set area or netmail for autocreate reports
 * RobotsArea::                  area for areafix scanning
 * Route::                       routing of netmails
 * RouteFile::                   routing of netmails with file attached
@@ -864,7 +864,7 @@ This statement can be repeated.
 @code{ReportTo netmail}
 @end table
 
-Set name of echoarea or netmailarea for areafix reports.
+Set name of echoarea or netmailarea for autocreate reports.
 
 This statement cannot be repeated.
 

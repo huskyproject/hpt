@@ -581,7 +581,7 @@ int createDirectoryTree(const char *pathName) {
 
 int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 {
-   int fd, save_errno; // bsy file for current link
+   int fd; // bsy file for current link
    char *name=NULL, *sepDir=NULL, limiter=PATH_DELIM, *tmpPtr;
    e_bundleFileNameStyle bundleNameStyle = eUndef;
    
@@ -663,17 +663,15 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    // maybe we have session with this link?
    if ( (fd=open(link->bsyFile, O_CREAT | O_RDWR | O_EXCL, S_IREAD | S_IWRITE)) < 0 ) {
 
-           save_errno = errno;
-#if defined(__WATCOMC__)	   
-	   if (save_errno != ENOENT) {
-#else
+#if !defined(__WATCOMC__)	   
+	   int save_errno = errno;
+	   
 	   if (save_errno != EEXIST) {
-#endif
 		   w_log('7', "cannot create *.bsy file \"%s\" for %s (errno %d)\n", link->bsyFile, link->name, (int)save_errno);
 		   exit_hpt("cannot create *.bsy file!",0);
-
+		   
 	   } else {
-
+#endif
 		   w_log('7', "link %s is busy.", link->name);
 		   nfree(link->floFile);
 		   nfree(link->bsyFile);

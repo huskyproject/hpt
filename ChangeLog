@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Mar 24 14:51:39 NOVT 2001
+max:
+* fix checking .bsy under win32 (WATCOMC)
+
+----- cvs ci ------
 Fri Mar 23 10:32:34 NOVT 2001
 max:
 * turn off high waters in netmail for SDM areas
