@@ -34,7 +34,7 @@
 #include <malloc.h>
 #endif
 #include <string.h>
-
+#include <ctype.h>
 
 #include <fidoconfig.h>
 #include <common.h>
@@ -103,7 +103,7 @@ s_pktHeader *openPkt(FILE *pkt)
 
   header->auxNet = getUINT16(pkt);
 
-  header->capabilityWord = fgetc(pkt) * 256 + fgetc(pkt);
+  header->capabilityWord = (fgetc(pkt) << 8) + fgetc(pkt);
   header->hiProductCode = getc(pkt);
   header->minorProductRev = getc(pkt);
 
@@ -166,8 +166,8 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
    copy = buffer;
    start = strstr(msg->text, "FMPT");
    if (NULL!=start) {
-      start += 5;                  /* skip "FMPT " */
-      while ('\r' != *start) {     /* copy all data until cr occurs */
+      start += 6;                  /* skip "FMPT " */
+      while (isdigit(*start)) {     /* copy all digit data */
          *copy = *start;
          copy++;
          start++;
@@ -183,8 +183,8 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
    copy = buffer;
    start = strstr(msg->text, "TOPT");
    if (NULL!=start) {
-      start += 5;                  /* skip "TOPT " */
-      while ('\r' != *start) {     /* copy all data until cr occurs */
+      start += 6;                  /* skip "TOPT " */
+      while (isdigit(*start)) {     /* copy all digit data */
          *copy = *start;
          copy++;
          start++;
@@ -200,7 +200,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
    copy = buffer;
    start = strstr(msg->text, "INTL");
    if (NULL != start) {
-      start += 6;                 // skip INTL
+      start += 6;                 // skip "INTL "
       while (':' != *start) {     // copy all data until ':'
          *copy = *start;
          copy++;

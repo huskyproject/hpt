@@ -113,7 +113,7 @@ int  processExportOptions(unsigned int *i, int argc, char **argv)
   return rc != 0 ? rc : 1;
 }
 
-void processCommandLine(int argc, char **argv)
+int processCommandLine(int argc, char **argv)
 {
    unsigned int i = 0;
 
@@ -158,6 +158,8 @@ void processCommandLine(int argc, char **argv)
       } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
 
    } /* endwhile */
+
+   return argc;
 }
 
 void processConfig()
@@ -269,8 +271,8 @@ int main(int argc, char **argv)
 #endif
    initCharsets();
 
+   if (processCommandLine(argc, argv)==1) exit(0);
    processConfig();
-   processCommandLine(argc, argv);
 
    // init SMAPI
    m.req_version = 0;

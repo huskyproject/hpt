@@ -1,6 +1,12 @@
 hpt 0.9.5
 ---------
 
+----- cvs ci ------
+Sat Dec 18 17:55:05 NOVT 1999
+max:
+* don't read config if no command line arguments
+* changes in correctNMAddr() - was coredumps on some broken pkt files
+
 On Thu Dec 16 i renamed the 0.29 release to 0.31 because of some lists which say0.29 and 0.30 are not y2k compliant. They are only smapi was not compliant that day. The beta 0.30 is renamed to 0.9.5.
 
 ----- cvs ci ------
