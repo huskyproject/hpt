@@ -1,15 +1,29 @@
+Here's some help about how you can use AreaFix to change your echomail areas.
 
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-areafix help:
+Example:
 
-%list		list of areas avialable
-%help		what are you reading, pal? :)
-%avail          list of all areas available 
-                including other fido systems
-+<echotag>	subscribe area
-<echotag>	the same
--<echotag>	unsubscribe area
-
-attention!	all other lines are *ignored*
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+ Msg  : 5 of 8                             Pvt
+ From : Your Name                          2:5020/960.1    13 Feb 99  19:51:12
+ To   : AreaFix                            2:5020/960      15 Feb 99  21:57:42
+ Subj : PASSWORD              <- Your password
+-------------------------------------------------------------------------------
+ RA_UTIL                      <- Add (link) area
+ +DFUE.GER                    <- same
+ -SYSOPS.024                  <- Remove (unlink) area
+ U.ENG.*                      <- Add all areas beginning with U.ENG.
+ -F.???.COMP.*                <- Remove all areas that match this pattern
+ *                            <- Add all areas available for you
+ -*                           <- Remove all linked areas
+ %INFO                        <- Ask for general information
+ %LIST                        <- List available areas
+ %UNLINKED                    <- List available areas to which
+                                 you are currently not linked
+ %AVAIL                       <- List all areas that are available at
+                                 this system's uplinks
+ %PAUSE                       <- If you go to holiday you can
+                                 stop receiving echomail for that
+                                 time without manually removing each
+                                 area with '-AREANAME'.
+ %RESUME                      <- Switch echomail receiving ON again.
+ %HELP                        <- AreaFix will send you this help.
 

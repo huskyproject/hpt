@@ -2,6 +2,13 @@ hpt 0.27
 --------
 
 ----- cvs ci ------
+Wed Mar  3 23:47:30 CET 1999
+- applied Max areafix patch
++ new afix commandline option
+! autoareacreatedefaults moved to each link. Please change your config!  
++ avaible areas file for each link
+
+----- cvs ci ------
 Tue Mar  2 12:11:04 MET 1999
 - removed old config code.
 

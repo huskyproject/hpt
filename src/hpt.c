@@ -60,6 +60,7 @@
 #include <patmat.h>
 #include <post.h>
 #include <link.h>
+#include <areafix.h>
 
 void processCommandLine(int argc, char **argv)
 {
@@ -72,6 +73,7 @@ void processCommandLine(int argc, char **argv)
       printf("   hpt pack - packing netmail\n");
       printf("   hpt post - posting a mail\n");
       printf("   hpt link - links messages\n");
+      printf("   hpt afix - process areafix\n");
    }
 
    while (i < argc-1) {
@@ -87,6 +89,9 @@ void processCommandLine(int argc, char **argv)
          continue;
       } else if (stricmp(argv[i], "link") == 0) {
          cmLink = 1;
+         continue;
+      } else if (stricmp(argv[i], "afix") == 0) {
+         cmAfix = 1;
          continue;
       } else if (stricmp(argv[i], "post") == 0) {
          ++i; post(argc, &i, argv);
@@ -174,6 +179,7 @@ int main(int argc, char **argv)
    tossTempOutbound(config->tempOutbound);
    if (1 == cmToss) toss();
    if (cmScan == 1) scan();
+   if (cmAfix == 1) afix();
    if (cmPack == 1) pack();
    if (cmLink == 1) linkAreas();
 

@@ -665,22 +665,22 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
    //write new line in config file
    if (stricmp(config->msgBaseDir, "passthrough")!=0) {
 #ifndef MSDOS
-     sprintf(buff, "EchoArea %s %s%s -a %s Squish %s ", c_area, config->msgBaseDir, c_area, myaddr, hisaddr);
+	   sprintf(buff, "EchoArea %s %s%s -a %s Squish %s ", c_area, config->msgBaseDir, c_area, myaddr, hisaddr);
 #else
-     sleep(1); // to prevent time from creating equal numbers
-     sprintf(buff,"EchoArea %s %s%8lx -a %s Squish %s ", c_area, config->msgBaseDir, time(NULL), myaddr, hisaddr);
+	   sleep(1); // to prevent time from creating equal numbers
+	   sprintf(buff,"EchoArea %s %s%8lx -a %s Squish %s ", c_area, config->msgBaseDir, time(NULL), myaddr, hisaddr);
 #endif
    } else
-      sprintf(buff, "EchoArea %s Passthrough -a %s %s ", c_area, myaddr, hisaddr);
-   if ((config->autoCreateDefaults != NULL) &&
-       (strlen(buff)+strlen(config->autoCreateDefaults))<255) {
-      strcat(buff, config->autoCreateDefaults);
+	   sprintf(buff, "EchoArea %s Passthrough -a %s %s ", c_area, myaddr, hisaddr);
+   if ((creatingLink->autoCreateDefaults != NULL) &&
+       (strlen(buff)+strlen(creatingLink->autoCreateDefaults))<255) {
+	   strcat(buff, creatingLink->autoCreateDefaults);
    }
    fprintf(f, buff);
    fprintf(f, "\n");
-
+   
    fclose(f);
-
+   
    // add new created echo to config in memory
    parseLine(buff,config);
 
@@ -871,12 +871,13 @@ void processMsg(s_message *msg, s_pktHeader *pktHeader)
 
    statToss.msgs++;
    if (msg->netMail == 1) {
-           if (stricmp(msg->toUserName,"areafix")==0 ||
-               stricmp(msg->toUserName,"areamgr")==0 ||
-               stricmp(msg->toUserName,"hpt")==0) {
-                   processAreaFix(msg, pktHeader);
+           if (config->AreaFixFromPkt && 
+	       (stricmp(msg->toUserName,"areafix")==0 ||
+		stricmp(msg->toUserName,"areamgr")==0 ||
+		stricmp(msg->toUserName,"hpt")==0)) {
+	     processAreaFix(msg, pktHeader);
            } else
-                   processNMMsg(msg, pktHeader);
+	     processNMMsg(msg, pktHeader);
    } else {
            processEMMsg(msg, pktHeader->origAddr);
    } /* endif */
@@ -1075,7 +1076,9 @@ void processDir(char *directory, e_tossSecurity sec)
       strcpy(dummy, directory);
       strcat(dummy, file->d_name);
 
-      if (!(pktFile = patimat(file->d_name, "*.PKT") == 1))
+      if (!(pktFile = patmat(file->d_name, "*.PKT") == 1) ||
+		  !(pktFile = patmat(file->d_name, "*.pkt") == 1))
+			  
          for (i = 0; i < sizeof(validExt) / sizeof(char *); i++)
             if (patimat(file->d_name, validExt[i]) == 1)
                arcFile = 1;
@@ -1203,11 +1206,11 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 {
     int i;
     char logmsg[512];
-    int cmdexit;
+//    int cmdexit;
     s_link *link;
     char *newfn;
-    char zoneSuffix[4];
-    char *zoneOutbound;
+//    char zoneSuffix[4];
+//    char *zoneOutbound;
     
     for (i = 0 ; i < config->linkCount; i++) {
 	if (addrComp(header->destAddr, config->links[i].hisAka) == 0) {
@@ -1217,14 +1220,8 @@ int forwardPkt(const char *fileName, s_pktHeader *header, e_tossSecurity sec)
 			
 	    /* security checks */
 			
-	    switch (link->forwardPkts) {
-	    case fOff:
-		return 4;
-	    case fSecure:
-		if (sec != secProtInbound &&
-		    sec != secLocalInbound)
-		    return 4;
-	    }
+	    if (link->forwardPkts==fOff) return 4;
+		if ((link->forwardPkts==fSecure)&&(sec != secProtInbound)&&(sec != secLocalInbound)) return 4;
 	    
             /* as we have feature freeze currently, */
 	    /* I enclose the following code with an ifdef ... */
@@ -1268,7 +1265,7 @@ void fix_qqq(char *filename)
 	FILE *f;
 	char buffer[2] = { '\0', '\0' };
 	size_t l = strlen(filename);
-	char *newname;
+	char *newname=NULL;
 
 	if (l > 3 && newname != NULL && toupper(filename[l-1]) == 'Q' &&
 	    toupper(filename[l-2]) == 'Q' && toupper(filename[l-3]) == 'Q')

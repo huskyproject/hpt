@@ -46,5 +46,6 @@ extern int       cmToss;
 extern int       cmScan;
 extern int       cmPack;
 extern int       cmLink;
+extern int       cmAfix;
 
 #endif

@@ -35,11 +35,12 @@ s_log     *log;
 s_fidoconfig *config;
 
 const int VER_MAJOR = 0;
-const int VER_MINOR = 26;
+const int VER_MINOR = 27;
 char      versionStr[10];
 
 int       cmToss = 0;
 int       cmScan = 0;
 int       cmPack = 0;
 int       cmLink = 0;
+int       cmAfix = 0;
 

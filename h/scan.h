@@ -45,5 +45,6 @@ void pack(void);
 void scan(void);
 void scanEMArea(s_area *echo);
 void makePktHeader(s_link *link, s_pktHeader *header);
+void cvtAddr(const NETADDR aka1, s_addr *aka2);
 
 #endif

@@ -55,5 +55,6 @@ void putMsgInArea(s_area *echo, s_message *msg, int strip);
 void toss(void);
 void tossTempOutbound(char *directory); 
 void arcmail(void);
+int autoCreate(char *c_area, s_addr pktOrigAddr);
 
 #endif
