@@ -63,6 +63,7 @@
 #include <recode.h>
 #include <areafix.h>
 #include <scanarea.h>
+#include <arealist.h>
 #include <hpt.h>
 
 unsigned char RetFix;
@@ -318,47 +319,39 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
 
 char *list(s_message *msg, s_link *link) {
 	
-	int i, active, avail, rc, desclen, *areaslen, maxlen = 0;
+	int i, active, avail, rc = 0;
 	char *report = NULL;
+	char *list = NULL;
+	ps_arealist al;
 	s_area area;
 
-	areaslen = malloc(config->echoAreaCount * sizeof(int));
-
-	for (i=0; i< config->echoAreaCount; i++) {
-	   areaslen[i]=strlen(config->echoAreas[i].areaName);
-	   if (areaslen[i]>maxlen) maxlen = areaslen[i];
-	}
-	
 	xscatprintf(&report, "Available areas for %s\r\r", aka2str(link->hisAka));
 
+	al = newAreaList();
 	for (i=active=avail=0; i< config->echoAreaCount; i++) {
 		
 	    area = config->echoAreas[i];
 
 	    rc=subscribeCheck(area, msg, link);
 	    if (rc < 2 && !area.hide) { /* add line */
-			if (area.description) desclen=strlen(config->echoAreas[i].description);
-			else desclen=0;
-			
-			xscatprintf(&report, "%s %s%s%s%s%s\r",
-					(rc) ? " " : "*",
-					area.areaName,
-					(desclen) ? " " : "",
-					(desclen) ? print_ch(maxlen-areaslen[i],'.') : "",
-					(desclen) ? " " : "",
-					(desclen) ? area.description : "");
-			 
+
+			addAreaListItem(al,rc==0,area.areaName,area.description);
+
 			if (rc==0) active++; avail++;
 
 	    } /* end add line */
 
 	} /* end for */
+	sortAreaList(al);
+	list = formatAreaList(al,78," *");
+	xstrcat(&report,list);
+	free(list);
+	freeAreaList(al);
 	
 	xscatprintf(&report, "\r'*' = area active for %s\r%i areas available, %i areas active\r", 
 			aka2str(link->hisAka), avail, active);
 	
 	writeLogEntry(hpt_log, '8', "areafix: list sent to %s", aka2str(link->hisAka));
-	free(areaslen);
 
 	return report;
 }
@@ -441,12 +434,12 @@ char *help(s_link *link) {
 
 char *available(s_link *link) {
 	FILE *f;
-	int i=0,j=0;
+	int j=0;
 	unsigned int k;
 	int found;
-	char *report = NULL, *avail, linkAka[25];
-	long endpos;
+	char *report = NULL, *line, *token, *running, linkAka[25];
 	s_link *uplink=NULL;
+	ps_arealist al;
 
 
     for (j = 0; j < config->linkCount; j++) {
@@ -467,16 +460,30 @@ char *available(s_link *link) {
 
 		   	xscatprintf(&report, "Available Area List from %s:\r", aka2str(uplink->hisAka));
 
-			fseek(f,0L,SEEK_END);
-			endpos=ftell(f);
+		   	al = newAreaList();
+			while ((line = readLine(f)) != NULL) {
+				line = trimLine(line);
+				if (line[0] != '\0') {
 			
-			fseek(f,0L,SEEK_SET);
-			endpos=fread(avail = xstralloc(&report, endpos + 1), 1, (size_t) endpos,f);
-			for (i=0; i<endpos; i++) if (avail[i]=='\n') avail[i]='\r';
-			avail[endpos] = '\0';
-			
+					running = line;
+					token = strseparate(&running, " \t\r\n");
+
+					addAreaListItem(al,0,token,running);
+
+				}
+				free(line);
+			}
 			fclose(f);
-			
+
+			if(al->count) {
+				sortAreaList(al);
+				line = formatAreaList(al,78,NULL);
+				xstrcat(&report,"\r");
+				xstrcat(&report,line);
+				free(line);
+			}
+
+			freeAreaList(al);
 			
 			xscatprintf(&report, " %s\r\r",print_ch(77,'-'));
 

@@ -2,6 +2,7 @@ CC      = bcc
 
 OBJS    = pktinfo.obj \
 	  areafix.obj \
+	  arealist.obj\
           pktread.obj \
 	  pktwrite.obj \
           fcommon.obj \

@@ -10,7 +10,7 @@ FCONFL=	..\..\fidoconf\fconfmvc.lib
 SMAPIL=	..\..\smapi\smapimvc.lib
 HPTL=	hptmvc.lib
 
-OBJS    = pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj post.obj areafix.obj dupe.obj recode.obj tree.obj seenby.obj strsep.obj link.obj crc.obj xstr.obj
+OBJS    = pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj post.obj areafix.obj arealist.obj dupe.obj recode.obj tree.obj seenby.obj strsep.obj link.obj crc.obj xstr.obj
 
 {..\src}.c.obj:
 	$(CC) $(CFLAGS) $(CDEFS) $(COPT) -c $<
