@@ -684,7 +684,11 @@ int cmdcall(const char *cmd)
 
   if( (list = mk_lst(cmd)) ) {
     w_log(LL_DEBUGV, "spawnvp(P_WAIT, %s, ...)", list[0] );
+#ifdef __WATCOMC__
     cmdexit = spawnvp(P_WAIT, list[0], (const char * const *)list);
+#else
+    cmdexit = spawnvp(P_WAIT, list[0], list);
+#endif
     nfree(list[0]);
     nfree(list);
   }
