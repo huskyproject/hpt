@@ -1,3 +1,11 @@
+2003-06-20 Friday 13:55  nssoft
+
+	* Makefile (1.20), src/toss.c (1.520): Fix support hptzip
+
+2003-06-20 Friday 09:15  nssoft
+
+	* Makefile (1.19): Add USE_HPTZIP option
+
 2003-06-14 Saturday 12:09  mche
 
 	* make/txt2pkt.vcproj (1.1): vcproj Project File added for building
