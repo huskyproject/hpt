@@ -52,6 +52,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
    UCHAR   *ctrlBuff;
    UINT32  ctrlLen;
    time_t  tm;
+   struct tm *dt;
 
    // get kludge lines
    ctrlLen = MsgGetCtrlLen(SQmsg);
@@ -64,7 +65,10 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
    msg->textLength = MsgGetTextLen(SQmsg);
 
    time(&tm);
-   sprintf(viaLine, "\001Via @%u:%u/%u.%u @%s @%s", ourAka.zone, ourAka.net, ourAka.node, ourAka.point, ctime(&tm), versionStr);
+   dt = gmtime(&tm);
+   sprintf(viaLine, "\001Via %u:%u/%u.%u @%04u%02u%02u.%02u%02u%02u %s",
+           ourAka.zone, ourAka.net, ourAka.node, ourAka.point,
+           dt->tm_year + 1900, dt->tm_mon + 1, dt->tm_mday, dt->tm_hour+1, dt->tm_min, dt->tm_sec, versionStr);
 
    msg->text = (char *) malloc(msg->textLength+strlen(kludgeLines)+strlen(viaLine)+1);
 
