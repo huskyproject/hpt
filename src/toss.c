@@ -252,7 +252,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
    HAREA harea;
    HMSG  hmsg;
    XMSG  xmsg;
-   char *slash, *p;
+   char *slash, *p, *q;
    int rc = 0;
 
    // create Directory Tree if necessary
@@ -304,10 +304,16 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
             textWithoutArea++;
          }
 
-		 if (echo->tinySB) {
-			 if (NULL != (p = strstr(textWithoutArea,"\rSEEN-BY:"))) p[1]='\0';
+		 if (echo->killSB) {
+			 if (NULL != (p = strstr(textWithoutArea,"\rSEEN-BY: "))) p[1]='\0';
+		 } else if (echo->tinySB) {
+			 if (NULL != (p = strstr(textWithoutArea,"\rSEEN-BY: "))) {
+				 p++;
+				 if (NULL != (q = strstr(p,"\001PATH: "))) memmove(p,q,strlen(q)+1);
+				 else p[0]='\0';
+			 }
 		 }
-		 
+
          ctrlBuff = (char *) CopyToControlBuf((UCHAR *) textWithoutArea,
 				              (UCHAR **) &textStart,
 				              &textLength);

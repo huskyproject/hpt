@@ -9,6 +9,7 @@ Category 1: Will certainly be implemented until next release
 - msgbasedir for each link
 - tossIgnoreSeenBy <address>
 - -sbadd <addr>, -sbdel <addr>
+- tibysb & killsb
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
