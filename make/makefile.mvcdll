@@ -96,7 +96,7 @@ $(HPTTREE): $(HPTTREEOBJS)
 
 $(HPT): $(HPTOBJS)
 	@echo Create $(HPT)...
-	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS) $(EXEFLAGS)
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS) $(EXEFLAGS) $(PERLDLL)
 
 clean:
 	-$(RM) $(RMOPT) *$(_OBJ)
