@@ -32,7 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
+#include <xstr.h>
 
 int compare(const void *first, const void *second)
 {
@@ -52,11 +52,10 @@ void sortSeenBys(s_seenBy *seenBys, UINT count)
 char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
 {
    int  size = 81, i;
-   char *text, *line, addr2d[13];
+   char *text=NULL, *line, addr2d[13];
    
    if (seenByCount==0) {              //return empty control line
-      text = malloc(strlen(lineHeading)+1+1);
-      strcpy(text, lineHeading);
+      xstrcat(&text, lineHeading);
    } else {
        
       line = calloc (size,sizeof(char));

@@ -78,7 +78,7 @@ char *createSeenByPath(s_area *echo) {
 	free(seenBys);
 	
 	// path line only include node-akas in path
-	if (echo->useAka->point == 0) 
+	if (echo->useAka->point == 0)
 		xscatprintf(&seenByPath, "\001PATH: %u/%u\r",
 					echo->useAka->net, echo->useAka->node);
 
@@ -136,8 +136,9 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    free(ctrlBuff);
 
    // added SEEN-BY and PATH from scan area only
-   if (action == 0) seenByPath = createSeenByPath(echo);
-   
+   if (action == 0)// seenByPath = createSeenByPath(echo);
+	   seenByPath = createControlText(NULL, 0, "SEEN-BY: ");
+
    // create text
    msg->textLength = MsgGetTextLen(hmsg);
    msg->text=NULL;
@@ -167,11 +168,11 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
 void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 {
    s_message    msg;
-   UINT32       i,j=0;
-   s_pktHeader  header;
-   FILE         *pkt;
-   s_link	*link;
-   long len;
+   UINT32       j=0;
+//   s_pktHeader  header;
+//   FILE         *pkt;
+//   s_link	    *link;
+//   long len;
 
    makeMsg(hmsg, xmsg, &msg, echo, 0);
 
@@ -180,8 +181,9 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
        msg.text[j]=(char)toupper(msg.text[j]);j++;
    }
 
-   // scan msg to downlinks
-   
+   // export msg to downlinks
+   forwardMsgToLinks(echo, &msg, *echo->useAka);
+/*
    for (i = 0; i<echo->downlinkCount; i++) {
        link = echo->downlinks[i]->link;
        // link is passive?
@@ -191,10 +193,8 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
           if (link->pktFile != NULL && link->pktSize != 0) { // check packet size
              len = fsize(link->pktFile);
              if (len >= link->pktSize * 1024L) { // Stop writing to pkt
-				 free(link->pktFile);
-				 link->pktFile=NULL;
-				 free(link->packFile);
-				 link->packFile=NULL;
+				 nfree(link->pktFile);
+				 nfree(link->packFile);
              }
           }
 
@@ -205,7 +205,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 		      exit_hpt("Could not create new pkt.",1);
 		  }
 		   
-	  } /* endif */
+	  }
 		   
       makePktHeader(NULL, &header);
       header.origAddr = *(link->ourAka);
@@ -220,7 +220,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
 
       closeCreatedPkt(pkt);
    }
-
+*/
    // mark msg as sent and scanned
    xmsg.attr |= MSGSENT;
    xmsg.attr |= MSGSCANNED;

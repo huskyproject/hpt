@@ -481,24 +481,26 @@ int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link, s_addr pktOrigA
 
 void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
 						s_area *echo, s_arealink ***newLinks,
-						s_addr pktOrigAddr)
+						s_arealink ***zoneLinks, s_addr pktOrigAddr)
 {
-	UINT i, j=0;//, k=0;
+	UINT i, j=0, k=0;
 	
 	*newLinks = (s_arealink **) calloc(echo->downlinkCount, sizeof(s_arealink*));
-//	*zoneLinks = (s_arealink **) calloc(echo->downlinkCount, sizeof(s_arealink*));
+	*zoneLinks = (s_arealink **) calloc(echo->downlinkCount, sizeof(s_arealink*));
 
 	for (i=0; i < echo->downlinkCount; i++) {
-		if (checkLink(seenBys,seenByCount,echo->downlinks[i]->link,pktOrigAddr)==0) {
-//			if (pktOrigAddr.zone==echo->downlinks[i]->link->hisAka.zone) {
-				// links with same zone
-				(*newLinks)[j] = echo->downlinks[i];
-				j++;
-//			} else {
-				// links in different zones
-//				(*zoneLinks)[k] = echo->downlinks[i];
-//				k++;
-//			}
+		if (seenBys!=NULL &&
+			checkLink(seenBys,seenByCount,
+					  echo->downlinks[i]->link,
+					  pktOrigAddr)!=0) continue;
+		if (pktOrigAddr.zone==echo->downlinks[i]->link->hisAka.zone) {
+			// links with same zone
+			(*newLinks)[j] = echo->downlinks[i];
+			j++;
+		} else {
+			// links in different zones
+			(*zoneLinks)[k] = echo->downlinks[i];
+			k++;
 		}
 	}
 }
@@ -513,7 +515,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	char *start, *seenByText = NULL, *pathText = NULL;
 
 	// add our aka to seen-by (zonegating link must strip our aka)
-	if (*seenByCount==0) {
+	if (*seenByCount==0 && echo->useAka->point==0) {
 		(*seenBys) = (s_seenBy*) realloc((*seenBys), sizeof(s_seenBy) * (*seenByCount+1));
 		(*seenBys)[*seenByCount].net = (UINT16) echo->useAka->net;
 		(*seenBys)[*seenByCount].node = (UINT16) echo->useAka->node;
@@ -591,10 +593,8 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		if (newLinks[i]->link->pktFile != NULL && newLinks[i]->link->pktSize != 0) {
 			len = fsize(newLinks[i]->link->pktFile);
 			if (len >= (newLinks[i]->link->pktSize * 1024L)) { // Stop writing to pkt
-				free(newLinks[i]->link->pktFile);
-				newLinks[i]->link->pktFile=NULL;
-				free(newLinks[i]->link->packFile);
-				newLinks[i]->link->packFile=NULL;
+				nfree(newLinks[i]->link->pktFile);
+				nfree(newLinks[i]->link->packFile);
 			}
 		}
 		
@@ -627,23 +627,23 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    s_seenBy *seenBys = NULL, *path = NULL;
    UINT     seenByCount, pathCount;
    // links who does not have their aka in seenBys and thus have not got the echomail
-   s_arealink **newLinks;//, **zoneLinks;
+   s_arealink **newLinks, **zoneLinks;
 
    createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
    createPathArrayFromMsg(msg, &path, &pathCount);
    
-   createNewLinkArray(seenBys, seenByCount, echo, &newLinks, pktOrigAddr);
+   createNewLinkArray(seenBys, seenByCount, echo, &newLinks, &zoneLinks, pktOrigAddr);
 
    forwardToLinks(msg, echo, newLinks, &seenBys, &seenByCount, &path, &pathCount);
-//   if (zoneLinks!=NULL) {
-//	   seenByCount = 0;
-//	   forwardToLinks(msg, echo, zoneLinks, &seenBys, &seenByCount, &path, &pathCount);
-//   }
+   if (zoneLinks!=NULL) {
+       if (echo->useAka->zone != pktOrigAddr.zone) seenByCount = 0;
+       forwardToLinks(msg, echo, zoneLinks, &seenBys, &seenByCount, &path, &pathCount);
+   }
 
    free(seenBys);
    free(path);
    free(newLinks);
-//   free(zoneLinks);
+   free(zoneLinks);
 }
 
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
