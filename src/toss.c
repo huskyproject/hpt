@@ -749,6 +749,10 @@ void writeMsgToSysop()
                 aka2str(msgToSysop[i]->origAddr));
             msgToSysop[i]->textLength = strlen(msgToSysop[i]->text);
 
+#ifdef DO_PERL
+            perl_robotmsg(msgToSysop[i], "tosysop");
+#endif
+
             if (msgToSysop[i]->netMail == 1)
                 /*  FIXME: should be putMsgInArea */
                 processNMMsg(msgToSysop[i], NULL, config->ReportTo ?

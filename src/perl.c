@@ -1322,6 +1322,8 @@ int PerlStart(void)
 					perl_subs &= ~SUB_PUTMSG;
    if (perl_get_cv(PERLEXPORT    , FALSE) == NULL)
 					perl_subs &= ~SUB_EXPORT;
+   if (perl_get_cv(PERLROBOTMSG  , FALSE) == NULL)
+					perl_subs &= ~SUB_ON_ROBOTMSG;
 /* val: run hpt_start() */
    if (perl_subs & SUB_HPT_START) {
       { dSP;
@@ -2520,6 +2522,78 @@ int perl_export(s_area *echo, s_link *link, s_message *msg)
      }
    }
    return 1;
+}
+
+int perl_robotmsg(s_message *msg, char *type)
+{
+   int rc = 0;
+   SV *svfromname, *svfromaddr, *svtoname, *svtoaddr;
+   SV *svtext, *svsubj, *svret, *svtype;
+   STRLEN n_a;
+   char *s_robottype;
+   static int do_perlrobotmsg = 1;
+
+   VK_START_HOOK(perlrobotmsg, SUB_ON_ROBOTMSG, 0)
+
+   { dSP;
+     svtype     = perl_get_sv("type",      TRUE);
+     svfromname = perl_get_sv("fromname",  TRUE);
+     svfromaddr = perl_get_sv("fromaddr",  TRUE);
+     svtoname   = perl_get_sv("toname",    TRUE);
+     svtoaddr   = perl_get_sv("toaddr",    TRUE);
+     svsubj     = perl_get_sv("subject",   TRUE);
+     svtext     = perl_get_sv("text",      TRUE);
+
+     if (type) sv_setpv(svtype, type); else sv_setsv(svtype, &sv_undef);
+     sv_setpv(svfromname,  msg->fromUserName);
+     sv_setpv(svfromaddr,  aka2str(msg->origAddr));
+     sv_setpv(svtoname,    msg->toUserName);
+     sv_setpv(svtoaddr,    aka2str(msg->destAddr));
+     sv_setpv(svsubj,      msg->subjectLine);
+     sv_setpv(svtext,      msg->text);
+
+     ENTER;
+     SAVETMPS;
+     PUSHMARK(SP);
+     PUTBACK;
+     perl_call_pv(PERLROBOTMSG, G_EVAL|G_SCALAR);
+     SPAGAIN;
+     svret=POPs;
+     if (!SvOK(svret)) rc = 0; else rc = SvIV(svret);
+     PUTBACK;
+     FREETMPS;
+     LEAVE;
+     if (SvTRUE(ERRSV))
+     {
+       w_log(LL_ERR, "Perl on_robotmsg eval error: %s\n", SvPV(ERRSV, n_a));
+       do_perlrobotmsg = 0;
+       return 0;
+     }
+     if (rc)
+     { /*  change */
+       char *ptr;
+       freeMsgBuffers(msg);
+       ptr = SvPV(perl_get_sv("text", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->text = safe_strdup(ptr);
+       msg->textLength = strlen(msg->text);
+       ptr = SvPV(perl_get_sv("toname", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->toUserName = safe_strdup(ptr);
+       ptr = SvPV(perl_get_sv("fromname", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->fromUserName = safe_strdup(ptr);
+       ptr = SvPV(perl_get_sv("subject", FALSE), n_a);
+       if (n_a == 0) ptr = "";
+       msg->subjectLine = safe_strdup(ptr);
+       ptr = SvPV(perl_get_sv("toaddr", FALSE), n_a);
+       if (n_a > 0) string2addr(ptr, &(msg->destAddr));
+       ptr = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
+       if (n_a > 0) string2addr(ptr, &(msg->origAddr));
+       return 1;
+     }
+   }
+   return 0;
 }
 
 #ifdef __OS2__
