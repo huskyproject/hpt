@@ -1,4 +1,9 @@
 ----- cvs ci ------
+Sun Oct 15 23:56:09 MSZ 2000
+tobi (patch from Dmitry Sergienko via max):
+* process attaches in packed netmail (tossed from tempInbound)
+
+----- cvs ci ------
 Wed Oct 11 19:41:21 MEZ 2000
 tobi (patch from max)
 * attaches with kludges like "FLAGS IMM KFS" now processed correctly
