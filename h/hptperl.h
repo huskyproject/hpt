@@ -23,6 +23,8 @@
 #define SUB_ON_ECHOLIST         0x0400
 #define SUB_ON_AFIXCMD          0x0800
 #define SUB_ON_AFIXREQ		0x1000
+#define SUB_PUTMSG		0x2000
+#define SUB_EXPORT		0x4000
 
 #define PERLFILE        "filter.pl"
 #define PERLFILT        "filter"
@@ -38,6 +40,8 @@
 #define PERLONECHOLIST  "on_echolist"
 #define PERLONAFIXCMD   "on_afixcmd"
 #define PERLONAFIXREQ	"on_afixreq"
+#define PERLPUTMSG      "put_msg"
+#define PERLEXPORT      "export"
 
 extern int skip_addvia;
 
@@ -57,5 +61,7 @@ void perldone(void);
 int perl_echolist(char **report, s_listype type, ps_arealist al, char *aka);
 int perl_afixcmd(char **report, int cmd, char *aka, char *line);
 int perl_afixreq(s_message *msg, hs_addr pktOrigAddr);
+int perl_putmsg(s_area *echo, s_message *msg);
+int perl_export(char *area, hs_addr link, s_message *msg);
 
 #endif

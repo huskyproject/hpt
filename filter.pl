@@ -78,8 +78,23 @@ sub filter
 # return "" or reason for moving to badArea
 # set $kill for kill the message (not move to badarea)
 # set $change to update $text, $subject, $fromaddr, $toaddr,
-#     $fromname, $toname, $attr
+#     $fromname, $toname, $attr, $date
   return "";
+}
+
+sub put_msg
+{
+# predefined variables:
+# $fromname, $fromaddr, $toname, $toaddr,
+# $area (areatag in config),
+# $subject, $text, $date, $attr
+# return:
+#   0 not to put message in base
+#   1 to put message as usual
+#   2 to put message without recoding
+# set $change to update $text, $subject, $fromaddr, $toaddr,
+#     $fromname, $toname, $attr, $date
+  return 1;
 }
 
 sub scan

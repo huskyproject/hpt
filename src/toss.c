@@ -164,6 +164,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
     XMSG  xmsg;
     char /**slash,*/ *p, *q, *tiny;
     int rc = 0;
+    int recode = 1;
 
     if (echo->msgbType==MSGTYPE_PASSTHROUGH) {
         w_log(LL_ERR, "Can't put message to passthrough area %s!", echo->areaName);
@@ -176,6 +177,13 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 	msg->destAddr.node  = echo->useAka->node;
 	msg->destAddr.point = echo->useAka->point;
     }
+#ifdef DO_PERL
+    switch( perl_putmsg(echo, msg) ) {
+        case 0 : return 1;
+        case 2 : recode = 0;
+        default: textLength = (UINT)msg->textLength;
+    }
+#endif
 
     if (maxopenpkt == 0) setmaxopen();
 
@@ -192,7 +200,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 	if (hmsg != NULL) {
 
 	    /*  recode from TransportCharset to internal Charset */
-	    if (config->intab != NULL) {
+	    if (recode && config->intab != NULL) {
 		if ((msg->recode & REC_HDR)==0) {
 		    recodeToInternalCharset((CHAR*)msg->fromUserName);
 		    recodeToInternalCharset((CHAR*)msg->toUserName);
