@@ -60,7 +60,7 @@ FILE *createPkt(char *filename, s_pktHeader *header)
 {
   FILE       *pkt;
   struct tm  *pktTime;
-  int        i;
+  unsigned int        i;
   UCHAR      dummy;
 
   pkt = fopen(filename, "wb");
@@ -178,11 +178,11 @@ int writeMsgToPkt(FILE *pkt, s_message msg)
   size_t rc;
 
   x = strlen(msg.toUserName);
-  if (x >= 36) x = 35;
+  if (x >= XMSG_TO_SIZE) x = XMSG_TO_SIZE - 1;
   y = strlen(msg.fromUserName);
-  if (y >= 36) y = 35;
+  if (y >= XMSG_FROM_SIZE) y = XMSG_FROM_SIZE -1;
   z = strlen(msg.subjectLine);
-  if (z >= 72) x = 71;
+  if (z >= XMSG_SUBJ_SIZE) z = XMSG_SUBJ_SIZE - 1;
   textLen = strlen(msg.text);
 
   buf = safe_malloc(38+x+y+z+textLen);
