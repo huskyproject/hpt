@@ -1,3 +1,12 @@
+2002-12-05 Thursday 13:54  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.61): Update about golded config
+
+2002-12-05 Thursday 08:10  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.60): Add q/a about differences between
+	win32 binaries
+
 2002-12-03 Tuesday 15:57  stas_degteff
 
 	* doc/hpt.texi (1.91): Specify default value for BundleNameStyle
