@@ -1,3 +1,7 @@
+2002-02-04 Monday 09:19  ml
+
+	* src/toss.c (1.380.2.6): compiling under msvc6 and logical fix
+
 2002-01-31 Thursday 19:16  ml
 
 	* src/getfree.c (1.8.2.2): msdos define
