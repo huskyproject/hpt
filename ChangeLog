@@ -1,3 +1,22 @@
+2002-07-01 Monday 14:41  stas
+
+	* debian/changelog (1.10.2.2): Fix doc.
+
+2002-07-01 Monday 14:23  stas
+
+	* debian/: changelog (1.10.2.1), control (1.8.2.1), postinst
+	(1.1.2.1): Change debian cntrol files. (Patch from Pavel Andreew
+	<pavel@collage.etel.ru>, 2:5080/59)
+
+2002-07-01 Monday 14:23  stas
+
+	* debian/postinst (1.1): file postinst was initially added on
+	branch hpt-1_2-stable.
+
+2002-07-01 Monday 12:11  mche
+
+	* src/areafix.c (1.316.2.1): fixed bug with changing config
+
 2002-06-30 Sunday 09:46  mche
 
 	* src/: scan.c (1.166.2.1), scanarea.c (1.83.2.1): fixed bug with
