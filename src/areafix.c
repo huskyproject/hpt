@@ -1169,8 +1169,8 @@ char *unsubscribe(s_link *link, char *cmd) {
 	switch (rc) {
 	case 0:
 	    if (from_us == 0) {
-        int k;
-        for (k=0; i<area->downlinkCount; k++) {
+        unsigned int k;
+        for (k=0; k<area->downlinkCount; k++) {
             if (addrComp(link->hisAka, area->downlinks[k]->link->hisAka)==0 &&
                 area->downlinks[k]->defLink)
                 return do_delete(link, area);
