@@ -241,6 +241,7 @@ void processConfig()
    if (config->protInbound && (strcmp(config->protInbound,config->tempInbound)==0)) exit_hpt("protInbound & tempInbound must be differ",1);
    if (config->protInbound && config->inbound && (strcmp(config->protInbound,config->inbound)==0)) exit_hpt("protInbound & Inbound must be differ",1);
    if (config->localInbound && (strcmp(config->localInbound,config->tempInbound)==0)) exit_hpt("localInbound & tempInbound must be differ",1);
+   if (strcmp(config->tempOutbound,config->tempInbound)==0) exit_hpt("tempOutbound & tempInbound must be differ",1);
    if (config->msgBaseDir==NULL) exit_hpt("No msgBaseDir specified in config file!",1);
    if (config->dupeHistoryDir==NULL) exit_hpt("No dupeHistoryDir specified in config file!",1);
    if (config->dupeArea.areaName==NULL) exit_hpt("you must define DupeArea!",1);

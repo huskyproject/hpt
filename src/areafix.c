@@ -1347,7 +1347,7 @@ int rescanEMArea(s_area *echo, s_link *link, long rescanCount)
 char *rescan(s_link *link, s_message *msg, char *cmd)
 {
     int i, c, rc = 0;
-    long rescanCount = -1;
+    long rescanCount = -1, rcc;
     char *report = NULL, *line, *countstr, *an, *end;
     s_area *area;
     
@@ -1388,11 +1388,11 @@ char *rescan(s_link *link, s_message *msg, char *cmd)
 						area->areaName, aka2str(link->hisAka));
 			} else {
 
-			  rescanCount = rescanEMArea(area, link, rescanCount);
+			  rcc = rescanEMArea(area, link, rescanCount);
 			  xscatprintf(&report," %s %s  rescanned %lu mails\r",
-			      an, print_ch(49-strlen(an), '.'), rescanCount);
+			      an, print_ch(49-strlen(an), '.'), rcc);
 			  writeLogEntry(hpt_log,'8',"areafix: %s rescanned %lu mails to %s",
-			      area->areaName, rescanCount, aka2str(link->hisAka));
+			      area->areaName, rcc, aka2str(link->hisAka));
 //			  arcmail(link);
 			  tossTempOutbound(config->tempOutbound);
 			}
