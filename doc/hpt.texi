@@ -1241,13 +1241,19 @@ This statement cannot be repeated.
 @findex Remap
 @table @asis
 @item Syntax:
-@code{Remap <toUserName>,<to_addr>,<new_addr>}
-@item Example:
-@code{Remap Max Levenkov,2:5000/117,2:5000/117.1}
+@code{Remap <ToName>,<ToAddress>,<NewAddress>}
+@item Examples:
+@itemize
+@item @code{Remap Max Levenkov,2:5000/117,2:5000/117.1\n}
+@item @code{Remap *,2:5000/117,2:5000/117.1}
+@item @code{Remap Max Levenkov,*,2:5000/117.1}
+@end itemize
 @end table
 
 Remap mail to other address.
-@strong{This statement is not tested well, not touches TOPT & FMPT kludges.}
+ToName @strong{OR} ToAddress can be replaced with asterisk to match any
+value of ToName or ToAddress. Two asterisks can't be defined together.
+@strong{This statement does not touch TOPT & FMPT kludges.}
 
 This statement can be repeated.
 
