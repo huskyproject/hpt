@@ -305,6 +305,40 @@ char *help(s_link *link) {
 	return NULL;
 }
 
+char *available(s_link *link) {                                                 
+        FILE *f;                                                                
+        int i=1;                                                                
+        char *avail, addline[256];                                              
+        long endpos;                                                            
+                                                                                
+        if (config->available!=NULL) {                                          
+                if ((f=fopen(config->available,"r")) == NULL)                   
+                        {                                                       
+                                fprintf(stderr,"areafix: cannot open Available Areas file \"%s\"\n",                                                            
+                                                config->areafixhelp);           
+                                return NULL;                                    
+                        }                                                       
+                                                                                
+                fseek(f,0l,SEEK_END);                                           
+                endpos=ftell(f);                                                
+                                                                                
+                avail=(char*) calloc((size_t) endpos,sizeof(char*));            
+                                                                                
+                fseek(f,0l,SEEK_SET);                                           
+                fread(avail,1,(size_t) endpos,f);                               
+                for (i=0; i<endpos; i++) if (avail[i]=='\n') avail[i]='\r';     
+                                                                                
+                fclose(f);                                                      
+                                                                                
+                sprintf(addline,"areafix: Available Area List sent to %s",link->name);                                                                          
+                writeLogEntry(log, '8', addline);                               
+                                   
+                return avail;                                                   
+        }                                                                       
+                                                                                
+        return NULL;                                                            
+}                                                                               
+
 int changeconfig(char *fileName, char *areaName, s_link *link, int action) {
 	FILE *f;
 	char *cfgline, *token, *running, *straka;
@@ -502,7 +536,10 @@ int tellcmd(char *cmd) {
 		line++;
 		if (stricmp(line,"list")==0) return 1;
 		if (stricmp(line,"help")==0) return 2;
-		break;
+                if (stricmp(line,"avail")==0) return 5;     
+                if (stricmp(line,"available")==0) return 5; 
+                if (stricmp(line,"all")==0) return 5;       	
+                break;
 	case '\01': return 0;
 //		break;
 	case '-'  : return 4;
@@ -526,6 +563,8 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 		break;
 	case 4: report = unsubscribe (link,msg,line);
 		break;
+        case 5: report = available (link);
+                break;                    
 	default: return NULL;
 	}
 
