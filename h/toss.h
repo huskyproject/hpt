@@ -57,7 +57,7 @@ void toss(void);
 void tossTempOutbound(char *directory); 
 void arcmail(s_link *link);
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr);
-void tossFromBadArea(void);
+void tossFromBadArea(char force);
 void writeMsgToSysop(void);
 int checkAreaLink(s_area *area, s_addr aka, int type);
 void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,

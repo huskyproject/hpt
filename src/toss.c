@@ -2497,7 +2497,7 @@ void toss()
    tossTempOutbound(config->tempOutbound);
 }
 
-int packBadArea(HMSG hmsg, XMSG xmsg)
+int packBadArea(HMSG hmsg, XMSG xmsg, char force)
 {
    int		rc = 0;
    s_message   msg;
@@ -2566,7 +2566,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
        return rc;
    }
    
-   if (checkAreaLink(echo, pktOrigAddr, 0) == 0) {
+   if (checkAreaLink(echo, pktOrigAddr, 0) == 0 || force) {
 	   if (dupeDetection(echo, msg)==1 || noexp) {
 		   // no dupe or toss whithout export to links
 		   
@@ -2613,7 +2613,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
    return rc;
 }
 
-void tossFromBadArea()
+void tossFromBadArea(char force)
 {
    HAREA area;
    HMSG  hmsg;
@@ -2634,7 +2634,7 @@ void tossFromBadArea()
 			   hmsg = MsgOpenMsg(area, MOPEN_RW, i);
 			   if (hmsg == NULL) continue;      // msg# does not exist
 			   MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-			   delmsg = packBadArea(hmsg, xmsg);
+			   delmsg = packBadArea(hmsg, xmsg, force);
 	 
 			   MsgCloseMsg(hmsg);
 	 
@@ -2647,7 +2647,7 @@ void tossFromBadArea()
 			   hmsg = MsgOpenMsg(area, MOPEN_RW, i);
 			   if (hmsg == NULL) continue;      // msg# does not exist
 			   MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-			   delmsg = packBadArea(hmsg, xmsg);
+			   delmsg = packBadArea(hmsg, xmsg, force);
 	 
 			   MsgCloseMsg(hmsg);
 	 

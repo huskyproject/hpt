@@ -5,6 +5,7 @@ hpt 0.9.8 (development version)
 Thu Nov 30 14:26:01 NOVT 2000
 max:
 * command line argument "-c config" supported by areafix & autocreate
+* hpt toss -bf (force access checking)
 
 ----- cvs ci ------
 Tue Nov 28 22:39:14 NOVT 2000

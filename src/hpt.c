@@ -70,6 +70,7 @@
 s_message **msgToSysop = NULL;
 char *scanParmA;
 char *scanParmF;
+char force = 0;
 
 /* kn: I've really tried not to break it. 
    FIXME: if there is pack and scan options on cmd line - one set 
@@ -112,8 +113,8 @@ int  processExportOptions(unsigned int *i, int argc, char **argv)
 void start_help(void) {
   fprintf(stdout,"%s",versionStr);
   fprintf(stdout,"\nUsage: hpt [-c config] [options]\n");
-  fprintf(stdout,"   hpt toss    - tossing mail\n");
-  fprintf(stdout,"   hpt toss -b - tossing mail from badarea\n");
+  fprintf(stdout,"   hpt toss       - tossing mail\n");
+  fprintf(stdout,"   hpt toss -b[f] - tossing mail from badarea [force]\n");
   fprintf(stdout,"   hpt scan    - scanning echomail\n");
   fprintf(stdout,"   hpt scan -w - scanning echomail without highwaters\n");
   fprintf(stdout,"   hpt scan -a <areaname> - scanning echomail from <areaname> area\n");
@@ -136,9 +137,16 @@ int processCommandLine(int argc, char **argv)
       i++;
       if (0 == stricmp(argv[i], "toss")) {
          cmToss = 1;
-         if (i < argc-1) if (stricmp(argv[i+1], "-b") == 0) {
-             cmToss = 2;
-             break;
+         if (i < argc-1) {
+	     if (stricmp(argv[i+1], "-b") == 0) {
+                cmToss = 2;
+                break;
+	     } else 
+	     if (stricmp(argv[i+1], "-bf") == 0) {
+                cmToss = 2;
+		force = 1;
+                break;
+	     }
          }
          continue;
       } else if (stricmp(argv[i], "scan") == 0) {
@@ -382,7 +390,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 
    tossTempOutbound(config->tempOutbound);
    if (1 == cmToss) toss();
-   if (cmToss == 2) tossFromBadArea();
+   if (cmToss == 2) tossFromBadArea(force);
 
    if (cmScan == 1) scanExport(SCN_ALL  | SCN_ECHOMAIL, NULL);
    if (cmScan &  2) scanExport(SCN_FILE | SCN_ECHOMAIL, scanParmF);
