@@ -320,9 +320,11 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
 char *list(s_message *msg, s_link *link) {
 
 	int i,j,active,avail,rc,desclen,len;
-	int areaslen[config->echoAreaCount];
+	int *areaslen;
 	int maxlen;
 	char *report, addline[256];
+	
+	areaslen = malloc(config->echoAreaCount * sizeof(int));
 
 	maxlen = 0;
 	for (i=0; i< config->echoAreaCount; i++) {
@@ -375,6 +377,8 @@ char *list(s_message *msg, s_link *link) {
 	sprintf(addline,"AreaFix: list sent to %s", aka2str(link->hisAka));
 	writeLogEntry(hpt_log, '8', addline);
 	
+	free(areaslen);
+
 	return report;
 }
 
