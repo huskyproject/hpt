@@ -2,9 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
-
+Tue May  2 22:13:32 NOVST 2000
 max:
+* some changes about zone seen-by stripping
 * fixed my last changes in readDupeFile()
+* write dupefiles when abnormal exit
 
 ----- cvs ci ------
 Mon May  1 17:01:13 NOVST 2000

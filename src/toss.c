@@ -2064,7 +2064,6 @@ void toss()
 
    // set stats to 0
    memset(&statToss, 0, sizeof(s_statToss));
-//   statToss.startTossing = time(NULL);
    writeLogEntry(hpt_log, '1', "Start tossing...");
    processDir(config->localInbound, secLocalInbound);
    processDir(config->protInbound, secProtInbound);

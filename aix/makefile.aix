@@ -33,7 +33,7 @@ all: $(OBJS) \
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
 
 pktinfo: pktinfo.o $(OBJS)
-	$(CC) $(LFLAGS) -o pktinfo log.o pktinfo.o pktread.o fcommon.o global.o recode.o $(FIDOCONFIG) $(SMAPI)
+	$(CC) $(LFLAGS) -o pktinfo log.o pktinfo.o pktread.o fcommon.o global.o recode.o dupe.o tree.o crc.o $(FIDOCONFIG) $(SMAPI)
 
 tlog: tlog.o log.o
 	$(CC) $(LFLAGS) -o tlog tlog.o log.o

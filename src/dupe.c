@@ -416,7 +416,7 @@ int createDupeFile(s_area *area, char *name, s_dupeMemory DupeEntries) {
 
 
 int writeToDupeFile(s_area *area) {
-   char *fileName;
+   char *fileName=NULL;
    s_dupeMemory *dupes;
    int  rc = 0;          
 
@@ -428,9 +428,7 @@ int writeToDupeFile(s_area *area) {
    }
    else {
       dupes = CommonDupes;
-      fileName = (char *) malloc(strlen(config->dupeHistoryDir)+15);
-      strcpy(fileName, config->dupeHistoryDir);
-      strcat(fileName, "hpt_base.dpa");
+      xstrscat(&fileName, config->dupeHistoryDir, "hpt_base.dpa", NULL);
    }
 
    if (dupes != NULL) {

@@ -33,7 +33,7 @@ pktinfo.obj tlog.obj tconfig.obj: $(SRC_DIR)\$*.c
 
 pktinfo.exe: pktinfo.obj common.obj pkt.obj
   @echo linking pktinfo
-  $(LINK) $(LFLAGS) FILE pktinfo.obj, common.obj, pkt.obj NAME pktinfo.exe
+  $(LINK) $(LFLAGS) FILE pktinfo.obj, common.obj, pkt.obj, dupe.obj, tree.obj, crc.obj NAME pktinfo.exe
 
 tlog.exe: tlog.obj log.obj
   @echo linking tlog

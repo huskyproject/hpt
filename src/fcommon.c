@@ -55,6 +55,7 @@
 
 #include <global.h>
 #include <recode.h>
+#include <dupe.h>
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 
@@ -64,6 +65,18 @@
 #include <smapi/progprot.h>
 
 void exit_hpt(char *logstr, int print) {
+	unsigned i;
+
+	// write dupeFiles
+	for (i = 0 ; i < config->echoAreaCount; i++) {
+		writeToDupeFile(&(config->echoAreas[i]));
+		freeDupeMemory(&(config->echoAreas[i]));
+	}
+	for (i = 0 ; i < config->netMailAreaCount; i++) {
+		writeToDupeFile(&(config->netMailAreas[i]));
+		freeDupeMemory(&(config->netMailAreas[i]));
+	}
+
     if (config->lockfile != NULL) remove(config->lockfile);
     if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
     writeLogEntry(hpt_log, '9', logstr);
@@ -194,7 +207,7 @@ int createTempPktFileName(s_link *link)
 
     tr=time(NULL);
     tp=localtime(&tr);
-    counter = 0;
+    counter = count;
     
     wday=wdays[tp->tm_wday];
     
@@ -216,49 +229,62 @@ int createTempPktFileName(s_link *link)
     big problem, but a big system with many links and many zones may encounter
     problems */
 
-    do {
-        
-        sprintf(fileName, "%s%06lx%02x.pkt",
-                config->tempOutbound, (long)aTime, counter);
-	   
-        if ( link->hisAka.point == 0 ) {
+	while(1) {
+		do {
+			
+			sprintf(fileName, "%s%06lx%02x.pkt",
+					config->tempOutbound, (long)aTime, counter);
 
-            if (config->separateBundles) {
-                sprintf(tmpPFileName,"%s%04x%04x.sep%c%06lx%02x.%s",
-                        zoneOutbound, link->hisAka.net, link->hisAka.node,
-                        limiter, (long)aTime, counter, wday);
-            } else {
-                sprintf(tmpPFileName,"%s%06lx%02x.%s",zoneOutbound,
-                        (long)aTime,counter,wday);
-            }
-        } else {
-            
-            if (config->separateBundles) {
-                sprintf(tmpPFileName,"%s%04x%04x.pnt%c%08x.sep%c%06lx%02x.%s",
-                        zoneOutbound, link->hisAka.net,	link->hisAka.node,
-                        limiter,link->hisAka.point, limiter, (long)aTime,
-                        counter, wday);
-            } else {
-		sprintf(tmpPFileName,"%s%04x%04x.pnt%c%06lx%02x.%s",
-                        zoneOutbound, link->hisAka.net,	link->hisAka.node,
-                        limiter, (long)aTime, counter, wday);
-            }
-        }
+			if ( link->hisAka.point == 0 ) {
+
+				if (config->separateBundles) {
+					sprintf(tmpPFileName,"%s%04x%04x.sep%c%06lx%02x.%s",
+							zoneOutbound, link->hisAka.net, link->hisAka.node,
+							limiter, (long)aTime, counter, wday);
+				} else {
+					sprintf(tmpPFileName,"%s%06lx%02x.%s",zoneOutbound,
+							(long)aTime,counter,wday);
+				}
+			} else {
+
+				if (config->separateBundles) {
+					sprintf(tmpPFileName,"%s%04x%04x.pnt%c%08x.sep%c%06lx%02x.%s",
+							zoneOutbound, link->hisAka.net,	link->hisAka.node,
+							limiter,link->hisAka.point, limiter, (long)aTime,
+							counter, wday);
+				} else {
+					sprintf(tmpPFileName,"%s%04x%04x.pnt%c%06lx%02x.%s",
+							zoneOutbound, link->hisAka.net,	link->hisAka.node,
+							limiter, (long)aTime, counter, wday);
+				}
+			}
 	   
-        counter++;
+			counter++;
 	   
-    } while ((fexist(fileName) || fileNameAlreadyUsed(fileName, NULL)) &&
-             (counter<=255));
+		} while ((fexist(fileName) || fileNameAlreadyUsed(fileName, NULL)) &&
+				 (counter<=255));
+
+		if (counter<=255) break;
+		else {
+			writeLogEntry(hpt_log,'7',"created 256 pkt's/sec!");
+			sleep(1);
+			aTime = time(NULL);
+			counter=0;
+		}
+	}
     free(zoneOutbound);
+	count = counter;
 
     counter = 0;
-    do {
-        sprintf(pfileName, "%s%0x", tmpPFileName, counter);
-        counter++;
-    } while ((fexist(pfileName) || fileNameAlreadyUsed(NULL, pfileName)) &&
-             (counter <= 15));
+	do {
+		sprintf(pfileName, "%s%0x", tmpPFileName, counter);
+		writeLogEntry(hpt_log,'1',"%s", pfileName);
+		counter++;
+	} while ((fexist(pfileName) || fileNameAlreadyUsed(NULL, pfileName)) &&
+			 (counter <= 15));
+	free(tmpPFileName);
 
-    free(tmpPFileName);
+	if (counter > 15) writeLogEntry(hpt_log,'7',"created 16 bundles/sec!");
     
     if ((!fexist(fileName)) && (!fexist(pfileName))) {
         if (link->packFile != NULL) {
@@ -274,6 +300,7 @@ int createTempPktFileName(s_link *link)
     else {
         free(fileName);
         free(pfileName);
+		writeLogEntry(hpt_log,'7',"can't create arcmail bundles any more!");
         return 1;
     }
 }

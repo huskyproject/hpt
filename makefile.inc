@@ -31,7 +31,8 @@ all: $(OBJS) \
 
 pktinfo$(EXE): pktinfo$(OBJ) $(OBJS)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) pktinfo$(EXE) log$(OBJ) recode$(OBJ) pktinfo$(OBJ) \
-          pktread$(OBJ) fcommon$(OBJ) global$(OBJ) xstr$(OBJ) $(LIBS)
+          pktread$(OBJ) fcommon$(OBJ) global$(OBJ) xstr$(OBJ) dupe$(OBJ) tree$(OBJ) \
+	  crc$(OBJ) $(LIBS)
 
 tlog$(EXE): tlog$(OBJ) log$(OBJ)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) tlog$(EXE) tlog$(OBJ) log$(OBJ) $(LIBS)
@@ -46,7 +47,7 @@ txt2pkt$(EXE): txt2pkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
                recode$(OBJ) log$(OBJ) global$(OBJ) xstr$(OBJ)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) txt2pkt$(EXE) log$(OBJ) txt2pkt$(OBJ) \
           fcommon$(OBJ) pktread$(OBJ) recode$(OBJ) pktwrite$(OBJ) \
-          global$(OBJ) xstr$(OBJ) $(LIBS)
+          global$(OBJ) xstr$(OBJ) dupe$(OBJ) tree$(OBJ) crc$(OBJ) $(LIBS)
 
 hptlink$(EXE): hptlink$(OBJ)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) hptlink$(EXE) hptlink$(OBJ) $(LIBS)

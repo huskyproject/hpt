@@ -21,7 +21,7 @@ pktinfo.obj tlog.obj: $(SRC_DIR)\*.c
 
 pktinfo.exe: pktinfo.obj fcommon.obj pktread.obj
   @echo linking pktinfo
-  $(LINK) $(LFLAGS) FILE pktinfo.obj, log.obj, pktread.obj, global.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fconfwcw.lib NAME pktinfo.exe
+  $(LINK) $(LFLAGS) FILE pktinfo.obj, log.obj, pktread.obj, global.obj, xstr.obj, dupe.obj, tree.obj, crc.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fconfwcw.lib NAME pktinfo.exe
 
 tlog.exe: tlog.obj log.obj
   @echo linking tlog

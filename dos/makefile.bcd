@@ -58,6 +58,9 @@ pktread.obj
 fcommon.obj
 global.obj
 xstr.obj
+dupe.obj
+tree.obj
+crc.obj
 fconfbcd.lib
 smapibcd.lib
 !
@@ -128,6 +131,9 @@ recode.obj
 log.obj
 xstr.obj
 global.obj
+dupe.obj
+tree.obj
+crc.obj
 fconfbcd.lib
 smapibcd.lib
 !
