@@ -1257,7 +1257,6 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
    }
 
    free(textBuff);
-   printf("rc=%i\n",rc);
    return rc;
 }
 
