@@ -81,6 +81,17 @@ char *print_ch(int len, char ch)
     return tmp;
 }
 
+int isarcmail (char *name)
+{
+    char *ext = name + strlen(name) - 4;
+
+    if (strncasecmp(ext, ".mo", 3) == 0 || strncasecmp(ext, ".tu", 3) == 0||
+        strncasecmp(ext, ".we", 3) == 0 || strncasecmp(ext, ".th", 3) == 0||
+        strncasecmp(ext, ".fr", 3) == 0 || strncasecmp(ext, ".sa", 3) == 0||
+        strncasecmp(ext, ".su", 3) == 0) return 1;
+    else return 0;  
+}
+
 int mandatoryCheck(s_area area, s_link *link) {
     int i;
 
@@ -2041,6 +2052,7 @@ void autoPassive()
 			   while ((line = readLine(f)) != NULL) {
 				   line = trimLine(line);
 				   path = line;
+				   if (!isarcmail(path)) continue;
 				   if (*path && (*path == '^' || *path == '#')) {
 					   path++;
 					   // set Pause if files stored only in outbound
@@ -2051,6 +2063,7 @@ void autoPassive()
 						   time_cur = time(NULL);
 						   time_test = (time_cur - stat_file.st_mtime)/3600;
 						   if (time_test >= (config->links[i].autoPause*24)) {
+							   w_log('8', "autopause: the file %s is %d days old", path, time_test/24);
 							   if (changepause((cfgFile) ? cfgFile :
 											   getConfigFileName(),
 											   &(config->links[i]), 1)) {    

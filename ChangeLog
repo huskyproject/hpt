@@ -6,6 +6,8 @@ Fri Mar  9 15:50:00 NOVT 2001
 max:
 * changed route procedure: now route & routeMail the same, and file attaches
   routed only via routeFile, and no routed if routeFile not defined.
+patch from Alex Bronin:
+* checking for arcmail names while autopausing
 
 ---- cvs ci ------
 Thu Mar  8 17:58:16 NOVT 2001
