@@ -1,3 +1,22 @@
+2003-05-08 Thursday 23:27  d_sergienko
+
+	* HISTORY (1.31), doc/hpt.texi (1.122), h/query.h (1.18),
+	src/areafix.c (1.412): NewAreaRefuseFile also refuses subscription
+	to prevent forward requests
+
+2003-05-08 Thursday 22:43  d_sergienko
+
+	* src/areafix.c (1.411): prevent yet another crash
+
+2003-05-08 Thursday 22:37  d_sergienko
+
+	* HISTORY (1.30), src/areafix.c (1.410): Fix crash on hpt afix
+	<addr> "+<area> /r=<days>"
+
+2003-05-08 Thursday 22:36  d_sergienko
+
+	* src/toss.c (1.512): close all pkts before put them in bundles
+
 2003-05-08 Thursday 15:52  mche
 
 	* src/areafix.c (1.409): code cleanup
