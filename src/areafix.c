@@ -1444,8 +1444,8 @@ int tellcmd(char *cmd) {
 		return ERROR;
 	case '\001': return NOTHING;
 	case '\000': return NOTHING;
-	case '-'  :	
-		if (line[1]=='-') return NOTHING;
+	case '-'  :
+		if (line[1]=='-' && line[2]=='-') return DONE;
 		else if (line[1]=='\000') return ERROR;
 		else return DEL;
 	case '~'  : return REMOVE;
@@ -1463,6 +1463,9 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 	switch (cmd) {
 
 	case NOTHING: return NULL;
+
+	case DONE: RetFix=DONE;
+		return NULL;
 
 	case LIST: report = list (msg, link);
 		RetFix=LIST;
@@ -1702,6 +1705,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 			} /* end if (preport != NULL) */
 
 			token = strseparate (&textBuff, "\n\r");
+			if (RetFix==DONE) token=NULL;
 		} /* end while (token != NULL) */
 		
 	} else {

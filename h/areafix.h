@@ -16,6 +16,7 @@
 #define INFO    10
 #define RESCAN  11
 #define REMOVE  12
+#define DONE    100
 #define ERROR   255
 
 char *print_ch(int len, char ch);
