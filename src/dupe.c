@@ -70,7 +70,7 @@ UINT32  DupeCountInHeader, maxTimeLifeDupesInArea;
 s_dupeMemory *CommonDupes=NULL;
 
 #define MSGIDPOS        7
-#define HASHBUFSIZE     XMSG_FROM_SIZE + XMSG_TO_SIZE + XMSG_SUBJ_SIZE + XMSG_TO_SIZE /* msgid len */ + AREANAMELEN
+#define HASHBUFSIZE     3*XMSG_TO_SIZE /* msgid len */ + AREANAMELEN
 static char hashBuf [HASHBUFSIZE];
 
 static time_t TimeStamp;
@@ -505,10 +505,13 @@ int dupeDetection(s_area *area, const s_message msg) {
     switch (config->typeDupeBase) {
     case hashDupes:
         enhash = safe_malloc(sizeof(s_hashDupeEntry));
+        strnzcpy(hashBuf, area->areaName,   AREANAMELEN);
+        /*
         strnzcpy(hashBuf, msg.fromUserName, XMSG_FROM_SIZE);
         strnzcat(hashBuf, msg.toUserName,   XMSG_TO_SIZE);
-        /*strnzcat(hashBuf, msg.subjectLine,  XMSG_SUBJ_SIZE);*/
-        strnzcat(hashBuf, str+MSGIDPOS,     XMSG_TO_SIZE);
+        strnzcat(hashBuf, msg.subjectLine,  XMSG_SUBJ_SIZE);
+        */
+        strnzcat(hashBuf, str+MSGIDPOS,     3*XMSG_TO_SIZE);
         enhash->CrcOfDupe       = strcrc32(hashBuf, 0xFFFFFFFFL);
         enhash->TimeStampOfDupe = TimeStamp;
         nRet = tree_add(&(Dupes->avlTree), compareEntries, (char *) enhash, deleteEntry);
@@ -516,10 +519,13 @@ int dupeDetection(s_area *area, const s_message msg) {
         
     case hashDupesWmsgid:
         enhashM = safe_malloc(sizeof(s_hashMDupeEntry));
+        strnzcpy(hashBuf, area->areaName,   AREANAMELEN);
+        /*
         strnzcpy(hashBuf, msg.fromUserName, XMSG_FROM_SIZE);
         strnzcat(hashBuf, msg.toUserName,   XMSG_TO_SIZE);
-        /*strnzcat(hashBuf, msg.subjectLine,  XMSG_SUBJ_SIZE);*/
-        strnzcat(hashBuf, str+MSGIDPOS,     XMSG_TO_SIZE);
+        strnzcat(hashBuf, msg.subjectLine,  XMSG_SUBJ_SIZE);
+        */
+        strnzcat(hashBuf, str+MSGIDPOS,     3*XMSG_TO_SIZE);
         enhashM->msgid = safe_malloc(strlen(str)+1-MSGIDPOS); 
         strcpy(enhashM->msgid, str+MSGIDPOS);
         enhashM->CrcOfDupe       = strcrc32(hashBuf, 0xFFFFFFFFL);
@@ -539,10 +545,12 @@ int dupeDetection(s_area *area, const s_message msg) {
     case commonDupeBase:
         enhash = safe_malloc(sizeof(s_hashDupeEntry));
         strnzcpy(hashBuf, area->areaName,   AREANAMELEN);
+        /*
         strnzcat(hashBuf, msg.fromUserName, XMSG_FROM_SIZE);
         strnzcat(hashBuf, msg.toUserName,   XMSG_TO_SIZE);
-        /*strnzcat(hashBuf, msg.subjectLine,  XMSG_SUBJ_SIZE);*/
-        strnzcat(hashBuf, str+MSGIDPOS,     XMSG_TO_SIZE);
+        strnzcat(hashBuf, msg.subjectLine,  XMSG_SUBJ_SIZE);
+        */
+        strnzcat(hashBuf, str+MSGIDPOS,     3*XMSG_TO_SIZE);
         enhash->CrcOfDupe       = strcrc32(hashBuf, 0xFFFFFFFFL);
         enhash->TimeStampOfDupe = TimeStamp;
         nRet = tree_add(&(CommonDupes->avlTree), compareEntries, (char *) enhash, deleteEntry);
