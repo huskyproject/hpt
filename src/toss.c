@@ -1487,7 +1487,6 @@ int processPkt(char *fileName, e_tossSecurity sec)
 				   free(msg);
                }
 		   }
-		   nfree(globalBuffer); // free msg->text global buffer
 		   if (msgrc==2) rc = 3; // rename to .bad (wrong msg format)
 		   // real time of process pkt & msg without external programs
 		   statToss.realTime += time(NULL) - realtime;
@@ -2080,6 +2079,7 @@ void toss()
    processDir(config->localInbound, secLocalInbound);
    processDir(config->protInbound, secProtInbound);
    processDir(config->inbound, secInbound);
+   nfree(globalBuffer); // free msg->text global buffer
 
    writeDupeFiles();
 

@@ -2,6 +2,10 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+max:
+* free globalBuffer after processDir(s) not after each pkt file
+
+----- cvs ci ------
 Sat Jun  3 23:25:14 NOVST 2000
 max:
 * transit messages from our address kills now
