@@ -124,6 +124,7 @@ void start_help(void) {
   fprintf(stdout,"   hpt link [areaname] - links messages\n");
   fprintf(stdout,"   hpt afix    - process areafix\n");
   fprintf(stdout,"   hpt relink <addr> - refresh area subsription\n");
+  fprintf(stdout,"   hpt pause - set pause for links who don't poll our system\n");
   fprintf(stdout,"   hpt -q [options] - quiet mode (no screen output)\n");
 }
 
@@ -180,6 +181,9 @@ int processCommandLine(int argc, char **argv)
 		  continue;
       } else if (stricmp(argv[i], "-h") == 0) {
 		  start_help();
+		  continue;
+      } else if (stricmp(argv[i], "pause") == 0) {
+		  cmPause = 1;
 		  continue;
       } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
 
@@ -412,7 +416,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    }
    nfree(msgToSysop);
 
-   autoPassive();
+   if (cmPause || config->autoPassive) autoPassive();
 
    // deinit SMAPI
    MsgCloseApi();

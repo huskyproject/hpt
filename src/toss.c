@@ -1048,7 +1048,6 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	    }
 	}
 	
-//	i = strlen(old_text);
 	i = old_textLength;
 
 	if (!msg->netMail) {
@@ -1072,20 +1071,21 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 				(reason) ? reason : "",
 				(reason) ? "\r" : "");
 	else *(msg->text) = '\0';
-/*	
+/*
 	if (!msg->netMail)
-	xstrscat(&msg->text,
-	(export) ? "AREA:" : "",
-	(export) ? area->areaName : "",
-	(export) ? "\r" : "",
-	" * Forwarded from area '", echo->areaName, "'\r",
-	(reason) ? reason : "",
-	(reason) ? "\r" : "",
-	"\r\1", NULL);
+		xstrscat(&msg->text,
+				 (export) ? "AREA:" : "",
+				 (export) ? area->areaName : "",
+				 (export) ? "\r" : "",
+				 " * Forwarded from area '", echo->areaName, "'\r",
+				 (reason) ? reason : "",
+				 (reason) ? "\r" : "",
+				 "\r\1", NULL);
 	else *(msg->text) = '\0';
 */
-	strncat(msg->text,old_text,i); // copy rest of msg
 	msg->textLength = strlen(msg->text);
+	strncat(msg->text,old_text,i); // copy rest of msg
+	msg->textLength += i;
 
 	if (!export) {
 		if (msg->netMail) rc = putMsgInArea(area,msg,0,MSGSENT);
