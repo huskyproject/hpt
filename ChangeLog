@@ -1,3 +1,12 @@
+2003-02-17 Monday 09:26  pgul
+
+	* src/fcommon.c (hpt-1_4-stable.1): Bugfix from current: ASO
+	lo-file names when all arcmail extensions used
+
+2003-02-17 Monday 09:04  sfpavel
+
+	* src/pktwrite.c (hpt-1_4-stable.2): Fix compiler warnings
+
 2003-02-16 Sunday 17:59  stas_degteff
 
 	* README (1.17): Fix type erors; add link to homepage
