@@ -67,9 +67,6 @@
 #include <fcntl.h>
 
 #include <process.h>
-#ifndef P_WAIT
-#define P_WAIT		_P_WAIT
-#endif
 
 #if !defined(S_ISDIR)
 #define S_ISDIR(a) (((a) & S_IFDIR) != 0)
@@ -77,7 +74,7 @@
 
 #endif
 
-#if defined(__MINGW32__)
+#if defined(__MINGW32__) || defined(__DJGPP__)
 # include <process.h>
 #endif
 
@@ -643,6 +640,11 @@ int isValidConference(const char *s) {
 
 
 #ifdef HAS_SPAWNVP
+
+#if !defined(P_WAIT) && defined(_P_WAIT)
+#define P_WAIT		_P_WAIT
+#endif
+
 /* make parameters list for spawnvp(), spawnv()
  * Return malloc()'ed array of pointers to difference parts of one string,
  * 1st element points to string begin.

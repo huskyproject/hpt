@@ -67,6 +67,11 @@
 #define P_WAIT		_P_WAIT
 #endif
 */
+
+#if defined(__DJGPP__)
+#include <dos.h>
+#endif
+
 #if  defined(__NT__)
 /* we can't include windows.h for several reasons ... */
 #define GetFileAttributes GetFileAttributesA
