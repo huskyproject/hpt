@@ -1,6 +1,12 @@
 hpt 0.27
 --------
 
+Thu Apr 15
+Gabriel:
+   + Added a loglevels into sample.config
+
+--------------
+
 Wed Apr  14 04:50
 Antonio:
 - fixed overrun that cause 'segmentation faults' if scan one message with a
