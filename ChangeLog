@@ -1,6 +1,16 @@
 hpt 0.9.8 (development version)
 ---------	
 
+----- cvs ci ------
+Tue Mar 13 22:42:10 NOVT 2001
+max (patch from Serguei Revtov):
+* trying to fix unwanted autopause (fileTime > current)
+
+---- cvs ci ------
+Mon Mar 12 16:02:17 NOVT 2001
+max:
+* fixed getfree compiling for SUN & win32
+
 ---- cvs ci ------
 Sun Mar 11 12:26:29 NOVT 2001
 max:

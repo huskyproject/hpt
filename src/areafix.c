@@ -2061,7 +2061,12 @@ void autoPassive()
 						   stat(path, &stat_file) != -1) {
 
 						   time_cur = time(NULL);
-						   time_test = (time_cur - stat_file.st_mtime)/3600;
+						   if (time_cur > stat_file.st_mtime) {
+                                                      time_test = (time_cur - stat_file.st_mtime)/3600;
+                                                   } else { // buggly time on file, anyway don't autopause on it
+                                                      time_test = 0;
+                                                   }
+
 						   if (time_test >= (config->links[i].autoPause*24)) {
 							   w_log('8', "autopause: the file %s is %d days old", path, time_test/24);
 							   if (changepause((cfgFile) ? cfgFile :

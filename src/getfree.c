@@ -2,7 +2,7 @@
 /* This was taken from BinkD and modified a bit for hpt -- ml, 2001 */
 /*                                                                  */
 
-#if defined(__NT__)
+#if defined(__NT__) || defined (NT) || defined (WINNT)
 /*--------------------------------------------------------------------*/
 /*       Copyright (c) 1997 by Fydodor Ustinov                        */
 /*                             FIDONet 2:5020/79                      */
@@ -13,9 +13,23 @@
 /*  the License, or (at your option) any later version. See COPYING.  */
 /*--------------------------------------------------------------------*/
 
+#ifdef __WATCOMC__
+#include <direct.h>
+#ifndef MAXPATHLEN
+#define MAXPATHLEN NAME_MAX
+#endif
+#elif defined (_MSC_VER)
+#include <direct.h>
+#ifndef MAXPATHLEN
+#define MAXPATHLEN _MAX_PATH
+#endif
+#endif
+
 #include <windows.h>
 #include <stdio.h>
 #include <limits.h>
+
+extern void w_log (char key, char *logString, ...);
 
 unsigned long getfree (char *path) {
 char RPN[MAXPATHLEN];	// root path
@@ -120,7 +134,11 @@ unsigned long getfree (char *path)
 
 #include <sys/types.h>
 #ifndef __BEOS__
+#if defined( __svr4__ ) || defined( __SVR4 )
+#include <sys/statvfs.h>
+#else
 #include <sys/statfs.h>
+#endif
 #endif
 #include <limits.h>
 
