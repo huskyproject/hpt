@@ -57,6 +57,9 @@ int __stdcall CharToOemA(char *, char *);
 #include <unistd.h>
 #endif
 
+#if defined(OS2)
+#include <os2.h>
+#endif
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
@@ -2438,7 +2441,6 @@ void writeImportLog(void) {
 #if defined(OS2)
 
 #define INCL_DOS
-#include <os2.h>
 
 static void setmaxopen(void) {
     ULONG cur, add;
