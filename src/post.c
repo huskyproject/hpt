@@ -101,6 +101,7 @@ void post(int c, unsigned int *n, char *params[])
                }; break;
             case 'f':    // flags
                msg.attributes = atoi(params[++(*n)]);
+               if (stricmp(params[(*n)],"local")==0) msg.attributes |= MSGLOCAL;
                break;
             case 'e':    // echo name
                area = params[++(*n)];
@@ -146,7 +147,7 @@ void post(int c, unsigned int *n, char *params[])
          quit = 1;
       };  
    };
-   // msg.attributes |= MSGLOCAL; // Always set bit for LOCAL
+   //msg.attributes |= MSGLOCAL; // Always set bit for LOCAL
    // won't be set in the msgbase, because the mail is processed if it were received
    (*n)--; tm = localtime(&t);
    strftime(msg.datetime, 21, "%d %b %y  %T", tm);
