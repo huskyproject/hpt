@@ -1,3 +1,30 @@
+2002-03-17 Sunday 15:51  mche
+
+	* src/hpt.c (1.138): commands call logic changed (for qreport,
+	qudate)
+
+2002-03-17 Sunday 15:23  mche
+
+	* src/query.c (1.32): fixed bug with forward requests
+
+2002-03-17 Sunday 14:55  mche
+
+	* src/query.c (1.31): fixed bug with forward requests
+
+2002-03-17 Sunday 14:41  mche
+
+	* src/areafix.c (1.271): fixed bug with forward requests
+
+2002-03-17 Sunday 14:05  d.sergienko
+
+	* src/scan.c (1.148): bug with echotoss.log because micro$oft's
+	implementation of rename() and POSIX's rename() are different :(
+
+2002-03-17 Sunday 13:35  d.sergienko
+
+	* src/scan.c (1.147): fixed yet another bug with stale
+	echotoss.log.* files
+
 2002-03-16 Saturday 13:34  mche
 
 	* h/toss.h (1.45), src/toss.c (1.393): duplicated code removed
