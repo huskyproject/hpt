@@ -117,17 +117,6 @@ void print_help(void) {
     exit(EX_OK);
 }
 
-static char *extattr(char *line)
-{
-    static char *eattr[] = { "KFS", "TFS", "DIR", "IMM", "CFM", "NPD" };
-    int i;
-
-    for (i=0; i<sizeof(eattr)/sizeof(eattr[0]); i++)
-        if (stricmp(line, eattr[i]) == 0)
-            return eattr[i];
-    return NULL;
-}
-
 void post(int c, unsigned int *n, char *params[])
 {
     char *area = NULL, *tearl = NULL, *origin = NULL, *flags = NULL;
