@@ -52,49 +52,6 @@ typedef unsigned long flag_t;  /* for at least 32 bit flags */
 #define FTSC_SEADOG 16          /* Seadog style string in the FTSC   */
 #define FTSC_TS_BROKEN 128      /* Only timestamp broken, date is OK */
 
-#ifdef _MAKE_DLL
-
-UINT16 getUINT16(FILE *in)
-{
-   UCHAR dummy;
-
-   dummy = (UCHAR) getc(in);
-   return (dummy + (UCHAR) getc(in) * 256);
-}
-
-#ifdef __TURBOC__
-#pragma warn +sig
-#endif
-
-INT   fgetsUntil0(UCHAR *str, size_t n, FILE *f, char *filter)
-{
-   size_t i;
-
-   for (i=0;i<n-1 ;i++ ) {
-	   
-	  do {
-		  str[i] = (UCHAR)getc(f);
-	  } while (filter && *filter && str[i] && strchr(filter, str[i]) != NULL);
-
-      // if end of file
-      if (feof(f)) {
-         str[i] = 0;
-         return i+1;
-      } /* endif */
-
-      if (0 == str[i]) {
-         return i+1;
-      } /* endif */
-
-   } /* endfor */
-
-   str[n-1] = 0;
-   return n;
-}
-
-#endif //_MAKE_DLL
-
-
 time_t readPktTime(FILE *pkt)
 {
   struct tm time;

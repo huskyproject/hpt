@@ -56,24 +56,6 @@
 #include <version.h>
 
 
-#ifdef _MAKE_DLL
-
-#ifdef __TURBOC__
-#pragma warn -sig
-#endif
-
-int fputUINT16(FILE *out, UINT16 word)
-{
-  UCHAR dummy;
-
-  dummy = word % 256;        // write high Byte
-  fputc(dummy, out);
-  dummy = word / 256;        // write low Byte
-  return fputc(dummy, out);
-}
-
-#endif //_MAKE_DLL
-
 FILE *createPkt(char *filename, s_pktHeader *header)
 {
   FILE       *pkt;
