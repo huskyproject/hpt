@@ -64,30 +64,12 @@
 	2:464/910 from 910.TEST and produce letter to 2:464/910 with body
 	"-910.TEST"
 
-2003-01-31 Friday 07:05  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.75): Add Q about cvs and proxy
-
-2003-01-28 Tuesday 21:42  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.74): Change (rename and improve) Q27:
-	about if-elif-else-endif
-
-2003-01-28 Tuesday 21:30  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.73): Update answer about Golded
-
 2003-01-27 Monday 14:50  mche
 
 	* src/dupe.c (1.72): one more improved dupe detection :)
 	
 	2Developers: if you want to make changes in dupe detection let me
 	know first (mihz@ua.fm)
-
-2003-01-25 Saturday 17:52  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.72): Add information about warning for gcc
-	2.96 (Q36)
 
 2003-01-25 Saturday 15:45  pgul
 
@@ -125,18 +107,9 @@
 
 	* src/carbon.c (1.15): fix kluge AREA in carboned messages
 
-2003-01-21 Tuesday 10:46  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.71): Update modules list (Q44). Thanks to
-	Dmitry Sergienko
-
 2003-01-21 Tuesday 10:09  stas_degteff
 
 	* doc/hpt.texi (1.98): Fix misprint. Thanks to Max Chernogor
-
-2003-01-21 Tuesday 06:41  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.70): Spell check. Thanks to Igor Zakharoff
 
 2003-01-21 Tuesday 06:19  stas_degteff
 
@@ -146,14 +119,6 @@
 
 	* doc/hpt.texi (1.97): Update RobotsArea description (about
 	security hole for echomail)
-
-2003-01-21 Tuesday 05:56  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.69): Add Q44: modules list
-
-2003-01-17 Friday 14:42  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.68): Fix FAQ
 
 2003-01-17 Friday 14:28  stas_degteff
 
@@ -219,14 +184,6 @@
 
 	* doc/hpt.texi (1.95): Describe 'PackAka' token
 
-2003-01-16 Thursday 09:56  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.67): Add Q43: run hpt from cron
-
-2003-01-16 Thursday 09:25  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.66): Update A9: golded & fidoconfig
-
 2003-01-15 Wednesday 12:11  mche
 
 	* misc/adv-stat-hpt.pl (1.1): # hptstat ver.0.3, (c)opyright
@@ -251,14 +208,6 @@
 	* src/carbon.c (1.10): fix kludge location in carbon copied
 	messages
 
-2003-01-14 Tuesday 11:24  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.65): Small update
-
-2003-01-14 Tuesday 10:55  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.64): New question: learning CVS an russian
-
 2003-01-13 Monday 14:52  stas_degteff
 
 	* src/perl.c (1.47): Remove obsolete check
@@ -267,10 +216,6 @@
 
 	* h/fcommon.h (1.50), src/fcommon.c (1.156): Move cmdcall() from
 	hpt into fidoconfig
-
-2003-01-13 Monday 08:10  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.63): Update peoples list
 
 2003-01-13 Monday 08:09  stas_degteff
 
@@ -298,10 +243,6 @@
 2003-01-09 Thursday 10:24  stas_degteff
 
 	* src/query.c (1.87): fix warning: 'i' might be used uninitialized
-
-2003-01-09 Thursday 08:14  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.62): Add question about self-unsubscribing
 
 2003-01-08 Wednesday 09:14  stas_degteff
 
@@ -486,23 +427,10 @@
 	* src/: fcommon.c (1.151), perl.c (1.45), query.c (1.82), toss.c
 	(1.484): fix warnings
 
-2002-12-05 Thursday 13:54  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.61): Update about golded config
-
-2002-12-05 Thursday 08:10  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.60): Add q/a about differences between
-	win32 binaries
-
 2002-12-03 Tuesday 15:57  stas_degteff
 
 	* doc/hpt.texi (1.91): Specify default value for BundleNameStyle
 	statement
-
-2002-12-03 Tuesday 13:07  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.59): Update Q9 (golded & fidoconfig)
 
 2002-12-03 Tuesday 13:03  stas_degteff
 
@@ -602,14 +530,6 @@
 	* src/perl.c (1.44): Partialy revert patch: '2002-11-21 Thursday
 	07:45  stas_degteff'
 
-2002-11-26 Tuesday 13:32  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.58): A&Q about current with bugs
-
-2002-11-26 Tuesday 12:34  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.57): Add Q&A about echolist
-
 2002-11-26 Tuesday 11:17  stas_degteff
 
 	* config/packer (1.6): Add unpacker definitions for many rar sfx
@@ -652,19 +572,6 @@
 	* src/fcommon.c (1.149): Fix Watcom C comilation warning (type
 	incompatile of 3rd parameter of spawnvp())
 
-2002-11-23 Saturday 21:07  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.56): Add Q&A about 'AREAFILE fidoconfig'
-	for Golded+ config file
-
-2002-11-23 Saturday 20:40  pgul
-
-	* doc/hpt-FAQ.russian (1.55): fix spelling
-
-2002-11-23 Saturday 20:29  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.54): Change A22 (cygwin & mingw)
-
 2002-11-22 Friday 14:24  stas_degteff
 
 	* src/areafix.c (1.368): Fix for availlist feature. Patch from
@@ -695,11 +602,6 @@
 	* src/: pktread.c (1.92), toss.c (1.475): Fix duplicating origin
 	for DOS32
 
-2002-11-21 Thursday 13:07  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.53): Update developers list; remove
-	question about htick
-
 2002-11-21 Thursday 12:42  stas_degteff
 
 	* config/packer (1.5): Fix Unpack pkzip25 line
@@ -725,11 +627,6 @@
 
 	* src/areafix.c (1.366): Three variants for %avail, token
 	availlist. Patch from Alexander Reznikov, 2:4600/220 (modified)
-
-2002-11-20 Wednesday 11:45  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.52): question about big stuff in temp
-	directory
 
 2002-11-20 Wednesday 10:04  stas_degteff
 
@@ -826,11 +723,6 @@
 2002-11-13 Wednesday 15:00  pgul
 
 	* src/toss.c (1.466): Use strmerr() from smapi
-
-2002-11-13 Wednesday 09:52  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.51): Add answer about archivers call and
-	command.com
 
 2002-11-12 Tuesday 11:00  pgul
 
@@ -965,14 +857,6 @@
 
 	* src/link.c (1.65): Prevent compiler varning
 
-2002-10-30 Wednesday 10:28  nssoft
-
-	* doc/hpt-FAQ.russian (1.50): Small correction
-
-2002-10-30 Wednesday 09:21  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.49): Update FAQ-current
-
 2002-10-30 Wednesday 08:52  mche
 
 	* src/toss.c (1.459): syntax of changeFileSuffix is expanded
@@ -981,24 +865,14 @@
 
 	* doc/hpt.texi (1.87): Fix description of the "Unpack" statement
 
-2002-10-30 Wednesday 05:35  nssoft
-
-	* doc/hpt-FAQ.russian (1.48): Update info about BeFTN - Husky
-	project on BeOS
-
 2002-10-29 Tuesday 14:11  mche
 
 	* src/query.c (1.71): fix area autocreation
 
 2002-10-29 Tuesday 08:43  stas_degteff
 
-	* doc/: bugreport.rus (1.4), bugreport.txt (1.3), hpt-FAQ.russian
-	(1.47): Update FAQ (q.1 & q.36); use RCS  keyword for automate FAQ
-	dating
-
-2002-10-29 Tuesday 06:17  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.46): Fix FAQ
+	* doc/: bugreport.rus (1.4), bugreport.txt (1.3): Update FAQ (q.1 &
+	q.36); use RCS	keyword for automate FAQ dating
 
 2002-10-28 Monday 23:30  pgul
 
@@ -1027,11 +901,6 @@
 2002-10-25 Friday 06:17  mche
 
 	* src/scan.c (1.178): undo previos patch
-
-2002-10-24 Thursday 13:33  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.45): Add question/answer about old
-	-current; change address for Serguei Revtov
 
 2002-10-24 Thursday 11:49  mche
 
@@ -1088,11 +957,6 @@
 	* make/: makefile.mvc (1.4), makefile.mvcdll (1.6), makeperl.mvc
 	(1.11), makeperl.mvcdll (1.8): Remove useless defines
 
-2002-10-19 Saturday 19:04  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.44): Fix husky/BeOS maintainer info;
-	change bugreport info
-
 2002-10-18 Friday 13:57  nssoft
 
 	* doc/faqfmt.pl (1.5): Add lost backslash
@@ -1129,10 +993,6 @@
 
 	* src/areafix.c (1.353): correct previous patch
 
-2002-10-17 Thursday 06:24  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.43): fix FAQ about loglevels
-
 2002-10-17 Thursday 05:40  mche
 
 	* src/areafix.c (1.352): send areafix replyies using defined
@@ -1141,15 +1001,6 @@
 2002-10-16 Wednesday 09:37  mche
 
 	* src/areafix.c (1.351): fix bug with rescan echos by pattern
-
-2002-10-15 Tuesday 10:15  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.42): update FAQ
-
-2002-10-15 Tuesday 08:24  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.41): Fix contact address of Andy U.
-	Luk'yanov
 
 2002-10-14 Monday 18:32  sfpavel
 
@@ -1201,18 +1052,10 @@
 	h/areafix.h (1.33): functions addlink and removelink are moved to
 	fidoconfig
 
-2002-10-08 Tuesday 14:31  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.40): FAQ fix
-
 2002-10-08 Tuesday 14:26  stas_degteff
 
 	* src/toss.c (1.450): Use new syntax of move_file() and
 	copy_file(). Test this please!
-
-2002-10-08 Tuesday 12:20  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.39): Update 34 answer
 
 2002-10-08 Tuesday 06:56  sfpavel
 
@@ -1226,19 +1069,6 @@
 
 	* doc/: faqfmt.pl (1.4), perlwin32.rus (1.5), perlwin32.txt (1.3):
 	Fix color for "Q:" strings; fix multi-line Q:
-
-2002-10-07 Monday 12:24  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.38): Spell fix
-
-2002-10-07 Monday 12:14  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.37): Update FAQ date
-
-2002-10-07 Monday 12:12  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.36): Update FAQ: add question about
-	mktemp() unsafety warning
 
 2002-10-04 Friday 11:32  sfpavel
 
@@ -1256,8 +1086,7 @@
 
 2002-10-04 Friday 04:56  stas_degteff
 
-	* doc/: faqfmt.pl (1.3), hpt-FAQ.russian (1.35): Fix about hptsqfix
-	module
+	* doc/faqfmt.pl (1.3): Fix about hptsqfix module
 
 2002-10-03 Thursday 15:52  d_sergienko
 
@@ -1272,18 +1101,6 @@
 	* doc/: perlwin32.rus (1.3), perlwin32.txt (1.1): HPT with Perl
 	support: Frequently Asked Questions
 
-2002-10-03 Thursday 13:34  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.34): Fix typo error
-
-2002-10-03 Thursday 13:26  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.33): Update FAQ
-
-2002-10-03 Thursday 10:16  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.32): FAQ update
-
 2002-10-02 Wednesday 19:45  d_sergienko
 
 	* doc/faqfmt.pl (1.2): replaced \r\n to \n at the end of lines
@@ -1293,29 +1110,6 @@
 	* doc/faqfmt.pl (1.1): Small perl script produce html-formatted
 	output for postings into "Documentation" area of
 	http://sourceforge.net/projects/husky
-
-2002-10-02 Wednesday 14:24  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.31):  Cosmetic update (for automate
-	generating HTML)
-
-2002-10-02 Wednesday 14:12  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.30): update FAQ
-
-2002-10-02 Wednesday 06:47  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.29): Add http://walther.sourceforge.net/ -
-	BeOS FTN package
-
-2002-10-02 Wednesday 06:29  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.28): Remove invalid URLs, fix answers, add
-	Q33
-
-2002-10-01 Tuesday 19:46  stas_degteff
-
-	* doc/hpt-FAQ.russian (1.27): Update FAQ
 
 2002-09-30 Monday 10:50  pgul
 
@@ -1853,11 +1647,6 @@
 	* src/areafix.c (1.327): Initialize variable 'j' in unsubscribe(),
 	line 1222 (prevent compiler varning)
 
-2002-07-24 Wednesday 20:27  stas
-
-	* doc/hpt-FAQ.russian (1.26): Add question about disable netmail
-	packing
-
 2002-07-24 Wednesday 16:18  mche
 
 	* TODO (1.195): no message
@@ -1949,15 +1738,6 @@
 2002-07-14 Sunday 17:51  pavel.gulchouck
 
 	* src/fcommon.c (1.135): removing sent empty arcmail fix
-
-2002-07-14 Sunday 15:49  pavel.gulchouck
-
-	* doc/hpt-FAQ.russian (1.25): fix spelling
-
-2002-07-12 Friday 19:30  stas
-
-	* doc/hpt-FAQ.russian (1.24): Add question about russian
-	documentation.
 
 2002-07-12 Friday 19:03  stas
 
@@ -2284,10 +2064,6 @@
 	* h/fcommon.h (1.41, hpt-1_2_2-release, hpt-1_2-release),
 	src/fcommon.c (1.129): removed commented out Truncate
 
-2002-06-04 Tuesday 16:30  pavel.gulchouck
-
-	* doc/hpt-FAQ.russian (1.23): Added info about JamSMAPIHighwater
-
 2002-06-04 Tuesday 13:36  stas
 
 	* src/query.c (1.48): Add diagnostic messages ("areafixQueueFile
@@ -2372,15 +2148,10 @@
 	hpt-1_2_2-release, hpt-1_2-release), post.c (1.85), txt2pkt.c
 	(1.37, hpt-1_2_2-release, hpt-1_2-release): BeOS compilation fix
 
-2002-05-19 Sunday 08:52  ml
-
-	* doc/hpt-FAQ.russian (1.22): update
-
 2002-05-19 Sunday 08:35  ml
 
-	* doc/hpt-FAQ.russian (1.21), h/hptperl.h (1.7), src/hpt.c (1.148),
-	src/perl.c (1.36): patch for using putMsgInArea in hpt_exit by
-	Dmitriy Kazimirow
+	* h/hptperl.h (1.7), src/hpt.c (1.148), src/perl.c (1.36): patch
+	for using putMsgInArea in hpt_exit by Dmitriy Kazimirow
 
 2002-05-18 Saturday 19:24  pavel.gulchouck
 
@@ -2686,16 +2457,12 @@
 
 2002-04-15 Monday 16:54  pavel.gulchouck
 
-	* doc/: hpt-FAQ.russian (1.20), hpt.texi (1.62): perlSupport token
-	and default for perlFile removed
+	* doc/hpt.texi (1.62): perlSupport token and default for perlFile
+	removed
 
 2002-04-15 Monday 10:54  mche
 
 	* src/: hpt.c (1.143), perl.c (1.26): token perlSupport removed
-
-2002-04-14 Sunday 18:48  ml
-
-	* doc/hpt-FAQ.russian (1.19): update
 
 2002-04-14 Sunday 17:52  ml
 
@@ -3165,18 +2932,12 @@
 
 2002-02-16 Saturday 19:25  ml
 
-	* doc/hpt-FAQ.russian (1.18), doc/hpt.texi (1.57),
-	doc/perlwin32.rus (1.2), h/hptperl.h (1.3), src/hpt.c (1.130),
-	src/perl.c (1.20): perlsupport
+	* doc/hpt.texi (1.57), doc/perlwin32.rus (1.2), h/hptperl.h (1.3),
+	src/hpt.c (1.130), src/perl.c (1.20): perlsupport
 
 2002-02-16 Saturday 18:52  ml
 
 	* src/post.c (1.63): cosmetic fix when printing errors
-
-2002-02-16 Saturday 16:07  pavel.gulchouck
-
-	* doc/hpt-FAQ.russian (1.17): Fix spelling, update jam known bugs
-	info
 
 2002-02-16 Saturday 11:08  pavel.gulchouck
 
@@ -3620,8 +3381,8 @@
 
 2002-01-10 Thursday 16:10  ml
 
-	* TODO (1.183), doc/hpt-FAQ.russian (1.16), doc/hpt.texi (1.54),
-	src/areafix.c (1.235): multiply rules files (by sir)
+	* TODO (1.183), doc/hpt.texi (1.54), src/areafix.c (1.235):
+	multiply rules files (by sir)
 
 2002-01-06 Sunday 19:54  ml
 
@@ -3693,9 +3454,9 @@
 
 2001-12-28 Friday 17:22  ml
 
-	* TODO (1.180), doc/hpt-FAQ.russian (1.15), doc/hpt.texi (1.49),
-	src/areafix.c (1.231), src/toss.c (1.378): remove yesterday code
-	from pavel and fix this bug in areafix
+	* TODO (1.180), doc/hpt.texi (1.49), src/areafix.c (1.231),
+	src/toss.c (1.378): remove yesterday code from pavel and fix this
+	bug in areafix
 
 2001-12-28 Friday 09:08  mche
 
@@ -3744,11 +3505,6 @@
 2001-12-23 Sunday 22:16  pavel.gulchouck
 
 	* doc/hpt.texi (1.47): added arcNetmail
-
-2001-12-23 Sunday 20:44  pavel.gulchouck
-
-	* doc/hpt-FAQ.russian (1.14): Added second answer about pack
-	netmail
 
 2001-12-23 Sunday 20:39  pavel.gulchouck
 
@@ -3802,8 +3558,7 @@
 
 2001-12-13 Thursday 14:55  ml
 
-	* doc/hpt-FAQ.russian (1.13), src/toss.c (1.371): print link
-	address after pkt name
+	* src/toss.c (1.371): print link address after pkt name
 
 2001-12-12 Wednesday 16:00  ml
 
@@ -3815,11 +3570,10 @@
 
 2001-12-12 Wednesday 11:48  ml
 
-	* TODO (1.176), doc/hpt-FAQ.russian (1.12), doc/hpt.texi (1.45),
-	h/toss.h (1.43), src/areafix.c (1.225), src/dupe.c (1.46),
-	src/hpt.c (1.118), src/hptlink.c (1.29), src/hpttree.c (1.19),
-	src/toss.c (1.370): don't make AREATAGs and PATHs with forbidden
-	symbols
+	* TODO (1.176), doc/hpt.texi (1.45), h/toss.h (1.43), src/areafix.c
+	(1.225), src/dupe.c (1.46), src/hpt.c (1.118), src/hptlink.c
+	(1.29), src/hpttree.c (1.19), src/toss.c (1.370): don't make
+	AREATAGs and PATHs with forbidden symbols
 
 2001-12-11 Tuesday 19:43  ml
 
@@ -3840,7 +3594,7 @@
 
 2001-12-09 Sunday 18:38  ml
 
-	* doc/: hpt-FAQ.russian (1.11), hpt.texi (1.42): doc updates
+	* doc/hpt.texi (1.42): doc updates
 
 2001-12-09 Sunday 18:37  ml
 
@@ -3862,9 +3616,9 @@
 
 2001-11-13 Tuesday 13:58  ml
 
-	* doc/hpt-FAQ.russian (1.10), man/hpttree.1 (1.2), src/fcommon.c
-	(1.100), src/hptlink.c (1.28), src/hpttree.c (1.18), src/pktread.c
-	(1.78): exit codes for hptlink & hpttree [patch by Serguei Revtov]
+	* man/hpttree.1 (1.2), src/fcommon.c (1.100), src/hptlink.c (1.28),
+	src/hpttree.c (1.18), src/pktread.c (1.78): exit codes for hptlink
+	& hpttree [patch by Serguei Revtov]
 
 2001-11-08 Thursday 14:42  ml
 
@@ -3905,7 +3659,7 @@
 
 2001-09-20 Thursday 05:51  ml
 
-	* doc/: hpt-FAQ.russian (1.8), hpt.texi (1.40): updating docs
+	* doc/hpt.texi (1.40): updating docs
 
 2001-09-18 Tuesday 15:01  pavel.gulchouck
 
@@ -3960,8 +3714,8 @@
 
 2001-08-24 Friday 07:27  ml
 
-	* doc/hpt-FAQ.russian (1.7), src/hpt.c (1.113), src/toss.c (1.359):
-	fixed config file name processing with -c option
+	* src/: hpt.c (1.113), toss.c (1.359): fixed config file name
+	processing with -c option
 
 2001-08-21 Tuesday 16:48  georgi
 
@@ -3969,7 +3723,7 @@
 
 2001-08-19 Sunday 11:35  ml
 
-	* TODO (1.170), doc/hpt-FAQ.russian (1.5): Russian FAQ update
+	* TODO (1.170): Russian FAQ update
 
 2001-08-19 Sunday 11:10  ml
 
@@ -3998,9 +3752,8 @@
 
 2001-08-08 Wednesday 11:29  ml
 
-	* doc/hpt-FAQ.russian (1.4), doc/hpt.texi (1.33), man/hpt.1 (1.13),
-	src/areafix.c (1.218), src/post.c (1.56): documented how to post
-	with several flags
+	* doc/hpt.texi (1.33), man/hpt.1 (1.13), src/areafix.c (1.218),
+	src/post.c (1.56): documented how to post with several flags
 
 2001-08-02 Thursday 08:02  ml
 
@@ -4017,9 +3770,8 @@
 
 2001-07-24 Tuesday 08:33  ml
 
-	* doc/hpt-FAQ.russian (1.3), src/toss.c (1.354): don't add zone
-	number in PATH; some shanges in code which creates path&seen-by
-	arrays from msg text
+	* src/toss.c (1.354): don't add zone number in PATH; some shanges
+	in code which creates path&seen-by arrays from msg text
 
 2001-07-11 Wednesday 20:52  pavel.gulchouck
 
