@@ -132,6 +132,7 @@ static int  do_perl=1;
 static int  perl_vars_invalid = PERL_CONF_MAIN|PERL_CONF_LINKS|PERL_CONF_AREAS;
 
 int skip_addvia = 0;			/* val: skip via adding */
+int perl_setattr= 0;			/* val: perl manages msg attr */
 int perl_subs   = -1;			/* val: defined subs */
 #ifdef _MSC_VER
   EXTERN_C void xs_init (pTHXo);
@@ -1708,6 +1709,7 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
 
    VK_START_HOOK(perlfilter, SUB_FILTER, 0)
 
+   perl_setattr = 0;
    if (msg->netMail != 1) {
      char *p, *p1;
      p = msg->text+5;
@@ -1823,7 +1825,7 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
        update_addr(msg);
        /* process flags, update message if needed */
        attr = SvUV(perl_get_sv("attr", FALSE));
-       msg->attributes = attr & 0xffff;
+       msg->attributes = attr & 0xffff; perl_setattr = 1;
        if ((ptr = update_flags(msg->text, attr, MODE_REPLACE)) != NULL) {
            if (ptr != msg->text) { free(msg->text); msg->text = ptr; }
            msg->textLength = strlen(msg->text);
