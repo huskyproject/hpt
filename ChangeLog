@@ -1,3 +1,25 @@
+2001-05-05 Saturday 22:28  tobi
+
+	* doc/hpt.texi (1.25), src/toss.c (1.343): Implemented the
+	"autoAreaCreateSubdirs" feature to create a structured message base
+	instead of a flat one.
+
+2001-05-05 Saturday 12:12  ml
+
+	* TODO (1.169), doc/hpt.texi (1.24), src/areafix.c (1.208),
+	src/toss.c (1.342): areafixnames, fixed bug in areafix when
+	processing more than one request at once
+
+2001-05-05 Saturday 10:51  ml
+
+	* TODO (1.168), doc/hpt.texi (1.23), src/areafix.c (1.207),
+	src/hpt.c (1.109), src/toss.c (1.341): advisory lock
+
+2001-05-05 Saturday 09:08  ml
+
+	* TODO (1.167), doc/hpt.texi (1.22), src/toss.c (1.340): allowed
+	passthrough keyword in autoarecreatedefaults
+
 2001-05-04 Friday 19:55  ml
 
 	* TODO (1.166), doc/hpt.texi (1.21), h/date.h (1.176), src/toss.c
