@@ -321,7 +321,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    if (cmPack &  2) scanExport(SCN_FILE | SCN_NETMAIL, scanParmF);
    if (cmPack &  4) scanExport(SCN_NAME | SCN_NETMAIL, scanParmA);
    
-   if (cmLink == 1) linkAreas();
+   if (cmLink == 1) linkAreas(NULL);
    
    writeMsgToSysop();
    

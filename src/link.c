@@ -60,6 +60,8 @@
 #include <tree.h>
 #include <fcommon.h>
 
+#include "link.h"
+
 /* internal structure holding msg's related to link information */
 /* used by linkArea */
 struct msginfo {
