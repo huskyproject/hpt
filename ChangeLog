@@ -1,3 +1,26 @@
+2003-01-31 Friday 18:29  mche
+
+	* src/areafix.c (1.383): New command 'afix!' in addition to 'afix'
+	It does the same job as 'afix' and send subscride/unsubscribe
+	letter to link that was manualy subscribed/unsubscribed by areafix
+	command like: hpt afix! 2:464/910 -910.TEST This command remove
+	echo link 2:464/910 from 910.TEST and produce letter to 2:464/910
+	with body "-910.TEST"
+
+2003-01-31 Friday 18:24  mche
+
+	* src/areafix.c (1.382), src/global.c (1.49), src/hpt.c (1.170),
+	h/global.h (1.37): New command 'afix!' in addition to 'afix' It
+	does the same job as 'afix' and send subscride/unsubscribe letter
+	to link that was manualy subscribed/unsubscribed by areafix command
+	like: hpt afix! 2:464/910 -910.TEST This command remove echo link
+	2:464/910 from 910.TEST and produce letter to 2:464/910 with body
+	"-910.TEST"
+
+2003-01-31 Friday 07:05  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.75): Add Q about cvs and proxy
+
 2003-01-28 Tuesday 21:42  stas_degteff
 
 	* doc/hpt-FAQ.russian (1.74): Change (rename and improve) Q27:
