@@ -30,7 +30,7 @@ tlog: tlog.o log.o
 	$(CC) $(LFLAGS) -o tlog tlog.o log.o
 
 tpkt: tpkt.o pktwrite.o log.o fcommon.o pktread.o recode.o
-	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o pktread.o pktwrite.o global.o recode.o log.o $(FIDOCONFIG) $(SMAPI)
+	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o pktread.o pktwrite.o global.o recode.o log.o xstr.o $(FIDOCONFIG) $(SMAPI)
 
 hpt: $(OBJS)
 	$(CC) $(LFLAGS) -o hpt $(OBJS) $(FIDOCONFIG) $(SMAPI) 
