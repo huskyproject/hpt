@@ -1050,7 +1050,7 @@ void repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_link *link)
    // link is passive?
    if (link->Pause && !echo->noPause) return;
    // check access read for link
-   if (e_readCheck(config, echo, link)) return;
+   if (checkAreaLink(echo, link->hisAka, 1)!=0) return;
 
    if (link->pktFile != NULL && link->pktSize != 0) { // check packet size
 	   len = fsize(link->pktFile);

@@ -1180,14 +1180,19 @@ s_arealink *getAreaLink(s_area *area, s_addr aka)
 	return NULL;
 }
 
-int checkAreaLink(s_area *area, s_addr aka)
+// import: type == 0, export: type != 0 
+int checkAreaLink(s_area *area, s_addr aka, int type)
 {
 	s_arealink *arealink;
 	int writeAccess = 0;
 	
 	arealink = getAreaLink(area, aka);
 	if (arealink) {
+	    if (type==0) {
 		if (arealink->import) writeAccess = 0; else writeAccess = 3;
+	    } else {
+		if (arealink->export) writeAccess = 0; else writeAccess = 3;
+	    }
 	} else {
 		if (addrComp(aka, *area->useAka)==0) writeAccess = 0;
 		else writeAccess = 4;
@@ -1214,7 +1219,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
    statToss.echoMail++;
 
    if (echo == &(config->badArea)) writeAccess = 0;
-   else writeAccess = checkAreaLink(echo, pktOrigAddr);
+   else writeAccess = checkAreaLink(echo, pktOrigAddr, 0);
    if (writeAccess!=0) echo = &(config->badArea);
 		
    if (echo != &(config->badArea)) {
@@ -1262,7 +1267,7 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
         if ((link != NULL) && (link->autoAreaCreate != 0) && (writeAccess == 0)) {
            autoCreate(area, pktOrigAddr, NULL);
            echo = getArea(config, area);
-		   writeAccess = checkAreaLink(echo, pktOrigAddr);
+		   writeAccess = checkAreaLink(echo, pktOrigAddr, 0);
 	   if (writeAccess) {
 	       rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
 	   } else {
@@ -2213,7 +2218,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
        return 1;
    }
    
-   if (checkAreaLink(echo, pktOrigAddr) == 0) {
+   if (checkAreaLink(echo, pktOrigAddr, 0) == 0) {
 	   if (dupeDetection(echo, msg)==1) {
 		   // no dupe
 		   if (config->carbonCount != 0) carbonCopy(&msg, echo);

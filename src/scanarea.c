@@ -187,7 +187,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
        // link is passive?
        if (link->Pause && !echo->noPause) continue;
        // check access read for link
-       if (e_readCheck(config, echo, link)) continue;
+       if (checkAreaLink(echo, link->hisAka, 1)!=0) continue;
           if (link->pktFile != NULL && link->pktSize != 0) { // check packet size
              len = fsize(link->pktFile);
              if (len >= link->pktSize * 1024L) { // Stop writing to pkt

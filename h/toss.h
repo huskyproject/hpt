@@ -58,6 +58,7 @@ void arcmail(s_link *link);
 int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr);
 void tossFromBadArea(void);
 void writeMsgToSysop(void);
+int checkAreaLink(s_area *area, s_addr aka, int type);
 
 #define REC_HDR 0x0001
 #define REC_TXT 0x0002
