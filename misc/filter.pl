@@ -477,7 +477,7 @@ EOF
           next;
         }
         if ($subject =~ /^Your Areafix Request/)
-        { # 5020/52
+        { # Fidogate
           next unless /^[ *] [ R]   (\S+)\s*$/;
           push (@areas, $1);
           next;
@@ -533,11 +533,61 @@ EOF
     }
   }
   else
-  {
-    if (grep(/^\x01Via 2:463\/68(\.0)?(\@|\s)/, @lines) > 1)
+  { # Transit message
+    # Dupe- and loop- check
+    opendupe();
+    if ($msgtied)
     {
+      ($msgid) = grep(/^\x01MSGID:/, @lines);
+      if ($msgid)
+      { $msgid =~ s/^\x01MSGID:\s*//;
+        $msgid =~ tr/A-Z/a-z/;
+      }
+      else
+      { $msgid = sprintf("C%s %08x", $fromaddr, crc32($date . join(' ',grep(!/^(\x01(Via|Recd|Forwarded))(:|\s)/,@lines))));
+      }
+      $key = sprintf("NETMAIL|%s|%s|%08x", $msgid, $toaddr, crc32($fromname . $toname . $subject));
+      $path = $lastpath = "";
+      foreach(grep(/^\x01(Via|Recd|Forwarded):?\s/, @lines))
+      { next unless m#(\d+:\d+/\d+(?:\.\d+)?)(\@|\s)#;
+        next if $lastpath eq $1;
+        $lastpath = $1;
+        $path .= " " if $path;
+        $path .= $1;
+      }
+      $curtime = time();
+      if ($oldval=checkdupe($key))
+      { # Dupe or Loop
+        $text =~ s/\r\n?/\n/gs;
+        ($oldtime, $oldpath, $oldpktfrom) = split(/\|/, $oldval);
+        $oldtime = localtime($oldtime);
+        if ($path eq $oldpath && $oldpktfrom eq $pktfrom)
+        { # Dupe
+           $dupetext = <<EOF;
+Pkt from: $pktfrom
+Original msg arrived: $oldtime
+$text
+EOF
+          putMsgInArea("NETMAILDUPES", $fromname, $toname, $fromaddr, "",
+                       $subject, $date, "pvt sent read", $dupetext, 0);
+          $kill = 1;
+          return "Dupe";
+        } else
+        { # Loop
+          putMsgInArea("LOOPS", $fromname, $toname, $fromaddr, $toaddr,
+                       $subject, $date, "pvt sent read",
+                       "hpt> loop\r" . $text, 0);
+          $kill = 1;
+          return "Loop";
+        }
+      }
+      adddupe($key, "$curtime|$path|$pktfrom");
+    }
+    if (_route($toaddr, $attr, $text) eq $pktfrom)
+    { # Route to pktfrom-addr -- ping-pong
       putMsgInArea("LOOPS", $fromname, $toname, $fromaddr, $toaddr,
-         $subject, $date, "pvt sent read", "hpt> loop\r" . $text, 0);
+                   $subject, $date, "pvt sent read",
+                   "hpt> ping-pong with $pktfrom\r" . $text, 0);
       $kill = 1;
       return "Loop";
     }
@@ -594,8 +644,9 @@ EOF
   }
   $toboss   = $toaddr;
   $toboss   =~ s/\.\d+$//;
-  if ($text =~ /^hpt> [^\r]+\r/)
-  { $text = $';
+  # Remove my "hpt> " comments
+  if ($text =~ /^((?:\x01[^\r]+\r)*)hpt> [^\r]+\r/)
+  { $text = "$1$'";
     $change = 1;
   }
   compileNL() unless $nltied;
