@@ -1,3 +1,11 @@
+2002-09-17 Tuesday 19:53  stas_degteff
+
+	* doc/hpt.texi (1.82): Correct documentation
+
+2002-09-17 Tuesday 18:59  stas_degteff
+
+	* doc/hpt.texi (1.81): Fix spelling and update text
+
 2002-09-15 Sunday 10:42  d_sergienko
 
 	* src/link.c (1.59): fix spelling; fix trailing slash at line 253
