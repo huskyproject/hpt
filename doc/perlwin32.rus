@@ -9,7 +9,7 @@ ActivePerl build 623, вероятно будет работать и с более новыми)
 nmake -f makefile.mvc или nmake -f makefile.mvcdll
 
 hpt:
-(ActivePerl поставлен в D:\Perl; иначе надо исправить путь в makefile.mvc*)
+(ActivePerl поставлен в D:\Perl; иначе надо исправить путь в makeperl.mvc*)
 
 nmake -f makeperl.mvc или nmake -f makeperl.mvcdll
 
