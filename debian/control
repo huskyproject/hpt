@@ -2,7 +2,7 @@ Source: hpt
 Section: contrib/mail
 Priority: optional
 Maintainer: Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>
-Build-Depends: debhelper (>> 3.0.0), libsmapi2-dev(>=2.1.0-1), libfidoconf0(>= 0.12-1), libperl-dev
+Build-Depends: debhelper (>> 3.0.0), libsmapi2-dev(>=2.1.0-1), libfidoconf0-dev(>= 0.13-1), libperl-dev
 Standards-Version: 3.5.2
 
 Package: hpt
