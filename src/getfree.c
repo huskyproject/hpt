@@ -216,17 +216,18 @@ unsigned long getfree (char *path)
 #else
 unsigned long getfree (char *path)
 {
-  w_log ('9', "warning: free space doesn't checked in %s.",path);
+  w_log ('9', "warning: free space doesn't checked in %s",path);
   return ULONG_MAX;
 }
 
 #endif
 
 #elif defined(MSDOS)
+#include <limits.h>
 unsigned long getfree (char *path)
 {
-  w_log ('9', "warning: free space doesn't checked in %s.",path);
-  return 0L;
+  w_log ('9', "warning: free space doesn't checked in %s",path);
+  return ULONG_MAX;
 }
 #else
 
