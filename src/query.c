@@ -191,10 +191,12 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
             if( stricmp(areaNode->type,czFreqArea) == 0 && 
                 addrComp(pktOrigAddr, areaNode->downlinks[0])!=0)
                 return 4;  // wrong link to autocreate from
-            // removinq area from query. it is autocreated now
-            queryAreasHead->nFlag = 1; // query was changed
-            areaNode->type[0] = '\0';          // mark as deleted
-            
+            if( stricmp(areaNode->type,czFreqArea) == 0 )
+            {
+                // removinq area from query. it is autocreated now
+                queryAreasHead->nFlag = 1; // query was changed
+                areaNode->type[0] = '\0';  // mark as deleted
+            }
             // setting up msgbase dir
             if (config->createFwdNonPass==0)
                 msgbDir = pass;
@@ -373,6 +375,8 @@ char* af_Req2Idle(char *areatag, char* report, s_addr linkAddr)
                 if(areaNode->linksCount == 1)
                 {
                     strcpy(areaNode->type,czIdleArea);
+                    areaNode->bTime = tnow;
+                    areaNode->eTime = when;
                     w_log('8', "areafix: make request idle for area: %s", areaNode->name);
                 }
                 xscatprintf(&report, " %s %s  request canceled\r",
@@ -406,7 +410,7 @@ void af_QueueReport()
     {
         tmpNode = tmpNode->next;
         strcpy(link1,aka2str(tmpNode->downlinks[0]));
-
+        strcpy(type,tmpNode->type);
         if( stricmp(tmpNode->type,czFreqArea) == 0 )
         {
             strcpy(link2,aka2str(tmpNode->downlinks[1]));
@@ -419,7 +423,6 @@ void af_QueueReport()
                     "request");
                 continue;
             }
-            strcpy(type,tmpNode->type);
             if(tmpNode->eTime < tnow ) 
             {
                 strcpy(state,"rr_or_d");
@@ -481,7 +484,6 @@ void af_QueueReport()
             xscatprintf(&report,rmask, tmpNode->name, type,
                 link1,"",
                 state);
-
         }
 
     }
