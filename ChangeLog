@@ -1,3 +1,8 @@
+2005-01-30 Sunday 20:08  i_zkh
+
+	* doc/hpt.texi (1.157): Moved RobotsArea description to fidoconfig
+	doc
+
 2005-01-28 Friday 20:08  i_zkh
 
 	* doc/hpt.texi (1.156): Minor fix (made it compilable)
