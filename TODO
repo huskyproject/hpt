@@ -12,7 +12,6 @@ Category 1: Will certainly be implemented until next release
 - autoAreaCreateMask
 - areafix from cmd line (like hpt afix <addr> %command)
 - del pass areas after unsubscribing
-- pack netmail in pkt/arcmail bundles
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
@@ -33,3 +32,4 @@ Category 4: Will not be implemented
 - unpack all bundles before toss -> carc
 - afterUnpackBundle, afterUnpackAll -> carc
 - UnpackAllBeforeToss -> carc
+- pack netmail in pkt/arcmail bundles -> carc
