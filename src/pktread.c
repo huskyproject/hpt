@@ -110,9 +110,10 @@ s_pktHeader *openPkt(FILE *pkt)
   header->minorProductRev = getc(pkt);
 
   capWord = getUINT16(pkt);
-  if (capWord!=header->capabilityWord &&
-      header->capabilityWord!=0) { /* if both capabilitywords */
-    free(header);                        /* aren't the same, abort */
+  /* if both capabilitywords aren't the same, abort */
+  /* but read stone-age pkt */
+  if (capWord!=header->capabilityWord && header->capabilityWord!=0) {
+    free(header);
     header = NULL;
     return NULL;
   } /* endif */
