@@ -161,7 +161,7 @@ int to_us(const s_addr destAddr)
 
 XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr) 
 {
-	char **outbounds[] = { &tossDir, &config->protInbound, &config->inbound, NULL};
+	char **outbounds[4];
 	XMSG  msgHeader;
 	struct tm *date;
 	time_t    currentTime;
@@ -169,6 +169,12 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr)
 	int i;
 	char *subject=NULL;
 	struct stat fInfo;
+       
+        //init outbounds
+        outbounds[0] = &tossDir;
+        outbounds[1] = &config->protInbound;
+        outbounds[2] = &config->inbound;
+        outbounds[3] = NULL;
 
 	// clear msgheader
 	memset(&msgHeader, '\0', sizeof(XMSG));
