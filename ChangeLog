@@ -1,3 +1,11 @@
+2002-02-20 Wednesday 18:16  mche
+
+	* src/query.c (1.21): changed datetime rutin in query
+
+2002-02-20 Wednesday 18:15  mche
+
+	* h/query.h (1.7): changed datetime rutine in query
+
 2002-02-19 Tuesday 21:33  pavel.gulchouck
 
 	* doc/hpt.texi (1.59), src/post.c (1.64): "hpt post" add areaname
