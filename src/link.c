@@ -108,9 +108,9 @@ static s_msginfo *findMsgId(s_msginfo *entries, struct hashinfo *hash, dword has
     unsigned long h, d = 1;
     dword crc;
     if (crc32 == 0)
-        h = crc = strcrc32(msgId, 0xFFFFFFFFL);
+        h = crc = strcrc32(strUpper(msgId), 0xFFFFFFFFL);
     else if (crc32 == 0xFFFFFFFFL)
-        h = crc = Jam_Crc32((UCHAR*)msgId, strlen(msgId));
+        h = crc = Jam_Crc32((UCHAR*)strUpper(msgId), strlen(msgId));
     else
         h = crc = crc32;
     while (d < hashSize) {
@@ -122,7 +122,7 @@ static s_msginfo *findMsgId(s_msginfo *entries, struct hashinfo *hash, dword has
             hash[h].crc = crc;
             return &(entries[add-1]);
         }
-        if (hash[h].crc == crc && !strcmp(entries[hash[h].idx-1].msgId, msgId)) {
+        if (hash[h].crc == crc && !stricmp(entries[hash[h].idx-1].msgId, msgId)) {
             /* Found it ! */
             return &(entries[hash[h].idx-1]);
         } else {
