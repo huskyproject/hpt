@@ -1,3 +1,7 @@
+2004-11-20 Saturday 18:24  d_sergienko
+
+	* src/seenby.c (hpt-1_4-stable.7): debug code: newLinks creating
+
 2004-11-18 Thursday 22:50  d_sergienko
 
 	* h/seenby.h, src/seenby.c, src/toss.c (hpt-1_4-stable.[4,6,12]):
