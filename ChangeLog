@@ -2,6 +2,12 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Apr  7 22:43:10 NOVST 2001
+max:
+* fixed "created 256 pkt's/sec!" (were always printed when generated 256 pkt
+  file names, now if really in one second).
+
+----- cvs ci ------
 Thu Apr  5 23:09:57 NOVST 2001
 max:
 * code cleanup from yesterday fix

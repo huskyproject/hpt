@@ -65,7 +65,8 @@ int       cmLink = 0;
 int       cmAfix = 0;
 int       cmPause = 0;
 int       noHighWaters = 0;
-int       count = 0;
+int       pkt_count = 0;
+int       pkt_aTime = 0;
 int	  quiet = 0;
 
 s_addr afixAddr = {0,0,0,0};

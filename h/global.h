@@ -60,7 +60,8 @@ extern int       cmLink;
 extern int       cmAfix;
 extern int       cmPause;
 extern int       noHighWaters;
-extern int       count; // pkt counter
+extern int       pkt_count; // pkt counter
+extern int       pkt_aTime;
 extern int	 quiet;
 
 extern s_addr afixAddr;

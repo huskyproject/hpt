@@ -274,7 +274,7 @@ int createTempPktFileName(s_link *link)
 
     tr=time(NULL);
     tp=localtime(&tr);
-    counter = count;
+    counter = pkt_count;
 
     wday=wdays[tp->tm_wday];
 
@@ -291,13 +291,6 @@ int createTempPktFileName(s_link *link)
 		xscatprintf(&tmp, ".%03x%c", link->hisAka.zone, limiter);
 	}
 
-   /* There is a problem here: Since we use the tmpOutbound fileName for
-    duplicate checking, links with different zones who does not have problems
-    with duplicate pfileName´s increment the counter. We can run out of
-    counters without using them.  Has anybody understand that? :-) This is no
-    big problem, but a big system with many links and many zones may encounter
-    problems */
-
 	/* Making pkt name */
 	while(1) {
 		do {
@@ -308,16 +301,20 @@ int createTempPktFileName(s_link *link)
 		} while ((fexist(fileName) || fileNameAlreadyUsed(fileName, NULL)) &&
 				 (counter<=255));
 
-		if (counter<=255) break;
+		if (counter<=256) break;
 		else {
-			w_log('7',"created 256 pkt's/sec!");
-			sleep(1);
-			aTime = time(NULL);
-			aTime %= 0xffffff;
 			counter=0;
+			nfree(fileName);
+			if (pkt_aTime==aTime) {
+				w_log('7',"created 256 pkt's/sec!");
+				sleep(1);
+				aTime = time(NULL);
+				aTime %= 0xffffff;
+			}
 		}
 	}
-	count = counter;
+	pkt_count = counter;
+	pkt_aTime = aTime;
 
 	// path to bundle
 	if (bundleNameStyle!=eAmiga) {
