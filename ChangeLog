@@ -1,3 +1,31 @@
+2002-10-23 Wednesday 11:55  mche
+
+	* h/areafix.h (1.34), src/areafix.c (1.354): fix ERROR redefinition
+
+2002-10-23 Wednesday 10:29  mche
+
+	* h/fcommon.h (1.44): clean type redefinition for win32 compilers
+
+2002-10-23 Wednesday 10:23  mche
+
+	* src/: post.c (1.96), toss.c (1.456), txt2pkt.c (1.39), toss.c
+	(1.457): clean type redefinition for win32 compilers
+
+2002-10-23 Wednesday 08:22  stas_degteff
+
+	* makefile.inc (1.23): Prevent remove files like 'Makefile' on
+	non-unix OS
+
+2002-10-23 Wednesday 08:13  mche
+
+	* h/global.h (1.32), src/hpt.c (1.157), src/toss.c (1.455),
+	makefile.inc (1.22), make/makefile.inc (1.12): function getfree()
+	moved to fidoconfig
+
+2002-10-23 Wednesday 07:26  mche
+
+	* src/post.c (1.95): fix documentation
+
 2002-10-22 Tuesday 10:31  sfpavel
 
 	* debian/: changelog (1.18), docs (1.7): New debian package
