@@ -1,3 +1,35 @@
+2002-11-14 Thursday 14:25  stas_degteff
+
+	* src/toss.c (1.472): Use spanvp alwais if possible
+
+2002-11-14 Thursday 13:17  stas_degteff
+
+	* src/toss.c (1.471): Small reduce code
+
+2002-11-14 Thursday 13:02  stas_degteff
+
+	* src/areafix.c (1.364): Fix unsubscribing without arefixqueuefile
+
+2002-11-14 Thursday 12:52  stas_degteff
+
+	* config/packer (1.2): Update pkzip call
+
+2002-11-14 Thursday 12:42  stas_degteff
+
+	* src/toss.c (1.470): Fix reporting about MSGAPI error
+
+2002-11-14 Thursday 11:03  stas_degteff
+
+	* src/toss.c (1.469): Fix previous buggy patch
+
+2002-11-14 Thursday 08:39  stas_degteff
+
+	* HISTORY (1.12): Update bugfix list
+
+2002-11-14 Thursday 05:30  stas_degteff
+
+	* src/toss.c (1.468): optimize previous
+
 2002-11-13 Wednesday 15:03  pgul
 
 	* src/toss.c (1.467): Fix typo in previous patch
