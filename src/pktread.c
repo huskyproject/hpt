@@ -36,6 +36,7 @@
 #include <ctype.h>
 
 #include <huskylib/compiler.h>
+#include <huskylib/huskylib.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
@@ -391,9 +392,6 @@ char safe_toupper(char c)
     return c;
 }
 
-static const char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-
 int get_month(const char *pmon, flag_t *flag)
 {
     int i;
@@ -405,9 +403,9 @@ int get_month(const char *pmon, flag_t *flag)
 
     for (i=0; i < 12; i++)
     {
-        if (pmon[0] == months[i][0] &&
-            pmon[1] == months[i][1] &&
-            pmon[2] == months[i][2])
+        if (pmon[0] == months_ab[i][0] &&
+            pmon[1] == months_ab[i][1] &&
+            pmon[2] == months_ab[i][2])
         {
             return i;
         }
@@ -415,9 +413,9 @@ int get_month(const char *pmon, flag_t *flag)
 
     for (i=0; i < 12; i++)
     {
-        if (safe_toupper(pmon[0]) == safe_toupper(months[i][0]) &&
-            safe_toupper(pmon[1]) == safe_toupper(months[i][1]) &&
-            safe_toupper(pmon[2]) == safe_toupper(months[i][2]))
+        if (safe_toupper(pmon[0]) == safe_toupper(months_ab[i][0]) &&
+            safe_toupper(pmon[1]) == safe_toupper(months_ab[i][1]) &&
+            safe_toupper(pmon[2]) == safe_toupper(months_ab[i][2]))
         {
             (*flag) |= FTSC_FLAWY;
             return i;
@@ -570,7 +568,7 @@ static flag_t parse_ftsc_date(struct tm * ptm, char *pdatestr)
 static void make_ftsc_date(char *pdate, const struct tm *ptm)
 {
     sprintf(pdate, "%02d %-3.3s %02d  %02d:%02d:%02d",
-            ptm->tm_mday % 100, months[ptm->tm_mon], ptm->tm_year % 100,
+            ptm->tm_mday % 100, months_ab[ptm->tm_mon], ptm->tm_year % 100,
             ptm->tm_hour % 100, ptm->tm_min % 100, ptm->tm_sec % 100);
 }
 
