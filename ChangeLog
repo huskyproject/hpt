@@ -1,2297 +1,2204 @@
-hpt 0.9.8 (development version)
----------	
-
------ cvs ci ------
-Thu Apr 26 20:21:33 NOVST 2001
-max:
-* HAVE_POPEN definition
-* MAXPATHLEN definition if not defined
-
------ cvs ci ------
-Wed Apr 25 00:17:41 NOVST 2001
-max:
-* don't add .0 in @Via address
-* CapabilityWord error log warning
-* carbon fixes from kees
-
------ cvs ci ------
-Tue Apr 17 23:59:14 NOVST 2001
-max:
-* remove copying msgs to bad with "no downlinks for passthrough area" reason
-* fixed bug in "toss -b" with \001 before AREA
-
------ cvs ci ------
-Thu Apr 12 12:12:34 NOVST 2001
-max:
-* use current smapi! (fixed "direct" & "immediate" msg packing)
-patch from kees:
-* added CarbonRule, CarbonGroups, CarbonFromArea
-* changed CarbonText: skip kludges
-
------ cvs ci ------
-Mon Apr  9 13:12:20 NOVST 2001
-max:
-* fixed sbadd after processing echomail from/to different zone
-* strip spaces from end of lines in echotoss.log
-* fixed stripping areaname when carbon messages (carbonText)
-* now areaname is always skipped (in carbonextern too)
-* fixed processing areafix for @othernets (Mike Ivanov)
-patch from Alex Bronin:
-* use spawnvp() instead of spawnv()
-
------ cvs ci ------
-Sat Apr  7 22:43:10 NOVST 2001
-max:
-* fixed "created 256 pkt's/sec!" (were always printed when generated 256 pkt
-  file names, now if really in one second).
-
------ cvs ci ------
-Thu Apr  5 23:09:57 NOVST 2001
-max:
-* code cleanup from yesterday fix
-
------ cvs ci ------
-Wed Apr  4 23:29:55 NOVST 2001
-max:
-* fixed packing to empty bundles with ~ prefix in ?lo.
-
------ cvs ci ------
-Sat Mar 31 16:11:07 NOVST 2001
-max:
-* sample configs
-
------ cvs ci ------
-Fri Mar 30 15:17:24 NOVST 2001
-max (patch from Serguei Revtov):
-* win32/watcom: any non-zero unpacker code is treated as error
-
------ cvs ci ------
-Tue Mar 27 21:23:16 NOVST 2001
-max:
-* fix autocreate bug when creates non-passthrough area if linkmsgbasedir used
-patch from Serguei Revtov:
-* hptlink: bugly twice linking of 2 msgs with reverse order when -t set
-
------ cvs ci ------
-Mon Mar 26 13:17:50 NOVST 2001
-max:
-* removing lock file when exit "out of memory"
-* fixed "hpt post -x"
-
------ cvs ci ------
-Sun Mar 25 20:08:09 NOVST 2001
-max:
-* fixed compiling on win32 ('cause of yesterday changes)
-
------ cvs ci ------
-Sat Mar 24 14:51:39 NOVT 2001
-max:
-* fix checking .bsy under win32 (WATCOMC)
-* small changes in areafix
-
------ cvs ci ------
-Fri Mar 23 10:32:34 NOVT 2001
-max:
-* turn off high waters in netmail for SDM areas
-
------ cvs ci ------
-Thu Mar 22 20:20:25 NOVT 2001
-max:
-* areafix.c cleanup (thanx to Kees Bergwerf)
-* update high waters for netmail
-
------ cvs ci ------
-Tue Mar 20 17:36:41 NOVT 2001
-max (patch from Serguei Revtov):
-* use spawn() instead of system() in WATCOMC on packing
-
------ cvs ci ------
-Sat Mar 17 12:55:45 NOVT 2001
-max:
-* closing lockfile before remove (fix win32 trouble)
-
------ cvs ci ------
-Tue Mar 13 22:42:10 NOVT 2001
-max (patch from Serguei Revtov):
-* trying to fix unwanted autopause (fileTime > current)
-
----- cvs ci ------
-Mon Mar 12 16:02:17 NOVT 2001
-max:
-* fixed getfree compiling for SUN & win32
-
----- cvs ci ------
-Sun Mar 11 12:26:29 NOVT 2001
-max:
-* lock file creates 1 byte length (OS/2 fix)
-* don't close lock file before remove()
-* getfree.c
-* minDiskFreeSpace
-
----- cvs ci ------
-Fri Mar  9 15:50:00 NOVT 2001
-max:
-* changed route procedure: now route & routeMail the same, and file attaches
-  routed only via routeFile, and no routed if routeFile not defined.
-patch from Alex Bronin:
-* checking for arcmail names while autopausing
-
----- cvs ci ------
-Thu Mar  8 17:58:16 NOVT 2001
-max:
-* exit on unrecognized cmd line options
-
----- cvs ci ------
-Tue Mar  6 16:20:54 NOVT 2001
-max:
-* fixed auto adding link to echo from autoareacreatedefaults with fwd.requests
-
----- cvs ci ------
-Mon Mar  5 11:07:24 NOVT 2001
-max:
-* fixed bug in hpttree (lost nodes)
-* log() -> w_log() bacause of conflicts with perl.h
-
----- cvs ci ------
-Sun Mar  4 14:42:00 NOVT 2001
-max:
-* checking return value of MsgWriteMsg() in processEMMsg() and
-  processNMMsg() for new smapi
-* writeLogEntry() changed to log()
-* "hpt link" founded not all msgids. fixed! (you must update smapi)
-* pattern matching for "hpt link"
-
----- cvs ci ------
-Sat Mar  3 16:12:28 NOVT 2001
-max:
-* fixed .bsy checks under win32 (watcom)
-
------ cvs ci ------
-Fri Mar  2 12:53:15 NOVT 2001
-max:
-* return back save_errno in .bsy checks
-
------ cvs ci ------
-Tue Feb 27 21:31:50 NOVT 2001
-max:
-* don't move msg to BadArea when carbon to passthrough area with one link
-* fixed compiling warnings under win32
-
------ cvs ci ------
-Sun Feb 25 15:50:46 NOVT 2001
-max:
-* del "\001FLAGS" from incoming mail
-* put msgs to badArea from passthrough echoes w/o downlinks
-* %avail without areas from denyfwdmask & denyfwdfile
-* denyUncondFwdReqAccess
-* frequestfromuplink changed to denyFwdReqAccess !!!
-* advisory lock (to lockfile)
-
------ cvs ci ------
-Wed Feb 21 22:13:09 NOVT 2001
-max:
-* don't create areas with ':' symbol
-
------ cvs ci ------
-Tue Feb 20 19:07:02 NOVT 2001
-max:
-* adapted cleanEmptyBundles()
-
------ cvs ci ------
-Mon Feb 19 14:46:21 NOVT 200
-max:
-* relink changes: unsubscribe from passthru echoes with 1 link, don't
-  process local areas.
-* unsubscribe auto-paused link from passthrough areas with no downlinks
-  besides him
-
------ cvs ci ------
-Sun Feb 18 14:34:41 NOVT 2001
-max:
-* fixed file attachs deleting
-* keepTrsFiles
-* [link]BundleNameStyle Amiga
-* createOutboundFileName() & createTempPktFileName() code clanup
-* change bsy checking procedure: always using open()
-* fixed msg->text zero termination in rescan
-
------ cvs ci ------
-Sun Feb 18 00:19:33 NOVT 2001
-max:
-* fixed recoding in some other reports
-* fixed kludges zero termination in rescan
-
------ cvs ci ------
-Mon Feb 12 23:47:14 NOVT 2001
-max:
-* fixed recoding in %help report (reported by Afonin Denis)
-
------ cvs ci ------
-Mon Feb 12 00:44:02 NOVT 2001
-max:
-* doc dir included
-* select "right" netmail area for ourAka (patch from Kostya Krasavin)
-
------ cvs ci ------
-Thu Feb  1 22:26:43 NOVT 2001
-max:
-* don't create areas with symbols space, tab, /, \, and comment symbol
-
------ cvs ci ------
-Tue Jan 30 23:44:07 MSK 2001
-Nestyurkin Nikolay:
-* an other fix for netmailFlag
-
------ cvs ci ------
-Mon Jan 29 15:59:11 NOVT 2001
-max:
-* netmailFlag works properly
-
------ cvs ci ------
-Sun Jan 28 16:43:58 NOVT 2001
-max:
-* write statistics when tossing from badArea
-* create flag when unpacking netmail
-* create flag when autocreating new areas
-* areafix from cmd line (like hpt afix [<addr> command])
-* areafixEchoLimit
-
------ cvs ci ------
-Sat Jan 27 15:22:41 NOVT 2001
-max:
-* forwardRequestMask
-* denyFwdMask
-* denyFwdFile
-* correctEMAddr: take node from path if no origin in message
-* del from autoareacreatedefaults -$m xxx, -p xxx, -killsb, -tinysb,
-  -killRead, -keepUnread, -nopack, -nolink when creating passthrough area
-
------ cvs ci ------
-Sat Jan 20 21:56:54 NOVT 2001
-max:
-* hpt pause - set pause for links who don't poll our system
-* autopassive (old style)
-
------ cvs ci ------
-Sat Jan 20 10:00:21 NOVT 2001
-max:
-* fixed yesterday bug in packing (maybe scanning too)
-* fixed init of flags in processAttachs() & packMsg()
-
------ cvs ci ------
-Fri Jan 19 22:15:10 NOVT 2001
-max:
-* possible speed up (changing strlen(msg->text) to msg->textLength
-  calculation in many places). warning! possible bugs because a lot
-  of changes.
-
------ cvs ci ------
-Tue Jan 16 18:33:40 NOVT 2001
-max:
-* send avail list if "forwardrequests on"
-patch from Serguei Revtov:
-* prevent circling of hptlink on jam areas with dupes
-
------ cvs ci ------
-Mon Jan 15 14:19:26 NOVT 2001
-max:
-* rescan when subscribe
-* linkmsgbasedir - msgbasedir for links
-* -sbadd() -sbign() echoArea options
-* createFwdNonPass
-
------ cvs ci ------
-Tue Jan  9 20:03:11 NOVT 2001
-max (patch from Serguei Revtov):
-* areafix: %rescan command without argument
-
------ cvs ci ------
-Mon Jan  8 01:02:02 NOVT 2001
-max (patch from Pavel Gulchouck):
-* delete() & do_detele() fixes
-
------ cvs ci ------
-Wed Dec 20 23:54:18 NOVT 2000
-max:
-* fixed bug in "toss -b" with squish & jam areas - "normal" msgs didn't
-  scanned after "bad" msg (report by Eugene Barbashin, 2:5030/920.1)
-
------ cvs ci ------
-Wed Dec 13 18:42:21 UTC 2000
-sms:
-* removed length limit for area descriptions in autocreate
-
------ cvs ci ------
-Tue Dec 12 22:39:34 NOVT 2000
-max:
-* fixed bug with carbonExtern (report from Mike Ivanov)
-
------ cvs ci ------
-Sat Dec  9 20:35:07 NOVT 2000
-max:
-* fixed "AREA:NETMAIL" bug
-* descriptions longer than 80 chars don't added in autocreate 
-
------ cvs ci ------
-Thu Dec  7 00:13:18 NOVT 2000
-max:
-* file attach: try to use original file name from subject
-
------ cvs ci ------
-Tue Dec  5 03:17:40 UTC 2000
-sms:
-! using enum for linkWithImportLog instead of strings
-
------ cvs ci ------
-Sun Dec  3 18:45:03 UTC 2000
-sms:
-* forcing KFS on intransit mails with file attaches
-
------ cvs ci ------
-Sat Dec  2 19:17:26 NOVT 2000
-max (patch from Trooper):
-* file attaches processed correctly if not all outbounds defined in config
-
-Thu Nov 30 14:26:01 NOVT 2000
-max:
-* command line argument "-c config" supported by areafix & autocreate
-* hpt toss -bf (force access checking)
-
------ cvs ci ------
-Tue Nov 28 22:39:14 NOVT 2000
-max (patch from Serguei Revtov):
-* write to log when areafix can't change config file
-
------ cvs ci ------
-Sun Nov 12 13:48:07 NOVT 2000
-max:
-* fixed segfault when run "hpt -c"
-* fixed "-q" cmd arg parsing
-* areafix print error for subscribe & unsibscribe cmds with spaces
-
------ cvs ci ------
-Wed Nov  8 22:22:17 NOVT 2000
-max:
-* in carbon msgs kludges stripped only after Origin
-* arcmail from unsecure inbound renames to .sec
-* route several files (this is dangerous, because subjectLine only 72 bytes,
-  and files stores with full paths).
-* del scanned echomail with k/s flag
-
------ cvs ci ------
-Fri Nov  3 22:04:03 NOVT 2000
-max:
-* additional checking of SEEN-BY lines when parsing path
-* new code for stripping kludges before adding the new ones
-
------ cvs ci ------
-Sun Oct 29 00:20:09 NOVST 2000
-max:
-* fixed statlog comliling (linux)
-
------ cvs ci ------
-Mon Oct 23 18:09:53 MET 2000
-  Michael Haase:
-+ added statlog for hpt
-
------ cvs ci ------
-Mon Oct 23 14:46:29 NOVST 2000
-max:
-* when scanning netmail for file attach, creates .req + .?ut (normal msg
-  not routed and stored as .out)
-patch from Serguei Revtov:
-* Jam fix for hptlink
-
------ cvs ci ------
-Sun Oct 22 16:01:25 NOVST 2000
-max:
-* when scanning netmail for file attach, creates only .req (no mail packets)
-* if can't open msgbase put msg in badArea, if can't open badArea -
-  rename .pkt to .err (then tossed through "toss -b" such msgs not checks
-  for dupes and don't forwards to links)
-* use spawn() instead of system() in WATCOMC (so, arcmail shouldn't be lost)
-
------ cvs ci ------
-Sat Oct 21 19:41:45 NOVST 2000
-max:
-* add ourAka to SEEN-BYs if not exist
-* when areafix process %rescan to link -- msgs exported like in normal tossing,
-  but there is no SEEN-BYs checking (only export) -- so if link in SEEN-BYs
-  he gets the mail & second SEEN-BY is added.
-
------ cvs ci ------
-Wed Oct 18 23:01:50 NOVST 2000
-max:
-* calculate packet orig zone if zero
-
------ cvs ci ------
-Tue Oct 17 14:51:55 NOVST 2000
-max:
-* checking return values of fopen
-* areafix - strip spaces at the end of command
-* DIR, IMM mails packed well
-
------ cvs ci ------
-Mon Oct 16 12:06:41 NOVST 2000
-max:
-* new writeMsgToPkt -- write msg to pkt as one piece
-* check return values when writing to pkt file
-* -debug echoarea token
-
------ cvs ci ------
-Sun Oct 15 15:06:03 NOVST 2000
-max:
-* set k/s flag to relink msg
-* use fexist() instead of fstat()
-* calculate packet dest zone if zero
-patch from PG:
-* fix jam linking (hpt link)
-
------ cvs ci ------
-Wed Oct 11 21:35:53 NOVST 2000
-max:
-* attaches with kludges like "FLAGS IMM KFS" processed correctly
-patch from Dmitry Sergienko:
-* process attaches in packed netmail (tossed from tempInbound)
-
------ cvs ci ------
-Wed Oct 11 11:14:47 MSD 2000
-max (patch from Serguei Revtov):
-* -n switch for hptlink (test!)
-
------ cvs ci ------
-Mon Oct  9 17:29:40 NOVST 2000
-max:
-* tearline stops areafix
-
------ cvs ci ------
-Sun Oct  8 21:00:25 MEZ 2000
-tobi:
-* when appending to a zero-length pkt file, write a pkt header first
-
------ cvs ci ------
-Sat Oct  7 13:53:49 NOVST 2000
-max:
-* fixed bug in relink with squish area
-* don't carbon relink msg
-* fixed carbon of netmail msgs (don't export again)
-
------ cvs ci ------
-Thu Oct  5 18:26:32 MSD 2000
-max (patch from Serguei Revtov):
-* adapt hptlink.c for xmreply1st and xmreplynext as replies[0,1]
-
------ cvs ci ------
-Tue Oct  3 17:08:22 MSD 2000
-Fedor:
-* adapted link.c and hptlink.c for used xmreply1st and xmreplynext
-
------ cvs ci ------
-Sat Sep 30 22:59:09 NOVST 2000
-max:
-* autopause works again (fixed bug in my last "autopause bugfix")
-
------ cvs ci ------
-Wed Sep 27 20:24:45 NOVST 2000
-max:
-* robotsArea
-
------ cvs ci ------
-Tue Sep 26 00:25:41 NOVST 2000
-max:
-* autocreate fix (don't del "-b basetype" from non-pass areas)
-patch from Serguei Revtov:
-* addrDiffAlways value for BundleNameStyle & linkBundleNameStyle
-
------ cvs ci ------
-Sat Sep 23 17:52:53 NOVST 2000
-max (patch from Serguei Revtov):
-* token linkBundleNameStyle
-
------ cvs ci ------
-Thu Sep 21 11:31:52 NOVST 2000
-max:
-* fix for deleting msg bases (Serguei Revtov)
-* patch from PG to link.c (exceeds counter fix)
-
------ cvs ci ------
-Sat Sep 16 21:31:18 NOVST 2000
-max:
-* cut "-b msgbtype" from autocreate defaults when creating passthrugh area
-
------ cvs ci ------
-Fri Sep 15 11:34:16 NOVST 2000
-max:
-* fixed autocreate with -dosfile at the end of AutoAreaCreateDefaults
-* set Pause if files stored only in outbound
-patch from Serguei Revtov:
-* additional checks of directories difference
-
------ cvs ci ------
-Wed Sep 14 15:44:37 NOVST 2000
-max (patch from Serguei Revtov):
-* change in bundle names generation algorithm (bundleStyle addrDiff)
-* removing old empty bundles (bundleStyle addrDiff)
-
------ cvs ci ------
-Wed Sep 13 16:30:05 NOVST 2000
-max:
-* don't add NOECHO msg if %rescan from SDM area
-
------ cvs ci ------
-Tue Sep 12 14:34:02 NOVST 2000
-max:
-* fixed bug in post (init smapi first)
-* check for SEEN-BY's like zone:net/node
-
------ cvs ci ------
-Mon Sep 11 22:31:46 NOVST 2000
-max:
-* %rescan bug with wildcards & number of msgs to process (Pavel Sizykh)
-* tempInbound & tempOutbound must be differ
-
------ cvs ci ------
-Sun Sep 10 11:33:19 NOVST 2000
-max (patch from Serguei Revtov):
-* switch to TimeStamp bundleStyle when addrDiff used 36 extentions
-
------ cvs ci ------
-Sat Sep  9 22:00:24 NOVST 2000
-max:
-* "toss -b" fixes (squish & jam areas)
-
------ cvs ci ------
-Fri Sep  8 10:25:40 NOVST 2000
-max:
-* fixed bug with empty arealist (%list when no areas is available)
-
------ cvs ci ------
-Thu Sep  7 16:00:38 NOVST 2000
-max:
-* misc/filter.pl from Pavel Gulchouck
-
------ cvs ci ------
-Wed Sep  6 17:36:17 NOVST 2000
-max (patches from Serguei Revtov):
-* hptlink JAM enable, linking by subj in spite of control info found
-* compiling on Win9x
-
------ cvs ci ------
-Tue Sep  5 23:04:04 NOVST 2000
-max (patch from Pavel Gulchouck):
-* "hpt link" speed up
-
------ cvs ci ------
-Mon Sep  4 12:56:12 NOVST 2000
-max (patch from Pavel Gulchouck):
-* hpt link & hptlink fixes for JAM
-* fix compiling errors under OS/2
-
------ cvs ci ------
-Sun Sep  3 19:37:46 NOVST 2000
-max:
-* tearline & origin support in post
-patch from Pavel Gulchouck:
-* "hpt link" link msg areas
-
------ cvs ci ------
-Sat Sep  2 20:48:59 NOVST 2000
-max (patch from Michael Kulinich):
-* token keepTrsMail
-
------ cvs ci ------
-Wed Aug 30 22:12:03 NOVST 2000
-max:
-* fixed autocreate bug (reported by Konstantin Kubatkin)
-patch from Serguei Revtov:
-* expanding number of bundle filename extensions (.??0-.??9, .??a-.??z)
-* bugfix for BundleNameStyle addrDiff
-
------ cvs ci ------
-Tue Aug 29 22:54:10 NOVST 2000
-max (patches from Serguei Revtov):
-* hptlink bugfix when linking with -t
-* hptlink little speedup when linking by subjects
-
------ cvs ci ------
-Sat Aug 27 19:31:04 NOVST 2000
-* excludePassthroughCarbon
-* processEMMsg optimization
-
------ cvs ci ------
-Fri Aug 25 12:37:46 NOVST 2000
-max (patch from Serguei Revtov):
-* token BundleNameStyle
-
------ cvs ci ------
-Thu Aug 24 23:52:17 NOVST 2000
-max:
-* msgs for processing tiny or kill seen-by's stripped after Origin line
-  even if SEEN-BY: line in msg body.
-* -q command line option (quiet mode, no output)
-
------ cvs ci ------
-Sat Aug 19 18:39:28 NOVST 2000
-max:
-* bundle added to flo file if it is really packed
-
------ cvs ci ------
-Mon Aug 14 12:07:14 NOVST 2000
-max:
-* if no uplinks with "forwardRequests on" then areafix wrote "not found"
-  instead of "no uplinks to forward"
-patch from PG:
-* better bsy processing
-* fixed bug when linking netmail areas in hptlink
-
------ cvs ci ------
-Sun Aug 13 13:14:34 NOVST 2000
-max:
-* areafix: fix processing commands broked yesterday ("+" & "-" without areatag)
-* deleted old makefiles
-* perl support in new makefiles
-* areafix delete *last* substring in delLinkFromArea()
-* first message to links from autoAreaCreateDefaults after autocreate don't
-  recoded to internal charset (report by Georgi Fofanov)
-* processEMMsg() code cleanup (be carefull)
-* carbonCopy from badArea doesn't works now
-
------ cvs ci ------
-Sat Aug 12 23:36:58 NOVST 2000
-max:
-* areafix: fixed tearline bug (report by Konstantin Samoylov)
-
------ cvs ci ------
-Fri Aug 11 22:03:37 NOVST 2000
-max:
-* links with "export off" don't added to SEEN-BYs
-
------ cvs ci ------
-Thu Aug 10 21:01:47 NOVST 2000
-max:
-* perl support in Makefile
-
------ cvs ci ------
-Wed Aug  2 13:59:09 NOVST 2000
-max 
-* fixed bug in autoCreate() from Jul 31
-patch from Serguei Revtov:
-* hptlink links LOCALareas when they are specified by args or in importlog file
-
------ cvs ci ------
-Mon Jul 31 12:18:23 NOVST 2000
-max (patch from Pavel Gulchouk):
-* delete msgbase and dupebase when area delete
-* fix: update in-core config when area deleting
-* you can now write "2:5020/238 -def" in AutoAreaCreateDefaults
-
------ cvs ci ------
-Fri Jul 28 19:29:14 NOVST 2000
-max (patch from Pavel Gulchouk):
-* %delete areatag changed to ~areatag
-
------ cvs ci ------
-Tue Jul 25 22:09:07 NOVST 2000
-max (patch from Pavel Gulchouk):
-* [module]=hpt
-* %delete areatag
-* areafix code cleanup
-
------ cvs ci ------
-Tue Jul 18 22:51:16 NOVST 2000
-max:
-* don't read /n in message body from pkt
-* when adding seen-by & path to message without ones, adding /r first
-* search also "SEEN-BY: " after "(\rSEEN-BY: " & "\rSEEN-BY: "
-* fix in putMsgInBadArea (don't add Rejected by filter if not needed)
-
------ cvs ci ------
-Fri Jul 14 15:35:18 NOVST 2000
-max:
-* perl fixes
-* disabeleTID also turns off PID
-* fixed @Via adding in routed messages
-
------ cvs ci ------
-Fri Jul 14 00:10:45 CEST 2000
-tobi:
-* fixed legacy makefiles to a state in which they are usefule for our users :)
-
------ cvs ci ------
-Thu Jul 13 20:02:50 NOVST 2000
-max:
-* perl support (patch from Pavel Gulchouk)
-* small fixes
-
------ cvs ci ------
-Sun Jul  9 20:01:16 NOVST 2000
-max:
-* ignoreSeen - ignore SeenBYs and toss mail for this links
-* fixed processing forward requests (bug from 30 Jun)
-
------ cvs ci ------
-Thu Jul  6 23:14:39 NOVST 2000
-max:
-* exit if not defined or passthrough dupeArea & badArea
-* fixed subjects in file attach messages
-
------ cvs ci ------
-Tue Jul  4 22:36:41 NOVST 2000
-max:
-* -killsb kills all kludge lines after Origin
-* -tinysb keeps PATH line
-
------ cvs ci ------
-Sun Jul  2 16:13:24 NOVST 2000
-max:
-* safe_strdup()
-
------ cvs ci ------
-Sat Jul 1 19:11:34 MSK 2000
-Nestyurkin Nikolay:
-* new make files in 'make' directory
-
------ cvs ci ------
-Fri Jun 30 23:25:08 NOVST 2000
-max:
-* disable auto packing netmail after relink
-* fixed processing msg without SEEN-BY's but with PATH
-* fixed linkgrp & forward request bug
-* changed /NT to /w32
-
------ cvs ci ------
-Wed Jun 28 17:22:41 NOVST 2000
-max:
-* fixed returning message without SEEN-BY's
-* now adding SEEN-BY & PATH to message without one
-
------ cvs ci ------
-Sun Jun 25 22:44:15 NOVST 2000
-max:
-* don't creates .err files after autocreating passthrough areas
-
------ cvs ci ------
-Wed Jun 21 13:44:01 NOVST 2000
-max:
-* carbons outgoing mail if carbonOut in config
-
------ cvs ci ------
-Mon Jun 19 20:35:10 NOVST 2000
-max:
-* fixed areafix bug: " * Origin" seems like "*" (thanx to Konstantin Mohorea)
-
------ cvs ci ------
-Sun Jun 18 13:35:07 NOVST 2000
-max:
-* manual tearline, origin
-
------ cvs ci ------
-Sat Jun 17 22:14:27 NOVST 2000
-max:
-* hpt relink sets local flag on the messages
-* add origin, seen-by's & path to long messages under MS-DOS
-* carbons for exported netmail
-
------ cvs ci ------
-Thu Jun 15 16:55:36 NOVST 2000
-max:
-* fixed wrong recoding with carbons when toss from badArea
-
------ cvs ci ------
-Wed Jun 14 23:52:05 NOVST 2000
-max:
-* write dupe indexes to dupebase after "toss -b"
-* fixed buffers overflow while toss to badArea
-* fixed areafix: requests like " + AREATAG" worked now
-
------ cvs ci ------
-Tue Jun 13 21:04:54 MEZ 2000
-tobi:
-* Fix: netmail area tag is now added to echotoss.log for "hpt post", instead
-  of an empty string or even "(null)". Fixes bug reported by M. Haase.
-* Fixed arguments to open for creation of bsy files - fixes misbehaviour
-  on OS/2 reported by D. Friedmann.
-
------ cvs ci ------
-Sun Jun 11 18:25:29 NOVST 2000
-max:
-* areafix strip " bla bla bla" after "%command bla bla bla"
-* free -> nfree
-
------ cvs ci ------
-Wed Jun  7 09:44:09 MSD 2000
-max:
-* fixed "hpt scan -a"
-patch from Serguei Revtov:
-* bugfix for creation of lock file in fcommon.c
-* compiling tree.c on win32
-* fix crash in autocreate when no Sysop specified in config
-
------ cvs ci ------
-Tue Jun  6 19:39:31 NOVST 2000
-max:
-* safe_malloc(), safe_realloc()
-
------ cvs ci ------
-Mon Jun  5 11:04:32 NOVST 2000
-max:
-* fixed carbonAddr processing
-* fix for carbonExtern
-
------ cvs ci ------
-Sun Jun  4 20:28:00 NOVST 2000
-Nestyurkin Nikolay:
-* added txt2pkt.exe & debug switch to makefile.wcw
-* renamed tree.c::count to tree.c::tr_count
-* fix trap at start (only under Win32)
-* no errors while compile
-
------ cvs ci ------
-Sun Jun  4 14:19:57 NOVST 2000
-max:
-* free globalBuffer after processDir(s) not after each pkt file
-* run with config from command line
-* autocreate from BadArea
-* carbonAddr
-* carbons when scan
-* support for "route flavour nopack ..."
-* delete & truncate file attaches
-* addToSeen net/node net/node ... (add addr to seen-by's)
-
------ cvs ci ------
-Sat Jun  3 23:25:14 NOVST 2000
-max:
-* transit messages from our address kills now
-* changed readMsgFromPkt: no limits, safe code.
-* parse SEEN-BYs after Origin (if exist)
-* don't create err files after areafixfrompkt (if error)
-* fix for bundle filename creation (report from Mike Ivanov)
-patch from Serguei Revtov:
-* atomic creation of lock&bsy files in fcommon.c
-
------ cvs ci ------
-Fri Jun  2 17:39:35 NOVST 2000
-max:
-* zone seen-by stripping works again
-* changed export messages code for scanning
-* don't change task title under win32 (setConsoleTitle token)
-* scanned msgs now added to dupebase
-* moved xstr* functions to fidoconf
-* screenloglevels
-
------ cvs ci ------
-Thu Jun  1 11:51:34 NOVST 2000
-max:
-* fixed several "toss -b" processing (thanx to Fedor Lizunkov)
-* del spaces in beginning when parsing line in areafix
-* fixed processing attaches from unsecured inbound
-patch from Lev Serebryakov:
-* Now hpt sorts links according to ForwardAreaPriority when request areas
-
------ cvs ci ------
-Tue May 30 11:01:06 MSD 2000
-max (patch from Serguei Revtov):
-* %resume works in spite of space before 'aka' token
-
------ cvs ci ------
-max (patch from Serguei Revtov):
-Mon May 29 09:49:57 MSD 2000
-* don't subscribe to Passthrough areas with one link on hpt relink
-
------ cvs ci ------
-Sun May 28 12:47:15 NOVST 2000
-max:
-* fixed bug when renaming to .ntu (.sec, etc) several packets
-
------ cvs ci ------
-Sat May 27 10:21:30 NOVST 2000
-max:
-* set default dupebase type to hashDupesWmsgid (read documentation)
-* changed loglevels (rtfm)
-* added pktdate code to fix msg datetime headers
-
------ cvs ci ------
-Fri May 26 14:37:15 NOVST 2000
-max:
-* fixed "link -mn" check in area option (thanx to Kirill Belokurov)
-
------ cvs ci ------
-Thu May 25 23:30:52 NOVST 2000
-max:
-* relink (adopted code from Pavel Lyashko)
-
------ cvs ci ------
-Tue May 23 22:36:28 NOVST 2000
-max (patch from Lev Serebryakov):
-* new areafix %list & %avail generation
-
-
-hpt 0.9.7
----------	
-(released on Mon May 22 14:58:56 CEST 2000)
-
------ cvs ci ------	
-Mon May 22 14:03:38 CEST 2000
-mtt:
-* changed version number to 0.9.7
-
------ cvs ci ------
-Fri May 19 14:13:34 NOVST 2000
-max:
-* fix my yesterday bug: carbons exported again (works? don't touch anything!)
-
------ cvs ci ------
-Thu May 18 10:07:35 NOVST 2000
-max:
-* Use zone of our area AKA in hpttree instead of 2 (patch from Serguei Revtov)
-* fix statistic (exported messages)
-* remove arcmail bundle after unpacking
-
------ cvs ci ------
-Sat May 13 20:29:59 NOVST 2000
-max:
-* carbonMove & carbonDelete works properly
-
------ cvs ci ------
-Fri May 12 13:56:18 NOVST 2000
-max:
-* exit if inbound=protinbound
-
------ cvs ci ------
-Mon May  8 17:40:14 NOVST 2000
-max (patch from Alex Bronin):
-* MS Visual C porting
-
------ cvs ci ------
-Mon May  8 13:26:01 NOVST 2000
-max:
-* return back seen-by processing
-
------ cvs ci ------
-Sat May  7 13:30:43 MSD 2000
-max (patch from Serguei Revtov):
-* fixed coredump in area autocreation
-* changing of pkt & bundle files extension while tossing (prevents of
-  tossing the same bad packet many times). rtfm 'bout tossingExt token.
-* fixed memory leak in changeFileSuffix()
-
------ cvs ci ------
-Fri May  6 13:02:59 NOVST 2000
-max:
-* if no carbonArea defined msg really goes to BadArea now
-
------ cvs ci ------
-Wed May  3 08:25:11 NOVST 2000
-max:
-* fixed bug with pktsize & createTempPktFileName (thanx to Lev Serebryakov)
-
------ cvs ci ------
-Tue May  2 22:13:32 NOVST 2000
-max:
-* some changes about zone seen-by stripping
-* fixed my last changes in readDupeFile()
-* write dupefiles when abnormal exit
-
------ cvs ci ------
-Mon May  1 17:01:13 NOVST 2000
-max:
-* clean autoCreate code
-* fixed creating dupebase file under dos (passthru)
-patch from Alex Bronin:
-* Win32: restore old console title before exit
-* -nolink option disables reply linking for area
-
------ cvs ci ------
-Fri Apr 28 11:45:55 NOVST 2000
-max:
-* fixed bug in correctNMAddr()
-* fixed bug with processing transit messages by areafix (thanx to Valery Abeev)
-
------ cvs ci ------
-Wed Apr 26 22:15:08 MEZ 2000
-tobi:
-* Fixed handling of INTL kludges. Zonegated mails will now be routed to 
-  the zone gate (instead of directly) in all cases except for the special 
-  case that we are ourselves are the zone gate.
-
------ cvs ci ------
-Wed Apr 26 19:19:23 NOVST 2000
-max:
-* removed e_readCheck from hpt and fixed 
-  exporting mail to link with "export off"
-
------ cvs ci ------
-Mon Apr 24 19:25:03 NOVST 2000
-max:
-* link with level lower than -lr & -lw can't subscribe to echo
-
------ cvs ci ------
-Sun Apr 16 22:38:28 MEST 2000
-tobi:
-* Changed the filename generation algorithm to use the functions from
-  fidoconfig. This fixes problems with multi-zone links where the
-  link could reject his second arcmail bundle due to duplicate filename.
-  [NOTE: THIS CHANGE WAS UNDONE SOON AFTER. ANOTHER QUICK FIX FOR THE 
-  PROBLEM WAS CHECKED IN. A NICE FINAL SOLUTION IS STILL PENDING.]
-* Pktfile and Packfile are now logged. This eases tracing of lost echomail.
-
------ cvs ci ------
-Sat Apr 15 10:47:38 NOVST 2000
-max:
-* set Loc Scn Snt flags to posted message with -x parameter
-* MSGLOCAL updates (add forceattr to processEMMsg & processNMMsg)
-* disableTID
-* tinySB woks for storing msg in area only - no SEEN-BY & PATH
-
------ cvs ci ------
-Fri Apr 14 21:00:00 MSK 2000
-nn:
-* areafixKillRequests fix
-
------ cvs ci ------
-Wed Apr 12 13:57:24 MSD 2000
-max (patch from Serguei Revtov):
-* print message attributes in pktinfo
-
------ cvs ci ------
-Sun Apr 10 16:40:00 CET 2000
-sms:
-* some changes to fidoconfig.h and affected files needed to automatically
-  convert fidoconfig.h to fidoconf.pas with h2pas
-
------ cvs ci ------
-Mon Apr 10 20:53:39 NOVST 2000
-max:
-* netmail dupe detection
-
------ cvs ci ------
-Sun Apr  9 22:41:43 NOVST 2000
-max:
-* moved readCheck & writeCheck to fidoconfig
-
------ cvs ci ------
-Sun Apr  9 17:23:17 CET 2000
-hjk:
-* removed check of groupaccess on import and export of messages
-
------ cvs ci ------
-Fri Apr  7 14:09:52 NOVST 2000
-max:
-* clear MSGLOCAL flag on transit netmail bugfix
-
------ cvs ci ------
-Tue Apr  4 16:27:54 NOVST 2000
-max:
-* fixed double posting in some cases
-
------ cvs ci ------
-Tue Apr  4 12:51:02 MSD 2000
-max (patch from Serguei Revtov):
-* createAreasCase & areasFileNameCase tokens
-
------ cvs ci ------
-Sun Apr  2 11:04:29 NOVST 2000
-max:
-* fixing recoding in post.c when posting to netmailArea
-* pack mail when posting to netMail with -x parameter
-
------ cvs ci ------
-Sat Apr  1 18:35:11 NOVST 2000
-max:
-* recoding msgToSysop
-* writing log line when reading recoding table
-* read recoding tables once
-* do not print "Start..." with LogEchoToScreen when "hpt post -h" running
-* exit_hpt() removed to fcommon.c
-* fixed attach code
-* now hpt can route files
-* fixed pktsize bug
-* add pktsize check to %rescan in areafix
-
------ cvs ci ------
-Mon Mar 31 18:24:10 NOVST 2000
-max (patch from Serguei Revtov):
-* new areas autocreation report
-
------ cvs ci ------
-Thu Mar 30 15:09:34 NOVST 2000
-max:
-* clear MSGLOCAL flag on transit netmail
-* fix "Areas summary" info after autoCreate
-* areafix reports if no links for creation Available Area List
-
------ cvs ci ------
-Mon Mar 27 13:28:49 MSD 2000
-max (patch from Serguei Revtov):
-* pktsize token
-
------ cvs ci ------
-Mon Mar 27 11:24:07 NOVST 2000
-max:
-* fixed error with static buffer in areafix.c
-* fixed adding path & seen-by to non passthrough area in post.c
-
------ cvs ci ------
-Sun Mar 26 14:00:02 NOVST 2000
-max:
-* fixed static buffers in autoCreate()
-
------ cvs ci ------
-Sat Mar 25 10:59:40 NOVT 2000
-max:
-* fixed origAddr.zone calculation in correctNMAddr()
-
------ cvs ci ------
-Thu Mar 23 16:10:45 NOVT 2000
-max:
-* fixed statistic afrer autocreate (report from Alex Belozuerov)
-* under __linux__ & UNIX attach files must be in lowercase
-* fixed bug when tossing to area without PATH_DELIM in area->fileName
-
------ cvs ci ------
-Wed Mar 22 13:31:29 NOVT 2000
-max:
-* reports from hpt in ReportTo area are local now (Loc flag)
-
------ cvs ci ------
-Wed Mar 22 12:45:48 MSK 2000
-max (patch from Serguei Revtov):
-* fixed coredump in carboncopy after area autocreating
-
------ cvs ci ------
-Mon Mar 20 08:56:28 MSK 2000
-max (patch from Serguei Revtov):
-* change legacy SUN & Win makefiles to compile with new includes, simplifying
-
------ cvs ci ------
-Sun Mar 19 18:49:25 NOVT 2000
-max:
-* areafix: hidden & mandatory fixes
-* non transit messages without k/s flag not killed
-
------ cvs ci ------
-Fri Mar 17 11:30:14 NOVT 2000
-max:
-* print error messages & exit with wrong inbound settings
-  (which may cause to tossing loops)
-* areafix fix: mandatory prevent subcribing
-* changes in versionStr string
-
------ cvs ci ------
-Wed Mar 15 18:51:52 NOVT 2000
-max (patch from Serguei Revtov):
-* areafix bugfix (add /0 after MsgReadMsg)
-
------ cvs ci ------
-Thu Mar  9 15:31:13 NOVT 2000
-max:
-* fixed correctEMAddr: origins like (FidoNet 9:99/9.9) looks like (9:99/9.9)
-
------ cvs ci ------
-Tue Mar  7 00:37:31 NOVT 2000
-max:
-* new dupes tested & added to source tree
-
------ cvs ci ------
-Fri Mar  3 23:14:49 NOVT 2000
-max:
-* add SEEN-BY and PATH when posting to echoarea
-
------ cvs ci ------
-Fri Feb 25 11:19:12 NOVT 2000
-max:
-* small changes in areafix
-* del option in post (patch from Alexander Vernigora)
-
------ cvs ci ------
-Sat Feb 19 17:44:32 NOVT 2000
-max:
-* my last fix really works now :)
-* netmail areas didn't scanned twice too
-* cosmetical changes in areafix
-
------ cvs ci ------
-Wed Feb 16 00:56:19 NOVT 2000
-max:
-* small fix with scanByName - prints correct number of scanned areas
-
------ cvs ci ------
-Tue Feb 15 17:24:20 NOVT 2000
-max (patch from Serguei Revtov):
-- adding xstr.o to sun/makefile.sun & sun/makefile.nohusky
-
------ cvs ci ------
-Sat Feb 12 23:53:44 NOVT 2000
-max:
-* compiling without warnings under win32
-* unlink from echo with "local areafix" (patch from Nestyurkin Nikolay)
-
------ cvs ci ------
-Sat Feb 12 20:50:26 NOVT 2000
-max:
-* areafixKillRequests works now
-* fix sending available areas list under NT,OS/2... (Basile A. Sey)
-
------ cvs ci ------
-Fri Feb 11 22:17:03 NOVT 2000
-max:
-* some changes in pktread.c
-* some code cleanup
-
------ cvs ci ------
-Wed Feb  9 23:20:55 NOVT 2000
-max (patch from Serguei Revtov):
-- small fixes in areafix.c (closing file, empty line comparation, memory leak)
-- adding crc.o to Sun & win32 makefiles
-patch from Nestyurkin Nikolay (2:5020/3600):
-* you can make link with you addr[] and subscribe to echoarea (if not
-  exist - forward request to uplink and creates non passthrough area)
-
------ cvs ci ------
-Mon Feb  7 22:37:12 NOVT 2000
-max:
-* newhashdupe's from Alexander Vernigora, 2:4625/69
-* trying to fix addstring() in areafix for win32 (not tested)
-patch from Alex Bronin (2:5049/36):
-* lock file contains pid in win32 too
-* linking local areas too
-* txt2pkt: fixed recoding command line arguments in win32
-* txt2pkt: added sleep() to prevent creating duplicate pkt names
-
------ cvs ci ------
-Sun Feb  6 01:24:10 NOVT 2000
-max:
-* don't unpack arcmail if set noProcessBundles in config
-
------ cvs ci ------
-Sat Feb  5 19:15:01 NOVT 2000
-max:
-* correct reading msg's with time like "01 Jan 100  12:00:35"
-  (hpt must be compiling without -Ox options)
-* fixed bug when subscribing to echo with non accessable group
-* pack mail after %rescan
-
------ cvs ci ------
-Sat Feb  5 02:36:03 NOVT 2000
-max:
-* fixed memleak in toss.c (newLinks was not freed)
-* adopted changes for groups
-* adopted readCheck & writeCheck for new groups
-* removed one writeCheck from processEMMsg and added optimal code
-* the same with readCheck
-
------ cvs ci ------
-Fri Feb  4 01:04:47 NOVT 2000
-max:
-- disabling HASHDUPE and compiling purgeDupes in hpt/NT (patch from Serguei)
-
------ cvs ci ------
-Thu Jan  3 02:35:29 NOVT 2000
-max:
-* speed of tossing in statistic shows the time of read/write pkt & msg files
-
------ cvs ci ------
-Tue Feb  1 16:23:04 NOVT 2000
-max:
-* fixed bug in %rescan (report by Lev Serebryakov)
-* some %rescan changes (code cleanup)
-* autocreate reports by default in netmail
-* now possible reports to echo & local areas, secondary netmail areas
-* file attachs with path processed without adding protInbound
-* changed file attach code in packMsg() (not tested)
-
------ cvs ci ------
-Mon Jan 31 01:32:43 NOVT 2000
-max:
-* fixed %avail coredump in areafix (broken by sms)
-
-hpt 0.9.5
----------
-(released on Sun Jan 30 22:44:56 NOVT 2000)
-
-released, but no announces
-my recomendation is to use latest versions from cvs
-
------ cvs ci ------
-Sun Jan 30 17:06:45 NOVT 2000
-max:
-* areafixOrigin supported by hpt 
-* fixed bug with reading arguments after -x in post.c
-* fixed bug when posting to passthrough area
-* correct printing to log and stderr in post.c
-* post options printed through "hpt post -h"
-* documented -x option in post
-* updated man page for hpt
-
------ cvs ci ------
-Fri Jan 28 21:40:00 CET 2000
-sms:
-* changed groups from chars to strings
-
------ cvs ci ------
-Thu Jan 27 19:16:42 CET 2000 
-mtt:
-- fixed my request bugfix
-
------ cvs ci ------
-Thu Jan 27 18:42:50 CET 2000
-mtt (patch from Alex Semyanka)
-* added NetmailExtern (carbonExtern for netmails)
-- added subjectline for *extern commands
-* added processPkt for calling pktdate etc.
+2001-05-03 Thursday 21:41  ml
+
+	* doc/hpt.texi (1.20), h/date.h (1.175), src/toss.c (1.338): patch
+	from kees: carbon copy changes
+
+2001-05-03 Thursday 13:25  ml
+
+	* .cvs2cl (1.1): added .cvs2cl file
+
+2001-04-30 Monday 08:26  kazimirow
+
+	* src/areafix.c (1.206): 'unrec.%-sequence' under MSVC(possible
+	others also) fixed(this time really -:))
+
+2001-04-30 Monday 08:12  kazimirow
+
+	* src/areafix.c (1.205): fixed 'unrecognized %-sequence'
+
+2001-04-21 Saturday 17:23  joerg.jaspert
+
+	* debian/: changelog (1.5), control (1.3), huskymak.cfg (1.5),
+	rules (1.4): Turned debug on
+
+2001-04-18 Wednesday 23:47  tobi
+
+	* doc/hpt.texi (1.18): added doc about (not yet implemented)
+	autoareacreatesubdirs
+
+2001-04-14 Saturday 16:55  joerg.jaspert
+
+	* debian/control (1.2): Changed build-depends
+
+2001-04-14 Saturday 14:49  tobi
+
+	* debian/huskymak.cfg (1.4): fixed DEBLFLAGS
+
+2001-04-13 Friday 15:19  joerg.jaspert
+
+	* debian/: changelog (1.4), huskymak.cfg (1.3): Recompiled. Change
+	to smapi-version made it neccessary for right Dependencys (I hope
+	apt-get/dselect like it now!)
+
+2001-04-12 Thursday 17:33  tobi
+
+	* doc/keywords.bp (1.1): test
+
+2001-04-12 Thursday 13:32  joerg.jaspert
+
+	* debian/: changelog (1.3), dirs (1.2), huskymak.cfg (1.2), rules
+	(1.3): 99% of Debian-specific things now done in rules-file, not in
+	upstream-makefile
+
+2001-04-12 Thursday 13:31  joerg.jaspert
+
+	* Makefile (1.9), makefile.inc (1.13): Deleted yesterdays
+	debian-changes
+
+2001-04-11 Wednesday 22:31  joerg.jaspert
+
+	* debian/README.BUILD-DEB (1.1): Some words for package-building on
+	Debian Systems.
+
+2001-04-10 Tuesday 22:26  joerg.jaspert
+
+	* debian/: changelog (1.2), doc-base (1.1): doc-base was missing.
+
+2001-04-10 Tuesday 22:13  joerg.jaspert
+
+	* debian/rules (1.2): Placed a - on the wrong line.
+
+2001-04-10 Tuesday 22:11  joerg.jaspert
+
+	* doc/Makefile (1.3): Debian-specific changes
+
+2001-04-10 Tuesday 22:11  joerg.jaspert
+
+	* debian/: README.Debian (1.1), changelog (1.1), control (1.1),
+	copyright (1.1), dirs (1.1), docs (1.1), huskymak.cfg (1.1), rules
+	(1.1): Files needed to build .debs
+
+2001-04-10 Tuesday 22:10  joerg.jaspert
+
+	* Makefile (1.8), makefile.inc (1.12): Debian-specific changes.
+	Included in ifeqs
+
+2001-04-05 Thursday 14:11  joerg.jaspert
+
+	* man/: pktinfo.1 (1.1), txt2pkt.1 (1.1): manpages for the two
+	binaries without manpage in hpt. Check for errors please
+
+2001-04-03 Tuesday 22:25  tobi
+
+	* src/toss.c (1.327): fix crash after tossing finished due to
+	statlog being NULL
+
+2001-04-03 Tuesday 19:35  mhaase
+
+	* src/toss.c (1.326): fixed non Ansi C code with fopen ("rt" ->
+	"r") for reading statlog (Michael Haase)
+
+2001-04-03 Tuesday 00:29  tobi
+
+	* src/getfree.c (1.5): portability fix for BSD-based operating
+	systems
+
+2001-03-21 Wednesday 10:46  tobi
+
+	* src/fcommon.c (1.83): bounds checking compatibility fix
+
+2001-03-11 Sunday 21:42  tobi
+
+	* src/getfree.c (1.3): fixed ifdef errors in getfree for os/2 and
+	win32
+
+2001-03-11 Sunday 21:34  oliver.grimm
+
+	* src/getfree.c (1.2): OG: sys/fsstat.h excluded for BeOS !
+
+2001-03-11 Sunday 00:15  tobi
+
+	* src/: hptlink.c (1.22), hpttree.c (1.14): portability fixes
+
+2001-02-11 Sunday 19:36  ml
+
+	* doc/: Makefile (1.1), hpt.texi (1.1), makefile.lnx (1.1),
+	makefile.os2 (1.1): doc
+
+2001-02-09 Friday 09:57  pavel.gulchouck
+
+	* make/makeperl.inc (1.2): failed if $PERL not defined
+
+2001-01-30 Tuesday 21:47  nestyurkin.nikolay
+
+	* src/toss.c (1.313): an other fix for netmailFlag
+
+2001-01-24 Wednesday 19:03  pavel.gulchouck
+
+	* src/perl.c (1.7): set msg.textLength fixed
+
+2001-01-24 Wednesday 18:54  pavel.gulchouck
+
+	* src/perl.c (1.6): set msg.textLength in perl_putMsgInArea
+
+2001-01-20 Saturday 16:54  ml
+
+	* h/global.h (1.23), src/global.c (1.33), src/hpt.c (1.96),
+	src/toss.c (1.307): new feature
+
+2001-01-20 Saturday 05:05  ml
+
+	* h/date.h (1.134), src/scan.c (1.113), src/scanarea.c (1.64):
+	bugfixes
+
+2001-01-19 Friday 17:38  ml
+
+	* h/date.h (1.133), src/pktread.c (1.69), src/scan.c (1.112),
+	src/scanarea.c (1.63), src/toss.c (1.306): speed up
+
+2001-01-15 Monday 17:01  ml
+
+	* TODO (1.141), h/toss.h (1.41), src/areafix.c (1.180), src/toss.c
+	(1.305): new features
+
+2001-01-15 Monday 09:31  ml
+
+	* BUGS (1.9), TODO (1.140), h/areafix.h (1.19), h/date.h (1.131),
+	h/toss.h (1.40), misc/areafix.hlp (1.14), src/areafix.c (1.179),
+	src/toss.c (1.304): new features
+
+2001-01-09 Tuesday 14:59  ml
+
+	* h/date.h (1.130), misc/areafix.hlp (1.13), src/areafix.c (1.178):
+	rescan mode on subscribe
+
+2001-01-07 Sunday 20:43  ml
+
+	* TODO (1.139), h/date.h (1.129), src/areafix.c (1.177),
+	src/txt2pkt.c (1.23): delete fixes
+
+2000-12-13 Wednesday 19:43  sms
+
+	* src/toss.c (1.302): removed length limit for area descriptions in
+	autocreate
+
+2000-12-06 Wednesday 19:10  ml
+
+	* h/date.h (1.125), src/toss.c (1.299): attaches fix
+
+2000-12-05 Tuesday 04:20  sms
+
+	* src/: hptlink.c (1.20), link.c (1.39): using enum for
+	linkWithImportLog instead of strings
+
+2000-12-03 Sunday 19:46  sms
+
+	* TODO (1.136), src/scan.c (1.111): forcing KFS on intransit mails
+	with file attaches
+
+2000-12-03 Sunday 19:34  sms
+
+	* TODO (1.135): updated TODO
+
+2000-12-03 Sunday 18:59  sms
+
+	* Makefile (1.7): using RMOPT from huskymak.cfg
+
+2000-11-30 Thursday 10:22  ml
+
+	* h/date.h (1.123), h/global.h (1.22), src/areafix.c (1.176),
+	src/global.c (1.32), src/hpt.c (1.94), src/toss.c (1.296): see
+	changelog 30-nov-2000
+
+2000-11-29 Wednesday 10:58  ml
+
+	* h/date.h (1.122), src/areafix.c (1.175): write to log when
+	areafix can't change config file
+
+2000-11-28 Tuesday 06:30  ml
+
+	* src/: areafix.c (1.174), fcommon.c (1.75), scan.c (1.110): delete
+	old code
+
+2000-11-17 Friday 10:21  tobi
+
+	* src/pktwrite.c (1.30): print errno when append fails
+
+2000-11-12 Sunday 11:52  ml
+
+	* h/date.h (1.120), src/areafix.c (1.172), src/hpt.c (1.93),
+	src/toss.c (1.295): see ChangeLog Nov 12
+
+2000-11-08 Wednesday 19:35  ml
+
+	* README (1.10), h/date.h (1.119), src/scanarea.c (1.62),
+	src/toss.c (1.294): see ChangeLog Nov 09
+
+2000-11-03 Friday 17:10  ml
+
+	* h/date.h (1.118), src/toss.c (1.293): see changelog Nov 03
+
+2000-10-30 Monday 21:23  mhaase
+
+	* src/areafix.c (1.171): * fixed previous added update (upped wrong
+	file)
+
+2000-10-30 Monday 20:59  mhaase
+
+	* src/areafix.c (1.170): * hpt (areafix): with %rescan command now
+	also /R=xx and /R allowed   e.g.: '%rescan area /r=10' is the same
+	as '%rescan area 10'	     '%rescan area' is the same as '%rescan
+	/r'	     (Micha)
+
+2000-10-28 Saturday 19:38  ml
+
+	* h/date.h (1.117), src/toss.c (1.292): see changelog oct 29
+
+2000-10-26 Thursday 20:25  mhaase
+
+	* src/toss.c (1.290): * New optional keyword: statlog	After
+	tossing (hpt toss), it is checked if there is new personal mail  
+	(netmail or personal echo mail). If that's true, it is checked if  
+	statlog is defined in config. If yes, then it is checked if the log
+	file   exists. If not, then it is created and the number of
+	received netmails   or/and personal echo mails is written to the
+	log file. Otherwise, if the   file exists, the old counter will be
+	read, added to the new counter and   written the actual counter.   
+	The log file looks like this:	  netmail: x	 CC: x	  Whereas x
+	is the number of mails.    If the log file exists, one of the two
+	or both lines exist.
 	
------ cvs ci ------
-Mon Jan 24 22:28:35 CET 2000
-mtt:
-* fixed file request generation
+	  This is for utils, which can show you how many personal mail you
+	got.
+	  The log file is not removed by hpt, only by the util that uses
+	it.
+	  Or you could write in your toss script something like this:
+	   if exist stat.log type stat.log
+	   if exist stat.log del stat.log>nul
+
+2000-10-23 Monday 17:53  ml
+
+	* BUGS (1.8), TODO (1.132), h/date.h (1.115), src/hptlink.c (1.19),
+	src/scan.c (1.109): see ChangeLog Oct 23
+
+2000-10-22 Sunday 16:35  ml
+
+	* BUGS (1.7), TODO (1.131), src/areafix.c (1.169), src/hpt.c
+	(1.92), src/post.c (1.52), src/toss.c (1.288): see ChangeLog Oct 22
+
+2000-10-22 Sunday 11:11  ml
+
+	* h/date.h (1.114), src/scan.c (1.108): see ChangeLog Oct 22
+
+2000-10-21 Saturday 18:17  ml
+
+	* h/date.h (1.113), h/toss.h (1.38), src/areafix.c (1.168),
+	src/toss.c (1.287): see ChangeLog Oct 21
+
+2000-10-18 Wednesday 17:58  ml
+
+	* h/date.h (1.112), src/pktread.c (1.67): calculate packet orig
+	zone if zero
+
+2000-10-17 Tuesday 11:25  ml
+
+	* h/date.h (1.111), src/areafix.c (1.167), src/hpt.c (1.91),
+	src/pktwrite.c (1.29), src/scan.c (1.107): see ChangeLog Oct 17
+
+2000-10-16 Monday 16:43  ml
+
+	* src/: areafix.c (1.166), pktwrite.c (1.28), toss.c (1.286): see
+	ChangeLog Oct 16
+
+2000-10-16 Monday 07:04  ml
+
+	* h/date.h (1.110), src/pktwrite.c (1.27): write msg to pkt as one
+	piece
+
+2000-10-15 Sunday 19:14  ml
+
+	* BUGS (1.6), src/pktread.c (1.66), src/toss.c (1.285): zone fixing
+
+2000-10-15 Sunday 14:18  ml
+
+	* src/link.c (1.38): see ChangeLog Oct 15
+
+2000-10-15 Sunday 10:05  ml
+
+	* h/date.h (1.109), src/areafix.c (1.165), src/hpt.c (1.90),
+	src/post.c (1.51), src/toss.c (1.284): see ChangeLog Oct 15
+
+2000-10-11 Wednesday 17:10  ml
+
+	* src/scan.c (1.106): attaches fix
+
+2000-10-11 Wednesday 16:39  ml
+
+	* src/toss.c (1.282): attaches fix
+
+2000-10-11 Wednesday 15:28  ml
+
+	* h/date.h (1.107), man/hptlink.1 (1.2), src/hptlink.c (1.18):
+	hptlink -n
+
+2000-10-09 Monday 12:27  ml
+
+	* h/areafix.h (1.18), h/date.h (1.106), src/areafix.c (1.164):
+	tearline stops areafix
+
+2000-10-08 Sunday 20:58  tobi
+
+	* src/pktwrite.c (1.26): * when appending to a zero-length pkt
+	file, write a pkt header first
+
+2000-10-07 Saturday 09:11  ml
+
+	* h/date.h (1.105), src/areafix.c (1.163), src/toss.c (1.281): see
+	changelog Oct 07
+
+2000-10-05 Thursday 19:00  ml
+
+	* h/date.h (1.104), h/log.h (1.12), make/makefile.mgw (1.4),
+	src/hptlink.c (1.17), src/log.c (1.22): hptlink update
+
+2000-09-30 Saturday 18:04  ml
+
+	* src/areafix.c (1.162): autopause bugfix
+
+2000-09-27 Wednesday 15:26  ml
+
+	* h/date.h (1.103), src/areafix.c (1.161): robotsArea
+
+2000-09-25 Monday 19:48  ml
+
+	* src/toss.c (1.280): autocreate fix
+
+2000-09-25 Monday 19:26  ml
+
+	* TODO (1.130), h/date.h (1.102), src/fcommon.c (1.74), src/toss.c
+	(1.279): addrDiffAlways
+
+2000-09-23 Saturday 16:22  ml
+
+	* h/date.h (1.101), src/fcommon.c (1.73), src/toss.c (1.278): see
+	ChangeLog Sep 23
+
+2000-09-21 Thursday 15:22  ml
+
+	* h/date.h (1.100), h/global.h (1.21), h/link.h (1.5),
+	src/areafix.c (1.160), src/global.c (1.31), src/hpt.c (1.89),
+	src/link.c (1.36), src/perl.c (1.5): see ChangeLog Sep 21
+
+2000-09-16 Saturday 17:20  ml
+
+	* h/date.h (1.99), src/toss.c (1.277): autocreate fix
+
+2000-09-15 Friday 11:29  ml
+
+	* src/areafix.c (1.159): small fix to last patch (areafix.c)
+
+2000-09-15 Friday 11:09  ml
+
+	* src/areafix.c (1.158): small fix to last patch (areafix.c)
+
+2000-09-15 Friday 10:24  ml
+
+	* src/: areafix.c (1.157), hpt.c (1.88): see ChangeLog Fri Sep 15
+
+2000-09-15 Friday 06:43  ml
+
+	* h/date.h (1.98), src/toss.c (1.276): fixed autocreate with
+	-dosfile at the end of AutoAreaCreateDefaults
+
+2000-09-14 Thursday 09:24  ml
+
+	* h/date.h (1.97), src/fcommon.c (1.72): addrDiff changes
+
+2000-09-13 Wednesday 11:59  ml
+
+	* h/date.h (1.96), src/areafix.c (1.156): don't add NOECHO msg if
+	escan from SDM area
+
+2000-09-12 Tuesday 18:00  ml
+
+	* src/toss.c (1.275): seen-by
+
+2000-09-12 Tuesday 17:43  ml
+
+	* src/toss.c (1.274): seen-by
+
+2000-09-12 Tuesday 10:21  ml
+
+	* h/global.h (1.20), src/global.c (1.30), src/hpt.c (1.87),
+	src/post.c (1.50): post fix
+
+2000-09-11 Monday 19:22  ml
+
+	* h/date.h (1.95), src/areafix.c (1.155), src/hpt.c (1.86): rescan
+	bugfix
+
+2000-09-10 Sunday 17:53  ml
+
+	* h/date.h (1.94), src/fcommon.c (1.71), src/toss.c (1.273): see
+	changelog Sep 10
+
+2000-09-09 Saturday 17:11  ml
+
+	* h/date.h (1.93), src/toss.c (1.272): toss -b fix
+
+2000-09-08 Friday 05:32  ml
+
+	* h/date.h (1.92), src/areafix.c (1.154): areafix bugfix
+
+2000-09-07 Thursday 11:03  ml
+
+	* h/date.h (1.91), misc/filter.pl (1.1): filter.pl
+
+2000-09-06 Wednesday 12:57  ml
+
+	* h/date.h (1.90), h/fcommon.h (1.29), src/hptlink.c (1.15): see
+	changeLog Sep 06
+
+2000-09-05 Tuesday 18:06  ml
+
+	* h/date.h (1.89), src/link.c (1.35): hpt link speedup
+
+2000-09-04 Monday 19:45  ml
+
+	* src/link.c (1.34): link fix
+
+2000-09-04 Monday 11:34  ml
+
+	* h/date.h (1.88), h/fcommon.h (1.28), make/makeperl.emo (1.2),
+	make/makeperl.emx (1.2), src/fcommon.c (1.70), src/hpt.c (1.85),
+	src/hptlink.c (1.14), src/link.c (1.33), src/log.c (1.21),
+	src/recode.c (1.14), src/seenby.c (1.18): see changelog sep 04
+
+2000-09-03 Sunday 17:26  ml
+
+	* man/hpt.1 (1.11), src/post.c (1.49): post - orig&tearl
+
+2000-09-03 Sunday 14:52  ml
+
+	* h/date.h (1.87), src/link.c (1.32): see ChangeLog Sep 03
+
+2000-09-03 Sunday 05:02  sms
+
+	* TODO (1.129): updated TODO
+
+2000-09-02 Saturday 15:54  ml
+
+	* h/date.h (1.86), src/toss.c (1.270): see changelog Sep 02
+
+2000-08-30 Wednesday 17:55  ml
+
+	* h/date.h (1.85), src/fcommon.c (1.69), src/toss.c (1.269): see
+	changelog
+
+2000-08-29 Tuesday 17:58  ml
+
+	* TODO (1.128), src/hptlink.c (1.13), src/toss.c (1.268): see
+	ChangeLog Aug 29
+
+2000-08-27 Sunday 20:31  sms
+
+	* Makefile (1.6): removed -I.. (only used for debugging purposes)
+
+2000-08-27 Sunday 19:51  sms
+
+	* makefile.inc (1.10): added manual pages to target distclean
+
+2000-08-27 Sunday 19:39  sms
+
+	* Makefile (1.5), makefile.inc (1.9): added manual pages to target
+	all
+
+2000-08-27 Sunday 16:29  ml
+
+	* TODO (1.127), h/date.h (1.83), src/toss.c (1.267): see changelog
+	Aug 27
+
+2000-08-25 Friday 08:16  ml
+
+	* h/date.h (1.82), src/fcommon.c (1.68): see changelog Aug 25
+
+2000-08-24 Thursday 19:36  ml
+
+	* TODO (1.126), h/date.h (1.81), h/global.h (1.19), src/global.c
+	(1.29), src/hpt.c (1.84), src/log.c (1.20), src/toss.c (1.266): see
+	changelog Aug 25
+
+2000-08-22 Tuesday 22:39  sms
+
+	* TODO (1.125): updated TODO list
+
+2000-08-22 Tuesday 00:26  sms
+
+	* Makefile (1.4): fixed missing TABs
+
+2000-08-21 Monday 15:15  sms
+
+	* Makefile (1.3): added target uninstall
+
+2000-08-13 Sunday 17:53  ml
+
+	* h/date.h (1.78), src/toss.c (1.264): processEMMsg
+
+2000-08-13 Sunday 08:16  ml
+
+	* src/areafix.c (1.151): areafix fix.2
+
+2000-08-12 Saturday 18:56  ml
+
+	* h/date.h (1.77), src/areafix.c (1.150): areafix bugfix
+
+2000-08-11 Friday 17:05  ml
+
+	* src/toss.c (1.263): seen-bys fix
+
+2000-08-06 Sunday 21:56  tobi
+
+	* src/hpt.c (1.83): added BeOS version identification
+
+2000-08-02 Wednesday 18:14  ml
+
+	* TODO (1.120), src/toss.c (1.262): autoCreate fix
+
+2000-08-02 Wednesday 09:30  ml
+
+	* TODO (1.119), h/date.h (1.74), src/hptlink.c (1.11): hptlink
+	bugfix
+
+2000-07-24 Monday 19:56  ml
+
+	* misc/clean_outb (1.4): clean_outb cleanup
+
+2000-07-18 Tuesday 19:34  ml
+
+	* src/toss.c (1.259): fix in putMsgInBadArea
+
+2000-07-18 Tuesday 18:09  ml
+
+	* src/pktread.c (1.65): /n stripping
+
+2000-07-18 Tuesday 18:08  ml
+
+	* src/toss.c (1.258): seen-by & path bugfix
+
+2000-07-14 Friday 00:55  tobi
+
+	* VERSION (1.1): file VERSION was initially added on branch
+	hpt-0_9_7.
+
+2000-07-14 Friday 00:40  tobi
+
+	* h/version.h (1.7), src/global.c (1.27), src/hpt.c (1.81):
+	implemented versioning scheme as discussed with mtt
+
+2000-07-12 Wednesday 13:11  tobi
+
+	* INSTALL (1.8): merged fixes from stable
+
+2000-07-08 Saturday 00:18  tobi
+
+	* h/fcommon.h (1.27), src/hpt.c (1.79): more mingw32 adaptions
+
+2000-07-07 Friday 20:43  tobi
+
+	* src/arealist.c (1.5): migrated fixes from stable
+
+2000-07-07 Friday 20:35  tobi
+
+	* src/fcommon.c (1.65): turbo c fix from stable
+
+2000-07-07 Friday 20:28  tobi
+
+	* h/arealist.h (1.2): merged prototype fix from stable
+
+2000-07-05 Wednesday 01:56  tobi
+
+	* make/makefile.rxw (1.2): makefile fix
+
+2000-07-05 Wednesday 01:54  tobi
+
+	* src/hpt.c (1.77): fix for mingw (don't know where to get this API
+	from)
+
+2000-07-05 Wednesday 01:54  tobi
+
+	* make/: makefile.bcd (1.2), makefile.bco (1.2), makefile.bcw
+	(1.2), makefile.djg (1.2), makefile.emx (1.2): some makefile fixes
+
+2000-07-01 Saturday 17:38  nestyurkin.nikolay
+
+	* make/makefile.inc (1.2): update
+
+2000-07-01 Saturday 17:16  nestyurkin.nikolay
+
+	* make/: makefile (1.1), makefile.aix (1.1), makefile.bcd (1.1),
+	makefile.bco (1.1), makefile.bcw (1.1), makefile.bsd (1.1),
+	makefile.djg (1.1), makefile.emo (1.1), makefile.emx (1.1),
+	makefile.inc (1.1), makefile.lnx (1.1), makefile.mgw (1.1),
+	makefile.mvc (1.1), makefile.osf (1.1), makefile.rxw (1.1),
+	makefile.sun (1.1), makefile.unx (1.1), makefile.wcd (1.1),
+	makefile.wco (1.1), makefile.wcw (1.1), makefile.wcx (1.1): new
+	makefiles
+
+2000-06-13 Tuesday 21:10  tobi
+
+	* src/: fcommon.c (1.63), post.c (1.46): * Fix: netmail area tag is
+	now added to echotoss.log for "hpt post", instead   of an empty
+	string or even "(null)". Fixes bug reported by M. Haase.  * Fixed
+	arguments to open for creation of bsy files - fixes misbehaviour  
+	on OS/2 reported by D. Friedmann.
+
+2000-06-04 Sunday 18:29  nestyurkin.nikolay
+
+	* src/: hpt.c (1.72), scan.c (1.93): fix
+
+2000-06-04 Sunday 17:42  nestyurkin.nikolay
+
+	* src/txt2pkt.c (1.18): fix
+
+2000-06-04 Sunday 17:15  nestyurkin.nikolay
+
+	* h/global.h (1.18, hpt-0_9_7d-release, hpt-0_9_7c-release,
+	hpt-0_9_7b-release, hpt-0_9_7a-release), src/pktread.c (1.60),
+	src/tree.c (1.7): fix
+
+2000-06-04 Sunday 14:03  tobi
+
+	* src/areafix.c (1.135): grammatical "fix" ;-)
+
+2000-05-27 Saturday 20:46  tobi
+
+	* src/scan.c (1.87): added a missing include file
+
+2000-05-27 Saturday 20:01  tobi
+
+	* src/scan.c (1.86): Only lowercase filename in flow file if the
+	file does not exist in the original spelling.
+
+2000-05-22 Monday 14:54  mt
+
+	* src/global.c (1.24): changed version number
+
+2000-05-10 Wednesday 00:26  sms
+
+	* TODO (1.83): updated TODO
+
+2000-04-26 Wednesday 22:18  tobi
+
+	* src/pktread.c (1.53): fixed handling of INTL kludges
+
+2000-04-21 Friday 13:14  sms
+
+	* Makefile (1.1, hpt-0_9_7d-release, hpt-0_9_7c-release,
+	hpt-0_9_7b-release, hpt-0_9_7a-release), makefile.husky (1.12):
+	renamed makefile.husky to Makefile
+
+2000-04-17 Monday 07:47  tobi
+
+	* src/fcommon.c (1.48): undone filename algo changes; they were not
+	FTSC compliant.
+
+2000-04-16 Sunday 23:47  tobi
+
+	* src/: fcommon.c (1.47), toss.c (1.207): hpt unnecessary polled
+	the packfilename twice. fixed.
+
+2000-04-16 Sunday 23:36  tobi
+
+	* src/toss.c (1.206): further cleanup on log file messages
+
+2000-04-16 Sunday 23:31  tobi
+
+	* src/toss.c (1.205): cleaned up packet file name logging
+
+2000-04-16 Sunday 23:02  tobi
+
+	* src/toss.c (1.204): improved logging of filenames
+
+2000-04-16 Sunday 22:48  tobi
+
+	* src/fcommon.c (1.46): small bug fixes
+
+2000-04-16 Sunday 22:40  tobi
+
+	* src/: fcommon.c (1.45), toss.c (1.203): fixed the filename
+	generation routines
+
+2000-04-16 Sunday 20:01  tobi
+
+	* src/: areafix.c (1.113), fcommon.c (1.44), log.c (1.12), post.c
+	(1.39), toss.c (1.202), txt2pkt.c (1.13): added fixes for mingw32
+
+2000-04-16 Sunday 16:29  tobi
+
+	* src/hpt.c (1.59): legacy makefile fixes
+
+2000-04-16 Sunday 16:03  tobi
+
+	* src/: hpt.c (1.58), toss.c (1.201): fixes for DJGPP
+
+2000-04-16 Sunday 13:42  tobi
+
+	* makefile.husky (1.11): makefiles reworked
+
+2000-04-16 Sunday 13:36  tobi
+
+	* makefile.inc (1.1): legacy makefiles reworked
+
+2000-04-16 Sunday 13:35  tobi
+
+	* TODO (1.73): updated todo list
+
+2000-04-15 Saturday 23:39  tobi
+
+	* src/pktinfo.c (1.11): fixed problem with ambiguous evaluation
+	order
+
+2000-04-15 Saturday 23:23  tobi
+
+	* src/fcommon.c (1.43): further borland c fixes
+
+2000-04-15 Saturday 23:21  tobi
+
+	* src/crc.c (1.2, hpt-0_9_7d-release, hpt-0_9_7c-release,
+	hpt-0_9_7b-release, hpt-0_9_7a-release): Fixes for Borland C
+
+2000-04-15 Saturday 22:52  tobi
+
+	* h/fcommon.h (1.23), src/post.c (1.38), src/txt2pkt.c (1.12):
+	removed another warning
+
+2000-04-15 Saturday 20:09  tobi
+
+	* h/dupe.h (1.16, hpt-0_9_7d-release, hpt-0_9_7c-release,
+	hpt-0_9_7b-release, hpt-0_9_7a-release), h/fcommon.h (1.22),
+	h/global.h (1.13), h/log.h (1.9), h/pkt.h (1.19), h/scan.h (1.14,
+	hpt-0_9_7d-release, hpt-0_9_7c-release, hpt-0_9_7b-release,
+	hpt-0_9_7a-release), h/seenby.h (1.7, hpt-0_9_7d-release,
+	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release),
+	src/areafix.c (1.112), src/fcommon.c (1.42), src/hpt.c (1.57),
+	src/hptlink.c (1.6), src/hpttree.c (1.8), src/link.c (1.26),
+	src/pktread.c (1.52), src/pktwrite.c (1.21), src/post.c (1.37),
+	src/scan.c (1.83), src/scanarea.c (1.50), src/toss.c (1.200),
+	src/tpkt.c (1.23), src/txt2pkt.c (1.11): fixed include statements
+	to match new 8.3 filenames
+
+2000-04-14 Friday 17:11  nestyurkin.nikolay
+
+	* src/areafix.c (1.110): areafix kill request fix
+
+2000-04-12 Wednesday 23:56  tobi
+
+	* makefile.husky (1.10): small fix
+
+2000-04-12 Wednesday 23:28  tobi
+
+	* src/toss.c (1.195): implemented check for hidden files in inbound
+	for borland c
+
+2000-04-12 Wednesday 23:28  tobi
+
+	* h/: areafix.h (1.12), recode.h (1.6, hpt-0_9_7d-release,
+	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release), toss.h
+	(1.30), tree.h (1.6, hpt-0_9_7d-release, hpt-0_9_7c-release,
+	hpt-0_9_7b-release, hpt-0_9_7a-release): Borland Fixes / removed
+	Warnings
+
+2000-04-12 Wednesday 22:48  tobi
+
+	* src/fcommon.c (1.41): borland c fix
+
+2000-04-12 Wednesday 21:51  tobi
+
+	* src/hpt.c (1.56): Added SetConsoleTitle for Borland C
+
+2000-04-12 Wednesday 20:11  tobi
+
+	* src/: areafix.c (1.109), dupe.c (1.32), fcommon.c (1.40), hpt.c
+	(1.55), hptlink.c (1.5), hpttree.c (1.7), link.c (1.25), pktread.c
+	(1.51), pktwrite.c (1.20), post.c (1.34), recode.c (1.10), scan.c
+	(1.82), scanarea.c (1.48), seenby.c (1.11), strsep.c (1.6,
+	hpt-0_9_7d-release, hpt-0_9_7c-release, hpt-0_9_7b-release,
+	hpt-0_9_7a-release), toss.c (1.194), tpkt.c (1.22), tree.c (1.6):
+	Removed warnings for Borland C
+
+2000-04-12 Wednesday 18:08  tobi
+
+	* src/: areafix.c (1.108), fcommon.c (1.39), hpt.c (1.54),
+	pktwrite.c (1.19), toss.c (1.193): Fixes for Borland C
+
+2000-04-12 Wednesday 17:50  tobi
+
+	* src/dupe.c (1.31): removed more ampersands
+
+2000-04-12 Wednesday 17:47  tobi
+
+	* src/dupe.c (1.30): removed superfluous (and possibly harmful)
+	ampersands
+
+2000-04-10 Monday 16:41  sms
+
+	* src/toss.c (1.192): some changes to fidoconfig.h and affected
+	files needed to automatically convert fidoconfig.h to fidoconf.pas
+	with h2pas
+
+2000-04-09 Sunday 17:29  hjk
+
+	* src/toss.c (1.189): * Code cleanup
+
+2000-04-09 Sunday 17:25  hjk
+
+	* src/toss.c (1.188): * removed check of groupaccess on import and
+	export of messages
+
+2000-03-30 Thursday 09:33  tobi
+
+	* makefile.husky (1.8): makefile fixes by max and others
+
+2000-03-19 Sunday 23:33  tobi
+
+	* makefile.husky (1.7): Makefile fixes
+
+2000-03-12 Sunday 15:55  tobi
+
+	* src/hptlink.c (1.4): 64 bit bug fixes
+
+2000-03-12 Sunday 15:48  tobi
+
+	* src/: fcommon.c (1.36), toss.c (1.173), txt2pkt.c (1.9): 64 bit
+	bug fixes64 bit bug fixes64 bit bug fixes64 bit bug fixes64 bit bug
+	fixes64 bit bug fixes
+
+2000-03-09 Thursday 17:48  sms
+
+	* makefile.husky (1.6): changed / to DIRSEP in makefile.husky
+
+2000-03-09 Thursday 17:27  sms
+
+	* makefile.husky (1.5), h/dupe.h (1.15), h/fcommon.h (1.20),
+	h/global.h (1.12), h/log.h (1.8), h/pkt.h (1.17), h/scan.h (1.13),
+	h/seenby.h (1.6), src/areafix.c (1.99), src/dupe.c (1.28),
+	src/fcommon.c (1.35), src/hpt.c (1.49), src/hptlink.c (1.3),
+	src/hpttree.c (1.6), src/link.c (1.24), src/log.c (1.11),
+	src/pktread.c (1.49), src/pktwrite.c (1.18), src/post.c (1.29),
+	src/scan.c (1.77), src/scanarea.c (1.44), src/toss.c (1.172),
+	src/tpkt.c (1.21), src/txt2pkt.c (1.8): moved smapi and fidoconfig
+	headers to INCDIR/smapi and INCDIR/fidoconfig
+
+2000-03-07 Tuesday 16:37  tobi
+
+	* makefile.husky (1.4): makefile fixes
+
+2000-02-22 Tuesday 09:51  edi
+
+	* src/areafix.c (1.97): 
+	edi: * now if token `allowPktAddrDiffer' for link is on, areafix
+	allows the originating addresses in PKT and MSG header be
+	different. See the manual of fidoconfig about this token.
+
+2000-02-06 Sunday 23:32  henk-jan.krueger
+
+	* src/areafix.c (1.88): * Added '%query' to AreaFix - Update
+
+2000-02-06 Sunday 23:29  henk-jan.krueger
+
+	* h/areafix.h (1.11), misc/areafix.hlp (1.7), src/areafix.c (1.87):
+	* Added '%query' to AreaFix
+
+2000-01-29 Saturday 12:57  mt
+
+	* src/scan.c (1.70): last fix for requests
+
+2000-01-28 Friday 21:42  sms
+
+	* src/: areafix.c (1.80), toss.c (1.164): changed groups from chars
+	to strings
+
+2000-01-27 Thursday 19:18  mt
+
+	* src/scan.c (1.69): requets bugfix
+
+2000-01-27 Thursday 18:56  mt
+
+	* src/toss.c (1.163): patch by alex Semyaka
+
+2000-01-25 Tuesday 20:04  mt
+
+	* src/scan.c (1.68): request bug fixed
+
+2000-01-24 Monday 20:05  mt
+
+	* src/areafix.c (1.79): hopefully fixed rescan
+
+2000-01-24 Monday 00:30  sms
+
+	* makefile.husky (1.1): move makefile.husky from linux subdir to
+	main dir
+
+2000-01-16 Sunday 14:11  sms
+
+	* INSTALL (1.6): added reference to husky-common-package to INSTALL
+
+2000-01-01 Saturday 22:14  tobi
+
+	* src/: areafix.c (1.73), recode.c (1.8): Fixed some warning.
+
+1999-12-22 Wednesday 14:47  mt
+
+	* src/: pktinfo.c (1.8), toss.c (1.157): merely bugfixes. Look into
+	Changelog
+
+1999-12-15 Wednesday 23:38  mt
+
+	* h/version.h (1.5), src/global.c (1.19), src/hpt.c (1.38),
+	src/pktinfo.c (1.7), src/pktread.c (1.43), src/purgeDupes.c (1.12):
+	version numbers changed changed
+
+1999-12-07 Tuesday 19:44  mt
+
+	* src/pktread.c (1.41): fixed the last bugfix back to original
+	correct behaviour
+
+1999-12-06 Monday 18:59  tobi
+
+	* src/pktread.c (1.39): * Month number in PKT header was
+	interpreted wrong, fixed.    (Patch by Eduard Dulich).
+
+1999-12-06 Monday 14:53  tobi
+
+	* src/: areafix.c (1.71), hpt.c (1.37), pktread.c (1.38), post.c
+	(1.18), recode.c (1.7), scan.c (1.63), scanarea.c (1.39), toss.c
+	(1.153): Fixed warnings, adapted dirlayer.h, and fixed osf makefile
+
+1999-12-02 Thursday 11:45  mt
+
+	* src/areafix.c (1.70): fixed bug in rescanEMArea introduced by me
+	yesterday
+
+1999-12-01 Wednesday 09:33  mt
+
+	* misc/areafix.hlp (1.6), src/areafix.c (1.69): rescan parameter
+	for maximum count of echomail rescanned added
+
+1999-11-30 Tuesday 22:12  sms
+
+	* src/: areafix.c (1.68), toss.c (1.152): fixed some misuses of ++
+	in areafix.c and toss.c
+
+1999-11-04 Thursday 12:31  mt
+
+	* src/seenby.c (1.9): fixed buffer overflow bug
+
+1999-11-03 Wednesday 08:56  mt
+
+	* src/toss.c (1.150): fixed the bug when hpt got a bad echomail
+	with spaces between AREA:   <NAME>
+
+1999-10-19 Tuesday 21:04  mt
+
+	* src/: global.c (1.17), link.c (1.15): fixed one bug and adjusted
+	version
+
+1999-10-18 Monday 09:14  tobi
+
+	* src/scan.c (1.60): Recognise trailing ^M in echotoss.log
+
+1999-10-12 Tuesday 10:43  mt
+
+	* src/pktwrite.c (1.14): npd kludge corrected
+
+1999-10-10 Sunday 23:21  henk-jan.krueger
+
+	* src/toss.c (1.147): * Too much checks for reading or writing an
+	area, groups are now only used for AreaFix check
+
+1999-09-24 Friday 11:14  mt
+
+	* INSTALL (1.5): release updates
+
+1999-09-23 Thursday 23:20  mt
+
+	* CREDITS (1.14, hpt-0_9_7d-release, hpt-0_9_7c-release,
+	hpt-0_9_7b-release, hpt-0_9_7a-release): ready for release
+
+1999-09-15 Wednesday 21:39  mt
+
+	* src/toss.c (1.141): djgpp should work again
+
+1999-09-14 Tuesday 22:37  mt
+
+	* CREDITS (1.13), src/post.c (1.11): applied patch from sven
+
+1999-09-08 Wednesday 15:40  tobi
+
+	* src/areafix.c (1.60): Fixed areafix message in case of different
+	pkt and msg addresses.	Previously, the message was "system is
+	unknown". Now, it is "different pkt and msg addresses", as
+	originally intended.
+
+1999-09-06 Monday 14:22  tobi
+
+	* src/areafix.c (1.59): Fixed a coredump that occured when a PKT
+	file was processed that contained two messages, each an areafix
+	request for an area that was not available, but needed to be
+	requested at the uplink.
+
+1999-08-12 Thursday 12:51  tobi
+
+	* src/toss.c (1.132): Implemented the "allowEmptyPktPwd" feature.
+	Lothar never seems to get his ITrack configured correctly ... ;-)
+
+1999-08-03 Tuesday 13:30  georgi
+
+	* src/txt2pkt.c (1.3): Added Via line if post in netmail
+
+1999-08-02 Monday 15:37  georgi
+
+	* src/toss.c (1.129): attachs now find in protInbound dir
+
+1999-07-30 Friday 19:50  tobi
+
+	* src/areafix.c (1.54): Fixed return codes of processAreaFix. 0 is
+	error and 1 is OK, not the other way round.
+
+1999-07-30 Friday 19:22  tobi
+
+	* src/: link.c (1.13), scan.c (1.52), scanarea.c (1.33): Fix: Added
+	trailing zeros to the control buffer after call to MsgReadMsg,
+	because MsgReadMsg does not insert them, but CvtCtrlToKludge does
+	need them.
+
+1999-07-30 Friday 18:05  tobi
+
+	* src/areafix.c (1.53): Fixed nonportable declaration of areaslen
+
+1999-07-21 Wednesday 09:06  georgi
+
+	* src/areafix.c (1.52): change %list
+
+1999-06-30 Wednesday 10:16  mt
+
+	* src/scan.c (1.51): small patch
+
+1999-06-29 Tuesday 12:06  mt
+
+	* src/toss.c (1.128): first message in autocreated area is now also
+	in dupe-database recorded.
+
+1999-06-23 Wednesday 21:05  mt
+
+	* src/: dupe.c (1.19), global.c (1.15): version updated bugfix for
+	dupe.c
+
+1999-06-23 Wednesday 13:23  georgi
+
+	* src/txt2pkt.c (1.1): posting text files to pkt
+
+1999-06-11 Friday 20:06  mm
+
+	* src/areafix.c (1.47): + area descriptions are printed as well in
+	arealist
+
+1999-06-08 Tuesday 00:24  mt
+
+	* src/pktread.c (1.27): release
+
+1999-06-07 Monday 19:20  mt
+
+	* h/toss.h (1.20), src/hpt.c (1.29), src/post.c (1.8), src/toss.c
+	(1.120): post patches
+
+1999-06-01 Tuesday 19:36  mt
+
+	* h/toss.h (1.19), src/dupe.c (1.17), src/post.c (1.7), src/toss.c
+	(1.119): post fixed, dupe fixed
+
+1999-05-26 Wednesday 10:19  mt
+
+	* src/: post.c (1.6), toss.c (1.118): fixed the swapped parameters
+	at and af in post
+
+1999-05-20 Thursday 12:27  mt
+
+	* src/toss.c (1.117): err files with passthrough areas now fixed
+
+1999-05-19 Wednesday 20:52  mt
+
+	* src/toss.c (1.116): empty packets are processed no more
+
+1999-05-18 Tuesday 20:54  mt
+
+	* h/toss.h (1.18), src/toss.c (1.115): fix applied and other
+	changes
+
+1999-05-18 Tuesday 19:20  mt
+
+	* src/toss.c (1.114): update
+
+1999-05-17 Monday 14:50  mt
+
+	* src/toss.c (1.113): pktpwd bug fixed
+
+1999-05-17 Monday 01:23  mt
+
+	* src/toss.c (1.112): updates
+
+1999-05-11 Tuesday 20:58  mt
+
+	* src/: areafix.c (1.43), log.c (1.7): one bugfixes in areafix and
+	new patches from oleg
+
+1999-05-10 Monday 14:46  mt
+
+	* h/global.h (1.9), h/log.h (1.6), src/areafix.c (1.42), src/dupe.c
+	(1.16), src/fcommon.c (1.23), src/global.c (1.14), src/hpt.c
+	(1.25), src/link.c (1.12), src/pktread.c (1.25), src/purgeDupes.c
+	(1.9), src/scan.c (1.48), src/scanarea.c (1.30), src/tlog.c (1.5),
+	src/toss.c (1.111): pgcc/emx related fixes
+
+1999-05-10 Monday 00:19  mt
+
+	* src/: link.c (1.11), scan.c (1.47), toss.c (1.110): small fixes
+
+1999-04-21 Wednesday 12:41  mt
+
+	* src/toss.c (1.109): fixed null pointer errors
+
+1999-04-20 Tuesday 00:05  mt
+
+	* src/toss.c (1.107): fixed the bug, when no autocreatedefaults was
+	specified
+
+1999-04-18 Sunday 22:53  mt
+
+	* src/scan.c (1.46): vialine fix
+
+1999-04-09 Friday 12:19  mt
+
+	* src/toss.c (1.100): applied a fix from Antonio
+
+1999-04-08 Thursday 17:25  mt
+
+	* TODO (1.22), src/dupe.c (1.15), src/toss.c (1.99): new patches by
+	antonio
+
+1999-04-06 Tuesday 22:38  mt
+
+	* INSTALL (1.4), src/global.c (1.13), src/hpt.c (1.24),
+	src/scanarea.c (1.28), src/toss.c (1.97): applied antonios patches
+
+1999-03-20 Saturday 15:24  mt
+
+	* src/toss.c (1.94): applied a patch from as russian. (forgot the
+	name sorry)
+
+1999-03-18 Thursday 18:53  gabriel
+
+	* src/areafix.c (1.36): changed loglevel for string "Start AReafix"
+	from 4 to 1
+
+1999-03-13 Saturday 10:54  ml
+
+	* h/scanarea.h (1.2), h/toss.h (1.16), src/areafix.c (1.33),
+	src/hpt.c (1.21), src/scanarea.c (1.25), src/toss.c (1.92): Max: +
+	toss -b (from Fedor Lizunkov) + small fixes
+
+1999-03-10 Wednesday 16:01  ml
+
+	* src/toss.c (1.91): Max: - fixed core dump if no pkt pwd (change
+	processPkt code)
 	
------ cvs ci ------
-Mon Jan 24 18:50:32 CET 2000
-mtt:
-* finally managed to checking my rescan-bugfix.
+	CVS : Enter Log.  Lines beginning with `CVS:' are removed
+	automatically
 
------ cvs ci ------
-Tue Jan 25 00:43:18 NOVT 2000
-max:
-* comment /* checkDateTime() */
-patch from Serguei Revtov:
-* added -d NUM switch (last NUM days) to hpttree by Vlad Pluzhnikov 2:5021/19
+1999-03-10 Wednesday 01:18  mt
 
------ cvs ci ------
-Sat Jan 22 11:16:22 NOVT 2000
-max (patch from Serguei Revtov):
-* fixed bug in areafix (core dump on %rescan)
-* disabled Jam linking in hptlink/NT
+	* TODO (1.18), src/link.c (1.8), src/toss.c (1.89): segfault in
+	link fixed, fixed a bug in processPkt
 
------ cvs ci ------
-Thu Jan 20 23:16:21 NOVT 2000
-max:
-* fixed recoding in post with export
-* clear attributes for echoarea when posting messages
+1999-03-10 Wednesday 01:00  ml
 
------ cvs ci ------
-Thu Jan 20 15:10:29 NOVT 2000
-max (patch from Serguei Revtov):
-* if no route specified hpt leave netmail untouched
+	* h/toss.h (1.15), src/areafix.c (1.31), src/toss.c (1.88): Max
+	(patches from Fedor Lizunkov): - fixed areafix bug when send mail
+	to uunknown link - fixed echo access (readCheck, writeCheck)
 
------ cvs ci ------
-Mon Jan 17 21:05:16 NOVT 2000
-max:
-* fixed posting to netmail
-* file route fix (patch from Serguei)
-* kill seen-by's (-tinySB) in echoarea (patch from Kolya)
+1999-03-09 Tuesday 16:41  mt
 
------ cvs ci ------
-Tue Jan 11 01:50:40 NOVT 2000
-max (patch from Kolya & Serguei):
-* hpttree fixes
+	* src/scan.c (1.45): changed the routing back to old style. See
+	ChangeLog
 
------ cvs ci ------
-Mon Jan 10 12:28:35 NOVT 2000
-max:
-* added hpttree.c to cvs :)
-* fixed forward requests
+1999-03-09 Tuesday 02:10  mt
 
------ cvs ci ------
-Sun Jan  9 20:22:44 NOVT 2000
-max (patch from Serguei Revtov):
-* added hpttree tool
+	* TODO (1.17), h/scanarea.h (1.1), src/link.c (1.7): small fixes
 
------ cvs ci ------
-Sat Jan  8 13:35:58 NOVT 2000
-max:
-* small fixes in post.c
+1999-03-08 Monday 12:51  ml
 
------ cvs ci ------
-Fri Jan  7 21:43:32 NOVT 2000
-max:
-* areafix global revision (many bugfixes)
-! forward requests not tested
+	* src/areafix.c (1.30): Max (areafix updates) : - core dumped at
+	%info - fixed small bugz in %pause & %resume - small changes in
+	available code - delLinkFromArea: unsubscribed other links -
+	%rescan: fixed core dumps if no area defined.
 
------ cvs ci ------
-Fri Jan  7 11:30:05 NOVT 2000
-max:
-* fixed bug in makeMsg
-* fixed several bugs in areafix (not all)
-* added xstr.c & xstr.h to cvs-tree :)
+1999-03-07 Sunday 19:36  ml
 
------ cvs ci ------
-Thu Jan  6 19:51:30 NOVT 2000                                                   
-max (patch from Kolya):
-- added string functions xstralloc, xstrcat, xstrscat, xscatprintf to
- make text handling code more simple and reliable (uses vsnprintf and
- vasprintf if possible).
-- changed lot of code to use this new xfunctions. Be prepared !!!
-- made some changes in arcmail and find_old_arcmail functions
-- fix in scanNMArea to display area name
-- fix in createKludges to generate different MSGID's
-- memory leak fix in hpt.c
-- functions in fcommon.c use PATHDELIM as delimiter now
-max:
-* corrected tossFromBadArea
-! there is some bugs in code: we try to fix them, but...
+	* CREDITS (1.11), h/areafix.h (1.4), h/toss.h (1.14), src/areafix.c
+	(1.29), src/pktwrite.c (1.10), src/scanarea.c (1.24), src/toss.c
+	(1.87): - changing echo access policy by Fedor Lizunkov 2:5020/960
+	Max: - added rescan code by Fedor and other.  - areafix is in test
+	stage, so...
 
------ cvs ci ------
-Mon Jan  3 17:45:54 NOVT 2000                                                   
-max:
-* added correctDateTime()
-(there may be coredumps with broken pkt's, but
- my solution is not progressive for speed).
+1999-03-04 Thursday 12:43  mt
 
-patch from Kolya Nesterov:
-* fixed flags parsing in post.c
-* added carbonDelete
+	* src/toss.c (1.86): fixed a bug where no pkt-files are recognized.
 
------ cvs ci ------
-Sat Dec 25 19:27:26 NOVT 1999
-max:
-* del packet pkt's if cmdexit==0
-* fix trouble with 0x0D when subscribing to area under UNIXes
+1999-03-03 Wednesday 23:57  mt
 
-patch from Kolya Nesterov:
-* linking speedup (?) especially for systems with poor IO caching
-* hashes used instead of trees in linkArea
-* flags in post command are now specified with human readable notation
-  ex: -f pvt loc
-* manual pages update for hpt
+	* h/areafix.h (1.3), h/global.h (1.8), h/scan.h (1.9), h/toss.h
+	(1.13), misc/areafix.hlp (1.4), src/areafix.c (1.28), src/global.c
+	(1.12), src/hpt.c (1.20), src/toss.c (1.85): applied max patch
 
------ cvs ci ------
-Wed Dec 22 14:10:55 CET 1999
-mtt (inspired by Alex):
-* crash and hold flags are removed on every netmail tossed in. 
-* pakets in localinbound are tossed now even they are not adressed to us.
-* some additional log messages when packets are not to us.
-* made pktinfo working again. Fixed a segmentation fault.
+1999-03-02 Tuesday 13:18  mt
 
------ cvs ci ------
-Sun Dec 19 10:36:32 NOVT 1999                                                   
-max:
-* fixed bug in my last change 'bout "don't read config..."
+	* src/: config.c (1.4), tconfig.c (1.4): removed old config code
 
------ cvs ci ------
-Sat Dec 18 17:55:05 NOVT 1999
-max:
-* don't read config if no command line arguments
-* changes in correctNMAddr() - was coredumps on some broken pkt files
+1999-03-01 Monday 23:26  gabriel
 
-On Thu Dec 16 i renamed the 0.29 release to 0.31 because of some lists which say
-0.29 and 0.30 are not y2k compliant. They are only smapi was not compliant that day.
-The beta 0.30 is renamed to 0.9.5.
+	* CREDITS (1.10), h/log.h (1.4), src/hpt.c (1.19), src/log.c (1.5),
+	src/scan.c (1.44), src/toss.c (1.84): Mon Mar  1 22:00	 Gabriel
+	Plutzar + included support for generic new keyword for LogLevels  
+	* LogLevels <string>	 You can specify all Loglevels you want in
+	your log     Default is 123456789, use 23456789 if you don't want
+	all the IDLE	 sessions in your logfile (eg when you start hpt
+	once a minute)	 + Major Changes in log.c & log.h were necessary to
+	supress unwanted     log file entries in IDLE only hpt sessions
+	(like regularily scanning     the netmail area without something
+	happening worth logging)   + Changes to the code to force all
+	unneeded log entries to loglevel 1
 
------ cvs ci ------
-Tue Dec 14 19:30:14 NOVT 1999
-max (patch from Serguei Revtov):
-* sorting inbound mail by time
+1999-03-01 Monday 19:59  mt
 
------ cvs ci ------
-Sat Dec 11 13:08:47 NOVT 1999
-max (patch from Serguei Revtov):
-* added alternative tool hptlink
-* moved man pages
+	* INSTALL (1.3), src/areafix.c (1.27), src/hpt.c (1.18), src/link.c
+	(1.6), src/post.c (1.5), src/purgeDupes.c (1.8) (utags: hpt-0_26):
+	djgpp port
 
------ cvs ci ------
-Thu Dec  9 16:33:03 NOVT 1999
-max (patch from Kolya):
-* fixed bug in "area linking speed up!"
+1999-02-28 Sunday 20:28  gabriel
 
------ cvs ci ------
-Thu Dec  9 00:03:43 NOVT 1999                                                   
-max (patch from Kolya):
-* area linking speed up!
+	* src/areafix.c (1.26): little change in subscribeareacheck to you
+	the new patimat funktion
 
------ cvs ci -----
-Tue Dec  7 19:31:12 CET 1999
-mtt:
-* removed last wrong bugfix. The month number was correctly interpreted. fixed :-)
+1999-02-27 Saturday 22:58  gabriel
 
------ cvs ci ------
-Tue Dec  7 20:57:05 NOVT 1999
-max:
-* ignore Capability Words in pkt (token ignoreCapWord)
+	* misc/: areafix.hlp (1.3), filefix.hlp (1.1, hpt-0_9_7d-release,
+	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release) (utags:
+	hpt-0_26): updated areafix & filefix help file
 
------ cvs ci -----
-Mon Dec  6 18:55:17 mez 1999
-tobi:
-* Month number in PKT header was interpreted wrong, fixed. 
-  (Patch by Eduard Dulich).
+1999-02-27 Saturday 20:22  gabriel
+
+	* src/areafix.c (1.25): Minor Changes
+
+1999-02-25 Thursday 22:43  gabriel
+
+	* h/toss.h (1.12, hpt-0_26): Warning fixed
+
+1999-02-25 Thursday 19:02  gabriel
+
+	* src/: fcommon.c (1.20), toss.c (1.83) (utags: hpt-0_26): Warnings
+	& makefile fixed
+
+1999-02-22 Monday 11:26  tobi
+
+	* src/toss.c (1.82): - Ignore my last check-in message, hpt was
+	able to recognise mixed case   file name extensions even before my
+	last check-in.
+
+1999-02-22 Monday 11:13  tobi
+
+	* src/toss.c (1.81): - hpt now also recognises .pkt and arcmail
+	filename extensions that are   written in lower case.
+
+1999-02-20 Saturday 21:21  tobi
+
+	* h/fcommon.h (1.14, hpt-0_26), src/fcommon.c (1.19), src/hpt.c
+	(1.17), src/scanarea.c (1.23, hpt-0_26), src/toss.c (1.80): + Added
+	support for QQQ files. If found in the tempOutbound, they will be  
+	packed into the outgoing arcmail bundle. This is useful if you use 
+	 CFRoute: You can point CFRoutes tempOutbound to the fidoconfig
+	tempOut,   in order to pack netmail into arcmail bundles.  + Added
+	support for packet forwarding. See the fidoconfig manual for  
+	information.
+
+1999-02-19 Friday 20:33  tobi
+
+	* h/fcommon.h (1.13), src/fcommon.c (1.18), src/toss.c (1.79):
+	Changes for the pkt forwarding feature. All embraced in ifdefs
+	because of the feature freeze.
+
+1999-02-19 Friday 18:06  tobi
+
+	* src/toss.c (1.78): - Added a log file entry for the case that a
+	PKT file in the secure inbound	 does not originate from a link of
+	ours (i.E. only netmail from this   packet will be processed, and
+	echomail will "vanish").
+
+1999-02-17 Wednesday 21:24  gabriel
+
+	* src/toss.c (1.77): Wed Feb 17 20:07:00 CET 1999   Gabriel
+	Plutzar: + added implementation of the new remap statment. It takes
+	the parameters	 ToName,OldAddr,NewAddr, seperated by commas.
+	ToName or OldAddr may be *.    If a Netmail meets the ToName and
+	OldAddr Criteria, it is sent to    NewAddr.
+
+1999-02-16 Tuesday 19:08  gabriel
+
+	* src/areafix.c (1.24): Gabriel Plutzar:   I included a new Areafix
+	Command, %avail  (alias %available, %all) which   sends back the
+	file availableareas, which should contain all areas for   forward
+	requests
+
+1999-02-15 Monday 20:23  mt
+
+	* TODO (1.16, hpt-0_26), src/areafix.c (1.23), src/dupe.c (1.14,
+	hpt-0_26), src/link.c (1.5), src/purgeDupes.c (1.7), src/toss.c
+	(1.76), src/tpkt.c (1.18, hpt-0_26): added autoCreateFile and
+	applied max's patch
+
+1999-02-14 Sunday 14:16  mt
+
+	* src/toss.c (1.75): applied patch from max
+
+1999-02-10 Wednesday 21:51  mt
+
+	* src/tpkt.c (1.17): update
+
+1999-02-10 Wednesday 21:50  mt
+
+	* src/: toss.c (1.74), tpkt.c (1.16): fixed autoareacreate bug
+
+1999-02-09 Tuesday 11:29  mt
+
+	* TODO (1.15), h/areafix.h (1.2, hpt-0_26), h/toss.h (1.11),
+	src/areafix.c (1.22), src/post.c (1.4), src/toss.c (1.73),
+	src/tpkt.c (1.15): fixed bugs, and changed the netmail tossing
+	behaviour
+
+1999-02-08 Monday 14:09  tobi
+
+	* src/toss.c (1.72): Started to work on PKT forwarding and fixed a
+	small bug.
+
+1999-02-04 Thursday 11:20  mt
+
+	* TODO (1.14), src/scan.c (1.43, hpt-0_26), src/strsep.c (1.3,
+	hpt-0_26), src/toss.c (1.71): new strsep and if echomail is from a
+	link which is not linked, it will be tossed to bad.
+
+1999-02-02 Tuesday 21:41  mt
+
+	* TODO (1.13), h/scan.h (1.8, hpt-0_26), src/pktread.c (1.24,
+	hpt-0_26), src/scan.c (1.42): outgoing pkt's now have a valid
+	pktpassword if the link is defined in fidoconfig and the mails have
+	the flag crash or hold
+
+1999-02-02 Tuesday 00:21  mt
+
+	* TODO (1.12), src/pktread.c (1.23), src/pktwrite.c (1.9,
+	hpt-0_26): fixed the TOPT, FMPT bug and made a work-around for a
+	memory-problem
+
+1999-02-01 Monday 20:53  mt
+
+	* BUG-REPORTING (1.1, hpt-0_26): added BUG-REPORTING
+
+1999-02-01 Monday 20:52  mt
+
+	* src/: pktinfo.c (1.4, hpt-0_26), pktread.c (1.22): hpt now can
+	read pkt's which use \n as line separator and pktinfo displays all
+	pkt's on the commandline
+
+1999-02-01 Monday 14:22  mt
+
+	* src/: scanarea.c (1.22), toss.c (1.70): fixed MSGLOCAL bug in
+	makeMsg
+
+1999-01-31 Sunday 03:04  tobi
+
+	* src/pktread.c (1.21): Removed some other code that accidentally
+	slipped into CVS. Errrrr ....
+
+1999-01-31 Sunday 03:03  tobi
+
+	* src/pktread.c (1.20): Removed some debugging code that
+	accidentally slipped into the CVS. Sorry.
+
+1999-01-28 Thursday 19:26  tobi
+
+	* h/strsep.h (1.1, hpt-0_9_7d-release, hpt-0_9_7c-release,
+	hpt-0_9_7b-release, hpt-0_9_7a-release, hpt-0_26), src/areafix.c
+	(1.21), src/link.c (1.4), src/pktread.c (1.19), src/scan.c (1.41),
+	src/scanarea.c (1.21), src/strsep.c (1.2), src/toss.c (1.69):
+	portability fixes
+
+1999-01-27 Wednesday 19:50  mt
+
+	* TODO (1.11), src/pktread.c (1.18), src/purgeDupes.c (1.6): fixes
+
+1999-01-27 Wednesday 19:14  mt
+
+	* src/: areafix.c (1.20), scan.c (1.40): changed strsep to strtok_r
+
+1999-01-27 Wednesday 13:51  tobi
+
+	* h/pkt.h (1.9, hpt-0_26): Fixed preprocessor statements
+
+1999-01-27 Wednesday 13:35  tobi
+
+	* src/strsep.c (1.1): Added strsep.c from EMX source as temporary
+	solution for those UNIX systems that do not have strsep in their C
+	library (like OSF).
+
+1999-01-27 Wednesday 13:21  tobi
+
+	* src/: dupe.c (1.13), toss.c (1.68): - Fixed non-standard
+	preprocessor directives.    Hey, everybody: YOU MUST PUT THE # HASH
+	MARK FOR A PREPROCESSOR DIRECTIVE    TO THE VERY FRIST COLUMN OF
+	THE SOURCE CODE!. I.e., use
 	
------ cvs ci -----
-Thu Dec  2 11:32:02 CET 1999 
-mtt:
-* fixed a bug in my last change
-
------ cvs ci -----
-Tue Nov 30 22:58:33 CET 1999 
-mtt:
-* new rescan for a maximum of rescanned echomails.
-
------ cvs ci -----	
-Tue Nov 30 22:08:29 CET 1999
-sms:
-* fixed some misuses of ++ in areafix.c and toss.c
-
------ cvs ci -----	
-Thu Nov 18 23:28:29 NOVT 1999
-max (patch from Serguei Revtov): 
-* changed gmtime to localtime 
-* small fixed
-
------ cvs ci -----	
-Thu Nov  4 23:10:31 NOVT 1999
-max:
-* fixed wrong recoding carbon messages
-* patch from Kolya Nesterov for HASHDUPEs (for dos & win32)
-
------ cvs ci -----	
-Thu Nov  4 10:15:38 MET 1999 
-mtt:
-* fixed buffer overflow bug in seenby.c (thanks to Alex Semenyaka)
-
-
------ cvs ci ------
-Wed Nov  3 08:26:56 CET 1999
-mtt:
-* if the AREA: line in a message contains spaces between AREA: <NAME>, hpt deletes this spaces
-
------ cvs ci ------
-Sun Oct 24 16:58:04 NOVST 1999
-max (patch from Kolya Nesterov):
-- carbonCopy & carbonMove implemented in hpt
-- carbons in netmail are possible (used to implement mailboxes)
-  to use this define transit netmail area (it must be first in
-  config), and your private netmail area(s)
-  Then add something like this to fidoconfig:
-    CarbonTo Kolya Nesterov
-    CarbonMove kolya.netmail
-- carbonExtern: spawns external program with the last parameter equal
-  to temp file with msg header & text or pipes it to the external program
-  if first char of command line is '|' (to use this pipe feature you must
-  have popen function in your system and define HAS_POPEN symbol in makefile
-  (already done for linux))
-- pktinfo: added switches -h (display header msg info) and -t (display msg
-  text) (could be used instead of various pkt viewers)
-- packBadArea - checks for link write access to area added
-- some internal changes in scan.c: decreased the number of functions,
-  all argument for scan are also possible to pack
-
------ cvs ci ------
-Thu Oct 21 22:44:42 NOVST 1999
-max:
-* areafix: areatags converted to uppercase (forwardRequests)
+	#ifdef blah
 	
------ cvs ci ------	
-Tue Oct 19 20:22:22 CEST 1999 
-mtt:
-* dirty fix for link.c when trying to link a non existing message.
-* version adjusted to 0.30 
+	  and NOT
 	
------ cvs ci ------
-Mon Oct 18 22:22:12 NOVST 1999                                                  
-max:
-- transit mail with SNT flag are lost. fixed. (Alexander V Popaduck)
-
------ cvs ci ------
-Thu Oct 16 13:40:00 MET DST 1999
-sms:
-- reorganized Makefiles, please read README.Makefiles in the husky-common
-  package!
-
------ cvs ci ------
-Wed Oct 13 16:47:49 NOVST 1999
-max:
-- fixed Kolyas changes in areafix (aka2str was used twice)
-- remove Kolyas aka2str from fcommon.c - this function in fidoconfig
-
------ cvs ci ------
-Mon Oct 11 22:47:05 NOVST 1999
-max:
-* log.c fix: normal print to stdout
-
------ cvs ci ------
-Mon Oct 11 00:22:43 NOVST 1999
-max:
-* fixed some memory leak (thanx to Basile A. Sey)
-* patch from Kolya Nesterov:
-- static charset tables removed from recode.c
-- syntax of writeLogEntry replaced with printf like and all calls changed
-- rewritten some portion of function packBadArea (sometimes coredumped, not
-anymore, I hope)
-- area toss statistic added (displays count of tossed msgs in log file)
-
------ cvs ci ------
-Sun Oct  3 19:30:57 NOVST 1999
-max:
-* fixed problem with createDirectoryTree() under WinNT (Alexey Vasilyev)
-* some work on post.c (patch from Kolya)
-
------ cvs ci ------
-Tue Sep 28 17:31:08 NOVST 1999
-max:
-* fixed small bug in forwardMsgToLinks
-
-hpt 0.29
---------
-(released on Thu Sep 23 23:05:24 CEST 1999)
-
------ cvs ci ------
-Wed Sep 15 21:26:46 CEST 1999 
-mtt:
-* djgpp should compile again
-
------ cvs ci ------
-Sat Sep 19 17:40:33 NOVST 1999
-max:
-* fixed areafix bug (NULL areas in forwardrequest file)
-* local carbon areas added to import.log
-* porting to win32 (changed default char to unsigned)
-* recode toUserName & fromUserName fixing
+	  #ifdef blah
 	
------ cvs ci ------
-Sat Sep 18 21:53:03 NOVST 1999                                                  
-max:
-* fixed bug when pkt with dupes renames to .err if "dupecheck move"
-* autoCreate fixing
-
------ cvs ci ------
-Tue Sep 14 22:24:52 CEST 1999 
-mtt:
-* applied patch from sven to fix the bug in post.c
-
------ cvs ci ------
-Sat Sep 11 13:00:16 NOVST 1999
-max:
-+ added carbonReason (patch from Serguei Revtov)
-* carbonCopy code cleanup
-* areafix.c %list - code cleanup & bugfixing (may be) :-)
-+ added @NPD kludge for areafix reports
-* some statistix changes (to be continued)
-	
------ cvs ci ------
-Tue Sep  7  18:28:00
-Fedor:
-* fixed buf with HighWaters position
-
------ cvs ci ------
-Thu Sep  2 22:11:30 CEST 1999
-Antonio:
-* fixed bug in correctEMAddr of pktread.c
-+ now hpt can post msg in area without export it (default).
-
------ cvs ci ------
-Sun Aug 29 21:25:52 NOVST 1999
-max:
-* fixed bug when packed mail for busy links
-	
------ cvs ci ------
-Sat Aug 28 13:47:33 NOVST 1999
-max:
-* some fixes for last bugfix :)
-
-=======
-Sat Aug 28 02:03:49 CEST 1999
-Antonio:
-+ added Jam to autoCreate
-
------ cvs ci ------
-Fri Aug 27 00:44:58 NOVST 1999
-max:
-* fixed a bug with nemail without INTL-Kludge
-
------ cvs ci ------
-Fri Aug 20 14:42:16 NOVST 1999
-max:
-+ changes in areafix.c (patch from Serguei Revtov)
-
------ cvs ci ------
-Mon Aug 16 12:33:46 NOVST 1999
-max:
-* do not scan one area several times (if found in echotoss.log)
-+ execute external programs beforePack & afterUnpack
-
------ cvs ci ------
-Sun Aug 15 23:42:08 NOVST 1999
-max:
-* fixed small bug with header->origAddr.net
-+ netmailarea packed when found in echotoss.log
-	
------ cvs ci ------
-Sat Aug 14 23:34:49 NOVST 1999
-max:
-* areafix can split messages (areafixmsgSize)
-
------ cvs ci ------
-Fri Aug 13 13:30:54 NOVST 1999
-max:
-changes in carbon copy:
-* fixed bug when CC to LocalArea
-+ now we can keep kludges (carbonKeepSb in config or -keepsb in echoarea options)
-
------ cvs ci ------
-Wed Aug 11 02:20:37 NOVST 1999
-max:
-+ added stricmp function (thanx to Serguei Revtov)
-* changes in carbonCopy
-
------ cvs ci ------
-Mon Aug  9 15:34:24 NOVST 1999
-max:
-+ added HASHDUPES code by Oleg Zrozhevsky
-* small fixes in log.c by Oleg Zrozhevsky
-
------ cvs ci ------
-Mon Jul 26 14:19:28 NOVST 1999
-max:
-* fixed memory leak in dupe.c (thanx to Oleg Zrozhevsky)
-* small changes in pktread.c (now reads stone age pkt's)
-
------ cvs ci ------
-Wed Jun 30 10:14:02 MET DST 1999
-mtt:
-* applied small patch for os/2
-
------ cvs ci ------
-Tue Jun 29 23:43:34 NOVST 1999
-max:
-* fixed bug in areafix.c (%list and long area names)
-	
------ cvs ci ------
-Tue Jun 29 10:45:07 CEST 1999
-mtt:
-* the first echomail in a autocreated area is now also
-  recorded in the dupe-database.
-+ hopefully fixed makefile.djg
-
------ cvs ci ------
-Mon Jun 28  16:47:00
-Fedor:
-+ Added direct and immediate flavours
-
------ cvs ci ------
-Sun Jun 27  17:16:00
-Fedor:
-* fixed small bug with intab when request %LIST (description of area)
-+ added check group when request %AVAIL
-
------ cvs ci ------
-Wed Jun 23 09:13:20 CEST 1999
-mtt:
-* fixed the creation of dupe-bases in win32 version of hpt
-
------ cvs ci ------
-Tue Jun 22 22:10:45 CEST 1999
-mtt:
-* version number updated
-
------ cvs ci ------
-Wed Jun 23 23:20:11 NOVST 1999
-max:
-* bugfix for dupe.c (createDupeFileName)
-
------ cvs ci ------
-Mon Jun 21 17:36:45 NOVST 1999
-max:
-* small changes in (5) code // little optimization
-
------ cvs ci ------
-Sun Jun 20  21:24:20
-Fedor:
-* bugfix 5 for OS/2 (problem with "\r\n" in end line)
-
-reply from max:
-* this bugfix is for win32 also
-
------ cvs ci ------
-Thu Jun 17 00:08:15 NOVST 1999
-max:
-+ (5) pkt's added to existing arcmail bundle (default 500kb)
-
------ cvs ci ------
-Fri Jun 11  18:52:30
-mm:
-+ descriptions of areas are now also displayed when requesting a list
-
------ cvs ci ------
-Thu Jun 10  19:30:00
-Fedor:
-* change areafix.c
-* when autocreated and added description from forwardRequestFile, if zero line
-  in this file ("\r\n"), then to core. Fixed.
-
------ cvs ci ------
-Tue Jun 8  20:53:32
-Fedor:
-* small change areafix.c
-
-
-hpt 0.28
-(released on Mon Jun  7 22:37:09 CEST 1999)
---------
-
------ cvs ci ------
-Mon Jun  7 16:08:10 CEST 1999 
-mtt:
-* fixed small display bug (thanks to Matthias Duesterhoeft 2:2432/700.2)
-* applied patch from eike, so you can Carbon Copies to echoareas
-  are now also exported.
-
------ cvs ci ------
-Fri Jun  4 13:19:02
-Fedor:
-* bugfix %rescan to AreaFix (thanks to Serguei Revtov 2:5021/19.1)
-
------ cvs ci ------
-Tue Jun  1 18:07:24 CEST 1999 
-mtt:
-* post works now for our own aka too (patch from eike)
-* messages without kludge are never treated as dupe. F*ck that old software
-
------ cvs ci ------
-Wed May 26 08:51:13 CEST 1999
-mtt:
-* bugfix for post, af and at parameterers are swapped.
-
------ cvs ci ------
-Tue May 25 20:12:09 CEST 1999 
-mtt:
-* applied bugfix of (4) also for insecure inbound
-
------ cvs ci ------
-Thu May 20 11:03:49 MET DST 1999	
-mtt:
-* problem with err files while using passthrough areas should be fixed now
-
------ cvs ci ------
-Wed May 19 19:25:59 CEST 1999 
-mtt:
-* pkt's which are only 60 byte long (empty packets) are not processed, 
-  but deleted.
-	
------ cvs ci ------
-Tue May 18 19:27:56 CEST 1999
-mtt:
-* (4) fixed a bug with pkts without pwd and made it compilable again
-* applied Kolyas patch so pkts are not deleted, when there are
-  problems accessing the messagebase
-
------ cvs ci ------	
-Mon May 17 13:23:56 CEST 1999
-mtt:
-* fixed the bug, when pkts has no pwd...
-  this is a temporal solution, expect a new config verb and
-  additional code soon.
-	
------ cvs ci ------
-Sun May 16 23:54:17 CEST 1999
-mtt:
-* fixed a bug when autocreateing areas like e/lf/e
-  ( i know that i have fixed this already :-) )
-
------ cvs ci ------
-Sun May  16 20:45:02
-Fedor:
-+ delete lockfile if terminated by SIGINT/SIGTERM (UNIX and OS/2).
-
------ cvs ci ------
-mtt:
-Tue May 11 19:13:26 CEST 1999
-* if you write to AreaFix all leading space before a command is removed.
-- some more hpt_log changes
-
------ cvs ci ------
-Tue May  11 16:24:02
-Fedor:
-+ Add 'hpt scan -f<filename>' - scanning echomail from alternative
-  echotoss file.
-+ Add 'hpt scan -a<areaname>' - scanning echomail from <areaname> area.
-- If scanning echomail from echotoss (from config) and area is not found
-  in config (unknown area for hpt), then hpt scanned from badarea. Fixed.
-
------ cvs ci ------
-Mon May 10 13:14:47 CEST 1999
-mtt:
-- replaced all occurences of log to hpt_log because log is defined on pgcc/emx
-- inserted include <sys/types.h> whereever necessary for pgcc/emx
-- made some other changes (makefiles etc.) for pgcc/emx
-	
------ cvs ci ------
-Sun May  9 21:06:02 CEST 1999
-mtt:
-+ applied patch by John Zaitsev (2:5037/24)
-  so also toName and fromName are encoded
-
-
-hpt 0.27
-(released on Wed Apr 21 18:44:22 CEST 1999)
---------
-
------ cvs ci ------
-Wed Apr 21 18:44:22 CEST 1999
-mtt:
-+ changed two strcasecmp to stricmp
-
------ cvs ci ------
-Wed Apr 21 11:23:59 MET DST 1999
-mtt:
-+ fixed some pointer == null in autoareacreate and arcmail
-	
------ cvs ci ------
-Max:
-Tue Apr 20 09:31:53 NOVST 1999
-- change rindex() to strrchr() in description code
-+ small areafix updates from Edgar (for __WATCOMC__)
-
------ cvs ci ------
-Mon Apr 19 22:35:21 CEST 1999
-mtt:
-- fixed a bug in autoareacreatecode
-
------ cvs ci ------
-Sun Apr 18 20:47:51 CEST 1999
-Mtt:
-- via lines are now finished with a \r.
-
------ cvs ci ------
-Sun Apr 18 15:45:09 NOVST 1999
-Max:
-+ add separateBundles code
-
------ cvs ci ------
-Wed Apr  14 04:50
-Antonio:
-- fixed overrun that cause 'segmentation faults' if scan one message with a
-large kludge line. Electric Fence Power! :)
-
------ cvs ci ------
-Sun Apr  11 15:46
-Fedor:
-- fixed small bug in "SENDER:" string (badarea).
-
------ cvs ci ------
-Sat Apr  10 22:25:12
-Max:
-removed "\*.pkt" from unpack code
-
------ cvs ci ------
-Fri Apr  9 11:03:45 MET DST 1999
-Antonio: (applied by mtt)
-+ If hpt create an area and take his description from ForwardRequestFile,
-  and then create another area, description for this area was the same that
-  previous area. Fixed.
-
------ cvs ci ------
-Tue Apr  6 18:23:17 CEST 1999
-Antonio: (applied by mtt)
-+ Fidoconfig and hpt now supports descriptions for areas. See docs for
-  more info and examples. fconf2golded supports too.
-+ fidoconfig and hpt supports create and read filenames of areas in dos
-  style (8+3). Useful when you use Linux and want to store your message base
-  on a DOS partition.
-+ hpt now import description from ForwardResquestFile if found it, if
-  not, take the the description from AutoCreateDefault, if not... take
-  nothing... ;)
-+ Modifications in dupe-routines 
-  All Dupedatebases are written in lowercase.
-
------ cvs ci ------
-Mon Mar  29 16:05
-Fedor:
-- fixed bug in seen-by's line (0/0 0 ...)
-! report to netmail, or echoarea, or nowhere about autocreation areas
-+ new sample of config - ./linux/config.sample
-
------ cvs ci ------
-Sat Mar  27 13:30
-Fedor:
-- fixed small bug in forward of request
-+ report to netmail about autocreation areas
-
------ cvs ci ------
-Thu Mar  25 12:40
-Fedor:
-! Created area in passthrough, when created from forward of requests
-
------ cvs ci ------
-Sat Mar  20 16:03
-Max:
-- link patch from Edgar
-
------ cvs ci ------
-Thu Mar  18 Some time :)
-+ Changed loglevel for String "Start Areafix" from 4 to 1, in order to
-  continuosly support the loglevel feature ...
-
------ cvs ci ------
-Thu Mar  18 22:23
-Max:
-- removed old code from areafix
-+ remove all warnings for win32 version (thanx to Edgar)
-	
------ cvs ci ------
-Mon Mar  15 20:57
-Max:
-+ win32 port by Edgar Chupit (chupit@mail.lv)
-+ logEchoToScreen
-- fixed long seenby lines
-	
------ cvs ci ------	
-Sat Mar  13 14:49:30
-Max:
-+ toss -b (from Fedor)
-+ small updates
-
------ cvs ci ------	
-Wed Mar  10 19:56:00
-Max:
-- fixed segfault when pkt password is NULL (changes in processPkt code)
-
------ cvs ci ------	
-Wed Mar  10 15:41:00
-
-Max (areafix updates):
-+ new areafix.hlp
-+ forward of Requests
-+ kill reports if "areafixKillReports" defined in config
-+ code cleanup
-- do not kill attributes in transit netmail
-
-areafix is more stable now
-
------ cvs ci ------
-Wed Mar 10 00:05:25 CET 1999
-mtt:
-- fixed the seg-fault, when trying to link passthrough areas
-- fixed a bug in the processPkt routine which leads to wrong recognition of
-  pktPassword and so...
-
------ cvs ci ------	
-Wed Mar  10 04:55:00
-Max (patches from Fedor Lizunkov):
-- fixed areafix bug when send mail to uunknown link
-- fixed echo access (readCheck, writeCheck)
-
------ cvs ci ------	
-Tue Mar  9 15:30:17 MET 1999
-mtt:
-- changed the routing code back, so a netmail to a node (like 2:2433/1245) is 
-  matched to the routing statements using 2:2433/1245.0
-  This means:
-    route crash 2:2433/1245 2:2433/1245.* (matches the node and all points)
-	
------ cvs ci ------
-Mon Mar  8 21:36:00
-Max (areafix updates) :
-- core dumped at %info
-- fixed small bugz in %pause & %resume
-- small changes in available code
-- delLinkFromArea: unsubscribed other links than needed
-- %rescan: fixed core dump if no area defined.
-	
------ cvs ci ------
-Sun Mar  7 23:20:17
-Max:
-+ applied patches from Fedor Lizunkov 2:5020/960 for new echo acess policy
-+ write "REASON..." in message tossed to bad area (Fedor Lizunkov)
-+ areafix patch from Fedor (added %rescan and other...)
-
------ cvs ci ------
-Thu Mar  4 12:13:49 CET 1999
-- fixed a bug in processDir, when no pkt files are recognized.
-
------ cvs ci ------
-Wed Mar  3 23:47:30 CET 1999
-- applied Max areafix patch
-+ new afix commandline option
-! autoareacreatedefaults moved to each link. Please change your config!  
-+ avaible areas file for each link
-
------ cvs ci ------
-Tue Mar  2 12:11:04 MET 1999
-- removed old config code.
-
------ cvs ci ------
-Mon Mar  1 22:00
-  Gabriel Plutzar
-+ included support for generic new keyword for LogLevels                       
-  * LogLevels <string>                                               
-    You can specify all Loglevels you want in your log               
-    Default is 123456789, use 23456789 if you don't want all the IDLE
-    sessions in your logfile (eg when you start hpt once a minute)   
-  + Major Changes in log.c & log.h were necessary to supress unwanted
-    log file entries in IDLE only hpt sessions (like regularily scanning
-    the netmail area without something happening worth logging)
-  + Changes to the code to force all unneeded log entries to loglevel 1
-
-hpt 0.26
-(released on Mon Mar  1 19:47:36 CET 1999)
---------
-
------ cvs ci ------
-Mon Mar  1 19:45:25 CET 1999
-- included work when i staid in Austria.
-- djgpp support
-
------ cvs ci ------
-Thu Feb 25 17:52:04 MET 1999
-  Gabriel Plutzar:
-* Changed Makefile so that fidoconfig Header Files are included
-  before smapi Header Files are included -> patimat declared implicitly
-  warning fixed
-* Unused variable warning in fcommon.c fixed
-	
------ cvs ci ------
-Sat Feb 20 20:48:03 MET 1999
-  Tobias Ernst:
-+ Added support for QQQ files. If found in the tempOutbound, they will be
-  packed into the outgoing arcmail bundle. This is useful if you use
-  CFRoute: You can point CFRoutes tempOutbound to the fidoconfig tempOut,
-  in order to pack netmail into arcmail bundles.	
-+ Added support for packet forwarding. See the fidoconfig manual for
-  information.	 
-	
-Fri Feb 19 16:47:14 MET 1999
-  Tobias Ernst:
-- Added a log file entry for the case that a PKT file in the secure inbound
-  does not originate from a link of ours (i.E. only netmail from this 
-  packet will be processed, and echomail will "vanish").
-	
------ cvs ci ------
-Wed Feb 17 20:07:00 CET 1999                                                
-  Gabriel Plutzar:                                                          
-+ added implementation of the new remap statment. It takes the parameters 
-  ToName,OldAddr,NewAddr, seperated by commas. ToName or OldAddr may be *.  
-  If a Netmail meets the ToName and OldAddr Criteria, it is sent to
-  NewAddr.
-
------ cvs ci ------
-Mon Feb 15 18:21:51 CET 1999
-- echomails now have the flags minus the unnecessary flags like CRASH
-- added autoCreateFile
-  Max Levenkov:
-+ added TossGrp support for areafix
-- rewritten some dummy moments in areafix.c
-	
------ cvs ci ------
-Sun Feb 14 12:57:04 CET 1999
-- applied max patch. the first echomail to an autocreated area was not
-  forwarded to links
-
------ cvs ci ------
-Wed Feb 10 20:38:22 CET 1999
-- fixed a bug i introduced in (3), so autoareacreate does not work...
-
-Wed Feb 10 09:40:49 CET 1999
-- echomails now have the right attributes...
-
------ cvs ci ------
-Tue Feb  9 10:13:56 CET 1999
-- fixed the things from yesterday night.
-
-Mon Feb  8 23:13:44 CET 1999
-- fixed the netmail handling. The flags like hold,crash,killsent are removed
-  and other are set like MSGPRIVATE.
-  the intransit flag is set if the netmail is not going to the node.
-
-Thu Feb  4 09:21:57 CET 1999
-- fixed two bugs in (**)
-
------ cvs ci ------
-Wed Feb  3 23:23:06 CET 1999
-- if a link is not linked to an echomail area, all echomail will be tossed to
-  bad, which come from the link and go to the area. (3)
-Wed Feb  3 20:19:03 CET 1999
-- replaced the strsep from bsd with that from the gnu libc5, so we do not have
-  to make advertisment for the university of california.
-
------ cvs ci ------
-Tue Feb  2 11:41:09 CET 1999
-- a message with crash or hold flag is now packed using the link table in
-  the config. That means if a message with crash or hold flag is adressed to a
-  known link it will contain the pktPassword. (**)
-- it was no workaround, it was a bug-fix.
-
------ cvs ci ------
-Mon Feb  1 23:07:56 CET 1999
-- work around for a memory bug which is floating around the source, see
-  freeMsgBuffers in pktread.c
-Mon Feb  1 21:45:42 CET 1999
-- created netmail messages now have correct TOPT and FMPT Kludges.
-
------ cvs ci ------
-Mon Feb  1 18:08:33 CET 1999
-- pktInfo now displays all pkt's which are given on the commandline
-- now correctEMAddr also understands \n as line separator
-
------ cvs ci ------
-Mon Feb  1 13:10:49 MET 1999
-- fixed !MSGLOCAL to ~MSGLOCAL in makeMsg scanarea.c
-	
------ cvs ci ------
-Wed Jan 27 18:36:53 CET 1999
-- changed all occurences of strsep to strtok_r
-Mon Jan 25 19:40:48 CET 1999
-- fixed a core dump in purgeDupes when there was no index file
-
------ cvs ci ------
-Sat Jan 23 16:01:49 CET 1999
-- fixed the first FIX-ME in link.c when trying to access a msg which does not
-  exist.
-Fri Jan 22 19:07:24 CET 1999
-- included gerald큦 last patch about linking the netmail ares
-
------ cvs ci ------
-Thu Jan 21 23:52:47 CET 1999
-- included gerald큦 patches. linkWithImportLog
-
------ cvs ci ------
-Thu Jan 21 09:59:14 CET 1999
-- fixed the last bug in pkts going to pnt-dir
-Wed Jan 20 23:04:50 CET 1999
-- further work on sven's patch, it should be correct now
-
------ cvs ci ------
-Wed Jan 20 09:24:50 CET 1999
-- pkt큦 nor really going to pnt-dir not to some weired place in tempOutbound
-
------ cvs ci ------
-Tue Jan 19 21:53:14 CET 1999
-- cosmetical prob if a netmail has no route, the log-msg was wrong
-- there was a bug in sven's patch
-
------ cvs ci ------
-Tue Jan 19 10:03:19 CET 1999
-- areafix patch included, security problem.
-Mon Jan 18 17:34:18 CET 1999
-- pkt큦 for points are now going to pnt-dir
-- fixed a bug when no logFileDir was created
-
------ cvs ci ------
-Mon Jan 18 17:00:20 CET 1999
-- fixed all warnings
-- changed logic of findRouteForNetmail (the aka-string now has no .0 if link is node)
-- fixed a bug with a non-correct generated link 
-Mon Jan 18 10:40:19 CET 1999
-- included sven큦 patch which leads to wrong scanning of Squish-Netmailbases and wrong killing of msgs
-- added .ntu suffix for pkt큦 which are Not To Us
-
------ cvs ci ------
-Sun Jan 17 21:46:12 CET 1999
-- added freebsd things and a rewrite of recoding
-***** released bugfix-release hpt 0.25.2 which includes the (*) fixes
-- fixed a bug with wrong PATH-creation (*)
-
------ cvs ci ------
-Thu Jan 14 19:24:49 CET 1999
-- fixed core dump while autocreating passthrough areas (*)
-
------ cvs ci ------
-Thu Jan 14 13:34:41 CET 1999
-- began ChangeLog
-- changed path addition, maybe this is resulting in a bugfix
-Wed Jan 13 20:12:00 CET 1999
-- added Kolya큦 memory bug fixes
-- added Kolya큦 link feature
-- replaced areafix.c with max큦 new version
-
-hpt 0.25.1
-----------
-- fixed a bug in toss.c concerning netmailpackets without password
+	  !!!
+
+1999-01-23 Saturday 19:24  mt
+
+	* src/link.c (1.3): link patch for netmail from gerald and bugfix
+	for linking not existing msg
+
+1999-01-22 Friday 11:20  mt
+
+	* CREDITS (1.9, hpt-0_26), src/link.c (1.2): added
+	linkWithImportLog
+
+1999-01-21 Thursday 11:05  mt
+
+	* TODO (1.10), src/scan.c (1.39), src/toss.c (1.67): bugfixes on
+	svens patch and my pkt-pnt stuff
+
+1999-01-20 Wednesday 10:35  mt
+
+	* src/toss.c (1.66): fixed pkt placing for points
+
+1999-01-19 Tuesday 23:39  mt
+
+	* TODO (1.9), src/scan.c (1.38): sven's patches, wrong netmail
+	scanning and cosmetical prob
+
+1999-01-19 Tuesday 11:09  mt
+
+	* TODO (1.8), src/areafix.c (1.19), src/hpt.c (1.16), src/scan.c
+	(1.37), src/toss.c (1.65): security-prob in areafix fixed and,
+	pkt's are going to pnt-dir now
+
+1999-01-18 Monday 18:26  mt
+
+	* TODO (1.7), src/scan.c (1.36), src/scanarea.c (1.20), src/toss.c
+	(1.64), src/tree.c (1.4, hpt-0_26): fixed one bug and made some
+	other small changes
+
+1999-01-17 Sunday 22:52  mt
+
+	* h/recode.h (1.3, hpt-0_26), src/pktread.c (1.17), src/pktwrite.c
+	(1.8), src/recode.c (1.3, hpt-0_26), src/scan.c (1.35), src/toss.c
+	(1.63): added makefile for bsd, and made some bugfixes
+
+1999-01-14 Thursday 20:55  mt
+
+	* src/tpkt.c (1.14): fixes
+
+1999-01-14 Thursday 20:50  mt
+
+	* src/: toss.c (1.62), tpkt.c (1.13): fixed a bug with core dump
+	whern autocreating passthrough areas
+
+1999-01-14 Thursday 14:52  mt
+
+	* TODO (1.6), h/dupe.h (1.9, hpt-0_26), h/global.h (1.7, hpt-0_26),
+	h/link.h (1.3, hpt-0_26), h/vixie.h (1.5, hpt-0_26), src/areafix.c
+	(1.18), src/dupe.c (1.12), src/global.c (1.11, hpt-0_26), src/hpt.c
+	(1.15), src/link.c (1.1), src/pktread.c (1.16), src/toss.c (1.61):
+	link patch, memory bug fix from Kolya and some patches from me
+
+1999-01-14 Thursday 11:40  mt
+
+	* src/hpt.c (1.14): fixed bug if no logFileDir was specified
+
+1999-01-13 Wednesday 13:53  mt
+
+	* src/toss.c (1.60): big bug fixed in toss.c
+
+1999-01-12 Tuesday 12:00  mt
+
+	* src/toss.c (1.59): last minute fixes
+
+1999-01-12 Tuesday 00:13  mt
+
+	* TODO (1.5): fixes for release
+
+1999-01-10 Sunday 20:54  mt
+
+	* src/toss.c (1.58): fixed bug with giving the mail back to the
+	link we got it from
+
+1999-01-08 Friday 18:19  tobi
+
+	* h/vixie.h (1.4): added osf makefile. doesn't work yet.  fixed
+	vixie.h for aix
+
+1999-01-08 Friday 00:14  mt
+
+	* TODO (1.4), src/fcommon.c (1.17), src/toss.c (1.57), src/tpkt.c
+	(1.12): first tempcode bugfixes
+
+1999-01-06 Wednesday 14:43  mt
+
+	* TODO (1.3), src/toss.c (1.56): fixed echomail fromaddr bug for
+	fidogate
+
+1999-01-06 Wednesday 00:16  mt
+
+	* TODO (1.2), src/scan.c (1.34), src/toss.c (1.55): hpt now does
+	not touch netmails without route, hopefully fixed that netmail -
+	empty password problem
+
+1999-01-04 Monday 11:15  mt
+
+	* src/areafix.c (1.17): fixed an areafix bug, with areas in
+	included files
+
+1999-01-03 Sunday 01:56  mt
+
+	* README (1.5, hpt-0_26), TODO (1.1), h/dupe.h (1.8), h/fcommon.h
+	(1.12), h/global.h (1.6), h/hpt.h (1.3, hpt-0_26), h/log.h (1.3,
+	hpt-0_26), h/pkt.h (1.8), h/scan.h (1.7), h/seenby.h (1.3,
+	hpt-0_26), h/toss.h (1.10), h/version.h (1.3, hpt-0_26),
+	src/areafix.c (1.16), src/config.c (1.3, hpt-0_26), src/dupe.c
+	(1.11), src/fcommon.c (1.16), src/global.c (1.10), src/hpt.c
+	(1.13), src/log.c (1.4, hpt-0_26), src/pktinfo.c (1.3),
+	src/pktread.c (1.15), src/pktwrite.c (1.7), src/post.c (1.3),
+	src/scan.c (1.33), src/scanarea.c (1.19), src/seenby.c (1.7,
+	hpt-0_26), src/tconfig.c (1.3, hpt-0_26), src/tlog.c (1.3,
+	hpt-0_26), src/toss.c (1.54), src/tpkt.c (1.11): added TODO
+
+1999-01-02 Saturday 19:27  mt
+
+	* src/areafix.c (1.15): changed makefiles, fixed some unpack code
+	and done some other changes
+
+1998-12-31 Thursday 14:46  mt
+
+	* src/: fcommon.c (1.15), hpt.c (1.12), scan.c (1.32), toss.c
+	(1.53): fixed one unpack bug on unix systems, and some minor
+	kosmetical changes
+
+1998-12-30 Wednesday 13:43  mt
+
+	* src/scan.c (1.31): fixed another subjectline Bug, now for file
+	requests
+
+1998-12-29 Tuesday 23:33  mt
+
+	* src/toss.c (1.52): fixed one unportable thing in arcmail code
+
+1998-12-29 Tuesday 20:34  mt
+
+	* src/scan.c (1.30): fixed the file attach handling code, it should
+	now work good also for more than one file
+
+1998-12-29 Tuesday 19:38  mt
+
+	* src/scanarea.c (1.18): fixed a big memory bug in makeMsg. There
+	was to less memory reserved. I was stupid that day i wrote that
+	shit .-)
+
+1998-12-28 Monday 17:45  mt
+
+	* src/: areafix.c (1.14), hpt.c (1.11), toss.c (1.51), tpkt.c
+	(1.10): fixed a nested strtok problem with strsep, which is not so
+	widely available, maybe i will add an implementation to hpt later
+
+1998-12-27 Sunday 18:46  mt
+
+	* h/vixie.h (1.3), src/areafix.c (1.13), src/fcommon.c (1.14),
+	src/hpt.c (1.10), src/toss.c (1.50), src/tpkt.c (1.9): done some
+	backporting to os/2 for ibm and watcom compiler and one big
+	security bug
+
+1998-12-27 Sunday 01:41  mt
+
+	* src/: areafix.c (1.12), dupe.c (1.10), tpkt.c (1.8): fixed a bug
+	in areafix concerning white spaces after echoarea keyword and a bug
+	concerning echoareas in included files
+
+1998-12-22 Tuesday 18:00  mt
+
+	* src/toss.c (1.49): fixed a bug in autoAreaCreate with the wrong
+	-a option generated, fixed a bug in changeFileSuffix with
+	overwriting duplicate fileName
+
+1998-12-21 Monday 23:55  mt
+
+	* h/post.h (1.2, hpt-0_26), src/dupe.c (1.9), src/hpt.c (1.9),
+	src/pktread.c (1.14), src/post.c (1.2), src/toss.c (1.48): fixed a
+	bug concerning pkt reading, and applied the third patch by Kolya
+	with Docu for post-feature and some minor changes
+
+1998-12-19 Saturday 00:40  mt
+
+	* src/scan.c (1.29): fixed a bug in via line with wrong hour info
+
+1998-12-17 Thursday 23:51  mt
+
+	* CREDITS (1.8), h/fcommon.h (1.11), h/pkt.h (1.7), h/post.h (1.1),
+	h/toss.h (1.9), h/vixie.h (1.2), src/areafix.c (1.11),
+	src/fcommon.c (1.13), src/hpt.c (1.8), src/pktread.c (1.13),
+	src/pktwrite.c (1.6), src/post.c (1.1), src/purgeDupes.c (1.5),
+	src/scan.c (1.28), src/toss.c (1.47), src/tpkt.c (1.7): added fixes
+	and patches by Kolya, post and unpack feature by Kolya and
+	backporting to dos by Kolya
+
+1998-12-15 Tuesday 21:25  mt
+
+	* h/toss.h (1.8), src/toss.c (1.46): added performance statistics
+	for tossing
+
+1998-12-14 Monday 16:21  mtt
+
+	* h/typesize.h (1.4): got it working on an ultrasparc removed
+	redundant typesize.h
+
+1998-12-14 Monday 13:09  mt
+
+	* CREDITS (1.7), src/fcommon.c (1.12), src/scan.c (1.27):
+	zoneOutbound fix, fattach bugfix, minor doc changes
+
+1998-12-12 Saturday 00:02  tobi
+
+	* src/toss.c (1.45): fixed the syntax error that I made when fixing
+	the other syntax error ;-)
+
+1998-12-12 Saturday 00:01  tobi
+
+	* src/toss.c (1.44): fixed a trivial syntax error
+
+1998-12-11 Friday 00:55  mt
+
+	* src/toss.c (1.43): fixed a autocreate bug
+
+1998-12-10 Thursday 23:38  mt
+
+	* INSTALL (1.2), src/areafix.c (1.10), src/toss.c (1.42),
+	src/tpkt.c (1.6): fixed a bug in passthrough-autoareacreate code
+	and rewrote the security handling function
+
+1998-12-08 Tuesday 11:47  mt
+
+	* src/: fcommon.c (1.11), toss.c (1.41): added passthrough for
+	autocreate and some other things
+
+1998-12-02 Wednesday 00:51  mt
+
+	* h/fcommon.h (1.10), h/pkt.h (1.6), src/areafix.c (1.9),
+	src/pktread.c (1.12), src/pktwrite.c (1.5), src/scan.c (1.26),
+	src/scanarea.c (1.17), src/toss.c (1.40): updated hpt to new
+	fidoconfig
+
+1998-12-01 Tuesday 21:27  mt
+
+	* h/fcommon.h (1.9): added createLockFile() to fcommon.h
+
+1998-12-01 Tuesday 21:13  mt
+
+	* src/toss.c (1.39): no PATH bug fixed, made hpt compilable again
+
+1998-11-30 Monday 18:13  mt
+
+	* CREDITS (1.6), h/fcommon.h (1.8), src/areafix.c (1.8),
+	src/fcommon.c (1.10), src/hpt.c (1.7), src/scan.c (1.25),
+	src/scanarea.c (1.16), src/toss.c (1.38): applied max diff and
+	fixed one minor bug. This is a q&d bugfix, i will do a better
+	later.
+
+1998-11-28 Saturday 13:08  tobi
+
+	* h/typesize.h (1.3): Added FreeBSD support
+
+1998-11-23 Monday 14:40  mt
+
+	* src/: areafix.c (1.7), toss.c (1.37), tpkt.c (1.5): included some
+	small patches from max
+
+1998-11-21 Saturday 19:32  mt
+
+	* src/toss.c (1.36): fixed printing of seenBys
+
+1998-11-21 Saturday 13:58  mt
+
+	* src/global.c (1.9): updated global. c to 0.25
+
+1998-11-18 Wednesday 21:32  mt
+
+	* src/areafix.c (1.6): added gpl header on areafix.c
+
+1998-11-17 Tuesday 10:37  mt
+
+	* README (1.4), src/pktread.c (1.11), src/scan.c (1.24): routing
+	does work now as it is specified in fidoconfig
+
+1998-11-16 Monday 17:38  mt
+
+	* src/seenby.c (1.6): fixed a problem when a point exports an
+	echomail msg to another point. Which shouldn't be done anyhow.
+
+1998-11-16 Monday 17:08  mt
+
+	* h/pkt.h (1.5), src/fcommon.c (1.9), src/pktread.c (1.10),
+	src/toss.c (1.35): included several patches from max
+
+1998-11-11 Wednesday 17:12  mt
+
+	* h/areafix.h (1.1): forgot areafix.h
+
+1998-11-11 Wednesday 12:15  mt
+
+	* README (1.3), h/dupe.h (1.7), h/fcommon.h (1.7), h/global.h
+	(1.5), h/hpt.h (1.2), h/log.h (1.2), h/pkt.h (1.4), h/scan.h (1.6),
+	h/seenby.h (1.2), h/toss.h (1.7), h/version.h (1.2), src/areafix.c
+	(1.5), src/config.c (1.2), src/dupe.c (1.8), src/fcommon.c (1.8),
+	src/global.c (1.8), src/hpt.c (1.6), src/log.c (1.3), src/pktinfo.c
+	(1.2), src/pktread.c (1.9), src/pktwrite.c (1.4), src/purgeDupes.c
+	(1.4), src/scan.c (1.23), src/scanarea.c (1.15), src/seenby.c
+	(1.5), src/tconfig.c (1.2), src/tlog.c (1.2), src/toss.c (1.34),
+	src/tpkt.c (1.4): put copyright into header of files hacked araefix
+	up, so it can serve also requests with wildcards
+
+1998-11-05 Thursday 11:23  mt
+
+	* src/: toss.c (1.33), tpkt.c (1.3): bug fixes
+
+1998-11-03 Tuesday 23:22  mt
+
+	* src/: scanarea.c (1.14), toss.c (1.32): echomails must be
+	adressed to the link.
+
+1998-11-03 Tuesday 00:41  mt
+
+	* src/: areafix.c (1.4), tpkt.c (1.2): fixed a bug in the areafix.
+
+1998-11-02 Monday 14:39  mt
+
+	* CREDITS (1.5), src/areafix.c (1.3), src/toss.c (1.31):
+	incorparated localareas and carboncopys by max
+
+1998-10-30 Friday 12:15  mt
+
+	* CREDITS (1.4), h/toss.h (1.6), misc/areafix.hlp (1.2),
+	src/areafix.c (1.2), src/pktread.c (1.8), src/toss.c (1.30):
+	incorporated max patches incorporated svens patch
+
+1998-10-29 Thursday 09:50  mt
+
+	* h/fcommon.h (1.6), h/toss.h (1.5), src/fcommon.c (1.7),
+	src/scan.c (1.22), src/scanarea.c (1.13), src/seenby.c (1.4),
+	src/toss.c (1.29), src/tree.c (1.3): arcmail fixed echoMailFlavour
+	implemented routing flavour fixed localinbound implemented
+
+1998-10-28 Wednesday 00:40  mt
+
+	* src/: global.c (1.7), scan.c (1.21): changed version to 0.24
+	added killing of intransit netmail after exporting it to links
+
+1998-10-27 Tuesday 23:17  mt
+
+	* src/toss.c (1.28): added recoding of incoming netmail patched
+	logging of pkt-problems from Sven in changed arcmail to use
+	packerdef changeFileSuffix bug with little filenames fixed
+
+1998-10-26 Monday 21:27  mt
+
+	* src/toss.c (1.27): changed typo in toss.c
+
+1998-10-26 Monday 16:56  mt
+
+	* CREDITS (1.3), h/fcommon.h (1.5), h/toss.h (1.4),
+	misc/areafix.hlp (1.1), misc/fidom2iso (1.1, hpt-0_9_7d-release,
+	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release,
+	hpt-0_26), misc/ibmpc-latin1 (1.1, hpt-0_9_7d-release,
+	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release,
+	hpt-0_26), misc/iso2fidom (1.1, hpt-0_9_7d-release,
+	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release,
+	hpt-0_26), misc/latin1-ibmpc (1.1, hpt-0_9_7d-release,
+	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release,
+	hpt-0_26), misc/outaltkoi8 (1.1, hpt-0_9_7d-release,
+	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release,
+	hpt-0_26), misc/outkoi8alt (1.1, hpt-0_9_7d-release,
+	hpt-0_9_7c-release, hpt-0_9_7b-release, hpt-0_9_7a-release,
+	hpt-0_26), src/areafix.c (1.1), src/fcommon.c (1.6), src/scan.c
+	(1.20), src/scanarea.c (1.12), src/toss.c (1.26): incorporated
+	patches by max for areafix, autoCreateDefaults, arcmail
+
+1998-10-22 Thursday 09:47  mt
+
+	* src/pktread.c (1.7): made correctEMaddr more robust. There will
+	be a complete rewrite in 0.24
+
+1998-10-19 Monday 15:32  mt
+
+	* CREDITS (1.2): fixed maxs e-mail adress in CREDITS
+
+1998-10-19 Monday 15:20  mt
+
+	* CREDITS (1.1): added CREDITS
+
+1998-10-19 Monday 15:19  mt
+
+	* README (1.2), h/fcommon.h (1.4), src/fcommon.c (1.5), src/toss.c
+	(1.25): Added createDirectoryTree() killed install target from
+	makefile\all: used createDirectoryTree in
+	putMsgInArea/processNMArea/createOutboundFileName, so you can
+	always use the directories
+
+1998-10-18 Sunday 22:25  mt
+
+	* h/scan.h (1.5), src/scanarea.c (1.11), src/toss.c (1.24): while
+	scanning echomails to downlinks, hpt will upcase area name hpt now
+	first toss an echomail to the downlinks and then put it in the
+	msgbase (so only recoded msgs go to msgbase)
+
+1998-10-16 Friday 15:27  mt
+
+	* src/: pktread.c (1.6), pktwrite.c (1.3), scan.c (1.19),
+	scanarea.c (1.10), toss.c (1.23): fixed a typo in makefile rewrote
+	recoding so not all messages are recoded but only the ones the were
+	put to msgbase or scanned from msgbase rewrote recoding so no
+	recoding is done, when no in/outtabs are specified.
+
+1998-10-16 Friday 14:25  mt
+
+	* h/recode.h (1.2), src/recode.c (1.2), src/scan.c (1.18),
+	src/toss.c (1.22): fixed a bug in toss.c concerning reading
+	seenByLines
+
+1998-10-16 Friday 12:00  mt
+
+	* src/seenby.c (1.3): lines should only be 80 characters long, not
+	81
+
+1998-10-15 Thursday 11:51  mt
+
+	* h/global.h (1.4), src/global.c (1.6), src/hpt.c (1.5), src/scan.c
+	(1.17), src/scanarea.c (1.9): made a distinction between scan and
+	pack.	  hpt pack -> packs netmail	hpt scan -> scans echomail 
+	found a bug concerning points as downlinks and scanning of
+	echomails.
+
+1998-10-14 Wednesday 14:55  mt
+
+	* h/fcommon.h (1.3), src/fcommon.c (1.4), src/global.c (1.5),
+	src/scanarea.c (1.8): 0.22 -> 0.23 added createDirectoryTree
+	routine fixed a bug concerning two or more downlinks in scanarea.c
+	(only the first downlink array[0] was used.)
+
+1998-10-14 Wednesday 14:34  mt
+
+	* h/fcommon.h (1.2), src/fcommon.c (1.3), src/scanarea.c (1.7):
+	seenByCount was wrong in scanarea.c if tossing to a point
+	seenbyCount was bigger than seenbys was.
+
+1998-10-14 Wednesday 12:18  mt
+
+	* src/toss.c (1.21): when tossing echomails to downlinks
+	filename.pkt.pkt is generated.fixed
+
+1998-10-14 Wednesday 12:14  mt
+
+	* src/toss.c (1.20): when tossing echomails to downlinks recoding
+	do not work
+
+1998-10-12 Monday 12:22  tobi
+
+	* src/seenby.c (1.2): Removed the inline operator before the
+	compare functions for two reasons: #1: The GNU compiler cannot
+	handle function pointers to inline functions,	  so the compare
+	function would not be inlined anyway #2: AIX xlC does not
+	understand it.
+
+1998-10-12 Monday 12:05  tobi
+
+	* h/typesize.h (1.2): Added preliminary AIX defines. They do only
+	work on 32 bit RS/6000 machines, and I have not yet looked into the
+	big endian problematic.
+
+1998-10-09 Friday 17:22  mt
+
+	* src/: pktread.c (1.5), toss.c (1.19): stripped AREA: from
+	echomails which do not go to dupeArea or BadArea
+
+1998-10-07 Wednesday 22:29  mt
+
+	* src/pktread.c (1.4): this bugfix addresses a problem if
+	subjectline is 72 + \0 and to 36+\0 and from...  It should no read
+	ok .-)
+
+1998-10-04 Sunday 17:25  mt
+
+	* src/scan.c (1.16): fixed a bug/typo in echotosslog code that only
+	the first area is scanned.
+
+1998-10-03 Saturday 23:59  mt
+
+	* h/recode.h (1.1), src/pktread.c (1.3), src/pktwrite.c (1.2),
+	src/recode.c (1.1), src/scan.c (1.15), src/toss.c (1.18):
+	incorporated recoding patch from Max added character transition
+	tables / recoding source added import.log feature added
+	echotoss.log feature changed makefile
+
+1998-10-03 Saturday 11:55  mt
+
+	* src/toss.c (1.17): fixes
+
+1998-10-01 Thursday 18:08  mt
+
+	* src/scan.c (1.14): netmailarea was only *.msg...  now you can
+	also make it Squish
+
+1998-09-28 Monday 19:55  mt
+
+	* src/: dupe.c (1.7), scanarea.c (1.6): added scanned flag for
+	scanned echomails
+
+1998-09-26 Saturday 15:05  mt
+
+	* h/scan.h (1.4), src/scan.c (1.13): added Statistics support for
+	scanning changed a typo downLinkCount
+
+1998-09-24 Thursday 11:57  mt
+
+	* src/: scan.c (1.12), scanarea.c (1.5): added statistics for
+	scanning makefile now without profiling support hopefully the
+	problems are gone...
+
+1998-09-21 Monday 13:27  mt
+
+	* h/dir.h (1.2), src/dir.c (1.2), src/hpt.c (1.4), src/purgeDupes.c
+	(1.3): moved dir.c and dir.h (opendir etc. vor ibm visualagec++)
+	from hpt to fidoconfigfixed purgeDupes. It should no work ok. 
+	added -pg switch for profiling the debug version of hpt added error
+	message if commandline option is invalid added error message and
+	usage screen if hpt is incoked without a commandline option
+
+1998-09-20 Sunday 23:49  mt
+
+	* h/patmat.h (1.2), src/patmat.c (1.2), src/scan.c (1.11),
+	src/toss.c (1.16): moved patmat to fidoconfig bugfixes
+
+1998-09-20 Sunday 15:26  mt
+
+	* src/: scan.c (1.10), scanarea.c (1.4), toss.c (1.15): added patch
+	by Max Levenkov for empty pktPasswords changed purgeDupes
+
+1998-09-19 Saturday 19:13  mt
+
+	* h/scan.h (1.3), h/toss.h (1.3), src/scan.c (1.9), src/toss.c
+	(1.14): added statistics for tossing and scanning
+
+1998-09-16 Wednesday 18:41  mt
+
+	* src/purgeDupes.c (1.2): fixed crazy bug concerning time condition
+
+1998-09-15 Tuesday 00:28  mt
+
+	* src/purgeDupes.c (1.1): added purging of dupeFiles
+
+1998-09-15 Tuesday 00:22  mt
+
+	* h/dupe.h (1.6), h/global.h (1.3), src/dupe.c (1.6), src/toss.c
+	(1.13): added dupeFile Indexes made a bugfix to toss.c concerning
+	empty passwords
+
+1998-09-08 Tuesday 22:52  mt
+
+	* src/toss.c (1.12): max fixed bug if no pktpwd in fidoconfig were
+	given
+
+1998-09-08 Tuesday 22:38  mt
+
+	* src/toss.c (1.11): made processEMMsg a little better (eleganter
+	:-) )
+
+1998-09-07 Monday 23:16  mt
+
+	* .hpt.prcs_aux (1.2), hpt.prj (1.2): these files are unnecessary
+
+1998-09-07 Monday 23:03  mt
+
+	* src/toss.c (1.10): added autoareacreate from max Levenkov and
+	made some changes to it.  Also the makefile now has an install and
+	clean option
+
+1998-09-03 Thursday 16:35  mt
+
+	* src/scan.c (1.8): added man-page and new makefile (thnx to max
+	levenkov)
+
+1998-09-02 Wednesday 12:38  mt
+
+	* h/toss.h (1.2), src/toss.c (1.9): hpt now renames pkt's to *.sec
+	*.bad *.acs if there were errors     *.sec :	pktpassword is
+	incorrect     *.bad :	 file is not a recognized pkt	  *.acs :  
+	 file could not be opened
+
+1998-09-02 Wednesday 12:34  mt
+
+	* src/scan.c (1.7): changed style of via-kludge (now conforming to
+	some unwritten standard)
+
+1998-08-22 Saturday 13:02  mt
+
+	* src/: global.c (1.4), toss.c (1.8): changed to 0.22 fixed bug
+	which causes a segfault when dup-checking a mail which goes to bad
+	instead of a msgbase
+
+1998-08-13 Thursday 13:55  mt
+
+	* h/vixie.h (1.1): needed for avl-trees
+
+1998-08-13 Thursday 13:48  mt
+
+	* h/dupe.h (1.5), h/tree.h (1.2, hpt-0_26), src/dupe.c (1.5),
+	src/tree.c (1.2): dupe Detection now working.
+
+1998-08-08 Saturday 14:37  mt
+
+	* h/dupe.h (1.4), h/pkt.h (1.3), h/tree.h (1.1), src/dupe.c (1.4),
+	src/lhash.c (1.2), src/pktread.c (1.2), src/scan.c (1.6),
+	src/tree.c (1.1): changed dupe-detection from hashing to avl-trees
+	with full information about message.  changed via line. (it will be
+	changed further)
+
+1998-08-08 Saturday 14:35  mt
+
+	* h/lhash.h (1.2): remobed hashing from dupe-detection
+
+1998-07-23 Thursday 14:17  mt
+
+	* h/dupe.h (1.3), src/dupe.c (1.3), src/global.c (1.3), src/scan.c
+	(1.5), src/toss.c (1.7): I updated several files. Mainly dupe
+	support added. Beware! It's slow and does not find all dupes. in 3
+	week there will be a bugfix.
+
+1998-07-21 Tuesday 22:52  mt
+
+	* h/dupe.h (1.2), src/dupe.c (1.2): bugfixes and dupe base-support
+	working
+
+1998-07-17 Friday 23:00  mt
+
+	* src/: scan.c (1.4), toss.c (1.6): added PASSTHROUGH support
+
+1998-07-17 Friday 22:54  mt
+
+	* src/: dupe.c (1.1), lhash.c (1.1): preparing for dupe-checkingy
+
+1998-07-17 Friday 22:53  mt
+
+	* h/dupe.h (1.1): preparing for dupe-checking
+
+1998-07-17 Friday 22:48  mt
+
+	* h/lhash.h (1.1): added hashing for dupe-checking
+
+1998-06-16 Tuesday 18:48  mt
+
+	* src/scan.c (1.3): bug-fixes
+
+1998-06-16 Tuesday 18:47  mt
+
+	* src/toss.c (1.5): fixes
+
+1998-06-07 Sunday 14:26  mt
+
+	* src/scanarea.c (1.3): finished fidoconfig support
+
+1998-06-03 Wednesday 22:49  mt
+
+	* h/global.h (1.2), h/scan.h (1.2), src/scanarea.c (1.2),
+	src/toss.c (1.4): made hpt full fidoconfig able, runs and works
+	(afaik :-)
+
+1998-05-28 Thursday 18:24  mt
+
+	* h/: route.h (1.3), config.h (1.2): no more needed
+
+1998-05-28 Thursday 18:22  mt
+
+	* h/link.h (1.2): changed to fidoconfig, no more needed
+
+1998-05-28 Thursday 18:21  mt
+
+	* src/: fcommon.c (1.2), global.c (1.2), hpt.c (1.3), log.c (1.2),
+	scan.c (1.2), toss.c (1.3): changed to fidoconfig
+
+1998-05-28 Thursday 18:21  mt
+
+	* h/area.h (1.3): change to fidoconfig
+
+1998-05-21 Thursday 18:16  mt
+
+	* h/area.h (1.2), h/pkt.h (1.2), h/route.h (1.2), src/hpt.c (1.2):
+	made some changes
+
+1998-05-21 Thursday 18:15  mt
+
+	* src/common.c (1.2): moved common.c to fidoconfig
+
+1998-05-21 Thursday 18:15  mt
+
+	* h/common.h (1.2): removed common.h to fidoconfig
+
+1998-05-21 Thursday 18:14  mt
+
+	* h/fcommon.h (1.1): move much code from common.h to fidoconfig and
+	created fcommon.h
+
+1998-05-21 Thursday 18:13  mt
+
+	* src/fcommon.c (1.1): removed much code of common.c to fidoconfig
+	and created fcommon.c
+
+1998-05-21 Thursday 18:10  mt
+
+	* INSTALL (1.1): added INSTALL for hpt
+
+1998-05-08 Friday 11:05  tw
+
+	* src/toss.c (1.2): Stand 8.5.98
+
+1998-05-06 Wednesday 21:48  mt
+
+	* .hpt.prcs_aux (1.1), COPYING (1.1), hpt.prj (1.1), h/area.h
+	(1.1), h/common.h (1.1), h/config.h (1.1), h/dir.h (1.1),
+	h/global.h (1.1), h/hpt.h (1.1), h/link.h (1.1), h/log.h (1.1),
+	h/patmat.h (1.1), h/pkt.h (1.1), h/route.h (1.1), h/scan.h (1.1),
+	h/seenby.h (1.1), h/toss.h (1.1), h/typesize.h (1.1), h/version.h
+	(1.1), src/common.c (1.1), src/config.c (1.1), src/dir.c (1.1),
+	src/global.c (1.1), src/hpt.c (1.1), src/log.c (1.1), src/patmat.c
+	(1.1), src/pktinfo.c (1.1), src/pktread.c (1.1), src/pktwrite.c
+	(1.1), src/scan.c (1.1), src/scanarea.c (1.1), src/seenby.c (1.1),
+	src/tconfig.c (1.1), src/tlog.c (1.1), src/toss.c (1.1), src/tpkt.c
+	(1.1): Initial revision
+
