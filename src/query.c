@@ -482,19 +482,19 @@ w_log(LL_FUNC, "af_GetQFlagName(): begin");
     if (config->lockfile)
     {
        logdir = dirname(config->lockfile);  /* slash-trailed */
-       xstrscat(&chanagedflag,logdir,(char*)czChangFlg);
+       xstrscat(&chanagedflag,logdir,(char*)czChangFlg,NULL);
        nfree(logdir);
     }
     else if (config->echotosslog)
     {
        logdir = dirname(config->echotosslog);  /* slash-trailed */
-       xstrscat(&chanagedflag,logdir,(char*)czChangFlg);
+       xstrscat(&chanagedflag,logdir,(char*)czChangFlg,NULL);
        nfree(logdir);
     }
     else if (config->semaDir)
     {
        logdir = dirname(config->echotosslog);  /* slash-trailed */
-       xstrscat(&chanagedflag,logdir,(char*)czChangFlg);
+       xstrscat(&chanagedflag,logdir,(char*)czChangFlg,NULL);
        nfree(logdir);
     }
     else
@@ -502,9 +502,8 @@ w_log(LL_FUNC, "af_GetQFlagName(): begin");
         chanagedflag = safe_strdup(czChangFlg);
     }
 
-#ifdef DEBUG_HPT
-w_log(LL_FUNC, "af_GetQFlagName(): end");
-#endif
+    w_log(LL_FUNC, "af_GetQFlagName(): end");
+
     return chanagedflag;
 }
 
