@@ -1,3 +1,12 @@
+2002-11-13 Wednesday 10:03  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.21): Fix date of FAQ
+
+2002-11-13 Wednesday 09:56  stas_degteff
+
+	* doc/hpt-FAQ.russian (hpt-1_2-stable.20): Add answer about call
+	archiver if shell is command.com
+
 2002-11-10 Sunday 09:02  sfpavel
 
 	* HISTORY, debian/changelog, src/global.c (hpt-1_2-stable.[4,13,2])
