@@ -15,16 +15,22 @@
 /*  the License, or (at your option) any later version. See COPYING.  */
 /*--------------------------------------------------------------------*/
 
-#include <fidoconf/log.h>
-
 #if defined(__NT__) || defined (NT) || defined (WINNT)
 
-#undef CHAR
-#undef UCHAR
-#undef LONG
-#undef ULONG
-#undef INT32
-#undef UINT32
+/* See  fidoconf/log.h  */
+#  define LL_ERROR   	'A'      /* Trivial error: continue */
+#  define LL_ERR     LL_ERROR
+#  define LL_WARN    	'B'      /* Warning */
+   extern void w_log(char key, char *logString, ...);
+
+#else
+
+#  include <fidoconf/log.h> */
+
+#endif
+
+
+#if defined(__NT__) || defined (NT) || defined (WINNT)
 
 #ifdef __WATCOMC__
 #include <direct.h>
