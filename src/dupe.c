@@ -358,21 +358,24 @@ s_dupeMemory *readDupeFile(s_area *area) {
    tree_init(&(dupeMemory->avlTree));
    
    if (config->typeDupeBase!=commonDupeBase) {
-	  fileName = createDupeFileName(area);
-      w_log('2', "Reading dupes of %s.", area->areaName);
+       fileName = createDupeFileName(area);
+       w_log('2', "Reading dupes of %s", area->areaName);
    }
    else {
-	   xstrscat(&fileName, config->dupeHistoryDir, "hpt_base.dpa", NULL);
-	   w_log('2', "Reading dupes from %s.", fileName);
+       xstrscat(&fileName, config->dupeHistoryDir, "hpt_base.dpa", NULL);
+       w_log('2', "Reading dupes from %s", fileName);
    }
 
    f = fopen(fileName, "rb");
    if (f != NULL) {
-      // readFile
-      doReading(f, dupeMemory);
-      fclose(f);
-   } else w_log('2', "Error reading dupes.");
-   
+       // readFile
+       doReading(f, dupeMemory);
+       fclose(f);
+   } else {
+       if (fexist(fileName)) w_log('2', "Error reading dupes");
+       else w_log('2', "Dupe base not found");
+   }
+
    nfree(fileName);
 
    return dupeMemory;
