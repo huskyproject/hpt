@@ -10,6 +10,7 @@ Category 1: Will certainly be implemented until next release
 - autocreate reports
 - add Origin to areafix reports
 - del SEEN-BY's with echoarea option -killsb (tinysb)
+- fix file route
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

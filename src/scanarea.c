@@ -1,4 +1,3 @@
-/*:ts=8*/
 /*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
@@ -96,7 +95,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    ctrlBuff[ctrlLen] = '\0'; /* MsgReadMsg does not do zero termination! */
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
    
-#if 0   
+#if 1
    if (action == 0) {
        // added TID from scan area only
        kludgeLines=(char *) realloc (kludgeLines,strlen(kludgeLines)
