@@ -1,3 +1,32 @@
+2002-10-02 Wednesday 19:45  d_sergienko
+
+	* doc/faqfmt.pl (1.2): replaced \r\n to \n at the end of lines
+
+2002-10-02 Wednesday 14:28  stas_degteff
+
+	* doc/faqfmt.pl (1.1): Small perl script produce html-formatted
+	output for postings into "Documentation" area of
+	http://sourceforge.net/projects/husky
+
+2002-10-02 Wednesday 14:24  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.31):  Cosmetic update (for automate
+	generating HTML)
+
+2002-10-02 Wednesday 14:12  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.30): update FAQ
+
+2002-10-02 Wednesday 06:47  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.29): Add http://walther.sourceforge.net/ -
+	BeOS FTN package
+
+2002-10-02 Wednesday 06:29  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.28): Remove invalid URLs, fix answers, add
+	Q33
+
 2002-10-01 Tuesday 19:46  stas_degteff
 
 	* doc/hpt-FAQ.russian (1.27): Update FAQ
