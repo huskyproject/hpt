@@ -1,3 +1,13 @@
+2002-09-25 Wednesday 19:00  pgul
+
+	* src/: toss.c (1.443), post.c (1.94): add TID for messages posted
+	by "hpt post -x"
+
+2002-09-25 Wednesday 18:09  pgul
+
+	* src/post.c (1.93): post -x echomail message from not our aka
+	fixed
+
 2002-09-24 Tuesday 13:52  pgul
 
 	* src/: areafix.c (1.349), perl.c (1.40), post.c (1.92), query.c
