@@ -5,7 +5,13 @@ LINK    = WLINK
 OBJS    = hpt.obj pktread.obj pktwrite.obj fcommon.obj log.obj global.obj toss.obj scan.obj scanarea.obj post.obj areafix.obj arealist.obj dupe.obj recode.obj tree.obj seenby.obj strsep.obj link.obj crc.obj pktinfo.obj txt2pkt.obj
 SRC_DIR = ..\src
 
-CFLAGS = -zq -wx -bt=nt -i=..\..;..\h; -oneatx -5
+!IF $(DEBUG) == 1
+CFLAGS= -zq -wx -bt=nt -i=..\..;..\h; -oneatx -5 -d2
+LFLAGS= DEBUG watcom all
+!ELSE
+CFLAGS= -zq -wx -bt=nt -i=..\..;..\h; -oneatx -5
+!ENDIF
+
 all: $(OBJS) pktinfo.exe hptlink.exe hpttree.exe txt2pkt.exe hpt.exe
 
 $(OBJS): $(SRC_DIR)\*.c

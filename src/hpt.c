@@ -268,6 +268,13 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
 #endif
 
    fprintf(stdout, "Highly Portable Toss %s\n", version);
+   xscatprintf(&versionStr,"hpt %s", version);
+   free(version);
+
+   if (processCommandLine(argc, argv)==1) exit(0);
+
+   if (config==NULL) processConfig();
+
 #if defined ( __NT__ )
    if (config->setConsoleTitle) {
 	   sprintf( title, "Highly Portable Toss %s", version);
@@ -275,12 +282,6 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
 	   SetConsoleTitleA( title );
    }
 #endif
-   xscatprintf(&versionStr,"hpt %s", version);
-   free(version);
-
-   if (processCommandLine(argc, argv)==1) exit(0);
-
-   if (config==NULL) processConfig();
 
    // init SMAPI
    m.req_version = 0;

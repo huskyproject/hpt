@@ -32,6 +32,10 @@
 #include <string.h>
 #include <time.h>
 
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
+#include <fidoconf/xstr.h>
+
 #include <fcommon.h>
 #include <pkt.h>
 #include <scan.h>
@@ -41,10 +45,6 @@
 #include <recode.h>
 #include <toss.h>
 #include <strsep.h>
-
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
-#include <fidoconf/xstr.h>
 
 #include <smapi/msgapi.h>
 #include <smapi/progprot.h>

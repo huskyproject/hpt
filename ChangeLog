@@ -2,9 +2,12 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Jun  4 20:28:00 NOVST 2000
 Nestyurkin Nikolay:
-* added txt2pkt to makefile.wcw
+* added txt2pkt.exe & debug switch to makefile.wcw
 * renamed tree.c::count to tree.c::tr_count
+* fix trap at start (only under Win32)
+* no errors while compile
 
 ----- cvs ci ------
 Sun Jun  4 14:19:57 NOVST 2000
