@@ -1119,7 +1119,7 @@ void perlbeforepack(void)
 
 int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reason)
 {
-   char *prc;
+   char *prc, *sorig;
    SV *svfromname, *svfromaddr, *svtoname, *svtoaddr, *svpktfrom;
    SV *svdate, *svtext, *svarea, *svsubj, *svret, *svchange, *svattr;
    STRLEN n_a;
