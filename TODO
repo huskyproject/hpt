@@ -3,10 +3,12 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
+- fix INTL kludge treatment for zone gated netmail
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
 
+- seen-by stripping
 - document each loglevels
 - add scanned msgs to dupebase
 - del empty .sep catalogues
