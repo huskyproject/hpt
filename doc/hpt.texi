@@ -258,6 +258,7 @@ FIDOCONFIG about location of config file and keywords ideology.
 * Keywords::                    This chapter describes keywords
 * Files and Paths::             File & Path keywords
 * Link Keywords::               Links configuration
+* Areafix Keywords::            Areafix configuration
 * Area Definition::             Areas definition
 * Carbon Copy::                 Carbon Copy keywords
 @end menu
@@ -1940,7 +1941,7 @@ This statement cannot be repeated.
 
 
 
-@node Link Keywords, Area Definition, Files and Paths, Configuration Reference
+@node Link Keywords, Areafix Keywords, Files and Paths, Configuration Reference
 @section Link Keywords
 
 @menu
@@ -2838,7 +2839,14 @@ to subscribing/unsubscribing of new areas forwarded to this link.
 
 This statement can only be repeated for different links.
 
-@node Area Definition, Carbon Copy, Link Keywords, Configuration Reference
+@node Areafix Keywords, Area Definition, Link Keywords, Configuration Reference
+@section Areafix Keywords
+
+@menu
+@end menu
+
+
+@node Area Definition, Carbon Copy, Areafix Keywords, Configuration Reference
 @section Area Definition
 
 @menu
