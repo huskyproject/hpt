@@ -5,7 +5,6 @@ Category 1: Will certainly be implemented until next release
 ============================================================
 - link with level lower than -lr & -lw can't subscribe to echo
 - fix INTL kludge treatment for zone gated netmail
-- fix getLink...
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

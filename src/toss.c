@@ -2213,39 +2213,39 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
        return 1;
    }
    
-   if (e_writeCheck(config, echo, &pktOrigAddr) == 0) {
-      if (dupeDetection(echo, msg)==1) {
-	 // no dupe
-         if (config->carbonCount != 0) carbonCopy(&msg, echo);
-
-         echo->imported++;  // area has got new messages
-         if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-            rc = !putMsgInArea(echo, &msg,1, 0); // FIXME: why !putMsg not putMsg?
+   if (checkAreaLink(echo, pktOrigAddr) == 0) {
+	   if (dupeDetection(echo, msg)==1) {
+		   // no dupe
+		   if (config->carbonCount != 0) carbonCopy(&msg, echo);
+		   
+		   echo->imported++;  // area has got new messages
+		   if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
+			   rc = !putMsgInArea(echo, &msg,1, 0); // FIXME: why !putMsg not putMsg?
 //            statToss.saved++;
-         } else statToss.passthrough++;
+		   } else statToss.passthrough++;
 
-	 // recoding from internal to transport charSet
-	 if (config->outtab) {
-	     recodeToTransportCharset((CHAR*)msg.fromUserName);
-	     recodeToTransportCharset((CHAR*)msg.toUserName);
-	     recodeToTransportCharset((CHAR*)msg.subjectLine);
-	     recodeToTransportCharset((CHAR*)msg.text);
-	 }
+		   // recoding from internal to transport charSet
+		   if (config->outtab) {
+			   recodeToTransportCharset((CHAR*)msg.fromUserName);
+			   recodeToTransportCharset((CHAR*)msg.toUserName);
+			   recodeToTransportCharset((CHAR*)msg.subjectLine);
+			   recodeToTransportCharset((CHAR*)msg.text);
+		   }
    
-	 if (echo->downlinkCount > 0) {
-            forwardMsgToLinks(echo, &msg, pktOrigAddr);
+		   if (echo->downlinkCount > 0) {
+			   forwardMsgToLinks(echo, &msg, pktOrigAddr);
 //            statToss.exported++;
-         }
+		   }
 
-      } else {
-         // msg is dupe
-         if (echo->dupeCheck == dcMove) {
-            rc = !putMsgInArea(&(config->dupeArea), &msg, 0, 0); // FIXME: why !putMsg not putMsg?
-         } else {
-	    rc = 0;
-	 };
+	   } else {
+		   // msg is dupe
+		   if (echo->dupeCheck == dcMove) {
+			   rc = !putMsgInArea(&(config->dupeArea), &msg, 0, 0); // FIXME: why !putMsg not putMsg?
+		   } else {
+			   rc = 0;
+		   };
 //         statToss.dupes++;
-      }
+	   }
 
    } else {
 	   rc = 1;
