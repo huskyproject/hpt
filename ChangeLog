@@ -1,3 +1,16 @@
+2002-03-18 Monday 16:44  mche
+
+	* src/link.c (1.49): b-tree moved from hpt to fidoconfig
+
+2002-03-18 Monday 16:34  mche
+
+	* h/dupe.h (1.18), make/makefile.inc (1.7): b-tree moved from hpt
+	to fidoconfig
+
+2002-03-18 Monday 14:39  mche
+
+	* src/query.c (1.33): fixed bug with wrong date in idle requests
+
 2002-03-17 Sunday 15:51  mche
 
 	* src/hpt.c (1.138): commands call logic changed (for qreport,
