@@ -6,13 +6,13 @@ INSTDIR = $(HOME)/fido/bin
 MANDIR  = $(HOME)/fido/man
 LIBDIR  = $(HOME)/fido/lib
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o strsep.o link.o
 SRC_DIR = ../src/
 
-CFLAGS     = -c -I ../../fidoconfig -I ../../smapi -I ../h -O2 -s -DUNIX
-LFLAGS     = -L $(LIBDIR)
-FIDOCONFIG = -l fidoconfig
-SMAPI      = -l smapiunix
+CFLAGS     = -c -I../../fidoconfig -I../../smapi -I../h -O2 -s -DUNIX
+LFLAGS     = -L$(LIBDIR)
+FIDOCONFIG = -lfidoconfig
+SMAPI      = -lsmapiunix
 
 
 all: $(OBJS) \
@@ -45,8 +45,11 @@ clean:
 	-rm -f *.o
 	-rm *~
 
+distclean: clean
+	-rm purgeDupes hpt tpkt tlog pktinfo
+
 install:
-	install -s hpt pktinfo purgeDupes $(INSTDIR)
-	gzip -c hpt.1 > hpt.1.gz
-	gzip -c purgeDupes.1 > purgeDupes.1.gz
-	install hpt.1.gz purgeDupes.1.gz $(MANDIR)/man1
+	cp  hpt pktinfo purgeDupes $(INSTDIR)
+	cp  ../linux/hpt.1 $(MANDIR)/man1
+	cp  ../linux/purgeDupes.1 $(MANDIR)/man1
+
