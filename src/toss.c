@@ -70,7 +70,7 @@
 #include <smapi/compiler.h>
 #include <smapi/progprot.h>
 
-#if defined(__WATCOMC__) || defined(__TURBOC__)
+#if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
 #include <dos.h>
 #endif
 
@@ -1667,7 +1667,7 @@ void processDir(char *directory, e_tossSecurity sec)
       strcat(dummy,file->d_name);
 
 #if !defined(UNIX)
-#if defined(__TURBOC__)
+#if defined(__TURBOC__) || defined(__DJGPP__)
       _dos_getfileattr(dummy, &fattrs);
 #else
       fattrs = file->d_attr;

@@ -257,6 +257,8 @@ xscatprintf(&version, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
    xstrcat(&version, "/NT");
 #elif defined(__sun__)
    xstrcat(&version, "/sun");
+#elif defined(MSDOS)
+   xstrcat(&version, "/dos");
 #endif
 
 #ifndef RELEASE
