@@ -527,7 +527,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 int delLinkFromString(char **lineOut, char *line, char *linkAddr)
 {
     char *startLink, *ptr, *tmp, *origLine;
-    int endLen=0; // length of string where link ends
+    unsigned int endLen=0; // length of string where link ends
 
     origLine = safe_strdup(line);
     startLink = line;
@@ -1233,11 +1233,19 @@ char *unsubscribe(s_link *link, char *cmd) {
                 removelink(link, area);
                 if ((area->msgbType == MSGTYPE_PASSTHROUGH) &&
                     (area->downlinkCount == 1) &&
-                    (area->downlinks[0]->link->hisAka.point == 0) &&
-                    (config->areafixQueueFile)) {
-                    af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
-                    j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,1);
+                    (area->downlinks[0]->link->hisAka.point == 0))
+                {
+                    if(config->areafixQueueFile)
+                    {
+                        af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
+                        j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,7);
+                    }
+                    else
+                    {
+                        j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,1);
+                    }
                 } else {
+                
                     j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,7);
                 }
                 if (j != DEL_OK) {
