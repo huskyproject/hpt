@@ -325,6 +325,12 @@ void forwardMsgToLink(s_message *msg, s_area *echo, s_link *link,
     UINT16 pathCount = 0;
     char *start = NULL, *text = NULL, *seenByText = NULL, *pathText = NULL;
 
+    text = createControlText(seenBys, seenByCount, "SEEN-BY: ");
+    w_log(LL_DEBUGS, "forwardMsgToLink:%u: %s", __LINE__, text);
+    text   = createControlText(pathArray, pathArrayCount, "PATH: ");
+    w_log(LL_DEBUGS, "forwardMsgToLink:%u: %s", __LINE__, text);
+    nfree(text);
+
     /*  add our aka to path */
     if (pathArrayCount > 0) {
         path = memdup(pathArray, sizeof(s_seenBy) * pathArrayCount);
@@ -370,6 +376,13 @@ void forwardMsgToLink(s_message *msg, s_area *echo, s_link *link,
     msg->textLength = (size_t) (start - msg->text);
 
     /*  create new seenByText */
+
+    text = createControlText(seenBys, seenByCount, "SEEN-BY: ");
+    w_log(LL_DEBUGS, "forwardMsgToLink:%u: %s", __LINE__, text);
+    text   = createControlText(path, pathCount, "PATH: ");
+    w_log(LL_DEBUGS, "forwardMsgToLink:%u: %s", __LINE__, text);
+    nfree(text);
+
     seenByText = createControlText(seenBys, seenByCount, "SEEN-BY: ");
     pathText   = createControlText(path, pathCount, "\001PATH: ");
     xstrscat(&msg->text, "\r", seenByText, pathText, NULL);
@@ -439,37 +452,59 @@ void forwardMsgToLinks_rsb(s_area *echo, s_message *msg, hs_addr pktOrigAddr, UI
     s_seenBy *seenBys = NULL, *path = NULL;
     UINT16     seenByCount = 0 , pathCount = 0;
     int i;
+    char *text;
 
     /*  links who does not have their aka in seenBys and thus have not got the echomail */
     s_arealink **newLinks = NULL;
 
     /* init array of seen-bys */
     zero_seenBysZone();
+    print_seenBysZone();
     /* fetch seen-bys from msg */
     createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
+    text = createControlText(seenBys, seenByCount, "");
+    w_log(LL_DEBUGS, "forwardMsgToLinks_rsb:%u: SEEN-BY: %s", __LINE__, text);
+
     /* fetch path from msg */
     createPathArrayFromMsg(msg, &path, &pathCount);
-    if (rsb == 0)
+    text = createControlText(path, pathCount, "");
+    w_log(LL_DEBUGS, "forwardMsgToLinks_rsb:%u: PATH: %s", __LINE__, text);
+
+    if (rsb == 0) {
         /* attach seen-bys of message to seenBysZone with
          zone == pktOrigAddr.zone */
         attachTo_seenBysZone(pktOrigAddr.zone, &seenBys, seenByCount);
-    else {
+        text = createControlText(seenBys, seenByCount, "");
+        w_log(LL_DEBUGS, "forwardMsgToLinks_rsb:%u: SEEN-BY: %s", __LINE__, text);
+
+    } else {
         /* attach path to seenBysZone with zone == pktOrigAddr.zone */
         attachTo_seenBysZone(pktOrigAddr.zone, &path, pathCount);
+        text = createControlText(path, pathCount, "");
+        w_log(LL_DEBUGS, "forwardMsgToLinks_rsb:%u: PATH: %s", __LINE__, text);
         /* make a copy of path 'cause 1st is left for seen-bys */
         path = memdup(path, sizeof(s_seenBy) * pathCount);
     }
     /* add seen-bys from addToSeen & -sbadd to all zones */
     processAutoAdd_seenByZone(echo);
+    w_log(LL_DEBUGS, "after processAutoAdd_seenByZone()");
+    print_seenBysZone();
 
     /* build an array of links who will receive this message */
     createNewLinksArray(echo, &newLinks, pktOrigAddr, rsb);
+
     /* append AKAs of links to seen-by array with sorting by zone */
     addLinksTo_seenByZone(newLinks, echo->downlinkCount);
+    w_log(LL_DEBUGS, "after addLinksTo_seenByZone()");
+    print_seenBysZone();
     /* add all our AKAs */
     addAkasTo_seenByZone();
+    w_log(LL_DEBUGS, "after addAkasTo_seenByZone()");
+    print_seenBysZone();
 
     cleanDupes_seenByZone();
+    w_log(LL_DEBUGS, "after cleanDupes_seenByZone()");
+    print_seenBysZone();
     /* forward message to each links from an array */
     for (i=0;i<echo->downlinkCount;i++)
     {
@@ -482,6 +517,9 @@ void forwardMsgToLinks_rsb(s_area *echo, s_message *msg, hs_addr pktOrigAddr, UI
     }
     /* free all used memory */
     free_seenBysZone();
+    w_log(LL_DEBUGS, "after free_seenByZone()");
+    print_seenBysZone();
+
     nfree(path);
     nfree(newLinks);
 }

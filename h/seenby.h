@@ -61,6 +61,7 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT16 *seenByCo
 
 
 void zero_seenBysZone();
+void print_seenBysZone();
 void free_seenBysZone();
 void attachTo_seenBysZone(UINT16 zone, s_seenBy **seenBys, UINT16 count);
 void addTo_seenByZone(UINT16 zone, UINT16 net, UINT16 node);

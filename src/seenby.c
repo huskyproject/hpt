@@ -101,6 +101,24 @@ void zero_seenBysZone()
     }
 }
 
+void print_seenBysZone()
+{
+    UINT16 i;
+    char *text;
+
+    w_log(LL_DEBUGS, "printing seen-bys...");
+
+    for (i=0;i<MAX_ZONE;i++)
+    {
+        if (seenBysZone[i].seenByCount) {
+            w_log(LL_DEBUGS, "printing %u seenbys of zone %u", seenBysZone[i].seenByCount, i);
+            text = createControlText(seenBysZone[i].seenByArray, seenBysZone[i].seenByCount, "");
+            w_log(LL_DEBUGS, "SEEN-BY: %s", text);
+            nfree(text);
+        }
+    }
+}
+
 void free_seenBysZone()
 {
     UINT16 i;
