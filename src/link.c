@@ -34,8 +34,7 @@
 /*
 For now reply linking is performed using the msgid/reply kludges
 TODO:
-linking flat, subject linking
-SPEEDUP!!!!!!!!!!!
+subject linking
 FIXME:	do better when finding if msg links need to be updated
 The problem with original patch by Leonid was that if msg had 
 some reply links written in replies or replyto fields but
@@ -135,23 +134,30 @@ static s_msginfo *findMsgId(s_msginfo *entries, struct hashinfo *hash, dword has
     return NULL;
 }
 
+static char *stripDomain(char *msgid)
+{
+    char *p, *p1;
+    hs_addr addr;
+
+    if (msgid == NULL) return msgid;
+    for (p=msgid; *p && (isdigit(*p) || *p==':' || *p=='/' || *p=='.'); p++);
+    if (*p != '@') return msgid;
+    string2addr(msgid, &addr);
+    if (!addr.zone || !addr.net) return msgid;
+    for (p1=p; *p1 && !isspace(*p1); p1++);
+    strcpy(p, p1);
+    return msgid;
+}
+
 static char *GetKludgeText(byte *ctl, char *kludge)
 {
     char *pKludge, *pToken;
-    hs_addr addr;
     
     pToken = (char *) GetCtrlToken(ctl, (byte *)kludge);
     if (pToken) {
         pKludge = safe_strdup(pToken+1+strlen(kludge));
         nfree(pToken);
-        /* convert 5D-address to 4D */
-        for (pToken=pKludge; *pToken && (isdigit(*pToken) || *pToken==':' || *pToken=='/' || *pToken=='.'); pToken++);
-        if (*pToken=='@') {
-            string2addr(pKludge, &addr);
-            if (addr.zone && addr.net)
-                *pToken = '\0';
-        }
-        return pKludge;
+        return stripDomain(pKludge);
     } else
         return NULL;
 }
@@ -219,7 +225,7 @@ int linkArea(s_area *area, int netMail)
         memset(hash, '\0', hashNums * sizeof(*hash));
         msgs = safe_malloc(msgsNum * sizeof(s_msginfo));
         memset(msgs, '\0', msgsNum * sizeof(s_msginfo));
-        ctl = (byte *) safe_malloc(cctlen = 1); /* Some libs don't accept relloc(NULL, ..
+        ctl = (byte *) safe_malloc(cctlen = 1); /* Some libs doesn't accept relloc(NULL, ..
                                                 * So let it be initalized
         */
         jam = !!(area->msgbType & MSGTYPE_JAM);
@@ -229,9 +235,11 @@ int linkArea(s_area *area, int netMail)
         for (i = 1; i <= msgsNum; i++) {
             if (jam) {
                 if (linkJamByCRC)
-		   msgId = crc2str(Jam_GetHdr(harea, i)->MsgIdCRC);
-		else
+                   msgId = crc2str(Jam_GetHdr(harea, i)->MsgIdCRC);
+                else {
                    msgId = Jam_GetKludge(harea, i, JAMSFLD_MSGID);
+                   stripDomain(msgId);
+                }
             } else {
                 hmsg  = MsgOpenMsg(harea, (word)((msgsNum >= MAX_INCORE) ? MOPEN_READ : (MOPEN_READ|MOPEN_WRITE)), i);
                 if (hmsg == NULL) {
@@ -260,7 +268,7 @@ int linkArea(s_area *area, int netMail)
                 continue;
             }
             curr = findMsgId(msgs, hash, hashNums, msgId, i,
-                jam ? Jam_GetHdr(harea, i)->MsgIdCRC : 0);
+                (jam && linkJamByCRC) ? Jam_GetHdr(harea, i)->MsgIdCRC : 0);
             if (curr == NULL) {
                 w_log(LL_ERR, "hash table overflow. Tell it to the developers !"); 
                 /*  try to free as much as possible */
@@ -289,10 +297,12 @@ int linkArea(s_area *area, int netMail)
             curr -> msgh = NULL;
             if (jam) {
                 curr -> hdr.jamhdr = Jam_GetHdr(harea, i);
-		if (linkJamByCRC)
+                if (linkJamByCRC)
                    curr -> replyId = crc2str(curr->hdr.jamhdr->ReplyCRC);
-		else
+                else {
                    curr -> replyId = Jam_GetKludge(harea, i, JAMSFLD_REPLYID);
+                   stripDomain(curr -> replyId);
+                }
             } else {
                 curr -> replyId = GetKludgeText(ctl, "REPLY");
                 curr -> hdr.xmsg = memdup(&xmsg, sizeof(XMSG));
@@ -303,12 +313,12 @@ int linkArea(s_area *area, int netMail)
             }
         }
         
-        /* Pass 2nd : search for reply links and build relations*/
+        /* Pass 2nd : search for reply links and build relations */
         for (i = 0; i < msgsNum; i++) {
             if (msgs[i].msgId == NULL || msgs[i].replyId == NULL)
                 continue;
             curr = findMsgId(msgs, hash, hashNums, msgs[i].replyId, 0,
-                jam ? Jam_GetHdr(harea, i+1)->ReplyCRC : 0);
+                (jam && linkJamByCRC) ? Jam_GetHdr(harea, i+1)->ReplyCRC : 0);
             if (curr == NULL) continue;
             if (curr -> msgId == NULL) continue;
             if (curr -> freeReply >= MAX_REPLY-4 &&
