@@ -1,3 +1,8 @@
+2001-09-04 Tuesday 06:13  ml
+
+	* TODO (1.173), doc/hpt.texi (1.37), src/fcommon.c (1.93),
+	src/toss.c (1.362): remove empty importlog
+
 2001-08-31 Friday 10:21  ml
 
 	* doc/hpt.texi (1.36), src/fcommon.c (1.92): Use/create filebox
