@@ -3,19 +3,16 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- supporting mask in echoArea links
-- -sbadd(<addr>,<addr>,...) -sbdel(<addr>,<addr>,...)
-- createForwardNonPass
+- autoAreaCreateMask <masklist>
+- denyFwdMask <masklist>
+- denyFwdFile <file>
 - correctEMAddr: take node from path if no origin in message
-- autoAreaCreateMask
-- areafix from cmd line (like hpt afix <addr> %command)
-- del pass areas after unsubscribing
 - del "-$m 200 -dosfile -keepsb" from autocreatedefaults when create passthrough
 - write statistics when tossing from badArea
 - delete empty mail
-- DenyEchoRequest <masklist>
 - create flag when unpacking netmail
 - AutoCreateSemaphore
+- areafix from cmd line (like hpt afix <addr> %command)
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

@@ -394,7 +394,7 @@ int putMsgInDupeArea(s_addr addr, s_message *msg, dword forceattr)
 }
 */
 
-void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount)
+void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, UINT *seenByCount)
 {
    char *seenByText, *start, *token;
    unsigned long temp;
@@ -408,6 +408,12 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCo
 	   (*seenBys) = (s_seenBy*) safe_realloc(*seenBys,sizeof(s_seenBy)*(*seenByCount));
 	   (*seenBys)[*seenByCount-1].net = (UINT16) config->addToSeen[i].net;
 	   (*seenBys)[*seenByCount-1].node = (UINT16) config->addToSeen[i].node;
+   }
+   for (i=0; i<area->sbaddCount; i++) {
+	   (*seenByCount)++;
+	   (*seenBys) = (s_seenBy*) safe_realloc(*seenBys,sizeof(s_seenBy)*(*seenByCount));
+	   (*seenBys)[*seenByCount-1].net = (UINT16) area->sbadd[i].net;
+	   (*seenBys)[*seenByCount-1].node = (UINT16) area->sbadd[i].node;
    }
 
    start = strrstr(msg->text, " * Origin:"); // jump over Origin
@@ -534,7 +540,8 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
   * This function returns 0 if the link is not in seenBy else it returns 1.
   */
 
-int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link, s_addr pktOrigAddr)
+int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link,
+			  s_addr pktOrigAddr, s_area *area)
 {
    UINT i,j;
 
@@ -553,6 +560,10 @@ int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link, s_addr pktOrigA
 		   for (j=0; j < config->ignoreSeenCount; j++) {
 			   if (config->ignoreSeen[j].net == seenBys[i].net &&
 				   config->ignoreSeen[j].node == seenBys[i].node) return 0;
+		   }
+		   for (j=0; j < area->sbignCount; j++) {
+			   if (area->sbign[j].net == seenBys[i].net &&
+				   area->sbign[j].node == seenBys[i].node) return 0;
 		   }
 
 		   return 1;
@@ -581,7 +592,7 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
 		// is the link in SEEN-BYs?
 		if (checkLink(seenBys,seenByCount,
 					  echo->downlinks[i]->link,
-					  pktOrigAddr)!=0) continue;
+					  pktOrigAddr, echo)!=0) continue;
 		if (pktOrigAddr.zone==echo->downlinks[i]->link->hisAka.zone) {
 			// links with same zone
 			(*newLinks)[j] = echo->downlinks[i];
@@ -795,7 +806,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    // links who does not have their aka in seenBys and thus have not got the echomail
    s_arealink **newLinks, **zoneLinks;
 
-   createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
+   createSeenByArrayFromMsg(echo, msg, &seenBys, &seenByCount);
    createPathArrayFromMsg(msg, &path, &pathCount);
    
    createNewLinkArray(seenBys, seenByCount, echo, &newLinks, &zoneLinks, pktOrigAddr);

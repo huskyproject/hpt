@@ -520,7 +520,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 	if (act==0) {
 	    if (getArea(config, areatag) == &(config->badArea)) {
 		base = config->msgBaseDir;
-		config->msgBaseDir = pass;
+		if (config->createFwdNonPass==0) config->msgBaseDir = pass;
                 for (j = 0; j < config->addrCount; j++)
                     if (addrComp(dwlink->hisAka, config->addr[j])==0) {
                        config->msgBaseDir = base;
@@ -1263,7 +1263,7 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
 	   return 0;
    }
 
-   createSeenByArrayFromMsg(&msg, &seenBys, &seenByCount);
+   createSeenByArrayFromMsg(echo, &msg, &seenBys, &seenByCount);
    createPathArrayFromMsg(&msg, &path, &pathCount);
 
    forwardToLinks(&msg, echo, links, &seenBys, &seenByCount, &path, &pathCount);

@@ -66,7 +66,8 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr);
 int carbonCopy(s_message *msg, s_area *echo);
 s_arealink *getAreaLink(s_area *area, s_addr aka);
-void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount);
+void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy
+							  **seenBys, UINT *seenByCount);
 void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount);
 char *hpt_stristr(char *str, char *find);
 
