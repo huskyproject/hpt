@@ -1,3 +1,25 @@
+2004-01-05 Monday 05:16  d_sergienko
+
+	* src/toss.c (hpt-1_4-stable.6): fixed renaming files when files
+	are need to be moved across different partitions
+
+2004-01-05 Monday 04:36  d_sergienko
+
+	* doc/hpt-FAQ.russian (hpt-1_4-stable.2): small corrections
+
+2004-01-05 Monday 03:41  d_sergienko
+
+	* HISTORY, src/areafix.c, src/post.c, src/scan.c
+	(hpt-1_4-stable.[6,6,2,3]): remove hard-coded ^AFLAGS NPD, use it
+	if it is defined in areafixReportsFlags
+
+2004-01-04 Sunday 22:10  d_sergienko
+
+	* h/fcommon.h, src/areafix.c, src/fcommon.c
+	(hpt-1_4-stable.[1,5,2]): backport of bigfix from current: add
+	robotsArea to echotoss.log when posting messages from areafix (bug
+	was noticed by Ivan Rodenkov)
+
 2003-12-28 Sunday 22:19  d_sergienko
 
 	* src/toss.c (hpt-1_4-stable.5): use areafixFromName when sending
