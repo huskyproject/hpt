@@ -12,6 +12,8 @@
 #include <global.h>
 #include <version.h>
 
+s_statScan statScan;
+
 void cvtAddr(const NETADDR aka1, s_addr *aka2)
 {
   aka2->zone = aka1.zone;
@@ -272,13 +274,28 @@ void scanNMArea(void)
    } /* endif */
 }
 
+void writeScanStatToLog() {
+   char buff[100];
+   
+   writeLogEntry(log, '4', "Statistics");
+   sprintf(buff, "    areas: % 4d   msgs: % 6d", statScan.areas, statScan.msgs);
+   writeLogEntry(log, '4', buff);
+   sprintf(buff, "    exported: % 4d", statScan.exported);
+   writeLogEntry(log, '4', buff);
+}
+
 void scan(void)
 {
    UINT i;
-   
+
+   // zero statScan
+   memset(&statScan, sizeof(s_statScan), 0);
+   writeLogEntry(log,'4', "Start scanning...");
    scanNMArea();
    for (i = 0; i< config->echoAreaCount; i++) {
       if (config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH)
          scanEMArea(&(config->echoAreas[i]));
    }
+
+   writeScanStatToLog();
 }

@@ -18,6 +18,8 @@
 #include <compiler.h>
 #include <progprot.h>
 
+s_statToss statToss; 
+
 void changeFileSuffix(char *fileName, char *newSuffix) {
    char *beginOfSuffix = strrchr(fileName, '.')+1;
    char *newFileName;
@@ -373,6 +375,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
    area += 5;
 
    echo = getArea(config, area);
+   statToss.echoMail++;
 
    if (echo == &(config->badArea)) {
       // checking for autocreate option
@@ -383,6 +386,7 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
       } else
          // no autoareaCreate -> msg to bad
          putMsgInArea(echo, msg);
+         statToss.bad++;
    }
 
    if (echo != &(config->badArea)) {
@@ -391,15 +395,18 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
 
          if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
             putMsgInArea(echo, msg);
-         }
+	    statToss.saved++;
+         } else statToss.passthrough++;
          if (echo->downlinkCount > 1)     // if only one downlink, we've got the mail from him
             forwardMsgToLinks(echo, msg, pktOrigAddr);
+	    statToss.exported++;
       
       } else {
          // msg is dupe
          if (echo->dupeCheck == move) {
             putMsgInArea(&(config->dupeArea), msg);
          }
+	 statToss.dupes++;
       }
    }
 
@@ -433,6 +440,7 @@ void processNMMsg(s_message *msg)
          sprintf(buff, "Tossed Netmail: %u:%u/%u.%u -> %u:%u/%u.%u", msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
                          msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
          writeLogEntry(log, '7', buff);
+	 statToss.netMail++;
       } else {
          writeLogEntry(log, '9', "Could not write message to NetmailArea");
       } /* endif */
@@ -446,6 +454,7 @@ void processNMMsg(s_message *msg)
 
 void processMsg(s_message *msg, s_addr pktOrigAddr)
 {
+   statToss.msgs++;
    if (msg->netMail == 1) {
       processNMMsg(msg);
    } else {
@@ -471,6 +480,7 @@ int processPkt(char *fileName, int onlyNetmail)
       if (to_us(*header)==0){
          sprintf(buff, "pkt: %s", fileName);
          writeLogEntry(log, '6', buff);
+	 statToss.pkts++;
          
          link = getLinkFromAddr(*config, header->origAddr);
          if (link != NULL)
@@ -530,10 +540,25 @@ void processDir(char *directory, int onlyNetmail)
    closedir(dir);
 }
 
+void writeTossStatsToLog() {
+   char buff[100];
+
+   writeLogEntry(log, '4', "Statistics:");
+   sprintf(buff, "   pkt's: % 3d   msgs: % 5d   echoMail: % 5d   netmail: % 5d", statToss.pkts, statToss.msgs, statToss.echoMail, statToss.netMail);
+   writeLogEntry(log, '4', buff); 
+   sprintf(buff, "   saved: % 5d   passthrough: % 5d   exported: % 5d", statToss.saved, statToss.passthrough, statToss.exported);
+   writeLogEntry(log, '4', buff);
+   sprintf(buff, "   dupes: % 5d   bad: % 5d", statToss.dupes, statToss.bad);
+   writeLogEntry(log, '4', buff);
+}
+
 void toss()
 {
    int i;
 
+   // set stats to 0
+   memset(&statToss, sizeof(s_statToss), 0);
+   writeLogEntry(log, '4', "Start tossing...");
    processDir(config->protInbound, 0);
    // only import Netmails from inboundDir
    processDir(config->inbound, 1);
@@ -541,4 +566,7 @@ void toss()
    // write dupeFiles
 
    for (i = 0 ; i < config->echoAreaCount; i++) writeToDupeFile(&(config->echoAreas[i]));
+
+   // write statToss to Log
+   writeTossStatsToLog();
 }
