@@ -778,11 +778,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 
 void *safe_malloc(size_t size)
 {
-#ifdef _MAKE_DLL
-    void *ptr = smalloc (size);
-#else
     void *ptr = malloc (size);
-#endif
     if (ptr == NULL) exit_hpt("out of memory", 1);
     return ptr;
 }
@@ -790,33 +786,20 @@ void *safe_malloc(size_t size)
 void *safe_calloc(size_t nmemb, size_t size)
 {
     void *ptr = safe_malloc (size*nmemb);
-#ifdef _MAKE_DLL
-    if( ptr) memset(ptr,'\0',size*nmemb);
-#else
     memset(ptr,'\0',size*nmemb);
-#endif
-
     return ptr;
 }
 
 void *safe_realloc(void *ptr, size_t size)
 {
-#ifdef _MAKE_DLL
-    void *newptr = srealloc (ptr, size);
-#else
     void *newptr = realloc (ptr, size);
-#endif
     if (newptr == NULL) exit_hpt("out of memory", 1);
     return newptr;
 }
 
 char *safe_strdup(const char *src)
 {
-#ifdef _MAKE_DLL
-    char *ptr = sstrdup (src);
-#else
     char *ptr = strdup (src);
-#endif
     if (ptr == NULL) exit_hpt("out of memory", 1);
     return ptr;
 }

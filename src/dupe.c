@@ -240,10 +240,6 @@ int writeEntry(char *p_entry) {
    return 1;
 }
 
-#ifdef _MAKE_DLL_MVC_
-#define free(a) ffree(a) 
-#endif
- 
 int deleteEntry(char *entry) {
    const s_textDupeEntry  *entxt;
    const s_hashDupeEntry  *enhash;
@@ -278,10 +274,6 @@ int deleteEntry(char *entry) {
 
    return 1;
 }
-
-#ifdef _MAKE_DLL_MVC_
-#undef free
-#endif
 
 void doReading(FILE *f, s_dupeMemory *mem) {
    s_textDupeEntry  *entxt;
