@@ -2,7 +2,10 @@ HPT is a FidoNet tosser. It is a part of HUSKY portable fidonet software.
 
 See doc/hpt.* for command reference
 
-See INSTALL for installation inscructions
+See INSTALL for installation instructions.
 
-HPT is a free software, distributed unded GPL Licence. 
+HPT is a free software, distributed under GPL Licence.
 See COPYING file for copying conditions.
+
+See also The Husky project homepage: http://husky.sourceforge.net and
+http://sorceforge.net/projects/husky.
