@@ -1,0 +1,58 @@
+# makefile for DJGPP
+
+CC      = gcc
+
+OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o crc.o xstr.o txt2pkt.o
+SRC_DIR = ../src/
+
+INCDIR=../..
+
+ifeq ($(DEBUG), 1)
+  CFLAGS  = -c  -I../h -I$(INCDIR) -Wall -ggdb -DMSDOS
+  LFLAGS  = -L../../smapi -L../../fidoconfig -lwrap
+else
+  CFLAGS  = -c -fomit-frame-pointer -fstrength-reduce  -I../h -I$(INCDIR) -Wall -s -DMSDOS -O3
+  LFLAGS  = -L../../smapi -L../../fidoconfig -lwrap
+endif
+
+all: $(OBJS) \
+     pktinfo.exe \
+     tlog.exe \
+     tpkt.exe \
+     hpt.exe \
+     hptlink.exe \
+     hpttree.exe \
+     txt2pkt.exe
+
+%.o: $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
+
+pktinfo.exe: pktinfo.o $(OBJS)
+	$(CC) $(LFLAGS) -Os -o pktinfo.exe log.o recode.o pktinfo.o pktread.o fcommon.o global.o xstr.o -lfconfdjg -lsmapidjg 
+
+tlog.exe: tlog.o log.o
+	$(CC) $(LFLAGS) -Os -o tlog.exe tlog.o log.o
+
+tpkt.exe: tpkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o xstr.o
+	$(CC) $(LFLAGS) -Os -o tpkt.exe log.o tpkt.o fcommon.o pktread.o recode.o pktwrite.o global.o xstr.o -lfconfdjg -lsmapidjg 
+
+hpt.exe: $(OBJS)
+	$(CC) $(LFLAGS) -O3 -o hpt.exe hpt.o pktread.o pktwrite.o fcommon.o global.o recode.o scan.o areafix.o seenby.o toss.o link.o log.o scanarea.o dupe.o tree.o crc.o xstr.o strsep.o post.o -lfconfdjg -lsmapidjg
+
+hptlink.exe: hptlink.o
+	$(CC) $(LFLAGS) -Os -o hptlink.exe hptlink.o -lfconfdjg -lsmapidjg
+
+hpttree.exe: hpttree.o
+	$(CC) $(LFLAGS) -Os -o hpttree.exe hpttree.o -lfconfdjg -lsmapidjg
+
+txt2pkt.exe: $(OBJS)
+	$(CC) $(LFLAGS) -Os -o txt2pkt.exe txt2pkt.o pktwrite.o fcommon.o pktread.o recode.o log.o global.o xstr.o -lfconfdjg -lsmapidjg
+
+clean:
+	-del *.o 
+	-del *.bak
+
+distclean: clean
+	-del *.exe
+
+
