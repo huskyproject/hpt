@@ -1827,8 +1827,9 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	     break;
 
 	   case secInbound:
-	     if ((link != NULL) && (link->pktPwd != NULL) && link->pktPwd[0]) {               
-	       if (header->pktPassword && stricmp(link->pktPwd, header->pktPassword)==0) {
+		   if ((link != NULL) && (link->pktPwd != NULL) && link->pktPwd[0]) {
+
+			   if (header->pktPassword && stricmp(link->pktPwd, header->pktPassword)==0) {
                   processIt = 1;
                } else {
                   if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (eOn)) ) {

@@ -8,6 +8,7 @@ Category 1: Will certainly be implemented until next release
 - make switch for advisory lock
 - areafix definition
 - optimize packing (several files)
+- autofwdareacreatedefaults
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
