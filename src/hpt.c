@@ -201,9 +201,9 @@ int processCommandLine(int argc, char **argv)
       } else if (stricmp(argv[i], "relink") == 0) {
          i++; relink(argv[i]);
       } else if (stricmp(argv[i], "qupdate") == 0) {
-          cmQueue = 1;
+          cmQueue |= 2;
       } else if (stricmp(argv[i], "qreport") == 0) {
-          cmQueue = 2;
+          cmQueue |= 4;
       } else if (stricmp(argv[i], "-c") == 0) {
 		  i++;
 		  if (argv[i]!=NULL) xstrcat(&cfgFile, argv[i]);
@@ -560,8 +560,8 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    }
    if (cmPause || config->autoPassive) autoPassive();
 
-   if (cmQueue == 1) af_QueueUpdate();
-   if (cmQueue == 2) af_QueueReport();
+   if (cmQueue &  2) af_QueueUpdate();
+   if (cmQueue &  4) af_QueueReport();
 
    // save forward requests info
    af_CloseQuery();
