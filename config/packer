@@ -41,3 +41,5 @@ Pack 	rar rar a -ep -md1024 -m5 -mm -inul -s $a $f
 
 Unpack  "arj e -+ -y $a $p >nul" 0 60ea
 Pack  arj arj a -+ -e -y $a $f >nul
+
+Unpack "unace e -y -c- $a $p $f" 7 2a2a414345
