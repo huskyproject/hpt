@@ -309,11 +309,11 @@ int createTempPktFileName(s_link *link)
     if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
     else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
 	
-	// fileBoxes support
+    // fileBoxes support
     if (link->fileBox) 
 		xstrcat(&tmp, link->fileBox);
-    else 
-		xstrcat(&tmp, config->outbound);
+    else {
+	xstrcat(&tmp, config->outbound);
 
 	// add suffix for other zones
 	if (link->hisAka.zone != config->addr[0].zone && bundleNameStyle != eAmiga) {
@@ -335,7 +335,10 @@ int createTempPktFileName(s_link *link)
 							 link->hisAka.node, limiter);
 		}
 	}
-	npos = strlen(tmp);
+
+    } // link->fileBox
+
+    npos = strlen(tmp);
 
     /* bundle file name */
     switch ( bundleNameStyle ) {
