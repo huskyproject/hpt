@@ -1,3 +1,7 @@
+2002-12-30 Monday 13:58  stas_degteff
+
+	* misc/areafix.866 (1.1): Add russian areafix help
+
 2002-12-27 Friday 13:23  mche
 
 	* src/: fcommon.c (1.153), hpt.c (1.167): common function for
