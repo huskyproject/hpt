@@ -614,7 +614,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 		}
                 if (stricmp(token, areaName)==0) {
                     // why do you need to redefine the same filename?
-//		    fileName = safe_strdup(getCurConfName());
+		    fileName = safe_strdup(getCurConfName());
 		    pos = getCurConfPos();
 		    break;
 		}
@@ -623,8 +623,9 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 	nfree(buff);
     }
     if (pos == -1) { // impossible // error occurred
-	    close_conf();
-	    return -1;
+        close_conf();
+        nfree(fileName);
+        return -1;
     }
     cfgin = get_hcfg();
     if((tmpFileName=tmpnam(tmpFileName)) != NULL)
@@ -636,7 +637,8 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 	if (cfgin) close_conf();
 	if (!quiet) fprintf(stderr, "areafix: cannot open config file %s for reading and writing\n", fileName);
 	w_log(LL_ERR,"areafix: cannot open config file \"%s\" for reading and writing", fileName);
-	nRet = I_ERR; // go to end :) // error occurred
+        nRet = I_ERR; // go to end :) // error occurred
+        nfree(fileName);
 	return -1;
     }
     else {
