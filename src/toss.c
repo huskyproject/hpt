@@ -1643,6 +1643,7 @@ void arcmail(s_link *tolink) {
     s_link *link = NULL;
     int startlink=0;
     int endlink = config->linkCount;
+    hs_addr *aka;
     e_bundleFileNameStyle bundleNameStyle;
 
     if (tolink != NULL) {
@@ -1666,11 +1667,12 @@ void arcmail(s_link *tolink) {
 
 	/*  only create floFile if we have mail for this link */
 	if (link->pktFile != NULL) {
+	    
+	    aka = SelectPackAka(link);
+ 
+	    if (needUseFileBoxForLinkAka(config,link,aka)) {
 
-
-	    if (needUseFileBoxForLink(config,link)) {
-
-		if (!link->fileBox) link->fileBox = makeFileBoxName (config,link);
+		if (!link->fileBox) link->fileBox = makeFileBoxNameAka (config,link,aka);
 
 		_createDirectoryTree (link->fileBox);
 		if (link->packFile == NULL)
@@ -1714,7 +1716,7 @@ void arcmail(s_link *tolink) {
 		    nfree(pkt);
 		}
 
-	    } else if (createOutboundFileName(link,link->echoMailFlavour, FLOFILE) == 0) {
+	    } else if (createOutboundFileNameAka(link,link->echoMailFlavour, FLOFILE, aka) == 0) {
 		/*  process if the link not busy, else do not create 12345678.?lo */
 		flo = fopen(link->floFile, "a+");
 
@@ -1792,17 +1794,17 @@ void arcmail(s_link *tolink) {
 
 			    if (bundleNameStyle==eAmiga)
 				xscatprintf(&pkt, "%u.%u.%u.%u.sep%c",
-					    link->hisAka.zone, link->hisAka.net,
-					    link->hisAka.node, link->hisAka.point,
+					    aka->zone, aka->net,
+					    aka->node, aka->point,
 					    PATH_DELIM);
 			    else {
-				if (link->hisAka.point != 0)
+				if (aka->point != 0)
 				    xscatprintf(&pkt,"%08x.sep%c",
-						link->hisAka.point,PATH_DELIM);
+						aka->point,PATH_DELIM);
 				else
 				    xscatprintf(&pkt, "%04x%04x.sep%c",
-						link->hisAka.net,
-						link->hisAka.node,
+						aka->net,
+						aka->node,
 						PATH_DELIM);
 			    }
 			}

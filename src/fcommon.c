@@ -293,6 +293,8 @@ int createPackFileName(s_link *link)
     static char ext3[] = "0123456789abcdefghijklmnopqrstuvwxyz";
     int numExt = sizeof(ext3)-1;
     int counter;
+    hs_addr *aka;
+    char *str_hisAka, *str_Aka;
     e_bundleFileNameStyle bundleNameStyle = eTimeStamp;
 
     tr=aTime=time(NULL);
@@ -302,36 +304,37 @@ int createPackFileName(s_link *link)
 
     wday=wdays[tp->tm_wday];
 
+    aka = SelectPackAka(link);
 
     if (link->linkBundleNameStyle!=eUndef) bundleNameStyle=link->linkBundleNameStyle;
     else if (config->bundleNameStyle!=eUndef) bundleNameStyle=config->bundleNameStyle;
 	
     /*  fileBoxes support */
-    if (needUseFileBoxForLink(config,link)) {
-	if (!link->fileBox) link->fileBox = makeFileBoxName (config,link);
+    if (needUseFileBoxForLinkAka(config,link,aka)) {
+	if (!link->fileBox) link->fileBox = makeFileBoxNameAka (config,link,aka);
 	xstrcat(&tmp, link->fileBox);
 	_createDirectoryTree (tmp);
     } else {
 	xstrcat(&tmp, config->outbound);
 
 	/*  add suffix for other zones */
-	if (link->hisAka.zone != config->addr[0].zone && bundleNameStyle != eAmiga) {
+	if (aka->zone != config->addr[0].zone && bundleNameStyle != eAmiga) {
 		tmp[strlen(tmp)-1]='\0';
-		xscatprintf(&tmp, ".%03x%c", link->hisAka.zone, limiter);
+		xscatprintf(&tmp, ".%03x%c", aka->zone, limiter);
 	}
 
 	/*  path to bundle */
 	if (bundleNameStyle!=eAmiga) {
-		if (link->hisAka.point)
+		if (aka->point)
 			xscatprintf(&tmp, "%04x%04x.pnt%c",
-						link->hisAka.net, link->hisAka.node, limiter);
+						aka->net, aka->node, limiter);
 
 		/*  separate bundles */
 		if (config->separateBundles) {
-			if (link->hisAka.point) xscatprintf(&tmp, "%08x.sep%c",
-							link->hisAka.point, limiter);
-			else xscatprintf(&tmp, "%04x%04x.sep%c", link->hisAka.net,
-							link->hisAka.node, limiter);
+			if (aka->point) xscatprintf(&tmp, "%08x.sep%c",
+							aka->point, limiter);
+			else xscatprintf(&tmp, "%04x%04x.sep%c", aka->net,
+							aka->node, limiter);
 		}
 	}
 
@@ -349,18 +352,18 @@ int createPackFileName(s_link *link)
                 if( bundleNameStyle == eAddrsCRC32 ||
                     bundleNameStyle == eAddrsCRC32Always ) {
                   xscatprintf( &tmp2, "hpt %s ", aka2str(config->addr[0]) );
-  	          xstrcat( &tmp2, aka2str(link->hisAka) );
+  	          xstrcat( &tmp2, aka2str(*aka) );
                   xscatprintf(&tmp,"%08x.", strcrc32(tmp2,0xFFFFFFFFUL) );
                   nfree(tmp2);
                 } else {
-                  if ( link->hisAka.point == 0 && config->addr[0].point == 0) {
+                  if ( aka->point == 0 && config->addr[0].point == 0) {
                     xscatprintf (&tmp, "%04hx%04hx.",
-                                 config->addr[0].net - link->hisAka.net,
-                                 config->addr[0].node - link->hisAka.node);
+                                 config->addr[0].net - aka->net,
+                                 config->addr[0].node - aka->node);
                   } else {
                     xscatprintf (&tmp, "%04hx%04hx.",
-                                 config->addr[0].node - link->hisAka.node,
-                                 config->addr[0].point- link->hisAka.point);
+                                 config->addr[0].node - aka->node,
+                                 config->addr[0].point- aka->point);
                   }
                 }
                 w_log(LL_FILENAME, "bundle name generating: %s", tmp);
@@ -368,11 +371,11 @@ int createPackFileName(s_link *link)
     case eAmiga:
 		if (bundleNameStyle==eAmiga) {
 			xscatprintf (&tmp, "%u.%u.%u.%u.",
-						 link->hisAka.zone, link->hisAka.net,
-						 link->hisAka.node, link->hisAka.point);
+						 aka->zone, aka->net,
+						 aka->node, aka->point);
 		}
 
-		if (!needUseFileBoxForLink(config,link)) cleanEmptyBundles(tmp,npos,wday);
+		if (!needUseFileBoxForLinkAka(config,link,aka)) cleanEmptyBundles(tmp,npos,wday);
 
 		counter = 0;
 		minFreeExt = -1;
@@ -449,9 +452,12 @@ int createPackFileName(s_link *link)
     if (!fexist(pfileName)) {
         nfree(link->packFile);
         link->packFile = pfileName;
-        w_log(LL_CREAT,"packFile %s created for [%s]",
+        str_hisAka = aka2str5d(link->hisAka);
+        str_Aka = aka2str5d(*aka);
+        w_log(LL_CREAT,"packFile %s created for [%s via %s]",
             link->packFile,
-            aka2str(link->hisAka));
+            str_hisAka, str_Aka);
+        nfree(str_hisAka); nfree(str_Aka);
         return 0;
     }
     else {
@@ -590,14 +596,18 @@ int createDirectoryTree(const char *pathName) {
 } /* createDirectoryTree() */
 #endif
 
-int createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ)
+int createOutboundFileNameAka(s_link *link, e_flavour prio, e_pollType typ, hs_addr *aka)
 {
-   int nRet = NCreateOutboundFileName(config,link,prio,typ);
+   int nRet = NCreateOutboundFileNameAka(config,link,prio,typ,aka);
    if(nRet == -1)
       exit_hpt("cannot create *.bsy file!",0);
    return nRet;
 }
 
+int createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ)
+{
+  return createOutboundFileNameAka(link, prio, typ, &(link->hisAka));
+}
 
 void *safe_malloc(size_t size)
 {

@@ -100,6 +100,7 @@ int   createPackFileName(s_link *link);
 */
 
 int    createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ);
+int    createOutboundFileNameAka(s_link *link, e_flavour prio, e_pollType typ, hs_addr *aka);
 /*DOC
   Input:  link is the link whose OutboundFileName should be created.
           prio is some kind of CRASH, HOLD, NORMAL, DIRECT, IMMEDIATE
