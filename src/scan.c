@@ -96,8 +96,7 @@ void makePktHeader(s_message *msg, s_pktHeader *header)
    header->majorProductRev = VER_MAJOR;
    header->hiProductCode   = 0;
    header->loProductCode   = 0xfe;
-   memset(&(header->pktPassword), 0, 9);
-//   header->pktPassword[0]  = 0;       // no pwd
+   memset(&(header->pktPassword), 0, 9); // no password
    time(&(header->pktCreated));
    header->capabilityWord  = 1;
    header->prodData        = 0;
