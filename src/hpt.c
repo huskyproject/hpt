@@ -416,7 +416,7 @@ FARPROC WINAPI ourhook(unsigned dliNotify,PDelayLoadInfo pdli)
   //print error message and exit
   char msg[128];
   memset(msg,0,sizeof(msg));
-  sprintf(msg,"perlSupport is On but loading of %s failed - exiting ",pdli->szDll);
+  sprintf(msg,"Loading of %s failed - exiting ",pdli->szDll);
   w_log('8',msg);
   //standart deinit sequence
   // deinit SMAPI
@@ -513,7 +513,7 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
 #ifdef DO_PERL
    __pfnDliFailureHook=ourhook;
    //attempt to start Perl
-   if (config->perlSupport) PerlStart();
+   PerlStart();
 #endif 
 #endif
    msgToSysop = (s_message**) safe_malloc(config->addrCount * sizeof(s_message*));

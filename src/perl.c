@@ -538,15 +538,13 @@ int PerlStart(void)
    char *perlargs[]={"", NULL, NULL};
    int saveerr, pid;
    
-   if (!config->perlSupport)
-   {
-     do_perl=0;
-     return 1;
-   }
    if (config->hptPerlFile != NULL)
-     perlfile = config->hptPerlFile;
+      perlfile = config->hptPerlFile;
    else
-     perlfile = PERLFILE;
+   {
+      do_perl=0;
+      return 1;
+   }    
    perlargs[1] = perlfile;
 #ifdef _MSC_VER
    if (_access(perlfile, R_OK))
