@@ -1,0 +1,30 @@
+                          HPT with Perl support
+                        Frequently Asked Questions
+
+Q: What files does hpt need to support perl?
+A: (DK)
+   ActiveState Perl library (Perl56.dll) and
+   MS Visual C run-time library (msvcrt.dll)
+
+Q: I've installed libraries but perl script doesn't work. Why?
+A: (DK)
+   If you use system (standard) Perl modules you need Perl to be installed
+   into your system (http://www.activestate.com, download and install build
+   623 or above)
+
+Q: Am I able to use another perl interpreter instead of ActiveState Perl?
+A: (DK)
+   Yes you can, but you should modify code by yourself like in current code.
+
+Q: Why sub hpt_exit cannot be called sometimes?
+A: (DK)
+   This function is called only if other perl hooks had been called before.
+
+Q: Can I compile hpt with perl support, but perl56.dll is to be used only when
+Q: it's needed?
+A: (DK)
+   Yes. See config statement 'HptPerlFile'
+
+Legend:
+-------
+DK: Dmitriy Kazimirow, 2:5004/73
