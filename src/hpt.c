@@ -553,10 +553,14 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
        if (msgToSysop[i]) freeMsgBuffers(msgToSysop[i]);
        nfree(msgToSysop[i]);
    }
-   nfree(msgToSysop);
 
    if (cmPause || config->autoPassive) autoPassive();
 
+   // save forward requests info
+   af_CloseQuery();
+   
+   nfree(msgToSysop);
+   
    // deinit SMAPI
    MsgCloseApi();
 
@@ -564,8 +568,6 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    closeLog();
    doneCharsets();
    nfree(versionStr);
-   // save forvard requests info
-   af_CloseQuery();
 
    if (config->lockfile) {
 	close(lock_fd);
