@@ -1,3 +1,11 @@
+2003-01-09 Thursday 10:24  stas_degteff
+
+	* src/query.c (1.87): fix warning: 'i' might be used uninitialized
+
+2003-01-09 Thursday 08:14  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.62): Add question about self-unsubscribing
+
 2003-01-08 Wednesday 09:14  stas_degteff
 
 	* src/areafix.c (1.379): Skip areafix for empty command; write
