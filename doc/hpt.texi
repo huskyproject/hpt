@@ -1361,6 +1361,8 @@ as passthrough areas.
 
 This statement cannot be repeated.
 
+@xref{LinkMsgBaseDir}.
+
 @node Outbound, Outtab, MsgBaseDir, Files and Paths
 @subsection Outbound
 @findex Outbound
@@ -2132,9 +2134,9 @@ This statement can only be repeated for different links.
 Same as @code{MsgBaseDir}, but you can set it for different links.
 @strong{Do not use it with} @code{LinkDefaults}!
 
-@xref{MsgBaseDir}.
-
 This statement can only be repeated for different links.
+
+@xref{MsgBaseDir}.
 
 @node Mandatory, OptGrp, LinkMsgBaseDir, Link Keywords
 @subsection Mandatory

@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sun Apr 22 20:21:19 NOVST 2001
+max:
+* don't add .0 in @Via address
+
+----- cvs ci ------
 Tue Apr 17 23:59:14 NOVST 2001
 max:
 * remove copying msgs to bad with "no downlinks for passthrough area" reason
