@@ -2040,6 +2040,7 @@ void tossTempOutbound(char *directory)
 			   fclose(pkt);
 			   arcmail();
 		   } else {
+ 			   free(dummy);
 			   writeLogEntry(hpt_log, '9', "found non packed mail without matching link in tempOutbound");
 			   fclose(pkt);
 		   }

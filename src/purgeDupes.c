@@ -158,6 +158,7 @@ int processArea(s_area *echo) {
    free(dupeFileName);
    free(indexFileName);
    free(tmpFileName);
+   free(tmpIndexFileName);
 
    free(dupePackHeader);
    free(dupeFileHeader);

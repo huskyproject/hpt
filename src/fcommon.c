@@ -64,9 +64,7 @@ int createLockFile(char *lockfile) {
                    return 1;
            }
 
-#ifndef __NT__	   
         fprintf(f, "%u\n", getpid());
-#endif
 
         fclose(f);
         return 0;
@@ -209,6 +207,7 @@ int createTempPktFileName(s_link *link)
 	   counter++;
 	   
    } while ((fexist(fileName) || fileNameAlreadyUsed(fileName, NULL)) && (counter<=255));
+   free(zoneOutbound);
 
    counter = 0;
    do {

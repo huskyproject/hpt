@@ -75,10 +75,16 @@ int main(int argc, char *argv[])
                   case 't':
                      msg.toUserName = (char *) malloc(strlen(argv[++n]) + 1);
                      strcpy(msg.toUserName, argv[n]);
+#ifdef __NT__
+                     CharToOem(msg.toUserName, msg.toUserName);
+#endif
                      break;
                   case 'f':
                      msg.fromUserName = (char *) malloc(strlen(argv[++n]) + 1);
                      strcpy(msg.fromUserName, argv[n]);
+#ifdef __NT__
+                     CharToOem(msg.fromUserName, msg.fromUserName);
+#endif
                      break;
                   default:
                      quit = 1;
@@ -92,9 +98,15 @@ int main(int argc, char *argv[])
                break;
             case 't':    // tearline
                tearl = argv[++n];
+#ifdef __NT__
+               CharToOem(tearl, tearl);
+#endif
                break;
             case 'o':    // origin
                orig = argv[++n];
+#ifdef __NT__
+               CharToOem(orig, orig);
+#endif
                break;
             case 'd':    // directory
                dir = argv[++n];
@@ -102,6 +114,9 @@ int main(int argc, char *argv[])
             case 's':    // subject
                msg.subjectLine = (char *) malloc(strlen(argv[++n]) + 1);
                strcpy(msg.subjectLine, argv[n]);
+#ifdef __NT__
+               CharToOem(msg.subjectLine, msg.subjectLine);
+#endif
                break;
 	    default:
                quit = 1;
@@ -204,6 +219,7 @@ int main(int argc, char *argv[])
       writeMsgToPkt(pkt, msg);
 
       closeCreatedPkt(pkt);
+      sleep(1);
    } else {
       printf("Could not create pkt");
    } /* endif */

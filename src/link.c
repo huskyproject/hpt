@@ -270,6 +270,9 @@ void linkAreas(void)
       /* link all echomail areas */
       for (i = 0; i < config -> echoAreaCount; i++)
             linkArea(&(config -> echoAreas[i]), 0);
+      /* link all local areas */
+      for (i = 0; i < config -> localAreaCount; i++)
+            linkArea(&(config -> localAreas[i]), 0);
       /* link NetMailAreas */
       for (i = 0; i < config -> netMailAreaCount; i++)
          linkArea(&(config -> netMailAreas[i]), 1);
