@@ -215,6 +215,7 @@ int main(int argc, char *argv[])
 	   msg.origAddr = config->addr[0];
 
       if (area != NULL) {
+         strUpper(area);
          sprintf(tmp, " * Origin: %s (%d:%d/%d.%d)\r",
                  (orig) ? orig : (config->origin) ? config->origin : "",
 		 msg.origAddr.zone, msg.origAddr.net,
