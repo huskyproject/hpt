@@ -141,6 +141,8 @@ void start_help(void) {
   fprintf(stdout,"   hpt scan -f <filename> - scanning echomail from alternative echotoss file\n");
   fprintf(stdout,"   hpt post [options] file - posting a mail (for details run \"hpt post -h\")\n");
   fprintf(stdout,"   hpt pack - packing netmail\n");
+  fprintf(stdout,"   hpt pack -a <areaname> - packing netmail from <areaname> area\n");
+  fprintf(stdout,"   hpt pack -f <filename> - packing netmail from alternative echotoss file\n");
   fprintf(stdout,"   hpt link [areamask] - links messages\n");
   fprintf(stdout,"   hpt afix [<addr> command] - process areafix\n");
   fprintf(stdout,"   hpt relink <addr> - refresh area subsription\n");
