@@ -694,7 +694,7 @@ void makeMsgToSysop(char *areaName, hs_addr fromAddr, ps_addr uplinkAddr)
 
                 msgToSysop[i] = makeMessage(echo->useAka,
                     echo->useAka,
-                    versionStr,
+                    config->areafixFromName ? config->areafixFromName : versionStr,
                     netmail ? (config->sysop ? config->sysop : "Sysop") : "All", "Created new areas",
                     netmail,
                     config->areafixReportsAttr);
