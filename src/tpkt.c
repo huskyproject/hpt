@@ -44,21 +44,21 @@ int main()
    struct tm    *tm;
 
    header.origAddr.zone  = 2;
-   header.origAddr.net   = 2433;
-   header.origAddr.node  = 1245;
-   header.origAddr.point = 100;
+   header.origAddr.net   = 2432;
+   header.origAddr.node  = 605;
+   header.origAddr.point = 0;
 
    header.destAddr.zone  = 2;
-   header.destAddr.net   = 2433;
-   header.destAddr.node  = 1247;
-   header.destAddr.point = 0;
+   header.destAddr.net   = 2432;
+   header.destAddr.node  = 605;
+   header.destAddr.point = 14;
 
    header.hiProductCode  = 0;
    header.loProductCode  = 0xfe;
    header.majorProductRev = 0;
-   header.minorProductRev = 25;
+   header.minorProductRev = 26;
    //header.pktPassword[0] = 0;
-   strcpy(header.pktPassword, "xxx");
+   strcpy(header.pktPassword, "hghprt");
    header.pktCreated = time(NULL);
 
    header.capabilityWord = 1;
@@ -67,14 +67,14 @@ int main()
    pkt = createPkt("test.pkt", &header);
    if (pkt != NULL) {
       msg.origAddr.zone  = 2;
-      msg.origAddr.net   = 2433;
-      msg.origAddr.node  = 1247;
+      msg.origAddr.net   = 2432;
+      msg.origAddr.node  = 605;
       msg.origAddr.point = 0;
 
       msg.destAddr.zone  = 2;
       msg.destAddr.net   = 2432;
       msg.destAddr.node  = 605;
-      msg.destAddr.point = 0;
+      msg.destAddr.point = 14;
 
       msg.attributes = 1;
 
@@ -84,7 +84,7 @@ int main()
 
       msg.netMail = 1;
       msg.text = (char *) malloc(300);
-      strcpy(msg.text, "\001FMPT 100\r+linux.ger\r");
+      strcpy(msg.text, "AREA:test.ger\rhallo\r---\r * Origin: kljöklj (2:2432/605.0)\r");
       msg.toUserName = (char *) malloc(15);
       strcpy(msg.toUserName, "areafix");
       msg.fromUserName = (char *) malloc(20);

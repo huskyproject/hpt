@@ -1,6 +1,8 @@
 
 hpt 0.26
 --------
+Thu Jan 14 19:24:49 CET 1999
+- fixed core dump while autocreating passthrough areas
 ----- cvs ci ------
 Thu Jan 14 13:34:41 CET 1999
 - began ChangeLog

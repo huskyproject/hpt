@@ -728,7 +728,8 @@ void processEMMsg(s_message *msg, s_addr pktOrigAddr)
       if ((link != NULL) && (link->autoAreaCreate != 0) &&(writeAccess == 0)) {
          autoCreate(area, pktOrigAddr);
          echo = getArea(config, area);
-         putMsgInArea(echo, msg, 1);
+         if (echo->msgbType != MSGTYPE_PASSTHROUGH)
+            putMsgInArea(echo, msg, 1);
       } else {
          // no autoareaCreate -> msg to bad
          statToss.bad++;
