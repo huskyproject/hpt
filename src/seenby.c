@@ -123,11 +123,11 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCo
 
     /*  find beginning of seen-by lines */
     do {
-	start = strstr(start, "SEEN-BY:");
-	if (start == NULL) return;
-	start += 8; /*  jump over SEEN-BY: */
+        start = strstr(start, "SEEN-BY:");
+        if (start == NULL) return;
+        start += 8; /*  jump over SEEN-BY: */
 
-	while (*start == ' ') start++; /*  find first word after SEEN-BY: */
+        while (*start == ' ') start++; /*  find first word after SEEN-BY: */
     } while (!isdigit(*start));
 
     /*  now that we have the start of the SEEN-BY's we can tokenize the lines and read them in */
@@ -135,43 +135,43 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCo
 
     token = strtok(seenByText, " \r\t\376");
     for (; token != NULL; token = strtok(NULL, " \r\t\376")) {
-	if (isdigit(*token)) {
-	    /*  parse token */
-	    temp = strtoul(token, &endptr, 10);
-	    if (*endptr==':') {
-		token = endptr+1;
-		temp = strtoul(token, &endptr, 10);
-	    }
-	    if (*endptr && *endptr != '/')
-		continue;
+        if (isdigit(*token)) {
+            /*  parse token */
+            temp = strtoul(token, &endptr, 10);
+            if (*endptr==':') {
+                token = endptr+1;
+                temp = strtoul(token, &endptr, 10);
+            }
+            if (*endptr && *endptr != '/')
+                continue;
 
-	    /*  get new memory */
-	    if ((*seenByCount)++ >= seenByAlloced)
-		(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAlloced+=32));
+            /*  get new memory */
+            if ((*seenByCount)++ >= seenByAlloced)
+                (*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAlloced+=32));
 
-	    if ((*endptr) == '\0') {
-		/*  only node aka */
-		(*seenBys)[*seenByCount-1].node = (UINT16) temp;
-		/*  use net aka of last seenBy */
-		(*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
-	    } else {
-		/*  net and node aka */
-		(*seenBys)[*seenByCount-1].net = (UINT16) temp;
-		/*  eat up '/' */
-		endptr++;
-		(*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
-	    }
-	} else if (strcmp(token,"SEEN-BY:")!=0) break; /*  not digit and not SEEN-BY */
-	
+            if ((*endptr) == '\0') {
+                /*  only node aka */
+                (*seenBys)[*seenByCount-1].node = (UINT16) temp;
+                /*  use net aka of last seenBy */
+                (*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
+            } else {
+                /*  net and node aka */
+                (*seenBys)[*seenByCount-1].net = (UINT16) temp;
+                /*  eat up '/' */
+                endptr++;
+                (*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
+            }
+        } else if (strcmp(token,"SEEN-BY:")!=0) break; /*  not digit and not SEEN-BY */
+
     } /*  end while */
 
     if (*seenByCount != seenByAlloced)
-	(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
+        (*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
     /* test output for reading of seenBys... */
 #ifdef DEBUG_HPT
     for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
 #endif
-/*    exit(2); */
+    /*    exit(2); */
 
     nfree(seenByText);
 }
@@ -197,19 +197,19 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
 
     /*  find beginning of path lines */
     do {
-	start = strstr(start, "\001PATH:");
-	if (start == NULL) return;
-	for (endptr = strchr(start, '\r'); endptr; endptr = strchr(endptr, '\r')) {
-	    while (*endptr == '\r' || *endptr == '\n') endptr++;
-	    if (strncmp(endptr, "\001PATH:", 6)) break; /* not path line */
-	}
-	if (endptr && strstr(endptr, "\001PATH:")) {
-	    start = endptr;
-	    continue; /* only last path lines are valid */
-	}
-	start += 7; /*  jump over PATH: */
+        start = strstr(start, "\001PATH:");
+        if (start == NULL) return;
+        for (endptr = strchr(start, '\r'); endptr; endptr = strchr(endptr, '\r')) {
+            while (*endptr == '\r' || *endptr == '\n') endptr++;
+            if (strncmp(endptr, "\001PATH:", 6)) break; /* not path line */
+        }
+        if (endptr && strstr(endptr, "\001PATH:")) {
+            start = endptr;
+            continue; /* only last path lines are valid */
+        }
+        start += 7; /*  jump over PATH: */
 
-	while (*start == ' ') start++; /*  find first word after PATH: */
+        while (*start == ' ') start++; /*  find first word after PATH: */
     } while (!isdigit(*start));
 
     /*  now that we have the start of the PATH' so we can tokenize the lines and read them in */
@@ -217,37 +217,37 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
 
     token = strtok(seenByText, " \r\t\376");
     for (; token != NULL; token = strtok(NULL, " \r\t\376")) {
-	if (isdigit(*token)) {
-	    /*  parse token */
-	    temp = strtoul(token, &endptr, 10);
-	    if (*endptr==':') {
-		token = endptr+1;
-		temp = strtoul(token, &endptr, 10);
-	    }
-	    if (*endptr && *endptr != '/')
-		continue;
+        if (isdigit(*token)) {
+            /*  parse token */
+            temp = strtoul(token, &endptr, 10);
+            if (*endptr==':') {
+                token = endptr+1;
+                temp = strtoul(token, &endptr, 10);
+            }
+            if (*endptr && *endptr != '/')
+                continue;
 
-	    /*  get new memory */
-	    if ((*seenByCount)++ >= seenByAlloced)
-		(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAlloced+=32));
+            /*  get new memory */
+            if ((*seenByCount)++ >= seenByAlloced)
+                (*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAlloced+=32));
 
-	    if ((*endptr) == '\0') {
-		/*  only node aka */
-		(*seenBys)[*seenByCount-1].node = (UINT16) temp;
-		/*  use net aka of last seenBy */
-		(*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
-	    } else {
-		/*  net and node aka */
-		(*seenBys)[*seenByCount-1].net = (UINT16) temp;
-		/*  eat up '/' */
-		endptr++;
-		(*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
-	    }
-	} else if (strcmp(token, "\001PATH:")!=0) break; /*  not digit and not PATH */
+            if ((*endptr) == '\0') {
+                /*  only node aka */
+                (*seenBys)[*seenByCount-1].node = (UINT16) temp;
+                /*  use net aka of last seenBy */
+                (*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
+            } else {
+                /*  net and node aka */
+                (*seenBys)[*seenByCount-1].net = (UINT16) temp;
+                /*  eat up '/' */
+                endptr++;
+                (*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
+            }
+        } else if (strcmp(token, "\001PATH:")!=0) break; /*  not digit and not PATH */
     }
 
     if (*seenByCount != seenByAlloced)
-	(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
+        (*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
 
     /*  test output for reading of paths... */
 #ifdef DEBUG_HPT

@@ -209,29 +209,31 @@ void scanEMArea(s_area *echo)
        highestMsg = MsgGetNumMsg(area);
 
        while (i < highestMsg) {
-	   hmsg = MsgOpenMsg(area, MOPEN_RW, ++i);
-	   if (hmsg == NULL) continue;      /*  msg# does not exist */
-	   statScan.msgs++;
-	   MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-	   if (((xmsg.attr & MSGSENT) != MSGSENT) &&
-           ((xmsg.attr & MSGLOCKED) != MSGLOCKED) &&
-	       ((xmsg.attr & MSGLOCAL) == MSGLOCAL)) {
-	       packEMMsg(hmsg, &xmsg, echo);
-	   }
+           hmsg = MsgOpenMsg(area, MOPEN_RW, ++i);
+           if (hmsg == NULL) continue;      /*  msg# does not exist */
+           statScan.msgs++;
+           MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+           if (((xmsg.attr & MSGSENT) != MSGSENT) &&
+               ((xmsg.attr & MSGLOCKED) != MSGLOCKED) &&
+               ((xmsg.attr & MSGLOCAL) == MSGLOCAL)) {
+               packEMMsg(hmsg, &xmsg, echo);
+           }
 
-	   MsgCloseMsg(hmsg);
-		 
-	   /*  kill msg */
-	   if ((xmsg.attr & MSGKILL) == MSGKILL) {
-	       MsgKillMsg(area, i);
-	       i--;
-	   }
+           MsgCloseMsg(hmsg);
+
+           /*  kill msg */
+           if ((xmsg.attr & MSGKILL) == MSGKILL) {
+               MsgKillMsg(area, i);
+               i--;
+           }
 
        }
-       MsgSetHighWater(area, i);
+       if (i < highestMsg)
+           MsgSetHighWater(area, i);
+
        closeOpenedPkt();
-	  
        MsgCloseArea(area);
+
    } else {
        w_log(LL_START, "Could not open %s", echo->fileName);
    } /* endif */

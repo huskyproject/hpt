@@ -272,36 +272,3 @@ FILE *openPktForAppending(char *fileName, s_pktHeader *header)
 
    return pkt;
 }
-
-/* Note:
- * This is a simply msgid without any hash function...
- * Imho it is not necessary to create better msgid for this purpose.
- */
-/*
-char *createKludges(const char *area, const ps_addr ourAka, const ps_addr destAka) {
-   
-   char *buff = NULL;
-	
-   if (area) xscatprintf(&buff, "AREA:%s\r", area);
-   else {
-	   xscatprintf(&buff, "\001INTL %u:%u/%u %u:%u/%u\r",
-			   destAka->zone, destAka->net, destAka->node,
-			   ourAka->zone,  ourAka->net,  ourAka->node);
-      if (ourAka->point) xscatprintf(&buff, "\001FMPT %d\r", ourAka->point);
-      if (destAka->point) xscatprintf(&buff, "\001TOPT %d\r", destAka->point);
-   }
-
-   sleep(1);
-   if (ourAka->point)
-      xscatprintf(&buff, "\001MSGID: %u:%u/%u.%u %08lx\r",
-              ourAka->zone,ourAka->net,ourAka->node,ourAka->point,time(NULL));
-   else
-      xscatprintf(&buff, "\001MSGID: %u:%u/%u %08lx\r",
-              ourAka->zone,ourAka->net,ourAka->node,time(NULL));
-
-   if (!config->disableTID) xscatprintf(&buff, "\001PID: %s\r", versionStr);
-   xstrcat(&buff, "\001FLAGS NPD\r");
-
-   return buff;
-}
-*/
