@@ -41,15 +41,17 @@ struct log {
    FILE *logFile;        // in this logFile
    char open;            // is the log-file open?
    char firstLinePrinted;// First line in Log File printed ?
+   unsigned int logEcho; // echo log to screen?
 };
 
 typedef struct log s_log;
 
-s_log *openLog(char *fileName, char *appN, char *keys);
+s_log *openLog(char *fileName, char *appN, char *keys,unsigned int echoLog);
 /*DOC
   Input:  fileName is a valid name for a file.
           appN contains the name of the application.
           keys contains the list of keys which will go to log 
+          echo log - echo log to screen
   Output: openLog returns a pointer to an s_log struct.
   FZ:     openLog fills the s_log struct, opens the logfile and returns the struct
 */

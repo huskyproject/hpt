@@ -18,7 +18,7 @@ MAIN:   Should be defined for a program containing a main() function which
 
         Value is not important, only existence/nonexistence matters.
 
-#endif  DOCUMENTATION
+#endif  /*DOCUMENTATION*/
 
 
 #ifndef _VIXIE_FLAG
@@ -72,4 +72,4 @@ extern  char    *APC_PROCS[MAXPROC];
 #endif
 
 
-#endif  _VIXIE_FLAG
+#endif /* _VIXIE_FLAG*/

@@ -145,7 +145,7 @@ int linkArea(s_area *area, int netMail)
          curr -> msgNum = i;
          curr -> msgId   = (char *) GetCtrlToken(ctl, (byte *) "MSGID");
          curr -> replyId = (char *) GetCtrlToken(ctl, (byte *) "REPLY");
-         curr -> subject = strdup(xmsg.subj);
+         curr -> subject = strdup((char*)xmsg.subj);
          curr -> msgPos  = MsgMsgnToUid(harea, i);
          free(ctl);
          if (curr -> msgId != NULL)  // This msg would don't have reply links

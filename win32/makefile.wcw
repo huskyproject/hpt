@@ -1,0 +1,30 @@
+CC = wcl386
+CFLAGS = -zq -wx -bt=nt -j -l=nt -i=..\..\fidoconfig;..\..\smapi;..\h;
+COPT = -oneatx -5
+LIB = wlib
+LIBS = ..\..\smapi\smapiwcw.lib ..\..\fidoconfig\fidoconfig.lib
+
+OBJS = areafix.obj dupe.obj fcommon.obj global.obj log.obj pktread.obj pktwrite.obj recode.obj scan.obj scanarea.obj seenby.obj toss.obj tree.obj post.obj link.obj strsep.obj
+
+.c.obj:
+        $(CC) $(CFLAGS) $(COPT) -c $<
+
+all:    $(OBJS) hpt.exe pktinfo.exe purgeDupes.exe tlog.exe tpkt.exe
+
+hpt.exe:
+        $(CC) $(CFLAGS) $(COPT) hpt.c $(OBJS) $(LIBS)
+
+pktinfo.exe:
+        $(CC) $(CFLAGS) $(COPT) pktinfo.c $(OBJS) $(LIBS)
+
+purgeDupes.exe:
+        $(CC) $(CFLAGS) $(COPT) purgeDupes.c $(OBJS) $(LIBS)
+
+tlog.exe:
+        $(CC) $(CFLAGS) $(COPT) tlog.c $(OBJS) $(LIBS)
+
+tpkt.exe:
+        $(CC) $(CFLAGS) $(COPT) tpkt.c $(OBJS) $(LIBS)
+
+clean:
+        del *.exe *.obj *.bak *.lib

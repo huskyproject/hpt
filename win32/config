@@ -1,0 +1,122 @@
+# sample fido config file
+
+
+version 0.14
+Name Edgars Unlimited Station Line 1
+Location Riga, Latvia
+Sysop Edgar Chupit
+
+Address 2:5100/115
+#Address 2:5100/93.23
+#Address 2:5100/83.23
+
+# This is taken from Serge Koghin's ParToss
+# Hope he wouldn't be angry for this
+# ATTENTION the commeneed lines are not tested by me (mtt)
+# and will mostly only useful on dos-systems
+
+Unpack  "pkunzip -^ -o -e $a $f $p" 0 504b0304
+Pack zip zip -j -q $a $f
+
+#Unpack  "pkunpak /r $a $p $f" 0 1a
+#Pack  arc pkpak -oct a $a $f
+
+#Unpack  "pak e /wn $a $p $f" -2 fe
+#Pack  pak pak a $a $f
+
+#Unpack  "lha e /m $a $p $f" 2 2d6c68
+#Pack  lha lha a /o /m $a $f
+
+#Unpack  "zoo e:O $a $p $f" 0 5a4f4f
+#Pack  zoo zoo a: $a $f
+
+#Unpack  "arj e -+ -y $a $p $f" 0 60ea
+#Pack  arj arj a -+ -e -y $a $f
+
+Unpack  "unrar e -y  $a $f $p > /dev/null"   0 52617221
+#Pack  rar rar a -std -ep $a $f
+
+#Unpack  "jar e -y $a $p $f" 14 1a4a61721b
+#Pack  jar jar a -y $a $f
+
+#Unpack  "ha eyq $a $f"  0 4841
+#Pack  ha ha a21eq $a $f
+
+# include /etc/fido/areas
+
+Link Kaspars Rocans
+Aka 2:5100/113
+ourAka 2:5100/115
+Password xxxxxxxx
+EchoMailFlavour Normal
+AutoAreaCreate on
+AutoCreateDefaults -p 14 -dupeCheck move -dupeHistory 11
+Packer zip
+
+Link SysOp
+Aka 2:5100/115.1
+ourAka 2:5100/115
+Password TEST
+EchoMailFlavour hold
+Packer zip
+
+
+#route crash 2:2433/1245 *
+#route hold  2:2433/1247.100 2:2433/1247.100
+#route Crash  2:2433/1245 2:2433/*
+#route hold noroute 2:2433/1245.*
+#route crash host 2:2433/*
+#route crash enc no-route *
+#Route crash 44:4932/100 44:*
+Route normal 2:5100/113 *
+Route hold noroute 2:5100/115.*
+
+
+Inbound         c:\fido\inbound\insec
+ProtInbound     c:\fido\inbound
+LocalInbound    c:\fido\inbound
+Outbound        c:\fido\outbound
+tempOutbound    c:\fido\outbound\fboxes
+tempInbound     c:\fido\inbound\intmp
+#MsgBaseDir     Passthrough
+MsgBaseDir      c:\fido\squish
+
+public          c:\
+# public                /home/mtt/fido/public2
+
+# intab           /home/mtt/fido/recode/outaltkoi8
+# outtab          /home/mtt/fido/recode/outkoi8alt
+
+echotosslog     c:\fido\logs\echotoss.log
+importlog       c:\fido\logs\import.log
+
+logFileDir      c:\fido\logs
+DupeHistoryDir  c:\windows\temp
+NodelistDir     c:\fido\nodelist
+magic           c:\windows\temp
+
+areafixhelp     c:\fido\hpt\areafix.hlp
+
+NetmailArea NetmailArea c:\fido\netmail
+# NetmailArea NetmailArea /home/mtt/fido/msgb/net Squish
+BadArea     BadArea     c:\fido\squish\bad squish
+DupeArea    DupeArea    c:\fido\squish\dupes squish
+
+EchoArea watcom.c c:\fido\squish\watcom.c -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea nice.sources c:\fido\squish\nice.sources -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea pvt.crack c:\fido\squish\pvt.crack -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea ru.algorithms c:\fido\squish\ru.algorithms -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea ru.cbuilder c:\fido\squish\ru.cbuilder -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea ru.fastecho c:\fido\squish\ru.fastecho -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea ru.golded c:\fido\squish\ru.golded -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea ru.hacker c:\fido\squish\ru.hacker -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea ru.hrg.scene c:\fido\squish\ru.hrg.scene -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea ru.os.cmp c:\fido\squish\ru.os.cmp -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea su.fidotech c:\fido\squish\su.fidotech -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea su.pascal.modula.ada c:\fido\squish\su.pascal.modula.ada -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea talks.asm c:\fido\squish\talks.asm -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea su.windows.nt.prog c:\fido\squish\su.windows.nt.prog -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea rar.support c:\fido\squish\rar.support -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea ru.hacker.dummy c:\fido\squish\ru.hacker.dummy -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea lv.pearls c:\fido\squish\lv.pearls -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113
+EchoArea tycobka c:\fido\squish\tycobka -a 2:5100/115 Squish -p 14 -dupeCheck move -dupeHistory 11 2:5100/113

@@ -80,12 +80,12 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    //strcpy(msg->datetime, xmsg.__ftsc_date);
    sc_time((union stamp_combo *) &(xmsg.date_written), msg->datetime);
 
-   msg->toUserName   = (char *) malloc(strlen(xmsg.to)+1);
-   strcpy(msg->toUserName, xmsg.to);
-   msg->fromUserName = (char *) malloc(strlen(xmsg.from)+1);
-   strcpy(msg->fromUserName, xmsg.from);
-   msg->subjectLine  = (char *) malloc(strlen(xmsg.subj)+1);
-   strcpy(msg->subjectLine, xmsg.subj);
+   msg->toUserName   = (char *) malloc(strlen((char*)xmsg.to)+1);
+   strcpy(msg->toUserName, (char*)xmsg.to);
+   msg->fromUserName = (char *) malloc(strlen((char*)xmsg.from)+1);
+   strcpy(msg->fromUserName, (char*)xmsg.from);
+   msg->subjectLine  = (char *) malloc(strlen((char*)xmsg.subj)+1);
+   strcpy(msg->subjectLine, (char*)xmsg.subj);
 
    // make msgtext
 

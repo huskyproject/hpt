@@ -850,7 +850,7 @@ void processNMMsg(s_message *msg,s_pktHeader *pktHeader)
    char   *bodyStart;             // msg-body without kludgelines start
    char   *ctrlBuf;               // Kludgelines
    XMSG   msgHeader;
-   char   buff[36];               // buff for sprintf
+   char   buff[256];               // buff for sprintf
    char *slash;
 #ifdef UNIX
    char limiter = '/';

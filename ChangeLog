@@ -1,6 +1,13 @@
 hpt 0.27
 --------
 
+----- cvs ci ------
+Mon Mar  15 20:57
+Max:
++ win32 port by Edgar Chupit (chupit@mail.lv)
++ logEchoToScreen
+- fixed long seenby lines
+	
 ----- cvs ci ------	
 Sat Mar  13 14:49:30
 Max:

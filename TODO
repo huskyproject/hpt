@@ -1,4 +1,3 @@
-- fix SEEN-BY lines
 - netmailarea should be packed when found in echotoss.log
 - divide hpt into several programs:
   tosser

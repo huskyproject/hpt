@@ -53,17 +53,19 @@ void sortSeenBys(s_seenBy *seenBys, UINT count)
 char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
 {
    int  size = 81, i;
-   char *text, addr2d[12];
-
+   char *text, *line, addr2d[12];
+   
    if (seenByCount==0) {              //return empty control line
       text = malloc(strlen(lineHeading)+1+1);
       strcpy(text, lineHeading);
    } else {
        
+      line = calloc (size,sizeof(char));
+
       sprintf(addr2d, "%u/%u", seenBys[0].net, seenBys[0].node);
-      text = (char *) malloc(size);
-      strcpy(text, lineHeading);
-      strcat(text, addr2d);
+      text = (char *) calloc(size,sizeof(char));
+      strcpy(line, lineHeading);
+      strcat(line, addr2d);
       for (i=1; i < seenByCount; i++) {
 
          if (seenBys[i-1].net == seenBys[i].net)
@@ -71,19 +73,21 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
          else
             sprintf(addr2d, " %u/%u", seenBys[i].net, seenBys[i].node);
 
-         if (strlen(text)+strlen(addr2d) +1 > size-2) {
+         if (strlen(line)+strlen(addr2d) +1 > 79) {
             //if line would be greater than 79 characters, make new line
-            size += 80;
-            text = (char *) realloc(text, size);
+            strcat(text,line);
             strcat(text, "\r");
-            strcat(text, lineHeading);
+            text = (char *) realloc(text,strlen(text)+size);
+            strcpy(line, lineHeading);
             // start new line with full 2d information
             sprintf(addr2d, "%u/%u", seenBys[i].net, seenBys[i].node);
          }
-         strcat(text, addr2d);
+         strcat(line, addr2d);
       }
-
-      text = (char *) realloc(text, strlen(text)+2); // reserve only needed space + ending \r
+	  // reserve only needed space + ending \r
+          text = (char *) realloc(text, strlen(text)+strlen(line)+2);
+	  strcat(text,line);
+	  free(line);
    }
                            
    strcat(text, "\r");

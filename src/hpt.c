@@ -62,6 +62,10 @@
 #include <link.h>
 #include <areafix.h>
 
+#if defined ( __WATCOMC__ ) && defined ( __NT__ )
+int __stdcall SetConsoleTitleA( const char* lpConsoleTitle );
+#endif
+
 void processCommandLine(int argc, char **argv)
 {
    unsigned int i = 0;
@@ -131,9 +135,9 @@ void processConfig()
      strcpy(buff, config->logFileDir),
      strcat(buff, "hpt.log");
      if (config->loglevels==NULL)                           
-        log = openLog(buff, versionStr, "123456789");       
+        log = openLog(buff, versionStr, "123456789", config->logEchoToScreen);
        else                                                 
-        log = openLog(buff, versionStr, config->loglevels); 
+        log = openLog(buff, versionStr, config->loglevels, config->logEchoToScreen);
      free(buff);
    } else printf("You have no logFileDir in your config, there will be no log created");
    if (log==NULL) printf("Could not open logfile: %s\n", buff);
@@ -162,10 +166,17 @@ void processConfig()
 int main(int argc, char **argv)
 {
    struct _minf m;
+#if defined ( __WATCOMC__ ) && defined ( __NT__ )
+   char title[ 256 ];
+#endif
 
    sprintf(versionStr, "hpt v%u.%02u", VER_MAJOR, VER_MINOR);
 
    printf("Highly Portable Toss v%u.%02u\n", VER_MAJOR, VER_MINOR);
+#if defined ( __WATCOMC__ ) && defined ( __NT__ )
+   sprintf( title, "Highly Portable Toss v%u.%02u", VER_MAJOR, VER_MINOR);
+   SetConsoleTitleA( title );
+#endif
 
    processConfig();
    processCommandLine(argc, argv);
