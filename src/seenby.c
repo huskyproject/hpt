@@ -33,6 +33,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <fcommon.h>
+#include <global.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/common.h>
 
@@ -69,6 +70,11 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
       strcat(line, addr2d);
       for (i=1; i < seenByCount; i++) {
 
+		 // fix for double seen-by's (may be after ignoreSeen)
+		 if (config->ignoreSeenCount &&
+			 seenBys[i-1].net == seenBys[i].net &&
+			 seenBys[i-1].node == seenBys[i].node) continue;
+
          if (seenBys[i-1].net == seenBys[i].net)
             sprintf(addr2d, " %u", seenBys[i].node);
          else
@@ -86,7 +92,7 @@ char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
          strcat(line, addr2d);
       }
 	  // reserve only needed space + ending \r
-          text = (char *) safe_realloc(text, strlen(text)+strlen(line)+2);
+	  text = (char *) safe_realloc(text, strlen(text)+strlen(line)+2);
 	  strcat(text,line);
 	  nfree(line);
    }

@@ -336,7 +336,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
    return rc;
 }
 
-void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCount)
+void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount)
 {
    char *seenByText, *start, *token;
    unsigned long temp;
@@ -404,7 +404,7 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
    nfree(seenByText);
 }
 
-void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCount)
+void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount)
 {
 
    // DON'T GET MESSED UP WITH THE VARIABLES NAMED SEENBY...
@@ -472,7 +472,7 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
 
 int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link, s_addr pktOrigAddr)
 {
-   UINT i;
+   UINT i,j;
 
    // the link where we got the mail from
    if (addrComp(pktOrigAddr, link->hisAka) == 0) return 1;
@@ -483,9 +483,17 @@ int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link, s_addr pktOrigA
    if (link->hisAka.point != 0) return 0;
 
    for (i=0; i < seenByCount; i++) {
-	   if ((link->hisAka.net==seenBys[i].net) && (link->hisAka.node==seenBys[i].node)) return 1;
-   }
+	   if ((link->hisAka.net==seenBys[i].net) &&
+		   (link->hisAka.node==seenBys[i].node)) {
+		   
+		   for (j=0; j < config->ignoreSeenCount; j++) {
+			   if (config->ignoreSeen[j].net == seenBys[i].net &&
+				   config->ignoreSeen[j].node == seenBys[i].node) return 0;
+		   }
 
+		   return 1;
+	   }
+   }
    return 0;
 }
 
@@ -507,8 +515,8 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
 
 	for (i=0; i < echo->downlinkCount; i++) {
 		if (checkLink(seenBys,seenByCount,
-				  echo->downlinks[i]->link,
-				  pktOrigAddr)!=0) continue;
+					  echo->downlinks[i]->link,
+					  pktOrigAddr)!=0) continue;
 		if (pktOrigAddr.zone==echo->downlinks[i]->link->hisAka.zone) {
 			// links with same zone
 			(*newLinks)[j] = echo->downlinks[i];
@@ -522,8 +530,8 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
 }
 
 void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks, 
-					s_seenBy *seenBys[], UINT *seenByCount,
-					s_seenBy *path[], UINT *pathCount) {
+					s_seenBy **seenBys, UINT *seenByCount,
+					s_seenBy **path, UINT *pathCount) {
 	int i;
 	long len;
 	FILE *pkt;

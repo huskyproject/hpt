@@ -682,9 +682,9 @@ int forwardRequest(char *areatag, s_link *dwlink) {
 
     for (i = 0; i < Requestable; i++) {
 		uplink = &(config->links[Indexes[i]]);
-		if (uplink->forwardRequests &&
-		    grpInArray(uplink->LinkGrp, 
-		    dwlink->AccessGrp, dwlink->numAccessGrp)) {
+		if (uplink->forwardRequests && (uplink->LinkGrp) ? 
+			grpInArray(uplink->LinkGrp, dwlink->AccessGrp,
+					   dwlink->numAccessGrp) : 1) {
 			
 			if (uplink->forwardRequestFile!=NULL) {
 				// first try to find the areatag in forwardRequestFile
