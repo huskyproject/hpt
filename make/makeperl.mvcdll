@@ -1,3 +1,4 @@
+# $Id$
 # Microsoft Visual C++ Makefile
 #
 
@@ -7,7 +8,7 @@ EXENAMEFLAG=-Fe
 PERL_DIR=e:\GVN\Perl
 SRC_DIR=..\src\
 
-CFLAGS=-nologo -Zp1 -Ob2 -c -MD -I..\.. -I..\h -I"$(PERL_DIR)\lib\core"
+CFLAGS= -nologo -Zp1 -Ob2 -c -MD -I..\h -I..\.. -I"$(PERL_DIR)\lib\core"
 LFLAGS=
 CDEFS = -DDO_PERL  -D_MAKE_DLL -DNDEBUG -D__NT__ -DWIN32 -D_CONSOLE -DNO_STRICT -DHAVE_DES_FCRYPT -DPERL_IMPLICIT_CONTEXT -DPERL_IMPLICIT_SYS -DPERL_MSVCRT_READFIX -DINTEL
 

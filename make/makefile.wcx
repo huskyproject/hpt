@@ -1,4 +1,5 @@
-# Makefile for Watcom C (DOS4G)
+# $Id$
+# Makefile for Watcom C to build DPMI executables (DOS4G)
 #
 
 DEBUG=0
@@ -6,14 +7,19 @@ CC=wcl386
 EXENAMEFLAG=-fe=
 SRC_DIR=..\src\
 
+CFLAGS= -zq -wx -i=..\h;..\.. -oneatx -5 -c
+LFLAGS= -bt=dos
+CDEFS = -D__DOS__
+
+
 !IF $(DEBUG) == 1
-CFLAGS=-zq -wx -i=..\..;..\h -oneatx -5 -d2 -hw -c
-LFLAGS=-bt=dos /"SYSTEM dos4g DEBUG Watcom"
-CDEFS =-D__DOS__ -DDEBUG_HPT
+CFLAGS+= -d2 -hw
+LFLAGS+= /"SYSTEM dos4g DEBUG Watcom"
+CDEFS += -DDEBUG_HPT
 !ELSE
-CFLAGS=-zq -wx -i=..\..;..\h -oneatx -5 -c
-LFLAGS=-bt=dos /"SYSTEM dos4g"
-CDEFS =-D__DOS__
+CFLAGS+=
+LFLAGS+= /"SYSTEM dos4g"
+CDEFS +=
 !ENDIF
 
 OBJ=.obj

@@ -1,24 +1,30 @@
-# Makefile for Watcom C (DOS)
+# $Id$
+# Makefile for Watcom C to build DOS executables (16 bit)
 #
 
-DEBUG=0
-CC=wcl386
-EXENAMEFLAG=-fe=
-SRC_DIR=..\src\
+DEBUG      = 0
+
+CC         = wcl386
+EXENAMEFLAG= -fe=
+SRC_DIR    = ..\src\
+CFLAGS     = -zq -wx -i=..\h;..\.. -oneatx -5 -c
+LFLAGS     = -bt=dos
+CDEFS      = -D__DOS__
+
 
 !IF $(DEBUG) == 1
-CFLAGS=-zq -wx -i=..\..;..\h -oneatx -5 -d2 -hw -c
-LFLAGS=-bt=dos /"DEBUG Watcom"
-CDEFS =-D__DOS__ -DDEBUG_HPT
+CFLAGS+= -d2 -hw
+LFLAGS+= /"DEBUG Watcom"
+CDEFS += -DDEBUG_HPT
 !ELSE
-CFLAGS=-zq -wx -i=..\..;..\h -oneatx -5 -c
-LFLAGS=-bt=dos
-CDEFS =-D__DOS__
+CFLAGS+=
+LFLAGS+=
+CDEFS +=
 !ENDIF
 
-OBJ=.obj
-EXE=.exe
-RM=del
+OBJ = .obj
+EXE = .exe
+RM  = del
 
 NULL=%null
 SYMBOLIC=.SYMBOLIC

@@ -6,7 +6,7 @@ CC=cl
 EXENAMEFLAG=-Fe
 SRC_DIR=..\src\
 
-CFLAGS=-nologo -Zp1 -O2 -I..\.. -I..\h -c
+CFLAGS=-nologo -Zp1 -O2 -I..\h -I..\.. -c
 LFLAGS=
 CDEFS =-D__NT__ -DWIN32 -D_CONSOLE -DINTEL
 

@@ -13,13 +13,14 @@ CC=cc -qcpluscmt
 
 EXENAMEFLAG=-o 
 SRC_DIR=../src/
-LFLAGS=
-CDEFS =-DUNIX
+LFLAGS =
+CDEFS  = -DUNIX
+CFLAGS = -c -I ../h -I ../.. -O2 
 
 ifeq ($(DEBUG), 1)
- CFLAGS     = -c -I ../.. -I ../h -O2 -ggdb $(PERLFLAGS)
+ CFLAGS     += -ggdb $(PERLFLAGS)
 else
- CFLAGS     = -c -I ../.. -I ../h -O2 -s $(PERLFLAGS)
+ CFLAGS     += -s $(PERLFLAGS)
 endif
 
 OBJ=.o

@@ -1,18 +1,24 @@
+# $Id$
 # Makefile for Watcom C (Win32)
 
 DEBUG=0
+
 CC=wcl386
 EXENAMEFLAG=-fe=
 SRC_DIR=..\src\
 
-!IF $(DEBUG) == 1
-CFLAGS=-zq -wx -i=..\..;..\h -oneatx -5 -d2 -hw -c
-LFLAGS=-bt=nt -l=nt /"DEBUG Watcom"
-CDEFS =-DDEBUG_HPT
-!ELSE
-CFLAGS=-zq -wx -i=..\..;..\h -oneatx -5 -c
-LFLAGS=-bt=nt -l=nt
+CFLAGS= -zq -wx -i=..\h;..\.. -oneatx -5 -c
+LFLAGS= -bt=nt -l=nt
 CDEFS =
+
+!IF $(DEBUG) == 1
+CFLAGS+= -d2 -hw 
+LFLAGS+= /"DEBUG Watcom"
+CDEFS += -DDEBUG_HPT
+!ELSE
+CFLAGS+=
+LFLAGS+=
+CDEFS +=
 !ENDIF
 
 OBJ=.obj
