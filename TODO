@@ -6,7 +6,6 @@ Category 1: Will certainly be implemented until next release
 
 - jam fixes (Fedor)
 - real statistics - msg's and speed (max)
-- normal parsing of the CarbonAreas (Serguei Revtov)
 - check dupebase filename creation - dos & passthrough areas
 - autocreate reports
 
