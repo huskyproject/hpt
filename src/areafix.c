@@ -619,7 +619,6 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     int rc=0;
     e_changeConfigRet nRet = I_ERR;
     char *areaName = area->areaName;
-    char *rewrittenLine = NULL;
 
     w_log(LL_FUNC,"areafix.c::changeconfig()");
 
@@ -704,15 +703,13 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
             }
         case 7:
             if ((rc = DelLinkFromString(cfgInline, link->hisAka)) == 1) {
-                w_log('9',"areafix: can't del link %s from echo area %s",
+                w_log('9',"areafix: Unlink is not possible for %s from echo area %s",
                     aka2str(link->hisAka), areaName);
                 nRet = O_ERR;
-                fprintf(cfgout, "%s%s", cfgInline, cfgEol());
             } else {
-                //rewrittenLine = trimLine(rewrittenLine);
-                fprintf(cfgout, "%s%s", cfgInline, cfgEol()); // add line to config
                 nRet = DEL_OK;
             }
+            fprintf(cfgout, "%s%s", cfgInline, cfgEol()); // add line to config
             break;
         case 2:
         //makepass(f, fileName, areaName);
