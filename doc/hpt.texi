@@ -3186,7 +3186,7 @@ This statement can only be repeated for different links.
 * DupeArea::                    definition of dupearea
 * EchoArea::                    definition of echoarea
 * EchoAreaDefaults::            defaults for echoarea
-* AreaGroup::           definition of areagroup
+* AreaGroup::                   definition of areagroup
 * AreaGroupDefaults::           default options for areas in group
 * LocalArea::                   definition of localarea
 * NetArea::                     same as netmailarea
@@ -3477,7 +3477,7 @@ This statement can be repeated.
 @item Syntax:
 @code{AreaGroupDefaults <group name> <options>}
 @item Example:
-@code{AreaGroup RUSSIAN -p 14 -dupehistory 11}
+@code{AreaGroupDefaults RUSSIAN -p 14 -dupehistory 11}
 @end table
 
 This token defines default options for areas in group (see @code{AreaGroup}
