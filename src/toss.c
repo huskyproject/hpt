@@ -1831,6 +1831,21 @@ int find_old_arcmail(s_link *link, FILE *flo)
 	return 0;
 }
 
+static char *get_filename(char *pathname)
+{
+    char *ptr;
+
+    if (pathname == NULL || !(*pathname))
+        return pathname;
+
+    ptr = pathname + strlen(pathname) - 1;
+
+    while (*ptr != '/' && *ptr != '\\' && *ptr != ':' && ptr != pathname)
+        ptr --;
+
+    return ptr;
+}   
+
 void arcmail(s_link *tolink) {
    char cmd[256], *pkt, *lastPathDelim, saveChar, sepDir[14];
    int i, cmdexit;
@@ -1916,11 +1931,11 @@ void arcmail(s_link *tolink) {
 			 
 			 // pack mail
 			 if (link->packerDef != NULL) {
-				 fillCmdStatement(cmd,
-								  link->packerDef->call,
-								  link->packFile,
-								  link->pktFile, "");
-				 writeLogEntry(hpt_log, '7', "Packing mail for %s %s [%s -> %s]", aka2str(link->hisAka), link->name, link->pktFile, link->packFile);
+                                 
+                                 fillCmdStatement(cmd,	  link->packerDef->call,
+							  link->packFile,
+							  link->pktFile, "");
+				 writeLogEntry(hpt_log, '7', "Packing mail for %s %s [%s -> %s]", aka2str(link->hisAka), link->name, get_filename(link->pktFile), get_filename(link->packFile));
 				 cmdexit = system(cmd);
 // 				 writeLogEntry(hpt_log, '7', "cmd: %s",cmd);
 				 if (!cmdexit) remove(link->pktFile);
