@@ -1,3 +1,21 @@
+2003-01-25 Saturday 17:52  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.72): Add information about warning for gcc
+	2.96 (Q36)
+
+2003-01-25 Saturday 15:45  pgul
+
+	* src/carbon.c (1.21): minor fix
+
+2003-01-25 Saturday 15:29  mche
+
+	* src/carbon.c (1.20): undo buggy patches (r 1.18,1.19) . back to
+	working code 1.17 And no patches any more!!!
+
+2003-01-25 Saturday 11:07  mche
+
+	* src/dupe.c (1.71): fix bug in compare dupe entries
+
 2003-01-24 Friday 11:42  mche
 
 	* src/carbon.c (1.19): fix previous patch
