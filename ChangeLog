@@ -1,3 +1,31 @@
+2002-02-15 Friday 12:43  ml
+
+	* make/makeperl.mvc (1.4): PERL_DIR variable added
+
+2002-02-15 Friday 12:22  ml
+
+	* config/config (1.4): fixed location of fileareas
+
+2002-02-15 Friday 12:18  ml
+
+	* config/config (1.3), h/fcommon.h (1.35), make/makeperl.mvc (1.3),
+	src/fcommon.c (1.119): comment truncate() and ftruncate()
+	functions; use setfsize() from smapi
+
+2002-02-15 Friday 12:00  ml
+
+	* src/areafix.c (1.258): use setfsize()  instead of truncate() for
+	changeresume()
+
+2002-02-15 Friday 09:49  ml
+
+	* src/areafix.c (1.257): new changeconfig() code & bugfixes from
+	Max Chernogor
+
+2002-02-15 Friday 08:35  ml
+
+	* src/fcommon.c (1.118): changing strncpy() to strcpy() back
+
 2002-02-14 Thursday 13:59  mche
 
 	* make/makefile.mvcdll (1.2): minimized binaries size
