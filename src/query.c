@@ -165,11 +165,17 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
         del_tok(&newAC, "-p ");  /*  del "-p xxx" from autocreate defaults */
 
         del_tok(&newAC, "-killsb");
+        del_tok(&newAC, "-nokillsb");
         del_tok(&newAC, "-tinysb");
+        del_tok(&newAC, "-notinysb");
+        del_tok(&newAC, "-pack");
         del_tok(&newAC, "-nopack");
+        del_tok(&newAC, "-link");
         del_tok(&newAC, "-nolink");
         del_tok(&newAC, "-killread");
+        del_tok(&newAC, "-nokillread");
         del_tok(&newAC, "-keepunread");
+        del_tok(&newAC, "-nokeepunread");
     }
 
     nfree(msgbFileName);
@@ -202,7 +208,7 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
     size_t i=0;
     unsigned int j;
     char pass[] = "passthrough";
-    char CR; 
+    char CR;
 
     w_log( LL_FUNC, "%s::autoCreate() begin", __FILE__ );
 
@@ -219,7 +225,7 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
     {
         w_log(LL_WARN, "Can't create area %s : refused by NewAreaRefuseFile\n", c_area);
         return 11;
-    } 
+    }
 
 
     creatingLink = getLinkFromAddr(config, pktOrigAddr);
@@ -312,7 +318,7 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
     }
 
     /*  fix if dummys del \n from the end of file */
-    if( fseek (f, -2L, SEEK_END) == 0) 
+    if( fseek (f, -2L, SEEK_END) == 0)
     {
         CR = getc (f); /*   may be it is CR aka '\r'  */
         if (getc(f) != '\n') {
@@ -333,7 +339,7 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
         xstrcat(&buff,cfgEol());   /* config depended EOL */
     }
     /*  add line to config */
-    if ( fprintf(f, "%s", buff) != (int)(strlen(buff)) || fflush(f) != 0) 
+    if ( fprintf(f, "%s", buff) != (int)(strlen(buff)) || fflush(f) != 0)
     {
         w_log(LL_ERR, "Error creating area %s, config write failed: %s!",
             c_area, strerror(errno));
@@ -659,7 +665,7 @@ void af_QueueReport()
         remove(reportFlg);
         nfree(reportFlg);
         return;
-    }    
+    }
 
     w_log(LL_START, "Start generating queue report");
     xscatprintf(&header,rmask,"Area","Act","From","By","Details");
@@ -940,7 +946,7 @@ int af_CloseQuery()
     nfree(queryAreasHead->downlinks);
     nfree(queryAreasHead->report);
     nfree(queryAreasHead);
-    
+
     if(queryFile) fclose(queryFile);
 
     w_log(LL_FUNC, __FILE__ ":%u:af_CloseQuery() end", __LINE__);
