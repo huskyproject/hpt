@@ -1,3 +1,13 @@
+2003-01-08 Wednesday 13:11  stas_degteff
+
+	* src/query.c (hpt-1_2-stable.5): MFC: bugfix: AutoAreaCreate adds
+	wrong line feed in Win32
+
+2003-01-08 Wednesday 09:10  stas_degteff
+
+	* src/areafix.c (hpt-1_2-stable.6): Skip areafix for empty command;
+	write message to log
+
 2003-01-05 Sunday 08:35  sfpavel
 
 	* src/perl.c (tags: hpt-1_2_2-release) (hpt-1_2-stable.4): Fix
