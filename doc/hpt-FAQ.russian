@@ -42,7 +42,7 @@
  Q24. В чем разница между версиями cygwin и mingw32?
  Q25. А чем фиксить базы если с ними действительно траблы?
  Q26. Отсутствие доки сильно мешает! (Где взять документацию на русском?)
- Q27. Как разделить отчеты от areafix и filefix?
+ Q27. Как разделить настройки hpt, htick и других программ?
  Q28. Почему нельзя допаковывать почту в FileBox?
  Q29. Не могу настроить winzip!
  Q30. А как паковать netmail?
@@ -825,20 +825,20 @@ A: (SD)
 
 /------/
 
-[27] Q: Как разделить отчеты от areafix и filefix?
+[27] Q: Как разделить настройки hpt, htick и других программ?
 
-A: (PG)
+A:
 
 if "[module]"=="hpt"
-  ReportTo hpt.reports
+  RobotsArea tossermail
+  Origin MyStation
+elif "[module]"=="htick"
+  RobotsArea tickermail
+  Origin FREQ allowed at 00:00-04:00
 else
-  ReportTo htick.reports
+  RobotsArea netmail
+  Origin Reports generator
 endif
-
-A: (SD)
-
-В htick 1.1-current Макс Черногор реализовал продвинутый генератор отчетов:
-см. секцию `Announce System` в htick.texi.
 
 /------/
 
