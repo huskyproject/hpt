@@ -72,6 +72,7 @@ struct msginfo {
 
    short freeReply;
    char relinked;
+   UMSGID replyto, replynext;
 };
 
 typedef struct msginfo s_msginfo;
@@ -156,6 +157,7 @@ int linkArea(s_area *area, int netMail)
       msgs = safe_malloc(hashNums * sizeof(s_msginfo));
       memset(msgs, '\0', hashNums * sizeof(s_msginfo));
       num2hidx = safe_malloc(msgsNum * sizeof(*num2hidx));
+      memset(num2hidx, '\0', msgsNum * sizeof(*num2hidx));
       ctl = (byte *) safe_malloc(ctlen = 1); /* Some libs don't accept relloc(NULL, ..
 					 * So let it be initalized
 					 */
@@ -221,7 +223,10 @@ int linkArea(s_area *area, int netMail)
          curr -> msgPos  = MsgMsgnToUid(harea, i);
 	 curr -> freeReply = 0;
          curr -> relinked = 0;
-         num2hidx[i] = (curr-msgs)/sizeof(*msgs);
+         curr -> replyto = curr -> xmsg -> replyto;
+         curr -> replynext = curr -> xmsg -> replynext;
+         curr -> xmsg -> replyto = curr -> xmsg -> replynext = 0;
+         num2hidx[i-1] = curr-msgs;
       }
       /* Pass 2nd : going from the last msg to first search for reply links and
         build relations*/
@@ -236,13 +241,15 @@ int linkArea(s_area *area, int netMail)
 					    curr -> relinked = 1;
 			      }
 			      if (curr -> freeReply && (area->msgbType & MSGTYPE_JAM)) {
-				  int replyprev = num2hidx[MsgUidToMsgn(harea, curr -> xmsg -> replies[curr -> freeReply - 1], UID_EXACT)];
-				  if (msgs[replyprev].xmsg -> replynext != curr -> msgPos) {
-				      msgs[replyprev].xmsg -> replynext = curr -> msgPos;
+				  int replyprev = num2hidx[MsgUidToMsgn(harea, curr -> xmsg -> replies[curr -> freeReply - 1], UID_EXACT)-1];
+				  msgs[replyprev].replynext = msgs[i].msgPos;
+				  if (msgs[replyprev].xmsg -> replynext != msgs[i].msgPos) {
+				      msgs[replyprev].xmsg -> replynext = msgs[i].msgPos;
 				      msgs[replyprev].relinked = 1;
 				  }
 			      }
 			      (curr -> freeReply)++;
+			      msgs[i].replyto = curr -> msgPos;
 			      if (msgs[i].xmsg -> replyto != curr -> msgPos) {
 				      msgs[i].xmsg -> replyto = curr -> msgPos;
 				      msgs[i].relinked = 1;
@@ -256,7 +263,15 @@ int linkArea(s_area *area, int netMail)
       /* Pass 3rd : write information back to msgbase */
       for (i = 0; i < hashNums; i++) {
 	if (msgs[i].msgId != NULL) {
-		if (msgs[i].relinked != 0) {
+		int j;
+		for (j=0; j<MAX_REPLY && msgs[i].xmsg->replies[j]; j++);
+		if (msgs[i].relinked != 0 ||
+		    msgs[i].replyto != msgs[i].xmsg->replyto ||
+		    ((area->msgbType & MSGTYPE_JAM) && msgs[i].replynext != msgs[i].xmsg->replynext) ||
+		    ((area->msgbType & MSGTYPE_SQUISH) && msgs[i].freeReply != j) ||
+		    (msgs[i].freeReply == 0 && j)) {
+			if (msgs[i].freeReply<MAX_REPLY)
+				msgs[i].xmsg->replies[msgs[i].freeReply] = 0;
 			MsgWriteMsg(msgs[i].msgh, 0, msgs[i].xmsg, NULL, 0, 0, 0, NULL);
 		}
 	        MsgCloseMsg(msgs[i].msgh);
