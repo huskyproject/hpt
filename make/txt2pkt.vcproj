@@ -51,7 +51,8 @@
 				IgnoreAllDefaultLibraries="TRUE"
 				DelayLoadDLLs=""
 				ProgramDatabaseFile=""
-				SubSystem="1"/>
+				SubSystem="1"
+				TargetMachine="0"/>
 			<Tool
 				Name="VCMIDLTool"
 				TypeLibraryName=".\..\nd_r\bin/txt2pkt.tlb"/>

@@ -56,7 +56,12 @@
 				Name="VCMIDLTool"
 				TypeLibraryName=".\..\nd_r\bin/hpt.tlb"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="echo Building documentation
+set PATH=%PATH%;F:\compilation\cyg\bin
+cd 
+bash -c &apos;makeinfo --html --no-split --force ../doc/hpt.texi&apos;
+move /Y  hpt.html $(OutDir)"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
