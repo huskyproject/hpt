@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Fri Mar  3 23:14:49 NOVT 2000
+max:
+* add SEEN-BY and PATH when posting to echoarea
+
+----- cvs ci ------
 Fri Feb 25 11:19:12 NOVT 2000
 max:
 * small changes in areafix
