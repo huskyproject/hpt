@@ -464,7 +464,7 @@ void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, 
 			   endptr++;
 			   (*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
 		   }
-	   } else if (strcmp(token, "\001PATH:")==0) break;
+	   } else if (strcmp(token,"SEEN-BY:")!=0) break; // not digit and not SEEN-BY
 	   
 	   token = strtok(NULL, " \r\t\376");
    } // end while
@@ -516,6 +516,10 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
 		   
 		   // parse token
 		   temp = strtoul(token, &endptr, 10);
+		   if (*endptr==':') {
+			   token = endptr+1;
+			   temp = strtoul(token, &endptr, 10);
+		   }
 		   if ((*endptr) == '\0') {
 			   // only node aka
 			   (*seenBys)[*seenByCount-1].node = (UINT16) temp;
@@ -528,7 +532,7 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
 			   endptr++;
 			   (*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
 		   }
-	   } else if (strcmp(token, "SEEN-BY:")==0) break; // not digit & path
+	   } else if (strcmp(token, "\001PATH:")!=0) break; // not digit and not PATH
 	   token = strtok(NULL, " \r\t\376");
    }
 
