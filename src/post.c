@@ -395,7 +395,7 @@ void post(int c, unsigned int *n, char *params[])
             if(!msg.netMail) memset(&msg.destAddr, '\0', sizeof(s_addr));
 
             msg.text = createKludges(config->disableTID,area, &msg.origAddr, &msg.destAddr,versionStr);
-            if (flags) xscatprintf(&msg.text, "\001 FLAGS%s\r", flags);
+            if (flags) xscatprintf(&msg.text, "\001FLAGS%s\r", flags);
 
             if( uuepost )
             {
