@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 #
+# $Id$
+#
 # Author:
 # Valery Kondakoff (2:5020/163).
 # Code was based on original Michael Savin (2:5070/269) idea.
@@ -64,7 +66,7 @@ open(LOG, "<$logname") || die "can't open $logname: $!";
 while (<LOG>) {
     $from = $1 if /-{10}\s+\w+\s($days),/ && !$from;
     $last = $1 if /-{10}\s+\w+\s(.*),/;
-    $count{"\L$1"} += $2 if $from && (/echo area ($areaname) - (\d*)/i);
+    $count{"\U$1"} += $2 if $from && (/echo area ($areaname) - (\d*)/i);
 }
 # error checking - if we can find the day specified in log file
 unless($from) {
