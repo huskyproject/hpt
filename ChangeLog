@@ -1,3 +1,7 @@
+2002-04-04 Thursday 13:12  ml
+
+	* src/areafix.c (1.277): sendRules fix
+
 2002-03-31 Sunday 08:16  ml
 
 	* BUGS (1.18), doc/hpt.texi (1.60), src/scan.c (1.150):
