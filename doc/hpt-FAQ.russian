@@ -397,11 +397,15 @@ A: (SD)
 
 A: (PS, DP)
 
-    В конфиге Golded+ и Golded, начиная с 3.0.1-asa9 SR3, June 8 1999:
+    В конфиге Golded+ и Golded указывается путь к списку арий фидоконфига
+* начиная с 3.0.1-asa9 SR3, June 8 1999:
 
 AREAFILE Fidoconfig -lame ..\husky\areas
 
-    путь к списку арий фидоконфига!
+* начиная с Golded+ 1.1.5
+
+AREAFILE Fidoconfig ..\husky\areas
+
 
 A: (Gi)
 
