@@ -30,6 +30,9 @@ int to_us(s_pktHeader header)
 XMSG createXMSG(s_message *msg)
 {
    XMSG  msgHeader;
+   struct tm *date;
+   time_t    currentTime;
+   union stamp_combo dosdate;
 
    msgHeader.attr = MSGPRIVATE;
    strcpy((char *) msgHeader.from,msg->fromUserName);
@@ -45,20 +48,17 @@ XMSG createXMSG(s_message *msg)
    msgHeader.dest.point = msg->destAddr.point;
 
    memset(&(msgHeader.date_written), 0, 8);    // date to 0
-   //msgHeader.date_written = (SCOMBO) 0;
-   //msgHeader.date_arrived = (SCOMBO) 0;
-
-   // fool SMAPI to write zone info instead of time info
-   //zone = (INT32*) &(msgHeader.date_written);
-   //*zone = msg->destAddr.zone << 15 + msg->origAddr.zone;
-   //zone = (INT16*) &(msgHeader.date_arrived);
-   //*zone = msg->origAddr.zone;
 
    msgHeader.utc_ofs = 0;
    msgHeader.replyto = 0;
    memset(&(msgHeader.replies), 0, 40);   // no replies
    strcpy((char *) msgHeader.__ftsc_date, msg->datetime);
    ASCII_Date_To_Binary(msg->datetime, &(msgHeader.date_written));
+
+   currentTime = time(NULL);
+   date = localtime(&currentTime);
+   TmDate_to_DosDate(date, &dosdate);
+   msgHeader.date_arrived = dosdate.msg_st;
 
    return msgHeader;
 }
