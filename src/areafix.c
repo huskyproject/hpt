@@ -1202,8 +1202,8 @@ char *unsubscribe(s_link *link, char *cmd) {
                     }
                 }
                 j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,6);
-/*                if (area->msgbType!=MSGTYPE_PASSTHROUGH) */
-                if (area->fileName)
+/*                if ( (j == DEL_OK) && area->msgbType!=MSGTYPE_PASSTHROUGH ) */
+                if ( (j == DEL_OK) && area->fileName )
                    MsgDeleteBase(area->fileName, (word) area->msgbType);
             }
             if (j == DEL_OK){
