@@ -544,7 +544,8 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
        if (prio==normal) {
 	   route = findRouteForNetmail(&msg);
 	   link = getLinkForRoute(route, &msg);
-	   if ((route != NULL) && (link != NULL)) {
+	   if ((route != NULL) && (link != NULL) &&
+	       (route->routeVia != nopack)) {
 	       if (createOutboundFileName(link,route->flavour,
 					  FLOFILE) == 0) {
 		   processAttachs(link, &msg, xmsg->attr);
