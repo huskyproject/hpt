@@ -562,7 +562,8 @@ void af_QueueUpdate()
             {
                 strcpy(tmpNode->type, czKillArea);
                 tmpNode->bTime = tnow;
-                tmpNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
+                tmpNode->eTime = tnow + config->killedRequestTimeout*secInDay;
+                tmpNode->linksCount = 1;
                 w_log( LL_AREAFIX, "areafix: request for %s is going to be killed",tmpNode->name);
             }
             queryAreasHead->nFlag = 1; // query was changed
