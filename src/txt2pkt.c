@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
          xstrcat(&textBuffer, tmp);
       }
       xstrcat(&versionStr,"txt2pkt");
-      msg.text = createKludges(config->disablePID,
+      msg.text = createKludges(config,
                                area, &msg.origAddr, &msg.destAddr,
                                versionStr);
       if (!config->disableTID)

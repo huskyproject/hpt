@@ -396,7 +396,7 @@ void post(int c, unsigned int *n, char *params[])
             
             if(!msg.netMail) memset(&msg.destAddr, '\0', sizeof(s_addr));
 
-            msg.text = createKludges(config->disablePID,
+            msg.text = createKludges(config,
                                      (area == NULL) ? NULL : strUpper(area),
                                      &msg.origAddr,
                                      &msg.destAddr,

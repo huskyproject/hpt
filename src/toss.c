@@ -1042,8 +1042,7 @@ void makeMsgToSysop(char *areaName, s_addr fromAddr, s_addr *uplinkAddr)
                     netmail ? config->sysop : "All", "Created new areas",
                     netmail,
                     config->areafixKillReports);
-                msgToSysop[i]->text = createKludges(
-                    config->disablePID,
+                msgToSysop[i]->text = createKludges(config,
                     netmail ? NULL : config->ReportTo,
                     echo->useAka, echo->useAka,
                     versionStr);

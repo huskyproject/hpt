@@ -465,7 +465,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
         uplink->RemoteRobotName ? uplink->RemoteRobotName : "areafix",
         uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1,
         config->areafixKillReports);
-	msg->text = createKludges(config->disablePID, NULL, uplink->ourAka, &(uplink->hisAka),
+	msg->text = createKludges(config, NULL, uplink->ourAka, &(uplink->hisAka),
                               versionStr);
         xstrcat(&(msg->text), "\001FLAGS DIR\r");
 	uplink->msg = msg;
@@ -1629,7 +1629,7 @@ void preprocText(char *split, s_message *msg)
 {
     char *orig = (config->areafixOrigin) ? config->areafixOrigin : config->origin;
     
-    msg->text = createKludges(config->disablePID, NULL, &msg->origAddr,
+    msg->text = createKludges(config, NULL, &msg->origAddr,
         &msg->destAddr, versionStr);
     /* xstrcat(&(msg->text), "\001FLAGS NPD DIR\r"); */
     xstrcat(&(msg->text), "\001FLAGS NPD\r");
@@ -2204,8 +2204,7 @@ void autoPassive()
 					    versionStr,config->links[i].name,
 					    "AutoPassive", 1,
 					    config->areafixKillReports);
-				  msg->text = createKludges(
-					    config->disablePID, NULL,
+				  msg->text = createKludges(config, NULL,
 					    config->links[i].ourAka,
 					    &(config->links[i].hisAka),
 					    versionStr);
@@ -2299,7 +2298,7 @@ int relink (char *straddr) {
 			  researchLink->areaFixPwd ? researchLink->areaFixPwd : "", 1,
               config->areafixKillReports);
 
-	msg->text = createKludges(config->disablePID,NULL,researchLink->ourAka,
+	msg->text = createKludges(config,NULL,researchLink->ourAka,
                               &researchLink->hisAka,versionStr);
 	xstrcat(&(msg->text), "\001FLAGS DIR\r");
 

@@ -317,7 +317,7 @@ static XS(perl_putMsgInArea)
   }
   nfree(sattr);
   if (addkludges)
-    msg.text = createKludges(config->disablePID,
+    msg.text = createKludges(config,
                 msg.netMail ? NULL : area, 
                 &msg.origAddr, &msg.destAddr,
                 versionStr);

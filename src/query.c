@@ -586,8 +586,7 @@ void af_QueueReport()
                                 netmail ? config->sysop : "All", "Requests report",
                                 netmail,
                                 config->areafixKillReports);
-    msgToSysop[0]->text = createKludges(
-                                config->disablePID,
+    msgToSysop[0]->text = createKludges(config,
                                 netmail ? NULL : config->ReportTo,
                                 &(config->addr[0]), &(config->addr[0]),
                                 versionStr);
