@@ -1,0 +1,22 @@
+Hi
+
+If you want to build a .deb-Package of this source for yourself you need some
+tools. I suggest you install task-debian-devel, i think it depends on all
+neccessary tools. (I think you already have gcc installed :) )
+
+For some Husky-Packages you also need texi2html, so install it :)
+
+For more information on package-building install the maint-guide and
+packaging-manual.
+
+If you have problems mail me at joerg@goliathbbs.dnsalias.net or write in
+the echo FIDOSOFT.HUSKY !
+
+
+PLEASE NOTE: The dir in which you build the package MUST BE NAMED
+package-version.nr !! NOT ONLY package !!
+If you made apt-get source PACKAGE you are right. If you have fetched the
+source directly from cvs you MUST rename or copy it to the correct naming !
+
+bye
+Joerg
