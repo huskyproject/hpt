@@ -24,7 +24,12 @@
  * $Id$
  */
 
+
+#if defined (UNIX)
+#   include <unistd.h>
+#endif
 #include <stdlib.h>
+#include <string.h>
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/recode.h>
