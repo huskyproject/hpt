@@ -2598,6 +2598,7 @@ static void setmaxopen(void) {
 #include <unistd.h>
 
 static void setmaxopen(void) {
+#ifdef RLIMIT_NOFILE
     struct rlimit rl;
     maxopenpkt = MAXOPEN_DEFAULT;
     if (getrlimit(RLIMIT_NOFILE, &rl) == 0)
@@ -2613,6 +2614,7 @@ static void setmaxopen(void) {
 	maxopenpkt = rl.rlim_cur;
 	return;
     }
+#endif
 
 #else // windows or unknown OS, just test
 
