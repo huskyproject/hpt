@@ -782,7 +782,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		    if (strstr(line, "*") == NULL) i = config->echoAreaCount;
         	break;
 		case 1: 
-			changeconfig (getConfigFileName(), area, link, 0);
+			changeconfig ((cfgFile) ? cfgFile : getConfigFileName(), area, link, 0);
 			addlink(link, area);
 			xscatprintf(&report, " %s %s  added\r", an, print_ch(49-strlen(an), '.'));
 			writeLogEntry(hpt_log, '8', "areafix: %s subscribed to %s",
@@ -813,7 +813,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 				    writeLogEntry(hpt_log, '8', "areafix: %s subscribed to area %s",
 							  aka2str(link->hisAka),line);
 				    area = getArea(config, line);
-				    changeconfig (getConfigFileName(), area, link, 3);
+				    changeconfig ((cfgFile) ? cfgFile : getConfigFileName(), area, link, 3);
 				    addlink(link, area);
 				}
 			}
@@ -848,7 +848,7 @@ static char *do_delete(s_link *link, s_message *msg, s_area *area)
 	    forwardRequestToLink(an, area->downlinks[i]->link, NULL, 2);
     }
     /* remove area from config-file */
-    changeconfig (getConfigFileName(),  area, link, 4);
+    changeconfig ((cfgFile) ? cfgFile : getConfigFileName(),  area, link, 4);
 
     /* delete msgbase and dupebase for the area */
     if (area->msgbType!=MSGTYPE_PASSTHROUGH)
@@ -952,7 +952,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 			   	    area->downlinks[i]->defLink)
 					return do_delete(link, msg, area);
 			   removelink(link, area);
-			   changeconfig (getConfigFileName(),  area, link, 1);
+			   changeconfig ((cfgFile) ? cfgFile : getConfigFileName(),  area, link, 1);
 			   writeLogEntry(hpt_log, '8', "areafix: %s unlinked from %s",aka2str(link->hisAka),an);
 			} else {
 			if ((area->downlinkCount==1) && (area->downlinks[0]->link->hisAka.point == 0))
@@ -1082,7 +1082,8 @@ char *pause_link(s_message *msg, s_link *link)
     char *tmp, *report = NULL;
     
     if (link->Pause == 0) {
-	if (changepause(getConfigFileName(), link, 0) == 0) return NULL;    
+	if (changepause((cfgFile) ? cfgFile : getConfigFileName(), link, 0) == 0)
+		return NULL;
     }
 
     xstrcat(&report, " System switched to passive\r");
@@ -1207,7 +1208,8 @@ char *resume_link(s_message *msg, s_link *link)
     char *tmp, *report = NULL;
     
     if (link->Pause) {
-		if (changeresume(getConfigFileName(), link) == 0) return NULL;
+		if (changeresume((cfgFile) ? cfgFile : getConfigFileName(), link) == 0)
+			return NULL;
     }
 	
     xstrcat(&report, " System switched to active\r");
@@ -1917,7 +1919,9 @@ void autoPassive()
 							   time_cur = time(NULL);
 							   time_test = (time_cur - stat_file.st_mtime)/3600;
 							   if (time_test >= (config->links[i].autoPause*24)) {
-								   if (changepause(getConfigFileName(), &(config->links[i]), 1)) {    
+								   if (changepause((cfgFile) ? cfgFile :
+												   getConfigFileName(),
+												   &(config->links[i]), 1)) {    
 									   msg = makeMessage(config->links[i].ourAka,
 														 &(config->links[i].hisAka),
 														 versionStr,config->links[i].name,

@@ -30,8 +30,9 @@
  *****************************************************************************/
 #include <global.h>
 
-s_log     *hpt_log;
-s_fidoconfig *config=NULL;
+s_log        *hpt_log;
+s_fidoconfig *config  = NULL;
+char         *cfgFile = NULL;
 
 int initSMAPI = -1;
 

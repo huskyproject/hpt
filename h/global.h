@@ -38,8 +38,9 @@ extern int initSMAPI;
 
 // variables for config statements
 
-extern s_log     *hpt_log;
+extern s_log        *hpt_log;
 extern s_fidoconfig *config;
+extern char         *cfgFile;
 
 // vriable for current tossing dir
 extern char *tossDir;

@@ -70,7 +70,6 @@
 s_message **msgToSysop = NULL;
 char *scanParmA;
 char *scanParmF;
-char *cfgFile = NULL;
 
 /* kn: I've really tried not to break it. 
    FIXME: if there is pack and scan options on cmd line - one set 
