@@ -3,14 +3,10 @@ TODO-List for HPT
 
 Category 1: Will certainly be implemented until next release
 ============================================================
-- packnetmail on (create netmail as pkt)
 - supporting mask in echoArea links
-- msgbasedir for each link
 - -sbadd(<addr>,<addr>,...) -sbdel(<addr>,<addr>,...)
-- reduces Seen-BYs (fsc-0093)
 - createForwardNonPass
 - correctEMAddr: take node from path if no origin in message
-- AutoCreateSemaphore
 - autoAreaCreateMask
 - areafix from cmd line (like hpt afix <addr> %command)
 - del pass areas after unsubscribing
@@ -19,6 +15,7 @@ Category 1: Will certainly be implemented until next release
 - delete empty mail
 - DenyEchoRequest <masklist>
 - create flag when unpacking netmail
+- AutoCreateSemaphore
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
@@ -29,6 +26,7 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 Category 3: Will only be included if volunteers send patches
 ============================================================
 - remove areafix from hpt, make hptfix (areafix & filefix)
+- reduces Seen-BYs (fsc-0093)
 
 Category 4: Will not be implemented
 ===================================

@@ -70,19 +70,6 @@ extern FILE *hcfg;
 unsigned char RetFix;
 static int rescanMode = 0;
 
-int strncasesearch(char *strL, char *strR, int len)
-{
-    char *str;
-    int ret;
-    
-    str = (char*) safe_malloc(strlen(strL)+1);
-    strcpy(str, strL);
-    if (strlen(str) > len) str[len] = '\0';
-    ret = stricmp(str, strR);
-    nfree(str);
-    return ret;
-}
-
 char *print_ch(int len, char ch)
 {
     static char tmp[256];
@@ -176,9 +163,9 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 		break;
 	    }
 	    else {
-		if (strncasesearch(ptr, "-r", 2)) {
-		    if (strncasesearch(ptr, "-w", 2)) {
-			if (strncasesearch(ptr, "-mn", 3)) {
+		if (strncasecmp(ptr, "-r", 2)) {
+		    if (strncasecmp(ptr, "-w", 2)) {
+			if (strncasecmp(ptr, "-mn", 3)) {
 			    linelen = ptr-line;
 			    break;
 			}
@@ -762,9 +749,11 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 
 	line = cmd;
 	
-	if (line[0]=='+') line++;
-	while (*line==' ') line++;
+	if (*line=='+') line++; while (*line==' ') line++;
 	
+	if (strchr(line,' ') || strchr(line,'\t') || strchr(line,'\\') ||
+		strchr(line,'/') ||	strchr(line,config->CommentChar)) return errorRQ(line);
+
 	for (i=0; i<config->echoAreaCount; i++) {
 	    area = &(config->echoAreas[i]);
 	    an = area->areaName;
@@ -1351,12 +1340,14 @@ char *rescan(s_link *link, s_message *msg, char *cmd) {
     if (*line == 0) return errorRQ(cmd);
 
     countstr = line;
-    while (*countstr && (!isspace(*countstr))) countstr++;
+    while (*countstr && (!isspace(*countstr))) countstr++; // skip areatag
     while (*countstr && (*countstr == ' ' || *countstr == '\t')) countstr++;
-    if (!strncasecmp(countstr, "/R=",3)) countstr = countstr + 3;
-    if (!strncasecmp(countstr, "/R",2)) countstr = "99999"; /* rescan all mails */
-
-    if (*countstr != 0)
+	if (strncasecmp(countstr, "/R",2)==0) {
+		countstr += 2;
+		if (*countstr == '=') countstr++;
+	}
+	
+    if (*countstr != '\0')
       {
          rescanCount = strtol(countstr, NULL, 10);
       }
@@ -1419,6 +1410,25 @@ char *rescan(s_link *link, s_message *msg, char *cmd) {
     return report;
 }
 
+char *add_rescan(s_link *link, s_message *msg, char *line) {
+	char *report=NULL, *line2=NULL, *p;
+
+	if (*line=='+') line++; while (*line==' ') line++;
+	
+	p = hpt_stristr(line, " /R");
+	*p = '\0';
+
+	report = subscribe(link,msg,line);
+	*p = ' ';
+
+	xstrscat(&line2,"%rescan ", line, NULL);
+	xstrcat(&report, rescan(link, msg, line2));
+	nfree(line2);
+	*p = '\0';
+	
+	return report;
+}
+
 int tellcmd(char *cmd) {
 	char *line;
 
@@ -1441,7 +1451,7 @@ int tellcmd(char *cmd) {
 		if (strncasecmp(line,"pause",5)==0) return PAUSE;
 		if (strncasecmp(line,"resume",6)==0) return RESUME;
 		if (strncasecmp(line,"info",4)==0) return INFO;
-		if (strncasesearch(line, "rescan", 6)==0) {
+		if (strncasecmp(line, "rescan", 6)==0) {
                    if (line[6] == '\0') {
                       rescanMode=1;
                       return NOTHING;
@@ -1460,8 +1470,9 @@ int tellcmd(char *cmd) {
 	case '~'  : return REMOVE;
 	case '+':
 		if (line[1]=='\000') return ERROR;
-		if (strchr(line,' ') || strchr(line,'\t')) return ERROR;
-	default: return ADD;
+	default:
+		if (hpt_stristr(line, " /R")!=NULL) return ADD_RSC; // add & rescan
+		return ADD;
 	}
 	
 //	return 0; - Unreachable
@@ -1488,10 +1499,10 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 		RetFix=ADD;
 		break;
 	case DEL: report = unsubscribe (link,msg,line);
-		RetFix=DEL;
+		RetFix=STAT;
 		break;
 	case REMOVE: report = delete (link,msg,line);
-		RetFix=REMOVE;
+		RetFix=STAT;
 		break;
 	case AVAIL: report = available (link); 
 		RetFix=AVAIL;
@@ -1512,10 +1523,13 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 		RetFix=INFO;
 		break;
 	case RESCAN: report = rescan(link, msg, line);
-		RetFix=RESCAN;
+		RetFix=STAT;
+		break;
+	case ADD_RSC: report = add_rescan(link, msg, line);
+		RetFix=STAT;
 		break;
 	case ERROR: report = errorRQ(line);
-		RetFix=ERROR;
+		RetFix=STAT;
 		break;
 	default: return NULL;
 	}
@@ -1688,10 +1702,6 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 					      report = areaStatus(report, preport);
 					}
 					break;
-				case DEL:
-				case REMOVE:
-					report = areaStatus(report, preport);
-					break;
 				case AVAIL:
 					RetMsg(msg, link, preport, "areafix reply: available areas");
 					break;
@@ -1710,14 +1720,11 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader)
 				case INFO:
 					RetMsg(msg, link, preport, "areafix reply: link information");
 					break;
-				case RESCAN:
- 					report=areaStatus(report, preport);
- 					break;
-				case ERROR:
+				case STAT:
 					report = areaStatus(report, preport);
 					break;
 				default: break;
-				} /* end switch */
+				}
 				
 			} /* end if (preport != NULL) */
 

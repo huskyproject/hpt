@@ -817,7 +817,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    FILE *f;
    char *fileName, *squishFileName=NULL, *acDef;
    char *buff=NULL, *myaddr=NULL, *hisaddr=NULL;
-   char *msgbtype, *newAC=NULL, *desc, *p;
+   char *msgbtype, *newAC=NULL, *desc, *p, *msgbDir;
    s_link *creatingLink;
    s_area *area;
    int i;
@@ -870,22 +870,24 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
    //write new line in config file
    msgbtype = hpt_stristr(newAC, "-b ");
 
-   if (stricmp(config->msgBaseDir, "passthrough")!=0) {
+   msgbDir=(creatingLink->msgBaseDir) ? creatingLink->msgBaseDir : config->msgBaseDir;
+
+   if (stricmp(msgbDir, "passthrough")!=0) {
 #ifndef MSDOS
 	   if (hpt_stristr(newAC, "-dosfile")==NULL)
 		   xscatprintf(&buff, "EchoArea %s %s%s -a %s%s", c_area,
-					   config->msgBaseDir, squishFileName, myaddr,
+					   msgbDir, squishFileName, myaddr,
 					   (msgbtype) ? "" : " -b Squish");
 	   else {
 		   sleep(1); // to prevent time from creating equal numbers
 		   xscatprintf(&buff,"EchoArea %s %s%8lx -a %s%s", c_area,
-					   config->msgBaseDir, (long)time(NULL), myaddr,
+					   msgbDir, (long)time(NULL), myaddr,
 					   (msgbtype) ? "" : " -b Squish");
 	   }
 #else
 	   sleep(1); // to prevent time from creating equal numbers
 	   xscatprintf(&buff,"EchoArea %s %s%8lx -a %s%s", c_area,
-				   config->msgBaseDir, (long)time(NULL), myaddr,
+				   msgbDir, (long)time(NULL), myaddr,
 				   (msgbtype) ? "" : " -b Squish");
 #endif
    } else {

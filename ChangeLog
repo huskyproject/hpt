@@ -2,6 +2,12 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Mon Jan 15 14:19:26 NOVT 2001
+max:
+* rescan when subscribe
+* linkmsgbasedir - msgbasedir for links
+
+----- cvs ci ------
 Tue Jan  9 20:03:11 NOVT 2001
 max (patch from Serguei Revtov):
 * areafix: %rescan command without argument

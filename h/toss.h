@@ -68,6 +68,7 @@ int carbonCopy(s_message *msg, s_area *echo);
 s_arealink *getAreaLink(s_area *area, s_addr aka);
 void createSeenByArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount);
 void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount);
+char *hpt_stristr(char *str, char *find);
 
 #define REC_HDR 0x0001
 #define REC_TXT 0x0002

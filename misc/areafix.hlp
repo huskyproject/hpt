@@ -34,4 +34,5 @@ Example:
  %RESCAN OS2.*                <- same
  %RESCAN linux.develop.ger 200  <- rescan the last 200 mails
  %RESCAN                      <- turn on rescanning of following subscription
-
+ NSK.SYSOP /r			<- subscribe & rescan area
+ NSK.PARTY /r=100		<- subscribe & rescan the last 100 mails
