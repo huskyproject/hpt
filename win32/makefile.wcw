@@ -36,7 +36,7 @@ hpttree.exe:
 
 hpt.exe: $(OBJS)
   @echo linking hpt
-  $(LINK) $(LFLAGS) FILE hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, post.obj, areafix.obj, dupe.obj, recode.obj, tree.obj, seenby.obj, strsep.obj, link.obj, crc.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconf\fconfwcw.lib NAME hpt.exe
+  $(LINK) $(LFLAGS) FILE hpt.obj, pktread.obj, pktwrite.obj, fcommon.obj, log.obj, global.obj, toss.obj, scan.obj, scanarea.obj, post.obj, areafix.obj, arealist.obj, dupe.obj, recode.obj, tree.obj, seenby.obj, strsep.obj, link.obj, crc.obj, xstr.obj LIBRARY ..\..\smapi\smapiwcw.lib, ..\..\fidoconf\fconfwcw.lib NAME hpt.exe
 
 clean:
 	del *.obj
