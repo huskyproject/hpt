@@ -44,6 +44,17 @@
 
 extern s_message **msgToSysop;
 
+int afIsValidConference(const char *s) {
+    if (!s || strlen(s) > 60) return BM_AREATAG_TOO_LONG;
+    /*  according to FSC-0074 with lowercase symbols */
+    /*  lowercase symbols only for internal use */
+    while (*s) {
+        if ( !(*s >= 33 && *s <= 126) ) return BM_ILLEGAL_CHARS;
+        s++;
+    }
+    return 0;
+}
+
 int afSendMsg(s_message *tmpmsg) {
         processNMMsg(tmpmsg, NULL, getRobotsArea(config), 0, MSGLOCAL);
         writeEchoTossLogEntry(getRobotsArea(config)->areaName);
@@ -235,6 +246,7 @@ int init_hptafix(void) {
   call_smalloc  = &safe_malloc;
   call_srealloc = &safe_realloc;
 
+  call_isValid  = &afIsValidConference;
   call_sendMsg  = &afSendMsg;
   call_writeMsgToSysop = &afWriteMsgToSysop;
   call_getLinkRobot = &getLinkRobot;
