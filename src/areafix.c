@@ -676,7 +676,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
             }
         case 3: // add link to existing area
             xscatprintf(&cfgInline, " %s", aka2str(link->hisAka));
-            fprintf(cfgout, "%s%s", cfgInline, cfgEof()); // add line to config
+            fprintf(cfgout, "%s%s", cfgInline, cfgEol()); // add line to config
             nRet = ADD_OK;
             break;
         case 1: // remove link from area
@@ -697,7 +697,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
                 rc = -1;
                 while( isspace(cfgline[rc])) { cfgline[rc] = '\0'; rc--;}
             }
-            fprintf(cfgout, "%s%s", cfgInline, cfgEof()); // add line to config 
+            fprintf(cfgout, "%s%s", cfgInline, cfgEol()); // add line to config 
             nRet = DEL_OK;
             break;
         case 2:
@@ -710,7 +710,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
             if ( hpt_stristr(area->downlinks[0]->link->autoAreaCreateDefaults,
                 "passthrough") )  {
                 nRet = O_ERR;
-                fprintf(cfgout, "%s%s", cfgInline, cfgEof()); // add line to config 
+                fprintf(cfgout, "%s%s", cfgInline, cfgEol()); // add line to config 
                 break;
             }   
             // get area string
@@ -728,7 +728,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
             token = strstr(token+1, aka2str(area->downlinks[0]->link->hisAka));
 
           xstrcat( &buff, token-1); 
-          fprintf(cfgout, "%s%s", buff, cfgEof()); // add line to config
+          fprintf(cfgout, "%s%s", buff, cfgEol()); // add line to config
           break;
         default: break;
       } // switch (action)
@@ -1359,7 +1359,7 @@ linkline:
 		line[cfglen]='\0';
 
 		fseek(f_conf, curpos, SEEK_SET);
-		fprintf(f_conf, "Pause%s%s", cfgEof(), line);
+		fprintf(f_conf, "Pause%s%s", cfgEol(), line);
 		fclose(f_conf);
 		nfree(line);
 		link->Pause = 1;

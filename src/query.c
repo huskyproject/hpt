@@ -240,7 +240,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     } else {
     fseek (f, 0L, SEEK_END);
     }
-    fprintf(f, "%s%s", buff, cfgEof()); // add line to config
+    fprintf(f, "%s%s", buff, cfgEol()); // add line to config
     fclose(f);
    
     nfree(buff);
