@@ -196,7 +196,7 @@ char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir)
     return buff;
 }
 
-int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
+e_BadmailReasons autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
 {
     FILE *f;
     char *fileName;
@@ -214,11 +214,11 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
 
     if (strlen(c_area)>60){
        w_log( LL_FUNC, "%s::autoCreate() rc=11", __FILE__ );
-       return 11;
+       return BM_AREATAG_TOO_LONG;
     }
     if (!isValidConference(c_area) || isPatternLine(c_area)){
        w_log( LL_FUNC, "%s::autoCreate() rc=7", __FILE__ );
-       return 7;
+       return BM_ILLEGAL_CHARS;
     }
 
     if (checkRefuse(c_area))
@@ -233,7 +233,7 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
     if (creatingLink == NULL) {
 	w_log(LL_ERR, "creatingLink == NULL !!!");
         w_log( LL_FUNC, "%s::autoCreate() rc=8", __FILE__ );
-	return 8;
+	return BM_SENDER_NOT_FOUND;
     }
 
     fileName = creatingLink->autoAreaCreateFile;
@@ -243,7 +243,7 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
     if (f == NULL) {
 	fprintf(stderr,"autocreate: cannot open config file\n");
         w_log( LL_FUNC, "%s::autoCreate() rc=9", __FILE__ );
-	return 9;
+	return BM_CANT_OPEN_CONFIG;
     }
     /*  setting up msgbase dir */
     if (config->createFwdNonPass == 0 && forwardAddr)
@@ -258,7 +258,7 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
         {
             if( stricmp(areaNode->type,czKillArea) == 0 ){
                 w_log( LL_FUNC, "%s::autoCreate() rc=4", __FILE__ );
-                return 12;  /*  area already unsubscribed */
+                return BM_AREA_KILLED;  /*  area already unsubscribed */
             }
             if( stricmp(areaNode->type,czFreqArea) == 0 &&
                 addrComp(pktOrigAddr, areaNode->downlinks[0])!=0)
