@@ -290,6 +290,9 @@ void writeScanStatToLog() {
 }
 
 void pack(void) {
+
+   if (config->outtab != NULL) getctab(&outtab, config->outtab);
+   
    memset(&statScan, sizeof(s_statScan), 0);
    writeLogEntry(log, '4', "Start packing...");
    scanNMArea();

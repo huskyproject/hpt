@@ -1,5 +1,5 @@
 DEBUG   = 1
-CC      = gcc 
+CC      = egcc
 INSTDIR = /usr/local/bin
 MANDIR  = /usr/local/man
 
@@ -8,7 +8,7 @@ SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
   CFLAGS  = -c -I../h -I../../smapi -I../../fidoconfig -Wall -g -O2 -s -DUNIX
-  LFLAGS  = 
+  LFLAGS  =
 else
   CFLAGS  = -c -I../h -I../../smapi -Wall -O2 -s -DUNIX $(CADDFLAGS)
   LFLAGS  =  

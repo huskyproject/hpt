@@ -122,11 +122,13 @@ void putMsgInArea(s_area *echo, s_message *msg)
 
 void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCount)
 {
-   char *seenByText, *start, *token, digit[6];
-   INT i;
+   char *seenByText, *start, *token;
+   unsigned long temp;
+   char *endptr;
    
    *seenByCount = 0;
    start = msg->text;
+
    // find beginning of seen-by lines
    do {
       start = strstr(start, "SEEN-BY:");
@@ -144,30 +146,32 @@ void createSeenByArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByC
    while (token != NULL) {
       if (strcmp(token, "\001PATH:")==0) break;
       if (isdigit(*token)) {
-         i = 0;
-         // copy first number
-         while (isdigit(*token)) digit[i++] = *token++;
-         *seenBys = (s_seenBy*) realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount)+1);
-         if (*token++ == '/') {
-            // net/node address
-            (*seenBys)[*seenByCount].net = atoi(digit);
-            i = 0;
-            while (isdigit(*token)) digit[i++] = *token++;
-            (*seenBys)[*seenByCount].node = atoi(digit);
-         } else {
-            // only node
-            (*seenBys)[(*seenByCount)].net = (*seenBys)[(*seenByCount)-1].net;
-            (*seenBys)[*seenByCount].node = atoi(digit);
-         }
+
+         // get new memory
          (*seenByCount)++;
-         memset(&digit, 0, 5);
+         *seenBys = (s_seenBy*) realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
+         
+         // parse token
+         temp = strtoul(token, &endptr, 10);
+         if ((*endptr) == '\0') {
+            // only node aka
+            (*seenBys)[*seenByCount-1].node = temp;
+            // use net aka of last seenBy
+            (*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
+         } else {
+            // net and node aka
+            (*seenBys)[*seenByCount-1].net = temp;
+            // eat up '/'
+            endptr++;
+            (*seenBys)[*seenByCount-1].node = atoi(endptr);
+         }
       }
       token = strtok(NULL, " \r\t\xfe");
    }
 
-   // test output for reading of seenBys...
-   //for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
-   //exit(2);
+   //test output for reading of seenBys...
+//   for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
+//   exit(2);
 
    free(seenByText);
 }
@@ -178,8 +182,9 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
    // DON'T GET MESSED UP WITH THE VARIABLES NAMED SEENBY...
    // THIS FUNCTION READS PATH!!!
    
-   char *seenByText, *start, *token, digit[6];
-   INT i;
+   char *seenByText, *start, *token;
+   char *endptr;
+   unsigned long temp;
    
    *seenByCount = 0;
    start = msg->text;
@@ -199,23 +204,24 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy *seenBys[], UINT *seenByCou
    token = strtok(seenByText, " \r\t\xfe");
    while (token != NULL) {
       if (isdigit(*token)) {
-         i = 0;
-         // copy first number
-         while (isdigit(*token)) digit[i++] = *token++;
-         *seenBys = (s_seenBy*) realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount)+1);
-         if (*token++ == '/') {
-            // net/node address
-            (*seenBys)[*seenByCount].net = atoi(digit);
-            i = 0;
-            while (isdigit(*token)) digit[i++] = *token++;
-            (*seenBys)[*seenByCount].node = atoi(digit);
-         } else {
-            // only node
-            (*seenBys)[(*seenByCount)].net = (*seenBys)[(*seenByCount)-1].net;
-            (*seenBys)[*seenByCount].node = atoi(digit);
-         }
          (*seenByCount)++;
-         memset(&digit, 0, 5);
+         *seenBys = (s_seenBy*) realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
+         
+         // parse token
+         temp = strtoul(token, &endptr, 10);
+         if ((*endptr) == '\0') {
+            // only node aka
+            (*seenBys)[*seenByCount-1].node = temp;
+            // use net aka of last seenBy
+            (*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
+         } else {
+            // net and node aka
+            (*seenBys)[*seenByCount-1].net = temp;
+            // eat up '/'
+            endptr++;
+            (*seenBys)[*seenByCount-1].node = atoi(endptr);
+         }
+
       }
       token = strtok(NULL, " \r\t\xfe");
    }
@@ -242,6 +248,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
    // add seenBy for links
    for (i=0; i<echo->downlinkCount; i++) {
       if (echo->downlinks[i]->hisAka.point != 0) continue; // don't include points in SEEN-BYS
+      if (addrComp(echo->downlinks[i]->hisAka, pktOrigAddr)==0) continue; // don´t include the link we have got the mail from in SEEN-BYS
       
       seenBys = (s_seenBy*) realloc(seenBys, sizeof(s_seenBy) * (seenByCount)+1);
       seenBys[seenByCount].net = echo->downlinks[i]->hisAka.net;

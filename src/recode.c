@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <recode.h>
 
 CHAR intab[] = {
 "\000\001\002\003\004\005\006\007\010\011\012\013\014\015\016\017"
