@@ -1,3 +1,31 @@
+2003-03-15 Saturday 21:58  d_sergienko
+
+	* h/dupe.h (1.22), h/global.h (1.39), h/seenby.h (1.11),
+	src/areafix.c (1.389), src/carbon.c (1.24), src/dupe.c (1.79),
+	src/fcommon.c (1.165), src/hpt.c (1.175), src/hptlink.c (1.53),
+	src/link.c (1.71), src/perl.c (1.51), src/pktread.c (1.99),
+	src/pktwrite.c (1.45), src/post.c (1.109), src/query.c (1.97),
+	src/scan.c (1.188), src/scanarea.c (1.100), src/seenby.c (1.30),
+	src/stat.c (1.10), src/toss.c (1.499), src/tpkt.c (1.31),
+	src/txt2pkt.c (1.50): fix compiling
+
+2003-03-15 Saturday 20:44  d_sergienko
+
+	* src/tlog.c (1.15): moved to huskylib
+
+2003-03-15 Saturday 19:34  d_sergienko
+
+	* src/: areafix.c (1.388), carbon.c (1.23), hpt.c (1.174),
+	hptlink.c (1.52), scan.c (1.187), toss.c (1.498): fix compiling
+
+2003-03-15 Saturday 13:39  d_sergienko
+
+	* src/: hptlink.c (1.51), tlog.c (1.14): use initLog()
+
+2003-03-15 Saturday 13:29  d_sergienko
+
+	* src/: hpt.c (1.173), pktread.c (1.98): use initLog()
+
 2003-03-14 Friday 13:48  stas_degteff
 
 	* doc/hpt.texi (1.113): Fix Echoareadefaults description. Thanks to
