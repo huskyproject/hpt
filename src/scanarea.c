@@ -97,7 +97,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
 
    // create seen-by's & path
    seenByCount = 0;
-   seenBys = (s_seenBy*) malloc(echo->downlinkCount+1);
+   seenBys = (s_seenBy*) calloc(echo->downlinkCount+1,sizeof(s_seenBy));
    for (i = 0;i < echo->downlinkCount; i++) {
       if (echo->downlinks[i]->hisAka.point != 0) continue; // only include nodes in SEEN-BYS
       
