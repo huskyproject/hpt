@@ -242,34 +242,36 @@ int writeEntry(char *p_entry) {
 }
 
 int deleteEntry(char *entry) {
-    s_textDupeEntry  *entxt;
-    s_hashDupeEntry  *enhash;
-    s_hashMDupeEntry *enhashM;
-    
-    switch (config->typeDupeBase) {
-    case hashDupes:
-        enhash = (s_hashDupeEntry *)entry;
-        nfree(enhash);
-        break;
+    if(entry)
+    {
+        s_textDupeEntry  *entxt;
+        s_hashDupeEntry  *enhash;
+        s_hashMDupeEntry *enhashM;
         
-    case hashDupesWmsgid:
-        enhashM = (s_hashMDupeEntry *)entry;
-        nfree(enhashM->msgid);
-        nfree(enhashM);
-        break;
-        
-    case textDupes:
-        entxt = (s_textDupeEntry *)entry;
-        nfree(entxt->msgid);
-        nfree(entxt);
-        break;
-        
-    case commonDupeBase:
-        enhash = (s_hashDupeEntry *)entry;
-        nfree(enhash);
-        break;
+        switch (config->typeDupeBase) {
+        case hashDupes:
+            enhash = (s_hashDupeEntry *)entry;
+            nfree(enhash);
+            break;
+            
+        case hashDupesWmsgid:
+            enhashM = (s_hashMDupeEntry *)entry;
+            nfree(enhashM->msgid);
+            nfree(enhashM);
+            break;
+            
+        case textDupes:
+            entxt = (s_textDupeEntry *)entry;
+            nfree(entxt->msgid);
+            nfree(entxt);
+            break;
+            
+        case commonDupeBase:
+            enhash = (s_hashDupeEntry *)entry;
+            nfree(enhash);
+            break;
+        }
     }
-    
     return 1;
 }
 
