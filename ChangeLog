@@ -1,3 +1,12 @@
+2004-01-05 Monday 05:20  d_sergienko
+
+	* src/toss.c (1.533): fixed renaming files when they are need to be
+	moved across partitions
+
+2004-01-05 Monday 04:38  d_sergienko
+
+	* doc/hpt-FAQ.russian (1.88): small corrections
+
 2003-12-30 Tuesday 08:50  val_khokhlov
 
 	* make/makefile.mvc (1.12): turn off perl linking by default
