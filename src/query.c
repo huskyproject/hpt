@@ -678,7 +678,7 @@ void af_QueueReport()
 
     msgToSysop[0] = makeMessage(&(config->addr[0]),&(config->addr[0]),
                                 config->areafixFromName ? config->areafixFromName : versionStr,
-                                netmail ? config->sysop : "All", "Requests report",
+                                netmail ? (config->sysop ? config->sysop : "Sysop") : "All", "Requests report",
                                 netmail,
                                 config->areafixReportsAttr);
     msgToSysop[0]->text = createKludges(config,
