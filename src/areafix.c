@@ -89,7 +89,7 @@ int subscribeCheck(s_area area, s_message *msg, s_link *link) {
 	for (i = 0; i<area.downlinkCount;i++) {
 		if (addrComp(msg->origAddr, area.downlinks[i]->link->hisAka)==0) return 0;
 	}
-	if (area.group != '\060')
+	if (area.group != '\060') {
 	    if (link->AccessGrp) {
 			if (config->PublicGroup) {
 				if (strchr(link->AccessGrp, area.group) == NULL &&
@@ -98,6 +98,7 @@ int subscribeCheck(s_area area, s_message *msg, s_link *link) {
 	    } else if (config->PublicGroup) {
 			if (strchr(config->PublicGroup, area.group) == NULL) return 2;
 		} else return 2;
+        }
 	if (area.hide) return 3;
 	return 1;
 }

@@ -94,13 +94,15 @@ INT in,on,count;
 			}
 
 			on=ctoi((char *)q);
-			if (in && on) 
-			 if( count++ < 256 ) dest[in]=on; 
-			 else 
-			  { 
-			  fprintf(stderr,"getctab: char map table \"%s\" is big\n",charMapFileName); 
-			  break;
-			  }
+			if (in && on)
+                        {
+                                if( count++ < 256 ) dest[in]=on; 
+                                else 
+                                { 
+                                        fprintf(stderr,"getctab: char map table \"%s\" is big\n",charMapFileName); 
+                                        break;
+                                }
+                        }
 		}
 	}
 	fclose(fp);
