@@ -579,15 +579,15 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     FILE *f;
-    char *cfgline, *token, *buff, *addr=NULL;
-    long pos=-1, lastpos, endpos, len;
+    char *cfgline=NULL, *token=NULL, *buff=NULL, *addr=NULL;
+    long pos=-1, lastpos=-1, endpos=-1, len=0;
     int rc=0;
     e_changeConfigRet nRet = I_ERR;
 
     char* areaName = area->areaName;
 
-	if (init_conf(fileName))
-		return I_ERR;
+    if (init_conf(fileName))
+		return -1;
 
     while ((buff = configline()) != NULL) {
 	buff = trimLine(buff);
@@ -607,15 +607,16 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 	nfree(buff);
     }
     close_conf();
-    if (pos == -1) {
-	    nRet = I_ERR; // impossible // error occurred
+    if (pos == -1) { // impossible // error occurred
+	nRet = I_ERR;
+	return -1;
     }
-    nfree(buff);
 
-	if ((nRet != I_ERR ) && ((f=fopen(fileName,"r+b")) == NULL) ) {
+    if ( (f=fopen(fileName,"r+b")) == NULL ) {
 	fprintf(stderr, "areafix: cannot open config file %s for reading and writing\n", fileName);
 	w_log('9',"areafix: cannot open config file \"%s\" for reading and writing", fileName);
-	    nRet = -1; // go to end :) // error occurred
+	nRet = I_ERR; // go to end :) // error occurred
+	return -1;
     }
     else {
         fseek(f, pos, SEEK_SET);
@@ -623,6 +624,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     }
     if ((nRet != I_ERR) && (cfgline == NULL)) {
         nRet = I_ERR; // go to end :) // error occurred
+	return -1;
     }
     else { // everithing fine. now we try to do some actions
     switch (action) {
@@ -638,7 +640,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         if (addstring(f, aka2str(link->hisAka)))
         {
             w_log('9',"areafix: can't write to file %s", fileName);
-               nRet = O_ERR;
+            nRet = O_ERR;
         }
         else { nRet = ADD_OK; }
         break;
@@ -659,10 +661,10 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
                 nfree(addr);
             }
         }
-        if (rc)        {
+        if (rc) {
             w_log('9',"areafix: can't del link %s from echo area %s",
-                aka2str(link->hisAka), areaName);
-               nRet = O_ERR;
+            aka2str(link->hisAka), areaName);
+            nRet = O_ERR;
         }
         else { nRet = DEL_OK; }
         break;
@@ -711,7 +713,8 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     nfree(cfgline);
     nfree(fileName);
     fclose(f);
-	return nRet;
+    if (nRet==I_ERR) return -1;
+    return nRet;
 }
 
 int areaIsAvailable(char *areaName, char *fileName, char **desc, int retd) {
