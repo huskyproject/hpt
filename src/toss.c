@@ -1707,7 +1707,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg)
 	     recodeToTransportCharset(msg.subjectLine);
 	 }
    
-	 if (echo->downlinkCount > 1) {   // if only one downlink, we've got the mail from him
+	 if (echo->downlinkCount > 0) {
             forwardMsgToLinks(echo, &msg, pktOrigAddr);
 //            statToss.exported++;
          }
