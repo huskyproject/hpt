@@ -25,14 +25,14 @@ hpt$(EXE): hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) global$(OBJ) que
 	$(CC) $(LFLAGS) $(EXENAMEFLAG)hpt$(EXE) hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) global$(OBJ) query$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) post$(OBJ) areafix$(OBJ) arealist$(OBJ) dupe$(OBJ) seenby$(OBJ) link$(OBJ) getfree$(OBJ) $(PERLOBJ) $(LIBS) $(PERLLIBS)
 
 commonclean: $(SYMBOLIC)
-	-$(RM) *~
-	-$(RM) *$(OBJ)
-	-$(RM) core
+	-$(RM) $(RMOPT) *~
+	-$(RM) $(RMOPT) *$(OBJ)
+	-$(RM) $(RMOPT) core
 
 commondistclean: clean $(SYMBOLIC)
-	-$(RM) tpkt$(EXE)
-	-$(RM) txt2pkt$(EXE)
-	-$(RM) pktinfo$(EXE)
-	-$(RM) hpt$(EXE)
-	-$(RM) hptlink$(EXE)
-	-$(RM) hpttree$(EXE)
+	-$(RM) $(RMOPT) tpkt$(EXE)
+	-$(RM) $(RMOPT) txt2pkt$(EXE)
+	-$(RM) $(RMOPT) pktinfo$(EXE)
+	-$(RM) $(RMOPT) hpt$(EXE)
+	-$(RM) $(RMOPT) hptlink$(EXE)
+	-$(RM) $(RMOPT) hpttree$(EXE)
