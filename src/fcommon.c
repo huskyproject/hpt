@@ -118,9 +118,12 @@ int fileNameAlreadyUsed(char *pktName, char *packName) {
 
 int createTempPktFileName(s_link *link)
 {
-   char   *fileName = (char *) malloc(strlen(config->tempOutbound)+1+12);
-   char   *pfileName = (char *) malloc(strlen(config->outbound)+1+12+13);
-   char   *tmpPFileName = (char *) malloc(strlen(config->outbound)+1+12+13);
+   // pkt file in tempOutbound
+   char   *fileName = (char *) malloc(strlen(config->tempOutbound)+12+1);
+   // name of the arcmail bundle
+   char   *pfileName = (char *) malloc(strlen(config->outbound)+13+13+12+1);
+   // temp name of the arcmail bundle
+   char   *tmpPFileName = (char *) malloc(strlen(config->outbound)+13+13+12+1);
    time_t aTime = time(NULL);  // get actual time
    int counter = 0;
    char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
@@ -161,15 +164,36 @@ int createTempPktFileName(s_link *link)
    // This is no big problem, but a big system with many links and many zones may encounter problems
 
    do {
+	   
+	   sprintf(fileName, "%s%06lx%02x.pkt", config->tempOutbound, aTime, counter);
+	   
+	   if ( link->hisAka.point == 0 ) {
 
-           sprintf(fileName, "%s%06lx%02x.pkt", config->tempOutbound, aTime, counter);
+		   if (config->separateBundles) sprintf(tmpPFileName,
+												"%s%04x%04x.sep%c%06lx%02x.%s",
+												zoneOutbound, link->hisAka.net,
+												link->hisAka.node, limiter,
+												aTime, counter, wday);
+		   
+		   else sprintf(tmpPFileName,"%s%06lx%02x.%s",zoneOutbound,aTime,counter,wday);
 
-           if ( link->hisAka.point == 0 )
-                   sprintf(tmpPFileName,"%s%06lx%02x.%s",zoneOutbound,aTime,counter,wday);
-           else
-                   sprintf(tmpPFileName, "%s%04x%04x.pnt%c%06lx%02x.%s", zoneOutbound, link->hisAka.net, link->hisAka.node, limiter, aTime, counter, wday);
-           counter++;
-
+	   } else {
+		   
+		   if (config->separateBundles) sprintf(tmpPFileName,
+												"%s%04x%04x.pnt%c%08x.sep%c%06lx%02x.%s",
+												zoneOutbound, link->hisAka.net,
+												link->hisAka.node, limiter,
+												link->hisAka.point, limiter,
+												aTime, counter, wday);
+		   else sprintf(tmpPFileName,
+						"%s%04x%04x.pnt%c%06lx%02x.%s",
+						zoneOutbound, link->hisAka.net,
+						link->hisAka.node, limiter,
+						aTime, counter, wday);
+	   }
+	   
+	   counter++;
+	   
    } while ((fexist(fileName) || fileNameAlreadyUsed(fileName, NULL)) && (counter<=255));
 
    counter = 0;
@@ -257,6 +281,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 {
    FILE *f; // bsy file for current link
    char name[13], bsyname[13], zoneSuffix[6], pntDir[14], *tolog;
+   char	*sepDir, sepname[13];
 
 #ifdef UNIX
    char limiter='/';
@@ -308,6 +333,19 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    createDirectoryTree(link->floFile); // create directoryTree if necessary
    strcpy(link->bsyFile, link->floFile);
    strcat(link->floFile, name);
+
+   // separate bundles
+   if (config->separateBundles) {
+
+	   if (link->hisAka.point != 0) sprintf(sepname, "%08x.sep", link->hisAka.point);
+	   else sprintf(sepname, "%04x%04x.sep", link->hisAka.net, link->hisAka.node);
+
+	   sepDir = (char *) malloc(strlen(link->bsyFile)+strlen(sepname)+2);
+	   sprintf(sepDir,"%s%s%c",link->bsyFile,sepname,limiter);
+
+	   createDirectoryTree(sepDir);
+	   free(sepDir);
+   }
 
    // create bsyFile
    strcpy(bsyname, name);

@@ -9,6 +9,8 @@ Version		0.15
 
 PublicGroup 	A
 #AreaFixFromPkt
+#AreaFixKillReports
+#SeparateBundles
 
 Unpack		"unzip -j -Loqq $a -d $p" 0 504b0304
 Pack		zip zip -9 -j -q $a $f
