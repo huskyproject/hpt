@@ -6,6 +6,8 @@ Mon Apr  9 13:12:20 NOVST 2001
 max:
 * fixed sbadd after processing echomail from/to different zone
 * strip spaces from end of lines in echotoss.log
+* fixed stripping areaname when carbon messages (carbonText)
+* now areaname is always skipped (in carbonextern too)
 patch from Alex Bronin:
 * use spawnvp() instead of spawnv()
 
