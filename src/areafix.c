@@ -550,7 +550,7 @@ char* findLinkInString(char *line, s_addr addr)
     {
         if((linkpos!=NULL) && testAddr(linkpos,addr))
             break;
-        line = linkpos+1;
+        linkpos++;
     }
     return linkpos;
 }
