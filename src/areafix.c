@@ -44,6 +44,7 @@
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
+#include <fidoconf/areatree.h>
 
 #include <fcommon.h>
 #include <global.h>
@@ -1202,8 +1203,8 @@ char *do_delete(s_link *link, s_area *area) {
 	    memcpy(&(config->echoAreas[i]), &(config->echoAreas[i+1]),
 	           sizeof(s_area));
 	config->echoAreaCount--;
+    RebuildEchoAreaTree(config);
     }
-
     return report;
 }
 

@@ -1,13 +1,13 @@
-/* Arefix improvement by Max Chernogor 2:464/108  */
+/* Areafix improvement by Max Chernogor 2:464/108  */
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
+#include <fidoconf/areatree.h>
 #include <global.h>
 #include <toss.h>
 #include <areafix.h>
 #include <query.h>
-//#include <hpt.h>
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
@@ -217,6 +217,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 
     // add new created echo to config in memory
     parseLine(buff, config);
+    RebuildEchoAreaTree(config);
 
     // subscribe uplink if he is not subscribed
     area = &(config->echoAreas[config->echoAreaCount-1]);
