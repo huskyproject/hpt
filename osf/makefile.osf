@@ -1,62 +1,21 @@
-# for gcc, use this:
-#CC    = gcc -Wall
-# for DEC CC, use this:
-CC      = cc
+# DEC UNIX DEC CC makefile (for gcc, use makefile.unx)
+# no support for the husky build environment
 
-# include Husky-Makefile-Config
-include ../../huskymak.cfg
+DEBUG=-s
+# set to -g for debugging
 
-OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.o scan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o strsep.o link.o crc.o xstr.o
-SRC_DIR = ../src/
+OBJ    =.o
+RM     =rm
+DIRSEP =/
+CFLAGS =-I../h -I../.. -c -O3 $(DEBUG)
+LFLAGS =$(DEBUG)
+CDEFS  =-DUNIX
+CC     =cc
+EXENAMEFLAG=-o 
+SRC_DIR=../src/
+LIBS   =../../fidoconf/libfidoconfigosf.a ../../smapi/libsmapiosf.a
 
-ifeq ($(DEBUG), 1)
-  CFLAGS     = -c -I$(INCDIR) -I../h -I../../smapi -O2 -g -DUNIX
-else
-  CFLAGS     = -c -I$(INCDIR) -I../h -I../../smapi -O2 -s -DUNIX
-endif
-
-LFLAGS     = -L$(LIBDIR)
-FIDOCONFIG = -lfidoconfig
-SMAPI      = -lsmapiunix
+include ../makefile.inc
 
 
-all: $(OBJS) \
-     pktinfo \
-     tlog \
-     tpkt \
-     hpt \
-     hptlink \
-     hpttree
-#     install
-
-%.o: $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
-
-pktinfo: pktinfo.o $(OBJS)
-	$(CC) $(LFLAGS) -o pktinfo log.o pktinfo.o pktread.o fcommon.o global.o recode.o $(FIDOCONFIG) $(SMAPI)
-
-tlog: tlog.o log.o
-	$(CC) $(LFLAGS) -o tlog tlog.o log.o
-
-tpkt: tpkt.o pktwrite.o log.o fcommon.o pktread.o recode.o
-	$(CC) $(LFLAGS) -o tpkt tpkt.o fcommon.o pktread.o pktwrite.o global.o recode.o log.o $(FIDOCONFIG) $(SMAPI)
-
-hpt: $(OBJS)
-	$(CC) $(LFLAGS) -o hpt $(OBJS) $(FIDOCONFIG) $(SMAPI) 
-
-hptlink: hptlink.o
-	$(CC) $(LFLAGS) -o hptlink hptlink.o $(FIDOCONFIG) $(SMAPI)
-
-hpttree: hpttree.o
-	$(CC) $(LFLAGS) -o hpttree hpttree.o $(FIDOCONFIG) $(SMAPI)
-
-clean:
-	-rm -f *.o
-	-rm *~
-
-distclean: clean
-	-rm hpt tpkt tlog pktinfo hptlink hpttree
-
-install: hpt pktinfo
-	cp hpt pktinfo $(BINDIR)
 
