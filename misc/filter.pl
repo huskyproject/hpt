@@ -413,8 +413,12 @@ EOF
       return "Message to FaqServer";
     }
     if ($fromname =~ /^(areafix|gecho)$/i && listname($fromaddr) ne "" &&
-        $subject =~ /^(List request|List of areas available|List of available areas)/)
+        $subject =~ /^(List request|List of areas available|List of available areas|AreaFix list of areas|AreaFix response)/)
     {
+      if ($subject eq "AreaFix response" && $text =~ /--- CrashEcho's AreaFix/)
+      { $kill = 1;
+        return "CrashEcho's areafix response";
+      }
       if (@areas)
       { if ($areas[0] ne $fromaddr)
         { putlist();
@@ -427,7 +431,13 @@ EOF
       foreach (split(/\s*\r\n?/, $text))
       {
         next if /^(\x01|SEEN-BY:)/;
-        if (/^ {15,}(\S.*)$/ && $areas[1])
+        if ($subject =~ /^AreaFix list of areas/) # CrashEcho
+        { if (/^ {15,}(\S(?:.*\S)?)\s+(?:\?|\d+)\s*$/ && $areas[1])
+          { $areas[@areas-1] .= " $1";
+            next;
+          }
+        }
+        elsif (/^ {15,}(\S.*)$/ && $areas[1])
         { $areas[@areas-1] .= " $1";
           next;
         }
@@ -446,6 +456,13 @@ EOF
         if ($subject =~ /^List of available areas/)
         {
           next unless /^ (\S+)(?: +(\S.*))?\s*$/;
+          push (@areas, "$1 $2");
+          next;
+        }
+        if ($subject =~ /^AreaFix list of areas/)
+        { # CrashEcho
+          next if /^ Group:/;
+          next unless /^ (\S+)(?:\s+(\S(?:.*\S)?)\s+(?:\?|\d+))?\s*$/;
           push (@areas, "$1 $2");
           next;
         }
