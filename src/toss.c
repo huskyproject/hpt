@@ -1854,7 +1854,7 @@ void processDir(char *directory, e_tossSecurity sec)
 
 	    rc = 3; // nonsence, but compiler warns
 	    if (config->tossingExt != NULL &&
-		(newFileName=changeFileSuffix(dummy, config->tossingExt)) != NULL){
+		(newFileName=changeFileSuffix(dummy, config->tossingExt,1)) != NULL){
 		nfree(dummy);
 		dummy = newFileName;
 		newFileName=NULL;
@@ -1866,7 +1866,7 @@ void processDir(char *directory, e_tossSecurity sec)
 
 	    if (rc>=1 && rc<=6) {
 		w_log(LL_ERR, "Renaming pkt/arc to .%s",ext[rc]);
-		newFileName=changeFileSuffix(dummy, ext[rc]);
+		newFileName=changeFileSuffix(dummy, ext[rc], 1);
 	    } else {
 		if (rc!=7) remove(dummy);
 	    }
