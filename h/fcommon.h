@@ -82,8 +82,8 @@ int   createTempPktFileName(s_link *link);
           structure
 */
 
-int    createDirectoryTree(const char *pathName);
-/*DOC
+int    createDirectoryTree(const char *pathName); // moved to smapi
+/*DOC                              // can be removed from hpt later 
   Input:  a pointer to a \0 terminated string
   Output: 0 if successfull, 1 else
   FZ:     pathName is a correct directory name
