@@ -1,7 +1,12 @@
+2002-12-24 Tuesday 08:33  d_sergienko
+
+	* HISTORY (hpt-1_2-stable.10): 
+	removed info about local areas in import.log
+
 2002-12-22 Sunday 13:13  d_sergienko
 
-	* HISTORY, src/toss.c (hpt-1_2-stable.[9,10]): importlog will not
-	contain local & passthrough areas any more
+	* HISTORY (hpt-1_2-stable.9): importlog will not contain local &
+	passthrough areas any more
 
 2002-12-05 Thursday 13:56  stas_degteff
 
