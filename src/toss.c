@@ -1262,7 +1262,6 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
         if ((link != NULL) && (link->autoAreaCreate != 0) && (writeAccess == 0)) {
            autoCreate(area, pktOrigAddr, NULL);
            echo = getArea(config, area);
-		   //writeAccess = e_writeCheck(config, echo, &pktOrigAddr);
 		   writeAccess = checkAreaLink(echo, pktOrigAddr);
 	   if (writeAccess) {
 	       rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
