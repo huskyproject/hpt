@@ -656,14 +656,14 @@ sub _route
     $boss =~ s/\..*//;
     if ($patt =~ /^hub(.*)/i)
     { $_ = $1;
-      $dest = "";
-      $dest = $1 if $nodelist{$boss} =~ /,(.*)/;
-      $patt = ".*" if $_ eq $dest;
+      if ($nodelist{$boss} =~ /,(.*)/)
+      { $patt = ".*" if $_ eq $1;
+      }
     } elsif ($patt =~ /^reg(.*)/i)
     { $_ = $1;
-      $dest = "";
-      $dest = $1 if $nodelist{$boss} =~ /^(.*),/;
-      $patt = ".*" if $_ eq $dest;
+      if ($nodelist{$boss} =~ /^(.*),/)
+      { $patt = ".*" if $_ eq $1;
+      }
     }
     if ($addr =~ /^$patt$/)
     { if ($dest eq "noroute")
