@@ -3,22 +3,30 @@
  * $Id$
  */
 
+/* libc */
 #include <stdio.h>
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
-#include <fidoconf/xstr.h>
-#include <fidoconf/areatree.h>
-#include <fidoconf/afixcmd.h>
-#include <smapi/progprot.h>
-#include <global.h>
-#include <toss.h>
-#include <areafix.h>
-#include <query.h>
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+
+/* smapi */
+#include <smapi/compiler.h>
+#include <smapi/progprot.h>
+
+/* fidoconf */
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
+#include <fidoconf/xstr.h>
+#include <fidoconf/areatree.h>
+#include <fidoconf/afixcmd.h>
+
+/* hpt */
+#include <global.h>
+#include <toss.h>
+#include <areafix.h>
+#include <query.h>
 
 #if !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>

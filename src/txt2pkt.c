@@ -314,7 +314,7 @@ int main(int argc, char *argv[])
       writeMsgToPkt(pkt, msg);
 
       closeCreatedPkt(pkt);
-      sleep(1);
+/*      sleep(1); */
    } else {
       printf("Could not create pkt");
    } /* endif */

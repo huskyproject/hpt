@@ -2022,8 +2022,8 @@ void writeImportLog(void) {
 
 static void setmaxopen(void) {
     ULONG cur, add;
-    maxopenpkt = MAXOPEN_DEFAULT;
-    cur = add = 0;
+    unsigned maxopenpkt = MAXOPEN_DEFAULT;
+    unsigned cur = add = 0;
 
     if (DosSetRelMaxFH(&add, &cur) == 0)
 	if (cur>=maxopenpkt) return;
@@ -2050,7 +2050,7 @@ static void setmaxopen(void) {
 static void setmaxopen(void) {
 #ifdef RLIMIT_NOFILE
     struct rlimit rl;
-    maxopenpkt = MAXOPEN_DEFAULT;
+    unsigned maxopenpkt = MAXOPEN_DEFAULT;
 
     if (getrlimit(RLIMIT_NOFILE, &rl) == 0)
 	if (rl.rlim_cur >= MAXOPEN_DEFAULT)
