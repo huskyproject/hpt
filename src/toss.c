@@ -1156,7 +1156,7 @@ int carbonCopy(s_message *msg, s_area *echo)
         area = cb->area;
 		
 	// dont CC to the echo the mail comes from
-        if(!cb->rule)
+        if(!cb->rule&CC_AND)
             if (!cb->extspawn &&
              // fix for extspawn
             !stricmp(echo->areaName,area->areaName)
@@ -1219,10 +1219,10 @@ int carbonCopy(s_message *msg, s_area *echo)
 
         }
 
-        if(cb->rule&CC_NOT) /* 2nd bit for NOT on/off */
+        if(cb->rule&CC_NOT) /* NOT on/off */
             result=!result;
 
-        switch(cb->rule){ /* what operation with next result */
+        switch(cb->rule&CC_AND){ /* what operation with next result */
         case CC_OR: /* OR */
             if(result){
                 /* make cc */
@@ -1241,7 +1241,7 @@ int carbonCopy(s_message *msg, s_area *echo)
             if(!result){
                 /* following expressions can be skipped until OR */
                 for (++i,++cb; i<config->carbonCount; i++,++cb)
-                    if(!cb->rule)
+                    if(!cb->rule&CC_AND)
                         break; /* this is the last in the AND expr. chain */
             }
             /* else result==TRUE, so continue with next expr. */
