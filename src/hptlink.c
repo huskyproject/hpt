@@ -86,7 +86,7 @@ int useSubj = 1;
 int useReplyId = 1;
 int loglevel = 10;
 int linkNew = 0;
-char *version = "1.8";
+char *version = "1.9";
 HAREA harea;
 int maxreply;
 
@@ -130,19 +130,13 @@ int cmpMsgIdReply (register char *str1, register char *str2)
 {
 
     while (*str1==*str2 && *str1) {
-	str1++;
-	str2++;
+	if (*str1=='@') while (*str1 && *str1!=' ') str1++;
+	if (*str1) str1++;
+	if (*str2=='@') while (*str2 && *str2!=' ') str2++;
+	if (*str2) str2++;
     }
     if (*str1=='\0' && *str2=='\0') return 0;
-    if (*str1=='@') {
-	while (*str1 && *str1!=' ') str1++;
-	return (strcmp (str1, str2));
-    } else if(*str2=='@') {
-	while (*str2 && *str2!=' ') str2++;
-	return (strcmp (str1, str2));
-    } else {
-	return 1;
-    }
+    return 1;
 }
 
 void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo *replmap )
