@@ -37,6 +37,7 @@ tearline generation added
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #if defined(__BEOS__)
 #include <sys/sysexits.h>
@@ -366,7 +367,7 @@ void post(int c, unsigned int *n, char *params[])
                     nfree(textBuffer);
                 }
             } else {
-                w_log(LL_ERROR, "post: failed to open input file %s", params[*n]);
+                w_log(LL_ERROR, "post: failed to open input file %s: %s", params[*n], strerror(errno));
                 quit = 1;
             }
         } else {
