@@ -41,7 +41,7 @@ Changes between hpt-1.2-stable and hpt-1.4-stable
    - If hpt is being run several times within the same second it could generate
      the same pkt name and archiver will overwrite existing pkt in bundle.
      Now before generating 1st pkt hpt make a delay in 1 second to prevent 
-     this.
+     this. Or set seqDir in config and no delay will be at all! :)
    - Changed zonegating algorythm (see docs)
    - Take from/to addresses from INTL instead of binary headers when packing 
      netmail from message base. If addresses from kludges not available - 
