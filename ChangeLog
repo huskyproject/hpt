@@ -1,3 +1,8 @@
+2003-09-17 Wednesday 20:05  d_sergienko
+
+	* Makefile (1.21): add libz to linking libraries list if defined
+	USE_HPTZIP
+
 2003-09-04 Thursday 07:56  val_khokhlov
 
 	* doc/perlhooks.rus (1.5), src/perl.c (1.69): new parameters in
