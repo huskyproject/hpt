@@ -67,7 +67,7 @@ be cleared.
 #include <global.h>
 #include <fcommon.h>
 
-#define MAX_INCORE	10000	/*  if more messages, do not link incore */
+#define MAX_INCORE	10000UL	/*  if more messages, do not link incore */
 
 dword Jam_Crc32(unsigned char* buff, dword len);
 char *Jam_GetKludge(HAREA jm, dword msgnum, word what);
