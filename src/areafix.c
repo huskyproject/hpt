@@ -2041,6 +2041,7 @@ void afix(s_addr addr, char *cmd)
     if (cmd) {
 	link = getLinkFromAddr(config, addr);
 	if (link) {
+	  if (cmd && strlen(cmd)) {
 	    tmpmsg = makeMessage(&addr, link->ourAka, link->name,
 				 link->RemoteRobotName ?
 				 link->RemoteRobotName : "Areafix",
@@ -2051,6 +2052,7 @@ void afix(s_addr addr, char *cmd)
 	    processAreaFix(tmpmsg, NULL, 1);
 	    tmpmsg->text=NULL;
 	    freeMsgBuffers(tmpmsg);
+	  } else w_log(LL_WARN, "areafix: empty areafix command from %s", aka2str(addr));
 	} else w_log(LL_ERR, "areafix: no such link in config: %s!", aka2str(addr));
     }
 
