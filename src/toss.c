@@ -689,8 +689,8 @@ void makeMsgToSysop(char *areaName, hs_addr fromAddr, ps_addr uplinkAddr)
 		if (robot->reportsFlags)
 		    xstrscat(&(msgToSysop[i]->text), "\001FLAGS ",
 		             robot->reportsFlags, "\r", NULL);
-                xstrscat(&(msgToSysop[i]->text),
-                    "Action   Name", print_ch(49, ' '), "By\r", NULL);
+                xstrscat(&(msgToSysop[i]->text), "Action   Name", 
+                         print_ch(49, ' '), "By\r", NULL);
                 /*  Shitty static variables .... */
                 xstrscat(&(msgToSysop[i]->text), print_ch(79, '-'), "\r", NULL);
                 msgToSysop[i]->recode |= (REC_HDR|REC_TXT);
@@ -698,7 +698,7 @@ void makeMsgToSysop(char *areaName, hs_addr fromAddr, ps_addr uplinkAddr)
             }
 
             /*           New report generation */
-            xstrcat(&buff, aka2str(fromAddr));
+            if (config->reportRequester) xstrcat(&buff, aka2str(fromAddr));
             if (uplinkAddr != NULL) { /*  autocreation with forward request */
                 xstrcat(&buff, " from ");
                 xstrcat(&buff, aka2str(*uplinkAddr));
