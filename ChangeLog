@@ -8,6 +8,7 @@ max:
 * changed readMsgFromPkt: no limits, safe code.
 * parse SEEN-BYs after Origin (if exist)
 * don't create err files after areafixfrompkt (if error)
+* fix for bundle filename creation (report from Mike Ivanov)
 patch from Serguei Revtov:
 * atomic creation of lock&bsy files in fcommon.c
 

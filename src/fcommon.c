@@ -241,7 +241,6 @@ int createTempPktFileName(s_link *link)
 
 	while(1) {
 		do {
-			
 			sprintf(fileName, "%s%06lx%02x.pkt",
 					config->tempOutbound, (long)aTime, counter);
 
@@ -279,15 +278,16 @@ int createTempPktFileName(s_link *link)
 			writeLogEntry(hpt_log,'7',"created 256 pkt's/sec!");
 			sleep(1);
 			aTime = time(NULL);
+			aTime %= 0xffffff;
 			counter=0;
 		}
 	}
-    free(zoneOutbound);
+	free(zoneOutbound);
 	count = counter;
 
-    counter = 0;
+	counter = 0;
 	do {
- 		sprintf(pfileName, "%s%0x", tmpPFileName, counter);
+ 		sprintf(pfileName, "%s%01x", tmpPFileName, counter);
 		counter++;
 	} while ((fexist(pfileName) || fileNameAlreadyUsed(NULL, pfileName)) &&
 			 (counter <= 15));
