@@ -381,7 +381,6 @@ define links and areas before any carbone definitions
 * RouteFile::                   routing of netmails with file attached
 * RouteMail::                   routing of netmails without file attached
 * ScreenLogLevels::             set level of log output to screen
-* SendNotifyMessages::          send messages about query changes to link
 * SeparateBundles::             move echomail for each link to his own directory
 * SetConsoleTitle::             schange conesole title under win32
 * SortEchoList::                echolist sort mode
@@ -1455,7 +1454,7 @@ This statement is the same as the @code{Route} statement.
 
 This statement can be repeated.
 
-@node ScreenLogLevels, SendNotifyMessages, RouteMail, Keywords
+@node ScreenLogLevels, SeparateBundles, RouteMail, Keywords
 @subsection ScreenLogLevels
 @findex ScreenLogLevels
 @table @asis
@@ -1469,22 +1468,7 @@ Set level of log output to screen. See loglevels for details
 
 This statement cannot be repeated.
 
-@node SendNotifyMessages, SeparateBundles, ScreenLogLevels, Keywords
-@subsection SendNotifyMessages
-@findex SendNotifyMessages
-@table @asis
-@item Syntax:
-@code{sendNotifyMessages <bool>}
-@item Example:
-@code{sendNotifyMessages yes}
-@end table
-
-If sendNotifyMessages is true, link will receive notification messages from 
-areafix about link's requests status (this is default behavior).
-
-This statement can be repeated only for different links.
-
-@node SeparateBundles, SetConsoleTitle, SendNotifyMessages, Keywords
+@node SeparateBundles, SetConsoleTitle, ScreenLogLevels, Keywords
 @subsection SeparateBundles
 @findex SeparateBundles
 @table @asis
@@ -2239,6 +2223,7 @@ This statement cannot be repeated.
 * PktPwd::                      pktpassword for this link
 * ReducedSeenBY::               reduced seen-by mode (FSC-0093)
 * RemoteRobotName::             remote "areafix" name
+* SendNotifyMessages::          send messages about query changes, bad posts and so on
 @end menu
 
 @node AccessGrp, AdvancedAreafix, Link Keywords, Link Keywords
@@ -3156,7 +3141,7 @@ RSB algorithm
 
 This statement can only be repeated for different links.
 
-@node RemoteRobotName, , ReducedSeenBY, Link Keywords
+@node RemoteRobotName, SendNotifyMessages, ReducedSeenBY, Link Keywords
 @subsection RemoteRobotName
 @findex RemoteRobotName
 @table @asis
@@ -3168,6 +3153,23 @@ This statement can only be repeated for different links.
 
 Set remote system "areafix" to new name. This token used when requests
 to subscribing/unsubscribing of new areas forwarded to this link.
+
+This statement can only be repeated for different links.
+
+@node SendNotifyMessages, , RemoteRobotName, Link Keywords
+@subsection SendNotifyMessages
+@findex SendNotifyMessages
+@table @asis
+@item Syntax:
+@code{sendNotifyMessages <bool>}
+@item Example:
+@code{sendNotifyMessages yes}
+@end table
+
+If sendNotifyMessages is true, link will receive notification messages from 
+areafix about link's requests status or bad posts.
+
+By default is off, i.e. do not send any notification messages.
 
 This statement can only be repeated for different links.
 
