@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Tue Dec 12 22:39:34 NOVT 2000
+max:
+* fixed bug with carbonExtern (report from Mike Ivanov)
+
+----- cvs ci ------
 Sat Dec  9 20:35:07 NOVT 2000
 max:
 * fixed "AREA:NETMAIL" bug

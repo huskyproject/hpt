@@ -982,9 +982,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 	fprintf(msgfp, "From: \"%s\" %s\n", msg->fromUserName, aka2str(msg->origAddr));
 	fprintf(msgfp, "To:   \"%s\" %s\n", msg->toUserName, aka2str(msg->destAddr));
 	fprintf(msgfp, "Date: \"%s\"\n", msg->datetime);
-  	/* +AS+ */
   	fprintf(msgfp, "Subject: \"%s\"\n\n", msg->subjectLine);
-  	/* -AS- */
 	/* Output msg text */
 	for (p = msg->text; *p ; p++) 
 		if (*p == '\r') 
@@ -1126,7 +1124,8 @@ int carbonCopy(s_message *msg, s_area *echo)
 			break;
 		case 3:	str=hpt_stristr(msg->subjectLine,config->carbons[i].str);
 			break;
-		case 4:	str=hpt_stristr(msg->text+strlen(area->areaName)+6,config->carbons[i].str);
+		case 4:	if (config->carbons[i].extspawn) str=hpt_stristr(msg->text,config->carbons[i].str);
+			else str=hpt_stristr(msg->text+strlen(area->areaName)+6,config->carbons[i].str);
 			break;
 		case 5:	if (addrComp(msg->origAddr, config->carbons[i].addr)==0) cmp = 1;
 			break;
