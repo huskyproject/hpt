@@ -1103,6 +1103,13 @@ void perl_setvars(void) {
    VK_ADD_HASH_int(hv, sv, "keepTrsFiles", config->keepTrsFiles);
    VK_ADD_HASH_str(hv, sv, "fileBoxesDir", config->fileBoxesDir);
    VK_ADD_HASH_str(hv, sv, "rulesDir", config->rulesDir);
+   if (config->packCount) {
+     char *packlist = NULL;
+     for (j = 0; j < config->packCount; j++)
+         xstrscat(&packlist, " ", config->pack[j].packer, NULL);
+     VK_ADD_HASH_str(hv, sv, "packers", packlist+1);
+     nfree(packlist);
+   }
    av = newAV();
    for (i = 0; i < config->addrCount; i++)
       if ( (sv = newSVpv(aka2str(config->addr[i]), 0)) != NULL ) {
@@ -1130,6 +1137,9 @@ void perl_setvars(void) {
       VK_ADD_HASH_int(hv2, sv, "forwreqs", config->links[i]->forwardRequests);
       VK_ADD_HASH_str(hv2, sv, "forwreqsFile", config->links[i]->forwardRequestFile);
       VK_ADD_HASH_int(hv2, sv, "forwreqsPrio", config->links[i]->forwardAreaPriority);
+      VK_ADD_HASH_int(hv2, sv, "reducedSeenBy", config->links[i]->reducedSeenBy);
+      VK_ADD_HASH_int(hv2, sv, "noRules", config->links[i]->noRules);
+      if (config->links[i]->packerDef) VK_ADD_HASH_str(hv2, sv, "packer", config->links[i]->packerDef->packer);
       if (config->links[i]->AccessGrp) {
         char *grplist = NULL;
         for (j = 0; j < config->links[i]->numAccessGrp; j++)
