@@ -1,3 +1,20 @@
+2001-12-13 Thursday 17:11  mche
+
+	* src/toss.c (1.372): calls of createDirectoryTree are removed
+	(commented)
+
+2001-12-13 Thursday 16:48  mche
+
+	* h/fcommon.h (1.33): fiture - createDirectoryTree moved  from
+	hpt/fcommon to smapi/fexist, now when we try to write to msgbase we
+	build DirectoryTree if needed it probably increase speed of tossing
+	to non passthrough areas.
+
+2001-12-13 Thursday 15:55  ml
+
+	* doc/hpt-FAQ.russian (1.13), src/toss.c (1.371): print link
+	address after pkt name
+
 2001-12-12 Wednesday 17:00  ml
 
 	* src/scanarea.c (1.72): fixed carbonCopy() parameters
