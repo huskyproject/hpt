@@ -96,9 +96,9 @@ groups for @code{EchoAreas})
 @section Download the Source Code & Binary Files
 
 @table @asis
-@item Main page (source code, win32 & os/2 releases) - http://husky.physcip.uni-stuttgart.de/hpt.html
-@item Win32 bins (unstable) - www.chat.ru/~sirevtov/files
-@item Win32 bins (unstable) - ftp://bbs.ogo.ru/pub/fileecho/nftn
+@item Main page (source code, win32 & os/2 releases) - @url{http://husky.physcip.uni-stuttgart.de/hpt.html}
+@item Win32 bins (unstable) - @url{www.chat.ru/~sirevtov/files}
+@item Win32 bins (unstable) - @url{ftp://bbs.ogo.ru/pub/fileecho/nftn}
 @end table
 
 @node Compiling, Support, Download, Installation
@@ -485,7 +485,7 @@ This statement cannot be repeated.
 @findex BundleNameStyle
 @table @asis
 @item Syntax:
-@code{bundleNameStyle <timeStamp|addrDiff|addrDiffAlways>}
+@code{bundleNameStyle <timeStamp | addrDiff | addrDiffAlways>}
 @item Example:
 @code{bundleNameStyle timeStamp}
 @end table
@@ -617,7 +617,7 @@ This statement cannot be repeated.
 @findex KludgeAreaNetmail
 @table @asis
 @item Syntax:
-@code{kludgeAreaNetmail <kill|ignore|echomail>}
+@code{kludgeAreaNetmail <kill | ignore | echomail>}
 @item Example:
 @code{kludgeAreaNetmail kill}
 @end table
@@ -637,7 +637,7 @@ This statement cannot be repeated.
 @findex LinkWithImportLog
 @table @asis
 @item Syntax:
-@code{linkWithImportLog <yes|no|kill>}
+@code{linkWithImportLog <yes | no | kill>}
 @item Example:
 @code{linkWithImportLog yes}
 @end table
@@ -1014,7 +1014,7 @@ This statement cannot be repeated.
 @findex TossingExt
 @table @asis
 @item Syntax:
-@code{TossingExt <string>}
+@code{TossingExt [<string>]}
 @item Example:
 @code{TossingExt tos}
 @end table
@@ -1032,7 +1032,7 @@ This statement cannot be repeated.
 @findex Unpack
 @table @asis
 @item Syntax:
-@code{Unpack "<Call>" <offset> <matchcode>}
+@code{Unpack "<call>" <offset> <matchcode>}
 @item Example:
 @code{Unpack "unzip -joLqq $a -d $p" 0 504b0304}
 @end table
@@ -1779,7 +1779,7 @@ This statement can only be repeated for different links.
 @findex EchoMailFlavour
 @table @asis
 @item Syntax:
-@code{echoMailFlavour <hold|normal|crash|direct|immediate>}
+@code{echoMailFlavour <hold | normal | crash | direct | immediate>}
 @item Example:
 @code{echoMailFlavour hold}
 @end table
@@ -1969,7 +1969,7 @@ This statement can be repeated.
 @findex LinkBundleNameStyle
 @table @asis
 @item Syntax:
-@code{linkBundleNameStyle <timeStamp|addrDiff|addrDiffAlways>}
+@code{linkBundleNameStyle <timeStamp | addrDiff | addrDiffAlways>}
 @item Example:
 @code{linkbundleNameStyle addrDiff}
 @end table
