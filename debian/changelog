@@ -1,4 +1,4 @@
-hpt (1.2.0-20020917-1) stable; urgency=low
+hpt (1.2.0-20020918-1) stable; urgency=low
 
   * New cvs version (1.2-RC2)
   * Make single html-doc and place it to /usr/share/doc/hpt

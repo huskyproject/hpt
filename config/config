@@ -41,8 +41,8 @@ DefArcmailSize	300
 
 Include /etc/husky/path
 
-# Uncomment if you use filter.pl
-#hptPerlFile /etc/filter.pl
+# Enable power of perl hooks!
+#hptPerlFile /etc/husky/filter.pl
 
 ############################################################################
 # Report about autocreation areas

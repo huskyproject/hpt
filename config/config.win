@@ -21,6 +21,7 @@ include c:\fido\config\path
 logechotoscreen
 mindiskfreespace 10
 
+# Enable power of perl hooks!
 #hptPerlFile c:\fido\config\filter.pl
 
 Link Boss
