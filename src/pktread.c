@@ -209,7 +209,7 @@ s_message *readMsgFromPkt(FILE *pkt,UINT16 def_zone)
    getc(pkt); getc(pkt);                // read unused cost fields (2bytes)
    fgets(msg->datetime, 21, pkt);
 
-   textBuffer = (CHAR *) malloc(73);   // reserve mem space
+   textBuffer = (CHAR *) malloc(74);   // reserve mem space
    len = fgetsUntil0(textBuffer, 37, pkt);
    msg->toUserName = (CHAR *) malloc(len);
    strcpy(msg->toUserName, textBuffer);

@@ -82,7 +82,7 @@ XMSG createXMSG(s_message *msg)
 
 void putMsgInArea(s_area *echo, s_message *msg)
 {
-   char buff[70], *ctrlBuff, *textStart;
+   char buff[70], *ctrlBuff, *textStart, *textWithoutArea;
    UINT textLength = msg->textLength;
    HAREA harea;
    HMSG  hmsg;
@@ -92,7 +92,16 @@ void putMsgInArea(s_area *echo, s_message *msg)
    if (harea != NULL) {
       hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
       if (hmsg != NULL) {
-         ctrlBuff = CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &textStart, &textLength);
+
+         textWithoutArea = msg->text;
+         
+         if ((strncmp(msg->text, "AREA:", 5) == 0) && (echo != &(config->badArea)) && (echo != &(config->dupeArea))) {
+            // jump over AREA:xxxxx\r
+            while (*(textWithoutArea) != '\r') textWithoutArea++;
+            textWithoutArea++;
+         }
+         
+         ctrlBuff = CopyToControlBuf((UCHAR *) textWithoutArea, (UCHAR **) &textStart, &textLength);
          // textStart is a pointer to the first non-kludge line
          xmsg = createXMSG(msg);
 
