@@ -173,11 +173,14 @@ int linkArea(s_area *area, int netMail)
       /* Pass 3rd : write information back to msgbase */
       for (curr = tail; curr != NULL; ) {
          hmsg  = MsgOpenMsg(harea, MOPEN_READ, curr -> msgNum);
-         MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-         memcpy(xmsg.replies, curr->replies, sizeof(UMSGID) * MAX_REPLY);
-         xmsg.replyto = curr->replyToPos;
-         MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
-         MsgCloseMsg(hmsg);
+	 if (hmsg != NULL) 
+	   {
+	     MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+	     memcpy(xmsg.replies, curr->replies, sizeof(UMSGID) * MAX_REPLY);
+	     xmsg.replyto = curr->replyToPos;
+	     MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+	     MsgCloseMsg(hmsg);
+	   }
          /* free this node */
          prv = curr -> prev;
          free(curr -> msgId);

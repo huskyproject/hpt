@@ -1,3 +1,12 @@
+hpt 0.30
+--------
+	
+----- cvs ci ------	
+Tue Oct 19 20:22:22 CEST 1999 
+mtt:
+* dirty fix for link.c when trying to link a non existing message.
+* version adjusted to 0.30 
+	
 ----- cvs ci ------
 Mon Oct 18 22:22:12 NOVST 1999                                                  
 max:
