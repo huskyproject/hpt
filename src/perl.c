@@ -185,7 +185,7 @@ static char* flv2str(e_flavour flv) {
 }
 /* smart string flavour parsing */
 static e_flavour str2flv(char *flv) {
-typedef struct flv_data_s { e_flavour f; char c; char *s1; char *s2; };
+struct flv_data_s { e_flavour f; char c; char *s1; char *s2; };
 const struct flv_data_s flv_data[] = { { normal, 'n', "norm", "normal" },
                                        { hold, 'h', "hld", "hold" },
                                        { crash, 'c', "cra", "crash" },
@@ -904,7 +904,7 @@ static XS(perl_gmtoff)
 #ifdef _MSC_VER
 EXTERN_C void boot_DynaLoader (pTHXo_ CV* cv);
 #else
-void boot_DynaLoader(CV *cv);
+XS(boot_DynaLoader);
 void boot_DB_File(CV *cv);
 void boot_Fcntl(CV *cv);
 void boot_POSIX(CV *cv);
@@ -918,7 +918,11 @@ void boot_OS2__REXX(CV *cv);
 #ifdef _MSC_VER
 EXTERN_C void xs_init (pTHXo)
 #else
+#ifdef pTHXo
+static void xs_init(pTHXo)
+#else
 static void xs_init(void)
+#endif
 #endif
 {
   static char *file = __FILE__;
@@ -1307,21 +1311,36 @@ int PerlStart(void)
 /* val: run main program body */
    perl_run(perl);
 /* val: look which subs present */
-   if (perl_get_cv(PERLFILT, NULL) == NULL) perl_subs &= ~SUB_FILTER;
-   if (perl_get_cv(PERLPKT, NULL) == NULL) perl_subs &= ~SUB_PROCESS_PKT;
-   if (perl_get_cv(PERLPKTDONE, NULL) == NULL) perl_subs &= ~SUB_PKT_DONE;
-   if (perl_get_cv(PERLAFTERUNP, NULL) == NULL) perl_subs &= ~SUB_AFTER_UNPACK;
-   if (perl_get_cv(PERLBEFOREPACK, NULL) == NULL) perl_subs &= ~SUB_BEFORE_PACK;
-   if (perl_get_cv(PERLSTART, NULL) == NULL) perl_subs &= ~SUB_HPT_START;
-   if (perl_get_cv(PERLEXIT, NULL) == NULL) perl_subs &= ~SUB_HPT_EXIT;
-   if (perl_get_cv(PERLROUTE, NULL) == NULL) perl_subs &= ~SUB_ROUTE;
-   if (perl_get_cv(PERLSCAN, NULL) == NULL) perl_subs &= ~SUB_SCAN;
-   if (perl_get_cv(PERLTOSSBAD, NULL) == NULL) perl_subs &= ~SUB_TOSSBAD;
-   if (perl_get_cv(PERLONECHOLIST, NULL) == NULL) perl_subs &= ~SUB_ON_ECHOLIST;
-   if (perl_get_cv(PERLONAFIXCMD, NULL) == NULL) perl_subs &= ~SUB_ON_AFIXCMD;
-   if (perl_get_cv(PERLONAFIXREQ, NULL) == NULL) perl_subs &= ~SUB_ON_AFIXREQ;
-   if (perl_get_cv(PERLPUTMSG, NULL) == NULL) perl_subs &= ~SUB_PUTMSG;
-   if (perl_get_cv(PERLEXPORT, NULL) == NULL) perl_subs &= ~SUB_EXPORT;
+   if (perl_get_cv(PERLFILT      , FALSE) == NULL)
+					perl_subs &= ~SUB_FILTER;
+   if (perl_get_cv(PERLPKT       , FALSE) == NULL)
+					perl_subs &= ~SUB_PROCESS_PKT;
+   if (perl_get_cv(PERLPKTDONE   , FALSE) == NULL)
+					perl_subs &= ~SUB_PKT_DONE;
+   if (perl_get_cv(PERLAFTERUNP  , FALSE) == NULL)
+					perl_subs &= ~SUB_AFTER_UNPACK;
+   if (perl_get_cv(PERLBEFOREPACK, FALSE) == NULL)
+					perl_subs &= ~SUB_BEFORE_PACK;
+   if (perl_get_cv(PERLSTART     , FALSE) == NULL)
+					perl_subs &= ~SUB_HPT_START;
+   if (perl_get_cv(PERLEXIT      , FALSE) == NULL)
+					perl_subs &= ~SUB_HPT_EXIT;
+   if (perl_get_cv(PERLROUTE     , FALSE) == NULL)
+					perl_subs &= ~SUB_ROUTE;
+   if (perl_get_cv(PERLSCAN      , FALSE) == NULL)
+					perl_subs &= ~SUB_SCAN;
+   if (perl_get_cv(PERLTOSSBAD   , FALSE) == NULL)
+					perl_subs &= ~SUB_TOSSBAD;
+   if (perl_get_cv(PERLONECHOLIST, FALSE) == NULL)
+					perl_subs &= ~SUB_ON_ECHOLIST;
+   if (perl_get_cv(PERLONAFIXCMD , FALSE) == NULL)
+					perl_subs &= ~SUB_ON_AFIXCMD;
+   if (perl_get_cv(PERLONAFIXREQ , FALSE) == NULL)
+					perl_subs &= ~SUB_ON_AFIXREQ;
+   if (perl_get_cv(PERLPUTMSG    , FALSE) == NULL)
+					perl_subs &= ~SUB_PUTMSG;
+   if (perl_get_cv(PERLEXPORT    , FALSE) == NULL)
+					perl_subs &= ~SUB_EXPORT;
 /* val: run hpt_start() */
    if (perl_subs & SUB_HPT_START) {
       pid = handleperlerr(&saveerr);
