@@ -716,10 +716,14 @@ void scanExport(int type, char *str) {
        if (config->echotosslog)
        {
            f = fopen(config->echotosslog, "r");
-	   if (f != NULL && config->packNetMailOnScan == 0) {
+           if (f != NULL && config->packNetMailOnScan == 0) {
+#if !defined(MSDOS)
                tmplogname = (char *) smalloc(strlen(config->echotosslog)+7);
                // assuming we have max. 5 digits pid + '.' and '\0'
                sprintf(tmplogname, "%s.%u", config->echotosslog, getpid());
+#else
+               tmplogname = makeUniqueDosFileName(config->logDirectory, "tmp", config);
+#endif
                ftmp = fopen(tmplogname, "w");
                if (ftmp == NULL) {
                    w_log('9', "Can't open file %s for writing : %s", tmplogname, strerror(errno));
@@ -730,9 +734,13 @@ void scanExport(int type, char *str) {
        }
    }
    if (type & SCN_FILE) {
+#if !defined(MSDOS)
        tmplogname = (char *) smalloc(strlen(str)+7);
        // assuming we have max. 5 digits pid + '.' and '\0'
-       sprintf(tmplogname, "%s.%d", str, getpid());
+       sprintf(tmplogname, "%s.%u", str, getpid());
+#else
+       tmplogname = makeUniqueDosFileName(config->logDirectory, "tmp", config);
+#endif
        f = fopen(str, "r");
        if (f != NULL) {
            ftmp = fopen(tmplogname, "w");
@@ -745,7 +753,7 @@ void scanExport(int type, char *str) {
    }
 
    if (type & SCN_NAME) {
-      scanByName(str);   
+       scanByName(str);
    } else if (f == NULL) {
        if (type & SCN_FILE) {
            w_log('4', "EchoTossLogFile not found -> Scanning stop");
@@ -766,38 +774,38 @@ void scanExport(int type, char *str) {
            }
        };
    } else {
-   // else scan only those areas which are listed in the file
-      w_log('4', "EchoTossLogFile found -> Scanning only listed areas");
+       // else scan only those areas which are listed in the file
+       w_log('4', "EchoTossLogFile found -> Scanning only listed areas");
 
-      while (!feof(f)) {
-         line = readLine(f);
+       while (!feof(f)) {
+           line = readLine(f);
 
-         if (line != NULL) {
-	    if (*line && line[strlen(line)-1] == '\r')
-	       line[strlen(line)-1] = '\0';  /* fix for DOSish echotoss.log */
-            striptwhite(line);
-            if (!ftmp) { // the same as if(config->packNetMailOnScan) {
-                scanByName(line);
-            } else {
-                /* exclude NetmailAreas in echoTossLogFile */
-                if (type & SCN_ECHOMAIL) {
-                    if (getNetMailArea(config, line) == NULL)
-                        scanByName(line);
-                    else
-                        fprintf(ftmp, "%s\n", line);
-                } else {
-                    if (getNetMailArea(config, line) != NULL)
-                        scanByName(line);
-                    else
-                        fprintf(ftmp, "%s\n", line);
-                }
-            }
-            nfree(line);
-         }
-      }
-   };
-   
-   if (f != NULL) { 
+           if (line != NULL) {
+               if (*line && line[strlen(line)-1] == '\r')
+                   line[strlen(line)-1] = '\0';  /* fix for DOSish echotoss.log */
+               striptwhite(line);
+               if (!ftmp) { // the same as if(config->packNetMailOnScan) {
+                   scanByName(line);
+               } else {
+                   /* exclude NetmailAreas in echoTossLogFile */
+                   if (type & SCN_ECHOMAIL) {
+                       if (getNetMailArea(config, line) == NULL)
+                           scanByName(line);
+                       else
+                           fprintf(ftmp, "%s\n", line);
+                   } else {
+                       if (getNetMailArea(config, line) != NULL)
+                           scanByName(line);
+                       else
+                           fprintf(ftmp, "%s\n", line);
+                   }
+               }
+               nfree(line);
+           }
+       }
+   }
+
+   if (f != NULL) {
        fclose(f);
        if (ftmp != NULL) fclose(ftmp);
        st.st_size = 0;
@@ -810,12 +818,12 @@ void scanExport(int type, char *str) {
                remove(config->echotosslog);
                rename(tmplogname, config->echotosslog);
            }
-       } 
+       }
        else if (type & SCN_FILE) {
            if (st.st_size == 0) {
                remove(str);
                if (tmplogname) remove(tmplogname);
-    	   } else {
+           } else {
                remove(str);
                rename(tmplogname, str);
            }
@@ -825,7 +833,7 @@ void scanExport(int type, char *str) {
 
 //   if (type & SCN_ECHOMAIL) arcmail(NULL);
 //   if (type & SCN_ECHOMAIL)
-   // pack tempOutbound after scan Echomail, Netmail or EchoTossLogFile
+// pack tempOutbound after scan Echomail, Netmail or EchoTossLogFile
    tossTempOutbound(config->tempOutbound);
 
    writeDupeFiles();
