@@ -2895,6 +2895,8 @@ CarbonText " Israel "
 CarbonCopy my.news
 @end example
 
+@strong{Doesn't works for NetMail areas!}
+
 This statement can be repeated.
 
 @node CarbonGroups, CarbonKeepSb, CarbonFromArea, Carbon Copy
@@ -3026,14 +3028,14 @@ carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
 @item Syntax:
 @code{carbonRule AND|NOT|OR}
 @item Example:
-@code{carbonGroups fido}
-@code{carbonRule AND}
-@code{carbonText programming}
-@code{carbonCopy my.echomail}
+@item @code{carbonGroups fido}
+@item @code{carbonRule AND}
+@item @code{carbonText programming}
+@item @code{carbonCopy my.echomail}
 @end table
 
 With this keyword you can make it possible to have more than 1 selection
-criteria for a message. The defaultrule is AND. So without using CarbonRule,
+criteria for a message. The default rule is AND. So without using CarbonRule,
 all expressions will be AND-ed.
 With Carbonrule AND, the two expressions above and below the AND must be 
 true or else a message will not be copied.

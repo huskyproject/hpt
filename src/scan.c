@@ -336,13 +336,6 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    char        freeVirtualLink = 0;
    char        *flags=NULL;
 
-
-// remove after 29-Nov-01
-//   if (config->routeCount == 0) {
-//       w_log('7', "no routing - leave msg untouched");
-//       return 1;
-//   }
-
    memset(&msg,'\0',sizeof(s_message));
    convertMsgHeader(*xmsg, &msg);
    convertMsgText(SQmsg, &msg);
@@ -483,7 +476,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
    }
 
    // process carbon copy
-   if (config->carbonOut) carbonCopy(&msg, area);
+   if (config->carbonOut) carbonCopy(&msg, xmsg, area);
    
    freeMsgBuffers(&msg);
    if (freeVirtualLink==1) {

@@ -1265,7 +1265,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 /* Does carbon copying */
 /* Return value: 0 if nothing happend, 1 if there was a carbon copy, 
    > 1 if there was a carbon move or carbon delete*/
-int carbonCopy(s_message *msg, s_area *echo)
+int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
 {
     int i, rc = 0, result=0;
     char *testptr, *testptr2, *kludge;
@@ -1282,9 +1282,8 @@ int carbonCopy(s_message *msg, s_area *echo)
 
     for (i=0; i<config->carbonCount; i++,++cb) {
         /* Dont come to use netmail on echomail and vise verse */
-        if (( msg->netMail && !cb->netMail) ||
-            (!msg->netMail &&  cb->netMail))
-            continue;
+        if (cb->move!=2 && ((msg->netMail && !cb->netMail) ||
+            (!msg->netMail &&  cb->netMail))) continue;
 
         area = cb->area;
 		
@@ -1384,6 +1383,9 @@ int carbonCopy(s_message *msg, s_area *echo)
                     if (cb->areaName && cb->move!=2)
                         if (!processCarbonCopy(area,echo,msg,*cb))
                             rc &= 1;
+
+		// delete CarbonMove and CarbonDelete messages
+		if (cb->move && xmsg) xmsg->attr |= MSGKILL;
                 if (config->carbonAndQuit)
 		    /* not skip quit or delete */
                     if ((cb->areaName && *cb->areaName!='*') ||	cb->move==2) {
@@ -1608,7 +1610,8 @@ void writeMsgToSysop()
 		*ptr = '\0'; echo = getArea(config, msgToSysop[i]->text + 5); *ptr = '\r';
 		
 		if (echo != &(config->badArea)) {
-		    if (config->carbonCount != 0) ccrc = carbonCopy(msgToSysop[i], echo);
+		    if (config->carbonCount != 0) 
+			ccrc = carbonCopy(msgToSysop[i], NULL, echo);
 		    if (echo->msgbType != MSGTYPE_PASSTHROUGH && ccrc <= 1) {
         		putMsgInArea(echo, msgToSysop[i],1, (MSGSCANNED|MSGSENT|MSGLOCAL));
         		echo->imported++;  // area has got new messages
@@ -1737,7 +1740,8 @@ int processEMMsg(s_message *msg, s_addr pktOrigAddr, int dontdocc, dword forceat
 		     (addrComp(pktOrigAddr,*echo->useAka)==0)))
 		    forwardMsgToLinks(echo, msg, pktOrigAddr);
 
-		if ((config->carbonCount!=0)&&(!dontdocc)) ccrc=carbonCopy(msg,echo);
+		if ((config->carbonCount!=0)&&(!dontdocc))
+		    ccrc=carbonCopy(msg, NULL, echo);
 
 		if (ccrc <= 1) {
 		    echo->imported++;  // area has got new messages
@@ -1804,7 +1808,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 	return rc;
     }
 
-    if ((config->carbonCount!=0)&&(!dontdocc)) ccrc = carbonCopy(msg, area);
+    if ((config->carbonCount!=0)&&(!dontdocc)) ccrc = carbonCopy(msg, NULL, area);
     if (ccrc > 1) return 1; // carbon del or move
 
     // create Directory Tree if necessary
@@ -2956,7 +2960,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
 	if (dupeDetection(echo, msg)==1 || noexp) {
 	    // no dupe or toss whithout export to links
 		   
-	    if (config->carbonCount != 0) carbonCopy(&msg, echo);
+	    if (config->carbonCount != 0) carbonCopy(&msg, NULL, echo);
 		   
 	    echo->imported++;  // area has got new messages
 	    if (echo->msgbType != MSGTYPE_PASSTHROUGH) {

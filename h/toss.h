@@ -64,7 +64,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 					s_seenBy **seenBys, UINT *seenByCount,
 					s_seenBy **path, UINT *pathCount);
 void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr);
-int carbonCopy(s_message *msg, s_area *echo);
+int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo);
 s_arealink *getAreaLink(s_area *area, s_addr aka);
 void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy
 							  **seenBys, UINT *seenByCount);
