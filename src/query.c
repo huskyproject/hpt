@@ -414,7 +414,7 @@ char* af_Req2Idle(char *areatag, char* report, s_addr linkAddr)
 
 char* af_GetQFlagName()
 {
-    char *chanagedflag = sstrdup(config->echotosslog);
+    char *chanagedflag = safe_strdup(config->echotosslog);
     char *logdir       = strrchr(chanagedflag, PATH_DELIM);
     if(logdir)
     {
@@ -424,7 +424,7 @@ char* af_GetQFlagName()
     else
     {
         nfree(chanagedflag);
-        chanagedflag = sstrdup(czChangFlg);
+        chanagedflag = safe_strdup(czChangFlg);
     }
     return chanagedflag;
 }
