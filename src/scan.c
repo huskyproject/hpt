@@ -83,8 +83,6 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
 {
    // convert header
    msg->attributes  = xmsg.attr;
-   // clear trs, local & k/s flags
-   msg->attributes &= ~(MSGFWD|MSGLOCAL|MSGKILL);
 
    msg->origAddr.zone  = xmsg.orig.zone;
    msg->origAddr.net   = xmsg.orig.net;
@@ -359,6 +357,8 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 	return 0;
    }
 #endif
+   // clear trs, local & k/s flags
+   msg.attributes &= ~(MSGFWD|MSGLOCAL|MSGKILL);
 
    // prepare virtual link...
    virtualLink = getLinkFromAddr(config, msg.destAddr);  //maybe the link is in config?
