@@ -2234,6 +2234,7 @@ This statement cannot be repeated.
 * ReducedSeenBY::               reduced seen-by mode (FSC-0093)
 * RemoteRobotName::             remote "areafix" name
 * RescanGrp::                   groups that @code{denyRescan} token applies to
+* RescanLimit::                 limit max number of messages sent by rescan
 * SendNotifyMessages::          send messages about query changes, bad posts and so on
 * UnsubscribeOnAreaDelete::     send unsubscribe request when subscribed area is deleted
 @end menu
@@ -3221,7 +3222,7 @@ to subscribing/unsubscribing of new areas forwarded to this link.
 
 This statement can only be repeated for different links.
 
-@node RescanGrp, SendNotifyMessages, RemoteRobotName, Link Keywords
+@node RescanGrp, RescanLimit, RemoteRobotName, Link Keywords
 @subsection RescanGrp
 @findex RescanGrp
 @table @asis
@@ -3253,7 +3254,22 @@ Area groups A and B are denied to rescan, while C and D are allowed.
 
 This statement can only be repeated for different links.
 
-@node SendNotifyMessages, UnsubscribeOnAreaDelete, RescanGrp, Link Keywords
+@node RescanLimit, SendNotifyMessages, RescanGrp, Link Keywords
+@subsection RescanLimit
+@findex RescanLimit
+@table @asis
+@item Syntax:
+@code{RescanLimit <number>}
+@item Example:
+@code{RescanGrp 100}
+@end table
+
+This keyword is used to limit max number of messages sent by %rescan command.
+If it's set to 0 (default), the link is not limited.
+
+This statement can only be repeated for different links.
+
+@node SendNotifyMessages, UnsubscribeOnAreaDelete, RescanLimit, Link Keywords
 @subsection SendNotifyMessages
 @findex SendNotifyMessages
 @table @asis
