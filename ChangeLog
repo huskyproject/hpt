@@ -1,3 +1,21 @@
+2002-11-20 Wednesday 15:38  stas_degteff
+
+	* src/areafix.c (1.366): Three variants for %avail, token
+	availlist. Patch from Alexander Reznikov, 2:4600/220 (modified)
+
+2002-11-20 Wednesday 11:45  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.52): question about big stuff in temp
+	directory
+
+2002-11-20 Wednesday 10:04  stas_degteff
+
+	* src/post.c (1.100): Fix permition field in uue header
+
+2002-11-20 Wednesday 07:56  mche
+
+	* src/areafix.c (1.365): send areafix messages by defined routing
+
 2002-11-19 Tuesday 12:50  stas_degteff
 
 	* HISTORY (1.13): Check netmailarea presence in config
