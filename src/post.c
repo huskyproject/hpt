@@ -87,9 +87,9 @@ void print_help(void) {
    fprintf(stdout,"              -f flags(s)\n");
    fprintf(stdout,"                 flags  to  set  to the posted msg. possible ones\n");
    fprintf(stdout,"                 are: pvt, crash, read, sent, att,  fwd,  orphan,\n");
-   fprintf(stdout,"                 k/s, loc, hld, xx2,  frq, rrq, cpt, arq, urq;\n
-                                    use it without trailing brackets like this:  pvt\n
-                                    loc k/s\n\n");
+   fprintf(stdout,"                 k/s, loc, hld, xx2,  frq, rrq, cpt, arq, urq;\n");
+   fprintf(stdout,"                 use it without trailing brackets like this:  pvt\n");
+   fprintf(stdout,"                 loc k/s\n\n");
    fprintf(stdout,"              -x export message to echo links\n\n");
    fprintf(stdout,"              -d erase input file after posting\n\n");
    fprintf(stdout,"              -h get help\n\n");
