@@ -107,12 +107,16 @@ void processConfig()
            exit(1);
    }
    else if (config->lockfile!=NULL) createLockFile(config->lockfile);
+   
 
    // open Logfile
-   buff = (char *) malloc(strlen(config->logFileDir)+7+1); // 7 for hpt.log
-   strcpy(buff, config->logFileDir),
-   strcat(buff, "hpt.log");
-   log  = openLog(buff, versionStr, "123456789");
+   log = NULL;
+   if (config->logFileDir != NULL) {
+     buff = (char *) malloc(strlen(config->logFileDir)+7+1); /* 7 for hpt.log */
+     strcpy(buff, config->logFileDir),
+     strcat(buff, "hpt.log");
+     log = openLog(buff, versionStr, "123456789");
+   }
    if (log==NULL) printf("Could not open logfile: %s\n", buff);
    writeLogEntry(log, '1', "Start");
 
