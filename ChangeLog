@@ -2,6 +2,12 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Wed Jun 28 17:22:41 NOVST 2000
+max:
+* fixed returning message without SEEN-BY's
+* now adding SEEN-BY & PATH to message without one
+
+----- cvs ci ------
 Sun Jun 25 22:44:15 NOVST 2000
 max:
 * don't creates .err files after autocreating passthrough areas

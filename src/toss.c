@@ -471,6 +471,8 @@ int checkLink(s_seenBy *seenBys, UINT seenByCount, s_link *link, s_addr pktOrigA
    // the link where we got the mail from
    if (addrComp(pktOrigAddr, link->hisAka) == 0) return 1;
 
+   if (seenBys==NULL) return 0;
+
    // a point always gets the mail
    if (link->hisAka.point != 0) return 0;
 
@@ -498,10 +500,9 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
 	if (*newLinks==NULL || *zoneLinks==NULL) exit_hpt("out of memory",1);
 
 	for (i=0; i < echo->downlinkCount; i++) {
-		if (seenBys!=NULL &&
-			checkLink(seenBys,seenByCount,
-					  echo->downlinks[i]->link,
-					  pktOrigAddr)!=0) continue;
+		if (checkLink(seenBys,seenByCount,
+				  echo->downlinks[i]->link,
+				  pktOrigAddr)!=0) continue;
 		if (pktOrigAddr.zone==echo->downlinks[i]->link->hisAka.zone) {
 			// links with same zone
 			(*newLinks)[j] = echo->downlinks[i];
@@ -563,7 +564,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 		}
 	} else {
 		(*pathCount) = 0;
-		(*path) = (s_seenBy*) safe_realloc((*path),sizeof(s_seenBy) * 1);
+		(*path) = (s_seenBy*) safe_realloc((*path),sizeof(s_seenBy));
 		(*path)[*pathCount].net = (UINT16) echo->useAka->net;
 		(*path)[*pathCount].node = (UINT16) echo->useAka->node;
 		(*pathCount) = 1;
@@ -580,14 +581,13 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	if (start != NULL) {
 		while(*start != 'S') start++; // to jump over )\r
 		*start='\0';
-		
-		// create new seenByText
-		seenByText = createControlText((*seenBys), *seenByCount, "SEEN-BY: ");
-		pathText   = createControlText((*path), *pathCount, "\001PATH: ");
-		xstrscat(&msg->text, seenByText, pathText, NULL);
-		nfree(seenByText);
-		nfree(pathText);
-	}
+	} 
+	// create new seenByText
+	seenByText = createControlText((*seenBys), *seenByCount, "SEEN-BY: ");
+	pathText   = createControlText((*path), *pathCount, "\001PATH: ");
+	xstrscat(&msg->text, seenByText, pathText, NULL);
+	nfree(seenByText);
+	nfree(pathText);
 	
 	// add msg to the pkt's of the downlinks
 	for (i = 0; i<echo->downlinkCount; i++) {
