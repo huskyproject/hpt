@@ -1,3 +1,8 @@
+2003-04-18 Friday 10:44  val_khokhlov
+
+	* src/perl.c (1.60): SvPV_nolen is replaced with SvPV for
+	compatibility with Perl 5.005
+
 2003-04-13 Sunday 21:31  d_sergienko
 
 	* HISTORY (1.27), doc/hpt.texi (1.120), src/areafix.c (1.402):
