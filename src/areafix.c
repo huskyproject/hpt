@@ -676,9 +676,7 @@ int delLinkFromString(char **lineOut, char *line, char *linkAddr)
 }
 */
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
-    FILE *f_conf;
     char *cfgline=NULL, *token=NULL, *tmpPtr=NULL, *line=NULL, *buff=0;
-    long endpos, cfglen;
     long strbeg = 0, strend = -1;
     int rc=0;
 
@@ -725,15 +723,6 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         nfree(fileName);
         return -1;
     }
-    if ((f_conf=fopen(fileName,"r+b")) == NULL)
-    {
-        if (!quiet) fprintf(stderr, "areafix: cannot open config file %s \n", fileName);
-        nfree(cfgline);
-        nfree(fileName);
-        return 1;
-    }
-    nfree(fileName);
-
     w_log(LL_SRCLINE,"areafix.c:%u:changeconfig()", __LINE__);
 
     switch (action) {
@@ -802,24 +791,9 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     } // switch (action)
 
     w_log(LL_SRCLINE,"areafix.c:%u:changeconfig()", __LINE__);
-
-    fseek(f_conf, 0L, SEEK_END);
-    endpos = ftell(f_conf);
-    cfglen = endpos - strend;
-    line = (char*) smalloc((size_t) cfglen+1);
-    fseek(f_conf, strend, SEEK_SET);
-    cfglen = fread(line, sizeof(char), cfglen, f_conf);
-    line[cfglen]='\0';
-    fseek(f_conf, strbeg, SEEK_SET);
-    setfsize( fileno(f_conf), strbeg );
-    if(cfgline) { // line not deleted
-        fprintf(f_conf, "%s%s%s", cfgline, cfgEol(), line);
-    } else {
-        fprintf(f_conf, "%s", line);
-    }
-    fclose(f_conf);
-    nfree(line);
+    InsertCfgLine(fileName, cfgline, strbeg, strend);
     nfree(cfgline);
+    nfree(fileName);
     w_log(LL_FUNC,"areafix.c::changeconfig() rc=%i", nRet);
     return nRet;
 }
@@ -2040,8 +2014,6 @@ void afix(s_addr addr, char *cmd)
 
                 MsgReadMsg(SQmsg, &xmsg, 0, 0, NULL, 0, NULL);
                 cvtAddr(xmsg.dest, &dest);
-
-                w_log(LL_INFO,"message %d from %s was read" ,i,xmsg.from);
 
                 // if not read and for us -> process AreaFix
                 striptwhite((char*)xmsg.to);
