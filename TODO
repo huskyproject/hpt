@@ -1,5 +1,3 @@
-- remove old config code
-- toss echomails from a link who is not subscribed to an area to bad
 - include -b flag to toss from badarea
 - autocreateFile
 - netmailarea should be packed when found in echotoss.log

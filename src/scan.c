@@ -142,7 +142,12 @@ void makePktHeader(s_link *link, s_pktHeader *header)
    header->hiProductCode   = 0;
    header->loProductCode   = 0xfe;
    memset(header->pktPassword, 0, sizeof(header->pktPassword)); // no password
-   if (link->pktPwd != NULL) strncpy(header->pktPassword, link->pktPwd, 8);
+   if (link != NULL && link->pktPwd != NULL) {
+      if (strlen(link->pktPwd) > 8)
+         strncpy(header->pktPassword, link->pktPwd, 8);
+      else
+         strcpy(header->pktPassword, link->pktPwd);
+   }
    time(&(header->pktCreated));
    header->capabilityWord  = 1;
    header->prodData        = 0;

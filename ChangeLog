@@ -2,10 +2,20 @@
 hpt 0.26
 --------
 
+Thu Feb  4 09:21:57 CET 1999
+- fixed two bugs in (**)
+Wed Feb  3 23:23:06 CET 1999
+- if a link is not linked to an echomail area, all echomail will be tossed to
+  bad, which come from the link and go to the area.
+Wed Feb  3 20:19:03 CET 1999
+- replaced the strsep from bsd with that from the gnu libc5, so we do not have
+  to make advertisment for the university of california.
+
+----- cvs ci ------
 Tue Feb  2 11:41:09 CET 1999
 - a message with crash or hold flag is now packed using the link table in
   the config. That means if a message with crash or hold flag is adressed to a
-  known link it will contain the pktPassword.
+  known link it will contain the pktPassword. (**)
 - it was no workaround, it was a bug-fix.
 
 ----- cvs ci ------

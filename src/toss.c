@@ -368,6 +368,10 @@ int writeCheck(s_area *echo, s_link *link) {
         int i, rc=0;
         char *denygrp;
 
+        // test if the link is linked to the area
+        // if not all should be tossed to bad
+        if (!isLinkOfArea(link, echo)) return 1;
+
         // read/write for all
         if ((echo->wgrp==NULL) && (echo->rwgrp==NULL)) return 0;
 
