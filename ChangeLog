@@ -1,3 +1,8 @@
+2004-01-17 Saturday 14:01  d_sergienko
+
+	* src/post.c (1.113): ability to set netmailArea via -e flag when
+	posting
+
 2004-01-11 Sunday 23:15  d_sergienko
 
 	* src/fcommon.c (1.173): change pkt name generation algo.
