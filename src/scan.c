@@ -225,13 +225,15 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 void processAttachs(s_link *link, s_message *msg)
 {
    FILE *flo;
-   char *running = msg->subjectLine;
+   char *running;
    char *token;
    char *newSubjectLine = (char *) calloc(strlen(msg->subjectLine)+1, 1);
    
    flo = fopen(link->floFile, "a");
-
-   token = strsep(&running, " \t");
+  
+   //running = msg->subjectLine;
+   token = strtok_r(msg->subjectLine, " \t", &running);
+   //token = strsep(&running, " \t");
 
    while (token != NULL) {
       if (flo != NULL) fprintf(flo, "%s\n", token);
@@ -242,7 +244,7 @@ void processAttachs(s_link *link, s_message *msg)
 
       strcat(newSubjectLine, " ");
 
-      token = strsep(&running, " \t");
+      token = strtok_r(NULL, " \t", &running);
    }
    
    if (flo!= NULL) {
@@ -257,17 +259,20 @@ void processAttachs(s_link *link, s_message *msg)
 void processRequests(s_link *link, s_message *msg)
 {
    FILE *flo;
-   char *running = msg->subjectLine;
+   char *running;
    char *token;
    
    flo = fopen(link->floFile, "a");
 
-   token = strsep(&running, " \t");
+   //running = msg->subjectLine;
+   //token = strsep(&running, " \t");
+   token = strtok_r(msg->subjectLine, " \t", &running);
 
    while (token != NULL) {
       if (flo != NULL) fprintf(flo, "%s\n", token);
 
-      token = strsep(&running, " \t");
+      //token = strsep(&running, " \t");
+      token = strtok_r(NULL, " \t", &running);
    }
    if (flo!= NULL) {
       fclose(flo);

@@ -316,15 +316,18 @@ int changeconfig(char *fileName, char *areaName, s_link *link, int action) {
 		cfgline = trimLine(cfgline);
 		if ((cfgline[0] != '#') && (cfgline[0] != 0)) {
 			
-			running = cfgline;
-			token = strsep(&running, " \t");
+			//running = cfgline;
+                        token = strtok_r(cfgline, " \t", &running);
+			//token = strsep(&running, " \t");
 			
 			if (stricmp(token, "include")==0) {
-				token=strsep(&running, " \t");
+				//token=strsep(&running, " \t");
+                                token = strtok_r(NULL, " \t", &running);
 				changeconfig(token, areaName, link, action);
 			}			
 			else if (stricmp(token, "echoarea")==0) {
-				token = strsep(&running, " \t");
+				//token = strsep(&running, " \t"); 
+                                token = strtok_r(NULL, " \t", &running);
 				if (stricmp(token, areaName)==0)
 					switch 	(action) {
 					case 0: 
