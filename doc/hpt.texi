@@ -565,6 +565,8 @@ This statement cannot be repeated.
 @item Syntax:
 @code{AreafixReportsAttr <attr>}
 @item Example:
+@code{AreafixReportsAttr pvt loc k/s}
+@item or
 @code{AreafixReportsAttr pvt,loc,k/s}
 @end table
 
