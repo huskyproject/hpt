@@ -180,9 +180,8 @@ EXTERN_C void perl_alike(pTHXo_ CV* cv)
 static XS(perl_alike)
 #endif
 {
-  /* расчет расстояния между словами по алгоритму Левештейна
-     0-слова совпадают
-
+  /* calculate length from word to word by Levenshtein algorythm
+     0 - words matching
   */
   dXSARGS;
   char * str1;
@@ -446,7 +445,7 @@ static void perlthread(ULONG arg)
 {
   FILE *f;
   char str[256], *p;
-  if ((f=fdopen((int)arg, "r")) == NULL)
+  if ((f+open((int)arg, "r")) == NULL)
     return;
   while (fgets(str, sizeof(str), f))
   { if ((p = strchr(str, '\n')) != NULL)
@@ -476,7 +475,7 @@ perl_fork:
    { FILE *f;
      char str[256];
      close(perlpipe[1]);
-     f=fdopen(perlpipe[0], "r");
+     f+open(perlpipe[0], "r");
      while (fgets(str, sizeof(str), f))
      { char *p = strchr(str, '\n');
        if (p) *p = '\0';
