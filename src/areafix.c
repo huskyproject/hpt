@@ -851,8 +851,8 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			break;
 		case 6:
 			break;
-		default : 
-			if (!area->hide) {
+		default :
+			if (!area->hide && strstr(line,"*")==NULL) {
 				w_log('8', "areafix: area %s -- no access for %s",
 					  an, aka2str(link->hisAka));
 				xscatprintf(&report," %s %s  no access\r", an,
@@ -901,7 +901,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 					line, print_ch(49-strlen(line), '.'));
 	}
 
-	if (report == NULL) {
+	if (report == NULL && found==0) {
 	    xscatprintf(&report," %s %s  not found\r",line,print_ch(49-strlen(line),'.'));
 	    w_log('8', "areafix: area %s is not found",line);
 	}
