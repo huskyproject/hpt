@@ -1625,6 +1625,7 @@ This statement cannot be repeated.
 * AllowEmptyPktPwd::            allow empty packet passwords
 * AllowPktAddrDiffer::          allow addresses in PKT and MSG differ for areafix req.
 * ArcmailSize::			size of arcmail bundle
+* ArcNetmail::			pack netmail for this link into arcmail bundles
 * Areafix::                     areafix access for this link
 * AreafixEchoLimit::            limit for subscribe via areafix
 * AreafixPwd::                  areafix password for this link
@@ -1770,7 +1771,7 @@ by your areafix. The state @code{on} makes areafix ignore this error.
 
 This statement can only be repeated for different links.
 
-@node ArcmailSize, Areafix, AllowPktAddrDiffer, Link Keywords
+@node ArcmailSize, ArcNetmail, AllowEmptyPktPwd, Link Keywords
 @subsection ArcmailSize
 @findex ArcmailSize
 @table @asis
@@ -1781,6 +1782,25 @@ This statement can only be repeated for different links.
 @end table
 
 Maximum arcmail size in kb for this link. Default is 500kb.
+
+This statement can only be repeated for different links.
+
+@node ArcNetmail, Areafix, ArcmailSize, Link Keywords
+@subsection ArcNetmail
+@findex ArcNetmail
+@table @asis
+@item Syntax:
+@code{arcnetmail <bool>}
+@item Example:
+@code{arcnetmail on}
+@end table
+
+This keyword is useful if you want to compress netmail for this link and
+pack it into arcmail bundles or to filebox like echomail. Netmail will
+compress only if its flavour is equial with @code{EchoMailFlavour} for this link.
+
+The default state if @code{off}: in this case netmail will be written
+to ut-file (i.e. *.?ut) and will not compressed.
 
 This statement can only be repeated for different links.
 
