@@ -1241,7 +1241,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
 	     
 	   case secInbound:
 	     if ((link != NULL) && (link->pktPwd != NULL) && (stricmp(link->pktPwd, header->pktPassword)==0) ) processIt = 1;
-	     else if ((link != NULL) && (link->pktPwd==NULL)) processIt=1;
+	     else if ((link != NULL) && ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "")==0))) processIt=1;
 	     else if (link == NULL) {
 	       sprintf(buff, "pkt: %s No Link for %i:%i/%i.%i, processing only Netmail",
 		       fileName, header->origAddr.zone, header->origAddr.net,

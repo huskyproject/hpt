@@ -2,6 +2,16 @@ hpt 0.28
 --------
 
 ----- cvs ci ------
+Wed May 26 08:51:13 CEST 1999
+mtt:
+* bugfix for post, af and at parameterers are swapped.
+
+----- cvs ci ------
+Tue May 25 20:12:09 CEST 1999 
+mtt:
+* applied bugfix of (4) also for insecure inbound
+
+----- cvs ci ------
 Thu May 20 11:03:49 MET DST 1999	
 mtt:
 * problem with err files while using passthrough areas should be fixed now
@@ -15,8 +25,8 @@ mtt:
 ----- cvs ci ------
 Tue May 18 19:27:56 CEST 1999
 mtt:
-* fixed a bug with pkts without pwd and made it compilable again
-* applied Kolyas patch which so pkts are not deleted, when there are
+* (4) fixed a bug with pkts without pwd and made it compilable again
+* applied Kolyas patch so pkts are not deleted, when there are
   problems accessing the messagebase
 
 ----- cvs ci ------	

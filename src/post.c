@@ -72,10 +72,10 @@ void post(int c, unsigned int *n, char *params[])
          switch(params[*n][1]) {
             case 'a':    // address
                switch(params[*n][2]) {
-                  case 'f':
+                  case 't':
                      string2addr(params[++(*n)], &(msg.destAddr));
                      break;
-                  case 't':
+                  case 'f':
                      string2addr(params[++(*n)], &(msg.origAddr));
                      break;
                   default:
