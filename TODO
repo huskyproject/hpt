@@ -20,6 +20,7 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - change CHRS kludge when recode message
 - add areafix %users command which sends list of links, subscribed to echo
 - EchoAreaGroupDefaults
+- Listing EchoAreas with rescan ability
 - ListEcho sorted | unsorted | grouped - for areafix list reports
 
 Category 3: Will only be included if volunteers send patches
