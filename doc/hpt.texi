@@ -1324,7 +1324,7 @@ This statement cannot be repeated.
 @end table
 
 This statement specifies the file which contains perl filter functions.
-If not specified, HPT will search file "filter.pl" in the current directory.
+If not specified, perl support will be switched off.
 
 This statement cannot be repeated.
 
@@ -3423,7 +3423,7 @@ c) scan works the same: first sending to z2 links, adding to seen-by's
 @node Perl support, , ZoneGating , Advanced Concepts
 @section Perl support in HPT
 HPT may be compiled with support for calling Perl subs in some parts of its 
-work. In this case it also provides API for such subs(Perl hooks).
+work. In this case it also provides API for such subs (Perl hooks).
 Perl subs are located in file filter.pl, which usually located
 in same directory as HPT's executable file but it's name and location
 may changed via @code{HptPerlFile} configuration option.
@@ -3481,23 +3481,6 @@ The following Perl hooks are supported:
  scan - called while scanning messages(hpt scan or hpt pack).
     
 @end table
-@subsection PerlSupport
-@findex PerlSupport
-
-This statement enables/disables perl support in win32 hpt's version 
-wich was compiled with perl support.
-If you enable Perl support, you must also have ActivePerl's perl56.dll from
-ActivePerl 623 or later(www.activestate.com,about 10 Mb) somewere on your PATH.
-Run without perl56.dll and with this option set to on will result in 
-emergency exit with message telling that delay-loading of perl56.dll failed
-and exit code EX_UNAVAILABLE
-This option have any sence only on hpt.exe compiled with MS Visual C++ 6.0
-or later using makeperl.mvc
-
-Default is off
-
-This statement cannot be repeated 
-
 @node Keyword Index,  , Advanced Concepts, Top
 @appendix Configuration File Keyword Index
 @printindex fn
