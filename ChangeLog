@@ -1,3 +1,19 @@
+2004-01-08 Thursday 00:46  d_sergienko
+
+	* HISTORY, src/areafix.c (hpt-1_4-stable.[10,7]): Fix old bug with
+	corrupting of first line in included files (backported patch by
+	nssoft from current)
+
+2004-01-07 Wednesday 23:47  d_sergienko
+
+	* HISTORY, src/scan.c (hpt-1_4-stable.[9,4]): take an addresses
+	from INTL/FMPT/TOPT kludges if they available when packing netmail
+
+2004-01-07 Wednesday 23:12  d_sergienko
+
+	* src/query.c (hpt-1_4-stable.8): fix printf output in
+	newAreaRefuseFile
+
 2004-01-07 Wednesday 00:10  d_sergienko
 
 	* HISTORY, doc/hpt.texi, src/toss.c (hpt-1_4-stable.[8,7,7]):
