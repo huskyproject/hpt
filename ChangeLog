@@ -1,3 +1,24 @@
+2002-09-05 Thursday 02:08  sfpavel
+
+	* debian/changelog, debian/control, debian/dirs, debian/info,
+	debian/rules, doc/Makefile, doc/hpt.texi, man/hpttree.1,
+	man/pktinfo.1, man/txt2pkt.1, misc/filefix.hlp
+	(hpt-1_2-stable.[7,4,1,1,2,1,1,1,1,1,1]): New debian package
+
+2002-09-05 Thursday 01:24  sfpavel
+
+	* config/: areas, config, config.win, fileareas, links, path,
+	path.win (hpt-1_2-stable.[1,1,1,1,1,1,1]): Update config samples
+
+2002-08-30 Friday 09:27  sfpavel
+
+	* debian/info (1.1): New debian version
+
+2002-08-30 Friday 08:03  sfpavel
+
+	* config/: config.win (1.1), links (1.1), path.win (1.1): Update
+	config samples
+
 2002-08-27 Tuesday 10:11  sfpavel
 
 	* misc/purge_fileecho (hpt-1_2-stable.1): Move misc/purge_fileecho
