@@ -85,6 +85,10 @@ int __stdcall GetFileAttributesA(char *);
 #define GetFileAttributes GetFileAttributesA
 #endif
 
+#if defined(__MINGW32__) || (defined(__WATCOMC__) && (__WATCOMC__ < 1100))
+#define NOSLASHES
+#endif
+
 extern s_message **msgToSysop;
 int save_err;
 
@@ -2148,7 +2152,7 @@ void processDir(char *directory, e_tossSecurity sec)
 {
    DIR            *dir;
    struct dirent  *file;
-   char           *dummy;
+   char           *dummy = NULL;
    int            rc, i;
    int            pktFile,
                   arcFile;
@@ -2170,7 +2174,7 @@ void processDir(char *directory, e_tossSecurity sec)
 
    dirNameLen = strlen(directory);
 
-#if defined(__MINGW32__) || (defined(__WATCOMC__) && (__WATCOMC__ < 1100))
+#ifdef NOSLASHES
    directory[dirNameLen-1]='\0';
 #endif
 
@@ -2179,7 +2183,7 @@ void processDir(char *directory, e_tossSecurity sec)
 	return;
    }
 
-#if defined(__MINGW32__) || (defined(__WATCOMC__) && (__WATCOMC__ < 1100))
+#ifdef NOSLASHES
    directory[dirNameLen-1]='\\';
 #endif
 
@@ -2188,9 +2192,10 @@ void processDir(char *directory, e_tossSecurity sec)
       printf("testing %s\n", file->d_name);
 #endif
 
-      dummy = (char *)malloc(strlen(directory) + strlen(file->d_name) + 1);
-      strcpy(dummy,directory);
-      strcat(dummy,file->d_name);
+      //dummy = (char *)malloc(dirNameLen + strlen(file->d_name) + 1);
+      //strcpy(dummy,directory);
+      //strcat(dummy,file->d_name);
+      xstrscat(&dummy,directory,file->d_name,NULL);
 
 #if !defined(UNIX)
 #if defined(__TURBOC__) || defined(__DJGPP__)
@@ -2718,10 +2723,25 @@ void tossTempOutbound(char *directory)
    s_pktHeader    *header;
    s_link         *link;
    size_t         l;
+#ifdef NOSLASHES
+   int 		  dirNameLen;
+#endif
 
    if (directory==NULL) return;
 
-   dir = opendir(directory);
+#ifdef NOSLASHES
+   dirNameLen = strlen(directory);
+   directory[dirNameLen-1]='\0';
+#endif
+
+   if (NULL == (dir = opendir(directory))) {
+        printf("Can't open dir: %s!\n",directory);
+	return;
+   }
+
+#ifdef NOSLASHES
+   directory[dirNameLen-1]='\\';
+#endif
 
    while ((file = readdir(dir)) != NULL) {
 	   l = strlen(file->d_name);
