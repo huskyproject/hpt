@@ -1,9 +1,7 @@
 # common rules for all platforms
 
-VER = 0.1
+VER = 0.2
 VERH = 0
-
-OBJS = hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) log$(OBJ) global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) post$(OBJ) areafix$(OBJ) arealist$(OBJ) dupe$(OBJ) recode$(OBJ) tree$(OBJ) seenby$(OBJ) strsep$(OBJ) link$(OBJ) crc$(OBJ) pktinfo$(OBJ) txt2pkt$(OBJ) tpkt$(OBJ) hptlink$(OBJ) hpttree$(OBJ)
 
 commonprogs: pktinfo$(EXE) tpkt$(EXE) txt2pkt$(EXE) hptlink$(EXE) hpttree$(EXE) hpt$(EXE)	 $(SYMBOLIC)
 	$(NULL)
