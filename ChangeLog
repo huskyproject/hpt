@@ -1,3 +1,12 @@
+2002-11-03 Sunday 04:21  d_sergienko
+
+	* BUG-REPORTING (1.2), BUGS (1.19), INSTALL (1.12), README (1.15):
+	update docs
+
+2002-11-03 Sunday 00:07  d_sergienko
+
+	* src/hptlink.c (1.44): added MsgCloseApi() before exit
+
 2002-11-01 Friday 23:48  stas_degteff
 
 	* src/link.c (1.65): Prevent compiler varning
