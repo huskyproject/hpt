@@ -521,9 +521,28 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 char* findLinkInString(char *line, s_addr addr)
 {
     char* linkpos = NULL;
-    while ( (linkpos = strrstr(line, aka2str(addr))) != NULL )
+    char *lineptr = NULL;
+
+    // let's skip description which possibly contains address
+    lineptr = line;
+    while((lineptr = strstr(lineptr, "-d")) != NULL)
     {
-        if(testAddr(linkpos,addr))
+        lineptr+=2;
+        if (isspace(*lineptr))
+        {
+            while((*lineptr) && (*lineptr!='"')) lineptr++;
+            if (*lineptr=='"') lineptr++;
+            while((*lineptr) && (*lineptr!='"')) lineptr++;
+            // now only right addresses (not from desc.) have left.
+            linkpos = lineptr;
+            break;
+        }
+    }
+    if (lineptr == NULL) linkpos = line;
+    // find position of link address
+    while ( (linkpos = strstr(linkpos, aka2str(addr))) != NULL )
+    {
+        if((linkpos!=NULL) && testAddr(linkpos,addr))
             break;
         line = linkpos+1;
     }
