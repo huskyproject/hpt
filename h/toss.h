@@ -25,7 +25,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -56,9 +56,9 @@ int  processMsg(s_message *msg, s_pktHeader *pktHeader, int secure);
 int  processPkt(char *fileName, e_tossSecurity sec);
 int  putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr);
 void toss(void);
-void tossTempOutbound(char *directory); 
+void tossTempOutbound(char *directory);
 void arcmail(s_link *link);
-int  autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr);
+e_BadmailReasons autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr);
 void tossFromBadArea(char force);
 void writeMsgToSysop(void);
 int  checkAreaLink(s_area *area, hs_addr aka, int type);

@@ -565,6 +565,23 @@ int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr, unsigned writeAccess)
 {
     char *tmp = NULL, *line = NULL, *textBuff=NULL, *areaName=NULL, *reason=NULL;
     char buff[128] = "";
+    char *(BadmailReasonString[BM_MAXERROR+1]) = {
+    /* 0*/"System not allowed to create new area",
+    /* 1*/"Sender not allowed to post in this area (access group)",
+    /* 2*/"Sender not allowed to post in this area (access level)",
+    /* 3*/"Sender not allowed to post in this area (access import)",
+    /* 4*/"Sender not active for this area",
+    /* 5*/"Rejected by perl filter",
+    /* 6*/"MSGAPI error",
+    /* 7*/"Can't create echoarea with forbidden symbols in areatag",
+    /* 8*/"Sender not found in config file",
+    /* 9*/"Can't open config file",
+    /*10*/"No downlinks for passthrough area",
+    /*11*/"lenght of CONFERENCE name is more than 60 symbols",
+    /*12*/"Area killed (unsubscribed)",
+    /*13*/"New area refused by NewAreaRefuseFile",
+    /*14*/"Wrong link to autocreate from (area requested from other link)"
+    };
 
     w_log(LL_FUNC, "putMsgInBadArea() begin");
     statToss.bad++;

@@ -224,7 +224,7 @@ e_BadmailReasons autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAd
     if (checkRefuse(c_area))
     {
         w_log(LL_WARN, "Can't create area %s : refused by NewAreaRefuseFile\n", c_area);
-        return 11;
+        return BM_DENY_NEWAREAREFUSEFILE;
     }
 
 
@@ -264,7 +264,7 @@ e_BadmailReasons autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAd
                 addrComp(pktOrigAddr, areaNode->downlinks[0])!=0)
             {
                 w_log( LL_FUNC, "%s::autoCreate() rc=4", __FILE__ );
-                return 4;  /*  wrong link to autocreate from */
+                return BM_WRONG_LINK_TO_AUTOCREATE;  /*  wrong link to autocreate from */
             }
             if( stricmp(areaNode->type,czFreqArea) == 0 )
             {

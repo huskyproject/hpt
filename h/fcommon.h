@@ -55,24 +55,11 @@ typedef enum{
  BM_NO_LINKS=10,
  BM_AREATAG_TOO_LONG=11,
  BM_AREA_KILLED=12,
- BM_MAXERROR=12       /* Set to max value, equivalence of last element */
+ BM_DENY_NEWAREAREFUSEFILE=13,
+ BM_WRONG_LINK_TO_AUTOCREATE=14,
+ BM_MAXERROR=14       /* Set to max value, equivalence of last element */
 }e_BadmailReasons;
 
-char *(BadmailReasonString[BM_MAXERROR+1]) = {
-/* 0*/"System not allowed to create new area",
-/* 1*/"Sender not allowed to post in this area (access group)",
-/* 2*/"Sender not allowed to post in this area (access level)",
-/* 3*/"Sender not allowed to post in this area (access import)",
-/* 4*/"Sender not active for this area",
-/* 5*/"Rejected by perl filter",
-/* 6*/"MSGAPI error",
-/* 7*/"Can't create echoarea with forbidden symbols in areatag",
-/* 8*/"Sender not found in config file",
-/* 9*/"Can't open config file",
-/*10*/"No downlinks for passthrough area",
-/*11*/"lenght of CONFERENCE name is more than 60 symbols",
-/*12*/"Area killed (unsubscribed)"
-};
 
 /* common functions */
 void writeDupeFiles(void);
