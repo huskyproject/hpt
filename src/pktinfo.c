@@ -40,6 +40,7 @@
 #include <version.h>
 
 #include <fidoconf/common.h>
+#include <fidoconf/afixcmd.h>
 
 static char *attrStr[] = { "pvt", "crash", "read", "sent", "att",
                        "fwd", "orphan", "k/s", "loc", "hld",

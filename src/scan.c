@@ -301,7 +301,8 @@ void processAttachs(s_link *link, s_message *msg, unsigned int attr)
 	   if (!fexist(token)) strLower(token);
 #endif
       if (flo != NULL) {
-		  if (msg->text) flags = (char *) GetCtrlToken(msg->text,(byte *)"FLAGS");
+		  if (msg->text) flags = 
+             (char *) GetCtrlToken((byte *)msg->text,(byte *)"FLAGS");
           if ((flags && strstr(flags, "KFS")) || 
 			  (config->keepTrsFiles==0 && (attr & MSGFWD)==MSGFWD))
 			  fprintf(flo, "^%s\n", token);
@@ -392,7 +393,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 	   ((xmsg->attr & MSGHOLD)==MSGHOLD &&
 		(xmsg->attr & MSGCRASH)==MSGCRASH)) prio = direct; // XX2 or Crash+Hold
    if (msg.text) {
-	   flags = (char *) GetCtrlToken(msg.text,(byte *)"FLAGS");
+	   flags = (char *) GetCtrlToken((byte *)msg.text,(byte *)"FLAGS");
 	   if (flags) {
 		   if (strstr(flags,"DIR")!=NULL) prio = direct;
 		   if (strstr(flags,"IMM")!=NULL) prio = immediate; // most priority

@@ -340,7 +340,8 @@ void linkArea(s_area *area)
 		 }
 
 		 if ( useSubj && xmsg.subj != NULL) {
-		    if ( (ptr=skipReSubj(xmsg.subj)) == NULL) ptr = xmsg.subj;
+		    if ( (ptr=skipReSubj((char*)xmsg.subj)) == NULL) 
+                  ptr = (char*) xmsg.subj;
 		    crepl -> subject = strdup(ptr);
 		 }
 

@@ -106,7 +106,7 @@ static s_msginfo *findMsgId(s_msginfo *entries, struct hashinfo *hash, dword has
 	if (crc32 == 0)
 		h = crc = strcrc32(msgId, 0xFFFFFFFFL);
 	else if (crc32 == 0xFFFFFFFFL)
-		h = crc = Jam_Crc32(msgId, strlen(msgId));
+		h = crc = Jam_Crc32((UCHAR*)msgId, strlen(msgId));
 	else
 		h = crc = crc32;
 	while (d < hashSize) {
@@ -156,7 +156,7 @@ int linkArea(s_area *area, int netMail)
 {
 
    HAREA harea;
-   HMSG  hmsg;
+   HMSG  hmsg = NULL;
    XMSG  xmsg;
    s_msginfo *msgs;   
    dword msgsNum, hashNums, i, ctlen, cctlen;

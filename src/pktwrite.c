@@ -175,7 +175,8 @@ int writeMsgToPkt(FILE *pkt, s_message msg)
 int writeMsgToPkt(FILE *pkt, s_message msg)
 {
   char x,y,z;
-  char *buf, *pbuf; 
+  byte *buf; 
+  byte *pbuf;
   INT32 textLen;
   size_t rc;
 
@@ -187,7 +188,7 @@ int writeMsgToPkt(FILE *pkt, s_message msg)
   if (z >= XMSG_SUBJ_SIZE) z = XMSG_SUBJ_SIZE - 1;
   textLen = strlen(msg.text);
 
-  buf = safe_malloc(38+x+y+z+textLen);
+  buf = (byte*)safe_malloc(38+x+y+z+textLen);
   pbuf = buf;
   
   // type (2 bytes)

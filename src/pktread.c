@@ -612,8 +612,8 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    getc(pkt); getc(pkt);                // read unused cost fields (2bytes)
 
    fgetsUntil0 (msg->datetime, 22, pkt, NULL);
-   parse_ftsc_date(&tm, msg->datetime);
-   make_ftsc_date(msg->datetime, &tm);
+   parse_ftsc_date(&tm, (char*)msg->datetime);
+   make_ftsc_date((char*)msg->datetime, &tm);
 
    if (globalBuffer==NULL) {
        globalBuffer = (UCHAR *) safe_malloc(BUFFERSIZE+1); // 128K (32K in MS-DOS)
@@ -662,7 +662,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 #if !defined(MSDOS)
    do {
 	   len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
-	   xstrcat(&msg->text, globalBuffer);
+	   xstrcat(&msg->text, (char*)globalBuffer);
 	   msg->textLength+=len-1; // trailing \0 is not the text
    } while (len == BUFFERSIZE+1);
 #else
@@ -693,15 +693,3 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
    *message = msg;
    return 1;
 }
-/*
-void freeMsgBuffers(s_message *msg)
-{
-  nfree(msg->text);
-  nfree(msg->subjectLine);
-  nfree(msg->toUserName);
-  nfree(msg->fromUserName);
-//  if (msg->destAddr.domain) free(msg->destAddr.domain);
-  // do not free the domains of the adresses of the message, because they
-  // come from fidoconfig structures and are needed more than once.
-}
-*/

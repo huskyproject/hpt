@@ -695,7 +695,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
     nfree(pathText);
 
     if (echo->debug) {
-	debug = (char *) GetCtrlToken(msg->text, (byte *)"MSGID");
+	debug = (char *) GetCtrlToken((byte *)msg->text, (byte *)"MSGID");
 	if (f && debug) {
 	    fputs("\n[",f);
 	    fputs(debug,f);
@@ -858,7 +858,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
     };
     return 0;
 
-};
+}
 
 /* area - area to carbon messages, echo - original echo area */
 int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carbon) {
@@ -979,7 +979,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
             break;
 
         case ct_kludge:
-	    kludge = (char *) GetCtrlToken(msg->text, (byte *)cb->str);
+	    kludge = (char *) GetCtrlToken((byte *)msg->text, (byte *)cb->str);
 	    result = (kludge!=NULL);
 	    nfree(kludge);
 	    break;

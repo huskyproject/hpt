@@ -590,10 +590,10 @@ int delLinkFromString(char **lineOut, char *line, char *linkAddr)
             if (tmp == NULL)  break; // nothing found
             if (*tmp != '-') break; // this is not option
             else { // found link option
-                /* if (!strncasecmp(tmp, "-r", 2) ||
-                    !strncasecmp(tmp, "-w", 2) ||
-                    !strncasecmp(tmp, "-mn", 3) ||
-                    !strncasecmp(tmp, "-def", 4)) 
+                // if (!strncasecmp(tmp, "-r", 2) ||
+                //    !strncasecmp(tmp, "-w", 2) ||
+                //    !strncasecmp(tmp, "-mn", 3) ||
+                //   !strncasecmp(tmp, "-def", 4)) 
                 {
                     endLen = ptr ? (ptr - line) : strlen(origLine);
                     continue;
@@ -2097,7 +2097,7 @@ void afix(s_addr addr, char *cmd)
 		// if not read and for us -> process AreaFix
 		striptwhite((char*)xmsg.to);
 		if (((xmsg.attr & MSGREAD) != MSGREAD) && 
-		    (isOurAka(config,dest)) && (strlen(xmsg.to)>0) &&
+		    (isOurAka(config,dest)) && (strlen((char*)xmsg.to)>0) &&
 		    ((stricmp((char*)xmsg.to, "areafix")==0) ||
 		     (stricmp((char*)xmsg.to, "areamgr")==0) ||
 		     (stricmp((char*)xmsg.to, "hpt")==0) ||

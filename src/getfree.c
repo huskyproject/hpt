@@ -5,8 +5,7 @@
  * $Id$
  */
 
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/log.h>
+void w_log(char key, char *logString, ...);
 
 #if defined(__NT__) || defined (NT) || defined (WINNT)
 /*--------------------------------------------------------------------*/
@@ -45,6 +44,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include <limits.h>
+#include <ctype.h>
 
 unsigned long getfree (char *path) {
 char RPN[MAXPATHLEN];	// root path
