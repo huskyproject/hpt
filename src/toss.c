@@ -555,6 +555,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, s_addr pktOrigAddr)
 int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 {
     char *tmp = NULL, *line = NULL, *textBuff=NULL, *areaName=NULL, *reason = NULL;
+    char buff[256];
 
     w_log(LL_FUNC, "putMsgInBadArea() begin");
     statToss.bad++;
@@ -593,54 +594,11 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr, int writeAccess)
 	w_log(LL_ECHOMAIL, "Badmail reason: Rejected by filter");
 	break;
     case 6:
-	switch (msgapierr)
-    {
-	    case MERR_NONE: reason = "MSGAPIERR: No error";
-		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: No error");
-		break;
-	    case MERR_BADH: reason = "MSGAPIERR: Invalid handle passed to function";
-		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Invalid handle passed to function");
-		break;
-	    case MERR_BADF: reason = "MSGAPIERR: Invalid or corrupted file";
-		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Invalid or corrupted file");
-		break;
-	    case MERR_NOMEM: reason = "MSGAPIERR: Not enough memory for specified operation";
-		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Not enough memory for specified operation");
-		break;
-	    case MERR_NODS:
-		reason = "MSGAPIERR: Maybe not enough disk space for operation";
-		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Maybe not enough disk space for operation");
-		w_log(LL_ERR, "Maybe not enough disk space for operation");
-		break;
-	    case MERR_NOENT: reason = "MSGAPIERR: File/message does not exist";
-		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: File/message does not exist");
-		break;
-	    case MERR_BADA: reason = "MSGAPIERR: Bad argument passed to msgapi function";
-		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Bad argument passed to msgapi function");
-		break;
-	    case MERR_EOPEN: reason = "MSGAPIERR: Couldn't close - messages still open";
-		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Couldn't close - messages still open");
-		break;
-	    case MERR_NOLOCK: reason = "MSGAPIERR: Base needs to be locked to perform operation";
-		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Base needs to be locked to perform operation");
-		break;
-	    case MERR_SHARE: reason = "MSGAPIERR: Resource in use by other process";
-		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Resource in use by other process");
-		break;
-	    case MERR_EACCES: reason = "MSGAPIERR: Access denied (can't write to read-only, etc)";
-		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Access denied (can't write to read-only, etc)");
-		break;
-	    case MERR_BADMSG: reason = "MSGAPIERR: Bad message frame (Squish)";
-		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Bad message frame (Squish)");
-		break;
-	    case MERR_TOOBIG: reason = "MSGAPIERR: Too much text/ctrlinfo to fit in frame (Squish)";
-		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Too much text/ctrlinfo to fit in frame (Squish)");
-		break;
-	    default: reason = "MSGAPIERR: Unknown error";
-		w_log(LL_ECHOMAIL, "Badmail reason: MSGAPIERR: Unknown error");
-		break;
-	    }
-
+	strcpy(buff, "MSGAPIERR: ");
+	strncat(buff, strmerr(msgapierr), sizeof(buff)-strlen(buff));
+	buff[sizeof(buf)-1] = '\0';
+	reason = buff;
+	w_log(LL_ECHOMAIL, "Badmail reason: %s", reason);
 	break;
     case 7:
 	reason = "Can't create echoarea with forbidden symbols in areatag";
