@@ -80,24 +80,12 @@ int subscribeCheck(s_area area, s_message *msg) {
 
 int subscribeAreaCheck(s_area *area, s_message *msg, char *areaname) {
    int rc;
-   char *upName, *upAreaName;
 
-        upName = (char *) malloc(strlen(areaname)+1);
-        upAreaName = (char *) malloc(strlen(area->areaName)+1);
-        strcpy(upName, areaname);
-        strcpy(upAreaName, area->areaName);
-
-        upName = strUpper(upName);
-        upAreaName = strUpper(upAreaName);
-
-	if (patmat(upAreaName,upName)==1) {
+	if (patimat(area->areaName,areaname)==1) {
 		rc=subscribeCheck(*area, msg);
 		// 0 - already subscribed
 		// 1 - need subscribe
         } else rc = 2;
-
-        free(upName);
-        free(upAreaName);
 
 	// this is another area
 	return rc;
