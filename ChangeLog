@@ -1,3 +1,12 @@
+2002-06-27 Thursday 11:21  mche
+
+	* src/: query.c (1.51), toss.c (1.418): added some traces
+
+2002-06-27 Thursday 08:01  mche
+
+	* makefile.inc (1.20): patch by [Alexander Shiyan
+	<shc@milas.spb.ru>]
+
 2002-06-25 Tuesday 18:04  stas
 
 	* VERSION (1.4), src/global.c (1.44): Change -current version
