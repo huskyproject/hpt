@@ -1,3 +1,16 @@
+2002-10-11 Friday 07:36  pgul
+
+	* src/scan.c (hpt-1_2-stable.3): Remove redundrant #ifdef
+
+2002-10-11 Friday 07:20  pgul
+
+	* src/toss.c (hpt-1_2-stable.6): fix security again
+
+2002-10-11 Friday 05:17  sfpavel
+
+	* src/scan.c (hpt-1_2-stable.2): Fix OS/2 build (patch from Andy
+	Luk'yanov)
+
 2002-10-10 Thursday 19:16  sfpavel
 
 	* src/toss.c (hpt-1_2-stable.5): Drop patch from pgul (2002-09-25
