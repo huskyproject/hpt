@@ -1,3 +1,8 @@
+2003-02-14 Friday 10:32  pgul
+
+	* src/fcommon.c (1.162): Fixed amiga-style lo-files names when all
+	arcmail extensions used
+
 2003-02-13 Thursday 21:10  it-dienste
 
 	* src/areafix.c (1.384): added another rescan possibility: +area
