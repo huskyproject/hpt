@@ -325,11 +325,13 @@ void forwardMsgToLink(s_message *msg, s_area *echo, s_link *link,
     UINT16 pathCount = 0;
     char *start = NULL, *text = NULL, *seenByText = NULL, *pathText = NULL;
 
+#ifdef DEBUG_HPT
     text = createControlText(seenBys, seenByCount, "SEEN-BY: ");
     w_log(LL_DEBUGS, "forwardMsgToLink:%u: %s", __LINE__, text);
     text   = createControlText(pathArray, pathArrayCount, "PATH: ");
     w_log(LL_DEBUGS, "forwardMsgToLink:%u: %s", __LINE__, text);
     nfree(text);
+#endif
 
     /*  add our aka to path */
     if (pathArrayCount > 0) {
@@ -377,11 +379,13 @@ void forwardMsgToLink(s_message *msg, s_area *echo, s_link *link,
 
     /*  create new seenByText */
 
+#ifdef DEBUG_HPT
     text = createControlText(seenBys, seenByCount, "SEEN-BY: ");
     w_log(LL_DEBUGS, "forwardMsgToLink:%u: %s", __LINE__, text);
     text   = createControlText(path, pathCount, "PATH: ");
     w_log(LL_DEBUGS, "forwardMsgToLink:%u: %s", __LINE__, text);
     nfree(text);
+#endif
 
     seenByText = createControlText(seenBys, seenByCount, "SEEN-BY: ");
     pathText   = createControlText(path, pathCount, "\001PATH: ");
@@ -459,52 +463,70 @@ void forwardMsgToLinks_rsb(s_area *echo, s_message *msg, hs_addr pktOrigAddr, UI
 
     /* init array of seen-bys */
     zero_seenBysZone();
+#ifdef DEBUG_HPT
     print_seenBysZone();
+#endif
     /* fetch seen-bys from msg */
     createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
     text = createControlText(seenBys, seenByCount, "");
+#ifdef DEBUG_HPT
     w_log(LL_DEBUGS, "forwardMsgToLinks_rsb:%u: SEEN-BY: %s", __LINE__, text);
+#endif
 
     /* fetch path from msg */
     createPathArrayFromMsg(msg, &path, &pathCount);
     text = createControlText(path, pathCount, "");
+#ifdef DEBUG_HPT
     w_log(LL_DEBUGS, "forwardMsgToLinks_rsb:%u: PATH: %s", __LINE__, text);
+#endif
 
     if (rsb == 0) {
         /* attach seen-bys of message to seenBysZone with
          zone == pktOrigAddr.zone */
         attachTo_seenBysZone(pktOrigAddr.zone, &seenBys, seenByCount);
         text = createControlText(seenBys, seenByCount, "");
+#ifdef DEBUG_HPT
         w_log(LL_DEBUGS, "forwardMsgToLinks_rsb:%u: SEEN-BY: %s", __LINE__, text);
+#endif
 
     } else {
         /* attach path to seenBysZone with zone == pktOrigAddr.zone */
         attachTo_seenBysZone(pktOrigAddr.zone, &path, pathCount);
         text = createControlText(path, pathCount, "");
+#ifdef DEBUG_HPT
         w_log(LL_DEBUGS, "forwardMsgToLinks_rsb:%u: PATH: %s", __LINE__, text);
+#endif
         /* make a copy of path 'cause 1st is left for seen-bys */
         path = memdup(path, sizeof(s_seenBy) * pathCount);
     }
     /* add seen-bys from addToSeen & -sbadd to all zones */
     processAutoAdd_seenByZone(echo);
+#ifdef DEBUG_HPT
     w_log(LL_DEBUGS, "after processAutoAdd_seenByZone()");
     print_seenBysZone();
+#endif
 
     /* build an array of links who will receive this message */
     createNewLinksArray(echo, &newLinks, pktOrigAddr, rsb);
 
     /* append AKAs of links to seen-by array with sorting by zone */
     addLinksTo_seenByZone(newLinks, echo->downlinkCount);
+#ifdef DEBUG_HPT
     w_log(LL_DEBUGS, "after addLinksTo_seenByZone()");
     print_seenBysZone();
+#endif
     /* add all our AKAs */
     addAkasTo_seenByZone();
+#ifdef DEBUG_HPT
     w_log(LL_DEBUGS, "after addAkasTo_seenByZone()");
     print_seenBysZone();
+#endif
 
     cleanDupes_seenByZone();
+#ifdef DEBUG_HPT
     w_log(LL_DEBUGS, "after cleanDupes_seenByZone()");
     print_seenBysZone();
+#endif
     /* forward message to each links from an array */
     for (i=0;i<echo->downlinkCount;i++)
     {
@@ -517,8 +539,10 @@ void forwardMsgToLinks_rsb(s_area *echo, s_message *msg, hs_addr pktOrigAddr, UI
     }
     /* free all used memory */
     free_seenBysZone();
+#ifdef DEBUG_HPT
     w_log(LL_DEBUGS, "after free_seenByZone()");
     print_seenBysZone();
+#endif
 
     nfree(path);
     nfree(newLinks);

@@ -136,31 +136,47 @@ void attachTo_seenBysZone(UINT16 zone, s_seenBy **seenBys, UINT16 count)
 void addTo_seenByZone(UINT16 zone, UINT16 net, UINT16 node)
 {
     UINT16 i;
+    s_seenBy *tmp, *tmp2;
 
+#ifdef DEBUG_HPT
     w_log(LL_DEBUGS, "adding %u:%u/%u to seen-by chain", zone, net, node);
     print_seenBysZone();
+#endif
     if (seenBysZone[zone].seenByArray == NULL) {
         i=0;
         seenBysZone[zone].seenByArray = (s_seenBy *) safe_calloc(sizeof(s_seenBy), 1);
+#ifdef DEBUG_HPT
         w_log(LL_DEBUGS, "created seen-by array for zone %u", zone);
+#endif
     } else {
         for (i=0;i<seenBysZone[zone].seenByCount;i++)
         {
             if (seenBysZone[zone].seenByArray[i].net == net &&
                 seenBysZone[zone].seenByArray[i].node == node) {
-                return; /* already found this address in sb array */
+#ifdef DEBUG_HPT
                 w_log(LL_DEBUGS, "already found this address in sb array");
+#endif
+                return; /* already found this address in sb array */
             }
         }
-            seenBysZone[zone].seenByArray = (s_seenBy *) safe_realloc(seenBysZone[zone].seenByArray, sizeof(s_seenBy) * seenBysZone[zone].seenByCount+1);
-            w_log(LL_DEBUGS, "enlarge sb array to 1 element");
+        seenBysZone[zone].seenByCount++;
+        tmp = (s_seenBy *) safe_malloc(seenBysZone[zone].seenByCount * sizeof(s_seenBy));
+        memset(tmp, 0, sizeof(s_seenBy) * seenBysZone[zone].seenByCount);
+        memcpy(tmp, seenBysZone[zone].seenByArray, sizeof(s_seenBy) * (seenBysZone[zone].seenByCount-1));
+        tmp2 = seenBysZone[zone].seenByArray;
+        seenBysZone[zone].seenByArray = tmp;
+        nfree(tmp2);
+#ifdef DEBUG_HPT
+        w_log(LL_DEBUGS, "enlarge sb array to 1 element, %u bytes of memory", sizeof(s_seenBy));
+        print_seenBysZone();
+#endif
     }
-    seenBysZone[zone].seenByArray[seenBysZone[zone].seenByCount].net = net;
-    seenBysZone[zone].seenByArray[seenBysZone[zone].seenByCount].node = node;
-    seenBysZone[zone].seenByCount++;
+    seenBysZone[zone].seenByArray[seenBysZone[zone].seenByCount-1].net = net;
+    seenBysZone[zone].seenByArray[seenBysZone[zone].seenByCount-1].node = node;
+#ifdef DEBUG_HPT
     w_log(LL_DEBUGS, "seenBysZone[%u].seenByCount = %u", zone, seenBysZone[zone].seenByCount);
     print_seenBysZone();
-
+#endif
 }
 
 void deleteFrom_seenByZone(UINT16 zone, UINT16 net, UINT16 node)
@@ -453,8 +469,10 @@ void createNewLinksArray(s_area *echo, s_arealink ***newLinks,
 
     *newLinks =  (s_arealink **)safe_calloc(echo->downlinkCount,sizeof(s_arealink*));
 
+#ifdef DEBUG_HPT
     w_log(LL_DEBUGS, "echo->downlinkCount = %u", echo->downlinkCount);
     printNewLinks(*newLinks, echo->downlinkCount);
+#endif
 
     for (i=0; i < echo->downlinkCount; i++) {
         /*  link with "export off" */
@@ -465,15 +483,21 @@ void createNewLinksArray(s_area *echo, s_arealink ***newLinks,
                       seenBysZone[echo->downlinks[i]->link->hisAka.zone].seenByCount,
                       echo->downlinks[i]->link, echo, pktOrigAddr))
             continue;
+#ifdef DEBUG_HPT
         w_log(LL_DEBUGS, "i=%u, lFound=%u", i, lFound);
+#endif
         (*newLinks)[lFound++] = echo->downlinks[i];
+#ifdef DEBUG_HPT
         w_log(LL_DEBUGS, "adding link %s to newLinks chain", aka2str(echo->downlinks[i]->link->hisAka));
         printNewLinks(*newLinks, echo->downlinkCount);
         w_log(LL_DEBUGS, "i=%u, lFound=%u --", i, lFound);
+#endif
     }
 
+#ifdef DEBUG_HPT
     w_log(LL_DEBUGS, "created %u links in newLinks chain", lFound);
     printNewLinks(*newLinks, echo->downlinkCount);
+#endif
 
     if(lFound == 0)
         nfree(*newLinks);
