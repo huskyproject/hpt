@@ -560,7 +560,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 			autoCreate(areatag, uplink->hisAka, &(dwlink->hisAka));
 			uplink->msgBaseDir = base;
 	    }
-	    xscatprintf(&(msg->text), "+%s\r", areatag);
+	    xstrscat(&msg->text, "+", areatag, "\r", NULL);
 	} else if (act==1) {
 	    xscatprintf(&(msg->text), "-%s\r", areatag);
 	} else {
@@ -839,7 +839,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	switch (rc) {
 	case 0: 
 	    xscatprintf(&report, " %s %s  already linked\r",
-			an,	print_ch(49-strlen(an), '.'));
+			an, print_ch(49-strlen(an), '.'));
 	    w_log('8', "areafix: %s already linked to %s",
 		  aka2str(link->hisAka), an);
 	    if (strstr(line, "*") == NULL) i = config->echoAreaCount;
@@ -917,13 +917,15 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
     return report;
 }
 
-char *errorRQ(char *line)
-{
-   char *report = NULL;
-
-   xscatprintf(&report, " %s %s  error line\r", line, print_ch(49-strlen(line), '.'));
-
-   return report;
+char *errorRQ(char *line) {
+    char *report = NULL;
+    
+    if (strlen(line)>48) {
+	xstrscat(&report, " ", line, " .......... error line\r", NULL);
+    }
+    else xscatprintf(&report, " %s %s  error line\r",
+		    line, print_ch(49-strlen(line),'.'));
+    return report;
 }
 
 static char *do_delete(s_link *link, s_message *msg, s_area *area)
@@ -1545,51 +1547,50 @@ char *add_rescan(s_link *link, s_message *msg, char *line) {
 }
 
 int tellcmd(char *cmd) {
-	char *line;
+    char *line;
 
-	if (strncmp(cmd, "* Origin:", 9) == 0) return NOTHING;
+    if (strncmp(cmd, "* Origin:", 9) == 0) return NOTHING;
 
-	line = cmd;
-	if (line && *line && (line[1]==' ' || line[1]=='\t')) return ERROR;
-	
-	switch (line[0]) {
-	case '%': 
-		line++;
-		if (*line == '\000') return ERROR;
-		if (strncasecmp(line,"list",4)==0) return LIST;
-		if (strncasecmp(line,"help",4)==0) return HELP;
-		if (strncasecmp(line,"avail",5)==0) return AVAIL;
-		if (strncasecmp(line,"all",3)==0) return AVAIL;
-		if (strncasecmp(line,"unlinked",8)==0) return UNLINK;
-		if (strncasecmp(line,"linked",6)==0) return QUERY;
-		if (strncasecmp(line,"query",5)==0) return QUERY;
-		if (strncasecmp(line,"pause",5)==0) return PAUSE;
-		if (strncasecmp(line,"resume",6)==0) return RESUME;
-		if (strncasecmp(line,"info",4)==0) return INFO;
-		if (strncasecmp(line, "rescan", 6)==0) {
-                   if (line[6] == '\0') {
-                      rescanMode=1;
-                      return NOTHING;
-                   } else {
-                      return RESCAN;
-                   }
-                }
-		return ERROR;
-	case '\001': return NOTHING;
-	case '\000': return NOTHING;
-	case '-'  :
-		if (line[1]=='-' && line[2]=='-') return DONE;
-		if (line[1]=='\000') return ERROR;
-		if (strchr(line,' ') || strchr(line,'\t')) return ERROR;
-		return DEL;
-	case '~'  : return REMOVE;
-	case '+':
-		if (line[1]=='\000') return ERROR;
-	default:
-		if (hpt_stristr(line, " /R")!=NULL) return ADD_RSC; // add & rescan
-		return ADD;
+    line = cmd;
+    if (line && *line && (line[1]==' ' || line[1]=='\t')) return ERROR;
+
+    switch (line[0]) {
+    case '%': 
+	line++;
+	if (*line == '\000') return ERROR;
+	if (strncasecmp(line,"list",4)==0) return LIST;
+	if (strncasecmp(line,"help",4)==0) return HELP;
+	if (strncasecmp(line,"avail",5)==0) return AVAIL;
+	if (strncasecmp(line,"all",3)==0) return AVAIL;
+	if (strncasecmp(line,"unlinked",8)==0) return UNLINK;
+	if (strncasecmp(line,"linked",6)==0) return QUERY;
+	if (strncasecmp(line,"query",5)==0) return QUERY;
+	if (strncasecmp(line,"pause",5)==0) return PAUSE;
+	if (strncasecmp(line,"resume",6)==0) return RESUME;
+	if (strncasecmp(line,"info",4)==0) return INFO;
+	if (strncasecmp(line, "rescan", 6)==0) {
+	    if (line[6] == '\0') {
+		rescanMode=1;
+		return NOTHING;
+	    } else {
+		return RESCAN;
+	    }
 	}
-	
+	return ERROR;
+    case '\001': return NOTHING;
+    case '\000': return NOTHING;
+    case '-'  :
+	if (line[1]=='-' && line[2]=='-') return DONE;
+	if (line[1]=='\000') return ERROR;
+	if (strchr(line,' ') || strchr(line,'\t')) return ERROR;
+	return DEL;
+    case '~'  : return REMOVE;
+    case '+':
+	if (line[1]=='\000') return ERROR;
+    default:
+	if (hpt_stristr(line, " /R")!=NULL) return ADD_RSC; // add & rescan
+	return ADD;
+    }
 //	return 0; - Unreachable
 }
 
@@ -1747,178 +1748,176 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 
 int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 {
-	int i, security=1, notforme = 0;
-	s_link *link = NULL;
-	s_link *tmplink = NULL;
-	s_message *linkmsg;
-	s_pktHeader header;
-	char *token, *textBuff, *report=NULL, *preport = NULL;
+    int i, security=1, notforme = 0;
+    s_link *link = NULL;
+    s_link *tmplink = NULL;
+    s_message *linkmsg;
+    s_pktHeader header;
+    char *token, *textBuff, *report=NULL, *preport = NULL;
 	
-	RetFix = NOTHING;
+    RetFix = NOTHING;
 	
-	// 1st security check
-	if (pktHeader) security=addrComp(msg->origAddr, pktHeader->origAddr);
-	else {
-		makePktHeader(NULL, &header);
-		pktHeader = &header;
-		pktHeader->origAddr = msg->origAddr;
-		pktHeader->destAddr = msg->destAddr;
-		security = 0;
-	}
+    // 1st security check
+    if (pktHeader) security=addrComp(msg->origAddr, pktHeader->origAddr);
+    else {
+	makePktHeader(NULL, &header);
+	pktHeader = &header;
+	pktHeader->origAddr = msg->origAddr;
+	pktHeader->destAddr = msg->destAddr;
+	security = 0;
+    }
 	
-	if (security) security=1;
+    if (security) security=1;
 	
-	// find link
-	link=getLinkFromAddr(*config, msg->origAddr);
+    // find link
+    link=getLinkFromAddr(*config, msg->origAddr);
 
-	// if keyword allowPktAddrDiffer for this link is on,
-	// we allow the addresses in PKT and MSG header differ
-	if (link!=NULL)
-		if (link->allowPktAddrDiffer == pdOn)
-			security = 0;
+    // if keyword allowPktAddrDiffer for this link is on,
+    // we allow the addresses in PKT and MSG header differ
+    if (link!=NULL)
+	if (link->allowPktAddrDiffer == pdOn)
+	    security = 0;
 	
-	// this is for me?
-	if (link!=NULL)	notforme=addrComp(msg->destAddr, *link->ourAka);
-	else if (!security) security=4; // link == NULL;
+    // this is for me?
+    if (link!=NULL)	notforme=addrComp(msg->destAddr, *link->ourAka);
+    else if (!security) security=4; // link == NULL;
 	
-	// ignore msg for other link (maybe this is transit...)
-	if (notforme || (link==NULL && security==1)) {
-		return processNMMsg(msg, pktHeader, NULL, 0, 0);
-	}
+    // ignore msg for other link (maybe this is transit...)
+    if (notforme || (link==NULL && security==1)) {
+	return processNMMsg(msg, pktHeader, NULL, 0, 0);
+    }
 	
-	// 2nd security check. link, areafixing & password.
-	if (!security && !force_pwd) {
-		if (link->AreaFix==1) {
-			if (link->areaFixPwd!=NULL) {
-				if (stricmp(link->areaFixPwd,msg->subjectLine)==0) security=0;
-				else security=3;
-			}
-		} else security=2;
-	}
+    // 2nd security check. link, areafixing & password.
+    if (!security && !force_pwd) {
+	if (link->AreaFix==1) {
+	    if (link->areaFixPwd!=NULL) {
+		if (stricmp(link->areaFixPwd,msg->subjectLine)==0) security=0;
+		else security=3;
+	    }
+	} else security=2;
+    }
 	
-	if (!security) {
-		
-		textBuff = msg->text;
-		token = strseparate (&textBuff, "\n\r");
-		while(token != NULL) {
-			while ((*token == ' ') || (*token == '\t')) token++;
-			while(isspace(token[strlen(token)-1])) token[strlen(token)-1]='\0';
-			preport = processcmd( link, msg, token, tellcmd (token) );
-			if (preport != NULL) {
-				switch (RetFix) {
-				case LIST:
-					RetMsg(msg, link, preport, "areafix reply: list request");
-					break;
-				case HELP:
-					RetMsg(msg, link, preport, "areafix reply: help request");
-					break;
-				case ADD:
-					report = areaStatus(report, preport);
-					if (rescanMode) {
-					   preport = processcmd( link, msg, token, RESCAN );
-					   if (preport != NULL)
-					      report = areaStatus(report, preport);
-					}
-					break;
-				case AVAIL:
-					RetMsg(msg, link, preport, "areafix reply: available areas");
-					break;
-				case UNLINK:
-					RetMsg(msg, link, preport, "areafix reply: unlinked request");
-					break;
-				case QUERY:
-					RetMsg(msg, link, preport, "areafix reply: linked request");
-					break;
-				case PAUSE:
-					RetMsg(msg, link, preport, "areafix reply: node change request");
-					break;
-				case RESUME:
-					RetMsg(msg, link, preport, "areafix reply: node change request");
-					break;
-				case INFO:
-					RetMsg(msg, link, preport, "areafix reply: link information");
-					break;
-				case STAT:
-					report = areaStatus(report, preport);
-					break;
-				default: break;
-				}
-				
-			} /* end if (preport != NULL) */
+    if (!security) {
 
-			token = strseparate (&textBuff, "\n\r");
-			if (RetFix==DONE) token=NULL;
-		} /* end while (token != NULL) */
-		
-	} else {
-
-		if (link == NULL) {
-			tmplink = (s_link*) safe_malloc(sizeof(s_link));
-			memset(tmplink, '\0', sizeof(s_link));
-			tmplink->ourAka = &(msg->destAddr);
-			tmplink->hisAka.zone = msg->origAddr.zone;
-			tmplink->hisAka.net = msg->origAddr.net;
-			tmplink->hisAka.node = msg->origAddr.node;
-			tmplink->hisAka.point = msg->origAddr.point;
-			link = tmplink;
+	textBuff = msg->text;
+	token = strseparate (&textBuff, "\n\r");
+	while(token != NULL) {
+	    while ((*token == ' ') || (*token == '\t')) token++;
+	    while(isspace(token[strlen(token)-1])) token[strlen(token)-1]='\0';
+	    preport = processcmd( link, msg, token, tellcmd (token) );
+	    if (preport != NULL) {
+		switch (RetFix) {
+		case LIST:
+		    RetMsg(msg, link, preport, "areafix reply: list request");
+		    break;
+		case HELP:
+		    RetMsg(msg, link, preport, "areafix reply: help request");
+		    break;
+		case ADD:
+		    report = areaStatus(report, preport);
+		    if (rescanMode) {
+			preport = processcmd( link, msg, token, RESCAN );
+			if (preport != NULL)
+			    report = areaStatus(report, preport);
+		    }
+		    break;
+		case AVAIL:
+		    RetMsg(msg, link, preport, "areafix reply: available areas");
+		    break;
+		case UNLINK:
+		    RetMsg(msg, link, preport, "areafix reply: unlinked request");
+		    break;
+		case QUERY:
+		    RetMsg(msg, link, preport, "areafix reply: linked request");
+		    break;
+		case PAUSE:
+		    RetMsg(msg, link, preport, "areafix reply: node change request");
+		    break;
+		case RESUME:
+		    RetMsg(msg, link, preport, "areafix reply: node change request");
+		    break;
+		case INFO:
+		    RetMsg(msg, link, preport, "areafix reply: link information");
+		    break;
+		case STAT:
+		    report = areaStatus(report, preport);
+		    break;
+		default: break;
 		}
-		// security problem
-		
-		switch (security) {
-		case 1:
-			xscatprintf(&report, " \r different pkt and msg addresses\r");
-			break;
-		case 2:
-			xscatprintf(&report, " \r areafix is turned off\r");
-			break;
-		case 3:
-			xscatprintf(&report, " \r password error\r");
-			break;
-		case 4:
-			xscatprintf(&report, " \r your system is unknown\r");
-			break;
-		default:
-			xscatprintf(&report, " \r unknown error. mail to sysop.\r");
-			break;
-		}
-		
-		RetMsg(msg, link, report, "areafix reply: security violation");
-		w_log('8', "areafix: security violation from %s", aka2str(link->hisAka));
-		nfree(tmplink);
-		
-		return 1;
-	}
+	    } /* end if (preport != NULL) */
 
-	if ( report != NULL ) {
-		preport=linked(msg, link);
-		xstrcat(&report, preport);
-		nfree(preport);
-		RetMsg(msg, link, report, "areafix reply: node change request");
-	}
-	
-	w_log('8', "areafix: sucessfully done for %s",aka2str(link->hisAka));
-	
-	// send msg to the links (forward requests to areafix)
-	for (i = 0; i < config->linkCount; i++) {
-		if (config->links[i].msg == NULL) continue;
-		link = &(config->links[i]);
-		linkmsg = link->msg;
+	    token = strseparate (&textBuff, "\n\r");
+	    if (RetFix==DONE) token=NULL;
+	} /* end while (token != NULL) */
 		
-		xscatprintf(&(linkmsg->text), " \r--- %s areafix\r", versionStr);
-		linkmsg->textLength = strlen(linkmsg->text);
-		
-		w_log('8', "areafix: write netmail msg for %s", aka2str(link->hisAka));
+    } else {
 
-		processNMMsg(linkmsg, NULL,
-					 getNetMailArea(config,config->robotsArea),
-					 0, MSGLOCAL);
-
-		freeMsgBuffers(linkmsg);
-		nfree(linkmsg);
-		link->msg = NULL;
+	if (link == NULL) {
+	    tmplink = (s_link*) safe_malloc(sizeof(s_link));
+	    memset(tmplink, '\0', sizeof(s_link));
+	    tmplink->ourAka = &(msg->destAddr);
+	    tmplink->hisAka.zone = msg->origAddr.zone;
+	    tmplink->hisAka.net = msg->origAddr.net;
+	    tmplink->hisAka.node = msg->origAddr.node;
+	    tmplink->hisAka.point = msg->origAddr.point;
+	    link = tmplink;
 	}
-	
+	// security problem
+		
+	switch (security) {
+	case 1:
+	    xscatprintf(&report, " \r different pkt and msg addresses\r");
+	    break;
+	case 2:
+	    xscatprintf(&report, " \r areafix is turned off\r");
+	    break;
+	case 3:
+	    xscatprintf(&report, " \r password error\r");
+	    break;
+	case 4:
+	    xscatprintf(&report, " \r your system is unknown\r");
+	    break;
+	default:
+	    xscatprintf(&report, " \r unknown error. mail to sysop.\r");
+	    break;
+	}
+		
+	RetMsg(msg, link, report, "areafix reply: security violation");
+	w_log('8', "areafix: security violation from %s", aka2str(link->hisAka));
+	nfree(tmplink);
 	return 1;
+    }
+
+    if ( report != NULL ) {
+	preport=linked(msg, link);
+	xstrcat(&report, preport);
+	nfree(preport);
+	RetMsg(msg, link, report, "areafix reply: node change request");
+    }
+	
+    w_log('8', "areafix: sucessfully done for %s",aka2str(link->hisAka));
+	
+    // send msg to the links (forward requests to areafix)
+    for (i = 0; i < config->linkCount; i++) {
+	if (config->links[i].msg == NULL) continue;
+	link = &(config->links[i]);
+	linkmsg = link->msg;
+
+	xscatprintf(&(linkmsg->text), " \r--- %s areafix\r", versionStr);
+	linkmsg->textLength = strlen(linkmsg->text);
+
+	w_log('8', "areafix: write netmail msg for %s", aka2str(link->hisAka));
+
+	processNMMsg(linkmsg, NULL,
+		     getNetMailArea(config,config->robotsArea),
+		     0, MSGLOCAL);
+
+	freeMsgBuffers(linkmsg);
+	nfree(linkmsg);
+	link->msg = NULL;
+    }
+	
+    return 1;
 }
 
 void MsgToStruct(HMSG SQmsg, XMSG xmsg, s_message *msg)
