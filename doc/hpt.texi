@@ -949,8 +949,7 @@ This statement can be repeated.
 
 This statement is the same as the @code{Route} statement, but considers
 only msgs with file attaches. Files are routed with netmail msgs. If
-no @code{RouteFile} defined, then files will be routed via default
-routing (@code{Route}).
+no @code{RouteFile} defined, then files will be not routed at all!
 
 This statement can be repeated.
 
@@ -964,10 +963,7 @@ This statement can be repeated.
 @code{routeMail crash 2:2433/1245 2:2433/* 2:2432/*}
 @end table
 
-This statement is the same as the @code{Route} statement, but considers
-only msgs without file attached.
-Current version of @value{HPT} processing @code{RouteMail} before
-@code{Route}. This will be changed in the future.
+This statement is the same as the @code{Route} statement.
 
 This statement can be repeated.
 

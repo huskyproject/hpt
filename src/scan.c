@@ -163,18 +163,17 @@ void makePktHeader(s_link *link, s_pktHeader *header)
 
 s_route *findRouteForNetmail(s_message msg)
 {
-   char addrStr[24];
-   UINT i;
-
-   // FIX ME - we need a better solution here...
-   sprintf(addrStr, "%u:%u/%u.%u", msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+	char *addrStr=NULL;
+	UINT i;
 
 #ifdef DO_PERL
-   { s_route *route;
-     if ((route = perlroute(&msg)) != NULL)
-       return route;
-   }
+	{ s_route *route;
+	if ((route = perlroute(&msg)) != NULL)
+		return route;
+	}
 #endif
+
+/* remove after 03-Apr-01
    if ((msg.attributes & MSGFILE) == MSGFILE) {
       // if msg has file attached
       for (i=0; i < config->routeFileCount; i++) {
@@ -193,9 +192,26 @@ s_route *findRouteForNetmail(s_message msg)
       if(patmat(addrStr, config->route[i].pattern))
          return &(config->route[i]);
    }
+*/
+	xscatprintf(&addrStr, "%u:%u/%u.%u",
+				msg.destAddr.zone, msg.destAddr.net,
+				msg.destAddr.node, msg.destAddr.point);
 
-   // if no aka is found return no link
-   return NULL;
+	for (i=0; i < config->routeCount; i++) {
+		if ((msg.attributes & MSGFILE) == MSGFILE) { // routeFile
+			if (config->route[i].id == id_routeFile)
+				if (patmat(addrStr, config->route[i].pattern))
+					break;
+		} else {
+			if (config->route[i].id != id_routeFile) // route & routeMail
+				if (patmat(addrStr, config->route[i].pattern))
+					break;
+		}
+	}
+
+	nfree(addrStr);
+
+	return (i==config->routeCount) ? NULL : &(config->route[i]);
 }
 
 s_link *getLinkForRoute(s_route *route, s_message *msg) {
@@ -484,11 +500,11 @@ void scanNMArea(s_area *area)
    // do not scan one area twice
    if (area->scn) return;
 
-   // FixMe: workaround for not netmail packing when there's no any routing
-   if (config->routeFileCount == 0 && config->routeMailCount == 0 && config->routeCount == 0) {
-      w_log('7', "no route at all - leave mail untouched");
-      return;
-   }
+   // FIXME: workaround for not netmail packing when there's no any routing
+//   if (config->routeFileCount == 0 && config->routeMailCount == 0 && config->routeCount == 0) {
+//      w_log('7', "no route at all - leave mail untouched");
+//      return;
+//   }
 
    netmail = MsgOpenArea((unsigned char *) area -> fileName, MSGAREA_NORMAL, 
 /*								 config->netMailArea.fperm, 
