@@ -103,6 +103,8 @@ void print_help(void) {
     fprintf(stdout,"              -x export message to echo links\n\n");
     fprintf(stdout,"              -d erase input file after posting\n\n");
     fprintf(stdout,"              -u uue-multipart posting \n\n");
+    fprintf(stdout,"              -l \"n\"\n");
+    fprintf(stdout,"                 number of lines per section (150 for default)\n\n");
     fprintf(stdout,"              -h get help\n\n");
     fprintf(stdout,"              file - text file to post into echo or \"-\" for stdin\n\n");
     exit(EX_OK);
@@ -117,8 +119,9 @@ void post(int c, unsigned int *n, char *params[])
     char *fname = NULL;
     s_area *echo = NULL;
     long attr;
-    int  sections=0;
+    int sections=0;
     int part = 0;
+    int linesPerSec=LINPERSECTION;
     struct _minf m;
     
     s_message msg;
@@ -212,6 +215,11 @@ void post(int c, unsigned int *n, char *params[])
                     case 'u':    // uue-multipart posting
                         uuepost=1;
                         break;
+                    case 'l':    // uue-multipart posting
+                        linesPerSec = atoi(params[++(*n)]);
+                        if(linesPerSec<10)
+                            linesPerSec=LINPERSECTION;
+                        break;
                     case 'z':
                         tearl = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
                         strcpy(tearl, params[*n]);
@@ -282,8 +290,8 @@ void post(int c, unsigned int *n, char *params[])
                     
                     fprintf (tmpfile, "end\n");
                     lines++;
-                    sections = (lines%LINPERSECTION==0) ?
-                        lines/LINPERSECTION : lines/LINPERSECTION+1;
+                    sections = (lines%linesPerSec==0) ?
+                        lines/linesPerSec : lines/linesPerSec+1;
                     
                     fclose (tmpfile);
                     tmpfile = freopen (tmpname, "rt",tmpfile);
@@ -364,7 +372,7 @@ void post(int c, unsigned int *n, char *params[])
                 int i; 
                 xscatprintf(&msg.text, "\rsection %d of %d of file %s < %s >\r\r",
                             part+1,sections,fname,versionStr);
-                for(i = 0; i < LINPERSECTION; i++)
+                for(i = 0; i < linesPerSec; i++)
                 {
                     res = fgets(textBuffer,4*(MAX_LINELEN/3 + 1),tmpfile);
                     if(res)
