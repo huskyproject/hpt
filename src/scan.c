@@ -217,9 +217,41 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
    } else return route->target;
 }
 
+void processAttachs(s_link *link, s_message *msg)
+{
+   FILE *flo;
+   char *running = msg->subjectLine;
+   char *token;
+   char *newSubjectLine = (char *) calloc(strlen(msg->subjectLine)+1, 1);
+   
+   flo = fopen(link->floFile, "a");
+
+   token = strsep(&running, " \t");
+
+   while (token != NULL) {
+      if (flo != NULL) fprintf(flo, "%s\n", token);
+      if (strrchr(token, PATH_DELIM)!= NULL)
+         strcat(newSubjectLine, strrchr(token, PATH_DELIM)+1);
+      else
+         strcat(newSubjectLine, token);
+
+      strcat(newSubjectLine, " ");
+
+      token = strsep(&running, " \t");
+   }
+   
+   if (flo!= NULL) {
+      fclose(flo);
+   } else writeLogEntry(log, '9', "Could not open FloFile");
+
+   // replace subjectLine
+   free(msg->subjectLine);
+   msg->subjectLine = newSubjectLine;
+}
+
 int packMsg(HMSG SQmsg, XMSG xmsg)
 {
-   FILE        *flo, *pkt, *req;
+   FILE        *pkt, *req;
    char        buff[90];
    e_prio      prio;
    s_message   msg;
@@ -270,21 +302,14 @@ int packMsg(HMSG SQmsg, XMSG xmsg)
 //		   prio = cvtFlavour2Prio(route->flavour);
 //		   createOutboundFileName(virtualLink, prio, FLOFILE);
 //	   } /* endif */
-	   if (createOutboundFileName(virtualLink, prio, FLOFILE) == 0) {
-		   flo = fopen(virtualLink->floFile, "a");
-		   if (flo!= NULL) {
-			   fprintf(flo, msg.subjectLine);
-			   fprintf(flo, "\n");
-			   fclose(flo);
-                   } else writeLogEntry(log, '9', "Could not open FloFile");
-                   if (strrchr(msg.subjectLine, PATH_DELIM)!= NULL)
-                      strcpy(msg.subjectLine, strrchr(msg.subjectLine, PATH_DELIM)+1);
-		   remove(virtualLink->bsyFile);
-		   free(virtualLink->bsyFile);
-		   // mark Mail as sent
-		   xmsg.attr |= MSGSENT;
-		   MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
-		   free(virtualLink->floFile);
+           if (createOutboundFileName(virtualLink, prio, FLOFILE) == 0) {
+              processAttachs(virtualLink, &msg);
+              remove(virtualLink->bsyFile);
+              free(virtualLink->bsyFile);
+              // mark Mail as sent
+              xmsg.attr |= MSGSENT;
+              MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+              free(virtualLink->floFile);
 	   }
    } /* endif */
    
