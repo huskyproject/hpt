@@ -151,6 +151,7 @@ void autoPassive()
                                               getConfigFileName(),
                                               config->links[i], 1,
                                               config->links[i]->Pause^(ECHOAREA|FILEAREA))) {
+                                  int j, k;
                                   int mask = config->links[i]->areafixReportsAttr ? config->links[i]->areafixReportsAttr : config->areafixReportsAttr;
                                   msg = makeMessage(config->links[i]->ourAka,
                                             &(config->links[i]->hisAka),
@@ -176,10 +177,22 @@ void autoPassive()
                                   freeMsgBuffers(msg);
                                   nfree(msg);
 
+                                  /* update arealink access */
+                                  for (k = 0; k < config->echoAreaCount; k++)
+                                      for (j = 0; j < config->echoAreas[k].downlinkCount; j++)
+                                          if (config->links[i] == config->echoAreas[k].downlinks[j]->link)
+                                          {
+                                              setLinkAccess(config, &(config->echoAreas[k]), config->echoAreas[k].downlinks[j]);
+                                              break;
+                                          }
+
                                   /* pause areas with one link alive while others are paused */
                                   if (config->autoAreaPause)
                                       rc += pauseAreas(0,config->links[i],NULL);
-
+#ifdef DO_PERL
+                                  /* update perl vars */
+                                  perl_setvars();
+#endif
                               } /*  end changepause */
                               nfree(line);
                               /* fclose(f); file closed after endwhile */
