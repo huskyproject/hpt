@@ -36,6 +36,7 @@ typedef enum changeConfigRet e_changeConfigRet;
 s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink, e_query_action act);
 int af_OpenQuery();
 int af_CloseQuery();
+char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir);
 
 
 
