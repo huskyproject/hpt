@@ -223,7 +223,7 @@ void cleanEmptyBundles(char *pathName, size_t npos, char *wday)
 	   }
    }
 
-   closedir(dir);
+   husky_closedir(dir);
    nfree(pattern);
    nfree(tmpfile);
 }
