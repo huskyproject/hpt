@@ -1,3 +1,8 @@
+2003-04-08 Tuesday 07:21  val_khokhlov
+
+	* src/scan.c (1.191): bugfix: crash (bus error) on
+	adaptcase_refresh_dir()
+
 2003-04-07 Monday 15:47  mche
 
 	* hpt.vcproj (1.2): no message
