@@ -1,3 +1,44 @@
+2003-10-05 Sunday 18:01  d_sergienko
+
+	* doc/hpt.texi (1.138): fix docs building
+
+2003-10-05 Sunday 17:42  d_sergienko
+
+	* HISTORY (1.37), doc/hpt.texi (1.137), src/query.c (1.106): added
+	processing of sendNotifyMessages
+
+2003-10-05 Sunday 17:30  d_sergienko
+
+	* HISTORY (1.36), h/global.h (1.41), man/hpt.1 (1.19), src/global.c
+	(1.52), src/hpt.c (1.185), src/query.c (1.105): added -d option for
+	hpt qrep command
+
+2003-10-05 Sunday 17:10  d_sergienko
+
+	* src/areafix.c (1.426): fixes for previous patches
+
+2003-10-05 Sunday 16:56  d_sergienko
+
+	* HISTORY (1.35), h/areafix.h (1.38), misc/areafix.866 (1.6),
+	misc/areafix.hlp (1.21), src/areafix.c (1.425), src/perl.c (1.70):
+	added new areafix commands: %rules, %pktsize, %arcmailsize (patch
+	from Andrey Ladutsko)
+
+2003-10-05 Sunday 12:28  d_sergienko
+
+	* h/fcommon.h (1.55), src/areafix.c (1.424), src/fcommon.c (1.170):
+	add robotsArea to echotoss.log when posting messages from areafix
+	(bug was noticed by Ivan Rodenkov)
+
+2003-10-05 Sunday 10:44  d_sergienko
+
+	* doc/hpt.texi (1.136): fix spelling
+
+2003-10-04 Saturday 22:01  d_sergienko
+
+	* src/toss.c (1.528): optimization for previous patch about
+	statistics (thanx to Pavel Gulchouk)
+
 2003-10-04 Saturday 19:58  d_sergienko
 
 	* src/toss.c (1.527): fixed message size for statistics
