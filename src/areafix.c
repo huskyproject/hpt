@@ -726,6 +726,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
                 (area->downlinks[0]->link->hisAka.point == 0)) {
                 forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 1);
             }
+        case 7:
             cfgline = findLinkInString(cfgInline , link->hisAka );
             rc = 0;
             while(cfgline[rc] && !isspace(cfgline[rc++])); // search for end of addr string
@@ -1283,14 +1284,16 @@ char *unsubscribe(s_link *link, char *cmd) {
                 area->downlinks[k]->defLink)
                 return do_delete(link, area);
         }
+        removelink(link, area);
         if ((area->msgbType == MSGTYPE_PASSTHROUGH) &&
-            (area->downlinkCount < 3) &&
+            (area->downlinkCount < 2) &&
             (area->downlinks[0]->link->hisAka.point == 0) &&
             (config->areafixQueueFile)) {
             af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
-        }    
-        removelink(link, area);
-		j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,1);
+            j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,7);
+        } else {
+		    j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,1);
+        }
 		if (j != DEL_OK) {
 		    w_log('8', "areafix: %s doesn't unlinked from %s",
 			  aka2str(link->hisAka), an);
