@@ -546,7 +546,7 @@ int main(int argc, char **argv) {
 
 	// Local Areas
 	for (i=0; i < cfg->localAreaCount && !found; i++) {
-	   if (stricmp(cfg->echoAreas[i].areaName, argareas[j])==0){
+	   if (stricmp(cfg->localAreas[i].areaName, argareas[j])==0){
 	      linkArea(&(cfg->localAreas[i]));
 	      found++;
 	   }
@@ -588,7 +588,7 @@ int main(int argc, char **argv) {
 	       }
 	       // Local Areas
 	       for (i=0; i < cfg->localAreaCount && !found; i++) {
-		  if (stricmp(cfg->echoAreas[i].areaName, line)==0){
+		  if (stricmp(cfg->localAreas[i].areaName, line)==0){
 		     linkArea(&(cfg->localAreas[i]));
 		     found++;
 		  }

@@ -14,6 +14,7 @@ Category 1: Will certainly be implemented until next release
 - unpack all bundles before toss
 - afterUnpackBundle, afterUnpackAll ???
 - UnpackAllBeforeToss ???
+- hpt -q (quiet)
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================

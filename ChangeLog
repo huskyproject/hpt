@@ -2,6 +2,11 @@ hpt 0.9.7 (development version)
 ---------	
 
 ----- cvs ci ------
+Wed Aug  2 13:59:09 NOVST 2000
+max (patch from Serguei Revtov):
+* hptlink links LOCALareas when they are specified by args or in importlog file
+
+----- cvs ci ------
 Mon Jul 31 12:18:23 NOVST 2000
 max (patch from Pavel Gulchouk):
 * delete msgbase and dupebase when area delete
