@@ -124,7 +124,6 @@ s_link *findLinkForRoutedNetmail(s_message msg)
    }
 
    
-   
    // if no aka is found return first link
    sprintf(buff, "No route for %s found. Using first link statement", addrStr);
    writeLogEntry(log, '8', buff);
