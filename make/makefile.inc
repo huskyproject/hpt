@@ -21,8 +21,8 @@ hptlink$(EXE): hptlink$(OBJ)
 hpttree$(EXE): hpttree$(OBJ)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG)hpttree$(EXE) hpttree$(OBJ) $(LIBS)
 
-hpt$(EXE): hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) log$(OBJ) global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) post$(OBJ) areafix$(OBJ) arealist$(OBJ) dupe$(OBJ) recode$(OBJ) tree$(OBJ) seenby$(OBJ) strsep$(OBJ) link$(OBJ) crc$(OBJ)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG)hpt$(EXE) hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) log$(OBJ) global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) post$(OBJ) areafix$(OBJ) arealist$(OBJ) dupe$(OBJ) recode$(OBJ) tree$(OBJ) seenby$(OBJ) strsep$(OBJ) link$(OBJ) crc$(OBJ) $(LIBS)
+hpt$(EXE): hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) log$(OBJ) global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) post$(OBJ) areafix$(OBJ) arealist$(OBJ) dupe$(OBJ) recode$(OBJ) tree$(OBJ) seenby$(OBJ) strsep$(OBJ) link$(OBJ) crc$(OBJ) $(PERLOBJ)
+	$(CC) $(LFLAGS) $(EXENAMEFLAG)hpt$(EXE) hpt$(OBJ) pktread$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) log$(OBJ) global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) post$(OBJ) areafix$(OBJ) arealist$(OBJ) dupe$(OBJ) recode$(OBJ) tree$(OBJ) seenby$(OBJ) strsep$(OBJ) link$(OBJ) crc$(OBJ) $(PERLOBJ) $(LIBS) $(PERLLIBS)
 
 commonclean: $(SYMBOLIC)
 	-$(RM) *~

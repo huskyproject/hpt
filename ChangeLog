@@ -5,6 +5,8 @@ hpt 0.9.8 (development version)
 Sun Aug 13 13:14:34 NOVST 2000
 max:
 * areafix: fix processing commands broked yesterday ("+" & "-" without areatag)
+* deleted old makefiles
+* perl support in new makefiles
 
 ----- cvs ci ------
 Sat Aug 12 23:36:58 NOVST 2000

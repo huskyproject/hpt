@@ -17,6 +17,12 @@ else
   LIBS  = -L$(LIBDIR) -lfidoconfig -lsmapi
 endif
 
+ifeq ($(PERL), 1)
+  CFLAGS += -DDO_PERL `perl -MExtUtils::Embed -e ccopts`
+  PERLLIBS = `perl -MExtUtils::Embed -e ldopts`
+  PERLOBJ = perl$(OBJ)
+endif
+
 CDEFS=-D$(OSTYPE) $(ADDCDEFS)
 
 default: all

@@ -66,5 +66,3 @@ distclean: clean
 	-$(RM) hpt$(EXE)
 	-$(RM) hptlink$(EXE)
 	-$(RM) hpttree$(EXE)
-
-

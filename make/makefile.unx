@@ -4,16 +4,13 @@
 DEBUG=-s
 # set to -g for debugging
 
+PERL=0
+include makeperl.inc
+
 CC=cc
-EXENAMEFLAG=-o
+EXENAMEFLAG=-o 
 SRC_DIR=../src/
-ifdef PERL
-CFLAGS=-DDO_PERL -I../h -I../.. -c -O3 $(DEBUG) `perl -MExtUtils::Embed -e ccopts`
-PERLLIBS=`perl -MExtUtils::Embed -e ldopts`
-PERLOBJ=perl$(OBJ)
-else
-CFLAGS=-I../h -I../.. -c -O3 $(DEBUG)
-endif
+CFLAGS=-I../h -I../.. -c -O3 $(DEBUG) $(PERLFLAGS)
 LFLAGS=$(DEBUG)
 CDEFS =-DUNIX
 

@@ -30,4 +30,3 @@ all: commonprogs
 clean: commonclean
 
 distclean: commondistclean
-

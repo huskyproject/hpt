@@ -8,7 +8,7 @@ DEBUG=-s
 .SUFFIXES: .c .obj
 
 CC=gcc
-EXENAMEFLAG=-o
+EXENAMEFLAG=-o 
 SRC_DIR=../src/
 CFLAGS=-Zomf -I../h -I../.. -c -O3 $(DEBUG)
 LFLAGS=-Zomf -Zsys -Zlinker /PM:VIO $(DEBUG)

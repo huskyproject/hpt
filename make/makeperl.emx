@@ -9,7 +9,6 @@ PERL   =D:/PERL5/LIB/5.00553/os2
 OBJ    =.o
 EXE    =.exe
 RM     =cmd /c del
-DIRSEP =/
 CFLAGS =-I../h -I../.. -c -O3 $(DEBUG) -funsigned-char -Wall -Wno-char-subscripts\
         -DDO_PERL -DDOSISH -DEMBED -I$(PERL)/CORE
 LFLAGS =-Zcrtdll $(DEBUG) -Zstack 4096 \
@@ -20,7 +19,6 @@ EXENAMEFLAG=-o
 SRC_DIR=../src/
 # DynaLoader does not work :(
 LIBS   =../../fidoconf/fconfemx.a ../../smapi/smapiemx.a
-PERLOBJ=perl$(OBJ)
 PERLLIBS=\
         $(PERL)/auto/DB_File/DB_File.a \
         $(PERL)/auto/SDBM_File/SDBM_File.a \
@@ -33,4 +31,17 @@ PERLLIBS=\
         $(PERL)/auto/OS2/REXX/REXX.a \
         $(PERL)/auto/DynaLoader/DynaLoader.a \
         -llibperl -lsocket -lm -lbsd -ldb
-include ../makefile.inc
+PERLOBJ=perl$(OBJ)
+
+default: all
+
+%$(OBJ): $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
+
+include makefile.inc
+
+all: commonprogs
+
+clean: commonclean
+
+distclean: commondistclean

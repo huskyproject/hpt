@@ -3,20 +3,23 @@
 
 DEBUG=0
 
+PERL=0
+include makeperl.inc
+
 # for gcc, use this:
 # CC = gcc -Wall
 # for xlc, use this:
 CC=cc -qcpluscmt
 
-EXENAMEFLAG=-o
+EXENAMEFLAG=-o 
 SRC_DIR=../src/
 LFLAGS=
 CDEFS =-DUNIX
 
 ifeq ($(DEBUG), 1)
- CFLAGS     = -c -I ../.. -I ../h -O2 -ggdb
+ CFLAGS     = -c -I ../.. -I ../h -O2 -ggdb $(PERLFLAGS)
 else
- CFLAGS     = -c -I ../.. -I ../h -O2 -s
+ CFLAGS     = -c -I ../.. -I ../h -O2 -s $(PERLFLAGS)
 endif
 
 OBJ=.o
