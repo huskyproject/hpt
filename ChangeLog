@@ -1,3 +1,17 @@
+2005-04-03 Sunday 13:48  d_sergienko
+
+	* HISTORY, src/query.c (hpt-1_4-stable.[13,9]):    - Send
+	unsubscribe message when area going from idle state to kill
+	(areafixQueueFile)
+	   - Send "-area" instead of "~area" when updating areafixQueueFile
+	even if
+			advancedAreaFix is on for uplink.
+
+2005-04-03 Sunday 12:43  d_sergienko
+
+	* HISTORY, src/link.c (hpt-1_4-stable.[12,3]): Fixed linking with
+	5d address in ^AMSGID. Backport of pgul's patch from current.
+
 2005-03-28 Monday 16:33  val_khokhlov
 
 	* doc/hpt.texi (hpt-1_4-stable.11): corrected autoPassive and
