@@ -1,3 +1,8 @@
+2004-12-30 Thursday 14:37  val_khokhlov
+
+	* src/: hptafix.c (1.16), perl.c (1.85), toss.c (1.539): move all
+	robot-dependent stuff from s_link to s_link_robot
+
 2004-12-28 Tuesday 20:51  val_khokhlov
 
 	* src/hptafix.c (1.15): move some vars from global into robot
