@@ -500,17 +500,16 @@ int createTempPktFileName(s_link *link)
 		break;
 
     case eTimeStamp:
-		xscatprintf(&tmp, "%06lx%02x.%s", (long)aTime, counter, wday);
 		counter = 0;
 		do {
 			nfree(pfileName);
-			xstrcat(&pfileName, tmp);
-			xscatprintf(&pfileName, "%c", ext3[counter]);
+			xscatprintf(&pfileName, "%06lx%02x.%s%c", (long)aTime, counter%256, wday, ext3[counter/256]);
 			counter++;
 		} while ((fexist(pfileName) || fileNameAlreadyUsed(NULL, pfileName))
-				 && (counter < numExt));
+				 && (counter < numExt*256));
 
-		if (counter >= numExt) w_log('7',"created %d bundles/sec!", numExt);
+		if (counter >= numExt*256)
+			w_log('7',"created %d bundles/sec!", numExt*256);
 
 		break;
 
