@@ -1,3 +1,22 @@
+2002-05-07 Tuesday 13:53  mche
+
+	* src/toss.c (1.408): putMsgInArea()  wrong usage of pointers fixed
+
+2002-05-07 Tuesday 13:10  mche
+
+	* src/perl.c (1.35): fixed redifenition of s_addr from winsock.h
+
+2002-05-07 Tuesday 11:54  pavel.gulchouck
+
+	* src/toss.c (1.407): Do not reopen msgbase files for toss each
+	message
+
+2002-05-07 Tuesday 09:51  pavel.gulchouck
+
+	* filter.pl (1.9), doc/hpt.texi (1.63), h/hptperl.h (1.6),
+	src/perl.c (1.34), src/toss.c (1.406): added new perl hook tossbad,
+	called when put message to badarea
+
 2002-05-06 Monday 18:15  pavel.gulchouck
 
 	* src/toss.c (1.404), TODO (1.188): speedup: do not reopen pkt for
