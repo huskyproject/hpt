@@ -70,7 +70,8 @@ struct message {
    /*Address block */
    s_addr destAddr, origAddr;
 
-   UINT16 attributes;
+//   UINT16 attributes;
+   dword  attributes;
    UCHAR  datetime[22];
    CHAR   netMail;
    INT32  textLength;

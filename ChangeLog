@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Wed Mar 22 13:31:29 NOVT 2000
+max:
+* reports from hpt in ReportTo area are local now (Loc flag)
+
+----- cvs ci ------
 Mon Mar 20 08:56:28 MSK 2000
 max (patch from Serguei Revtov):
 * change legacy SUN & Win makefiles to compile with new includes, simplifying

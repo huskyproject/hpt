@@ -142,7 +142,7 @@ int to_us(const s_addr destAddr)
    return !0;
 }
 
-XMSG createXMSG(s_message *msg, const s_pktHeader *header, UINT16 forceattr) 
+XMSG createXMSG(s_message *msg, const s_pktHeader *header, dword forceattr) 
 {
 	XMSG  msgHeader;
 	struct tm *date;
@@ -230,7 +230,7 @@ XMSG createXMSG(s_message *msg, const s_pktHeader *header, UINT16 forceattr)
    return msgHeader;
 }
 
-int putMsgInArea(s_area *echo, s_message *msg, int strip, UINT16 forceattr)
+int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 {
    char *ctrlBuff, *textStart, *textWithoutArea;
    UINT textLength = (UINT) msg->textLength;
@@ -1143,7 +1143,7 @@ void writeMsgToSysop()
 		if (echo != &(config->badArea)) {
 		    if (config->carbonCount != 0) ccrc = carbonCopy(msgToSysop[i], echo);
 		    if (echo->msgbType != MSGTYPE_PASSTHROUGH && ccrc <= 1) {
-        		putMsgInArea(echo, msgToSysop[i],1, 0);
+        		putMsgInArea(echo, msgToSysop[i],1, (MSGSCANNED|MSGSENT|MSGLOCAL));
         		echo->imported++;  // area has got new messages
 		    }
 
