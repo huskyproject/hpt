@@ -2917,9 +2917,9 @@ This statement can be repeated.
 @code{CarbonFromArea Interuser}
 @end table
 
-Only messages that are written in this area, will be copied.
-Use it in combination with CarbonRule to prevent that all messages from
-an area are copied.
+Only messages that are written in this area, will be copied. Use it in
+combination with CarbonRule to prevent that all messages from an area
+are copied.
 
 @xref{CarbonRule}.
 
@@ -2931,7 +2931,7 @@ CarbonText " Israel "
 CarbonCopy my.news
 @end example
 
-@strong{Doesn't works for NetMail areas!}
+<areatag> is the area name, defined after EchoArea or NetMailArea.
 
 This statement can be repeated.
 
