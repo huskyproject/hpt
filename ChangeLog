@@ -1,3 +1,8 @@
+2004-07-07 Wednesday 13:45  stas_degteff
+
+	* doc/hpt-FAQ.russian (1.89): Add Q/A about perl modules for
+	hpt/win
+
 2004-06-07 Monday 11:21  sfpavel
 
 	* debian/compat (1.1): file compat was initially added on branch
