@@ -2,6 +2,11 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Sat Sep  2 20:48:59 NOVST 2000
+max (patch from Michael Kulinich):
+* token keepTrsMail
+
+----- cvs ci ------
 Wed Aug 30 22:12:03 NOVST 2000
 max:
 * fixed autocreate bug (reported by Konstantin Kubatkin)
