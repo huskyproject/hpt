@@ -1,3 +1,7 @@
+2002-06-15 Saturday 10:26  mche
+
+	* src/areafix.c (1.314): no message
+
 2002-06-14 Friday 14:31  mche
 
 	* src/dupe.c (1.63): some trace added
