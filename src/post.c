@@ -219,8 +219,6 @@ void post(int c, unsigned int *n, char *params[])
                     case 'e':    // echo name
                         area = params[++(*n)];
                         echo = getArea(config, area);
-                        //strUpper(area);
-                        //strUpper(echo->areaName);
                         if (echo == &(config->badArea)) {
                             w_log(LL_ERROR, "post: wrong area to post: %s" , area);
                             *n = (unsigned int)c;
@@ -400,7 +398,12 @@ void post(int c, unsigned int *n, char *params[])
             
             if(!msg.netMail) memset(&msg.destAddr, '\0', sizeof(s_addr));
 
-            msg.text = createKludges(config->disableTID,area, &msg.origAddr, &msg.destAddr,versionStr);
+            msg.text = createKludges(config->disableTID,
+                                     strUpper(area),
+                                     &msg.origAddr,
+                                     &msg.destAddr,
+                                     versionStr);
+
             if (flags) xscatprintf(&msg.text, "\001FLAGS%s\r", flags);
 
             if( uuepost )
