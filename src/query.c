@@ -313,14 +313,14 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
                     i++;
                 if(i == tmpNode->linksCount) {
                     af_AddLink( tmpNode, dwlink ); // add link to queried area
-                    tmpNode->eTime = config->forwardRequestTimeout*secInDay;
+                    tmpNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
                 } else {
                     tmpNode = NULL;  // link already in query
                 }
             } else {
                 strcpy(tmpNode->type,czFreqArea); // change state to @freq"
                 af_AddLink( tmpNode, dwlink );
-                tmpNode->eTime = config->forwardRequestTimeout*secInDay;
+                tmpNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
             }
         } else { // area not found, so add it
             areaNode = af_AddAreaListNode( areatag, czFreqArea );
@@ -328,7 +328,7 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
                 queryAreasHead->linksCount = strlen( areatag );
             af_AddLink( areaNode, uplink );
             af_AddLink( areaNode, dwlink );
-            tmpNode->eTime = config->forwardRequestTimeout*secInDay;
+            tmpNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
         }
         break;
     case ADDIDLE:
@@ -338,7 +338,7 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
             if(strlen( areatag ) > queryAreasHead->linksCount)
                 queryAreasHead->linksCount = strlen( areatag );
             af_AddLink( areaNode, uplink );
-            tmpNode->eTime = config->idlePassthruTimeout*secInDay;
+            tmpNode->eTime = tnow + config->idlePassthruTimeout*secInDay;
             w_log(LL_AREAFIX, "areafix: make request idle for area: %s", areaNode->name);
 
         }
@@ -388,7 +388,7 @@ char* af_Req2Idle(char *areatag, char* report, s_addr linkAddr)
                 {
                     strcpy(areaNode->type,czIdleArea);
                     areaNode->bTime = tnow;
-                    areaNode->eTime = config->idlePassthruTimeout*secInDay;
+                    areaNode->eTime = tnow + config->idlePassthruTimeout*secInDay;
                     w_log('8', "areafix: make request idle for area: %s", areaNode->name);
                 }
                 xscatprintf(&report, " %s %s  request canceled\r",
@@ -547,13 +547,13 @@ void af_QueueUpdate()
             {
                 tmpNode->downlinks[0] = lastRlink->hisAka; 
                 tmpNode->bTime = tnow;
-                tmpNode->eTime = config->forwardRequestTimeout*secInDay;
+                tmpNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
             }
             else
             {
                 strcpy(tmpNode->type, czKillArea);
                 tmpNode->bTime = tnow;
-                tmpNode->eTime = config->forwardRequestTimeout*secInDay;
+                tmpNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
                 w_log( LL_AREAFIX, "areafix: request for %s is going to be killed",tmpNode->name);
             }
             queryAreasHead->nFlag = 1; // query was changed
@@ -571,7 +571,7 @@ void af_QueueUpdate()
             queryAreasHead->nFlag = 1; // query was changed
             strcpy(tmpNode->type, czKillArea);
             tmpNode->bTime = tnow;
-            tmpNode->eTime = config->killedRequestTimeout*secInDay;
+            tmpNode->eTime = tnow + config->killedRequestTimeout*secInDay;
             w_log( LL_AREAFIX, "areafix: request for %s is going to be killed",tmpNode->name);
             do_delete(NULL, getArea(config, tmpNode->name));
         }
