@@ -646,7 +646,7 @@ cygwin1.dll. Применяются для той же цели (портирование unix utils), но требуют
 
 A: (ML,SR)
 
-hptsqfix (Squish, Jam базы), hptutil fix
+hptsqfix (Squish базы), hptutil fix
 не стоит использовать старые досовые sqfix и sqfix32 (not y2k compatible)
 
 Q: А что за файлы .tm*?
