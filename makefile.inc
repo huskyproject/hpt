@@ -44,8 +44,8 @@ txt2pkt$(EXE): txt2pkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
           fcommon$(OBJ) pktread$(OBJ) pktwrite$(OBJ) \
           global$(OBJ) dupe$(OBJ) $(LIBS)
 
-hptlink$(EXE): hptlink$(OBJ)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG) hptlink$(EXE) hptlink$(OBJ) $(LIBS)
+hptlink$(EXE): hptlink$(OBJ) global$(OBJ)
+	$(CC) $(LFLAGS) $(EXENAMEFLAG) hptlink$(EXE) hptlink$(OBJ) $(LIBS) global$(OBJ)
 
 hpttree$(EXE): hpttree$(OBJ)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) hpttree$(EXE) hpttree$(OBJ) $(LIBS)
