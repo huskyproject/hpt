@@ -1,3 +1,7 @@
+2001-09-20 Thursday 07:51  ml
+
+	* doc/: hpt-FAQ.russian (1.8), hpt.texi (1.40): updating docs
+
 2001-09-18 Tuesday 17:01  pavel.gulchouck
 
 	* src/: fcommon.c (1.94), toss.c (1.364): stat() changed to
