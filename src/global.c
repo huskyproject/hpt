@@ -60,3 +60,4 @@ int       cmLink = 0;
 int       cmAfix = 0;
 int       noHighWaters = 0;
 int       count = 0;
+int	  quiet = 0;

@@ -138,7 +138,7 @@ void writeLogEntry(s_log *hpt_log, char key, char *logString, ...)
 			fflush(hpt_log->logFile);
 		}
 
-		if (screen) {
+		if (screen && quiet==0) {
 			fprintf(stdout, "%c %02u.%02u.%02u  ",
 					key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec);
 			va_start(ap, logString);

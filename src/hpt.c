@@ -126,6 +126,7 @@ int processCommandLine(int argc, char **argv)
       printf("   hpt link    - links messages\n");
       printf("   hpt afix    - process areafix\n");
       printf("   hpt relink <addr> - refresh area subsription\n");
+      printf("   hpt -q [options] - quiet mode (no screen output)\n");
    }
 
    while (i < argc-1) {
@@ -157,6 +158,9 @@ int processCommandLine(int argc, char **argv)
       } else if (stricmp(argv[i], "-c") == 0) {
          ++i; xstrcat(&cfgFile, argv[i]);
 	 continue;
+      } else if (stricmp(argv[i], "-q") == 0) {
+		  ++i; quiet = 1;
+		  continue;
       } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
 
    } /* endwhile */
@@ -275,11 +279,12 @@ xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVI
    xscatprintf(&version, " %s", hpt_date);
 #endif
 
-   fprintf(stdout, "Highly Portable Toss %s\n", version);
    xscatprintf(&versionStr,"hpt %s", version);
-   nfree(version);
 
    if (processCommandLine(argc, argv)==1) exit(0);
+
+   if (quiet==0) fprintf(stdout, "Highly Portable Toss %s\n", version);
+   nfree(version);
 
    if (config==NULL) processConfig();
 

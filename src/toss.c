@@ -255,7 +255,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
    HAREA harea;
    HMSG  hmsg;
    XMSG  xmsg;
-   char *slash, *p, *q;
+   char *slash, *p, *q, *tiny;
    int rc = 0;
 
    // create Directory Tree if necessary
@@ -311,10 +311,12 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
             textWithoutArea++;
          }
 
+		 tiny = strrstr(textWithoutArea, " * Origin:");
+		 if (tiny == NULL) tiny = textWithoutArea;
 		 if (echo->killSB) {
-			 if (NULL != (p = strstr(textWithoutArea,"\rSEEN-BY: "))) p[1]='\0';
+			 if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) p[1]='\0';
 		 } else if (echo->tinySB) {
-			 if (NULL != (p = strstr(textWithoutArea,"\rSEEN-BY: "))) {
+			 if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) {
 				 p++;
 				 if (NULL != (q = strstr(p,"\001PATH: "))) memmove(p,q,strlen(q)+1);
 				 else p[0]='\0';

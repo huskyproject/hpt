@@ -4,20 +4,19 @@ TODO-List for HPT
 Category 1: Will certainly be implemented until next release
 ============================================================
 - excludePassthroughCarbon
-- don't open/close on each msg when writing to pkt files.
 - add pkt from to dupe messages
 - msgbasedir for each link
 - -sbadd(<addr>,<addr>,...) -sbdel(<addr>,<addr>,...)
 - reduces Seen-BYs (fsc-0093)
 - createForwardNonPass
 - correctEMAddr: take node from path if no origin in message
-- hpt -q (quiet)
 - AutoCreateSemaphore
 - autoAreaCreateMask
 - areafix from cmd line (like hpt afix <addr> %command)
 
 Category 2: Might be implemented, but volunteers are always very welcome!
 =========================================================================
+- don't open/close on each msg when writing to pkt files (through ifdef)
 - fileboxes
 - templates
 

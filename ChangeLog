@@ -2,6 +2,13 @@ hpt 0.9.8 (development version)
 ---------	
 
 ----- cvs ci ------
+Thu Aug 24 23:52:17 NOVST 2000
+max:
+* msgs for processing tiny or kill seen-by's stripped after Origin line
+  even if SEEN-BY: line in msg body.
+* -q command line option (quiet mode, no output)
+
+----- cvs ci ------
 Sat Aug 19 18:39:28 NOVST 2000
 max:
 * bundle added to flo file if it is really packed
