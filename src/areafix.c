@@ -945,6 +945,7 @@ char *subscribe(s_link *link, char *cmd) {
                 af_CheckAreaInQuery(an, NULL, NULL, DELIDLE);
                 xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
                 w_log(LL_AREAFIX, "areafix: %s subscribed to %s",aka2str(link->hisAka),an);
+                if(cmNotifyLink)
                 forwardRequestToLink(area->areaName,link, NULL, 0);
             } else {
                 xscatprintf(&report," %s %s  error. report to sysop!\r",an,print_ch(49-strlen(an),'.'));
@@ -1198,8 +1199,8 @@ char *unsubscribe(s_link *link, char *cmd) {
                             aka2str(link->hisAka), an);
                     } else {
                         w_log(LL_AREAFIX,"areafix: %s unlinked from %s",aka2str(link->hisAka),an);
+                        if(cmNotifyLink)
                         forwardRequestToLink(area->areaName,link, NULL, 1);
-
                     }
             } else { /*  unsubscribing from own address - set area passtrough */
                 if (area->downlinkCount==0)
