@@ -1,3 +1,12 @@
+2002-12-26 Thursday 12:34  stas_degteff
+
+	* make/: makefile, makefile.aix, makefile.bco, makefile.be,
+	makefile.bsd, makefile.emo, makefile.emx, makefile.lnx,
+	makefile.osf, makefile.sun, makefile.unx, makefile.wcd,
+	makefile.wco, makefile.wcx, makeperl.emo, makeperl.emx
+	(hpt-1_2-stable.[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]): compile with 
+	-DNOSEMAPHORES
+
 2002-12-24 Tuesday 08:33  d_sergienko
 
 	* HISTORY (hpt-1_2-stable.10): 
