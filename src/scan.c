@@ -296,7 +296,7 @@ void scan(void)
    scanNMArea();
    statScan.areas++;
    for (i = 0; i< config->echoAreaCount; i++) {
-      if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downLinkCount > 0)) {
+      if ((config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH) && (config->echoAreas[i].downlinkCount > 0)) {
          scanEMArea(&(config->echoAreas[i]));
          statScan.areas++;
       }
