@@ -1,3 +1,9 @@
+2002-01-04 Friday 16:01  ml
+
+	* h/global.h (1.26.2.1), src/areafix.c (1.232.2.1), src/global.c
+	(1.38.2.1), src/hpt.c (1.121.2.1), src/post.c (1.60.2.1),
+	src/toss.c (1.380.2.1): createDirectoryTree only for smapi 2.0.0
+
 2002-01-03 Thursday 13:21  ml
 
 	* VERSION (1.2), doc/hpt.texi (1.51), man/hpt.1 (1.14),
