@@ -142,7 +142,10 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    // create text
    msg->textLength = MsgGetTextLen(hmsg); // with trailing \0
    msg->text=NULL;
-   if (action!=2) xscatprintf(&(msg->text),"AREA:%s\r",strUpper(echo->areaName));
+   if (action!=2) {
+      xscatprintf(&(msg->text),"AREA:%s\r",echo->areaName);
+      strUpper(msg->text+5);
+   }
    xstrcat(&(msg->text), kludgeLines);
    nfree(kludgeLines);
    ctrlLen = strlen(msg->text);
