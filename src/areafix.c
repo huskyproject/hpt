@@ -384,7 +384,7 @@ char *query(s_message *msg, s_link *link)
     xscatprintf(&report, "Linked areas to %s\r\r",
 		    aka2str(link->hisAka));
     
-    for (i=0; i<config->echoAreaCount; i++) {
+    for (i=n=0; i<config->echoAreaCount; i++) {
 	rc=subscribeCheck(EchoAreas[i], msg, link);
 	if (rc==0) {
             xscatprintf(&report, " %s\r", EchoAreas[i].areaName);
