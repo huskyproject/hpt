@@ -2,6 +2,11 @@ hpt 0.9.6
 ---------
 
 ----- cvs ci ------
+Sat Mar 25 10:59:40 NOVT 2000
+max:
+* fixed origAddr.zone calculation in correctNMAddr()
+
+----- cvs ci ------
 Thu Mar 23 16:10:45 NOVT 2000
 max:
 * fixed statistic afrer autocreate (report from Alex Belozuerov)

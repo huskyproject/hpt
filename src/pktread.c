@@ -168,7 +168,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
 
    copy = buffer;
    start = strstr(msg->text, "FMPT");
-   if (NULL!=start) {
+   if (start) {
       start += 6;                  /* skip "FMPT " */
       while (isdigit(*start)) {     /* copy all digit data */
          *copy = *start;
@@ -185,7 +185,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
    /* and the same for TOPT */
    copy = buffer;
    start = strstr(msg->text, "TOPT");
-   if (NULL!=start) {
+   if (start) {
       start += 6;                  /* skip "TOPT " */
       while (isdigit(*start)) {     /* copy all digit data */
          *copy = *start;
@@ -202,9 +202,9 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
    /* INTL Kludge processing */
    copy = buffer;
    start = strstr(msg->text, "INTL");
-   if (NULL != start) {
+   if (start) {
       start += 6;                 // skip "INTL "
-      while (':' != *start) {     // copy all data until ':'
+      while (isdigit(*start)) {   // copy all data until ':'
          *copy = *start;
          copy++;
          start++;
@@ -212,9 +212,10 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
       *copy = '\0';
       msg->destAddr.zone = atoi(buffer);
 
-      while (*start != ' ') start++; // walk to next zone info
+      while (!isspace(*start)) start++; // walk to next zone info
 
-      while (':' != *start) {     // copy all data until ':'
+      copy = buffer; start++;
+      while (isdigit(*start)) {     // copy all data until ':'
          *copy = *start;
          copy++;
          start++;
