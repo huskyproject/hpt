@@ -828,7 +828,6 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	    an = area->areaName;
 
 	    rc=subscribeAreaCheck(area, msg, line, link);
-		w_log('1',"rc = %d",rc);
 	    if (rc==4) continue;
  		if (rc==1 && mandatoryCheck(*area, link)) rc = 5;
 
