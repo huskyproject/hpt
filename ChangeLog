@@ -2,6 +2,16 @@ hpt 0.9.5
 ---------
 
 ----- cvs ci ------
+Mon Jan 24 22:28:35 CET 2000
+mtt:
+* fixed file request generation
+	
+----- cvs ci ------
+Mon Jan 24 18:50:32 CET 2000
+mtt:
+* finally managed to checking my rescan-bugfix.
+
+----- cvs ci ------
 Tue Jan 25 00:43:18 NOVT 2000
 max:
 * comment /* checkDateTime() */
