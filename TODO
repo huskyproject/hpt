@@ -19,6 +19,7 @@ Category 2: Might be implemented, but volunteers are always very welcome!
 - processing of echomail.jam by hpt link (or hptlink).
 - correctNMAddress when packing messages from msgbase
 - rewrite zonegating algorythm.
+- put netmail into fileboxes
 
 Category 3: Will only be included if volunteers send patches
 ============================================================
