@@ -62,14 +62,15 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo)
    free(ctrlBuff);
 
    // create seen-by's & path
+   seenByCount = 0;
    seenBys = (s_seenBy*) malloc(echo->downlinkCount+1);
    for (i = 0;i < echo->downlinkCount; i++) {
       if (echo->downlinks[i]->hisAka.point != 0) continue; // only include nodes in SEEN-BYS
       
       seenBys[i].net  = echo->downlinks[0]->hisAka.net;
       seenBys[i].node = echo->downlinks[0]->hisAka.node;
+      seenByCount++;
    }
-   seenByCount = echo->downlinkCount;
    if (echo->useAka->point == 0) {      // only include if system is node
       seenBys[i].net = echo->useAka->net;
       seenBys[i].node = echo->useAka->node;
@@ -147,7 +148,7 @@ void packEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo)
       writeMsgToPkt(pkt, msg);
 
       closeCreatedPkt(pkt);
-}
+   }
 
    // mark msg as sent and scanned
    xmsg.attr |= MSGSENT;

@@ -30,6 +30,15 @@ char *createTempPktFileName()
    }
 }
 
+int createDirectoryTree(char *pathName) {
+#ifdef UNIX
+   char limiter=´/´;
+#else
+   char limiter=´\\´;
+#endif
+   return 0;
+}
+
 char *createOutboundFileName(s_addr aka, e_prio prio, e_type typ)
 {
    char name[13], zoneSuffix[5], pntDir[14];
