@@ -1,23 +1,36 @@
 # $Id$
-# Microsoft Visual C++ Makefile
+# Microsoft Visual C++ Makefile for build dinamic program(s)
+# with PERL language and Internal ZIP (Zlib) support
+# No support for the Husky build environment.
+#
+# Tested on MS Visual C 6.0
 #
 
 DEBUG=0
+
+HPTZIP=0
+
+!if $(HPTZIP) == 1
+HPTZIPL = ..\..\hptzip\make\hptzip.lib
+HPTZIPI = -I..\..\hptzip
+HPTZIPD = -DUSE_HPTZIP
+!endif
+
 CC=cl
 EXENAMEFLAG=-Fe
 PERL_DIR=c:\programs\Perl
 SRC_DIR=..\src\
 
-CFLAGS=-nologo -Zp1 -Ob2 -c -MD -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib -I"$(PERL_DIR)\lib\core"
+CFLAGS=-nologo -Zp1 -Ob2 -c -MD -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib $(HPTZIPI) -I"$(PERL_DIR)\lib\core"
 LFLAGS=
-CDEFS =-DDO_PERL -DWIN32 -D_MAKE_DLL -DNDEBUG -D__NT__ -D_CONSOLE -DNO_STRICT -DHAVE_DES_FCRYPT -DPERL_IMPLICIT_CONTEXT -DPERL_IMPLICIT_SYS -DPERL_MSVCRT_READFIX
+CDEFS =-DDO_PERL -DWIN32 -D_MAKE_DLL -DNDEBUG -D__NT__ -D_CONSOLE -DNO_STRICT -DHAVE_DES_FCRYPT $(HPTZIPD) -DPERL_IMPLICIT_CONTEXT -DPERL_IMPLICIT_SYS -DPERL_MSVCRT_READFIX
 
 OBJ=.obj
 EXE=.exe
 RM=del
 PERLOBJ = perl.obj
 
-LIBS= ..\..\fidoconf\fconfmvc.lib ..\..\smapi\make\smapimvc.lib ..\..\huskylib\make\huskymvc.lib USER32.LIB msvcrt.lib Kernel32.lib delayimp.lib $(PERL_DIR)\lib\core\perl56.lib /link /nodefaultlib /opt:nowin98 /delayload:perl56.dll
+LIBS= ..\..\fidoconf\fconfmvc.lib ..\..\smapi\make\smapimvc.lib ..\..\huskylib\make\huskymvc.lib USER32.LIB msvcrt.lib Kernel32.lib delayimp.lib $(HPTZIPL) $(PERL_DIR)\lib\core\perl56.lib /link /nodefaultlib /opt:nowin98 /delayload:perl56.dll
 
 default: all
 
