@@ -150,7 +150,7 @@ int linkArea(s_area *area, int netMail)
                        (word)(area->msgbType | (netMail ? 0 : MSGTYPE_ECHO)));
    if (harea) {
       w_log('3', "linking area %s", area->areaName);
-      msgsNum = MsgGetHighMsg(harea);
+      msgsNum = MsgGetNumMsg(harea);
       if (msgsNum < 2) { /* Really nothing to link */
 	      MsgCloseArea(harea);
 	      return 0;
