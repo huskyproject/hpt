@@ -1,3 +1,22 @@
+2002-01-19 Saturday 17:51  ml
+
+	* src/global.c (1.38.2.2): set -pre1 version branch
+
+2002-01-19 Saturday 16:53  ml
+
+	* src/toss.c (1.380.2.4): fix if dummys del \n from the end of
+	autoareacreatefile
+
+2002-01-19 Saturday 09:52  ml
+
+	* doc/hpt.texi (1.51.2.2), src/areafix.c (1.232.2.5): fixed bug in
+	areafix when unsubscribing node addr with trailing .0
+
+2002-01-19 Saturday 08:06  ml
+
+	* src/areafix.c (1.232.2.4): fix pattern subscrition after hidden
+	areas
+
 2002-01-18 Friday 05:14  ml
 
 	* src/post.c (1.60.2.2): convert AREA:CONFERENCE to upper case if
