@@ -51,6 +51,7 @@
 #include <huskylib/recode.h>
 #include <huskylib/temp.h>
 #include <huskylib/xstr.h>
+#include <smapi/msgapi.h>
 
 #include "global.h"
 #include "toss.h"

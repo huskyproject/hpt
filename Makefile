@@ -25,7 +25,7 @@ endif
 ifeq ($(PERL), 1)
   CFLAGS += -DDO_PERL `perl -MExtUtils::Embed -e ccopts`
   PERLLIBS = `perl -MExtUtils::Embed -e ldopts`
-  PERLOBJ = perl$(OBJ)
+  PERLOBJ = perl$(_OBJ)
 endif
 
 CDEFS=-D$(OSTYPE) $(ADDCDEFS)

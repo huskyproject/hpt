@@ -11,10 +11,10 @@ EXENAMEFLAG=-o
 #SRC_DIR=../src/
 #LIBS   =-L$(LIBDIR) -lfidoconfig -lsmapi
 
-OBJS	= $(PERLOBJ) fcommon$(OBJ) hpt$(OBJ) pktread$(OBJ) \
-	global$(OBJ) toss$(OBJ) scan$(OBJ) scanarea$(OBJ) seenby$(OBJ) \
-	dupe$(OBJ) query$(OBJ) areafix$(OBJ) post$(OBJ) \
-	link$(OBJ) pktwrite$(OBJ) carbon$(OBJ) stat$(OBJ)
+OBJS	= $(PERLOBJ) fcommon$(_OBJ) hpt$(_OBJ) pktread$(_OBJ) \
+	global$(_OBJ) toss$(_OBJ) scan$(_OBJ) scanarea$(_OBJ) seenby$(_OBJ) \
+	dupe$(_OBJ) query$(_OBJ) areafix$(_OBJ) post$(_OBJ) \
+	link$(_OBJ) pktwrite$(_OBJ) carbon$(_OBJ) stat$(_OBJ)
 
 commonall: $(OBJS) \
      pktinfo$(EXE) \
@@ -24,37 +24,37 @@ commonall: $(OBJS) \
      hpttree$(EXE) \
      hpt$(EXE)
 
-%$(OBJ): $(SRC_DIR)%.c
+%$(_OBJ): $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
 
-pktinfo$(EXE): pktinfo$(OBJ) $(OBJS)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG) pktinfo$(EXE) pktinfo$(OBJ) \
-          pktread$(OBJ) fcommon$(OBJ) global$(OBJ) dupe$(OBJ) \
+pktinfo$(EXE): pktinfo$(_OBJ) $(OBJS)
+	$(CC) $(LFLAGS) $(EXENAMEFLAG) pktinfo$(EXE) pktinfo$(_OBJ) \
+          pktread$(_OBJ) fcommon$(_OBJ) global$(_OBJ) dupe$(_OBJ) \
 	  $(LIBS)
 
-tpkt$(EXE): tpkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
-              global$(OBJ) 
-	$(CC) $(LFLAGS) $(EXENAMEFLAG) tpkt$(EXE) tpkt$(OBJ) \
-              fcommon$(OBJ) pktread$(OBJ) pktwrite$(OBJ) global$(OBJ) \
-              dupe$(OBJ) $(LIBS)
+tpkt$(EXE): tpkt$(_OBJ) pktwrite$(_OBJ) fcommon$(_OBJ) pktread$(_OBJ) \
+              global$(_OBJ) 
+	$(CC) $(LFLAGS) $(EXENAMEFLAG) tpkt$(EXE) tpkt$(_OBJ) \
+              fcommon$(_OBJ) pktread$(_OBJ) pktwrite$(_OBJ) global$(_OBJ) \
+              dupe$(_OBJ) $(LIBS)
 
-txt2pkt$(EXE): txt2pkt$(OBJ) pktwrite$(OBJ) fcommon$(OBJ) pktread$(OBJ) \
-               global$(OBJ)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG) txt2pkt$(EXE) txt2pkt$(OBJ) \
-          fcommon$(OBJ) pktread$(OBJ) pktwrite$(OBJ) \
-          global$(OBJ) dupe$(OBJ) $(LIBS)
+txt2pkt$(EXE): txt2pkt$(_OBJ) pktwrite$(_OBJ) fcommon$(_OBJ) pktread$(_OBJ) \
+               global$(_OBJ)
+	$(CC) $(LFLAGS) $(EXENAMEFLAG) txt2pkt$(EXE) txt2pkt$(_OBJ) \
+          fcommon$(_OBJ) pktread$(_OBJ) pktwrite$(_OBJ) \
+          global$(_OBJ) dupe$(_OBJ) $(LIBS)
 
-hptlink$(EXE): hptlink$(OBJ) global$(OBJ)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG) hptlink$(EXE) hptlink$(OBJ) $(LIBS) global$(OBJ)
+hptlink$(EXE): hptlink$(_OBJ) global$(_OBJ)
+	$(CC) $(LFLAGS) $(EXENAMEFLAG) hptlink$(EXE) hptlink$(_OBJ) $(LIBS) global$(_OBJ)
 
-hpttree$(EXE): hpttree$(OBJ)
-	$(CC) $(LFLAGS) $(EXENAMEFLAG) hpttree$(EXE) hpttree$(OBJ) $(LIBS)
+hpttree$(EXE): hpttree$(_OBJ)
+	$(CC) $(LFLAGS) $(EXENAMEFLAG) hpttree$(EXE) hpttree$(_OBJ) $(LIBS)
 
 hpt$(EXE): $(OBJS)
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) hpt$(EXE) $(OBJS) $(LIBS) $(PERLLIBS)
 
 clean:
-	-$(RM) $(RMOPT) *$(OBJ)
+	-$(RM) $(RMOPT) *$(_OBJ)
 	-$(RM) $(RMOPT) core
 
 distclean: clean

@@ -49,6 +49,7 @@
 #include <fidoconf/fidoconf.h>
 #include <huskylib/xstr.h>
 #include <fidoconf/common.h>
+#include <smapi/msgapi.h>
 
 #include <pkt.h>
 #include <global.h>
