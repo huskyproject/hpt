@@ -44,6 +44,11 @@
 
 extern s_message **msgToSysop;
 
+s_area *afGetArea(char *areaName) {
+    s_area *area = getArea(config, areaName);
+    return area != &(config->badArea) ? area : NULL;
+}
+
 int afIsValidConference(const char *s) {
     if (!s || strlen(s) > 60) return BM_AREATAG_TOO_LONG;
     /*  according to FSC-0074 with lowercase symbols */
@@ -246,6 +251,7 @@ int init_hptafix(void) {
   call_smalloc  = &safe_malloc;
   call_srealloc = &safe_realloc;
 
+  call_getArea  = &afGetArea;
   call_isValid  = &afIsValidConference;
   call_sendMsg  = &afSendMsg;
   call_writeMsgToSysop = &afWriteMsgToSysop;
