@@ -1333,16 +1333,17 @@ char *unsubscribe(s_link *link, char *cmd) {
 	    break;
 	}
     }
+    report = af_Req2Idle(line, report, link->hisAka);
     if (report == NULL) {
-	if (isPatternLine(line)) {
-	    xscatprintf(&report, " %s %s  no areas to unlink\r",
-			line, print_ch(49-strlen(line), '.'));
-	    w_log('8', "areafix: no areas to unlink");
-	} else {
-	    xscatprintf(&report, " %s %s  not found\r",
-			line, print_ch(49-strlen(line), '.'));
-	    w_log('8', "areafix: area %s is not found", line);
-	}
+        if (isPatternLine(line)) {
+            xscatprintf(&report, " %s %s  no areas to unlink\r",
+                line, print_ch(49-strlen(line), '.'));
+            w_log('8', "areafix: no areas to unlink");
+        } else {
+            xscatprintf(&report, " %s %s  not found\r",
+                line, print_ch(49-strlen(line), '.'));
+            w_log('8', "areafix: area %s is not found", line);
+        }
     }
     return report;
 }

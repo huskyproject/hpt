@@ -309,7 +309,9 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
         if( bFind ) {
             if( stricmp(tmpNode->type,czFreqArea) == 0 )
             {
-                for (i = 1; i < tmpNode->linksCount && addrComp(*dwlink, tmpNode->downlinks[i])!=0; i++);
+                i = 1;
+                while( i < tmpNode->linksCount && addrComp(*dwlink, tmpNode->downlinks[i])!=0)
+                    i++;
                 if(i == tmpNode->linksCount) {
                     af_AddLink( tmpNode, dwlink ); // add link to queried area
                 } else {
@@ -338,6 +340,51 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink
         break;
     }
     return tmpNode;
+}
+
+char* af_Req2Idle(char *areatag, char* report, s_addr linkAddr)
+{
+    size_t i;
+    s_query_areas *tmpNode  = NULL;
+    s_query_areas *areaNode  = NULL;
+    if( !queryAreasHead ) af_OpenQuery();
+    tmpNode = queryAreasHead;
+    while(tmpNode->next)
+    {
+        areaNode = tmpNode->next;
+        if( ( areaNode->name ) && 
+            ( stricmp(areaNode->type,czFreqArea) == 0 ) &&
+            ( patimat(areaNode->name,areatag)==1) )
+        {
+            i = 1;
+            while( i < areaNode->linksCount)
+            {
+                  if( addrComp(areaNode->downlinks[i],linkAddr) == 0)
+                      break;
+                  i++;
+            }
+            if( i < areaNode->linksCount )
+            {
+                if( i != areaNode->linksCount-1 )
+                    memmove(&(areaNode->downlinks[i]),&(areaNode->downlinks[i+1]),
+                    sizeof(s_addr)*(areaNode->linksCount-i));
+                areaNode->linksCount--;
+                queryAreasHead->nFlag = 1; // query was changed
+                if(areaNode->linksCount == 1)
+                {
+                    strcpy(areaNode->type,czIdleArea);
+                    w_log('8', "areafix: make request idle for area: %s", areaNode->name);
+                }
+                xscatprintf(&report, " %s %s  request canceled\r",
+                    areaNode->name, 
+                    print_ch(49-strlen(areaNode->name), '.'));
+                w_log('8', "areafix: request canceled for [%s] area: %s",aka2str(linkAddr),
+                    areaNode->name);
+            }
+        }
+        tmpNode = tmpNode->next;
+    }
+    return report;
 }
 
 void af_QueueReport()

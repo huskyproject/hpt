@@ -21,7 +21,7 @@ typedef struct query_areas
 //    struct query_areas *prev;
 } s_query_areas;
 
-enum  query_action{ FIND, ADDFREQ, ADDDELETED };
+enum  query_action{ FIND, FINDREQ, ADDFREQ, ADDDELETED, IDLE };
 typedef enum query_action e_query_action;
 
 enum  changeConfigRet{ I_ERR=-2, // read config error
@@ -33,6 +33,7 @@ enum  changeConfigRet{ I_ERR=-2, // read config error
 typedef enum changeConfigRet e_changeConfigRet;
 
 s_query_areas* af_CheckAreaInQuery(char *areatag, s_addr *uplink, s_addr *dwlink, e_query_action act);
+char* af_Req2Idle(char *areatag, char* report, s_addr linkAddr);
 int af_OpenQuery();
 int af_CloseQuery();
 char* makeAreaParam(s_link *creatingLink, char* c_area, char* msgbDir);
