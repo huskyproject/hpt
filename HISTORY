@@ -48,6 +48,7 @@ Changes between hpt-1.2-stable and hpt-1.4-stable
      addresses from headers will be taken.
    - Fixed bug with changing 1st line of included config file while
      autocreating area
+   - Fix buggy linking when ^AMSGID contains 5d address
 
 HPT 1.2.3-release
 (1.2-stable branch started 25.06.2002)
