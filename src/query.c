@@ -162,8 +162,8 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
     s_link *creatingLink;
     s_area *area;
     s_query_areas* areaNode=NULL;
-    size_t i;
-    unsigned int j;
+    size_t i=0;
+    unsigned int j, rc=0;
     char pass[] = "passthrough";
 
 
@@ -252,31 +252,53 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
         }
     }
 
-    // fix if dummys del \n from the end of file
-    fseek (f, -1L, SEEK_END);
-    if (getc(f) != '\n') {
-	fseek (f, 0L, SEEK_END);  // not neccesary, but looks better ;)
-	fputs (cfgEol(), f);
+    /* fix if dummys del \n from the end of file */
+    if( fseek (f, -2L, SEEK_END) == 0) 
+    {
+        char CR;
+        CR = getc (f); /*   may be it is CR aka '\r'  */
+        if (getc(f) != '\n') {
+            fseek (f, 0L, SEEK_END);  /*  not neccesary, but looks better ;) */
+            fputs (cfgEol(), f);
+        } else {
+            fseek (f, 0L, SEEK_END);
+        }
+        i = ftell(f); /* config length */
+        /* correct EOL in memory */
+        if(CR == '\r')
+            xstrcat(&buff,"\r\n"); /* DOS EOL */
+        else
+            xstrcat(&buff,"\n");   /* UNIX EOL */
     } else {
-    fseek (f, 0L, SEEK_END);
+        xstrcat(&buff,(char*)cfgEol());   /* config depended EOL */
     }
-    fprintf(f, "%s%s", buff, cfgEol()); // add line to config
-    fclose(f);
 
+    /*  add line to config */
+    if ( fprintf(f, "%s", buff) != (int)(strlen(buff)) || fflush(f) != 0) 
+    {
+        w_log(LL_ERR, "Error creating area %s, config write failed: %s!",
+            c_area, strerror(errno));
+        fseek(f, i, SEEK_SET);
+        setfsize(fileno(f), i);
+        rc=9;
+    }
+    fclose(f);
     nfree(buff);
 
     // echoarea addresses changed by safe_reallocating of config->echoAreas[]
     carbonNames2Addr(config);
 
-    w_log(LL_AUTOCREATE, "Area %s autocreated by %s", c_area, hisaddr);
+    if(!rc){
+      w_log(LL_AUTOCREATE, "Area %s autocreated by %s", c_area, hisaddr);
 
-    if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr, NULL);
-    else makeMsgToSysop(c_area, *forwardAddr, &pktOrigAddr);
+      if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr, NULL);
+      else makeMsgToSysop(c_area, *forwardAddr, &pktOrigAddr);
+    }
 
     nfree(hisaddr);
 
     // create flag
-    if (config->aacFlag) {
+    if (!rc && config->aacFlag) {
 	if (NULL == (f = fopen(config->aacFlag,"a")))
 	    w_log(LL_ERR, "Could not open autoAreaCreate flag: %s", config->aacFlag);
 	else {
@@ -285,7 +307,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, s_addr *forwardAddr)
 	}
     }
 
-    return 0;
+    return rc;
 }
 
 
