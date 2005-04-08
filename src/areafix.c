@@ -1722,6 +1722,11 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 
     text = report;
 
+    if (msg->text)
+        xstrscat(&text,"\rFollowing is the original message text\r--------------------------------------\r",msg->text,"\r--------------------------------------\r",NULL);
+    else
+        xstrscat(&text,"\r",NULL);
+
     while (text) {
 
         len = strlen(text);
@@ -1735,13 +1740,14 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
                 text = NULL;
                 nfree(report);
             }
-            if (msg->text)
-                xstrscat(&split,"\rFollowing is the original message text\r--------------------------------------\r",msg->text,"\r--------------------------------------\r",NULL);
-            else
-                xstrscat(&split,"\r",NULL);
         } else {
             p = text + msgsize;
-            while (*p != '\r') p--;
+            while (p > text && *p != '\r') p--;
+            if (p == text) {
+                p = text + msgsize;
+                while (p > text && *p != ' ' && *p != '\t') p--;
+                if (p == text) p = text + msgsize;
+            }
             *p = '\000';
             len = p - text;
             split = (char*)safe_malloc(len+strlen(splitStr ? splitStr : splitted)+3+1);
