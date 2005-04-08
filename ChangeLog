@@ -1,3 +1,7 @@
+2005-04-08 Friday 16:16  val_khokhlov
+
+	* src/hptafix.c (1.22): maybe, fix a bug with crash on auto-create
+
 2005-03-28 Monday 09:44  val_khokhlov
 
 	* filter.pl (1.15): add description for on_robotmsg() hook
