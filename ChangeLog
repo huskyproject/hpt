@@ -1,3 +1,9 @@
+2005-04-08 Friday 04:40  d_sergienko
+
+	* src/areafix.c (hpt-1_4-stable.8): backporting fixes from current:
+	- fixed reply message splitting - fixed adding original request
+	text after message splitting
+
 2005-04-03 Sunday 13:48  d_sergienko
 
 	* HISTORY, src/query.c (hpt-1_4-stable.[13,9]):    - Send
