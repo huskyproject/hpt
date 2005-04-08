@@ -77,8 +77,12 @@ int afWriteMsgToSysop(s_message *msg) {
 }
 
 void afReportAutoCreate(char *c_area, char *descr, hs_addr pktOrigAddr, ps_addr forwardAddr) {
+#if 0 /* val: don't know why is was here; so trying to fix */
   if (forwardAddr == NULL) makeMsgToSysop(c_area, pktOrigAddr, NULL);
   else makeMsgToSysop(c_area, *forwardAddr, &pktOrigAddr);
+#else
+  makeMsgToSysop(c_area, pktOrigAddr, forwardAddr);
+#endif
 }
 
 int afDeleteArea(s_link *link, s_area *area) {
