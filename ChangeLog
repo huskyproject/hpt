@@ -1,3 +1,8 @@
+2005-04-09 Saturday 12:21  d_sergienko
+
+	* src/query.c (hpt-1_4-stable.10): fixing previous commit: do not
+	make unsubscribe request if do_delete() is already called
+
 2005-04-08 Friday 04:40  d_sergienko
 
 	* src/areafix.c (hpt-1_4-stable.8): backporting fixes from current:
