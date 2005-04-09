@@ -768,10 +768,11 @@ void af_QueueUpdate()
             if (delarea != &(config->badArea))
             {
                 do_delete(NULL, delarea);
+            } else {
+                /* send unsubscribe message to uplink when moving from idle to kill */
+                lastRlink = getLinkFromAddr(config,tmpNode->downlinks[0]);
+                if (lastRlink) forwardRequestToLink(tmpNode->name, lastRlink, NULL, 1);
             }
-            /* send unsubscribe message to uplink when moving from idle to kill */
-            lastRlink = getLinkFromAddr(config,tmpNode->downlinks[0]);
-            if (lastRlink) forwardRequestToLink(tmpNode->name, lastRlink, NULL, 1);
         }
     }
     /*  send msg to the links (forward requests to areafix) */
