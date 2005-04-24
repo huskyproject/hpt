@@ -357,8 +357,8 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount, long resc
              MsgCloseMsg(hmsg);
 	       }
        }
-       for (i = n_pool - 1; i >= 0; i--) {
-	       hmsg = MsgOpenMsg(area, MOPEN_RW, pool[i]);
+       for (i = n_pool; i > 0; ) {
+	       hmsg = MsgOpenMsg(area, MOPEN_RW, pool[--i]);
 	       if (hmsg != NULL) {     /*  msg# does not exist */
              MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
              rc += repackEMMsg(hmsg, xmsg, echo, arealink);
