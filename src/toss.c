@@ -698,10 +698,10 @@ void makeMsgToSysop(char *areaName, hs_addr fromAddr, ps_addr uplinkAddr)
             }
 
             /*           New report generation */
+            buff = safe_strdup("");
             if (config->reportRequester) xstrcat(&buff, aka2str(fromAddr));
             if (uplinkAddr != NULL) { /*  autocreation with forward request */
-                xstrcat(&buff, " from ");
-                xstrcat(&buff, aka2str(*uplinkAddr));
+                xstrscat(&buff, " from ", aka2str(*uplinkAddr), NULL);
             }
             xstrscat(&strbeg, "Created  ", echo->areaName, NULL);
 
