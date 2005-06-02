@@ -231,7 +231,11 @@ int main(int argc, char *argv[])
 	 }
       }
    }
-
+   if (text == NULL) {
+	  fprintf(stderr,"Text file not specified, exit\n");
+	  exit(EX_NOINPUT);
+   }
+   
    config = readConfig(NULL);
    if (NULL == config) {
       fprintf(stderr,"Config not found, exit\n");
