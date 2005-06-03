@@ -37,6 +37,9 @@ hpt.dvi: hpt.texi
 hpt.info: hpt.texi
 	makeinfo --no-split hpt.texi
 
+hpt.txt:
+	makeinfo --no-split hpt.texi >hpt.txt
+
 clean:
 	-$(RM) $(RMOPT) *~
 	-$(RM) $(RMOPT) hpt.aux
