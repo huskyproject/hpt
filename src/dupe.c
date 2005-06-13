@@ -489,7 +489,7 @@ int dupeDetection(s_area *area, const s_message msg) {
         if (msg.text)
         {
             char *hbuf=NULL;
-            xstrscat(&hbuf,msg.text,msg.fromUserName,msg.datetime,msg.toUserName,msg.subjectLine,NULL);  
+            xstrscat(&hbuf,msg.text,msg.fromUserName,msg.datetime,msg.toUserName,msg.subjectLine,NULL);
             xscatprintf (&str, "MSGID: %08lx",strcrc32(hbuf, 0xFFFFFFFFL));
             nfree(hbuf);
         }
