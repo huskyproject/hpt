@@ -403,6 +403,7 @@ void processConfig()
    if (config->logFileDir) {
         xstrscat(&buff, config->logFileDir, LogFileName, NULL);
         initLog(config->logFileDir, config->logEchoToScreen, config->loglevels, config->screenloglevels);
+        setLogDateFormat(config->logDateFormat);
 	hpt_log = openLog(buff, versionStr);
 	if (hpt_log && quiet) hpt_log->logEcho=0; /* Don't display messages */
 	nfree(buff);
