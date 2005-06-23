@@ -363,6 +363,7 @@ define links and areas before any carbon definitions
 * KilledRequestTimeout::    wait time (in days) for kill echo without links
 * KludgeAreaNetmail::           how to process netmail with kludge "AREA:NETMAIL"
 * LinkWithImportLog::           list of areas only which should be linked
+* LogDateFormat::               set date format used in logs
 * LogEchoToScreen::             set output to screen log information
 * LogLevels::           set level of log output
 * Name::                        your system's name
@@ -1050,7 +1051,7 @@ If message started with "AREA:NETMAIL" we have three ways:
 
 This statement cannot be repeated.
 
-@node LinkWithImportLog, LogEchoToScreen, KludgeAreaNetmail, Keywords
+@node LinkWithImportLog, LogDateFormat, KludgeAreaNetmail, Keywords
 @subsection LinkWithImportLog
 @findex LinkWithImportLog
 @table @asis
@@ -1075,7 +1076,54 @@ DEFAULT. all areas will be linked.
 
 This statement cannot be repeated.
 
-@node LogEchoToScreen, LogLevels, LinkWithImportLog, Keywords
+@node LogDateFormat, LogEchoToScreen, LinkWithImportLog, Keywords
+@subsection LogDateFormat
+@findex LogDateFormat
+@table @asis
+@item Syntax:
+@code{logDateFormat <string>}
+@item Example:
+@code{logDateFormat "%H:%M:%S "}
+@end table
+
+Set date format for log messages. The parameter expected to be a valid 
+strftime() format string. The following macros are expanded to current
+date/time value (incomplete list):
+
+@multitable
+@item %d
+@tab current day of month as a decimal number, zero-prefixed (01-31)
+@item %e
+@tab current day or month as a decimal number, space-perfixed ( 1-31)
+@item %H
+@tab current hour as a decimal number (00-23)
+@item %M
+@tab current minute as a decimal number (00-59)
+@item %m
+@tab current month as a decimal number (01-12)
+@item %S
+@tab current second as a decimal number (00-59)
+@item %Y
+@tab current year with century as a decimal number (for example, 2005)
+@item %y
+@tab current year without century as a decimal number (for example, 05)
+@item %A
+@tab national representation of the full weekday name (for example, Monday)
+@item %a
+@tab national representation of the abbreviated weekday name (for example, Mon)
+@item %B
+@tab national representation of the full month name (for example, April)
+@item %b
+@tab national representation of the abbreviated month name (for example, Apr)
+@end multitable
+
+Please refer to strftime() manual page to see the complete list of macros
+allowed. National representation of month or weekday name is determined by
+the current locale.
+
+This statement cannot be repeated.
+
+@node LogEchoToScreen, LogLevels, LogDateFormat, Keywords
 @subsection LogEchoToScreen
 @findex LogEchoToScreen
 @table @asis
