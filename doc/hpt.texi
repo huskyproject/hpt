@@ -3498,13 +3498,15 @@ This statement cannot be repeated.
 @findex CarbonExtern
 @table @asis
 @item Syntax:
-@code{carbonExtern <program name>}
+@code{carbonExtern <program name and arguments>}
 @item Example:
 @code{carbonExtern douuedecode}
 @end table
 
 This statement specifies external program to run for the previous
-carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
+carbon@{Addr|To|From|Kludge|Subj|Text@} statement. The space char and
+filename of the text file with message is appended into end of string. (See
+"Message file" above.)
 
 If this statement is ommitted and no @code{EchoArea} defined for move or
 copy, the carbon msgs gets copyed to the @code{BadArea}.
@@ -3514,6 +3516,21 @@ the pipe, not temporary file.
 
 This statement can be repeated for each different
 carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
+
+@subsection Message file
+
+Before execute the program hpt creates temporary text file and store
+message into. Message format is:
+
+Area: <areatag>
+From: <originator's name and address>
+To:   <destination's name and address>
+Date: <message date and time>
+Subject: <message subject>
+<empty line>
+<message text (multiline, contain all kludges, tearline, origin & etc.)>
+
+
 
 @node CarbonFrom,  CarbonFromArea, CarbonExtern, Carbon Copy
 @subsection CarbonFrom
