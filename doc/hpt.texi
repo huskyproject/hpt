@@ -1246,9 +1246,13 @@ This statement cannot be repeated.
 @code{PublicGroup local,a,b,othernet}
 @end table
 
-This is a list of groups for public echo acess.
+This is a list of groups for public echo access.
 
 This statement cannot be repeated.
+
+@unnumberedsubsec Warning
+
+The area without group defined is public echo.
 
 @node Remap, ReportTo, PublicGroup, Keywords
 @subsection Remap
@@ -1267,7 +1271,9 @@ This statement cannot be repeated.
 Remap mail to other address.
 ToName @strong{OR} ToAddress can be replaced with asterisk to match any
 value of ToName or ToAddress. Two asterisks can't be defined together.
-@strong{This statement does not touch TOPT & FMPT kludges.}
+@strong{This statement does not touch TOPT & FMPT kludges and should be
+used to change destination adress to your direct link only. E.g. don't
+route remap'ed message indirect!}
 
 This statement can be repeated.
 
@@ -3505,8 +3511,7 @@ This statement cannot be repeated.
 
 This statement specifies external program to run for the previous
 carbon@{Addr|To|From|Kludge|Subj|Text@} statement. The space char and
-filename of the text file with message is appended into end of string. (See
-"Message file" above.)
+filename of the text file with message is appended into end of string.
 
 If this statement is ommitted and no @code{EchoArea} defined for move or
 copy, the carbon msgs gets copyed to the @code{BadArea}.
@@ -3517,18 +3522,22 @@ the pipe, not temporary file.
 This statement can be repeated for each different
 carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
 
+	@xref{NetmailExtern}.
+
+
 @subsection Message file
 
 Before execute the program hpt creates temporary text file and store
 message into. Message format is:
-
-Area: <areatag>
-From: <originator's name and address>
-To:   <destination's name and address>
-Date: <message date and time>
-Subject: <message subject>
-<empty line>
-<message text (multiline, contain all kludges, tearline, origin & etc.)>
+@verbatim
+Area: (areatag)
+From: (originator's name and address)
+To:   (destination's name and address)
+Date: (message date and time)
+Subject: (message subject)
+(empty line)
+(message text: multiline, contain all kludges, tearline, origin & etc.)
+@end verbatim
 
 
 
@@ -3863,7 +3872,7 @@ This statement cannot be repeated.
 @findex NetmailExtern
 @table @asis
 @item Syntax:
-@code{netmailExtern <program name>}
+@code{netmailExtern <command>}
 @item Example:
 @code{netmailExtern douuedecode}
 @end table
@@ -3875,11 +3884,31 @@ messages...
 If this statement is ommitted and no @code{NetMailArea} defined for move or
 copy, the carbon msgs gets copyed to the @code{BadArea}.
 
-If program name is prepended with '|' sign, hpt tries to pass data thru the
+If command is prepended with '|' sign, hpt tries to pass data thru the
 pipe, not temporary file.
+
+Before execution the <command> a space char and filename of the text file
+with message is appended into end of string.
 
 This statement can be repeated for each different
 carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
+
+	@xref{CarbonExtern}.
+
+
+@subsection Message file
+
+Before execute the program hpt creates temporary text file and store
+message into. Message format is:
+@verbatim
+Area: (areatag)
+From: (originator's name and address)
+To:   (destination's name and address)
+Date: (message date and time)
+Subject: (message subject)
+(empty line)
+(message text: multiline, contain all kludges, tearline, origin & etc.)
+@end verbatim
 
 
 @node Advanced Concepts, Keyword Index, Configuration Reference, Top
