@@ -19,7 +19,7 @@
  Q1.  Где взять свежие версии?
  Q2.  А где можно стянуть исходники?
  Q3.  Что означают буквы в скобках в начале ответа?
- Q4.  Как связаться с разработчиками?
+>Q4.  Как связаться с разработчиками?
  Q5.  Кому присылать патчи?
  Q6.  Я скачал *-current-(дата).tar.gz, а там баг! (архив ~месячной давности)
  Q7.  Кому прислать и как правильно оформить багрепорт?
@@ -153,7 +153,7 @@ A: (SD)
    2. Найти разработчика нужного модуля на страничке HUSKY TEAM:
       http://husky.sf.net/team.html
    3. Вот нынешние участники проекта c http://sourceforge.net/projects/husky/
-      (данные на ноябрь 2002):
+      (данные на сентябрь 2005, актуальные данные см. на указанной вебстранице):
 
 Andrew Ladutsko                        andrew_ladutsko at users.sourceforge.net
 Andrew Sagulin     Developer           andrews42 at users.sourceforge.net
@@ -184,6 +184,9 @@ val khokhlov       Developer           val_khokhlov at users.sourceforge.net
 Volker Quetschke   Developer           quetschke at users.sourceforge.net
 
 Чтобы получить email-адрес, " at " нужно заменить на "@".
+
+Некоторые разработчики фактически оставили проект, но, во всяком случае, каждый
+из перечисленных в этом списке может внести присланной патч в репозиторий CVS.
 
 /------/
 
