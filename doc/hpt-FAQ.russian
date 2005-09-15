@@ -930,7 +930,7 @@ A: (PG)
 
 В hpt >=1.1 прописать для линка "arcNetmail", и тогда, если флейвор
 совпадает с EchoMailFlavour, netmail будет паковаться в бандлы
-всесте с echomail.
+вместе с echomail.
 
 /------/
 
