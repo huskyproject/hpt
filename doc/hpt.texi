@@ -685,10 +685,10 @@ This statement cannot be repeated.
 @end table
 
 If this statement is defined HPT will check for old bundles in every run.
-Fileboxes are not checked. Links, for which there are bundles that are 
-at least "@ref{AutoPause}" days old, will be paused. It stops exporting 
-echomail for them. If @ref{AutoPause} is not defined or is equal to 0 for a link 
-then AutoPassive is ignored for this link. If AutoPassive is not defined 
+Fileboxes are not checked. Links, for which there are bundles that are
+at least "@ref{AutoPause}" days old, will be paused. It stops exporting
+echomail for them. If @ref{AutoPause} is not defined or is equal to 0 for a link
+then AutoPassive is ignored for this link. If AutoPassive is not defined
 then @ref{AutoPause} is ignored for all links.
 
 The paused link is unsubscribed from the passthrough echo areas with no
@@ -696,7 +696,7 @@ downlinks besides him. An unsubscribe request is sent to the uplink. Note that
 this feature is unavailable when using %PAUSE Areafix command.
 
 By using "hpt pause" command-line parameter instead of defining AutoPassive in
-the configuration file, you can do the check for old bundles and all the rest 
+the configuration file, you can do the check for old bundles and all the rest
 of the functionality of AutoPassive only once.
 
 This statement cannot be repeated.
@@ -1228,9 +1228,11 @@ This statement can be repeated (overwrides old setting).
 @code{processPkt pktdate}
 @end table
 
-The <string> willl be executed before tossing each pkt file. You are able to
-fix your pkts using pktdate or any other tool before tossing them. Note that
-pkt file may be renamed depending of @code{tossingExt} token value.
+Space char and name of the current file "*.pkt" will be append into end of
+<string> and <string> willl be executed before tossing each pkt file. You
+are able to fix your pkts using pktdate or any other tool before tossing
+them. Note that pkt file may be renamed depending of @code{tossingExt}
+token value.
 
 This statement cannot be repeated.
 
@@ -1670,14 +1672,14 @@ This statement cannot be repeated.
 @end table
 
 This statement specifies the file which is filled by a message editor
-or "hpt post" with the names of the areas where new netmails or echomails 
+or "hpt post" with the names of the areas where new netmails or echomails
 have been entered. Each line contains one areaname.
 When "hpt scan" is invoked, only echomail areas listed in this file will be
 scanned, when we start "hpt pack" - the same is for netmail areas.
 If area was processed, its name is removed from echotosslog file.
 When hpt has finished processing all listed areas and this file became
 empty, it is removed, otherwise kept for futher processing (maybe by other programs).
-If this file is not found - all areas will be scaned 
+If this file is not found - all areas will be scaned
 (depending on value of PackNetMailOnScan).
 @xref{PackNetMailOnScan}, but if '-f' command line flag specified, scanning
 will stop. Filename after -f is optional. If it is not set, value of
@@ -2192,7 +2194,7 @@ This is sometimes necessary as a workaraound if your link sends you netmail
 packets without packet passwords, for example.
 
 The default state is off. In this case the incoming packet password must
-match the packet password that you defined. Otherwise only netmail will be 
+match the packet password that you defined. Otherwise only netmail will be
 processed if packet is being tossed from secure inbound.
 This is the most secure option.
 
@@ -2397,11 +2399,11 @@ Please note that this option will @emph{not} currently work if the
 @code{autopause 10}
 @end table
 
-AutoPause sets the number of days after which HPT will stop exporting echomail 
-for the link if he has not fetched his echomail for this period of time. 
+AutoPause sets the number of days after which HPT will stop exporting echomail
+for the link if he has not fetched his echomail for this period of time.
 @ref{AutoPassive} should be defined for AutoPause to take effect.
 
-Technically, if you define "autopause 10" for a link then HPT looks for 
+Technically, if you define "autopause 10" for a link then HPT looks for
 10 (or more) days old files that are listed to be sent for this link in
 the .?lo files with `#' or `^' prefixes and reside in the outbound directory.
 If at least one such file exists, exporting echomail for the link is paused.
@@ -3942,8 +3944,8 @@ Assign read SEEN-BYs to an array of SEEN-BY arrays with zone = pktOrigAddr.zone
 @item 4.
 Add SEEN-BYs from AddToSeen & -sbadd. @xref{AddToSeen}.
 @item 5.
-Build an array of downlinks for this echo. Links which present in SEEN-BYs 
-are skipped (except ones defined in IgnoreSeen or -sbign), link with 
+Build an array of downlinks for this echo. Links which present in SEEN-BYs
+are skipped (except ones defined in IgnoreSeen or -sbign), link with
 AKA == pktOrigAddr is also skipped. Link with zone:net/node equal to our AKA
 is not skipped (we can be point and shall send message to our boss).
 @item 6.
@@ -3951,7 +3953,7 @@ Add all links to an array of SEEN-BY arrays
 @item 7.
 Add all our AKAs to an array of SEEN-BY arrays
 @item 8.
-Forward message to all links. Eacho link will have our AKA from corresponding 
+Forward message to all links. Eacho link will have our AKA from corresponding
 Link->ourAka in PATH. Each link will get SEEN-BYs only for his zone.
 @end table
 
