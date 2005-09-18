@@ -554,8 +554,8 @@ the origin string in areafix reports will be like this:
 This statement cannot be repeated.
 
 @node AreafixReportsAttr, AreafixSplitStr, AreafixOrigin, Keywords
-@subsection AreafixKillReports
-@findex AreafixKillReports
+@subsection AreafixReportsAttr
+@findex AreafixReportsAttr
 @table @asis
 @item Syntax:
 @code{AreafixReportsAttr <attr>}
