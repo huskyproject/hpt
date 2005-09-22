@@ -1387,13 +1387,13 @@ int isArcMail(char *fname)
 	else p=fname;
 	/* Amiga? */
 	for (i=0; i<8; i++)
-		if (!isalnum(p[i]))
+		if (!isalnum((unsigned char)p[i]))
 			break;
 	if (i<8) {
 		/* Amiga? */
 		for (i=0; i<4; i++) {
-			if (!isdigit(*p++)) return 0;
-			while (isdigit(*p)) p++;
+			if (!isdigit((unsigned char)*p++)) return 0;
+			while (isdigit((unsigned char)*p)) p++;
 			if (*p++ != '.') return 0;
 		}
 	} else {
@@ -1404,7 +1404,7 @@ int isArcMail(char *fname)
 		if (strncasecmp(p, validExt[i], 2) == 0)
 			break;
 	if (i == sizeof(validExt)/sizeof(*validExt)) return 0;
-	return (isalnum(p[2]) && (p[3] == '\0'));
+	return (isalnum((unsigned char)p[2]) && (p[3] == '\0'));
 }
 
 int processDir(char *directory, e_tossSecurity sec)
