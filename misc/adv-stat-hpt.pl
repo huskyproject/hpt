@@ -110,13 +110,13 @@ eval {
   else {
     if (defined $move) {
       my $to = POSIX::strftime($move, (localtime)[0..5]);
-      print STDERR " * moving successfully processed file $name to $to" if $DBG; 
+      print STDERR " * moving successfully processed file $name to $to" if $DBG;
       File::Path::mkpath( File::Basename::dirname($to) );
       File::Copy::move($name, $to);
     }
-    elsif ($del) { 
-      print STDERR " * deleting successfully processed file $name" if $DBG; 
-      unlink $name; 
+    elsif ($del) {
+      print STDERR " * deleting successfully processed file $name" if $DBG;
+      unlink $name;
     }
   }
 }
@@ -468,7 +468,7 @@ sub str2time {
       elsif ($a[1] < 1900) { $y = $a[1]+100; }
       else { $y = $a[1]-1900; }
     }
-    elsif (lc $a[2] eq 'm') { $m = $a[0] eq '-' ? $m-$a[1] : $a[1]-1;
+    elsif (lc $a[2] eq 'm') {
       if ($a[0] eq '-') { $m -= $a[1]; }
       elsif ($a[0] eq '+') { $m += $a[1]; }
       else { $m = $a[1] - 1; }
@@ -601,7 +601,7 @@ sub file {
 sub pkt {
   my @mon = qw'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec';
   sleep 1 if defined $footer;
-  done(); 
+  done();
   # params
   my $msg = $_[0];
   $msg->{'from'} = "Statistic generator" unless defined $msg->{'from'};
@@ -625,13 +625,13 @@ sub pkt {
   my @t = localtime; $t[5] %= 100;
   my @from = $config{'address'} =~ m!^(\d+):(\d+)/(\d+)(?:\.(\d+))?!;
   my $passwd = ''; my @to = @from[0..3];
-  my $hdr = pack 'S12 C2 Z8 S2 S2 C2 S5 L', $from[2], $to[2], 
+  my $hdr = pack 'S12 C2 Z8 S2 S2 C2 S5 L', $from[2], $to[2],
                                     $t[5], $t[4], $t[3], $t[2], $t[1], $t[0],
                                     0, 2, ($from[3] ? -1 : $from[1]), $to[1], 0xfe, 0, $passwd, $from[0], $to[0],
                                     ($from[3] ? $from[1] : 0), 0x0200, 0, 0, 0x0002, $from[0], $to[0], $from[3], $to[3], 0;
   print $hdr;
   # add packed message header
-  my $hdr = pack 'S6 Z20', $from[2], $to[2], $from[1], $to[1], 
+  my $hdr = pack 'S6 Z20', $from[2], $to[2], $from[1], $to[1],
                            defined $msg->{'area'} ? 0x100 : 0x101, 0,
                            sprintf('%02d %3s %02d  %02d:%02d:%02d', $t[3], $mon[$t[4]], $t[5]%100, $t[2], $t[1], $t[0]);
   $hdr .= substr($msg->{'to'},   0, 35)."\x00";
