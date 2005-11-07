@@ -434,7 +434,7 @@ sub str2time {
       elsif ($a[1] < 1900) { $y = $a[1]+100; }
       else { $y = $a[1]-1900; }
     }
-    elsif (lc $a[2] eq 'm') { $m = $a[0] eq '-' ? $m-$a[1] : $a[1]-1;
+    elsif (lc $a[2] eq 'm') {
       if ($a[0] eq '-') { $m -= $a[1]; }
       elsif ($a[0] eq '+') { $m += $a[1]; }
       else { $m = $a[1] - 1; }
