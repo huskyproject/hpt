@@ -16,10 +16,10 @@
 
 Новые или измененные вопросы помечены знаком ">".
 
- Q1.  Где взять свежие версии?
+>Q1.  Где взять свежие версии?
  Q2.  А где можно стянуть исходники?
  Q3.  Что означают буквы в скобках в начале ответа?
->Q4.  Как связаться с разработчиками?
+ Q4.  Как связаться с разработчиками?
  Q5.  Кому присылать патчи?
  Q6.  Я скачал *-current-(дата).tar.gz, а там баг! (архив ~месячной давности)
  Q7.  Кому прислать и как правильно оформить багрепорт?
@@ -82,12 +82,9 @@ A: (ML, SR, SD)
      страничка "Файлы" (самые свежие выставлены на первой). Ссылка есть
      на сайте проекта http://husky.sf.net == http://husky.sourceforge.net.
 
-1.2. Исходники: http://husky.sourceforge.net/cvs2/stable
-     или на CVS, инструкция тут: http://husky.sourceforge.net/cvs.html
+1.2. Debian packages: http://husky.sourceforge.net/debian
 
-1.3. Debian packages: http://husky.sourceforge.net/debian
-
-1.4. Бинарники для win32 - в файлэхе NFTN, архив на Демосе:
+1.3. Бинарники для win32 - в файлэхе NFTN, архив на Демосе:
      ftp://ddt.demos.su/pub/fileecho/NFTN/
 
 2. Персональные сборки (часто согласованы с официальными):
@@ -109,11 +106,9 @@ A: (ML, SR, SD)
 
 A: (ML,SD)
 
-1. current за несколько дней: http://husky.sourceforge.net/cvs2/current
-2. stable за несколько дней: http://husky.sourceforge.net/cvs2/stable
-3. На любой момент - с CVS, инструкция: http://husky.sourceforge.net/cvs.html
+1. На любой момент - с CVS, инструкция: http://husky.sourceforge.net/cvs.html
    и https://sourceforge.net/cvs/?group_id=1332
-4. Файлэха HUSKY, архив на ftp://ddt.demos.su/pub/fileecho/HUSKY/
+2. Файлэха HUSKY, архив на ftp://ddt.demos.su/pub/fileecho/HUSKY/
    Сорцы раз в два месяца, diff'ы постоянно.
 
 /------/
@@ -1224,7 +1219,7 @@ emailpkt:  ftn-over-email мэйлер: для отправки и приема фидошных файлов и почты
            по email
            ведущий модуля: Stas Degteff
 
-fastlst:   генератор файллиста
+fastlst:   компилятор нодлиста V7+
            ведущий модуля: Gerrit K╪hn
 
 ffma:      FreeFidoMessageAssistant
