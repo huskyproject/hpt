@@ -43,3 +43,6 @@ Unpack  "arj e -+ -y $a $p >nul" 0 60ea
 Pack  arj arj a -+ -e -y $a $f >nul
 
 Unpack "unace e -y -c- $a $p $f" 7 2a2a414345
+
+Pack 7ZIP 7za.exe a -y $a $f
+Unpack  "7za.exe e -y $a $p $f" 0 377ABCAF
