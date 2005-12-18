@@ -77,6 +77,15 @@ The advantages of @value{HPT} are:
 @item quick bug fixing
 @end enumerate
 
+The limitations of @value{HPT} is:
+
+@enumerate
+@item OPUS messagebase (type MSG) is limited to 65536 messages, this is SMAPI
+implementation limit;
+@item PKT password is limited to 8 characters, this is PKT 2+ limit.
+@end enumerate
+
+
 @node Installation, Configuration Reference, Overview, Top
 @chapter Installation Procedures and Release Notes
 This chapter provides you with information that is necessary to successfully
@@ -724,10 +733,10 @@ This statement cannot be repeated.
 @end table
 
 If this statement is defined HPT will check for old bundles in every run.
-Fileboxes are not checked. Links, for which there are bundles that are 
-at least "@ref{AutoPause}" days old, will be paused. It stops exporting 
-echomail for them. If @ref{AutoPause} is not defined or is equal to 0 for a link 
-then AutoPassive is ignored for this link. If AutoPassive is not defined 
+Fileboxes are not checked. Links, for which there are bundles that are
+at least "@ref{AutoPause}" days old, will be paused. It stops exporting
+echomail for them. If @ref{AutoPause} is not defined or is equal to 0 for a link
+then AutoPassive is ignored for this link. If AutoPassive is not defined
 then @ref{AutoPause} is ignored for all links.
 
 The paused link is unsubscribed from the passthrough echo areas with no
@@ -735,7 +744,7 @@ downlinks besides him. An unsubscribe request is sent to the uplink. Note that
 this feature is unavailable when using %PAUSE Areafix command.
 
 By using "hpt pause" command-line parameter instead of defining AutoPassive in
-the configuration file, you can do the check for old bundles and all the rest 
+the configuration file, you can do the check for old bundles and all the rest
 of the functionality of AutoPassive only once.
 
 This statement cannot be repeated.
@@ -1086,7 +1095,7 @@ This statement cannot be repeated.
 @code{logDateFormat "%H:%M:%S "}
 @end table
 
-Set date format for log messages. The parameter expected to be a valid 
+Set date format for log messages. The parameter expected to be a valid
 strftime() format string. The following macros are expanded to current
 date/time value (incomplete list):
 
@@ -1240,7 +1249,7 @@ This statement cannot be repeated.
 
 This token defines a file which will be used when autocreating echoarea.
 File contains list of areas which we don't allow to autocreate.
-Subscribtion on such areas is also refused because such areas are marked as 
+Subscribtion on such areas is also refused because such areas are marked as
 dead. Each line of this file is a mask of echotag.
 
 Example:
@@ -1309,9 +1318,9 @@ doesn't run command.com to execute external commands such as
 packers/unpackers. hpt calls OS function to execute them instead of
 command.com.
 
-If you use hptzip (winth Zlib) library, you can set default packer by     
+If you use hptzip (winth Zlib) library, you can set default packer by
 
-    Pack    zip zipInternal 
+    Pack    zip zipInternal
 
 @node PackNetMailOnScan, ProcessPkt, Pack, Keywords
 @subsection PackNetMailOnScan
@@ -1372,7 +1381,7 @@ This statement cannot be repeated.
 @code{recodeMsgBase on}
 @end table
 
-This statement specifies if we should recode messages when put/get them 
+This statement specifies if we should recode messages when put/get them
 to/from message base. So you can keep message base in transport charset and
 configs/other local files in local one.
 
@@ -1671,7 +1680,7 @@ e.g.: unpack "unzip -joLqq $a -d $p $f" 0 504b0304
        they can be unpacked by
        "unzip -joLqq <filename> -d <path> <descrption_filename>"
 or
-       if you use hptzip (with Zlib) library, you can set default unpacker by     
+       if you use hptzip (with Zlib) library, you can set default unpacker by
 
        unpack  zipInternal 0 504b0304
 
@@ -1839,14 +1848,14 @@ This statement cannot be repeated.
 @end table
 
 This statement specifies the file which is filled by a message editor
-or "hpt post" with the names of the areas where new netmails or echomails 
+or "hpt post" with the names of the areas where new netmails or echomails
 have been entered. Each line contains one areaname.
 When "hpt scan" is invoked, only echomail areas listed in this file will be
 scanned, when we start "hpt pack" - the same is for netmail areas.
 If area was processed, its name is removed from echotosslog file.
 When hpt has finished processing all listed areas and this file became
 empty, it is removed, otherwise kept for futher processing (maybe by other programs).
-If this file is not found - all areas will be scanned 
+If this file is not found - all areas will be scanned
 (depending on value of PackNetMailOnScan).
 @xref{PackNetMailOnScan}, but if '-f' command line flag specified, scanning
 will stop. Filename after -f is optional. If it is not set, value of
@@ -2595,11 +2604,11 @@ Please note that this option will @emph{not} currently work if the
 @code{autopause 10}
 @end table
 
-AutoPause sets the number of days after which HPT will stop exporting echomail 
-for the link if he has not fetched his echomail for this period of time. 
+AutoPause sets the number of days after which HPT will stop exporting echomail
+for the link if he has not fetched his echomail for this period of time.
 @ref{AutoPassive} should be defined for AutoPause to take effect.
 
-Technically, if you define "autopause 10" for a link then HPT looks for 
+Technically, if you define "autopause 10" for a link then HPT looks for
 10 (or more) days old files that are listed to be sent for this link in
 the .?lo files with `#' or `^' prefixes and reside in the outbound directory.
 If at least one such file exists, exporting echomail for the link is paused.
@@ -2644,8 +2653,8 @@ This statement can only be repeated for different links.
 @end table
 
 If DailyBundles is off, hpt will use existing arcmail bundles to add packets
-for this link, even if they were created in the previous days. If 
-DailyBundles is set, a new arcmail bundle for the link will be started when 
+for this link, even if they were created in the previous days. If
+DailyBundles is set, a new arcmail bundle for the link will be started when
 the new day begins.
 
 This statement can only be repeated for different links.
@@ -3018,10 +3027,10 @@ can delete echo areas in his @code{LinkGrp} group.
 
 In this exmaple:
 
-1) string @code{Fido} will be added to a new area record unless 
+1) string @code{Fido} will be added to a new area record unless
 @code{AutoAreaCreateDefaults} defines implicit group;
 
-2) links that have no access to group @code{Fido} can't forward requests 
+2) links that have no access to group @code{Fido} can't forward requests
 to uplink with @code{LinkGrp Fido};
 
 3) this link can delete echo areas with @code{-g Fido} group.
@@ -3340,7 +3349,7 @@ This statement can only be repeated for different links.
 @code{sendNotifyMessages on}
 @end table
 
-If sendNotifyMessages is true, link will receive notification messages from 
+If sendNotifyMessages is true, link will receive notification messages from
 areafix about link's requests status, bad posts or deletion of subscribed area.
 
 By default is off, i.e. do not send any notification messages.
@@ -3454,7 +3463,7 @@ This links are auto-mandatory. Always use slash in mask!
 Options:
 
 @table @asis
-@item -pass 
+@item -pass
 define area as passthrough even if msgbase type or filename is defined.
 @item -lr <integer>
 required level for read access (see also @code{Level} in link options);
@@ -3574,6 +3583,10 @@ use tokens ReadOnly & WriteOnly for seting permissions on arealinks.
 
 This statement can be repeated.
 
+@subsection Note.
+The msgbase @code{MSG} is limited to 65536 messages. This is SMAPI
+implementation limit.
+
 @node EchoAreaDefaults, AreaGroup, EchoArea, Area Definition
 @subsection EchoAreaDefaults
 @findex EchoAreaDefaults
@@ -3649,7 +3662,7 @@ list of patterns with wich area names will be compared. If area name equals
 to some of patterns in group it will be assigned to this group.
 Pattern lookup will be performed in order you wrote them.
 
-If you define AreaGroup once and then define it again with the same name 
+If you define AreaGroup once and then define it again with the same name
 patterns from these two definitions will be joined.
 
 @example
@@ -4541,7 +4554,7 @@ Example of Areafix message:
 %from 2:450/210.1       <-- all next actions will be made with 2:450/210.1
 +ru.husky               <-- subscribe to ru.husky
 %areafixpwd testpwd     <-- change areafix password to 'testpwd'
-%from 2:450/210.5       <-- all next actions will be made with 2:450/210.5 
+%from 2:450/210.5       <-- all next actions will be made with 2:450/210.5
 -bel.sysop              <-- unsubscribe from bel.sysop
 %linked                 <-- send list of linked areas
 @end example
