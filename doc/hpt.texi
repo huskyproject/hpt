@@ -3108,7 +3108,7 @@ filename(s) for this area without extension;
 should be the area-tag (as far as possible). if file == Passthrough then
 [-b <msgbase>] is skipped and msgarea is set as an passthrough area.
 @item msgbase:
-@code{Msg} is standard (*.msg-base). Write @code{Squish} for an
+@code{Msg} is standard (OPUS *.msg-base). Write @code{Squish} for an
 Squish-msgbase and @code{Jam} for Jam-msgbase.
 @item linkAKA:
 aka's of up- and down links (full 4D address).
