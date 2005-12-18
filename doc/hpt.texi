@@ -77,6 +77,15 @@ The advantages of @value{HPT} is:
 @item quick bug fixing
 @end enumerate
 
+The limitations of @value{HPT} is:
+
+@enumerate
+@item OPUS messagebase (type MSG) is limited to 65536 messages, this is SMAPI
+implementation limit;
+@item PKT password is limited to 8 characters, this is PKT 2+ limit.
+@end enumerate
+
+
 @node Installation, Configuration Reference, Overview, Top
 @chapter Installation Procedures and Release Notes
 This chapter provides you with information that is necessary to successfully
@@ -3218,6 +3227,10 @@ use tokens ReadOnly & WriteOnly for seting permissions on arealinks.
 @end table
 
 This statement can be repeated.
+
+@subsection Note.
+The msgbase @code{MSG} is limited to 65536 messages. This is SMAPI
+implementation limit.
 
 @node EchoAreaDefaults, LocalArea, EchoArea, Area Definition
 @subsection EchoAreaDefaults
