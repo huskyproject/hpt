@@ -106,7 +106,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    {
        while ((msgtid = GetCtrlToken(ctrlBuff, tid)) != NULL)
            MsgRemoveToken(ctrlBuff, tid);
-       xstrscat((char **) &ctrlBuff, "\001TID: ", versionStr, NULL);
+       xstrscat((char **)&ctrlBuff, "\001TID: ", versionStr, NULL);
    }
    /*  add '\r' after each kludge */
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);

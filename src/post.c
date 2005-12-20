@@ -66,7 +66,7 @@ tearline generation added
 #include <hpt.h>
 #include <scanarea.h>
 #include <scan.h>
-
+#include <hptafix.h>
 
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
 /* we can't include windows.h for several reasons ... */

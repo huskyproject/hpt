@@ -99,7 +99,7 @@ int afDeleteArea(s_link *link, s_area *area) {
 int afRescanArea(char **report, s_link *link, s_area *area, long rescanCount, long rescanAfter) {
   char *an = area->areaName;
   s_arealink *arealink;
-  long rcc;
+  long rcc = 0;
 
             arealink = getAreaLink(area, link->hisAka);
 

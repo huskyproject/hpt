@@ -268,7 +268,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 		}
 	    }
 	    ctrlBuff = (char *) CopyToControlBuf((UCHAR *) textWithoutArea,
-						 (UCHAR **) &textStart,
+						 (UCHAR **)&textStart,
 						 &textLength);
 	    /*  textStart is a pointer to the first non-kludge line */
 	    xmsg = createXMSG(config,msg, NULL, forceattr,tossDir);
@@ -1049,7 +1049,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 #endif
 	    /* Create CtrlBuf for SMAPI */
             len = msg->textLength;
-	    ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
+	    ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **)&bodyStart, &len);
 	    /* write message */
 	    if (MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *)
 			    bodyStart, len, len, strlen(ctrlBuf)+1,
