@@ -9,10 +9,11 @@ include ../../huskymak.cfg
 include makefile.inc
 
 # includes directories
-CINCL	= -I$(H_DIR) -I../../fidoconf -I../../smapi/ -I../../huskylib/
+CINCL	= -I$(H_DIR) -I../../huskylib/ -I../../areafix/ -I../../fidoconf -I../../smapi/
 
 # libraries need to build binary file
-LIBS	= ../../fidoconf/make/$(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(_LIB) \
+LIBS	= ../../areafix/make/$(LIBPREFIX)areafix$(LIBSUFFIX)$(_LIB) \
+	  ../../fidoconf/make/$(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(_LIB) \
 	  ../../smapi/make/$(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
 	  ../../huskylib/make/$(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB)
 
