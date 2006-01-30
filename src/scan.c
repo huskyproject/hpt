@@ -138,7 +138,7 @@ int parseINTL(char *msgtxt, hs_addr *from, hs_addr *to)
           *copy='\0';
           if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
           string2addr(buffer, &intl_to);
-          
+
           while (*start && isspace(*start)) start++;
           if (!*start) break;
 
@@ -965,7 +965,10 @@ void scanExport(int type, char *str) {
                                processed |= 2;
                        }
                        else
+                       {
                            fprintf(ftmp, "%s\n", line);
+                           processed |= 2;
+                       }
                     } else {
                        if (getNetMailArea(config, line) != NULL) {
                            if(scanByName(line))
