@@ -873,7 +873,7 @@ void scanExport(int type, char *str) {
     char *tmplogname = NULL;
     char *line = NULL;
     struct stat st;
-    int processed;
+    int processed=0;
 
     if ( !config->tempDir )
     {
@@ -946,7 +946,6 @@ void scanExport(int type, char *str) {
         /*  else scan only those areas which are listed in the file */
         w_log(LL_START, "EchoTossLogFile found -> Scanning only listed areas");
 
-        processed = 0;
         while (!feof(f)) {
             line = readLine(f);
 
