@@ -101,6 +101,8 @@ long links_revmsgid=0L;
 long links_total=0L;
 long links_ignored=0L;
 
+char *versionStr;
+
 char *skipReSubj ( char *subjstr )
 {
    char *ptr;
