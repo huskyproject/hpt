@@ -1033,7 +1033,7 @@ This statement cannot be repeated.
 @code{logEchoToScreen}
 @end table
 
-Set output to screen log messages.
+Enable or disable log messages screen output. See also @xref{ScreenLogLevels}.
 
 This statement cannot be repeated.
 
