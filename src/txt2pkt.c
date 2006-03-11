@@ -103,8 +103,8 @@ int main(int argc, char *argv[])
              "\t -t  \"<arg>\" \t- message tearline\n"
              "\t -o  \"<arg>\" \t- message origin\n"
              "\t -s  \"<arg>\" \t- message subject\n"
-             "\t -d  \"<path>\" \t- output directory\n"
-             "\t <file> or -\t- text file to post. the '-' sign for standard input\n");
+             "\t -d  \"<path>\" \t- output directory\n");
+      printf("\t <file> or -\t- text file to post. the '-' sign for standard input\n");
       exit(EX_OK);
    }
 
@@ -235,7 +235,7 @@ int main(int argc, char *argv[])
 	  fprintf(stderr,"Text file not specified, exit\n");
 	  exit(EX_NOINPUT);
    }
-   
+
    config = readConfig(NULL);
    if (NULL == config) {
       fprintf(stderr,"Config not found, exit\n");
