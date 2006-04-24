@@ -7,7 +7,7 @@ CC=cl
 EXENAMEFLAG=-Fe
 SRC_DIR=..\src\
 
-PERL_DIR=d:\compilation\Perl
+PERL_DIR=c:\Perl
 #PERL_VER=56
 PERL_VER=58
 

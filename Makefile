@@ -39,21 +39,24 @@ default: all
 include makefile.inc
 
 hpt.1.gz: man/hpt.1
-	gzip -c man/hpt.1 > hpt.1.gz
+	gzip -9c man/hpt.1 > hpt.1.gz
 
 hptlink.1.gz: man/hptlink.1
-	gzip -c man/hptlink.1 > hptlink.1.gz
+	gzip -9c man/hptlink.1 > hptlink.1.gz
 
 hpttree.1.gz: man/hpttree.1
-	gzip -c man/hpttree.1 > hpttree.1.gz
+	gzip -9c man/hpttree.1 > hpttree.1.gz
+
+pktinfo.1.gz: man/pktinfo.1
+	gzip -9c man/pktinfo.1 > pktinfo.1.gz
 
 txt2pkt.1.gz: man/txt2pkt.1
-	gzip -c man/txt2pkt.1 > txt2pkt.1.gz
+	gzip -9c man/txt2pkt.1 > txt2pkt.1.gz
 
 ifeq ($(SHORTNAMES), 1)
 all: commonall
 else
-all: commonall hpt.1.gz hptlink.1.gz hpttree.1.gz txt2pkt.1.gz
+all: commonall hpt.1.gz hptlink.1.gz hpttree.1.gz pktinfo.1.gz txt2pkt.1.gz
 endif
 
 ifeq ($(SHORTNAMES), 1)
@@ -61,6 +64,7 @@ install: hpt$(EXE) pktinfo$(EXE) txt2pkt$(EXE) hptlink$(EXE) hpttree$(EXE)
 	$(INSTALL) $(IMOPT) man/hpt.1 $(MANDIR)/man1
 	$(INSTALL) $(IMOPT) man/hptlink.1 $(MANDIR)/man1
 	$(INSTALL) $(IMOPT) man/hpttree.1 $(MANDIR)/man1
+	$(INSTALL) $(IMOPT) man/pktinfo.1 $(MANDIR)/man1
 	$(INSTALL) $(IMOPT) man/txt2pkt.1 $(MANDIR)/man1
 else
 install: hpt$(EXE) pktinfo$(EXE) txt2pkt$(EXE) hptlink$(EXE) hpttree$(EXE) hpt.1.gz hptlink.1.gz hpttree.1.gz txt2pkt.1.gz
@@ -69,6 +73,7 @@ install: hpt$(EXE) pktinfo$(EXE) txt2pkt$(EXE) hptlink$(EXE) hpttree$(EXE) hpt.1
 	$(INSTALL) $(IMOPT) hpt.1.gz $(MANDIR)/man1
 	$(INSTALL) $(IMOPT) hptlink.1.gz $(MANDIR)/man1
 	$(INSTALL) $(IMOPT) hpttree.1.gz $(MANDIR)/man1
+	$(INSTALL) $(IMOPT) pktinfo.1.gz $(MANDIR)/man1
 	$(INSTALL) $(IMOPT) txt2pkt.1.gz $(MANDIR)/man1
 endif
 	$(INSTALL) $(IBOPT) hpt$(EXE) $(BINDIR)
