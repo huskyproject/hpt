@@ -1880,6 +1880,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     w_log(LL_FUNC, __FILE__ "::processAreaFix()");
 
     RetFix = NOTHING;
+    rescanMode = 0;
 
     /*  1st security check */
     if (pktHeader) security=addrComp(msg->origAddr, pktHeader->origAddr);
