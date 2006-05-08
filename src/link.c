@@ -170,7 +170,7 @@ static char *crc2str(dword crc)
    ptr=str=safe_malloc(11);
    /* backward figures order, it's not mistake */
    while (crc) {
-      *ptr++='0'+crc%10;
+      *ptr++='0'+(char)(crc%10);
       crc/=10;
    }
    *ptr='\0';

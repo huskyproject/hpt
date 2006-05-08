@@ -456,11 +456,12 @@ void forwardMsgToLink(s_message *msg, s_area *echo, s_link *link,
     return;
 }
 
+/* rsb stands for reduced seen-by and can be either 0 or 1 */
 void forwardMsgToLinks_rsb(s_area *echo, s_message *msg, hs_addr pktOrigAddr, UINT16 rsb)
 {
     s_seenBy *seenBys = NULL, *path = NULL;
     UINT16     seenByCount = 0 , pathCount = 0;
-    int i;
+    unsigned int i;
     char *text;
 
     /*  links who does not have their aka in seenBys and thus have not got the echomail */
@@ -556,7 +557,7 @@ void forwardMsgToLinks_rsb(s_area *echo, s_message *msg, hs_addr pktOrigAddr, UI
 void forwardMsgToLinks(s_area *echo, s_message *msg, hs_addr pktOrigAddr)
 {
     char *msgtext;
-    UINT16 textlen;
+    INT32 textlen; /* INT32 is the type of msg->textLength defined in fidoconf.h */
     msgtext = safe_strdup(msg->text);
     textlen = msg->textLength;
     /* forward message to all links with normal seen-bys */
