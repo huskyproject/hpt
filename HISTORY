@@ -42,8 +42,8 @@ This file describe changes between hpt-1.4-stable and hpt-1.9-current
       (token sendNotifyMessages)
     - added area pause algorythm (see "autoAreaPause" token), "-paused" and
       "-noautoareapause" options for areas.
-
-
+    - new token disableKludgeRescanned: do not add kludge @RESCANNED to
+      messages
 
 3. IMPORTANT bugfixes:
    - attach processing was changed: now hpt will try to guess actual attached

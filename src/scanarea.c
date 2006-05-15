@@ -264,17 +264,19 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
        return 0;
    }
 
-   /* d_sergienko: Following FSC-0057 ... */
-   tempbefore = (char *) scalloc(j+1, 1);
-   tempbefore = (char *)strncpy(tempbefore, msg.text, j);
-   tempafter = (char *)sstrdup(msg.text+j+1);
-   nfree(msg.text);
-   xstrscat((char **) &msg.text, tempbefore, "\r\001RESCANNED ", 
-            (addrstr=aka2str5d(*arealink->link->ourAka)), "\r", tempafter,
-            NULL);
-   nfree(tempbefore);
-   nfree(tempafter);
-   nfree(addrstr);
+   if (!config->disableKludgeRescanned)
+   {
+       /* d_sergienko: Following FSC-0057 ... */
+       tempbefore = (char *) scalloc(j+1, 1);
+       tempbefore = (char *)strncpy(tempbefore, msg.text, j);
+       tempafter = (char *)sstrdup(msg.text+j+1);
+       nfree(msg.text);
+       xstrscat((char **) &msg.text, tempbefore, "\r\001RESCANNED ", 
+         (addrstr=aka2str5d(*arealink->link->ourAka)), "\r", tempafter, NULL);
+       nfree(tempbefore);
+       nfree(tempafter);
+       nfree(addrstr);
+   }
 
    createSeenByArrayFromMsg(echo, &msg, &seenBys, &seenByCount);
    createPathArrayFromMsg(&msg, &path, &pathCount);
