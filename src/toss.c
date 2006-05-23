@@ -155,7 +155,8 @@ static char *get_filename(char *pathname)
 /* return value: 1 if success, 0 if fail */
 int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 {
-    char *ctrlBuff = NULL, *textStart = NULL, *textWithoutArea = NULL;
+    char *ctrlBuff = NULL, *textWithoutArea = NULL;
+    UCHAR *textStart = NULL;
     UINT textLength = (UINT) msg->textLength;
     /* HAREA harea = NULL; */
     HMSG  hmsg;
@@ -1051,7 +1052,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 
 	    msgHeader = createXMSG(config,msg, pktHeader, forceattr,tossDir);
 	    /* Create CtrlBuf for SMAPI */
-            len = msg->textLength;
+            len = (UINT)(msg->textLength);
 	    ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
 	    /* write message */
 	    if (MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *)
