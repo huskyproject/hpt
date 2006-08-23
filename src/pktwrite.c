@@ -60,13 +60,15 @@
 
 FILE *createPkt(char *filename, s_pktHeader *header)
 {
-  FILE       *pkt;
+  FILE       *pkt = NULL;
   struct tm  *pktTime;
   unsigned int        i;
   UCHAR      dummy;
 
-  pkt = fopen(filename, "wb");
-  if (pkt != NULL) {
+  i = open(filename, O_CREAT | O_EXCL | O_RDWR);
+  if( i >0 ) {
+    pkt = fdopen(i, "wb");
+    if (pkt != NULL) {
 
      fputUINT16(pkt, (UINT16)header->origAddr.node);
      fputUINT16(pkt, (UINT16)header->destAddr.node);
@@ -131,6 +133,7 @@ FILE *createPkt(char *filename, s_pktHeader *header)
      fputUINT16(pkt, 0); fputUINT16(pkt, 0); /*  write prodData */
 
      return pkt;
+    }
   }
   return NULL;
 }

@@ -260,12 +260,21 @@ int main(int argc, char *argv[])
    xstrcat(&tmp, (dir) ? dir : ".\\");
    if (tmp[strlen(tmp)-1] != '\\')  xstrcat(&tmp,"\\");
 #endif
-   xscatprintf(&tmp,"%08lx.pkt",(long)time(NULL));
+   { time_t tm = time(NULL);
+     int pathlen = strlen(tmp);
+     char* tmpp;
+     xscatprintf(&tmp,"%08lx.pkt",(long)tm++);
+     tmpp = tmp+pathlen;
+     pkt = createPkt(tmp, &header);
+     while(pkt==NULL){
+       sprintf(tmpp,"%08lx.pkt",(long)tm++);
+       pkt = createPkt(tmp, &header);
+     }
+   }
 
    if (header.origAddr.zone==0) header.origAddr = msg.origAddr;
    if (header.destAddr.zone==0) header.destAddr = msg.destAddr;
 
-   pkt = createPkt(tmp, &header);
 
    if (pkt != NULL) {
 
@@ -342,7 +351,7 @@ int main(int argc, char *argv[])
       closeCreatedPkt(pkt);
 /*      sleep(1); */
    } else {
-      printf("Could not create pkt");
+      printf("Could not create pkt, error message: %s", strerror(errno));
    } /* endif */
 
    doneCharsets();
