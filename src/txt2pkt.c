@@ -252,6 +252,9 @@ int main(int argc, char *argv[])
    header.capabilityWord = 1;
    header.prodData = 0;
 
+   if (header.origAddr.zone==0) header.origAddr = msg.origAddr;
+   if (header.destAddr.zone==0) header.destAddr = msg.destAddr;
+
 #ifdef __UNIX__
    xstrcat(&tmp, (dir) ? dir : "./");
    if (tmp[strlen(tmp)-1] != '/') xstrcat(&tmp,"/");
@@ -262,21 +265,23 @@ int main(int argc, char *argv[])
 
    /* Make pkt name */
    if (config->seqDir == NULL) {
-       sleep(1);
-       xscatprintf(&fileName,"%s%08lx.pkt",tmp,(long)time(NULL));
+       time_t tm = time(NULL);
+       int pathlen = strlen(tmp);
+       char* tmpp;
+       xscatprintf(&tmp,"%08lx.pkt",(long)tm++);
+       tmpp = tmp+pathlen;
+       pkt = createPkt(tmp, &header);
+       while(pkt==NULL){
+         sprintf(tmpp,"%08lx.pkt",(long)tm++);
+         pkt = createPkt(tmp, &header);
+       }
    } else {
        do {
            nfree(fileName);
            xscatprintf(&fileName, "%s%08x.pkt",
                        tmp, GenMsgId(config->seqDir, config->seqOutrun));
-       } while (fexist(fileName));
+       } while ((pkt = createPkt(fileName, &header))==NULL);
    }
-
-   if (header.origAddr.zone==0) header.origAddr = msg.origAddr;
-   if (header.destAddr.zone==0) header.destAddr = msg.destAddr;
-
-   pkt = createPkt(fileName, &header);
-   nfree(fileName);
 
    if (pkt != NULL) {
 
@@ -351,7 +356,7 @@ int main(int argc, char *argv[])
       closeCreatedPkt(pkt);
 /*      sleep(1); */
    } else {
-      printf("Could not create pkt");
+      printf("Could not create pkt, error message: %s", strerror(errno));
    } /* endif */
 
    doneCharsets();
