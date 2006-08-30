@@ -97,8 +97,8 @@ int main(int argc, char *argv[])
              "\t -at \"<arg>\" \t- message to address\n"
              "\t -nf \"<arg>\" \t- message from name\n"
              "\t -nt \"<arg>\" \t- message to name\n"
-             "\t -e  \"<arg>\" \t- message echo name\n"
-             "\t -t  \"<arg>\" \t- message tearline\n"
+             "\t -e  \"<arg>\" \t- message echo name\n");
+      printf("\t -t  \"<arg>\" \t- message tearline\n"
              "\t -o  \"<arg>\" \t- message origin\n"
              "\t -s  \"<arg>\" \t- message subject\n"
              "\t -d  \"<path>\" \t- output directory\n"
