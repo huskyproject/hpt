@@ -124,9 +124,6 @@
 #define NOSLASHES
 #endif
 
-#ifdef DO_PERL
-extern int perl_setattr; /* perl.c */
-#endif
 
 extern s_message **msgToSysop;
 int save_err;
@@ -291,7 +288,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 	if (nopenpkt>=maxopenpkt-12) {
         w_log( LL_SRCLINE, "%s:%d closing %s", __FILE__, __LINE__,echo->fileName);
 	    MsgCloseArea(getHAREA(echo->harea));
-	    getHAREA(echo->harea) = NULL;
+	    echo->harea = NULL;
 	    nopenpkt-=3;
 	}
     } else w_log(LL_ERR, "Could not open/create EchoArea %s!", echo->fileName);
@@ -1043,10 +1040,9 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 	    }
 
 	    msgHeader = createXMSG(config,msg, pktHeader, forceattr,tossDir);
-#ifdef DO_PERL
-            /* val: force attrs set by perlfilter() hook */
-            if (perl_setattr) msgHeader.attr = msg->attributes;
-#endif
+            /* val: this is temp-fix !!! */
+            /* dmitry: ...which set incorrect flags! */
+/*            msgHeader.attr = msg->attributes; */
 	    /* Create CtrlBuf for SMAPI */
             len = msg->textLength;
 	    ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **)&bodyStart, &len);
@@ -1169,7 +1165,9 @@ int processPkt(char *fileName, e_tossSecurity sec)
                 if (stricmp(link->pktPwd, header->pktPassword)==0) {
                     processIt = 1;
                 } else {
-                    if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (eSecure | eOn)) ) {
+                    if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') &&
+                        ((link->allowEmptyPktPwd == eSecure) || (link->allowEmptyPktPwd == eOn)) )
+                    {
                         w_log(LL_WARN, "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
                             fileName, header->origAddr.zone, header->origAddr.net,
                             header->origAddr.node, header->origAddr.point);
@@ -1178,9 +1176,6 @@ int processPkt(char *fileName, e_tossSecurity sec)
                         w_log(LL_WARN, "pkt: %s Password Error for %i:%i/%i.%i",
                             fileName, header->origAddr.zone, header->origAddr.net,
                             header->origAddr.node, header->origAddr.point);
-                        if (header->pktPassword == NULL || header->pktPassword[0] == '\0')
-                            processIt = 2;
-                        else
                             rc = 1;
                     }
                 }
@@ -1200,7 +1195,9 @@ int processPkt(char *fileName, e_tossSecurity sec)
                 if (header->pktPassword && stricmp(link->pktPwd, header->pktPassword)==0) {
                     processIt = 1;
                 } else {
-                    if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') && (link->allowEmptyPktPwd & (eOn)) ) {
+                    if ( (header->pktPassword == NULL || header->pktPassword[0] == '\0') &&
+                        (link->allowEmptyPktPwd == eOn) )
+                    {
                         w_log(LL_ERR, "pkt: %s Warning: missing packet password from %i:%i/%i.%i",
                             fileName, header->origAddr.zone, header->origAddr.net,
                             header->origAddr.node, header->origAddr.point);
