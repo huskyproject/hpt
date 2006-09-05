@@ -26,7 +26,7 @@ sub filter()
  my $myaddr="2:5020/545";
  my $txt2pkt="/usr/local/bin/txt2pkt";
  my $report_subj="$myname report";
- my ($report_tearline='$Id') =~ s/\$//g;
+ my ($report_tearline='$Id$') =~ s/\$//g;
  my $report_origin="$myname";
  my $pkt_dir="/fido/inbound-local";
 
