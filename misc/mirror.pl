@@ -26,13 +26,16 @@ sub filter()
  my $myaddr="2:5020/545";
  my $txt2pkt="/usr/local/bin/txt2pkt";
  my $report_subj="$myname report";
- my ($report_tearline='$Id') =~ s/\$//g;
  my $report_origin="$myname";
  my $pkt_dir="/fido/inbound-local";
 
  $testarea{"GREMLIN.TEST"}=1;  # echobase is exists
  $testarea{"MU.TEST"}=2;       # passthrough echo
 # ==== и до обеда
+
+ my @Id = split(/ /,'$Id$');
+ my $report_tearline="$Id[1] $Id[2] $Id[3] $Id[4]";
+ undef @Id;
 
  if( ($testarea{$area}) && ($toname eq $check_toname)
      && (lc($subject) eq $check_subject) )
