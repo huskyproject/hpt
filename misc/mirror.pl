@@ -2,6 +2,7 @@
 # $Id$
 # Mirror robot for HPT
 # (c) 2006 Gremlin
+# (c) 2006 Grumbler
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,29 +24,58 @@ sub filter()
  my $check_subject="test";
  my $myname="Mirror robot";
  my $myaddr="2:5020/545";
- $testarea{"GREMLIN.TEST"}=1;
- $testarea{"R50.DIAGNOSTICS"}=1;
+ my $txt2pkt="/usr/local/bin/txt2pkt";
+ my $report_subj="$myname report";
+ my ($report_tearline='$Id') =~ s/\$//g;
+ my $report_origin="$myname";
+ my $pkt_dir="/fido/inbound-local";
+
+ $testarea{"GREMLIN.TEST"}=1;  # echobase is exists
+ $testarea{"MU.TEST"}=2;       # passthrough echo
 # ==== и до обеда
 
  if( ($testarea{$area}) && ($toname eq $check_toname)
      && (lc($subject) eq $check_subject) )
  {
 # $text contains original message and must be left as is
-  $msgtext = $text;
+  my $msgtext = $text;
 
 # invalidate control stuff
-  $msgtext =~ s/\x01/^A /g;
+  $msgtext =~ s/\x01/@/g;
   $msgtext =~ s/SEEN-BY/SEEN+BY/g;
   $msgtext =~ s/\n--- /\n-+- /g;
   $msgtext =~ s/\n \* Origin: /\n + Origin: /g;
   $msgtext="$date $fromname wrote:\r\r"
 	. "==== start message ====\r\r"
 	. "$msgtext\r"
-	. "==== end of message ====\r\r\r"
-	. "--- mirror.pl\r"
-	." * Origin: $myname ($myaddr)\r";
+	. "==== end of message ====\r\r\r";
 
-   putMsgInArea($area,$myname,$fromname,$myaddr,$myaddr,$myname . " report","","Uns Loc",$msgtext,1);
+  if( $testarea{$area}==1 ){
+    $msgtext = $msgtext . "--- $report_tearline\r * Origin: $report_origin ($myaddr)\r";
+    putMsgInArea($area,$myname,$fromname,$myaddr,$myaddr,$myname . " report","","Uns Loc",$msgtext,1);
+
+  }else{
+    $msgtext =~ s/\r/\n/g;
+    my $cmd="$txt2pkt -e $area -xf $myaddr -xt $myaddr -nf '$myname'"
+           ." -nt '$fromname' -s '$report_subj' -t '$report_tearline'"
+           ." -o '$report_origin' -d '$pkt_dir' -";
+    if( open( PIPE,"|$cmd" ) ){
+      print PIPE $msgtext;
+      close PIPE;
+      writeLogEntry('7','PKT with reply is created from $myname using txt2pkt');
+    }else{
+      writeLogEntry('1',"Can't open pipe to txt2pkt");
+    }
+  }
  }
  return "";
 }
+
+sub process_pkt{}
+sub after_unpack{}
+sub before_pack{}
+sub pkt_done{}
+sub scan{}
+sub route{}
+sub hpt_exit{}
+
