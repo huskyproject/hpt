@@ -138,50 +138,6 @@ FILE *createPkt(char *filename, s_pktHeader *header)
   return NULL;
 }
 
-#if 0
-int writeMsgToPkt(FILE *pkt, s_message msg)
-{
-  /*  write type 2 msg */
-  fputc(2, pkt);
-  fputc(0, pkt);
-
-  /*  write net/node info */
-  fputUINT16(pkt, (UINT16) msg.origAddr.node);
-  fputUINT16(pkt, (UINT16) msg.destAddr.node);
-  fputUINT16(pkt, (UINT16) msg.origAddr.net);
-  fputUINT16(pkt, (UINT16) msg.destAddr.net);
-
-  /*  write attribute info */
-  fputUINT16(pkt, (UINT16) msg.attributes);
-
-  /*  write cost info */
-  fputUINT16(pkt, 0);
-
-  /*  write date...info */
-  fwrite(msg.datetime, 20, 1, pkt);
-
-  /*  write userNames (max 36 bytes) */
-  if (strlen(msg.toUserName) >= 36) fwrite(msg.toUserName, 35, 1, pkt);
-  else fputs(msg.toUserName, pkt);
-  fputc(0, pkt);
-
-  if (strlen(msg.fromUserName) >= 36) fwrite(msg.fromUserName, 35, 1, pkt);
-  else fputs(msg.fromUserName, pkt);
-  fputc(0, pkt);
-
-  /*  write subject */
-  if (strlen(msg.subjectLine) >= 72) fwrite(msg.subjectLine, 71, 1, pkt);
-  else fputs(msg. subjectLine, pkt);
-  fputc(0, pkt);
-
-  /*  write text */
-  fputs(msg.text, pkt);
-  fputc(0, pkt);
-
-  return 0;
-}
-#endif
-
 int writeMsgToPkt(FILE *pkt, s_message msg)
 {
   char x,y,z;
