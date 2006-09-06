@@ -3,4 +3,5 @@
    code: if the new msg in the end of message base, scanning will be started 
    from this msg, else - from 1-st msg (new msg at the begin or if no new msg 
    at all). That's why you should always use EchoTossLog file!
-      
+3. possibly memory corruption on freeing pointer returned from getenv().
+   Track this in hpt&fidoconfig
