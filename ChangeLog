@@ -1,3 +1,40 @@
+2006-09-06 Wednesday 01:03  nick_voronin
+
+	* BUGS (1.20): Bug description added
+
+2006-09-05 Tuesday 11:11  stas_degteff
+
+	* misc/mirror.pl (1.3): Merging differences between 1.2 and 1.2.2.4
+
+2006-09-05 Tuesday 10:58  stas_degteff
+
+	* misc/mirror.pl (1.2): Add posting into passthrough areas
+
+2006-09-05 Tuesday 10:47  stas_degteff
+
+	* misc/mirror.pl (1.1): Added: Mirror robot for HPT (c) 2006
+	  Gremlin
+
+2006-08-30 Wednesday 11:17  stas_degteff
+
+	* src/toss.c (1.548): Fix warnings: use of cast expressions as
+	  lvalues is deprecated
+
+2006-08-30 Wednesday 11:15  stas_degteff
+
+	* src/toss.c (1.547): Fix warning: use of cast expressions as
+	  lvalues is deprecated
+
+2006-08-30 Wednesday 08:44  stas_degteff
+
+	* src/txt2pkt.c (1.57): Fix warning about long string constant (ISO
+	  C89 requirement)
+
+2006-08-30 Wednesday 08:40  stas_degteff
+
+	* src/: pktwrite.c (1.47), txt2pkt.c (1.56): Fix: if .PKT is exists
+	  then txt2pkt uses new (unique) file name
+
 2006-07-03 Monday 17:00  stas_degteff
 
 	* misc/PostFile.pl (1.1): Perl script to post messages of some
