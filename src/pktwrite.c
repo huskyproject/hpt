@@ -64,7 +64,7 @@ FILE *createPkt(char *filename, s_pktHeader *header)
   unsigned int        i;
   UCHAR      dummy;
 
-  i = open(filename, O_CREAT | O_EXCL | O_RDWR);
+  i = open(filename, O_CREAT | O_EXCL | O_RDWR, S_IREAD | S_IWRITE);
   if( i >0 ) {
     pkt = fdopen(i, "wb");
     if (pkt != NULL) {
