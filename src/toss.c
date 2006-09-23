@@ -638,7 +638,7 @@ int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr, int writeAccess)
 	w_log(LL_ECHOMAIL, "Badmail reason: No downlinks for passthrough area '%s'", areaName);
 	break;
     case 11:
-	reason = "lenght of CONFERENCE name is more than 60 symbols";
+	reason = "length of CONFERENCE name is more than 60 symbols";
 	w_log(LL_ECHOMAIL, "Badmail reason: lenght of CONFERENCE name (areatag) is more than 60 symbols: '%s'", areaName);
 	break;
     case 12:
