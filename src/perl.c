@@ -1129,6 +1129,7 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
    char *prc, *sorig;
    SV *svfromname, *svfromaddr, *svtoname, *svtoaddr, *svpktfrom;
    SV *svdate, *svtext, *svarea, *svsubj, *svret, *svchange, *svattr;
+   SV *svreason;
    STRLEN n_a;
    static int do_perltossbad=1;
    int pid, saveerr;
@@ -1152,6 +1153,7 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
      svarea     = perl_get_sv("area",     TRUE);
      svtoaddr   = perl_get_sv("toaddr",   TRUE);
      svattr     = perl_get_sv("attr",     TRUE);
+     svreason   = perl_get_sv("reason",   TRUE);
      sv_setpv(svfromname, msg->fromUserName);
      sv_setpv(svfromaddr, aka2str(msg->origAddr));
      sv_setpv(svtoname,   msg->toUserName);
@@ -1161,6 +1163,7 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
      sv_setpv(svpktfrom,  aka2str(pktOrigAddr));
      sv_setsv(svchange,   &sv_undef);
      sv_setiv(svattr,     msg->attributes);
+     sv_setpv(svreason,   reason);
      if (areaName)
      { sv_setpv(svarea,   areaName);
        sv_setsv(svtoaddr, &sv_undef);
