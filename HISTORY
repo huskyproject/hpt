@@ -49,9 +49,13 @@ Changes between hpt-1.2-stable and hpt-1.4-stable
    - Fixed bug with changing 1st line of included config file while
      autocreating area
    - Fix buggy linking when ^AMSGID contains 5d address
-   - Send unsubscribe message when area going from idle state to kill (areafixQueueFile)
+   - Send unsubscribe message when area going from idle state to kill
+     (areafixQueueFile)
    - Send "-area" instead of "~area" when updating areafixQueueFile even if
-   		advancedAreaFix is on for uplink.
+     advancedAreaFix is on for uplink.
+   - "carbonrule delete" may remove message from (common) netmail, not  only
+     from specified area
+
 
 HPT 1.2.3-release
 (1.2-stable branch started 25.06.2002)
