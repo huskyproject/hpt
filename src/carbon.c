@@ -278,8 +278,9 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
 
     for (i=0; i<config->carbonCount; i++,++cb) {
         /* Dont come to use netmail on echomail and vise verse */
-        if (cb->move!=2 && ((msg->netMail && !cb->netMail) ||
-            (!msg->netMail &&  cb->netMail))) continue;
+        if (!(cb->rule & CC_AND) /* move and netmail have meaning only in last carbon in group */
+            && cb->move != 2 /* type of mail doesn't matter for CarbonDelete */
+            && !msg->netMail != !cb->netMail) continue; /* if types differ the rule doesn't apply */
 
         area = cb->area;
 
