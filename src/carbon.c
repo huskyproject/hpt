@@ -267,6 +267,8 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
     int copiedToCount = 0;
     int ncop;
 
+	w_log( LL_FUNC, "carbonCopy() begin");
+
     if(!msg)
         return 0;
     if (echo->ccoff==1)
@@ -412,6 +414,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
     } /* end for() */
 
     if (copiedTo) nfree (copiedTo);
+	w_log( LL_FUNC, "carbonCopy() rc=%d", rc);
     return rc;
 }
 
