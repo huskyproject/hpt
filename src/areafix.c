@@ -1712,34 +1712,36 @@ char *areaStatus(char *report, char *preport)
 /* report already nfree() after this function */
 void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 {
-    char *tab = config->intab, *text, *split, *p, *newsubj = NULL;
-    char splitted[]=" > message splitted...";
-    char *splitStr = config->areafixSplitStr;
+    char *tab = config->intab, *text, *split, *p, *p2, *newsubj = NULL;
+    char *splitStr = config->areafixSplitStr ? config->areafixSplitStr : " > message splitted...";
+    int splitStrLen = strlen(splitStr);
     int len, msgsize = config->areafixMsgSize * 1024, partnum=0;
     s_message *tmpmsg;
 
     config->intab = NULL;
 
-    text = report;
-
     if (msg->text)
-        xstrscat(&text,"\rFollowing is the original message text\r--------------------------------------\r",msg->text,"\r--------------------------------------\r",NULL);
+        xstrscat(&report,"\rFollowing is the original message text\r--------------------------------------\r",msg->text,"\r--------------------------------------\r",NULL);
     else
-        xstrscat(&text,"\r",NULL);
+        xstrscat(&report,"\r",NULL);
+
+    text = report;
 
     while (text) {
 
         len = strlen(text);
         if (msgsize == 0 || len <= msgsize) {
-            split = text;
-            text = NULL;
-            if (partnum) { /* last part of splitted msg */
+            if(partnum) { /* last part of splitted msg */
                 partnum++;
-                xstrcat(&text,split);
-                split = text;
-                text = NULL;
+                split = (char*)safe_malloc(len + 1);
+                memcpy(split, text, len + 1); /* copy last part of text with \0 */
+
                 nfree(report);
             }
+            else
+                split = text; /* == report, will be freed in preprocText */
+
+            text = NULL;
         } else {
             p = text + msgsize;
             while (p > text && *p != '\r') p--;
@@ -1750,12 +1752,17 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
             }
             *p = '\000';
             len = p - text;
-            split = (char*)safe_malloc(len+strlen(splitStr ? splitStr : splitted)+3+1);
-            memcpy(split,text,len);
-            strcpy(split+len,"\r\r");
-            strcat(split, (splitStr) ? splitStr : splitted);
-            strcat(split,"\r");
-            text = p+1;
+
+                                                 /* len + 2*\r + splitter + \r +\000 */
+            split = (char*)safe_malloc(len+splitStrLen+3+1);
+            memcpy(split,text,len);              /* len */
+            p2 = split + len;
+            *p2 = '\r'; *++p2 = '\r';            /* +2*\r */
+            memcpy(++p2, splitStr, splitStrLen); /* + splitter */
+            p2 += splitStrLen; *p2 = '\r';       /* +\r */
+            *++p2 = '\000';                      /* + \000 */
+
+            text = p + 1;
             partnum++;
         }
 
