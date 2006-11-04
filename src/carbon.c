@@ -269,7 +269,9 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
     int copiedToCount = 0;
     int ncop;
 
-    if(!msg)
+    w_log( LL_FUNC, "carbonCopy() begin");
+	
+	if(!msg)
         return 0;
     if (echo->ccoff==1)
         return 0;
@@ -279,8 +281,8 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
     for (i=0; i<config->carbonCount; i++,++cb) {
         /* Dont come to use netmail on echomail and vise verse */
         if (!(cb->rule & CC_AND) /* move and netmail have meaning only in last carbon in group */
-            && cb->move != 2 /* type of mail doesn't matter for CarbonDelete */
-            && !msg->netMail != !cb->netMail) continue; /* if types differ the rule doesn't apply */
+				&& cb->move != 2 /* type of mail doesn't matter for CarbonDelete */
+				&& !msg->netMail != !cb->netMail) continue; /* if types differ the rule doesn't apply */
 
         area = cb->area;
 
@@ -414,6 +416,7 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
     } /* end for() */
 
     if (copiedTo) nfree (copiedTo);
+	w_log( LL_FUNC, "carbonCopy() rc=%d", rc);
     return rc;
 }
 
