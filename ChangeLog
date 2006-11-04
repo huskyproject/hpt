@@ -1,3 +1,21 @@
+2006-11-04 Saturday 15:44  nick_voronin
+
+	* src/carbon.c (1.33): Debug output added
+
+2006-11-02 Thursday 11:10  stas_degteff
+
+	* src/carbon.c (1.32): Fix: carbonrule delete may remove message in
+	  (common) netmail, not only specified area. Patch by Nick Voronin
+	  2:5030/1554
+
+2006-09-10 Sunday 11:01  nick_voronin
+
+	* src/pktwrite.c (1.49): pkts should be created in binary mode
+
+2006-09-07 Thursday 01:13  nick_voronin
+
+	* src/pktwrite.c (1.48): wrong 'open' call wixed
+
 2006-09-06 Wednesday 01:03  nick_voronin
 
 	* BUGS (1.20): Bug description added
