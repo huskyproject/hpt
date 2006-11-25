@@ -215,6 +215,12 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
 
     w_log( LL_FUNC, "%s::autoCreate() begin", __FILE__ );
 
+    if(c_area == NULL)
+    {
+        w_log( LL_FUNC, "%s::autoCreate() rc=14", __FILE__);
+        return 14;
+    }
+
     if (strlen(c_area)>60){
        w_log( LL_FUNC, "%s::autoCreate() rc=11", __FILE__ );
        return 11;

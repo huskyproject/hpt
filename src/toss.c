@@ -586,7 +586,9 @@ int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr, int writeAccess)
 	
     /*  get real name area */
     line = strchr(msg->text, '\r');
-    if (strncmp(msg->text,"AREA:",5)==0) {
+    if (line == NULL || strncmp(msg->text,"AREA:",5)!=0)
+        areaName = xstrcat(&areaName, "no areatag");
+	else {
 	*line = 0;
 	xstrcat(&areaName, msg->text+5);
 	*line = '\r';
@@ -648,6 +650,10 @@ int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr, int writeAccess)
     case 13:
 	reason = "New area refused by NewAreaRefuseFile";
 	w_log(LL_ECHOMAIL, "Badmail reason: New area '%s' refused by NewAreaRefuseFile", areaName);
+	break;
+    case 14:
+	reason = "No valid areatag is given for the message";
+	w_log(LL_ECHOMAIL, "Badmail reason: No valid areatag is given for the message");
 	break;
     default :
 	reason = "Another error";
