@@ -55,7 +55,7 @@ sub filter()
 
   if( $testarea{$area}==1 ){
     $msgtext = $msgtext . "--- $report_tearline\r * Origin: $report_origin ($myaddr)\r";
-    putMsgInArea($area,$myname,$fromname,$myaddr,$myaddr,$myname . " report","","Uns Loc",$msgtext,1);
+    putMsgInArea($area,$myname,$fromname,$myaddr,$myaddr,$report_subj,"","Uns Loc",$msgtext,1);
 
   }else{
     $msgtext =~ s/\r/\n/g;
