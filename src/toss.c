@@ -137,22 +137,25 @@ void makeMsgToSysop(char *areaName, hs_addr fromAddr, ps_addr uplinkAddr);
 static void setmaxopen(void);
 
 char *(BadmailReasonString[BM_MAXERROR+1]) = {
-/* 0*/"System not allowed to create new area",
-/* 1*/"Sender not allowed to post in this area (access group)",
-/* 2*/"Sender not allowed to post in this area (access level)",
-/* 3*/"Sender not allowed to post in this area (access import)",
-/* 4*/"Sender not active for this area",
-/* 5*/"Rejected by perl filter",
-/* 6*/"MSGAPI error",
-/* 7*/"Can't create echoarea with forbidden symbols in areatag",
-/* 8*/"Sender not found in config file",
-/* 9*/"Can't open config file",
-/*10*/"No downlinks for passthrough area",
-/*11*/"length of CONFERENCE name is more than 60 symbols",
-/*12*/"Area killed (unsubscribed)",
-/*13*/"New area refused by NewAreaRefuseFile",
-/*14*/"Wrong link to autocreate from (area requested from other link)",
-/*15*/"Area is paused (unsubscribed at uplink)"
+/* 0*/"No reason",
+/* 1*/"System not allowed to create new area",
+/* 2*/"Sender not allowed to post in this area (access group)",
+/* 3*/"Sender not allowed to post in this area (access level)",
+/* 4*/"Sender not allowed to post in this area (access import)",
+/* 5*/"Sender not active for this area",
+/* 6*/"Rejected by perl filter",
+/* 7*/"MSGAPI error",
+/* 8*/"Can't create echoarea with forbidden symbols in areatag",
+/* 9*/"Sender not found in config file",
+/*10*/"Can't open config file",
+/*11*/"No downlinks for passthrough area",
+/*12*/"length of CONFERENCE name is more than 60 symbols",
+/*13*/"Area killed (unsubscribed)",
+/*14*/"New area refused by NewAreaRefuseFile",
+/*15*/"Wrong link to autocreate from (area requested from other link)",
+/*16*/"Area is paused (unsubscribed at uplink)",
+/*17*/"No valid areatag is given in the message",
+/*18*/"Can't create subdirectories for echobase"
 };
 
 
@@ -604,7 +607,9 @@ int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr, unsigned writeAccess)
 	
     /*  get real name area */
     line = strchr(msg->text, '\r');
-    if (strncmp(msg->text,"AREA:",5)==0) {
+    if(line == NULL || strncmp(msg->text,"AREA:",5)!=0)
+        areaName = xstrcat(&areaName, "no areatag");
+	else {
 	*line = 0;
 	xstrcat(&areaName, msg->text+5);
 	*line = '\r';
@@ -835,7 +840,7 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
         /*  check if we should not refuse this area */
         /*  checking for autocreate option */
         if ((link != NULL) && (link->areafix.autoCreate != 0)) {
-            if (0 == (writeAccess = autoCreate(area, NULL, pktOrigAddr, NULL)))
+            if (BM_MAIL_OK == (writeAccess = autoCreate(area, NULL, pktOrigAddr, NULL)))
                 echo = getArea(config, area);
             else rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
         } /*  can't create echoarea - put msg in BadArea */
