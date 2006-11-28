@@ -397,7 +397,8 @@ int linkArea(s_area *area, int netMail)
                 if (msgs[i].msgh == NULL)
                     msgs[i].msgh = MsgOpenMsg(harea, MOPEN_READ|MOPEN_WRITE, i+1);
                 if (msgs[i].msgh)
-                    MsgWriteMsg(msgs[i].msgh, 0, msgs[i].hdr.xmsg, NULL, 0, 0, 0, NULL);
+                    if (0!=MsgWriteMsg(msgs[i].msgh, 0, msgs[i].hdr.xmsg, NULL, 0, 0, 0, NULL))
+                        w_log(LL_ERR, "Could not update msg in area %s! Check the wholeness of messagebase, please.", area->areaName);
             }
             if (msgs[i].msgh)
                 MsgCloseMsg(msgs[i].msgh);

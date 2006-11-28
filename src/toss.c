@@ -276,7 +276,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 	    if (MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword)
 			    textLength, (dword) textLength,
 			    (dword)strlen(ctrlBuff), (byte*)ctrlBuff)!=0)
-		w_log(LL_ERR, "Could not write msg in %s!", echo->fileName);
+		w_log(LL_ERR, "Could not write msg in %s! Check the wholeness of messagebase, please.", echo->fileName);
 	    else rc = 1; /*  normal exit */
 
         w_log( LL_SRCLINE, "%s:%d closing msg", __FILE__, __LINE__);
@@ -1054,7 +1054,8 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 	    /* write message */
 	    if (MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *)
 			    bodyStart, len, len, strlen(ctrlBuf)+1,
-			    (UCHAR *) ctrlBuf)!=0) w_log(LL_ERR,"Could not write msg to NetmailArea %s",area->areaName);
+			    (UCHAR *) ctrlBuf)!=0)
+		w_log(LL_ERR, "Could not write msg to NetmailArea %s! Check the wholeness of messagebase, please.", area->areaName);
 	    else rc = 1; /*  normal exit */
 	    nfree(ctrlBuf);
 	    if (MsgCloseMsg(msgHandle)!=0) { /*  can't close */

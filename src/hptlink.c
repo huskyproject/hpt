@@ -554,7 +554,8 @@ void linkArea(s_area *area)
                        xmsg.replyto = crepl->replyToPos;
                        xmsg.xmreply1st = crepl->reply1st;
                        xmsg.xmreplynext = crepl->replyNxt;
-		       MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+		       if( 0!=MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL) )
+                           w_log(LL_ERR, "Could not update msg in area %s! Check the wholeness of messagebase, please.", area->areaName);
 		       MsgCloseMsg(hmsg);
 		    }
                  }
@@ -571,7 +572,8 @@ void linkArea(s_area *area)
                        MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
                        memcpy(xmsg.replies, crepl->replies, sizeof(UMSGID) * maxreply);
                        xmsg.replyto = crepl->replyToPos;
-                       MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+                       if( 0!=MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL) )
+                           w_log(LL_ERR, "Could not update msg in area %s! Check the wholeness of messagebase, please.", area->areaName);
                        MsgCloseMsg(hmsg);
                     }
                  }

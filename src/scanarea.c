@@ -180,7 +180,8 @@ void packEMMsg(HMSG hmsg, XMSG *xmsg, s_area *echo)
    /*  mark msg as sent and scanned */
    xmsg->attr |= MSGSENT;
    xmsg->attr |= MSGSCANNED;
-   MsgWriteMsg(hmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+   if (0!=MsgWriteMsg(hmsg, 0, xmsg, NULL, 0, 0, 0, NULL))
+       w_log(LL_ERR, "Could not update msg in area %s! Check the wholeness of messagebase, please.", echo->areaName);
 
    freeMsgBuffers(&msg);
    freeMsgBuffers(messCC);
@@ -282,12 +283,7 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
    createPathArrayFromMsg(&msg, &path, &pathCount);
 
    forwardToLinks(&msg, echo, links, &seenBys, &seenByCount, &path, &pathCount);
-#if 0
-   /*  mark msg as sent and scanned */
-   xmsg.attr |= MSGSENT;
-   xmsg.attr |= MSGSCANNED;
-   MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
-#endif
+
    freeMsgBuffers(&msg);
    nfree(links);
    nfree(seenBys);
