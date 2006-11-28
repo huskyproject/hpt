@@ -515,7 +515,8 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   nfree(link->bsyFile);
 		   /*  mark Mail as sent */
 		   xmsg->attr |= MSGSENT;
-		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+		   if (0!=MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL))
+                        w_log(LL_ERR, "Could not update msg in area %s! Check the wholeness of messagebase, please.", area->areaName);
 		   nfree(link->floFile);
 		   w_log(LL_FROUTE, "File %s from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
 	       }
@@ -527,7 +528,8 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   nfree(virtualLink->bsyFile);
 		   /*  mark Mail as sent */
 		   xmsg->attr |= MSGSENT;
-		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+		   if (0!=MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL))
+                        w_log(LL_ERR, "Could not update msg in area %s! Check the wholeness of messagebase, please.", area->areaName);
 		   nfree(virtualLink->floFile);
 		   w_log(LL_FROUTE, "File %s from %u:%u/%u.%u -> %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 	   }
@@ -542,7 +544,8 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   nfree(virtualLink->bsyFile);
 		   /*  mark Mail as sent */
 		   xmsg->attr |= MSGSENT;
-		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+		   if (0!=MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL))
+                        w_log(LL_ERR, "Could not update msg in area %s! Check the wholeness of messagebase, please.", area->areaName);
 		   nfree(virtualLink->floFile);
 		   w_log(LL_FREQ, "Request %s from %u:%u/%u.%u", msg.subjectLine, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
 	   }
@@ -587,7 +590,8 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
                    }
 		   /*  mark Mail as sent */
 		   xmsg->attr |= MSGSENT;
-		   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+		   if (0!=MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL))
+                        w_log(LL_ERR, "Could not update msg in area %s! Check the wholeness of messagebase, please.", area->areaName);
 	   }
    } else {
            /*  no crash, no hold flag -> route netmail */
@@ -631,7 +635,8 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
                            }
 			   /*  mark Mail as sent */
 			   xmsg->attr |= MSGSENT;
-			   MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL);
+			   if (0!=MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL))
+                             w_log(LL_ERR, "Could not update msg in area %s! Check the wholeness of messagebase, please.", area->areaName);
 		   }
 	   } else {
                 if ((xmsg->attr & MSGFILE) == MSGFILE) w_log(LL_FROUTE, "no routeFile found or no-pack for %s - leave mail untouched", aka2str(msg.destAddr));

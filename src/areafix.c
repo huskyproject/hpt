@@ -2181,7 +2181,8 @@ void afix(hs_addr addr, char *cmd)
                         MsgKillMsg(netmail, i--);
                     } else {
                         xmsg.attr |= MSGREAD;
-                        MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+                        if( 0!=MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL) )
+                           w_log(LL_ERR, "Could not write msg in netmailarea %s! Check the wholeness of messagebase, please.", config->netMailAreas[k].areaName);
                         MsgCloseMsg(SQmsg);
                     }
                     freeMsgBuffers(&msg);
