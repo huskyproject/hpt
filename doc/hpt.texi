@@ -3561,6 +3561,10 @@ disable debug output if defined in echoareadefaults;
 add seen-by(s) at tossing time;
 @item -sbign(<addr2D>,...)
 ignore seen-by(s) and toss mail to link(s).
+@item -r
+Default read-only: set link read-only at subscribing
+@item -w
+Default write-only: set link write-only at subscribing
 @end table
 
 (*) - these tokens to be removed from @code{AutoAreaCreateDefaults} when
