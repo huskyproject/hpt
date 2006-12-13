@@ -116,9 +116,8 @@ groups for @code{EchoAreas})
 @section Download the Source Code & Binary Files
 
 @table @asis
-@item Main page (source code, win32 & os/2 releases) - @url{http://husky.physcip.uni-stuttgart.de/hpt.html}
-@item Win32 bins (current, russian) - @url{www.chat.ru/~sirevtov/files}
-@item Win32 bins (current, russian) - @url{www.sirevtov.narod.ru}
+@item Main page - @url{http://husky.sourceforge.net/}
+@item Latest win32 binaries - @url{http://elfy.nv.googlepages.com/}
 @end table
 
 @node Compiling, Support, Download, Installation
