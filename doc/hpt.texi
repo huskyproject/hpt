@@ -3580,10 +3580,10 @@ this link is read only
 this link is write only
 @item -mn
 this link is mandatory subscribed,
-you may also set: "<aka> -r -mn" or "<aka> -w -r" and so on...
+you may also set: "<aka> -r -mn" or "<aka> -w -mn" and so on...
 
 Link Options -r -w are left for backward compatibility. We strongly recommend to
-use tokens ReadOnly & WriteOnly for seting permissions on arealinks.
+use tokens ReadOnly & WriteOnly for setting permissions on arealinks.
 @end table
 
 This statement can be repeated.
