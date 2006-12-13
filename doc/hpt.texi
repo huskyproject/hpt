@@ -5,6 +5,7 @@
 @c adopted from msged.texi, written by Tobias Ernst
 @setfilename hpt.info
 @set HPT HPT
+@set MSGED MsgEd-TE
 @set VERSION 1.9
 @settitle @value{HPT} @value{VERSION} - Highly Portable Tosser
 @setchapternewpage odd
@@ -921,7 +922,7 @@ Don't add kludge RESCANNED to generated messages.
 
 This statement cannot be repeated.
 
-@node ForwardRequestTimeout, IdlePassthruTimeout, DisablePID, Keywords
+@node ForwardRequestTimeout, IdlePassthruTimeout, DisableKludgeRescanned, Keywords
 @subsection ForwardRequestTimeout
 @findex ForwardRequestTimeout
 @table @asis
