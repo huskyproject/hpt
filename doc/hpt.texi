@@ -5,6 +5,7 @@
 @c adopted from msged.texi, written by Tobias Ernst
 @setfilename hpt.info
 @set HPT HPT
+@set MSGED MsgED TE 6.1
 @set VERSION 1.4
 @settitle @value{HPT} @value{VERSION} - Highly Portable Tosser
 @setchapternewpage odd
@@ -3220,7 +3221,7 @@ this link is read only
 this link is write only
 @item -mn
 this link is mandatory subscribed,
-you may also set: "<aka> -r -mn" or "<aka> -w -r" and so on...
+you may also set: "<aka> -r -mn" or "<aka> -w -mn" and so on...
 
 Link Options -r -w are left for backward compatibility. We strongly recommend to
 use tokens ReadOnly & WriteOnly for seting permissions on arealinks.
