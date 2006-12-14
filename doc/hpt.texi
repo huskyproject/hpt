@@ -3409,8 +3409,6 @@ This statement can only be repeated for different links.
 * LocalArea::                   definition of localarea
 * NetArea::                     same as netmailarea
 * NetMailArea::                 definition of netmailarea
-* ReadOnly::                    set link(s) readonly for echoarea(s)
-* WriteOnly::                   set link(s) writeonly for echoarea(s)
 @end menu
 
 @node BadArea, DupeArea, Area Definition, Area Definition
@@ -3743,7 +3741,7 @@ This statement can be repeated.
 
 This statement can be repeated.
 
-@node NetMailArea, ReadOnly, NetArea, Area Definition
+@node NetMailArea, , NetArea, Area Definition
 @subsection NetMailArea
 @findex NetMailArea
 @table @asis
@@ -3760,49 +3758,6 @@ bases per default.
 This statement can be repeated to use different netmailareas.
 
 @xref{NetArea}.
-
-This statement can be repeated.
-
-@node ReadOnly, WriteOnly, NetMailArea, Area Definition
-@subsection ReadOnly
-@findex ReadOnly
-@table @asis
-@item Syntax:
-@code{ReadOnly <addressMask> <areaMask>}
-@item Example:
-@code{ReadOnly 2:5021/19.* tver.sysop*}
-@end table
-
-This statement set link(s) to readonly for specified ares(s).
-If you write node address do it *without* trailing .0!
-
-If areaMask begins with '!' symbol it means that links won't be set
-readonly for areas that match areaMask
-
-@example
-    ReadOnly 2:5021/19.* tver.sysop*
-    ReadOnly 2:5021/19.1 !tver.sysop*
-    ReadOnly 2:5021/19.2 !tver.sysop.talks
-@end example
-
-It means that all points if 2:5021/19 set r/o for tver.sysop*
-areas except 2:5021/19.1 for all areas and 2:5021/19.2 can write
-only to tver.sysop.talks from tver.sysop* areagroup
-
-This statement can be repeated.
-
-@node WriteOnly, , ReadOnly, Area Definition
-@subsection WriteOnly
-@findex WriteOnly
-@table @asis
-@item Syntax:
-@code{WriteOnly <addressMask> <areaMask>}
-@item Example:
-@code{WriteOnly 2:5021/19.* NobodyReadArea}
-@end table
-
-This statement set link(s) to writeonly for specified ares(s).
-If you write node address do it *without* trailing .0!
 
 This statement can be repeated.
 
