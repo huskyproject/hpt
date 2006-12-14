@@ -624,9 +624,10 @@ int delLinkFromString(char **lineOut, char *line, char *linkAddr)
 }
 #endif
 
+/* fileName isn't freed inside this function */
 int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
-    char *cfgline=NULL, *token=NULL, *tmpPtr=NULL, *line=NULL, *buff=0;
-    char *strbegfileName = fileName;
+    char *cfgline=NULL, *foundFileName = NULL, *token=NULL, *buff=0;
+    char strbegfileName[MAXPATHLEN + 1];
     long strbeg = 0, strend = -1;
     int rc=0;
 
@@ -635,44 +636,61 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
 
     w_log(LL_FUNC, __FILE__ "::changeconfig(%s,...)", fileName);
 
+    strncpy(strbegfileName, fileName, MAXPATHLEN + 1);
+    /* if fileName's length is <= MAXPATHLEN
+     * then strncpy will fill strbegfileName by \0 up to the last byte,
+     * check it: */
+    if(strbegfileName[MAXPATHLEN] != 0)
+        return -1;
+
     if (init_conf(fileName))
-		return -1;
+        return -1;
 
     w_log(LL_SRCLINE, __FILE__ ":%u:changeconfig() action=%i",__LINE__,action);
 
     while ((cfgline = configline()) != NULL) {
-        line = sstrdup(cfgline);
-        line = trimLine(line);
-        line = stripComment(line);
-        if (line[0] != 0) {
+        /* FIXME: use expandCfgLine instead? */
+        /* FIXME: I think we shall definitely strip comments _before_
+         *  modifying line (when we add link to the end) */
+        cfgline = stripComment(cfgline);
+        cfgline = trimLine(cfgline);
+        if(cfgline[0] != 0)
+        {
+            char *line = NULL, *tmpPtr = NULL;
+            line = sstrdup(cfgline);
             line = shell_expand(line);
-            line = tmpPtr = vars_expand(line);
+            tmpPtr = line = vars_expand(line);
             token = strseparate(&tmpPtr, " \t");
-            if (stricmp(token, "echoarea")==0) {
+
+            if (!stricmp(token, "echoarea")) {
                 token = strseparate(&tmpPtr, " \t");
                 if (*token=='\"' && token[strlen(token)-1]=='\"' && token[1]) {
                     token++;
                     token[strlen(token)-1]='\0';
                 }
                 if (stricmp(token, areaName)==0) {
-                    fileName = safe_strdup(getCurConfName());
+                    foundFileName = safe_strdup(getCurConfName());
                     strend = get_hcfgPos();
-                    if (strcmp(strbegfileName, fileName) != 0) strbeg = 0;
+                    if (strcmp(strbegfileName, foundFileName) != 0) strbeg = 0;
+                    nfree(line);
                     break;
                 }
             }
+            nfree(line);
         }
+
         strbeg = get_hcfgPos();
-        strbegfileName = safe_strdup(getCurConfName());
+        strncpy(strbegfileName, getCurConfName(), MAXPATHLEN + 1);
+        if(strbegfileName[MAXPATHLEN] != 0)
+            break;
         w_log(LL_DEBUGF, __FILE__ ":%u:changeconfig() strbeg=%ld", __LINE__, strbeg);
-        nfree(line);
+
         nfree(cfgline);
     }
     close_conf();
-    nfree(line);
-    if (strend == -1) { /*  impossible   error occurred */
+    if (strend == -1) { /* error occurred */
         nfree(cfgline);
-        nfree(fileName);
+        nfree(foundFileName);
         return -1;
     }
 
@@ -705,7 +723,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         }
         break;
     case 2:
-        /* makepass(f, fileName, areaName); */
+        /* makepass(f, foundFileName, areaName); */
     case 4: /*  delete area */
         nfree(cfgline);
         nRet = DEL_OK;
@@ -741,10 +759,10 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     default: break;
     } /*  switch (action) */
 
-    w_log(LL_DEBUGF, __FILE__ ":%u:changeconfig() call InsertCfgLine(\"%s\",<cfgline>,%ld,%ld)", __LINE__, fileName, strbeg, strend);
-    InsertCfgLine(fileName, cfgline, strbeg, strend);
+    w_log(LL_DEBUGF, __FILE__ ":%u:changeconfig() call InsertCfgLine(\"%s\",<cfgline>,%ld,%ld)", __LINE__, foundFileName, strbeg, strend);
+    InsertCfgLine(foundFileName, cfgline, strbeg, strend);
     nfree(cfgline);
-    nfree(fileName);
+    nfree(foundFileName);
     w_log(LL_FUNC, __FILE__ "::changeconfig() rc=%i", nRet);
     return nRet;
 }
@@ -888,7 +906,7 @@ char *subscribe(s_link *link, char *cmd) {
 	
     if (line[0]=='+') line++;
     while (*line==' ') line++;
-
+    /* FIXME:  "+  +  area" isn't a well-formed line */
     if (*line=='+') line++; while (*line==' ') line++;
 	
     if (strlen(line)>60 || !isValidConference(line)) {
