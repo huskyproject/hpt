@@ -1,3 +1,50 @@
+2006-12-14 Thursday 09:28  stas_degteff
+
+	* doc/hpt.texi (1.172): Move descriptions of the tokens 'readonly'
+	  and 'writeonly' into fidoconfig manual
+
+2006-12-13 Wednesday 11:24  nick_voronin
+
+	* doc/hpt.texi (1.171): removed links to outdated sites, added new
+	  link
+
+2006-12-13 Wednesday 10:30  stas_degteff
+
+	* doc/hpt.texi (1.170): Fix sequence
+
+2006-12-13 Wednesday 10:27  stas_degteff
+
+	* doc/hpt.texi (1.169): Fix: Add node 'DisableKludgeRescanned';
+	  escape '@'
+
+2006-12-13 Wednesday 10:09  stas_degteff
+
+	* doc/hpt.texi (1.168): Fix typo
+
+2006-12-12 Tuesday 10:52  stas_degteff
+
+	* doc/hpt.texi (1.167): Default RO and default RW for areas
+
+2006-11-28 Tuesday 08:58  stas_degteff
+
+	* src/: hptlink.c (1.56), link.c (1.78), scan.c (1.207), scanarea.c
+	  (1.108), toss.c (1.550): Check result of MsgWriteMsg() always
+
+2006-11-25 Saturday 15:51  nick_voronin
+
+	* src/toss.c (1.549): fix crash when no valid AREA:.*<cr> line is
+	  found in message, add new badmail reasons, change actual number
+	  codes for BM_*. May have side effects on code which use numbers
+	  instead of enums.
+
+2006-11-25 Saturday 11:24  stas_degteff
+
+	* misc/mirror.pl (1.4): Fix new message subject
+
+2006-11-23 Thursday 13:06  stas_degteff
+
+	* src/txt2pkt.c (1.58): Add errno.h into includes
+
 2006-11-04 Saturday 15:44  nick_voronin
 
 	* src/carbon.c (1.33): Debug output added
