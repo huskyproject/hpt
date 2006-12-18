@@ -44,6 +44,10 @@
 
 #include <smapi/compiler.h>
 
+#ifdef HAS_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+
 #ifdef HAS_IO_H
 #include <io.h>
 #endif
@@ -51,6 +55,7 @@
 #ifdef HAS_UNISTD_H
 #include <unistd.h>
 #endif
+
 
 #include <smapi/patmat.h>
 #include <smapi/progprot.h>
