@@ -124,6 +124,10 @@
 #define NOSLASHES
 #endif
 
+#ifdef DO_PERL
+extern int perl_setattr; /* perl.c */
+#endif
+
 
 extern s_message **msgToSysop;
 int save_err;
@@ -1045,9 +1049,10 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 	    }
 
 	    msgHeader = createXMSG(config,msg, pktHeader, forceattr,tossDir);
-            /* val: this is temp-fix !!! */
-            /* dmitry: ...which set incorrect flags! */
-/*            msgHeader.attr = msg->attributes; */
+#ifdef DO_PERL
+            /* val: force attrs set by perlfilter() hook */
+            if (perl_setattr) msgHeader.attr = msg->attributes;
+#endif
 	    /* Create CtrlBuf for SMAPI */
             len = msg->textLength;
 	    ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **)&bodyStart, &len);
