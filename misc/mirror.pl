@@ -45,9 +45,10 @@ sub filter()
 
 # invalidate control stuff
   $msgtext =~ s/\x01/@/g;
+  $msgtext =~ s/\n/\\x0A/g;
   $msgtext =~ s/SEEN-BY/SEEN+BY/g;
-  $msgtext =~ s/\n--- /\n-+- /g;
-  $msgtext =~ s/\n \* Origin: /\n + Origin: /g;
+  $msgtext =~ s/\r--- /\r-+- /g;
+  $msgtext =~ s/\r \* Origin: /\r + Origin: /g;
   $msgtext="$date $fromname wrote:\r\r"
 	. "==== start message ====\r\r"
 	. "$msgtext\r"
