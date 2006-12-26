@@ -23,7 +23,7 @@
 # }
 #
 
-my $Id='$Id';
+my $Id='$Id$';
 my $myaddr='2:5080/102';
 
 sub pong()
