@@ -320,6 +320,9 @@ char *intl = NULL, *topt = NULL, *fmpt = NULL, *pos = NULL;
   char *level, *str, lvl;
   STRLEN n_a;
 
+  unused(cv);
+  unused(my_perl);
+
   if (items != 1 && items != 2)
   { w_log(LL_ERR, "wrong params number to log (need 1 or 2, exist %d)", items);
     XSRETURN_EMPTY;
@@ -426,6 +429,10 @@ static XS(perl_alike)
   char * str2;
   int len1,len2,threshold,ldist;
   STRLEN n_a;
+
+  unused(cv);
+  unused(my_perl);
+
   if (items!=2)
   {
     w_log(LL_ERR,"wrong number of params to alike(need 2, exist %d)", items);
@@ -556,6 +563,9 @@ static XS(perl_putMsgInArea)
   s_area *echo;
   s_message msg;
 
+  unused(cv);
+  unused(my_perl);
+
   if (items != 9 && items != 10)
   { w_log(LL_ERR, "wrong params number to putMsgInArea (need 9 or 10, exist %d)", items);
     XSRETURN_PV("Invalid arguments");
@@ -678,6 +688,10 @@ static XS(perl_str2attr)
   dXSARGS;
   char *attr;
   STRLEN n_a;
+
+  unused(cv);
+  unused(my_perl);
+
   w_log(LL_WARN, "str2attr() deprecated, use numeric attributes instead");
   if (items != 1)
   { w_log(LL_ERR, "wrong params number to str2attr (need 1, exist %d)", items);
@@ -696,6 +710,10 @@ static XS(perl_attr2str)
   char *s = NULL, buf[4];
   register unsigned char i = 0;
   register unsigned long attr;
+
+  unused(cv);
+  unused(my_perl);
+
   if (items != 1)
   { w_log(LL_ERR, "wrong params number to attr2str (need 1, exist %d)", items);
     XSRETURN_UNDEF;
@@ -715,6 +733,10 @@ static XS(perl_flv2str)
 #endif
 {
   dXSARGS;
+
+  unused(cv);
+  unused(my_perl);
+
   if (items != 1)
   { w_log(LL_ERR, "wrong params number to flv2str (need 1, exist %d)", items);
     XSRETURN_UNDEF;
@@ -732,6 +754,10 @@ static XS(perl_fts_date)
   char *date;
   time_t t;
   STRLEN n_a;
+
+  unused(cv);
+  unused(my_perl);
+
   w_log(LL_WARN, "fts_date() deprecated, use numeric unixtime instead");
   if (items != 1)
   { w_log(LL_ERR, "wrong params number to fts_date (need 1, exist %d)", items);
@@ -752,6 +778,10 @@ static XS(perl_date_fts)
   time_t t;
   char date[21];
   struct tm *tm;
+
+  unused(cv);
+  unused(my_perl);
+
   w_log(LL_WARN, "date_fts() deprecated, use numeric unixtime instead");
   if (items != 1)
   { w_log(LL_ERR, "wrong params number to date_fts (need 1, exist %d)", items);
@@ -771,6 +801,10 @@ static XS(perl_myaddr)
 {
   UINT naddr;
   dXSARGS;
+
+  unused(cv);
+  unused(my_perl);
+
   w_log(LL_WARN, "myaddr() deprecated, use @{$config{addr}} instead");
   if (items != 0)
   { w_log(LL_ERR, "wrong params number to myaddr (need 0, exist %d)", items);
@@ -791,6 +825,10 @@ static XS(perl_nodelistDir)
 #endif
 {
   dXSARGS;
+
+  unused(cv);
+  unused(my_perl);
+
   w_log(LL_WARN, "nodelistDir() deprecated, use $config{nodelistDir} instead");
   if (items != 0)
   { w_log(LL_ERR, "wrong params number to nodelistDir (need 0, exist %d)", items);
@@ -810,6 +848,10 @@ static XS(perl_crc32)
   dXSARGS;
   STRLEN n_a;
   char *str;
+
+  unused(cv);
+  unused(my_perl);
+
   if (items != 1)
   { w_log(LL_ERR, "wrong params number to crc32 (need 1, exist %d)", items);
     XSRETURN_IV(0);
@@ -826,6 +868,10 @@ static XS(perl_mktime)
 {
   dXSARGS;
   struct tm tm;
+
+  unused(cv);
+  unused(my_perl);
+
   if (items < 6 || items > 9)
   { w_log(LL_ERR, "wrong params number to mktime (need 6 to 9, exist %d)", items);
     XSRETURN_UNDEF;
@@ -854,6 +900,10 @@ static XS(perl_strftime)
   struct tm tm;
   char buf[64];
   STRLEN n_a;
+
+  unused(cv);
+  unused(my_perl);
+
   if (items != 1 && items != 2 && (items < 7 || items > 10))
   { w_log(LL_ERR, "wrong params number to strftime (need 1, 2, 7..10, exist %d)", items);
     XSRETURN_UNDEF;
@@ -889,6 +939,10 @@ static XS(perl_gmtoff)
   struct tm loc, gmt;
   double offs;
   time_t t;
+
+  unused(cv);
+  unused(my_perl);
+
   if (items > 1)
   { w_log(LL_ERR, "wrong params number to gmtoff (need 0 or 1, exist %d)", items);
     XSRETURN_UNDEF;
@@ -925,6 +979,10 @@ static XS(perl_warn)
 #endif
 {
   dXSARGS;
+
+  unused(cv);
+  unused(my_perl);
+
   if (items == 1) perl_warn_sv (ST(0));
   XSRETURN_EMPTY;
 }
@@ -954,6 +1012,9 @@ static void xs_init(void)
 #endif
 {
   static char *file = __FILE__;
+
+  unused(my_perl);
+
 #ifndef DO_HPM
 #if defined(__OS2__)
   newXS("DB_File::bootstrap", boot_DB_File, file);
@@ -2530,7 +2591,6 @@ int perl_robotmsg(s_message *msg, char *type)
    SV *svfromname, *svfromaddr, *svtoname, *svtoaddr;
    SV *svtext, *svsubj, *svret, *svtype;
    STRLEN n_a;
-   char *s_robottype;
    static int do_perlrobotmsg = 1;
 
    VK_START_HOOK(perlrobotmsg, SUB_ON_ROBOTMSG, 0)

@@ -297,7 +297,8 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount, long resc
    HAREA area;
    HMSG  hmsg;
    XMSG  xmsg;
-   dword highestMsg, i;
+/*   dword highestMsg; */
+   dword i;
    dword *pool;              /* pool of messages to rescan */
    int   n_pool = 0, s_pool; /* actual and allocated pool size */
    unsigned int rc=0;

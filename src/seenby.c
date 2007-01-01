@@ -118,6 +118,8 @@ void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, 
     char *endptr = NULL;
     UINT seenByAlloced;
 
+    unused(area);
+
     *seenByCount = seenByAlloced = 0;
 
     start = strrstr(msg->text, " * Origin:"); /*  jump over Origin */

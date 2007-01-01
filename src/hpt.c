@@ -463,6 +463,9 @@ FARPROC WINAPI ourhook(unsigned dliNotify,PDelayLoadInfo pdli)
 {
   /* print error message and exit */
   char msg[128];
+  
+  unused(dliNotify);
+  
   memset(msg,0,sizeof(msg));
   sprintf(msg,"Loading of %s failed - exiting ",pdli->szDll);
   w_log(LL_CRIT,msg);
