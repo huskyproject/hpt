@@ -129,7 +129,7 @@ int parseINTL(char *msgtxt, hs_addr *from, hs_addr *to)
    if (start)
    {
       start += 6;                 /*  skip "INTL " */
-      while(1)
+      for (;;)
       {
           while (*start && isspace(*start)) start++;
           if (!*start) break;

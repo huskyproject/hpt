@@ -256,7 +256,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
       
       start += 6;                 /*  skip "INTL " */
 
-      while(1)
+      for (;;)
       {
           while (*start && isspace(*start)) start++;
           if (!*start) break;

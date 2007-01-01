@@ -240,7 +240,8 @@ int createTempPktFileName_legasy(s_link *link)
     aTime %= 0xffffff;   /* only last 24 bit count */
 
     /* Making pkt name */
-    while(1) {
+    for (;;)
+    {
 		do {
 			nfree(fileName);
 			xscatprintf(&fileName, "%s%06lx%02x.pkt",

@@ -46,6 +46,9 @@
 #  define WIN32
 #endif
 
+#ifdef _MSC_VER
+#pragma warning(disable: 4127)
+#endif
 
 #include <fidoconf/common.h>
 #include <huskylib/xstr.h>
