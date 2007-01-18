@@ -34,7 +34,16 @@ char *rescan(s_link *link, char *cmd);
 char *errorRQ(char *line);
 int isPatternLine(char *s);
 void makeMsgToSysop(char *areaName, hs_addr fromAddr, hs_addr *uplinkAddr);
+
+/*  forwardRequest()
+    Forward request to areatag. Request initiated by dwlink.
+    lastRlink is pointer to last requested link in uplinks array, uses for
+    repeat calls of forwardRequest()
+    (uplinks array is sorted by forward-priority of link)
+    lastRlink may be NULL
+*/
 int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink);
+
 int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act);
 void sendAreafixMessages();
 char *do_delete(s_link *link, s_area *area);

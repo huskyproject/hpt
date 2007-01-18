@@ -23,7 +23,13 @@ typedef struct query_areas
 /*     struct query_areas *prev; */
 } s_query_areas;
 
-enum  query_action{ FIND, ADDFREQ, ADDIDLE, DELIDLE };
+enum  query_action{
+    FIND,     /* Find area in query list */
+    ADDFREQ,  /* Add node into existing query in list */
+    ADDIDLE,  /* Create idle forward request into query list */
+    DELIDLE   /* Remove idle forward request from query list */
+};
+
 typedef enum query_action e_query_action;
 
 enum  changeConfigRet{ I_ERR=-2, /*  read config error */
