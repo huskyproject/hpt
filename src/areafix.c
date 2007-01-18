@@ -785,6 +785,19 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
     s_link *uplink;
     int *Indexes;
     unsigned int Requestable = 0;
+    s_query_areas *oldRequest;
+
+    oldRequest = af_CheckAreaInQuery(areatag, NULL, NULL, FIND);
+    if(oldRequest != NULL)
+    {
+       af_CheckAreaInQuery(areatag, NULL, &(dwlink->hisAka), ADDFREQ);
+       /* there is no way to check if the call was sucessfull,
+        * result is: link included into queue or it already included;
+        * we just returns OK, because we've done all we can do. */
+       /* FIXME: I think no other processing is needed
+        * because the request to uplink is already issued. */
+       return 1;
+    }
 
     /* From Lev Serebryakov -- sort Links by priority */
     Indexes = safe_malloc(sizeof(int)*config->linkCount);
