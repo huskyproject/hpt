@@ -814,13 +814,13 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
         if ( (uplink->numDfMask) &&
             (tag_mask(areatag, uplink->dfMask, uplink->numDfMask)))
         {
-            rc = 2;
+            rc = 2; /* not forward */
             continue;
         }
         if ( (uplink->denyFwdFile!=NULL) &&
             (IsAreaAvailable(areatag,uplink->denyFwdFile,NULL,0)))
         {
-            rc = 2;
+            rc = 2; /* area is listed in denyfwdfile */
             continue;
         }
         if (uplink->forwardRequestFile!=NULL) {
@@ -829,24 +829,24 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
                 IsAreaAvailable(areatag,uplink->forwardRequestFile,NULL,0))
             {
                 forwardRequestToLink(areatag,uplink,dwlink,0);
-                rc = 0;
+                rc = 0; /* Request is forwarded */
             }
             else
-            { rc = 2; }/*  found link with freqfile, but there is no areatag */
+            { rc = 2; }/* found link with freqfile, but there is no areatag */
         } else {
             rc = 0;
             if (uplink->numFrMask) /*  found mask */
             {
                 if (tag_mask(areatag, uplink->frMask, uplink->numFrMask))
                     forwardRequestToLink(areatag,uplink,dwlink,0);
-                else rc = 2;
+                else rc = 2; /* area not matched areatag mask for uplink */
             } else { /*  unconditional forward request */
                 if (dwlink->denyUFRA==0)
                     forwardRequestToLink(areatag,uplink,dwlink,0);
-                else rc = 2;
+                else rc = 2; /* Deny unconditional forward requests for link */
             }
         }/* (uplink->forwardRequestFile!=NULL) */
-        if (rc==0) { /*  ? */
+        if (rc==0) { /*  Duplicate of end of function, may be removed */
             nfree(Indexes);
             return rc;
         }

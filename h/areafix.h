@@ -38,9 +38,12 @@ void makeMsgToSysop(char *areaName, hs_addr fromAddr, hs_addr *uplinkAddr);
 /*  forwardRequest()
     Forward request to areatag. Request initiated by dwlink.
     lastRlink is pointer to last requested link in uplinks array, uses for
-    repeat calls of forwardRequest()
-    (uplinks array is sorted by forward-priority of link)
-    lastRlink may be NULL
+    repeat calls of forwardRequest() (uplinks array is sorted by
+    forward-priority of link). lastRlink may be NULL
+    Return values:
+    0 - request is forwarded
+    1 - echo already requested (link is queued to echo-subcribing) or action isn't required
+    2 - request is not forwarded (deny area-link, not found, ...)
 */
 int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink);
 
