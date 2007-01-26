@@ -387,6 +387,13 @@ s_query_areas*  af_AddAreaListNode(char *areatag, const char *type);
 void            af_DelAreaListNode(s_query_areas* node);
 void            af_AddLink(s_query_areas* node, ps_addr link);
 
+
+/* TODO: make some optimisations. 
+ * 1) make all areanames upper case before do all actual comparisons
+ * 2) implement more effective search for names, 
+ * now operations with big queue file are terribly slow. The list now is sorted,
+ * but it worth nothing at all. Elementary small hash will help much more. */
+
 s_query_areas* af_CheckAreaInQuery(char *areatag, ps_addr uplink, ps_addr dwlink, e_query_action act)
 {
     size_t i = 0;
@@ -419,7 +426,7 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, ps_addr uplink, ps_addr dwlink
                 if(i == tmpNode->linksCount) {
                     af_AddLink( tmpNode, dwlink ); /*  add link to queried area */
                     tmpNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
-                    w_log(LL_AREAFIX, "areafix: add node %s into request list (idle queue) for area: %s", aka2str(*dwlink), areaNode->name);
+                    w_log(LL_AREAFIX, "areafix: add node %s into request list (idle queue) for area: %s", aka2str(*dwlink), tmpNode->name);
                 } else {
                     tmpNode = NULL;  /*  link already in query */
                 }
@@ -427,7 +434,7 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, ps_addr uplink, ps_addr dwlink
                 strcpy(tmpNode->type,czFreqArea); /*  change state to @freq" */
                 af_AddLink( tmpNode, dwlink );
                 tmpNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
-                w_log(LL_AREAFIX, "areafix: add node %s into request list (idle queue) for area: %s", aka2str(*dwlink), areaNode->name);
+                w_log(LL_AREAFIX, "areafix: add node %s into request list (idle queue) for area: %s", aka2str(*dwlink), tmpNode->name);
             }
         } else { /*  area not found, so add it */
             areaNode = af_AddAreaListNode( areatag, czFreqArea );

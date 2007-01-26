@@ -780,6 +780,10 @@ static int compare_links_priority(const void *a, const void *b) {
     else return 0;
 }
 
+/* Return values:
+ * 0 = request is forwarded now or before
+ * 1 = link with "forwardRequests on" not found
+ * 2 = something prevent us from forwarding request */
 int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
     unsigned int i, rc = 1;
     s_link *uplink;
@@ -792,11 +796,11 @@ int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
     {
        af_CheckAreaInQuery(areatag, NULL, &(dwlink->hisAka), ADDFREQ);
        /* there is no way to check if the call was sucessfull,
-        * result is: link included into queue or it already included;
+        * result is: link included into queue or it is already included;
         * we just returns OK, because we've done all we can do. */
        /* FIXME: I think no other processing is needed
         * because the request to uplink is already issued. */
-       return 1;
+       return 0;
     }
 
     /* From Lev Serebryakov -- sort Links by priority */
