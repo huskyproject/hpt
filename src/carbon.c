@@ -55,6 +55,8 @@
 #include "global.h"
 #include "toss.h"
 
+#define LL_CARBON LL_POSTING
+
 extern s_statToss statToss;
 
 s_message* MessForCC(s_message *msg)
@@ -94,10 +96,17 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 {
     FILE *msgfp = NULL;
     char *fname = NULL;
-    char *progname = NULL, *execstr = NULL, *p = NULL;
+    char *progname = carbon.areaName, *execstr = NULL, *p = NULL;
     int  rc;
 
-    progname = carbon.areaName;
+    w_log(LL_CARBON, "Carbon external from area %s to program \"%s\"%s%s%s: msg from \"%s\" %s to \"%s\"%s%s",
+                      echo->areaName? echo->areaName:"netmail",
+                      progname? progname:"",
+                      carbon.reason? " at reason \"":"", carbon.reason? carbon.reason:"", carbon.reason? "\"":"",
+                      msg->fromUserName, aka2str(msg->origAddr), msg->toUserName,
+                      msg->netMail? " ":"", msg->netMail? aka2str(msg->destAddr):""
+         );
+
 #ifdef HAS_popen_close
     if (*progname == '|') {
 	msgfp = popen(progname + 1, "w");
@@ -144,6 +153,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
       unlink(fname);
       nfree(fname);
     }
+
 /*    if (rc == -1 || rc == 127) */
     if (rc)  /* system() return exit status returned by shell */
 	w_log(LL_ERR, "Execution of external program failed. Cmd is: %s", execstr);
@@ -243,6 +253,14 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	rc = processEMMsg(msg, *area->useAka, 1, 0);
     } else
 	rc = processNMMsg(msg, NULL, area, 1, 0);
+
+    w_log(LL_CARBON, "Carbon %s from %s to %s%s%s%s: msg from \"%s\" %s to \"%s\"%s%s", carbon.move? "move":"copy",
+                      echo->areaName? echo->areaName:"netmail",
+                      area->areaName? area->areaName:"netmail",
+                      reason? " at reason \"":"", reason? reason:"", reason? "\"":"",
+                      msg->fromUserName, aka2str(msg->origAddr), msg->toUserName,
+                      msg->netMail? " ":"", msg->netMail? aka2str(msg->destAddr):""
+         );
 
     nfree(msg->text);
     msg->textLength = old_textLength;
