@@ -95,10 +95,17 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 {
     FILE *msgfp = NULL;
     char *fname = NULL;
-    char *progname = NULL, *execstr = NULL, *p = NULL;
+    char *progname = carbon.areaName, *execstr = NULL, *p = NULL;
     int  rc;
 
-    progname = carbon.areaName;
+    w_log(LL_CARBON, "Carbon external from area %s to program \"%s\"%s%s%s: msg from \"%s\" %s to \"%s\"%s%s",
+                      echo->areaName? echo->areaName:"netmail",
+                      progname? progname:"",
+                      carbon.reason? " at reason \"":"", carbon.reason? carbon.reason:"", carbon.reason? "\"":"",
+                      msg->fromUserName, aka2str(msg->origAddr), msg->toUserName,
+                      msg->netMail? " ":"", msg->netMail? aka2str(msg->destAddr):""
+         );
+
 #ifdef HAS_popen_close
     if (*progname == '|') {
 	msgfp = popen(progname + 1, "w");
@@ -147,7 +154,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
     }
 /*    if (rc == -1 || rc == 127) */
     if (rc)  /* system() return exit status returned by shell */
-	w_log(LL_ERR, "Execution of external program failed. Cmd is: %s", execstr);
+	w_log(LL_ERR, "Execution of external program failed. Cmd is: \"%s\", return code %d", execstr, rc);
     return 0;
 
 }
@@ -245,6 +252,15 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 	rc = processEMMsg(msg, *area->useAka, 1, 0);
     } else
 	rc = processNMMsg(msg, NULL, area, 1, 0);
+
+    w_log(LL_CARBON, "Carbon %s from %s to %s%s%s%s: msg from \"%s\" %s to \"%s\"%s%s. Result code is %d", carbon.move? "move":"copy",
+                      echo->areaName? echo->areaName:"netmail",
+                      area->areaName? area->areaName:"netmail",
+                      reason? " at reason \"":"", reason? reason:"", reason? "\"":"",
+                      msg->fromUserName, aka2str(msg->origAddr), msg->toUserName,
+                      msg->netMail? " ":"", msg->netMail? aka2str(msg->destAddr):"",
+                      rc
+         );
 
     nfree(msg->text);
     msg->textLength = old_textLength;
@@ -396,6 +412,14 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
                     }
                     /*  delete CarbonMove and CarbonDelete messages */
                     if (cb->move && xmsg) xmsg->attr |= MSGKILL;
+                    if (cb->move == 2) {
+                      w_log( LL_CARBON, "Carbon delete from %s %s%s%s: msg from \"%s\" %s to \"%s\"%s%s.",
+                             echo->areaName? echo->areaName:"netmail",
+                             reason? " at reason \"":"", reason? reason:"", reason? "\"":"",
+                             msg->fromUserName, aka2str(msg->origAddr), msg->toUserName,
+                             msg->netMail? " ":"", msg->netMail? aka2str(msg->destAddr):""
+                           );
+                    }
                     if (config->carbonAndQuit)
                         /* not skip quit or delete */
                         if ((cb->areaName && *cb->areaName!='*') ||	cb->move==2) {
