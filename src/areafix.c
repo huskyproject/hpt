@@ -783,26 +783,12 @@ static int compare_links_priority(const void *a, const void *b) {
 /* Return values:
  * 0 = request is forwarded now
  * 1 = link with "forwardRequests on" not found
- * 2 = something prevent us from forwarding request
- * 3 = the area is already in the queue so forward is not necessary */
+ * 2 = something prevent us from forwarding request */
 int forwardRequest(char *areatag, s_link *dwlink, s_link **lastRlink) {
     unsigned int i, rc = 1;
     s_link *uplink;
     int *Indexes;
     unsigned int Requestable = 0;
-    s_query_areas *oldRequest;
-
-    oldRequest = af_CheckAreaInQuery(areatag, NULL, NULL, FIND);
-    if(oldRequest != NULL)
-    {
-       af_CheckAreaInQuery(areatag, NULL, &(dwlink->hisAka), ADDFREQ);
-       /* there is no way to check if the call was sucessfull,
-        * result is: link is included into the queue or it is already there;
-        * we just return OK, because we've done all we can do. */
-       /* FIXME: I think no other processing is needed
-        * because the request to uplink is already issued. */
-       return 3;
-    }
 
     /* From Lev Serebryakov -- sort Links by priority */
     Indexes = safe_malloc(sizeof(int)*config->linkCount);
@@ -1018,8 +1004,16 @@ char *subscribe(s_link *link, char *cmd) {
 
     if (rc==4 && !isPatternLine(line) && !found) { /* rc not equal 4 there! */
 	if (link->denyFRA==0) {
+            s_query_areas *node = NULL;
+            /* check if area is already requested */
+            if (config->areafixQueueFile && (node = af_CheckAreaInQuery(line,NULL,NULL,FIND)) != NULL) {
+                af_CheckAreaInQuery(line, &(node->downlinks[0]), &(link->hisAka), ADDFREQ);
+		xscatprintf(&report, " %s %s  request forwarded\r",
+			    line, print_ch(49-strlen(line), '.'));
+                w_log(LL_AREAFIX, "areafix: Area \'%s\' is already requested at %s", line, aka2str(node->downlinks[0]));
+	    }
 	    /*  try to forward request */
-	    if ((rc=forwardRequest(line, link, NULL))==2) {
+	    else if ((rc=forwardRequest(line, link, NULL))==2) {
 		xscatprintf(&report, " %s %s  no uplinks to forward\r",
 			    line, print_ch(49-strlen(line), '.'));
 		w_log( LL_AREAFIX, "areafix: %s - no uplinks to forward", line);
@@ -1028,35 +1022,30 @@ char *subscribe(s_link *link, char *cmd) {
 		xscatprintf(&report, " %s %s  request forwarded\r",
 			    line, print_ch(49-strlen(line), '.'));
 		w_log( LL_AREAFIX, "areafix: %s - request forwarded", line);
-		if( !config->areafixQueueFile && isOurAka(config,link->hisAka)==0)
-		{
-		    area = getArea(config, line);
-		    if ( !isLinkOfArea(link, area) ) {
-			if(changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==ADD_OK) {
-			    Addlink(link, area, NULL);
-			    processPermissions(config);
-			    fixRules (link, area->areaName);
-			    w_log( LL_AREAFIX, "areafix: %s subscribed to area %s",
-				aka2str(link->hisAka),line);
-			} else {
-			    xscatprintf( &report," %s %s  error. report to sysop!\r",
-				an, print_ch(49-strlen(an),'.') );
-			    w_log( LL_AREAFIX, "areafix: %s not subscribed to %s",
-				aka2str(link->hisAka),an);
-			    w_log(LL_ERR, "areafix: can't change config file: %s!", strerror(errno));
-			}
-		    } else w_log( LL_AREAFIX, "areafix: %s already subscribed to area %s",
-			aka2str(link->hisAka), line );
+        if( !config->areafixQueueFile && isOurAka(config,link->hisAka)==0)
+        {
+            area = getArea(config, line);
+            if ( !isLinkOfArea(link, area) ) {
+                if(changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==ADD_OK) {
+                    Addlink(link, area, NULL);
+                    processPermissions(config);
+                    fixRules (link, area->areaName);
+                    w_log( LL_AREAFIX, "areafix: %s subscribed to area %s",
+                        aka2str(link->hisAka),line);
+                } else {
+                    xscatprintf( &report," %s %s  error. report to sysop!\r",
+                        an, print_ch(49-strlen(an),'.') );
+                    w_log( LL_AREAFIX, "areafix: %s not subscribed to %s",
+                        aka2str(link->hisAka),an);
+                    w_log(LL_ERR, "areafix: can't change config file: %s!", strerror(errno));
+                }
+            } else w_log( LL_AREAFIX, "areafix: %s already subscribed to area %s",
+                aka2str(link->hisAka), line );
 
-		} else {
-		    fixRules (link, line);
-		}
-	    }
-	    else if (rc == 3)
-	    {
-		xscatprintf(&report, " %s %s  request forwarded\r",
-			    line, print_ch(49-strlen(line), '.'));
-	    }
+        } else {
+            fixRules (link, line);
+        }
+        }
 	}
     }
 
