@@ -34,10 +34,10 @@ sub filter()
 # ==== и до обеда
 
  my @Id = split(/ /,'$Id$');
- my $report_tearline="$Id[1] $Id[2] $Id[3] $Id[4]";
+ my $report_tearline="$Id[1] $Id[2]";
  undef @Id;
 
- if( ($testarea{$area}) && ($toname eq $check_toname)
+ if( ($testarea{$area}) && ($toname eq $check_toname) && ($toname eq $myname)
      && (lc($subject) eq $check_subject) )
  {
 # $text contains original message and must be left as is
@@ -46,8 +46,8 @@ sub filter()
 # invalidate control stuff
   $msgtext =~ s/\x01/@/g;
   $msgtext =~ s/\n/\\x0A/g;
-  $msgtext =~ s/SEEN-BY/SEEN+BY/g;
-  $msgtext =~ s/\r--- /\r-+- /g;
+  $msgtext =~ s/\rSEEN-BY/SEEN+BY/g;
+  $msgtext =~ s/\r--- /\r=== /g;
   $msgtext =~ s/\r \* Origin: /\r + Origin: /g;
   $msgtext="$date $fromname wrote:\r\r"
 	. "==== start message ====\r\r"
