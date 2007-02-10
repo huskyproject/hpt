@@ -34,10 +34,10 @@ sub filter()
 # ==== и до обеда
 
  my @Id = split(/ /,'$Id$');
- my $report_tearline="$Id[1] $Id[2] $Id[3] $Id[4]";
+ my $report_tearline="$Id[1] $Id[2]";
  undef @Id;
 
- if( ($testarea{$area}) && ($toname eq $check_toname)
+ if( ($testarea{$area}) && ($toname eq $check_toname) && ($toname eq $myname)
      && (lc($subject) eq $check_subject) )
  {
 # $text contains original message and must be left as is
