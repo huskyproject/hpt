@@ -15,11 +15,11 @@
 # GNU General Public License for more details.
 #
 # 
-sub filter()
+
+sub mirror()
 {
  my %testarea;
- my $msgtext="";
-# ==== настраивать от забора
+# ==== Configuration # настраивать от забора
  my $check_toname="All";
  my $check_subject="test";
  my $myname="Mirror robot";
@@ -31,7 +31,8 @@ sub filter()
 
  $testarea{"GREMLIN.TEST"}=1;  # echobase is exists
  $testarea{"MU.TEST"}=2;       # passthrough echo
-# ==== и до обеда
+# ==== End of configuration # и до обеда
+ my $msgtext="";
 
  my @Id = split(/ /,'$Id$');
  my $report_tearline="$Id[1] $Id[2]";
@@ -49,8 +50,8 @@ sub filter()
   $msgtext =~ s/\rSEEN-BY/\rSEEN+BY/g;
   $msgtext =~ s/\r--- /\r=== /g;
   $msgtext =~ s/\r \* Origin: /\r + Origin: /g;
-  $msgtext="$date $fromname wrote:\r\r"
-	. "==== start message ====\r\r"
+  $msgtext="$date $fromname ($fromaddr) wrote:\r\r"
+	. "==== begin of message ====\r"
 	. "$msgtext\r"
 	. "==== end of message ====\r\r\r";
 
@@ -75,6 +76,7 @@ sub filter()
  return "";
 }
 
+sub filter() { &mirror; }
 sub process_pkt{}
 sub after_unpack{}
 sub before_pack{}
