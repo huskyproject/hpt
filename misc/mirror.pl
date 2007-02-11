@@ -14,7 +14,24 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# 
+
+# Look messages in specified (echo)aread. Check toname for "All" and robot name
+# (now "Mirror robot"), check subject for specified (now "test"), (see
+# "Configuration" below). If matchs then post reply with original message text
+# and invalidated cludges.
+#
+# usage example:
+# ==============
+# BEGIN{ use "mirror.pl" }
+# sub filter() { &mirror; }
+# sub process_pkt{}
+# sub after_unpack{}
+# sub before_pack{}
+# sub pkt_done{}
+# sub scan{}
+# sub route{}
+# sub hpt_exit{}
+# ==============
 
 sub mirror()
 {
@@ -75,13 +92,3 @@ sub mirror()
  }
  return "";
 }
-
-sub filter() { &mirror; }
-sub process_pkt{}
-sub after_unpack{}
-sub before_pack{}
-sub pkt_done{}
-sub scan{}
-sub route{}
-sub hpt_exit{}
-
