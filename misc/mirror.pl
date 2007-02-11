@@ -37,15 +37,15 @@ sub mirror()
 {
  my %testarea;
 # ==== Configuration # настраивать от забора
- my $check_toname="All";
- my $check_subject="test";
- my $myname="Mirror robot";
- my $myaddr="2:5020/545";
- my $txt2pkt="/usr/local/bin/txt2pkt";
- my $report_subj="$myname report";
- my $report_origin="$myname";
- my $pkt_dir="/fido/inbound-local";
-
+ my $check_toname="All";     # Exactly!
+ my $check_subject="test";   # Lower case!
+ my $myname="Mirror robot";  # Robot name, uses in reply and check "to" name
+ my $myaddr="2:5020/545";    # Robot address
+ my $txt2pkt="/usr/local/bin/txt2pkt"; # txt2pkt program with path uses for post into passthrough areas
+ my $report_subj="$myname report";           # Subject of report message
+ my $report_origin="$myname: HPT-perl hook"; # Origin of report message
+ my $pkt_dir="/fido/inbound-local";          # Directory to write PKT for passtrough areas
+ # areas list, value "1" for ordinary areas, value "2" for passthrough areas.
  $testarea{"GREMLIN.TEST"}=1;  # echobase is exists
  $testarea{"MU.TEST"}=2;       # passthrough echo
 # ==== End of configuration # и до обеда
