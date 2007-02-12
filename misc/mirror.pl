@@ -22,7 +22,7 @@
 #
 # usage example:
 # ==============
-# BEGIN{ use "mirror.pl" }
+# BEGIN{ require "mirror.pl" }
 # sub filter() { &mirror; }
 # sub process_pkt{}
 # sub after_unpack{}
