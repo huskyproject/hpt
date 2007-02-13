@@ -61,6 +61,7 @@ void cleanDupesFromSeenBys(s_seenBy **seenBys, UINT16 *count)
 {
     UINT16 i;
     s_seenBy seenBy;
+    int dupes = 0;
 
     if (seenBys == NULL || *seenBys == NULL || count == NULL || *count < 2)
         return;
@@ -72,14 +73,19 @@ void cleanDupesFromSeenBys(s_seenBy **seenBys, UINT16 *count)
     for (i=1;i<*count;i++) {
         if ((*seenBys)[i].net == seenBy.net &&
             (*seenBys)[i].node == seenBy.node)
-        { /* seenby[i-1] == seenby[i] - overwrite it */
-            (*seenBys)[i].net = (*seenBys)[--*count].net;
-            (*seenBys)[i].node = (*seenBys)[--*count].node;
-            sortSeenBys((*seenBys), *count);
+        { /* seenby[i-1-dupes] == seenby[i] - overwrite it */
+            ++dupes;
         }
-        seenBy.net = (*seenBys)[i].net;
-        seenBy.node = (*seenBys)[i].node;
+        else 
+        {
+            seenBy.net = (*seenBys)[i].net;
+            seenBy.node = (*seenBys)[i].node;
+            /* shift nonduplicated seen-bys */
+            (*seenBys)[i-dupes].net = (*seenBys)[i].net;
+            (*seenBys)[i-dupes].node = (*seenBys)[i].node;
+        }
     }
+    *count -= dupes;
 }
 
 void cleanDupes_seenByZone()
