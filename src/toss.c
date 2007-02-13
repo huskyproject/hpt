@@ -463,7 +463,9 @@ void forwardMsgToLinks_rsb(s_area *echo, s_message *msg, hs_addr pktOrigAddr, UI
     s_seenBy *seenBys = NULL, *path = NULL;
     UINT16     seenByCount = 0 , pathCount = 0;
     unsigned int i;
+#ifdef DEBUG_HPT
     char *text;
+#endif
 
     /*  links who does not have their aka in seenBys and thus have not got the echomail */
     s_arealink **newLinks = NULL;
@@ -475,33 +477,37 @@ void forwardMsgToLinks_rsb(s_area *echo, s_message *msg, hs_addr pktOrigAddr, UI
 #endif
     /* fetch seen-bys from msg */
     createSeenByArrayFromMsg(msg, &seenBys, &seenByCount);
-    text = createControlText(seenBys, seenByCount, "");
 #ifdef DEBUG_HPT
+    text = createControlText(seenBys, seenByCount, "");
     w_log(LL_DEBUGS, "forwardMsgToLinks_rsb:%u: SEEN-BY: %s", __LINE__, text);
+    nfree(text);
 #endif
 
     /* fetch path from msg */
     createPathArrayFromMsg(msg, &path, &pathCount);
-    text = createControlText(path, pathCount, "");
 #ifdef DEBUG_HPT
+    text = createControlText(path, pathCount, "");
     w_log(LL_DEBUGS, "forwardMsgToLinks_rsb:%u: PATH: %s", __LINE__, text);
+    nfree(text);
 #endif
 
     if (rsb == 0) {
         /* attach seen-bys of message to seenBysZone with
          zone == pktOrigAddr.zone */
         attachTo_seenBysZone(pktOrigAddr.zone, &seenBys, seenByCount);
-        text = createControlText(seenBys, seenByCount, "");
 #ifdef DEBUG_HPT
+        text = createControlText(seenBys, seenByCount, "");
         w_log(LL_DEBUGS, "forwardMsgToLinks_rsb:%u: SEEN-BY: %s", __LINE__, text);
+        nfree(text);
 #endif
 
     } else {
         /* attach path to seenBysZone with zone == pktOrigAddr.zone */
         attachTo_seenBysZone(pktOrigAddr.zone, &path, pathCount);
-        text = createControlText(path, pathCount, "");
 #ifdef DEBUG_HPT
+        text = createControlText(path, pathCount, "");
         w_log(LL_DEBUGS, "forwardMsgToLinks_rsb:%u: PATH: %s", __LINE__, text);
+        nfree(text);
 #endif
         /* make a copy of path 'cause 1st is left for seen-bys */
         path = memdup(path, sizeof(s_seenBy) * pathCount);
