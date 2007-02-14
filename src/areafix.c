@@ -905,168 +905,167 @@ void fixRules (s_link *link, char *area) {
 }
 
 char *subscribe(s_link *link, char *cmd) {
-    unsigned int i, rc=4, found=0, matched=0;
-    char *line, *an=NULL, *report = NULL;
-    s_area *area=NULL;
+  unsigned int i, rc=4, found=0, matched=0;
+  char *line, *an=NULL, *report = NULL;
+  s_area *area=NULL;
 
-    w_log(LL_FUNC, "%s::subscribe(...,%s)", __FILE__, cmd);
+  w_log(LL_FUNC, "%s::subscribe(...,%s)", __FILE__, cmd);
 
-    line = cmd;
-	
-    if (line[0]=='+') line++;
-    while (*line==' ') line++;
-    /* FIXME:  "+  +  area" isn't a well-formed line */
-    if (*line=='+') line++; while (*line==' ') line++;
-	
-    if (strlen(line)>60 || !isValidConference(line)) {
-      report = errorRQ(line);
-      w_log(LL_FUNC, "%s::subscribe() FAILED (error request line) rc=%s", __FILE__, report);
-      return report;
-    }
+  line = cmd;
+      
+  if (line[0]=='+') line++;
+  while (*line==' ') line++;
+  /* FIXME:  "+  +  area" isn't a well-formed line */
+  if (*line=='+') line++; while (*line==' ') line++;
+      
+  if (strlen(line)>60 || !isValidConference(line)) {
+    report = errorRQ(line);
+    w_log(LL_FUNC, "%s::subscribe() FAILED (error request line) rc=%s", __FILE__, report);
+    return report;
+  }
 
-    for (i=0; !found && rc!=6 && i<config->echoAreaCount; i++) {
-	area = &(config->echoAreas[i]);
-	an = area->areaName;
+  for (i=0; !found && rc!=6 && i<config->echoAreaCount; i++) {
+    area = &(config->echoAreas[i]);
+    an = area->areaName;
 
-	rc=subscribeAreaCheck(area, line, link);
-	if (rc==4) continue;        /* not match areatag, try next */
-	if (rc==1 && manualCheck(*area, link)) rc = 5; /* manual area/group/link */
+    rc=subscribeAreaCheck(area, line, link);
+    if (rc==4) continue;        /* not match areatag, try next */
+    if (rc==1 && manualCheck(*area, link)) rc = 5; /* manual area/group/link */
 
-	if (rc!=0 && limitCheck(link)) rc = 6; /* areas limit exceed for link */
+    if (rc!=0 && limitCheck(link)) rc = 6; /* areas limit exceed for link */
 
-	switch (rc) {
-	case 0:         /* already linked */
-	    if (isPatternLine(line)) {
-		matched = 1;
-	    } else {
-		xscatprintf(&report, " %s %s  already linked\r",
-			    an, print_ch(49-strlen(an), '.'));
-		w_log(LL_AREAFIX, "areafix: %s already linked to %s",
-		      aka2str(link->hisAka), an);
-		i = config->echoAreaCount;
-	    }
-	    break;
-	case 1:         /* not linked */
-        if( isOurAka(config,link->hisAka)) {
-           if(area->msgbType==MSGTYPE_PASSTHROUGH) {
-              int state =
-                  changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,5);
-              if( state == ADD_OK) {
-                  af_CheckAreaInQuery(an, NULL, NULL, DELIDLE);
-                  xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
-                  w_log(LL_AREAFIX, "areafix: %s subscribed to %s",aka2str(link->hisAka),an);
-              } else {
-                  xscatprintf(&report, " %s %s  not subscribed\r",an,print_ch(49-strlen(an), '.'));
-                  w_log(LL_AREAFIX, "areafix: %s not subscribed to %s , cause uplink",aka2str(link->hisAka),an);
-                  w_log(LL_AREAFIX, "areafix: %s has \"passthrough\" in \"autoAreaCreateDefaults\" for %s",
-                                    an, aka2str(area->downlinks[0]->link->hisAka));
-              }
-           } else {  /* ??? (not passthrou echo) */
-                     /*   non-passthrough area for our aka means */
-                     /*   that we already linked to this area */
-               xscatprintf(&report, " %s %s  already linked\r",an, print_ch(49-strlen(an), '.'));
-               w_log(LL_AREAFIX, "areafix: %s already linked to %s",aka2str(link->hisAka), an);
-           }
-        } else {
-            if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==ADD_OK) {
-                Addlink(link, area, NULL);
-                processPermissions(config);
-                fixRules (link, area->areaName);
-                af_CheckAreaInQuery(an, NULL, NULL, DELIDLE);
-                xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
-                w_log(LL_AREAFIX, "areafix: %s subscribed to %s",aka2str(link->hisAka),an);
-                if(cmNotifyLink)
-                forwardRequestToLink(area->areaName,link, NULL, 0);
-            } else {
-                xscatprintf(&report," %s %s  error. report to sysop!\r",an,print_ch(49-strlen(an),'.'));
-                w_log(LL_AREAFIX, "areafix: %s not subscribed to %s",aka2str(link->hisAka),an);
-                w_log(LL_ERR, "areafix: can't write to config file: %s!", strerror(errno));
-            }/* if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==0) */
+    switch (rc) {
+    case 0:         /* already linked */
+      if (isPatternLine(line)) {
+        matched = 1;
+      } else {
+        xscatprintf(&report, " %s %s  already linked\r",
+                    an, print_ch(49-strlen(an), '.'));
+        w_log(LL_AREAFIX, "areafix: %s already linked to %s",
+              aka2str(link->hisAka), an);
+        i = config->echoAreaCount;
+      }
+      break;
+    case 1:         /* not linked */
+      if( isOurAka(config,link->hisAka)) {
+        if(area->msgbType==MSGTYPE_PASSTHROUGH) {
+          int state =
+              changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,5);
+          if( state == ADD_OK) {
+              af_CheckAreaInQuery(an, NULL, NULL, DELIDLE);
+              xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
+              w_log(LL_AREAFIX, "areafix: %s subscribed to %s",aka2str(link->hisAka),an);
+          } else {
+              xscatprintf(&report, " %s %s  not subscribed\r",an,print_ch(49-strlen(an), '.'));
+              w_log(LL_AREAFIX, "areafix: %s not subscribed to %s , cause uplink",aka2str(link->hisAka),an);
+              w_log(LL_AREAFIX, "areafix: %s has \"passthrough\" in \"autoAreaCreateDefaults\" for %s",
+                                an, aka2str(area->downlinks[0]->link->hisAka));
+          }
+        } else {  /* ??? (not passthrou echo) */
+                /*   non-passthrough area for our aka means */
+                /*   that we already linked to this area */
+          xscatprintf(&report, " %s %s  already linked\r",an, print_ch(49-strlen(an), '.'));
+          w_log(LL_AREAFIX, "areafix: %s already linked to %s",aka2str(link->hisAka), an);
         }
-	    if (!isPatternLine(line)) i = config->echoAreaCount;
-	    break;
-	case 6:         /* areas limit exceed for link */
-	    break;
-	default : /*  rc = 2  not access */
-	    if (!area->hide && !isPatternLine(line)) {
-		w_log(LL_AREAFIX, "areafix: area %s -- no access for %s",
-		      an, aka2str(link->hisAka));
-		xscatprintf(&report," %s %s  no access\r", an,
-			    print_ch(49-strlen(an), '.'));
-		found=1;
-	    }
-	    if (area->hide && !isPatternLine(line)) found=1;
-	    break;
-	}
+      } else {
+        if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,0)==ADD_OK) {
+          Addlink(link, area, NULL);
+          processPermissions(config);
+          fixRules (link, area->areaName);
+          af_CheckAreaInQuery(an, NULL, NULL, DELIDLE);
+          xscatprintf(&report," %s %s  added\r",an,print_ch(49-strlen(an),'.'));
+          w_log(LL_AREAFIX, "areafix: %s subscribed to %s",aka2str(link->hisAka),an);
+          if(cmNotifyLink)
+          forwardRequestToLink(area->areaName,link, NULL, 0);
+        } else {
+          xscatprintf(&report," %s %s  error. report to sysop!\r",an,print_ch(49-strlen(an),'.'));
+          w_log(LL_AREAFIX, "areafix: %s not subscribed to %s",aka2str(link->hisAka),an);
+          w_log(LL_ERR, "areafix: can't write to config file: %s!", strerror(errno));
+        }/* if (changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==0) */
+      }
+      if (!isPatternLine(line)) i = config->echoAreaCount;
+        break;
+    case 6:         /* areas limit exceed for link */
+      break;
+    default : /*  rc = 2  not access */
+      if (!area->hide && !isPatternLine(line)) {
+        w_log(LL_AREAFIX, "areafix: area %s -- no access for %s",
+              an, aka2str(link->hisAka));
+        xscatprintf(&report," %s %s  no access\r", an,
+                    print_ch(49-strlen(an), '.'));
+        found=1;
+      }
+      if (area->hide && !isPatternLine(line)) found=1;
+        break;
     }
+  }
 
-    if (rc!=0 && limitCheck(link)) rc = 6; /*double!*/ /* areas limit exceed for link */
+  if (rc!=0 && limitCheck(link)) rc = 6; /*double!*/ /* areas limit exceed for link */
 
-    if (rc==4 && !isPatternLine(line) && !found) { /* rc not equal 4 there! */
-	if (link->denyFRA==0) {
-            s_query_areas *node = NULL;
-            /* check if area is already requested */
-            if (config->areafixQueueFile && (node = af_CheckAreaInQuery(line,NULL,NULL,FIND)) != NULL) {
-                af_CheckAreaInQuery(line, &(node->downlinks[0]), &(link->hisAka), ADDFREQ);
-		xscatprintf(&report, " %s %s  request forwarded\r",
-			    line, print_ch(49-strlen(line), '.'));
-                w_log(LL_AREAFIX, "areafix: Area \'%s\' is already requested at %s", line, aka2str(node->downlinks[0]));
-	    }
-	    /*  try to forward request */
-	    else if ((rc=forwardRequest(line, link, NULL))==2) {
-		xscatprintf(&report, " %s %s  no uplinks to forward\r",
-			    line, print_ch(49-strlen(line), '.'));
-		w_log( LL_AREAFIX, "areafix: %s - no uplinks to forward", line);
-	    }
-	    else if (rc==0) {
-		xscatprintf(&report, " %s %s  request forwarded\r",
-			    line, print_ch(49-strlen(line), '.'));
-		w_log( LL_AREAFIX, "areafix: %s - request forwarded", line);
+  if (rc==4 && !isPatternLine(line) && !found) { /* rc not equal 4 there! */
+    if (link->denyFRA==0) {
+      s_query_areas *node = NULL;
+      /* check if area is already requested */
+      if (config->areafixQueueFile && (node = af_CheckAreaInQuery(line,NULL,NULL,FIND)) != NULL) {
+          af_CheckAreaInQuery(line, &(node->downlinks[0]), &(link->hisAka), ADDFREQ);
+      	xscatprintf(&report, " %s %s  request already forwarded, you will subscribed after area creation\r",
+      		    line, print_ch(49-strlen(line), '.'));
+        w_log(LL_AREAFIX, "areafix: Area \'%s\' is already requested at %s", line, aka2str(node->downlinks[0]));
+      }
+      /*  try to forward request */
+      else if ((rc=forwardRequest(line, link, NULL))==2) {
+      	xscatprintf(&report, " %s %s  no uplinks to forward\r",
+      		    line, print_ch(49-strlen(line), '.'));
+      	w_log( LL_AREAFIX, "areafix: %s - no uplinks to forward", line);
+      }
+      else if (rc==0) {
+      	xscatprintf(&report, " %s %s  request forwarded\r",
+      		    line, print_ch(49-strlen(line), '.'));
+      	w_log( LL_AREAFIX, "areafix: %s - request forwarded", line);
         if( !config->areafixQueueFile && isOurAka(config,link->hisAka)==0)
         {
-            area = getArea(config, line);
-            if ( !isLinkOfArea(link, area) ) {
-                if(changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==ADD_OK) {
-                    Addlink(link, area, NULL);
-                    processPermissions(config);
-                    fixRules (link, area->areaName);
-                    w_log( LL_AREAFIX, "areafix: %s subscribed to area %s",
-                        aka2str(link->hisAka),line);
-                } else {
-                    xscatprintf( &report," %s %s  error. report to sysop!\r",
-                        an, print_ch(49-strlen(an),'.') );
-                    w_log( LL_AREAFIX, "areafix: %s not subscribed to %s",
-                        aka2str(link->hisAka),an);
-                    w_log(LL_ERR, "areafix: can't change config file: %s!", strerror(errno));
-                }
-            } else w_log( LL_AREAFIX, "areafix: %s already subscribed to area %s",
-                aka2str(link->hisAka), line );
-
+          area = getArea(config, line);
+          if ( !isLinkOfArea(link, area) ) {
+            if(changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,3)==ADD_OK) {
+              Addlink(link, area, NULL);
+              processPermissions(config);
+              fixRules (link, area->areaName);
+              w_log( LL_AREAFIX, "areafix: %s subscribed to area %s",
+                     aka2str(link->hisAka), line );
+            } else {
+              xscatprintf( &report," %s %s  error. report to sysop!\r",
+                           an, print_ch(49-strlen(an),'.') );
+              w_log( LL_AREAFIX, "areafix: %s not subscribed to %s",
+                     aka2str(link->hisAka), an );
+              w_log( LL_ERR, "areafix: can't change config file: %s!", strerror(errno) );
+            }
+          } else w_log( LL_AREAFIX, "areafix: %s already subscribed to area %s",
+                        aka2str(link->hisAka), line );
         } else {
             fixRules (link, line);
         }
-        }
-	}
+      } /* else if (rc==0) */
     }
+  }
 
-    if (rc == 6) {   /* areas limit exceed for link */
-	w_log( LL_AREAFIX,"areafix: area %s -- no access (full limit) for %s",
-	      line, aka2str(link->hisAka));
-	xscatprintf(&report," %s %s  no access (full limit)\r",
-		    line, print_ch(49-strlen(line), '.'));
-    }
+  if (rc == 6) {   /* areas limit exceed for link */
+      w_log( LL_AREAFIX,"areafix: area %s -- no access (full limit) for %s",
+            line, aka2str(link->hisAka));
+      xscatprintf(&report," %s %s  no access (full limit)\r",
+      	    line, print_ch(49-strlen(line), '.'));
+  }
 
-    if (matched) {
-	if (report == NULL)
-	    w_log (LL_AREAFIX, "areafix: all areas matching %s are already linked", line);
-	xscatprintf(&report, "All %sareas matching %s are already linked\r", report ? "other " : "", line);
-    }
-    else if ((report == NULL && found==0) || (found && area->hide)) {
-	xscatprintf(&report," %s %s  not found\r",line,print_ch(49-strlen(line),'.'));
-	w_log( LL_AREAFIX, "areafix: area %s is not found",line);
-    }
-    w_log(LL_FUNC, "areafix::subscribe() OK");
-    return report;
+  if (matched) {
+    if (report == NULL)
+      w_log (LL_AREAFIX, "areafix: all areas matching %s are already linked", line);
+    xscatprintf(&report, "All %sareas matching %s are already linked\r", report ? "other " : "", line);
+  }
+  else if ((report == NULL && found==0) || (found && area->hide)) {
+    xscatprintf(&report," %s %s  not found\r",line,print_ch(49-strlen(line),'.'));
+    w_log( LL_AREAFIX, "areafix: area %s is not found",line);
+  }
+  w_log(LL_FUNC, "areafix::subscribe() OK");
+  return report;
 }
 
 char *errorRQ(char *line) {
