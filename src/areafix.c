@@ -244,7 +244,7 @@ char *list(s_link *link, char *cmdline) {
 
     al = newAreaList();
     for (i=active=avail=0; i< config->echoAreaCount; i++) {
-		
+
 	area = config->echoAreas[i];
 	rc = subscribeCheck(area, link);
 
@@ -289,7 +289,7 @@ char *linked(s_link *link) {
 
     xscatprintf(&report, "\r%s areas on %s\r\r",
 		((link->Pause & EPAUSE) == EPAUSE) ? "Passive" : "Active", aka2str(link->hisAka));
-							
+
     for (i=n=0; i<config->echoAreaCount; i++) {
 	rc=subscribeCheck(config->echoAreas[i], link);
 	if (rc==0) {
@@ -337,7 +337,7 @@ char *help(s_link *link) {
 		        config->areafixhelp, strerror(errno));
 	    return NULL;
 	}
-		
+
 	fseek(f,0L,SEEK_END);
 	endpos=ftell(f);
 
@@ -488,7 +488,7 @@ char *available(s_link *link, char *cmdline)
                 nfree(hal);
               }
  	}
-    }	
+    }
 
     if (report==NULL) {
 	xstrcat(&report, "\r  no links for creating Available Area List\r");
@@ -514,7 +514,7 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 	    xstrscat(&(msg->text), "\001FLAGS ", config->areafixReportsFlags, "\r", NULL);
 	uplink->msg = msg;
     } else msg = uplink->msg;
-	
+
     if (act==0) {
     if (getArea(config, areatag) == &(config->badArea)) {
         if(config->areafixQueueFile) {
@@ -874,7 +874,7 @@ int limitCheck(s_link *link) {
 
     if (link->afixEchoLimit==0) return 0;
     for (i=n=0; i<config->echoAreaCount; i++)
-	if (0==subscribeCheck(config->echoAreas[i], link))	
+	if (0==subscribeCheck(config->echoAreas[i], link))
 	    n++;
     i = n >= link->afixEchoLimit ;
     w_log(LL_FUNC, __FILE__ "::limitCheck() rc=%u", i);
@@ -912,12 +912,12 @@ char *subscribe(s_link *link, char *cmd) {
   w_log(LL_FUNC, "%s::subscribe(...,%s)", __FILE__, cmd);
 
   line = cmd;
-      
+
   if (line[0]=='+') line++;
   while (*line==' ') line++;
   /* FIXME:  "+  +  area" isn't a well-formed line */
   if (*line=='+') line++; while (*line==' ') line++;
-      
+
   if (strlen(line)>60 || !isValidConference(line)) {
     report = errorRQ(line);
     w_log(LL_FUNC, "%s::subscribe() FAILED (error request line) rc=%s", __FILE__, report);
@@ -1187,11 +1187,11 @@ char *unsubscribe(s_link *link, char *cmd) {
 
     w_log(LL_FUNC,__FILE__ ":%u:unsubscribe() begin", __LINE__);
     line = cmd;
-	
+
     if (line[1]=='-') return NULL;
     line++;
     while (*line==' ') line++;
-	
+
     for (i = 0; i< config->echoAreaCount; i++) {
         area = &(config->echoAreas[i]);
         an = area->areaName;
@@ -1219,7 +1219,7 @@ char *unsubscribe(s_link *link, char *cmd) {
                         (area->downlinkCount == 1) &&
                         (area->downlinks[0]->link->hisAka.point == 0))
                     {
-                        if(config->areafixQueueFile)
+                      if (config->areafixQueueFile && (area->downlinks[0]->link->mandatory == 0))
                         {
                             af_CheckAreaInQuery(an, &(area->downlinks[0]->link->hisAka), NULL, ADDIDLE);
                             j = changeconfig(cfgFile?cfgFile:getConfigFileName(),area,link,7);
@@ -1394,7 +1394,7 @@ char *rescan(s_link *link, char *cmd) {
 	countstr += 2;
 	if (*countstr == '=') countstr++;
     }
-	
+
     if (*countstr != '\0') {
 	rescanCount = strtol(countstr, NULL, 10);
     }
@@ -1947,7 +1947,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
     /*  is this for me? */
     if (link!=NULL)	notforme=addrComp(msg->destAddr, *link->ourAka);
     else if (!security) security=4; /*  link == NULL; unknown system */
-	
+
     if (notforme && !security) security=5; /*  message to wrong AKA */
 
 #if 0 /*  we're process only our messages here */
@@ -2056,7 +2056,7 @@ int processAreaFix(s_message *msg, s_pktHeader *pktHeader, unsigned force_pwd)
 	    link = tmplink;
 	}
 	/*  security problem */
-		
+
 	switch (security) {
 	case 1:
 	    xscatprintf(&report, " \r different pkt and msg addresses\r");
