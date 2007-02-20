@@ -715,7 +715,9 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     case 1: /*  remove link from area */
         if ((area->msgbType==MSGTYPE_PASSTHROUGH)
             && (area->downlinkCount==1) &&
-            (area->downlinks[0]->link->hisAka.point == 0)) {
+            (area->downlinks[0]->link->hisAka.point == 0) &&
+            (area->downlinks[0]->link->mandatory == 0)
+           ) {
             forwardRequestToLink(areaName, area->downlinks[0]->link, NULL, 1);
         }
     case 7:
