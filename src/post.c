@@ -133,22 +133,22 @@ void post(int c, unsigned int *n, char *params[])
     int part = 0;
     int linesPerSec=LINPERSECTION;
     struct _minf m;
-    
+
     s_message msg;
-    
+
     CHAR *textBuffer = NULL;
-    
+
     int quit;
     int export=0;
     int erasef=0;
     int uuepost=0;
     int perms;
-    
+
     time_t t = time (NULL);
     struct tm *tm;
-    
+
     if (params[*n]!='\0' && params[*n][1]=='h') print_help();
-    
+
     if (config==NULL) processConfig();
     if ( initSMAPI == -1 ) {
         /*  init SMAPI */
@@ -159,9 +159,9 @@ void post(int c, unsigned int *n, char *params[])
             exit_hpt("MsgApiOpen Error",1);
         } /*endif */
     }
-    
+
     memset(&msg, 0, sizeof(s_message));
-    
+
     for (quit = 0;*n < (unsigned int)c && !quit; (*n)++) {
         if (*params[*n] == '-' && params[*n][1] != '\0') {
             switch(params[*n][1]) {
@@ -258,7 +258,7 @@ void post(int c, unsigned int *n, char *params[])
             };
         } else if (textBuffer == NULL) {
             if (strcmp(params[*n], "-")) {
-                if(fexist(params[*n])) 
+                if(fexist(params[*n]))
                     text = fopen(params[*n], "rt");
             }
             else
@@ -272,7 +272,7 @@ void post(int c, unsigned int *n, char *params[])
                     UCHAR inbuf [MAX_LINELEN];
                     UCHAR *inbytep;
                     char outbuf [5];
-                    
+
                     xstrscat(&tmpname, config->tempOutbound, "hptucode.$$$",NULL);
                     text = freopen(params[*n], "rb", text);
                     tmpfile = fopen (tmpname, "wt");
@@ -297,10 +297,10 @@ void post(int c, unsigned int *n, char *params[])
                     fprintf (tmpfile, "begin %03o %s\n", perms, fname);
                     do
                     {
-                        
+
                         linelen = fread (inbuf, 1, MAX_LINELEN, text);
                         fputc (ENCODE_BYTE (linelen), tmpfile);
-                        
+
                         /* Encode the line */
                         for (linecnt = linelen, inbytep = inbuf;
                         linecnt > 0;
@@ -314,20 +314,20 @@ void post(int c, unsigned int *n, char *params[])
                                 ((inbytep [2] & 0xC0) >> 6));
                             outbuf [3] = ENCODE_BYTE (inbytep [2] & 0x3F);
                             outbuf [4] = '\0';
-                            
+
                             /* Write the 4 encoded bytes to the file */
                             fprintf (tmpfile, "%s", outbuf);
                         }
-                        
+
                         fprintf (tmpfile, "\n");
                         lines++;
                     } while (linelen != 0);
-                    
+
                     fprintf (tmpfile, "end\n");
                     lines++;
                     sections = (lines%linesPerSec==0) ?
                         lines/linesPerSec : lines/linesPerSec+1;
-                    
+
                     fclose (tmpfile);
                     tmpfile = fopen (tmpname, "rt");
                     if (tmpfile == NULL)
@@ -388,19 +388,19 @@ void post(int c, unsigned int *n, char *params[])
             msg.toUserName = safe_strdup("All");
         if (msg.subjectLine == NULL)
             msg.subjectLine = safe_calloc(1, 1);
-        
+
         msg.netMail = (char)(area == NULL);
         /*FIXME*/
         if (msg.netMail) echo=&(config->netMailAreas[0]);
-        
+
         if (msg.origAddr.zone == 0) /*  maybe origaddr isn't specified ? */
             msg.origAddr = echo->useAka[0];
-        
+
         w_log(LL_START, "Start posting...");
-        part = 0; 
+        part = 0;
         do
         {
-            
+
             if(!msg.netMail) memset(&msg.destAddr, '\0', sizeof(hs_addr));
 
             msg.text = createKludges(config,
@@ -417,7 +417,7 @@ void post(int c, unsigned int *n, char *params[])
             if( uuepost )
             {
                 /* char *res; */
-                int i; 
+                int i;
                 xscatprintf(&msg.text, "\rsection %d of %d of file %s < %s >\r\r",
                             part+1,sections,fname,versionStr);
                 for(i = 0; i < linesPerSec; i++)
@@ -468,7 +468,7 @@ void post(int c, unsigned int *n, char *params[])
                 msg.destAddr.zone, msg.destAddr.net,
                 msg.destAddr.node, msg.destAddr.point,
                 (area) ? area : echo->areaName);
-            
+
             if (!export && echo->fileName) {
                 msg.recode |= (REC_HDR|REC_TXT); /*  msg already in internal Charset */
                 putMsgInArea(echo, &msg, 1, msg.attributes);
@@ -490,7 +490,7 @@ void post(int c, unsigned int *n, char *params[])
             nfree(msg.text);
         } while (part < sections);
 
-        if (export) 
+        if (export)
         {
             closeOpenedPkt();
             tossTempOutbound(config->tempOutbound);
@@ -503,18 +503,11 @@ void post(int c, unsigned int *n, char *params[])
             fclose(tmpfile);
             remove(tmpname);
         }
-        if ((config->echotosslog) && (!export)) {
-            FILE *f=fopen(config->echotosslog, "a");
-            if (f==NULL)
-                w_log(LL_ERROR, "Could not open or create EchoTossLogFile.");
-            else {
-                fprintf(f, "%s\n", echo->areaName);
-                fclose(f);
-            }
-        }
+
+        if (!export) writeEchoTossLogEntry(echo->areaName);
         w_log(LL_STOP, "End posting");
     }
-    
+
     if (textBuffer == NULL && !quit) {
         w_log(LL_CRIT, "post: no input source specified");
         /* exit(EX_NOINPUT); */
