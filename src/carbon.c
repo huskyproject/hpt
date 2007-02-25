@@ -412,15 +412,16 @@ int carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo)
                     }
                     /*  delete CarbonMove and CarbonDelete messages */
                     if (cb->move && xmsg) xmsg->attr |= MSGKILL;
-                    if (cb->move == 2) {
+					if (cb->move == 2) {
+						/* FIXME: Is there any reason in this case?  */
                       w_log( LL_CARBON, "Carbon delete from %s %s%s%s: msg from \"%s\" %s to \"%s\"%s%s.",
                              echo->areaName? echo->areaName:"netmail",
-                             reason? " at reason \"":"", reason? reason:"", reason? "\"":"",
+                             cb->reason? " at reason \"":"", cb->reason? cb->reason:"", cb->reason? "\"":"",
                              msg->fromUserName, aka2str(msg->origAddr), msg->toUserName,
                              msg->netMail? " ":"", msg->netMail? aka2str(msg->destAddr):""
                            );
                     }
-                    if (config->carbonAndQuit)
+					if (config->carbonAndQuit)
                         /* not skip quit or delete */
                         if ((cb->areaName && *cb->areaName!='*') ||	cb->move==2) {
                             return rc;
