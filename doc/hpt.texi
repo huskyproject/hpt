@@ -2047,6 +2047,8 @@ This is the minimum disk free space in MB to run @value{HPT}.
 The following directories are checked: @code{TempInbound},
 @code{MsgBaseDir}, @code{LinkMsgBaseDir}s.
 
+The default value is 10.
+
 This statement cannot be repeated.
 
 @node MsgBaseDir, NotValidFileNameChars, MinDiskFreeSpace, Files and Paths
