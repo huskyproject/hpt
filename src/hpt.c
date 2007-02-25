@@ -446,10 +446,10 @@ void processConfig()
 int isFreeSpace(char *path) {
 	unsigned long sp;
 
-	sp = fc_GetDiskFreeSpace(path);	
-	if (sp < config->minDiskFreeSpace*1024) {
+	sp = husky_GetDiskFreeSpace(path)/1024;	
+	if (sp < config->minDiskFreeSpace) {
 		fprintf(stderr, "no free space in %s! (needed %d mb, available %d mb).\n",
-				path, config->minDiskFreeSpace, (unsigned)(sp/1024));
+				path, config->minDiskFreeSpace, (unsigned)(sp));
 		exit_hpt("no free disk space!",0);
 	}
 
