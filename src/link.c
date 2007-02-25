@@ -261,7 +261,7 @@ int linkArea(s_area *area, int netMail)
                 msgId   = GetKludgeText(ctl, "MSGID");
             }
             if (msgId == NULL) {
-                w_log(LL_WARN, "msg %ld haven't got any MSGID, replying is not possible", i);
+                w_log(LL_DEBUGB, "msg %ld haven't got any MSGID, replying is not possible", i);
                 if (!jam)
                     MsgCloseMsg(hmsg);
                 continue;
@@ -281,7 +281,7 @@ int linkArea(s_area *area, int netMail)
                 return 0;
             };
             if (curr -> msgId != NULL) {
-                w_log(LL_WARN, "msg %ld has dupes in msgbase: thrown out from reply chain", i);
+                w_log(LL_DEBUGB, "msg %ld has dupes in msgbase: thrown out from reply chain", i);
                 if (!jam) {
                     MsgCloseMsg(hmsg);
                     nfree(msgId);
