@@ -536,8 +536,11 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
         /*  .. and must come from us */
         msg->origAddr = header.origAddr;
         rc += writeMsgToPkt(newLinks[i]->link->pkt, *msg);
-        if (rc) w_log(LL_ERR,"can't write msg to pkt: %s",
-            newLinks[i]->link->pktFile);
+        if (rc)
+        {
+            w_log(LL_ERR,"can't write msg to pkt: %s", newLinks[i]->link->pktFile);
+            exit_hpt("Can't write msg to pkt!", 1);
+        }
         if (nopenpkt >= maxopenpkt-12 || /*  std streams, in pkt, msgbase, log */
             (newLinks[i]->link->pktSize && ftell(newLinks[i]->link->pkt)>= (long)newLinks[i]->link->pktSize*1024L)) {
             rc += closeCreatedPkt(newLinks[i]->link->pkt);
