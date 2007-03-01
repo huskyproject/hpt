@@ -5,26 +5,59 @@ DEBUG=
 CC=gcc
 RM=del
 
-CDEFS=-D__NT__ 
-CFLAGS=-I../h -I../.. -c -Wall -O3 $(DEBUG)
+#CDEFS+=-D__NT__ 
+#
+CFLAGS=-I../h -I../.. -I../../huskylib -I../../smapi -I../../fidoconf -I../../areafix -c -Wall -O3 $(DEBUG)
+#CFLAGS=-I../h -I../.. -c -Wall -O3 $(DEBUG)
 LFLAGS=$(DEBUG)
 
 EXENAMEFLAG=-o 
-SRC_DIR=../src/
-OBJ=.o
-EXE=.exe
+SRC_DIR	=../src/
+_OBJ	=.o
+_EXE	=.exe
+_C	=.c
 
-LIBS=-L../../smapi -L../../fidoconf -lfidoconfigmgw -lsmapimgw -luser32
+#LIBS=-L../../smapi -L../../fidoconf -lfidoconfigmgw -lsmapimgw -luser32
 
 default: all
 
-%$(OBJ): $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
 
 include makefile.inc
 
-all: commonprogs
+LIBS=../../smapi/make/smapi.dll ../../fidoconf/fidoconf.dll\
+  ../../areafix/make/areafix.dll ../../huskylib/make/husky.dll
 
-clean: commonclean
+all:	programs
 
-distclean: commondistclean
+programs: $(PROGRAMS)
+
+%$(_OBJ): $(_SRC_DIR)%$(_C)
+	@echo Compiling $<
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(OPTCFLAGS) $<
+
+$(PKTINFO): $(PKTINFOOBJS)
+	@echo Create $(PKTINFO)
+	-@echo !cflags!: $(CFLAGS) 
+	-@echo libs: $(LIBS) 
+	@$(CC) $(STRIP) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
+$(TPKT): $(TPKTOBJS)
+	@echo Create $(TPKT)
+	@$(CC) $(STRIP) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
+$(TXT2PKT): $(TXT2PKTOBJS)
+	@echo Create $(TXT2PKT)
+	@$(CC) $(STRIP) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
+$(HPTLINK): $(HPTLINKOBJS)
+	@echo Create $(HPTLINK)
+	@$(CC) $(STRIP) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
+$(HPTTREE): $(HPTTREEOBJS)
+	@echo Create $(HPTTREE)
+	@$(CC) $(STRIP) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
+$(HPT): $(HPTOBJS)
+	@echo Create $(HPT)
+	@$(CC) $(STRIP) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+
