@@ -160,7 +160,7 @@ void start_help(void) {
   fprintf(stdout,"   hpt scan - scanning echomail\n");
   fprintf(stdout,"   hpt scan -w - scanning echomail without highwaters\n");
   fprintf(stdout,"   hpt scan -a <pattern> - scanning echomail from areas matching <pattern>\n");
-  fprintf(stdout,"   hpt scan -f [filename] - scan only listed areas in this file.\n");
+  fprintf(stdout,"   hpt scan -f [filename] - scan only listed areas in this file\n");
   fprintf(stdout,"   hpt post [options] file - posting a mail (for details run \"hpt post -h\")\n");
   fprintf(stdout,"   hpt pack - packing netmail\n");
   fprintf(stdout,"   hpt pack -a <pattern> - packing netmail from areas matching <pattern>\n");
@@ -172,8 +172,11 @@ void start_help(void) {
   fprintf(stdout,"   hpt qrep - make report based on information from queue file\n");
   fprintf(stdout,"   hpt qrep -d - show in report changes only\n");
   fprintf(stdout,"   hpt relink <pattern> <addr> - refresh matching pattern areas subscription\n");
+  fprintf(stdout,"   hpt relink -f [filename] <addr> - refresh only listed areas in this file\n");
   fprintf(stdout,"   hpt resubscribe <pattern> <fromaddr> <toaddr> - move subscription of \n");
   fprintf(stdout,"                        areas matching pattern from one link to another\n");
+  fprintf(stdout,"   hpt resubscribe -f [filename] <fromaddr> <toaddr> - resubscription only\n");
+  fprintf(stdout,"                        listed areas in this file\n");
   fprintf(stdout,"   hpt pause - set pause for links who don't poll our system\n");
   fprintf(stdout,"   hpt -q [options] - quiet mode (no screen output)\n");
 }
