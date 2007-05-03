@@ -1,12 +1,12 @@
 #Unpack  "unzip -joLqq $a -d $p" 0 504b0304
 #Pack 	zip zip -9jgq $a $f
-Unpack "\path\pkzipc -ext -dir=none -over=all -nozip -silent $a $p $f" 0 504b0304
+#Unpack "\path\pkzipc -ext -dir=none -over=all -nozip -silent $a $p $f" 0 504b0304
 #Unpack "pkunzip -njCL $a -d $p $f" 0 504b0304
 #Unpack "pkzip25 -ext -silent -over=all -nofix -nozip $a $p $f" 0 504b0304
-Pack  zip pkzip.exe -ex $a $f
+#Pack  zip pkzip.exe -ex $a $f
 
 # *.rar
-Unpack  "unrar e -y -c- -o+ -inul $a $p $f"   0 52617221
+#Unpack  "unrar e -y -c- -o+ -inul $a $p $f"   0 52617221
 # rar-sfx/DOS
 Unpack  "unrar e -y -c- -o+ -inul $a $p $f"  28 52534658
 # rar 2.90 R sfxs
@@ -39,10 +39,15 @@ Unpack "rar e -y -c- -o+ -inul $a $p $f" 37888 52617221  # WinCon.sfx
 
 Pack 	rar rar a -ep -md1024 -m5 -mm -inul -s $a $f
 
-Unpack  "arj e -+ -y $a $p >nul" 0 60ea
+#Unpack  "arj e -+ -y $a $p >nul" 0 60ea
 Pack  arj arj a -+ -e -y $a $f >nul
 
 Unpack "unace e -y -c- $a $p $f" 7 2a2a414345
 
-Pack 7ZIP 7za.exe a -y $a $f
-Unpack  "7za.exe e -y $a $p $f" 0 377ABCAF
+Pack 7ZIP 7za.exe a -bd -y $a $f
+Unpack  "7za.exe e -bd -y $a $p $f" 0 377ABCAF         # 7z
+
+Pack zip 7za a -bd -mx -tzip -y $a $f
+Unpack "7za e -bd -y $a -o$p $f" 0 504b0304            # zip
+Unpack "7za e -bd -y $a -o$p $f" 0 60ea                # arj
+Unpack "7za e -bd -y $a -o$p $f" 0 52617221            # rar
