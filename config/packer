@@ -45,7 +45,7 @@ Pack  arj arj a -+ -e -y $a $f >nul
 Unpack "unace e -y -c- $a $p $f" 7 2a2a414345
 
 Pack 7ZIP 7za.exe a -bd -y $a $f
-Unpack  "7za.exe e -bd -y $a $p $f" 0 377ABCAF         # 7z
+Unpack  "7za.exe e -bd -y $a -o$p $f" 0 377ABCAF         # 7z
 
 Pack zip 7za a -bd -mx -tzip -y $a $f
 Unpack "7za e -bd -y $a -o$p $f" 0 504b0304            # zip
