@@ -609,7 +609,8 @@ void usage(void) {
 
 int main(int argc, char **argv) {
 
-   int i, j;
+   unsigned int i;
+   int j;
    struct _minf m;
    char **argareas=NULL;
    char *line=NULL;
@@ -629,9 +630,9 @@ int main(int argc, char **argv) {
 
    printf("%s\n\n", versionStr);
 
-   for (i=1; i<argc; i++) {
-     if ( argv[i][0] == '-' ) {
-	switch (argv[i][1])
+   for (j=1; j<argc; j++) {
+     if ( argv[j][0] == '-' ) {
+	switch (argv[j][1])
 	  {
 	     case 't': /* Tree mode */
 	     case 'T':
@@ -665,7 +666,7 @@ int main(int argc, char **argv) {
        /*  AreaName(s) specified by args */
        nareas++;
        argareas = (char **)srealloc ( argareas, nareas*sizeof(char *));
-       argareas[nareas-1] = argv[i];
+       argareas[nareas-1] = argv[j];
      }
    }
 
