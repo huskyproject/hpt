@@ -168,6 +168,8 @@ void correctEMAddr(s_message *msg)
    if (start) {
 	   while (*start && (*start != '\r') && (*start != '\n')) start++;  /*  get to end of line */
 
+	   while (*(start-1) == ' ') --start; /* skip trailing spaces, just in case */
+
 	   if (*(start-1) == ')') {         /*  if there is no ')', there is no origin */
 		   while (start>msg->text && *(--start)!='('); /*  find beginning '(' */
 		   start++;                     /*  and skip it */
