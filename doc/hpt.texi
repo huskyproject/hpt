@@ -1115,7 +1115,7 @@ Set date format for log messages. The parameter expected to be a valid
 strftime() format string. The following macros are expanded to current
 date/time value (incomplete list):
 
-@multitable
+@multitable {Col1} {Biiiig Column 2 PADPADPADPADPADPADPADPADPADPADPADPADPADPADPADPADPADPADPADPAD}
 @item %d
 @tab current day of month as a decimal number, zero-prefixed (01-31)
 @item %e
