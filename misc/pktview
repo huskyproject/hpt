@@ -1,4 +1,43 @@
 #!/usr/bin/perl
+# $Id$
+# view PKT contents
+# (c) Husky development team
+# This script reads PKT from stdin and prints it's contents in human-readabe form into stdout
+# options:
+#   -v   verbose
+#   -s   print SEEN-BY, PATH and PTH kludges
+#   -r   print RFC-* kludges
+#   -p   print PID and TID kludges
+#   -h   print usage information
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+
+sub usage{
+my @Id = split(/ /,'$Id$');
+my $programid="$Id[1] $Id[2]";
+undef @Id;
+
+print <<US;
+ $programid - View PKT contents (c) Husky development team
+ This script reads PKT from stdin and prints it's contents in human-readabe form into stdout
+ options:
+   -v   verbose
+   -s   print SEEN-BY, PATH and PTH kludges
+   -r   print RFC-* kludges
+   -p   print PID and TID kludges
+   -h   print usage information (this screen)
+US
+}
+
 sub getattr($) {
     my($attr)=@_;
     my(@attr);
@@ -25,6 +64,7 @@ $noseenby=1;
 $norfc=1;
 $nopid=1;
 foreach(@ARGV) {
+    if(/^-.*h/){ &usage; exit; }
     $verbose=1  if(/^-.*v/);
     $noseenby=0 if(/^-.*s/);
     $norfc=0    if(/^-.*r/);
@@ -43,13 +83,15 @@ while(1) {
     die "Unknown packet header type $type!\n" if($type != 2);
     if($Cap == 0x0001 && $CapValidate == 0x0100 ) {
         print "Version:2+\n";
-        print "From: $origZone:$origNet/$origNode.$origPoint\t\t",$day+1,"/", $month+1,"/$year $hour:$minute:$seconds\n";
+        printf "From: %u:%u/%u.%u\t\t%2u/%2u/%2u %2u:%2u:%2u\n",
+               $origZone, $origNet, $origNode, $origPoint, $day+1, $month+1, $year, $hour,$minute,$seconds;
         print "To  : $destZone:$destNet/$destNode.$destPoint\n";
         print "Prodcode : ",$ProductCode+$PCodeHi*256," ($RevMaj.$RevMin)\n";
         print "Password : `$Password'\n";
     } else {
         print "Version:2\n";
-        print "From: $origNet/$origNode\t\t$day/$month/$year $hour:$minute:$seconds\n";
+        printf "From: %u/%u\t\t%2u/%2u/%2u %2u:%2u:%2u\n",
+               $origNet, $origNode, $day, $month, $year, $hour,$minute,$seconds;
         print "To  : $destNet/$destNode\n";
         print "Prodcode : $ProductCode\n";
         print "[ May be 2+ $origZone:$origNet/$origNode.$origPoint -> $destZone:$destNet/$destNode.$destPoint ]\n";
