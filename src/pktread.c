@@ -163,6 +163,26 @@ void correctEMAddr(s_message *msg)
    char *start = NULL, buffer[48];
    int i, brokenOrigin = 1;
 
+   /* Find originating address in MSGID line */
+   start = strrstr(msg->text, "\001MSGID:"); /* Standard required "\001MSGID: " but not all software is compatible with FTS-9 :( */
+   if (start) {
+      hs_addr tempaddr={0,0,0,0,NULL};
+      char *end;
+      while (*(start) == ' ') start++ ; /* skip leading spaces */
+      strncpy(buffer,start,sizeof(buffer));
+      end = strtok(buffer," ");
+      string2addr(buffer,&tempaddr);
+      if( tempaddr.zone>0 ){
+         msg->origAddr.zone = tempaddr.zone;
+         msg->origAddr.net = tempaddr.net;
+         msg->origAddr.node = tempaddr.node;
+         msg->origAddr.point = tempaddr.point;
+         msg->origAddr.domain = tempaddr.domain;
+         return;
+      }
+   }
+
+   /* Find originating address in Origin line */
    start = strrstr(msg->text, " * Origin:");
 
    if (start) {
@@ -188,7 +208,8 @@ void correctEMAddr(s_message *msg)
 	   }
    }
 
-   /*  this is really needed? */
+   /*  Another try... But if MSGID isn't present or broken and origin is broken then PATH may be broken too...
+   */
    if (brokenOrigin) {
 	   start = strstr(msg->text, "\001PATH: ");
 	   if (start && strlen(start) > 7) {
