@@ -51,3 +51,24 @@ Pack zip 7za a -bd -mx -tzip -y $a $f
 Unpack "7za e -bd -y $a -o$p $f" 0 504b0304            # zip
 Unpack "7za e -bd -y $a -o$p $f" 0 60ea                # arj
 Unpack "7za e -bd -y $a -o$p $f" 0 52617221            # rar
+
+#### Use 7-zip for all (config part from Alexey Antonyuk 2:5030/731) ####
+### PACK CONFIG ###
+##Pack zip zipInternal
+#Pack zip   c:\progra~1\7-zip\7za.exe a -bd -mx -tzip   -y $a $f
+#Pack 7z    c:\progra~1\7-zip\7za.exe a -bd -mx -t7z    -y $a $f
+#Pack gzip  c:\progra~1\7-zip\7za.exe a -bd -mx -tgzip  -y $a $f
+#Pack bzip2 c:\progra~1\7-zip\7za.exe a -bd -mx -tbzip2 -y $a $f
+#Pack tar   c:\progra~1\7-zip\7za.exe a -bd -mx -ttar   -y $a $f
+
+### UNPACK CONFIG ###
+##Unpack zipInternal 0 504b0304
+#Unpack "c:\progra~1\7-zip\7za.exe e -bd -y $a -o$p $f" 0 504b0304   # zip
+#Unpack "c:\progra~1\7-zip\7za.exe e -bd -y $a -o$p $f" 0 377abcaf   # 7z
+##Unpack "c:\progra~1\7-zip\7za.exe e -bd -y $a -o$p $f" 0 1f8b0808   # gzip ???
+#Unpack "c:\progra~1\7-zip\7za.exe e -bd -y $a -o$p $f" 0 425a6839   # bzip2
+#Unpack "c:\progra~1\7-zip\7za.exe e -bd -y $a -o$p $f" 0 52617221   # rar
+#Unpack "c:\progra~1\7-zip\7za.exe e -bd -y $a -o$p $f" 0 4d534346   # cab
+#Unpack "c:\progra~1\7-zip\7za.exe e -bd -y $a -o$p $f" 0 60ea       # arj
+#Unpack "c:\progra~1\7-zip\7za.exe e -bd -y $a -o$p $f" 2 2d6c       # lzh
+####
