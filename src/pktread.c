@@ -236,7 +236,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
    UINT i;
 
    copy = buffer;
-   start = strstr(msg->text, "FMPT");
+   start = strstr(msg->text, "\001FMPT");
    if (start) {
       start += 6;                  /* skip "FMPT " */
       while (isdigit(*start)) {     /* copy all digit data */
@@ -253,7 +253,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
 
    /* and the same for TOPT */
    copy = buffer;
-   start = strstr(msg->text, "TOPT");
+   start = strstr(msg->text, "\001TOPT");
    if (start) {
       start += 6;                  /* skip "TOPT " */
       while (isdigit(*start)) {     /* copy all digit data */
@@ -270,9 +270,9 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
 
    /* Parse the INTL Kludge */
 
-   start = strstr(msg->text, "INTL ");
+   start = strstr(msg->text, "\001INTL ");
    if (start) {
-      
+
       start += 6;                 /*  skip "INTL " */
 
       for (;;)
@@ -285,7 +285,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
           *copy='\0';
           if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
           string2addr(buffer, &intl_to);
-          
+
           while (*start && isspace(*start)) start++;
           if (!*start) break;
 
@@ -350,17 +350,17 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
       }
 
    } else {
-      
+
       /* no INTL kludge */
 
       msg->destAddr.zone = header->destAddr.zone;
       msg->origAddr.zone = header->origAddr.zone;
 
-      msg->textLength += xscatprintf(&text,"\1INTL %u:%u/%u %u:%u/%u\r",msg->destAddr.zone,msg->destAddr.net,msg->destAddr.node,msg->origAddr.zone,msg->origAddr.net,msg->origAddr.node);
+      msg->textLength += xscatprintf(&text,"\001INTL %u:%u/%u %u:%u/%u\r",msg->destAddr.zone,msg->destAddr.net,msg->destAddr.node,msg->origAddr.zone,msg->origAddr.net,msg->origAddr.node);
       xstrcat(&text,msg->text);
       nfree(msg->text);
       msg->text = text;
-      
+
       w_log( LL_PKT, "Mail without INTL-Kludge. Assuming %i:%i/%i.%i -> %i:%i/%i.%i",
 		    msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
 		    msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
