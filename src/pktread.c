@@ -239,7 +239,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
    start = strstr(msg->text, "\001FMPT");
    if (start) {
       start += 6;                  /* skip "FMPT " */
-      while (isdigit(*start)) {     /* copy all digit data */
+      while (isdigit(*start) && (copy<buffer+sizeof(buffer)-1)) {     /* copy all digit data */
          *copy = *start;
          copy++;
          start++;
@@ -256,7 +256,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
    start = strstr(msg->text, "\001TOPT");
    if (start) {
       start += 6;                  /* skip "TOPT " */
-      while (isdigit(*start)) {     /* copy all digit data */
+      while (isdigit(*start) && (copy<buffer+sizeof(buffer)-1)) {     /* copy all digit data */
          *copy = *start;
          copy++;
          start++;
@@ -281,7 +281,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
           if (!*start) break;
 
           copy = buffer;
-          while (*start && !isspace(*start)) *copy++ = *start++;
+          while (*start && !isspace(*start) && (copy<buffer+sizeof(buffer)-1)) *copy++ = *start++;
           *copy='\0';
           if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
           string2addr(buffer, &intl_to);
@@ -290,7 +290,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
           if (!*start) break;
 
           copy = buffer;
-          while (*start && !isspace(*start)) *copy++ = *start++;
+          while (*start && !isspace(*start) && (copy<buffer+sizeof(buffer)-1)) *copy++ = *start++;
           *copy='\0';
           if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
           string2addr(buffer, &intl_from);
