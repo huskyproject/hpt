@@ -166,25 +166,24 @@ s_pktHeader *openPkt(FILE *pkt)
 void correctEMAddr(s_message *msg)
 {
    char *start = NULL, buffer[48];
-   int i, brokenOrigin = 1;
+   int i/*, brokenOrigin = 1*/;
 
    /* Find originating address in MSGID line */
    start = strrstr(msg->text, "\001MSGID:"); /* Standard required "\001MSGID: " but not all software is compatible with FTS-9 :( */
    if (start) {
       hs_addr tempaddr={0,0,0,0,NULL};
-      char *end;
-      while (*(start) == ' ') start++ ; /* skip leading spaces */
+      start+=7;
+      while (*start == ' ') start++ ; /* skip leading spaces */
       strncpy(buffer,start,sizeof(buffer));
-      end = strtok(buffer," ");
-      //memset(&tempaddr,0,sizeof(tempaddr));
-      string2addr(buffer,&tempaddr);
-      if( tempaddr.zone>0 ){
-         msg->origAddr.zone = tempaddr.zone;
-         msg->origAddr.net = tempaddr.net;
-         msg->origAddr.node = tempaddr.node;
-         msg->origAddr.point = tempaddr.point;
-         msg->origAddr.domain = tempaddr.domain;
-         return;
+      if (strtok(buffer," ")){
+         string2addr(buffer,&tempaddr);
+         if (tempaddr.zone>0){
+            msg->origAddr.zone = tempaddr.zone;
+            msg->origAddr.net = tempaddr.net;
+            msg->origAddr.node = tempaddr.node;
+            msg->origAddr.point = tempaddr.point;
+            return;
+         }
       }
    }
 
@@ -197,29 +196,41 @@ void correctEMAddr(s_message *msg)
 	   while (*(start-1) == ' ') --start; /* skip trailing spaces, just in case */
 
 	   if (*(start-1) == ')') {         /*  if there is no ')', there is no origin */
-		   while (start>msg->text && *(--start)!='('); /*  find beginning '(' */
-		   start++;                     /*  and skip it */
-		   i=0;
-   
-		   while (*start && (*start!=')') && (*start!='\r') && (*start!='\n') && (i<47)) {
+		   --start;
+		   while (start>msg->text && *(--start)!='('                              /*  find beginning '(' */
+		      && (isdigit(*start) || *start==':' || *start=='/' || *start=='.')); /* and check address FTN */
+		   if (*start=='(') {  /* "(1:2/3.4)" is found */
+		      start++;         /*  skip '(' */
+		      i=0;
+
+		      while (*start && (*start!=')') && (*start!='\r') && (*start!='\n') && (i<47)) {
 			   if (isdigit(*start) || *start==':' || *start=='/' || *start=='.') {
 				   buffer[i] = *start;
 				   i++;
 			   }
 			   start++;
+		      }
+		      buffer[i]   = '\0';
+		      {
+		         hs_addr tempaddr={0,0,0,0,NULL};
+		         string2addr(buffer,&tempaddr);
+		         if (tempaddr.zone>0){
+		            msg->origAddr.zone = tempaddr.zone;
+		            msg->origAddr.net = tempaddr.net;
+		            msg->origAddr.node = tempaddr.node;
+		            msg->origAddr.point = tempaddr.point;
+		            return;
+		         }
+		      }
 		   }
-		   buffer[i]   = '\0';
-		   string2addr(buffer, &(msg->origAddr));
-		   brokenOrigin = 0;
 	   }
    }
 
    /*  Another try... But if MSGID isn't present or broken and origin is broken then PATH may be broken too... */
-   if (brokenOrigin) {
 	   start = strstr(msg->text, "\001PATH: ");
 	   if (start && strlen(start) > 7) {
 		   start += 7;
-		   buffer[0] = '0';
+		   buffer[0] = '1';
 		   buffer[1] = ':';
 		   i = 2;
 
@@ -232,8 +243,15 @@ void correctEMAddr(s_message *msg)
 		   }
 		   buffer[i]   = '\0';
 		   string2addr(buffer, &(msg->origAddr));
+		   {
+		      hs_addr tempaddr={0,0,0,0,NULL};
+		      string2addr(buffer,&tempaddr);
+		      msg->origAddr.zone = 0;
+		      msg->origAddr.net = tempaddr.net;
+		      msg->origAddr.node = tempaddr.node;
+		      msg->origAddr.point = 0;
+		   }
 	   }
-   }
 }
 
 void correctNMAddr(s_message *msg, s_pktHeader *header)
