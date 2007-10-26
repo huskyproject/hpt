@@ -175,17 +175,18 @@ void correctEMAddr(s_message *msg)
          start--;
          while (start>msg->text && *(--start)!='('  /*  find beginning '(' */
             && (isdigit(*start) || *start==':' || *start=='/' || *start=='.' || isalpha(*start) || *start=='@')); /* and check address FTN (5D adress is allowed) */
-         if (*start=='(') {  /* "(1:2/3.4)" is found */
-            start++;                     /*  skip '(' */
+         if (*start=='(' || *start==' ') {  /* "(1:2/3.4@dom)" or " 1:2/3.4@dom)" is found */
+            start++;                     /*  skip '(' or ' ' */
             i=0;
 
-            while (*start && (*start!=')') && (*start!='\r') && (*start!='\n') && (i<47)) {
+/*            while (*start && (*start!=')') && (*start!='\r') && (*start!='\n') && (i<47)) {
                buffer[i] = *start;
                i++;
                start++;
             }
             buffer[i]   = '\0';
-            if( string2addr(buffer,&msg->origAddr) ){
+            if( string2addr(buffer,&msg->origAddr) ){*/  /* string2addr stops on 1st invalid char, buffer isn't needs */
+            if( string2addr(start,&msg->origAddr) ){
                return; /* FTN address is taken from Origin */
             }
          }
