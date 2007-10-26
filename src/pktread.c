@@ -174,7 +174,7 @@ void correctEMAddr(s_message *msg)
       if (*(start-1) == ')') {         /*  if there is no ')', there is no origin */
          start--;
          while (start>msg->text && *(--start)!='('  /*  find beginning '(' */
-            && (isdigit(*start) || *start==':' || *start=='/' || *start=='.')); /* and check address FTN */
+            && (isdigit(*start) || *start==':' || *start=='/' || *start=='.' || isalpha(*start) || *start=='@')); /* and check address FTN (5D adress is allowed) */
          if (*start=='(') {  /* "(1:2/3.4)" is found */
             start++;                     /*  skip '(' */
             i=0;
