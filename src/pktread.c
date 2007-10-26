@@ -163,18 +163,6 @@ void correctEMAddr(s_message *msg)
    char *start = NULL, buffer[48];
    int i;
 
-   /* Find originating address in MSGID line */
-   start = strrstr(msg->text, "\001MSGID:"); /* Standard required "\001MSGID: " but not all software is compatible with FTS-9 :( */
-   if (start) {
-      start+=7;
-      while ((*start) == ' ') start++ ; /* skip leading spaces */
-      strncpy(buffer,start,sizeof(buffer));
-      if( strtok(buffer," ")
-      &&  string2addr(buffer,&msg->origAddr) ){
-            return;
-      }
-   }
-
    /* Find originating address in Origin line */
    start = strrstr(msg->text, " * Origin:");
 
@@ -198,9 +186,21 @@ void correctEMAddr(s_message *msg)
             }
             buffer[i]   = '\0';
             if( string2addr(buffer,&msg->origAddr) ){
-               return;
+               return; /* FTN address is taken from Origin */
             }
          }
+      }
+   }
+
+   /* Find originating address in MSGID line */
+   start = strrstr(msg->text, "\001MSGID:"); /* Standard required "\001MSGID: " but not all software is compatible with FTS-9 :( */
+   if (start) {
+      start+=7;
+      while ((*start) == ' ') start++ ; /* skip leading spaces */
+      strncpy(buffer,start,sizeof(buffer));
+      if( strtok(buffer," ")
+      &&  string2addr(buffer,&msg->origAddr) ){
+            return; /* FTN address is taken from MSGID */
       }
    }
 
@@ -222,7 +222,7 @@ void correctEMAddr(s_message *msg)
       buffer[i] = '\0';
       if( string2addr(buffer,&msg->origAddr) ){
          msg->origAddr.zone=0;
-         return;
+         return; /* FTN address is taken from PATH */
       }
    }
 }
