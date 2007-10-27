@@ -18,7 +18,6 @@ OBJS	= $(PERLOBJ) fcommon$(OBJ) hpt$(OBJ) pktread$(OBJ) \
 
 commonall: $(OBJS) \
      pktinfo$(EXE) \
-     tpkt$(EXE) \
      txt2pkt$(EXE) \
      hptlink$(EXE) \
      hpttree$(EXE) \
