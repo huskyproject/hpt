@@ -59,6 +59,8 @@ time_t readPktTime(FILE *pkt)
 {
   struct tm time;
 
+  if(!pkt) return 0;
+
   time.tm_year  = getUINT16(pkt) - 1900; /* years since 1900 */
   time.tm_mon   = getUINT16(pkt);
   time.tm_mday  = getUINT16(pkt);
@@ -74,6 +76,8 @@ void readPktPassword(FILE *pkt, UCHAR *password)
 {
    int i;
 
+   if(!pkt || !password) return;
+
    for (i=0 ;i<8 ;i++ ) {
      password[i] = (UCHAR) getc(pkt); /* no EOF check :-( */
    } /* endfor */
@@ -84,6 +88,8 @@ s_pktHeader *openPkt(FILE *pkt)
 {
   s_pktHeader *header;
   UINT16      pktVersion, capWord;
+
+  if(!pkt) return NULL;
 
   header = (s_pktHeader *) safe_malloc(sizeof(s_pktHeader));
   memset(header, '\0', sizeof(s_pktHeader));
@@ -167,6 +173,8 @@ void correctEMAddr(s_message *msg)
 {
    char *start = NULL, buffer[48];
    int i/*, brokenOrigin = 1*/;
+
+   if (!msg) return;
 
    /* Find originating address in Origin line */
    start = strrstr(msg->text, " * Origin:");
@@ -262,6 +270,8 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
    hs_addr intl_from, intl_to;
    UINT i;
 
+   if (!msg || !header) return;
+
    copy = buffer;
    start = strstr(msg->text, "\001FMPT");
    if (start) {
@@ -299,7 +309,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
 
    start = strstr(msg->text, "\001INTL ");
    if (start) {
-      
+
       start += 6;                 /*  skip "INTL " */
 
       while(1)
@@ -377,7 +387,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
       }
 
    } else {
-      
+
       /* no INTL kludge */
 
       msg->destAddr.zone = header->destAddr.zone;
@@ -396,6 +406,9 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
 
 void correctAddr(s_message *msg,s_pktHeader *header)
 {
+
+    if (!msg || !header) return;
+
 	if (strncmp(msg->text, "AREA:",5) == 0) {
 
 		if (strncmp(msg->text+5, "NETMAIL\r",8) == 0) {
@@ -435,11 +448,22 @@ char safe_toupper(char c)
 static const char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
+/* get_month() checks 3-chars month name
+   return 1 if OK,
+   sets flag and  return 1 if found corectable error
+   or return 0 if founds fatal error */
 int get_month(const char *pmon, flag_t *flag)
 {
     int i;
 
-    if (strlen(pmon) != 3 && flag != NULL)
+    if (!flag) return 0;
+    if (sstrlen(pmon) < 3)
+    {
+      (*flag) |= FTSC_BROKEN;
+      return 0;
+    }
+
+    if (sstrlen(pmon) != 3)
     {
         (*flag) |= FTSC_FLAWY;
     }
@@ -477,6 +501,8 @@ static flag_t parse_ftsc_date(struct tm * ptm, char *pdatestr)
 	int fixseadog=0;
 	struct tm *pnow;
     time_t t_now;
+
+    if (!ptm || !pdatestr) return 0;
 
     time(&t_now);
     pnow = localtime(&t_now);   /* get the current time */
@@ -622,7 +648,9 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
     struct tm tm;
     char *p, *q;
     long unread;
-    
+
+    if (!pkt || !header || !message) return 0;
+
     if (2 != getUINT16(pkt)) {
         *message = NULL;
         
