@@ -180,7 +180,7 @@ void correctEMAddr(s_message *msg)
            while (start>msg->text && *(--start)!='('                /*  find beginning '('   */
               && (isdigit(*start) || *start==':' || *start=='/'     /* and check address FTN */
                   || *start=='.' || isalpha(*start) || *start=='@'));
-		   if (*start=='(') {  /* "(1:2/3.4)" is found */
+           if (*start=='(' || *start==' ') {  /* "(1:2/3.4@dom)" or " 1:2/3.4@dom)" is found */
 		      start++;         /*  skip '(' */
 		      i=0;
 
