@@ -679,6 +679,7 @@ int isValidConference(const char *s) {
 
 void writeEchoTossLogEntry(char *areaName)
 {
+  if (areaName) {
     if (config->echotosslog) {
         FILE *f=fopen(config->echotosslog, "a");
         if (f==NULL)
@@ -688,4 +689,5 @@ void writeEchoTossLogEntry(char *areaName)
             fclose(f);
         }
     }
+  }
 }
