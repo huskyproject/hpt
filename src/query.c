@@ -714,7 +714,9 @@ void af_QueueReport()
     w_log(LL_STOP, "End generating queue report");
 
     writeMsgToSysop();
-    if (config->ReportTo) writeEchoTossLogEntry(config->ReportTo);
+    if (config->ReportTo) writeEchoTossLogEntry(config->ReportTo)
+    else writeEchoTossLogEntry(config->netMailAreas[0].areaName);
+
     freeMsgBuffers(msgToSysop[0]);
     nfree(msgToSysop[0]);
     remove(reportFlg);
