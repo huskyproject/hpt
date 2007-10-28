@@ -51,4 +51,9 @@ int forwardRequestToLink (char *areatag, s_link *uplink, s_link *dwlink, int act
 void sendAreafixMessages();
 char *do_delete(s_link *link, s_area *area);
 
+/* test area-link pair to mandatory
+   return 1 if area is mandatory for link, 0 otherwize
+ */
+int mandatoryCheck(s_area area, s_link *link);
+
 #endif

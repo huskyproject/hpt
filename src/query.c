@@ -426,15 +426,15 @@ s_query_areas* af_CheckAreaInQuery(char *areatag, ps_addr uplink, ps_addr dwlink
                 if(i == tmpNode->linksCount) {
                     af_AddLink( tmpNode, dwlink ); /*  add link to queried area */
                     tmpNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
-                    w_log(LL_AREAFIX, "areafix: add node %s into request list (idle queue) for area: %s", aka2str(*dwlink), tmpNode->name);
+                    w_log(LL_AREAFIX, "areafix: add link %s into request list (idle queue) for area: %s, uplink: %s", aka2str(*dwlink), tmpNode->name, aka2str(tmpNode->downlinks[0]));
                 } else {
                     tmpNode = NULL;  /*  link already in query */
                 }
             } else {
+                w_log(LL_AREAFIX, "areafix: add link %s into request list (idle queue) for area: %s, uplink: %s and change state from @%s to @freq", aka2str(*dwlink), tmpNode->name, aka2str(tmpNode->downlinks[0]), tmpNode->type);
                 strcpy(tmpNode->type,czFreqArea); /*  change state to @freq" */
                 af_AddLink( tmpNode, dwlink );
                 tmpNode->eTime = tnow + config->forwardRequestTimeout*secInDay;
-                w_log(LL_AREAFIX, "areafix: add node %s into request list (idle queue) for area: %s", aka2str(*dwlink), tmpNode->name);
             }
         } else { /*  area not found, so add it */
             areaNode = af_AddAreaListNode( areatag, czFreqArea );
@@ -714,7 +714,7 @@ void af_QueueReport()
     w_log(LL_STOP, "End generating queue report");
 
     writeMsgToSysop();
-    if (config->ReportTo) writeEchoTossLogEntry(config->ReportTo)
+    if (config->ReportTo) writeEchoTossLogEntry(config->ReportTo);
     else writeEchoTossLogEntry(config->netMailAreas[0].areaName);
 
     freeMsgBuffers(msgToSysop[0]);
@@ -784,8 +784,8 @@ void af_QueueUpdate()
             w_log( LL_AREAFIX, "areafix: request for %s is going to be killed",tmpNode->name);
             delarea = getArea(config, tmpNode->name);
             if (delarea != &(config->badArea))
-            {
-                do_delete(NULL, delarea);
+            {   /* echoarea is exists in config, delete it if permissible */
+                if (mandatoryCheck( *(getArea(config,tmpNode->name)),getLinkFromAddr(config,tmpNode->downlinks[0]))==0) do_delete(NULL, delarea);
             } else {
                 /* send unsubscribe message to uplink when moving from idle to kill */
                 lastRlink = getLinkFromAddr(config,tmpNode->downlinks[0]);
