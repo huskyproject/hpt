@@ -661,7 +661,8 @@ char *safe_strdup(const char *src)
 
 void writeEchoTossLogEntry(char *areaName)
 {
-    if (config->echotosslog) {
+    if (areaName && config->echotosslog)
+    {
         FILE *f=fopen(config->echotosslog, "a");
         if (f==NULL)
             w_log(LL_ERROR, "Could not open or create EchoTossLogFile.");
