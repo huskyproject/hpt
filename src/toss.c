@@ -766,6 +766,7 @@ void writeMsgToSysop()
                 /*  FIXME: should be putMsgInArea */
                 processNMMsg(msgToSysop[i], NULL, config->ReportTo ?
                 getNetMailArea(config, config->ReportTo) : NULL, 1, 0);
+                writeEchoTossLogEntry(config->ReportTo?config->ReportTo:config->netMailAreas[0]->areaName);
             else {
                 /*  get echoarea  for this msg */
                 ptr = strchr(msgToSysop[i]->text, '\r');
@@ -809,6 +810,7 @@ void writeMsgToSysop()
                         }
                         forwardMsgToLinks(echo, msgToSysop[i], msgToSysop[i]->origAddr);
                         closeOpenedPkt();
+                        writeEchoTossLogEntry(echo->areaName);
                         tossTempOutbound(config->tempOutbound);
                     }
                 } else {
