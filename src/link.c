@@ -137,14 +137,13 @@ static s_msginfo *findMsgId(s_msginfo *entries, struct hashinfo *hash, dword has
 static char *stripDomain(char *msgid)
 {
     char *p, *p1;
-    hs_addr addr;
+    hs_addr addr = {0};
 
     if (msgid == NULL) return msgid;
     for (p=msgid; *p && (isdigit(*p) || *p==':' || *p=='/' || *p=='.'); p++);
     if (*p != '@') return msgid;
-    string2addr(msgid, &addr);
-    if (!addr.zone || !addr.net) return msgid;
-    for (p1=p; *p1 && !isspace(*p1); p1++);
+    if (parseFtnAddrZ(msgid, &addr, FTNADDR_GOOD, &p1) & FTNADDR_ERROR) return msgid;
+    for (; *p1 && !isspace(*p1); p1++);
     strcpy(p, p1);
     return msgid;
 }
@@ -171,7 +170,7 @@ static char *crc2str(dword crc)
    ptr=str=safe_malloc(11);
    /* backward figures order, it's not mistake */
    while (crc) {
-      *ptr++='0'+crc%10;
+      *ptr++=(char)('0'+crc%10);
       crc/=10;
    }
    *ptr='\0';

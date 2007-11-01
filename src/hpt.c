@@ -229,7 +229,7 @@ int processCommandLine(int argc, char **argv)
 			  i++;
 		  }
 		  if (i < argc) {
-			  string2addr(argv[i], &afixAddr);
+			  parseFtnAddrZS(argv[i], &afixAddr);
 			  if (i < argc-1) {
 				  i++;
 				  xstrcat(&afixCmd,argv[i]);
@@ -253,7 +253,7 @@ int processCommandLine(int argc, char **argv)
               xstrcat(&relinkPattern, argv[i]);
               if (i < argc-1) {
                   i++;
-                  string2addr(argv[i], &relinkFromAddr);
+                  parseFtnAddrZS(argv[i], &relinkFromAddr);
                   cmRelink = 1;
               } else printf("address missing after \"%s\"!\n", argv[i]);
 	  } else printf("pattern missing after \"%s\"!\n", argv[i]);
@@ -263,10 +263,10 @@ int processCommandLine(int argc, char **argv)
               xstrcat(&relinkPattern, argv[i]);
               if (i < argc-1) {
                   i++;
-                  string2addr(argv[i], &relinkFromAddr);
+                  parseFtnAddrZS(argv[i], &relinkFromAddr);
                   if (i < argc-1) {
                       i++;
-                      string2addr(argv[i], &relinkToAddr);
+                      parseFtnAddrZS(argv[i], &relinkToAddr);
                       cmRelink = 2;
                   } else printf("address missing after \"%s\"!\n", argv[i]);
               } else printf("address missing after \"%s\"!\n", argv[i]);
@@ -560,7 +560,7 @@ int main(int argc, char **argv)
    }
 #ifdef USE_HPTZIP
 {
-   int zi_pack = config->packCount, zi_unpack = config->unpackCount;
+   unsigned int zi_pack = config->packCount, zi_unpack = config->unpackCount;
    for (i = 0; i < config->unpackCount; i++)
      if (fc_stristr(config->unpack[i].call, ZIPINTERNAL) == 0) {
        zi_unpack = i; break;
