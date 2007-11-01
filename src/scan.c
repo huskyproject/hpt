@@ -85,87 +85,6 @@
 
 s_statScan statScan;
 
-int parseINTL(char *msgtxt, hs_addr *from, hs_addr *to)
-{
-   char *start, *copy, buffer[35]; /* FIXME: static buffer */
-   hs_addr intl_from, intl_to;
-
-   copy = buffer;
-   start = strstr(msgtxt, "FMPT");
-   if (start) {
-      start += 6;                  /* skip "FMPT " */
-      while (isdigit(*start)) {     /* copy all digit data */
-         *copy = *start;
-         copy++;
-         start++;
-      } /* endwhile */
-      *copy = '\0';                /* don't forget to close the string with 0 */
-
-      from->point = atoi(buffer);
-   } else {
-      from->point = 0;
-   } /* endif */
-
-   /* and the same for TOPT */
-   copy = buffer;
-   start = strstr(msgtxt, "TOPT");
-   if (start) {
-      start += 6;                  /* skip "TOPT " */
-      while (isdigit(*start)) {     /* copy all digit data */
-         *copy = *start;
-         copy++;
-         start++;
-      } /* endwhile */
-      *copy = '\0';                /* don't forget to close the string with 0 */
-
-      to->point = atoi(buffer);
-   } else {
-      to->point = 0;
-   } /* endif */
-
-   /* Parse the INTL Kludge */
-
-   start = strstr(msgtxt, "INTL ");
-   if (start)
-   {
-      start += 6;                 /*  skip "INTL " */
-      for (;;)
-      {
-          while (*start && isspace(*start)) start++;
-          if (!*start) break;
-
-          copy = buffer;
-          while (*start && !isspace(*start)) *copy++ = *start++;
-          *copy='\0';
-          if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
-          string2addr(buffer, &intl_to);
-
-          while (*start && isspace(*start)) start++;
-          if (!*start) break;
-
-          copy = buffer;
-          while (*start && !isspace(*start)) *copy++ = *start++;
-          *copy='\0';
-          if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
-          string2addr(buffer, &intl_from);
-
-          /* INTL is valid, copy parsed data to output */
-          from->zone = intl_from.zone;
-          from->net = intl_from.net;
-          from->node = intl_from.node;
-
-          to->zone = intl_to.zone;
-          to->net = intl_to.net;
-          to->node = intl_to.node;
-          return 1;
-          break;
-      }
-   } else
-       w_log(LL_DEBUGB, "Warning: no INTL kludge found in message");
-
-   return 0;
-}
-
 void convertMsgHeader(XMSG xmsg, s_message *msg)
 {
    /*  convert header */
@@ -363,7 +282,7 @@ s_link *getLinkForRoute(s_route *route, s_message *msg) {
 		  break;
 
 	  case route_extern:
-		  string2addr(route->viaStr, &tempLink.hisAka);
+		  parseFtnAddrZS(route->viaStr, &tempLink.hisAka);
 		  break;
       }
 
@@ -762,8 +681,8 @@ void scanNMArea(s_area *area)
        ctl[ctllen] = '\0';
 
        MsgReadMsg(msg, &xmsg, 0, 0, NULL, ctllen, (byte *)ctl);
-       cvtAddr(xmsg.dest, &dest);
-       cvtAddr(xmsg.orig, &orig);
+       dest = xmsg.dest;
+       orig = xmsg.orig;
        memset(&intl_orig, 0, sizeof(hs_addr));
        memset(&intl_dest, 0, sizeof(hs_addr));
        /*
