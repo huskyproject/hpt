@@ -113,10 +113,10 @@ int main(int argc, char *argv[])
             case 'a':    /*  address */
                switch(argv[n][2]) {
                   case 'f':
-                     string2addr(argv[++n], &(msg.origAddr));
+                     parseFtnAddrZS(argv[++n], &(msg.origAddr));
                      break;
                   case 't':
-                     string2addr(argv[++n], &(msg.destAddr));
+                     parseFtnAddrZS(argv[++n], &(msg.destAddr));
                      break;
                   default:
                      quit = 1;
@@ -126,10 +126,10 @@ int main(int argc, char *argv[])
             case 'x':    /*  address */
                switch(argv[n][2]) {
                   case 'f':
-                     string2addr(argv[++n], &(header.origAddr));
+                     parseFtnAddrZS(argv[++n], &(header.origAddr));
                      break;
                   case 't':
-                     string2addr(argv[++n], &(header.destAddr));
+                     parseFtnAddrZS(argv[++n], &(header.destAddr));
                      break;
                   default:
                      quit = 1;
