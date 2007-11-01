@@ -147,7 +147,7 @@ void buildAreaTree(s_area *area)
    HMSG  hmsg;
    XMSG  xmsg;
    int   i = -1;
-   int nmsg;
+   unsigned int nmsg;
    char *text;
    dword  textLength;
    s_nodepath node;
@@ -335,7 +335,8 @@ void usage(void) {
 
 int main(int argc, char **argv) {
 
-   int i, j;
+   unsigned int i;
+   int j;
    struct _minf m;
    char **argareas=NULL;
    int nareas=0;
@@ -350,9 +351,9 @@ int main(int argc, char **argv) {
 
    printf("%s\n\n", versionStr);
 
-   for (i=1; i<argc; i++) {
-     if ( argv[i][0] == '-' ) {
-	switch (argv[i][1])
+   for (j=1; j<argc; j++) {
+     if ( argv[j][0] == '-' ) {
+	switch (argv[j][1])
 	  {
 	     case 'p': /* Toggle pseudographics */
 	     case 'P':
@@ -361,12 +362,12 @@ int main(int argc, char **argv) {
 
 	     case 'd': /* Last NUM days */
 	     case 'D':
-                i++;
-                if ( !argv[i] ) {
+                j++;
+                if ( !argv[j] ) {
                    usage();
                    exit(EX_USAGE);
                 }
-		tperiod = atoi(argv[i]);
+		tperiod = atoi(argv[j]);
                 if ( tperiod <=0 ) {
                    usage();
                    exit(EX_USAGE);
@@ -381,7 +382,7 @@ int main(int argc, char **argv) {
        /*  AreaName(s) specified by args */
        nareas++;
        argareas = (char **)srealloc ( argareas, nareas*sizeof(char *));
-       argareas[nareas-1] = argv[i];
+       argareas[nareas-1] = argv[j];
      }
    }
 
