@@ -120,4 +120,22 @@ typedef unsigned long flag_t;  /* for at least 32 bit flags */
 flag_t parse_ftsc_date(struct tm * ptm, char *pdatestr);
 void make_ftsc_date(char *pdate, const struct tm *ptm);
 
+#define INTL_FOUND 1
+#define FMPT_FOUND 2
+#define TOPT_FOUND 4
+int parseINTL(char *msgtxt, hs_addr *from, hs_addr *to);
+/*DOC
+  Input:  msgtxt is a pointer to message text in which
+          parseINTL will try to find INTL, FMPT and TOPT kludges,
+		  parse them and store result in from and to structures.
+          from and to may be initialized by default values, if
+          particular kludges aren't found or can't be parsed
+          these values will stay intact. 
+  Output: bitmask constructed from INTL_FOUND, FMPT_FOUND and TOPT_FOUND
+          values. If kludge was found and successfully parsed
+          then appropriate bit is set.
+  FZ:     parseINTL searches for INTL, FMPT and TOPT kludges and 
+          transforms the data to the structs.
+*/
+
 #endif
