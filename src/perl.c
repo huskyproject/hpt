@@ -622,18 +622,18 @@ static XS(perl_putMsgInArea)
     XSRETURN_PV("Unknown area");
 #endif
   if (fromaddr && *fromaddr)
-    string2addr(fromaddr, &(msg.origAddr));
+    parseFtnAddrZS(fromaddr, &(msg.origAddr));
   else
     memcpy(&msg.origAddr, echo->useAka, sizeof(msg.origAddr));
   if (msg.netMail)
-    string2addr(toaddr, &(msg.destAddr));
+    parseFtnAddrZS(toaddr, &(msg.destAddr));
 
   if (!sdate || !*sdate)
   { time_t t = (date != 0) ? (time_t)date : time(NULL);
     fts_time((char *)msg.datetime, localtime(&t));
   }
   else
-  { strncpy(msg.datetime, sdate, sizeof(msg.datetime));
+  { strncpy((char*)msg.datetime, sdate, sizeof(msg.datetime));
     msg.datetime[sizeof(msg.datetime)-1] = '\0';
   }
 
@@ -653,10 +653,10 @@ static XS(perl_putMsgInArea)
       free(sattr);
   }
 
-  if ( !strstr(text, "\r\n") ) for (p = text; (p = strchr(p, '\n')); *p = '\r');
+  if ( !strstr(text, "\r\n") ) for (p = text; (p = strchr(p, '\n')) != NULL; *p = '\r');
   else {
     int len = strlen(p = text);
-    while ( (p = strchr(p, '\n')) )
+    while ( (p = strchr(p, '\n')) != NULL)
       if (p > text && *(p-1) == '\r') memmove(p, p+1, (len--)-(p-text));
       else *p = '\r';
   }
@@ -767,7 +767,7 @@ static XS(perl_fts_date)
     XSRETURN_UNDEF;
   }
   date = (char *)SvPV(ST(0), n_a); 
-  if (!n_a || !(t = fts2unix(date, NULL))) XSRETURN_UNDEF;
+  if (!n_a || (t = fts2unix(date, NULL)) == 0) XSRETURN_UNDEF;
     else XSRETURN_IV( (unsigned long)t );
 }
 
@@ -1474,8 +1474,8 @@ int perlscanmsg(char *area, s_message *msg)
      sv_setpv(svfromaddr, aka2str(msg->origAddr));
      sv_setpv(svtoname,   msg->toUserName);
 
-     sv_setuv(svdate,     (unsigned long)fts2unix(msg->datetime, NULL) );
-     sv_setpv(svdate,     msg->datetime);
+     sv_setuv(svdate,     (unsigned long)fts2unix((char*)msg->datetime, NULL) );
+     sv_setpv(svdate,     (char*)msg->datetime);
      SvIOK_on(svdate);
 
      sv_setpv(svsubj,     msg->subjectLine);
@@ -1531,9 +1531,9 @@ int perlscanmsg(char *area, s_message *msg)
        if (n_a == 0) ptr = "";
        msg->subjectLine = safe_strdup(ptr);
        ptr = SvPV(perl_get_sv("toaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(ptr, &(msg->destAddr));
+       if (n_a > 0) parseFtnAddrZS(ptr, &(msg->destAddr));
        ptr = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(ptr, &(msg->origAddr));
+       if (n_a > 0) parseFtnAddrZS(ptr, &(msg->origAddr));
        /* update message kludges, if needed */
        update_addr(msg);
        /* process flags, update message if needed */
@@ -1547,12 +1547,12 @@ int perlscanmsg(char *area, s_message *msg)
        svdate = perl_get_sv("date", FALSE);
        if ( (SvIOK(svdate)) && (SvUV(svdate) > 0) ) {
               date = SvUV(svdate);
-              make_ftsc_date(msg->datetime, localtime(&date));
+              make_ftsc_date((char*)msg->datetime, localtime(&date));
        }
        else if ( SvPOK(svdate) ) {
               ptr = SvPV(svdate, n_a); if (n_a == 0) ptr = "";
               if (fts2unix(ptr, NULL) > 0) {
-                  strncpy(msg->datetime, ptr, sizeof(msg->datetime));
+                  strncpy((char*)msg->datetime, ptr, sizeof(msg->datetime));
                   msg->datetime[sizeof(msg->datetime)-1] = '\0';
               }
        }
@@ -1616,8 +1616,8 @@ s_route *perlroute(s_message *msg, s_route *defroute)
      sv_setpv(svfromname, msg->fromUserName);
      sv_setpv(svtoname,   msg->toUserName);
 
-     sv_setuv(svdate,     (unsigned long)fts2unix(msg->datetime, NULL) );
-     sv_setpv(svdate,     msg->datetime);
+     sv_setuv(svdate,     (unsigned long)fts2unix((char*)msg->datetime, NULL) );
+     sv_setpv(svdate,     (char*)msg->datetime);
      SvIOK_on(svdate);
 
      sv_setpv(svsubj,     msg->subjectLine);
@@ -1683,9 +1683,9 @@ s_route *perlroute(s_message *msg, s_route *defroute)
            if (n_a == 0) prc = "";
            msg->subjectLine = safe_strdup(prc);
            prc = SvPV(perl_get_sv("addr", FALSE), n_a);
-           if (n_a > 0) string2addr(prc, &(msg->destAddr));
+           if (n_a > 0) parseFtnAddrZS(prc, &(msg->destAddr));
            prc = SvPV(perl_get_sv("from", FALSE), n_a);
-           if (n_a > 0) string2addr(prc, &(msg->origAddr));
+           if (n_a > 0) parseFtnAddrZS(prc, &(msg->origAddr));
            /* update message kludges, if needed */
            update_addr(msg);
            /* process flags, update message if needed */
@@ -1699,12 +1699,12 @@ s_route *perlroute(s_message *msg, s_route *defroute)
            svdate = perl_get_sv("date", FALSE);
            if ( (SvIOK(svdate)) && (SvUV(svdate) > 0) ) {
                   date = SvUV(svdate);
-                  make_ftsc_date(msg->datetime, localtime(&date));
+                  make_ftsc_date((char*)msg->datetime, localtime(&date));
            }
            else if ( SvPOK(svdate) ) {
                   ptr = SvPV(svdate, n_a); if (n_a == 0) ptr = "";
                   if (fts2unix(ptr, NULL) > 0) {
-                      strncpy(msg->datetime, ptr, sizeof(msg->datetime));
+                      strncpy((char*)msg->datetime, ptr, sizeof(msg->datetime));
                       msg->datetime[sizeof(msg->datetime)-1] = '\0';
                   }
            }
@@ -1810,8 +1810,8 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
      sv_setpv(svfromaddr, aka2str(msg->origAddr));
      sv_setpv(svtoname,   msg->toUserName);
 
-     sv_setuv(svdate,     (unsigned long)fts2unix(msg->datetime, NULL) );
-     sv_setpv(svdate,     msg->datetime);
+     sv_setuv(svdate,     (unsigned long)fts2unix((char*)msg->datetime, NULL) );
+     sv_setpv(svdate,     (char*)msg->datetime);
      SvIOK_on(svdate);
 
      sv_setpv(svsubj,     msg->subjectLine);
@@ -1890,9 +1890,9 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
        if (n_a == 0) ptr = "";
        msg->subjectLine = safe_strdup(ptr);
        ptr = SvPV(perl_get_sv("toaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(ptr, &(msg->destAddr));
+       if (n_a > 0) parseFtnAddrZS(ptr, &(msg->destAddr));
        ptr = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(ptr, &(msg->origAddr));
+       if (n_a > 0) parseFtnAddrZS(ptr, &(msg->origAddr));
        /* update message kludges, if needed */
        update_addr(msg);
        /* process flags, update message if needed */
@@ -1906,12 +1906,12 @@ int perlfilter(s_message *msg, hs_addr pktOrigAddr, int secure)
        svdate = perl_get_sv("date", FALSE);
        if ( (SvIOK(svdate)) && (SvUV(svdate) > 0) ) {
               date = SvUV(svdate);
-              make_ftsc_date(msg->datetime, localtime(&date));
+              make_ftsc_date((char*)msg->datetime, localtime(&date));
        }
        else if ( SvPOK(svdate) ) {
               ptr = SvPV(svdate, n_a); if (n_a == 0) ptr = "";
               if (fts2unix(ptr, NULL) > 0) {
-                  strncpy(msg->datetime, ptr, sizeof(msg->datetime));
+                  strncpy((char*)msg->datetime, ptr, sizeof(msg->datetime));
                   msg->datetime[sizeof(msg->datetime)-1] = '\0';
               }
        }
@@ -2097,8 +2097,8 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
      sv_setpv(svfromaddr, aka2str(msg->origAddr));
      sv_setpv(svtoname,   msg->toUserName);
 
-     sv_setuv(svdate,     (unsigned long)fts2unix(msg->datetime, NULL) );
-     sv_setpv(svdate,     msg->datetime);
+     sv_setuv(svdate,     (unsigned long)fts2unix((char*)msg->datetime, NULL) );
+     sv_setpv(svdate,     (char*)msg->datetime);
      SvIOK_on(svdate);
 
      sv_setpv(svsubj,     msg->subjectLine);
@@ -2168,9 +2168,9 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
        if (n_a == 0) ptr = "";
        msg->subjectLine = safe_strdup(ptr);
        ptr = SvPV(perl_get_sv("toaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(ptr, &(msg->destAddr));
+       if (n_a > 0) parseFtnAddrZS(ptr, &(msg->destAddr));
        ptr = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(ptr, &(msg->origAddr));
+       if (n_a > 0) parseFtnAddrZS(ptr, &(msg->origAddr));
        /* update message kludges, if needed */
        update_addr(msg);
        /* process flags, update message if needed */
@@ -2184,12 +2184,12 @@ int perltossbad(s_message *msg, char *areaName, hs_addr pktOrigAddr, char *reaso
        svdate = perl_get_sv("date", FALSE);
        if ( (SvIOK(svdate)) && (SvUV(svdate) > 0) ) {
               date = SvUV(svdate);
-              make_ftsc_date(msg->datetime, localtime(&date));
+              make_ftsc_date((char*)msg->datetime, localtime(&date));
        }
        else if ( SvPOK(svdate) ) {
               ptr = SvPV(svdate, n_a); if (n_a == 0) ptr = "";
               if (fts2unix(ptr, NULL) > 0) {
-                  strncpy(msg->datetime, ptr, sizeof(msg->datetime));
+                  strncpy((char*)msg->datetime, ptr, sizeof(msg->datetime));
                   msg->datetime[sizeof(msg->datetime)-1] = '\0';
               }
        }
@@ -2362,9 +2362,9 @@ int perl_afixreq(s_message *msg, hs_addr pktOrigAddr)
        if (n_a == 0) ptr = "";
        msg->subjectLine = safe_strdup(ptr);
        ptr = SvPV(perl_get_sv("toaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(ptr, &(msg->destAddr));
+       if (n_a > 0) parseFtnAddrZS(ptr, &(msg->destAddr));
        ptr = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(ptr, &(msg->origAddr));
+       if (n_a > 0) parseFtnAddrZS(ptr, &(msg->origAddr));
        return 1;
      }
    }
@@ -2401,8 +2401,8 @@ int perl_putmsg(s_area *echo, s_message *msg)
      sv_setpv(svtoname,   msg->toUserName);
      sv_setpv(svtoaddr,   aka2str(msg->destAddr));
 
-     sv_setuv(svdate,     (unsigned long)fts2unix(msg->datetime, NULL) );
-     sv_setpv(svdate,     msg->datetime);
+     sv_setuv(svdate,     (unsigned long)fts2unix((char*)msg->datetime, NULL) );
+     sv_setpv(svdate,     (char*)msg->datetime);
      SvIOK_on(svdate);
 
      sv_setpv(svsubj,     msg->subjectLine);
@@ -2449,9 +2449,9 @@ int perl_putmsg(s_area *echo, s_message *msg)
        if (n_a == 0) ptr = "";
        msg->subjectLine = safe_strdup(ptr);
        ptr = SvPV(perl_get_sv("toaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(ptr, &(msg->destAddr));
+       if (n_a > 0) parseFtnAddrZS(ptr, &(msg->destAddr));
        ptr = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(ptr, &(msg->origAddr));
+       if (n_a > 0) parseFtnAddrZS(ptr, &(msg->origAddr));
        /* update message kludges, if needed */
        if (msg->netMail) update_addr(msg);
        /* process flags, update message if needed */
@@ -2466,12 +2466,12 @@ int perl_putmsg(s_area *echo, s_message *msg)
        svdate = perl_get_sv("date", FALSE);
        if ( (SvIOK(svdate)) && (SvUV(svdate) > 0) ) {
               date = SvUV(svdate);
-              make_ftsc_date(msg->datetime, localtime(&date));
+              make_ftsc_date((char*)msg->datetime, localtime(&date));
        }
        else if ( SvPOK(svdate) ) {
               ptr = SvPV(svdate, n_a); if (n_a == 0) ptr = "";
               if (fts2unix(ptr, NULL) > 0) {
-                  strncpy(msg->datetime, ptr, sizeof(msg->datetime));
+                  strncpy((char*)msg->datetime, ptr, sizeof(msg->datetime));
                   msg->datetime[sizeof(msg->datetime)-1] = '\0';
               }
        }
@@ -2506,8 +2506,8 @@ int perl_export(s_area *echo, s_link *link, s_message *msg)
      sv_setpv(svfromname, msg->fromUserName);
      sv_setpv(svtoname,   msg->toUserName);
 
-     sv_setuv(svdate,     (unsigned long)fts2unix(msg->datetime, NULL) );
-     sv_setpv(svdate,     msg->datetime);
+     sv_setuv(svdate,     (unsigned long)fts2unix((char*)msg->datetime, NULL) );
+     sv_setpv(svdate,     (char*)msg->datetime);
      SvIOK_on(svdate);
 
      sv_setpv(svsubj,     msg->subjectLine);
@@ -2574,12 +2574,12 @@ int perl_export(s_area *echo, s_link *link, s_message *msg)
        svdate = perl_get_sv("date", FALSE);
        if ( (SvIOK(svdate)) && (SvUV(svdate) > 0) ) {
               date = SvUV(svdate);
-              make_ftsc_date(msg->datetime, localtime(&date));
+              make_ftsc_date((char*)msg->datetime, localtime(&date));
        }
        else if ( SvPOK(svdate) ) {
               ptr = SvPV(svdate, n_a); if (n_a == 0) ptr = "";
               if (fts2unix(ptr, NULL) > 0) {
-                  strncpy(msg->datetime, ptr, sizeof(msg->datetime));
+                  strncpy((char*)msg->datetime, ptr, sizeof(msg->datetime));
                   msg->datetime[sizeof(msg->datetime)-1] = '\0';
               }
        }
@@ -2650,9 +2650,9 @@ int perl_robotmsg(s_message *msg, char *type)
        if (n_a == 0) ptr = "";
        msg->subjectLine = safe_strdup(ptr);
        ptr = SvPV(perl_get_sv("toaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(ptr, &(msg->destAddr));
+       if (n_a > 0) parseFtnAddrZS(ptr, &(msg->destAddr));
        ptr = SvPV(perl_get_sv("fromaddr", FALSE), n_a);
-       if (n_a > 0) string2addr(ptr, &(msg->origAddr));
+       if (n_a > 0) parseFtnAddrZS(ptr, &(msg->origAddr));
        return 1;
      }
    }

@@ -1511,7 +1511,7 @@ int processDir(char *directory, e_tossSecurity sec)
 #ifdef DEBUG_HPT
 	w_log(LL_DEBUGV,"testing sorted %s\n", dummy);
 #endif
-	if (!(pktFile = patimat(dummy+dirNameLen, "*.pkt") == 1))
+	if ((pktFile = patimat(dummy+dirNameLen, "*.pkt")) == 0)
 	    if (isArcMail(dummy+dirNameLen))
 		arcFile = 1;
 
@@ -2244,7 +2244,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
 	    strncmp(ptmp, "REASON: ", 8) == 0 ||
 	    strncmp(ptmp, "AREANAME: ", 10) == 0) {
 	    /*  It's from address */
-	    if (*ptmp == 'F') string2addr(ptmp + 6, &pktOrigAddr);
+	    if (*ptmp == 'F') parseFtnAddrZS(ptmp + 6, &pktOrigAddr);
 	    /*  Don't export to links */
 	    if (*ptmp == 'R') {
 		if (strstr(ptmp, "MSGAPIERR: ")!=NULL) noexp=1;
