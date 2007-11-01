@@ -195,7 +195,7 @@ void cleanEmptyBundles(char *pathName, size_t npos, char *wday)
    savech = tmpfile[npos-1]; /*  there must be path delimiter */
    tmpfile[npos-1] = '\0';
 
-   if(!(dir = husky_opendir(tmpfile))) { /*  nothing to clean */
+   if((dir = husky_opendir(tmpfile)) == NULL) { /*  nothing to clean */
       nfree(tmpfile);
       return;
    }
@@ -654,7 +654,7 @@ char *safe_strdup(const char *src)
 {
     char *ptr=NULL;
     if(src)
-      if ( !( ptr = strdup (src) ) ) /* use sstrdup() from fidoconfig library */
+      if ( ( ptr = strdup (src) ) == NULL ) /* use sstrdup() from fidoconfig library */
         exit_hpt("out of memory (safe_strdup())", 1);
     return ptr;
 }
