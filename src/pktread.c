@@ -158,35 +158,83 @@ s_pktHeader *openPkt(FILE *pkt)
   return header;
 }
 
+int parseINTL(char *msgtxt, hs_addr *from, hs_addr *to)
+{
+   char *start;
+   hs_addr intl_from= *from, intl_to = *to; /* set defaults */
+   int result = 0, temp_point;
+
+   /* Parse the INTL Kludge */
+
+   start = strstr(msgtxt, "\001INTL ");
+   if (start) 
+   {
+      start += 6;                 /*  skip "INTL " */
+
+	  if( !(parseFtnAddrZ(start, &intl_to, FTNADDR_GOOD, &start) & FTNADDR_ERROR) &&
+		  !(parseFtnAddrZ(start, &intl_from, FTNADDR_GOOD, &start) & FTNADDR_ERROR))
+	  {
+          /* INTL is valid, copy parsed data to output */
+		  /* copying the whole structures is ok since they are initialized by from and to */
+          *from = intl_from;
+          *to = intl_to;
+
+          result |= INTL_FOUND;
+	  }
+   } else
+       w_log(LL_DEBUGB, "Warning: no INTL kludge found in message");
+
+   /* TODO: check whether we should zero point numbers if no fpmt/topt are present */
+   start = strstr(msgtxt, "\001FMPT");
+   if (start) 
+   {
+      start += 6;                  /* skip "FMPT " */
+      temp_point = atoi(start);
+      from->point = (temp_point >= 0 && temp_point <= 32767)?(sword)temp_point:0;
+	  /* Actually there should not be */
+      result |= FMPT_FOUND;
+   } else {
+      from->point = 0;
+   }
+
+   /* and the same for TOPT */
+   start = strstr(msgtxt, "\001TOPT");
+   if (start) 
+   {
+      start += 6;                  /* skip "TOPT " */
+      temp_point = atoi(start);
+      to->point = (temp_point >= 0 && temp_point <= 32767)?(sword)temp_point:0;
+      result |= TOPT_FOUND;
+   } else {
+      to->point = 0;
+   }
+
+return result;
+}
+
 void correctEMAddr(s_message *msg)
 {
-   char *start = NULL, buffer[48];
-   int i;
+   char *start = NULL, *temp;
 
    /* Find originating address in Origin line */
    start = strrstr(msg->text, " * Origin:");
 
    if (start) {
+      temp = start += 10; /* skip " * Origin:" */
       while (*start && (*start != '\r') && (*start != '\n')) start++;  /*  get to end of line */
+      --start;
+      while (*(start) == ' ') --start; /* skip trailing spaces, just in case */
 
-      while (*(start-1) == ' ') --start; /* skip trailing spaces, just in case */
+      if (*(start) == ')') {           /*  if there is no ')', there is no origin */
 
-      if (*(start-1) == ')') {         /*  if there is no ')', there is no origin */
-         start--;
-         while (start>msg->text && *(--start)!='('  /*  find beginning '(' */
-            && (isdigit(*start) || *start==':' || *start=='/' || *start=='.' || isalpha(*start) || *start=='@')); /* and check address FTN (5D adress is allowed) */
-         if (*start=='(' || *start==' ') {  /* "(1:2/3.4@dom)" or " 1:2/3.4@dom)" is found */
-            start++;                     /*  skip '(' or ' ' */
-            i=0;
+         while (--start > temp && 
+                *start != '(' &&       /*  find beginning '(' */
+                !isspace(*start));
 
-/*            while (*start && (*start!=')') && (*start!='\r') && (*start!='\n') && (i<47)) {
-               buffer[i] = *start;
-               i++;
-               start++;
-            }
-            buffer[i]   = '\0';
-            if( string2addr(buffer,&msg->origAddr) ){*/  /* string2addr stops on 1st invalid char, buffer isn't needs */
-            if( string2addr(start,&msg->origAddr) ){
+		 if (*start=='(' || *start==' ') {  /* "(1:2/3.4@dom)" or " 1:2/3.4@dom)" is found */
+
+            start++;                   /*  skip '(' or ' ' */
+            if( !(parseFtnAddrZS(start,&msg->origAddr) & FTNADDR_ERROR) ){
                return; /* FTN address is taken from Origin */
             }
          }
@@ -194,115 +242,45 @@ void correctEMAddr(s_message *msg)
    }
 
    /* Find originating address in MSGID line */
-   start = strrstr(msg->text, "\001MSGID:"); /* Standard required "\001MSGID: " but not all software is compatible with FTS-9 :( */
+   start = strrstr(msg->text, "\001MSGID:");
+   /* Standard requires "\001MSGID: " but not all software is compatible with FTS-9 :( */
    if (start) {
       start+=7;
-      while ((*start) == ' ') start++ ; /* skip leading spaces */
-      strncpy(buffer,start,sizeof(buffer));
-      if( strtok(buffer," ")
-      &&  string2addr(buffer,&msg->origAddr) ){
+      if( !(parseFtnAddrZS(start, &msg->origAddr) & FTNADDR_ERROR) ){
             return; /* FTN address is taken from MSGID */
       }
    }
 
-   /*  Another try... But if MSGID isn't present or broken and origin is broken then PATH may be broken too...
-   */
+   /*  Another try... 
+	*  But if MSGID isn't present or broken and origin is broken 
+	*  then PATH may be broken too...
+    */
    start = strstr(msg->text, "\001PATH: ");
-   if (start && strlen(start) > 7) {
+   if (start) {
       start += 7;
-      buffer[0] = '1';
-      buffer[1] = ':';
-      i = 2;
-      while (*start && (!isspace(*start)) && (*start!='\r') && (*start!='\n') && (i<47)) {
-         if (isdigit(*start) || *start=='/') {
-            buffer[i] = *start;
-            i++;
-         }
-         start++;
-      }
-      buffer[i] = '\0';
-      if( string2addr(buffer,&msg->origAddr) ){
-         msg->origAddr.zone=0;
+      if( !(parseFtnAddrZ(start, &msg->origAddr, FTNADDR_2D, NULL) & FTNADDR_ERROR) ){
          return; /* FTN address is taken from PATH */
       }
    }
+
+   /* if nothing works then send report to RC ;) */
 }
 
 void correctNMAddr(s_message *msg, s_pktHeader *header)
 {
-   char *start, *copy, *text=NULL, buffer[35]; /* FIXME: static buffer */
+   char *text = NULL;
    int valid_intl_kludge = 0;
    int zonegated = 0;
-   hs_addr intl_from, intl_to;
+   hs_addr intl_from = msg->origAddr, intl_to = msg->destAddr;
    UINT i;
 
-   copy = buffer;
-   start = strstr(msg->text, "\001FMPT");
-   if (start) {
-      start += 6;                  /* skip "FMPT " */
-      while (isdigit(*start) && (copy<buffer+sizeof(buffer)-1)) {     /* copy all digit data */
-         *copy = *start;
-         copy++;
-         start++;
-      } /* endwhile */
-      *copy = '\0';                /* don't forget to close the string with 0 */
+   valid_intl_kludge = parseINTL(msg->text, &intl_from, &intl_to);
 
-      msg->origAddr.point = atoi(buffer);
-   } else {
-      msg->origAddr.point = 0;
-   } /* endif */
-
-   /* and the same for TOPT */
-   copy = buffer;
-   start = strstr(msg->text, "\001TOPT");
-   if (start) {
-      start += 6;                  /* skip "TOPT " */
-      while (isdigit(*start) && (copy<buffer+sizeof(buffer)-1)) {     /* copy all digit data */
-         *copy = *start;
-         copy++;
-         start++;
-      } /* endwhile */
-      *copy = '\0';                /* don't forget to close the string with 0 */
-
-      msg->destAddr.point = atoi(buffer);
-   } else {
-      msg->destAddr.point = 0;
-   } /* endif */
-
-   /* Parse the INTL Kludge */
-
-   start = strstr(msg->text, "\001INTL ");
-   if (start) {
-
-      start += 6;                 /*  skip "INTL " */
-
-      for (;;)
-      {
-          while (*start && isspace(*start)) start++;
-          if (!*start) break;
-
-          copy = buffer;
-          while (*start && !isspace(*start) && (copy<buffer+sizeof(buffer)-1)) *copy++ = *start++;
-          *copy='\0';
-          if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
-          string2addr(buffer, &intl_to);
-
-          while (*start && isspace(*start)) start++;
-          if (!*start) break;
-
-          copy = buffer;
-          while (*start && !isspace(*start) && (copy<buffer+sizeof(buffer)-1)) *copy++ = *start++;
-          *copy='\0';
-          if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
-          string2addr(buffer, &intl_from);
-
-          intl_from.point = msg->origAddr.point;
-          intl_to.point = msg->destAddr.point;
-
-          valid_intl_kludge = 1;
-	  break;
-      }
-   }
+   /* TODO: check whether we should zero point numbers if no fpmt/topt are present */
+   if(valid_intl_kludge & FMPT_FOUND)
+      msg->origAddr.point = intl_from.point;
+   if(valid_intl_kludge & TOPT_FOUND)
+      msg->destAddr.point = intl_to.point;
 
    /* now interpret the INTL kludge */
 
@@ -317,7 +295,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
       /* the to part is more complicated */
 
       zonegated = 0;
-
+      /* TODO: Really? net == zone, node == zone? */
       if (msg->destAddr.net == intl_from.zone &&
           msg->destAddr.node == intl_to.zone)
       {
