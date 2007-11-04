@@ -23,7 +23,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -97,7 +97,7 @@ s_pktHeader *openPkt(FILE *pkt)
 
   header->origAddr.net = getUINT16(pkt);
   header->destAddr.net = getUINT16(pkt);
-  
+
   header->loProductCode = (UCHAR) getc(pkt);
   header->majorProductRev = (UCHAR) getc(pkt);
 
@@ -123,7 +123,7 @@ s_pktHeader *openPkt(FILE *pkt)
 		  return NULL;
 	  } /* endif */
   }
-  
+
   getUINT16(pkt); getUINT16(pkt); /* read the additional zone info */
 
   header->origAddr.point = getUINT16(pkt);
@@ -167,7 +167,7 @@ int parseINTL(char *msgtxt, hs_addr *from, hs_addr *to)
    /* Parse the INTL Kludge */
 
    start = strstr(msgtxt, "\001INTL ");
-   if (start) 
+   if (start)
    {
       start += 6;                 /*  skip "INTL " */
 
@@ -184,31 +184,32 @@ int parseINTL(char *msgtxt, hs_addr *from, hs_addr *to)
    } else
        w_log(LL_DEBUGB, "Warning: no INTL kludge found in message");
 
-   /* TODO: check whether we should zero point numbers if no fpmt/topt are present */
    start = strstr(msgtxt, "\001FMPT");
-   if (start) 
+   if (start)
    {
       start += 6;                  /* skip "FMPT " */
       temp_point = atoi(start);
       from->point = (temp_point >= 0 && temp_point <= 32767)?(sword)temp_point:0;
 	  /* Actually there should not be */
       result |= FMPT_FOUND;
-   } else {
-      from->point = 0;
    }
-
+   else
+   /* while standard says that no FMPT kludge means zero point, we wont change
+	* point nuber here but will rely on interpretation of caller function */
+   ;
    /* and the same for TOPT */
    start = strstr(msgtxt, "\001TOPT");
-   if (start) 
+   if (start)
    {
       start += 6;                  /* skip "TOPT " */
       temp_point = atoi(start);
       to->point = (temp_point >= 0 && temp_point <= 32767)?(sword)temp_point:0;
       result |= TOPT_FOUND;
-   } else {
-      to->point = 0;
    }
-
+   else
+   /* while standard says that no TOPT kludge means zero point, we wont change
+	* point nuber here but will rely on interpretation of caller function */
+   ;
 return result;
 }
 
@@ -227,7 +228,7 @@ void correctEMAddr(s_message *msg)
 
       if (*(start) == ')') {           /*  if there is no ')', there is no origin */
 
-         while (--start > temp && 
+         while (--start > temp &&
                 *start != '(' &&       /*  find beginning '(' */
                 !isspace(*start));
 
@@ -251,8 +252,8 @@ void correctEMAddr(s_message *msg)
       }
    }
 
-   /*  Another try... 
-	*  But if MSGID isn't present or broken and origin is broken 
+   /*  Another try...
+	*  But if MSGID isn't present or broken and origin is broken
 	*  then PATH may be broken too...
     */
    start = strstr(msg->text, "\001PATH: ");
@@ -269,22 +270,24 @@ void correctEMAddr(s_message *msg)
 void correctNMAddr(s_message *msg, s_pktHeader *header)
 {
    char *text = NULL;
-   int valid_intl_kludge = 0;
+   int valid_intl_kludge;
    int zonegated = 0;
    hs_addr intl_from = msg->origAddr, intl_to = msg->destAddr;
    UINT i;
 
    valid_intl_kludge = parseINTL(msg->text, &intl_from, &intl_to);
 
-   /* TODO: check whether we should zero point numbers if no fpmt/topt are present */
+   /* Assign point numbers if FMPT/TOPT kludges are found */
    if(valid_intl_kludge & FMPT_FOUND)
       msg->origAddr.point = intl_from.point;
    if(valid_intl_kludge & TOPT_FOUND)
       msg->destAddr.point = intl_to.point;
+   /* if no kludges are found then leave current values
+    *  which most possible are zeroes */
 
    /* now interpret the INTL kludge */
 
-   if (valid_intl_kludge)
+   if (valid_intl_kludge & INTL_FOUND)
    {
       /* the from part is easy - we can always use it */
 
@@ -295,7 +298,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
       /* the to part is more complicated */
 
       zonegated = 0;
-      /* TODO: Really? net == zone, node == zone? */
+
       if (msg->destAddr.net == intl_from.zone &&
           msg->destAddr.node == intl_to.zone)
       {
@@ -360,9 +363,9 @@ void correctAddr(s_message *msg,s_pktHeader *header)
 				break;
 			}
 		}
-		
+
 	} else msg->netMail = 1;
-	
+
 	if (msg->netMail) correctNMAddr(msg,header);
 	else correctEMAddr(msg);
 }
@@ -570,14 +573,14 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
     int len, badmsg=0;
     struct tm tm;
     long unread;
-    
+
     if (2 != getUINT16(pkt)) {
         *message = NULL;
-        
+
         unread = ftell(pkt);
         fseek(pkt, 0L, SEEK_END);
         unread = ftell(pkt) - unread; /*  unread bytes */
-        
+
         if (unread) {
             w_log(LL_ERR,"There are %d bytes of unknown data at the end of pkt file!",
                 unread);
@@ -585,28 +588,28 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
         }
         else return 0; /*  end of pkt file */
     }
-    
+
     msg = (s_message*) safe_malloc(sizeof(s_message));
     memset(msg, '\0', sizeof(s_message));
-    
+
     msg->origAddr.node   = getUINT16(pkt);
     msg->destAddr.node   = getUINT16(pkt);
     msg->origAddr.net    = getUINT16(pkt);
     msg->destAddr.net    = getUINT16(pkt);
     msg->attributes      = getUINT16(pkt);
-    
+
     getc(pkt); getc(pkt);                /*  read unused cost fields (2bytes) */
-    
+
     /* val: fgetsUntil0 (msg->datetime, 22, pkt, NULL);*/
     fread(msg->datetime, 20, 1, pkt);    /* read datetime field - 20 bytes */
     msg->datetime[20] = 0;               /* ensure it's null-terminated */
     parse_ftsc_date(&tm, (char*)msg->datetime);
     /* val: make_ftsc_date((char*)msg->datetime, &tm); */
-    
+
     if (globalBuffer==NULL) {
         globalBuffer = (UCHAR *) safe_malloc(BUFFERSIZE+1); /*  128K (32K in MS-DOS) */
     }
-    
+
     len = fgetsUntil0 ((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
     if (len > XMSG_TO_SIZE) {
         if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
@@ -617,7 +620,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
         badmsg++;
     }
     xstrcat(&msg->toUserName, (char *) globalBuffer);
-    
+
     fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
     if (len > XMSG_FROM_SIZE) {
         if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
@@ -628,7 +631,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
         badmsg++;
     }
     xstrcat(&msg->fromUserName, (char *) globalBuffer);
-    
+
     len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
     if (len > XMSG_SUBJ_SIZE) {
         if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
@@ -639,14 +642,14 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
         badmsg++;
     }
     xstrcat(&msg->subjectLine, (char *) globalBuffer);
-    
+
     if (badmsg) {
         freeMsgBuffers(msg);
         *message = NULL;
         w_log(LL_ERR, "wrong msg header: renaming pkt to bad.");
         return 2; /*  exit with error */
     }
-    
+
 #if !defined(__DOS__) || defined(__FLAT__)
 #ifdef DEBUG_HPT
     w_log(LL_DEBUG, "readMsgFromPkt()  32bit");
@@ -664,13 +667,13 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
     len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
     xstrcat(&msg->text, globalBuffer);
     msg->textLength+=len-1; /*  trailing \0 is not the text */
-    
+
     if( (len == BUFFERSIZE+1) ) {
         badmsg++;
         xstrscat(&msg->text, "\r* Message too big, truncated by ", versionStr, "\r",NULL);
         do {
             char *origin;
-            
+
             len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
             /* add kludges to end of striped text */
             if((origin=strstr(globalBuffer, " * Origin"))) {
@@ -682,9 +685,9 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
             globalBuffer);
     }
 #endif
-    
+
     correctAddr(msg, header);
-#ifndef DO_PERL 
+#ifndef DO_PERL
     {
         char *p, *q;
         /*  del "\001FLAGS" from message text */
@@ -694,7 +697,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
             msg->textLength -= (q-p+1);
         }
     }
-#endif    
+#endif
     *message = msg;
     return 1;
 }

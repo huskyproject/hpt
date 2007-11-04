@@ -627,7 +627,7 @@ void scanNMArea(s_area *area)
    dword           highestMsg, i, j;
    XMSG            xmsg;
    hs_addr         dest, orig;
-    hs_addr         intl_dest, intl_orig;
+   hs_addr         intl_dest = {0}, intl_orig = {0};
     char            *ctl;
     int             ctllen;
    int             for_us, from_us;
@@ -683,12 +683,11 @@ void scanNMArea(s_area *area)
        MsgReadMsg(msg, &xmsg, 0, 0, NULL, ctllen, (byte *)ctl);
        dest = xmsg.dest;
        orig = xmsg.orig;
-       memset(&intl_orig, 0, sizeof(hs_addr));
-       memset(&intl_dest, 0, sizeof(hs_addr));
        /*
         * if @INTL and optionally @TOPT/@FMPT found, take address
         * from there
         */
+       /* TODO: use correctNMAddr from pktread.c? */
        if (parseINTL(ctl, &intl_orig, &intl_dest))
        {
            if (addrComp(orig, intl_orig)) /* addresses are differ */
