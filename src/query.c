@@ -500,15 +500,16 @@ char* af_Req2Idle(char *areatag, char* report, hs_addr linkAddr)
                 areaNode->linksCount--;
                 queryAreasHead->nFlag = 1; /*  query was changed */
                 if(areaNode->linksCount == 1)
-                { ps_link UPlink;
+                { 
+                    ps_link UPlink;
                     strcpy(areaNode->type,czIdleArea);
                     areaNode->bTime = tnow;
                     areaNode->eTime = tnow + config->idlePassthruTimeout*secInDay;
                     w_log(LL_AREAFIX, "areafix: make request idle for area: %s", areaNode->name);
                     /* send unsubscribe message to uplink when moving from freq to idle
                      * because last link in queue unsibscribed before receive echo   */
-                   UPlink = getLinkFromAddr(config,tmpNode->downlinks[0]);
-                   if (UPlink) forwardRequestToLink(tmpNode->name, UPlink, NULL, 1);
+                    UPlink = getLinkFromAddr(config, areaNode->downlinks[0]);
+                    if (UPlink) forwardRequestToLink(areaNode->name, UPlink, NULL, 1);
                 }
                 xscatprintf(&report, " %s %s  request cancelled\r",
                     areaNode->name,
