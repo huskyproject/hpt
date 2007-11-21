@@ -941,17 +941,13 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
                     /*  mail from us */
                     (addrComp(pktOrigAddr,*echo->useAka)==0)))
                     forwardMsgToLinks(echo, msg, pktOrigAddr);
-#ifdef DEBUG_HPT
-                w_log( LL_SRCLINE, "%s::processEMMsg():%d", __FILE__, __LINE__);
-#endif
+                w_dbglog( LL_SRCLINE, "%s::processEMMsg():%d", __FILE__, __LINE__);
                 /* todo: remove TID from local-generated msgs by hpt post -x
                 * (if (addrComp(pktOrigAddr,*echo->useAka)==0)) */
 
                 if (messCC && !dontdocc)
                     ccrc=carbonCopy(messCC, NULL, echo);
-#ifdef DEBUG_HPT
-                w_log( LL_SRCLINE, "%s::processEMMsg():%d", __FILE__, __LINE__);
-#endif
+                w_dbglog( LL_SRCLINE, "%s::processEMMsg():%d", __FILE__, __LINE__);
                 if (ccrc <= 1) {
                     echo->imported++;  /*  area has got new messages */
 #ifdef ADV_STAT
@@ -1465,9 +1461,7 @@ int processDir(char *directory, e_tossSecurity sec)
 #endif
 
     while ((filename = husky_readdir(dir)) != NULL) {
-#ifdef DEBUG_HPT
-	w_log(LL_DEBUGV, "testing %s\n", filename);
-#endif
+	w_dbglog(LL_DEBUGV, "testing %s\n", filename);
 
 	dummy = (char *) safe_malloc(dirNameLen + strlen(filename) + 1);
 	strcpy(dummy,directory);
@@ -1508,9 +1502,7 @@ int processDir(char *directory, e_tossSecurity sec)
     for ( filenum=0; filenum < nfiles; filenum++) {
 	arcFile = pktFile = 0;
 	dummy = (files[filenum]).fileName;
-#ifdef DEBUG_HPT
-	w_log(LL_DEBUGV,"testing sorted %s\n", dummy);
-#endif
+	w_dbglog(LL_DEBUGV,"testing sorted %s\n", dummy);
 	if ((pktFile = patimat(dummy+dirNameLen, "*.pkt")) == 0)
 	    if (isArcMail(dummy+dirNameLen))
 		arcFile = 1;

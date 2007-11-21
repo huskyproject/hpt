@@ -651,18 +651,14 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
     }
 
 #if !defined(__DOS__) || defined(__FLAT__)
-#ifdef DEBUG_HPT
-    w_log(LL_DEBUG, "readMsgFromPkt()  32bit");
-#endif
+    w_dbglog(LL_DEBUG, "readMsgFromPkt()  32bit");
     do {
         len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
         xstrcat(&msg->text, (char*)globalBuffer);
         msg->textLength+=len-1; /*  trailing \0 is not the text */
     } while (len == BUFFERSIZE+1);
 #else
-#ifdef DEBUG_HPT
-    w_log(LL_DEBUG, "readMsgFromPkt() DOS-16");
-#endif
+    w_dbglog(LL_DEBUG, "readMsgFromPkt() DOS-16");
     /* DOS: read only one segment of message */
     len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, "\n");
     xstrcat(&msg->text, globalBuffer);
