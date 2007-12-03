@@ -40,8 +40,8 @@ tearline generation added
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
-#include <huskylib/compiler.h>
+#include <assert.h>
+#include <malloc.h>
 #include <huskylib/huskylib.h>
 
 #ifdef HAS_SYS_SYSEXITS_H
@@ -53,9 +53,7 @@ tearline generation added
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
-#include <huskylib/xstr.h>
 #include <fidoconf/afixcmd.h>
-#include <huskylib/recode.h>
 #include <areafix/areafix.h>
 
 #include <version.h>
@@ -77,6 +75,11 @@ tearline generation added
 #define LINPERSECTION 150
 
 #define ENCODE_BYTE(b) (((b) == 0) ? 0x60 : ((b) + 0x20))
+
+char uu_b[] = "\"begin\" to last encoded line)\r";
+char uu_m[] = "first to last encoded line)\r";
+char uu_e[] = "first encoded line to \"end\")\r";
+char uu_end[] = "end\r";
 
 void print_help(void) {
     fprintf(stdout,"\n   Post a message to area:\n");
@@ -118,36 +121,10 @@ void print_help(void) {
     exit(EX_OK);
 }
 
-void post(int c, unsigned int *n, char *params[])
+void init_libs(void)
 {
-    char *area = NULL, *tearl = NULL, *origin = NULL, *flags = NULL;
-    FILE *text = NULL;
-    FILE *tmpfile = NULL;
-    char *tmpname = NULL;
-    char *fname = NULL;
-    s_area *echo = NULL;
-    long attr;
-    int sections=0;
-    int part = 0;
-    int subjLen = 0;
-    int linesPerSec=LINPERSECTION;
     struct _minf m;
-    
-    s_message msg;
-    
-    CHAR *textBuffer = NULL;
-    
-    int quit;
-    int export=0;
-    int erasef=0;
-    int uuepost=0;
-    int perms;
-    
-    time_t t = time (NULL);
-    struct tm *tm;
-    
-    if (params[*n]!='\0' && params[*n][1]=='h') print_help();
-    
+
     if (config==NULL) processConfig();
     /* init areafix */
     if ( !init_hptafix() ) exit_hpt("Can't init Areafix library", 1);
@@ -160,382 +137,772 @@ void post(int c, unsigned int *n, char *params[])
             exit_hpt("MsgApiOpen Error",1);
         } /*endif */
     }
-    
-    memset(&msg, 0, sizeof(s_message));
-    
-    for (quit = 0;*n < (unsigned int)c && !quit; (*n)++) {
-        if (*params[*n] == '-' && params[*n][1] != '\0') {
-            switch(params[*n][1]) {
-            case 'a':    /*  address */
-                switch(params[*n][2]) {
-                case 't':
-                    parseFtnAddrZS(params[++(*n)], &(msg.destAddr));
-                    break;
-                case 'f':
-                    parseFtnAddrZS(params[++(*n)], &(msg.origAddr));
-                    break;
-                default:
-                    quit = 1;
-                    break;
-                }; break;
-                case 'n':    /*  name */
-                    switch(params[*n][2]) {
-                    case 't':
-                        msg.toUserName = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
-                        strcpy(msg.toUserName, params[*n]);
+}
+
+struct post_parameters {
+    char *name_from;    /* should be freed */
+    int name_from_len;
+    char *name_to;      /* should be freed */
+    int name_to_len;
+    char *address_from;
+    char *address_to;
+    char *subject;      /* should be freed */
+    int subject_len;
+    char *area_name;
+    char *tearline;     /* should be freed */
+    int tearline_len;
+    char *origin;       /* should be freed */
+    int origin_len;
+    long attr;
+    char *flags;        /* should be freed */
+    int export_mail;
+    int erase_file;
+    int uue;
+    int sum_r;
+    char *file;
+    char *fname;        /* should be freed */
+    int file_size;
+    s_area *area;
+    char *text_head;    /* should be freed */
+    char *text_foot;    /* should be freed */
+    int sections;
+    char *temp_file;    /* should be freed */
+    long *sectioning;   /* should be freed */
+    int perms;
+};
+
+void free_post_parameters(struct post_parameters *p)
+{
+    nfree(p->name_to);
+    nfree(p->name_from);
+    nfree(p->subject);
+    nfree(p->tearline);
+    nfree(p->origin);
+    nfree(p->flags);
+    nfree(p->fname);
+    nfree(p->text_head);
+    nfree(p->text_foot);
+    nfree(p->temp_file);
+    nfree(p->sectioning);
+}
+
+int strdup_convert(char **dest, char *src)
+{
+    size_t len;
+
+    assert(dest != NULL);
+    if(src == NULL)
+    {
+        *dest = NULL;
+        return 0;
+    }
+
+    len = strlen(src);
+    *dest = malloc(len + 1);
+    if(*dest == NULL)
+    {
+        w_log(LL_CRIT, "out of memory");
+        return -1;
+    }
+
 #ifdef __NT__
-                        CharToOem(msg.toUserName, msg.toUserName);
-#endif
-                        break;
-                    case 'f':
-                        msg.fromUserName = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
-                        strcpy(msg.fromUserName, params[*n]);
-#ifdef __NT__
-                        CharToOem(msg.fromUserName, msg.fromUserName);
-#endif
-                        break;
-                    default:
-                        quit = 1;
-                        break;
-                    }; break;
-                    case 'f':    /*  flags */
-                        for ((*n)++; params[*n]!=NULL; (*n)++) {
-                            char *p;
-                            if ((attr=str2attr(params[*n])) != -1L)
-                                msg.attributes |= attr;
-                            else if ((p=extattr(params[*n])) != NULL)
-                                xscatprintf(&flags, " %s", p);
-                            else
-                                break;
-                        }
-                        (*n)--;
-                        break;
-                    case 'e':    /*  echo name */
-                        area = params[++(*n)];
-                        echo = getNetMailArea(config, area);
-                        if (echo == NULL) {
-                            echo = getArea(config, area);
-                            if (echo == &(config->badArea)) {
-                                w_log(LL_ERROR, "post: wrong area to post: %s" , area);
-                                *n = (unsigned int)c;
-                                quit = 1;
-                            }
-                        } else /* found NetmailArea */
-                            msg.netMail = 1;
-                        break;
-                    case 's':    /*  subject */
-                        msg.subjectLine = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
-                        strcpy(msg.subjectLine, params[*n]);
-#ifdef __NT__
-                        CharToOem(msg.subjectLine, msg.subjectLine);
-#endif
-                        subjLen=strlen(msg.subjectLine);
-                        break;
-                    case 'x':    /*  export message */
-                        export=1;
-                        break;
-                    case 'd':    /*  erase input file after posting */
-                        erasef=1;
-                        break;
-                    case 'u':    /*  uue-multipart posting */
-                        uuepost=1;
-                        linesPerSec = atoi(params[(*n)]+2);
-                        if(linesPerSec<10)
-                            linesPerSec=LINPERSECTION;
-                        break;
-                    case 'z':
-                        tearl = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
-                        strcpy(tearl, params[*n]);
-#ifdef __NT__
-                        CharToOem(tearl, tearl);
-#endif
-                        break;
-                    case 'o':
-                        origin = (char *) safe_malloc(strlen(params[++(*n)]) + 1);
-                        strcpy(origin, params[*n]);
-#ifdef __NT__
-                        CharToOem(origin, origin);
-#endif
-                        break;
-                    default:
-                        w_log(LL_ERROR, "post: unknown switch %s", params[*n]);
-                        quit = 1;
-                        break;
-            };
-        } else if (textBuffer == NULL) {
-            if (strcmp(params[*n], "-")) {
-                if(fexist(params[*n])) 
-                    text = fopen(params[*n], "rt");
-            }
-            else
-                text = stdin;
-            if (text != NULL) {
-                if( uuepost && text != stdin)
-                {
-                    long lines = 1;
-                    int	linelen;
-                    int linecnt;
-                    UCHAR inbuf [MAX_LINELEN];
-                    UCHAR *inbytep;
-                    char outbuf [5];
-                    
-                    xstrscat(&tmpname, config->tempOutbound, "hptucode.$$$",NULL);
-                    text = freopen(params[*n], "rb", text);
-                    tmpfile = fopen (tmpname, "wt");
-                    if (tmpfile == NULL)
-                    {
-                        exit_hpt("Couldn't open tmpfile file", 1);
-                    }
-                    fname = GetFilenameFromPathname(params[*n]);
-                    /* Write the 'begin' line, giving it a mode of 0600 */
-		    perms = 0644;
-#ifdef __UNIX__
-		    {
-			struct stat st;
-			if (fstat(fileno(text), &st) == 0)
-			    perms = st.st_mode & 0777;
-		    }
+    CharToOem(src, *dest);
 #else
-		    if (patimat(fname, "*.exe") ||
-		        patimat(fname, "*.com"))
-			perms = 0755;
+    memcpy(*dest, src, len + 1);
 #endif
-                    fprintf (tmpfile, "begin %03o %s\n", perms, fname);
-                    do
-                    {
-                        
-                        linelen = fread (inbuf, 1, MAX_LINELEN, text);
-                        fputc (ENCODE_BYTE (linelen), tmpfile);
-                        
-                        /* Encode the line */
-                        for (linecnt = linelen, inbytep = inbuf;
-                        linecnt > 0;
-                        linecnt -= 3, inbytep += 3)
-                        {
-                            /* Encode 3 bytes from the input buffer */
-                            outbuf [0] = ENCODE_BYTE ((inbytep [0] & 0xFC) >> 2);
-                            outbuf [1] = ENCODE_BYTE (((inbytep [0] & 0x03) << 4) +
-                                ((inbytep [1] & 0xF0) >> 4));
-                            outbuf [2] = ENCODE_BYTE (((inbytep [1] & 0x0F) << 2) +
-                                ((inbytep [2] & 0xC0) >> 6));
-                            outbuf [3] = ENCODE_BYTE (inbytep [2] & 0x3F);
-                            outbuf [4] = '\0';
-                            
-                            /* Write the 4 encoded bytes to the file */
-                            fprintf (tmpfile, "%s", outbuf);
-                        }
-                        
-                        fprintf (tmpfile, "\n");
-                        lines++;
-                    } while (linelen != 0);
-                    
-                    fprintf (tmpfile, "end\n");
-                    lines++;
-                    sections = (lines%linesPerSec==0) ?
-                        lines/linesPerSec : lines/linesPerSec+1;
-                    
-                    fclose (tmpfile);
-                    tmpfile = fopen (tmpname, "rt");
-                    if (tmpfile == NULL)
-                    {
-                        exit_hpt("Couldn't open tmpfile file", 1);
-                    }
-                    textBuffer = safe_malloc(4*(MAX_LINELEN/3 + 1));
+return (int)len;
+}
+
+int parse_post_command(struct post_parameters *p, unsigned int argc, char **argv, unsigned int *n)
+{
+    char *cur_arg;
+
+    for (; *n < argc; (*n)++)
+    {
+        cur_arg = argv[*n];
+        if (*cur_arg == '-' && cur_arg[1] != '\0') {
+            switch(cur_arg[1]) {
+            case 'a':   /*  address */
+                if(*n + 1 >= argc)
+                    goto unknown_switch;
+                if(cur_arg[2] == 't' && cur_arg[3] == 0)
+                    p->address_to = argv[++*n];
+                else if(cur_arg[2] == 'f' && cur_arg[3] == 0)
+                    p->address_from = argv[++*n];
+                else
+                    goto unknown_switch;
+            break;
+            case 'n':   /*  name */
+                if(*n + 1 >= argc)
+                    goto unknown_switch;
+                if(cur_arg[2] == 't' && cur_arg[3] == 0)
+                {
+                    if(-1 == (p->name_to_len = strdup_convert(&p->name_to, argv[++*n])))
+                        goto low_mem;
+                }
+                else if(cur_arg[2] == 'f' && cur_arg[3] == 0)
+                {
+                    if(-1 == (p->name_from_len = strdup_convert(&p->name_from, argv[++*n])))
+                        goto low_mem;
                 }
                 else
-                {
-                    int c, cursize=TEXTBUFFERSIZE;
-                    /* reserve 512kb + 1 (or 32kb+1) text Buffer */
-                    textBuffer = safe_malloc(cursize);
-                    for (msg.textLength = 0;; msg.textLength++) {
-                        if (msg.textLength >= cursize)
-                            textBuffer = safe_realloc(textBuffer,
-                                                      cursize += TEXTBUFFERSIZE);
-                        c = getc(text);
-                        if (c == EOF || c == 0) {
-                            textBuffer[msg.textLength] = 0;
-                            break;
-                        }
-                        textBuffer[msg.textLength] = (char)c;
-                        if ('\r' == textBuffer[msg.textLength])
-                            msg.textLength--;
-                        if ('\n' == textBuffer[msg.textLength])
-                            textBuffer[msg.textLength] = '\r';
-                    }
-                } /* endfor */
-                while (!feof(text))
-                    getc(text);
-                if (strcmp(params[*n], "-"))
-                    fclose(text);
-                if (strcmp(params[*n], "-")&&erasef==1)
-                    remove(params[*n]);
-                if( uuepost && text == stdin)
-                {
-                    quit = 1;
-                    nfree(textBuffer);
-                }
-            } else {
-                w_log(LL_ERROR, "post: failed to open input file %s: %s", params[*n], strerror(errno));
-                quit = 1;
-            }
-        } else {
-            w_log(LL_ERROR, "post: several input files in cmd line");
-            quit = 1;
-        }
-    }
-    /*  won't be set in the msgbase, because the mail is processed if it were received */
-    (*n)--; tm = localtime(&t);
-    fts_time((char *)msg.datetime, tm);
-    if ((msg.destAddr.zone != 0 || area) && (textBuffer != NULL) && !quit) {
-        /*  Dumbchecks */
-        if (msg.fromUserName == NULL)
-            msg.fromUserName = safe_strdup(config->sysop);
-        if (msg.toUserName == NULL)
-            msg.toUserName = safe_strdup("All");
-        if (msg.subjectLine == NULL)
-            msg.subjectLine = safe_calloc(1, 1);
-        
-        if (msg.netMail==0) msg.netMail = (char)(area == NULL);
-        /*FIXME*/
-        if (msg.netMail && (echo==NULL)) echo=&(config->netMailAreas[0]);
-        
-        if (msg.origAddr.zone == 0) /*  maybe origaddr isn't specified ? */
-            msg.origAddr = echo->useAka[0];
-        
-        w_log(LL_START, "Start posting...");
-        part = 0; 
-        do
-        {
-            
-            if(!msg.netMail) memset(&msg.destAddr, '\0', sizeof(hs_addr));
-
-            msg.text = createKludges(config,
-                                     (msg.netMail == 0) ? strUpper(area) : NULL,
-                                     &msg.origAddr,
-                                     &msg.destAddr,
-                                     versionStr);
-
-            if ((export || !echo->fileName) && !config->disableTID)
-                xscatprintf(&msg.text, "\001TID: %s\r", versionStr);
-
-            if (flags) xscatprintf(&msg.text, "\001FLAGS%s\r", flags);
-
-            if( uuepost )
-            {
-                /* char *res; */
-                int i; 
-                xscatprintf(&msg.text, "\rsection %d of %d of file %s < %s >\r\r",
-                            part+1,sections,fname,versionStr);
-
-                if (part>0) msg.subjectLine[subjLen]='\0';
-                xscatprintf(&msg.subjectLine," [%d/%d]",part+1,sections);
-
-                for(i = 0; i < linesPerSec; i++)
-                {
-                    char *res = readLine(tmpfile);
-                    if(res)
-                    {
-                        xscatprintf(&msg.text,"%s\r",res);
-                        nfree(res);
-                    }
+                    goto unknown_switch;
+            break;
+            case 'f':   /*  flags */
+                if(cur_arg[2] != 0)
+                    goto unknown_switch;
+                for (++*n; *n < argc; ++*n) {
+                    int attr;
+                    char *flag;
+                    if ((attr = str2attr(argv[*n])) != -1L)
+                        p->attr |= attr;
+                    else if ((flag = extattr(argv[*n])) != NULL)
+                        xscatprintf(&p->flags, " %s", flag);
                     else
-                    {
                         break;
-                    }
                 }
-                xscatprintf(&msg.text,"section %d end\r",part+1);
-                part++;
+                --*n;
+            break;
+            case 'e':   /*  echo name */
+                if(cur_arg[2] != 0 || *n + 1 >= argc)
+                    goto unknown_switch;
+                p->area_name = argv[++*n];
+            break;
+            case 's':   /*  subject */
+                if(cur_arg[2] != 0 || *n + 1 >= argc)
+                    goto unknown_switch;
+                if(-1 == (p->subject_len = strdup_convert(&p->subject, argv[++*n])))
+                    goto low_mem;
+            break;
+            case 'x':   /*  export message */
+                if(cur_arg[2] != 0)
+                    goto unknown_switch;
+                p->export_mail=1;
+            break;
+            case 'd':   /*  erase input file after posting */
+                if(cur_arg[2] != 0)
+                    goto unknown_switch;
+                p->erase_file=1;
+            break;
+            case 'u':   /*  uue-multipart posting */
+                p->uue = atoi(cur_arg+2); /* TODO: additional checks would be great */
+                if(p->uue < 10)
+                    p->uue = LINPERSECTION;
+            break;
+            case 'z':   /*  tearline */
+                if(cur_arg[2] != 0 || *n + 1 >= argc)
+                    goto unknown_switch;
+                if(-1 == (p->tearline_len = strdup_convert(&p->tearline, argv[++*n])))
+                    goto low_mem;
+            break;
+            case 'o':   /*  origin */
+                if(cur_arg[2] != 0 || *n + 1 >= argc)
+                    goto unknown_switch;
+                if(-1 == (p->origin_len = strdup_convert(&p->origin, argv[++(*n)])))
+                    goto low_mem;
+            break;
+            default:
+                goto unknown_switch;
+            }
+        }
+        else
+            break;
+    }
+
+    /* We discovered first non-switch argument or end of command line */
+    if(*n < argc)
+    {
+        p->file = argv[*n];
+        ++*n;
+    }
+    else
+    {
+        w_log(LL_CRIT, "post: no filename is given");
+        return 3;
+    }
+
+    return 0;
+unknown_switch:
+    w_log(LL_CRIT, "post: unknown or incomplete switch %s", cur_arg);
+    return 1;
+low_mem:
+    w_log(LL_CRIT, "post: low memory");
+    return 2;
+}
+
+int sum_r_byte(UCHAR byte, int checksum)
+{
+    checksum = (checksum >> 1) + ((checksum & 1) << 15); /* ror */
+    checksum += byte;
+    checksum &= 0xffff;
+return checksum;
+}
+
+int sum_r(UCHAR *buffer, int length, int checksum)
+{
+    int i;
+
+    for(i = 0; i < length; ++i)
+        checksum = sum_r_byte(buffer[i], checksum);
+return checksum;
+}
+
+/* in_line buffer size should be multiple of 3 zero-padded if needed */
+/* out_line buffer should be ceiling(len/3)*4 + 1 + "\n" bytes long */
+int uuencode_line(UCHAR *in_line, int len, UCHAR *out_line, int *sum_r_src, int *sum_r_enc)
+{
+    UCHAR *in_ptr = in_line, *out_ptr = out_line;
+    int i;
+
+    assert(in_line != NULL);
+    assert(out_line != NULL);
+    assert(len < 0x40);
+
+    if(sum_r_src != NULL)
+        *sum_r_src = sum_r(in_line, len, *sum_r_src);
+
+    *out_ptr++ = ENCODE_BYTE ((UCHAR)len);
+
+    /* Encode the line */
+    for (i = 0; i < len; i += 3, in_ptr += 3, out_ptr +=4)
+    {
+        /* Encode 3 bytes from the input buffer */
+        out_ptr[0] = ENCODE_BYTE  ((in_ptr[0]       ) >> 2);
+        out_ptr[1] = ENCODE_BYTE (((in_ptr[0] & 0x03) << 4) |
+                                  ((in_ptr[1]       ) >> 4));
+        out_ptr[2] = ENCODE_BYTE (((in_ptr[1] & 0x0F) << 2) |
+                                  ((in_ptr[2]       ) >> 6));
+        out_ptr[3] = ENCODE_BYTE   (in_ptr[2] & 0x3F);
+    }
+
+    if(sum_r_enc != NULL)
+    {
+        *sum_r_enc = sum_r(out_line, out_ptr - out_line, *sum_r_enc);
+        *sum_r_enc = sum_r_byte(0x0a, *sum_r_enc);
+    }
+    *out_ptr++ = '\r';
+return out_ptr - out_line;
+}
+
+FILE *uuencode_file(FILE *input, struct post_parameters *p)
+{
+    unsigned int part = 0, max_sections = 16, sect_size = 0;
+    int lines = 0, sum_r_sect = 0;
+    size_t linelen, outlen;
+    UCHAR inbuf[MAX_LINELEN];
+    UCHAR outbuf[MAX_LINELEN/3*4+1+1]; /* + \r + prefix */
+    FILE *tmpfile = NULL;
+    char *begin_line = NULL;
+
+    assert(MAX_LINELEN%3 == 0);
+    if((p->sectioning = malloc(sizeof(long)*max_sections)) == NULL)
+        return NULL;
+    xstrscat(&p->temp_file, config->tempOutbound, "hptucode.$$$",NULL);
+    tmpfile = fopen(p->temp_file, "wb");
+    if (tmpfile == NULL)
+    {
+        w_log(LL_ERROR, "post: failed to open temp file %s: %s",
+                p->temp_file, strerror(errno));
+        return NULL;
+    }
+
+    p->sectioning[0] = 0;
+    /* Write the 'begin' line, giving it a mode of 0600 */
+    sect_size = xscatprintf(&begin_line, "begin %03o %s\r", p->perms, p->fname);
+    sum_r_sect = sum_r((UCHAR*)begin_line, sect_size - 1, sum_r_sect);
+    sum_r_sect = sum_r_byte(0x0a, sum_r_sect);
+    if(fwrite(begin_line, 1, sect_size, tmpfile) != sect_size)
+    {   /* error */
+        nfree(begin_line);
+        fclose(input);
+        fclose(tmpfile);
+        w_log(LL_ERROR, "post: temp file write error: %s", strerror(errno));
+        return NULL;
+    }
+    nfree(begin_line);
+    do
+    {
+        if(lines >= p->uue)
+        {
+            ++part;
+            if(part + 1 >= max_sections)
+            { /* yes, alloc in advance for one element that will mark eof */
+                max_sections *= 2;
+                p->sectioning = srealloc(p->sectioning, sizeof(long)*max_sections);
+            }
+            fprintf(tmpfile, "\rsum -r/size %d/%d section (from ", sum_r_sect, sect_size);
+            if(part == 1)
+                fwrite(uu_b, sizeof(uu_b)-1, 1, tmpfile);
+            else
+                fwrite(uu_m, sizeof(uu_m)-1, 1, tmpfile);
+            p->sectioning[part] = ftell(tmpfile);
+            lines = sect_size = 0;
+            sum_r_sect = 0;
+        }
+        linelen = fread(inbuf, 1, MAX_LINELEN, input);
+        p->file_size += linelen;
+        sect_size += outlen = uuencode_line(inbuf, linelen, outbuf, &p->sum_r, &sum_r_sect);
+
+        if(fwrite(outbuf, 1, outlen, tmpfile) != outlen)
+        {   /* error */
+            fclose(input);
+            fclose(tmpfile);
+            w_log(LL_ERROR, "post: temp file write error: %s", strerror(errno));
+            return NULL;
+        }
+        ++lines;
+    } while(linelen != 0);
+
+    sect_size += fwrite(uu_end, 1, sizeof(uu_end) - 1, tmpfile);
+    sum_r_sect = sum_r((UCHAR*)uu_end, sizeof(uu_end) - 2, sum_r_sect);
+    sum_r_sect = sum_r_byte(0x0a, sum_r_sect);
+
+    fprintf(tmpfile, "\rsum -r/size %d/%d section (from ", sum_r_sect, sect_size);
+    fwrite(uu_e, sizeof(uu_e)-1, 1, tmpfile);
+    fprintf(tmpfile, "sum -r/size %d/%d entire input file\r",
+            p->sum_r, p->file_size);
+
+    ++part;
+    assert(part < max_sections);
+    p->sectioning[part] = ftell(tmpfile);
+    p->sections = part;
+    p->sectioning = srealloc(p->sectioning, sizeof(long)*(p->sections + 1));
+
+    fclose(input);
+    fclose(tmpfile);
+return fopen(p->temp_file, "rb");
+}
+
+UINT uuencode2buf(struct post_parameters *p, char **text, UINT msg_len, FILE *input, int part)
+{
+    int sum_r_sect = 0, sect_size = 0, lines = 0;
+    UINT linelen, max_msg_len, outlen;
+    UCHAR inbuf[MAX_LINELEN];
+
+    if(part == 0)
+    {
+        msg_len += sect_size = xscatprintf(text,
+            "begin %03o %s\r", p->perms, p->fname);
+        sum_r_sect = sum_r((UCHAR*)*text + msg_len - sect_size,
+                           sect_size - 1, sum_r_sect);
+        sum_r_sect = sum_r_byte(0x0a, sum_r_sect);
+    }
+
+    assert(MAX_LINELEN%3 == 0);
+    max_msg_len = msg_len + (MAX_LINELEN/3*4+1+1) * p->uue;
+
+    *text = srealloc(*text, max_msg_len + 1);
+    do
+    {
+        linelen = fread(inbuf, 1, MAX_LINELEN, input);
+        assert(msg_len + (MAX_LINELEN/3*4+1+1) <= max_msg_len);
+        outlen = uuencode_line(inbuf, linelen, (UCHAR*)*text + msg_len, &p->sum_r, &sum_r_sect);
+        msg_len += outlen;
+        sect_size += outlen;
+        ++lines;
+    } while(linelen != 0 && lines < p->uue);
+    (*text)[msg_len] = '\0';
+    if(linelen == 0)
+    {
+        xstrcat(text, uu_end);
+        msg_len += sizeof(uu_end)-1;
+        sect_size += sizeof(uu_end)-1;
+        sum_r_sect = sum_r((UCHAR*)uu_end, sizeof(uu_end)-2, sum_r_sect);
+        sum_r_sect = sum_r_byte(0x0a, sum_r_sect);
+        msg_len += xscatprintf(text, "\rsum -r/size %d/%d section (from %s",
+                               sum_r_sect, sect_size, uu_e);
+        msg_len += xscatprintf(text, "sum -r/size %d/%d entire input file\r",
+                               p->sum_r, p->file_size);
+    }
+    else
+    {
+        if(part == 0)
+            msg_len += xscatprintf(text, "\rsum -r/size %d/%d section (from %s",
+                                   sum_r_sect, sect_size, uu_b);
+        else
+            msg_len += xscatprintf(text, "\rsum -r/size %d/%d section (from %s",
+                                   sum_r_sect, sect_size, uu_m);
+    }
+return msg_len;
+}
+
+FILE *open_input_file(struct post_parameters *p)
+{
+    FILE *input = NULL;
+
+    if (p->file == NULL)
+        return NULL;
+
+    if (p->file[0] == '-' && p->file[1] == 0)
+    {
+        if(p->uue)
+            w_log(LL_CRIT, "post: uuencoding of stdin is not implemented");
+        else
+            input = stdin;
+    }
+    else if(fexist(p->file))
+    {
+        input = fopen(p->file, (p->uue)?"rb":"rt");
+        if(input == NULL)
+        {
+            w_log(LL_ERROR, "post: failed to open input file %s: %s",
+                    p->file, strerror(errno));
+        }
+        else if(p->uue) /* Calculate number of sections */
+        {
+            long file_size, lines;
+
+            p->perms = 0644;
+#ifdef __UNIX__
+            {
+            struct stat st;
+            if (fstat(fileno(input), &st) == 0)
+                p->perms = st.st_mode & 0777;
+            }
+#else
+            if (patimat(p->file, "*.exe") ||
+                patimat(p->file, "*.com"))
+                p->perms = 0755;
+#endif
+
+            file_size = fsize(p->file);
+            if(file_size < 0)
+            {
+                /* no precalculation is possible for this file
+                 * or on current platform, fallback to temp file */
+                input = uuencode_file(input, p);
             }
             else
             {
-                xstrcat((char **)(&(msg.text)), (char *)textBuffer);
+                lines = (file_size + MAX_LINELEN - 1) / MAX_LINELEN + 1; /* +1 for zero-len line */
+                p->sections = (lines + p->uue - 1) / p->uue;
+                p->file_size = file_size;
             }
+        }
+    }
+    else
+        w_log(LL_ERROR, "post: input file '%s' does not exist", p->file);
+return input;
+}
 
-            if (msg.text[0] && msg.text[strlen(msg.text)-1] != '\r')
-                xscatprintf(&msg.text, "\r");
-            if (!msg.netMail || tearl)
-                xscatprintf(&msg.text, "--- %s\r",
-                  (tearl) ? tearl : (config->tearline) ? config->tearline : "");
-            if (!msg.netMail || origin)
-                xscatprintf(&msg.text, " * Origin: %s (%s)\r",
-                  (origin) ? origin : (config->origin) ? config->origin : config->name,
-                  aka2str(msg.origAddr));
+int process_parameters(struct post_parameters *p, s_message *msg)
+{
+    int result = 0;
 
-            msg.textLength = strlen(msg.text);
+    /* Copy given values or set defaults */
+    if(p->name_to != NULL)
+    {
+        msg->toUserName = p->name_to;
+        p->name_to = NULL;
+    }
+    else
+    {
+        msg->toUserName = safe_strdup("All");
+        p->name_to_len = 3;
+    }
 
-            if ((msg.destAddr.zone + msg.destAddr.net +
-                msg.destAddr.node + msg.destAddr.point)==0)
-                w_log(LL_POSTING,
-                "Posting msg from %u:%u/%u.%u -> %s in area: %s",
-                msg.origAddr.zone, msg.origAddr.net,
-                msg.origAddr.node, msg.origAddr.point,
-                msg.toUserName,
-                (area) ? area : echo->areaName);
-            else w_log(LL_POSTING,
-                "Posting msg from %u:%u/%u.%u -> %u:%u/%u.%u in area: %s",
-                msg.origAddr.zone, msg.origAddr.net,
-                msg.origAddr.node, msg.origAddr.point,
-                msg.destAddr.zone, msg.destAddr.net,
-                msg.destAddr.node, msg.destAddr.point,
-                (area) ? area : echo->areaName);
+    if(p->name_from != NULL)
+    {
+        msg->fromUserName = p->name_from;
+        p->name_from = NULL;
+    }
+    else
+    {
+        msg->fromUserName = safe_strdup(config->sysop);
+        p->name_from_len = strlen(config->sysop);
+    }
 
-            /*  recoding from internal to transport charSet */
-            if (config->outtab != NULL) {
-                recodeToTransportCharset((CHAR*)msg.fromUserName);
-                recodeToTransportCharset((CHAR*)msg.toUserName);
-                recodeToTransportCharset((CHAR*)msg.subjectLine);
-                recodeToTransportCharset((CHAR*)msg.text);
-            }
-            
-            if (!export && echo->fileName) {
-                msg.recode &= ~(REC_HDR|REC_TXT); /*  msg in transport Charset */
-                putMsgInArea(echo, &msg, 1, msg.attributes);
-            }
-            else {
-                if (msg.netMail) {
-                    processNMMsg(&msg, NULL, NULL, 0, MSGLOCAL);
-                }  else {
-                    processEMMsg(&msg, *(echo->useAka), 1, (MSGSCANNED|MSGSENT|MSGLOCAL));
-                }
-            }
-            nfree(msg.text);
-        } while (part < sections);
+    if (p->subject != NULL)
+    {
+        msg->subjectLine = p->subject;
+        p->subject = NULL;
+    }
+    else
+        msg->subjectLine = safe_calloc(1, 1);
 
-        if (export) 
+    strdup_convert(&p->fname, GetFilenameFromPathname(p->file));
+
+    /* Choose where to post */
+    if(p->area_name != NULL)
+    {
+        p->area = getNetMailArea(config, p->area_name);
+        if (p->area == NULL)
         {
-            closeOpenedPkt();
-            tossTempOutbound(config->tempOutbound);
-            writeDupeFiles();
-        }
+            p->area = getArea(config, p->area_name);
+            if (p->area == &(config->badArea)) {
+                w_log(LL_ERROR, "post: wrong area to post: %s", p->area_name);
+                return 1;
+            }
+        } else /* found NetmailArea */
+            msg->netMail = 1;
+    }
+    else /* first netmail area is default */
+    {
+        msg->netMail = 1;
+        p->area = &(config->netMailAreas[0]);
+    }
 
-        nfree(tearl); nfree(origin);
-        if( uuepost )
+    /* Decide on addresses */
+    assert(p->area != NULL);
+    if(p->address_from != NULL)
+    {
+        /* set defaults */
+        msg->origAddr.zone = config->addr[0].zone;
+        msg->origAddr.net = config->addr[0].net;
+        result = parseFtnAddrZ(p->address_from, &(msg->origAddr), FTNADDR_NODE, NULL);
+        if(result & FTNADDR_ERROR)
         {
-            fclose(tmpfile);
-            remove(tmpname);
+            w_log(LL_ERROR, "post: wrong 'from' address: %s", p->address_from);
+            return 1;
         }
-        if ((config->echotosslog) && (!export)) {
-            FILE *f=fopen(config->echotosslog, "a");
-            if (f==NULL)
-                w_log(LL_ERROR, "Could not open or create EchoTossLogFile.");
-            else {
-                fprintf(f, "%s\n", echo->areaName);
-                fclose(f);
+    }
+    else
+        msg->origAddr = p->area->useAka[0];
+
+    if(msg->netMail == 1)
+    {
+        if(p->address_to)
+        {
+            /* set defaults */
+            msg->destAddr.zone = msg->origAddr.zone;
+            msg->destAddr.net = msg->origAddr.net;
+            result = parseFtnAddrZ(p->address_to, &msg->destAddr, FTNADDR_NODE, NULL);
+            if(result & FTNADDR_ERROR)
+            {
+                w_log(LL_ERROR, "post: wrong 'to' address: %s", p->address_to);
+                return 1;
             }
         }
-        w_log(LL_STOP, "End posting");
+        else
+        {
+            w_log(LL_ERROR, "post: attempt to post netmail msg without specifying dest. address");
+            return 1;
+        }
     }
-    
-    if (textBuffer == NULL && !quit) {
-        w_log(LL_CRIT, "post: no input source specified");
-        /* exit(EX_NOINPUT); */
+
+    /* Create header for message(s) text */
+    /* createKludges shouldn't be called here since it generate MSGID */
+
+    if ((p->export_mail || !p->area->fileName) && !config->disableTID)
+        xscatprintf(&p->text_head, "\001TID: %s\r", versionStr);
+
+    if (p->flags) xscatprintf(&p->text_head, "\001FLAGS%s\r", p->flags);
+
+    /* Create footer for message(s) text */
+    xscatprintf(&p->text_foot, "\r");
+    if (!msg->netMail || p->tearline)
+    {
+        if(p->tearline_len > (79-4))
+            p->tearline[79-4] = '\0';
+        /* tearline in config supposed to be of acceptable length */
+        xscatprintf(&p->text_foot, "--- %s\r",
+            (p->tearline) ? p->tearline : (config->tearline) ? config->tearline : "");
     }
-    else if (msg.destAddr.zone == 0 && !quit) {
-        w_log(LL_CRIT,"post: attempt to post netmail msg without specifying dest. address");
-        /* exit(EX_USAGE); */
+    if (!msg->netMail || p->origin)
+    {
+        char *origAddr = aka2str(msg->origAddr);
+        int origLen = 11 + 3 +         /* " * Origin: " + " ()" */
+                      strlen(origAddr);
+        assert(origLen < 79);
+        if(p->origin == NULL)
+        {
+            p->origin = safe_strdup((config->origin) ? config->origin : config->name);
+            p->origin_len = strlen(p->origin);
+        }
+        if(origLen + p->origin_len > 79)
+            p->origin[79 - origLen] = '\0';
+        xscatprintf(&p->text_foot, " * Origin: %s (%s)\r",
+          p->origin, aka2str(msg->origAddr));
     }
-    nfree(textBuffer);
+
+    /*  recoding from internal to transport charSet */
+    if (config->outtab != NULL) {
+        recodeToTransportCharset((CHAR*)msg->fromUserName);
+        recodeToTransportCharset((CHAR*)msg->toUserName);
+        recodeToTransportCharset((CHAR*)msg->subjectLine);
+    }
+return 0;
+}
+
+void process_input_file(struct post_parameters *p, FILE *input, s_message *msg, int *part)
+{
+    UINT msg_len;
+
+    msg_len = strlen(msg->text);
+    if( p->uue )
+    {
+        msg_len += xscatprintf(&msg->text, "\rsection %d of %d of file %s < %s >\r\r",
+                    *part + 1, p->sections, p->fname, versionStr);
+        if (*part > 0)
+            msg->subjectLine[p->subject_len]='\0';
+        xscatprintf(&msg->subjectLine, " [%d/%d]", *part + 1, p->sections);
+
+        if(p->temp_file != NULL) /* Load uu-code from temp file */
+        {
+        int to_read, was_read;
+            to_read = p->sectioning[*part + 1] - p->sectioning[*part];
+            msg->text = srealloc(msg->text, msg_len + to_read + 1);
+            msg_len += was_read = fread(msg->text + msg_len, 1, to_read, input);
+            msg->text[msg_len] = '\0';
+            if(was_read != to_read)
+            { /* error */
+                w_log(LL_ERROR, "post: temp file read error: %s", strerror(errno));
+                /* Continue anyway */
+            }
+        }
+        else /* Encode on the fly based on size prediction */
+        {
+            msg_len = uuencode2buf(p, &msg->text, msg_len, input, *part);
+        }
+        /* msg_len += xscatprintf(&msg->text,"section %d end\r", *part + 1); */
+
+        ++*part;
+    }
+    else /* Ordinary text paste */
+    {
+        int c;
+        UINT cursize = msg_len;
+        for (; msg_len < 4*1024*1024; ++msg_len)  /* impose reasonable restriction on max_len */
+        {
+            c = getc(input);
+            /* FIXME: Maybe fread with file opened in text mode and replace \n->\r will do better? */
+            if (c == EOF || c == 0)
+                break;
+
+            if (msg_len >= cursize)
+                msg->text = safe_realloc(msg->text,
+                                         (cursize += TEXTBUFFERSIZE) + 1);
+
+            msg->text[msg_len] = (char)c;
+            if ('\r' == c)
+                --msg_len;
+            if ('\n' == c)
+                msg->text[msg_len] = '\r';
+        }
+        msg->text[msg_len] = 0; /* always ok because buffer's size is (cursize + 1) */
+        if(input == stdin)
+            while(!feof(input)) getc(input);
+    }
+}
+
+void do_posting(struct post_parameters *p, FILE *text, s_message *msg)
+{
+    int part = 0;
+
+    w_log(LL_START, "Start posting...");
+    do
+    {
+        p->text_head = createKludges(config,
+                                     (msg->netMail == 0) ? strUpper(p->area_name) : NULL,
+                                     &msg->origAddr,
+                                     &msg->destAddr,
+                                     versionStr);
+
+        xstrcat(&msg->text, p->text_head);
+        process_input_file(p, text, msg, &part);
+        if (msg->text[0] && msg->text[strlen(msg->text)-1] != '\r')
+            xstrcat(&msg->text, p->text_foot);
+        else
+            xstrcat(&msg->text, p->text_foot + 1);
+
+        msg->textLength = strlen(msg->text);
+
+        w_log(LL_POSTING,
+            "Posting msg from %u:%u/%u.%u -> %s in area: %s",
+            msg->origAddr.zone, msg->origAddr.net,
+            msg->origAddr.node, msg->origAddr.point,
+            msg->netMail?aka2str(msg->destAddr):msg->toUserName,
+            (p->area_name) ? p->area_name : p->area->areaName);
+
+        /*  recoding from internal to transport charSet */
+        if (config->outtab != NULL) {
+            recodeToTransportCharset((CHAR*)msg->text);
+        }
+
+        if (!p->export_mail && p->area->fileName) {
+            msg->recode &= ~(REC_HDR|REC_TXT); /*  msg in transport Charset */
+            putMsgInArea(p->area, msg, 1, msg->attributes);
+        }
+        else {
+            if (msg->netMail) {
+                processNMMsg(msg, NULL, NULL, 0, MSGLOCAL);
+            }  else {
+                processEMMsg(msg, *(p->area->useAka), 1, (MSGSCANNED|MSGSENT|MSGLOCAL));
+            }
+        }
+        nfree(msg->text);
+    } while (part < p->sections);
+
+    if (p->export_mail)
+    {
+        closeOpenedPkt();
+        tossTempOutbound(config->tempOutbound);
+        writeDupeFiles();
+    }
+
+    if ((config->echotosslog) && (!p->export_mail)) {
+        FILE *f=fopen(config->echotosslog, "a");
+        if (f==NULL)
+            w_log(LL_ERROR, "Could not open or create EchoTossLogFile.");
+        else {
+            fprintf(f, "%s\n", p->area->areaName);
+            fclose(f);
+        }
+    }
+    w_log(LL_STOP, "End posting");
+}
+
+void post(int c, unsigned int *n, char *params[])
+{
+    struct post_parameters p = {0};
+    FILE *text = NULL;
+    s_message msg = {0};
+    time_t t = time (NULL);
+    struct tm *tm;
+
+    if (params[*n]!='\0' && params[*n][1]=='h')
+        print_help(); /* exit */
+
+    if(parse_post_command(&p, c, params, n))
+    {
+        free_post_parameters(&p);
+        print_help(); /* exit */
+    }
+    --*n;
+
+    init_libs();
+
+    if(process_parameters(&p, &msg))
+    {
+        free_post_parameters(&p);
+        return;
+    }
+
+    if((text = open_input_file(&p)) == NULL)
+    {
+        free_post_parameters(&p);
+        return;
+    }
+
+    /*  won't be set in the msgbase, because the mail is processed if it were received */
+    tm = localtime(&t);
+    fts_time((char *)msg.datetime, tm);
+
+    /* actual read from file and write to messagebase/pkt */
+    do_posting(&p, text, &msg);
+
+    /* Cleanup */
+    if (!(p.file[0] == '-' && p.file[1] == 0))
+    {
+        fclose(text);
+        if (p.erase_file)
+            remove(p.file);
+    }
+    if(p.temp_file)
+        remove(p.temp_file);
+
     freeMsgBuffers(&msg);
+    free_post_parameters(&p);
 
     /* deinit SMAPI */
     MsgCloseApi();
