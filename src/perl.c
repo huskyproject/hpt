@@ -161,40 +161,40 @@ char *flag_name[] = { "PVT", "CRA", "RCV", "SNT", "ATT", "TRS", "ORP", "K/S",
 int reuse_line(char **ptext, char *pos, mmode_t mode);
 /* flag to flavour */
 static e_flavour flag2flv(unsigned long attr) {
-  if (attr & 0x100000) return immediate;
-  else if ((attr & 0x20000) || (attr & 0x202) == 0x202) return direct;
-  else if (attr & 0x200) return hold;
-  else if (attr & 2) return crash;
-  else return normal;
+  if (attr & 0x100000) return flImmediate;
+  else if ((attr & 0x20000) || (attr & 0x202) == 0x202) return flDirect;
+  else if (attr & 0x200) return flHold;
+  else if (attr & 2) return flCrash;
+  else return flNormal;
 }
 /* flavour to flag */
 static unsigned long flv2flag(e_flavour flv) {
   switch (flv) {
-    case immediate: return 0x100000;
-    case direct:    return 0x20000;
-    case hold:      return 0x200;
-    case crash:     return 2;
+    case flImmediate: return 0x100000;
+    case flDirect:    return 0x20000;
+    case flHold:      return 0x200;
+    case flCrash:     return 2;
     default:        return 0;
   }
 }
 /* flavour to string */
 static char* flv2str(e_flavour flv) {
   switch (flv) {
-    case immediate: return "immediate";
-    case direct:    return "direct";
-    case hold:      return "hold";
-    case crash:     return "crash";
+    case flImmediate: return "immediate";
+    case flDirect:    return "direct";
+    case flHold:      return "hold";
+    case flCrash:     return "crash";
     default:        return "normal";
   }
 }
 /* smart string flavour parsing */
 static e_flavour str2flv(char *flv) {
 struct flv_data_s { e_flavour f; char c; char *s1; char *s2; };
-const struct flv_data_s flv_data[] = { { normal, 'n', "norm", "normal" },
-                                       { hold, 'h', "hld", "hold" },
-                                       { crash, 'c', "cra", "crash" },
-                                       { direct, 'd', "dir", "direct" },
-                                       { immediate, 'i', "imm", "immediate" } 
+const struct flv_data_s flv_data[] = { { flNormal, 'n', "norm", "normal" },
+                                       { flHold, 'h', "hld", "hold" },
+                                       { flCrash, 'c', "cra", "crash" },
+                                       { flDirect, 'd', "dir", "direct" },
+                                       { flImmediate, 'i', "imm", "immediate" } 
                                      };
 register unsigned char i;
    for (i = 0; i < sizeof(flv_data)/sizeof(flv_data[0]); i++)
@@ -1630,15 +1630,15 @@ s_route *perlroute(s_message *msg, s_route *defroute)
                 sv_setpv(svroute, aka2str(defroute->target->hisAka));
         else /* noroute */
                 sv_setpv(svroute, aka2str(msg->destAddr));
-        if (defroute->flavour==normal)
+        if (defroute->flavour==flNormal)
             sv_setpv(svflv, "normal");
-        else if (defroute->flavour==hold)
+        else if (defroute->flavour==flHold)
             sv_setpv(svflv, "hold");
-        else if (defroute->flavour==direct)
+        else if (defroute->flavour==flDirect)
             sv_setpv(svflv, "direct");
-        else if (defroute->flavour==crash)
+        else if (defroute->flavour==flCrash)
             sv_setpv(svflv, "crash");
-        else if (defroute->flavour==immediate)
+        else if (defroute->flavour==flImmediate)
             sv_setpv(svflv, "immediate");
      }
      ENTER;
@@ -1732,25 +1732,25 @@ s_route *perlroute(s_message *msg, s_route *defroute)
                  if (route.target)
                    route.flavour = route.target->echoMailFlavour;
                  else
-                   route.flavour = hold;
+                   route.flavour = flHold;
                }
     #if 1
                else if ( (route.flavour = str2flv(flv)) != -1 ) ;
     #else
                else if (stricmp(flv, "normal") == 0)
-                 route.flavour = normal;
+                 route.flavour = flNormal;
                else if (stricmp(flv, "hold") == 0)
-                 route.flavour = hold;
+                 route.flavour = flHold;
                else if (stricmp(flv, "crash") == 0)
-                 route.flavour = crash;
+                 route.flavour = flCrash;
                else if (stricmp(flv, "direct") == 0)
-                 route.flavour = direct;
+                 route.flavour = flDirect;
                else if (stricmp(flv, "immediate") == 0)
-                 route.flavour = immediate;
+                 route.flavour = flImmediate;
     #endif
                else {
                  w_log(LL_PERL, "Perl route unknown flavour %s, set to hold", flv);
-                 route.flavour = hold;
+                 route.flavour = flHold;
                }
            }
            free(routeaddr);
