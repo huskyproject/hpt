@@ -234,7 +234,7 @@ sackett@@mail.ru
 
 @end itemize
 
-@node Credits, , Support, Installation
+@node Credits,  , Support, Installation
 @section Credits
 
 Thanks to:
@@ -268,8 +268,6 @@ FIDOCONFIG about location of config file and keywords ideology.
 * Keywords::                    This chapter describes keywords
 * Files and Paths::             File & Path keywords
 * Link Keywords::               Links configuration
-* Areafix Keywords::            Areafix configuration
-* Area Definition::             Areas definition
 * Carbon Copy::                 Carbon Copy keywords
 @end menu
 
@@ -338,71 +336,40 @@ define links and areas before any carbon definitions
 
 @menu
 * AddToSeen::                   add addr to seen-by's
-* Address::                     your system address
 * AfterUnpack::                 execute string after unpack arcmail bundles
 * AreafixFromPkt::              process areafix requests on the fly
-* AreafixKillRequests::         delete areafix requests
-* AreafixMsgSize::              maximum areafix report size
-* AreafixNames::                set additional areafix names
-* AreafixFromName::     set From: field in response messages
-* AreafixOrigin::       set origin for areafix reports
-* AreafixReportsAttr::          set flags to areafix reports
-* AreafixSplitStr::             set split string for splitted areafix messages
-* AreafixQueryReports::         insert linked areas list into areafix reports
-* AreafixQueueFile::        idle requests queue file for areafix
 * AreasFileNameCase::           case of filenames of autocreated areas
-* AutoAreaCreateFlag::          create this file-flag after auto-area-create
-* AutoAreaPause::               Enables or disables area pause algorythm
 * AutoPassive::                 set pause for links who don't poll our system
 * BeforePack::                  execute string before pack pkt files
 * BundleNameStyle::             style of filenames of arcmail bundles
-* CreateAddUplink::             set default uplink for auto-created areas
-* CreateAreasCase::             case of autocreated areas names
-* CreateFwdNonPass::            autocreate non-passthru echoes in fwd.req. operations
-* DailyBundles::        start a new arcmail bundle each day
-* DefArcmailSize::      default size for arcmail bundle
-* DisableTID::          disable adding TID to messages
-* DisablePID::          disable adding PID to messages
-* DisableKludgeRescanned::  disable adding kludge @@RESCANNED to messages
-* ForwardRequestTimeout::   requested from uplink echoarea traffic timeout (in days)
-* IdlePassthruTimeout::     timeout (in days) before unlink on uplink passthrough echo with one link (& some time later remove from config)
-* IgnoreCapWord::       ignore Capability Word in pkt files
+* DefArcmailSize::              default size for arcmail bundle
+* DisableTID::                  disable adding TID to messages
+* DisablePID::                  disable adding PID to messages
+* DisableKludgeRescanned::      disable adding kludge @@RESCANNED to messages
+* IgnoreCapWord::               ignore Capability Word in pkt files
 * IgnoreSeen::                  ignore SEEN-BYs and pack mail for link
 * KeepTrsFiles::                keep transit files
 * KeepTrsMail::                 keep transit netmail messages
-* KilledRequestTimeout::    wait time (in days) for kill echo without links
 * KludgeAreaNetmail::           how to process netmail with kludge "AREA:NETMAIL"
 * LinkWithImportLog::           list of areas only which should be linked
-* LogDateFormat::               set date format used in logs
-* LogEchoToScreen::             set output to screen log information
-* LogLevels::           set level of log output
-* Name::                        your system's name
 * NetmailFlag::                 create flag after unpacking netmail msg
-* NewAreaRefuseFile::       file with areas which we don't want to autocreate
 * NoProcessBundles::            no unpack arcmail bundles
 * Origin::                      add specified origin to hpt messages
-* Pack::                        definition for packer
 * PackNetMailOnScan::           pack netmail found in EchoTossLog file when scan
 * ProcessPkt::                  execute string before tossing pkts
-* PublicGroup::                 this is a list of groups for public echo acess
 * RecodeMsgBase::               allow recoding of message base
 * Remap::                       remap mail to other address
-* ReportRequester::             allow reporting link who requested area on autocreate
-* ReportTo::                    set area or netmail for autocreate reports
 * Route::                       routing of netmails
 * RouteFile::                   routing of netmails with file attached
 * RouteMail::                   routing of netmails without file attached
-* ScreenLogLevels::             set level of log output to screen
 * SeparateBundles::             move echomail for each link to his own directory
 * SetConsoleTitle::             schange conesole title under win32
 * SortEchoList::                echolist sort mode
-* Sysop::                       your name
 * TearLine::                    add specified tearline to hpt messages
 * TossingExt::                  extension of mail files while tossing
-* Unpack::                      definition for unpacker
 @end menu
 
-@node AddToSeen, Address, Keywords, Keywords
+@node AddToSeen, AfterUnpack, Keywords, Keywords
 @subsection AddToSeen
 @findex AddToSeen
 @table @asis
@@ -416,27 +383,7 @@ Add <addr> to SEEN-BYs. If <addr> is present or not - it is always adds.
 
 This statement can be repeated.
 
-@node Address, AfterUnpack, AddToSeen, Keywords
-@subsection Address
-@findex Address
-@table @asis
-@item Syntax:
-@code{Address <addr>}
-@item Example:
-@code{Address 2:2433/1245}
-@end table
-
-This command specifies which akas your system has. This statement is
-full 5d compatible, which means you can have also addresses like
-@code{2:2433/1245.1@@fidonet.org}. The first address statement is your
-main aka which will be used by tossers on different occasions, for
-example if zone number could not be taken from the @@INTL Kludge in
-netmails.
-
-This statement can be repeated.
-@strong{The domain name is not full supported throughout fidoconfig}
-
-@node AfterUnpack, AreafixFromPkt, Address, Keywords
+@node AfterUnpack, AreafixFromPkt, AddToSeen, Keywords
 @subsection AfterUnpack
 @findex AfterUnpack
 @table @asis
@@ -451,7 +398,7 @@ your pkt files in @code{tempInbound} directory with external utility.
 
 This statement cannot be repeated.
 
-@node AreafixFromPkt, AreafixKillRequests, AfterUnpack, Keywords
+@node AreafixFromPkt, AreasFileNameCase, AfterUnpack, Keywords
 @subsection AreafixFromPkt
 @findex AreafixFromPkt
 @table @asis
@@ -466,208 +413,9 @@ Process areafix requests on the fly. Check "areafix", "areamgr" &
 
 This statement cannot be repeated.
 
-@xref{AreafixNames}.
+@xref{RobotNames,,,fidoconfig, fidoconfig}.
 
-@node AreafixKillRequests, AreafixMsgSize, AreafixFromPkt, Keywords
-@subsection AreafixKillRequests
-@findex AreafixKillRequests
-@table @asis
-@item Syntax:
-@code{areafixKillRequests <bool>}
-@item Example:
-@code{areafixKillRequests}
-@end table
-
-Delete requests from links to areafix.
-
-This statement cannot be repeated.
-
-@node AreafixMsgSize, AreafixNames, AreafixKillRequests, Keywords
-@subsection AreafixMsgSize
-@findex AreafixMsgSize
-@table @asis
-@item Syntax:
-@code{areafixmsgsize <integer>}
-@item Example:
-@code{areafixmsgsize 20}
-@end table
-
-This option set up maximum areafix message size (20 kb).
-If not defined, areafix reports will be not splitted...
-
-This statement cannot be repeated.
-
-@node AreafixNames, AreafixFromName, AreafixMsgSize, Keywords
-@subsection AreafixNames
-@findex AreafixNames
-@table @asis
-@item Syntax:
-@code{AreafixNames <string>}
-@item Example:
-@code{AreafixNames SqaFix, hptfix}
-@end table
-
-Set additional names for areafix robot. Default is "areafix", "areamgr",
-"hpt".
-
-This statement cannot be repeated.
-
-@node AreafixFromName, AreafixOrigin, AreafixNames, Keywords
-@subsection AreafixFromName
-@findex AreafixFromName
-@table @asis
-@item Syntax:
-@code{AreafixFromName <string>}
-@item Example:
-@code{AreafixFromName "HPT AreaFix"}
-@end table
-
-    Use value from @code{AreafixFromName} in field @code{From} when
-responding on messages to areafix. If this token not defined, name in
-original message will be used. Example:
-@example
-
-1) AreafixFromName not defined in config:
-
-Original message to areafix:
-----------------------------
-From: Sysop
-To: ArEaFiX
-
-AreaFix's response:
--------------------
-From: ArEaFiX
-To: Sysop
-
-2) AreafixFromName "HPT AreaFix"
-
-Original message to areafix:
-----------------------------
-From: Sysop
-To: ArEaFiX
-
-AreaFix's response:
--------------------
-From: HPT AreaFix
-To: Sysop
-
-@end example
-
-Also this value is being used when creating reports by qrep command.
-
-@node AreafixOrigin, AreafixReportsAttr, AreafixFromName, Keywords
-@subsection AreafixOrigin
-@findex AreafixOrigin
-@table @asis
-@item Syntax:
-@code{areafixOrigin <string>}
-@item Example:
-@code{areafixOrigin c0()1 $tAt10n}
-@end table
-
-the origin string in areafix reports will be like this:
- * Origin: c0()1 $tAt10n (<your addr>)
-
-This statement cannot be repeated.
-
-@node AreafixReportsAttr, AreafixSplitStr, AreafixOrigin, Keywords
-@subsection AreafixReportsAttr
-@findex AreafixReportsAttr
-@table @asis
-@item Syntax:
-@code{AreafixReportsAttr <attr>}
-@item Example:
-@code{AreafixReportsAttr pvt loc k/s}
-@item or
-@code{AreafixReportsAttr pvt,loc,k/s}
-@end table
-
-Set attributes to areafix reports.
-
-Valid attributes are:
-@table @asis
-@item pvt
-@item crash
-@item read
-@item sent
-@item att
-@item fwd
-@item orphan
-@item k/s
-@item loc
-@item fwd
-@item xx2
-@item frq
-@item rrq
-@item cpt
-@item arq
-@item urq
-@item kfs
-@item tfs
-@item dir
-@item imm
-@item cfm
-@item npd
-@end table
-
-Default is "pvt loc k/s npd".
-
-If this statement is used inside Link or LinkDefaults section, it sets
-attributes for this particular link. Otherwise it defines attributes used
-by default.
-
-This statement can be repeated for different links.
-
-@node AreafixSplitStr, AreafixQueryReports, AreafixReportsAttr, Keywords
-@subsection AreafixSplitStr
-@findex AreafixSplitStr
-@table @asis
-@item Syntax:
-@code{areafixSplitStr <string>}
-@item Example:
-@code{areafixSplitStr > Message splitted. To be continued...}
-@end table
-
-This string added after splitted areafix messages.
-
-This statement cannot be repeated.
-
-
-@node AreafixQueryReports, AreafixQueueFile, AreafixSplitStr, Keywords
-@subsection AreafixQueryReports
-@findex AreafixQueryReports
-@table @asis
-@item Syntax:
-@code{areafixQueryReports <bool>}
-@item Example:
-@code{areafixQueryReports off}
-@end table
-
-This statement enables/disables including linked areas list into all areafix
-replies.
-
-Default: off.
-
-This statement cannot be repeated.
-
-
-@node AreafixQueueFile, AreasFileNameCase, AreafixQueryReports, Keywords
-@subsection AreafixQueueFile
-@findex AreafixQueueFile
-@table @asis
-@item Syntax:
-@code{AreafixQueueFile <string>}
-@item Example:
-@code{areafixQueueFile /fido/datafiles/areafix.queue}
-@end table
-
-This command specifies the queue file containing your delayed forward-requests.
-Hpt must have read/write rights for this file.
-To use this feature run @code{hpt qupd} periodically.
-
-This statement cannot be repeated.
-
-@node AreasFileNameCase, AutoAreaPause, AreafixQueueFile, Keywords
+@node AreasFileNameCase, AutoPassive, AreafixFromPkt, Keywords
 @subsection AreasFileNameCase
 @findex AreasFileNameCase
 @table @asis
@@ -682,48 +430,7 @@ Default is lower case.
 
 This statement cannot be repeated.
 
-@node AutoAreaPause, AutoAreaCreateFlag, AreasFileNameCase, Keywords
-@subsection AutoAreaPause
-@findex AutoAreaPause
-@table @asis
-@item Syntax:
-@code{AutoAreaPause <bool>}
-@item Example:
-@code{AutoAreaPause}
-@end table
-
-default: off (disabled)
-
-Enables or disables area pause algorythm. If area is passthrough
-and there is only uplink alive (link with "-def" flag set) while other links
-are paused, unsubscribe message will be sent to uplink and "-paused" flag
-will be set to area. If another link subscribes to the area, or one of already
-paused links resumes his subscription, area will be subscribed at uplink again
-and "-paused" flag cleared. Note, that links cannot send messages to paused
-area, they will be moved to badmail. If enabled, algorythm also works if link
-is paused by AutoPassive.
-
-You may disable or enable algorythm for a particular area by setting one of
-"-noautoareapause" or "-autoareapause" flags.
-
-This statement cannot be repeated.
-
-@node AutoAreaCreateFlag, AutoPassive, AutoAreaPause, Keywords
-@subsection AutoAreaCreateFlag
-@findex AutoAreaCreateFlag
-@table @asis
-@item Syntax:
-@code{autoareacreateflag <file>}
-@item Example:
-@code{autoareacreateflag /etc/ftn/flags/aac.flag}
-@end table
-
-Create file-flag after autocreating echo area. This feature can be used
-for execute some scripts after tossing.
-
-This statement cannot be repeated.
-
-@node AutoPassive, BeforePack, AutoAreaCreateFlag, Keywords
+@node AutoPassive, BeforePack, AreasFileNameCase, Keywords
 @subsection AutoPassive
 @findex AutoPassive
 @table @asis
@@ -750,7 +457,7 @@ of the functionality of AutoPassive only once.
 
 This statement cannot be repeated.
 
-See also @ref{AutoPause} and @ref{Pause} sections.
+See also @ref{AutoPause} and @ref{Pause,,,fidoconfig,fidoconfig} sections.
 
 @node BeforePack, BundleNameStyle, AutoPassive, Keywords
 @subsection BeforePack
@@ -768,7 +475,7 @@ external utility.
 
 This statement cannot be repeated.
 
-@node BundleNameStyle, CreateAddUplink, BeforePack, Keywords
+@node BundleNameStyle, DefArcmailSize, BeforePack, Keywords
 @subsection BundleNameStyle
 @findex BundleNameStyle
 @table @asis
@@ -815,55 +522,10 @@ Default value is @code{timeStamp}
 
 This statement cannot be repeated.
 
-See also @xref{LinkBundleNameStyle}.
+See also @ref{LinkBundleNameStyle}.
 
-@node CreateAddUplink, CreateAreasCase, BundleNameStyle, Keywords
-@subsection CreateAddUplink
-@findex CreateAddUplink
-@table @asis
-@item Syntax:
-@code{createAddUplink <bool>}
-@item Example:
-@code{createAddUplink}
-@end table
 
-If enabled, the link from which an area is auto-created is marked as
-the default uplink for this area. By default, turned off. Note that you
-can set similar behaviour via autoAreaCreateDefaults for the link.
-
-This statement cannot be repeated.
-
-@node CreateAreasCase, CreateFwdNonPass, CreateAddUplink, Keywords
-@subsection CreateAreasCase
-@findex CreateAreasCase
-@table @asis
-@item Syntax:
-@code{createAreasCase (Lower|Upper)}
-@item Example:
-@code{createAreasCase Upper}
-@end table
-
-This statement defines case of areanames in autocreation.
-Default is lower case.
-
-This statement cannot be repeated.
-
-@node CreateFwdNonPass, DefArcmailSize, CreateAreasCase, Keywords
-@subsection CreateFwdNonPass
-@findex CreateFwdNonPass
-@table @asis
-@item Syntax:
-@code{createFwdNonPass <bool>}
-@item Example:
-@code{createFwdNonPass}
-@end table
-
-Autocreate non-passthru echoes in forward request operations.
-MsgBaseDir should be not passthrough!
-
-This statement cannot be repeated.
-
-@node DefArcmailSize, DisableTID, CreateFwdNonPass, Keywords
+@node DefArcmailSize, DisableTID, BundleNameStyle, Keywords
 @subsection DefArcmailSize
 @findex DefArcmailSize
 @table @asis
@@ -907,7 +569,7 @@ Don't add PID-line to generated messages.
 This statement cannot be repeated.
 
 
-@node DisableKludgeRescanned, ForwardRequestTimeout, DisablePID, Keywords
+@node DisableKludgeRescanned, IgnoreCapWord, DisablePID, Keywords
 @subsection DisableKludgeRescanned
 @findex DisableKludgeRescanned
 @table @asis
@@ -921,53 +583,8 @@ Don't add kludge RESCANNED to generated messages.
 
 This statement cannot be repeated.
 
-@node ForwardRequestTimeout, IdlePassthruTimeout, DisableKludgeRescanned, Keywords
-@subsection ForwardRequestTimeout
-@findex ForwardRequestTimeout
-@table @asis
-@item Syntax:
-@code{ForwardRequestTimeout <number>}
-@item Example:
-@code{ForwardRequestTimeout 7}
-@end table
 
-This statement specifies time to wait (in days) for echoarea requested from
-uplink. If there is no traffic in this echoarea, @code{hpt qupd} unsubscribes
-area from this uplink and subscribes to it at next uplink. If next uplink
-for this echoarea not avaiable, @code{hpt qupd} removes echoarea from queue.
-
-To use this feature run @code{hpt qupd} daily.
-
-This token requires keyword AreaFixQueueFile. @xref{AreafixQueueFile}.
-
-Default is 7 days.
-
-This statement cannot be repeated.
-
-
-@node IdlePassthruTimeout, IgnoreCapWord, ForwardRequestTimeout, Keywords
-@subsection IdlePassthruTimeout
-@findex IdlePassthruTimeout
-@table @asis
-@item Syntax:
-@code{IdlePassthruTimeout <number>}
-@item Example:
-@code{IdlePassthruTimeout 3}
-@end table
-
-This statement specifies time to wait (in days) before unsubscribing echoarea
-from uplink after the time last downlink unsubscribed (one uplink rest).
-
-To use this feature run @code{hpt qupd} daily.
-
-This token requires keyword AreaFixQueueFile. @xref{AreafixQueueFile}.
-
-Default is 3 days.
-
-This statement cannot be repeated.
-
-
-@node IgnoreCapWord, IgnoreSeen, IdlePassthruTimeout, Keywords
+@node IgnoreCapWord, IgnoreSeen, DisableKludgeRescanned, Keywords
 @subsection IgnoreCapWord
 @findex IgnoreCapWord
 @table @asis
@@ -1018,7 +635,7 @@ This statement cannot be repeated.
 
 @xref{RouteFile}.
 
-@node KeepTrsMail, KilledRequestTimeout, KeepTrsFiles, Keywords
+@node KeepTrsMail, KludgeAreaNetmail, KeepTrsFiles, Keywords
 @subsection KeepTrsMail
 @findex KeepTrsMail
 @table @asis
@@ -1034,29 +651,7 @@ transit messages wouldn't be kept in NetmailArea. Default is "off".
 This statement cannot be repeated.
 
 
-@node KilledRequestTimeout, KludgeAreaNetmail, KeepTrsMail, Keywords
-@subsection KilledRequestTimeout
-@findex KilledRequestTimeout
-@table @asis
-@item Syntax:
-@code{KilledRequestTimeout <number>}
-@item Example:
-@code{KilledRequestTimeout 4}
-@end table
-
-This statement specified time wait (days) for delete from config echoarea after
-unsubscribe it from uplink (last link).
-
-Run @code{hpt qupd} daily for use this feature.
-
-This token requires keyword AreaFixQueueFile. @xref{AreafixQueueFile}.
-
-Default is 4 days.
-
-This statement cannot be repeated.
-
-
-@node KludgeAreaNetmail, LinkWithImportLog, KilledRequestTimeout, Keywords
+@node KludgeAreaNetmail, LinkWithImportLog, KeepTrsMail, Keywords
 @subsection KludgeAreaNetmail
 @findex KludgeAreaNetmail
 @table @asis
@@ -1076,7 +671,7 @@ If message started with "AREA:NETMAIL" we have three ways:
 
 This statement cannot be repeated.
 
-@node LinkWithImportLog, LogDateFormat, KludgeAreaNetmail, Keywords
+@node LinkWithImportLog, NetmailFlag, KludgeAreaNetmail, Keywords
 @subsection LinkWithImportLog
 @findex LinkWithImportLog
 @table @asis
@@ -1101,140 +696,7 @@ DEFAULT. all areas will be linked.
 
 This statement cannot be repeated.
 
-@node LogDateFormat, LogEchoToScreen, LinkWithImportLog, Keywords
-@subsection LogDateFormat
-@findex LogDateFormat
-@table @asis
-@item Syntax:
-@code{logDateFormat <string>}
-@item Example:
-@code{logDateFormat "%H:%M:%S "}
-@end table
-
-Set date format for log messages. The parameter expected to be a valid
-strftime() format string. The following macros are expanded to current
-date/time value (incomplete list):
-
-@multitable {Col1} {Biiiig Column 2 PADPADPADPADPADPADPADPADPADPADPADPADPADPADPADPADPADPADPADPAD}
-@item %d
-@tab current day of month as a decimal number, zero-prefixed (01-31)
-@item %e
-@tab current day or month as a decimal number, space-perfixed ( 1-31)
-@item %H
-@tab current hour as a decimal number (00-23)
-@item %M
-@tab current minute as a decimal number (00-59)
-@item %m
-@tab current month as a decimal number (01-12)
-@item %S
-@tab current second as a decimal number (00-59)
-@item %Y
-@tab current year with century as a decimal number (for example, 2005)
-@item %y
-@tab current year without century as a decimal number (for example, 05)
-@item %A
-@tab national representation of the full weekday name (for example, Monday)
-@item %a
-@tab national representation of the abbreviated weekday name (for example, Mon)
-@item %B
-@tab national representation of the full month name (for example, April)
-@item %b
-@tab national representation of the abbreviated month name (for example, Apr)
-@end multitable
-
-Please refer to strftime() manual page to see the complete list of macros
-allowed. National representation of month or weekday name is determined by
-the current locale.
-
-This statement cannot be repeated.
-
-@node LogEchoToScreen, LogLevels, LogDateFormat, Keywords
-@subsection LogEchoToScreen
-@findex LogEchoToScreen
-@table @asis
-@item Syntax:
-@code{logEchoToScreen <bool>}
-@item Example:
-@code{logEchoToScreen}
-@end table
-
-Enable or disable log messages screen output. See also @xref{ScreenLogLevels}.
-
-This statement cannot be repeated.
-
-@node LogLevels, Name, LogEchoToScreen, Keywords
-@subsection LogLevels
-@findex LogLevels
-@table @asis
-@item Syntax:
-@code{loglevels <string>}
-@item Example:
-@code{loglevels 345789}
-@end table
-
-In example we output to log messages with levels 3,4,5,7,8,9.
-The log levels are following:
-
-The log levels are following:
-
-@table @asis
-@item 1 - Program start, end;
-@item 2 - dupecheck
-@item 3 - linking messages
-@item 4 - scanning messages
-@item 5 - posting messages
-@item 6 - execute strings
-@item 7 - bundles, pkts, links, freqs, file routing, file attachs, msg packing
-@item 8 - areafix, relink, autocreate
-@item 9 - error messages (critical: exit on error)
-@item 0 - creation of file-flags
-@item A - (reserved for) trivial error messages (print message and continue execution)
-@item B - warnings & alerts
-@item C - informational messages
-@item D - (reserved for) statistics
-@item E - summary
-@item F - print program name & version
-@item G - message send/sent
-@item H - (reserved for) recoding operations & recoding tables read/write
-@item I - Generate or check MSGID
-@item J - Echomail phase
-@item K - Filebox phase
-@item L - Netmail phase
-@item M - File create
-@item N - File delete
-@item O - operations with opened file (read, write, seek, ...)
-@item P - Directory operations (create, delete, rename, ...)
-@item R - Truncate file
-@item S - File send/sent
-@item T - Test files (exist, permittions, etc.)
-@item U - Functions calls (enter to func & leave from it)
-@item V - reserved
-@item W - reserved
-@item X - Filenames construct
-@item Y - reserved
-@item Z - debug messages: source lines (functions control points).
-@item a-z - debug messages
-@end table
-
-Default value: 1234567890ABCDEF
-
-This statement cannot be repeated.
-
-@node Name, NetmailFlag, LogLevels, Keywords
-@subsection Name
-@findex Name
-@table @asis
-@item Syntax:
-@code{name <string>}
-@item Example:
-@code{name Leetebrok BBS}
-@end table
-
-Here you specify your Systems name.
-
-This statement cannot be repeated.
-
-@node NetmailFlag, NewAreaRefuseFile, Name, Keywords
+@node NetmailFlag, NoProcessBundles, LinkWithImportLog, Keywords
 @subsection NetmailFlag
 @findex NetmailFlag
 @table @asis
@@ -1253,32 +715,7 @@ tracker.
 
 This statement cannot be repeated.
 
-@node NewAreaRefuseFile, NoProcessBundles, NetmailFlag, Keywords
-@subsection NewAreaRefuseFile
-@findex NewAreaRefuseFile
-@table @asis
-@item Syntax:
-@code{newAreaRefuseFile <file>}
-@item Example:
-@code{newAreaRefuseFile /etc/ftn/areas/dontcrte.lst}
-@end table
-
-This token defines a file which will be used when autocreating echoarea.
-File contains list of areas which we don't allow to autocreate.
-Subscribtion on such areas is also refused because such areas are marked as
-dead. Each line of this file is a mask of echotag.
-
-Example:
-@table @asis
-@item
-@item RU.LIST.CITYCAT.*
-@item SU.KASCHENKO.LOCAL
-@item
-@end table
-
-This statement cannot be repeated.
-
-@node NoProcessBundles, Origin, NewAreaRefuseFile, Keywords
+@node NoProcessBundles, Origin, NetmailFlag, Keywords
 @subsection NoProcessBundles
 @findex NoProcessBundles
 @table @asis
@@ -1292,7 +729,7 @@ Don't unpack arcmail bundles.
 
 This statement cannot be repeated.
 
-@node Origin, Pack, NoProcessBundles, Keywords
+@node Origin, PackNetMailOnScan, NoProcessBundles, Keywords
 @subsection Origin
 @findex Origin
 @table @asis
@@ -1306,39 +743,7 @@ Add this Origin to hpt messages: post, reports about new areas created.
 
 This statement cannot be repeated.
 
-@node Pack, PackNetMailOnScan, Origin, Keywords
-@subsection Pack
-@findex Pack
-@table @asis
-@item Syntax:
-@code{Pack zip|tgz|rar|arc|arj|..... <call>}
-@item Example:
-@code{Pack zip zip -9 -g -q $a $f}
-@end table
-
-This statement sets the command line call for the packer.
-The file will be moved into the archive, that means the file will be
-deleted on the harddisk. It only remains in the archive.
-
-$a will be replaced by the archive file.
-
-$f will be replaced by the file which should be packed into the archive.
-
-This statement can be repeated.
-
-@subsection Warning
-
-You can't use shell input-output redirection chars under DOS or Win*
-platforms: hpt implementation uses workaround for command.com bug and
-doesn't run command.com to execute external commands such as
-packers/unpackers. hpt calls OS function to execute them instead of
-command.com.
-
-If you use hptzip (winth Zlib) library, you can set default packer by
-
-    Pack    zip zipInternal
-
-@node PackNetMailOnScan, ProcessPkt, Pack, Keywords
+@node PackNetMailOnScan, ProcessPkt, Origin, Keywords
 @subsection PackNetMailOnScan
 @findex PackNetMailOnScan
 @table @asis
@@ -1355,7 +760,7 @@ invoked.
 
 This statement can be repeated (overrides old setting).
 
-@node ProcessPkt, PublicGroup, PackNetMailOnScan, Keywords
+@node ProcessPkt, RecodeMsgBase, PackNetMailOnScan, Keywords
 @subsection ProcessPkt
 @findex ProcessPkt
 @table @asis
@@ -1371,21 +776,7 @@ pkt file may be renamed depending of @code{tossingExt} token value.
 
 This statement cannot be repeated.
 
-@node PublicGroup, RecodeMsgBase, ProcessPkt, Keywords
-@subsection PublicGroup
-@findex PublicGroup
-@table @asis
-@item Syntax:
-@code{PublicGroup <string>[,<string>,...] }
-@item Example:
-@code{PublicGroup local,a,b,othernet}
-@end table
-
-Specifies groups for public echo acess.
-
-This statement cannot be repeated.
-
-@node RecodeMsgBase, Remap, PublicGroup, Keywords
+@node RecodeMsgBase, Remap, ProcessPkt, Keywords
 @subsection RecodeMsgBase
 @findex RecodeMsgBase
 @table @asis
@@ -1403,7 +794,7 @@ configs/other local files in local one.
 
 This statement cannot be repeated.
 
-@node Remap, ReportRequester, RecodeMsgBase, Keywords
+@node Remap, Route, RecodeMsgBase, Keywords
 @subsection Remap
 @findex Remap
 @table @asis
@@ -1424,38 +815,7 @@ value of ToName or ToAddress. Two asterisks can't be defined together.
 
 This statement can be repeated.
 
-@node ReportRequester, ReportTo, Remap, Keywords
-@subsection ReportRequester
-@findex ReportRequester
-@table @asis
-@item Syntax:
-@code{reportRequester <bool>}
-@item Example:
-@code{reportRequester off}
-@item Defaults:
-@code{reportRequester on}
-@end table
-
-By default, the link who requested an area is displayed in the auto-create
-report. This keyword disables showing it.
-
-This statement cannot be repeated.
-
-@node ReportTo, Route, ReportRequester, Keywords
-@subsection ReportTo
-@findex ReportTo
-@table @asis
-@item Syntax:
-@code{ReportTo <string>}
-@item Example:
-@code{ReportTo netmail}
-@end table
-
-Set name of echoarea or netmailarea to place autocreate reports.
-
-This statement cannot be repeated.
-
-@node Route, RouteFile, ReportTo, Keywords
+@node Route, RouteFile, Remap, Keywords
 @subsection Route
 @findex Route
 @table @asis
@@ -1530,7 +890,7 @@ no @code{RouteFile} defined, then files will be not routed at all!
 
 This statement can be repeated.
 
-@node RouteMail, ScreenLogLevels, RouteFile, Keywords
+@node RouteMail, SeparateBundles, RouteFile, Keywords
 @subsection RouteMail
 @findex RouteMail
 @table @asis
@@ -1544,21 +904,7 @@ This statement is the same as the @code{Route} statement.
 
 This statement can be repeated.
 
-@node ScreenLogLevels, SeparateBundles, RouteMail, Keywords
-@subsection ScreenLogLevels
-@findex ScreenLogLevels
-@table @asis
-@item Syntax:
-@code{screenloglevels <string>}
-@item Example:
-@code{screenloglevels 2345789}
-@end table
-
-Set level of log output to screen. See loglevels for details
-
-This statement cannot be repeated.
-
-@node SeparateBundles, SetConsoleTitle, ScreenLogLevels, Keywords
+@node SeparateBundles, SetConsoleTitle, RouteMail, Keywords
 @subsection SeparateBundles
 @findex SeparateBundles
 @table @asis
@@ -1586,7 +932,7 @@ Set hpt console title while tossing. (@strong{WIN32 Only!})
 
 This statement cannot be repeated.
 
-@node SortEchoList, Sysop, SetConsoleTitle, Keywords
+@node SortEchoList, TearLine, SetConsoleTitle, Keywords
 @subsection SortEchoList
 @findex SortEchoList
 @table @asis
@@ -1616,21 +962,7 @@ By default echolist is sorted by name.
 This statement cannot be repeated.
 
 
-@node Sysop, TearLine, SortEchoList, Keywords
-@subsection Sysop
-@findex Sysop
-@table @asis
-@item Syntax:
-@code{sysop <string>}
-@item Example:
-@code{sysop Matthias Tichy}
-@end table
-
-You specify your name with this keyword.
-
-This statement cannot be repeated.
-
-@node TearLine, TossingExt, Sysop, Keywords
+@node TearLine, TossingExt, SortEchoList, Keywords
 @subsection TearLine
 @findex TearLine
 @table @asis
@@ -1644,7 +976,7 @@ Add this tearline to hpt messages (post, reports about new areas created)
 
 This statement cannot be repeated.
 
-@node TossingExt, Unpack, TearLine, Keywords
+@node TossingExt,  , TearLine, Keywords
 @subsection TossingExt
 @findex TossingExt
 @table @asis
@@ -1662,65 +994,11 @@ Default extension: tos.
 
 This statement cannot be repeated.
 
-@node Unpack, , TossingExt, Keywords
-@subsection Unpack
-@findex Unpack
-@table @asis
-@item Syntax:
-@code{Unpack "<call>" <offset> <matchcode>}
-@item Example:
-@code{Unpack "unzip -joLqq $a -d $p" 0 504b0304}
-@end table
-
-This statement sets the call of certain unpackers according to a id in the
-archive file
-
-call: see pack
-
-offset: position of recognition string in packed file.
-
-match code:  recognition string for packed file, ?? can be used as don't care
-
-$a will be replaced by the archive file.
-
-$p will be replaced by the temp inbound path.
-
-$f will be replaced by the description file name if any (used by htick, see 'FileDescName' token)
-
-@example
-
-e.g.: unpack "unzip -joLqq $a -d $p $f" 0 504b0304
-
-       files packed by zip can be recognized by
-         504b0304(hex) at offset 0(integer)
-       they can be unpacked by
-       "unzip -joLqq <filename> -d <path> <descrption_filename>"
-or
-       if you use hptzip (with Zlib) library, you can set default unpacker by
-
-       unpack  zipInternal 0 504b0304
-
-@end example
-
-This statement can be repeated.
-
-@subsection Warning
-
-You can't use shell input-output redirection chars under DOS or Win*
-platforms: hpt implementation uses workaround for command.com bug and
-doesn't run command.com to execute external commands such as
-packers/unpackers. hpt calls OS function to execute them instead of
-command.com.
-
-
 @node Files and Paths, Link Keywords, Keywords, Configuration Reference
 @section Files and Paths
 
 @menu
-* AdvisoryLock::                set lock file "advisory"
 * AdvStatisticsFile::           binary statistic file
-* AreafixHelp::                 file with help for areafix reports
-* AreafixQueueFile::            idle requests queue file for areafix
 * AreasMaxDupeAge::             max age for dupes in CommonDupeBase
 * DupeBaseType::                type of dupe base
 * DupeHistoryDir::              path for dupe files
@@ -1728,50 +1006,18 @@ command.com.
 * FileBoxesDir::                directory where link fileBoxes are created
 * HptPerlFile::                 file which contains perl filter functions
 * ImportLog::                   file which contains the names of the areas tossed in
-* Inbound::                     inbound path
-* Include::                     include other files
 * Intab::                       file for recoding incoming msgs
-* LocalInbound::                local inbound
-* LockFile::                    file which lock hpt session
-* LogFileDir::                  path for log files
 * MinDiskFreeSpace::            minimum free space on the drive
 * MsgBaseDir::                  base directory of areas
 * NotValidFileNameChars::       chars that will be converted to hex values
-* Outbound::                    outbound path
 * Outtab::                      file for recoding outgoing msgs
-* ProtInbound::                 protected inbound
 * RulesDir::                    directory with area rules
 * StatLog::                     file whith counter of personal net- and echo mails
 * TempInbound::                 temporary inbound path
 * TempOutbound::                temporary outbound path
 @end menu
 
-@node AdvisoryLock, AdvStatisticsFile, Files and Paths, Files and Paths
-@subsection AdvisoryLock
-@findex AdvisoryLock
-@table @asis
-@item Syntax:
-@code{AdvisoryLock <integer>}
-@item Example:
-@code{AdvisoryLock 10}
-@end table
-
-If value @code{AdvisoryLock} > 0, then @value{HPT} checks if
-@code{LockFile} is locked by another session of @value{HPT} or not.
-Program will not be terminated if the original process which created
-@code{LockFile} is running. Second instance of hpt will check @code{LockFile}
-for locking number of times defined by @code{AdvisoryLock} with period
-of 1 second. And if the file exists, but not locked
-(stale), @value{HPT} will be running...
-If @code{AdvisoryLock} = 0, advisorylock is off.
-
-This statement cannot be repeated.
-
-@strong{Don't use this under BeOS! (there is no locking mechanism).}
-
-@xref{LockFile}.
-
-@node AdvStatisticsFile, AreafixHelp, AdvisoryLock, Files and Paths
+@node AdvStatisticsFile, AreasMaxDupeAge, Files and Paths, Files and Paths
 @subsection AdvStatisticsFile
 @findex AdvStatisticsFile
 @table @asis
@@ -1784,21 +1030,7 @@ This statement cannot be repeated.
 Define binary statistic file for calculating links and echo trafic.
 Parsed by hpt/misc/adv-stat-hpt.pl
 
-@node AreafixHelp, AreasMaxDupeAge, AdvStatisticsFile, Files and Paths
-@subsection AreafixHelp
-@findex AreafixHelp
-@table @asis
-@item Syntax:
-@code{areafixhelp <file>}
-@item Example:
-@code{areafixhelp /etc/ftn/areafix.hlp}
-@end table
-
-This is help file, which sends to link if he requests "%HELP".
-
-This statement cannot be repeated.
-
-@node AreasMaxDupeAge, DupeBaseType, AreafixHelp, Files and Paths
+@node AreasMaxDupeAge, DupeBaseType, AdvStatisticsFile, Files and Paths
 @subsection AreasMaxDupeAge
 @findex AreasMaxDupeAge
 @table @asis
@@ -1913,7 +1145,7 @@ If not specified, perl support will be switched off.
 
 This statement cannot be repeated.
 
-@node ImportLog, Inbound, HptPerlFile, Files and Paths
+@node ImportLog, Intab, HptPerlFile, Files and Paths
 @subsection ImportLog
 @findex ImportLog
 @table @asis
@@ -1928,46 +1160,7 @@ of the areas where echomails has been tossed in.
 
 This statement cannot be repeated.
 
-@node Inbound, Include, ImportLog, Files and Paths
-@subsection Inbound
-@findex Inbound
-@table @asis
-@item Syntax:
-@code{inbound <path>}
-@item Example:
-@code{inbound /var/spool/fido/in}
-@end table
-
-This command specifies where your inbound files are stored. This directory
-is the base directory which means if you have a connection which is not
-protected and the other system is not listed. The files go in here.
-Only non-packed netmails are tossed from this inbound.
-
-This statement cannot be repeated.
-
-@node Include, Intab, Inbound, Files and Paths
-@subsection Include
-@findex Include
-@table @asis
-@item Syntax:
-@code{include <file>}
-@item Example:
-@code{include /etc/fido/areas}
-@end table
-
-You can include other files into your config file. For example if you would like to
-have different config parts, you can include a file and (via cron job or manually)
-change the content of this file without changing the rest of the config.
-Additionally you can split your config in different parts. So you can
-have your fileareas definition in another file than your msgareas definition.
-This gives your the ability to have some survey about your config.
-
-This statement can be repeated. But dont make recursive includes. eg
-include a file which includes another which includes the first. Although
-this will be detected and fixed many times, there is a chance that it
-will not be detected one time.
-
-@node Intab, LocalInbound, Include, Files and Paths
+@node Intab, MinDiskFreeSpace, ImportLog, Files and Paths
 @subsection Intab
 @findex Intab
 @table @asis
@@ -1984,56 +1177,7 @@ If you do not use this statement no recoding will be done.
 
 This statement cannot be repeated.
 
-@node LocalInbound, LockFile, Intab, Files and Paths
-@subsection LocalInbound
-@findex LocalInbound
-@table @asis
-@item Syntax:
-@code{localinbound <path>}
-@item Example:
-@code{localinbound /var/spool/fido/in.loc}
-@end table
-
-This command specifies the path, from which all types of netmail and echomail
-are tossed @strong{without} any password checking. You can put pkt´s here
-which were created by a file tosser etc. So created by a you or a programm on
-your own system.
-
-This statement cannot be repeated.
-
-@node LockFile, LogFileDir, LocalInbound, Files and Paths
-@subsection LockFile
-@findex LockFile
-@table @asis
-@item Syntax:
-@code{lockfile <file>}
-@item Example:
-@code{lockfile /var/lock/hpt.lock}
-@end table
-
-Another session of @value{HPT} will be terminated if the @code{LockFile}
-is exists (default setting).
-
-This statement cannot be repeated.
-
-@xref{AdvisoryLock}.
-
-@node LogFileDir, MinDiskFreeSpace, LockFile, Files and Paths
-@subsection LogFileDir
-@findex LogFileDir
-@table @asis
-@item Syntax:
-@code{logFileDir <path>}
-@item Example:
-@code{logFileDir /var/spool/log/fido}
-@end table
-
-This command specifies the path where the log-files of the fido-programs should
-be stored.
-
-This statement cannot be repeated.
-
-@node MinDiskFreeSpace, MsgBaseDir, LogFileDir, Files and Paths
+@node MinDiskFreeSpace, MsgBaseDir, Intab, Files and Paths
 @subsection MinDiskFreeSpace
 @findex MinDiskFreeSpace
 @table @asis
@@ -2077,7 +1221,7 @@ This statement cannot be repeated.
 
 @xref{LinkMsgBaseDir}.
 
-@node NotValidFileNameChars, Outbound, MsgBaseDir, Files and Paths
+@node NotValidFileNameChars, Outtab, MsgBaseDir, Files and Paths
 @subsection NotValidFileNameChars
 @findex NotValidFileNameChars
 @table @asis
@@ -2092,59 +1236,7 @@ with %hex analogs. If not defined, default string used: "*/:;<=>?\|%`'&+
 
 This statement cannot be repeated.
 
-@node Outbound, Outtab, NotValidFileNameChars, Files and Paths
-@subsection Outbound
-@findex Outbound
-@table @asis
-@item Syntax:
-@code{outbound <path>}
-@item Example:
-@code{outbound /var/spool/fido/out}
-@end table
-
-This command specifies your outbound path. This outbound path is
-binkley-style. A binkley style outbound consists of a base path and
-subdirectories. Each subdirectory represents a place for all the files
-for one zone. The base path is the zone path for your base zone.
-
-Example:
-
-@example
-@table @asis
-@item /var/spool/fido/out
-This directory contains the files for your base zone.
-@item /var/spool/fido/out.003
-This directory contains the files for zone 3.
-@item /var/spool/fido/out.00A
-This directory contains the files for zone 10.
-@end table
-@end example
-
-The zone directory contains the flow-files for each node. A Flow-file of a node
-has the name NNNNFFFF.?lo
-
-@example
-@table @asis
-@item NNNN
-The 4-digit hex-number of the nodes netnumber.
-@item FFFF
-The 4-digit hex-number of the nodes nodenumber.
-@item ?
-Here the flavour of the mails can be chosen. @strong{h}-hold, @strong{c}-crash,
-@strong{f}-normal, @strong{d}-direct, @strong{i}-immediate.
-@end table
-@end example
-
-For points there is a subdirectory with nodes flowfilename with suffix.pnt. In
-this subdirectory the flowfiles have the names PPPPPPPP ( 8-digit point number
-in hex).
-
-For a deeper background on a binkley-style outbound see the binkley-term
-documentation and source code.
-
-This statement cannot be repeated.
-
-@node Outtab, ProtInbound, Outbound, Files and Paths
+@node Outtab, RulesDir, NotValidFileNameChars, Files and Paths
 @subsection Outtab
 @findex Outtab
 @table @asis
@@ -2161,24 +1253,7 @@ If you do not use this statement no recoding will be done.
 
 This statement cannot be repeated.
 
-@node ProtInbound, RulesDir, Outtab, Files and Paths
-@subsection ProtInbound
-@findex ProtInbound
-@table @asis
-@item Syntax:
-@code{protinbound <path>}
-@item Example:
-@code{protinbound /var/spool/fido/in.sec}
-@end table
-
-This command specifies where files should be stored which were received
-during a password-protected session.
-All types of mail are tossed from this path. But passwords are checked
-before.
-
-This statement cannot be repeated.
-
-@node RulesDir, StatLog, ProtInbound, Files and Paths
+@node RulesDir, StatLog, Outtab, Files and Paths
 @subsection RulesDir
 @findex RulesDir
 @table @asis
@@ -2244,7 +1319,7 @@ are unpacked there.
 
 This statement cannot be repeated.
 
-@node TempOutbound, , TempInbound, Files and Paths
+@node TempOutbound,  , TempInbound, Files and Paths
 @subsection TempOutbound
 @findex TempOutbound
 @table @asis
@@ -2260,88 +1335,43 @@ storing outgoing pkt-files before packing.
 This statement cannot be repeated.
 
 
-
-@node Link Keywords, Areafix Keywords, Files and Paths, Configuration Reference
+@node Link Keywords, Carbon Copy, Files and Paths, Configuration Reference
 @section Link Keywords
 
 @menu
-* AccessGrp::                   groups for echomail access
 * AdvancedAreafix::             advanced areafix
-* Aka::                         links adress
 * AllowEmptyPktPwd::            allow empty packet passwords
 * AllowPktAddrDiffer::          allow addresses in PKT and MSG differ for areafix req.
 * AllowRemoteControl::          allow remote control using areafix
-* ArcmailSize::         size of arcmail bundle
-* ArcNetmail::          pack netmail for this link into arcmail bundles
+* ArcmailSize::                 size of arcmail bundle
+* ArcNetmail::                  pack netmail for this link into arcmail bundles
 * Areafix::                     areafix access for this link
-* AreafixEchoLimit::            limit for subscribe via areafix
-* AreafixPwd::                  areafix password for this link
-* AreafixReportsAttr::          set flags to areafix reports for the link
-* AutoAreaCreate::              right to auto create areas on your system
-* AutoAreaCreateFile::          file where autoCreated Areas by this links are going
-* AutoAreaCreateDefaults::      set defaults to autocreated echoareas
 * AutoAreaCreateSubdirs::       create structured or flat message base?
 * AutoPause::                   stop export mail for this link after xx days
 * AvailList::                   specify variant for reply to %avail
 * DailyBundles::                start a new arcmail bundle for the link each day
-* DenyFwdFile::                 file with area list for denyed requests
-* DenyFwdMask::                 mask list for denyed requests
-* DenyFwdReqAccess::            deny access to forward requests
 * DenyRescan::                  deny rescan of areas
-* DenyUncondFwdReqAccess::      deny access to unconditional forward requests
 * EchoMailFlavour::             flavour for outgoing echomail
-* Export::                      rules for echomail export
 * Flavour::                     flavour for netmail, echomail and fileechoes
-* ForwardAreaPriority::         forward requests priority
 * ForwardPkts::                 shall we forward inbound packets for this node?
-* ForwardRequestFile::          file for forwardRequest, AvialableAreas & descriptions
-* ForwardRequestMask::          mask list for forwardRequests
-* ForwardRequests::             allow forward requests to this link
 * FileBox::                     filebox directory
 * FileBoxAlways::               pack to filebox even if link is not busy
-* Import::                      rules for echomail import
-* Level::                       definition of link access level
-* Link::                        adding a link to your config
 * LinkBundleNameStyle::         style of filenames of arcmail bundles for link
-* LinkDefaults::                start/end/destroy links default definitions
-* LinkGrp::         add this group to autoareacreatedefaults
 * LinkMsgBaseDir::              base directory of areas for link
-* Mandatory::                   disable unsubscribing from all echoareas
-* Manual::                      disable subscribing to all echoareas
 * NetMailFlavour::              flavour for outgoing netmail
 * NoRules::                     don't send area rules to link on subscription
-* OptGrp::                      groups for export/import/mandatory
-* OurAka::                      our aka for link
-* PackAka::
-* Packer::                      default packer for link
-* Password::                    links default password
-* Pause::                       don't export mail for this link
-* PktSize::         max size of pkt in arcmail bundle
-* PktPwd::                      pktpassword for this link
+* PackAka::                     
+* PktSize::                     max size of pkt in arcmail bundle
 * ReducedSeenBY::               reduced seen-by mode (FSC-0093)
-* RemoteRobotName::             remote "areafix" name
 * RescanGrp::                   groups that @code{denyRescan} token applies to
 * RescanLimit::                 limit max number of messages sent by rescan
 * SendNotifyMessages::          send messages about query changes, bad posts and so on
 * UnsubscribeOnAreaDelete::     send unsubscribe request when subscribed area is deleted
 @end menu
+  @ref{AreafixReportsAttr,,,fidoconfig,fidoconfig}::          set flags to areafix reports for the link
 
-@node AccessGrp, AdvancedAreafix, Link Keywords, Link Keywords
-@subsection AccessGrp
-@findex AccessGrp
-@table @asis
-@item Syntax:
-@code{accessgrp <string>[,<string>...]}
-@item Example:
-@code{accessgrp A,B,C,Local}
-@end table
 
-This statement connects a link to several echomail groups. See also
-@code{PublicGroup} and @code{-g <group>} in echoarea options.
-
-This statement can only be repeated for different links.
-
-@node AdvancedAreafix, Aka, AccessGrp, Link Keywords
+@node AdvancedAreafix, AllowEmptyPktPwd, Link Keywords, Link Keywords
 @subsection AdvancedAreafix
 @findex AdvancedAreafix
 @table @asis
@@ -2368,21 +1398,7 @@ like "-areaname".
 
 This statement can only be repeated for different links.
 
-@node Aka, AllowEmptyPktPwd, AdvancedAreafix, Link Keywords
-@subsection Aka
-@findex Aka
-@table @asis
-@item Syntax:
-@code{aka <addr>}
-@item Example:
-@code{aka 2:2433/1245}
-@end table
-
-This statement sets the aka for the current link.
-
-This statement can only be repeated for different links.
-
-@node AllowEmptyPktPwd, AllowPktAddrDiffer, Aka, Link Keywords
+@node AllowEmptyPktPwd, AllowPktAddrDiffer, AdvancedAreafix, Link Keywords
 @subsection AllowEmptyPktPwd
 @findex AllowEmptyPktPwd
 @table @asis
@@ -2486,7 +1502,7 @@ to ut-file (i.e. *.?ut) and will not compressed.
 
 This statement can only be repeated for different links.
 
-@node Areafix, AreafixEchoLimit, ArcNetmail, Link Keywords
+@node Areafix, AutoAreaCreateSubdirs, ArcNetmail, Link Keywords
 @subsection Areafix
 @findex Areafix
 @table @asis
@@ -2500,94 +1516,7 @@ By default areafix is "on". You can turn off using of areafix by this link.
 
 This statement can only be repeated for different links.
 
-@node AreafixEchoLimit, AreafixPwd, Areafix, Link Keywords
-@subsection AreafixEchoLimit
-@findex AreafixEchoLimit
-@table @asis
-@item Syntax:
-@code{areafixecholimit <integer>}
-@item Example:
-@code{areafixecholimit 50}
-@end table
-
-This is maximum echo areas which can be subscribed via areafix for this link.
-
-This statement can only be repeated for different links.
-
-@node AreafixPwd, AutoAreaCreate, AreafixEchoLimit, Link Keywords
-@subsection AreafixPwd
-@findex AreafixPwd
-@table @asis
-@item Syntax:
-@code{areafixpwd [<string>]}
-@item Example:
-@code{areafixpwd geheim}
-@end table
-
-This statement sets the areafix password for the actual link.
-An empty statement is allowed.
-
-This statement can only be repeated for different links.
-
-@node AutoAreaCreate, AutoAreaCreateFile, AreafixPwd, Link Keywords
-@subsection AutoAreaCreate
-@findex AutoAreaCreate
-@table @asis
-@item Syntax:
-@code{autoareacreate <bool>}
-@item Example:
-@code{autoareacreate on}
-@end table
-
-This statement gives a link the permission to create areas on your system just
-by sending msgs in them.
-The echoarea is created using the @code{AutoAreaCreateDefaults} contents:
-@example
-   EchoArea <areaName> <msgBaseDir><areaName> -a <mypktaddr> -b Squish <linkAddr> <autoAreaCreateDefaults>
-@end example
-
-Default message base type is Squish. But you can set "-b Jam" or "-b
-Msg" in @code{AutoAreaCreateDefaults}
-
-This statement can only be repeated for different links.
-
-@node AutoAreaCreateFile, AutoAreaCreateDefaults, AutoAreaCreate, Link Keywords
-@subsection AutoAreaCreateFile
-@findex AutoAreaCreateFile
-@table @asis
-@item Syntax:
-@code{autoAreaCreateFile <file>}
-@item Example:
-@code{autoAreaCreateFile /etc/fido/areas.matthias}
-@end table
-
-This statement defines where autocreated areas by this link are going to.
-If you omit this statement the default configuration file will be used.
-The tosser must have the rights to create and change the file.
-
-@strong{You must include the specified file for yourself into fidoconfig,
-so these autocreated areas will be founded in subsequent tosser-runs.}
-
-@strong{autoAreaCreateFile and Include strings must be the *same*.}
-
-This statement can only be repeated for different links.
-
-@node AutoAreaCreateDefaults, AutoAreaCreateSubdirs, AutoAreaCreateFile, Link Keywords
-@subsection AutoAreaCreateDefaults
-@findex AutoAreaCreateDefaults
-@table @asis
-@item Syntax:
-@code{autoareacreatedefaults <string>}
-@item Example:
-@code{autoareacreatedefaults -$m 200 -dupecheck move}
-@end table
-
-Set defaults to autocreated echoareas. To create PASSTHROUGH areas you
-can add "passthrough" to @code{AutoAreaCreateDefaults}.
-
-This statement can only be repeated for different links.
-
-@node AutoAreaCreateSubdirs, AutoPause, AutoAreaCreateDefaults, Link Keywords
+@node AutoAreaCreateSubdirs, AutoPause, Areafix, Link Keywords
 @subsection AutoAreaCreateSubdirs
 @findex AutoAreaCreateSubdirs
 @table @asis
@@ -2610,7 +1539,7 @@ directory, e.g. @file{/var/spool/msgbase/fidosoft/husky.sqd}.
 
 Please note that this option will @emph{not} currently work if the
 @code{-dosfile} option is used to create filenames in 8.3 convention.
-@xref{EchoArea,,EchoArea}, for more information on the @code{-dosfile} option.
+@xref{EchoArea,,EchoArea,fidoconfig,fidoconfig}, for more information on the @code{-dosfile} option.
 
 @node AutoPause, AvailList, AutoAreaCreateSubdirs, Link Keywords
 @subsection AutoPause
@@ -2633,7 +1562,7 @@ If at least one such file exists, exporting echomail for the link is paused.
 
 This statement can only be repeated for different links.
 
-See also @ref{AutoPassive} and @ref{Pause} sections.
+See also @ref{AutoPassive} and @ref{Pause,,,fidoconfig,fidoconfig} sections.
 
 @node AvailList, DailyBundles, AutoPause, Link Keywords
 @subsection AvailList
@@ -2660,7 +1589,7 @@ Default value is @code{AvailList Full}.
 
 This statement can only be repeated for different links.
 
-@node DailyBundles, DenyFwdFile, AvailList, Keywords
+@node DailyBundles, DenyRescan, AvailList, Link Keywords
 @subsection DailyBundles
 @findex DailyBundles
 @table @asis
@@ -2677,51 +1606,7 @@ the new day begins.
 
 This statement can only be repeated for different links.
 
-@node DenyFwdFile, DenyFwdMask, DailyBundles, Link Keywords
-@subsection DenyFwdFile
-@findex DenyFwdFile
-@table @asis
-@item Syntax:
-@code{denyFwdFile <file>}
-@item Example:
-@code{denyFwdFile /etc/fido/denyfwd}
-@end table
-
-Don't forward requests for areas from this file.
-@strong{Pattern matching does not supporting!}
-
-This statement can only be repeated for different links.
-
-@node DenyFwdMask, DenyFwdReqAccess, DenyFwdFile, Link Keywords
-@subsection DenyFwdMask
-@findex DenyFwdMask
-@table @asis
-@item Syntax:
-@code{denyfwdmask <string>[,<string> ...]}
-@item Example:
-@code{denyfwdmask TYT.*, *FLAME*}
-@end table
-
-Don't forward this requests.
-
-This statement can only be repeated for different links.
-
-@node DenyFwdReqAccess, DenyRescan, DenyFwdMask, Link Keywords
-@subsection DenyFwdReqAccess
-@findex DenyFwdReqAccess
-@table @asis
-@item Syntax:
-@code{denyFwdReqAccess <bool>}
-@item Example:
-@code{denyFwdReqAccess}
-@end table
-
-Don't allow forward requests from this link (via areafix) to your
-links.
-
-This statement can only be repeated for different links.
-
-@node DenyRescan, DenyUncondFwdReqAccess, DenyFwdReqAccess, Link Keywords
+@node DenyRescan, EchoMailFlavour, DailyBundles, Link Keywords
 @subsection DenyRescan
 @findex DenyRescan
 @table @asis
@@ -2738,22 +1623,7 @@ token for details).
 
 This statement can only be repeated for different links.
 
-@node DenyUncondFwdReqAccess, EchoMailFlavour, DenyRescan, Link Keywords
-@subsection DenyUncondFwdReqAccess
-@findex DenyUncondFwdReqAccess
-@table @asis
-@item Syntax:
-@code{denyUncondFwdReqAccess <bool>}
-@item Example:
-@code{denyUncondFwdReqAccess}
-@end table
-
-Don't allow unconditional forward requests from this link (via areafix)
-to your links.
-
-This statement can only be repeated for different links.
-
-@node EchoMailFlavour, Export, DenyUncondFwdReqAccess, Link Keywords
+@node EchoMailFlavour, Flavour, DenyRescan, Link Keywords
 @subsection EchoMailFlavour
 @findex EchoMailFlavour
 @table @asis
@@ -2768,25 +1638,7 @@ For example set echomailFlavour for points to hold and for uplink crash.
 
 This statement can only be repeated for different links.
 
-@node Export, Flavour, EchoMailFlavour, Link Keywords
-@subsection Export
-@findex Export
-@table @asis
-@item Syntax:
-@code{export <bool>}
-@item Example:
-@code{export off}
-@end table
-
-By default "Export on".
-
-If "export" is "off", mail for groups defined in @code{OptGrp} not
-tossed to link and if @code{OptGrp} not defined, then no mail tossed to
-link at all.
-
-This statement can only be repeated for different links.
-
-@node Flavour, ForwardAreaPriority, Export, Link Keywords
+@node Flavour, ForwardPkts, EchoMailFlavour, Link Keywords
 @subsection Flavour
 @findex Flavour
 @table @asis
@@ -2803,23 +1655,7 @@ flavour is applied.
 
 This statement can only be repeated for different links.
 
-@node ForwardAreaPriority, ForwardPkts, Flavour, Link Keywords
-@subsection ForwardAreaPriority
-@findex ForwardAreaPriority
-@table @asis
-@item Syntax:
-@code{forwardAreaPriority <integer>}
-@item Example:
-@code{forwardAreaPriority 1}
-@end table
-
-By default forward requests processing for links in order as they
-defined in config. But you can set priority for some links... "1" is the
-first link to forward requests, "2" is the second, etc.
-
-This statement can only be repeated for different links.
-
-@node ForwardPkts, ForwardRequestFile, ForwardAreaPriority, Link Keywords
+@node ForwardPkts, FileBox, Flavour, Link Keywords
 @subsection ForwardPkts
 @findex ForwardPkts
 @table @asis
@@ -2850,61 +1686,7 @@ base areas).
 
 This statement can only be repeated for different links.
 
-@node ForwardRequestFile, ForwardRequestMask, ForwardPkts, Link Keywords
-@subsection ForwardRequestFile
-@findex ForwardRequestFile
-@table @asis
-@item Syntax:
-@code{forwardRequestFile <file>}
-@item Example:
-@code{forwardRequestFile /etc/fido/fidonet.na}
-@end table
-
-File for forward requests (also for available areas and descriptions).
-If file contains area descriptions they will be used when
-autocreating areas.
-If not defined then forward requests unconditional.
-
-This statement can only be repeated for different links.
-
-@node ForwardRequestMask, ForwardRequests, ForwardRequestFile, Link Keywords
-@subsection ForwardRequestMask
-@findex ForwardRequestMask
-@table @asis
-@item Syntax:
-@code{forwardrequestmask <string>[,<string> ...]}
-@item Example:
-@code{forwardrequestmask nsk.*}
-@end table
-
-If area nsk.* (nsk.test for example) will be requested by downlink and
-forwardrequests to uplink are allowed, then it is created and request
-goes to uplink. If area doesn't covered by mask list, then checks the
-next link for forwardRrequests.
-
-This statement can only be repeated for different links.
-
-@node ForwardRequests, FileBox, ForwardRequestMask, Link Keywords
-@subsection ForwardRequests
-@findex ForwardRequests
-@table @asis
-@item Syntax:
-@code{forwardRequests <bool>}
-@item Example:
-@code{forwardRequests on}
-@end table
-
-By default "forwardRequests off". "On" allow forward requests to this
-link from other links. If no @code{forwardRequestFile} or
-@code{forwardRequestMask} defined, then forwardRequests unconditional.
-
-@code{LinkGrp} can deny access to some links...
-
-This statement can only be repeated for different links.
-
-@xref{LinkGrp}.
-
-@node FileBox, FileBoxAlways, ForwardRequests, Link Keywords
+@node FileBox, FileBoxAlways, ForwardPkts, Link Keywords
 @subsection FileBox
 @findex FileBox
 @table @asis
@@ -2922,7 +1704,7 @@ Currently hpt can put only echomail into fileBoxes.
 
 This statement can only be repeated for different links.
 
-@node FileBoxAlways, Import, FileBox, Link Keywords
+@node FileBoxAlways, LinkBundleNameStyle, FileBox, Link Keywords
 @subsection FileBoxAlways
 @findex FileBoxAlways
 @table @asis
@@ -2939,54 +1721,7 @@ This statement can only be repeated for different links. Works only for
 links which have @code{FileBox} or when @code{FileBoxesDir} is set.
 
 
-@node Import, Level, FileBoxAlways, Link Keywords
-@subsection Import
-@findex Import
-@table @asis
-@item Syntax:
-@code{import <bool>}
-@item Example:
-@code{import off}
-@end table
-
-By default "import on".
-
-Same as @code{Export}, but this is for mail @strong{from} link.
-
-This statement can only be repeated for different links.
-
-@node Level, Link, Import, Link Keywords
-@subsection Level
-@findex Level
-@table @asis
-@item Syntax:
-@code{level <integer>}
-@item Example:
-@code{level 200}
-@end table
-
-Access level. Used in echoareas to control read/write access.
-By default "level 0".
-
-This statement can only be repeated for different links.
-
-@node Link, LinkBundleNameStyle, Level, Link Keywords
-@subsection Link
-@findex Link
-@table @asis
-@item Syntax:
-@code{link <string>}
-@item Example:
-@code{link Matthias Tichy}
-@end table
-
-This statement starts a new Link-definition. All the following
-link-related statements change the configuration of this link until a
-new link statement is found. <string> is the name of this link.
-
-This statement can be repeated.
-
-@node LinkBundleNameStyle, LinkDefaults, Link, Link Keywords
+@node LinkBundleNameStyle, LinkMsgBaseDir, FileBoxAlways, Link Keywords
 @subsection LinkBundleNameStyle
 @findex LinkBundleNameStyle
 @table @asis
@@ -3003,59 +1738,7 @@ It is similar @code{BundleNameStyle} keyword.
 
 This statement can only be repeated for different links.
 
-@node LinkDefaults, LinkGrp, LinkBundleNameStyle, Link Keywords
-@subsection LinkDefaults
-@findex LinkDefaults
-@table @asis
-@item Syntax:
-@code{linkdefaults [begin | end | destroy]}
-@item Example:
-@code{linkdefaults}
-@end table
-
-This statement starts section of default definitions of links.
-All the following link-related statements change default configuration
-of link until a @code{'link'} or @code{'linkdefaults end'} or
-@code{'linkdefaults destroy'} statement is found.
-All parameters collected in linkdefaults sections are copied to link
-configuration every time when @code{'link'} statement found in
-configuration file. Link-related statements after @code{'linkdefaults end'} or
-@code{'linkdefaults destroy'} or before first @code{'link'} or
-@code{'linkdefaults'} statement are treated as error.
-@code{'linkdefaults'} statement without @code{'begin'} or @code{'end'} means
-@code{'linkdefaults begin'}
-@code{'linkdefaults destroy'} destroys all default definitions.
-
-Be careful with @code{Pause}, @code{Export}, etc. ;-)
-
-This statement can be repeated. New definitions overwrite old ones.
-
-@node LinkGrp, LinkMsgBaseDir, LinkDefaults, Link Keywords
-@subsection LinkGrp
-@findex LinkGrp
-@table @asis
-@item Syntax:
-@code{linkgrp <string>}
-@item Example:
-@code{linkgrp Fido}
-@end table
-
-Specifies a group to use for areas auto-created from this link. Also link
-can delete echo areas in his @code{LinkGrp} group.
-
-In this exmaple:
-
-1) string @code{Fido} will be added to a new area record unless
-@code{AutoAreaCreateDefaults} defines implicit group;
-
-2) links that have no access to group @code{Fido} can't forward requests
-to uplink with @code{LinkGrp Fido};
-
-3) this link can delete echo areas with @code{-g Fido} group.
-
-This statement can only be repeated for different links.
-
-@node LinkMsgBaseDir, Mandatory, LinkGrp, Link Keywords
+@node LinkMsgBaseDir, NetMailFlavour, LinkBundleNameStyle, Link Keywords
 @subsection LinkMsgBaseDir
 @findex LinkMsgBaseDir
 @table @asis
@@ -3072,39 +1755,7 @@ This statement can only be repeated for different links.
 
 @xref{MsgBaseDir}.
 
-@node Mandatory, Manual, LinkMsgBaseDir, Link Keywords
-@subsection Mandatory
-@findex Mandatory
-@table @asis
-@item Syntax:
-@code{mandatory <bool>}
-@item Example:
-@code{mandatory on}
-@end table
-
-By default "mandatory off".
-
-This statement disallows the link to unsubscribe areas via areafix.
-
-This statement can only be repeated for different links.
-
-@node Manual, NetMailFlavour, Mandatory, Link Keywords
-@subsection Manual
-@findex Manual
-@table @asis
-@item Syntax:
-@code{manual <bool>}
-@item Example:
-@code{manual on}
-@end table
-
-By default "manual off".
-
-This statement disallows the link to subscribe areas via areafix.
-
-This statement can only be repeated for different links.
-
-@node NetMailFlavour, NoRules, Manual, Link Keywords
+@node NetMailFlavour, NoRules, LinkMsgBaseDir, Link Keywords
 @subsection NetMailFlavour
 @findex NetMailFlavour
 @table @asis
@@ -3118,7 +1769,7 @@ This statement sets the flavour for outgoing netmail routed via this link.
 
 This statement can only be repeated for different links.
 
-@node NoRules, OptGrp, NetMailFlavour, Link Keywords
+@node NoRules, PackAka, NetMailFlavour, Link Keywords
 @subsection NoRules
 @findex NoRules
 @table @asis
@@ -3136,38 +1787,7 @@ link is subscribed to area and corresponding file is found in
 
 This statement can only be repeated for different links.
 
-@node OptGrp, OurAka, NoRules, Link Keywords
-@subsection OptGrp
-@findex OptGrp
-@table @asis
-@item Syntax:
-@code{optgrp <string>[,<string> ...]}
-@item Example:
-@code{optgrp A,X,Fido}
-@end table
-
-@code{Export}, @code{Import} & @code{Mandatory} restrictions uses
-@code{OptGrp} areas. If @code{OptGrp} not defined - the restrictions
-will be applied to @strong{all} areas.
-
-This statement can only be repeated for different links.
-
-@node OurAka, PackAka, OptGrp, Link Keywords
-@subsection OurAka
-@findex OurAka
-@table @asis
-@item Syntax:
-@code{ourAka <addr>}
-@item Example:
-@code{ourAka 2:2433/1247}
-@end table
-
-This statement sets the aka which is used for this link.
-
-This statement can only be repeated for different links.
-
-
-@node PackAka, Packer, OurAka, Link Keywords
+@node PackAka, PktSize, NoRules, Link Keywords
 @subsection PackAka
 @findex PackAka
 @table @asis
@@ -3187,60 +1807,7 @@ This feature may be used for simple echomail routing.
 This statement can only be repeated for different links.
 
 
-@node Packer, Password, PackAka, Link Keywords
-@subsection Packer
-@findex Packer
-@table @asis
-@item Syntax:
-@code{packer <packer>}
-@item Example:
-@code{packer zip}
-@end table
-
-This statement sets the packer for the link. You can use the packer
-which you has set up using the @code{Pack} statement. If you omit this
-statement or set @code{Packer none} no mail will be packed. The pkt´s
-will be stored in the outbound.
-
-This statement can only be repeated for different links.
-
-If you use hptzip (Zlib) library, you can set <packer> - zip.
-
-@node Password, Pause, Packer, Link Keywords
-@subsection Password
-@findex Password
-@table @asis
-@item Syntax:
-@code{password <string>}
-@item Example:
-@code{password secret}
-@end table
-
-This statement sets the default password for the link.
-If you do not change the other passwords, they are set to this password.
-There is no limit for @code{Password} length except the @code{PktPwd}.
-
-This statement can only be repeated for different links.
-
-@node Pause, PktSize, Password, Link Keywords
-@subsection Pause
-@findex Pause
-@table @asis
-@item Syntax:
-@code{pause ([on]|off|earea|farea)}
-@item Examples:
-@code{pause}
-@code{pause earea}
-@code{pause}
-@end table
-
-Stop export echomail, fileechoes or both for this link.
-
-This statement can only be repeated for different links.
-
-See also @ref{AutoPause} section.
-
-@node PktSize, PktPwd, Pause, Link Keywords
+@node PktSize, ReducedSeenBY, PackAka, Link Keywords
 @subsection PktSize
 @findex PktSize
 @table @asis
@@ -3254,24 +1821,7 @@ Maximum pkt size in kb for this link. Default - unlimited.
 
 This statement can only be repeated for different links.
 
-@node PktPwd, ReducedSeenBY, PktSize, Link Keywords
-@subsection PktPwd
-@findex PktPwd
-@table @asis
-@item Syntax:
-@code{pktpwd [<string>]}
-@item Example:
-@code{pktpwd geheim}
-@end table
-
-This statement sets the pktpassword for the actual link.
-Only passwords with maximal 8 characters are valid because of
-limitations of other software packages.
-An empty statement is allowed.
-
-This statement can only be repeated for different links.
-
-@node ReducedSeenBY, RemoteRobotName, PktPwd, Link Keywords
+@node ReducedSeenBY, RescanGrp, PktSize, Link Keywords
 @subsection ReducedSeenBY
 @findex ReducedSeenBY
 @table @asis
@@ -3295,22 +1845,7 @@ RSB algorithm
 
 This statement can only be repeated for different links.
 
-@node RemoteRobotName, RescanGrp, ReducedSeenBY, Link Keywords
-@subsection RemoteRobotName
-@findex RemoteRobotName
-@table @asis
-@item Syntax:
-@code{remoteRobotName <string>}
-@item Example:
-@code{remoteRobotName allfix}
-@end table
-
-Set remote system "areafix" to new name. This token used when requests
-to subscribing/unsubscribing of new areas forwarded to this link.
-
-This statement can only be repeated for different links.
-
-@node RescanGrp, RescanLimit, RemoteRobotName, Link Keywords
+@node RescanGrp, RescanLimit, ReducedSeenBY, Link Keywords
 @subsection RescanGrp
 @findex RescanGrp
 @table @asis
@@ -3374,7 +1909,7 @@ By default is off, i.e. do not send any notification messages.
 
 This statement can only be repeated for different links.
 
-@node UnsubscribeOnAreaDelete, , SendNotifyMessages, Link Keywords
+@node UnsubscribeOnAreaDelete,  , SendNotifyMessages, Link Keywords
 @subsection UnsubscribeOnAreaDelete
 @findex UnsubscribeOnAreaDelete
 @table @asis
@@ -3391,380 +1926,8 @@ By default is off, i.e. do not send unsubscribe request.
 
 This statement can only be repeated for different links.
 
-@node Areafix Keywords, Area Definition, Link Keywords, Configuration Reference
-@section Areafix Keywords
 
-@menu
-@end menu
-
-
-@node Area Definition, Carbon Copy, Areafix Keywords, Configuration Reference
-@section Area Definition
-
-@menu
-* BadArea::                     definition of badarea
-* DupeArea::                    definition of dupearea
-* EchoArea::                    definition of echoarea
-* EchoAreaDefaults::            defaults for echoarea
-* AreaGroup::                   definition of areagroup
-* AreaGroupDefaults::           default options for areas in group
-* LocalArea::                   definition of localarea
-* NetArea::                     same as netmailarea
-* NetMailArea::                 definition of netmailarea
-@end menu
-
-@node BadArea, DupeArea, Area Definition, Area Definition
-@subsection BadArea
-@findex BadArea
-@table @asis
-@item Syntax:
-@code{BadArea <name> <file> [-b <msgbase>] [Options]}
-@item Example:
-@code{BadArea badarea /var/spool/fido/msgb/bad -b Squish}
-@end table
-
-This statement specifies the BadArea. Messages which have no area on
-your system go to the badArea.
-@xref{EchoArea}, for details on @code{Options}.
-Like all areas BadArea is *.msg base per default.
-
-This statement cannot be repeated.
-
-@node DupeArea, EchoArea, BadArea, Area Definition
-@subsection DupeArea
-@findex DupeArea
-@table @asis
-@item Syntax:
-@code{dupeArea <name> <file> [-b <msgbase>] [Options]}
-@item Example:
-@code{dupeArea dupeArea  /var/spool/fido/msgb/dupes -b Squish}
-@end table
-
-This statement specifies the DupeArea. Messages which area dupes
-e.g. come to your system the second time, will be put in the DupeArea.
-@xref{EchoArea}, for details on @code{Options}.
-Like all areas DupeArea is *.msg base per default.
-
-This statement cannot be repeated.
-
-@node EchoArea, EchoAreaDefaults, DupeArea, Area Definition
-@subsection EchoArea
-@findex EchoArea
-@table @asis
-@item Syntax:
-@code{EchoArea <name> <file> [-b <msgbase>] [Options] [linkAKAs] [linkOptions]}
-@item Example:
-@code{EchoArea linux.develop.ger /var/spool/fido/msgb/linux.develop.ger
--b Squish -a 2:2433/1247 -g A -dupeCheck move -dupehistory 11 -d "Linux
-development" 2:2433/1245 -def}
-@end table
-
-This statement specifies the echoareas.
-@table @asis
-@item name:
-area-tag
-@item file:
-filename(s) for this area without extension;
-should be the area-tag (as far as possible). if file == Passthrough then
-[-b <msgbase>] is skipped and msgarea is set as an passthrough area.
-@item msgbase:
-@code{Msg} is standard (OPUS *.msg-base). Write @code{Squish} for an
-Squish-msgbase and @code{Jam} for Jam-msgbase.
-@item linkAKA:
-aka's of up- and down links (full 4D address).
-you can use masks like: "*:*/*" - all downlinks from you config.
-This links are auto-mandatory. Always use slash in mask!
-@end table
-
-Options:
-
-@table @asis
-@item -pass
-define area as passthrough even if msgbase type or filename is defined.
-@item -lr <integer>
-required level for read access (see also @code{Level} in link options);
-@code{integer} can't be negative;
-@item -lw <integer>
-required level for write access; @code{integer} can't be negative;
-@item -mandatory
-forbid to unsubscribe from this echo;
-@item -noMandatory
-enable unsubscribe from this echo if echoareadefaults set @code{-mandatory};
-@item -manual
-disallow remote subscribe (only manual connect);
-@item -noManual
-allow remote subscribe (using netmail to areafix) if echoareadefaults set @code{-manual};
-@item -p <integer>
-purge after n days: used by purging utilities like sqpack (*); default value is 0;
-@item -$m <integer>
-leave max n messages after purge in area (*); default value is 0;
-@item -noPack
-do not purge or pack area (overwrites -p & -$m) (*)
-@item -pack
-enable purge or pack area (*) if echoareadefaults set @code{-noPack};
-@item -killRead
-kill read msgs in area on purging (*)
-@item -noKillRead
-disable kill read msgs in area on purging (*) if echoareadefaults set @code{-killRead};
-@item -keepUnread
-keep unread msgs in area on purging (*)
-@item -nokeepUnread
-do not keep unread msgs in area on purging (*) if echoareadefaults set @code{-keepUnread};
-@item -kill
-kill messagebase of area when setting it to passthrough
-@item -nokill
-do not kill messagebase when setting area to passthrough if echoareadefaults set @code{-kill};
-@item -a <addr>
-aka to use (first address from config if not defined)
-@item -b <msgbase type>
-type of msgbase (Msg, Squish, Jam) (*)
-@item -g <group>
-group for this echoarea
-@item -keepsb
-keep seen-by kludges (used in CarbonCopy)
-@item -nokeepsb
-do not keep seen-by kludges (used in CarbonCopy) if echoareadefaults set @code{-keepsb};
-@item -tinysb
-no seen-by kludges stores in message base (*)
-@item -notinysb
-seen-by kludges stores in message base (*) if echoareadefaults set @code{-tinysb};
-@item -killsb
-no seen-by & path kludges stores in message base (*)
-@item -nokillsb
-seen-by & path kludges stores in message base (*) if echoareadefaults set @code{-killsb};
-@item -dosfile
-file name of area is in dos style (8+3). Please be aware of the fact that
-this will currently automatically disable the autoAreaCreateSubdirs feature.
-@item -nodosfile
-file name of area is in long filename style if echoareadefaults set @code{-dosfile};
-@item -hide
-hide area in areafix reports (%list & etc.);
-@item -nohide
-show area in areafix reports (%list & etc.) if disabled in echoareadefaults;
-@item -d "Description for the area between double quote (like this)"
-describe area (for areafix reports & etc.);
-@item -nopause
-%PAUSE has no effect to this area;
-@item -pause
-%PAUSE has effect to this area if disabled in echoareadefaults;
-@item -paused
-Area is paused (unsubscribed at uplink). This flag is automatically set and
-cleared by hpt if ,@xref{AutoAreaPause}, enabled.
-@item -noautoareapause
-Do not automatically pause area even if ,@xref{AutoAreaPause}, is enabled.
-@item -autoareapause
-Automatically pause area (if ,@xref{AutoAreaPause}, is enabled).
-@item -ccoff
-disables carbonCopies for this area;
-@item -noccoff or -ccon
-enables carbonCopies for this area if disabled in echoareadefaults;
-@item -DupeCheck off|move|del
-toss dupes, move dupes to @code{DupeArea} or delete dupes.
-@item -DupeHistory <unsignedInteger>
-size of dupecheck history file in days (7 days if not defined);
-@item -nolink
-disables reply-linking for this area (*);
-@item -link
-enables reply-linking for this area (*) if disabled in echoareadefaults;
-@item -scan listed|manual|never
-conditions to scan area: if listed in echotoss file or "-a" option; if run with "-a" option; or never
-@item -debug
-write debug info about this area to areaname.dbg (or common.dbg if "-dosfile" is used)
-@item -nodebug
-disable debug output if defined in echoareadefaults;
-@item -sbadd(<addr2D>,...)
-add seen-by(s) at tossing time;
-@item -sbign(<addr2D>,...)
-ignore seen-by(s) and toss mail to link(s).
-@item -r
-Default read-only: set link read-only at subscribing
-@item -w
-Default write-only: set link write-only at subscribing
-@end table
-
-(*) - these tokens to be removed from @code{AutoAreaCreateDefaults} when
-creating passthrough areas.
-
-LinkOptions:
-@table @asis
-@item -def
-default-uplink (used for area deletion, @xref{AdvancedAreafix}.)
-@item -r
-this link is read only
-@item -w
-this link is write only
-@item -mn
-this link is mandatory subscribed,
-you may also set: "<aka> -r -mn" or "<aka> -w -mn" and so on...
-
-Link Options -r -w are left for backward compatibility. We strongly recommend to
-use tokens ReadOnly & WriteOnly for setting permissions on arealinks.
-@end table
-
-This statement can be repeated.
-
-@subsection Note.
-The msgbase @code{MSG} is limited to 65536 messages. This is SMAPI
-implementation limit.
-
-@node EchoAreaDefaults, AreaGroup, EchoArea, Area Definition
-@subsection EchoAreaDefaults
-@findex EchoAreaDefaults
-@table @asis
-@item Syntax:
-@code{EchoAreaDefaults [-b <msgbase>] [Options]}
-@item Example:
-@code{EchoAreaDefaults -b Squish -a 2:280/1507 -g F -dupeCheck move -dupehistory 11 -p 14 2:280/1126}
-@end table
-
-With this keyword you can specify settings that will be set for the
-@code{EchoArea} and @code{LocalArea} definitions that follow. It makes
-the echoarea definitions shorter. All echoarea settings can be used
-@strong{except} the areaname and path.
-
-When you specify a different value in an echoarea definition, it
-overrules the default setting.
-
-With the default from the example above, an echoarea definition could be:
-
-@example
-EchoArea fidosoft.husky /var/spool/fido/msgb/fidosoft.husky -d "husky
-develpment" 2:280/6207
-
-This will internally be expanded to:
-
-EchoArea fidosoft.husky /var/spool/fido/msgb/fidosoft.husky -d "husky
-develpment" -b Squish -a 2:280/1507 -g F -dupeCheck move -dupehistory 11
--p 14 2:280/1126 2:280/6207
-@end example
-
-Another example:
-
-@example
-EchoArea evolution /var/spool/fido/msgb/evolution -d "about fantasies" -p 100
-
-that will be expanded to:
-
-EchoArea evolution /var/spool/fido/msgb/evolution -d "about fantasies"
--b Squish -a 2:280/1507 -g F -dupeCheck move -dupehistory 11 -p 100
-2:280/1126
-@end example
-
-As you will notice, the default settings are combined with the
-additional settings in the EchoArea definition, and the messages are
-purged after 100 days instead of 14 (the default).
-
-This statement can be repeated.
-
-An @code{EchoAreaDefults} setting is valid until a next @code{EchoAreaDefaults}
-setting.
-@code{EchoAreaDefaults} can also be switched off with an empty definition:
-
-@example
-EchoAreaDefaults [OFF]
-@end example
-
-The word 'OFF' is not needed but makes it more readable.
-
-@node AreaGroup, AreaGroupDefaults, EchoAreaDefaults, Area Definition
-@subsection AreaGroup
-@findex AreaGroup
-@table @asis
-@item Syntax:
-@code{AreaGroup <group name> <pattern list>}
-@item Example:
-@code{AreaGroup RUSSIAN ru.* su.*}
-@end table
-
-You can group areas by their names and then apply some default options to such
-areas. <group name> is a unique handle for every group. <pattern list> is a
-list of patterns with wich area names will be compared. If area name equals
-to some of patterns in group it will be assigned to this group.
-Pattern lookup will be performed in order you wrote them.
-
-If you define AreaGroup once and then define it again with the same name
-patterns from these two definitions will be joined.
-
-@example
-AreaGroup DN dn.*
-AreaGroup DN dnepr.* 464.*
-
-will produce patterns as if you define
-
-AreaGroup DN dn.* dnepr.* 464.*
-@end example
-
-This statement can be repeated.
-
-@node AreaGroupDefaults, LocalArea, AreaGroup, Area Definition
-@subsection AreaGroupDefaults
-@findex AreaGroupDefaults
-@table @asis
-@item Syntax:
-@code{AreaGroupDefaults <group name> <options>}
-@item Example:
-@code{AreaGroupDefaults RUSSIAN -p 14 -dupehistory 11}
-@end table
-
-This token defines default options for areas in group (see @code{AreaGroup}
-token). Options are the same as in EchoArea or EchoAreaDefaults.
-Parsing priority:
-EchoAreaDefaults (if defined)
-AreaGroupDefaults (if areaName suits pattern from one of groups)
-EchoArea
-
-@node LocalArea, NetArea, AreaGroupDefaults, Area Definition
-@subsection LocalArea
-@findex LocalArea
-@table @asis
-@item Syntax:
-@code{localArea <name> <file> [-b <msgbase>] [Options]}
-@item Example:
-@code{localArea linux.develop.ger /var/spool/fido/msgb/linux.develop.ger -b Squish -a 2:2433/1247 -dupeCheck move -dupehistory 11 -d "Linux development"}
-@end table
-
-This statement creates an @code{LocalArea}. The only difference between
-a @code{LocalArea} and an @code{EchoArea} is that a @code{LocalArea} has
-no links and is not scanned for new mails.
-
-This statement can be repeated.
-
-@node NetArea, NetMailArea, LocalArea, Area Definition
-@subsection NetArea
-@findex NetArea
-@table @asis
-@item Syntax:
-@code{NetArea <name> <file> [-b <msgbase>] [Options]}
-@item Example:
-@code{NetArea netmail /var/spool/fido/msgb/netmail -b Squish}
-@end table
-
-@xref{NetMailArea}.
-
-This statement can be repeated.
-
-@node NetMailArea, , NetArea, Area Definition
-@subsection NetMailArea
-@findex NetMailArea
-@table @asis
-@item Syntax:
-@code{NetmailArea <name> <file> [-b <msgbase>] [Options]}
-@item Example:
-@code{NetmailArea netmail /var/spool/fido/msgb/netmail -b Squish}
-@end table
-
-This statement specifies the @code{NetMailArea}. @xref{EchoArea},
-for details on @code{Options}. Like all areas NetmailAreas is *.msg
-bases per default.
-
-This statement can be repeated to use different netmailareas.
-
-@xref{NetArea}.
-
-This statement can be repeated.
-
-
-@node Carbon Copy, , Area Definition, Configuration Reference
+@node Carbon Copy,  , Link Keywords, Configuration Reference
 @section Carbon Copy
 
 @menu
@@ -3916,7 +2079,7 @@ the pipe, not temporary file.
 This statement can be repeated for each different
 carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
 
-@node CarbonFrom,  CarbonFromArea, CarbonExtern, Carbon Copy
+@node CarbonFrom, CarbonFromArea, CarbonExtern, Carbon Copy
 @subsection CarbonFrom
 @findex CarbonFrom
 @table @asis
@@ -4245,7 +2408,7 @@ Don't carbon from passthrough areas.
 
 This statement cannot be repeated.
 
-@node NetmailExtern, , ExcludePassthroughCarbon, Carbon Copy
+@node NetmailExtern,  , ExcludePassthroughCarbon, Carbon Copy
 @subsection NetmailExtern
 @findex NetmailExtern
 @table @asis
@@ -4501,7 +2664,7 @@ $toname, $attr.
 
 @end table
 
-@node Remote control, , Perl support, Advanced Concepts
+@node Remote control,  , Perl support, Advanced Concepts
 @section How remote control using Areafix works
 
 You can remotely control and change other links' subscription and options
