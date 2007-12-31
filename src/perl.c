@@ -512,6 +512,7 @@ unsigned long msgid;
       pos = strstr(text, "\001TOPT ");
       if (reuse_line(ptext, pos, mode)) ;/*copy_line(&buff, pos);*/
       if (msg->destAddr.point) xscatprintf(&buff, "\001TOPT %d\r", msg->destAddr.point);
+/*FIXME: else if (msg->.... ??? */
 
       pos = strstr(text, "\001FLAGS ");
       if (reuse_line(ptext, pos, mode)) { 
