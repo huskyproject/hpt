@@ -535,11 +535,12 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   pkt = openPktForAppending(arcNetmail ? virtualLink->pktFile : virtualLink->floFile, &header);
 		   writeMsgToPkt(pkt, msg);
 		   closeCreatedPkt(pkt);
-		   if (prio==flCrash) w_log(LL_ROUTE, "Crash-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   else if (prio==flHold) w_log(LL_ROUTE, "Hold-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   else if (prio==flDirect) w_log(LL_ROUTE, "Direct-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   else if (prio==flImmediate) w_log(LL_ROUTE, "Immediate-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
-		   else if (prio==flNormal) w_log(LL_ROUTE, "Normal-Msg packed: %u:%u/%u.%u -> %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+           { char* strorigaddr=aka2str5d(msg.origAddr);
+             char* strdestaddr=aka2str5d(msg.destAddr);
+             w_log(LL_ROUTE, "Msg packed with flavour '%s': %s -> %s", flv2str(prio), strorigaddr, strdestaddr);
+             nfree(strorigaddr);
+             nfree(strdestaddr);
+           }
                    if (!arcNetmail) {
 		         remove(virtualLink->bsyFile);
 		         nfree(virtualLink->bsyFile);
