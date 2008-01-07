@@ -142,7 +142,9 @@ static char *stripDomain(char *msgid)
     if (msgid == NULL) return msgid;
     for (p=msgid; *p && (isdigit(*p) || *p==':' || *p=='/' || *p=='.'); p++);
     if (*p != '@') return msgid;
-    if (parseFtnAddrZ(msgid, &addr, FTNADDR_GOOD, &p1) & FTNADDR_ERROR) return msgid;
+    if (parseFtnAddrZ(msgid, &addr, FTNADDR_GOOD, (const char**)(&p1)) & FTNADDR_ERROR) return msgid;
+     /*  '(const char**)(&p1)' is needs for prevent warning "passing arg 4 of `parseFtnAddrZ' from incompatible pointer type" */
+
     for (; *p1 && !isspace(*p1); p1++);
     strcpy(p, p1);
     return msgid;

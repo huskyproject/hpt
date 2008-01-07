@@ -856,7 +856,7 @@ void post(int c, unsigned int *n, char *params[])
 {
     struct post_parameters p = {0};
     FILE *text = NULL;
-    s_message msg = {0};
+    s_message msg = {{0}};
     time_t t = time (NULL);
     struct tm *tm;
 

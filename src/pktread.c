@@ -171,8 +171,9 @@ int parseINTL(char *msgtxt, hs_addr *from, hs_addr *to)
    {
       start += 6;                 /*  skip "INTL " */
 
-	  if( !(parseFtnAddrZ(start, &intl_to, FTNADDR_GOOD, &start) & FTNADDR_ERROR) &&
-		  !(parseFtnAddrZ(start, &intl_from, FTNADDR_GOOD, &start) & FTNADDR_ERROR))
+	  if( !(parseFtnAddrZ(start, &intl_to, FTNADDR_GOOD, (const char**)(&start)) & FTNADDR_ERROR) &&
+		  !(parseFtnAddrZ(start, &intl_from, FTNADDR_GOOD, (const char**)(&start)) & FTNADDR_ERROR))
+          /*  '(const char**)(&start)' is needs for prevent warning "passing arg 4 of `parseFtnAddrZ' from incompatible pointer type" */
 	  {
           /* INTL is valid, copy parsed data to output */
 		  /* copying the whole structures is ok since they are initialized by from and to */
