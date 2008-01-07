@@ -131,7 +131,7 @@ s_pktHeader *openPkt(FILE *pkt)
 
   getUINT16(pkt); getUINT16(pkt); /* read ProdData */
 
-  if (header->origAddr.net == 65535) {
+  if (((UINT16)header->origAddr.net) == 65535U) {
 	  if (header->origAddr.point) header->origAddr.net = header->auxNet;
 	  else header->origAddr.net = header->destAddr.net; /*  not in FSC ! */
   }
