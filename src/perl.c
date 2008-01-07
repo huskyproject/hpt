@@ -457,9 +457,9 @@ unsigned long msgid;
       pos = strstr(text, "\001INTL ");
       if (reuse_line(ptext, pos, mode)) ;/*copy_line(&buff, pos);*/
       else
-	   xscatprintf(&buff, "\001INTL %u:%u/%u %u:%u/%u\r",
-			   msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node,
-			   msg->origAddr.zone,  msg->origAddr.net,  msg->origAddr.node);
+        xscatprintf(&buff, "\001INTL %u:%u/%u %u:%u/%u\r",
+      msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node,
+      msg->origAddr.zone,  msg->origAddr.net,  msg->origAddr.node);
 
       pos = strstr(text, "\001FMPT ");
       if (reuse_line(ptext, pos, mode)) ;/*copy_line(&buff, pos);*/
@@ -467,8 +467,7 @@ unsigned long msgid;
 
       pos = strstr(text, "\001TOPT ");
       if (reuse_line(ptext, pos, mode)) ;/*copy_line(&buff, pos);*/
-      if (msg->destAddr.point) xscatprintf(&buff, "\001TOPT %d\r", msg->destAddr.point);
-/*FIXME: else if (msg->.... ??? */
+      else if (msg->destAddr.point) xscatprintf(&buff, "\001TOPT %d\r", msg->destAddr.point);
 
       pos = strstr(text, "\001FLAGS ");
       if (reuse_line(ptext, pos, mode)) { 
