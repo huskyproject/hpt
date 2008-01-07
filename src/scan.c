@@ -475,7 +475,16 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   if (0!=MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL))
                         w_log(LL_ERR, "Could not update msg in area %s! Check the wholeness of messagebase, please.", area->areaName);
 		   nfree(link->floFile);
-		   w_log(LL_FROUTE, "File %s from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
+/*		   w_log(LL_FROUTE, "File %s from %u:%u/%u.%u -> %u:%u/%u.%u via %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
+*/
+           { char* strorigaddr=aka2str5d(msg.origAddr);
+             char* strdestaddr=aka2str5d(msg.destAddr);
+             char* strviaaddr=aka2str5d(link->hisAka);
+             w_log(LL_FROUTE, "File %s: %s -> %s routed via %s", msg.subjectLine, strorigaddr, strdestaddr, strviaaddr);
+             nfree(strorigaddr);
+             nfree(strdestaddr);
+             nfree(strviaaddr);
+           }
 	       }
 	   }
        }
@@ -488,7 +497,14 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   if (0!=MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL))
                         w_log(LL_ERR, "Could not update msg in area %s! Check the wholeness of messagebase, please.", area->areaName);
 		   nfree(virtualLink->floFile);
-		   w_log(LL_FROUTE, "File %s from %u:%u/%u.%u -> %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+/*		   w_log(LL_FROUTE, "File %s from %u:%u/%u.%u -> %u:%u/%u.%u", msg.subjectLine, msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+*/
+           { char* strorigaddr=aka2str5d(msg.origAddr);
+             char* strdestaddr=aka2str5d(msg.destAddr);
+             w_log(LL_FROUTE, "File %s: %s -> %s", msg.subjectLine, strorigaddr, strdestaddr);
+             nfree(strorigaddr);
+             nfree(strdestaddr);
+           }
 	   }
    } /* endif file attach */
 
@@ -504,7 +520,10 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 		   if (0!=MsgWriteMsg(SQmsg, 0, xmsg, NULL, 0, 0, 0, NULL))
                         w_log(LL_ERR, "Could not update msg in area %s! Check the wholeness of messagebase, please.", area->areaName);
 		   nfree(virtualLink->floFile);
-		   w_log(LL_FREQ, "Request %s from %u:%u/%u.%u", msg.subjectLine, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point);
+           { char* strdestaddr=aka2str5d(msg.destAddr);
+             w_log(LL_FREQ, "File-request %s from %s", msg.subjectLine, strdestaddr);
+             nfree(strdestaddr);
+           }
 	   }
    }
 
@@ -587,7 +606,14 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
 			   pkt = openPktForAppending(arcNetmail ? link->pktFile : link->floFile, &header);
 			   writeMsgToPkt(pkt, msg);
 			   closeCreatedPkt(pkt);
-			   w_log(LL_ROUTE, "Msg from %u:%u/%u.%u to %u:%u/%u.%u packed to %u:%u/%u.%u", msg.origAddr.zone, msg.origAddr.net, msg.origAddr.node, msg.origAddr.point, msg.destAddr.zone, msg.destAddr.net, msg.destAddr.node, msg.destAddr.point, link->hisAka.zone, link->hisAka.net, link->hisAka.node, link->hisAka.point);
+               { char* strOA=aka2str5d(msg.origAddr);
+                 char* strDA=aka2str5d(msg.destAddr);
+                 char* strVA=aka2str5d(link->hisAka);
+                 w_log(LL_ROUTE, "Msg from %s to %s packed via %s", strOA, strDA, strVA);
+                 nfree(strOA);
+                 nfree(strDA);
+                 nfree(strVA);
+               }
                            if (!arcNetmail) {
 			        remove(link->bsyFile);
 			        nfree(link->bsyFile);
