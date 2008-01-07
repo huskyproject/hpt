@@ -159,51 +159,7 @@ char *flag_name[] = { "PVT", "CRA", "RCV", "SNT", "ATT", "TRS", "ORP", "K/S",
                       "A/S", "DIR", "ZON", "HUB", "IMM", "XMA", "KFS", "TFS",
                       "LOK", "CFM", "HIR", "COV", "SIG", "LET" };
 int reuse_line(char **ptext, char *pos, mmode_t mode);
-/* flag to flavour */
-static e_flavour flag2flv(unsigned long attr) {
-  if (attr & 0x100000) return flImmediate;
-  else if ((attr & 0x20000) || (attr & 0x202) == 0x202) return flDirect;
-  else if (attr & 0x200) return flHold;
-  else if (attr & 2) return flCrash;
-  else return flNormal;
-}
-/* flavour to flag */
-static unsigned long flv2flag(e_flavour flv) {
-  switch (flv) {
-    case flImmediate: return 0x100000;
-    case flDirect:    return 0x20000;
-    case flHold:      return 0x200;
-    case flCrash:     return 2;
-    default:        return 0;
-  }
-}
-/* flavour to string */
-static char* flv2str(e_flavour flv) {
-  switch (flv) {
-    case flImmediate: return "immediate";
-    case flDirect:    return "direct";
-    case flHold:      return "hold";
-    case flCrash:     return "crash";
-    default:        return "normal";
-  }
-}
-/* smart string flavour parsing */
-static e_flavour str2flv(char *flv) {
-struct flv_data_s { e_flavour f; char c; char *s1; char *s2; };
-const struct flv_data_s flv_data[] = { { flNormal, 'n', "norm", "normal" },
-                                       { flHold, 'h', "hld", "hold" },
-                                       { flCrash, 'c', "cra", "crash" },
-                                       { flDirect, 'd', "dir", "direct" },
-                                       { flImmediate, 'i', "imm", "immediate" } 
-                                     };
-register unsigned char i;
-   for (i = 0; i < sizeof(flv_data)/sizeof(flv_data[0]); i++)
-      if ( ((*flv | 0x20) == flv_data[i].c) && (flv[1] == '\0') ) return flv_data[i].f;
-   for (i = 0; i < sizeof(flv_data)/sizeof(flv_data[0]); i++)
-      if (stricmp(flv, flv_data[i].s1) == 0 ||
-          stricmp(flv, flv_data[i].s2) == 0) return flv_data[i].f;
-   return -1;
-}
+
 /* fts1 date to unixtime, 0 on failure */
 static time_t fts2unix(const char *s, int *ret) {
 struct tm tm;
