@@ -31,6 +31,11 @@ sub filter()
 
  $testarea{"GREMLIN.TEST"}=1;  # echobase is exists
  $testarea{"MU.TEST"}=2;       # passthrough echo
+
+ my @ignore_from_regexp=(                # if these regexp's is matched with $fromname
+                         'devnull@f1.ru' # then message will be ignored.
+                        );
+
 # ==== и до обеда
 
  my @Id = split(/ /,'$Id$');
@@ -40,6 +45,12 @@ sub filter()
  if( ($testarea{$area}) && (($toname eq $check_toname) || ($toname eq $myname))
      && (lc($subject) eq $check_subject) )
  {
+  foreach my $ignore_from (@ignore_from_regexp)
+  {
+    if( $fromname =~ /$ignore_from/ )
+    { return ""; }
+  }
+
 # $text contains original message and must be left as is
   my $msgtext = $text;
 
