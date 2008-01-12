@@ -35,60 +35,72 @@
 
 sub mirror()
 {
- my %testarea;
+  my %testarea;
 # ==== Configuration # настраивать от забора
- my $check_toname="All";     # Exactly!
- my $check_subject="test";   # Lower case!
- my $myname="Mirror robot";  # Robot name, uses in reply and check "to" name
- my $myaddr="2:5020/545";    # Robot address
- my $txt2pkt="/usr/local/bin/txt2pkt"; # txt2pkt program with path uses for post into passthrough areas
- my $report_subj="$myname report";           # Subject of report message
- my $report_origin="$myname: HPT-perl hook"; # Origin of report message
- my $pkt_dir="/fido/inbound-local";          # Directory to write PKT for passtrough areas
+  my $check_toname="All";     # Exactly!
+  my $check_subject="test";   # Lower case!
+  my $myname="Mirror robot";  # Robot name, uses in reply and check "to" name
+  my $myaddr="2:5020/545";    # Robot address
+  my $txt2pkt="/usr/local/bin/txt2pkt"; # txt2pkt program (with path) uses for post
+                                        #  into passthrough areas
+  my $report_subj="$myname report";           # Subject of report message
+  my $report_origin="$myname: HPT-perl hook"; # Origin of report message
+  my $pkt_dir="/fido/inbound-local";          # Directory to write PKT for 
+                                              #  passtrough areas
+  my @ignore_from_regexp=(               # if these regexp's is matched with $fromname
+                         'devnull@f1.ru' #  then message will be ignored.
+                         );
  # areas list, value "1" for ordinary areas, value "2" for passthrough areas.
- $testarea{"GREMLIN.TEST"}=1;  # echobase is exists
- $testarea{"MU.TEST"}=2;       # passthrough echo
+  $testarea{"GREMLIN.TEST"}=1;  # echobase is exists
+  $testarea{"MU.TEST"}=2;       # passthrough echo
 # ==== End of configuration # и до обеда
- my $msgtext="";
+  my $msgtext="";
 
- my @Id = split(/ /,'$Id$');
- my $report_tearline="$Id[1] $Id[2]";
- undef @Id;
+  my @Id = split(/ /,'$Id$');
+  my $report_tearline="$Id[1] $Id[2]";
+  undef @Id;
 
- if( ($testarea{$area}) && (($toname eq $check_toname) || ($toname eq $myname))
-     && (lc($subject) eq $check_subject) )
- {
+  if( ($testarea{$area}) && (($toname eq $check_toname) || ($toname eq $myname))
+      && (lc($subject) eq $check_subject) )
+  {
+    foreach my $ignore_from (@ignore_from_regexp)
+    {
+      if( $fromname =~ /$ignore_from/ )
+      { return ""; }
+    }
+
 # $text contains original message and must be left as is
-  my $msgtext = $text;
+    my $msgtext = $text;
 
 # invalidate control stuff
-  $msgtext =~ s/\x01/@/g;
-  $msgtext =~ s/\n/\\x0A/g;
-  $msgtext =~ s/\rSEEN-BY/\rSEEN+BY/g;
-  $msgtext =~ s/\r--- /\r=== /g;
-  $msgtext =~ s/\r \* Origin: /\r + Origin: /g;
-  $msgtext="$date $fromname ($fromaddr) wrote:\r\r"
-	. "==== begin of message ====\r"
-	. "$msgtext\r"
-	. "==== end of message ====\r\r\r";
+    $msgtext =~ s/\x01/@/g;
+    $msgtext =~ s/\n/\\x0A/g;
+    $msgtext =~ s/\rSEEN-BY/\rSEEN+BY/g;
+    $msgtext =~ s/\r--- /\r=== /g;
+    $msgtext =~ s/\r \* Origin: /\r + Origin: /g;
+    $msgtext="$date $fromname ($fromaddr) wrote:\r\r"
+           . "==== begin of message ====\r"
+           . "$msgtext\r"
+           . "==== end of message ====\r\r\r";
 
-  if( $testarea{$area}==1 ){
-    $msgtext = $msgtext . "--- $report_tearline\r * Origin: $report_origin ($myaddr)\r";
-    putMsgInArea($area,$myname,$fromname,$myaddr,$myaddr,$report_subj,"","Uns Loc",$msgtext,1);
-
-  }else{
-    $msgtext =~ s/\r/\n/g;
-    my $cmd="$txt2pkt -e $area -xf $myaddr -xt $myaddr -nf '$myname'"
-           ." -nt '$fromname' -s '$report_subj' -t '$report_tearline'"
-           ." -o '$report_origin' -d '$pkt_dir' -";
-    if( open( PIPE,"|$cmd" ) ){
-      print PIPE $msgtext;
-      close PIPE;
-      writeLogEntry('7',"PKT with reply is created from $myname using txt2pkt");
+    if( $testarea{$area}==1 ){
+      $msgtext = $msgtext
+             . "--- $report_tearline\r * Origin: $report_origin ($myaddr)\r";
+      putMsgInArea( $area, $myname, $fromname, $myaddr, $myaddr, 
+                    $report_subj, "", "Uns Loc", $msgtext, 1 );
     }else{
-      writeLogEntry('1',"Can't open pipe to txt2pkt");
+      $msgtext =~ s/\r/\n/g;
+      my $cmd="$txt2pkt -e $area -xf $myaddr -xt $myaddr -nf '$myname'"
+             ." -nt '$fromname' -s '$report_subj' -t '$report_tearline'"
+             ." -o '$report_origin' -d '$pkt_dir' -";
+      if( open( PIPE,"|$cmd" ) ){
+        print PIPE $msgtext;
+        close PIPE;
+        writeLogEntry('7',"PKT with reply is created from $myname using txt2pkt");
+      }else{
+        writeLogEntry('1',"Can't open pipe to txt2pkt");
+      }
     }
   }
- }
- return "";
+  return "";
 }
