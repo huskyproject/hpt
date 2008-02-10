@@ -732,8 +732,8 @@ void af_QueueReport()
 void af_QueueUpdate()
 {
     s_query_areas *tmpNode  = NULL;
-    s_link *lastRlink;
-    s_link *dwlink;
+    s_link *lastRlink = NULL;
+    s_link *dwlink = NULL;
 
     w_log(LL_START, "Start updating queue file");
     if( !queryAreasHead ) af_OpenQuery();
@@ -747,8 +747,15 @@ void af_QueueUpdate()
 
         if( stricmp(tmpNode->type,czFreqArea) == 0 )
         {
-            lastRlink = getLinkFromAddr(config,tmpNode->downlinks[0]);
-            dwlink    = getLinkFromAddr(config,tmpNode->downlinks[1]);
+            if(tmpNode->linksCount >= 1)
+                lastRlink = getLinkFromAddr(config,tmpNode->downlinks[0]);
+            if(tmpNode->linksCount >= 2)
+                dwlink    = getLinkFromAddr(config,tmpNode->downlinks[1]);
+            if(lastRlink == NULL)
+            {
+                /* TODO: Make appropriate error message and remove (?) line */
+                continue;
+            }
             forwardRequestToLink(tmpNode->name, lastRlink, NULL, 1);
             w_log( LL_AREAFIX, "areafix: request for %s is cancelled for node %s",
                 tmpNode->name, aka2str(lastRlink->hisAka));
@@ -781,21 +788,29 @@ void af_QueueUpdate()
         if( stricmp(tmpNode->type,czIdleArea) == 0 )
         {
             ps_area delarea;
+            int mandatoryal=0;
             queryAreasHead->nFlag = 1; /*  query was changed */
             strcpy(tmpNode->type, czKillArea);
             tmpNode->bTime = tnow;
             tmpNode->eTime = tnow + config->killedRequestTimeout*secInDay;
-            tmpNode->linksCount = 1;
             w_log( LL_AREAFIX, "areafix: request for %s is going to be killed",tmpNode->name);
+            /* TODO: Make sure that all of the following won't crash and will do
+             * something reasonable when dwlink == NULL */
+            if(tmpNode->linksCount >= 1)
+            {
+                lastRlink = getLinkFromAddr(config,tmpNode->downlinks[0]);
+                tmpNode->linksCount = 1;
+            }
             delarea = getArea(config, tmpNode->name);
             if (delarea != &(config->badArea))
-            {   /* echoarea is exists in config, delete it if permissible */
-                if (mandatoryCheck( *(getArea(config,tmpNode->name)),getLinkFromAddr(config,tmpNode->downlinks[0]))==0) do_delete(NULL, delarea);
-            } else {
-                /* send unsubscribe message to uplink when moving from idle to kill */
-                lastRlink = getLinkFromAddr(config,tmpNode->downlinks[0]);
-                if (lastRlink) forwardRequestToLink(tmpNode->name, lastRlink, NULL, 1);
+            {
+                if (lastRlink != NULL)
+                    mandatoryal = mandatoryCheck( delarea, lastRlink);
+                if(!mandatoryal) /* echoarea is exists in config, delete it if permissible */
+                    do_delete(NULL, delarea);
             }
+            /* send unsubscribe message to uplink when moving from idle to kill */
+            if (lastRlink && !mandatoryal) forwardRequestToLink(tmpNode->name, lastRlink, NULL, 1);
         }
     }
     /*  send msg to the links (forward requests to areafix) */
