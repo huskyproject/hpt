@@ -413,7 +413,7 @@ void copy_line(char **dest, char *s) {
 char *pos;
 int len;
     pos = strchr(s, '\r');
-    len = (pos != NULL) ? pos-s : strlen(s);
+    len = (pos != NULL) ? pos-s : (int)strlen(s);
     if (pos != NULL) *pos = 0;
     xscatprintf(dest, "%s\r", s);
     if (pos != NULL) *pos = '\r';
@@ -444,7 +444,7 @@ char *create_kludges(s_message *msg, char **ptext, char *area, long attr,
 char *buff = NULL;
 char *flgs = NULL;
 char *pos, *text = *ptext, *pos2;
-int i;
+unsigned int i;
 unsigned long msgid;
    /* echomail */
    if (area) {
@@ -1208,7 +1208,8 @@ void perl_setvars(void) {
 
 int PerlStart(void)
 {
-   int rc, i;
+   int rc;
+   unsigned int i;
    char *perlfile;
    char *perlargs[]={"", NULL, NULL, NULL};
    char *cfgfile, *cfgpath=NULL, *patharg=NULL;
@@ -1691,7 +1692,7 @@ s_route *perlroute(s_message *msg, s_route *defroute)
                    route.flavour = flHold;
                }
     #if 1
-               else if ( (route.flavour = str2flv(flv)) != -1 ) ;
+               else if ( (int)(route.flavour = str2flv(flv)) != -1 ) {}
     #else
                else if (stricmp(flv, "normal") == 0)
                  route.flavour = flNormal;

@@ -180,7 +180,7 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
             (crepl -> freeReply)++;
         } else {
             linkTo = MsgUidToMsgn(harea, crepl->reply1st, UID_EXACT) - 1;
-	    if(linkTo == -1) {
+	    if(linkTo == (dword)-1) {
 		w_log( LL_WARN, "Thread linking broken. MsgUidToMsgn() returned -1");
 		links_ignored++;
 		return;
@@ -188,7 +188,7 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
 
             while (replmap[linkTo].replyNxt) {
 		linkTo = MsgUidToMsgn(harea, replmap[linkTo].replyNxt, UID_EXACT) - 1;
-		if(linkTo == -1) {
+		if(linkTo == (dword)-1) {
 		    w_log( LL_WARN, "Thread linking broken. MsgUidToMsgn() returned -1");
 		    links_ignored++;
 		    return;
