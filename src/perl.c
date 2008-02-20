@@ -449,24 +449,24 @@ unsigned long msgid;
    /* echomail */
    if (area) {
        pos = strstr(text, "AREA:");
-       if (reuse_line(ptext, pos, mode)) ;/*copy_line(&buff, pos);*/
+       if (reuse_line(ptext, pos, mode)) {} /*copy_line(&buff, pos);*/
          else xscatprintf(&buff, "AREA:%s\r", area);
    }
    /* netmail */
    else {
       pos = strstr(text, "\001INTL ");
-      if (reuse_line(ptext, pos, mode)) ;/*copy_line(&buff, pos);*/
+      if (reuse_line(ptext, pos, mode)) {} /*copy_line(&buff, pos);*/
       else
         xscatprintf(&buff, "\001INTL %u:%u/%u %u:%u/%u\r",
       msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node,
       msg->origAddr.zone,  msg->origAddr.net,  msg->origAddr.node);
 
       pos = strstr(text, "\001FMPT ");
-      if (reuse_line(ptext, pos, mode)) ;/*copy_line(&buff, pos);*/
+      if (reuse_line(ptext, pos, mode)) {} /*copy_line(&buff, pos);*/
       else if (msg->origAddr.point) xscatprintf(&buff, "\001FMPT %d\r", msg->origAddr.point);
 
       pos = strstr(text, "\001TOPT ");
-      if (reuse_line(ptext, pos, mode)) ;/*copy_line(&buff, pos);*/
+      if (reuse_line(ptext, pos, mode)) {} /*copy_line(&buff, pos);*/
       else if (msg->destAddr.point) xscatprintf(&buff, "\001TOPT %d\r", msg->destAddr.point);
 
       pos = strstr(text, "\001FLAGS ");
@@ -498,7 +498,7 @@ unsigned long msgid;
    }
    /* tid */
    pos = strstr(text, "\001TID: ");
-   if (reuse_line(ptext, pos, mode)) ;/*copy_line(&buff, pos);*/
+   if (reuse_line(ptext, pos, mode)) {} /*copy_line(&buff, pos);*/
    else if (!config->disableTID) xscatprintf(&buff, "\001TID: %s\r", versionStr);
 
    return buff;
