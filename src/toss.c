@@ -1098,6 +1098,8 @@ int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
 	return putMsgInBadArea(msg, pktHeader->origAddr, BM_DENY_BY_FILTER);
     else if (rc == 2)
 	return 1;
+#else
+    unused(secure);
 #endif
     if (msg->netMail == 1) {
         w_log(LL_NETMAIL, "Netmail from %s to %u:%u/%u.%u", aka2str(msg->origAddr),
