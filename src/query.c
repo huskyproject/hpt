@@ -805,7 +805,7 @@ void af_QueueUpdate()
             if (delarea != &(config->badArea))
             {
                 if (lastRlink != NULL)
-                    mandatoryal = mandatoryCheck( delarea, lastRlink);
+                    mandatoryal = mandatoryCheck( *delarea, lastRlink);
                 if(!mandatoryal) /* echoarea is exists in config, delete it if permissible */
                     do_delete(NULL, delarea);
             }
