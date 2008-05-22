@@ -36,18 +36,11 @@ install: build
 	dh_clean -k
 	dh_installdirs
 	# Add here commands to install the package into debian/hpt.
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/hpt
-	-cp config/config config/path config/links config/areas \
-	    filter.pl debian/hpt/etc/husky
-	-cp misc/areafix.hlp $(CURDIR)/debian/hpt/etc/husky
-	-cp misc/* $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc
-	-cp misc/hpt_ro/* $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/hpt_ro
-	-cp misc/makeavl/* $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/makeavl
-	rm -f $(CURDIR)/debian/hpt/usr/share/doc/hpt/misc/*.hlp
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/$(PACKAGE)
 	cd doc ; \
-	make all install DESTDIR=$(CURDIR)/debian/hpt 
-	rm -f $(CURDIR)/debian/hpt/usr/share/info/dir*
-
+	make all install DESTDIR=$(CURDIR)/debian/$(PACKAGE)
+	rm -f $(CURDIR)/debian/$(PACKAGE)/usr/share/info/dir*
+	dh_install debian/config etc/husky
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -56,15 +49,11 @@ binary-indep: build install
 # Build architecture-dependent files here.
 binary-arch: build install
 	dh_testdir
-	dh_testroot
-#	dh_installdebconf	
+	dh_testroot	
 	dh_installdocs
 	dh_installexamples
-	dh_installmenu
-	dh_installcron
 	dh_installmanpages
 	dh_installinfo
-#	dh_undocumented
 	dh_installchangelogs ChangeLog
 	dh_link
 	dh_strip

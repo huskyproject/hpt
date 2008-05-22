@@ -18,7 +18,7 @@ case "$1" in
 	#
 	OVERRIDEN=
 	OVERRIDEN=`dpkg-statoverride --list /usr/bin/hpt` || true
-	[ "${OVERRIDEN}" = "" ] && dpkg-statoverride --update --add ftn ftn 6755 /usr/bin/hpt
+	[ "${OVERRIDEN}" = "" ] && dpkg-statoverride --update --add ftn ftn 6550 /usr/bin/hpt
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

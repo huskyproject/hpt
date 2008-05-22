@@ -1,15 +1,15 @@
 Source: hpt
-Section: contrib/mail
+Section: mail
 Priority: optional
-Maintainer: Pavel Andreew <pavel@collage.etel.ru>
-Build-Depends: debhelper (>> 4.0.0), libsmapi2-dev (>=2.3-1), libfidoconf1-dev (>= 1.3-1), libperl-dev, texinfo
-Standards-Version: 3.5.8
+Maintainer: Stanislav Maslovski <stanislav.maslovski@gmail.com>
+Build-Depends: debhelper (>> 4.0.0), libsmapi2cur-dev (>= 2.5-1), libhusky-dev (>= 1.9-1), libareafix-dev (>= 1.9-1), libfidoconf1-dev (>= 1.9-1), libperl-dev, texinfo
+Standards-Version: 3.6.1
 
 Package: hpt
 Architecture: any
 Recommends: sqpack
 Suggests: hptkill, hptsqfix
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, adduser
 Description: Highly Portable (Performance ?) FTN Message Tosser
  HPT is a Fidonet message tosser and packer with areafix.
  .
