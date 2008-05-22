@@ -2549,14 +2549,14 @@ int perl_robotmsg(s_message *msg, char *type)
 {
    int rc = 0;
    SV *svfromname, *svfromaddr, *svtoname, *svtoaddr;
-   SV *svtext, *svsubj, *svret, *svtype;
+   SV *svtext, *svsubj, *svret, *svtyp;
    STRLEN n_a;
    static int do_perlrobotmsg = 1;
 
    VK_START_HOOK(perlrobotmsg, SUB_ON_ROBOTMSG, 0)
 
    { dSP;
-     svtype     = perl_get_sv("type",      TRUE);
+     svtyp      = perl_get_sv("type",      TRUE);
      svfromname = perl_get_sv("fromname",  TRUE);
      svfromaddr = perl_get_sv("fromaddr",  TRUE);
      svtoname   = perl_get_sv("toname",    TRUE);
@@ -2564,7 +2564,7 @@ int perl_robotmsg(s_message *msg, char *type)
      svsubj     = perl_get_sv("subject",   TRUE);
      svtext     = perl_get_sv("text",      TRUE);
 
-     if (type) sv_setpv(svtype, type); else sv_setsv(svtype, &sv_undef);
+     if (type) sv_setpv(svtyp, type); else sv_setsv(svtyp, &sv_undef);
      sv_setpv(svfromname,  msg->fromUserName);
      sv_setpv(svfromaddr,  aka2str(msg->origAddr));
      sv_setpv(svtoname,    msg->toUserName);
