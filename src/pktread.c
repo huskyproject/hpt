@@ -158,6 +158,7 @@ s_pktHeader *openPkt(FILE *pkt)
   return header;
 }
 
+/* WARNING: *from and *to addresses should be properly initialized */
 int parseINTL(char *msgtxt, hs_addr *from, hs_addr *to)
 {
    char *start;

@@ -714,6 +714,8 @@ void scanNMArea(s_area *area)
         * if @INTL and optionally @TOPT/@FMPT found, take address
         * from there
         */
+       memset(&intl_orig, 0, sizeof(intl_orig));
+       memset(&intl_dest, 0, sizeof(intl_dest));
        /* TODO: use correctNMAddr from pktread.c? */
        if (parseINTL(ctl, &intl_orig, &intl_dest))
        {
