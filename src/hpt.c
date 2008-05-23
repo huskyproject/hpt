@@ -502,8 +502,14 @@ int main(int argc, char **argv)
    char *title=NULL, oldtitle[ TITLESIZE ];
 #endif
 
-#if defined ( __NT__ )
+#if defined ( __NT__ ) && !defined ( DEBUG )
    SetUnhandledExceptionFilter(&UExceptionFilter);
+#endif
+#if defined ( __MSVC__ ) && defined ( DEBUG )
+	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+	_CrtSetReportMode( _CRT_WARN, _CRTDBG_MODE_DEBUG );
+	_CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_DEBUG );
+	_CrtSetReportMode( _CRT_ASSERT, _CRTDBG_MODE_DEBUG );
 #endif
 
    versionStr = GenVersionStr( "hpt", VER_MAJOR, VER_MINOR, VER_PATCH,
