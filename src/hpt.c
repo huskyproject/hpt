@@ -221,19 +221,23 @@ int processCommandLine(int argc, char **argv)
 		  cmLink = 1;
 		  continue;
       } else if (stricmp(argv[i], "afix") == 0) {
-		  i++;
-		  while ( i < argc && *(argv[i]) == '-' ) {
+		  while ( i+1 < argc && *(argv[i+1]) == '-' ) {
+			  i++;
 			  if (stricmp(argv[i], "-f") == 0) cmNotifyLink = 1;
 			  else if (stricmp(argv[i], "-s") == 0) silent_mode = 1;
 			  else printf("unknown afix option \"%s\"!\n", argv[i]);
-			  i++;
 		  }
-		  if (i < argc) {
-			  parseFtnAddrZS(argv[i], &afixAddr);
-			  if (i < argc-1) {
-				  i++;
-				  xstrcat(&afixCmd,argv[i]);
-			  } else printf("parameter missing after \"%s\"!\n", argv[i]);
+		  if (i+1 < argc) {
+		     i++;
+		     if(parseFtnAddrZS(argv[i], &afixAddr) & FTNADDR_ERROR) {
+			printf("parameter \"%s\" after afix command is not valid ftn address\n", argv[i]);
+			memset(&afixAddr, 0, sizeof(afixAddr));
+			i--;
+		     }
+		     else if (i < argc-1) {
+			i++;
+			xstrcat(&afixCmd,argv[i]);
+		     } else printf("parameter missing after \"%s\"!\n", argv[i]);
 		  }
 		  cmAfix = 1;
 		  continue;
