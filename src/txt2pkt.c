@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 
    if (argc == 1) {
       printf("Usage: txt2pkt [options] <file>|-\n"
-             "Options:"
+             "Options:\n"
              "\t -c \"<file>\" \t- configuration file\n"
              "\t -xf \"<arg>\" \t- packet from address\n"
              "\t -xt \"<arg>\" \t- packet to address\n"
