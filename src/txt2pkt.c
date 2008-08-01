@@ -80,6 +80,7 @@ int main(int argc, char *argv[])
     char *textBuffer = NULL;
     char *versionStr=NULL;
     char *tmp = NULL, *fileName = NULL;
+    char *cfgFile = NULL;
 
     memset (&header,'\0',sizeof(s_pktHeader));
     memset (&msg,'\0',sizeof(s_message));
@@ -91,7 +92,9 @@ int main(int argc, char *argv[])
 
    if (argc == 1) {
       printf("Usage: txt2pkt [options] <file>|-\n"
-             "Options: -xf \"<arg>\" \t- packet from address\n"
+             "Options:"
+             "\t -c \"<file>\" \t- configuration file\n"
+             "\t -xf \"<arg>\" \t- packet from address\n"
              "\t -xt \"<arg>\" \t- packet to address\n"
              "\t -p  \"<arg>\" \t- packet password\n"
              "\t -af \"<arg>\" \t- message from address>\n"
@@ -110,6 +113,9 @@ int main(int argc, char *argv[])
    for (; n < argc; n++) {
       if (*argv[n] == '-' && argv[n][1]) {
          switch(argv[n][1]) {
+            case 'c':    /*  config  */
+               cfgFile = argv[++n];
+               break;
             case 'a':    /*  address */
                switch(argv[n][2]) {
                   case 'f':
@@ -236,7 +242,7 @@ int main(int argc, char *argv[])
 	    exit(EX_NOINPUT);
    }
 
-   config = readConfig(NULL);
+   config = readConfig(cfgFile);
    if (NULL == config) {
       fprintf(stderr,"Config not found, exit\n");
       exit(EX_UNAVAILABLE);
