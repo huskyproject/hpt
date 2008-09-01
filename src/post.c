@@ -680,6 +680,9 @@ int process_parameters(struct post_parameters *p, s_message *msg)
         }
     }
 
+	/* Copy attributes */
+	msg->attributes |= p->attr;
+
     /* Create header for message(s) text */
     /* createKludges shouldn't be called here since it generate MSGID */
 
@@ -792,11 +795,12 @@ void do_posting(struct post_parameters *p, FILE *text, s_message *msg)
     w_log(LL_START, "Start posting...");
     do
     {
-        p->text_head = createKludges(config,
-                                     (msg->netMail == 0) ? strUpper(p->area_name) : NULL,
-                                     &msg->origAddr,
-                                     &msg->destAddr,
-                                     versionStr);
+        xstrcat(&msg->text,
+				createKludges(config,
+                              (msg->netMail == 0) ? strUpper(p->area_name) : NULL,
+                              &msg->origAddr,
+                              &msg->destAddr,
+                              versionStr));
 
         xstrcat(&msg->text, p->text_head);
         process_input_file(p, text, msg, &part);
