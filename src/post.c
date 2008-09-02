@@ -795,12 +795,11 @@ void do_posting(struct post_parameters *p, FILE *text, s_message *msg)
     w_log(LL_START, "Start posting...");
     do
     {
-        xstrcat(&msg->text,
-				createKludges(config,
+        msg->text = createKludges(config,
                               (msg->netMail == 0) ? strUpper(p->area_name) : NULL,
                               &msg->origAddr,
                               &msg->destAddr,
-                              versionStr));
+                              versionStr);
 
         xstrcat(&msg->text, p->text_head);
         process_input_file(p, text, msg, &part);
