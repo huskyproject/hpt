@@ -106,12 +106,12 @@ void print_help(void) {
     fprintf(stdout,"         -o \"origin\"\n");
     fprintf(stdout,"            origin, if not defined then assumed to be name\n");
     fprintf(stdout,"            of station in config-file\n\n");
-    fprintf(stdout,"         -f flags(s)\n");
+    fprintf(stdout,"         -f flag(s)\n");
     fprintf(stdout,"            flags to set to the posted msg. possible ones\n");
     fprintf(stdout,"            are: pvt, crash, read, sent, att, fwd, orphan,\n");
     fprintf(stdout,"            k/s, loc, hld, xx2, frq, rrq, cpt, arq, urq,\n");
     fprintf(stdout,"            kfs, tfs, dir, imm, cfm, npd;\n");
-    fprintf(stdout,"            use it without trailing brackets like this: pvt loc k/s\n\n");
+    fprintf(stdout,"            use it like this: pvt loc k/s OR pvt,loc,k/s OR \"pvt loc k/s\"\n\n");
     fprintf(stdout,"         -x export message to echo links\n\n");
     fprintf(stdout,"         -d erase input file after posting\n\n");
     fprintf(stdout,"         -u[size] uue-multipart posting\n");
@@ -252,14 +252,19 @@ int parse_post_command(struct post_parameters *p, unsigned int argc, char **argv
                 if(cur_arg[2] != 0)
                     goto unknown_switch;
                 for (++*n; *n < argc; ++*n) {
-                    int attr;
-                    char *flag;
-                    if ((attr = str2attr(argv[*n])) != -1L)
-                        p->attr |= attr;
-                    else if ((flag = extattr(argv[*n])) != NULL)
-                        xscatprintf(&p->flags, " %s", flag);
-                    else
+                    long attr = 0;
+                    char *flags = NULL, *end;
+					int parsed;
+
+                    parsed = parseAttrString(argv[*n], &flags, &attr, &end);
+                    if(parsed <= 0 || *end != '\0')
+                    {
+                        nfree(flags);
                         break;
+                    }
+                    p->attr |= attr;
+                    xstrscat(&p->flags, " ", flags, NULL);
+                    nfree(flags);
                 }
                 --*n;
             break;
