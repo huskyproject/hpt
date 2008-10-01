@@ -2,6 +2,9 @@
 ifeq ($(DEBIAN), 1)
 # Every Debian-Source-Paket has one included.
 include /usr/share/husky/huskymak.cfg
+else ifdef RPM_BUILD_ROOT
+# For RPM build is require all files in one directory branch
+include huskymak.cfg
 else
 include ../huskymak.cfg
 endif
@@ -59,36 +62,37 @@ endif
 
 ifeq ($(SHORTNAMES), 1)
 install: hpt$(_EXE) pktinfo$(_EXE) txt2pkt$(_EXE) hptlink$(_EXE) hpttree$(_EXE)
-	$(INSTALL) $(IMOPT) man/hpt.1 $(MANDIR)/man1
-	$(INSTALL) $(IMOPT) man/hptlink.1 $(MANDIR)/man1
-	$(INSTALL) $(IMOPT) man/hpttree.1 $(MANDIR)/man1
-	$(INSTALL) $(IMOPT) man/txt2pkt.1 $(MANDIR)/man1
+	$(INSTALL) $(IMOPT) man/hpt.1 $(DESTDIR)$(MANDIR)/man1
+	$(INSTALL) $(IMOPT) man/hptlink.1 $(DESTDIR)$(MANDIR)/man1
+	$(INSTALL) $(IMOPT) man/hpttree.1 $(DESTDIR)$(MANDIR)/man1
+	$(INSTALL) $(IMOPT) man/txt2pkt.1 $(DESTDIR)$(MANDIR)/man1
 else
 install: hpt$(_EXE) pktinfo$(_EXE) txt2pkt$(_EXE) hptlink$(_EXE) hpttree$(_EXE) hpt.1.gz hptlink.1.gz hpttree.1.gz txt2pkt.1.gz
-	-$(MKDIR) $(MKDIROPT) $(MANDIR)
-	-$(MKDIR) $(MKDIROPT) $(MANDIR)/man1
-	$(INSTALL) $(IMOPT) hpt.1.gz $(MANDIR)/man1
-	$(INSTALL) $(IMOPT) hptlink.1.gz $(MANDIR)/man1
-	$(INSTALL) $(IMOPT) hpttree.1.gz $(MANDIR)/man1
-	$(INSTALL) $(IMOPT) txt2pkt.1.gz $(MANDIR)/man1
+	-$(MKDIR) $(MKDIROPT) $(DESTDIR)$(MANDIR)
+	-$(MKDIR) $(MKDIROPT) $(DESTDIR)$(MANDIR)/man1
+	$(INSTALL) $(IMOPT) hpt.1.gz $(DESTDIR)$(MANDIR)/man1
+	$(INSTALL) $(IMOPT) hptlink.1.gz $(DESTDIR)$(MANDIR)/man1
+	$(INSTALL) $(IMOPT) hpttree.1.gz $(DESTDIR)$(MANDIR)/man1
+	$(INSTALL) $(IMOPT) txt2pkt.1.gz $(DESTDIR)$(MANDIR)/man1
 endif
-	$(INSTALL) $(IBOPT) hpt$(_EXE) $(BINDIR)
-	$(INSTALL) $(IBOPT) pktinfo$(_EXE) $(BINDIR)
-	$(INSTALL) $(IBOPT) txt2pkt$(_EXE) $(BINDIR)
-	$(INSTALL) $(IBOPT) hptlink$(_EXE) $(BINDIR)
-	$(INSTALL) $(IBOPT) hpttree$(_EXE) $(BINDIR)
+	-$(MKDIR) $(MKDIROPT) $(DESTDIR)$(BINDIR)
+	$(INSTALL) $(IBOPT) hpt$(_EXE) $(DESTDIR)$(BINDIR)
+	$(INSTALL) $(IBOPT) pktinfo$(_EXE) $(DESTDIR)$(BINDIR)
+	$(INSTALL) $(IBOPT) txt2pkt$(_EXE) $(DESTDIR)$(BINDIR)
+	$(INSTALL) $(IBOPT) hptlink$(_EXE) $(DESTDIR)$(BINDIR)
+	$(INSTALL) $(IBOPT) hpttree$(_EXE) $(DESTDIR)$(BINDIR)
 
 uninstall:
-	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpt.1
-	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hptlink.1
-	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpttree.1
-	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpt.1.gz 
-	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hptlink.1.gz
-	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hpttree.1.gz
-	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)hpt$(_EXE)
-	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)pktinfo$(_EXE)
-	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)txt2pkt$(_EXE)
-	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)hptlink$(_EXE)
-	-$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)hpttree$(_EXE)
+	-$(RM) $(RMOPT) $(DESTDIR)$(MANDIR)$(DIRSEP)man1$(DIRSEP)hpt.1
+	-$(RM) $(RMOPT) $(DESTDIR)$(MANDIR)$(DIRSEP)man1$(DIRSEP)hptlink.1
+	-$(RM) $(RMOPT) $(DESTDIR)$(MANDIR)$(DIRSEP)man1$(DIRSEP)hpttree.1
+	-$(RM) $(RMOPT) $(DESTDIR)$(MANDIR)$(DIRSEP)man1$(DIRSEP)hpt.1.gz 
+	-$(RM) $(RMOPT) $(DESTDIR)$(MANDIR)$(DIRSEP)man1$(DIRSEP)hptlink.1.gz
+	-$(RM) $(RMOPT) $(DESTDIR)$(MANDIR)$(DIRSEP)man1$(DIRSEP)hpttree.1.gz
+	-$(RM) $(RMOPT) $(DESTDIR)$(BINDIR)$(DIRSEP)hpt$(_EXE)
+	-$(RM) $(RMOPT) $(DESTDIR)$(BINDIR)$(DIRSEP)pktinfo$(_EXE)
+	-$(RM) $(RMOPT) $(DESTDIR)$(BINDIR)$(DIRSEP)txt2pkt$(_EXE)
+	-$(RM) $(RMOPT) $(DESTDIR)$(BINDIR)$(DIRSEP)hptlink$(_EXE)
+	-$(RM) $(RMOPT) $(DESTDIR)$(BINDIR)$(DIRSEP)hpttree$(_EXE)
 
 
