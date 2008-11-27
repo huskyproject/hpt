@@ -1,12 +1,11 @@
 # Microsoft Visual C++ Makefile
 #
 
-DEBUG=0
 CC=cl
 EXENAMEFLAG=-Fe
 SRC_DIR=..\src\
 
-CFLAGS=-nologo -MD -Zp1 -Ob2 -I..\h -I..\.. -c
+CFLAGS=-nologo -MD -Ob2 /Zi -I..\h -I..\.. -c /wd4996
 LFLAGS=
 CDEFS =-D__NT__ -D_CONSOLE -D_MAKE_DLL
 
@@ -19,7 +18,7 @@ LIBS=..\..\fidoconf\fconfmvc.lib ..\..\smapi\smapimvc.lib USER32.LIB msvcrt.lib 
 default: all
 
 {$(SRC_DIR)}.c$(OBJ):
-	$(CC) $(CFLAGS) $(CDEFS) $<
+        $(CC) $(CFLAGS) $(CDEFS) $<
 
 !include makefile.inc
 
