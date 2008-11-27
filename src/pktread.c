@@ -171,7 +171,7 @@ s_pktHeader *openPkt(FILE *pkt)
 
 void correctEMAddr(s_message *msg)
 {
-   char *start = NULL, buffer[48];
+   unsigned char *start = NULL, buffer[48];
    int i/*, brokenOrigin = 1*/;
 
    if (!msg) return;
@@ -264,7 +264,7 @@ void correctEMAddr(s_message *msg)
 
 void correctNMAddr(s_message *msg, s_pktHeader *header)
 {
-   char *start, *copy, *text=NULL, buffer[35]; /* FIXME: static buffer */
+   unsigned char *start, *copy, *text=NULL, buffer[35]; /* FIXME: static buffer */
    int valid_intl_kludge = 0;
    int zonegated = 0;
    hs_addr intl_from, intl_to;
