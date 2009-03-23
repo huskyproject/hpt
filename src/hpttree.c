@@ -150,7 +150,7 @@ void buildAreaTree(s_area *area)
    unsigned int nmsg;
    char *text;
    dword  textLength;
-   s_nodepath node;
+   s_nodepath node = { 2, 0, 0, -1, 0 };
    s_nodepath *cnode;
    int prevNode;
    char *token;
@@ -179,8 +179,9 @@ void buildAreaTree(s_area *area)
 
    if((area->useAka)!=NULL)
       node.zone = (area->useAka)->zone;
-   else
+/*   else
       node.zone = 2;
+*/
 
    nodeCount = linksInArray = 0;
    linksOnLevel = NULL;
@@ -232,8 +233,9 @@ void buildAreaTree(s_area *area)
 
 		   start = text;
 		   prevNode = -1;
-		   node.exportto = -1;
+/*		   node.exportto = -1;
 		   node.printed = 0;
+*/
 		   done = 0;
 
 		   /*  find beginning of path lines */
