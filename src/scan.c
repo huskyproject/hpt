@@ -107,9 +107,9 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
 
    /*  recoding subjectLine to TransportCharset */
    if ((config->recodeMsgBase) && (config->outtab != NULL)) {
-       recodeToTransportCharset((CHAR*)msg->subjectLine);
-       recodeToTransportCharset((CHAR*)msg->fromUserName);
-       recodeToTransportCharset((CHAR*)msg->toUserName);
+       recodeToTransportCharset((char*)msg->subjectLine);
+       recodeToTransportCharset((char*)msg->fromUserName);
+       recodeToTransportCharset((char*)msg->toUserName);
    }
 
    /*  set netmail flag */
@@ -142,7 +142,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg)
    msg->textLength += ctrlLen-1;
 
    /*  recoding text to TransportCharSet */
-   if ((config->recodeMsgBase) && (config->outtab != NULL)) recodeToTransportCharset((CHAR*)msg->text);
+   if ((config->recodeMsgBase) && (config->outtab != NULL)) recodeToTransportCharset((char*)msg->text);
 }
 
 void addViaToMsg(s_message *msg, hs_addr ourAka) {

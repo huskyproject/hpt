@@ -143,10 +143,10 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    
    /*  recoding from internal to transport charSet */
    if (config->outtab != NULL && action != 2) {
-      recodeToTransportCharset((CHAR*)msg->fromUserName);
-      recodeToTransportCharset((CHAR*)msg->toUserName);
-      recodeToTransportCharset((CHAR*)msg->subjectLine);
-      recodeToTransportCharset((CHAR*)msg->text);
+      recodeToTransportCharset((char*)msg->fromUserName);
+      recodeToTransportCharset((char*)msg->toUserName);
+      recodeToTransportCharset((char*)msg->subjectLine);
+      recodeToTransportCharset((char*)msg->text);
    } else msg->recode |= (REC_HDR|REC_TXT);
 
    nfree(seenByPath);

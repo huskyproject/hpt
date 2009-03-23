@@ -725,9 +725,9 @@ int process_parameters(struct post_parameters *p, s_message *msg)
 
     /*  recoding from internal to transport charSet */
     if (config->outtab != NULL) {
-        recodeToTransportCharset((CHAR*)msg->fromUserName);
-        recodeToTransportCharset((CHAR*)msg->toUserName);
-        recodeToTransportCharset((CHAR*)msg->subjectLine);
+        recodeToTransportCharset((char*)msg->fromUserName);
+        recodeToTransportCharset((char*)msg->toUserName);
+        recodeToTransportCharset((char*)msg->subjectLine);
     }
 return 0;
 }
@@ -824,7 +824,7 @@ void do_posting(struct post_parameters *p, FILE *text, s_message *msg)
 
         /*  recoding from internal to transport charSet */
         if (config->outtab != NULL) {
-            recodeToTransportCharset((CHAR*)msg->text);
+            recodeToTransportCharset((char*)msg->text);
         }
 
         if (!p->export_mail && p->area->fileName) {

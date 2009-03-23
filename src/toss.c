@@ -230,13 +230,13 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 	    /*  recode from TransportCharset to internal Charset */
 	    if ((config->recodeMsgBase) && (recode && config->intab != NULL)) {
 		if ((msg->recode & REC_HDR)==0) {
-		    recodeToInternalCharset((CHAR*)msg->fromUserName);
-		    recodeToInternalCharset((CHAR*)msg->toUserName);
-		    recodeToInternalCharset((CHAR*)msg->subjectLine);
+		    recodeToInternalCharset((char*)msg->fromUserName);
+		    recodeToInternalCharset((char*)msg->toUserName);
+		    recodeToInternalCharset((char*)msg->subjectLine);
 		    msg->recode |= REC_HDR;
 		}
 		if ((msg->recode & REC_TXT)==0) {
-		    recodeToInternalCharset((CHAR*)msg->text);
+		    recodeToInternalCharset((char*)msg->text);
 		    msg->recode |= REC_TXT;
 		}
 	    }
@@ -800,13 +800,13 @@ void writeMsgToSysop()
                         /*  recoding from internal to transport charSet */
                         if (config->outtab) {
                             if (msgToSysop[i]->recode & REC_HDR) {
-                                recodeToTransportCharset((CHAR*)msgToSysop[i]->fromUserName);
-                                recodeToTransportCharset((CHAR*)msgToSysop[i]->toUserName);
-                                recodeToTransportCharset((CHAR*)msgToSysop[i]->subjectLine);
+                                recodeToTransportCharset((char*)msgToSysop[i]->fromUserName);
+                                recodeToTransportCharset((char*)msgToSysop[i]->toUserName);
+                                recodeToTransportCharset((char*)msgToSysop[i]->subjectLine);
                                 msgToSysop[i]->recode &= ~REC_HDR;
                             }
                             if (msgToSysop[i]->recode & REC_TXT) {
-                                recodeToTransportCharset((CHAR*)msgToSysop[i]->text);
+                                recodeToTransportCharset((char*)msgToSysop[i]->text);
                                 msgToSysop[i]->recode &= ~REC_TXT;
                             }
                         }
@@ -1040,13 +1040,13 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
 	    /*  recode from TransportCharset to internal Charset */
 	    if ((config->recodeMsgBase) && (config->intab != NULL)) {
 		if ((msg->recode & REC_HDR)==0) {
-		    recodeToInternalCharset((CHAR*)msg->fromUserName);
-		    recodeToInternalCharset((CHAR*)msg->toUserName);
-		    recodeToInternalCharset((CHAR*)msg->subjectLine);
+		    recodeToInternalCharset((char*)msg->fromUserName);
+		    recodeToInternalCharset((char*)msg->toUserName);
+		    recodeToInternalCharset((char*)msg->subjectLine);
 		    msg->recode |= REC_HDR;
 		}
 		if ((msg->recode & REC_TXT)==0) {
-		    recodeToInternalCharset((CHAR*)msg->text);
+		    recodeToInternalCharset((char*)msg->text);
 		    msg->recode |= REC_TXT;
 		}
 	    }
@@ -2307,13 +2307,13 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
 		/*  recoding from internal to transport charSet */
 		if (config->outtab) {
 		    if (msg.recode & REC_HDR) {
-			recodeToTransportCharset((CHAR*)msg.fromUserName);
-			recodeToTransportCharset((CHAR*)msg.toUserName);
-			recodeToTransportCharset((CHAR*)msg.subjectLine);
+			recodeToTransportCharset((char*)msg.fromUserName);
+			recodeToTransportCharset((char*)msg.toUserName);
+			recodeToTransportCharset((char*)msg.subjectLine);
 			msg.recode &= ~REC_HDR;
 		    }
 		    if (msg.recode & REC_TXT) {
-			recodeToTransportCharset((CHAR*)msg.text);
+			recodeToTransportCharset((char*)msg.text);
 			msg.recode &= ~REC_TXT;
 		    }
 		}

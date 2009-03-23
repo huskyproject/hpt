@@ -614,10 +614,10 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 
     len = fgetsUntil0 ((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
     if (len > XMSG_TO_SIZE) {
-        if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
+        if (config->intab) recodeToInternalCharset((char*) globalBuffer);
         w_log(LL_ERR, "wrong msg header: toUserName (%s) is longer than %d bytes.",
             globalBuffer, XMSG_TO_SIZE-1);
-        if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
+        if (config->outtab) recodeToTransportCharset((char*) globalBuffer);
         globalBuffer[XMSG_TO_SIZE-1]='\0';
         badmsg++;
     }
@@ -625,10 +625,10 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 
     fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
     if (len > XMSG_FROM_SIZE) {
-        if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
+        if (config->intab) recodeToInternalCharset((char*) globalBuffer);
         w_log(LL_ERR, "wrong msg header: fromUserName (%s) is longer than %d bytes.",
             globalBuffer, XMSG_FROM_SIZE-1);
-        if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
+        if (config->outtab) recodeToTransportCharset((char*) globalBuffer);
         globalBuffer[XMSG_FROM_SIZE-1]='\0';
         badmsg++;
     }
@@ -636,10 +636,10 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 
     len = fgetsUntil0((UCHAR *) globalBuffer, BUFFERSIZE+1, pkt, NULL);
     if (len > XMSG_SUBJ_SIZE) {
-        if (config->intab) recodeToInternalCharset((CHAR*) globalBuffer);
+        if (config->intab) recodeToInternalCharset((char*) globalBuffer);
         w_log(LL_ERR, "wrong msg header: subjectLine (%s) is longer than %d bytes.",
             globalBuffer, XMSG_SUBJ_SIZE-1);
-        if (config->outtab) recodeToTransportCharset((CHAR*) globalBuffer);
+        if (config->outtab) recodeToTransportCharset((char*) globalBuffer);
         globalBuffer[XMSG_SUBJ_SIZE-1]='\0';
         badmsg++;
     }

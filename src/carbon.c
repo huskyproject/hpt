@@ -175,16 +175,16 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 /* this must be jub of putMsgInArea.
     if (config->outtab) {
 	if (msg->recode & REC_TXT) {
-	    recodeToTransportCharset((CHAR*)msg->text);
+	    recodeToTransportCharset((char*)msg->text);
 	    msg->recode &= ~REC_TXT;
 	}
 	if (msg->recode & REC_HDR) {
-	    recodeToTransportCharset((CHAR*)msg->fromUserName);
-	    recodeToTransportCharset((CHAR*)msg->toUserName);
-	    recodeToTransportCharset((CHAR*)msg->subjectLine);
+	    recodeToTransportCharset((char*)msg->fromUserName);
+	    recodeToTransportCharset((char*)msg->toUserName);
+	    recodeToTransportCharset((char*)msg->subjectLine);
 	    msg->recode &= ~REC_HDR;
 	}
-	if (reason) recodeToTransportCharset((CHAR*)reason);
+	if (reason) recodeToTransportCharset((char*)reason);
     }
 */
     msg->text = NULL;

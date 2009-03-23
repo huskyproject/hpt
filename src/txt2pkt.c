@@ -352,10 +352,10 @@ int main(int argc, char *argv[])
 
       if (config->outtab != NULL) {
          /*  recoding text to TransportCharSet */
-         recodeToTransportCharset((CHAR*)msg.text);
-         recodeToTransportCharset((CHAR*)msg.subjectLine);
-         recodeToTransportCharset((CHAR*)msg.fromUserName);
-         recodeToTransportCharset((CHAR*)msg.toUserName);
+         recodeToTransportCharset((char*)msg.text);
+         recodeToTransportCharset((char*)msg.subjectLine);
+         recodeToTransportCharset((char*)msg.fromUserName);
+         recodeToTransportCharset((char*)msg.toUserName);
       }
 
       writeMsgToPkt(pkt, msg);
