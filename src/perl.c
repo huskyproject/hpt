@@ -298,6 +298,7 @@ char *intl = NULL, *topt = NULL, *fmpt = NULL, *pos = NULL;
   XSRETURN_EMPTY;
 }
 
+/*  isn't used static function
 int l_dist_list(char *key,
                 char **list,
                 char **match,
@@ -346,6 +347,8 @@ int l_dist_list(char *key,
    }  /*  for k */
    return(num);
 }
+*/
+
 #define SMALLEST_OF(x,y,z)       ( (x<y) ? min(x,z) : min(y,z) )
 #define ZERO_IF_EQUAL(ch1,ch2)   ( (ch1==ch2) ? 0 : CHANGE )
 static int l_dist_raw(char *str1, char *str2, int len1, int len2)
