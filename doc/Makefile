@@ -62,20 +62,20 @@ distclean: clean
 install: info html dvi
 	@echo .
 ifdef INFODIR
-	-$(MKDIR) $(MKDIROPT) $(INFODIR)
-	$(INSTALL) $(IMOPT) hpt.info $(INFODIR)
-	-install-info --info-dir=$(INFODIR)  $(INFODIR)$(DIRSEP)hpt.info
+	-$(MKDIR) $(MKDIROPT) $(DESTDIR)$(INFODIR)
+	$(INSTALL) $(IMOPT) hpt.info $(DESTDIR)$(INFODIR)
+	-install-info --info-dir=$(INFODIR)  $(DESTDIR)$(INFODIR)$(DIRSEP)hpt.info
 endif
 ifdef HTMLDIR
-	-$(MKDIR) $(MKDIROPT) $(HTMLDIR)
-	$(INSTALL) $(IMOPT) hpt*html $(HTMLDIR)
+	-$(MKDIR) $(MKDIROPT) $(DESTDIR)$(HTMLDIR)
+	$(INSTALL) $(IMOPT) hpt*html $(DESTDIR)$(HTMLDIR)
 endif
 ifdef DVIDIR
-	-$(MKDIR) $(MKDIROPT) $(DVIDIR)
-	$(INSTALL)  hpt.dvi $(DVIDIR)
+	-$(MKDIR) $(MKDIROPT) $(DESTDIR)$(DVIDIR)
+	$(INSTALL)  hpt.dvi $(DESTDIR)$(DVIDIR)
 endif
 uninstall:
-	-install-info --remove --info-dir=$(INFODIR) $(INFODIR)$(DIRSEP)hpt.info
-	-$(RM) $(RMOPT) $(INFODIR)$(DIRSEP)hpt.info
-	-$(RM) $(RMOPT) $(HTMLDIR)$(DIRSEP)hpt*html
-	-$(RM) $(RMOPT) $(DVIDIR)$(DIRSEP)hpt.dvi
+	-install-info --remove --info-dir=$(DESTDIR)$(INFODIR) $(DESTDIR)$(INFODIR)$(DIRSEP)hpt.info
+	-$(RM) $(RMOPT) $(DESTDIR)$(INFODIR)$(DIRSEP)hpt.info
+	-$(RM) $(RMOPT) $(DESTDIR)$(HTMLDIR)$(DIRSEP)hpt*html
+	-$(RM) $(RMOPT) $(DESTDIR)$(DVIDIR)$(DIRSEP)hpt.dvi
