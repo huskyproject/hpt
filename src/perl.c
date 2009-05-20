@@ -1214,7 +1214,9 @@ int PerlStart(void)
    int rc;
    unsigned int i;
    char *perlfile;
-   char *perlargs[]={"", NULL, NULL, NULL};
+   char *perlargs[]={"", NULL, NULL, NULL, NULL};
+   char **perlargv = (char **)perlargs;
+   char **perlenv  = { NULL };
    char *cfgfile, *cfgpath=NULL, *patharg=NULL;
    STRLEN n_a;
 
@@ -1264,7 +1266,10 @@ int PerlStart(void)
 #else  /* !DO_HPM */
    perl = perl_alloc();
    perl_construct(perl);
-   rc = perl_parse (perl, xs_init, i, perlargs, NULL);
+#if defined(PERL_EXIT_DESTRUCT_END) && defined(PL_exit_flags)
+   PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
+#endif
+   rc = perl_parse (perl, xs_init, i, perlargv, perlenv);
 #endif /* !DO_HPM */
    if (!rc) {
      char* cmd = NULL;
