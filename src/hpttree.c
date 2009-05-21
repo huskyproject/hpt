@@ -233,9 +233,6 @@ void buildAreaTree(s_area *area)
 
 		   start = text;
 		   prevNode = -1;
-/*		   node.exportto = -1;
-		   node.printed = 0;
-*/
 		   done = 0;
 
 		   /*  find beginning of path lines */
