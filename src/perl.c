@@ -1264,6 +1264,9 @@ int PerlStart(void)
    perl = (void*) -1;
    rc   = 0;
 #else  /* !DO_HPM */
+#ifdef PERL_SYS_INIT3
+   PERL_SYS_INIT3(&i, &perlargv, &perlenv);
+#endif
    perl = perl_alloc();
    perl_construct(perl);
 #if defined(PERL_EXIT_DESTRUCT_END) && defined(PL_exit_flags)
