@@ -113,6 +113,7 @@ s_message    **msgToSysop = NULL;
 char *scanParmA;
 char *scanParmF;
 char force = 0;
+char **hpt_environ;
 
 /* kn: I've really tried not to break it.
    FIXME: if there is pack and scan options on cmd line - one set
@@ -497,7 +498,24 @@ FARPROC WINAPI ourhook(unsigned dliNotify,PDelayLoadInfo pdli)
 #endif
 #endif
 
-int main(int argc, char **argv)
+static char **save_envp(char **envp)
+{
+   int envc;
+   char **envp_copy;
+
+   if (envp == NULL)
+      return NULL;
+
+   for (envc = 0; envp[envc]; envc++);
+   envp_copy = safe_malloc((envc + 1) * sizeof(*envp_copy));
+   for (envc = 0; envp[envc]; envc++) {
+      envp_copy[envc] = safe_strdup(envp[envc]);
+   }
+   envp_copy[envc] = NULL;
+   return envp_copy;
+}
+
+int main(int argc, char **argv, char **envp)
 {
    struct _minf m;
    unsigned int i, rc;
@@ -529,6 +547,8 @@ int main(int argc, char **argv)
       }
    if (rc==1){ nfree(versionStr); exit(EX_OK); }
    if (rc==EX_USAGE){ nfree(versionStr); exit(EX_USAGE); }
+
+   hpt_environ = save_envp(envp);
 
    if (config==NULL) processConfig();
 

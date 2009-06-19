@@ -82,4 +82,6 @@ extern char *versionStr;
 extern int silent_mode;
 extern int report_changes;
 
+extern char **hpt_environ;
+
 #endif

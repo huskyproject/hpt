@@ -1021,20 +1021,20 @@ void perl_setvars(void) {
    if (!do_perl || perl == NULL) return;
    w_log( LL_FUNC, "perl.c::perl_setvars()" );
 
-#define VK_ADD_HASH_sv(_hv,_sv,_name)                  \
-    if (_sv != NULL) {                                 \
-      SvREADONLY_on(_sv);                              \
-      hv_store(_hv, _name, strlen(_name), _sv, 0);     \
+#define VK_ADD_HASH_sv(_hv,_sv,_name)                                    \
+    if (_sv != NULL) {                                                   \
+      SvREADONLY_on(_sv);                                                \
+      (void) hv_store(_hv, _name, strlen(_name), _sv, 0);                \
     }
 #define VK_ADD_HASH_str(_hv,_sv,_name,_value)                            \
     if ( (_value != NULL) && (_sv = newSVpv(_value, 0)) != NULL ) {      \
       SvREADONLY_on(_sv);                                                \
-      hv_store(_hv, _name, strlen(_name), _sv, 0);                       \
+      (void) hv_store(_hv, _name, strlen(_name), _sv, 0);                \
     }
 #define VK_ADD_HASH_intz(_hv,_sv,_name,_value)                           \
     if ( (_sv = newSViv(_value)) != NULL ) {                             \
       SvREADONLY_on(_sv);                                                \
-      hv_store(_hv, _name, strlen(_name), _sv, 0);                       \
+      (void) hv_store(_hv, _name, strlen(_name), _sv, 0);                \
     }
 #define VK_ADD_HASH_int(_hv,_sv,_name,_value)                            \
     if (_value) {                                                        \
@@ -1212,11 +1212,10 @@ void perl_setvars(void) {
 int PerlStart(void)
 {
    int rc;
-   unsigned int i;
+   int i;
    char *perlfile;
    char *perlargs[]={"", NULL, NULL, NULL, NULL};
    char **perlargv = (char **)perlargs;
-   char **perlenv  = { NULL };
    char *cfgfile, *cfgpath=NULL, *patharg=NULL;
    STRLEN n_a;
 
@@ -1265,14 +1264,14 @@ int PerlStart(void)
    rc   = 0;
 #else  /* !DO_HPM */
 #ifdef PERL_SYS_INIT3
-   PERL_SYS_INIT3(&i, &perlargv, &perlenv);
+   PERL_SYS_INIT3(&i, &perlargv, &hpt_environ);
 #endif
    perl = perl_alloc();
    perl_construct(perl);
 #if defined(PERL_EXIT_DESTRUCT_END) && defined(PL_exit_flags)
    PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
 #endif
-   rc = perl_parse (perl, xs_init, i, perlargv, perlenv);
+   rc = perl_parse (perl, xs_init, i, perlargv, hpt_environ);
 #endif /* !DO_HPM */
    if (!rc) {
      char* cmd = NULL;
