@@ -1,71 +1,57 @@
-##################################################################
-# Husky config for Node system
+# main fidoconfig file
+name Dummy point station
+sysop Ivan Durak
+location Moscow, Russia
+address 2:5020/9999.99
+inbound /home/username/fido/inbound/insecure
+protinbound /home/username/fido/inbound
+outbound /home/username/fido/outbound
+tempinbound /home/username/fido/tmp.inbound
+tempoutbound /home/username/fido/tmp.outbound
+logfiledir /home/username/fido/log
+dupehistorydir /home/username/fido/dupebase
+nodelistdir /home/username/fido/etc
+msgbasedir /home/username/fido/msgbase
+echotosslog /home/username/fido/log/toss.log
+importlog /home/username/fido/log/import.log
 
-Version		1.4
+linkwithimportlog kill
+separatebundles yes
+disablepid yes
+disabletid yes
+# hptperlfile /home/username/fido/lib/hptfunctions.pl
+pack zip zip -9 -j -q $a $f
+unpack "unzip -j -Loqq $a $f -d $p" 0 504b0304
 
-Name		Holiday System
-Sysop		Pavel Andreew
-Location 	Ekaterinburg, Russia
-Address		2:5080/59
+carbonto Ivan Durak
+carboncopy PERSONAL.MAIL
 
-PublicGroup 	A,B,C,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z
-Origin		* Association of Holiday Mail Robots *
-AreaFixFromPkt
-#AreaFixKillReports  # token removed
-AreafixReportsAttr loc pvt k/s npd  # kill areafix reports
-#AreafixReportsAttr loc pvt k/s npd dir # kill areafix reports and send directly
+robotsarea NETMAIL
 
-AreafixKillRequests
-AreaFixHelp	/etc/husky/areafix.hlp
-AreaFixMsgSize	32
+robot default
+killrequests yes
+reportsattr loc pvt k/s npd
 
-LogLevels	34567890ABCDEFGJKMNT
-ScreenLogLevels	234567890ABCDEFGJKMNT
-LogEchoToScreen
+robot areafix
+fromname Areafix robot
+robotorigin Areafix robot
 
-LinkWithImportLog	Kill
+linkdefaults begin
+allowemptypktpwd secure
+packer zip
+areafixautocreate off
+areafixautocreatedefaults -b squish -dupecheck del -dupehistory 14
+areafixautocreatefile /home/username/fido/etc/areas
+echomailflavour direct
+forwardrequests off
+linkdefaults end
 
-#dupebasetype	commondupebase
-DupeBaseType	HashDupesWMsgId
-AreasMaxDupeAge	10
+include /home/username/fido/etc/links
+include /home/username/fido/etc/route
 
-### Packers
-Unpack		"unzip -j -Loqq $a -d $p" 0 504b0304
-Pack		zip zip -9 -j -q $a $f
+netmailarea NETMAIL       /home/username/fido/msgbase/netmail       -b squish
+badarea     BAD           /home/username/fido/msgbase/bad           -b squish
+dupearea    DUPE          /home/username/fido/msgbase/dupe          -b squish
+localarea   PERSONAL.MAIL /home/username/fido/msgbase/personal.mail -b squish
 
-Unpack  "rar e -y  $a $p"   0 52617221
-#Pack  rar rar a -std -ep $a $f
-
-Unpack  "cd $p; unarj e $a" 0 60ea
-#Pack  arj arj a -+ -e -y $a $f
-
-#SeparateBundles
-DefArcmailSize	300
-
-Include /etc/husky/path
-
-# Enable power of perl hooks!
-#hptPerlFile /etc/husky/filter.pl
-
-############################################################################
-# Report about autocreation areas
-# to netMail
-#ReportTo	netmail
-# or to EchoArea
-ReportTo	HOLIDAY.INFO
-
-Include	/etc/husky/config.htick
-include	/etc/husky/links
-
-# Areas must be after links definition
-include	/etc/husky/areas
-include	/etc/husky/fileareas
-
-# Carbon copy must be after areas definition
-CarbonTo Pavel Andreew
-CarbonCopy PAVEL.PERSONAL
-
-############################################################################
-# If no routing in config, HPT don't touch outgoing netmail (only receive)
-#route normal 2:5080/80 *
-#route hold no-route 2:5080/59.*
+include /home/username/fido/etc/areas

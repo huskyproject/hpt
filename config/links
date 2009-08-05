@@ -1,60 +1,14 @@
-##################################################################
-# Nodes
+# Link definitions
 
-LinkDefaults begin
-OurAka 2:5080/59
-allowEmptyPktPwd on
-#allowPktAddrDiffer off
-#FileBoxAlways
-PktSize 400
-Packer zip
-#TickerPackToBox on
-ForwardFileRequests on
-LinkDefaults end
+link LoopBack
+aka 2:5020/9999.99
+allowemptypktpwd on
 
-# My Uplink
-Link Eugene Zorin
-Aka 2:5080/80
-Password PaSsWoRd
-Level 20
-AutoAreaCreate on
-AutoAreaCreateDefaults -g A -dupeCheck move -dupeHistory 11
-AutoAreaCreateFile /etc/husky/areas
-ForwardRequests on
-# this is network arealist
-ForwardRequestFile /var/lib/ftn/husky/5080elst.txt
-RemoteRobotName AreaFix
-EchomailFlavour Normal
-FileEchoFlavour	Normal
-AutoFileCreate on
-AutoFileCreateFile /etc/husky/fileareas
-AutoFileCreateDefaults -g A
-AutoFileCreateSubdirs off
-ForwardFileRequestFile /var/lib/ftn/husky/5080flst.txt
-RemoteFileRobotName AllFix
+link 2:5020/9999
+aka 2:5020/9999
+ouraka 2:5020/9999.99
+password pAs5w0rD
+areafixpwd pAs5w0rD
+# areafixautocreate on
+route direct 2:5020/9999 2:5020/9999.*
 
-Link Fake Point
-Aka 2:5080/59.100
-Password 
-Level 5
-AccessGrp LM
-Export Off
-EchomailFlavour Normal
-
-Link Artem Abramov
-Aka 2:5080/59.1
-Password pwd
-Level 10
-LinkGrp A
-EchomailFlavour Hold
-FileEchoFlavour	hold
-AutoPause 30
-
-Link Sergey Zhdanov
-Aka 2:5080/59.2
-Password pwd
-Level 10
-LinkGrp A
-EchomailFlavour Hold
-FileEchoFlavour	hold
-AutoPause 30
