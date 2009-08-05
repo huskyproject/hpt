@@ -1,0 +1,7 @@
+# Netmail routes
+# syntax:
+#  route <flavor> <next hop> <target> [target ...]
+#
+#route direct 2:9999/99 2:9999/99.*
+#route direct 2:9999/99 2:9999/*
+route direct 2:5020/9999 *
