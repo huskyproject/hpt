@@ -113,7 +113,8 @@ int displayPkt(char *name, int showHeader, int showText)
 
 int main(int argc, char *argv[])
 {
-  int          i, showHeader = 0, showText = 0;
+  int  i, showHeader = 0, showText = 0;
+  char *cfgFile = NULL;
 
 /*  printf("PktInfo v%u.%u.%u\n",VER_MAJOR, VER_MINOR, VER_PATCH); */
 
@@ -129,14 +130,14 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  config = readConfig(NULL);
-  
   for (i = 1; i < argc; i++)
   {
      if (argv[i][0] == '-') {
+	if (argv[i][1] == 'c') cfgFile = argv[++i];
 	if (argv[i][1] == 'h') showHeader = 1; 
 	if (argv[i][1] == 't') showText   = 1; 
      } else {
+        config = readConfig(cfgFile);
 	displayPkt(argv[i], showHeader, showText);
      };
   }
