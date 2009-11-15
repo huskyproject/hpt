@@ -2273,8 +2273,9 @@ This statement can only be repeated for different links.
 @end table
 
 This keyword is useful if you want to compress netmail for this link and
-pack it into arcmail bundles or to filebox like echomail. Netmail will
-compress only if its flavour is equial with @code{EchoMailFlavour} for this link.
+pack it into arcmail bundles or to filebox like echomail.
+A netmail message will be packed and compressed into a bundle only if
+ its flavour is equal to @code{EchoMailFlavour} for this link.
 
 The default state if @code{off}: in this case netmail will be written
 to ut-file (i.e. *.?ut) and will not compressed.
