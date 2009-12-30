@@ -1,0 +1,5 @@
+# Add the following two lines to your ~/fido/etc/route
+# and change WriteTo parameter in fidoroute.conf
+
+### Begin autoroute
+### End autoroute
