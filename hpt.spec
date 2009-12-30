@@ -1,4 +1,4 @@
-%define reldate 20090805
+%define reldate 20091230
 %define reltype C
 # may be one of: C (current), R (release), S (stable)
 
@@ -21,10 +21,13 @@ HPT is the FTN tosser from the Husky Project.
 
 %build
 make
+(cd fidoroute; make)
 
 %install
 rm -rf %{buildroot}
 make DESTDIR=%{buildroot} install
+test -s fidoroute/fidoroute \
+	&& install -m 755 fidoroute/fidoroute %{buildroot}%{_bindir}/fidoroute
 
 %clean
 rm -rf %{buildroot}
