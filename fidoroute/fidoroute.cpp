@@ -95,11 +95,11 @@ struct CfgValue
  boolean(*LoadVal) (char *in, void *out);
 };
 
-static const char *ErrNoMemory = EOLCHR "Cannot allocate memory.";
-static const char *ErrOpenCfg = EOLCHR "Cannot open config file.";
-static const char *ErrNoFile = "Cannot open file.";
-static const char *ErrOpenTmp = EOLCHR "Cannot open temp file.";
-static const char *ErrOpenDest = EOLCHR "Cannot open dest file.";
+static const char *ErrNoMemory = EOLCHR "Unable to allocate memory.";
+static const char *ErrOpenCfg = EOLCHR "Unable to open config file.";
+static const char *ErrNoFile = "Unable to open file.";
+static const char *ErrOpenTmp = EOLCHR "Unable to open temp file.";
+static const char *ErrOpenDest = EOLCHR "Unable to open dest file.";
 static const char *ErrUnknownRouteType = EOLCHR "Unsupported route type.";
 static const char *ErrUnknownMinType = EOLCHR "Illegal value of \"Minimized\".";
 static const char *ErrQuoteString = "Illegal quoted string.";
@@ -112,10 +112,9 @@ static const char *ErrBadNdlType = "Bad \"HubRoute\" definition.";
 static const char *ErrMissDirect = EOLCHR "%s is routed via us, but missing in \"Link\" definitions." EOLCHR " \'DefaultFlavor\' assumed.";
 static const char *ErrReroute = EOLCHR "Re-routing for %s.";
 static const char *ErrLoop = EOLCHR "RouteLoop detected for %s. Try to route by default";
-static const char *WarnNoMin = EOLCHR "Cannot minimize tree because of low memory";
+static const char *WarnNoMin = EOLCHR "Unable to minimize tree - out of memory";
 
 #define Error(s)   fprintf(stderr,s)
-//#define ErrorN(s,node)   fprintf(stderr,s,node.z,node.n,node.f)
 #define ErrorS(s,str)   fprintf(stderr,s,str)
 #define ErrorL(s)  fprintf(stderr, EOLCHR"%s %d: %s", CfgFile, CfgLine, s)
 
@@ -1378,7 +1377,6 @@ static void PutRoutingHusky(void)
  CmntSym = '#';
  fprintf(NewRoute, CREATED, '#', "Husky", MyNode->z, MyNode->n, MyNode->f,
 	   '#', ctime(&currtime), '#');
-// Spit("#" EOLCHR "# *** route" EOLCHR "#");
  for (level = 1; level < 4; level++)
  {
   fprintf(NewRoute, "# *** %s" EOLCHR "", RouteType[level]);
@@ -1392,7 +1390,7 @@ static void PutRoutingHusky(void)
    WriteNode(Link[i].addr, Buff, 0);
    PutDownLinks(InMemory(Link[i].addr), 0);
    if (strcmp(Buff, Prefix) != 0)
-    Spit(Buff);		// Spit short but significant line
+    Spit(Buff);
   }
  }
 }
@@ -1403,7 +1401,7 @@ static void PutUnRouted(void)
  FillRoute = true;
  FullAddr = true;
  fprintf(NewRoute,
-	   "%c" EOLCHR "%c !!! Unrouted !!!" EOLCHR "%c ----------------"
+	   "%c" EOLCHR "%c !!! Undefined !!!" EOLCHR "%c ----------------"
 	   EOLCHR "", CmntSym, CmntSym, CmntSym);
  level = 0;
  Prefix[0] = CmntSym;
@@ -2069,8 +2067,9 @@ static boolean LoadConfig(void)
 int main(int argc, char **argv)
 {
  fprintf(stderr,
-	  "Hubroute generator v." VERSION "(" TARGET ") " DATE "" EOLCHR ""
-	  "Copyright (c)1994-2003 by Yuri Safronov@2:5020/204" EOLCHR "");
+	  "Hubroute generator v." VERSION "(" TARGET ") " DATE "" EOLCHR
+	  "Copyright (c) 1994-2003 Yuri Safronov 2:5020/204" EOLCHR
+	  "Copyright (c) 2009-2010 Husky Project development team" EOLCHR);
  if (argc > 1)
  {
   if (!stricmp(argv[1], "--help") || !stricmp(argv[1], "-h")
@@ -2083,9 +2082,6 @@ int main(int argc, char **argv)
  PrevNode.CleanUp();
 
   // Allocate buffers
-#ifndef _OS2
-//    fprintf(stderr, "Available memory: %ld"EOLCHR"", coreleft());
-#endif
  Buff = (char *) malloc(BUFFLEN);
  Prefix = (char *) malloc(500);
  Node = (listitem *) calloc(MAXNODES, sizeof(listitem));
@@ -2100,9 +2096,6 @@ int main(int argc, char **argv)
  }
  else
  {
-#ifndef _OS2
-//        fprintf(stderr, "Free memory: %ld"EOLCHR"", coreleft());
-#endif
   nNodes = 0;
   nLinks = 0;
   if (argc == 1)
@@ -2167,8 +2160,8 @@ int main(int argc, char **argv)
    fclose(NewRoute);
    unlink(WriteTo);
    rename(TempFile, WriteTo);
-   fprintf(stderr, "" EOLCHR "Done! Total of %d links and %d items.",
-	    nLinks, nNodes);
+   fprintf(stderr, "" EOLCHR "Done - %d rules for %d links.",
+	   nNodes, nLinks);
    return 0;
   }
   else
