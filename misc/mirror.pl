@@ -33,6 +33,13 @@
 # sub hpt_exit{}
 # ==============
 
+my @Id = split(/ /,'$Id$');
+my $report_tearline = "$Id[1] $Id[2]";
+my $file = $Id[1];
+$file =~ s/,v$//;
+undef @Id;
+
+
 sub mirror()
 {
   my %testarea;
@@ -55,10 +62,6 @@ sub mirror()
   $testarea{"MU.TEST"}=2;       # passthrough echo
 # ==== End of configuration # и до обеда
   my $msgtext="";
-
-  my @Id = split(/ /,'$Id$');
-  my $report_tearline="$Id[1] $Id[2]";
-  undef @Id;
 
   if( ($testarea{$area}) && (($toname eq $check_toname) || ($toname eq $myname))
       && (lc($subject) eq $check_subject) )
@@ -96,11 +99,14 @@ sub mirror()
       if( open( PIPE,"|$cmd" ) ){
         print PIPE $msgtext;
         close PIPE;
-        writeLogEntry('7',"PKT with reply is created from $myname using txt2pkt");
+        w_log('7',"PKT with reply is created from $myname using txt2pkt");
       }else{
-        writeLogEntry('1',"Can't open pipe to txt2pkt");
+        w_log('1',"Can't open pipe to txt2pkt");
       }
     }
   }
   return "";
 }
+
+w_log('U',"$file is loaded");
+1;
