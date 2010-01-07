@@ -3,6 +3,7 @@
 # Ping-pong robot for HPT. Designed accordingly FTS-5001.002
 # (c) 2006 Gremlin
 # (c) 2006 Grumbler
+# (c) 2010 Grumbler
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +25,9 @@
 #
 
 my $Id='$Id$';
-my $myaddr='2:5080/102';
+my $file=$1 if( $Id =~ /Id: ([^ ]+),v / );
+my @myaddr=myaddr();
+my $myaddr=$myaddr[0];
 
 sub pong()
 {
@@ -52,13 +55,11 @@ sub pong()
    . "--- $report_tearline\r"
    ." * Origin: Ping-pong robot at ($myaddr)\r";
    my $err= putMsgInArea($area,"Ping-Pong Robot",$fromname,$myaddr,$fromaddr,
-                "PONG: ".$subject,"","Uns Loc Pvt K/s",$msgtext,1);
+                "PONG: ".$subject,"","Uns Loc Pvt K/s cpt",$msgtext,1);
    if( defined($err) ){ w_log('A',"Can't make new message: $err"); }
  }
  return "";
 }
 
-w_log('U',"pong.pl is loaded");
-
+w_log('U',"$file is loaded");
 1;
-

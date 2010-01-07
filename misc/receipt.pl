@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
 # Receipt robot for HPT: reply on RRQ and ARQ netmail flags
-# (c) 2009 Grumbler
+# (c) 2010 Grumbler
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #
 
 my $Id='$Id$';
-my $file="receipt.pl";
+my $file=$1 if( $Id =~ /Id: ([^ ]+),v / );
 my @myaddr=myaddr();
 
 sub arqcpt
