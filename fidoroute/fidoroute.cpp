@@ -2037,7 +2037,7 @@ static boolean LoadConfig(void)
     CfgLine++;
     char *p = Buff;
     skipws(&p);
-    if (*p == ';' || *p == '\n' || *p == '\0')
+    if (*p == '#' || *p == ';' || *p == '\n' || *p == '\0')
      continue;			// skip blank line or comment
     char *p1 = tmp;
     while (!isspace(*p))
