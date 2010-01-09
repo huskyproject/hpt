@@ -1,0 +1,29 @@
+.% $Id$
+.TH "fidoroute" "1" "1.0" "Stas Degteff <stas_degteff@users.sourceforge.net>" "Fidonet"
+.SH "NAME"
+.LP 
+fidoroute \- fidonet node route file generator
+
+
+.SH "SYNTAX"
+.LP 
+fidoroute [config.fi le]
+
+If config file is not specified, then fidoroute look a "fidoroute.conf" in the current directory.
+
+.SH "DESCRIPTION"
+.LP 
+Fidoroute produce routing file for your node.
+This program originally developed for hubs, but it can be usefull for plain
+node with a lot of links.
+.LP 
+Fidoroute configuration file contain your direct links, 
+routing paths and where and how to save the result routing file.
+.SH "AUTHORS"
+.LP 
+Hubrouter is created at 1994 by Yuri Safronov, 2:5020/204@fidonet.
+
+At december 2009 this program adopted for hpt and named "Fidoroute" by Alexey Vissarionov, 2:5020/545@fidonet.
+.SH "SEE ALSO"
+.LP 
+fidoroute.conf(5) hpt(1)

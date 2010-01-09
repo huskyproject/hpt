@@ -1,0 +1,215 @@
+.% $Id$
+.TH "fidoroute" "5" "1.0" "Stas Degteff <stas_degteff@users.sourceforge.net>" "configuration file"
+.SH "NAME"
+.LP 
+\fBfidoroute.conf\fR \- Configuration file for fidoroute
+.SH "DESCRIPTION"
+.LP 
+Fidoroute uses a configuration file called
+\fBfidoroute.conf\fR. This configuration file is searched in the current directory or specified in the command line.
+.LP 
+Configuration file contains statements in form:
+.br 
+token value
+.br 
+Empty lines is ignored.
+.br 
+Lines started with '#' or ';' chars also ignored (this is comment lines).
+.SH "PARAMETERS"
+.LP 
+\fBAddress\fR <FTN address of your node>
+.br 
+Each the 'Address' line is contain FTN address or AKA of your node in the 3D form. Any 4D address (point AKA) should not be specified here.
+.br 
+Example:
+.br 
+Address 2:5020/204
+Address 7:1130/204
+.br 
+Examples for wrong syntax:
+.br 
+Address 2:5020/204.1
+Address 7:1130/0@fidorus
+.TP 
+\fBHubroute\fR <nodelist file> <type of nodelist> <zone number> <net number>
+.br 
+where:
+.br 
+\fInodelist file\fR \- pathname of the world nodelist or nodelist segment file, may be use '?' and '*' shell wildcard characters;
+.br 
+\fItype of nodelist\fR \- 'z' for the zone/world nodelist, 'r' for the region nodelist segment, 'n' for the network nodelist segment;
+.br 
+\fIzone number\fR \- zone number for the routing
+.br 
+\fInet number\fR \- net number for the routing
+.LP 
+Every \fBHubroute\fR line asks router to get hub\- and host\- routing information from nodelist or nodelist segment.
+.br 
+If nodelist file name is wildcarded and there are a few matching files,
+router will get the file with maximum extention (i.e. maximum day number).
+.br 
+Nodelist scanning is long time process, determined by HDD speed.
+.br 
+Example:
+.br 
+Hubroute /fido/nodelist/nodelist.* z 2 5020
+.br 
+Hubroute /fido/nodelist/z2\-list.* z 2 5020
+.br 
+Hubroute /fido/nodelist/net5020.ndl n 2 5020
+
+.TP 
+\fBRouteFile\fR <.ROU file>
+.br 
+where:
+.br 
+\fI.ROU file\fR \- pathname of the .ROU file
+.br 
+The \fI.ROU file\fR has format:
+route_to_node	destination	destination ...
+route_to_node	"World"
+.br 
+Where \fIroute_to_node\fR is node for transit netmail for \fIdestination\fR nodes, networks and zones. Special token "World" is mean "all another desinations".
+.br 
+For example:
+.br 
+2:5020/888  999 555 5030/444 3:All/All
+2:5020/50   World
+
+.TP 
+\fBTrustFile\fR <.TRU file>
+.br 
+.br 
+
+.TP 
+\fBDefaultRoute\fR <route_to&gt <destination>;
+.br 
+  This line gives you possibility to override some route branches
+without creation additional rou\-file. Syntax is the same as in
+routefile. 'DefaultRoute' is treated AFTER all other lines, so
+it have the greatest priority.
+.br 
+
+.TP 
+\fBLogFile\fR <log file pathname>
+.br 
+Do nothing but is checked.
+.br 
+
+.TP 
+\fBWriteTo\fR <route file pathname>
+.br 
+The result\-file pathname, route file for the tosser or tracker.
+.br 
+
+.TP 
+\fBRouteType\fR <type of route file>
+.br 
+Type of route file specified in the '\fBWriteTo\fR statement.
+.br 
+\fItype of route file\fR may be: 'husky' (for hpt), 'squish', 'tmail' (for the T\-mail version before v.2601), 'tmailn' (for the T\-mail version v.2601 and above), 'itrack', 'bpack', 'imbink', 'xmail', 'ifmail', 'unimail', 'bip', 'fidogate', 'qecho', 'ftrack'.
+.br 
+
+.TP 
+\fBMinimize\fR <switch>
+.br 
+\fIswitch\fR may be 'on', 'yes' or 'off', 'no'.
+.br 
+Set it to 'on' or 'yes' for routing minimization.
+.br 
+
+.TP 
+\fBRouteBegin\fR <string>
+.br 
+\fIstring\fR is used to specify begin of the rewriting area in the result file. It's recommended to enclose \fIstring\fR into double\-quotes (").
+.br 
+For pointing to place results into file, there is the brackets
+RouteBegin and RouteEnd. Do not forget to write the strings to output file.
+Attention! Router drops out all your lines between these brackets and
+puts there his stupid results. Be carefull!
+.br 
+
+.TP 
+\fBRouteEnd\fR <string>
+.br 
+\fIstring\fR is used to specify end of the rewriting area in the result file. It's recommended to enclose \fIstring\fR into double\-quotes (").
+.br 
+For pointing to place results into file, there is the brackets
+RouteBegin and RouteEnd. Do not forget to write the strings to output file.
+Attention! Router drops out all your lines between these brackets and
+puts there his stupid results. Be carefull!
+.br 
+
+.TP 
+\fBLink\fR <FTN address> <flavours>
+.br 
+where:
+.br 
+\fIFTN address\fR is a FTN address of the your (direct) link;
+.br 
+\fIflavours\fR may be combination of the characters: 'C' (crash), 'D' (direct), 'N' (normal) or 'H' (hold) and 'F' (route files) and 'A' (no arcmail),
+.br 
+BHL:
+.br 
+\fIflavours\fR := ('C'|'D'|'N'|'H')['F']['A']
+.br 
+Examples:
+.br 
+Link 2:5020/0  CFA
+.br 
+Link 2:5020/24 DF
+.br 
+
+.TP 
+\fBDefaultFlavor\fR <flavours>
+.br 
+This statement describes default flavor for links, which is not present
+in 'Link' lines, but must be routed via us. If the DefaultRoute is
+absent in config file, Hold assumed. See \fIflavours\fR in the \fBLink\fR statement.
+.br 
+BHL:
+.br 
+\fIflavours\fR := ('C'|'D'|'N'|'H')['F']['A']
+.SH "Limitation and hints"
+.LP 
+   Maximum number of 'routing items' (i.e. nodes, nets, zones) is 5000.
+Can be increased, but I cannot imagine node to need this.
+.br 
+   Maximum number of recursively linked branches \- about 600 (it is not
+max number of routing branches but number of sequentaly linked branches,
+i.e. number of hops to destination node). Enough, IMHO. :)
+.br 
+   Maximum number of direct links \- 1000. You want wore \- no problem. ;)
+.br 
+   Maxinun number of aka \- 50.
+.br 
+   Maximum length of deadloop routing chain \- not limited.
+.br 
+   Maximum length of circle routing chain is unlimited. If
+     router detect such chain, it try carefully mark unliked
+     node as 'unrouted' and send him mail according default
+     routing. You'll be warned, of course. :) Usually router
+     do this by reasonable way, but check it.
+.br 
+   When re\-routing occured, router print messages. The last re\-routing
+is used. Example:
+.br 
+2:5020/50 22
+.br 
+......
+.br 
+2:5020/52 22
+.br 
+   There will be re\-routing warning, mail for /22 will go to /52.
+.br 
+  Attention! In this case:
+.br 
+2:5020/24  469/All
+.br 
+2:5020/777 469/83
+.br 
+there is no routing conflict. 469/83's mail will go to /777, other NET469's mail
+/24.
+.SH "SEE ALSO"
+.LP 
+fidoroute(1), hpt(1), info fidoconfig
