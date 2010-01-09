@@ -116,7 +116,7 @@ static const char *WarnNoMin = EOLCHR "Unable to minimize tree - out of memory";
 
 #define Error(s)   fprintf(stderr,s)
 #define ErrorS(s,str)   fprintf(stderr,s,str)
-#define ErrorL(s)  fprintf(stderr, EOLCHR"%s %d: %s", CfgFile, CfgLine, s)
+#define ErrorL(s)  fprintf(stderr, "%s %d: %s" EOLCHR, CfgFile, CfgLine, s)
 
 #define true     1
 #define false    0
@@ -2026,7 +2026,7 @@ static boolean LoadConfig(void)
  if ((cfg = fopen(CfgFile, "rt")) != 0)
  {
   char tmp[50];
-  fprintf(stderr, "" EOLCHR "Scanning config file...");
+  fprintf(stderr, "" EOLCHR "Scanning config file... ");
   ushort i;
   for (i = 0; i < CFG_PASSES; i++)
   {
@@ -2108,7 +2108,7 @@ int main(int argc, char **argv)
    strcpy(CfgFile, argv[1]);
   if (LoadConfig())
   {
-   fprintf(stderr, "" EOLCHR "Writing routing...");
+   fprintf(stderr, "" EOLCHR "Writing routing... ");
    time(&currtime);
    switch (RouteMode)
    {
