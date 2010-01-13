@@ -34,20 +34,22 @@
 # sub hpt_exit{}
 # ==============
 
+my @Id = split(/ /,'$Id$');
+my $report_tearline="$Id[1] $Id[2]";
+(my $file=$Id[1]) =~ s/,v$//;
+undef @Id;
+$myaddr=(myaddr())[0] if( $myaddr == "" );
+
 sub checkorigin{
 
  my $sysopname="Sysop";              # Report destination name
- my $sysopaddr="2:5080/102";         # Report destination address
+ my $sysopaddr="2:5080/102.1";         # Report destination address
  my $myname="Validity check robot";  # Robot name, uses in report
- my $myaddr="2:5080/102";            # Robot address
  my $report_subj="$myname report";           # Subject of report message
  my $report_origin="$myname: HPT-perl hook"; # Origin of report message
 
  my $msgtext="";
 
- my @Id = split(/ /,'$Id$');
- my $report_tearline="$Id[1] $Id[2]";
- undef @Id;
 
  if( $text =~ /\r \* Origin:([^\r]+)/gm ){ # origin line is found
    my $origin=$1;
@@ -65,10 +67,10 @@ sub checkorigin{
         $msgtext .= "* text or space in parentheses before address is prohibited\r";
      }
      if( $2 =~ /^0+:/ ){ # bad zone number
-        $msgtext .= "* bad zone number in address\r";
+        $msgtext .= "* bad zone number in address ($2)\r";
      }
-     if( $fromaddr ne "$2$3$4$5" ){
-        $msgtext .= "* orinating adress and address in origin line is different\r";
+     if( $fromaddr ne "$2$3/$4$5" ){
+        $msgtext .= "* originating address and address in origin line is different ($fromaddr != $2$3/$4$5\r";
      }
    }
    if( length($msgtext)>0 ){
@@ -88,3 +90,6 @@ sub checkorigin{
    }
  }
 }
+
+w_log('U',"$file is loaded");
+1;
