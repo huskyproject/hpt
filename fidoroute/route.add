@@ -1,4 +1,5 @@
-# Add the following two lines to your ~/fido/etc/route
+# Include this file into fidoconfig (using 'include route.add'
+# after/instead any 'route' statements)
 # and change WriteTo parameter in fidoroute.conf
 
 ### Begin autoroute
