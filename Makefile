@@ -60,6 +60,12 @@ else
 all: commonall hpt.1.gz hptlink.1.gz hpttree.1.gz txt2pkt.1.gz
 endif
 
+doc:
+	-cd doc; make all
+
+install-doc:
+	-cd doc; make install
+
 ifeq ($(SHORTNAMES), 1)
 install: hpt$(_EXE) pktinfo$(_EXE) txt2pkt$(_EXE) hptlink$(_EXE) hpttree$(_EXE)
 	$(INSTALL) $(IMOPT) man/hpt.1 $(DESTDIR)$(MANDIR)/man1
