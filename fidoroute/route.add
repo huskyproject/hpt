@@ -1,6 +1,5 @@
-# Include this file into fidoconfig (using 'include route.add'
-# after/instead any 'route' statements)
-# and change WriteTo parameter in fidoroute.conf
+# Include this file into fidoconfig (using 'include route.add' after
+# any 'route' statements) and change WriteTo value in fidoroute.conf
 
 ### Begin autoroute
 ### End autoroute
