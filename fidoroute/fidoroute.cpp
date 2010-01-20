@@ -207,7 +207,6 @@ static FILE * NewRoute;
 static FILE * OldRoute;
 
 #define	Spit(s)	{ fputs(s, NewRoute); fputs(EOLCHR, NewRoute); }
-static char LogFile[PATHLEN];;
 static char RouteBegin[100];
 static char RouteEnd[100];
 static boolean StarWild, AddPoint, DefaultFromMe, FullAddr, FillRoute, WithSlash, TmailAddFor;
@@ -1967,8 +1966,6 @@ static boolean GetHubRoute(char *p, void *)
  ,
  { "KillTransit", &KillTransit, 1, GetBoolean}
  ,
- { "LogFile", LogFile, 0, GetFile}
- ,
  { "DefaultFlavor", &DefaultFlavor, 2, GetFlavor}
  ,
  { "DefaultRoute", NULL, 5, GetRouteStr}
@@ -1985,9 +1982,6 @@ static boolean PassOK(ushort Pass)
  switch (Pass)
  {
   case 0:
-    // Existing log file (nafig?)
-//   if (LogFile[0] == '\0')
-//    return false;
     break;
   case 1:
    // Existing main address
