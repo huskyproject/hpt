@@ -5,31 +5,26 @@
 \fBfidoroute.conf\fR \- Configuration file for fidoroute
 .SH "DESCRIPTION"
 .LP 
-Fidoroute uses a configuration file called
-\fBfidoroute.conf\fR. This configuration file is searched in the current directory or specified in the command line.
+Fidoroute uses a configuration file named
+\fBfidoroute.conf\fR. This configuration file will be looked for in the current directory unless specified at the command line.
 .LP 
 Configuration file contains statements in form:
 .br 
 token value
 .br 
-Empty lines is ignored.
+Empty lines are ignored.
 .br 
-Lines started with '#' or ';' chars also ignored (this is comment lines).
+Lines beginning with '#' or ';' chars are also ignored (they are comment lines).
 .SH "PARAMETERS"
 .LP 
 \fBAddress\fR <FTN address of your node>
 .br 
-Each the 'Address' line is contain FTN address or AKA of your node in the 3D form. Any 4D address (point AKA) should not be specified here.
+Each 'Address' line contains FTN address or AKA of your node in the 3D form. Any 4D address (point AKA) should not be specified here.
 .br 
 Example:
 .br 
 Address 2:5020/204
 Address 7:1130/204
-.br 
-Examples for wrong syntax:
-.br 
-Address 2:5020/204.1
-Address 7:1130/0@fidorus
 .TP 
 \fBHubroute\fR <nodelist file> <type of nodelist> <zone number> <net number>
 .br 
@@ -37,20 +32,18 @@ where:
 .br 
 \fInodelist file\fR \- pathname of the world nodelist or nodelist segment file, may be use '?' and '*' shell wildcard characters;
 .br 
-\fItype of nodelist\fR \- 'z' for the zone/world nodelist, 'r' for the region nodelist segment, 'n' for the network nodelist segment;
+\fItype of nodelist\fR \- 'z' for the zone/world nodelist, 'r' for the regional segment, 'n' for the network segment;
 .br 
 \fIzone number\fR \- zone number for the routing
 .br 
 \fInet number\fR \- net number for the routing
 .LP 
-Every \fBHubroute\fR line asks router to get hub\- and host\- routing information from nodelist or nodelist segment.
+Every \fBHubroute\fR line tells router to get hub\- and host\- routing information from nodelist or nodelist segment.
 .br 
-If nodelist file name is wildcarded and there are a few matching files,
-router will get the file with maximum extention (i.e. maximum day number).
+If nodelist file name is wildcarded and there are several matching files,
+router will take the file with bigger suffix (i.e. bigger day number).
 .br 
-Nodelist scanning is long time process, determined by HDD speed.
-.br 
-Example:
+Examples:
 .br 
 Hubroute /fido/nodelist/nodelist.* z 2 5020
 .br 
@@ -66,12 +59,14 @@ where:
 \fI.ROU file\fR \- pathname of the .ROU file
 .br 
 The \fI.ROU file\fR has format:
-route_to_node	destination	destination ...
-route_to_node	"World"
+next_hop	destination [destination ...]
+next_hop	"World"
 .br 
-Where \fIroute_to_node\fR is node for transit netmail for \fIdestination\fR nodes, networks and zones. Special token "World" is mean "all another desinations".
+Where \fInext_hop\fR is node where netmail for \fIdestination\fR nodes, networks and zones should be routed to.
+Wildcards like 2:5020/545.* or 2:5020/545.All are allowed in destinations.
+Special token "World" means "all other destinations" and should be last in the list.
 .br 
-For example:
+Example:
 .br 
 2:5020/888  999 555 5030/444 3:All/All
 2:5020/50   World
@@ -85,29 +80,23 @@ For example:
 \fBDefaultRoute\fR <route_to&gt <destination>;
 .br 
   This line gives you possibility to override some route branches
-without creation additional rou\-file. Syntax is the same as in
+without creating additional rou\-file. Syntax is the same as in
 routefile. 'DefaultRoute' is treated AFTER all other lines, so
 it have the greatest priority.
 .br 
 
 .TP 
-\fBLogFile\fR <log file pathname>
-.br 
-Do nothing but is checked.
-.br 
-
-.TP 
 \fBWriteTo\fR <route file pathname>
 .br 
-The result\-file pathname, route file for the tosser or tracker.
+Output file (routing file for the tracker).
 .br 
 
 .TP 
 \fBRouteType\fR <type of route file>
 .br 
-Type of route file specified in the '\fBWriteTo\fR statement.
+Routing file syntax.
 .br 
-\fItype of route file\fR may be: 'husky' (for hpt), 'squish', 'tmail' (for the T\-mail version before v.2601), 'tmailn' (for the T\-mail version v.2601 and above), 'itrack', 'bpack', 'imbink', 'xmail', 'ifmail', 'unimail', 'bip', 'fidogate', 'qecho', 'ftrack'.
+\fItype of route file\fR should be one of: 'husky' (for hpt), 'squish', 'tmail' (for the T\-mail version before v.2601), 'tmailn' (for the T\-mail version v.2601 and above), 'itrack', 'bpack', 'imbink', 'xmail', 'ifmail', 'unimail', 'bip', 'fidogate', 'qecho', 'ftrack'.
 .br 
 
 .TP 
@@ -119,39 +108,34 @@ Set it to 'on' or 'yes' for routing minimization.
 .br 
 
 .TP 
-\fBRouteBegin\fR <string>
+\fBRouteBegin\fR <signature1>
 .br 
-\fIstring\fR is used to specify begin of the rewriting area in the result file. It's recommended to enclose \fIstring\fR into double\-quotes (").
+.TP 
+\fBRouteEnd\fR   <signature2>
 .br 
-For pointing to place results into file, there is the brackets
-RouteBegin and RouteEnd. Do not forget to write the strings to output file.
-Attention! Router drops out all your lines between these brackets and
-puts there his stupid results. Be carefull!
+.br 
+These \fIsignature\fRs are used to specify the start and the end of rewritable area in the route file.
+It is recommended to enclose both \fIsignature\fRs into double\-quotes (").
+.br 
+Be careful!
+.br
+Everything between these two \fIsignature\fRs will be deleted from route file.
+.br
+Do not forget to add these strings to route file before running \fBfidoroute\fR.
 .br 
 
 .TP 
-\fBRouteEnd\fR <string>
-.br 
-\fIstring\fR is used to specify end of the rewriting area in the result file. It's recommended to enclose \fIstring\fR into double\-quotes (").
-.br 
-For pointing to place results into file, there is the brackets
-RouteBegin and RouteEnd. Do not forget to write the strings to output file.
-Attention! Router drops out all your lines between these brackets and
-puts there his stupid results. Be carefull!
-.br 
-
-.TP 
-\fBLink\fR <FTN address> <flavours>
+\fBLink\fR <FTN address> <flavors>
 .br 
 where:
 .br 
 \fIFTN address\fR is a FTN address of the your (direct) link;
 .br 
-\fIflavours\fR may be combination of the characters: 'C' (crash), 'D' (direct), 'N' (normal) or 'H' (hold) and 'F' (route files) and 'A' (no arcmail),
+\fIflavors\fR may be combination of the characters: 'C' (crash), 'D' (direct), 'N' (normal) or 'H' (hold) and 'F' (route files) and 'A' (no arcmail),
 .br 
 BHL:
 .br 
-\fIflavours\fR := ('C'|'D'|'N'|'H')['F']['A']
+\fIflavors\fR := ('C'|'D'|'N'|'H')['F']['A']
 .br 
 Examples:
 .br 
@@ -161,15 +145,16 @@ Link 2:5020/24 DF
 .br 
 
 .TP 
-\fBDefaultFlavor\fR <flavours>
+\fBDefaultFlavor\fR <flavors>
 .br 
-This statement describes default flavor for links, which is not present
+This statement sets default flavor for links, which are not present
 in 'Link' lines, but must be routed via us. If the DefaultRoute is
-absent in config file, Hold assumed. See \fIflavours\fR in the \fBLink\fR statement.
+missing in config file, 'Hold' assumed. See \fIflavors\fR description
+in the \fBLink\fR statement.
 .br 
 BHL:
 .br 
-\fIflavours\fR := ('C'|'D'|'N'|'H')['F']['A']
+\fIflavors\fR := ('C'|'D'|'N'|'H')['F']['A']
 .SH "Limitation and hints"
 .LP 
    Maximum number of 'routing items' (i.e. nodes, nets, zones) is 5000.
