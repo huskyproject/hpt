@@ -63,8 +63,8 @@ sub checkorigin{
    }
 
    if( $origin =~ /(\(| )([0-9]+:)?([0-9]+)\/([0-9]+)(\.[0-9]+)?(\@[a-zA-Z])?\)(\s*)?$/ ){
-     if( $1 ne "(" ){ # bad: address and only address should be inclosed into parentheses
-        $msgtext .= "* text or space in parentheses before address is prohibited\r";
+     if( $1 ne "(" ){ # bad: address and only address should be enclosed into brackets
+        $msgtext .= "* text or space in brackets before address is prohibited\r";
      }
      if( $2 =~ /^0+:/ ){ # bad zone number
         $msgtext .= "* bad zone number in address ($2)\r";
