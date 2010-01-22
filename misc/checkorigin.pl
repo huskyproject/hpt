@@ -1,6 +1,6 @@
 #/usr/bin/perl
 
-# $Id$
+my @Id = split(/ /,'$Id$');
 
 # Check origin according FTS-4 (perl hook for HPT)
 # (c) 2007 Grumbler
@@ -34,7 +34,6 @@
 # sub hpt_exit{}
 # ==============
 
-my @Id = split(/ /,'$Id$');
 my $report_tearline="$Id[1] $Id[2]";
 (my $file=$Id[1]) =~ s/,v$//;
 undef @Id;
@@ -63,14 +62,16 @@ sub checkorigin{
    }
 
    if( $origin =~ /(\(| )([0-9]+:)?([0-9]+)\/([0-9]+)(\.[0-9]+)?(\@[a-zA-Z])?\)(\s*)?$/ ){
+     my $addrinorigin="$2$3/$4$5";
      if( $1 ne "(" ){ # bad: address and only address should be enclosed into brackets
         $msgtext .= "* text or space in brackets before address is prohibited\r";
      }
      if( $2 =~ /^0+:/ ){ # bad zone number
         $msgtext .= "* bad zone number in address ($2)\r";
      }
-     if( $fromaddr ne "$2$3/$4$5" ){
-        $msgtext .= "* originating address and address in origin line is different ($fromaddr != $2$3/$4$5\r";
+     $addrinorigin =~ s/\.0$//;
+     if( $fromaddr ne "$addrinorigin" ){
+        $msgtext .= "* originating address and address in origin line is different ($fromaddr ~= $addrinorigin\r";
      }
    }
    if( length($msgtext)>0 ){
