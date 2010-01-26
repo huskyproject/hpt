@@ -91,9 +91,9 @@ extern "C" {
 #define ALIKE              1
 #define NOT_ALIKE          0
 #define LENGTH_MISMATCH    32767
+
 static int l_dist_list(char *key, char **list, char **match, int dist[], int match_limit, int *threshold);
 static int l_dist_raw(char *str1, char *str2, int len1, int len2);
-
 
 
 static PerlInterpreter *perl = NULL;
@@ -128,7 +128,6 @@ static int  do_perl=1;
   w_log(*level, "%s", str);
   XSRETURN_EMPTY;
 }
-
 int l_dist_list(char *key,
                 char **list,
                 char **match,
