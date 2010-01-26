@@ -1,10 +1,11 @@
 # Linux legacy makefile
 #
+# run make -f makefile.lnx DEBUG=-g for debugging
+# run make -f makefile.lnx PERL=1 for enable embedded perl
 
-DEBUG=-s
-# set to -g for debugging
+DEBUG?=-s
 
-PERL=0
+PERL?=0
 include makeperl.inc
 
 CC=gcc
