@@ -106,22 +106,22 @@ int mandatoryCheck(s_area area, s_link *link) {
     w_log(LL_FUNC, __FILE__ "::mandatoryCheck()");
 
     if (grpInArray(area.group,link->optGrp,link->numOptGrp)&&link->mandatory){
-      w_log(LL_FUNC, __FILE__ "::mandatoryCheck() rc=1");
+      w_log(LL_SRCLINE, __FILE__ "::mandatoryCheck() rc=1");
       return 1;
     }
     if (link->numOptGrp==0 && link->mandatory){
-      w_log(LL_FUNC, __FILE__ "::mandatoryCheck() rc=1");
+      w_log(LL_SRCLINE, __FILE__ "::mandatoryCheck() rc=1");
       return 1;
     }
     if (area.mandatory){
-      w_log(LL_FUNC, __FILE__ "::mandatoryCheck() rc=1");
+      w_log(LL_SRCLINE, __FILE__ "::mandatoryCheck() rc=1");
       return 1;
     }
     if ((i=isAreaLink(link->hisAka, &area))!=-1){
-      w_log(LL_FUNC, __FILE__ "::mandatoryCheck() rc=%d", area.downlinks[i]->mandatory);
+      w_log(LL_SRCLINE, __FILE__ "::mandatoryCheck() rc=%d", area.downlinks[i]->mandatory);
       return area.downlinks[i]->mandatory;
     }
-      w_log(LL_FUNC, __FILE__ "::mandatoryCheck() rc=0");
+      w_log(LL_SRCLINE, __FILE__ "::mandatoryCheck() rc=0");
     return 0;
 }
 
@@ -133,22 +133,22 @@ int manualCheck(s_area area, s_link *link) {
     w_log(LL_FUNC, __FILE__ "::manualCheck()");
 
     if (grpInArray(area.group,link->optGrp,link->numOptGrp)&&link->manual){
-      w_log(LL_FUNC, __FILE__ "::manualCheck() rc=1");
+      w_log(LL_SRCLINE, __FILE__ "::manualCheck() rc=1");
       return 1;
     }
     if (link->numOptGrp==0 && link->manual){
-      w_log(LL_FUNC, __FILE__ "::manualCheck() rc=1");
+      w_log(LL_SRCLINE, __FILE__ "::manualCheck() rc=1");
       return 1;
     }
     if (area.manual){
-      w_log(LL_FUNC, __FILE__ "::manualCheck() rc=1");
+      w_log(LL_SRCLINE, __FILE__ "::manualCheck() rc=1");
       return 1;
     }
     if ((i=isAreaLink(link->hisAka, &area))!=-1){
-      w_log(LL_FUNC, __FILE__ "::manualCheck() rc=%d", area.downlinks[i]->manual);
+      w_log(LL_SRCLINE, __FILE__ "::manualCheck() rc=%d", area.downlinks[i]->manual);
       return area.downlinks[i]->manual;
     }
-      w_log(LL_FUNC, __FILE__ "::manualCheck() rc=0");
+      w_log(LL_SRCLINE, __FILE__ "::manualCheck() rc=0");
     return 0;
 }
 
@@ -157,7 +157,7 @@ int subscribeCheck(s_area area, s_link *link)
 {
     int found = 0;
 
-    w_log( LL_FUNC, "%s::subscribeCheck() begin", __FILE__ );
+    w_log( LL_SRCLINE, "%s::subscribeCheck() begin", __FILE__ );
 
     if (isLinkOfArea(link, &area)) return 0;
 
@@ -169,14 +169,14 @@ int subscribeCheck(s_area area, s_link *link)
     } else found = 1;
 
     if (!found){
-      w_log( LL_FUNC, "%s::subscribeCheck() end, rc=2", __FILE__ );
+      w_log( LL_SRCLINE, "%s::subscribeCheck() end, rc=2", __FILE__ );
       return 2;
     }
     if (area.levelwrite > link->level && area.levelread > link->level){
-      w_log( LL_FUNC, "%s::subscribeCheck() end, rc=2", __FILE__ );
+      w_log( LL_SRCLINE, "%s::subscribeCheck() end, rc=2", __FILE__ );
       return 2;
     }
-    w_log( LL_FUNC, "%s::subscribeCheck() end, rc=1", __FILE__ );
+    w_log( LL_SRCLINE, "%s::subscribeCheck() end, rc=1", __FILE__ );
     return 1;
 }
 
@@ -234,6 +234,7 @@ char *list(s_link *link, char *cmdline) {
     ps_arealist al;
     s_area area;
 
+    w_log(LL_FUNC, __FILE__ "::list()");
     pattern = getPatternFromLine(cmdline, &reversed);
     if ((pattern) && (sstrlen(pattern)>60 || !isValidConference(pattern))) {
         w_log(LL_FUNC, "areafix::list() FAILED (error request line)");
@@ -287,15 +288,16 @@ char *linked(s_link *link) {
     unsigned int i, n, rc;
     char *report = NULL;
 
+    w_log(LL_FUNC, __FILE__ "::linked()");
     xscatprintf(&report, "\r%s areas on %s\r\r",
-		((link->Pause & EPAUSE) == EPAUSE) ? "Passive" : "Active", aka2str(link->hisAka));
+         ((link->Pause & EPAUSE) == EPAUSE) ? "Passive" : "Active", aka2str(link->hisAka));
 
     for (i=n=0; i<config->echoAreaCount; i++) {
-	rc=subscribeCheck(config->echoAreas[i], link);
-	if (rc==0) {
-	    xscatprintf(&report, " %s\r", config->echoAreas[i].areaName);
-	    n++;
-	}
+      rc=subscribeCheck(config->echoAreas[i], link);
+      if (rc==0) {
+        xscatprintf(&report, " %s\r", config->echoAreas[i].areaName);
+        n++;
+      }
     }
     xscatprintf(&report, "\r%u areas linked\r", n);
     if (link->afixEchoLimit) xscatprintf(&report, "\rYour limit is %u areas for subscribe\r", link->afixEchoLimit);
@@ -308,14 +310,15 @@ char *unlinked(s_link *link) {
     char *report = NULL;
     s_area *areas;
 
+    w_log(LL_FUNC, "areafix::unlinked()");
     areas=config->echoAreas;
     xscatprintf(&report, "Unlinked areas to %s\r\r", aka2str(link->hisAka));
 
     for (i=0; i<config->echoAreaCount; i++) {
-	rc=subscribeCheck(areas[i], link);
-	if (rc == 1 && !areas[i].hide) {
-	    xscatprintf(&report, " %s\r", areas[i].areaName);
-	}
+      rc=subscribeCheck(areas[i], link);
+      if (rc == 1 && !areas[i].hide) {
+        xscatprintf(&report, " %s\r", areas[i].areaName);
+      }
     }
     w_log(LL_AREAFIX, "areafix: unlinked areas list sent to %s", aka2str(link->hisAka));
 
@@ -328,6 +331,7 @@ char *help(s_link *link) {
     char *help;
     long endpos;
 
+    w_log(LL_FUNC, __FILE__ "::help()");
     if (config->areafixhelp!=NULL) {
 	if ((f=fopen(config->areafixhelp,"r")) == NULL) {
 	    w_log (LL_ERR, "areafix: cannot open help file \"%s\": %s",
@@ -383,6 +387,7 @@ char *available(s_link *link, char *cmdline)
     ps_arealist al=NULL, *hal=NULL;
     unsigned int halcnt=0, isuplink;
 
+    w_log(LL_FUNC, __FILE__ "::available()");
     pattern = getPatternFromLine(cmdline, &reversed);
     if ((pattern) && (sstrlen(pattern)>60 || !isValidConference(pattern))) {
         w_log(LL_FUNC, "areafix::avail() FAILED (error request line)");
@@ -1300,11 +1305,17 @@ char *info_link(s_link *link)
 char *rescan(s_link *link, char *cmd) {
     unsigned int i, c, rc = 0;
     long rescanCount = -1, rcc;
-    char *report = NULL, *line, *countstr, *an, *end;
+    char *report = NULL, *line = cmd, *countstr, *an, *end;
     s_area *area;
     s_arealink *arealink;
 
-    line = cmd;
+    if (cmd==NULL)
+    {
+       w_log(LL_ERR, __FILE__ "::rescan() called with NULL command");
+       return "(NULL): Internal error";
+    }
+    w_log(LL_FUNC, __FILE__ "::rescan()");
+
     if (sstrnicmp(cmd, "%rescan", 7)==0) line += 7; /* strlen("%rescan"); is 7 */
 
     while (*line && (*line == ' ' || *line == '\t')) line++;
@@ -1314,10 +1325,15 @@ char *rescan(s_link *link, char *cmd) {
     countstr = line;
     while (*countstr && (!isspace(*countstr))) countstr++; /*  skip areatag */
     while (*countstr && (*countstr == ' ' || *countstr == '\t')) countstr++;
-    if (strncmp(countstr, "/R",2)==0)
+/*    if (sstrnicmp(countstr, "/R",2)==0) */
+    if ( (*countstr=='/' || *countstr=='-' ) )
     {
-      countstr += 2;
-      if (*countstr == '=') countstr++;
+      countstr++;
+      if ( (*countstr=='R' || *countstr=='r' ) )
+      {
+        countstr ++;
+        if (*countstr == '=') countstr++;
+      }
     }
 
     if (*countstr != '\0')
@@ -1345,7 +1361,7 @@ char *rescan(s_link *link, char *cmd) {
                         an, print_ch(49-sstrlen(an), '.'));
             w_log(LL_AREAFIX, "areafix: %s area no rescan possible to %s",
                   an, aka2str(link->hisAka));
-          } else {
+          } else if (rescanCount>0) {
 
             arealink = getAreaLink(area, link->hisAka);
             if (arealink->export) {
@@ -1362,6 +1378,12 @@ char *rescan(s_link *link, char *cmd) {
                         an, print_ch(49-sstrlen(an), '.'), rcc);
             w_log(LL_AREAFIX,"areafix: %s rescanned %lu mails to %s",
                   an, rcc, aka2str(link->hisAka));
+
+          } else {
+            xscatprintf(&report," %s %s illegal rescan amount: %li\r",
+                        an, print_ch(49-sstrlen(an), '.'), rescanCount);
+            w_log(LL_AREAFIX,"areafix: %s illegal rescan amount: %li (request from %s)",
+                  an, rescanCount, aka2str(link->hisAka));
           }
           if (!isPatternLine(line)) i = config->echoAreaCount;
           break;
@@ -1398,8 +1420,7 @@ char *add_rescan(s_link *link, char *line) {
     report = subscribe (link, line);
     *p = ' ';
 
-/*    xstrscat(&line2,"%rescan ", line, NULL); */
-    xstrcat(&report, rescan(link, line2));
+    xstrcat(&report, rescan(link, line));
     nfree(line2);
     *p = '\0';
 
