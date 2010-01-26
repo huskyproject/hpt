@@ -22,7 +22,7 @@ Example:
                                  areas that match pattern
  %QUERY			      <- List of areas to which you are currently
  				 linked
- %LINKED		      <- same as %QUERY
+ %LINKED		      <- Same as %QUERY
  %UNLINKED                    <- List available areas to which
                                  you are currently not linked
  %AVAIL                       <- List all areas that are available at
@@ -32,6 +32,7 @@ Example:
  %AVAIL ! DN.*                <- List all areas that are available at
                                  this system's uplinks except areas that
                                  match pattern
+ %ALL                         <- Same as %AVAIL
  %PAUSE                       <- If you go to holiday you can
                                  stop receiving echomail for that
                                  time without manually removing each
