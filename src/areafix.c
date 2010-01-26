@@ -833,18 +833,28 @@ char *subscribe(s_link *link, char *cmd) {
   char *line, *an=NULL, *report = NULL;
   s_area *area=NULL;
 
+  if (!cmd)
+  {
+    w_log(LL_ERR, "Error: subscribe(...,NULL)");
+    return "Invalid subscribe request: line is NULL";
+  }
+  if (!*cmd)
+  {
+    w_log(LL_ERR, "Error: subscribe(...,\"\")");
+    return "Invalid subscribe request: line is empty";
+  }
+
   w_log(LL_FUNC, "%s::subscribe(...,%s)", __FILE__, cmd);
 
   line = cmd;
 
-  if (line[0]=='+') line++;
   while (*line==' ') line++;
-  /* FIXME:  "+  +  area" isn't a well-formed line */
   if (*line=='+') line++; while (*line==' ') line++;
 
-  if (sstrlen(line)>60 || !isValidConference(line)) {
+  if (strlen(line)>60 || !isValidConference(line)) {
     report = errorRQ(line);
-    w_log(LL_FUNC, "%s::subscribe() FAILED (error request line) rc=%s", __FILE__, report);
+    w_log(LL_AREAFIX, "Invalid subscribe request line: '%s'", line );
+    w_log(LL_FUNC, "%s::subscribe() FAILED (invalid request line)", __FILE__);
     return report;
   }
 
@@ -1408,22 +1418,36 @@ char *rescan(s_link *link, char *cmd) {
 }
 
 char *add_rescan(s_link *link, char *line) {
-    char *report=NULL, *line2=NULL, *p;
+    char *report=NULL, *p;
 
-    if (line==NULL || *line=='\0') return NULL;
+    if (line==NULL)
+    {
+      w_log(LL_FUNC, __FILE__ "::add_rescan(): command string is NULL");
+      return NULL;
+    }
 
+    if (*line=='\0')
+    {
+      w_log(LL_FUNC, __FILE__ "::add_rescan(): command string is empty");
+      return NULL;
+    }
+
+    w_log(LL_FUNC, __FILE__ "::add_rescan() begin");
     if (*line=='+') line++; while (*line==' ') line++;
 
+/*
     p = fc_stristr(line, " /R");
-    *p = '\0';
+*/
+    p = strchr(line,' ');
+    if (strpbrk(p, "/-")) *p = '\0';
 
     report = subscribe (link, line);
     *p = ' ';
 
     xstrcat(&report, rescan(link, line));
-    nfree(line2);
     *p = '\0';
 
+    w_log(LL_FUNC, __FILE__ "::add_rescan() end");
     return report;
 }
 
@@ -1433,6 +1457,8 @@ char *packer(s_link *link, char *cmdline) {
     char *pattern = NULL;
     int reversed;
     UINT i;
+
+    w_log(LL_FUNC, __FILE__ "::packer() begin");
     pattern = getPatternFromLine(cmdline, &reversed);
     if(pattern)
     {
@@ -1453,6 +1479,8 @@ char *packer(s_link *link, char *cmdline) {
         if( (i == config->packCount) && (sstricmp("none",pattern) != 0) )
         {
             xscatprintf(&report, "Packer '%s' was not found\r", pattern);
+            w_log(LL_AREAFIX, "Packer '%s' was not found for %s", pattern, aka2str(link->hisAka));
+            w_log(LL_FUNC, __FILE__ "::packer() end");
             return report;
         }
         if (link->packerDef==NULL)
@@ -1466,26 +1494,35 @@ char *packer(s_link *link, char *cmdline) {
         if( InsertCfgLine(confName, packerString, strbeg, strend) )
         {
            link->packerDef = packerDef;
+           w_log(LL_AREAFIX, "Change a packer from '%s' to '%s' for %s", was, pattern, aka2str(link->hisAka));
         }
         nfree(confName);
         nfree(packerString);
     }
+    else w_log(LL_AREAFIX, "Information about packers has sent for %s", aka2str(link->hisAka));
 
-    xstrcat(  &report, "Here is some information about current & available packers:\r\r");
-    xstrcat(  &report,       "Compression: ");
-    if (link->packerDef==NULL)
-        xscatprintf(&report, "none (");
-    else
-        xscatprintf(&report, "%s (", link->packerDef->packer);
 
-    for (i=0; i < config->packCount; i++)
-        xscatprintf(&report, "%s%s", config->pack[i].packer,(i+1 == config->packCount) ? "" : ", ");
-
-    xscatprintf(&report, "%snone)\r", (i == 0) ? "" : ", ");
-    if(was)
+    xstrcat( &report, "Here is some information about current & available packers.\r\r" );
+    if (was)
     {
-        xscatprintf(&report, "        was: %s\r", was);
+        xscatprintf(&report, "Old compression method: %s\r"
+                             "New compression method: ", was);
     }
+    else
+    {
+        xscatprintf(&report, "Use compression method: ");
+    }
+    if (link->packerDef==NULL)
+        xscatprintf(&report, "none\r");
+    else
+        xscatprintf(&report, "%s \r", link->packerDef->packer);
+
+    xscatprintf(&report, "\nYou may select any compression method from: %s", config->pack[0].packer);
+    for (i=1; i < config->packCount; i++)
+        xscatprintf(&report, "%s,", config->pack[i].packer);
+
+    xscatprintf(&report, "%snone\r", (i == 0) ? "" : ", ");
+    w_log(LL_FUNC, __FILE__ "::packer() end");
     return report;
 }
 
@@ -1498,10 +1535,13 @@ char *rsb(s_link *link, char *cmdline)
     long  strbeg=0;
     long  strend=0;
 
+    w_log(LL_FUNC, __FILE__ "::rsb() begin");
     param = getPatternFromLine(cmdline, &mode); /*  extract rsb value (on or off) */
     if (param == NULL)
     {
         xscatprintf(&report, "Invalid request: %s\rPlease read help.\r\r", cmdline);
+        w_log(LL_AREAFIX, "Invalid request: %s", cmdline);
+        w_log(LL_FUNC, __FILE__ "::rsb() end");
         return report;
     }
 
@@ -1515,9 +1555,11 @@ char *rsb(s_link *link, char *cmdline)
             mode = 1;
         else
         {
-            xscatprintf(&report, "Unknown parameter for areafix %rsb command: %s\r. Please read help.\r\r",
-                        param);
+            xscatprintf(&report, "Unknown parameter for areafix %rsb command: %s\r"
+                                 "Please read help.\r\r", param);
             nfree(param);
+            w_log(LL_AREAFIX, "Unknown parameter for areafix %rsb command: %s", param);
+            w_log(LL_FUNC, __FILE__ "::rsb() end");
             return report;
         }
     }
@@ -1526,6 +1568,9 @@ char *rsb(s_link *link, char *cmdline)
     {
         xscatprintf(&report, "Redused SEEN-BYs had not been changed.\rCurrent value is '%s'\r\r",
                     mode?"on":"off");
+        w_log(LL_AREAFIX, "Redused SEEN-BYs had not been changed (already %s) for %s",
+                          mode?"on":"off", aka2str(link->hisAka));
+        w_log(LL_FUNC, __FILE__ "::rsb() end");
         return report;
     }
     xstrcat(&confName,(cfgFile) ? cfgFile : getConfigFileName());
@@ -1535,9 +1580,12 @@ char *rsb(s_link *link, char *cmdline)
     {
         xscatprintf(&report, "Redused SEEN-BYs is turned %s now\r\r", mode?"on":"off");
         link->reducedSeenBy = mode;
+        w_log(LL_AREAFIX, "Redused SEEN-BYs is changed to \"%s\" for %s",
+                          mode?"on":"off", aka2str(link->hisAka));
     }
     nfree(param);
     nfree(confName);
+    w_log(LL_FUNC, __FILE__ "::rsb() end");
     return report;
 }
 
