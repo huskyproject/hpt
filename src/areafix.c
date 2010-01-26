@@ -1381,9 +1381,7 @@ char *rescan(s_link *link, char *cmd) {
     s_arealink *arealink;
 
     line = cmd;
-    if (strncasecmp(cmd, "%rescan", 7)==0) line += strlen("%rescan");
-
-    if (*line == 0) return errorRQ(cmd);
+    if (strncasecmp(cmd, "%rescan", 7)==0) line += 7; /* strlen("%rescan"); */
 
     while (*line && (*line == ' ' || *line == '\t')) line++;
 
@@ -1407,10 +1405,10 @@ char *rescan(s_link *link, char *cmd) {
     if (*line == 0) return errorRQ(cmd);
 
     for (i=c=0; i<config->echoAreaCount; i++) {
-	rc=subscribeAreaCheck(&(config->echoAreas[i]), line, link);
+	area = &(config->echoAreas[i]);
+	rc=subscribeAreaCheck(area, line, link);
 	if (rc == 4) continue;
 
-	area = &(config->echoAreas[i]);
 	an = area->areaName;
 
 	switch (rc) {
