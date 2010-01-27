@@ -447,8 +447,12 @@ echomail for them. If @ref{AutoPause} is not defined or is equal to 0 for a link
 then AutoPassive is ignored for this link. If AutoPassive is not defined
 then @ref{AutoPause} is ignored for all links.
 
-The paused link is unsubscribed from the passthrough echo areas with no
-downlinks besides him. An unsubscribe request is sent to the uplink. Note that
+The paused link is unsubscribed from the areas which are passthrough with no
+downlinks besides him (see -def in @ref{EchoArea,,,fidoconfig,fidoconfig} to make it work)
+AND which are allowed to be paused 
+(see -pause, -paused, -noautoareapause, -autoareapause in @ref{EchoArea,,,fidoconfig,fidoconfig} 
+and @ref{AutoAreaPause,,,fidoconfig,fidoconfig}). 
+An unsubscribe request is sent to the uplink for those areas. Note that
 this feature is unavailable when using %PAUSE Areafix command.
 
 By using "hpt pause" command-line parameter instead of defining AutoPassive in
