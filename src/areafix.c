@@ -429,10 +429,10 @@ char *available(s_link *link, char *cmdline)
 
             while ((line = readLine(f)) != NULL)
             {
-                line = trimLine(line);
-                if (line[0] != '\0')
+                char *line1 = trimLine(line);
+                if (line1[0] != '\0')
                 {
-                    running = line;
+                    running = line1;
                     token = strseparate(&running, " \t\r\n");
                     rc = 0;
 
@@ -1535,11 +1535,17 @@ char *rsb(s_link *link, char *cmdline)
     long  strbeg=0;
     long  strend=0;
 
+    if (!cmdline)
+    {
+      w_log(LL_ERR, "rsb() call with NULL string");
+      return "(NULL): Internal error";
+    }
+      
     w_log(LL_FUNC, __FILE__ "::rsb() begin");
     param = getPatternFromLine(cmdline, &mode); /*  extract rsb value (on or off) */
     if (param == NULL)
     {
-        xscatprintf(&report, "Invalid request: %s\rPlease read help.\r\r", cmdline);
+        xscatprintf(&report, "Invalid request: \"%s\"\rPlease read help.\r\r", cmdline);
         w_log(LL_AREAFIX, "Invalid request: %s", cmdline);
         w_log(LL_FUNC, __FILE__ "::rsb() end");
         return report;
@@ -1557,13 +1563,11 @@ char *rsb(s_link *link, char *cmdline)
         {
             xscatprintf(&report, "Unknown parameter for areafix %rsb command: %s\r"
                                  "Please read help.\r\r", param);
-            nfree(param);
             w_log(LL_AREAFIX, "Unknown parameter for areafix %rsb command: %s", param);
             w_log(LL_FUNC, __FILE__ "::rsb() end");
             return report;
         }
     }
-    nfree(param);
     if (link->reducedSeenBy == (UINT)mode)
     {
         xscatprintf(&report, "Redused SEEN-BYs had not been changed.\rCurrent value is '%s'\r\r",
