@@ -24,7 +24,14 @@ Each 'Address' line contains FTN address or AKA of your node in the 3D form. Any
 Example:
 .br 
 Address 2:5020/204
+.br 
 Address 7:1130/204
+.br 
+Examples for wrong syntax:
+.br 
+Address 2:5020/204.1
+.br 
+Address 7:1130/0@fidorus
 .TP 
 \fBHubroute\fR <nodelist file> <type of nodelist> <zone number> <net number>
 .br 
@@ -69,6 +76,7 @@ Special token "World" means "all other destinations" and should be last in the l
 Example:
 .br 
 2:5020/888  999 555 5030/444 3:All/All
+.br 
 2:5020/50   World
 
 .TP 
@@ -77,7 +85,7 @@ Example:
 .br 
 
 .TP 
-\fBDefaultRoute\fR <route_to&gt <destination>;
+\fBDefaultRoute\fR <route_to> <destination>;
 .br 
   This line gives you possibility to override some route branches
 without creating additional rou\-file. Syntax is the same as in
