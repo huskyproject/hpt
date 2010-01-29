@@ -1,4 +1,4 @@
-.% $Id$
+.\" .% $Id$
 .TH "fidoroute" "5" "1.0" "Stas Degteff <stas_degteff@users.sourceforge.net>" "configuration file"
 .SH "NAME"
 .LP 
@@ -126,9 +126,9 @@ These \fIsignature\fRs are used to specify the start and the end of rewritable a
 It is recommended to enclose both \fIsignature\fRs into double\-quotes (").
 .br 
 Be careful!
-.br
+.br 
 Everything between these two \fIsignature\fRs will be deleted from route file.
-.br
+.br 
 Do not forget to add these strings to route file before running \fBfidoroute\fR.
 .br 
 
@@ -150,7 +150,6 @@ Examples:
 Link 2:5020/0  CFA
 .br 
 Link 2:5020/24 DF
-.br 
 
 .TP 
 \fBDefaultFlavor\fR <flavors>
@@ -163,6 +162,11 @@ in the \fBLink\fR statement.
 BHL:
 .br 
 \fIflavors\fR := ('C'|'D'|'N'|'H')['F']['A']
+
+.TP 
+\fBTempFile\fR </path/file.tmp>
+.br 
+This statement defines temporary file for build \fBWriteTo\fR file. \fBTempFile\fR and \fBWriteTo\fR file required be placed on same disk volume. Default value of \fBTempFile\fR is \fBWriteTo\fR with suffix replaced with '$$$', and if you don't specify \fBTempfile\fR, you should make directory of \fBWriteTo\fR file writable by user running fidoroute.
 .SH "Limitation and hints"
 .LP 
    Maximum number of 'routing items' (i.e. nodes, nets, zones) is 5000.

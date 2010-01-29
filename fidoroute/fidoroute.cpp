@@ -40,6 +40,7 @@
 #endif
 #elif defined(__GNUC__)
 //  #include <malloc.h>
+#include <sys/param.h>  // for MAXPATHLEN
 #include <dirent.h>
 #include <unistd.h>
 #include <glob.h>
@@ -53,7 +54,7 @@
 #endif
 
 #define VERSION   "1.35"
-#define DATE      "20091230"
+#define DATE      "20100130"
 #define CREATED   "%c %s routing for %d:%d/%d. Created by Hubroute generator "VERSION""EOLCHR"%c %45s%c"EOLCHR""
 #ifdef _TARGET
 #if defined (__GNUC__)
@@ -137,7 +138,7 @@ static const char *ErrReroute = EOLCHR "Re-routing for %s.";
 static const char *ErrLoop = EOLCHR "RouteLoop detected for %s. Try to route by default";
 static const char *WarnNoMin = EOLCHR "Unable to minimize tree - out of memory";
 
-#define Error(s)   fprintf(stderr,s)
+#define Error(s)   fprintf(stderr,"%s" EOLCHR,s)
 #define ErrorS(s,str)   fprintf(stderr,s,str)
 #define ErrorL(s)  fprintf(stderr, "%s %d: %s" EOLCHR, CfgFile, CfgLine, s)
 
@@ -171,10 +172,14 @@ static ushort DefaultFlavor = HOLD_FLAVOR;
 #define MAXFILE NAME_MAX
 #define MAXEXT  NAME_MAX
 #elif defined (__GNUC__)
+#ifdef MAXPATHLEN
+#define MAXPATH MAXPATHLEN
+#else
 #define MAXPATH 512
-#define MAXDIR  512
-#define MAXFILE 512
-#define MAXEXT  512
+#endif
+#define MAXDIR  MAXPATH
+#define MAXFILE MAXPATH
+#define MAXEXT  MAXPATH
 #endif
 
 #if defined(__GNUC__)
@@ -1553,17 +1558,21 @@ static boolean GetDestFile(char *p, void *Name)
   return false;
  }
 
+ if (TempFile[0] == '\0')
+ {
 #if !defined(__GNUC__)
- fnsplit((char *) Name, OutDrv, OutDir, OutName, OutExt);
- fnmerge(TempFile, OutDrv, OutDir, "MK$ROUTE", "$$$");
+  fnsplit((char *) Name, OutDrv, OutDir, OutName, OutExt);
+  fnmerge(TempFile, OutDrv, OutDir, "MK$ROUTE", "$$$");
 #else
- strcpy(TempFile, (char *) Name);
- strcat(TempFile, ".$$$");
+  strcpy(TempFile, (char *) Name);
+  strcat(TempFile, ".$$$");
 #endif
+ }
 
  if ((NewRoute = fopen(TempFile, "wt")) == NULL)
  {
-  Error(ErrOpenTmp);
+//  Error(ErrOpenTmp);
+  ErrorS("Unable to open temp file \"%s\"",TempFile);
   return false;
  }
  boolean ReplaceArea = false;
@@ -1789,9 +1798,9 @@ static boolean GetHubRoute(char *p, void *)
  if (strchr(Name, '?') || strchr(Name, '*'))
  {
   short maxext = (-1);
-  short ext;
 
 #if defined (__TSC__)
+  short ext;
   int rc;
   ffblk ff;
   for (rc = findfirst(Name, &ff, 0); rc != (-1); rc = findnext(&ff))
@@ -1811,6 +1820,7 @@ static boolean GetHubRoute(char *p, void *)
   }
 
 #elif defined (__WATCOMC__)
+  short ext;
   DIR * ff;
   if ((ff = opendir(Name)) != 0)
   {
@@ -1998,6 +2008,8 @@ static boolean GetHubRoute(char *p, void *)
  { "RouteBegin", RouteBegin, 1, GetQuotedString}
  ,
  { "RouteEnd", RouteEnd, 1, GetQuotedString}
+ ,
+ { "TempFile", TempFile, 1, GetFile}
 };
 
 static boolean PassOK(ushort Pass)
@@ -2115,6 +2127,7 @@ int main(int argc, char **argv)
  {
   nNodes = 0;
   nLinks = 0;
+  TempFile[0]='\0';
   if (argc == 1)
 #if defined(__GNUC__)
    strcpy(CfgFile, "fidoroute.conf");
@@ -2177,7 +2190,7 @@ int main(int argc, char **argv)
    fclose(NewRoute);
    unlink(WriteTo);
    rename(TempFile, WriteTo);
-   fprintf(stderr, "" EOLCHR "Done - %d rules for %d links.",
+   fprintf(stderr, "" EOLCHR "Done - %d rules for %d links." EOLCHR "",
 	   nNodes, nLinks);
    return 0;
   }
