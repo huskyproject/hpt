@@ -16,6 +16,8 @@
 
 # To build normal binary run `make all`
 # To build binary for debugging (using gdb) run `make debug`
+# To install normal binary and man pages run `make install`
+# To install debug binary and man pages run `make install-debug install-man`
 
 BINARIES=fidoroute
 MAN1PAGES=fidoroute.1
@@ -30,10 +32,10 @@ MAN5DIR?=$(MANDIR)/man5/
 BINDIR?=$(PREFIX)/bin/
 MANPAGES=$(MAN1PAGES) $(MAN5PAGES)
 
-all:
+all: $(BINARIES)
 	g++ $(COPTS) $(CDEFS) -o fidoroute fidoroute.cpp
 
-debug:
+debug: $(BINARIES)
 	g++ $(DEBUGOPTS) $(CDEFS) -o fidoroute fidoroute.cpp
 
 install-man:
@@ -42,8 +44,12 @@ install-man:
 	if [ ! -d $(MAN5DIR) ]; then install -d $(MAN5DIR); fi
 	install $(MAN5PAGES) $(MAN5DIR)
 
-install-bin:
+install-debug: debug
 	if [ ! -d $(BINDIR) ]; then install -d $(BINDIR); fi
-	install BINARIES $(BINDIR)
+	install $(BINARIES) $(BINDIR)
+
+install-bin: all
+	if [ ! -d $(BINDIR) ]; then install -d $(BINDIR); fi
+	install $(BINARIES) $(BINDIR)
 
 install: install-bin install-man
