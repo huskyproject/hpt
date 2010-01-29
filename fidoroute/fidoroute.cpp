@@ -1,3 +1,18 @@
+// $Id$
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 #if defined (__TSC__)
 #pragma call(inline_max => 150)
 #endif
@@ -40,6 +55,13 @@
 #define VERSION   "1.35"
 #define DATE      "20091230"
 #define CREATED   "%c %s routing for %d:%d/%d. Created by Hubroute generator "VERSION""EOLCHR"%c %45s%c"EOLCHR""
+#ifdef _TARGET
+#if defined (__GNUC__)
+#define TARGET "GNU/" _TARGET
+#else
+#define TARGET _TARGET
+#endif
+#else /*defined (__GNUC__)*/
 #if defined(_OS2) || defined (__OS2__)
 #define TARGET "OS/2"
 #elif defined (__NT__)
@@ -48,6 +70,7 @@
 #define TARGET "GNU/Unix"
 #else
 #define TARGET "DOS"
+#endif
 #endif
 
 #ifdef boolean
@@ -89,7 +112,7 @@ struct link
 
 struct CfgValue
 {
- char *Name;
+ const char *Name;
  void *Value;
  ushort Pass;
  boolean(*LoadVal) (char *in, void *out);
@@ -553,7 +576,7 @@ static void RemoveUnnecessary(void)
  }
 }
 
-static char * GetFlavor(link * pLink, char *Flav[])
+static const char * GetFlavor(link * pLink, const char *Flav[])
 {
  if (pLink->flavor & CRASH_FLAVOR)
   return Flav[0];
@@ -568,7 +591,7 @@ static char * GetFlavor(link * pLink, char *Flav[])
   return Flav[3];
 }
 
-char *SqFlavors[] =
+const char *SqFlavors[] =
 {
  "Crash ", "Direct", "Hold  ", "Normal"
 };
@@ -670,7 +693,7 @@ static void PutDownLinks(ushort UpIdx, ushort type)
  }
 }
 
-static char *RouteType[] =
+static const char *RouteType[] =
 {
  "Nodes", "Nets", "Zones", "Default"
 };
@@ -718,7 +741,7 @@ static void PutRoutingSq(void)
 
 
 // Make Routing for ITrack
-char *ItrFlavors[] =
+const char *ItrFlavors[] =
 {
  "Crash", "Dir  ", "Hold ", "     "
 };
@@ -739,7 +762,7 @@ static void PutRoutingItr(void)
   fprintf(NewRoute, "; *** %s" EOLCHR "", RouteType[level]);
   for (i = 0; i < nLinks; i++)
   {
-   strcpy(Prefix, GetFlavor(Link + i, ItrFlavors));
+   strcpy(Prefix, (char*)GetFlavor(Link + i, ItrFlavors));
    WriteNode(Link[i].addr, Prefix, 1);
    strcat(Prefix, "  ");
    strcpy(Buff, Prefix);
@@ -953,7 +976,7 @@ static void PutRoutingXmail(void)
 
 
 // ±±  Make Routing for ifmail
-static char * GetIfFlavor(link * pLink)
+static const char * GetIfFlavor(link * pLink)
 {
  if (pLink->flavor & CRASH_FLAVOR)
   return "c";
@@ -1061,7 +1084,7 @@ static void PutRoutingIfmail(void)
 
 
 // ±±  Make Routing for BiP
-char *BipFlavors[] =
+const char *BipFlavors[] =
 {
  "Crash", "Dir  ", "Hold ", "Norm "
 };
@@ -1083,7 +1106,7 @@ static void PutRoutingBip(void)
   for (i = 0; i < nLinks; i++)
   {
    strcpy(Prefix, "Route");
-   strcat(Prefix, GetFlavor(Link + i, BipFlavors));
+   strcat(Prefix, (char*)GetFlavor(Link + i, BipFlavors));
    WriteNode(Link[i].addr, Prefix, 1);
    strcat(Prefix, "  ");
    strcpy(Buff, Prefix);
@@ -1212,7 +1235,7 @@ static void PutRoutingQecho(void)
 
 
 // ±±  Make Routing for Fidogate
-char *FidogateFlavors[] =
+const char *FidogateFlavors[] =
 {
  "crash ", "direct", "hold  ", "normal"
 };
@@ -1220,7 +1243,7 @@ char *FidogateFlavors[] =
 static void MakeFidogatePrefix(link * pLink, char *out)
 {
  strcpy(out, "route ");
- strcat(out, GetFlavor(pLink, FidogateFlavors));
+ strcat(out, (char*)GetFlavor(pLink, FidogateFlavors));
 
  if (pLink->flavor & FILE_FLAVOR)
   strcat(out, " file");
@@ -1360,7 +1383,7 @@ static void PutRoutingFtrack(void)
  }
 }
 
-char *HuskyFlavors[] =
+const char *HuskyFlavors[] =
 {
  "crash", "direct", "hold"
 };
@@ -1383,7 +1406,7 @@ static void PutRoutingHusky(void)
   for (i = 0; i < nLinks; i++)
   {
    strcpy(Prefix, "route ");
-   strcat(Prefix, GetFlavor(Link + i, HuskyFlavors));
+   strcat(Prefix, (char*)GetFlavor(Link + i, HuskyFlavors));
    WriteNode(Link[i].addr, Prefix, 1);
    strcpy(Buff, Prefix);
    WriteNode(Link[i].addr, Buff, 0);
