@@ -24,6 +24,7 @@
 # }
 #
 
+my $myname='Ping-Pong Robot';
 my $Id='$Id$';
 my $file=$1 if( $Id =~ /Id: ([^ ]+),v / );
 my @myaddr=myaddr();
@@ -38,7 +39,7 @@ sub pong()
    my $report_tearline="$Id[1] $Id[2] $Id[3] $Id[4]";
    undef @Id;
 
-   w_log('C',"Make PONG to PING reqiest: area=".((length($area)==0)? "netmail":$area)."; toname=$toname; toaddr=$toaddr fromname=$fromname; fromaddr=$fromaddr" );
+   w_log('C',"Perl($file): Make PONG to PING reqiest: area=".((length($area)==0)? "netmail":$area)."; toname=$toname; toaddr=$toaddr fromname=$fromname; fromaddr=$fromaddr" );
 
 # $text contains original message and must be left as is
    $msgtext = $text;
@@ -53,10 +54,10 @@ sub pong()
    . "$msgtext\r"
    . "===== end of request body =====\r\r\r"
    . "--- $report_tearline\r"
-   ." * Origin: Ping-pong robot at ($myaddr)\r";
-   my $err= putMsgInArea($area,"Ping-Pong Robot",$fromname,$myaddr,$fromaddr,
+   ." * Origin: $myname at ($myaddr)\r";
+   my $err= putMsgInArea($area,$myname,$fromname,$myaddr,$fromaddr,
                 "PONG: ".$subject,"","Uns Loc Pvt K/s cpt",$msgtext,1);
-   if( defined($err) ){ w_log('A',"Can't make new message: $err"); }
+   if( defined($err) ){ w_log('A',"Perl($file): Can't make new message: $err"); }
  }
  return "";
 }
