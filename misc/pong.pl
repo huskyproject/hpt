@@ -24,6 +24,7 @@
 # }
 #
 
+my $flagfile='/fido/flag/netmail-in'; # Flag file for indicating new netmail
 my $myname='Ping-Pong Robot';
 my $Id='$Id$';
 my $file=$1 if( $Id =~ /Id: ([^ ]+),v / );
@@ -58,6 +59,7 @@ sub pong()
    my $err= putMsgInArea($area,$myname,$fromname,$myaddr,$fromaddr,
                 "PONG: ".$subject,"","Uns Loc Pvt K/s cpt",$msgtext,1);
    if( defined($err) ){ w_log('A',"Perl($file): Can't make new message: $err"); }
+   else{ open( FLAG, ">>$flagfile" ) && close(FLAG); }
  }
  return "";
 }
