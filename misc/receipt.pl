@@ -28,6 +28,8 @@
 my $Id='$Id$';
 my $file=$1 if( $Id =~ /Id: ([^ ]+),v / );
 my @myaddr=myaddr();
+my $myname="Receipt Robot";
+my $report_tearline="$file (HPT perl hook)";
 
 sub arqcpt
 { # This procedure should be called from route() subroutine.
@@ -40,23 +42,25 @@ w_log('Z', "Perl($file): Netmail with ARQ from $fromaddr to $toaddr");
     {
         my $origmsgid=extractmsgid($text);
         my $rcptext = 
-"    Hello $fromname!\r" .
-"\r" .
-"Your message (msgid: $origmsgid) with ARQ passed via $myaddr[0] to $route.\r" .
-"\r" .
-"Original message header:\r" .
-"=============================================================\r" .
-" From:    $fromname, $fromaddr\r" .
-" To:      $toname, $toaddr\r" .
-" Subject: $subject\r" .
-" Date:    $date\r" .
-"=============================================================\r" ;
+          "    Hello $fromname!\r" .
+          "\r" .
+          "Your message (msgid: $origmsgid) with ARQ passed via $myaddr[0] to $route.\r" .
+          "\r" .
+          "Original message header:\r" .
+          "=============================================================\r" .
+          " From:    $fromname, $fromaddr\r" .
+          " To:      $toname, $toaddr\r" .
+          " Subject: $subject\r" .
+          " Date:    $date\r" .
+          "=============================================================\r" ;
         my @Via = grep( s/^\x01Via/@Via/, split(/\r/,$text));
         if( $#Via >= 0 )
         {
           $rcptext .= "\rOriginal VIA kludges:\r" . join( "\r", @Via );
         }
-        my $err = putMsgInArea("", "Receipt Robot", $fromname, "", $fromaddr,
+        $rcptext .= "--- $report_tearline\r";
+
+        my $err = putMsgInArea("", $myname, $fromname, "", $fromaddr,
             "Audit Receipt Response", "", "pvt k/s loc cpt", $rcptext, 1);
         if( defined($err) ){ w_log('A',"Can't make new message: $err"); }
         else
@@ -77,20 +81,19 @@ w_log('Z', "Perl($file): Netmail with RRQ from $fromaddr to $toaddr");
     if($#a>=0) # for my
     {
         my $origmsgid=extractmsgid($text);
-        my $rcptext = <<EOF;
-    Hello $fromname!
+        my $rcptext = "\r"
+        .  "    Hello $fromname!\r\r"
+        .  "Your message to $toname, $toaddr (msgid: $origmsgid) successfully delivered.\r\r"
+        .  "Original message header:\r"
+        .  "=============================================================\r"
+        .  " From:    $fromname, $fromaddr\r"
+        .  " To:      $toname, $toaddr\r"
+        .  " Subject: $subject\r"
+        .  " Date:    $date\r"
+        .  "=============================================================\r"
+        .  "--- $report_tearline\r";
 
-Your message to $toname, $toaddr (msgid: $origmsgid) successfully delivered.
-
-Original message header:
-=============================================================
- From:    $fromname          $fromaddr
- To:      $toname            $toaddr
- Subject: $subject
- Date:    $date
-=============================================================
-EOF
-        my $err = putMsgInArea("", "Receipt Robot", $fromname, "", $fromaddr,
+        my $err = putMsgInArea("", $myname, $fromname, "", $fromaddr,
             "Return Receipt Response", "", "pvt k/s loc cpt", $rcptext, 1);
         if( defined($err) ){ w_log('A',"Can't make new message: $err"); }
         else
