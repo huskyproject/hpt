@@ -25,6 +25,7 @@
 # }
 #
 
+my $flagfile='/fido/flag/netmail-in'; # Flag file for indicating new netmail
 my $Id='$Id$';
 my $file=$1 if( $Id =~ /Id: ([^ ]+),v / );
 my @myaddr=myaddr();
@@ -66,6 +67,7 @@ w_log('Z', "Perl($file): Netmail with ARQ from $fromaddr to $toaddr");
         else
         {
           w_log('C', "Perl($file): ARR created for netmail from $fromaddr to $toaddr message ID $origmsgid");
+          open( FLAG, ">>$flagfile" ) && close(FLAG);
         }
     }
   }
@@ -99,6 +101,7 @@ w_log('Z', "Perl($file): Netmail with RRQ from $fromaddr to $toaddr");
         else
         {
           w_log('C', "Perl($file): RRR created for netmail from $fromaddr to $toaddr message ID $origmsgid");
+          open( FLAG, ">>$flagfile" ) && close(FLAG);
         }
     }
   }
