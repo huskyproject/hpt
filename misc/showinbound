@@ -1,0 +1,108 @@
+#!/bin/sh
+# $Id$
+# Create report about files in inbound directories what requires sysop's attention
+# (c) Copyleft Stas Degteff 2:5080/102@fidonet
+# 
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA
+#  or You may look it on http://www.gnu.org/ site.
+
+Tempfile="/tmp/showinbound.out"
+inboundunsecure="/fido/inbound-unsecure"
+inboundsecure="/fido/inbound-secure"
+inboundhpttemp="/fido/inbound-hpttemp"
+inboundlocal="/fido/inbound-local"
+
+txt2pkt="txt2pkt"
+#txt2pkt="/usr/bin/txt2pkt"
+PATH="/usr/bin:/bin:$PATH" ; export PATH
+
+if [ "$USER" != "ftn" ]
+then
+  echo "`basename $0` may be runned only by user ftn" >&2
+  exit
+fi
+
+if [ -f "$Tempfile" ]
+then
+  if [ -w "$Tempfile" ]
+  then
+    rm "$Tempfile"
+  else
+    echo "`basename $0` can't remove file `ls -l $Tempfile`"
+    exit
+ fi
+fi
+
+Test=`find ${inboundunsecure} -type f -printf "%M %10sb %Td-%Tm-%TY %TH:%TM %f\n"`
+if [ -n "$Test" ]
+then
+  echo >>$Tempfile
+  echo Unsecure inbound files >>$Tempfile
+  echo -Mode-----+------Size-+-Creation time--+-Filename---------------------------- >>$Tempfile
+  echo $Test >>$Tempfile
+  echo ----------+-----------+----------------+------------------------------------- >>$Tempfile
+fi
+
+Test=`find ${inboundsecure} -name '*.bad' -o -name '*.sec' -name '*.tos' -name '*.acs' -type f -printf "%M %10sb %Td-%Tm-%TY %TH:%TM %f\n"`
+if [ -n "$Test" ]
+then
+  echo >>$Tempfile
+  echo Secure inbound bad mail packets >>$Tempfile
+  echo -Mode-----+------Size-+-Creation time--+-Filename---------------------------- >>$Tempfile
+  echo "$Test" >>$Tempfile
+  echo ----------+-----------+----------------+------------------------------------- >>$Tempfile
+fi
+
+Test=`find ${inboundhpttemp} -type f -printf "%M %10sb %Td-%Tm-%TY %TH:%TM %f\n"`
+if [ -n "$Test" ]
+then
+  echo >>$Tempfile
+  echo Tosser\'s bad packets >>$Tempfile
+  echo -Mode-----+------Size-+-Creation time--+-Filename---------------------------- >>$Tempfile
+  echo "$Test" >>$Tempfile
+  echo ----------+-----------+----------------+------------------------------------- >>$Tempfile
+fi
+
+Test=`find ${inboundsecure} -ctime +1 -type f -printf "%M %10sb %Td-%Tm-%TY %TH:%TM %f\n"`
+if [ -n "$Test" ]
+then
+  echo >>$Tempfile
+  echo Secure inbound old files \(received one day ago\) >>$Tempfile
+  echo -Mode-----+------Size-+-Creation time--+-Filename---------------------------- >>$Tempfile
+  echo "$Test" >>$Tempfile
+  echo ----------+-----------+----------------+------------------------------------- >>$Tempfile
+fi
+
+Test=`find ${inboundlocal} -type f -printf "%M %10sb %Td-%Tm-%TY %TH:%TM %f\n"`
+if [ -n "$Test" ]
+then
+  echo >>$Tempfile
+  echo Local inbound files >>$Tempfile
+  echo -Mode-----+------Size-+-Creation time--+-Filename---------------------------- >>$Tempfile
+  echo "$Test" >>$Tempfile
+  echo ----------+-----------+----------------+------------------------------------- >>$Tempfile
+fi
+
+
+
+if [ -s "$Tempfile" ]
+then
+
+$txt2pkt -xf "2:5080/102" -xt "2:5080/102" -af "2:5080/102" \
+    -at "2:5080/102" -nf "Node robot" -nt "Sysop" \
+    -t 'showinbound script $Revision$' \
+    -s "Inbounds report" -d "${inboundlocal}" "$Tempfile"
+
+fi
