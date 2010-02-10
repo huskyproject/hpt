@@ -18,19 +18,19 @@
 #  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA
 #  or You may look it on http://www.gnu.org/ site.
 
-Tempfile="/tmp/showinbound.out"
 inboundunsecure="/fido/inbound-unsecure"
 inboundsecure="/fido/inbound-secure"
 inboundhpttemp="/fido/inbound-hpttemp"
 inboundlocal="/fido/inbound-local"
-
+netmail_flag="/fido/flag/netmail-in"
+Tempfile="/tmp/showinbound.out"
 txt2pkt="txt2pkt"
 #txt2pkt="/usr/bin/txt2pkt"
 PATH="/usr/bin:/bin:$PATH" ; export PATH
 
-if [ "$USER" != "ftn" ]
+if [ '!' '(' -O "$inboundlocal" -a -O "$inboundhpttemp" -a -O "$inboundsecure" -a -O "$inboundunsecure" ')' ]
 then
-  echo "`basename $0` may be runned only by user ftn" >&2
+  echo "`basename $0` may be runned only by owner of all inbounds" >&2
   exit
 fi
 
@@ -100,9 +100,10 @@ fi
 if [ -s "$Tempfile" ]
 then
 
-$txt2pkt -xf "2:5080/102" -xt "2:5080/102" -af "2:5080/102" \
+  $txt2pkt -xf "2:5080/102" -xt "2:5080/102" -af "2:5080/102" \
     -at "2:5080/102" -nf "Node robot" -nt "Sysop" \
     -t 'showinbound script $Revision$' \
     -s "Inbounds report" -d "${inboundlocal}" "$Tempfile"
+  touch /fido/flag/netmail-in
 
 fi
