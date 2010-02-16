@@ -166,27 +166,33 @@ BHL:
 .TP 
 \fBTempFile\fR </path/file.tmp>
 .br 
-This statement defines temporary file for build \fBWriteTo\fR file. \fBTempFile\fR and \fBWriteTo\fR file required be placed on same disk volume. Default value of \fBTempFile\fR is \fBWriteTo\fR with suffix replaced with '$$$', and if you don't specify \fBTempfile\fR, you should make directory of \fBWriteTo\fR file writable by user running fidoroute.
+This statement defines temporary file for building \fBWriteTo\fR file.
+\fBTempFile\fR and \fBWriteTo\fR file required be placed on same disk
+volume. Default value of \fBTempFile\fR is \fBWriteTo\fR with '$$$'
+suffix, and if you don't specify \fBTempfile\fR, you should make
+directory for \fBWriteTo\fR file writable by user running fidoroute.
 .SH "Limitation and hints"
 .LP 
    Maximum number of 'routing items' (i.e. nodes, nets, zones) is 5000.
-Can be increased, but I cannot imagine node to need this.
+Can be increased at compile time, but I cannot imagine node which needs
+that.
 .br 
-   Maximum number of recursively linked branches \- about 600 (it is not
-max number of routing branches but number of sequentaly linked branches,
-i.e. number of hops to destination node). Enough, IMHO. :)
+   Maximum number of recursively linked branches \- about 600 (it is
+not max number of routing branches but number of sequentaly linked
+branches, i.e. number of hops to destination node). Enough, IMHO. :)
 .br 
-   Maximum number of direct links \- 1000. You want wore \- no problem. ;)
+   Maximum number of direct links is 1000. If you have wore \- just
+increase and recompile.
 .br 
-   Maxinun number of aka \- 50.
+   Maximum number of local addresses is 50.
 .br 
-   Maximum length of deadloop routing chain \- not limited.
+   Maximum length of deadloop routing chain is unlimited.
 .br 
-   Maximum length of circle routing chain is unlimited. If
-     router detect such chain, it try carefully mark unliked
-     node as 'unrouted' and send him mail according default
-     routing. You'll be warned, of course. :) Usually router
-     do this by reasonable way, but check it.
+   Maximum length of go-round routing chain is unlimited. If router
+detects such a chain, it will try to carefully mark unliked node as
+'unrouted' and send him mail according default routing. You'll be
+warned, of course. Usually router does this in reasonable manner,
+but you should check it.
 .br 
    When re\-routing occured, router print messages. The last re\-routing
 is used. Example:
@@ -199,14 +205,14 @@ is used. Example:
 .br 
    There will be re\-routing warning, mail for /22 will go to /52.
 .br 
-  Attention! In this case:
+  Warning! In this case:
 .br 
 2:5020/24  469/All
 .br 
 2:5020/777 469/83
 .br 
-there is no routing conflict. 469/83's mail will go to /777, other NET469's mail
-/24.
+there is no routing conflict. 469/83's mail will go to 5020/777, other
+NET469's mail will be routed via 5020/24.
 .SH "SEE ALSO"
 .LP 
 fidoroute(1), hpt(1), info fidoconfig
