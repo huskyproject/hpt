@@ -160,7 +160,7 @@ void start_help(void) {
   fprintf(stdout,"   hpt toss -b[f] - toss mail from badarea [force]\n");
   fprintf(stdout,"   hpt scan - scan echomail\n");
   fprintf(stdout,"   hpt scan -w - scan echomail without highwaters\n");
-  fprintf(stdout,"   hpt scan -a <pattern> - scanning echomail from areas matching\n");
+  fprintf(stdout,"   hpt scan -a <pattern> - scan echomail from areas matching\n");
   fprintf(stdout,"                        the pattern\n");
   fprintf(stdout,"   hpt scan -f [filename] - scan only areas listed in this file\n");
   fprintf(stdout,"   hpt post [options] file - post a message (for details run \"hpt post -h\")\n");
@@ -168,7 +168,7 @@ void start_help(void) {
   fprintf(stdout,"   hpt pack -a <pattern> - pack netmail only from areas matching <pattern>\n");
   fprintf(stdout,"   hpt pack -f [filename] - pack netmail only from areas listed in this file\n");
   fprintf(stdout,"   hpt link [areamask] - link messages\n");
-  fprintf(stdout,"   hpt link -j [areamask] - link jam areas using CRC (more quickly)\n");
+  fprintf(stdout,"   hpt link -j [areamask] - link jam areas using CRC (quicker)\n");
   fprintf(stdout,"   hpt afix [-f] [-s] [<addr> command] - process areafix\n");
   fprintf(stdout,"   hpt qupd - update queue file and do some areafix jobs\n");
   fprintf(stdout,"   hpt qrep - make report based on information from queue file\n");
