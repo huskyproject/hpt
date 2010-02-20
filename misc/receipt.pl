@@ -59,7 +59,7 @@ w_log('Z', "Perl($file): Netmail with ARQ from $fromaddr to $toaddr");
         {
           $rcptext .= "\rOriginal VIA kludges:\r" . join( "\r", @Via );
         }
-        $rcptext .= "--- $report_tearline\r";
+        $rcptext .= "\r--- $report_tearline\r";
 
         my $err = putMsgInArea("", $myname, $fromname, "", $fromaddr,
             "Audit Receipt Response", "", "pvt k/s loc cpt", $rcptext, 1);
