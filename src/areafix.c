@@ -277,7 +277,7 @@ char *list(s_link *link, char *cmdline) {
     xscatprintf(&report,  "\r %i areas available, %i areas active",avail, active);
     xscatprintf(&report,  "\r for link:%s\r", aka2str(link->hisAka));
 
-    if (link->afixEchoLimit) xscatprintf(&report, "\rYour limit is %u areas for subscribe\r", link->afixEchoLimit);
+    if (link->afixEchoLimit) xscatprintf(&report, "\rYour limit is %u areas for subscription\r", link->afixEchoLimit);
 
     w_log(LL_AREAFIX, "areafix: list sent to %s", aka2str(link->hisAka));
 
@@ -496,8 +496,8 @@ char *available(s_link *link, char *cmdline)
     }
 
     if (report==NULL) {
-	xstrcat(&report, "\r  no links for creating Available Area List\r");
-	w_log(LL_AREAFIX, "areafix: no links for creating Available Area List");
+	xstrcat(&report, "\r  No links to create Available Area List\r");
+	w_log(LL_AREAFIX, "areafix: no links to create Available Area List");
     }
     return report;
 }
@@ -942,7 +942,7 @@ char *subscribe(s_link *link, char *cmd) {
       /* check if area is already requested */
       if (config->areafixQueueFile && (node = af_CheckAreaInQuery(line,NULL,NULL,FIND)) != NULL) {
           af_CheckAreaInQuery(line, &(node->downlinks[0]), &(link->hisAka), ADDFREQ);
-      	xscatprintf(&report, " %s %s  request already forwarded, you will subscribed after area creation\r",
+      	xscatprintf(&report, " %s %s  request already forwarded, you will be subscribed after area creation\r",
       		    line, print_ch(49-sstrlen(line), '.'));
         w_log(LL_AREAFIX, "areafix: Area \'%s\' is already requested at %s", line, aka2str(node->downlinks[0]));
       }
@@ -2219,7 +2219,7 @@ void afix(hs_addr addr, char *cmd)
                     } else {
                         xmsg.attr |= MSGREAD;
                         if( 0!=MsgWriteMsg(SQmsg, 0, &xmsg, NULL, 0, 0, 0, NULL) )
-                           w_log(LL_ERR, "Could not write msg in netmailarea %s! Check the wholeness of messagebase, please.", config->netMailAreas[k].areaName);
+                           w_log(LL_ERR, "Could not write msg in netmailarea %s! Please check the integrity of the messagebase.", config->netMailAreas[k].areaName);
                         MsgCloseMsg(SQmsg);
                     }
                     freeMsgBuffers(&msg);
