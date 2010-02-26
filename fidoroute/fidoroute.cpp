@@ -54,7 +54,6 @@
 #endif
 
 #define VERSION   "1.35"
-#define DATE      "20100130"
 #define CREATED   "%c %s routing for %d:%d/%d. Created by Hubroute generator "VERSION""EOLCHR"%c %45s%c"EOLCHR""
 #ifdef _TARGET
 # if defined (__GNUC__)
@@ -2087,10 +2086,17 @@ static boolean LoadConfig( void )
 
 int main( int argc, char **argv )
 {
+  char REVISION[] =  "$Revision$";
+  REVISION[strlen(REVISION)-1]=0;
+  if( strlen(REVISION) > 10 )
+    strcpy(REVISION,REVISION+10);
+  else
+    REVISION[0]=0;
   fprintf( stderr,
-           "Hubroute generator v." VERSION "(" TARGET ") " DATE "" EOLCHR
+           "Hubroute generator v." VERSION "(" TARGET ")%s%s" EOLCHR
            "Copyright (c) 1994-2003 Yuri Safronov 2:5020/204" EOLCHR
-           "Copyright (c) 2009-2010 Husky Project development team" EOLCHR );
+           "Copyright (c) 2009-2010 Husky Project development team" EOLCHR,
+           REVISION[0]?"rev.":"", REVISION );
   if( argc > 1 )
   {
     if( !stricmp( argv[1], "--help" ) || !stricmp( argv[1], "-h" ) || !stricmp( argv[1], "/h" ) )
