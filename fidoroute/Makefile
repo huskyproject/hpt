@@ -22,6 +22,7 @@
 BINARIES=fidoroute
 MAN1PAGES=fidoroute.1
 MAN5PAGES=fidoroute.conf.5
+DOCS=fidoroute.conf.ru.html
 CDEFS?=-D_TARGET=\"`uname -s`\"
 DEBUGOPTS?=-Wall -ggdb
 COPTS?=-s -O2
@@ -30,6 +31,7 @@ MANDIR?=$(PREFIX)/man
 MAN1DIR?=$(MANDIR)/man1/
 MAN5DIR?=$(MANDIR)/man5/
 BINDIR?=$(PREFIX)/bin/
+DOCDIR?=$(PREFIX)/share/doc/fidoroute/
 MANPAGES=$(MAN1PAGES) $(MAN5PAGES)
 
 all: $(BINARIES)
@@ -37,6 +39,15 @@ all: $(BINARIES)
 
 debug: $(BINARIES)
 	g++ $(DEBUGOPTS) $(CDEFS) -o fidoroute fidoroute.cpp
+
+doc: $(DOCS)
+
+fidoroute.conf.ru.html:
+	wget -k -O fidoroute.conf.ru.html 'http://sourceforge.net/apps/mediawiki/husky/index.php?title=%D0%A4%D0%B0%D0%B9%D0%BB_fidoroute.conf&printable=yes'
+
+install-doc: doc
+	if [ ! -d $(DOCDIR) ]; then install -d $(DOCDIR); fi
+	install fidoroute.conf.ru.html $(DOCDIR)
 
 install-man:
 	if [ ! -d $(MAN1DIR) ]; then install -d $(MAN1DIR); fi
