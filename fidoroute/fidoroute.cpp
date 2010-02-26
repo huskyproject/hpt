@@ -1383,7 +1383,7 @@ static void PutRoutingFtrack( void )
 }
 
 const char *HuskyFlavors[] = {
-  "crash", "direct", "hold"
+  "crash", "direct", "hold", "normal"
 };
 
 // ±±  Make Routing for HPT
