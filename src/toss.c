@@ -1736,7 +1736,10 @@ void arcmail(s_link *tolink) {
 			 exit_hpt("Could not create new bundle!",1);
 
 		if (link->packerDef != NULL) {
-
+/* FIXME  It's need to fix logic: MUST don't allow pack into filebox directly!!!
+   Normal logic: make bundle in temporary dir, next move(rename!) it into filebox,
+   and at scanning tempoutbound should to check bundles (not only PKT)
+*/
 		    fillCmdStatement(cmd, link->packerDef->call,
 				     link->packFile,
 				     link->pktFile, "");

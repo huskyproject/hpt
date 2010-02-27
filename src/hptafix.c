@@ -87,9 +87,9 @@ void afReportAutoCreate(char *c_area, char *descr, hs_addr pktOrigAddr, ps_addr 
 }
 
 int afDeleteArea(s_link *link, s_area *area) {
-  
+
    unused(link);
-  
+
    if (area->dupeCheck != dcOff && config->typeDupeBase != commonDupeBase) {
      char *dupename = createDupeFileName(area);
      if (dupename) {
