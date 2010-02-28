@@ -776,7 +776,7 @@ Default value is @code{timeStamp}
 
 This statement cannot be repeated.
 
-See also @xref{LinkBundleNameStyle}.
+See also @ref{LinkBundleNameStyle}.
 
 @node CreateAreasCase, CreateFwdNonPass, BundleNameStyle, Keywords
 @subsection CreateAreasCase
@@ -1034,7 +1034,7 @@ This statement cannot be repeated.
 @code{logEchoToScreen}
 @end table
 
-Enable or disable log messages screen output. See also @xref{ScreenLogLevels}.
+Enable or disable log messages screen output. See also @ref{ScreenLogLevels}.
 
 This statement cannot be repeated.
 
@@ -1634,6 +1634,9 @@ This statement cannot be repeated.
 
 Set maximum days for storing you hashes in CommonDupeBase.
 Default value is 5.
+
+For any other dupe base type please use @code{-DupeHistory}
+option in @ref{EchoArea} or @ref{EchoAreaDefaults}.
 
 This statement cannot be repeated.
 
@@ -3196,7 +3199,8 @@ enables carbonCopies for this area if disabled in echoareadefaults;
 @item -DupeCheck off|move|del
 toss dupes, move dupes to @code{DupeArea} or delete dupes.
 @item -DupeHistory <unsignedInteger>
-size of dupecheck history file in days (7 days if not defined);
+size of dupecheck history file in days for all dupe base types
+except @code{CommonDupeBase} (7 days if not defined), see also @ref{AreasMaxDupeAge};
 @item -nolink
 disables reply-linking for this area (*);
 @item -link
