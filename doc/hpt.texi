@@ -1047,6 +1047,10 @@ Parsed by hpt/misc/adv-stat-hpt.pl
 Set maximum days for storing you hashes in CommonDupeBase.
 Default value is 5.
 
+For any other dupe base type please use @code{-DupeHistory}
+option in @xref{EchoArea,,,fidoconfig, fidoconfig} or
+@xref{EchoAreaDefaults,,,fidoconfig, fidoconfig}.
+
 This statement cannot be repeated.
 
 @node DupeBaseType, DupeHistoryDir, AreasMaxDupeAge, Files and Paths
