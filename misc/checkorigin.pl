@@ -37,7 +37,7 @@ my @Id = split(/ /,'$Id$');
 my $report_tearline="$Id[1] $Id[2]";
 (my $file=$Id[1]) =~ s/,v$//;
 undef @Id;
-$myaddr=(myaddr())[0] if( $myaddr == "" );
+$myaddr=(myaddr())[0] if( !scalar(myaddr) or ($myaddr eq "") );
 
 sub checkorigin{
 
