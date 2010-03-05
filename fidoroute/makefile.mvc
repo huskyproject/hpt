@@ -1,0 +1,63 @@
+#
+# Microsoft Visual C++ Makefile for build static program(s)
+# No support for the Husky build environment.
+#
+# Tested on MS Visual C 6.0
+#
+
+## programs ##
+CC      = cl
+AR      = lib
+LINK    = link
+RANLIB  =
+RM      = del
+
+## file suffixes ##
+_C        = .c
+_OBJ      = .obj
+_EXP      = .exp
+_LIB      = .lib
+_DLL      = .dll
+_EXE      = .exe
+
+## programs ##
+CFLAGS  = -nologo -Zp1
+CINCL   = -I$(H_DIR)
+CDEFS   = -D__MSVC__ -D__NT__ -DNT -DWINNT -DWIN32 -D_CONSOLE
+COPT    = -Ob2
+
+EXENAMEFLAG = -Fe
+
+LIBS    =
+
+PROGRAMS= fidoroute$(_EXE)
+
+default: all
+
+all: programs
+programs: $(PROGRAMS)
+
+$(PROGRAMS):
+        @echo Create $(PROGRAMS)...
+        @$(_SRC_DIR)$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $** $(LIBS)
+
+man:
+
+doc: man
+        man2html$(_EXE) <..\$(LIBNAME).1 >$(LIBNAME).html
+
+clean:
+        -$(RM) $(RMOPT) *$(_OBJ)
+
+distclean: clean
+        -$(RM) $(RMOPT) $(PROGRAMS)
+        -$(RM) $(RMOPT) $(LIBNAME).html
+
+install: programs doc
+        $(INSTALL) $(IBOPT) $(PROGRAMS) $(BINDIR)
+        $(INSTALL) $(IBOPT) ..\$(LIBNAME).1 $(DOCDIR)
+        $(INSTALL) $(IBOPT) $(LIBNAME).html $(DOCDIR)
+
+uninstall:
+        -$(RM) $(RMOPT) $(BINDIR)\$(PROGRAMS)
+        -$(RM) $(RMOPT) $(DOCDIR)\$(LIBNAME).html

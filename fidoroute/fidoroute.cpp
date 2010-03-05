@@ -51,6 +51,12 @@
 
 # define EOLCHR "\n"
 # define link linkd
+
+#elif defined (__MSVC__)
+# define EOLCHR "\n"
+# define MAXDRIVE  3
+# define fnsplit _splitpath
+# define fnmerge _makepath
 #endif
 
 #define VERSION   "1.35"
@@ -172,7 +178,7 @@ static ushort DefaultFlavor = HOLD_FLAVOR;
 # define MAXDIR  256
 # define MAXFILE NAME_MAX
 # define MAXEXT  NAME_MAX
-#elif defined (__GNUC__)
+#elif defined (__GNUC__)  || (__MSVC__)
 # ifdef MAXPATHLEN
 #  define MAXPATH MAXPATHLEN
 # else
