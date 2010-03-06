@@ -1,5 +1,5 @@
 #
-# Microsoft Visual C++ Makefile for build static program(s)
+# Microsoft Visual C++ Makefile for build dynamic program(s)
 # No support for the Husky build environment.
 #
 # Tested on MS Visual C 6.0
