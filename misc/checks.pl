@@ -138,7 +138,7 @@ sub checksfilter{
               . "\r\rInformation about invalid kludge:\r"
               . $msgtext
               . "\r--- $report_tearline\r * Origin: $report_origin ($myaddr)\r";
-       putMsgInArea("",$myname,$fromname,$myaddr,$fromaddr,$report_subj,"","Uns Pvt Loc",$msgtext,1);
+       putMsgInArea("",$myname,$fromname,$myaddr,$fromaddr,$report_subj,"","Uns Pvt Loc",$bouncetext,1);
      }
      $msgtext = "Hello!\r\rMessage with invalid kludge is detected:\r"
               . "From: $fromname, $fromaddr\r"
