@@ -97,13 +97,58 @@ sub checksfilter{
               . (scalar($area)? "MSGID: $msgid\r" : "")
               . "\rSysop of the $myaddr may pass this message manually later or it may conclusively remove this message.\r"
               . "\r--- $report_tearline\r * Origin: $report_origin ($myaddr)\r";
-       putMsgInArea("",$myname,$fromname,$myaddr,$fromaddr,$report_subj,"","Uns Pvt Loc",$msgtext,1);
+       putMsgInArea("",$myname,$fromname,$myaddr,$fromaddr,$bounce_subj,"","Uns Pvt Loc",$msgtext,1);
      }
      w_log('C', "Perl($file): Message from $fromaddr "
                .(scalar($area)? "in $area":"to $toaddr")
                . " too large, drop into badarea"
                . ( $bounce? ", bounce created." : "." ) );
      return "Message too large - must be approved manually"; # drop into badarea
+   }
+ }
+
+ # check for CHRS kludge
+ my @chrs = grep /^\x01CHRS:/, split(/\r/,$text);
+ if( $#chrs > -1 ){
+   $msgtext="";
+   if( $#chrs > 0 ){
+     $msgtext .="* Error: CHRS kludge more one, extra CHRS kludges will ignored\r";
+   }
+   $chrs[0] =~ s/^\x01/\@/;
+   if( $chrs[0] !~ /^\x01CHRS:\s[[:alnum:]-]+\s[1-4]$/ ){
+     $msgtext .="* Error: invalid CHRS kludge, should be \"@CHRS: <charset> <level>\" where <level> is number 1..4 and <charset> is (alphanumberic) charset name\r";
+   }
+   if( $chrs[0] =~ /(IBMPC)/ ){
+        $msgtext .="* Warning: Charset name IBMPC is deprecated:\r   " . $chrs[0] . "\r";
+   }
+   if( $chrs[0] =~ /(FIDO|7)/ ){
+        $msgtext .="* Error: Russian fido uses charset CP866:\r   " . $chrs[0] . "\r";
+        $msgtext .="  Should be:\r   \@CHRS: CP866 2\r";
+   }
+   if( $msgtext ){
+     if( $bounce ) {
+       my $bouncetext = "Hello, $fromname!\r\r"
+              . "Regretfully I inform you that your message is violates Fidonet standard.\r"
+              . "These message is passed via my node, but I asks for you to fix misconfiguration."
+              . "Details of message:\r"
+              . "From: $fromname, $fromaddr\r"
+              . "To: $toname" . (scalar($area)? $toaddr : "") . "\r"
+              . "Subject: $subject\r"
+              . (scalar($area)? "MSGID: $msgid\r" : "")
+              . "\r\rInformation about invalid kludge:\r"
+              . $msgtext
+              . "\r--- $report_tearline\r * Origin: $report_origin ($myaddr)\r";
+       putMsgInArea("",$myname,$fromname,$myaddr,$fromaddr,$report_subj,"","Uns Pvt Loc",$msgtext,1);
+     }
+     $msgtext = "Hello!\r\rMessage with invalid kludge is detected:\r"
+              . "From: $fromname, $fromaddr\r"
+              . "To: $toname" . (scalar($area)? $toaddr : "") . "\r"
+              . "Subject: $subject\r"
+              . (scalar($area)? "MSGID: $msgid\r" : "")
+              . "\r\rInformation about invalid kludge:\r"
+              . $msgtext
+              . "\r--- $report_tearline\r * Origin: $report_origin ($myaddr)\r";
+     putMsgInArea($reportArea,$myname,$sysopname,$myaddr,$sysopaddr,$report_subj,"","Uns Loc",$msgtext,1);
    }
  }
 
