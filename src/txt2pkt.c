@@ -146,15 +146,21 @@ int main(int argc, char *argv[])
             case 'n':    /*  name */
                switch(argv[n][2]) {
                   case 't':
-                     msg.toUserName = (char *) safe_malloc(strlen(argv[++n]) + 1);
-                     strcpy(msg.toUserName, argv[n]);
+                     if (strlen(argv[++n])>36) {
+                       fprintf(stderr, "Destination name too long, truncated\n");
+                       argv[n][36] = '\0';
+                     }
+                     msg.toUserName = strdup(argv[n]);
 #ifdef __NT__
                      CharToOem(msg.toUserName, msg.toUserName);
 #endif
                      break;
                   case 'f':
-                     msg.fromUserName = (char *) safe_malloc(strlen(argv[++n]) + 1);
-                     strcpy(msg.fromUserName, argv[n]);
+                     if (strlen(argv[++n])>36) {
+                       fprintf(stderr, "Origination name too long, truncated\n");
+                       argv[n][36] = '\0';
+                     }
+                     msg.fromUserName = sstrdup(argv[n]);
 #ifdef __NT__
                      CharToOem(msg.fromUserName, msg.fromUserName);
 #endif
@@ -169,6 +175,10 @@ int main(int argc, char *argv[])
                break;
             case 'p':    /*  password */
                passwd = argv[++n];
+               if (strlen(passwd)>8) {
+                 fprintf(stderr, "Password too long, truncated\n");
+                 passwd[8] = '\0';
+               }
                break;
             case 't':    /*  tearline */
                tearl = argv[++n];
@@ -186,8 +196,11 @@ int main(int argc, char *argv[])
                dir = argv[++n];
                break;
             case 's':    /*  subject */
-               msg.subjectLine = (char *) safe_malloc(strlen(argv[++n]) + 1);
-               strcpy(msg.subjectLine, argv[n]);
+               if (strlen(argv[++n])>72) {
+                 fprintf(stderr, "Subject too long, truncated\n");
+                 argv[n][72] = '\0';
+               }
+               msg.subjectLine = strdup(argv[n]);
 #ifdef __NT__
                CharToOem(msg.subjectLine, msg.subjectLine);
 #endif
