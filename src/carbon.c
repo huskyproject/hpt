@@ -163,7 +163,7 @@ int processExternal (s_area *echo, s_message *msg,s_carbon carbon)
 int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carbon)
 {
     char *p, *text, *line, *old_text, *reason = carbon.reason;
-    int i, old_textLength, export = carbon.export, rc = 0;
+    int i, old_textLength, aexport = carbon.aexport, rc = 0;
 
     statToss.CC++;
 
@@ -194,9 +194,9 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
 
     if (!msg->netMail) {
         xstrscat(&msg->text,
-                 (export) ? "AREA:" : "",
-                 (export) ? area->areaName : "",
-                 (export) ? "\r" : "",
+                 (aexport) ? "AREA:" : "",
+                 (aexport) ? area->areaName : "",
+                 (aexport) ? "\r" : "",
                  "\001AREA:", echo->areaName,
                  "\r" , NULL);
     }
@@ -243,7 +243,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
     strncat(msg->text,text,i); /*  copy rest of msg */
     msg->textLength += i;
 
-    if (!export) {
+    if (!aexport) {
 	if (msg->netMail) rc = putMsgInArea(area,msg,0,MSGSENT);
 	else rc = putMsgInArea(area,msg,0,0);
 	area->imported++;  /*  area has got new messages */

@@ -329,14 +329,13 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
     *zoneLinks = (s_arealink **)safe_calloc(echo->downlinkCount,sizeof(s_arealink*));
     *otherLinks =(s_arealink **)safe_calloc(echo->downlinkCount,sizeof(s_arealink*));
 
-    
     for (i=0; i < echo->downlinkCount; i++) {
         /*  is the link in SEEN-BYs? */
         if ( checkLink(seenBys, seenByCount, echo->downlinks[i]->link,
             pktOrigAddr, echo)!=0) continue;
         /*  link with "export off" */
-        if (echo->downlinks[i]->export == 0) continue;
-        
+        if (echo->downlinks[i]->aexport == 0) continue;
+
         if (pktOrigAddr.zone==echo->downlinks[i]->link->hisAka.zone) {
             /*  links with same zone */
             if(echo->downlinks[i]->link->reducedSeenBy)

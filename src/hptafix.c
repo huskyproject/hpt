@@ -117,7 +117,7 @@ int afRescanArea(char **report, s_link *link, s_area *area, long rescanCount, lo
                   if (rescanCount < 0 || rescanCount > link->rescanLimit)
                     rescanCount = link->rescanLimit;
                 }
-                if (arealink->export) {
+                if (arealink->aexport) {
                     rcc = rescanEMArea(area, arealink, rescanCount, rescanAfter);
                     tossTempOutbound(config->tempOutbound);
                 } else {
