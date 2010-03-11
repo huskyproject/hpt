@@ -1192,7 +1192,7 @@ void perl_setvars(void) {
                             | config->echoAreas[i].downlinks[j]->manual << 2
                             | config->echoAreas[i].downlinks[j]->mandatory << 3
                             | config->echoAreas[i].downlinks[j]->import << 4
-                            | config->echoAreas[i].downlinks[j]->export << 5
+                            | config->echoAreas[i].downlinks[j]->aexport << 5
                            );
           }
           /* val r/o: SvREADONLY_on(hv3); */
