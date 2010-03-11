@@ -277,7 +277,7 @@ int main(int argc, char *argv[])
                 clean_exit(EX_USAGE);
               }
               if (strlen(passwd)>8) {
-                 fprintf(stderr, "Password too long, truncated to 8 characters");
+                fprintf(stderr, "Password too long, truncated to 8 characters\n");
                  passwd[8] = '\0';
                }
                break;
