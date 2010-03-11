@@ -42,10 +42,10 @@ then
   else
     echo "`basename $0` can't remove file `ls -l $Tempfile`"
     exit
- fi
+  fi
 fi
 
-Test=`find ${inboundunsecure} -type f -printf "%M %10sb %Td-%Tm-%TY %TH:%TM %f\n"`
+Test=`find ${inboundunsecure} -type f -printf "%M %10sb %Td-%Tm-%TY %TH:%TM %f | "`
 if [ -n "$Test" ]
 then
   echo >>$Tempfile
@@ -55,7 +55,7 @@ then
   echo ----------+-----------+----------------+------------------------------------- >>$Tempfile
 fi
 
-Test=`find ${inboundsecure} -name '*.bad' -o -name '*.sec' -name '*.tos' -name '*.acs' -type f -printf "%M %10sb %Td-%Tm-%TY %TH:%TM %f\n"`
+Test=`find ${inboundsecure} '(' -iname '*.bad' -o -iname '*.sec' -o -iname '*.tos' -o -iname '*.acs' -type f ')' -printf "%M %10sb %Td-%Tm-%TY %TH:%TM %f | "`
 if [ -n "$Test" ]
 then
   echo >>$Tempfile
@@ -65,7 +65,7 @@ then
   echo ----------+-----------+----------------+------------------------------------- >>$Tempfile
 fi
 
-Test=`find ${inboundhpttemp} -type f -printf "%M %10sb %Td-%Tm-%TY %TH:%TM %f\n"`
+Test=`find ${inboundhpttemp} -type f -printf "%M %10sb %Td-%Tm-%TY %TH:%TM %f | "`
 if [ -n "$Test" ]
 then
   echo >>$Tempfile
@@ -75,7 +75,7 @@ then
   echo ----------+-----------+----------------+------------------------------------- >>$Tempfile
 fi
 
-Test=`find ${inboundsecure} -ctime +1 -type f -printf "%M %10sb %Td-%Tm-%TY %TH:%TM %f\n"`
+Test=`find ${inboundsecure} -ctime +1 -type f -printf "%M %10sb %Td-%Tm-%TY %TH:%TM %f | "`
 if [ -n "$Test" ]
 then
   echo >>$Tempfile
@@ -85,7 +85,7 @@ then
   echo ----------+-----------+----------------+------------------------------------- >>$Tempfile
 fi
 
-Test=`find ${inboundlocal} -type f -printf "%M %10sb %Td-%Tm-%TY %TH:%TM %f\n"`
+Test=`find ${inboundlocal} -type f -printf "%M %10sb %Td-%Tm-%TY %TH:%TM %f | "`
 if [ -n "$Test" ]
 then
   echo >>$Tempfile
@@ -99,6 +99,7 @@ fi
 
 if [ -s "$Tempfile" ]
 then
+  sed -i 's/ | $//;s/ |$//;s/ | /\n/g' "$Tempfile"
 
   $txt2pkt -xf "2:5080/102" -xt "2:5080/102" -af "2:5080/102" \
     -at "2:5080/102" -nf "Node robot" -nt "Sysop" \
