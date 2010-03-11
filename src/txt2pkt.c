@@ -28,7 +28,7 @@
 #include <string.h>
 #include <time.h>
 #include <errno.h>
-
+#include <ctype.h>
 
 /* compiler.h */
 #include <huskylib/compiler.h>
@@ -66,6 +66,14 @@
 #include <pkt.h>
 #include <version.h>
 #include <cvsdate.h>
+
+#define clean_exit(exitcode)   { \
+                                nfree(msg.fromUserName); \
+                                nfree(msg.toUserName);   \
+                                nfree(msg.subjectLine);  \
+                                exit(exitcode);          \
+                               }
+
 
 int main(int argc, char *argv[])
 {
@@ -114,16 +122,47 @@ int main(int argc, char *argv[])
       if (*argv[n] == '-' && argv[n][1]) {
          switch(argv[n][1]) {
             case 'c':    /*  config  */
-               cfgFile = argv[++n];
+               if(argv[n][2])
+                 cfgFile = argv[n]+2;
+               else if(++n<argc)
+                 cfgFile = argv[n];
+               else {
+                 fprintf(stderr,"-c: Parameter (filename) is required\n");
+                 clean_exit(EX_USAGE);
+               }
                break;
             case 'a':    /*  address */
                switch(argv[n][2]) {
                   case 'f':
-                     parseFtnAddrZS(argv[++n], &(msg.origAddr));
-                     break;
+                    if(argv[n][3])
+                      tmp=argv[n]+3;
+                    else if(++n<argc)
+                      tmp=argv[n];
+                    else {
+                      fprintf(stderr,"-af: Parameter (FTN address) is required\n");
+                      clean_exit(EX_USAGE);
+                    }
+                    if(parseFtnAddrZS(tmp, &(msg.origAddr)) & FTNADDR_ERROR) {
+                      fprintf(stderr,"-af: Invalid FTN address\n");
+                      clean_exit(EX_USAGE);
+                    }
+                    tmp=NULL;
+                    break;
                   case 't':
-                     parseFtnAddrZS(argv[++n], &(msg.destAddr));
-                     break;
+                    if(argv[n][3])
+                      tmp=argv[n]+3;
+                    else if(++n<argc)
+                      tmp=argv[n];
+                    else {
+                      fprintf(stderr,"-at: Parameter (FTN address) is required\n");
+                      clean_exit(EX_USAGE);
+                    }
+                    if(parseFtnAddrZS(tmp, &(msg.destAddr)) & FTNADDR_ERROR) {
+                      fprintf(stderr,"-at: Invalid FTN address\n");
+                      clean_exit(EX_USAGE);
+                    }
+                    tmp=NULL;
+                    break;
                   default:
                      quit = 1;
                      break;
@@ -132,10 +171,34 @@ int main(int argc, char *argv[])
             case 'x':    /*  address */
                switch(argv[n][2]) {
                   case 'f':
-                     parseFtnAddrZS(argv[++n], &(header.origAddr));
+                     if(argv[n][3])
+                       tmp=argv[n]+3;
+                     else if(++n<argc)
+                       tmp=argv[n];
+                     else {
+                       fprintf(stderr,"-xf: Parameter (FTN address) is required\n");
+                       clean_exit(EX_USAGE);
+                     }
+                     if(parseFtnAddrZS(tmp, &(header.origAddr)) & FTNADDR_ERROR) {
+                       fprintf(stderr,"-xf: Invalid FTN address\n");
+                       clean_exit(EX_USAGE);
+                     }
+                     tmp=NULL;
                      break;
                   case 't':
-                     parseFtnAddrZS(argv[++n], &(header.destAddr));
+                     if(argv[n][3])
+                       tmp=argv[n]+3;
+                     else if(++n<argc)
+                       tmp=argv[n];
+                     else {
+                       fprintf(stderr,"-xt: Parameter (FTN address) is required\n");
+                       clean_exit(EX_USAGE);
+                     }
+                     if(parseFtnAddrZS(tmp, &(header.destAddr)) & FTNADDR_ERROR) {
+                       fprintf(stderr,"-xt: Invalid FTN address\n");
+                       clean_exit(EX_USAGE);
+                     }
+                     tmp=NULL;
                      break;
                   default:
                      quit = 1;
@@ -145,15 +208,39 @@ int main(int argc, char *argv[])
             case 'n':    /*  name */
                switch(argv[n][2]) {
                   case 't':
-                     msg.toUserName = (char *) safe_malloc(strlen(argv[++n]) + 1);
-                     strcpy(msg.toUserName, argv[n]);
+                     if(argv[n][3])
+                       tmp=argv[n]+3;
+                     else if(++n<argc)
+                       tmp=argv[n];
+                     else {
+                       fprintf(stderr,"-nt: Parameter (name) is required\n");
+                       clean_exit(EX_USAGE);
+                     }
+                     if (strlen(tmp)>36) { /* Max "to" name, see FTS-1 */
+                       fprintf(stderr,"-nt: Name too long, truncated to 36 characters.\n");
+                       tmp[36]='\0';
+                     }
+                     msg.toUserName = sstrdup(tmp);
+                     tmp=NULL;
 #ifdef __NT__
                      CharToOem(msg.toUserName, msg.toUserName);
 #endif
                      break;
                   case 'f':
-                     msg.fromUserName = (char *) safe_malloc(strlen(argv[++n]) + 1);
-                     strcpy(msg.fromUserName, argv[n]);
+                     if(argv[n][3])
+                       tmp=argv[n]+3;
+                     else if(++n<argc)
+                       tmp=argv[n];
+                     else {
+                       fprintf(stderr,"-nf: Parameter (name) is required\n");
+                       clean_exit(EX_USAGE);
+                     }
+                     if (strlen(tmp)>36) { /* Max "from" name, see FTS-1 */
+                       fprintf(stderr,"-nf: Name too long, truncated to 36 characters.\n");
+                       tmp[36]='\0';
+                     }
+                     msg.fromUserName = sstrdup(tmp);
+                     tmp=NULL;
 #ifdef __NT__
                      CharToOem(msg.fromUserName, msg.fromUserName);
 #endif
@@ -164,29 +251,87 @@ int main(int argc, char *argv[])
                }
                break;
             case 'e':    /*  echo name */
-               area = argv[++n];
+               if(argv[n][2])
+                 area = argv[n]+2;
+               else if(++n<argc)
+                 area = argv[n];
+               else {
+                 fprintf(stderr,"-e: Parameter (areatag) is required\n");
+                 clean_exit(EX_USAGE);
+               }
+               for(tmp=area; *tmp; tmp++){
+                 if (iscntrl(*tmp) || isspace(*tmp)) {
+                   fprintf(stderr, "-e: Areatag is contains invalid character '%c'\n", *tmp);
+                   clean_exit(EX_USAGE);
+                 }
+               }
+               tmp=NULL;
                break;
             case 'p':    /*  password */
-               passwd = argv[++n];
+              if(argv[n][2])
+                passwd = argv[n]+2;
+              else if(++n<argc)
+                passwd = argv[n];
+              else {
+                fprintf(stderr,"-p: Parameter (passowrd, 8 chars) is required\n");
+                clean_exit(EX_USAGE);
+              }
+              if (strlen(passwd)>8) {
+                 fprintf(stderr, "Password too long, truncated to 8 characters");
+                 passwd[8] = '\0';
+               }
                break;
             case 't':    /*  tearline */
-               tearl = argv[++n];
+               if(argv[n][2])
+                 tearl = argv[n]+2;
+               else if(++n<argc)
+                 tearl = argv[n];
+               else {
+                 fprintf(stderr,"-t: Parameter (tearline text) is required\n");
+                 clean_exit(EX_USAGE);
+               }
 #ifdef __NT__
                CharToOem(tearl, tearl);
 #endif
                break;
             case 'o':    /*  origin */
-               orig = argv[++n];
+               if(argv[n][2])
+                 orig = argv[n]+2;
+               else if(++n<argc)
+                 orig = argv[n];
+               else {
+                 fprintf(stderr,"-o: Parameter (origin) is required\n");
+                 clean_exit(EX_USAGE);
+               }
 #ifdef __NT__
                CharToOem(orig, orig);
 #endif
                break;
             case 'd':    /*  directory */
-               dir = argv[++n];
+               if(argv[n][2])
+                 dir = argv[n]+2;
+               else if(++n<argc)
+                 dir = argv[n];
+               else {
+                 fprintf(stderr,"-d: Parameter (directory name) is required\n");
+                 clean_exit(EX_USAGE);
+               }
                break;
             case 's':    /*  subject */
-               msg.subjectLine = (char *) safe_malloc(strlen(argv[++n]) + 1);
-               strcpy(msg.subjectLine, argv[n]);
+               if(argv[n][2])
+                 tmp = argv[n]+2;
+               else if(++n<argc)
+                 tmp = argv[n];
+               else {
+                 fprintf(stderr,"-s: Parameter (subject) is required\n");
+                 clean_exit(EX_USAGE);
+               }
+               if (strlen(tmp)>72) { /* Max "subject", see FTS-1 */
+                 fprintf(stderr,"-s: Subject line too long, truncated to 72 characters.\n");
+                 tmp[72]='\0';
+               }
+               msg.subjectLine = sstrdup(tmp);
+               tmp=NULL;
 #ifdef __NT__
                CharToOem(msg.subjectLine, msg.subjectLine);
 #endif
@@ -197,10 +342,7 @@ int main(int argc, char *argv[])
          }
          if (quit) {
             fprintf(stderr,"Unknown option '%s', exit.\n", argv[n]);
-            nfree(msg.fromUserName);
-            nfree(msg.toUserName);
-            nfree(msg.subjectLine);
-            exit(EX_USAGE);
+            clean_exit(EX_USAGE);
          }
       } else {
          if (strcmp(argv[n], "-") == 0)
