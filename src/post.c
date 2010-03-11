@@ -41,9 +41,11 @@ tearline generation added
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <assert.h>
-#include <malloc.h>
 #include <huskylib/huskylib.h>
 
+#ifdef HAS_MALLOC_H
+#include <malloc.h>
+#endif
 #ifdef HAS_SYS_SYSEXITS_H
 #include <sys/sysexits.h>
 #endif
