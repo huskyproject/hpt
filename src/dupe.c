@@ -107,7 +107,7 @@ char *createDupeFileName(s_area *area) {
     else 
         name = strLower(name);
     
-    xstrscat(&retname, config->dupeHistoryDir, name, NULL);
+    xstrscat(&retname, config->dupeHistoryDir, name, NULLP);
     nfree(name);
     
     return retname;
@@ -362,7 +362,7 @@ s_dupeMemory *readDupeFile(s_area *area) {
        w_log(LL_DUPE, "Reading dupes of %s", area->areaName);
    }
    else {
-       xstrscat(&fileName, config->dupeHistoryDir, "hpt_base.dpa", NULL);
+       xstrscat(&fileName, config->dupeHistoryDir, "hpt_base.dpa", NULLP);
        w_log(LL_DUPE, "Reading dupes from %s", fileName);
    }
 
@@ -434,7 +434,7 @@ int writeToDupeFile(s_area *area) {
    }
    else {
       dupes = CommonDupes;
-      xstrscat(&fileName, config->dupeHistoryDir, "hpt_base.dpa", NULL);
+      xstrscat(&fileName, config->dupeHistoryDir, "hpt_base.dpa", NULLP);
    }
 
    if (dupes != NULL) {
@@ -490,7 +490,7 @@ int dupeDetection(s_area *area, const s_message msg) {
         if (msg.text)
         {
             char *hbuf=NULL;
-            xstrscat(&hbuf,msg.text,msg.fromUserName,msg.datetime,msg.toUserName,msg.subjectLine,NULL);
+            xstrscat(&hbuf,msg.text,msg.fromUserName,msg.datetime,msg.toUserName,msg.subjectLine,NULLP);
             xscatprintf (&str, "MSGID: %08lx",strcrc32(hbuf, 0xFFFFFFFFL));
             nfree(hbuf);
         }

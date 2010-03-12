@@ -106,7 +106,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message *msg, s_area *echo, int action)
    {
        while ((msgtid = GetCtrlToken(ctrlBuff, tid)) != NULL)
            MsgRemoveToken(ctrlBuff, tid);
-       xstrscat((char **)&ctrlBuff, "\001TID: ", versionStr, NULL);
+       xstrscat((char **)&ctrlBuff, "\001TID: ", versionStr, NULLP);
    }
    /*  add '\r' after each kludge */
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
@@ -273,7 +273,7 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area *echo, s_arealink *arealink)
        tempafter = (char *)sstrdup(msg.text+j+1);
        nfree(msg.text);
        xstrscat((char **) &msg.text, tempbefore, "\r\001RESCANNED ", 
-         (addrstr=aka2str5d(*arealink->link->ourAka)), "\r", tempafter, NULL);
+         (addrstr=aka2str5d(*arealink->link->ourAka)), "\r", tempafter, NULLP);
        nfree(tempbefore);
        nfree(tempafter);
        nfree(addrstr);

@@ -411,7 +411,7 @@ void processConfig()
 
    /*  open Logfile */
    if (config->logFileDir) {
-        xstrscat(&buff, config->logFileDir, LogFileName, NULL);
+        xstrscat(&buff, config->logFileDir, LogFileName, NULLP);
         initLog(config->logFileDir, config->logEchoToScreen, config->loglevels, config->screenloglevels);
         setLogDateFormat(config->logDateFormat);
 	hpt_log = openLog(buff, versionStr);
@@ -558,7 +558,7 @@ int main(int argc, char **argv, char **envp)
    if (config->setConsoleTitle) {
      GetConsoleTitleA( oldtitle, TITLESIZE );
      if( versionStr ){
-       xstrscat( &title, "Highly Portable Tosser ", versionStr+4, NULL); /* versionStr is "hpt ..." */
+       xstrscat( &title, "Highly Portable Tosser ", versionStr+4, NULLP); /* versionStr is "hpt ..." */
        SetConsoleTitleA( title );
        nfree(title);
      }else

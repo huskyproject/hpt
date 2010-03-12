@@ -265,7 +265,7 @@ int parse_post_command(struct post_parameters *p, unsigned int argc, char **argv
                         break;
                     }
                     p->attr |= attr;
-                    xstrscat(&p->flags, " ", flags, NULL);
+                    xstrscat(&p->flags, " ", flags, NULLP);
                     nfree(flags);
                 }
                 --*n;
@@ -404,7 +404,7 @@ FILE *uuencode_file(FILE *input, struct post_parameters *p)
     assert(MAX_LINELEN%3 == 0);
     if((p->sectioning = malloc(sizeof(long)*max_sections)) == NULL)
         return NULL;
-    xstrscat(&p->temp_file, config->tempOutbound, "hptucode.$$$",NULL);
+    xstrscat(&p->temp_file, config->tempOutbound, "hptucode.$$$",NULLP);
     tmpfile = fopen(p->temp_file, "wb");
     if (tmpfile == NULL)
     {

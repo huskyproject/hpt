@@ -684,7 +684,7 @@ static XS(perl_attr2str)
   for (i = 0; i < sizeof(flag_name)/sizeof(flag_name[0]); i++)
     if (attr & (1UL<<i)) { 
       memcpy(buf, flag_name[i], 4); strLower(buf+1);
-      xstrscat(&s, " ", buf, NULL); 
+      xstrscat(&s, " ", buf, NULLP); 
     }
   XSRETURN_PV(s == NULL ? "" : s+1);
 }
@@ -1096,7 +1096,7 @@ void perl_setvars(void) {
      if (config->packCount) {
        char *packlist = NULL;
        for (j = 0; j < config->packCount; j++)
-           xstrscat(&packlist, " ", config->pack[j].packer, NULL);
+           xstrscat(&packlist, " ", config->pack[j].packer, NULLP);
        VK_ADD_HASH_str(hv, sv, "packers", packlist+1);
        nfree(packlist);
      }
@@ -1153,7 +1153,7 @@ void perl_setvars(void) {
           char *grplist = NULL;
           for (j = 0; j < config->links[i]->numAccessGrp; j++)
             if (config->links[i]->AccessGrp[j])
-              xstrscat(&grplist, " ", config->links[i]->AccessGrp[j], NULL);
+              xstrscat(&grplist, " ", config->links[i]->AccessGrp[j], NULLP);
           if (grplist) VK_ADD_HASH_str(hv2, sv, "groups", grplist+1);
           nfree(grplist);
         }
@@ -1231,12 +1231,12 @@ int PerlStart(void)
    cfgfile = (cfgFile) ? cfgFile : getConfigFileName();
    if ( strchr(perlfile, PATH_DELIM) ) {
       cfgpath = GetDirnameFromPathname(perlfile);
-      xstrscat(&patharg, "-I", cfgpath, NULL);
+      xstrscat(&patharg, "-I", cfgpath, NULLP);
       nfree(cfgpath);
    }
    else if ( strchr(cfgfile, PATH_DELIM) ) {
       cfgpath = GetDirnameFromPathname(cfgfile);
-      xstrscat(&patharg, "-I", cfgpath, NULL);
+      xstrscat(&patharg, "-I", cfgpath, NULLP);
       nfree(cfgpath);
    }
    if (patharg) perlargs[i++] = patharg;
@@ -1297,7 +1297,7 @@ int PerlStart(void)
      PL_diehook  = newRV_inc ((SV*) perl_get_cv ("hpt_warn", TRUE));
 
      /* Parse and execute hptPerlFile */
-     xstrscat (&cmd, "do '", perlfile, "'; $@ ? $@ : '';", NULL);
+     xstrscat (&cmd, "do '", perlfile, "'; $@ ? $@ : '';", NULLP);
      sv = perl_eval_pv (cmd, TRUE);
      if (!SvPOK(sv)) {
        w_log(LL_PERL,"Syntax error in internal perl expression: %s",cmd);

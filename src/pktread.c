@@ -668,7 +668,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
 
     if( (len == BUFFERSIZE+1) ) {
         badmsg++;
-        xstrscat(&msg->text, "\r* Message too big, truncated by ", versionStr, "\r",NULL);
+        xstrscat(&msg->text, "\r* Message too big, truncated by ", versionStr, "\r",NULLP);
         do {
             char *origin;
 

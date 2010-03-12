@@ -198,7 +198,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
                  (aexport) ? area->areaName : "",
                  (aexport) ? "\r" : "",
                  "\001AREA:", echo->areaName,
-                 "\r" , NULL);
+                 "\r" , NULLP);
     }
     if (strncmp(line, "AREA:", 5) == 0) {
         /*  jump over AREA:xxxxx\r */
@@ -235,7 +235,7 @@ int processCarbonCopy (s_area *area, s_area *echo, s_message *msg, s_carbon carb
             (config->carbonExcludeFwdFrom) ? "" : echo->areaName,
             (config->carbonExcludeFwdFrom) ? "" : "'\r",
             (reason) ? reason : "",
-            (reason) ? "\r" : "", NULL);
+            (reason) ? "\r" : "", NULLP);
         msg->textLength = strlen(msg->text);
     }
 

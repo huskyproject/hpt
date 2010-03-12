@@ -400,7 +400,7 @@ int createPackFileName(s_link *link)
 		minFreeExt = -1;
 		for (i=0; i<numExt; i++) {
 
-			xstrscat(&pfileName, tmp, wday, NULL);
+			xstrscat(&pfileName, tmp, wday, NULLP);
 			xscatprintf(&pfileName, "%c", ext3[i]);
 			
 			if (stat(pfileName, &stbuf) == 0) {
@@ -443,7 +443,7 @@ int createPackFileName(s_link *link)
 			}
 		}
 	
-		xstrscat(&pfileName, tmp, wday, NULL);
+		xstrscat(&pfileName, tmp, wday, NULLP);
 		xscatprintf(&pfileName, "%c", ext3[counter]);
 
 		break;

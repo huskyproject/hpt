@@ -366,7 +366,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
     if (echo->debug) {
 	xstrscat(&debug, config->logFileDir,
 		 (echo->DOSFile) ? "common" : echo->areaName,
-		 ".dbg", NULL);
+		 ".dbg", NULLP);
 		
 	if (config->areasFileNameCase == eLower)
 	    debug = strLower(debug);
@@ -476,7 +476,7 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	/*  create new seenByText */
     seenByText = createControlText(*seenBys, *seenByCount, "SEEN-BY: ");
     pathText   = createControlText(*path, *pathCount, "\001PATH: ");
-    xstrscat(&msg->text, "\r", seenByText, pathText, NULL);
+    xstrscat(&msg->text, "\r", seenByText, pathText, NULLP);
     msg->textLength += 1 + strlen(seenByText) + strlen(pathText);
     nfree(seenByText);
     nfree(pathText);
@@ -647,7 +647,7 @@ int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr, unsigned writeAccess)
 	else { tmp = line+1; *line = 0; break; }
     }
 	
-    xstrscat(&textBuff, msg->text, "\rFROM: ", aka2str(pktOrigAddr), "\rREASON: ", reason, "\r", NULL);
+    xstrscat(&textBuff, msg->text, "\rFROM: ", aka2str(pktOrigAddr), "\rREASON: ", reason, "\r", NULLP);
 
     if (areaName) xscatprintf(&textBuff, "AREANAME: %s\r\r", areaName);
     xstrcat(&textBuff, tmp);
@@ -697,11 +697,11 @@ void makeMsgToSysop(char *areaName, hs_addr fromAddr, ps_addr uplinkAddr)
 
 		if (robot->reportsFlags)
 		    xstrscat(&(msgToSysop[i]->text), "\001FLAGS ",
-		             robot->reportsFlags, "\r", NULL);
+		             robot->reportsFlags, "\r", NULLP);
                 xstrscat(&(msgToSysop[i]->text), "Action   Name", 
-                         print_ch(49, ' '), "By\r", NULL);
+                         print_ch(49, ' '), "By\r", NULLP);
                 /*  Shitty static variables .... */
-                xstrscat(&(msgToSysop[i]->text), print_ch(79, '-'), "\r", NULL);
+                xstrscat(&(msgToSysop[i]->text), print_ch(79, '-'), "\r", NULLP);
                 msgToSysop[i]->recode |= (REC_HDR|REC_TXT);
                 w_log(LL_NETMAIL,"Created msg to sysop");
             }
@@ -710,29 +710,29 @@ void makeMsgToSysop(char *areaName, hs_addr fromAddr, ps_addr uplinkAddr)
             buff = safe_strdup("");
             if (config->reportRequester) xstrcat(&buff, aka2str(fromAddr));
             if (uplinkAddr != NULL) { /*  autocreation with forward request */
-                xstrscat(&buff, " from ", aka2str(*uplinkAddr), NULL);
+                xstrscat(&buff, " from ", aka2str(*uplinkAddr), NULLP);
             }
-            xstrscat(&strbeg, "Created  ", echo->areaName, NULL);
+            xstrscat(&strbeg, "Created  ", echo->areaName, NULLP);
 
             if (echo->description) {
                 if (strlen(strbeg) + strlen(echo->description) >=77) {
-                    xstrscat(&(msgToSysop[i]->text), strbeg, "\r", NULL);
+                    xstrscat(&(msgToSysop[i]->text), strbeg, "\r", NULLP);
                     nfree(strbeg);
                     xstrcat(&strbeg, print_ch(9, ' '));
                 } else {
                     xstrcat(&strbeg, " ");
                 }
-                xstrscat(&strbeg, "\"", echo->description, "\"", NULL);
+                xstrscat(&strbeg, "\"", echo->description, "\"", NULLP);
             }
 
             xstrcat(&(msgToSysop[i]->text), strbeg);
 
             if (strlen(strbeg) + strlen(buff) >= 79) {
-                xstrscat(&(msgToSysop[i]->text), "\r", print_ch(79-strlen(buff), ' '), buff, "\r", NULL);
+                xstrscat(&(msgToSysop[i]->text), "\r", print_ch(79-strlen(buff), ' '), buff, "\r", NULLP);
             } else if (strlen(strbeg) <62 && strlen(buff) < 79-62) { /*  most beautiful */
-                xstrscat(&(msgToSysop[i]->text), print_ch(62-strlen(strbeg), ' '), buff, "\r", NULL);
+                xstrscat(&(msgToSysop[i]->text), print_ch(62-strlen(strbeg), ' '), buff, "\r", NULLP);
             } else {
-                xstrscat(&(msgToSysop[i]->text), print_ch(79-strlen(strbeg)-strlen(buff), ' '), buff, "\r", NULL);
+                xstrscat(&(msgToSysop[i]->text), print_ch(79-strlen(strbeg)-strlen(buff), ' '), buff, "\r", NULLP);
             }
             nfree(buff);
             nfree(strbeg);
@@ -889,9 +889,9 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
                 tmpmsg->text = createKludges(config, NULL, link->ourAka,
                     &(link->hisAka), versionStr);
                 if (link->areafix.reportsFlags)
-                    xstrscat(&(tmpmsg->text), "\001FLAGS ", link->areafix.reportsFlags, "\r",NULL);
+                    xstrscat(&(tmpmsg->text), "\001FLAGS ", link->areafix.reportsFlags, "\r",NULLP);
                 else if (robot->reportsFlags)
-                    xstrscat(&(tmpmsg->text), "\001FLAGS ", robot->reportsFlags, "\r",NULL);
+                    xstrscat(&(tmpmsg->text), "\001FLAGS ", robot->reportsFlags, "\r",NULLP);
 
                 xstrcat(&tmpmsg->text, "\r Your message was moved to badmail with the following reason:\r\r");
                 xscatprintf(&tmpmsg->text, " %s\r\r", reason);
