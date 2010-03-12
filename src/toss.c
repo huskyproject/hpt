@@ -2038,6 +2038,7 @@ void tossTempOutbound(char *directory)
 		header = openPkt(pkt);
 		if (header != NULL) {
 		    link = getLinkFromAddr (config, header->destAddr);
+			nfree(header);
 		} else {
 		    link = NULL;
 		}
