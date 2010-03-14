@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
              "\t -xf \"<arg>\" \t- packet from address\n"
              "\t -xt \"<arg>\" \t- packet to address\n"
              "\t -p  \"<arg>\" \t- packet password\n"
-             "\t -af \"<arg>\" \t- message from address>\n"
+             "\t -af \"<arg>\" \t- message from address\n"
              "\t -at \"<arg>\" \t- message to address\n"
              "\t -nf \"<arg>\" \t- message from name\n"
              "\t -nt \"<arg>\" \t- message to name\n"
