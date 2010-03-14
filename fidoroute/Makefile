@@ -43,7 +43,7 @@ debug: $(BINARIES)
 doc: $(DOCS)
 
 fidoroute.conf.ru.html:
-	wget -k -O fidoroute.conf.ru.html 'http://sourceforge.net/apps/mediawiki/husky/index.php?title=%D0%A4%D0%B0%D0%B9%D0%BB_fidoroute.conf&printable=yes'
+	wget -k -O fidoroute.conf.ru.html 'http://sourceforge.net/apps/mediawiki/husky/index.php?title=%D0%A4%D0%B0%D0%B9%D0%BB_fidoroute.conf&printable=yes' || true
 
 install-doc: doc
 	if [ ! -d $(DOCDIR) ]; then install -d $(DOCDIR); fi
