@@ -1143,7 +1143,7 @@ int processPkt(char *fileName, e_tossSecurity sec)
     /*  processIt = 2, process only Netmail */
     /*  processIt = 0, do not process pkt */
 
-    w_log(LL_FUNC,"toss.c::processPkt()");
+    w_log(LL_FUNC,"toss.c::processPkt(\"%s\",)",fileName);
 
     if ((pktlen = fsize(fileName)) > 60) {
 
@@ -1458,7 +1458,7 @@ void processDir(char *directory, e_tossSecurity sec)
 #endif
 
     if (NULL == (dir = opendir(directory))) {
-	printf("Can't open dir: %s!\n",directory);
+	w_log(LL_ERR, "Can't open dir: %s!\n",directory);
 	return;
     }
 
@@ -1511,6 +1511,7 @@ void processDir(char *directory, e_tossSecurity sec)
 #ifdef DEBUG_HPT
 	w_log(LL_DEBUGV,"testing sorted %s\n", dummy);
 #endif
+	w_log(LL_FILE, "Look incoming file %s", dummy);
 	if (!(pktFile = patimat(dummy+dirNameLen, "*.pkt") == 1))
 	    if (isArcMail(dummy+dirNameLen))
 		arcFile = 1;
