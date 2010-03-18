@@ -34,6 +34,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <assert.h>
 #include <fcommon.h>
 #include <global.h>
 #include <seenby.h>
@@ -52,7 +53,9 @@ int compare(const void *first, const void *second)
 
 void sortSeenBys(s_seenBy *seenBys, UINT count)
 {
-   qsort(seenBys, count, sizeof(s_seenBy), compare);
+	assert(seenBys != NULL || count == 0);
+		if(count)
+			qsort(seenBys, count, sizeof(s_seenBy), compare);
 }
 
 char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading)
@@ -157,7 +160,16 @@ void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, 
 		/*  only node aka */
 		(*seenBys)[*seenByCount-1].node = (UINT16) temp;
 		/*  use net aka of last seenBy */
-		(*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
+		if(*seenByCount >= 2)
+		    (*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
+		else
+		{ /* Shouldn't really happen. The best way out is unclear. */
+		  /* I propose to drop incorrect seen-by's, as possible dupes seem to be lesser evil
+		     compared to possible loss of mail if choose to propagate mail with buggy control
+			 lines --Elfy 2010-03-18 */
+			w_log(LL_ALERT, "Buggy SEEN-BY line encountered"); /* FIXME: print msgid to pinpoint problem? */
+			--*seenByCount;
+		}
 	    } else {
 		/*  net and node aka */
 		(*seenBys)[*seenByCount-1].net = (UINT16) temp;
@@ -170,7 +182,15 @@ void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, 
     } /*  end while */
 
     if (*seenByCount != seenByAlloced)
-	(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
+	{
+		if(*seenByCount > 0)
+			(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
+		else
+		{
+			nfree(*seenBys);
+			seenByAlloced = 0;
+		}
+	}
     /* test output for reading of seenBys... */
 #ifdef DEBUG_HPT
     for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
