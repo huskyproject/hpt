@@ -71,6 +71,7 @@ w_log('Z', "Perl($file): Netmail with ARQ from $fromaddr to $toaddr");
         }
     }
   }
+  return "";
 }
 
 sub rrqcpt
@@ -105,6 +106,7 @@ w_log('Z', "Perl($file): Netmail with RRQ from $fromaddr to $toaddr");
         }
     }
   }
+  return "";
 }
 
 sub isattr
@@ -121,10 +123,6 @@ sub extractmsgid
  my @msgid = grep(s/^\x01MSGID: //, @lines);
  if( $#msgid >=0 ){
    return $msgid[0];
-#   my $msgid = $msgid[0];
-#   return $1 if $msgid =~ /^\x01MSGID: ([0-9A-Za-z:\/\.])+(\@\S+)? /;
-#   $msgid =~ s/^\x01MSGID://;
-#   return $msgid;
  }
  return "";
 }
