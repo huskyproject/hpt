@@ -424,12 +424,14 @@ int main(int argc, char *argv[])
          sprintf(tmpp,"%08lx.pkt",(long)tm++);
          pkt = createPkt(tmp, &header);
        }
+       printf("%s\n", tmp);
    } else {
        do {
            nfree(fileName);
            xscatprintf(&fileName, "%s%08x.pkt",
                        tmp, GenMsgId(config->seqDir, config->seqOutrun));
        } while ((pkt = createPkt(fileName, &header))==NULL);
+       printf("%s\n", fileName);
    }
 
    if (pkt != NULL) {
