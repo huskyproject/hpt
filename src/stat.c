@@ -29,12 +29,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/log.h>
-
 
 #include "stat.h"
 
@@ -43,7 +43,9 @@
 #define REV_MAX 1            /* max revision we can read */
 
 /*#define STAT_ALONE*/         /* complie stat.c w/o hpt */
-#define STAT_DEBUG
+#if defined(DEBUG) || defined(DEBUG_HPT)
+#  define STAT_DEBUG*/         /* output stat info each write */
+#endif
 
 #ifdef STAT_ALONE
 #  define msg(s) fprintf(stderr,      __FILE__ ":%u: %s %s", __LINE__, s)
@@ -126,7 +128,7 @@ void put_stat(s_area *echo, hs_addr *link, st_type type, long len)
         if (res < 0) {
             me = calloc(1,sizeof(*me));
             if (me == NULL) { msg("Out of memory"); do_stat = 0; return; }
-            
+
             if( (me->tag_len = sstrlen(echo->areaName)) )
                 me->tag = strdup(echo->areaName);
             me->links = 0; me->chain = NULL;
@@ -142,7 +144,7 @@ void put_stat(s_area *echo, hs_addr *link, st_type type, long len)
                 chain_link *me;
                 me = calloc(1,sizeof(*me));
                 if (me == NULL) { msg("Out of memory"); do_stat = 0; return; }
-                
+
                 cur->links++;
                 me->link.addr.zone  = link->zone;
                 me->link.addr.net   = link->net;
@@ -175,8 +177,8 @@ void upd_stat(char *file)
         short rev;
         time_t t0;
         char xxx[8];
-    } hdr = {"vk", REV_CUR, 0, {0,0,0,0,0,0,0,0}}, ohdr;
-    
+    } hdr = {{'v','k'}, REV_CUR, 0, {0,0,0,0,0,0,0,0}}, ohdr;
+
     if (!do_stat) { msg("stat was disabled"); return; }
     if (statecho == NULL) { 
 #ifdef STAT_DEBUG
@@ -201,21 +203,28 @@ void upd_stat(char *file)
             fclose(OLD); OLD = NULL;
         }
         else if (ohdr.rev < REV_MIN || ohdr.rev > REV_MAX) {
-            msg2("Incompatible stat base", oldf); fclose(OLD); 
+            msg2("Incompatible stat base", oldf); fclose(OLD);
             do_stat = 0; return;
         }
     }
     /* make new base: hpt.st$ */
-    if ( (newf = sstrdup(oldf)) ) newf[strlen(newf)-1] = '$';
+    if ( (newf = sstrdup(oldf)) != NULL ) newf[strlen(newf)-1] = '$';
     else { msg("Out of memory"); if (OLD != NULL) fclose(OLD); return; }
     NEW = fopen(newf, "wb");
     if (NEW == NULL) {
-        msg2("Can't create tmp-file", newf);
-        if (OLD != NULL) fclose(OLD); 
+        w_log(LL_ALERT,  __FILE__ ":%u: Can't create tmp-file %s, error: ", __LINE__, newf, strerror(errno));
+        if (OLD != NULL) fclose(OLD);
+        nfree(newf);
         do_stat = 0; return; 
     }
     hdr.t0 = OLD ? ohdr.t0 : time(NULL);
-    fwrite(&hdr, sizeof(hdr), 1, NEW);
+    if( fwrite(&hdr, sizeof(hdr), 1, NEW)<1 ) {
+        w_log(LL_ALERT,  __FILE__ ":%u: Can't write to the tmp-file %s, error: ", __LINE__, newf, strerror(errno));
+        if (OLD != NULL) fclose(OLD);
+        fclose(NEW);
+        nfree(newf);
+        do_stat = 0; return;
+    }
     /* main loop */
     cur = statecho;
     while (do_stat && OLD && !feof(OLD)) {
@@ -238,7 +247,7 @@ void upd_stat(char *file)
                 if (res < 0) {
                     chain_link *me = malloc(sizeof(*me));
                     if (me == NULL) { msg("Out of memory"); do_stat = 0; continue; }
-                    
+
                     memcpy(&(me->link), &(oldl->link), sizeof(me->link));
                     if (prevl != NULL) prevl->next = me; else cur->chain = me;
                     me->next = newl;
@@ -281,7 +290,7 @@ int write_echo(FILE *F, stat_echo *e)
     chain_link *cl;
     int tst;
     short real_links = 0;
-    
+
     if (!e || !e->links) return 0;
 #ifdef STAT_DEBUG
     debug_out(e);
@@ -292,7 +301,7 @@ int write_echo(FILE *F, stat_echo *e)
     tst += fwrite(&(e->tag_len), sizeof(e->tag_len), 1, F);
     tst += fwrite(e->tag, e->tag_len, 1, F);
     if (tst < 3) { msg("Write error"); do_stat = 0; return 0; }
-    
+
     cl = e->chain;
     while (cl) {
         tst = fwrite(&(cl->link), sizeof(cl->link), 1, F);
@@ -308,25 +317,26 @@ stat_echo *read_echo(FILE *F)
     chain_link *l, *prev = NULL;
     short ol, ot;
     int i, tst;
-    
+
     tst = fread(&ol, sizeof(ol), 1, F); if (tst < 1) return NULL;
     tst = fread(&ot, sizeof(ot), 1, F); if (tst < 1) return NULL;
-    
+
     old = calloc( 1, sizeof (stat_echo) );
     if (old == NULL) { msg("Out of memory"); do_stat = 0; return NULL; }
-    
+
     old->links = ol; 
     old->tag_len = ot; 
     old->chain = NULL;
     old->tag = calloc( 1, ot+1 );
+    if (old->tag == NULL) { msg("Out of memory"); do_stat = 0; return NULL; }
     tst = fread(old->tag, ot, 1, F); 
 
     if (tst < 1) { msg("Read error"); free_echo(old); do_stat = 0; return NULL; }
     /* read links */
     for (i = 0; i < ol; i++) {
         l = malloc(sizeof(*l));
-        if (l == NULL) { msg("Out of memory"); do_stat = 0; return NULL; }
-        
+        if (l == NULL) { msg("Out of memory"); free_echo(old); do_stat = 0; return NULL; }
+
         if (prev != NULL) prev->next = l; else old->chain = l;
         l->next = NULL;
         tst = fread(&(l->link), sizeof(l->link), 1, F);
@@ -345,6 +355,10 @@ void free_echo(stat_echo *e) {
 }
 
 void debug_out(stat_echo *e) {
+
+#ifndef STAT_DEBUG
+    e=e; return;
+#endif
 #ifdef STAT_DEBUG
     stat_echo *cur = e ? e : statecho;
     chain_link *curl;
