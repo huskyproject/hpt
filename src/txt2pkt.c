@@ -73,7 +73,7 @@
                                 nfree(msg.subjectLine);  \
                                 exit(exitcode);          \
                                }
-
+statuc int quiet_mode = 0; /* quiet mode flag */
 
 int main(int argc, char *argv[])
 {
@@ -96,11 +96,12 @@ int main(int argc, char *argv[])
    versionStr = GenVersionStr( "txt2pkt", VER_MAJOR, VER_MINOR, VER_PATCH,
                                VER_BRANCH, cvs_date );
 
-   printf("%s\n\n", versionStr);
-
    if (argc == 1) {
-      printf("Usage: txt2pkt [options] <file>|-\n"
+       printf("%s\n\n", versionStr);
+
+       printf("Usage: txt2pkt [options] <file>|-\n"
              "Options:\n"
+             "\t -v          \t- verbose mode\n");
              "\t -c \"<file>\" \t- configuration file\n"
              "\t -xf \"<arg>\" \t- packet from address\n"
              "\t -xt \"<arg>\" \t- packet to address\n"
@@ -336,6 +337,9 @@ int main(int argc, char *argv[])
                CharToOem(msg.subjectLine, msg.subjectLine);
 #endif
                break;
+            case 'q':    /* quiet mode */
+              quiet_mode = 1;
+               break;
 	    default:
                quit = 1;
                break;
@@ -390,6 +394,7 @@ int main(int argc, char *argv[])
       exit(EX_UNAVAILABLE);
    }
 
+   if (!quiet_mode) printf("%s\n\n", versionStr);
 
    header.hiProductCode  = HPT_PRODCODE_HIGHBYTE;
    header.loProductCode  = HPT_PRODCODE_LOWBYTE;
@@ -424,14 +429,14 @@ int main(int argc, char *argv[])
          sprintf(tmpp,"%08lx.pkt",(long)tm++);
          pkt = createPkt(tmp, &header);
        }
-       printf("%s\n", tmp);
+       if (!quiet_mode) printf("%s\n", tmp);
    } else {
        do {
            nfree(fileName);
            xscatprintf(&fileName, "%s%08x.pkt",
                        tmp, GenMsgId(config->seqDir, config->seqOutrun));
        } while ((pkt = createPkt(fileName, &header))==NULL);
-       printf("%s\n", fileName);
+       if (!quiet_mode) printf("%s\n", fileName);
    }
 
    if (pkt != NULL) {
@@ -481,7 +486,7 @@ int main(int argc, char *argv[])
                  header.origAddr.zone, header.origAddr.net, header.origAddr.node, header.origAddr.point,
                  tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, versionStr);
       }
-      
+
       msg.textLength=strlen(textBuffer);
       nfree(textBuffer);
       nfree(versionStr);
@@ -507,7 +512,7 @@ int main(int argc, char *argv[])
       closeCreatedPkt(pkt);
 /*      sleep(1); */
    } else {
-      printf("Could not create pkt, error message: %s", strerror(errno));
+      fprintf(stderr, "Could not create pkt, error message: %s", strerror(errno));
    } /* endif */
 
    doneCharsets();
