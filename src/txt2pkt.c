@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 
        printf("Usage: txt2pkt [options] <file>|-\n"
              "Options:\n"
-             "\t -v          \t- verbose mode\n");
+             "\t -q          \t- quiet mode\n");
              "\t -c \"<file>\" \t- configuration file\n"
              "\t -xf \"<arg>\" \t- packet from address\n"
              "\t -xt \"<arg>\" \t- packet to address\n"
