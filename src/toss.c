@@ -1107,7 +1107,7 @@ int processMsg(s_message *msg, s_pktHeader *pktHeader, int secure)
 	if (config->areafixFromPkt &&
 	    isOurAka(config, msg->destAddr) &&
 	    strlen(msg->toUserName)>0 &&
-	     fc_stristr(robot->names,msg->toUserName)) {
+	     findInStrArray(robot->names,msg->toUserName) >=0) {
 	    rc = processAreaFix(msg, pktHeader, 0);
 	} else
 	    rc = processNMMsg(msg, pktHeader, NULL, 0, 0);
@@ -1504,7 +1504,8 @@ int processDir(char *directory, e_tossSecurity sec)
     for ( filenum=0; filenum < nfiles; filenum++) {
 	arcFile = pktFile = 0;
 	dummy = (files[filenum]).fileName;
-	w_dbglog(LL_DEBUGV,"testing sorted %s\n", dummy);
+	w_log(LL_FILE, "Look incoming file %s", dummy);
+	w_dbglog(LL_DEBUGV,"testing sorted %s", dummy+dirNameLen);
 	if ((pktFile = patimat(dummy+dirNameLen, "*.pkt")) == 0)
 	    if (isArcMail(dummy+dirNameLen))
 		arcFile = 1;
