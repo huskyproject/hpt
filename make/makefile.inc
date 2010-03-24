@@ -10,8 +10,9 @@
 # LIBSUFFIX  library filename suffix (compiler ID, three characters, somewhere empty)
 # DLLPREFIX  dinamic linking library prefix (usually empty)
 # DLLSUFFIX  dinamic linking library suffix (compiler ID or empty)
-# _SRC_DIR  sources dir
+# O, B, L, H prefixes to use with names of objects, binaries, libraries and headers respectively
 
+# Module name
 LIBNAME = hpt
 
 # Version
@@ -21,39 +22,40 @@ VERPATCH= 0
 VERH	= $(VERMAJOR).$(VERMINOR)
 VER	= $(VERH).$(VERPATCH)
 
-# Programms name
-PKTINFO	= pktinfo$(_EXE)
-TPKT	= tpkt$(_EXE)
-TXT2PKT	= txt2pkt$(_EXE)
-HPTLINK = hptlink$(_EXE)
-HPTTREE	= hpttree$(_EXE)
-HPT	= hpt$(_EXE)
-
-# Object files: programs
-OBJS	   = 
-PKTINFOOBJS= pktinfo$(_OBJ) dupe$(_OBJ)  pktread$(_OBJ) fcommon$(_OBJ) \
-	     global$(_OBJ) 
-TPKTOBJS   = tpkt$(_OBJ) fcommon$(_OBJ) pktread$(_OBJ) pktwrite$(_OBJ) \
-	     global$(_OBJ) dupe$(_OBJ)
-TXT2PKTOBJS= txt2pkt$(_OBJ) pktwrite$(_OBJ) dupe$(_OBJ) pktread$(_OBJ) \
-	     fcommon$(_OBJ) global$(_OBJ)
-HPTLINKOBJS= hptlink$(_OBJ) global$(_OBJ)
-HPTTREEOBJS= hpttree$(_OBJ)
-HPTOBJS    = hpt$(_OBJ) pktread$(_OBJ) pktwrite$(_OBJ) fcommon$(_OBJ) \
-	     global$(_OBJ) toss$(_OBJ) scan$(_OBJ) \
-	     scanarea$(_OBJ) post$(_OBJ) hptafix$(_OBJ) dupe$(_OBJ) \
-	     seenby$(_OBJ) link$(_OBJ) carbon$(_OBJ) $(PERLOBJ)
-
-# Header files
-HEADERS	= hptafix.h cvsdate.h dupe.h fcommon.h global.h hpt.h hptperl.h \
-	  link.h pkt.h post.h scan.h scanarea.h seenby.h toss.h \
-	  version.h
-
 # Sources directory
 _SRC_DIR= ../src/
-
 # Headers directory
 H_DIR	= ../h/
+
+# Programms name
+PKTINFO	= $(B)pktinfo$(_EXE)
+TPKT	= $(B)tpkt$(_EXE)
+TXT2PKT	= $(B)txt2pkt$(_EXE)
+HPTLINK = $(B)hptlink$(_EXE)
+HPTTREE	= $(B)hpttree$(_EXE)
+HPT	= $(B)hpt$(_EXE)
+
+# Header files
+HEADERS	= $(H)hptafix.h $(H)cvsdate.h $(H)dupe.h $(H)fcommon.h $(H)global.h \
+	  $(H)hpt.h $(H)hptperl.h $(H)link.h $(H)pkt.h $(H)post.h $(H)scan.h \
+	  $(H)scanarea.h $(H)seenby.h $(H)toss.h $(H)version.h
+
+OBJS	   = 
+
+# Object files: programs
+PKTINFOOBJS= $(O)pktinfo$(_OBJ) $(O)dupe$(_OBJ) $(O)pktread$(_OBJ) $(O)fcommon$(_OBJ) \
+	     $(O)global$(_OBJ) 
+TPKTOBJS   = $(O)tpkt$(_OBJ) $(O)fcommon$(_OBJ) $(O)pktread$(_OBJ) $(O)pktwrite$(_OBJ) \
+	     $(O)global$(_OBJ) $(O)dupe$(_OBJ)
+TXT2PKTOBJS= $(O)txt2pkt$(_OBJ) $(O)pktwrite$(_OBJ) $(O)dupe$(_OBJ) $(O)pktread$(_OBJ) \
+	     $(O)fcommon$(_OBJ) $(O)global$(_OBJ)
+HPTLINKOBJS= $(O)hptlink$(_OBJ) $(O)global$(_OBJ)
+HPTTREEOBJS= $(O)hpttree$(_OBJ)
+HPTOBJS    = $(O)hpt$(_OBJ) $(O)pktread$(_OBJ) $(O)pktwrite$(_OBJ) $(O)fcommon$(_OBJ) \
+	     $(O)global$(_OBJ) $(O)toss$(_OBJ) $(O)scan$(_OBJ) \
+	     $(O)scanarea$(_OBJ) $(O)post$(_OBJ) $(O)hptafix$(_OBJ) $(O)dupe$(_OBJ) \
+	     $(O)seenby$(_OBJ) $(O)link$(_OBJ) $(O)carbon$(_OBJ) $(O)$(PERLOBJ)
+PRGOBJS    = $(PKTINFOOBJS) $(TPKTOBJS) $(TXT2PKTOBJS) $(HPTLINKOBJS) $(HPTTREEOBJS) $(HPTOBJS)
 
 # Binary files(s) to bild from sources
 PROGRAMS  = $(PKTINFO) $(TPKT) $(TXT2PKT) $(HPTLINK) $(HPTTREE) $(HPT)
