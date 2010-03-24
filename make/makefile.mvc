@@ -1,105 +1,109 @@
 # $Id$
 #
-# Microsoft Visual C++ Makefile for build static program(s)
-# No support for the Husky build environment.
-#
-# Tested on MS Visual C 6.0
-#
-include makefile.inc
+# Microsoft Visual C++ Makefile for build hpt executable
 
-USE_HPTZIP=0
-USE_PERL = 0
 
-DEBUG	 = 0
+## include common makefiles part ##
+!include ../../huskymak.cfg
 
-!if $(USE_PERL) == 1
-PERL_DIR = c:\programs\Perl
-#PERLV	 = 56
-PERLV	 = 58
-PERLL	 = delayimp.lib $(PERL_DIR)\lib\core\perl$(PERLV).lib
-PERLI	 = -I$(PERL_DIR)\lib\core
-PERLD	 = -DDO_PERL -DWIN32 -DNO_STRICT -DHAVE_DES_FCRYPT -DPERL_IMPLICIT_CONTEXT -DPERL_IMPLICIT_SYS -DPERL_MSVCRT_READFIX
-PERLDLL  = /delayload:perl$(PERLV).dll
-PERLOBJ  = perl.obj
+!if "$(OBJOUT)" != ""
+
+OBJOUT2=$(OBJOUT)hpt/
+
+!if [if not exist $(OBJOUT2:/=\) $(MKDIR) $(OBJOUT2:/=\)] == 0
+OBJOUT=$(OBJOUT)hpt/
 !endif
 
-!if $(USE_HPTZIP) == 1
-HPTZIPL = ..\..\hptzip/make/hptzip.lib
-HPTZIPI = -I..\..\hptzip
-HPTZIPD = -DUSE_HPTZIP
 !endif
 
-## programs ##
 
-CC	= cl
-AR	= lib
-LINK	= link
-RANLIB	=
-RM	= del
+!include makefile.inc
 
-## file suffixes ##
-_C	= .c
-_OBJ	= .obj
-_LIB	= .lib
-_EXE	= .exe
-_DLL	= .dll
-_EXP	= .exp
-_ILK	= .ilk
-_PDB	= .pdb
+
+
+
+PROGRAMSILK=$(PROGRAMS:.exe=.ilk)
+PROGRAMSPDB=$(PROGRAMS:.exe=.pdb)
+
 
 ## program options ##
-CFLAGS=-nologo -Zp1
-CINCL= -I$(H_DIR) -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib -I..\..\areafix $(HPTZIPI) $(PERLI)
-LFLAGS=
-CDEFS =-D__NT__ -D_CONSOLE $(HPTZIPD) $(PERLD)
-COPT	= -Ob2
 
-EXENAMEFLAG=-Fe
+## options for compiler ##
+
+CINCL	= -I$(H_DIR) -I..\..\huskylib -I..\..\fidoconf -I..\..\smapi -I..\..\areafix $(HPTZIPI) $(PERLI)
+
+CFLAGS	= $(CFLAGS) $(CINCL)
+
+## options for linker ##
+LFLAGS=$(LFLAGS) $(LINKPDBOPT)$(BINOUT)
+
+LIBS = $(LIBS) user32.lib $(HPTZIPL)
 
 # List of HUSKY libraries required to build binary file(s)
-LIBS	= ..\..\areafix\make\areafix.lib \
-	  ..\..\fidoconf\make\fconfmvc.lib \
-	  ..\..\smapi\make\smapimvc.lib \
-	  ..\..\huskylib\make\huskymvc.lib \
-	  USER32.LIB $(HPTZIPL) $(PERLL)
+!if $(DYNLIBS)==1
+LIBSL	= $(LIBS) \
+	  $(IMPLIBPREFIX)husky$(DLLSUFFIX)$(_LIB) \
+	  $(IMPLIBPREFIX)smapi$(DLLSUFFIX)$(_LIB) \
+	  $(IMPLIBPREFIX)fidoconfig$(DLLSUFFIX)$(_LIB) \
+	  $(IMPLIBPREFIX)areafix$(DLLSUFFIX)$(_LIB) \
+	  $(PERLL)
 
+!else
+LIBSL	= $(LIBS) \
+	  $(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB) \
+	  $(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
+	  $(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(_LIB) \
+	  $(LIBPREFIX)areafix$(LIBSUFFIX)$(_LIB) \
+	  $(PERLL)
+
+!endif
+	  
 default:
-	@echo Run 'make programs' to build static version of programs
-	@echo ($(PROGRAMS))
-	@echo Run 'make all' to build all above
+	@echo Set DYNLIBS=1 in huskymak.cfg to build dynamic version of program
+	@echo Run 'make all' to build ($(PROGRAMS))
 
-programs:  $(PROGRAMS)
+programs: $(PROGRAMS)
 all: programs
 
-{$(_SRC_DIR)}.c$(_OBJ):
-	@$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(COPT) -c $<
+$(OBJS) $(PRGOBJS) : $(HEADERS) makefile.mvc ../../huskymak.cfg makefile.inc
+
+{$(_SRC_DIR)}$(_C){$(O)}$(_OBJ)::
+	@$(CC) $(CFLAGS) $(OBJOPT) $(OBJNAMEOPT)$(O) @<<
+$<
+<<
+
 
 $(PKTINFO): $(PKTINFOOBJS)
 	@echo Create $(PKTINFO)...
-	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS)
+	@$(LINK) $(LFLAGS) $(LINKNAMEOPT)$@ $** $(LIBSL)
 
 $(TPKT): $(TPKTOBJS)
 	@echo Create $(TPKT)...
-	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS)
+	@$(LINK) $(LFLAGS) $(LINKNAMEOPT)$@ $** $(LIBSL)
 
 $(TXT2PKT): $(TXT2PKTOBJS)
 	@echo Create $(TXT2PKT)...
-	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS)
+	@$(LINK) $(LFLAGS) $(LINKNAMEOPT)$@ $** $(LIBSL)
 
 $(HPTLINK): $(HPTLINKOBJS)
 	@echo Create $(HPTLINK)...
-	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS)
+	@$(LINK) $(LFLAGS) $(LINKNAMEOPT)$@ $** $(LIBSL)
 
 $(HPTTREE): $(HPTTREEOBJS)
 	@echo Create $(HPTTREE)...
-	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS)
+	@$(LINK) $(LFLAGS) $(LINKNAMEOPT)$@ $** $(LIBSL)
 
 $(HPT): $(HPTOBJS)
 	@echo Create $(HPT)...
-	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS) /link $(PERLDLL)
+	@$(LINK) $(LFLAGS) $(LINKNAMEOPT)$@ $** $(LIBSL)
 
 clean:
-	-$(RM) $(RMOPT) *$(_OBJ)
+	-$(RM) $(RMOPT) VC*$(_PDB)
+	-$(RM) $(RMOPT) $(PRGOBJS:/=\)
+	-$(RM) $(RMOPT) $(PROGRAMSILK:/=\)
 
 distclean: clean
-	-$(RM) $(RMOPT) $(PROGRAMS)
+	-$(RM) $(RMOPT) $(PROGRAMSPDB:/=\)
+	-$(RM) $(RMOPT) $(PROGRAMS:/=\)
+
+
