@@ -73,7 +73,7 @@
                                 nfree(msg.subjectLine);  \
                                 exit(exitcode);          \
                                }
-statuc int quiet_mode = 0; /* quiet mode flag */
+static int quiet_mode = 0; /* quiet mode flag */
 
 int main(int argc, char *argv[])
 {
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 
        printf("Usage: txt2pkt [options] <file>|-\n"
              "Options:\n"
-             "\t -q          \t- quiet mode\n");
+             "\t -q          \t- quiet mode\n"
              "\t -c \"<file>\" \t- configuration file\n"
              "\t -xf \"<arg>\" \t- packet from address\n"
              "\t -xt \"<arg>\" \t- packet to address\n"
