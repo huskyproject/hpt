@@ -517,6 +517,15 @@ static char **save_envp(char **envp)
    return envp_copy;
 }
 
+void free_envp(char **envp)
+{
+   int ii = 0;
+   if(envp == NULL)
+	   return;
+   while(envp[ii] != NULL) {nfree(envp[ii]); ++ii;}
+   nfree(envp);
+}
+
 int main(int argc, char **argv, char **envp)
 {
    struct _minf m;
@@ -718,6 +727,8 @@ int main(int argc, char **argv, char **envp)
 #endif
    disposeConfig(config);
    nfree(cfgFile);
+   /* Keep memory leaks detector happy */
+   free_envp(hpt_environ);
 
    return 0;
 }
