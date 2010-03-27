@@ -4,32 +4,13 @@
 
 
 ## include common makefiles part ##
-!include ../../huskymak.cfg
-
-!if "$(OBJOUT)" != ""
-
-OBJOUT2=$(OBJOUT)hpt/
-
-!if [if not exist $(OBJOUT2:/=\) $(MKDIR) $(OBJOUT2:/=\)] == 0
-OBJOUT=$(OBJOUT)hpt/
-!endif
-
-!endif
-
-
 !include makefile.inc
-
-
-
-
-PROGRAMSILK=$(PROGRAMS:.exe=.ilk)
-PROGRAMSPDB=$(PROGRAMS:.exe=.pdb)
+!include ../../huskymak.cfg
 
 
 ## program options ##
 
 ## options for compiler ##
-
 CINCL	= -I$(H_DIR) -I..\..\huskylib -I..\..\fidoconf -I..\..\smapi -I..\..\areafix $(HPTZIPI) $(PERLI)
 
 CFLAGS	= $(CFLAGS) $(CINCL)
@@ -37,24 +18,24 @@ CFLAGS	= $(CFLAGS) $(CINCL)
 ## options for linker ##
 LFLAGS=$(LFLAGS) $(LINKPDBOPT)$(BINOUT)
 
-LIBS = $(LIBS) user32.lib $(HPTZIPL)
-
 # List of HUSKY libraries required to build binary file(s)
+# for executables -- $(LIBSL)
+# for dynamic libraries -- $(DLLS)
+LIBS = $(LIBS) user32.lib $(HPTZIPL) $(PERLL)
+
 !if $(DYNLIBS)==1
 LIBSL	= $(LIBS) \
 	  $(IMPLIBPREFIX)husky$(DLLSUFFIX)$(_LIB) \
 	  $(IMPLIBPREFIX)smapi$(DLLSUFFIX)$(_LIB) \
 	  $(IMPLIBPREFIX)fidoconfig$(DLLSUFFIX)$(_LIB) \
-	  $(IMPLIBPREFIX)areafix$(DLLSUFFIX)$(_LIB) \
-	  $(PERLL)
+	  $(IMPLIBPREFIX)areafix$(DLLSUFFIX)$(_LIB)
 
 !else
-LIBSL	= $(LIBS) \
+LIBSL	= $(LIBS) $(ZLIBL) \
 	  $(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB) \
 	  $(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
 	  $(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(_LIB) \
-	  $(LIBPREFIX)areafix$(LIBSUFFIX)$(_LIB) \
-	  $(PERLL)
+	  $(LIBPREFIX)areafix$(LIBSUFFIX)$(_LIB)
 
 !endif
 	  
