@@ -54,7 +54,7 @@ HPTTREEOBJS= $(O)hpttree$(_OBJ)
 HPTOBJS    = $(O)hpt$(_OBJ) $(O)pktread$(_OBJ) $(O)pktwrite$(_OBJ) $(O)fcommon$(_OBJ) \
 	     $(O)global$(_OBJ) $(O)toss$(_OBJ) $(O)scan$(_OBJ) \
 	     $(O)scanarea$(_OBJ) $(O)post$(_OBJ) $(O)hptafix$(_OBJ) $(O)dupe$(_OBJ) \
-	     $(O)seenby$(_OBJ) $(O)link$(_OBJ) $(O)carbon$(_OBJ) $(O)$(PERLOBJ)
+	     $(O)seenby$(_OBJ) $(O)link$(_OBJ) $(O)carbon$(_OBJ) $(PERLOBJ)
 PRGOBJS    = $(PKTINFOOBJS) $(TPKTOBJS) $(TXT2PKTOBJS) $(HPTLINKOBJS) $(HPTTREEOBJS) $(HPTOBJS)
 
 # Binary files(s) to bild from sources
