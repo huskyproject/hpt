@@ -185,10 +185,10 @@ void correctEMAddr(s_message *msg)
 
 	   if (*(start-1) == ')') {         /*  if there is no ')', there is no origin */
 		   --start;
-           while (start>msg->text && *(--start)!='('                /*  find beginning '('   */
+             while ( (start>(unsigned char *)msg->text) && *(--start)!='('                /*  find beginning '('   */
               && (isdigit(*start) || *start==':' || *start=='/'     /* and check address FTN */
                   || *start=='.' || isalpha(*start) || *start=='@'));
-           if (*start=='(' || *start==' ' ||  *start=='#') {  /* "(1:2/3.4)" or "(1:2/3.4@dom)" or " 1:2/3.4@dom)" or "#1:2/3.4) is found */
+             if (*start=='(' || *start==' ' ||  *start=='#') {  /* "(1:2/3.4)" or "(1:2/3.4@dom)" or " 1:2/3.4@dom)" or "#1:2/3.4) is found */
 		      start++;         /*  skip '(' */
 		      i=0;
 
@@ -393,11 +393,11 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
       msg->destAddr.zone = header->destAddr.zone;
       msg->origAddr.zone = header->origAddr.zone;
 
-      msg->textLength += xscatprintf(&text,"\001INTL %u:%u/%u %u:%u/%u\r",msg->destAddr.zone,msg->destAddr.net,msg->destAddr.node,msg->origAddr.zone,msg->origAddr.net,msg->origAddr.node);
-      xstrcat(&text,msg->text);
+      msg->textLength += xscatprintf((char **)(&text),"\001INTL %u:%u/%u %u:%u/%u\r",msg->destAddr.zone,msg->destAddr.net,msg->destAddr.node,msg->origAddr.zone,msg->origAddr.net,msg->origAddr.node);
+      xstrcat((char **)(&text),msg->text);
       nfree(msg->text);
       msg->text = text;
-      
+
       w_log( LL_PKT, "Mail without INTL-Kludge. Assuming %i:%i/%i.%i -> %i:%i/%i.%i",
 		    msg->origAddr.zone, msg->origAddr.net, msg->origAddr.node, msg->origAddr.point,
 		    msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);

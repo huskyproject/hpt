@@ -92,7 +92,9 @@ extern "C" {
 #define NOT_ALIKE          0
 #define LENGTH_MISMATCH    32767
 
+#if 0
 static int l_dist_list(char *key, char **list, char **match, int dist[], int match_limit, int *threshold);
+#endif
 static int l_dist_raw(char *str1, char *str2, int len1, int len2);
 
 
@@ -128,6 +130,7 @@ static int  do_perl=1;
   w_log(*level, "%s", str);
   XSRETURN_EMPTY;
 }
+#if 0
 int l_dist_list(char *key,
                 char **list,
                 char **match,
@@ -176,6 +179,7 @@ int l_dist_list(char *key,
    }  /*  for k */
    return(num);
 }
+#endif
 #define SMALLEST_OF(x,y,z)       ( (x<y) ? min(x,z) : min(y,z) )
 #define ZERO_IF_EQUAL(ch1,ch2)   ( (ch1==ch2) ? 0 : CHANGE )
 static int l_dist_raw(char *str1, char *str2, int len1, int len2)
