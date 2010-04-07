@@ -5,30 +5,9 @@
 # Tested on MS Visual C 6.0
 #
 
-## programs ##
-CC      = cl
-AR      = lib
-LINK    = link
-RANLIB  =
-RM      = del
+!include ../../huskymak.cfg
 
-## file suffixes ##
-_C        = .c
-_OBJ      = .obj
-_EXP      = .exp
-_LIB      = .lib
-_DLL      = .dll
-_EXE      = .exe
-
-## programs ##
-CFLAGS  = -nologo -Zp1
-CINCL   = -I$(H_DIR)
-CDEFS   = -D__MSVC__ -D__NT__ -DNT -DWINNT -DWIN32 -D_CONSOLE
-COPT    = -Ob2
-
-EXENAMEFLAG = -Fe
-
-LIBS    =
+CFLAGS  = $(CFLAGS) -D__MSVC__
 
 PROGRAMS= fidoroute$(_EXE)
 
@@ -39,7 +18,7 @@ programs: $(PROGRAMS)
 
 $(PROGRAMS):
         @echo Create $(PROGRAMS)...
-        @$(_SRC_DIR)$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $** $(LIBS)
+        @$(_SRC_DIR)$(CC) $(CFLAGS) $(EXENAMEOPT)$(B)$@ $**
 
 man:
 
