@@ -9,7 +9,7 @@ Group: Applications/FTN
 Summary: HPT - the Husky Project tosser
 URL: http://husky.sf.net
 License: GPL
-Requires: fidoconf >= 1.9, smapi >= 2.5, areafix >= 1.9
+Requires: smapi >= 2.5, areafix >= 1.9
 Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
