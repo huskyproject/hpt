@@ -76,7 +76,7 @@ $(HPTTREE): $(HPTTREEOBJS)
 
 $(HPT): $(HPTOBJS)
 	@echo Create $(HPT)...
-	@$(LINK) $(LFLAGS) $(LINKNAMEOPT)$@ $** $(LIBSL)
+	@$(LINK) $(LFLAGS) $(LINKNAMEOPT)$@ $** $(LIBSL) $(PERLDLL)
 
 clean:
 	-$(RM) $(RMOPT) VC*$(_PDB)
