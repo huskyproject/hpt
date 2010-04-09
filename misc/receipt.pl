@@ -28,7 +28,7 @@
 my $flagfile='/fido/flag/netmail-in'; # Flag file for indicating new netmail
 my $Id='$Id$';
 my $file=$1 if( $Id =~ /Id: ([^ ]+),v / );
-my @myaddr=myaddr();
+my @myaddr=%config? @{$config{addr}} : myaddr();
 my $myname="Receipt Robot";
 my $report_tearline="$file (HPT perl hook)";
 
