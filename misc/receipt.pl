@@ -42,7 +42,7 @@ w_log('Z', "Perl($file): Netmail with ARQ from $fromaddr to $toaddr");
     if($#a<0) # not for my
     {
         my $origmsgid=extractmsgid($text);
-        my $rcptext = 
+        my $rcptext = "\x01REPLY: $origmsgid\r" .
           "    Hello $fromname!\r" .
           "\r" .
           "Your message (msgid: $origmsgid) with ARQ passed via $myaddr[0] to $route.\r" .
@@ -84,7 +84,7 @@ w_log('Z', "Perl($file): Netmail with RRQ from $fromaddr to $toaddr");
     if($#a>=0) # for my
     {
         my $origmsgid=extractmsgid($text);
-        my $rcptext = "\r"
+        my $rcptext = "\x01REPLY: $origmsgid\r"
         .  "    Hello $fromname!\r\r"
         .  "Your message to $toname, $toaddr (msgid: $origmsgid) successfully delivered.\r\r"
         .  "Original message header:\r"
