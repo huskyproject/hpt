@@ -32,10 +32,6 @@ test -s fidoroute/fidoroute \
 %clean
 rm -rf %{buildroot}
 
-#%post -p /sbin/ldconfig
-
-#%postun -p /sbin/ldconfig
-
 %files
 %defattr(-,root,root)
 %{_prefix}/*
