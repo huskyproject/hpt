@@ -1365,6 +1365,7 @@ This statement cannot be repeated.
 * FileBox::                     filebox directory
 * FileBoxAlways::               pack to filebox even if link is not busy
 * LinkBundleNameStyle::         style of filenames of arcmail bundles for link
+* LinkGrp::                     main group for the link
 * LinkMsgBaseDir::              base directory of areas for link
 * NetMailFlavour::              flavour for outgoing netmail
 * NoRules::                     don't send area rules to link on subscription
@@ -1393,7 +1394,7 @@ If this statement is "on" and our system wants to delete area from
 remote config then unsubscribe messages to areafix robot of this link
 looks like "~areaname". The area on the remote system will be deleted
 from config file, if our system is allowed to delete this area ("allow
-area delete" in FastEcho, and @code{LinkGrp} must be the same as
+area delete" in FastEcho, and @xref{LinkGrp} must be the same as
 EchoArea's @code{-g <group>} in @value{HPT}).
 
 Our system sends deleting command only for systems with
@@ -1730,7 +1731,7 @@ This statement can only be repeated for different links. Works only for
 links which have @code{FileBox} or when @code{FileBoxesDir} is set.
 
 
-@node LinkBundleNameStyle, LinkMsgBaseDir, FileBoxAlways, Link Keywords
+@node LinkBundleNameStyle, LinkGrp, FileBoxAlways, Link Keywords
 @subsection LinkBundleNameStyle
 @findex LinkBundleNameStyle
 @table @asis
@@ -1747,7 +1748,33 @@ It is similar @code{BundleNameStyle} keyword.
 
 This statement can only be repeated for different links.
 
-@node LinkMsgBaseDir, NetMailFlavour, LinkBundleNameStyle, Link Keywords
+@node LinkGrp, LinkMsgBaseDir, LinkBundleNameStyle, Link Keywords
+@subsection LinkGrp
+@findex LinkGrp
+@table @asis
+@item Syntax:
+@code{LinkGrp <Group name>}
+@item Example:
+@code{LinkGrp INTERNATIONAL}
+@end table
+
+   Specifies a group to use for areas auto-created from this link. Also
+link can delete echo areas in his @code{LinkGrp} group.
+
+   In this exmaple:
+
+   1) string @code{INTERNATIONAL} will be added to a new area record unless
+@code{AutoCreateDefaults} defines implicit group;
+
+   2) links that have no access to group @code{INTERNATIONAL} can't forward requests to uplink with @code{LinkGrp INTERNATIONAL};
+
+   3) this link can delete echo areas with @code{-g INTERNATIONAL} group if @code{AdvancedAreafix} is enabled for this link.
+
+@xref{AdvancedAreafix}
+
+This statement can only be repeated for different links.
+
+@node LinkMsgBaseDir, NetMailFlavour, LinkGrp, Link Keywords
 @subsection LinkMsgBaseDir
 @findex LinkMsgBaseDir
 @table @asis
