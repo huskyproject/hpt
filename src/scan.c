@@ -790,6 +790,7 @@ void scanNMArea(s_area *area)
                 w_log(LL_NETMAIL,"%s deleted", textforlog);
                 i--;
             }
+            nfree(textforlog);
 
         } /* endfor */
 
