@@ -708,6 +708,7 @@ void scanNMArea(s_area *area)
 
         /*  scan all Messages and test if they are already sent. */
         while (i < highestMsg) {
+            char *textforlog = NULL;
             msg = MsgOpenMsg(netmail, MOPEN_RW, ++i);
 
             /*  msg does not exist */
@@ -747,10 +748,13 @@ void scanNMArea(s_area *area)
 
             nfree(ctl);
 
-            ctl = safe_strdup(aka2str(dest)); /* use this just as temp buffer */
-            w_log( LL_DEBUGB, "%s::%u Msg from %s to %s",__FILE__,__LINE__,
-                  aka2str(orig), ctl);
-            nfree(ctl);
+//            ctl = safe_strdup(aka2str(dest)); /* use this just as temp buffer */
+//            w_log( LL_DEBUGB, "%s::%u Msg from %s to %s",__FILE__,__LINE__,
+//                  aka2str(orig), ctl);
+//            nfree(ctl);
+            xscatprintf(&textforlog, "Msg #%d from %s to ", i, aka2str(orig));
+            xstrcat(&textforlog, aka2str(dest));
+            w_log( LL_DEBUGB, "%s::%u %s", __FILE__, __LINE__, textforlog);
 
             for_us = 0;
             for (j=0; j < config->addrCount; j++)
@@ -783,6 +787,7 @@ void scanNMArea(s_area *area)
             if ((!config->keepTrsMail) && ((!for_us && !from_us) ||
                                            (xmsg.attr&MSGKILL)) && (xmsg.attr&MSGSENT)) {
                 MsgKillMsg(netmail, i);
+                w_log(LL_NETMAIL,"%s deleted", textforlog);
                 i--;
             }
 
