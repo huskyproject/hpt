@@ -3,5 +3,4 @@ config/config
 config/fileareas
 config/links
 config/packer
-config/path
 misc/areafix.hlp
