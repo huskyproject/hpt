@@ -1,4 +1,4 @@
-%define reldate 20100721
+%define reldate 20100726
 %define reltype C
 # may be one of: C (current), R (release), S (stable)
 
