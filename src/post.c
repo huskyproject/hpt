@@ -74,7 +74,7 @@ tearline generation added
 #endif
 
 #define MAX_LINELEN 45
-#define LINPERSECTION 150
+#define LINPERSECTION 0x7FFFFFFFL
 
 #define ENCODE_BYTE(b) (((b) == 0) ? 0x60 : ((b) + 0x20))
 
@@ -117,7 +117,7 @@ void print_help(void) {
     fprintf(stdout,"         -x export message to echo links\n\n");
     fprintf(stdout,"         -d erase input file after posting\n\n");
     fprintf(stdout,"         -u[size] uue-multipart posting\n");
-    fprintf(stdout,"            size - number of lines per section (150 by default)\n\n");
+    fprintf(stdout,"            size - number of lines per section (unlimited by default)\n\n");
     fprintf(stdout,"         -h get help\n\n");
     fprintf(stdout,"         file - text file to be posted or \"-\" for stdin\n\n");
     exit(EX_OK);
@@ -293,7 +293,7 @@ int parse_post_command(struct post_parameters *p, unsigned int argc, char **argv
             break;
             case 'u':   /*  uue-multipart posting */
                 p->uue = atoi(cur_arg+2); /* TODO: additional checks would be great */
-                if(p->uue < 10)
+                if(p->uue < 1) /* zero or negative */
                     p->uue = LINPERSECTION;
             break;
             case 'z':   /*  tearline */
