@@ -280,7 +280,7 @@ char *intl = NULL, *topt = NULL, *fmpt = NULL, *pos = NULL;
   STRLEN n_a;
 
   unused(cv);
-  unused(my_perl);
+  unused(perl);
 
   if (items != 1 && items != 2)
   { w_log(LL_ERR, "wrong params number to log (need 1 or 2, exist %d)", items);
@@ -393,7 +393,7 @@ static XS(perl_alike)
   STRLEN n_a;
 
   unused(cv);
-  unused(my_perl);
+  unused(perl);
 
   if (items!=2)
   {
@@ -526,7 +526,7 @@ static XS(perl_putMsgInArea)
   s_message msg;
 
   unused(cv);
-  unused(my_perl);
+  unused(perl);
 
   if (items != 9 && items != 10)
   { w_log(LL_ERR, "wrong params number to putMsgInArea (need 9 or 10, exist %d)", items);
@@ -652,7 +652,7 @@ static XS(perl_str2attr)
   STRLEN n_a;
 
   unused(cv);
-  unused(my_perl);
+  unused(perl);
 
   w_log(LL_WARN, "str2attr() deprecated, use numeric attributes instead");
   if (items != 1)
@@ -674,7 +674,7 @@ static XS(perl_attr2str)
   register unsigned long attr;
 
   unused(cv);
-  unused(my_perl);
+  unused(perl);
 
   if (items != 1)
   { w_log(LL_ERR, "wrong params number to attr2str (need 1, exist %d)", items);
@@ -697,7 +697,7 @@ static XS(perl_flv2str)
   dXSARGS;
 
   unused(cv);
-  unused(my_perl);
+  unused(perl);
 
   if (items != 1)
   { w_log(LL_ERR, "wrong params number to flv2str (need 1, exist %d)", items);
@@ -718,7 +718,7 @@ static XS(perl_fts_date)
   STRLEN n_a;
 
   unused(cv);
-  unused(my_perl);
+  unused(perl);
 
   w_log(LL_WARN, "fts_date() deprecated, use numeric unixtime instead");
   if (items != 1)
@@ -742,7 +742,7 @@ static XS(perl_date_fts)
   struct tm *tm;
 
   unused(cv);
-  unused(my_perl);
+  unused(perl);
 
   w_log(LL_WARN, "date_fts() deprecated, use numeric unixtime instead");
   if (items != 1)
@@ -765,7 +765,7 @@ static XS(perl_myaddr)
   dXSARGS;
 
   unused(cv);
-  unused(my_perl);
+  unused(perl);
 
   w_log(LL_WARN, "myaddr() deprecated, use @{$config{addr}} instead");
   if (items != 0)
@@ -789,7 +789,7 @@ static XS(perl_nodelistDir)
   dXSARGS;
 
   unused(cv);
-  unused(my_perl);
+  unused(perl);
 
   w_log(LL_WARN, "nodelistDir() deprecated, use $config{nodelistDir} instead");
   if (items != 0)
@@ -812,7 +812,7 @@ static XS(perl_crc32)
   char *str;
 
   unused(cv);
-  unused(my_perl);
+  unused(perl);
 
   if (items != 1)
   { w_log(LL_ERR, "wrong params number to crc32 (need 1, exist %d)", items);
@@ -832,7 +832,7 @@ static XS(perl_mktime)
   struct tm tm;
 
   unused(cv);
-  unused(my_perl);
+  unused(perl);
 
   if (items < 6 || items > 9)
   { w_log(LL_ERR, "wrong params number to mktime (need 6 to 9, exist %d)", items);
@@ -864,7 +864,7 @@ static XS(perl_strftime)
   STRLEN n_a;
 
   unused(cv);
-  unused(my_perl);
+  unused(perl);
 
   if (items != 1 && items != 2 && (items < 7 || items > 10))
   { w_log(LL_ERR, "wrong params number to strftime (need 1, 2, 7..10, exist %d)", items);
@@ -903,7 +903,7 @@ static XS(perl_gmtoff)
   time_t t;
 
   unused(cv);
-  unused(my_perl);
+  unused(perl);
 
   if (items > 1)
   { w_log(LL_ERR, "wrong params number to gmtoff (need 0 or 1, exist %d)", items);
@@ -943,7 +943,7 @@ static XS(perl_warn)
   dXSARGS;
 
   unused(cv);
-  unused(my_perl);
+  unused(perl);
 
   if (items == 1) perl_warn_sv (ST(0));
   XSRETURN_EMPTY;
@@ -975,7 +975,7 @@ static void xs_init(void)
 {
   static char *file = __FILE__;
 
-  unused(my_perl);
+  unused(perl);
 
 #ifndef DO_HPM
 #if defined(__OS2__)
