@@ -82,16 +82,37 @@ sub checksfilter{
   if( $text =~ /^(.*\r)?\x01MSGID: ([^\r]+)\r/m ){
     $msgid = "$2";
   }
+  my $pid_eid=undef;
+  if( $text =~ /^(.*\r)?\x01[PE]ID: ([^\r]+)\r/m ){
+    $pid_eid = "$2";
+  }
+  my $tearline=undef;
+  if( $text =~ /^(.*\r)?--- ([^\r]+)\r/m ){
+    $tearline = "$2";
+  }
 
   if( ! scalar($area) ) # if netmail
   {
 
     # Checks for robots
-    $fromrobot = grep( /$fromname/, @fromrobotnames );
-    $torobot = grep( /$toname/, @myrobotnames );
+    my $fromrobot = grep( /$fromname/, @fromrobotnames );
+    my $torobot = grep( /$toname/, @myrobotnames );
     return "Message from robot to robot" if( $fromrobot and $torobot );
-    undef $torobot;
     undef $fromrobot;
+
+    my $tomyaddr = grep( /$toaddr/, myaddr() );
+    if( $torobot and $tomyaddr )
+    {
+      my $bounce_subj = "Message to not my robot";
+      my $bouncetext = "Hello!\r\rYou send message to alien robot via my node. Please send this message directly!.\rOriginal message text:\r=========\r$msgtext\r=========\r";
+      $bouncetext =~ s/^---/===/;
+      $bouncetext =~ s/^ * Origin:/ + Origin:/;
+      $bouncetext .= "\r--- $report_tearline";
+      putMsgInArea("",$myname,$fromname,$myaddr,$fromaddr,$bounce_subj,"","Uns Pvt Loc",$bouncetext,1);
+      return $bounce_subj;
+    }
+
+    undef $torobot;
   } # if netmail
 
   # Check for big message
@@ -109,6 +130,8 @@ sub checksfilter{
               . "Subject: $subject\r"
               . (scalar($area)? "Area: $area\r" : "")
               . (scalar($msgid)? "MsgID: $msgid\r" : "")
+              . (scalar($tid_eid)? "TID: $tid_eid\r" : "")
+              . (scalar($tearline)? "Tearline: $tearline\r" : "")
               . "Size: $len bytes\r"
               . "\rSysop of the $myaddr may pass this message manually later or it may conclusively remove this message.\r"
               . "\r--- $report_tearline\r * Origin: $report_origin ($myaddr)\r";
@@ -140,21 +163,28 @@ sub checksfilter{
       }
       if( $check_CHRS_IMBPC>0 && $chrs[0] =~ /(IBMPC)/ )
       {
-        $msgtext .="* Warning: Charset name IBMPC is deprecated:\r   " . $chrs[0] . "\r";
+        $msgtext .="* Warning: Charset name IBMPC is deprecated: \"" . $chrs[0] . "\"\r";
         if( $fromaddr =~ m(^2:[56][0-9][0-9]{2}?/) )
         {
-          $msgtext .="  Should be: \@CHRS: CP866 2\r"
-                  ."  To fix, set \"XLATLOCALSET CP866\" in golded.cfg "
-                  ."for Golded on Windows or DOS\r";
+          $msgtext .="  It's recommended: \@CHRS: CP866 2\r";
+          if( ($pid_eid =~ /GED/i) or ($tearline =~ /(GED|Golded)/i) )
+          {
+            $msgtext ."  To fix, set \"XLATLOCALSET CP866\" in golded.cfg "
+                     ."for your Golded on Windows or DOS\r";
+          }
         }
       }
-      if( $check_CHRS_FIDO7>0 && $chrs[0] =~ /(FIDO|7)/ )
+      if( $check_CHRS_FIDO7>0 && $chrs[0] =~ /(FIDO|\+7)/ )
       {
-        $msgtext .="* Error: Russian fido uses charset CP866:\r"
-                ."  Present:   " . $chrs[0] . "\r"
-                ."  Should be: \@CHRS: CP866 2\r"
-                ."  To fix, set \"XLATLOCALSET CP866\" in golded.cfg for Golded on Windows or DOS\r"
+        $msgtext .="* Error: Your charset is invalid (and russian fido uses charset CP866 usually):\r"
+                ."  Present:     " . $chrs[0] . "\r"
+                ."  Recommended: \@CHRS: CP866 2\r"
                  ;
+        if( ($pid_eid =~ /GED/i) or ($tearline =~ /(GED|Golded)/i) )
+        {
+          $msgtext ."  To fix, set \"XLATLOCALSET CP866\" in golded.cfg "
+                   ."for your Golded on Windows or DOS\r";
+        }
       }
       if( $msgtext )
       {
