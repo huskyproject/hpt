@@ -101,7 +101,7 @@ sub checksfilter{
     undef $fromrobot;
 
     my $tomyaddr = grep( /$toaddr/, myaddr() );
-    if( $torobot and $tomyaddr )
+    if( $torobot and ! $tomyaddr )
     {
       my $bounce_subj = "Message to not my robot";
       my $bouncetext = "Hello!\r\rYou send message to alien robot via my node. Please send this message directly!.\rOriginal message text:\r=========\r$msgtext\r=========\r";
