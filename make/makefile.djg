@@ -4,7 +4,7 @@
 
 # include Husky-Makefile-Config,
 # copy this file from ../../huskybse/huskymak.cfg.djg
-include ../../huskymak.cfg
+include ../../huskybse/huskymak.cfg.djg
 
 include makefile.inc
 
