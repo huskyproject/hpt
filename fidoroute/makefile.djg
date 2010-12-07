@@ -20,5 +20,4 @@ default:
 all	: programs
 programs:
 	@echo Create $(PROGRAMS)...
-	$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $(EXENAME) $(PROGRAMS).cpp
-	@strip$(_EXE) $(EXENAME)
+	$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $(EXENAME) $(PROGRAMS).cpp

@@ -37,30 +37,24 @@ programs: $(PROGRAMS)
 
 $(PKTINFO): $(PKTINFOOBJS)
 	@echo Create $(PKTINFO)
-	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
-	strip$(_EXE) $@
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
 
 $(TPKT): $(TPKTOBJS)
 	@echo Create $(TPKT)
-	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
-	@strip$(_EXE) $@
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
 
 $(TXT2PKT): $(TXT2PKTOBJS)
 	@echo Create $(TXT2PKT)
-	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
-	@strip$(_EXE) $@
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
 
 $(HPTLINK): $(HPTLINKOBJS)
 	@echo Create $(HPTLINK)
-	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
-	@strip$(_EXE) $@
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
 
 $(HPTTREE): $(HPTTREEOBJS)
 	@echo Create $(HPTTREE)
-	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
-	@strip$(_EXE) $@
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
 
 $(HPT): $(HPTOBJS)
 	@echo Create $(HPT)
-	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
-	@strip$(_EXE) $@
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
