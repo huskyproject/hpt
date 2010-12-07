@@ -1,31 +1,25 @@
-
-DEBUG=
-# set to -g for debugging, NEVER use -s !!!
-
-CC=gcc
-RM=del
-
-#CDEFS+=-D__NT__ 
-#
-CFLAGS=-I../h -I../.. -I../../huskylib -I../../smapi -I../../fidoconf -I../../areafix -c -Wall -O3 $(DEBUG)
-#CFLAGS=-I../h -I../.. -c -Wall -O3 $(DEBUG)
-LFLAGS=$(DEBUG)
-
-EXENAMEFLAG=-o 
-SRC_DIR	=../src/
-_OBJ	=.o
-_EXE	=.exe
-_C	=.c
-
-#LIBS=-L../../smapi -L../../fidoconf -lfidoconfigmgw -lsmapimgw -luser32
-
-default: all
-
-
+## include common makefiles part ##
+include ../../huskybse/huskymak.mgw
 include makefile.inc
 
-LIBS=../../smapi/make/smapi.dll ../../fidoconf/fidoconf.dll\
-  ../../areafix/make/areafix.dll ../../huskylib/make/husky.dll
+# includes directories
+CINCL	+= -I$(H_DIR) -I../../fidoconf -I../../smapi/ -I../../huskylib/ -I../../areafix/
+
+# libraries need to build binary file
+LIBS	+= ../../areafix/make/$(LIBPREFIX)areafix$(LIBSUFFIX)$(_LIB) \
+	   ../../fidoconf/make/$(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(_LIB) \
+	   ../../smapi/make/$(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
+	   ../../huskylib/make/$(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB)
+
+READMEFILES= ../BUG-REPORTING ../BUGS ../ChangeLog ../COPYING ../CREDITS \
+	     ../INSTALL ../README ../TODO ../VERSION ../filter.pl
+
+default:
+	@echo
+	@echo Run \'make programs\' to build static version of programs
+	@echo \($(PROGRAMS)\)
+	@echo
+	@echo Run \'make all\' to build all above
 
 all:	programs
 
@@ -33,31 +27,28 @@ programs: $(PROGRAMS)
 
 %$(_OBJ): $(_SRC_DIR)%$(_C)
 	@echo Compiling $<
-	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(OPTCFLAGS) $<
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(OBJOPT) $<
 
 $(PKTINFO): $(PKTINFOOBJS)
 	@echo Create $(PKTINFO)
-	-@echo !cflags!: $(CFLAGS) 
-	-@echo libs: $(LIBS) 
-	@$(CC) $(STRIP) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
 
 $(TPKT): $(TPKTOBJS)
 	@echo Create $(TPKT)
-	@$(CC) $(STRIP) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
 
 $(TXT2PKT): $(TXT2PKTOBJS)
 	@echo Create $(TXT2PKT)
-	@$(CC) $(STRIP) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
 
 $(HPTLINK): $(HPTLINKOBJS)
 	@echo Create $(HPTLINK)
-	@$(CC) $(STRIP) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
 
 $(HPTTREE): $(HPTTREEOBJS)
 	@echo Create $(HPTTREE)
-	@$(CC) $(STRIP) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
 
 $(HPT): $(HPTOBJS)
 	@echo Create $(HPT)
-	@$(CC) $(STRIP) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
-
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
