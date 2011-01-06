@@ -22,13 +22,13 @@
 # usage example:
 # ==============
 # BEGIN{ require "loop.pl" }
-# sub filter() {}
+# sub filter(){ my $r=checkloop(); if( length($r)>0 ){ return $r; } }
 # sub process_pkt{}
 # sub after_unpack{}
 # sub before_pack{}
 # sub pkt_done{}
 # sub scan{}
-# sub route{ &checkloop; }
+# sub route{ if(length(checkloop()>0){ return (myaddr())[0]; } }
 # sub hpt_exit{}
 # ==============
 
@@ -90,11 +90,11 @@ sub checkloop()
       my $msgtext = $text;
         
        # invalidate control stuff
-       $msgtext =~ s/\x01/@/g;
-       $msgtext =~ s/\n/\\x0A/g;
-       $msgtext =~ s/\rSEEN-BY/\rSEEN+BY/g;
-       $msgtext =~ s/\r--- /\r=== /g;
-       $msgtext =~ s/\r \* Origin: /\r + Origin: /g;
+       $msgtext =~ s/\x01/@/gm;
+       $msgtext =~ s/\n/\\x0A/gm;
+       $msgtext =~ s/\rSEEN-BY/\rSEEN+BY/gm;
+       $msgtext =~ s/\r---([ \r])/\r-+-\1/gm;
+       $msgtext =~ s/\r \* Origin: /\r + Origin: /gm;
        $duplines =~ s/\x01/@/g;
        $msgtext=
              "\r Loop detected in message from $fromname, $fromaddr to $toname, $toaddr\r"

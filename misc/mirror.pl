@@ -76,11 +76,11 @@ sub mirror()
     my $msgtext = $text;
 
 # invalidate control stuff
-    $msgtext =~ s/\x01/@/g;
-    $msgtext =~ s/\n/\\x0A/g;
-    $msgtext =~ s/\rSEEN-BY/\rSEEN+BY/g;
-    $msgtext =~ s/\r--- /\r=== /g;
-    $msgtext =~ s/\r \* Origin: /\r + Origin: /g;
+    $msgtext =~ s/\x01/@/gm;
+    $msgtext =~ s/\n/\\x0A/gm;
+    $msgtext =~ s/\rSEEN-BY/\rSEEN+BY/gm;
+    $msgtext =~ s/\r--- /\r=== /gm;
+    $msgtext =~ s/\r \* Origin: /\r + Origin: /gm;
     $msgtext="$date $fromname ($fromaddr) wrote:\r\r"
            . "==== begin of message ====\r"
            . "$msgtext\r"
@@ -92,7 +92,7 @@ sub mirror()
       putMsgInArea( $area, $myname, $fromname, $myaddr, $myaddr, 
                     $report_subj, "", "Uns Loc", $msgtext, 1 );
     }else{
-      $msgtext =~ s/\r/\n/g;
+      $msgtext =~ s/\r/\n/gm;
       my $cmd="$txt2pkt -e $area -xf $myaddr -xt $myaddr -nf '$myname'"
              ." -nt '$fromname' -s '$report_subj' -t '$report_tearline'"
              ." -o '$report_origin' -d '$pkt_dir' -";
