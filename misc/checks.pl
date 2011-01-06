@@ -103,11 +103,18 @@ sub checksfilter{
     my $tomyaddr = grep( /$toaddr/, myaddr() );
     if( $torobot and ! $tomyaddr )
     {
+      my $msgtext=$text;
+      $msgtext =~ s/\x01/@/gm;
+      $msgtext =~ s/\n/\\x0A/gm;
+      $msgtext =~ s/\rSEEN-BY/\rSEEN+BY/gm;
+      $msgtext =~ s/\r---([ \r])/\r-+-\1/gm;
+      $msgtext =~ s/\r \* Origin: /\r + Origin: /gm;
       my $bounce_subj = "Message to not my robot";
-      my $bouncetext = "Hello!\r\rYou send message to alien robot via my node. Please send this message directly!.\rOriginal message text:\r=========\r$msgtext\r=========\r";
-      $bouncetext =~ s/^---/===/;
-      $bouncetext =~ s/^ * Origin:/ + Origin:/;
-      $bouncetext .= "\r--- $report_tearline";
+      my $bouncetext = "Hello!\r\rYou send message to alien robot via my node. Please send this message directly!.\r"
+      . "Original message header:\r From: \"$fromname\" $fromaddr\r To: \"$toname\" $toaddr\r"
+      . " Date: $date\r Subj: $subject\r Attr: $attr\r Received from: $pktfrom\r"
+      . "Original message text:\r*=========*\r$msgtext\r*=========*\r"
+      . "\r--- $report_tearline";
       putMsgInArea("",$myname,$fromname,$myaddr,$fromaddr,$bounce_subj,"","Uns Pvt Loc",$bouncetext,1);
       return $bounce_subj;
     }
