@@ -250,7 +250,9 @@ int autoCreate(char *c_area, hs_addr pktOrigAddr, ps_addr forwardAddr)
 
     f = fopen(fileName, "a+b");
     if (f == NULL) {
-	fprintf(stderr,"autocreate: cannot open config file\n");
+        w_log( LL_ERR, "%s::autoCreate(): cannot open config file \"%s\", OS error: \"%s\", please check configuration (and run tparser!)",
+               __FILE__, fileName, strerror(errno) );
+//	fprintf(stderr,"autocreate: cannot open config file\n");
         w_log( LL_FUNC, "%s::autoCreate() rc=9", __FILE__ );
 	return 9;
     }
