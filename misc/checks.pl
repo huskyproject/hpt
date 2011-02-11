@@ -95,12 +95,12 @@ sub checksfilter{
   {
 
     # Checks for robots
-    my $fromrobot = grep( /$fromname/, @fromrobotnames );
-    my $torobot = grep( /$toname/, @myrobotnames );
+    my $fromrobot = grep( /$fromname/i, @fromrobotnames );
+    my $torobot = grep( /$toname/i, @myrobotnames );
     return "Message from robot to robot" if( $fromrobot and $torobot );
     undef $fromrobot;
 
-    my $tomyaddr = grep( /$toaddr/, myaddr() );
+    my $tomyaddr = grep( /$toaddr/i, myaddr() );
     if( $torobot and ! $tomyaddr )
     {
       my $msgtext=$text;
