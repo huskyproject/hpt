@@ -2599,6 +2599,8 @@ base areas).
 
 This statement can only be repeated for different links.
 
+WARNING! This statement also enables file forwarding in htick!
+
 @node ForwardRequestFile, ForwardRequestMask, ForwardPkts, Link Keywords
 @subsection ForwardRequestFile
 @findex ForwardRequestFile
