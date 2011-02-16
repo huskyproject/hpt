@@ -1696,6 +1696,8 @@ base areas).
 
 This statement can only be repeated for different links.
 
+WARNING! This statement also enables file forwarding in htick!
+
 @node FileBox, FileBoxAlways, ForwardPkts, Link Keywords
 @subsection FileBox
 @findex FileBox
