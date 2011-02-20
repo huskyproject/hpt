@@ -1403,7 +1403,7 @@ static void PutRoutingHusky( void )
   CmntSym = '#';
   fprintf( NewRoute, CREATED, '#', "Husky", MyNode->z, MyNode->n, MyNode->f,
            '#', ctime( &currtime ), '#' );
-  for( level = 1; level < 4; level++ )
+  for( level = 0; level < 4; level++ )
   {
     fprintf( NewRoute, "# *** %s" EOLCHR "", RouteType[level] );
     int i;
