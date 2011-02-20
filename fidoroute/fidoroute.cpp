@@ -128,6 +128,7 @@ static const char *ErrNoMemory = EOLCHR "Unable to allocate memory.";
 static const char *ErrOpenCfg = EOLCHR "Unable to open config file.";
 static const char *ErrNoFile = "Unable to open file.";
 static const char *ErrOpenTmp = EOLCHR "Unable to open temp file.";
+static const char *ErrOpenTmpX = EOLCHR "Unable to open temp file \"%s\"." EOLCHR;
 static const char *ErrOpenDest = EOLCHR "Unable to open dest file.";
 static const char *ErrUnknownRouteType = EOLCHR "Unsupported route type.";
 static const char *ErrUnknownMinType = EOLCHR "Illegal value of \"Minimized\".";
@@ -1572,7 +1573,7 @@ static boolean GetDestFile( char *p, void *Name )
   if( ( NewRoute = fopen( TempFile, "wt" ) ) == NULL )
   {
 //  Error(ErrOpenTmp);
-    ErrorS( "Unable to open temp file \"%s\"", TempFile );
+    ErrorS( ErrOpenTmpX, TempFile );
     return false;
   }
   boolean ReplaceArea = false;
