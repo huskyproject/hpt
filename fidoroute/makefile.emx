@@ -1,13 +1,11 @@
 # $Id$
-# Makefile to build fidoroute/emx with gcc 3.x.x from DJGPP v2.03.
+# Makefile to build fidoroute/emx with gcc 3.x.x
 # No support for the Husky build environment.
 
 # include Husky-Makefile-Config,
-# copy this file from ../../huskybse/huskymak.cfg.djg
+# copy this file from ../../huskybse/huskymak.cfg.emx
 include ../../huskymak.cfg
 
-#redefine compiler
-CC=cpp
 PROGRAMS=fidoroute
 
 default:
