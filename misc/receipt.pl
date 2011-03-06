@@ -117,7 +117,7 @@ sub isattr
 
 sub extractmsgid
 {
- my $text = @_[0];
+ my $text = $_[0];
  $text =~ s/\r\n/\r/gs;
  my @lines = split('\r', $text);
  my @msgid = grep(s/^\x01MSGID: //, @lines);
