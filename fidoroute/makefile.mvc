@@ -1,11 +1,18 @@
+# $Id$
 #
-# Microsoft Visual C++ Makefile for build static program(s)
-# No support for the Husky build environment.
+# Microsoft Visual C++ Makefile for build static program fidoroute
 #
 # Tested on MS Visual C 6.0
 #
 
-!include ../../huskymak.cfg
+MAKEFILE_MVC = makefile.mvc
+MAKEFILE_HUSKYMAK = ../../huskybse/huskymak.cfg.mvc
+
+## include common makefiles part ##
+!include $(MAKEFILE_HUSKYMAK)
+
+MAKEFILES = $(MAKEFILE_MVC) $(MAKEFILE_HUSKYMAK) $(MAKEFILE_INC)
+
 
 CFLAGS  = $(CFLAGS) -D__MSVC__
 
@@ -14,7 +21,7 @@ PROGRAMS= fidoroute$(_EXE)
 default: all
 
 all: programs
-programs: $(PROGRAMS)
+programs: $(PROGRAMS) $(MAKEFILES)
 
 $(PROGRAMS):
         @echo Create $(PROGRAMS)...

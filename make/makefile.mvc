@@ -2,11 +2,15 @@
 #
 # Microsoft Visual C++ Makefile for build hpt executable
 
+MAKEFILE_MVC = makefile.mvc
+MAKEFILE_HUSKYMAK = ../../huskybse/huskymak.cfg.mvc
+MAKEFILE_INC = makefile.inc
 
 ## include common makefiles part ##
-!include makefile.inc
-!include ../../huskymak.cfg
+!include $(MAKEFILE_INC)
+!include $(MAKEFILE_HUSKYMAK)
 
+MAKEFILES = $(MAKEFILE_MVC) $(MAKEFILE_HUSKYMAK) $(MAKEFILE_INC)
 
 ## program options ##
 
@@ -38,15 +42,16 @@ LIBSL	= $(LIBS) $(ZLIBL) \
 	  $(LIBPREFIX)areafix$(LIBSUFFIX)$(_LIB)
 
 !endif
-	  
+
 default:
-	@echo Set DYNLIBS=1 in huskymak.cfg to build dynamic version of program
-	@echo Run 'make all' to build ($(PROGRAMS))
+	@echo Specify a parameter DYNLIBS=1 in the command line to build with dynamic version
+	@echo of the library
+	@echo Run 'make all' or 'make programs' to build programs ($(PROGRAMS))
 
-programs: $(PROGRAMS)
 all: programs
+programs: $(PROGRAMS) $(MAKEFILES)
 
-$(OBJS) $(PRGOBJS) : $(HEADERS) makefile.mvc ../../huskymak.cfg makefile.inc
+$(OBJS) $(PRGOBJS) : $(HEADERS) $(MAKEFILES)
 
 {$(_SRC_DIR)}$(_C){$(O)}$(_OBJ)::
 	@$(CC) $(CFLAGS) $(OBJOPT) $(OBJNAMEOPT)$(O) @<<
