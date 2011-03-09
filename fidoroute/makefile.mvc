@@ -6,7 +6,9 @@
 #
 
 MAKEFILE_MVC = makefile.mvc
+!if "$(MAKEFILE_HUSKYMAK)" == ""
 MAKEFILE_HUSKYMAK = ../../huskybse/huskymak.cfg.mvc
+!endif
 
 ## include common makefiles part ##
 !include $(MAKEFILE_HUSKYMAK)
@@ -18,7 +20,10 @@ CFLAGS  = $(CFLAGS) -D__MSVC__
 
 PROGRAMS= fidoroute$(_EXE)
 
-default: all
+default:
+	@echo "Specify a parameter MAKEFILE_HUSKYMAK=/path/to/your.huskymak.cfg to build"
+	@echo "using your own parameters"
+	@echo Run 'make all' to build ($(PROGRAMS))
 
 all: programs
 programs: $(PROGRAMS) $(MAKEFILES)
