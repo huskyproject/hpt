@@ -39,6 +39,11 @@
 This document describes @value{HPT} @value{VERSION}, a Fidonet Message
 Tosser for OS/2, Windows, BeOS and Unix.
 
+@value{HPT} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords,
+@xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
 @menu
 * Overview::                    What is @value{HPT}?
 * Installation::                Installation. @emph{Read this!}
@@ -97,6 +102,7 @@ or "Compile the Source Code" chapters.
 
 @enumerate
 @item Read FIDOCONFIG documentation about location of config-file
+and majority of the configuration statements.
 @item Copy sample config files to config directory
 @item Edit config files for your purposes
 @item Run @code{tparser} from FIDOCONFIG package to test your config
@@ -261,7 +267,9 @@ P.S. all this people make bug fixes, so I don't mention it.
 @chapter @value{HPT} @value{VERSION} Configuration Reference
 
 @value{HPT} is based on FIDOCONFIG library, so read documentation of
-FIDOCONFIG about location of config file and keywords ideology.
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords,
+@xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
 
 @menu
 * Using config::                Notes about fidoconfig usage in hpt
@@ -333,6 +341,10 @@ define links and areas before any carbon definitions
 @node Keywords, Files and Paths, Using config, Configuration Reference
 @section General Keywords
 
+@value{HPT} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords,
+@xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
 
 @menu
 * AddToSeen::                   add addr to seen-by's
@@ -1001,6 +1013,11 @@ This statement cannot be repeated.
 @node Files and Paths, Link Keywords, Keywords, Configuration Reference
 @section Files and Paths
 
+@value{HPT} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords,
+@xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
 @menu
 * AdvStatisticsFile::           binary statistic file
 * AreasMaxDupeAge::             max age for dupes in CommonDupeBase
@@ -1048,8 +1065,8 @@ Set maximum days for storing you hashes in CommonDupeBase.
 Default value is 5.
 
 For any other dupe base type please use @code{-DupeHistory}
-option in @xref{EchoArea,,,fidoconfig, fidoconfig} or
-@xref{EchoAreaDefaults,,,fidoconfig, fidoconfig}.
+option in @ref{EchoArea,,,fidoconfig, fidoconfig} or
+@ref{EchoAreaDefaults,,,fidoconfig, fidoconfig}.
 
 This statement cannot be repeated.
 
@@ -1379,6 +1396,11 @@ This statement cannot be repeated.
 @end menu
   @ref{AreafixReportsAttr,,,fidoconfig,fidoconfig}::          set flags to areafix reports for the link
 
+@value{HPT} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords,
+@xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
 
 @node AdvancedAreafix, AllowEmptyPktPwd, Link Keywords, Link Keywords
 @subsection AdvancedAreafix
@@ -1394,7 +1416,7 @@ If this statement is "on" and our system wants to delete area from
 remote config then unsubscribe messages to areafix robot of this link
 looks like "~areaname". The area on the remote system will be deleted
 from config file, if our system is allowed to delete this area ("allow
-area delete" in FastEcho, and @xref{LinkGrp} must be the same as
+area delete" in FastEcho, and @ref{LinkGrp} must be the same as
 EchoArea's @code{-g <group>} in @value{HPT}).
 
 Our system sends deleting command only for systems with
@@ -1772,7 +1794,7 @@ link can delete echo areas in his @code{LinkGrp} group.
 
    3) this link can delete echo areas with @code{-g INTERNATIONAL} group if @code{AdvancedAreafix} is enabled for this link.
 
-@xref{AdvancedAreafix}
+@xref{AdvancedAreafix}.
 
 This statement can only be repeated for different links.
 
@@ -1991,6 +2013,12 @@ This statement can only be repeated for different links.
 * NetmailExtern::               specify the external Program to pass netmail msgs to
 
 @end menu
+
+@value{HPT} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords,
+@xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
 
 @node CarbonAddr, CarbonAndQuit, Carbon Copy, Carbon Copy
 @subsection  CarbonAddr
@@ -2742,6 +2770,12 @@ without knowing their areafix passwords, you should enable allowRemoteControl
 token only for yourself or your cosysop.
 
 @node Keyword Index,  , Advanced Concepts, Top
+
+@value{HPT} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords,
+@xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
 @appendix Configuration File Keyword Index
 @printindex fn
 
