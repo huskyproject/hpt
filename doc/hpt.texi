@@ -39,6 +39,11 @@
 This document describes @value{HPT} @value{VERSION}, a Fidonet Message
 Tosser for OS/2, Windows, BeOS and Unix.
 
+@value{HPT} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords,
+@xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
 @menu
 * Overview::                    What is @value{HPT}?
 * Installation::                Installation. @emph{Read this!}
@@ -97,6 +102,7 @@ or "Compile the Source Code" chapters.
 
 @enumerate
 @item Read FIDOCONFIG documentation about location of config-file
+and majority of the configuration statements.
 @item Copy sample config files to config directory
 @item Edit config files for your purposes
 @item Run @code{tparser} from FIDOCONFIG package to test your config
@@ -261,8 +267,10 @@ P.S. all of this people makes bug fixes, so I don't mention it.
 @node Configuration Reference, Advanced Concepts, Installation, Top
 @chapter @value{HPT} @value{VERSION} Configuration Reference
 
-@value{HPT} based on FIDOCONFIG library, so read documentation of
-FIDOCONFIG about location of config file and keywords ideology.
+@value{HPT} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords,
+@xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
 
 @menu
 * Using config::                Notes about fidoconfig usage in hpt
@@ -335,6 +343,10 @@ define links and areas before any carbone definitions
 @node Keywords, Files and Paths, Using config, Configuration Reference
 @section General Keywords
 
+@value{HPT} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords,
+@xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
 
 @menu
 * AddToSeen::                   add addr to seen-by's
@@ -1570,6 +1582,12 @@ command.com.
 * TempOutbound::                temporary outbound path
 @end menu
 
+@value{HPT} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords,
+@xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
+
 @node AdvisoryLock, AdvStatisticsFile, Files and Paths, Files and Paths
 @subsection AdvisoryLock
 @findex AdvisoryLock
@@ -2142,6 +2160,12 @@ This statement cannot be repeated.
 * ReducedSeenBY::               reduced seen-by mode (FSC-0093)
 * RemoteRobotName::             remote "areafix" name
 @end menu
+
+@value{HPT} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords,
+@xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
 
 @node AccessGrp, AdvancedAreafix, Link Keywords, Link Keywords
 @subsection AccessGrp
@@ -3062,6 +3086,12 @@ This statement can only be repeated for different links.
 * WriteOnly::                   set link(s) writeonly for echoarea(s)
 @end menu
 
+@value{HPT} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords,
+@xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
+
 @node BadArea, DupeArea, Area Definition, Area Definition
 @subsection BadArea
 @findex BadArea
@@ -3421,6 +3451,12 @@ This statement can be repeated.
 * NetmailExtern::               specify the external Program to pass netmail msgs to
 
 @end menu
+
+@value{HPT} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords,
+@xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
 
 @node CarbonAddr, CarbonAndQuit, Carbon Copy, Carbon Copy
 @subsection  CarbonAddr
@@ -4155,6 +4191,12 @@ $toname, $attr.
 
 @end table
 @node Keyword Index,  , Advanced Concepts, Top
+
+@value{HPT} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords,
+@xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
 @appendix Configuration File Keyword Index
 @printindex fn
 
