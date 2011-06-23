@@ -718,7 +718,7 @@ void scanNMArea(s_area *area)
        memset(&intl_orig, 0, sizeof(intl_orig));
        memset(&intl_dest, 0, sizeof(intl_dest));
        /* TODO: use correctNMAddr from pktread.c? */
-       if (parseINTL(ctl, &intl_orig, &intl_dest))
+       if (parseINTL(ctl, &intl_orig, &intl_dest) & INTL_FOUND)
        {
            if (addrComp(orig, intl_orig)) /* addresses are differ */
            {
