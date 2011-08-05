@@ -1148,12 +1148,7 @@ This statement cannot be repeated.
 @code{FileBoxesDir ../boxes}
 @end table
 
-This statement specifies directory where link file boxes are placed (and
-created if necessary). Currnetly hpt creates file box names in form
-z.n.f.p (ex.: 2.5021.19.1). Trailing ".h" is added if link echomail
-flavour is "hold".
-
-This statement cannot be repeated.
+@xref{FileBoxesDir, , ,fidoconfig, FidoConfig Manual}, for full description.
 
 @node HptPerlFile, ImportLog, FileBoxesDir, Files and Paths
 @subsection HptPerlFile
@@ -1754,6 +1749,7 @@ outbound is used when link is not busy.
 This statement can only be repeated for different links. Works only for
 links which have @code{FileBox} or when @code{FileBoxesDir} is set.
 
+@xref{FileBox}, @xref{FileBoxesDir}.
 
 @node LinkBundleNameStyle, LinkGrp, FileBoxAlways, Link Keywords
 @subsection LinkBundleNameStyle
