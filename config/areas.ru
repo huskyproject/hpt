@@ -1,4 +1,4 @@
-# Описание конференций
-# echoarea <AREATAG> {</путь/к/файлам> [-b формат] | passthrough} [-dupecheck действие] [-dupehistory количество дней] [-a наш адрес] [линк1] [линк2 ...]
+# п·п©п╦я│п╟п╫п╦п╣ п╨п╬п╫я└п╣я─п╣п╫я├п╦п╧
+# echoarea <AREATAG> {</п©я┐я┌я▄/п╨/я└п╟п╧п╩п╟п╪> [-b я└п╬я─п╪п╟я┌] | passthrough} [-dupecheck п╢п╣п╧я│я┌п╡п╦п╣] [-dupehistory п╨п╬п╩п╦я┤п╣я│я┌п╡п╬ п╢п╫п╣п╧] [-a п╫п╟я┬ п╟п╢я─п╣я│] [п╩п╦п╫п╨1] [п╩п╦п╫п╨2 ...]
 #echoarea ECHO.AREA.READ /home/username/fido/msgbase/echo.area.read -b squish -dupecheck del -dupehistory 14 -a 2:5020/9999.99 2:5020/9999
 #echoarea ECHO.AREA.PASS passthrough -dupecheck del -dupehistory 14 -a 2:5020/9999.99 2:5020/9999
