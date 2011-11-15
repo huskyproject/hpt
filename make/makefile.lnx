@@ -1,32 +1,34 @@
+# $Id$
 # Linux legacy makefile
 #
 
-DEBUG=-s
+DEBUG?=-s
 # set to -g for debugging
 
-PERL=0
+PERL?=0
 include makeperl.inc
 
 CC=gcc
 EXENAMEFLAG=-o 
 SRC_DIR=../src/
-CFLAGS=-I../h -I../.. -I../../huskylib -I../../smapi -I../../fidoconf -c -O3 -Wall $(DEBUG) $(PERLFLAGS)
+CFLAGS=-I../h -I../.. -I../../huskylib -I../../smapi -I../../fidoconf -I../../areafix -c -O3 -Wall $(DEBUG) $(PERLFLAGS)
 LFLAGS=$(DEBUG)
 CDEFS =-DUNIX
 
-OBJ=.o
+_OBJ=.o
 RM=rm
 
-LIBS=../../huskylib/make/libhuskyliblnx.a ../../smapi/make/libsmapilnx.a ../../fidoconf/make/libfidoconfiglnx.a
+# Order of libraries are mandatory!
+LIBS= ../../smapi/make/libsmapilnx.a ../../areafix/make/libareafixlnx.a ../../fidoconf/make/libfidoconfiglnx.a ../../huskylib/make/libhuskylnx.a
 
 default: all
 
 %$(OBJ): $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
 
-include makefile.inc
+include ../makefile.inc
 
-all: commonprogs
+all: commonall
 
 clean: commonclean
 
