@@ -603,7 +603,7 @@ int readMsgFromPkt(FILE *pkt, s_pktHeader *header, s_message **message)
     getc(pkt); getc(pkt);                /*  read unused cost fields (2bytes) */
 
     /* val: fgetsUntil0 (msg->datetime, 22, pkt, NULL);*/
-    if ( fread(msg->datetime, 20, 1, pkt) != 20 )    /* read datetime field - 20 bytes */
+    if ( fread(msg->datetime, 20, 1, pkt) != 1 )    /* read datetime field - 20 bytes */
         badmsg++;
     msg->datetime[20] = 0;               /* ensure it's null-terminated */
     parse_ftsc_date(&tm, (char*)msg->datetime);
