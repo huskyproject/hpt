@@ -2,7 +2,7 @@ Source: hpt
 Section: mail
 Priority: optional
 Maintainer: Stanislav Maslovski <stanislav.maslovski@gmail.com>
-Build-Depends: debhelper (>> 4.0.0), libsmapi2cur-dev (>> 2.5-0), libhusky-dev (>> 1.9-0), libareafix-dev (>> 1.9-0), libfidoconf1-dev (>> 1.9-0), libperl-dev, texinfo
+Build-Depends: debhelper (>> 4.0.0), libsmapi2cur-dev (>> 2.5-0), libhusky-dev (>> 1.9-0), libareafix-dev (>> 1.9-0), libfidoconf1-dev (>> 1.9-0), libperl-dev (>= 5.8.8), texinfo
 Standards-Version: 3.6.1
 
 Package: hpt
