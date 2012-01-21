@@ -155,14 +155,14 @@ static const char *WarnNoMin = EOLCHR "Unable to minimize tree - out of memory";
 
 #define ItemNum(arr) (sizeof(arr)/sizeof(arr[0]))
 
-#define	MAXNODES	5000
-#define	MAXWILD		2000
-#define	MAXLINKS	1000
-#define	MAXAKAS		50
-#define	BUFFLEN		30000
-#define	PATHLEN		100
-#define	WILDVALUE	0xFFFF
-#define	DEADLOCK_DEPTH	10
+#define MAXNODES  5000
+#define MAXWILD   2000
+#define MAXLINKS  1000
+#define MAXAKAS   50
+#define BUFFLEN   30000
+#define PATHLEN   100
+#define WILDVALUE 0xFFFF
+#define DEADLOCK_DEPTH  10
 int MAX_ROUTE_LEN = 64;
 
 enum
@@ -204,19 +204,19 @@ static char OutName[MAXFILE];
 static char OutExt[MAXEXT];
 #endif
 
-#define	SQUISH		1
-#define	ITRACK		2
-#define	TMAIL		3
-#define	BPACK		4
-#define	IMBINK		5
-#define	XMAIL		6
-#define	IFMAIL		7
-#define	BIP		8
-#define	UNIMAIL		9
-#define	QECHO		10
-#define	FIDOGATE	11
-#define	FTRACK		12
-#define	HUSKY		13
+#define SQUISH    1
+#define ITRACK    2
+#define TMAIL     3
+#define BPACK     4
+#define IMBINK    5
+#define XMAIL     6
+#define IFMAIL    7
+#define BIP       8
+#define UNIMAIL   9
+#define QECHO     10
+#define FIDOGATE  11
+#define FTRACK    12
+#define HUSKY     13
 static ushort RouteMode = 0;
 static ushort MinMode = 0;
 static ushort KillTransit = 0;
@@ -242,7 +242,7 @@ static char WriteTo[PATHLEN];
 static FILE *NewRoute;
 static FILE *OldRoute;
 
-#define	Spit(s)	{ fputs(s, NewRoute); fputs(EOLCHR, NewRoute); }
+#define Spit(s) { fputs(s, NewRoute); fputs(EOLCHR, NewRoute); }
 static char RouteBegin[100];
 static char RouteEnd[100];
 static boolean StarWild, AddPoint, DefaultFromMe, FullAddr, FillRoute, WithSlash, TmailAddFor;
