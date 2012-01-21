@@ -1819,7 +1819,30 @@ static boolean GetHubRoute( char *p, void * )
         strcpy( OutExt, p2 );
       }
     }
-
+#elif defined (__MSVC__)
+    long handle;
+    int rc;
+    struct _finddata_t fdata;
+    short ext;
+    if((handle = _findfirst( Name, &fdata )) != -1L)
+    {
+      do
+      {
+        char bb[MAXFILE];
+        strcpy( bb, fdata.name );
+        *( strrchr( bb, '.' ) ) = '\0';
+        char *p1 = bb;
+        char *p2 = bb + strlen( bb ) + 1;
+        ext = (short)atoi( p2 );
+        if( ext > maxext )
+        {
+          maxext = ext;
+          strcpy( OutName, p1 );
+          strcpy( OutExt, p2 );
+        }
+        rc = _findnext( handle, &fdata );
+      } while(rc != -1);
+    }
 #elif defined (__WATCOMC__)
     short ext;
     DIR *ff;
