@@ -1788,7 +1788,7 @@ static void DrawDash( void )
 
 static boolean GetHubRoute( char *p, void * )
 {
-  char Name[100];
+  char Name[MAXPATH];
   FILE *ndl;
   strcpy( Name, strtok( p, " \t" ) );
 
