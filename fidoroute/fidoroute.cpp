@@ -53,6 +53,7 @@
 # define link linkd
 
 #elif defined (__MSVC__)
+# include <io.h>
 # define EOLCHR "\n"
 # define MAXDRIVE  3
 # define fnsplit _splitpath
