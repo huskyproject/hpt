@@ -59,7 +59,7 @@
 # define fnmerge _makepath
 #endif
 
-#define VERSION   "1.35"
+#define VERSION   "1.36"
 #define CREATED   "%c %s routing for %d:%d/%d. Created by Hubroute generator "VERSION""EOLCHR"%c %45s%c"EOLCHR""
 #ifdef _TARGET
 # if defined (__GNUC__)
@@ -142,7 +142,7 @@ static const char *ErrBadNdlType = "Bad \"HubRoute\" definition.";
 static const char *ErrMissDirect =
   EOLCHR "%s is routed via us, but missing in \"Link\" definitions." EOLCHR
   " \'DefaultFlavor\' assumed.";
-static const char *ErrReroute = EOLCHR "Re-routing for %s.";
+static const char *ErrReroute = EOLCHR "Rerouting for %s.";
 static const char *ErrLoop = EOLCHR "RouteLoop detected for %s. Try to route by default";
 static const char *WarnNoMin = EOLCHR "Unable to minimize tree - out of memory";
 
