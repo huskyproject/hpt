@@ -1,0 +1,269 @@
+
+                      Fidoroute generator
+                      ===================
+
+1. What the stuff is developed for
+==================================
+
+  Fidoroute generator produces a routing file for your node.
+Originally developed for hubs, though it can be usefull for an ordinary
+node with a lot of links.
+
+2. How it works
+===============
+
+  It's very simple: you tell it about your direct links, about 
+routing paths and where and where to save the result. And that's
+all.
+
+3. Command line
+===============
+
+     fidoroute [config_file]
+
+If you omit configuration file name, fidoroute.cfg will be used, or 
+fidoroute.conf if you have a Unix-like OS.
+
+     fidoroute -h
+
+prints something like help, but it is even not funny in my opinion, 
+
+4. Configuration file
+=====================
+
+        Address 2:5020/204
+        Address 7:1130/204
+        ------------------
+  Your addresses in 3D format.
+
+        Hubroute d:\fido\nodelist\z2-list.* z 2 5020
+        #Hubroute net5020.ndl n 2 5020
+        --------------------------------------------
+  Every "Hubroute" line asks fidoroute to get hub/host routing info from
+the nodelist. Format of these lines is:
+
+        Hubroute <nodelist> <ndl_type> <zone> <net>
+
+  ndl_type can be Z, R or N (zone, region or net nodelist segment).
+In two last cases fidoroute does not try to look for 'Zone,..' line.
+
+  If there are wildcards in the nodelist name and there are a few matching 
+files, fidoroute will get the file with maximum extention (i.e. maximum day 
+number).
+
+  I have done my best to speed up nodelist scanning as well as I can (in fact, 
+now scanning speed is limited by the HDD speed), but the scanning isn't
+fast enough. If you use FAT, take a minute to optimize it.
+
+        #RouteFile route.net
+        RouteFile d:\fido\fecho\r50route\r50.rou
+        ----------------------------------------
+  Each "RouteFile" contains routing branches:
+
+            2:5020/888  999 555 5030/444 3:All/All
+            2:5020/50   World
+
+  It means we want to send mail for 5020/999, /555, 5030/444 and all mail
+for Z3 to 5020/888, and all other mail to 5020/50.
+
+      The routing branches should not necessarily begin from your direct 
+    link. It is possible to write:
+
+        2:5020/251  51 5030/48 5100/2
+        2:5030/48   5030/All
+        2:5030/100  50/666
+        2:5100/2    5100/All 51/All
+        2:5020/50   140 204 251
+
+    If you have a direct link with 5020/50, all the above nodes will be
+    routed via it. 
+
+      If there is '>' in the very beginning of a route branch, the route 
+    line will be interpreted in a special way. If the route-to node begins 
+    with your own node, your node will be ignored. This feature is usefull 
+    for routing to a network. For example
+
+    >5020/140 5011/22 5011/All
+
+    at 5020/140 will be transformed to
+
+    5011/22 5011/All (i.e. route 5011/All via 5011/22)
+
+    and at all other nodes
+
+    5020/140 5011/22 5011/All  (i.e. route 5011/22 and 5011/All via 5020/140)
+
+  If some node isn't present in Link definitions, but must be routed 
+  via your node according to the nodelist or a route file, fidoroute assumes 
+  the Hold flavor for it (see also 'DefaultFlavor' below). This is done for 
+  forgetfull persons. :) For hosts and pseudohosts the same result may be 
+  obtained with:
+
+5020/0 5020/All
+
+  It means that everything not routed for 5020 net should be put on hold 
+since my node is the 5020 host. Routing to a zone works the same way but
+you hardly ever need it. :)
+
+  Fidoroute knows nothing about points. All addresses MUST be 3D and you may
+shorten them. Do not shorten 'all-for-zone' as 6:All. Fidoroute understands
+it like 6:0/All, but it isn't the thing you wanted, is it? ;) The correct
+notation is 6:All/All. You may also use '*' instead of 'All'.
+
+        TrustFile d:\fido\fecho\r50route\r50.tru
+        --------------------------------------------
+        
+  In this file 'trusted' nodes are described, i.e. nodes you trust to route 
+mail for someone. Its format is similar to the one of RouteFile, but in 
+inverse order. The line
+
+    5020/All 50 79 180 
+
+means that 'N5020C trusts to these nodes to recieve mail for N5020'. If one 
+of the nodes is your direct link, the mail for whole N5020 (and all other 
+nodes routed via 5020/*) will be routed via this node. If you have two or more
+trusted nodes in your direct links, the very _last_ will be preffered. If you 
+consider it's wrong, you may make a TrustFile of your own and place it after
+the official one in your configuration file.
+
+        DefaultRoute 2:5020/167 2:5020/79
+        DefaultRoute 7:1130/0 7:All/All
+        ---------------------------------
+
+  This line gives you a possibility to override some route branches
+without creation of an additional RouteFile. The syntax here is the same as 
+in the RouteFile. 'DefaultRoute' is treated AFTER all nodelists and 
+RouteFiles. 
+
+        WriteTo ..\autoroute.cfg
+        RouteType husky
+        --------------------
+
+  These are impotant things. The first line shows the file path where the
+resulting routing should be written to, the second one declares the file 
+format. Fidoroute supports squish, tmail, itrack, bpack, imbink, xmail, 
+ifmail, unimail, bip, fidogate, qecho, ftrack, husky. 
+
+        Minimize on
+        -----------
+
+  It can be 'on', 'yes', 'off', 'no'. If you set it to 'on' or 'yes',
+fidoroute tries to optimize the routing scheme minimizing the number of nodes
+via which the mail is routed. For example, if you have
+
+2:5020/50 5020/1 2 3
+2:5020/50 5020/All
+
+the first line is unnecessary. The same way fidoroute works with less evident
+indirect overlapping. The 'Minimize off' mode is usefull mostly for debugging 
+purpose.
+
+        KillTransit on
+        --------------
+
+Can be 'on', 'yes', 'off', 'no'. Setting this to 'yes' or 'on' will make 
+fidoroute to remove a transit node from a route branch if the first node in
+the line is not your own one. For example:
+
+>2:50/993 2:5014/5 2:5014/*
+
+will be treated like
+2:5014/5 2:5014/*
+at 2:50/993
+
+and
+2:50/993 2:5014/*
+at all other nodes.
+
+        RouteBegin "### Begin autoroute"
+        RouteEnd   "### End autoroute"
+        ----------------------------------
+
+  Oops... We have already told fidoroute, to which file to write the result, 
+but to what place inside the file? The RouteBegin and RouteEnd brackets serve 
+the purpose. The first character in both strings should be the comment 
+character of the configuration file of the program, for which the routing is 
+generated. For example, it is '#' for husky and '\' for rntrack (ftrack). 
+Do not forget to put these strings into the output file. Attention! Fidoroute 
+drops out all your lines between these brackets and puts there the result 
+of his stupid work. Be carefull!
+
+        Link 2:5020/0  CFA
+        Link 2:5020/24 DF
+        ------------------
+  Direct link declarations. There are flags after the node address. They
+can be C | D | N | H (flavors) and F (route files) and A (no arc). Flavors
+are not mutually exclusive, but there is no reason to set more than one flavor 
+in modes other than t-mail. But you can try, if you want. ;)
+
+        DefaultFlavor HA
+        ----------------
+  This line describes default flavor for links, which are not present
+in 'Link' lines but must be routed via us. In this example the default flavor
+is Hold/Noarc. If the DefaultRoute line is absent in the configuration file, 
+Hold is assumed.
+
+5. Restrictions and hints
+=========================
+
+   The maximum number of 'routing items' (i.e. nodes, nets, zones) is 5000.
+It can be increased, but I cannot imagine a node who needs this.
+
+   The maximum number of recursively linked branches is about 600 (it is not
+a maximum number of routing branches but the number of sequentaly linked 
+branches, i.e. the number of hops to destination node). Quite enough, IMHO. :)
+
+   Maximum number of direct links - 1000. Do you want more? No problem. ;)
+   Maximum number of AKAs - 50.
+   The length of a routing chain cycle that fidoroute can detect is unlimited. 
+     If fidoroute detects such a chain, it carefully marks a node as 
+     'unrouted' and mail to the node will be sent via default
+     routing. You'll be warned, of course. :) Usually fidoroute
+     does this in a reasonable way, but do not hesitate to check it.
+     
+   When rerouting occures, fidoroute prints a message and uses the last 
+declaration:
+
+2:5020/50 22
+......
+2:5020/52 22
+
+   There will be a rerouting warning, mail for /22 will go to /52.
+
+  There is no routing conflict in this case:
+2:5020/24  469/All
+2:5020/777 469/83
+The mail from 469/83 will go to /777, other NET469's mail - to /24.
+
+6. Warranty
+===========
+
+  There is no warranty at all. :) If something seems to be wrong, maybe I'll
+make a bugfix. But maybe not.
+
+7. Thanks
+=========
+
+  First of all - to Basil Dolmatov(2:5020/140) for idea and
+beta-testing. And also to FIDONET sysops:
+5005/26 Serge Dubakov 
+5020/28 Alex Korchmar, 
+5020/32 Dmitry Zavalishin,
+5020/35 Mikel Lavrentiev, 
+5020/47 Sergey Okhapkin,
+5020/50 Galka Okhapkina,
+5020/54 Sergey Wizgunov,
+5020/79 Fyodor Ustinov,
+5020/157 Slava Abramov, 
+5030/568 Pavel Romanov, 
+5070/25 Victor Butry,
+
+for usefull advices and bug reports. The most essential bug reports came
+from Fyodor Ustinov.
+
+Specifying and testing the imbink mode - Igor Haritonov (2:5030/263), 
+specifying the ifmail mode - Vsevolod Shabad (2:5020/182).
+
+Author is Yuri Safronov (2:5020/204 aka sfy@corbina.net).
+
+Adaptation for husky - 2:5020/545 Alexey Vissarionov.
