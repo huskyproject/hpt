@@ -560,11 +560,15 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     e_changeConfigRet nRet = I_ERR;
     char *areaName = area->areaName;
 
+    if (!fileName) {
+      w_log(LL_ERR, __FILE__ "::changeconfig(): FileName is NULL pointer! Can't change unknown config file");
+      return -1;
+    }
     w_log(LL_FUNC, __FILE__ "::changeconfig(%s,...)", fileName);
 
     sstrncpy(strbegfileName, fileName, MAXPATHLEN + 1);
     /* if fileName's length is <= MAXPATHLEN
-     * then strncpy will fill strbegfileName by \0 up to the last byte,
+     * then sstrncpy will fill strbegfileName by \0 up to the last byte,
      * check it: */
     if(strbegfileName[MAXPATHLEN] != 0)
         return -1;
