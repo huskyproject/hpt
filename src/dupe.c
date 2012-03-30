@@ -314,7 +314,10 @@ void doReading(FILE *f, s_dupeMemory *mem)
                 enhashM->msgid = safe_malloc(length+1);
                 fread((UCHAR*)enhashM->msgid, length, 1, f);     
                 enhashM->msgid[length]='\0';
-            } else enhashM->msgid = NULL;
+            } else {
+                enhashM->msgid = NULL;
+                w_log(LL_ERR, "Dupebase file corrupt!");
+            }
             tree_add(&(mem->avlTree), compareEntries, (char *) enhashM, deleteEntry);
             break;
             
@@ -338,7 +341,10 @@ void doReading(FILE *f, s_dupeMemory *mem)
                     entxt->msgid = safe_malloc(length+1);
                     fread((UCHAR*)entxt->msgid, length, 1, f);     
                     entxt->msgid[length]='\0';
-                } else entxt->msgid = NULL;
+                } else {
+                    entxt->msgid = NULL;
+                    w_log(LL_ERR, "Dupebase file corrupt!");
+                }
 
                 if(entxt->msgid)
                     tree_add(&(mem->avlTree), compareEntries, (char *) entxt, deleteEntry);
