@@ -119,6 +119,15 @@ int compareEntries(char *p_e1, char *p_e2) {
     const s_hashMDupeEntry *ahashM, *bhashM;
     int rc = 0;
     const void *e1 = (const void *)p_e1, *e2 = (const void *)p_e2;
+
+    if (!p_e1) {
+      w_log( LL_ERR, __FILE__ "::compareEntries(): 1st parameter invalid - pointer is NULL!");
+      return 0;
+    }
+    if (!p_e2) {
+      w_log( LL_ERR, __FILE__ "::compareEntries(): 2nd parameter invalid - pointer is NULL!");
+      return 0;
+    }
     
     switch (config->typeDupeBase) {
     case hashDupes:
@@ -134,7 +143,7 @@ int compareEntries(char *p_e1, char *p_e2) {
     case hashDupesWmsgid:
         ahashM = e1; bhashM = e2;
         if (ahashM->CrcOfDupe == bhashM->CrcOfDupe)
-            rc = strcmp(ahashM->msgid, bhashM->msgid);
+            rc = sstrcmp(ahashM->msgid, bhashM->msgid);
         else if (ahashM->CrcOfDupe > bhashM->CrcOfDupe)
             rc = 1;  
         else
@@ -143,7 +152,7 @@ int compareEntries(char *p_e1, char *p_e2) {
         
     case textDupes:
         atxt = e1; btxt = e2;
-        rc = strcmp(atxt->msgid, btxt->msgid);
+        rc = sstrcmp(atxt->msgid, btxt->msgid);
         break;
         
     case commonDupeBase:
