@@ -151,7 +151,7 @@ void buildAreaTree(s_area *area)
    int nmsg;
    char *text;
    dword  textLength;
-   s_nodepath node;
+   s_nodepath node = { 0,0,0,0,0 };
    s_nodepath *cnode;
    int prevNode;
    char *token;
