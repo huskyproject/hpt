@@ -177,7 +177,7 @@ void correctEMAddr(s_message *msg)
    if (!msg) return;
 
    /* Find originating address in Origin line */
-   start = strrstr(msg->text, " * Origin:");
+   start = (unsigned char *)strrstr(msg->text, " * Origin:");
    if (start) {
 	   while (*start && (*start != '\r') && (*start != '\n')) start++;  /*  get to end of line */
 
@@ -202,7 +202,7 @@ void correctEMAddr(s_message *msg)
 		      buffer[i]   = '\0';
 		      {
 		         hs_addr tempaddr={0,0,0,0,NULL};
-		         string2addr(buffer,&tempaddr);
+		         string2addr((const char*)buffer,&tempaddr);
 		         if (tempaddr.zone>0){
 		            msg->origAddr.zone = tempaddr.zone;
 		            msg->origAddr.net = tempaddr.net;
@@ -216,14 +216,14 @@ void correctEMAddr(s_message *msg)
    }
 
    /* Find originating address in MSGID line (if not found in Origin) */
-   start = strrstr(msg->text, "\001MSGID:"); /* Standard required "\001MSGID: " but not all software is compatible with FTS-9 :( */
+   start = (unsigned char *)strrstr(msg->text, "\001MSGID:"); /* Standard required "\001MSGID: " but not all software is compatible with FTS-9 :( */
    if (start) {
       hs_addr tempaddr={0,0,0,0,NULL};
       start+=7;
       while (*start == ' ') start++ ; /* skip leading spaces */
-      strncpy(buffer,start,sizeof(buffer));
-      if (strtok(buffer," ")){
-         string2addr(buffer,&tempaddr);
+      strncpy((char*)buffer,(const char*)start,sizeof(buffer));
+      if (strtok((char*)buffer," ")){
+         string2addr((const char*)buffer,&tempaddr);
          if (tempaddr.zone>0){
             msg->origAddr.zone = tempaddr.zone;
             msg->origAddr.net = tempaddr.net;
@@ -235,8 +235,8 @@ void correctEMAddr(s_message *msg)
    }
 
    /*  Another try... But if MSGID isn't present or broken and origin is broken then PATH may be broken too... */
-	   start = strstr(msg->text, "\001PATH: ");
-	   if (start && strlen(start) > 7) {
+	   start = (unsigned char*)strstr(msg->text, "\001PATH: ");
+	   if (start && strlen((const char*)start) > 7) {
 		   start += 7;
 		   buffer[0] = '1';
 		   buffer[1] = ':';
@@ -250,10 +250,10 @@ void correctEMAddr(s_message *msg)
 			   start++;
 		   }
 		   buffer[i]   = '\0';
-		   string2addr(buffer, &(msg->origAddr));
+		   string2addr((const char*)buffer, &(msg->origAddr));
 		   {
 		      hs_addr tempaddr={0,0,0,0,NULL};
-		      string2addr(buffer,&tempaddr);
+		      string2addr((const char*)buffer,&tempaddr);
 		      msg->origAddr.zone = 0;
 		      msg->origAddr.net = tempaddr.net;
 		      msg->origAddr.node = tempaddr.node;
@@ -273,7 +273,7 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
    if (!msg || !header) return;
 
    copy = buffer;
-   start = strstr(msg->text, "\001FMPT");
+   start = strstr((char*)msg->text, "\001FMPT");
    if (start) {
       start += 6;                  /* skip "FMPT " */
       while (isdigit(*start) && (copy<buffer+sizeof(buffer)-1)) {     /* copy all digit data */
@@ -283,14 +283,14 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
       } /* endwhile */
       *copy = '\0';                /* don't forget to close the string with 0 */
 
-      msg->origAddr.point = atoi(buffer);
+      msg->origAddr.point = atoi((const char*)buffer);
    } else {
       msg->origAddr.point = 0;
    } /* endif */
 
    /* and the same for TOPT */
    copy = buffer;
-   start = strstr(msg->text, "\001TOPT");
+   start = strstr((char*)msg->text, "\001TOPT");
    if (start) {
       start += 6;                  /* skip "TOPT " */
       while (isdigit(*start) && (copy<buffer+sizeof(buffer)-1)) {     /* copy all digit data */
@@ -300,14 +300,14 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
       } /* endwhile */
       *copy = '\0';                /* don't forget to close the string with 0 */
 
-      msg->destAddr.point = atoi(buffer);
+      msg->destAddr.point = atoi((const char*)buffer);
    } else {
       msg->destAddr.point = 0;
    } /* endif */
 
    /* Parse the INTL Kludge */
 
-   start = strstr(msg->text, "\001INTL ");
+   start = strstr((char*)msg->text, "\001INTL ");
    if (start) {
 
       start += 6;                 /*  skip "INTL " */
@@ -320,8 +320,8 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
           copy = buffer;
           while (*start && !isspace(*start) && (copy<buffer+sizeof(buffer)-1)) *copy++ = *start++;
           *copy='\0';
-          if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
-          string2addr(buffer, &intl_to);
+          if (strchr((const char*)buffer,':')==NULL || strchr((const char*)buffer,'/')==NULL) break;
+          string2addr((const char*)buffer, &intl_to);
           
           while (*start && isspace(*start)) start++;
           if (!*start) break;
@@ -329,8 +329,8 @@ void correctNMAddr(s_message *msg, s_pktHeader *header)
           copy = buffer;
           while (*start && !isspace(*start) && (copy<buffer+sizeof(buffer)-1)) *copy++ = *start++;
           *copy='\0';
-          if (strchr(buffer,':')==NULL || strchr(buffer,'/')==NULL) break;
-          string2addr(buffer, &intl_from);
+          if (strchr((const char*)buffer,':')==NULL || strchr((const char*)buffer,'/')==NULL) break;
+          string2addr((const char*)buffer, &intl_from);
 
           intl_from.point = msg->origAddr.point;
           intl_to.point = msg->destAddr.point;

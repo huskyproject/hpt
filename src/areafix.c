@@ -566,7 +566,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     }
     w_log(LL_FUNC, __FILE__ "::changeconfig(%s,...)", fileName);
 
-    sstrncpy(strbegfileName, fileName, MAXPATHLEN + 1);
+    strncpy(strbegfileName, fileName, MAXPATHLEN + 1);
     /* if fileName's length is <= MAXPATHLEN
      * then sstrncpy will fill strbegfileName by \0 up to the last byte,
      * check it: */
@@ -610,7 +610,7 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
         }
 
         strbeg = get_hcfgPos();
-        sstrncpy(strbegfileName, getCurConfName(), MAXPATHLEN + 1);
+        strncpy(strbegfileName, getCurConfName(), MAXPATHLEN + 1);
         if(strbegfileName[MAXPATHLEN] != 0) /* filename is truncated, error */
             break;
         w_log(LL_DEBUGF, __FILE__ ":%u:changeconfig() strbeg=%ld", __LINE__, strbeg);
