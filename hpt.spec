@@ -7,7 +7,7 @@ Version: 1.9.%{reldate}%{reltype}
 Release: 1
 Group: Applications/FTN
 Summary: HPT - the Husky Project tosser
-URL: http://husky.sf.net
+URL: http://huskyproject.org
 License: GPL
 Requires: smapi >= 2.5, areafix >= 1.9
 Source: %{name}.tar.gz
@@ -28,10 +28,12 @@ rm -rf %{buildroot}
 make DESTDIR=%{buildroot} install
 test -s fidoroute/fidoroute \
 	&& install -m 755 fidoroute/fidoroute %{buildroot}%{_bindir}/fidoroute
+chmod -R a+rX,u+w,go-w %{buildroot}
 
 %clean
 rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%{_prefix}/*
+%{_bindir}/*
+%{_mandir}/*
