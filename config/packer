@@ -1,8 +1,13 @@
+# ZIP format: 0x504b0304 at start in common case,
+# and 0x504b3030504b0304 in case of pkzip25.exe "PKZIP(R)  Version 2.50  FAST!  Compression Utility for Windows 95/NT"
+
+#Unpack  "unzip -joLqq -P '' $a -d $p" 0 504b3030504b0304
 #Unpack  "unzip -joLqq -P '' $a -d $p" 0 504b0304
 #Pack 	zip zip -9jgqX $a $f
 #Unpack "\path\pkzipc -ext -dir=none -over=all -nozip -silent $a $p $f" 0 504b0304
 #Unpack "pkunzip -njCL $a $p $f" 0 504b0304
 #Unpack "pkzip25 -ext -silent -over=all -nofix -nozip $a $p $f" 0 504b0304
+#Unpack "pkzip25 -ext -silent -over=all -nofix -nozip $a $p $f" 0 504b3030504b0304
 #Pack  zip pkzip.exe -ex $a $f
 
 # *.rar
@@ -48,6 +53,7 @@ Pack 7ZIP 7za.exe a -bd -y $a $f
 Unpack  "7za.exe e -bd -y $a -o$p $f" 0 377ABCAF         # 7z
 
 Pack zip 7za a -bd -mx -tzip -y $a $f
+Unpack "7za e -bd -y $a -o$p $f" 0 504b3030504b0304      # zip (pkzip25 w95/NT)
 Unpack "7za e -bd -y $a -o$p $f" 0 504b0304            # zip
 Unpack "7za e -bd -y $a -o$p $f" 0 60ea                # arj
 Unpack "7za e -bd -y $a -o$p $f" 0 52617221            # rar
@@ -62,7 +68,9 @@ Unpack "7za e -bd -y $a -o$p $f" 0 52617221            # rar
 #Pack tar   c:\progra~1\7-zip\7za.exe a -bd -mx -ttar   -y $a $f
 
 ### UNPACK CONFIG ###
+##Unpack zipInternal 0 504b3030504b0304
 ##Unpack zipInternal 0 504b0304
+#Unpack "c:\progra~1\7-zip\7za.exe e -bd -y $a -o$p $f" 0 504b3030504b0304   # zip
 #Unpack "c:\progra~1\7-zip\7za.exe e -bd -y $a -o$p $f" 0 504b0304   # zip
 #Unpack "c:\progra~1\7-zip\7za.exe e -bd -y $a -o$p $f" 0 377abcaf   # 7z
 ##Unpack "c:\progra~1\7-zip\7za.exe e -bd -y $a -o$p $f" 0 1f8b0808   # gzip ???
