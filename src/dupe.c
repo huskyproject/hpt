@@ -135,7 +135,7 @@ int compareEntries(char *p_e1, char *p_e2) {
     case hashDupesWmsgid:
         ahashM = e1; bhashM = e2;
         if (ahashM->CrcOfDupe == bhashM->CrcOfDupe)
-            rc = strcmp(ahashM->msgid, bhashM->msgid);
+            rc = sstrcmp(ahashM->msgid, bhashM->msgid);
         else if (ahashM->CrcOfDupe > bhashM->CrcOfDupe)
             rc = 1;  
         else
@@ -144,7 +144,7 @@ int compareEntries(char *p_e1, char *p_e2) {
         
     case textDupes:
         atxt = e1; btxt = e2;
-        rc = strcmp(atxt->msgid, btxt->msgid);
+        rc = sstrcmp(atxt->msgid, btxt->msgid);
         break;
         
     case commonDupeBase:
