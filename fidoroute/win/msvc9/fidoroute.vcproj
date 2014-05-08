@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="..\..\..\..\nd_d\bin"
+			IntermediateDirectory="..\..\..\..\nd_d\obj\$(ProjectName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -39,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;__MSVC__;__NT__;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="_DEBUG;__NT__;WIN32;_CONSOLE;__MSVC__;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -90,8 +90,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="..\..\..\..\nd_r\bin"
+			IntermediateDirectory="..\..\..\..\nd_r\obj\$(ProjectName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -131,7 +131,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="1"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
