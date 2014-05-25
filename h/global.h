@@ -84,4 +84,7 @@ extern int report_changes;
 
 extern char **hpt_environ;
 
+/* misc variables */
+extern time_t globalTime;
+
 #endif

@@ -575,6 +575,10 @@ int main(int argc, char **argv, char **envp)
    }
 #endif
 
+   /* get current time */
+   globalTime = time(NULL);
+   if (globalTime == (time_t)-1) exit_hpt("Can't get current time", 1);
+
    /*  check for free space */
    if (config->minDiskFreeSpace) {
 	   isFreeSpace(config->tempInbound);

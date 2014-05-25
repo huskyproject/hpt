@@ -62,6 +62,11 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
                        s_arealink ***otherLinks,
                        hs_addr pktOrigAddr);
 
+void createFilteredSeenByArray(s_seenBy *seenBys, UINT seenByCount,
+    s_seenBy **newSeenBys, UINT *newSeenByCount,
+    ps_addr addr, unsigned int addrCount);
 
+void stripSeenByArray(s_seenBy **seenBys, UINT *seenByCount,
+    ps_addr addr, unsigned int addrCount);
 
 #endif

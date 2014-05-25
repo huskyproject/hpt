@@ -153,13 +153,14 @@ char *(BadmailReasonString[BM_MAXERROR+1]) = {
 /* 9*/"Sender not found in config file",
 /*10*/"Can't open config file",
 /*11*/"No downlinks for passthrough area",
-/*12*/"length of CONFERENCE name is more than 60 symbols",
+/*12*/"Length of CONFERENCE name is more than 60 symbols",
 /*13*/"Area killed (unsubscribed)",
 /*14*/"New area refused by NewAreaRefuseFile",
 /*15*/"Wrong link to autocreate from (area requested from other link)",
 /*16*/"Area is paused (unsubscribed at uplink)",
 /*17*/"No valid areatag is given in the message",
-/*18*/"Can't create subdirectories for echobase"
+/*18*/"Can't create subdirectories for echobase",
+/*19*/"Mail considered to be too old"
 };
 
 
@@ -379,6 +380,11 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 	nfree(debug);
     }
 
+    if (echo->sbstripCount > 0)    /* strip SEEN-BYs */
+    {
+        stripSeenByArray(seenBys, seenByCount, echo->sbstrip, echo->sbstripCount);
+    }
+
     for (i=0; i<config->addToSeenCount; i++) {
         (*seenByCount)++;
         (*seenBys) = (s_seenBy*) safe_realloc(*seenBys,sizeof(s_seenBy)*(*seenByCount));
@@ -569,8 +575,8 @@ void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
 
 void forwardMsgToLinks(s_area *echo, s_message *msg, hs_addr pktOrigAddr)
 {
-    s_seenBy *seenBys = NULL, *path = NULL;
-    UINT     seenByCount = 0 , pathCount = 0;
+    s_seenBy *seenBys = NULL, *tempSeenBys = NULL, *path = NULL;
+    UINT     seenByCount = 0 , tempSeenByCount = 0, pathCount = 0;
 
     /*  links who does not have their aka in seenBys and thus have not got the echomail */
     s_arealink **newLinks = NULL, **zoneLinks = NULL, **otherLinks = NULL;
@@ -584,7 +590,21 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, hs_addr pktOrigAddr)
         forwardToLinks(msg, echo, newLinks, &seenBys, &seenByCount, &path, &pathCount);
 
     if (zoneLinks) {
-        if (echo->useAka->zone != pktOrigAddr.zone) seenByCount = 0;
+        /* strip SEEN-BYs when zone-gating and sbkeepAll is disabled */
+        if ((echo->sbkeep_all == 0) && (echo->useAka->zone != pktOrigAddr.zone)) {
+            if (echo->sbkeepCount == 0) {
+                seenByCount = 0;        /* strip all SEEN-BYs */
+            }
+            else {
+                /* keep SEEN-BYs found in sbkeep */
+                createFilteredSeenByArray(seenBys, seenByCount, &tempSeenBys,
+                    &tempSeenByCount, echo->sbkeep, echo->sbkeepCount);
+                nfree(seenBys);
+                seenBys = tempSeenBys;
+                seenByCount = tempSeenByCount;
+            }
+        }
+
         forwardToLinks(msg, echo, zoneLinks, &seenBys, &seenByCount, &path, &pathCount);
     }
 
@@ -600,6 +620,7 @@ void forwardMsgToLinks(s_area *echo, s_message *msg, hs_addr pktOrigAddr)
     nfree(path);
     nfree(newLinks);
     nfree(zoneLinks);
+    nfree(otherLinks);
 }
 
 /* return value: 1 if success, 0 if fail */
@@ -830,6 +851,10 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
     s_message* messCC = NULL;
     s_area *echo=&(config->badArea);
     s_link *link = NULL;
+    unsigned int days = 0;
+    struct tm msg_tm;
+    time_t msgTime, diffTime;
+    flag_t tFlag;
     int    writeAccess = 0, rc = 0, ccrc = 0;
 
     w_log(LL_FUNC, "%s::processEMMsg() begin", __FILE__);
@@ -915,7 +940,41 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
                 w_log( LL_AREAFIX, "areafix: write notification msg for %s",aka2str(link->hisAka));
             }
         }
-        else
+
+        /* check age of message */
+        if (writeAccess == 0)                     /* ok to proceed */
+        {
+            /* get message age if tooOld feature is enabled */
+            if (echo->tooOld > 0)        /* tooOld enabled */
+            {
+                /* get time from message */
+                tFlag = parse_ftsc_date(&msg_tm, (char*)msg->datetime);
+                if (! (tFlag & FTSC_BROKEN))
+                {
+                    msgTime = mktime(&msg_tm);
+                    if (msgTime != (time_t)-1)
+                    {
+                        /* calculate difference */
+                        if (globalTime > msgTime)
+                        {
+                            diffTime = globalTime - msgTime;
+                            diffTime /= (60 * 60 * 24);          /* convert to days */
+                            days = (unsigned int)diffTime;
+                        }
+                    }
+                }
+
+                /* check for valid age */
+                if (days > echo->tooOld) writeAccess = BM_TOO_OLD;
+            }
+
+            if (writeAccess)            /* on any problem move message to BadArea */
+            {
+                rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
+            }
+        }
+
+        if (writeAccess == 0)                     /* ok to proceed */
         { /*  access ok - process msg */
 	    int not_dupe = 1;
 

@@ -379,3 +379,79 @@ void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
         nfree(*otherLinks);
 }
 
+
+/*
+   Create a new SEEN-BY array from another one for AKAs found in an address list.
+*/
+
+void createFilteredSeenByArray(s_seenBy *seenBys, UINT seenByCount,
+    s_seenBy **newSeenBys, UINT *newSeenByCount,
+    ps_addr addr, unsigned int addrCount)
+{
+    unsigned int i, j;
+
+    /* sanity checks */
+    if ((newSeenBys == NULL) || (newSeenByCount == NULL)) return;
+    if ((seenByCount > 0) && (seenBys == NULL)) return;
+    if ((addrCount > 0) && (addr == NULL)) return;
+
+    *newSeenByCount = 0;
+
+    /* get memory for array (required at maximum) */
+    (*newSeenBys) = (s_seenBy*)safe_calloc(addrCount, sizeof(s_seenBy));
+
+    /* search for matches */
+    for (i = 0; i < addrCount; i++)          /* address array */
+    {
+        for (j = 0; j < seenByCount; j++)    /* SEEN-BY array */
+        {
+            if (((UINT16)addr[i].net == seenBys[j].net) &&
+                ((UINT16)addr[i].node == seenBys[j].node))
+            {
+                /* copy this one to new array */
+                (*newSeenBys)[*newSeenByCount].net = (UINT16)addr[i].net;
+                (*newSeenBys)[*newSeenByCount].node = (UINT16)addr[i].node;
+                (*newSeenByCount)++;
+            }
+        }
+    }
+}
+
+
+/*
+   strip specific AKAs (address array) from SEEN-BY array
+*/
+
+void stripSeenByArray(s_seenBy **seenBys, UINT *seenByCount,
+    ps_addr addr, unsigned int addrCount)
+{
+    unsigned int i, j, k;
+    unsigned int counter;
+
+    /* sanity check */
+    if ((seenBys == NULL) || (seenByCount == NULL)) return;
+
+    counter = *seenByCount;   /* local variable to speed up access */
+
+    /* search for matches */
+    for (i = 0; i < addrCount; i++)          /* address array */
+    {
+        for (j = 0; j < counter; j++)        /* SEEN-BY array */
+        {
+            if (((UINT16)addr[i].net == (*seenBys)[j].net) &&
+                ((UINT16)addr[i].node == (*seenBys)[j].node))
+            {
+                /* remove this AKA by moving remaining SEEN-BYs one up */
+                counter--;
+
+                for (k = j; k < counter; k++)
+                {
+                    (*seenBys)[k].net = (*seenBys)[k + 1].net;
+                    (*seenBys)[k].node = (*seenBys)[k + 1].node;
+                }
+            }
+        }
+    }
+
+    *seenByCount = counter;   /* update counter */
+}

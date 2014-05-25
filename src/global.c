@@ -86,3 +86,5 @@ char *relinkPattern = NULL;
 int lock_fd;
 int silent_mode = 0;
 int report_changes = 0;
+
+time_t globalTime;        /* time when hpt was started */
