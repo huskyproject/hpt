@@ -20,6 +20,8 @@
 @c{empty page to get the page numbering right}
 @end titlepage
 
+@contents
+
 @ifinfo
 @dircategory Fidonet Software
 @direntry
