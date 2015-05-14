@@ -1409,20 +1409,25 @@ majority of the keywords,
 @code{advancedareafix on}
 @end table
 
-If this statement is "on" and our system wants to delete area from
+If this statement is "on" and our system wants to delete an area from
 remote config then unsubscribe messages to areafix robot of this link
-looks like "~areaname". The area on the remote system will be deleted
+look like "~areaname". The area on the remote system will be deleted
 from config file, if our system is allowed to delete this area ("allow
 area delete" in FastEcho, and @ref{LinkGrp} must be the same as
 EchoArea's @code{-g <group>} in @value{HPT}).
 
 Our system sends deleting command only for systems with
-@code{AdvancedAreafix} and only when default uplink (@code{-def})
-unsubscribing from EchoArea or some link deleting this area by command
-"~areaname". Of course if this link has the rights to delete this area.
+@code{AdvancedAreafix} and with @ref{UnsubscribeOnAreaDelete} set to "on" 
+and when default uplink (@code{-def}) unsubscribes from an EchoArea or 
+some link deletes this area by "~areaname" command. Of course if this 
+link has the rights to delete this area.
 
-If this "AdvancedAreafix off" (default), then deleting command looks
-like "-areaname".
+You may also delete an area yourself by running the following command:@*@*
+@code{hpt afix <your main AKA> ~area}@*@*
+Here @code{<your main AKA>} is your main address. @xref{address,,,fidoconfig,FidoConfig Manual}.
+
+If @code{AdvancedAreafix} for the link is "off" (default), then unsubscribe 
+command "-areaname" is sent instead of delete command "~areaname".
 
 This statement can only be repeated for different links.
 
@@ -1978,7 +1983,14 @@ This statement can only be repeated for different links.
 @end table
 
 If unsubscribeOnAreaDelete is true, link will receive unsubscribe request
-("-area") to his areafix when subscribed area is deleted.
+("-area" if @ref{AdvancedAreafix} is off for the link and "~area" if it is on) 
+to his areafix when subscribed area is deleted. An area may be deleted when 
+default uplink (@code{-def}) unsubscribes from the area or some link deletes 
+this area by "~area" command (@ref{LinkGrp} for the link that deletes an area 
+must be the same as EchoArea's @code{-g <group>}). You may also delete an area 
+yourself by running the following command:@*@*
+@code{hpt afix <your main AKA> ~area}@*@*
+Here @code{<your main AKA>} is your main address. @xref{address,,,fidoconfig,FidoConfig Manual}.
 
 By default is off, i.e. do not send unsubscribe request.
 
