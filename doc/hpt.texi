@@ -503,37 +503,37 @@ This statement cannot be repeated.
 @code{bundleNameStyle timeStamp}
 @end table
 
-This statement sets rule for creating names of arcmail bundles:
+This statement sets a rule for creating names of arcmail bundles:
 
 @table @asis
 @item @code{timeStamp}
 some kind of random names (current time + some counter).
 @item @code{addrDiff}
 create name from difference of source and destination addreses. Always
-the same filename for every pair of links. Automatically  switched to
-@code{timeStamp} when all alowed extensions were used.
+the same filename for every pair of links. Automatically  switches to
+@code{timeStamp} when all alowed extensions have been used.
 @item @code{addrsCRC32}
 create name from CRC32 of string composed from "hpt", source and destination
 addreses. Always the same filename for every pair of links, very unique.
-Automatically switched to @code{timeStamp} when all alowed extensions were
-used.
+Automatically switches to @code{timeStamp} when all alowed extensions have
+been used.
 @item @code{addrDiffAlways}
-the same as addrDiff but tryes to use lower free numbers of extension in
+the same as addrDiff but tries to use lower free numbers of extension in
 case when all higher numbers are already busy.
 @item @code{addrsCRC32Always}
 the same as addrsCRC32 but tryes to use lower free numbers of extension in
 case when all higher numbers are already busy.
 @item @code{Amiga)}
-Amiga Style Outbound (ASO). Bundles creates in @code{Outbound} directory
+Amiga Style Outbound (ASO). Bundles are created in @ref{outbound,,,fidoconfig,FidoConfig Manual} directory
 like this:
 @example
 2.5000.117.1.hut
 2.5000.117.1.mo0
 @end example
-If @code{SeparateBundles on} and @code{Packer} not defined pkt moves to
+If @ref{SeparateBundles} is @code{on} and @ref{Pack,,,fidoconfig,FidoConfig Manual} not defined, pkt is moved to
 @code{2.5000.117.1.sep} directory.
 
-Extensions & prefixes in flo files creates as in @code{addrDiffAlways} algorythm.
+Extensions & prefixes in flo files are created as in @code{addrDiffAlways} algorithm.
 @end table
 
 Default value is @code{timeStamp}
