@@ -530,7 +530,7 @@ like this:
 2.5000.117.1.hut
 2.5000.117.1.mo0
 @end example
-If @ref{SeparateBundles} is @code{on} and @ref{Pack,,,fidoconfig,FidoConfig Manual} not defined, pkt is moved to
+If @ref{SeparateBundles} is @code{on} and @ref{packer,,,fidoconfig,FidoConfig Manual} not defined, pkt is moved to
 @code{2.5000.117.1.sep} directory.
 
 Extensions & prefixes in flo files are created as in @code{addrDiffAlways} algorithm.
