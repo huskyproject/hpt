@@ -6,6 +6,9 @@
 # Fixed by Stas Degteff 2:5080/102@fidonet
 # Modified by Michael Dukelsky 2:5020/1042@fidonet
 # version 2.0
+# It is free software and license is the same as for Perl,
+# see http://dev.perl.org/licenses/
+#
 
 ##### There is nothing to change below this line #####
 use File::Spec;
