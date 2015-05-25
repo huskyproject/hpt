@@ -203,7 +203,6 @@ int linkArea(s_area *area, int netMail)
     }
     
     harea = MsgOpenArea((UCHAR *) area->fileName, MSGAREA_NORMAL,
-        /*					  area->fperm, area->uid, area->gid,*/
         (word)(area->msgbType | (netMail ? 0 : MSGTYPE_ECHO)));
     if (harea) {
         w_log(LL_LINKING, "Linking area %s", area->areaName);

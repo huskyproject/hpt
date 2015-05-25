@@ -219,7 +219,6 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
     if (echo->harea == NULL) {
     w_log( LL_SRCLINE, "%s:%d opening %s", __FILE__, __LINE__,echo->fileName);
 	echo->harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC,
-			/*echo->fperm, echo->uid, echo->gid,*/
 			(word)(echo->msgbType | (msg->netMail ? 0 : MSGTYPE_ECHO)));
 	if (echo->harea) nopenpkt+=3;
     }
@@ -1087,8 +1086,7 @@ int processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontd
     if (ccrc > 1) return 1; /*  carbon del or move */
 
     netmail = MsgOpenArea((unsigned char *) area -> fileName, MSGAREA_CRIFNEC,
-/*								 config->netMailArea.fperm, config->netMailArea.uid,
-								 config->netMailArea.gid, */(word) area -> msgbType);
+                          (word) area -> msgbType);
 
     if (netmail != NULL) {
 	msgHandle = MsgOpenMsg(netmail, MOPEN_CREATE, 0);

@@ -681,10 +681,7 @@ void scanNMArea(s_area *area)
 #endif
 
    netmail = MsgOpenArea((unsigned char *) area -> fileName, MSGAREA_NORMAL,
-			 /* config->netMailArea.fperm,
-			    config->netMailArea.uid,
-			    config->netMailArea.gid, */
-			 (word)area -> msgbType);
+                         (word)area -> msgbType);
    if (netmail != NULL) {
 
        statScan.areas++;

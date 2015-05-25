@@ -303,8 +303,8 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount, long resc
    int   n_pool = 0, s_pool; /* actual and allocated pool size */
    unsigned int rc=0;
 
-   area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL, /*echo -> fperm,
-   echo -> uid, echo -> gid,*/ (word)(echo->msgbType | MSGTYPE_ECHO));
+   area = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_NORMAL,
+                      (word)(echo->msgbType | MSGTYPE_ECHO));
    if (area != NULL) {
 #if 0 /* val: change in algorithm */
        /*       i = highWaterMark = MsgGetHighWater(area); */
