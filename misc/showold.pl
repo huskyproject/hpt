@@ -5,7 +5,7 @@
 # Created by Pavel Gulchouck 2:463/68@fidonet
 # Fixed by Stas Degteff 2:5080/102@fidonet
 # Modified by Michael Dukelsky 2:5020/1042@fidonet
-# version 2.0
+# version 2.1
 # It is free software and license is the same as for Perl,
 # see http://dev.perl.org/licenses/
 #
@@ -232,7 +232,7 @@ sub allFilesInBSO
         {
             s/\r?\n$//s;
             s/^[#~^]//;
-            next unless ($size, $ctime) = (stat($_))[7,10];
+            next unless ($size, $ctime) = (stat($_))[7, 10];
             next if($size == 0);
             if (/[0-9a-f]{8}\.(su|mo|tu|we|th|fr|sa)[0-9a-z]$/i)
             {
@@ -261,7 +261,7 @@ sub allFilesInASO
     {
         my $node=unaso($file);
         next if($node eq "");
-        my ($size, $atime, $mtime, $ctime) = (stat($file))[7..10];
+        my ($size, $ctime) = (stat($file))[7, 10];
         next if($size == 0);
         if (!defined($ctime{$node}) || $ctime < $ctime{$node})
         {
@@ -681,22 +681,26 @@ $fidoconfig = normalize($fidoconfig);
 
 my $separateBundles;
 ($separateBundles, $path) = searchTokenValue("SeparateBundles", $fidoconfig);
-die "\nSeparateBundles mode is not supported" if(isOn($separateBundles));
+die "\nSeparateBundles mode is not supported\n" if(isOn($separateBundles));
 
 ($address, $path) = searchTokenValue("address", $fidoconfig);
-$defZone = $1 if($address ne "" && $address =~ /^(\d+):[\d\/]+/);
-defined($defZone) or die "\nYour FTN address is not defined";
+$defZone = $1 if($address ne "" && $address =~ /^(\d+):\d+\/\d+(?:\.\d+)?(?:@\w+)?$/);
+defined($defZone) or die "\nYour FTN address is not defined or has a syntax error\n";
 
 ($fileBoxesDir, $path) = searchTokenValue("FileBoxesDir", $fidoconfig);
--d $fileBoxesDir or die "\nfileBoxesDir $fileBoxesDir is not a directory";
-$fileBoxesDir = normalize($fileBoxesDir);
+if($fileBoxesDir ne "")
+{
+    -d $fileBoxesDir or die "\nfileBoxesDir \'$fileBoxesDir\' is not a directory\n";
+    $fileBoxesDir = normalize($fileBoxesDir);
+}
 
 ($defOutbound, $path) = searchTokenValue("Outbound", $fidoconfig);
--d $defOutbound or die "\nOutbound $defOutbound is not a directory";
+$defOutbound ne "" or die "\nOutbound is not defined\n";
+-d $defOutbound or die "\nOutbound \'$defOutbound\' is not a directory\n";
 $defOutbound = normalize($defOutbound);
 
-@dirs = listOutbounds(normalize($defOutbound));
-@boxesDirs = listFileBoxes(normalize($fileBoxesDir));
+@dirs = listOutbounds($defOutbound);
+@boxesDirs = listFileBoxes($fileBoxesDir) if($fileBoxesDir ne "");
 
 allFilesInASO();
 
@@ -724,7 +728,7 @@ foreach my $node (sort nodesort keys %ctime)
                  niceNumberFormat($netmail{$node}) . " |" .
                  niceNumberFormat($echomail{$node}) . " |" .
                  niceNumberFormat($files{$node}) . " |\n";
-    printf "$format",
+    printf $format,
            $node, (time()-$ctime{$node})/(24*60*60),
            niceNumber($netmail{$node}),
            niceNumber($echomail{$node}),
