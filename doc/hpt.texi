@@ -1157,10 +1157,8 @@ Each line of this file is a mask of echotag.
 
 Example:
 @table @asis
-@item
 @item RU.LIST.CITYCAT.*
 @item SU.KASCHENKO.LOCAL
-@item
 @end table
 
 This statement cannot be repeated.
@@ -3465,9 +3463,10 @@ majority of the keywords,
 @item Syntax:
 @code{carbonAddr <addr>}
 @item Example:
-@code{carbonAddr 2:5000/100}
-@item
-@code{carbonCopy mail.from.100}
+@example
+carbonAddr 2:5000/100
+carbonCopy mail.from.100
+@end example
 @end table
 
 If an echomail is tossed whose from address field is the same as <addr>,
@@ -3607,9 +3606,10 @@ Subject: (message subject)
 @item Syntax:
 @code{carbonFrom <pattern>}
 @item Example:
-@code{carbonFrom Matthias Tichy}
-@item
-@code{carbonCopy my.echomail}
+@example
+carbonFrom Matthias Tichy
+carbonCopy my.echomail
+@end example
 @end table
 
 If an echomail is tossed whose from-field matched the pattern <pattern>,
@@ -3656,9 +3656,10 @@ This statement can be repeated.
 @item Syntax:
 @code{carbonGroups <string> [,<string>...]}
 @item Example:
-@code{carbonGroups Fido, LifeNet}
-@item
-@code{carbonCopy my.echomail}
+@example
+carbonGroups Fido, LifeNet
+carbonCopy my.echomail
+@end example
 @end table
 
 With this keyword you can define from which groups messages should be copied.
@@ -3693,9 +3694,10 @@ This statement cannot be repeated.
 @item Syntax:
 @code{carbonKludge <pattern>}
 @item Example:
-@code{carbonKludge MSGID: 2:5000/117.}
-@item
-@code{carbonCopy written.by.points}
+@example
+carbonKludge MSGID: 2:5000/117.
+carbonCopy written.by.points
+@end example
 @end table
 
 If an echomail is tossed which has a kludge line which includes the
@@ -3754,11 +3756,11 @@ This statement cannot be repeated.
 @item Syntax:
 @code{carbonReason <string>}
 @item Example:
-@code{carbonText msged}
-@item
-@code{carbonReason Found 'msged' in message}
-@item
-@code{carbonCopy my.searches.echo}
+@example
+carbonText msged
+carbonReason Found 'msged' in message
+carbonCopy my.searches.echo
+@end example
 @end table
 
 This statement sets the 'reason string' for the previous
@@ -3858,9 +3860,10 @@ and new set of expressions starts.
 @item Syntax:
 @code{carbonSubj <pattern>}
 @item Example:
-@code{carbonSubj beer}
-@item
-@code{carbonCopy cc.beer}
+@example
+carbonSubj beer
+carbonCopy cc.beer
+@end example
 @end table
 
 If an echomail is tossed which has a subject line matched <pattern>,
@@ -3877,9 +3880,10 @@ This statement can be repeated.
 @item Syntax:
 @code{carbonText <pattern>}
 @item Example:
-@code{carbonText cool beer}
-@item
-@code{carbonCopy cc.beer}
+@example
+carbonText cool beer
+carbonCopy cc.beer
+@end example
 @end table
 
 If an echomail is tossed which has a kludge line which includes the
@@ -3898,9 +3902,10 @@ This statement can be repeated.
 @item Syntax:
 @code{carbonTo <pattern>}
 @item Example:
-@code{carbonTo Max Levenkov}
-@item
-@code{carbonCopy my.echomail}
+@example
+carbonTo Max Levenkov
+carbonCopy my.echomail
+@end example
 @end table
 
 If an echomail is tossed whose to-field matched <pattern>, the
