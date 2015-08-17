@@ -20,6 +20,8 @@
 @c{empty page to get the page numbering right}
 @end titlepage
 
+@contents
+
 @ifinfo
 @dircategory Fidonet Software
 @direntry
@@ -501,37 +503,37 @@ This statement cannot be repeated.
 @code{bundleNameStyle timeStamp}
 @end table
 
-This statement sets rule for creating names of arcmail bundles:
+This statement sets a rule for creating names of arcmail bundles:
 
 @table @asis
 @item @code{timeStamp}
 some kind of random names (current time + some counter).
 @item @code{addrDiff}
 create name from difference of source and destination addreses. Always
-the same filename for every pair of links. Automatically  switched to
-@code{timeStamp} when all alowed extensions were used.
+the same filename for every pair of links. Automatically  switches to
+@code{timeStamp} when all alowed extensions have been used.
 @item @code{addrsCRC32}
 create name from CRC32 of string composed from "hpt", source and destination
 addreses. Always the same filename for every pair of links, very unique.
-Automatically switched to @code{timeStamp} when all alowed extensions were
-used.
+Automatically switches to @code{timeStamp} when all alowed extensions have
+been used.
 @item @code{addrDiffAlways}
-the same as addrDiff but tryes to use lower free numbers of extension in
+the same as addrDiff but tries to use lower free numbers of extension in
 case when all higher numbers are already busy.
 @item @code{addrsCRC32Always}
 the same as addrsCRC32 but tryes to use lower free numbers of extension in
 case when all higher numbers are already busy.
 @item @code{Amiga)}
-Amiga Style Outbound (ASO). Bundles creates in @code{Outbound} directory
+Amiga Style Outbound (ASO). Bundles are created in @ref{outbound,,,fidoconfig,FidoConfig Manual} directory
 like this:
 @example
 2.5000.117.1.hut
 2.5000.117.1.mo0
 @end example
-If @code{SeparateBundles on} and @code{Packer} not defined pkt moves to
+If @ref{SeparateBundles} is @code{on} and @ref{packer,,,fidoconfig,FidoConfig Manual} not defined, pkt is moved to
 @code{2.5000.117.1.sep} directory.
 
-Extensions & prefixes in flo files creates as in @code{addrDiffAlways} algorythm.
+Extensions & prefixes in flo files are created as in @code{addrDiffAlways} algorithm.
 @end table
 
 Default value is @code{timeStamp}
@@ -1407,20 +1409,25 @@ majority of the keywords,
 @code{advancedareafix on}
 @end table
 
-If this statement is "on" and our system wants to delete area from
+If this statement is "on" and our system wants to delete an area from
 remote config then unsubscribe messages to areafix robot of this link
-looks like "~areaname". The area on the remote system will be deleted
+look like "~areaname". The area on the remote system will be deleted
 from config file, if our system is allowed to delete this area ("allow
 area delete" in FastEcho, and @ref{LinkGrp} must be the same as
 EchoArea's @code{-g <group>} in @value{HPT}).
 
 Our system sends deleting command only for systems with
-@code{AdvancedAreafix} and only when default uplink (@code{-def})
-unsubscribing from EchoArea or some link deleting this area by command
-"~areaname". Of course if this link has the rights to delete this area.
+@code{AdvancedAreafix} and with @ref{UnsubscribeOnAreaDelete} set to "on" 
+and when default uplink (@code{-def}) unsubscribes from an EchoArea or 
+some link deletes this area by "~areaname" command. Of course if this 
+link has the rights to delete this area.
 
-If this "AdvancedAreafix off" (default), then deleting command looks
-like "-areaname".
+You may also delete an area yourself by running the following command:@*@*
+@code{hpt afix <your main AKA> ~area}@*@*
+Here @code{<your main AKA>} is your main address. @xref{address,,,fidoconfig,FidoConfig Manual}.
+
+If @code{AdvancedAreafix} for the link is "off" (default), then unsubscribe 
+command "-areaname" is sent instead of delete command "~areaname".
 
 This statement can only be repeated for different links.
 
@@ -1976,7 +1983,14 @@ This statement can only be repeated for different links.
 @end table
 
 If unsubscribeOnAreaDelete is true, link will receive unsubscribe request
-("-area") to his areafix when subscribed area is deleted.
+("-area" if @ref{AdvancedAreafix} is off for the link and "~area" if it is on) 
+to his areafix when subscribed area is deleted. An area may be deleted when 
+default uplink (@code{-def}) unsubscribes from the area or some link deletes 
+this area by "~area" command (@ref{LinkGrp} for the link that deletes an area 
+must be the same as EchoArea's @code{-g <group>}). You may also delete an area 
+yourself by running the following command:@*@*
+@code{hpt afix <your main AKA> ~area}@*@*
+Here @code{<your main AKA>} is your main address. @xref{address,,,fidoconfig,FidoConfig Manual}.
 
 By default is off, i.e. do not send unsubscribe request.
 
