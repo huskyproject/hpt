@@ -1572,6 +1572,8 @@ int processDir(char *directory, e_tossSecurity sec)
 	    rc = 3; /*  nonsence, but compiler warns */
 	    if (config->tossingExt != NULL &&
 		(newFileName=changeFileSuffix(dummy, config->tossingExt,1)) != NULL){
+                if (arcFile)
+                    w_log(LL_BUNDLE, "bundle %s: renaming to .%s", dummy, config->tossingExt);
 		nfree(dummy);
 		dummy = newFileName;
 		newFileName=NULL;
