@@ -160,7 +160,8 @@ char *(BadmailReasonString[BM_MAXERROR+1]) = {
 /*16*/"Area is paused (unsubscribed at uplink)",
 /*17*/"No valid areatag is given in the message",
 /*18*/"Can't create subdirectories for echobase",
-/*19*/"Mail considered to be too old"
+/*19*/"Mail considered to be too old",
+/*20*/"Mail considered to be too new"
 };
 
 
@@ -943,8 +944,8 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
         /* check age of message */
         if (writeAccess == 0)                     /* ok to proceed */
         {
-            /* get message age if tooOld feature is enabled */
-            if (echo->tooOld > 0)        /* tooOld enabled */
+            /* get message age if tooOld or tooNew feature is enabled */
+            if ( (echo->tooOld > 0) || (echo->tooNew > 0) )
             {
                 /* get time from message */
                 tFlag = parse_ftsc_date(&msg_tm, (char*)msg->datetime);
@@ -953,18 +954,19 @@ int processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forcea
                     msgTime = mktime(&msg_tm);
                     if (msgTime != (time_t)-1)
                     {
-                        /* calculate difference */
-                        if (globalTime > msgTime)
-                        {
-                            diffTime = globalTime - msgTime;
-                            diffTime /= (60 * 60 * 24);          /* convert to days */
-                            days = (unsigned int)diffTime;
+                        diffTime = abs(globalTime - msgTime);
+                        diffTime /= (60 * 60 * 24);          /* convert to days */
+                        days = (unsigned int)diffTime;
+                        /* tooOld */
+                        if ((echo->tooOld > 0) && globalTime > msgTime) {
+                            if (days > echo->tooOld) writeAccess = BM_TOO_OLD;
+                        }
+                        /* tooNew */
+                        else if ((echo->tooNew > 0) && globalTime < msgTime) {
+                            if (days > echo->tooNew) writeAccess = BM_TOO_NEW;
                         }
                     }
                 }
-
-                /* check for valid age */
-                if (days > echo->tooOld) writeAccess = BM_TOO_OLD;
             }
 
             if (writeAccess)            /* on any problem move message to BadArea */
