@@ -256,7 +256,7 @@ int parse_post_command(struct post_parameters *p, unsigned int argc, char **argv
                 for (++*n; *n < argc; ++*n) {
                     long attr = 0;
                     char *flags = NULL, *end;
-					int parsed;
+                    int parsed;
 
                     parsed = parseAttrString(argv[*n], &flags, &attr, &end);
                     if(parsed <= 0 || *end != '\0')
@@ -687,8 +687,8 @@ int process_parameters(struct post_parameters *p, s_message *msg)
         }
     }
 
-	/* Copy attributes */
-	msg->attributes |= p->attr;
+    /* Copy attributes */
+    msg->attributes |= p->attr;
 
     /* Create header for message(s) text */
     /* createKludges shouldn't be called here since it generate MSGID */
@@ -818,11 +818,12 @@ void do_posting(struct post_parameters *p, FILE *text, s_message *msg)
         msg->textLength = strlen(msg->text);
 
         w_log(LL_POSTING,
-            "Posting msg from %u:%u/%u.%u -> %s in area: %s",
-            msg->origAddr.zone, msg->origAddr.net,
-            msg->origAddr.node, msg->origAddr.point,
-            msg->netMail?aka2str(msg->destAddr):msg->toUserName,
-            (p->area_name) ? p->area_name : p->area->areaName);
+              "Posting msg from %u:%u/%u.%u -> %s in area: %s with subject: %s",
+              msg->origAddr.zone, msg->origAddr.net,
+              msg->origAddr.node, msg->origAddr.point,
+              msg->netMail ? aka2str(msg->destAddr) : msg->toUserName,
+              (p->area_name) ? p->area_name : p->area->areaName,
+              msg->subjectLine);
 
         /*  recoding from internal to transport charSet */
         if (config->outtab != NULL) {
