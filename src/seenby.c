@@ -167,7 +167,7 @@ void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy **seenBys, 
 		  /* I propose to drop incorrect seen-by's, as possible dupes seem to be lesser evil
 		     compared to possible loss of mail if choose to propagate mail with buggy control
 			 lines --Elfy 2010-03-18 */
-			w_log(LL_ALERT, "Buggy SEEN-BY line encountered"); /* FIXME: print msgid to pinpoint problem? */
+			w_log(LL_ALERT, "Buggy SEEN-BY line encountered. Invalid node was removed from the line!"); /* FIXME: print msgid to pinpoint problem? */
 			--*seenByCount;
 		}
 	    } else {
@@ -217,65 +217,90 @@ void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCoun
     *seenByCount = seenByAlloced = 0;
 
     start = strrstr(msg->text, " * Origin:"); /*  jump over Origin */
-    if (start == NULL) start = msg->text;
+    if (start == NULL)
+		start = msg->text;
 
     /*  find beginning of path lines */
-    do {
-	start = strstr(start, "\001PATH:");
-	if (start == NULL) return;
-	for (endptr = strchr(start, '\r'); endptr; endptr = strchr(endptr, '\r')) {
-	    while (*endptr == '\r' || *endptr == '\n') endptr++;
-	    if (strncmp(endptr, "\001PATH:", 6)) break; /* not path line */
-	}
-	if (endptr && strstr(endptr, "\001PATH:")) {
-	    start = endptr;
-	    continue; /* only last path lines are valid */
-	}
-	start += 7; /*  jump over PATH: */
+    do
+	{
+		start = strstr(start, "\001PATH:");
+		if (start == NULL)
+			return;
+		for (endptr = strchr(start, '\r'); endptr; endptr = strchr(endptr, '\r'))
+		{
+			while (*endptr == '\r' || *endptr == '\n')
+				endptr++;
+			if (strncmp(endptr, "\001PATH:", 6))
+				break; /* not path line */
+		}
+		if (endptr && strstr(endptr, "\001PATH:"))
+		{
+			start = endptr;
+			continue; /* only last path lines are valid */
+		}
+		start += 7; /*  jump over PATH: */
 
-	while (*start == ' ') start++; /*  find first word after PATH: */
+		while (*start == ' ')
+			start++; /*  find first word after PATH: */
     } while (!isdigit(*start));
 
     /*  now that we have the start of the PATH' so we can tokenize the lines and read them in */
     xstrcat(&seenByText, start);
 
     token = strtok(seenByText, " \r\t\376");
-    for (; token != NULL; token = strtok(NULL, " \r\t\376")) {
-	if (isdigit(*token)) {
-	    /*  parse token */
-	    temp = strtoul(token, &endptr, 10);
-	    if (*endptr==':') {
-		token = endptr+1;
-		temp = strtoul(token, &endptr, 10);
-	    }
-	    if (*endptr && *endptr != '/')
-		continue;
+    for (; token != NULL; token = strtok(NULL, " \r\t\376"))
+	{
+		if (isdigit(*token))
+		{
+			/*  parse token */
+			temp = strtoul(token, &endptr, 10);
+			if (*endptr==':')
+			{
+				token = endptr+1;
+				temp = strtoul(token, &endptr, 10);
+			}
+			if (*endptr && *endptr != '/')
+				continue;
 
-	    /*  get new memory */
-	    if ((*seenByCount)++ >= seenByAlloced)
-		(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAlloced+=32));
+			/*  get new memory */
+			if ((*seenByCount)++ >= seenByAlloced)
+				(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAlloced+=32));
 
-	    if ((*endptr) == '\0') {
-		/*  only node aka */
-		(*seenBys)[*seenByCount-1].node = (UINT16) temp;
-		/*  use net aka of last seenBy */
-		(*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
-	    } else {
-		/*  net and node aka */
-		(*seenBys)[*seenByCount-1].net = (UINT16) temp;
-		/*  eat up '/' */
-		endptr++;
-		(*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
-	    }
-	} else if (strcmp(token, "\001PATH:")!=0) break; /*  not digit and not PATH */
-    }
+			if ((*endptr) == '\0')
+			{
+				/*  only node aka */
+				(*seenBys)[*seenByCount-1].node = (UINT16) temp;
+				/*  use net aka of last seenBy */
+				if(*seenByCount >= 2)
+				{
+					(*seenBys)[*seenByCount-1].net = (*seenBys)[*seenByCount-2].net;
+				}
+				else
+				{ 
+					w_log(LL_ALERT, "Buggy PATH line encountered. Invalid node was removed from the line!");
+					--*seenByCount;
+				}
+			}
+			else
+			{
+				/*  net and node aka */
+				(*seenBys)[*seenByCount-1].net = (UINT16) temp;
+				/*  eat up '/' */
+				endptr++;
+				(*seenBys)[*seenByCount-1].node = (UINT16) atol(endptr);
+			}
+		}
+		else if (strcmp(token, "\001PATH:")!=0)
+			break; /*  not digit and not PATH */
+	}
 
     if (*seenByCount != seenByAlloced)
-	(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
+		(*seenBys) = (s_seenBy*) safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
 
     /*  test output for reading of paths... */
 #ifdef DEBUG_HPT
-    for (i=0; i < *seenByCount; i++) printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
+    for (i=0; i < *seenByCount; i++)
+		printf("%u/%u ", (*seenBys)[i].net, (*seenBys)[i].node);
 #endif
     /* exit(2); */
 
