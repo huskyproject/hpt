@@ -1050,7 +1050,7 @@ majority of the keywords,
 @code{AdvStatisticsFile /home/val/fido/log/hpt.sta}
 @end table
 
-Define binary statistic file for calculating links and echo trafic.
+Define binary statistic file for calculating links and echo traffic.
 Parsed by hpt/misc/adv-stat-hpt.pl
 
 @node AreasMaxDupeAge, DupeBaseType, AdvStatisticsFile, Files and Paths
