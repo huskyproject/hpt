@@ -60,7 +60,7 @@
 # define fnmerge _makepath
 #endif
 
-#define VERSION   "1.36"
+#define VERSION   "1.37"
 #define CREATED   "%c %s routing for %d:%d/%d. Created by Hubroute generator "VERSION""EOLCHR"%c %45s%c"EOLCHR""
 #ifdef _TARGET
 # if defined (__GNUC__)
@@ -784,7 +784,7 @@ static void PutRoutingItr( void )
 }
 
 
-// 北  Make Routing for T-mail
+// Make Routing for T-mail
 static void DirectsTmail( void )
 {
   AddPoint = true;
@@ -851,7 +851,7 @@ static void PutRoutingTmail( void )
 }
 
 
-// 北  Make Routing for BPACK
+// Make Routing for BPACK
 static void DirectsBpack( void )
 {
   PrevNode = *MyNode;
@@ -895,7 +895,7 @@ static void PutRoutingBpack( void )
 }
 
 
-// 北  Make Routing for IMBINK
+// Make Routing for IMBINK
 static void PutRoutingImb( void )
 {
   StarWild = true;
@@ -929,7 +929,7 @@ static void PutRoutingImb( void )
 }
 
 
-// 北  Make Routing for XMAIL
+// Make Routing for XMAIL
 static void PutRoutingXmail( void )
 {
   StarWild = false;
@@ -984,7 +984,7 @@ static void PutRoutingXmail( void )
 }
 
 
-// 北  Make Routing for ifmail
+// Make Routing for ifmail
 static const char *GetIfFlavor( link * pLink )
 {
   if( pLink->flavor & CRASH_FLAVOR )
@@ -1091,7 +1091,7 @@ static void PutRoutingIfmail( void )
 }
 
 
-// 北  Make Routing for BiP
+// Make Routing for BiP
 const char *BipFlavors[] = {
   "Crash", "Dir  ", "Hold ", "Norm "
 };
@@ -1138,7 +1138,7 @@ static void PutRoutingBip( void )
 }
 
 
-// 北  Make Routing for Unimail
+// Make Routing for Unimail
 static void PutRoutingUnimail( void )
 {
   StarWild = true;
@@ -1169,7 +1169,7 @@ static void PutRoutingUnimail( void )
 }
 
 
-// 北  Make Routing for QECHO
+// Make Routing for QECHO
 ushort WriteNodeQecho( nodeaddr Node, char *out, ushort addrtype )
 {
   char tmp[20];
@@ -1241,7 +1241,7 @@ static void PutRoutingQecho( void )
 }
 
 
-// 北  Make Routing for Fidogate
+// Make Routing for Fidogate
 const char *FidogateFlavors[] = {
   "crash ", "direct", "hold  ", "normal"
 };
@@ -1303,7 +1303,7 @@ static void PutRoutingFidogate( void )
   }
 }
 
-// 北  Make Routing for FTRACK
+// Make Routing for FTRACK
 static int counter = 0;
 ushort WriteNodeFtrack( nodeaddr Node, char *out, ushort addrtype )
 {
@@ -1389,15 +1389,15 @@ static void PutRoutingFtrack( void )
   }
 }
 
+// Make Routing for HPT
 const char *HuskyFlavors[] = {
   "crash", "direct", "hold", "normal"
 };
 
-// 北  Make Routing for HPT
 static void PutRoutingHusky( void )
 {
   StarWild = true;
-  AddPoint = false;
+  AddPoint = true;
   DefaultFromMe = false;
   FullAddr = true;
   FillRoute = false;
@@ -1442,7 +1442,7 @@ static void PutUnRouted( void )
 }
 
 
-// 北  Config parser
+// Config parser
 static boolean LoadAddress( char *p, void * )
 {
   MyNode[nAKAs++] = ScanNode( &p );
@@ -2126,7 +2126,7 @@ int main( int argc, char **argv )
   fprintf( stderr,
            "Hubroute generator v." VERSION "(" TARGET ")%s%s" EOLCHR
            "Copyright (c) 1994-2003 Yuri Safronov 2:5020/204" EOLCHR
-           "Copyright (c) 2009-2010 Husky Project development team" EOLCHR,
+           "Copyright (c) 2009-2016 Husky Project development team" EOLCHR,
            REVISION[0]?"rev.":"", REVISION );
   if( argc > 1 )
   {
