@@ -11,7 +11,7 @@ URL: http://huskyproject.org
 License: GPL
 Requires: fidoconf >= 1.9, perl >= 5.8.8
 BuildRequires: huskylib >= 1.9, smapi >= 2.5
-BuildRequires: fidoconf-devel >= 1.9, areafix >= 1.9
+BuildRequires: fidoconf >= 1.9, areafix >= 1.9
 Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
@@ -22,6 +22,7 @@ HPT is the FTN tosser from the Husky Project.
 %setup -q -n %{name}
 
 %build
+sed -i -re 's,#LFLAGS =-s,LFLAGS =-s -static,g' makefile.inc
 make
 (cd fidoroute; make)
 
