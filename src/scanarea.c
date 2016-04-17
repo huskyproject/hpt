@@ -330,7 +330,10 @@ int rescanEMArea(s_area *echo, s_arealink *arealink, long rescanCount, long resc
        MsgSetHighWater(area, i);
 #else /* val: change in algorithm */
        i = MsgGetHighMsg(area);
-       MsgSetHighWater(area, i);
+	   if (i > 0)
+	   {
+		   MsgSetHighWater(area, i);
+	   }
        if (rescanCount <= 0) rescanCount = i;
        s_pool = rescanCount > 1024 ? 1024 : rescanCount;
        pool = safe_malloc(s_pool * sizeof(*pool));
