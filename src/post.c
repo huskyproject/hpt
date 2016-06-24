@@ -255,7 +255,7 @@ int parse_post_command(struct post_parameters *p, unsigned int argc, char **argv
                     goto unknown_switch;
                 for (++*n; *n < argc; ++*n) {
                     long attr = 0;
-                    char *flags = NULL, *end;
+                    char *flags = NULL, *end = NULL;
                     int parsed;
 
                     parsed = parseAttrString(argv[*n], &flags, &attr, &end);
@@ -264,9 +264,13 @@ int parse_post_command(struct post_parameters *p, unsigned int argc, char **argv
                         nfree(flags);
                         break;
                     }
-                    p->attr |= attr;
-                    xstrscat(&p->flags, " ", flags, NULLP);
-                    nfree(flags);
+                    if ( attr ) {
+                        p->attr |= attr;
+                    }
+                    if ( flags != NULL ) {
+                        xstrscat(&p->flags, " ", flags, NULLP);
+                        nfree(flags);
+                    }
                 }
                 --*n;
             break;
