@@ -11,8 +11,7 @@
 Ведущий оставляет за собой право редактировать и подправлять присланные вопросы
 и ответы, не согласовывая изменения с автоpами.
 
-Ведущий FAQ - Max Levenkov, 2:5000/362.117, ml(you_know)woland.iae.nsk.su
-(в его отсутствие: Stas Degteff, 2:5080/102)
+Ведущий FAQ - Stas Degteff, 2:5080/102
 
 Новые или измененные вопросы помечены знаком ">".
 
@@ -71,46 +70,26 @@
 
 [1] Q: Где взять свежие версии?
 
-A: (ML, SR, SD)
+A: (ML, SR, SD, MD)
 
 1. Официальные дистрибутивы.
-   Комплектацией архивов и компиляцией бинарников занимаются "Packagers"
-   проекта: Pavel Andreew 2:5080/59 (главный packager: комплектация архивов,
-   debian packages), Shilov Vladimir 2:4627/64 (бинарники win32-current),
-   Andy U. Luk'yanov 2:5001/7 (бинарники Win32, OS/2, DPMI).
+   Комплектацией архивов и компиляцией бинарников занимается
+   Max Vasilyev 2:5057/77.
 
-1.1. Бинарники и исходники релизов: http://sourceforge.net/projects/husky,
+1.1. Бинарники и исходники релизов: https://sourceforge.net/projects/husky,
      страничка "Файлы" (самые свежие выставлены на первой). Ссылка есть
      на сайте проекта http://husky.sf.net == http://husky.sourceforge.net.
-
-1.2. Debian packages: http://husky.sourceforge.net/debian
-
-1.3. Бинарники для win32 - в файлэхе NFTN, архив на Демосе:
-     ftp://ddt.demos.su/pub/fileecho/NFTN/
-
-2. Персональные сборки (часто согласованы с официальными):
-
-2.2. husky пакет под BeOS - BeFTN - живет на http://walther.sourceforge.net/
-     и http://www.bebits.com/app/1886/ (Собирают:
-     под BeOS5.1 Paul Galashin 2:5053/777.12
-     под BeOS5.0.3 Сергей Жарский 2:465/204.43)
-
-2.3. Бинаpники DOS-DPMI, OS/2, Win32-cyg, Win32-MVC-Perl, Win32-MVCdll-Perl:
-     http://hpt-bin.boom.ru/ (собирает Andy U. Luk'yanov 2:5001/7)
-
-3. Для Perl версии может понадобиться файл MSVCRT.DLL, взять его можно
-   с сервера Microsoft: ftp://ftp.microsoft.com/softlib/mslfiles/msvcrt.exe
+     Документацию, исходники и исполняемые файлы для различных операционных
+     систем можно также найти на http://download.huskyproject.org
 
 /------/
 
 [2] Q: А где можно стянуть исходники?
 
-A: (ML,SD)
+A: (ML, SD, MD)
 
 1. На любой момент - с CVS, инструкция: http://husky.sourceforge.net/cvs.html
-   и https://sourceforge.net/cvs/?group_id=1332
-2. Файлэха HUSKY, архив на ftp://ddt.demos.su/pub/fileecho/HUSKY/
-   Сорцы раз в два месяца, diff'ы постоянно.
+   и https://sourceforge.net/p/husky/code/?source=navbar
 
 /------/
 
@@ -131,6 +110,7 @@ A:
     Gi  - Pavel Girnov, 2:5066/18.66
     IF  - Ivan Fedorov, 2:5070/275
     MC  - Max Chernogor, 2:464/108
+    MD  - Michael Dukelsky, 2:5020/1042
     mk  - mihail kapitanov, 2:465/239
     ML  - Max Levenkov, 2:5000/117
     mtt - Matthias Tichy
