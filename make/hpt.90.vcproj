@@ -120,6 +120,108 @@
 			/>
 		</Configuration>
 		<Configuration
+			Name="Release|x64"
+			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="0"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+				TypeLibraryName=".\..\nd_r\bin/hpt.tlb"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="1"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="2"
+				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;..\..\areafix;C:\Perl\lib\CORE"
+				PreprocessorDefinitions="NDEBUG;NO_STRICT;DO_PERL;PERL_MSVCRT_READFIX;NO_STRICT;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_MAKE_DLL;WIN32;_CONSOLE"
+				StringPooling="true"
+				MinimalRebuild="true"
+				RuntimeLibrary="2"
+				BufferSecurityCheck="false"
+				EnableFunctionLevelLinking="false"
+				PrecompiledHeaderFile=""
+				AssemblerListingLocation=""
+				ProgramDataBaseFileName="$(IntDir)\vc90.pdb"
+				BrowseInformation="0"
+				WarningLevel="0"
+				SuppressStartupBanner="true"
+				DebugInformationFormat="3"
+				CompileAs="0"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1049"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="fidoconf.lib smapi.lib huskylib.lib Kernel32.lib delayimp.lib perl58.lib OLDNAMES.lib msvcrt.lib areafix.lib"
+				OutputFile="$(OutDir)\hpt.exe"
+				LinkIncremental="1"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="..\..\nd_r\lib;C:\Perl\lib\CORE"
+				GenerateManifest="true"
+				IgnoreAllDefaultLibraries="true"
+				DelayLoadDLLs="perl58.dll"
+				GenerateDebugInformation="false"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				OptimizeForWindows98="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="echo Building documentation&#x0D;&#x0A;set PATH=%PATH%;F:\compilation\cyg\bin&#x0D;&#x0A;cd&#x0D;&#x0A;sh -c &apos;makeinfo --html --no-split --force ../doc/hpt.texi&apos;&#x0D;&#x0A;move /Y  hpt.html $(OutDir)&#x0D;&#x0A;"
+			/>
+		</Configuration>
+		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="..\..\nd_d\bin"
 			IntermediateDirectory="..\..\nd_d\obj\$(ProjectName)"
@@ -215,108 +317,6 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release|x64"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="0"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				TargetEnvironment="3"
-				TypeLibraryName=".\..\nd_r\bin/hpt.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="1"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories="..\h;..\..\fidoconf;..\..\smapi;..\..\huskylib;..\..\areafix"
-				PreprocessorDefinitions="NDEBUG;NO_STRICT;DO_PERL;PERL_MSVCRT_READFIX;NO_STRICT;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_MAKE_DLL;WIN32;_CONSOLE"
-				StringPooling="true"
-				MinimalRebuild="true"
-				RuntimeLibrary="2"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				PrecompiledHeaderFile=""
-				AssemblerListingLocation=""
-				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
-				BrowseInformation="0"
-				WarningLevel="0"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1049"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="fidoconf.lib smapi.lib huskylib.lib Kernel32.lib delayimp.lib perl58.lib OLDNAMES.lib msvcrt.lib areafix.lib"
-				OutputFile="$(OutDir)\hpt.exe"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\nd_r\lib"
-				GenerateManifest="true"
-				IgnoreAllDefaultLibraries="true"
-				DelayLoadDLLs="perl58.dll"
-				GenerateDebugInformation="false"
-				SubSystem="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				OptimizeForWindows98="1"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="echo Building documentation&#x0D;&#x0A;set PATH=%PATH%;F:\compilation\cyg\bin&#x0D;&#x0A;cd&#x0D;&#x0A;sh -c &apos;makeinfo --html --no-split --force ../doc/hpt.texi&apos;&#x0D;&#x0A;move /Y  hpt.html $(OutDir)&#x0D;&#x0A;"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Debug|x64"
 			OutputDirectory="..\..\nd_d\bin"
 			IntermediateDirectory="..\..\nd_d\obj\hpt64"
@@ -353,7 +353,7 @@
 				RuntimeLibrary="3"
 				PrecompiledHeaderFile=""
 				AssemblerListingLocation=""
-				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
+				ProgramDataBaseFileName="$(IntDir)\vc90.pdb"
 				BrowseInformation="0"
 				WarningLevel="4"
 				SuppressStartupBanner="true"

@@ -35,7 +35,8 @@
 
 #define LogFileName "hpt.log"
 
-int processCommandLine(int argc, char **argv);
+typedef enum exitCode { ex_OK, ex_Help, ex_Error } e_exitCode;
+e_exitCode processCommandLine(int argc, char **argv);
 
 void processConfig(void);
 
