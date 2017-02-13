@@ -53,6 +53,7 @@
 #include <huskylib/xstr.h>
 #include <smapi/msgapi.h>
 
+#include <areafix/areafix.h>
 #include "global.h"
 #include "toss.h"
 

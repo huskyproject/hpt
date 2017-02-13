@@ -83,6 +83,8 @@
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 
+#include <areafix/areafix.h>
+
 #include <global.h>
 #include <fcommon.h>
 #include <dupe.h>

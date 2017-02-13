@@ -38,6 +38,7 @@
 #include <fidoconf/common.h>
 #include <fidoconf/afixcmd.h>
 
+#include <areafix/areafix.h>
 #include <global.h>
 #include <pkt.h>
 #include <version.h>

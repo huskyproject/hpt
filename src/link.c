@@ -65,6 +65,7 @@ be cleared.
 #include <huskylib/crc.h>
 #include <huskylib/log.h>
 
+#include <areafix/areafix.h>
 #include "global.h"
 #include "fcommon.h"
 #include "hptafix.h"

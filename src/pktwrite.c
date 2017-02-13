@@ -52,6 +52,7 @@
 #include <smapi/msgapi.h>
 
 #include <pkt.h>
+#include <areafix/areafix.h>
 #include <global.h>
 
 #include <version.h>

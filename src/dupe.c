@@ -49,6 +49,7 @@
 #include <errno.h>
 
 #include <pkt.h>
+#include <areafix/areafix.h>
 #include <global.h>
 
 #include <huskylib/compiler.h>

@@ -45,6 +45,7 @@
 #include <huskylib/log.h>
 #include <huskylib/recode.h>
 
+#include <areafix/areafix.h>
 #include <global.h>
 #include <fcommon.h>
 #include <pkt.h>

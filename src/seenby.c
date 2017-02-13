@@ -36,6 +36,7 @@
 #include <ctype.h>
 #include <assert.h>
 #include <fcommon.h>
+#include <areafix/areafix.h>
 #include <global.h>
 #include <seenby.h>
 #include <huskylib/xstr.h>

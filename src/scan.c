@@ -71,6 +71,8 @@
 #include <huskylib/recode.h>
 #include <huskylib/log.h>
 
+#include <areafix/areafix.h>
+
 /* hpt */
 #include <fcommon.h>
 #include <pkt.h>

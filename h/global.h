@@ -68,7 +68,7 @@ extern int       noHighWaters;
 extern int       pkt_count; /*  pkt counter */
 extern int       pkt_aTime;
 extern int       quiet;
-extern int       cmRelink;
+extern e_relinkType cmRelink;
 
 extern hs_addr afixAddr;
 extern char *afixCmd;

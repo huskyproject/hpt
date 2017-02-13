@@ -51,6 +51,8 @@
 #include <huskylib/log.h>
 #include <huskylib/recode.h>
 
+#include <areafix/areafix.h>
+
 #include <pkt.h>
 #include <scan.h>
 #include <seenby.h>

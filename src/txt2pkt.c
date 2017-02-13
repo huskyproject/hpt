@@ -61,6 +61,8 @@
 #include <fidoconf/afixcmd.h>
 #include <huskylib/recode.h>
 
+#include <areafix/areafix.h>
+
 /* hpt */
 #include <global.h>
 #include <pkt.h>
