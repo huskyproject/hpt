@@ -22,7 +22,7 @@ HPT is the FTN tosser from the Husky Project.
 %setup -q -n %{name}
 
 %build
-sed -i -re 's,#LFLAGS =-s,LFLAGS =-s -static,g' makefile.inc
+#sed -i -re 's,#LFLAGS =-s,LFLAGS =-s -static,g' makefile.inc
 make
 (cd fidoroute; make)
 
