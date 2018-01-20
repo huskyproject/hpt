@@ -82,15 +82,17 @@ A: (ML, SR, SD, MD)
      на сайте проекта http://husky.sf.net == http://husky.sourceforge.net.
      Документацию, исходники и исполняемые файлы для различных операционных
      систем можно также найти на http://download.huskyproject.org
+     8-го января 2018 г. исходники проекта переехали с sourceforge.net на
+     github.com. Сайт проекта теперь тут: https://huskyproject.github.io
 
 /------/
 
 [2] Q: А где можно стянуть исходники?
 
-A: (ML, SD, MD)
+A: (MD)
 
-1. На любой момент - с CVS, инструкция: http://husky.sourceforge.net/cvs.html
-   и https://sourceforge.net/p/husky/code/?source=navbar
+1. На любой момент - с гитхаба: https://github.com/huskyproject
+     Там каждый подпроект в отдельном репозитории.
 
 /------/
 
