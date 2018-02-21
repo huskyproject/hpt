@@ -472,6 +472,136 @@ void freeDupeMemory(s_area *area) {
 }
 
 
+/*
+ *  find start of content in echomail's message text
+ *
+ *  requires:
+ *  - msg_text: pointer to message text
+ *
+ *  returns:
+ *  - pointer to start of content or NULL in case of any error
+ */
+
+char *findStartOfContent(char *msg_text)
+{
+  char               *start = NULL;     /* start of content */
+  char               *temp;             /* temporary pointer */
+  unsigned int       run = TRUE;        /* loop control flag */
+
+  /* sanity check */
+  if (msg_text == NULL) return start;
+
+  /* message has to start with AREA: line */
+  if (strncmp(msg_text, "AREA:", 5) == 0)
+  {
+    /* find next line not starting with <soh> */
+    while (run == TRUE)
+    {
+      /* find end of current line */
+      temp = strchr(msg_text, '\r');    /* find next CR */
+
+      if (temp)                         /* found CR */
+      {
+        /* check for <soh> */
+        temp++;                         /* first char of new line */
+        if (*temp == 0x01)              /* is <soh> */
+        {
+          msg_text = temp;              /* skip this kludge line */
+        }
+        else                            /* not <soh> */
+        {
+          start = temp;                 /* found start of content */
+          run = FALSE;                  /* end loop */
+        }
+      }
+      else                              /* no CR found */
+      {
+        run = FALSE;                    /* end loop */
+      }
+    }
+  }
+
+  return start;
+}
+
+
+/*
+ *  find end of content in echomail's message text
+ *
+ *  requires:
+ *  - msg_text: pointer to message text
+ *
+ *  returns:
+ *  - pointer to end of content or NULL in case of any error
+ */
+
+char *findEndOfContent(char *msg_text)
+{
+  char               *end = NULL;       /* end of content */
+  char               *eol;              /* end of line */
+  char               *temp;             /* temporary pointer */
+  unsigned int       run = TRUE;        /* loop control flag */
+  unsigned long      length;            /* string length */
+
+  /* sanity check */
+  if (msg_text == NULL) return end;
+
+  /* get end of last line */
+  length = strlen(msg_text);            /* get length of message */
+  eol = msg_text + length - 1;          /* pointer to last char */
+  length = 0;                           /* use as SEEN-BY counter */
+
+  /* find line */
+  while (run == TRUE)
+  {
+    /* find start of line (starting at the end) */
+    temp = eol;
+    if ((*temp == '\r') && (temp > msg_text)) temp--;  /* skip CR at end */
+
+    /* next CR is end of previous line */
+    while ((*temp != '\r') && (temp > msg_text))       /* find next CR */
+    {
+      temp--;
+    }
+
+    if (temp == msg_text)     /* no CR found or reached start of message */
+    {
+      run = FALSE;            /* end loop */
+    }
+    else                      /* found CR */
+    {
+      temp++;                 /* first char of current line */
+
+      /* check for non-control line */
+      if (*temp != 0x01)      /* not <soh> */
+      {
+        /* check for SEEN-BY: (special case without <soh>) */
+        if (strncmp(temp, "SEEN-BY:", 8) == 0)    /* is SEEN-BY */
+        {
+          length++;                /* increase counter */
+        }
+        else                                      /* not SEEN-BY */
+        {
+          end = eol;               /* found end of content */
+          run = FALSE;             /* end loop */
+        }
+      }
+
+      temp--;                 /* end of previous line */
+      eol = temp;             /* update pointer for next run */
+    }
+  }
+
+  /* check for required SEEN-BY lines */
+  if (length == 0)                 /* no SEEN-BY lines */
+  {
+    end = NULL;                    /* signal error */
+  }
+
+  return end;
+}
+
+
 int dupeDetection(s_area *area, const s_message msg) {
     s_dupeMemory     *Dupes = area->dupes;
     s_textDupeEntry  *entxt;
@@ -490,10 +620,38 @@ int dupeDetection(s_area *area, const s_message msg) {
     {   /* Kluge MSGID is not found so make it from crc of message body */
         if (msg.text)
         {
-            char *hbuf=NULL;
-            xstrscat(&hbuf,msg.text,msg.fromUserName,msg.datetime,msg.toUserName,msg.subjectLine,NULLP);
+            char *hbuf = NULL;     /* buffer */
+            char *start;           /* start of content */
+            char *end;             /* end of content */
+            char orig;             /* original character */
+
+            /* isolate content from message text (no control lines) */
+            end = NULL;
+            start = findStartOfContent(msg.text);    /* find start of content */
+            if (start)                               /* found start */
+            {
+                end = findEndOfContent(start);       /* find end of content */
+                if (end)                             /* found end */
+                {
+                    orig = *end;                     /* save original char */
+                    *end = 0;                        /* end string */
+                }
+            }
+
+            if (end == NULL)            /* just in case something went wrong */
+            {
+                start = msg.text;       /* use complete message text */
+            }
+
+            /* create pseudo MSGID */
+            xstrscat(&hbuf,start,msg.fromUserName,msg.datetime,msg.toUserName,msg.subjectLine,NULLP);
             xscatprintf (&str, "MSGID: %08lx",strcrc32(hbuf, 0xFFFFFFFFL));
             nfree(hbuf);
+
+            if (end)                    /* un-modify message text */
+            {
+                *end = orig;            /* restore original char */
+            }
         }
         else 
             return 1; /*  without msg.text - message is empty, no dupeCheck */
