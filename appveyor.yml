@@ -1,0 +1,22 @@
+version: '{build}'
+branches:
+  only:
+    - master
+image:
+  - Visual Studio 2017
+platform:
+  - Win32
+install:
+  - cmd: git clone https://github.com/askovpen/huskylib  C:\projects\huskylib
+  - cmd: git clone https://github.com/askovpen/smapi  C:\projects\smapi
+  - cmd: git clone https://github.com/askovpen/fidoconf  C:\projects\fidoconf
+  - cmd: git clone https://github.com/askovpen/areafix  C:\projects\areafix
+  - cmd: git clone https://github.com/askovpen/hptzip  C:\projects\hptzip
+build_script:
+  - cmd: 
+      cd C:\projects\huskylib && mkdir build && cd build && cmake --version &&  cmake .. -G "Visual Studio 15 2017" && cmake --build . -- /P:Configuration=Release &&
+      cd C:\projects\smapi && mkdir build && cd build && cmake --version &&  cmake .. -G "Visual Studio 15 2017" && cmake --build . -- /P:Configuration=Release &&
+      cd C:\projects\fidoconf && mkdir build && cd build && cmake --version &&  cmake .. -G "Visual Studio 15 2017" && cmake --build . -- /P:Configuration=Release &&
+      cd C:\projects\areafix && mkdir build && cd build && cmake --version &&  cmake .. -G "Visual Studio 15 2017" && cmake --build . -- /P:Configuration=Release &&
+      cd C:\projects\hptzip && mkdir build && cd build && cmake --version &&  cmake .. -G "Visual Studio 15 2017" && cmake --build . -- /P:Configuration=Release &&
+      cd C:\projects\hpt && mkdir build && cd build && cmake --version &&  cmake .. -G "Visual Studio 15 2017" && cmake --build . -- /P:Configuration=Release
