@@ -46,6 +46,17 @@ Instructions to build hpt from sources.
    windows (MS Visual C/C++):
         d:\husky\hpt\make>nmake -f makefile.mvc
 
+2.1. Compile with cmake:
+
+  $ mkdir build
+  $ cd build
+  $ cmake .. -DCFGDIR=/path/to/config/dir
+  $ cmake --build .
+  $ make install
+
+  make distrib rpm,deb,tgz:
+    cpack -G RPM, cpack -G DEB, cpack -G TGZ
+
 5. Write a fido config according to the documentation of fidoconfig and hpt.
    Always test the config after changes with the tparser tool (from fidoconfig
    package).
