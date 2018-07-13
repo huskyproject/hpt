@@ -1,0 +1,55 @@
+language: c
+
+os:
+  - linux
+  - osx
+branches:
+  only:
+    - master
+compiler:
+  - gcc
+  - clang
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y rpm; fi
+  - git clone https://github.com/huskyproject/huskylib ~/build/huskyproject/huskylib
+  - git clone https://github.com/huskyproject/smapi ~/build/huskyproject/smapi
+  - git clone https://github.com/huskyproject/fidoconf ~/build/huskyproject/fidoconf
+  - git clone https://github.com/huskyproject/hptzip ~/build/huskyproject/hptzip
+  - git clone https://github.com/huskyproject/areafix ~/build/huskyproject/areafix
+script:
+  - cd  ~/build/huskyproject/huskylib
+  - mkdir build
+  - cd build
+  - cmake ..
+  - cmake --build .
+  - sudo make install
+  - cd  ~/build/huskyproject/smapi
+  - mkdir build
+  - cd build
+  - cmake ..
+  - cmake --build .
+  - sudo make install
+  - cd  ~/build/huskyproject/fidoconf
+  - mkdir build
+  - cd build
+  - cmake ..
+  - cmake --build .
+  - sudo make install
+  - cd  ~/build/huskyproject/areafix
+  - mkdir build
+  - cd build
+  - cmake ..
+  - cmake --build .
+  - sudo make install
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd  ~/build/huskyproject/hptzip; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mkdir build; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd build; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake ..; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake --build .; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo make install; fi
+  - cd $TRAVIS_BUILD_DIR
+  - mkdir build
+  - cd build
+  - cmake ..
+  - cmake --build .
+  - cpack

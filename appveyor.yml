@@ -1,0 +1,24 @@
+version: '{build}'
+branches:
+  only:
+    - master
+image:
+  - Visual Studio 2017
+environment:
+  matrix:
+    - generator: Visual Studio 15 2017
+    - generator: Visual Studio 15 2017 Win64
+install:
+  - cmd: git clone https://github.com/huskyproject/huskylib  C:\projects\huskylib
+  - cmd: git clone https://github.com/huskyproject/smapi  C:\projects\smapi
+  - cmd: git clone https://github.com/huskyproject/fidoconf  C:\projects\fidoconf
+  - cmd: git clone https://github.com/huskyproject/areafix  C:\projects\areafix
+  - cmd: git clone https://github.com/huskyproject/hptzip  C:\projects\hptzip
+build_script:
+  - cmd: 
+      cd C:\projects\huskylib && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release &&
+      cd C:\projects\smapi && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release &&
+      cd C:\projects\fidoconf && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release &&
+      cd C:\projects\areafix && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release &&
+      cd C:\projects\hptzip && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release &&
+      cd C:\projects\hpt && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release
