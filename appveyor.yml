@@ -14,7 +14,7 @@ install:
   - cmd: git clone https://github.com/huskyproject/huskylib  C:\projects\huskylib
   - cmd: git clone https://github.com/huskyproject/smapi  C:\projects\smapi
   - cmd: git clone https://github.com/huskyproject/fidoconf  C:\projects\fidoconf
-  - cmd: git clone https://github.com/huskyproject/areafix  C:\projects\areafix
+  - cmd: git clone https://github.com/askovpen/areafix  C:\projects\areafix
   - cmd: git clone https://github.com/huskyproject/hptzip  C:\projects\hptzip
 build_script:
   - cmd:
