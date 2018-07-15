@@ -93,6 +93,7 @@ if (hptzip_LIB)
   endif()
   if (MSVC)
     include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../hptzip")
+    SET (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
   endif()
 endif(hptzip_LIB)
 
