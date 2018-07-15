@@ -63,6 +63,7 @@ if (NOT BUILD_SHARED_LIBS)
 message("zlib              : ${ZLIB_LIBRARIES}")
 endif()
 message("perl              : ${PERLLIBS_FOUND}")
+message("Build shared      : ${BUILD_SHARED_LIBS}")
 message("Build type        : ${CMAKE_CONFIGURATION_TYPES}")
 message("-------------------------")
 
