@@ -30,36 +30,36 @@ script:
   - cd  ~/build/huskyproject/huskylib
   - mkdir build
   - cd build
-  - cmake .. "${CF}"
+  - cmake .. ${CF}
   - cmake --build .
   - sudo make install
   - cd  ~/build/huskyproject/smapi
   - mkdir build
   - cd build
-  - cmake .. "${CF}"
+  - cmake .. ${CF}
   - cmake --build .
   - sudo make install
   - cd  ~/build/huskyproject/fidoconf
   - mkdir build
   - cd build
-  - cmake .. "${CF}"
+  - cmake .. ${CF}
   - cmake --build .
   - sudo make install
   - cd  ~/build/huskyproject/areafix
   - mkdir build
   - cd build
-  - cmake .. "${CF}"
+  - cmake .. ${CF}
   - cmake --build .
   - sudo make install
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd  ~/build/huskyproject/hptzip; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mkdir build; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd build; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake .. "${CF}"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake .. ${CF}; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake --build .; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo make install; fi
   - cd $TRAVIS_BUILD_DIR
   - mkdir build
   - cd build
-  - cmake .. "${CF}"
+  - cmake .. ${CF}
   - cmake --build .
   - cpack
