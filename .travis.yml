@@ -11,13 +11,13 @@ matrix:
         - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF
     - os: linux
       env:
-        - MATRIX_EVAL="CC=gcc -m32" CF="-DBUILD_SHARED_LIBS=OFF -DCMAKE_LIBRARY_PATH=/usr/lib32"
+        - MATRIX_EVAL="CC='gcc -m32'" CF="-DBUILD_SHARED_LIBS=OFF -DCMAKE_LIBRARY_PATH=/usr/lib32"
     - os: osx
       env:
         - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF
     - os: osx
       env:
-        - MATRIX_EVAL="CC=gcc -m32" CF=-DBUILD_SHARED_LIBS=OFF
+        - MATRIX_EVAL="CC='gcc -m32'" CF=-DBUILD_SHARED_LIBS=OFF
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y rpm; fi
   - git clone https://github.com/huskyproject/huskylib ~/build/huskyproject/huskylib
