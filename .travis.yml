@@ -82,9 +82,9 @@ deploy:
   file_glob: true
   skip_cleanup: true
   file: 
-    - build/*.rpm
-    - build/*.deb
-    - build/*.tar.gz
+    - $TRAVIS_BUILD_DIR/build/*.rpm
+    - $TRAVIS_BUILD_DIR/build/*.deb
+    - $TRAVIS_BUILD_DIR/build/*.tar.gz
   on:
     repo: askovpen/hpt
     branch: master
