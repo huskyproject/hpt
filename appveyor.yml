@@ -37,7 +37,7 @@ deploy:
   provider: GitHub
   artifact: dist
   auth_token:
-    secure: bxK51k8GJ9Dubpn9l7oDW1rub9HEu1P/iBOr/nhlZRtMu2+F2kGvn+ItvJeLiOvL
+    secure: $(GITHUB_OAUTH_TOKEN)
   on:
     appveyor_repo_tag: true
 
