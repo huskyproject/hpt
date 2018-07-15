@@ -2,6 +2,7 @@ language: c
 branches:
   only:
   - master
+  - /^hpt-.*/
 matrix:
   fast_finish: true
   include:
@@ -87,3 +88,4 @@ deploy:
     - $TRAVIS_BUILD_DIR/build/*.tar.gz
   on:
     tags: true
+    branch: master
