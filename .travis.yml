@@ -80,6 +80,7 @@ deploy:
   api_key:
     secure: oj6/n+6CFX1OTOBxIEFLDpWfJbdgl4/poMy0z0jXE/q8Wr5eHlxJAwo/AtAcz0Szg7jgdjuGYqhWZhpBZ6JO9AooJJIb5yzOKGixvbcivRIwqR3D5FfA877LC56yItkovUjijQkRayS3CKkuH3QK4eoKJ23CRnr7q0KNcSomH8B7DJWAFN75Z8Qg+1NajyQSvR9zJT85/ZG7vcKbKAn5mE5ZoITr2y4FZ2n9Mn0w6JSEJE7oKSdeYYHdoJ+rSprXTn560lBSWZUn5tqWeyhNEjUFzoMHr9cRo20ZY05+lDfRDH9lNYh6Gw+ntGLoSd3XddQ3W4mhzPhRSJjccbN7CR+MZYU1qnwy2t49yLFHLRIf0bPuTsYPHglL6huSaTJ7obhxqf3iPxYJ+3erUII5nyAawNQuoUFWAII+d8rj/ae1XO0mllfPN4yWBfzJDDuOE8ML72k2SBhDW/xp40pP3AB6GhaTZPpcWKt0470jkdeQE+AAnXIoQI8iwtMCcJmBA2uaGiCGvF4q5HFDF/zKHTxKAfO/85Cx7HElXEwg8IJc2KiqGQCQtQPkn6hT6+BpqNTgfi8lcgB8MPP//aBWHAXpZEkmq5UATQ02PF9yoaInPwTmlza2tjldGjWe83w5nIsLIWXC2jbyBU4nlvu1qumaKrUrhUMIoen6+a1AbEk=
   file_glob: true
+  skip_cleanup: true
   file: 
     - build/*.rpm
     - build/*.deb
