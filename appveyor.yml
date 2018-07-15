@@ -8,12 +8,8 @@ environment:
   matrix:
     - generator: Visual Studio 15 2017
       cf: -DBUILD_SHARED_LIBS=OFF
-    - generator: Visual Studio 15 2017
-      cf: -DBUILD_SHARED_LIBS=ON
     - generator: Visual Studio 15 2017 Win64
       cf: -DBUILD_SHARED_LIBS=OFF
-    - generator: Visual Studio 15 2017 Win64
-      cf: -DBUILD_SHARED_LIBS=ON
 install:
   - cmd: git clone https://github.com/huskyproject/huskylib  C:\projects\huskylib
   - cmd: git clone https://github.com/huskyproject/smapi  C:\projects\smapi
