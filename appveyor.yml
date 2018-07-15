@@ -29,7 +29,7 @@ build_script:
       cd C:\projects\areafix && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" "%CF%" && cmake --build . -- /P:Configuration=Release &&
       cd C:\projects\hptzip && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" "%CF%" && cmake --build . -- /P:Configuration=Release &&
       cd C:\projects\hpt && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" "%CF%" && cmake --build . -- /P:Configuration=Release
-  - if ["%CF%"]==[-DBUILD_SHARED_LIBS=OFF] (cpack)
+  - if ["%CF%"]==["-DBUILD_SHARED_LIBS=OFF"] (cpack)
 artifacts:
   - path: build\*.7z
     name: dist
