@@ -69,11 +69,11 @@ script:
 - cpack
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpack -G RPM; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpack -G DEB; fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then for file in *.rpm; do echo mv $file
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then for file in *.rpm; do mv $file
   $(basename $file .rpm).${ARCH}.rpm; done; fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then for file in *.deb; do echo mv $file
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then for file in *.deb; do mv $file
   $(basename $file .deb).${ARCH}.deb; done; fi
-- for file in *.tar.gz; do echo mv $file $(basename $file .tar.gz).${ARCH}.tar.gz;
+- for file in *.tar.gz; do mv $file $(basename $file .tar.gz).${ARCH}.tar.gz;
   done
 deploy:
   provider: releases
@@ -82,9 +82,9 @@ deploy:
   file_glob: true
   skip_cleanup: true
   file: 
-    - ${TRAVIS_BUILD_DIR}/build/*.rpm
-    - ${TRAVIS_BUILD_DIR}/build/*.deb
-    - ${TRAVIS_BUILD_DIR}/build/*.tar.gz
+    - $TRAVIS_BUILD_DIR/build/*.rpm
+    - $TRAVIS_BUILD_DIR/build/*.deb
+    - $TRAVIS_BUILD_DIR/build/*.tar.gz
   on:
     repo: askovpen/hpt
     branch: master
