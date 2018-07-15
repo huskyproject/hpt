@@ -11,7 +11,7 @@ matrix:
         - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF
     - os: linux
       env:
-        - MATRIX_EVAL="CC='gcc -m32'" CF="-DBUILD_SHARED_LIBS=OFF -DCMAKE_LIBRARY_PATH=/usr/lib32"
+        - MATRIX_EVAL="CC='gcc -m32'" CF="-DBUILD_SHARED_LIBS=OFF -DCMAKE_LIBRARY_PATH=/usr/lib32" PACKAGES="gcc-multilib lib32z1-dev"
     - os: osx
       env:
         - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF
@@ -25,6 +25,7 @@ before_install:
   - git clone https://github.com/huskyproject/fidoconf ~/build/huskyproject/fidoconf
   - git clone https://github.com/huskyproject/hptzip ~/build/huskyproject/hptzip
   - git clone https://github.com/huskyproject/areafix ~/build/huskyproject/areafix
+  - if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get install --no-install-recommends --no-upgrade -qq $PACKAGES; fi
 script:
   - eval "${MATRIX_EVAL}"
   - cd  ~/build/huskyproject/huskylib
