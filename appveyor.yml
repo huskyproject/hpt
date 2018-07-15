@@ -26,7 +26,7 @@ build_script:
       cd C:\projects\hpt && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" "%CF%" && cmake --build . -- /P:Configuration=Release
   - cmd: cpack
 artifacts:
-  - path: build\\*.7z
+  - path: build\*.7z
     name: dist
 deploy:
   provider: GitHub
