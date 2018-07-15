@@ -21,7 +21,7 @@ install:
   - cmd: git clone https://github.com/huskyproject/areafix  C:\projects\areafix
   - cmd: git clone https://github.com/huskyproject/hptzip  C:\projects\hptzip
 build_script:
-  - cmd: 
+  - cmd:
       cd C:\projects\huskylib && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release &&
       cd C:\projects\smapi && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release &&
       cd C:\projects\fidoconf && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release &&
@@ -30,7 +30,7 @@ build_script:
       cd C:\projects\hpt && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release
   - cmd: cpack
 artifacts:
-  - path: %APPVEYOR_BUILD_FOLDER%\build\*.7z
+  - path: "%APPVEYOR_BUILD_FOLDER%\build\*.7z"
     name: dist
 deploy:
   provider: GitHub
