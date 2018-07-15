@@ -9,13 +9,17 @@ environment:
   matrix:
     - generator: Visual Studio 15 2017
       cf: -DBUILD_SHARED_LIBS=OFF
+    - generator: Visual Studio 15 2017
+      cf: -DBUILD_SHARED_LIBS=ON
     - generator: Visual Studio 15 2017 Win64
       cf: -DBUILD_SHARED_LIBS=OFF
+    - generator: Visual Studio 15 2017 Win64
+      cf: -DBUILD_SHARED_LIBS=ON
 install:
   - cmd: git clone https://github.com/huskyproject/huskylib  C:\projects\huskylib
   - cmd: git clone https://github.com/huskyproject/smapi  C:\projects\smapi
   - cmd: git clone https://github.com/huskyproject/fidoconf  C:\projects\fidoconf
-  - cmd: git clone https://github.com/askovpen/areafix  C:\projects\areafix
+  - cmd: git clone https://github.com/huskyproject/areafix  C:\projects\areafix
   - cmd: git clone https://github.com/huskyproject/hptzip  C:\projects\hptzip
 build_script:
   - cmd:
@@ -25,7 +29,7 @@ build_script:
       cd C:\projects\areafix && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" "%CF%" && cmake --build . -- /P:Configuration=Release &&
       cd C:\projects\hptzip && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" "%CF%" && cmake --build . -- /P:Configuration=Release &&
       cd C:\projects\hpt && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" "%CF%" && cmake --build . -- /P:Configuration=Release
-  - cmd: cpack
+  - if ["%CF%"]==[-DBUILD_SHARED_LIBS=OFF] (cpack)
 artifacts:
   - path: build\*.7z
     name: dist
