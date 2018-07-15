@@ -30,7 +30,7 @@ build_script:
       cd C:\projects\hpt && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" && cmake --build . -- /P:Configuration=Release
   - cmd: cpack
 artifacts:
-  - path: "%APPVEYOR_BUILD_FOLDER%\build\*.7z"
+  - path: "%APPVEYOR_BUILD_FOLDER%\\build\\*.7z"
     name: dist
 deploy:
   provider: GitHub
