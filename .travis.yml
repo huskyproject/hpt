@@ -64,7 +64,7 @@ script:
 - cd $TRAVIS_BUILD_DIR
 - mkdir build
 - cd build
-- cmake .. ${CF} CPACK_DEBIAN_PACKAGE_MAINTAINER=travis-ci
+- cmake .. ${CF} -DCPACK_DEBIAN_PACKAGE_MAINTAINER=travis-ci
 - cmake --build .
 - cpack
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpack -G RPM; fi
