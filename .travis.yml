@@ -8,7 +8,7 @@ matrix:
   include:
     - os: linux
       env:
-        - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF
+        - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF PACKAGES="zlib1g-dev"
     - os: linux
       env:
         - MATRIX_EVAL="CC='gcc -m32'" CF="-DBUILD_SHARED_LIBS=OFF -DCMAKE_LIBRARY_PATH=/usr/lib32" PACKAGES="gcc-multilib lib32z1-dev"
