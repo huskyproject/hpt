@@ -1,55 +1,90 @@
 language: c
-
-os:
-  - linux
-  - osx
 branches:
   only:
-    - master
-compiler:
-  - gcc
-  - clang
+  - master
+  - /^hpt-.*/
+matrix:
+  fast_finish: true
+  include:
+  - os: linux
+    env:
+    - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF ARCH="x86_64"
+  - os: linux
+    env:
+    - MATRIX_EVAL="CC='gcc -m32'" CF="-DBUILD_SHARED_LIBS=OFF -DCMAKE_LIBRARY_PATH=/usr/lib32"
+      PACKAGES="gcc-multilib lib32z1-dev" ARCH="i686"
+  - os: osx
+    env:
+    - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF ARCH="x86_64"
+  - os: osx
+    env:
+    - MATRIX_EVAL="CC='gcc -m32'" CF=-DBUILD_SHARED_LIBS=OFF ARCH="i686"
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y rpm; fi
-  - git clone https://github.com/huskyproject/huskylib ~/build/huskyproject/huskylib
-  - git clone https://github.com/huskyproject/smapi ~/build/huskyproject/smapi
-  - git clone https://github.com/huskyproject/fidoconf ~/build/huskyproject/fidoconf
-  - git clone https://github.com/huskyproject/hptzip ~/build/huskyproject/hptzip
-  - git clone https://github.com/huskyproject/areafix ~/build/huskyproject/areafix
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y rpm; fi
+- git clone https://github.com/huskyproject/huskylib ~/build/huskyproject/huskylib
+- git clone https://github.com/huskyproject/smapi ~/build/huskyproject/smapi
+- git clone https://github.com/huskyproject/fidoconf ~/build/huskyproject/fidoconf
+- git clone https://github.com/huskyproject/hptzip ~/build/huskyproject/hptzip
+- git clone https://github.com/huskyproject/areafix ~/build/huskyproject/areafix
+- if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get install --no-install-recommends
+  --no-upgrade -qq $PACKAGES; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ln -s /usr/include/x86_64-linux-gnu/zconf.h
+  /usr/include; fi
 script:
-  - cd  ~/build/huskyproject/huskylib
-  - mkdir build
-  - cd build
-  - cmake ..
-  - cmake --build .
-  - sudo make install
-  - cd  ~/build/huskyproject/smapi
-  - mkdir build
-  - cd build
-  - cmake ..
-  - cmake --build .
-  - sudo make install
-  - cd  ~/build/huskyproject/fidoconf
-  - mkdir build
-  - cd build
-  - cmake ..
-  - cmake --build .
-  - sudo make install
-  - cd  ~/build/huskyproject/areafix
-  - mkdir build
-  - cd build
-  - cmake ..
-  - cmake --build .
-  - sudo make install
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd  ~/build/huskyproject/hptzip; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mkdir build; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd build; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake ..; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake --build .; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo make install; fi
-  - cd $TRAVIS_BUILD_DIR
-  - mkdir build
-  - cd build
-  - cmake ..
-  - cmake --build .
-  - cpack
+- eval "${MATRIX_EVAL}"
+- cd  ~/build/huskyproject/huskylib
+- mkdir build
+- cd build
+- cmake .. ${CF}
+- cmake --build .
+- sudo make install
+- cd  ~/build/huskyproject/smapi
+- mkdir build
+- cd build
+- cmake .. ${CF}
+- cmake --build .
+- sudo make install
+- cd  ~/build/huskyproject/fidoconf
+- mkdir build
+- cd build
+- cmake .. ${CF}
+- cmake --build .
+- sudo make install
+- cd  ~/build/huskyproject/areafix
+- mkdir build
+- cd build
+- cmake .. ${CF}
+- cmake --build .
+- sudo make install
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd  ~/build/huskyproject/hptzip; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mkdir build; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd build; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake .. ${CF}; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake --build .; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo make install; fi
+- cd $TRAVIS_BUILD_DIR
+- mkdir build
+- cd build
+- cmake .. ${CF} -DCPACK_DEBIAN_PACKAGE_MAINTAINER=travis-ci
+- cmake --build .
+- cpack
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpack -G RPM; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpack -G DEB; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then for file in *.rpm; do mv $file
+  $(basename $file .rpm).${ARCH}.rpm; done; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then for file in *.deb; do mv $file
+  $(basename $file .deb).${ARCH}.deb; done; fi
+- for file in *.tar.gz; do mv $file $(basename $file .tar.gz).${ARCH}.tar.gz;
+  done
+deploy:
+  provider: releases
+  api_key: $GITHUB_OAUTH_TOKEN
+  file_glob: true
+  skip_cleanup: true
+  file: 
+    - $TRAVIS_BUILD_DIR/build/*.rpm
+    - $TRAVIS_BUILD_DIR/build/*.deb
+    - $TRAVIS_BUILD_DIR/build/*.tar.gz
+  on:
+    tags: true
+    branch: master
