@@ -8,11 +8,11 @@ matrix:
   include:
   - os: linux
     env:
-    - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF ARCH="x86_64"
+    - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF ARCH="x86_64" PACKAGES="texinfo"
   - os: linux
     env:
     - MATRIX_EVAL="CC='gcc -m32'" CF="-DBUILD_SHARED_LIBS=OFF -DCMAKE_LIBRARY_PATH=/usr/lib32"
-      PACKAGES="gcc-multilib lib32z1-dev" ARCH="i686"
+      PACKAGES="gcc-multilib lib32z1-dev texinfo" ARCH="i686"
   - os: osx
     env:
     - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF ARCH="x86_64"
