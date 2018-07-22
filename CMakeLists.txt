@@ -108,6 +108,12 @@ INSTALL(TARGETS pktinfo tpkt txt2pkt hptlink hpttree hpt
 if (MSVC)
   set(CPACK_GENERATOR ${CPACK_GENERATOR} 7Z)
 else()
+  include(GNUInstallDirs)
+  install(FILES "man/hpt.1" DESTINATION "${CMAKE_INSTALL_MANDIR}/man1")
+  install(FILES "man/hptlink.1" DESTINATION "${CMAKE_INSTALL_MANDIR}/man1")
+  install(FILES "man/hpttree.1" DESTINATION "${CMAKE_INSTALL_MANDIR}/man1")
+  install(FILES "man/pktinfo.1" DESTINATION "${CMAKE_INSTALL_MANDIR}/man1")
+  install(FILES "man/txt2pkt.1" DESTINATION "${CMAKE_INSTALL_MANDIR}/man1")
   set(CPACK_GENERATOR ${CPACK_GENERATOR} TGZ)
 endif (MSVC)
 
