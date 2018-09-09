@@ -9,12 +9,24 @@ environment:
   matrix:
     - generator: Visual Studio 15 2017
       cf: -DBUILD_SHARED_LIBS=OFF
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      pf: "msvc2017"
     - generator: Visual Studio 15 2017
       cf: -DBUILD_SHARED_LIBS=ON
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      pf: "msvc2017"
     - generator: Visual Studio 15 2017 Win64
       cf: -DBUILD_SHARED_LIBS=OFF
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      pf: "msvc2017"
     - generator: Visual Studio 15 2017 Win64
       cf: -DBUILD_SHARED_LIBS=ON
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      pf: "msvc2017"
+    - generator: Visual Studio 10 2010
+      cf: -DBUILD_SHARED_LIBS=OFF
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      pf: "msvc2010"
 install:
   - cmd: git clone https://github.com/huskyproject/huskylib  C:\projects\huskylib
   - cmd: git clone https://github.com/huskyproject/smapi  C:\projects\smapi
@@ -30,6 +42,7 @@ build_script:
       cd C:\projects\hptzip && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" "%CF%" && cmake --build . -- /P:Configuration=Release &&
       cd C:\projects\hpt && mkdir build && cd build && cmake --version &&  cmake .. -G "%GENERATOR%" "%CF%" && cmake --build . -- /P:Configuration=Release
   - if ["%CF%"]==["-DBUILD_SHARED_LIBS=OFF"] (cpack)
+  - ps:  gci *.7z | %{ rename-item –path $_.Fullname –Newname ( $_.basename +"-"+$Env:pf+$_.extension) }
 artifacts:
   - path: build\*.7z
     name: dist
