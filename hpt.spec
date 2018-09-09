@@ -24,13 +24,10 @@ HPT is the FTN tosser from the Husky Project.
 %build
 #sed -i -re 's,#LFLAGS =-s,LFLAGS =-s -static,g' makefile.inc
 make
-(cd fidoroute; make)
 
 %install
 rm -rf %{buildroot}
 make DESTDIR=%{buildroot} install
-test -s fidoroute/fidoroute \
-	&& install -m 755 fidoroute/fidoroute %{buildroot}%{_bindir}/fidoroute
 chmod -R a+rX,u+w,go-w %{buildroot}
 
 %clean

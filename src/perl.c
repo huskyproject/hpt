@@ -421,7 +421,6 @@ char *pos;
 
 int reuse_line(char **ptext, char *pos, mmode_t mode) {
 char *pos2;
-int  len;
     /* not found - add */
     if (pos == NULL) return 0;
     /* found, but not at the line start - add */
@@ -431,6 +430,7 @@ int  len;
     /* found and replace - delete, then add */
     pos2 = strchr(pos, '\r');
     if (pos2 != NULL) {
+        int  len;
         ++pos2; len = strlen(pos2);
         memcpy(pos, pos2, len+1);
     }
