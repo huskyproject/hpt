@@ -389,7 +389,7 @@ static XS(perl_alike)
   dXSARGS;
   char * str1;
   char * str2;
-  int len1,len2,threshold,ldist;
+  int len1,len2,ldist;
   STRLEN n_a;
 
   unused(cv);
@@ -404,7 +404,6 @@ static XS(perl_alike)
   str2=(char *)SvPV(ST(1),n_a);if (n_a==0) str2="";
   len1 = strlen(str1);
   len2 = strlen(str2);
-  threshold = 1 + ((len1 + 2) / 4);
   ldist = LENGTH_MISMATCH;
   len1 = min(len1, MAX_LDIST_LEN);
   len2 = min(len2, MAX_LDIST_LEN);
@@ -414,9 +413,7 @@ static XS(perl_alike)
 /* val: better create_kludges :) */
 void copy_line(char **dest, char *s) {
 char *pos;
-int len;
     pos = strchr(s, '\r');
-    len = (pos != NULL) ? pos-s : (int)strlen(s);
     if (pos != NULL) *pos = 0;
     xscatprintf(dest, "%s\r", s);
     if (pos != NULL) *pos = '\r';
@@ -424,7 +421,7 @@ int len;
 
 int reuse_line(char **ptext, char *pos, mmode_t mode) {
 char *pos2;
-int  len, frg;
+int  len;
     /* not found - add */
     if (pos == NULL) return 0;
     /* found, but not at the line start - add */
@@ -434,7 +431,7 @@ int  len, frg;
     /* found and replace - delete, then add */
     pos2 = strchr(pos, '\r');
     if (pos2 != NULL) {
-        frg = ++pos2 - pos; len = strlen(pos2);
+        ++pos2; len = strlen(pos2);
         memcpy(pos, pos2, len+1);
     }
     else *pos = 0;

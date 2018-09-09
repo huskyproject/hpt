@@ -124,9 +124,9 @@ void  printTree (int level, int nodeNum)
       }
       printf ( "  %c ", linech);
    }
-   printf ("%d:%d/%d\n", cnode->zone, cnode->net, cnode->node);
+   printf ("%u:%u/%u\n", cnode->zone, cnode->net, cnode->node);
    if (cnode->printed) {
-     printf("WARNING: Loop at %d:%d/%d, escaping thread\n", cnode->zone, cnode->net, cnode->node);
+     printf("WARNING: Loop at %u:%u/%u, escaping thread\n", cnode->zone, cnode->net, cnode->node);
      return;
    }
    cnode->printed = 1; /*  for checking for lost nodes */
@@ -146,18 +146,15 @@ void buildAreaTree(s_area *area)
    dword highMsg;
    HMSG  hmsg;
    XMSG  xmsg;
-   int   i = -1;
    unsigned int nmsg;
    char *text;
    dword  textLength;
    s_nodepath node = { 2, 0, 0, -1, 0 };
    s_nodepath *cnode;
    int prevNode;
-   char *token;
    char *start;
    char *endptr;
    unsigned long temp;
-   int found;
    int done;
    int root = -1;
 
@@ -191,6 +188,7 @@ void buildAreaTree(s_area *area)
 
    if (harea)
    {
+	   int i = -1;
 	   highMsg = MsgGetHighMsg(harea);
 
 	   if ( highMsg < 1 ) {
@@ -246,9 +244,11 @@ void buildAreaTree(s_area *area)
 		      }
 		   } while (!done && !isdigit( (int) *start));
 		   if (!done) {
+              char *token;
 		      token = strtok(start, " \r\t\376");
 		      while (token != NULL && !done) {
 			 if (isdigit( (int) *token)) {
+                int found;
 			    /*  parse token */
 			    temp = strtoul(token, &endptr, 10);
 
@@ -263,7 +263,7 @@ void buildAreaTree(s_area *area)
 			       endptr++;
 			       temp = strtoul(endptr, &endptr, 10);
 			    }
-			    if (*endptr) fprintf (outlog, "POINT or bad address in PATH: in message %d\n", nmsg);
+			    if (*endptr) fprintf (outlog, "POINT or bad address in PATH: in message %u\n", nmsg);
 
 			    /*  only node aka */
 			    node.node = temp;
@@ -271,9 +271,9 @@ void buildAreaTree(s_area *area)
 			    /*  find if there where that node in array */
 			    for ( found=0, i=0, cnode=allNodes; i < nodeCount && !found; i++, cnode++) {
 			      if ( cnode->node == node.node &&
-				   cnode->net  == node.net  &&
-				   cnode->zone == node.zone
-				 ) found++;
+				       cnode->net  == node.net  &&
+				       cnode->zone == node.zone
+				  ) found++;
 			    }
 
 			    if (!found) {

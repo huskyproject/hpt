@@ -135,10 +135,10 @@ char *skipReSubj ( char *subjstr )
 int cmpMsgIdReply (register char *str1, register char *str2)
 {
     while (*str1==*str2 && *str1) {
-	if (*str1=='@') while (*str1 && *str1!=' ') str1++; /*  skip domain */
-	if (*str1) str1++;
-	if (*str2=='@') while (*str2 && *str2!=' ') str2++; /*  skip domain */
-	if (*str2) str2++;
+    if (*str1=='@') while (*str1 && *str1!=' ') str1++; /*  skip domain */
+    if (*str1) str1++;
+    if (*str2=='@') while (*str2 && *str2!=' ') str2++; /*  skip domain */
+    if (*str2) str2++;
     }
     if (*str1=='\0' && *str2=='\0') return 0;
     return 1;
@@ -181,20 +181,20 @@ void linkMsgs ( s_msginfo *crepl, s_msginfo *srepl, dword i, dword j, s_msginfo 
             (crepl -> freeReply)++;
         } else {
             linkTo = MsgUidToMsgn(harea, crepl->reply1st, UID_EXACT) - 1;
-	    if(linkTo == (dword)-1) {
-		w_log( LL_WARN, "Thread linking broken. MsgUidToMsgn() returned -1");
-		links_ignored++;
-		return;
-	    }
+        if(linkTo == (dword)-1) {
+        w_log( LL_WARN, "Thread linking broken. MsgUidToMsgn() returned -1");
+        links_ignored++;
+        return;
+        }
 
             while (replmap[linkTo].replyNxt) {
-		linkTo = MsgUidToMsgn(harea, replmap[linkTo].replyNxt, UID_EXACT) - 1;
-		if(linkTo == (dword)-1) {
-		    w_log( LL_WARN, "Thread linking broken. MsgUidToMsgn() returned -1");
-		    links_ignored++;
-		    return;
-		}
-	    }
+        linkTo = MsgUidToMsgn(harea, replmap[linkTo].replyNxt, UID_EXACT) - 1;
+        if(linkTo == (dword)-1) {
+            w_log( LL_WARN, "Thread linking broken. MsgUidToMsgn() returned -1");
+            links_ignored++;
+            return;
+        }
+        }
             replmap[linkTo].replyNxt = srepl->msgPos;
             replmap[linkTo].freeReply++;
         }
@@ -274,83 +274,83 @@ void linkArea(s_area *area)
 
    if (harea)
    {
-	   highMsg = MsgGetHighMsg(harea);
+       highMsg = MsgGetHighMsg(harea);
 
-	   if ( highMsg < 2 ) {
-	      w_log( LL_LINKING, "nothing to link (%ld messages)", (long)highMsg);
-	      MsgCloseArea(harea);
-	      return;
-	   }
+       if ( highMsg < 2 ) {
+          w_log( LL_LINKING, "nothing to link (%ld messages)", (long)highMsg);
+          MsgCloseArea(harea);
+          return;
+       }
 
-	   if ( (replmap = (s_msginfo *) scalloc (highMsg, sizeof(s_msginfo))) == NULL){
-	      w_log( LL_CRIT,"Out of memory. Want %ld bytes",  (long) sizeof(s_msginfo)*highMsg);
-	      MsgCloseArea(harea);
-	      closeLog();
-              disposeConfig(config);
-	      exit(EX_SOFTWARE);
-	   }
+       if ( (replmap = (s_msginfo *) scalloc (highMsg, sizeof(s_msginfo))) == NULL){
+          w_log( LL_CRIT,"Out of memory. Want %ld bytes",  (long) sizeof(s_msginfo)*highMsg);
+          MsgCloseArea(harea);
+          closeLog();
+          disposeConfig(config);
+          exit(EX_SOFTWARE);
+       }
 
-	   if ( (links = (s_origlinks *) scalloc (highMsg, sizeof(s_origlinks))) == NULL){
-	      w_log( LL_CRIT, "Out of memory: can't get %ld bytes",  (long) sizeof(s_origlinks)*highMsg);
-	      MsgCloseArea(harea);
-	      closeLog();
-              disposeConfig(config);
-	      exit(EX_SOFTWARE);
-	   }
+       if ( (links = (s_origlinks *) scalloc (highMsg, sizeof(s_origlinks))) == NULL){
+          w_log( LL_CRIT, "Out of memory: can't get %ld bytes",  (long) sizeof(s_origlinks)*highMsg);
+          MsgCloseArea(harea);
+          closeLog();
+          disposeConfig(config);
+          exit(EX_SOFTWARE);
+       }
 
-	   /* Pass 1: read all message information in memory */
-	   w_log( LL_LINKPASS, "Pass 1 - reading");
+       /* Pass 1: read all message information in memory */
+       w_log( LL_LINKPASS, "Pass 1 - reading");
 
-	   for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++) {
-	      hmsg  = MsgOpenMsg(harea, MOPEN_READ, i);
-	      if (hmsg){
-		 ctlen = MsgGetCtrlLen(hmsg);
-		 if( ctlen == 0 )
-		 {
-		    w_log( LL_WARN, "msg %ld has no control information", (long) i);
-		    MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+       for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++)
+       {
+         hmsg  = MsgOpenMsg(harea, MOPEN_READ, i);
+         if (hmsg){
+         ctlen = MsgGetCtrlLen(hmsg);
+         if( ctlen == 0 )
+         {
+            w_log( LL_WARN, "msg %ld has no control information", (long) i);
+            MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
 
-		 } else {
-		   if( ctl==NULL || ctlen_curr < ctlen + 1) {
-
-		      ctl = (byte *) srealloc(ctl, ctlen + 1);
-		      if (ctl == NULL) {
-			w_log( LL_CRIT,"out of memory while linking on msg %ld", (long) i);
-			MsgCloseArea(harea);
+         } else {
+           if( ctl==NULL || ctlen_curr < ctlen + 1) {
+              ctl = (byte *) srealloc(ctl, ctlen + 1);
+              if (ctl == NULL) {
+            w_log( LL_CRIT,"out of memory while linking on msg %ld", (long) i);
+            MsgCloseArea(harea);
                         closeLog();
                         disposeConfig(config);
-			exit(EX_SOFTWARE);
-		      }
+            exit(EX_SOFTWARE);
+              }
 
-		      ctlen_curr = ctlen + 1;
-		   }
-		   MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, ctlen, ctl);
+              ctlen_curr = ctlen + 1;
+           }
+           MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, ctlen, ctl);
 
-		   ctl[ctlen] = '\0';
+           ctl[ctlen] = '\0';
 
-		   if ( useReplyId ) {
-		      crepl -> replyId = (char *) GetCtrlValue( (char *)ctl, "REPLY:");
-		      crepl -> msgId = (char *) GetCtrlValue( (char *)ctl, "MSGID:");
-		   }
+           if ( useReplyId ) {
+              crepl -> replyId = (char *) GetCtrlValue( (char *)ctl, "REPLY:");
+              crepl -> msgId = (char *) GetCtrlValue( (char *)ctl, "MSGID:");
+           }
 
-		 }
+         }
 
-		 if ( useSubj && xmsg.subj != NULL) {
-		    if ( (ptr=skipReSubj((char*)xmsg.subj)) == NULL)
+         if ( useSubj && xmsg.subj != NULL) {
+            if ( (ptr=skipReSubj((char*)xmsg.subj)) == NULL)
                   ptr = (char*) xmsg.subj;
-		    crepl -> subject = sstrdup(ptr);
-		 }
+            crepl -> subject = sstrdup(ptr);
+         }
 
                  crepl->msgPos = MsgMsgnToUid(harea, i);
 
-		 /*  Save data for comparing */
+         /*  Save data for comparing */
                  if (area->msgbType & MSGTYPE_JAM || area->msgbType & MSGTYPE_SDM) {
                     linksptr->reply1st = xmsg.xmreply1st;
                     linksptr->replyNxt = xmsg.xmreplynext;
                  } else {
                     memcpy(linksptr->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
                  }
-		 linksptr->replyToPos = xmsg.replyto;
+         linksptr->replyToPos = xmsg.replyto;
 
                  if (linkNew) {
                     if (area->msgbType & MSGTYPE_JAM || area->msgbType & MSGTYPE_SDM) {
@@ -367,32 +367,32 @@ void linkArea(s_area *area)
                           newStart = i+1;
                           memcpy(crepl->replies, xmsg.replies, sizeof(UMSGID) * MAX_REPLY);
                           crepl->replyToPos = xmsg.replyto;
-                          for (j=0; xmsg.replies[j] && j<MAX_REPLY; j++);
+                          for (j=0; j < MAX_REPLY && xmsg.replies[j]; j++);
                           crepl->freeReply = j;
                        }
                     }
                  }
 
-		 MsgCloseMsg(hmsg);
-	      }
-	   }
+         MsgCloseMsg(hmsg);
+          }
+       }
 
-	   /* Pass 2: building relations tree, & filling tree IDs */
-	   if ( loglevel >= 11 ) {
+       /* Pass 2: building relations tree, & filling tree IDs */
+       if ( loglevel >= 11 ) {
               if (linkNew)
                  w_log(LL_LINKPASS, "Pass 2: building relations for %ld messages, new from %ld", (long) i-1, (long) newStart);
               else
                  w_log(LL_LINKPASS, "Pass 2: building relations for %ld messages", (long) i-1);
            }
 
-	   for (i = 1, crepl=replmap; i < highMsg; i++, crepl++) {
-	     if (
-		  crepl -> replyId ||
-		  crepl -> msgId   ||
-		  crepl -> subject
-		) {
+       for (i = 1, crepl=replmap; i < highMsg; i++, crepl++) {
+         if (
+          crepl -> replyId ||
+          crepl -> msgId   ||
+          crepl -> subject
+        ) {
 
-		replDone = 0;
+        replDone = 0;
 
                 j=i+1;
                 srepl=crepl+1;
@@ -400,146 +400,146 @@ void linkArea(s_area *area)
                    j=newStart;
                    srepl = &(replmap[j-1]);
                 }
-		for (; j <= highMsg && !replDone; j++, srepl++ ) {
+        for (; j <= highMsg && !replDone; j++, srepl++ ) {
 
-		  replFound = 0;
+          replFound = 0;
 
-		  if (!replFound &&
-		      (crepl -> msgId) && (srepl -> replyId) &&
-		      cmpMsgIdReply (crepl -> msgId, srepl -> replyId) == 0 ) {
+          if (!replFound &&
+              (crepl -> msgId) && (srepl -> replyId) &&
+              cmpMsgIdReply (crepl -> msgId, srepl -> replyId) == 0 ) {
 
-		       replFound++;
-		       links_msgid++;
+               replFound++;
+               links_msgid++;
 
-		       if ( ! crepl -> treeId ) { /*  *crepl isn't linked */
-			  if (srepl -> treeId ) { /*  *srepl linked already */
-			     crepl -> treeId = srepl -> treeId;
-			  } else {
+               if ( ! crepl -> treeId ) { /*  *crepl isn't linked */
+              if (srepl -> treeId ) { /*  *srepl linked already */
+                 crepl -> treeId = srepl -> treeId;
+              } else {
                              crepl -> treeId = i; /*  top of new tree */
-			  }
-		       }
-		       srepl -> treeId = crepl -> treeId;
+              }
+               }
+               srepl -> treeId = crepl -> treeId;
 
-		       if (singleRepl) {
-			  treeLinks++;
-		       } else {
-			  linkMsgs ( crepl, srepl, i, j, replmap );
-		       }
-		  }
+               if (singleRepl) {
+              treeLinks++;
+               } else {
+              linkMsgs ( crepl, srepl, i, j, replmap );
+               }
+          }
 
-		  if ( !replFound &&
-		       (crepl -> treeId == 0 || srepl -> treeId == 0) &&
-		       crepl -> replyId && srepl -> replyId) {
-		      if ( cmpMsgIdReply (crepl -> replyId, srepl -> replyId) == 0 &&
-			   strcmp(crepl -> replyId, "  ffffffff")) {
+          if ( !replFound &&
+               (crepl -> treeId == 0 || srepl -> treeId == 0) &&
+               crepl -> replyId && srepl -> replyId) {
+              if ( cmpMsgIdReply (crepl -> replyId, srepl -> replyId) == 0 &&
+               strcmp(crepl -> replyId, "  ffffffff")) {
 
-			  replFound++;
-			  links_replid++;
+              replFound++;
+              links_replid++;
 
-			  if ( ! crepl -> treeId ) { /*  *crepl isn't linked */
-			      if (srepl -> treeId ) { /*  *srepl linked already */
-				  crepl -> treeId = srepl -> treeId;
-			      } else {
-				  crepl -> treeId = i; /*  top of new tree */
-			      }
-			  }
-			  srepl -> treeId = crepl -> treeId;
+              if ( ! crepl -> treeId ) { /*  *crepl isn't linked */
+                  if (srepl -> treeId ) { /*  *srepl linked already */
+                  crepl -> treeId = srepl -> treeId;
+                  } else {
+                  crepl -> treeId = i; /*  top of new tree */
+                  }
+              }
+              srepl -> treeId = crepl -> treeId;
 
-			  treeLinks++;
-		      }
-		  }
+              treeLinks++;
+              }
+          }
 
-		  if (!replFound && (srepl -> msgId) && (crepl -> replyId)) {
-		      if ( cmpMsgIdReply (srepl -> msgId, crepl -> replyId) == 0 ) {
-			  replFound++;
-			  links_revmsgid++;
+          if (!replFound && (srepl -> msgId) && (crepl -> replyId)) {
+              if ( cmpMsgIdReply (srepl -> msgId, crepl -> replyId) == 0 ) {
+              replFound++;
+              links_revmsgid++;
 
-		       if ( ! crepl -> treeId ) { /*  *crepl isn't linked */
-			  if (srepl -> treeId ) { /*  *srepl linked already */
-			     crepl -> treeId = srepl -> treeId;
-			  } else {
+               if ( ! crepl -> treeId ) { /*  *crepl isn't linked */
+              if (srepl -> treeId ) { /*  *srepl linked already */
+                 crepl -> treeId = srepl -> treeId;
+              } else {
                              crepl -> treeId = i; /*  top of new tree */
-			  }
-		       }
-		       srepl -> treeId = crepl -> treeId;
+              }
+               }
+               srepl -> treeId = crepl -> treeId;
 
-		       if (singleRepl) {
-			  treeLinks++;
-		       } else {
-			  linkMsgs ( srepl, crepl, j, i, replmap );
-		       }
-		     }
-		  }
+               if (singleRepl) {
+              treeLinks++;
+               } else {
+              linkMsgs ( srepl, crepl, j, i, replmap );
+               }
+             }
+          }
 
-		  if ( !replFound &&
-		       (srepl -> treeId == 0) &&
-		       crepl -> subject && srepl -> subject ) {
+          if ( !replFound &&
+               (srepl -> treeId == 0) &&
+               crepl -> subject && srepl -> subject ) {
 
-		     if ( strcmp ( crepl -> subject, srepl -> subject ) == 0 ) {
+             if ( strcmp ( crepl -> subject, srepl -> subject ) == 0 ) {
 
-		       replFound++;
-		       links_subj++;
+               replFound++;
+               links_subj++;
 
-		       if ( ! crepl -> treeId ) { /*  *crepl isn't linked */
-			  if (srepl -> treeId ) { /*  *srepl linked already */
-			     crepl -> treeId = srepl -> treeId;
-			  } else {
+               if ( ! crepl -> treeId ) { /*  *crepl isn't linked */
+              if (srepl -> treeId ) { /*  *srepl linked already */
+                 crepl -> treeId = srepl -> treeId;
+              } else {
                              crepl -> treeId = i; /*  top of new tree */
-			  }
-		       }
-		       srepl -> treeId = crepl -> treeId;
+              }
+               }
+               srepl -> treeId = crepl -> treeId;
 
-		       treeLinks++;
+               treeLinks++;
 
-		     }
-		  }
+             }
+          }
 
-		  if (replFound && singleRepl && !hardSearch ) replDone++;
+          if (replFound && singleRepl && !hardSearch ) replDone++;
 
-		}
-	     }
-	   }
+        }
+         }
+       }
 
-	   /* Pass 3: finding unlinked messages with filled tree IDs, and link
-	    * them to the tree where possible
-	    */
-	   w_log(LL_LINKPASS, "Pass 3: buildng relations by treeIds");
+       /* Pass 3: finding unlinked messages with filled tree IDs, and link
+        * them to the tree where possible
+        */
+       w_log(LL_LINKPASS, "Pass 3: buildng relations by treeIds");
 
-	   for (i = 1, crepl=replmap; i <= highMsg && treeLinks; i++, crepl++) {
-	      if ( crepl->replyToPos == 0 && crepl->freeReply == 0 &&
+       for (i = 1, crepl=replmap; i <= highMsg && treeLinks; i++, crepl++) {
+          if ( crepl->replyToPos == 0 && crepl->freeReply == 0 &&
                    crepl->treeId && i != crepl->treeId ) {
-		 /*  Link unlinked message */
+         /*  Link unlinked message */
 
-		 linkTo = (replmap[crepl -> treeId -1 ]).treeId;
-		 if (linkTo > highMsg || linkTo <= 0 ) {
-		    w_log(LL_CRIT,"Programming error 1 while linking linkTo=%ld", (long)linkTo);
-		    closeLog();
+         linkTo = (replmap[crepl -> treeId -1 ]).treeId;
+         if (linkTo > highMsg || linkTo <= 0 ) {
+            w_log(LL_CRIT,"Programming error 1 while linking linkTo=%ld", (long)linkTo);
+            closeLog();
                     disposeConfig(config);
-		    exit(EX_SOFTWARE);
-		 }
+            exit(EX_SOFTWARE);
+         }
 
                  if (maxreply == MAX_REPLY) { /*  Find place to put link for Squish */
                     while ( (replmap[linkTo-1]).freeReply >= maxreply) {
                        linkTo = MsgUidToMsgn(harea,(replmap[linkTo-1]).replies[0], UID_EXACT );
                        if (linkTo > highMsg || linkTo <= 0 ) {
                           w_log(LL_CRIT,"Programming error 2 while linking linkTo=%ld", (long)linkTo);
-      	                  closeLog();
+                            closeLog();
                           disposeConfig(config);
                           exit(EX_SOFTWARE);
                        }
                     }
                  }
-		 linkMsgs ( &(replmap[linkTo-1]), crepl, linkTo, i , replmap );
-		 (replmap[crepl -> treeId - 1]).treeId = i; /*  where to link next message */
-		 treeLinks--;
-	      }
-	   }
+         linkMsgs ( &(replmap[linkTo-1]), crepl, linkTo, i , replmap );
+         (replmap[crepl -> treeId - 1]).treeId = i; /*  where to link next message */
+         treeLinks--;
+          }
+       }
 
 
-	   /* Pass 4: write information back to msgbase */
-	   w_log(LL_LINKPASS, "Pass 4: writing");
+       /* Pass 4: write information back to msgbase */
+       w_log(LL_LINKPASS, "Pass 4: writing");
 
-	   for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++) {
+       for (i = 1, crepl=replmap, linksptr=links; i <= highMsg; i++, crepl++, linksptr++) {
 
               if (area->msgbType & MSGTYPE_JAM || area->msgbType & MSGTYPE_SDM) {
 
@@ -551,14 +551,14 @@ void linkArea(s_area *area)
 
                     if (hmsg) {
 
-		       MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
+               MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
                        xmsg.replyto = crepl->replyToPos;
                        xmsg.xmreply1st = crepl->reply1st;
                        xmsg.xmreplynext = crepl->replyNxt;
-		       if( 0!=MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL) )
+               if( 0!=MsgWriteMsg(hmsg, 0, &xmsg, NULL, 0, 0, 0, NULL) )
                            w_log(LL_ERR, "Could not update msg in area %s! Check the wholeness of messagebase, please.", area->areaName);
-		       MsgCloseMsg(hmsg);
-		    }
+               MsgCloseMsg(hmsg);
+            }
                  }
 
               } else { /*  Not Jam */
@@ -578,22 +578,22 @@ void linkArea(s_area *area)
                        MsgCloseMsg(hmsg);
                     }
                  }
-	      }
+          }
 
-	      if(crepl -> replyId) nfree(crepl -> replyId);
-	      if(crepl -> subject) nfree(crepl -> subject);
-	      if(crepl -> msgId  ) nfree(crepl -> msgId  );
-	   }
+          if(crepl -> replyId) nfree(crepl -> replyId);
+          if(crepl -> subject) nfree(crepl -> subject);
+          if(crepl -> msgId  ) nfree(crepl -> msgId  );
+       }
 
-	   MsgCloseArea(harea);
+       MsgCloseArea(harea);
 
-	   nfree(ctl);
-	   nfree(replmap);
-	   nfree(links);
+       nfree(ctl);
+       nfree(replmap);
+       nfree(links);
 
-	   w_log( LL_LINKING, "Linking area \"%s\" done", area->areaName);
+       w_log( LL_LINKING, "Linking area \"%s\" done", area->areaName);
    } else {
-	   w_log( LL_ERR, "Could not open area %s", area->areaName);
+       w_log( LL_ERR, "Could not open area %s", area->areaName);
    }
 }
 
@@ -633,36 +633,36 @@ int main(int argc, char **argv) {
 
    for (j=1; j<argc; j++) {
      if ( argv[j][0] == '-' ) {
-	switch (argv[j][1])
-	  {
-	     case 't': /* Tree mode */
-	     case 'T':
-		singleRepl = 0;
-		break;
+    switch (argv[j][1])
+      {
+         case 't': /* Tree mode */
+         case 'T':
+        singleRepl = 0;
+        break;
 
-	     case 's': /* do NOT use Subject field */
-	     case 'S':
-		useSubj = 0;
-		break;
-	     case 'a': /* search in all messages */
-	     case 'A':
-		hardSearch = 1;
-		break;
-	     case 'r': /* do NOT use REPLY:/MSGID: fields */
-	     case 'R':
-		useReplyId = 0;
-		break;
-	     case 'l':
-	     case 'L':
-	        break; /* obsolete */
-	     case 'n': /* link with 'new' messages only */
-	     case 'N':
-		linkNew = 1;
-		break;
-	     default:
-		usage();
-		exit(EX_USAGE);
-	  }
+         case 's': /* do NOT use Subject field */
+         case 'S':
+        useSubj = 0;
+        break;
+         case 'a': /* search in all messages */
+         case 'A':
+        hardSearch = 1;
+        break;
+         case 'r': /* do NOT use REPLY:/MSGID: fields */
+         case 'R':
+        useReplyId = 0;
+        break;
+         case 'l':
+         case 'L':
+            break; /* obsolete */
+         case 'n': /* link with 'new' messages only */
+         case 'N':
+        linkNew = 1;
+        break;
+         default:
+        usage();
+        exit(EX_USAGE);
+      }
      } else {
        /*  AreaName(s) specified by args */
        nareas++;
@@ -681,8 +681,8 @@ int main(int argc, char **argv) {
    if (config->logFileDir) {
         xstrscat(&line, config->logFileDir, LOGFILENAME, NULLP);
         initLog(config->logFileDir, config->logEchoToScreen, config->loglevels, config->screenloglevels);
-	hptlink_log = openLog(line, versionStr);
-	nfree(line);
+    hptlink_log = openLog(line, versionStr);
+    nfree(line);
    }
 
    w_log(LL_PRG, "%s", versionStr);
@@ -703,124 +703,124 @@ int main(int argc, char **argv) {
 
      for ( j=0; j<nareas; j++) {
 
-	found=0;
+    found=0;
 
-	/*  EchoAreas */
-	for (i=0, area=config->echoAreas;
-	     i < config->echoAreaCount && !found;
-	     i++, area++) {
-	    if (stricmp(area->areaName, argareas[j])==0){
-		if (!area->scn) {
-		    linkArea(area);
-		    area->scn=1;
-		}
-		found++;
-	    }
-	}
+    /*  EchoAreas */
+    for (i=0, area=config->echoAreas;
+         i < config->echoAreaCount && !found;
+         i++, area++) {
+        if (stricmp(area->areaName, argareas[j])==0){
+        if (!area->scn) {
+            linkArea(area);
+            area->scn=1;
+        }
+        found++;
+        }
+    }
 
-	/*  Local Areas */
-	for (i=0, area=config->localAreas;
-	     i < config->localAreaCount && !found;
-	     i++, area++) {
-	    if (stricmp(area->areaName, argareas[j])==0){
-		if (!area->scn) {
-		    linkArea(area);
-		    area->scn=1;
-		}
-		found++;
-	    }
-	}
+    /*  Local Areas */
+    for (i=0, area=config->localAreas;
+         i < config->localAreaCount && !found;
+         i++, area++) {
+        if (stricmp(area->areaName, argareas[j])==0){
+        if (!area->scn) {
+            linkArea(area);
+            area->scn=1;
+        }
+        found++;
+        }
+    }
 
-	/*  NetMail areas */
-	for (i=0, area=config->netMailAreas;
-	     i < config->netMailAreaCount && !found;
-	     i++, area++) {
-	    if (stricmp(area->areaName, argareas[j])==0){
-		if (!area->scn) {
-		    linkArea(area);
-		    area->scn=1;
-		}
-		found++;
-	    }
-	}
+    /*  NetMail areas */
+    for (i=0, area=config->netMailAreas;
+         i < config->netMailAreaCount && !found;
+         i++, area++) {
+        if (stricmp(area->areaName, argareas[j])==0){
+        if (!area->scn) {
+            linkArea(area);
+            area->scn=1;
+        }
+        found++;
+        }
+    }
 
-	if(!found) w_log(LL_WARN, "Couldn't find area \"%s\"", argareas[j]);
+    if(!found) w_log(LL_WARN, "Couldn't find area \"%s\"", argareas[j]);
      }
 
    } else {
 
       if (config->LinkWithImportlog != lwiNo){
-	 f = fopen(config->importlog, "r");
+     f = fopen(config->importlog, "r");
       } else {
-	 f = NULL;
+     f = NULL;
       }
 
       if ( f ) {
-	 w_log(LL_INFO, "Using importlogfile -> linking only listed Areas");
-	 while (!feof(f)) {
-	    line = readLine(f);
+     w_log(LL_INFO, "Using importlogfile -> linking only listed Areas");
+     while (!feof(f)) {
+        line = readLine(f);
 
-	    if (line) {
+        if (line) {
 
-	       found=0;
-	       /*  EchoAreas */
-	       for (i=0, area=config->echoAreas;
-		    i < config->echoAreaCount && !found;
-		    i++, area++) {
-		   if (stricmp(area->areaName, line)==0){
-		       if (!area->scn) {
-			   linkArea(area);
-			   area->scn=1;
-		       }
-		       found++;
-		   }
-	       }
-	       /*  Local Areas */
-	       for (i=0, area=config->localAreas;
-		    i < config->localAreaCount && !found;
-		    i++, area++) {
-		   if (stricmp(area->areaName, line)==0){
-		       if (!area->scn) {
-			   linkArea(area);
-			   area->scn=1;
-		       }
-		       found++;
-		   }
-	       }
+           found=0;
+           /*  EchoAreas */
+           for (i=0, area=config->echoAreas;
+            i < config->echoAreaCount && !found;
+            i++, area++) {
+           if (stricmp(area->areaName, line)==0){
+               if (!area->scn) {
+               linkArea(area);
+               area->scn=1;
+               }
+               found++;
+           }
+           }
+           /*  Local Areas */
+           for (i=0, area=config->localAreas;
+            i < config->localAreaCount && !found;
+            i++, area++) {
+           if (stricmp(area->areaName, line)==0){
+               if (!area->scn) {
+               linkArea(area);
+               area->scn=1;
+               }
+               found++;
+           }
+           }
 
-	       /*  NetMail areas */
-	       for (i=0, area=config->netMailAreas;
-		    i < config->netMailAreaCount && !found;
-		    i++, area++) {
-		   if (stricmp(area->areaName, line)==0){
-		       if (!area->scn) {
-			   linkArea(area);
-			   area->scn=1;
-		       }
-		       found++;
-		   }
-	       }
+           /*  NetMail areas */
+           for (i=0, area=config->netMailAreas;
+            i < config->netMailAreaCount && !found;
+            i++, area++) {
+           if (stricmp(area->areaName, line)==0){
+               if (!area->scn) {
+               linkArea(area);
+               area->scn=1;
+               }
+               found++;
+           }
+           }
 
-	       if(!found) w_log(LL_ERR, "Couldn't find area \"%s\"", line);
-	       nfree(line);
-	    }
+           if(!found) w_log(LL_ERR, "Couldn't find area \"%s\"", line);
+           nfree(line);
+        }
 
-	 }
-	 fclose(f);
-	 if (config->LinkWithImportlog == lwiKill) remove(config->importlog);
+     }
+     fclose(f);
+     if (config->LinkWithImportlog == lwiKill) remove(config->importlog);
       } else {
-	 /*  importlog does not exist link all areas */
-	 w_log(LL_INFO, "No ImportLog file, linking all Areas");
+     /*  importlog does not exist link all areas */
+     w_log(LL_INFO, "No ImportLog file, linking all Areas");
 
-	 /*  NetMails */
-	 for (i = 0; i < config -> netMailAreaCount; i++)
-	    linkArea (&(config->netMailAreas[i]));
+     /*  NetMails */
+     for (i = 0; i < config -> netMailAreaCount; i++)
+        linkArea (&(config->netMailAreas[i]));
 
-	 /*  EchoAreas */
-	 for (i=0; i < config->echoAreaCount; i++) linkArea(&(config->echoAreas[i]));
+     /*  EchoAreas */
+     for (i=0; i < config->echoAreaCount; i++) linkArea(&(config->echoAreas[i]));
 
-	 /*  Local Areas */
-	 for (i=0; i < config->localAreaCount; i++) linkArea(&(config->localAreas[i]));
+     /*  Local Areas */
+     for (i=0; i < config->localAreaCount; i++) linkArea(&(config->localAreas[i]));
       }
    }
 

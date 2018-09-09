@@ -441,7 +441,7 @@ FILE *uuencode_file(FILE *input, struct post_parameters *p)
                 max_sections *= 2;
                 p->sectioning = srealloc(p->sectioning, sizeof(long)*max_sections);
             }
-            fprintf(tmpfile, "\rsum -r/size %d/%d section (from ", sum_r_sect, sect_size);
+            fprintf(tmpfile, "\rsum -r/size %d/%u section (from ", sum_r_sect, sect_size);
             if(part == 1)
                 fwrite(uu_b, sizeof(uu_b)-1, 1, tmpfile);
             else
@@ -468,7 +468,7 @@ FILE *uuencode_file(FILE *input, struct post_parameters *p)
     sum_r_sect = sum_r((UCHAR*)uu_end, sizeof(uu_end) - 2, sum_r_sect);
     sum_r_sect = sum_r_byte(0x0a, sum_r_sect);
 
-    fprintf(tmpfile, "\rsum -r/size %d/%d section (from ", sum_r_sect, sect_size);
+    fprintf(tmpfile, "\rsum -r/size %d/%u section (from ", sum_r_sect, sect_size);
     fwrite(uu_e, sizeof(uu_e)-1, 1, tmpfile);
     fprintf(tmpfile, "sum -r/size %d/%d entire input file\r",
             p->sum_r, p->file_size);
@@ -520,7 +520,7 @@ UINT uuencode2buf(struct post_parameters *p, char **text, UINT msg_len, FILE *in
         sect_size += sizeof(uu_end)-1;
         sum_r_sect = sum_r((UCHAR*)uu_end, sizeof(uu_end)-2, sum_r_sect);
         sum_r_sect = sum_r_byte(0x0a, sum_r_sect);
-        msg_len += xscatprintf(text, "\rsum -r/size %d/%d section (from %s",
+        msg_len += xscatprintf(text, "\rsum -r/size %d/%u section (from %s",
                                sum_r_sect, sect_size, uu_e);
         msg_len += xscatprintf(text, "sum -r/size %d/%d entire input file\r",
                                p->sum_r, p->file_size);
@@ -528,10 +528,10 @@ UINT uuencode2buf(struct post_parameters *p, char **text, UINT msg_len, FILE *in
     else
     {
         if(part == 0)
-            msg_len += xscatprintf(text, "\rsum -r/size %d/%d section (from %s",
+            msg_len += xscatprintf(text, "\rsum -r/size %d/%u section (from %s",
                                    sum_r_sect, sect_size, uu_b);
         else
-            msg_len += xscatprintf(text, "\rsum -r/size %d/%d section (from %s",
+            msg_len += xscatprintf(text, "\rsum -r/size %d/%u section (from %s",
                                    sum_r_sect, sect_size, uu_m);
     }
 return msg_len;

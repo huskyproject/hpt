@@ -189,13 +189,13 @@ void start_help(void) {
 e_exitCode processCommandLine(int argc, char **argv)
 {
     int i = 0;
-	e_exitCode rc = ex_OK;
+    e_exitCode rc = ex_OK;
 
     if (argc == 1)
-	{
-		start_help();
-		rc = ex_Help;
-	}
+    {
+        start_help();
+        rc = ex_Help;
+    }
 
     while (i < argc-1)
     {
@@ -254,10 +254,10 @@ e_exitCode processCommandLine(int argc, char **argv)
                 else if (stricmp(argv[i], "-s") == 0)
                     silent_mode = 1;
                 else
-				{
+                {
                     fprintf(stderr, "Unknown afix option \"%s\"!\n", argv[i]);
-					rc = ex_Error;
-				}
+                    rc = ex_Error;
+                }
             }
             if (i+1 < argc)
             {
@@ -265,7 +265,7 @@ e_exitCode processCommandLine(int argc, char **argv)
                 if(parseFtnAddrZS(argv[i], &afixAddr) & FTNADDR_ERROR)
                 {
                     fprintf(stderr, "Parameter \"%s\" after afix command is not valid ftn address\n", argv[i]);
-					rc = ex_Error;
+                    rc = ex_Error;
                     memset(&afixAddr, 0, sizeof(afixAddr));
                     i--;
                 }
@@ -275,10 +275,10 @@ e_exitCode processCommandLine(int argc, char **argv)
                     xstrcat(&afixCmd,argv[i]);
                 }
                 else
-				{
+                {
                     fprintf(stderr, "Parameter missing after \"%s\"!\n", argv[i]);
-					rc = ex_Error;
-				}
+                    rc = ex_Error;
+                }
             }
             cmAfix = 1;
             continue;
@@ -314,16 +314,16 @@ e_exitCode processCommandLine(int argc, char **argv)
                     cmRelink = modeRelink;
                 }
                 else
-				{
+                {
                     fprintf(stderr, "Address missing after \"%s\"!\n", argv[i]);
-					rc = ex_Error;
-				}
+                    rc = ex_Error;
+                }
             }
             else
-			{
+            {
                 fprintf(stderr, "Pattern missing after \"%s\"!\n", argv[i]);
-				rc = ex_Error;
-			}
+                rc = ex_Error;
+            }
         }
         else if (stricmp(argv[i], "resubscribe") == 0)
         {
@@ -338,15 +338,15 @@ e_exitCode processCommandLine(int argc, char **argv)
                         if (fexist(argv[i]))
                         {
                             if (fsize(argv[i]) == 0)
-							{
-								fprintf(stderr, "File \"%s\" is empty\n", argv[i]);
-								rc = ex_Error;
-							}
-							else
-							{
-								xstrcat(&resubscribePatternFile, argv[i]);
-								cmRelink = modeResubsribeWithFile;
-							}
+                            {
+                                fprintf(stderr, "File \"%s\" is empty\n", argv[i]);
+                                rc = ex_Error;
+                            }
+                            else
+                            {
+                                xstrcat(&resubscribePatternFile, argv[i]);
+                                cmRelink = modeResubsribeWithFile;
+                            }
                         }
                         else
                         {
@@ -398,10 +398,10 @@ e_exitCode processCommandLine(int argc, char **argv)
             if (argv[i]!=NULL)
                 xstrcat(&cfgFile, argv[i]);
             else
-			{
+            {
                 fprintf(stderr, "Parameter missing after \"%s\"!\n", argv[i-1]);
-				rc = ex_Error;
-			}
+                rc = ex_Error;
+            }
             continue;
         }
         else if (stricmp(argv[i], "-q") == 0)
@@ -431,20 +431,21 @@ e_exitCode processCommandLine(int argc, char **argv)
 
 void allDiff(char *nam, char *var, ...)
 {
-   va_list	ap;
-   char	*ptr;
+   va_list    ap;
+   char    *ptr;
 
    struct diffCmp {
       char *name;
       char *var;
    } *diffData;
 
-   int	ncmp, i, j;
+   int    ncmp, i, j;
 
    for (va_start(ap, var), ncmp = 1; va_arg(ap, char *) != NULL; ) {
-      ptr = va_arg(ap, char *); /*  variable may be set ti NULL */
+      ptr = va_arg(ap, char *); /* variable may be set to NULL */
       ncmp++;
    }
+   va_end(ap);
 
    diffData = safe_malloc(ncmp * sizeof(struct diffCmp));
 
@@ -455,6 +456,7 @@ void allDiff(char *nam, char *var, ...)
       diffData[i].name = va_arg(ap, char *);
       diffData[i].var  = va_arg(ap, char *);
    }
+   va_end(ap);
    ptr = NULL;
 
    for (i=0; i < ncmp-1; i++) {
@@ -498,13 +500,13 @@ void processConfig()
 #if 0
    /*  lock... */
    if (config->lockfile!=NULL && fexist(config->lockfile)) {
-	   if ((f = fopen(config->lockfile, "rt"))==NULL) {
-		   fprintf(stderr,"Can't open file: \"%s\"\n",config->lockfile);
-		   exit_hpt("Can't open lock-file",0);
-	   }
-	   fscanf(f, "%lu\n", &pid);
-	   fclose(f);
-	   /*  Checking process PID */
+       if ((f = fopen(config->lockfile, "rt"))==NULL) {
+           fprintf(stderr,"Can't open file: \"%s\"\n",config->lockfile);
+           exit_hpt("Can't open lock-file",0);
+       }
+       fscanf(f, "%lu\n", &pid);
+       fclose(f);
+       /*  Checking process PID */
 #ifdef __OS2__
       if (DosKillProcess(DKP_PROCESSTREE, pid) == ERROR_NOT_DESCENDANT) {
 #elif UNIX
@@ -512,7 +514,7 @@ void processConfig()
 #else
       if (stat(config->lockfile, &stat_file) != -1) {
           time_cur = time(NULL);
-	  locklife = (time_cur - stat_file.st_mtime)/60;
+      locklife = (time_cur - stat_file.st_mtime)/60;
       }
       if (locklife < 180) {
 #endif
@@ -541,9 +543,9 @@ void processConfig()
         xstrscat(&buff, config->logFileDir, LogFileName, NULLP);
         initLog(config->logFileDir, config->logEchoToScreen, config->loglevels, config->screenloglevels);
         setLogDateFormat(config->logDateFormat);
-	hpt_log = openLog(buff, versionStr);
-	if (hpt_log && quiet) hpt_log->logEcho=0; /* Don't display messages */
-	nfree(buff);
+    hpt_log = openLog(buff, versionStr);
+    if (hpt_log && quiet) hpt_log->logEcho=0; /* Don't display messages */
+    nfree(buff);
    } else
      fprintf(stderr,"logFileDir not defined, there will be no log created!\n");
 
@@ -552,7 +554,7 @@ void processConfig()
    if (config->outbound == NULL) exit_hpt("you must set Outbound in fidoconfig first",1);
    if (config->tempOutbound == NULL) exit_hpt("you must set tempOutbound in fidoconfig first",1);
    if (config->inbound == NULL && config->protInbound == NULL)
-	   exit_hpt("you must set Inbound or protInbound in fidoconfig first",1);
+       exit_hpt("you must set Inbound or protInbound in fidoconfig first",1);
    if (config->tempInbound == NULL) exit_hpt("you must set tempInbound in fidoconfig first",1);
    if (config->msgBaseDir==NULL) exit_hpt("No msgBaseDir specified in config file!",1);
    if (config->dupeHistoryDir==NULL) exit_hpt("No dupeHistoryDir specified in config file!",1);
@@ -567,12 +569,12 @@ void processConfig()
    else exit_hpt("You must define NetmailArea!",1);
 
    allDiff ( "Inbound",      config->inbound,
-			 "tempInbound",  config->tempInbound,
-			 "protInbound",  config->protInbound,
-			 "localInbound", config->localInbound,
-			 "outbound",     config->outbound,
-			 "tempOutbound", config->tempOutbound,
-			 NULL);
+             "tempInbound",  config->tempInbound,
+             "protInbound",  config->protInbound,
+             "localInbound", config->localInbound,
+             "outbound",     config->outbound,
+             "tempOutbound", config->tempOutbound,
+             NULL);
 
    /*  load recoding tables */
    initCharsets();
@@ -581,16 +583,16 @@ void processConfig()
 }
 
 int isFreeSpace(char *path) {
-	unsigned long sp;
+    unsigned long sp;
 
-	sp = husky_GetDiskFreeSpace(path)/1024;	
-	if (sp < config->minDiskFreeSpace) {
-		fprintf(stderr, "no free space in %s! (needed %d mb, available %d mb).\n",
-				path, config->minDiskFreeSpace, (unsigned)(sp));
-		exit_hpt("no free disk space!",0);
-	}
+    sp = husky_GetDiskFreeSpace(path)/1024;    
+    if (sp < config->minDiskFreeSpace) {
+        fprintf(stderr, "no free space in %s! (needed %d mb, available %u mb).\n",
+                path, config->minDiskFreeSpace, (unsigned)(sp));
+        exit_hpt("no free disk space!",0);
+    }
 
-	return 0;
+    return 0;
 }
 
 
@@ -615,8 +617,8 @@ FARPROC WINAPI ourhook(unsigned dliNotify,PDelayLoadInfo pdli)
   doneCharsets();
   nfree(versionStr);
   if (config->lockfile) {
-	   close(lock_fd);
-	   remove(config->lockfile);
+       close(lock_fd);
+       remove(config->lockfile);
   }
 
   disposeConfig(config);
@@ -647,7 +649,7 @@ void free_envp(char **envp)
 {
    int ii = 0;
    if(envp == NULL)
-	   return;
+       return;
    while(envp[ii] != NULL) {nfree(envp[ii]); ++ii;}
    nfree(envp);
 }
@@ -666,10 +668,10 @@ int main(int argc, char **argv, char **envp)
    SetUnhandledExceptionFilter(&UExceptionFilter);
 #endif
 #if defined ( __MSVC__ ) && defined ( DEBUG )
-	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-	_CrtSetReportMode( _CRT_WARN, _CRTDBG_MODE_DEBUG );
-	_CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_DEBUG );
-	_CrtSetReportMode( _CRT_ASSERT, _CRTDBG_MODE_DEBUG );
+    _CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+    _CrtSetReportMode( _CRT_WARN, _CRTDBG_MODE_DEBUG );
+    _CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_DEBUG );
+    _CrtSetReportMode( _CRT_ASSERT, _CRTDBG_MODE_DEBUG );
 #endif
 
    versionStr = GenVersionStr( "hpt", VER_MAJOR, VER_MINOR, VER_PATCH,
@@ -679,7 +681,7 @@ int main(int argc, char **argv, char **envp)
    if ((rc != ex_OK) && config != NULL)
    {
        if (config->lockfile)
-	   {
+       {
           close(lock_fd);
           remove(config->lockfile);
           disposeConfig(config);
@@ -688,13 +690,13 @@ int main(int argc, char **argv, char **envp)
    }
    if (rc == ex_Help)
    {
-	   nfree(versionStr);
-	   exit(EX_OK);
+       nfree(versionStr);
+       exit(EX_OK);
    }
    if (rc == ex_Error)
    {
-	   nfree(versionStr);
-	   exit(EX_USAGE);
+       nfree(versionStr);
+       exit(EX_USAGE);
    }
 
    hpt_environ = save_envp(envp);
@@ -719,14 +721,14 @@ int main(int argc, char **argv, char **envp)
 
    /*  check for free space */
    if (config->minDiskFreeSpace) {
-	   isFreeSpace(config->tempInbound);
-	   if (stricmp(config->msgBaseDir,"passthrough")!=0)
-		   isFreeSpace(config->msgBaseDir);
-	   for (i=0; i<config->linkCount; i++) {
-		   if (config->links[i]->areafix.baseDir &&
-			   stricmp(config->links[i]->areafix.baseDir,"passthrough")!=0)
-			   isFreeSpace(config->links[i]->areafix.baseDir);
-	   }
+       isFreeSpace(config->tempInbound);
+       if (stricmp(config->msgBaseDir,"passthrough")!=0)
+           isFreeSpace(config->msgBaseDir);
+       for (i=0; i<config->linkCount; i++) {
+           if (config->links[i]->areafix.baseDir &&
+               stricmp(config->links[i]->areafix.baseDir,"passthrough")!=0)
+               isFreeSpace(config->links[i]->areafix.baseDir);
+       }
    }
 
    /* init areafix */
@@ -738,7 +740,7 @@ int main(int argc, char **argv, char **envp)
        m.req_version = 2;
        m.def_zone = (UINT16) config->addr[0].zone;
        if (MsgOpenApi(&m) != 0) {
-	   exit_hpt("MsgApiOpen Error",1);
+       exit_hpt("MsgApiOpen Error",1);
        }
    }
 #ifdef USE_HPTZIP
@@ -788,10 +790,10 @@ int main(int argc, char **argv, char **envp)
 #endif
    msgToSysop = (s_message**) safe_malloc(config->addrCount * sizeof(s_message*));
    for (i = 0; i < config->addrCount; i++) {
-	
+    
        /* Some results of wrong patching ? A memleak anyway
-	* msgToSysop[i] = (s_message*)malloc(sizeof(s_message));
-	*/
+    * msgToSysop[i] = (s_message*)malloc(sizeof(s_message));
+    */
        msgToSysop[i] = NULL;
    }
 
@@ -810,16 +812,14 @@ int main(int argc, char **argv, char **envp)
     if (cmRelink != modeNone)
     {
         int ret;
-		FILE *f;
-		char *line = NULL, *fromCmd = NULL, *toCmd = NULL, *toPrint = NULL;
-		unsigned int count = 0;
+        char *line = NULL, *fromCmd = NULL, *toCmd = NULL, *toPrint = NULL;
+        unsigned int count = 0;
 
-    
-		w_log(LL_START, "%s has started", cmRelink == modeRelink ? "Relinking" : "Resubscribing");
+        w_log(LL_START, "%s has started", cmRelink == modeRelink ? "Relinking" : "Resubscribing");
         if (cmRelink != modeResubsribeWithFile)
         {
             /* modeRelink or modeResubsribeWithPattern */
-			ret = relink(cmRelink, relinkPattern, relinkFromAddr, relinkToAddr, &fromCmd, &toCmd, &count);
+            ret = relink(cmRelink, relinkPattern, relinkFromAddr, relinkToAddr, &fromCmd, &toCmd, &count);
             nfree(relinkPattern);
             if (ret)
                 return 1;
@@ -827,7 +827,8 @@ int main(int argc, char **argv, char **envp)
         else
         {
             /* modeResubsribeWithFile */
-			f = fopen(resubscribePatternFile, "r");
+            FILE *f;
+            f = fopen(resubscribePatternFile, "r");
             if (f == NULL)
             {
                 fprintf(stderr, "Cannot open file \"%s\"!\n", resubscribePatternFile);
@@ -843,31 +844,33 @@ int main(int argc, char **argv, char **envp)
                     nfree(relinkPattern);
                     if (ret)
                     {
+                        fclose(f);
                         nfree(resubscribePatternFile);
                         return 1;
                     }
                 }
+                fclose(f);
                 nfree(resubscribePatternFile);
             }
         }
-		if (fromCmd)
-		{
-			if (cmRelink == modeRelink)
-				sendRelinkMsg(cmRelink, relinkFromAddr, fromCmd, smodeSubscribe);
-			else
-				sendRelinkMsg(cmRelink, relinkFromAddr, fromCmd, smodeUnsubscribe);
-			nfree(fromCmd);
-		}
-		if (toCmd)
-		{
-			sendRelinkMsg(cmRelink, relinkToAddr, toCmd, smodeSubscribe);
-			nfree(toCmd);
-		}
+        if (fromCmd)
+        {
+            if (cmRelink == modeRelink)
+                sendRelinkMsg(cmRelink, relinkFromAddr, fromCmd, smodeSubscribe);
+            else
+                sendRelinkMsg(cmRelink, relinkFromAddr, fromCmd, smodeUnsubscribe);
+            nfree(fromCmd);
+        }
+        if (toCmd)
+        {
+            sendRelinkMsg(cmRelink, relinkToAddr, toCmd, smodeSubscribe);
+            nfree(toCmd);
+        }
 
-	    xscatprintf(&toPrint, "%i ", count);
-		count == 1 ? xscatprintf(&toPrint, "%s has been", af_robot->strA) : xscatprintf(&toPrint, "%ss have been", af_robot->strA);
-		w_log(LL_AREAFIX, "%s %s", toPrint, cmRelink == modeRelink ? "relinked" : "resubscribed");
-		nfree(toPrint);
+        xscatprintf(&toPrint, "%i ", count);
+        count == 1 ? xscatprintf(&toPrint, "%s has been", af_robot->strA) : xscatprintf(&toPrint, "%ss have been", af_robot->strA);
+        w_log(LL_AREAFIX, "%s %s", toPrint, cmRelink == modeRelink ? "relinked" : "resubscribed");
+        nfree(toPrint);
     }
 
    if (cmPack == 1) scanExport(SCN_ALL  | SCN_NETMAIL, NULL);
@@ -875,17 +878,17 @@ int main(int argc, char **argv, char **envp)
    if ((cmPack &  4) && scanParmA) scanExport(SCN_NAME | SCN_NETMAIL, scanParmA);
 
    if (cmLink == 1) {
-	   if (linkName && (strstr(linkName,"*")||strstr(linkName,"?"))) {
-		   for (i=0; i < config->echoAreaCount; i++)
-			   if (patimat(config->echoAreas[i].areaName, linkName))
-				   linkAreas(config->echoAreas[i].areaName);
-		   for (i=0; i < config->localAreaCount; i++)
-			   if (patimat(config->localAreas[i].areaName, linkName))
-				   linkAreas(config->localAreas[i].areaName);
-		   for (i=0; i < config->netMailAreaCount; i++)
-			   if (patimat(config->netMailAreas[i].areaName, linkName))
-				   linkAreas(config->netMailAreas[i].areaName);
-	   } else linkAreas(linkName);
+       if (linkName && (strstr(linkName,"*")||strstr(linkName,"?"))) {
+           for (i=0; i < config->echoAreaCount; i++)
+               if (patimat(config->echoAreas[i].areaName, linkName))
+                   linkAreas(config->echoAreas[i].areaName);
+           for (i=0; i < config->localAreaCount; i++)
+               if (patimat(config->localAreas[i].areaName, linkName))
+                   linkAreas(config->localAreas[i].areaName);
+           for (i=0; i < config->netMailAreaCount; i++)
+               if (patimat(config->netMailAreas[i].areaName, linkName))
+                   linkAreas(config->netMailAreas[i].areaName);
+       } else linkAreas(linkName);
    }
    nfree(linkName);
 
