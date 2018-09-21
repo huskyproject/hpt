@@ -17,12 +17,23 @@ if (MSVC)
   if (BUILD_SHARED_LIBS)
     ADD_DEFINITIONS(-D_DLL -D_MAKE_DLL)
   else()
-    if(NOT "${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
-      set(ZLIB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../hptzip/zlib-win32")
-    else()
-      set(ZLIB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../hptzip/zlib-win64")
-    endif()
-    include(FindZLIB)
+    set(CompilerFlags
+      CMAKE_CXX_FLAGS
+      CMAKE_CXX_FLAGS_DEBUG
+      CMAKE_CXX_FLAGS_RELEASE
+      CMAKE_C_FLAGS
+      CMAKE_C_FLAGS_DEBUG
+      CMAKE_C_FLAGS_RELEASE
+    )
+    foreach(CompilerFlag ${CompilerFlags})
+      string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+    endforeach()
+#    if(NOT "${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
+#      set(ZLIB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../hptzip/zlib-win32")
+#    else()
+#      set(ZLIB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../hptzip/zlib-win64")
+#    endif()
+#    include(FindZLIB)
   endif()
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../out/lib")
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../out/bin")
@@ -47,7 +58,11 @@ find_library(fidoconfig_LIB NAMES fidoconfig PATHS "${CMAKE_FIND_ROOT_PATH}")
 find_library(smapi_LIB NAMES smapi PATHS "${CMAKE_FIND_ROOT_PATH}")
 find_library(areafix_LIB NAMES areafix PATHS "${CMAKE_FIND_ROOT_PATH}")
 find_library(hptzip_LIB NAMES hptzip PATHS "${CMAKE_FIND_ROOT_PATH}")
-
+if (MSVC)
+  if (NOT BUILD_SHARED_LIBS)
+    set(hptzip_LIB FALSE)
+  endif()
+endif()
 include(FindPerlLibs)
 
 message("-------------------------")
