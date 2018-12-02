@@ -437,7 +437,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
       virtualLink = safe_malloc(sizeof(s_link));  /*  if not create new virtualLink link */
       memset(virtualLink, '\0', sizeof(s_link));
       virtualLink->hisAka = msg.destAddr;
-      virtualLink->ourAka = &(msg.origAddr);
+      virtualLink->ourAka = config->addr;
       virtualLink->name = (char *) safe_malloc(strlen(msg.toUserName)+1);
       strcpy(virtualLink->name, msg.toUserName);
       freeVirtualLink = 1;  /* virtualLink is a temporary link, please free it.. */
@@ -551,7 +551,7 @@ int packMsg(HMSG SQmsg, XMSG *xmsg, s_area *area)
                    r = createOutboundFileName(virtualLink, prio, PKT);
            }
 	   if (r == 0) {
-		   addViaToMsg(&msg, msg.origAddr);
+		   addViaToMsg(&msg, *(config->addr));
 		   makePktHeader(virtualLink, &header);
 		   pkt = openPktForAppending(arcNetmail ? virtualLink->pktFile : virtualLink->floFile, &header);
 		   writeMsgToPkt(pkt, msg);
