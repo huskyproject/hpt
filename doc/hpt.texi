@@ -838,73 +838,114 @@ This statement can be repeated.
 @findex Route
 @table @asis
 @item Syntax:
-@code{route [<flavour>] <target> <linkWW> [<linkWW> ...]}
+@code{route <flavour> <routeVia> <target> [<target> ...]}@*
+@code{route nopack <target> [<target> ...]}
 @item Example:
-@code{route crash 2:2433/1245 2:2433/* 2:2432/*}
+@code{route crash 2:2433/1245 2:2433/* 2:2432/*}@*
+@code{route nopack 2:5020/98*}
 @end table
 
-This statement defines a route.
+The @strong{route} statement defines a route to destination address namely
+the node address via which we send the netmail containing the specific
+destination address.
 
-@strong{flavour:}
-@enumerate
-@item hold (.hut/.hlo)
-@item normal (.out/.flo)
-@item crash (.cut/.clo)
-@item direct (.dut./dlo)
-@item immediate (.iut/.ilo)
-@end enumerate
+There are two variants of the statement. The first one defines a route to
+<target>. The second one with 'nopack' (or 'no-pack') just after the
+'route' keyword tells not to process netmail when its destination coinsides
+with an address in <target>.
 
-Flavour can be omitted if target is a link defined by @code{Link} section.
-In this case the link's @code{netMailFlavour} is used as flavour.
+@strong{<target>} is one specific destination address or a DOS-style
+pattern containing characters @strong{?} and/or @strong{*} and defining a set of destination
+addresses.
 
-@strong{target:}
-@enumerate
-@item <addr> - mail is routed to this address
-@item host - mail is routed to zone:net/0.0 address
-@item hub - hub-routing, does not use the hubs defined in the nodelist
-but uses the nodes: addr - (addr.node %100). e.g.: a mail to node
-2:2433/1245 is send to 2:2433/1200, but a mail to node 2:2433/355 is
-send to 2:2433/300 which currently does not exist. BE CAREFUL!
-@item boss - mail is routed to zone:net/node.0 address
-@item no-route (noroute) - direct route according to current flavour
-@item no-pack (nopack) - don't process this mail
-@end enumerate
+@strong{<flavour>} is an instruction to mailer how it should handle the netmail
+and it can be one of the following keywords:
+@itemize @bullet
+@item hold
+@item normal
+@item crash
+@item direct
+@item immediate
+@end itemize
 
-linkWW is a DOS-style pattern with ? and *.
+If the flavour is 'hold', then the mailer should transfer the mail during
+an incoming session only. So the mail will be placed into outbound directory
+and it will wait for an incoming session. If the flavour differs from 'hold',
+then the mail may be transferred both during an incoming and an outgoing
+session. Interpretation of all flavours except 'hold' depends on the mailer.
 
-Route statements are parsed in descending order:
-Pseudo-code:
+The file extension of the netmail file or the flow file which the tosser puts
+into the outbound depends on the flavour:
 
-@example
-  1) actual = first statement
+@multitable @columnfractions .46 .30 .24
+@headitem flavour @tab netmail @tab flow
+@item hold
+@tab .hut
+@tab .hlo
+@item normal
+@tab .out
+@tab .flo
+@item crash
+@tab .cut
+@tab .clo
+@item direct
+@tab .dut
+@tab .dlo
+@item immediate
+@tab .iut
+@tab .ilo
+@end multitable
 
-  2) if linkWWW = msg-destination using pattern matching
+@strong{<routeVia>} defines the node via which the mail will be sent to
+destination. It may take the following values:
+@itemize @bullet
+@item <address> -- mail is routed to destination via this specific address.
+@item host -- when this keyword is used, mail will be transmitted via the
+node whose address is formed from the destination address with node and a
+point numbers equated to zero.
+@item hub -- this keyword denotes hub-routing, which does not use the hubs
+defined in the nodelist but uses the node address defined by formula:
 
-  2a) take this routing and return
+@code{via_address = (destination_address / 100) * 100}
 
-  2b) else actual = next statement
+Here '/ 100' denotes integer division discarding the remainder. E.g. a 
+mail to node 2:2433/1245 is sent via 2:2433/1200, but a mail to node
+2:2433/355 is sent via 2:2433/300 which currently does not exist. BE CAREFUL!
+@item boss -- this keyword is used when destination system is a point.
+If the destination address is zone:net/node.point then mail is routed
+via zone:net/node.0
+@item no-route (or noroute) -- this keyword is a misnomer in a way and
+in fact it means route to destination via itself.
+@end itemize
 
-  3) jump to 2)
+One may use the second variant of the route statement in the form
 
-@end example
+@code{route <flavour> nopack <target> [<target> ...]}
 
-NOTE! This statement must occur after "link" sections.
+Here the <flavour> is ignored.  Such use is deprecated and it is left for
+compatibility with old versions.
 
-This statement can be repeated.
+There can be several route statements. They are parsed in the order they
+are written until the statement with the target containing the destination
+address from the netmail is found.
+
+@strong{NOTE!} This statement must occur after "link" sections.
 
 @node RouteFile, RouteMail, Route, Keywords
 @subsection RouteFile
 @findex RouteFile
 @table @asis
 @item Syntax:
-@code{routeFile <flavour> <target> <linkWW> [<linkWW> ...]}
+@code{routeFile <flavour> <routeVia> <target> [<target> ...]}@*
+@code{routeFile nopack <target> [<target> ...]}
 @item Example:
-@code{routeFile crash 2:2433/1245 2:2433/* 2:2432/*}
+@code{routeFile crash 2:2433/1245 2:2433/* 2:2432/*}@*
+@code{routeFile nopack 2:5020/98*}
 @end table
 
-This statement is the same as the @code{Route} statement, but applies
-only to msgs with file attaches. Files are routed with netmail msgs. If
-no @code{RouteFile} defined, then files will be not routed at all!
+This statement is the same as the @ref{Route} statement, but applies
+only to messages with file attaches. Files are routed together with netmail
+messages. If no @code{RouteFile} defined, then files will be not routed at all!
 
 This statement can be repeated.
 
@@ -913,12 +954,14 @@ This statement can be repeated.
 @findex RouteMail
 @table @asis
 @item Syntax:
-@code{routeMail <flavour> <target> <linkWW> [<linkWW> ...]}
+@code{routeMail <flavour> <routeVia> <target> [<target> ...]}@*
+@code{routeMail nopack <target> [<target> ...]}
 @item Example:
-@code{routeMail crash 2:2433/1245 2:2433/* 2:2432/*}
+@code{routeMail crash 2:2433/1245 2:2433/* 2:2432/*}@*
+@code{routeMail nopack 2:5020/98*}
 @end table
 
-This statement is the same as the @code{Route} statement.
+This statement is the same as the @ref{Route} statement.
 
 This statement can be repeated.
 
