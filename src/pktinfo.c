@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
   nfree(versionStr);
   if (argc==1) {
     printf("usage: pktinfo [options] <pktNames>\n" \
-           "Oprions: -h\t- means display msg header information (from/to/subject)\n" \
+           "Options: -h\t- means display msg header information (from/to/subject)\n" \
 	   "\t -t\t- means display msg text\n");
     return 1;
   }
