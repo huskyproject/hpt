@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{1a6bb993-f786-4505-9f56-d6e4d16493f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers">
+      <UniqueIdentifier>{c05d858b-dab8-48ce-b65f-911cb9808ded}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\h\cvsdate.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\h\dupe.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\h\fcommon.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\h\global.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\h\hpt.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\h\hptafix.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\h\hptperl.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\h\link.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\h\pkt.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\h\post.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\h\query.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\h\scan.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\h\scanarea.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\h\seenby.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\h\toss.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\h\version.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\carbon.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\dupe.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\fcommon.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\global.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\hpt.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\hptafix.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\link.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pktread.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pktwrite.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\post.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\scan.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\scanarea.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\seenby.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\toss.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{9826b861-076d-47ac-b1cf-c68df2aeb65b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers">
+      <UniqueIdentifier>{2c25b192-8e06-4014-b134-6332351d96f1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\dupe.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\fcommon.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\global.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pktread.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pktwrite.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\txt2pkt.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
