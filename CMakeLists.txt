@@ -63,7 +63,13 @@ if (MSVC)
     set(hptzip_LIB FALSE)
   endif()
 endif()
+
 include(FindPerlLibs)
+if (${PERLLIBS_FOUND})
+  include_directories(${PERL_INCLUDE_PATH})
+  ADD_DEFINITIONS(-DPERL=1)
+  set(perl_SRC src/perl.c)
+endif()
 
 message("-------------------------")
 message("System            : ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_VERSION}")
@@ -96,8 +102,6 @@ target_link_libraries(hpttree ${fidoconfig_LIB} ${smapi_LIB} ${husky_LIB})
 target_link_libraries(hpt ${areafix_LIB} ${fidoconfig_LIB} ${smapi_LIB}  ${husky_LIB})
 
 if (${PERLLIBS_FOUND})
-  include_directories(${PERL_INCLUDE_PATH})
-  ADD_DEFINITIONS(-DPERL=1)
   target_link_libraries(hpt ${PERL_LIBRARY})
 endif (${PERLLIBS_FOUND})
 
