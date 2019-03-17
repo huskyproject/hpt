@@ -8,17 +8,20 @@ matrix:
   include:
   - os: linux
     env:
-    - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF ARCH="x86_64"
+    - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF ARCH="x86_64" DEPLOY="true"
   - os: linux
     env:
     - MATRIX_EVAL="CC='gcc -m32'" CF="-DBUILD_SHARED_LIBS=OFF -DCMAKE_LIBRARY_PATH=/usr/lib32"
-      PACKAGES="gcc-multilib lib32z1-dev" ARCH="i686"
+      PACKAGES="gcc-multilib lib32z1-dev" ARCH="i686" DEPLOY="true"
   - os: osx
     env:
-    - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF ARCH="x86_64"
+    - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF ARCH="x86_64" DEPLOY="true"
   - os: osx
     env:
-    - MATRIX_EVAL="CC='gcc -m32'" CF=-DBUILD_SHARED_LIBS=OFF ARCH="i686"
+    - MATRIX_EVAL="CC='gcc -m32'" CF=-DBUILD_SHARED_LIBS=OFF ARCH="i686" DEPLOY="true"
+  - os: linux
+    env:
+    - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=ON ARCH="x86_64" DEPLOY="false"
 before_install:
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y rpm; fi
 - git clone https://github.com/huskyproject/huskylib ~/build/huskyproject/huskylib
@@ -88,3 +91,4 @@ deploy:
   on:
     tags: true
     branch: master
+    condition: $DEPLOY="true"
