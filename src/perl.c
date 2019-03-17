@@ -110,9 +110,7 @@ extern "C" {
 #endif
 
 #ifdef __GNUC__
-# ifdef _OLDPERL_
-#  define Perl___notused Perl___notused __attribute__ ((unused))
-# endif
+# define Perl___notused Perl___notused __attribute__ ((unused))
 #endif
 
 #ifndef LL_PERL
