@@ -7,9 +7,11 @@ matrix:
   fast_finish: true
   include:
   - os: linux
+    dist: xenial
     env:
     - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF ARCH="x86_64" DEPLOY="true"
   - os: linux
+    dist: xenial
     env:
     - MATRIX_EVAL="CC='gcc -m32'" CF="-DBUILD_SHARED_LIBS=OFF -DCMAKE_LIBRARY_PATH=/usr/lib32"
       PACKAGES="gcc-multilib lib32z1-dev" ARCH="i686" DEPLOY="true"
@@ -20,9 +22,10 @@ matrix:
     env:
     - MATRIX_EVAL="CC='gcc -m32'" CF=-DBUILD_SHARED_LIBS=OFF ARCH="i686" DEPLOY="true"
   - os: linux
+    dist: xenial
     env:
     - MATRIX_EVAL="CC=gcc" CF="-DBUILD_SHARED_LIBS=ON" ARCH="x86_64"
-      CFLAGS="-Doff64_t=__off64_t" PACKAGES="libperl-dev" DEPLOY="false"
+      DEPLOY="false"
 before_install:
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y rpm; fi
 - git clone https://github.com/huskyproject/huskylib ~/build/huskyproject/huskylib
