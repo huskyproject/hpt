@@ -35,8 +35,6 @@ before_install:
 - git clone https://github.com/huskyproject/areafix ~/build/huskyproject/areafix
 - if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get install --no-install-recommends
   --no-upgrade -qq $PACKAGES; fi
-#- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ln -s /usr/include/x86_64-linux-gnu/zconf.h
-#  /usr/include; fi
 script:
 - eval "${MATRIX_EVAL}"
 - cd  ~/build/huskyproject/huskylib
