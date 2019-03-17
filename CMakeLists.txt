@@ -102,7 +102,7 @@ target_link_libraries(hpttree ${fidoconfig_LIB} ${smapi_LIB} ${husky_LIB})
 target_link_libraries(hpt ${areafix_LIB} ${fidoconfig_LIB} ${smapi_LIB}  ${husky_LIB})
 
 if (${PERLLIBS_FOUND})
-  if (not MSVC) 
+  if (NOT MSVC)
     target_link_libraries(hpt -lpthread)
   endif()
   target_link_libraries(hpt ${PERL_LIBRARY})
