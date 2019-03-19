@@ -67,7 +67,7 @@ endif()
 include(FindPerlLibs)
 if (${PERLLIBS_FOUND})
   include_directories(${PERL_INCLUDE_PATH})
-  ADD_DEFINITIONS(-DPERL=1)
+  ADD_DEFINITIONS(-DDO_PERL=1)
   set(perl_SRC src/perl.c)
 endif()
 
