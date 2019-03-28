@@ -12,8 +12,11 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# Insert into config:
-# hptperlfile /home/fido/lib/filter.pl
+# Usage:
+# Put uue.pm somewere in @inc path. It's strongly rcomended
+# to put it in the same directory with filter.pl.
+# Insert into HPT config file somthing like:
+# hptperlfile /home/fido/perl/filter.pl
 # and place to filter.pl some like this:
 # use uue;
 # sub put_msg {
