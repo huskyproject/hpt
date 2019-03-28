@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 #
 # Usage:
-# Put uue.pm somewere in @inc path. It's strongly rcomended
+# Put uue.pm somewere in @inc path. It's strongly recomended
 # to put it in the same directory with filter.pl.
 # Insert into HPT config file somthing like:
 # hptperlfile /home/fido/perl/filter.pl
