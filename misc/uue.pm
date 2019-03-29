@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 #
 # Usage:
-# Put uue.pm somewere in @inc path. It's strongly recomended
+# Put uue.pm somewere in @INC path. It's strongly recomended
 # to put it in the same directory with filter.pl.
 # Insert into HPT config file somthing like:
 # hptperlfile /home/fido/perl/filter.pl
@@ -26,7 +26,7 @@
 # sub put_msg 
 # {
 #     if ( uu_decode( $area, $text ) == 0 ) {
-#         $text =~ s/\rbegin 644[ ]+([^ \r]+)\r.*\rend\r/\rbegin 644 $1\r\[ uue skiped \]\rend\r/g;
+#         $text =~ s/\rbegin 644[ ]+([^ \r]+)\r.*\rend\r/\rbegin 644 $1\r\[ uue skipped \]\rend\r/g;
 #         $change=1;
 #     }
 #     return 1;
