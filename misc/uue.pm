@@ -19,11 +19,12 @@
 # hptperlfile /home/fido/perl/filter.pl
 # and place to filter.pl some like this:
 # use uue;
-# sub put_msg {
+# sub put_msg()
+# {
 #     return uu_decode( $area, $text );
 # }
 # or
-# sub put_msg 
+# sub put_msg()
 # {
 #     if ( uu_decode( $area, $text ) == 0 ) {
 #         $text =~ s/\rbegin 644[ ]+([^ \r]+)\r[^ ]*\rend\r/\rbegin 644 $1\r\[ uue skipped \]\rend\r/g;
