@@ -26,7 +26,7 @@
 # sub put_msg 
 # {
 #     if ( uu_decode( $area, $text ) == 0 ) {
-#         $text =~ s/\rbegin 644[ ]+([^ \r]+)\r.*\rend\r/\rbegin 644 $1\r\[ uue skipped \]\rend\r/g;
+#         $text =~ s/\rbegin 644[ ]+([^ \r]+)\r[^ ]*\rend\r/\rbegin 644 $1\r\[ uue skipped \]\rend\r/g;
 #         $change=1;
 #     }
 #     return 1;
@@ -46,7 +46,7 @@ sub uu_decode($$)
 	local $uuedir = $config{protInbound}."uue";
 	mkdir $uuedir if !-e $uuedir;
         # директория, в которой складывать разююки.
-	if ( $mtext =~ /\rbegin 644[ ]+([^ \r]+)\r(.*\r)end\r/i ){
+	if ( $mtext =~ /\rbegin 644[ ]+([^ \r]+)\r([^ ]*\r)end\r/i ){
 	    my @uuelines = split(/\r/,$2);
 	    my $decdir = $uuedir . $slash . uc($marea);
 	    my $ofile = $decdir . $slash . $1;
