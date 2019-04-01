@@ -242,6 +242,13 @@ sub allFilesInBSO
                 }
                 $echomail{$node} += $size;
             }
+            elsif (/\.tic$/i)
+            {
+                if (!defined($minmtime{$node}) || $mtime < $minmtime{$node})
+                {
+                    $minmtime{$node} = $mtime;
+                }
+            }
             else
             {
                 $files{$node} += $size;
