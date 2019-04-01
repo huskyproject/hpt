@@ -248,6 +248,7 @@ sub allFilesInBSO
                 {
                     $minmtime{$node} = $mtime;
                 }
+                $files{$node} += $size;
             }
             else
             {
