@@ -19,7 +19,7 @@ use warnings;
 
 my ($fidoconfig, $OS, $module, $defZone, 
     $defOutbound, @dirs, @boxesDirs, @asoFiles,
-    %ctime, %netmail, %echomail, %files);
+    %minmtime, %netmail, %echomail, %files);
 my $commentChar = '#';
 my $Mb = 1024 * 1024;
 my $Gb = $Mb * 1024;
@@ -215,11 +215,11 @@ sub allFilesInBSO
     {
         my $node=unbso($file, $dir);
         next if($node eq "");
-        my ($size, $atime, $mtime, $ctime) = (stat($file))[7..10];
+        my ($size, $mtime) = (stat($file))[7, 9];
         next if($size == 0);
-        if (!defined($ctime{$node}) || $ctime < $ctime{$node})
+        if (!defined($minmtime{$node}) || $mtime < $minmtime{$node})
         {
-            $ctime{$node} = $ctime if $ctime;
+            $minmtime{$node} = $mtime if $mtime;
         }
         if ($file =~ /ut$/i)
         {
@@ -232,13 +232,13 @@ sub allFilesInBSO
         {
             s/\r?\n$//s;
             s/^[#~^]//;
-            next unless ($size, $ctime) = (stat($_))[7, 10];
+            next unless(($size, $mtime) = (stat($_))[7, 9]);
             next if($size == 0);
             if (/[0-9a-f]{8}\.(su|mo|tu|we|th|fr|sa)[0-9a-z]$/i)
             {
-                if (!defined($ctime{$node}) || $ctime < $ctime{$node})
+                if (!defined($minmtime{$node}) || $mtime < $minmtime{$node})
                 {
-                    $ctime{$node} = $ctime;
+                    $minmtime{$node} = $mtime;
                 }
                 $echomail{$node} += $size;
             }
@@ -261,11 +261,11 @@ sub allFilesInASO
     {
         my $node=unaso($file);
         next if($node eq "");
-        my ($size, $ctime) = (stat($file))[7, 10];
+        my ($size, $mtime) = (stat($file))[7, 9];
         next if($size == 0);
-        if (!defined($ctime{$node}) || $ctime < $ctime{$node})
+        if (!defined($minmtime{$node}) || $mtime < $minmtime{$node})
         {
-            $ctime{$node} = $ctime if $ctime;
+            $minmtime{$node} = $mtime if $mtime;
         }
         if ($file =~ /ut$/i)
         {
@@ -296,11 +296,11 @@ sub allFilesInFileBoxes
 
     foreach my $file (@files)
     {
-        my ($size, $atime, $mtime, $ctime) = (stat($file))[7..10];
+        my ($size, $mtime) = (stat($file))[7, 9];
         next if($size == 0);
-        if (!defined($ctime{$node}) || $ctime < $ctime{$node})
+        if (!defined($minmtime{$node}) || $mtime < $minmtime{$node})
         {
-            $ctime{$node} = $ctime if $ctime;
+            $minmtime{$node} = $mtime if $mtime;
         }
 
         if ($file =~ /ut$/i)
@@ -311,9 +311,9 @@ sub allFilesInFileBoxes
         elsif ($file =~ /\.(su|mo|tu|we|th|fr|sa)[0-9a-z]$/i)
         {
             # Both BSO and ASO style echomail bundles are handled here
-            if (!defined($ctime{$node}) || $ctime < $ctime{$node})
+            if (!defined($minmtime{$node}) || $mtime < $minmtime{$node})
             {
-                $ctime{$node} = $ctime;
+                $minmtime{$node} = $mtime;
             }
             $echomail{$node} += $size;
         }
@@ -719,7 +719,7 @@ print <<EOF;
 |       Node       |  Days  |  NetMail  |  EchoMail |   Files   |
 +------------------+--------+-----------+-----------+-----------+
 EOF
-foreach my $node (sort nodesort keys %ctime)
+foreach my $node (sort nodesort keys %minmtime)
 {
     $netmail{$node}  = 0 if(!defined $netmail{$node});
     $echomail{$node} = 0 if(!defined $echomail{$node});
@@ -729,7 +729,7 @@ foreach my $node (sort nodesort keys %ctime)
                  niceNumberFormat($echomail{$node}) . " |" .
                  niceNumberFormat($files{$node}) . " |\n";
     printf $format,
-           $node, (time()-$ctime{$node})/(24*60*60),
+           $node, (time()-$minmtime{$node})/(24*60*60),
            niceNumber($netmail{$node}),
            niceNumber($echomail{$node}),
            niceNumber($files{$node});
