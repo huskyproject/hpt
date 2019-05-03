@@ -25,7 +25,7 @@
 # sub put_msg {
 #     return uu_decode( $area, $text );
 # } 
-# if uue detected and decoded the message will not be placed in the area.
+# if uue is detected and decoded, the message will not be placed in the area.
 #
 # or
 # sub put_msg()
@@ -36,7 +36,7 @@
 #     }
 #     return 1;
 # }
-# if uue detected and decoded uue code will be deleted from the message and
+# if uue is detected and decoded, uue code will be deleted from the message and
 # the message will be placed in the area.
 #
 # or
@@ -44,38 +44,37 @@
 # {
 #     uu_decode( $area, $text,undef,1 ) if defined( $area );
 # }
-# uue will be decoded from all echo areas. Decoded files will owerwrite
-# existing files and palced in UUE directory in ProtInbound from HPT config
-# file.
+# uue will be decoded from all echo areas. Decoded files will overwrite
+# existing files and will be placed in UUE subdirectory of ProtInbound from HPT
+# config file.
 #
 # or
 # sub filter()
 # {
 #     uu_decode( 'NetMail', $text, '/home/fido/files' ) if !defined( $area );
 # }
-# uue will be decoded from netmail area. Decoded files will owerwrite
-# existing files and palced in '/home/fido/files/NETMAIL' directory.
+# uue will be decoded from netmail area. Decoded files will overwrite
+# existing files and will be placed in '/home/fido/files/NETMAIL' directory.
 #
-# uu_decode( $area, $text, $decodedir, $owerwrite );
+# uu_decode( $area, $text, $decodedir, $overwrite );
 #            $area - Areatag. MUST be the echo area tag or 'NetMail'
 #            $text - MUST be message text
 #            $decodedir - Should be the full path to the directory, where you
-#                         wish to decode files. If not present, Default name is
-#                         UUE in ProtInbound from HPT config file.
-#            $owerwrite - Should be 1, if you wish to owerwrite existing files
-#                         by decoded files, 0 or undefined, - if no.
-#                         Default is do not owerwrite existing files by
+#                         wish to decode files. If not present, the default
+#                         name is UUE in ProtInbound from HPT config file.
+#            $overwrite - Should be 1, if you wish to overwrite existing files
+#                         by decoded files, 0 or undefined, if not.
+#                         Default is to not overwrite existing files by
 #                         renaming decoded files.
 # returns 0 if uue detected and 1 otherwise.
 #
 # uu_encode($filename, $mode);
 #           $filename - Fully qualified filename (with path) of file you wish
 #                       to uu encode.
-#           $mode     - May be omitted. Default is 644.
+#           $mode     - May be omitted. Default is 0644.
 #
 #
-# Also it can be used in any perl script without HPT.
-# Like this:
+# Also it can be used in any perl script without HPT like this:
 #---- decode.pl ----
 # !/usr/bin/perl
 # use uue;
