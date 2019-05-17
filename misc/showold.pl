@@ -368,7 +368,11 @@ sub expandVars
     my ($expr) = stripSpaces(@_);
     my ($result, $left, $cmd, $var, $remainder);
 
-    if ($OS eq 'UNIX' or $OS eq 'OS/2')
+    # check whether number of backticks is even
+    my $number = $expr =~ tr/`/`/;
+    if (($OS eq 'UNIX' or $OS eq 'OS/2') &&
+        $number != 0 &&
+        int($number / 2) * 2 == $number)
     {
         # execute commands in backticks
         $cmd = 1;
@@ -376,6 +380,9 @@ sub expandVars
         while ($cmd)
         {
             ($left, $cmd, $remainder) = split /`/, $expr, 3;
+            $left = "" if(!defined($left));
+            $cmd = "" if(!defined($cmd));
+            $remainder = "" if(!defined($remainder));
             if ($cmd)
             {
                 $result .= $left . eval('`' . $cmd . '`');
@@ -397,6 +404,9 @@ sub expandVars
     while ($var)
     {
         ($left, $var, $remainder) = split /[\[\]]/, $expr, 3;
+        $left = "" if(!defined($left));
+        $var = "" if(!defined($var));
+        $remainder = "" if(!defined($remainder));
         if ($var)
         {
             $result .=
