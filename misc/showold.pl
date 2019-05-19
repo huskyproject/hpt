@@ -368,8 +368,8 @@ sub expandVars
     my ($expr) = stripSpaces(@_);
     my ($result, $left, $cmd, $var, $remainder);
 
-    # check whether number of backticks is even
-    my $number = $expr =~ tr/`/`/;
+    # check whether number of backticks (\x60) is even
+    my $number = $expr =~ tr/\x60//;
     if (($OS eq 'UNIX' or $OS eq 'OS/2') &&
         $number != 0 &&
         int($number / 2) * 2 == $number)
@@ -379,7 +379,7 @@ sub expandVars
         $result = "";
         while ($cmd)
         {
-            ($left, $cmd, $remainder) = split /`/, $expr, 3;
+            ($left, $cmd, $remainder) = split /\x60/, $expr, 3;
             $left = "" if(!defined($left));
             $cmd = "" if(!defined($cmd));
             $remainder = "" if(!defined($remainder));
