@@ -443,13 +443,9 @@ int main(int argc, char *argv[])
 
    if (pkt != NULL) {
 
-      msg.attributes = 1;
-
       t = time (NULL);
       tm = localtime(&t);
       fts_time((char *)msg.datetime, tm);
-
-      msg.netMail = 1;
 
       if (tearl || config->tearline) {
          *tmp='\0';
@@ -462,6 +458,8 @@ int main(int argc, char *argv[])
 	   msg.origAddr = config->addr[0];
 
       if (area != NULL) {
+         msg.attributes = 0;
+         msg.netMail = 0;
          *tmp='\0';
          strUpper(area);
          xscatprintf(&tmp, " * Origin: %s (%d:%d/%d.%d)\r",
@@ -474,6 +472,11 @@ int main(int argc, char *argv[])
 	         header.origAddr.net,header.origAddr.node,
 		 header.origAddr.net,header.origAddr.node);
          xstrcat(&textBuffer, tmp);
+      }
+      else
+      {
+         msg.attributes = 1;
+         msg.netMail = 1;
       }
       msg.text = createKludges(config,
                                area, &msg.origAddr, &msg.destAddr,
