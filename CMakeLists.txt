@@ -3,6 +3,8 @@ PROJECT(hpt C)
 set(areafix_VERSION 1.9.0)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+include(GNUInstallDirs)
+
 option(BUILD_SHARED_LIBS "Build shared libs" ON)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
@@ -102,6 +104,8 @@ target_link_libraries(hpttree ${fidoconfig_LIB} ${smapi_LIB} ${husky_LIB})
 target_link_libraries(hpt ${areafix_LIB} ${fidoconfig_LIB} ${smapi_LIB}  ${husky_LIB})
 
 if (${PERLLIBS_FOUND})
+  EXECUTE_PROCESS(COMMAND ${PERL_EXECUTABLE} -e "use Config; print \$Config{ccflags}" OUTPUT_VARIABLE PERL_CCFLAGS)
+  ADD_DEFINITIONS(${PERL_CCFLAGS})
   if (NOT MSVC)
     target_link_libraries(hpt -lpthread)
   endif()
@@ -124,7 +128,7 @@ endif(hptzip_LIB)
 
 INSTALL(TARGETS pktinfo tpkt txt2pkt hptlink hpttree hpt
   RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
 if (MSVC)
