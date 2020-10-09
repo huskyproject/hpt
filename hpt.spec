@@ -1,39 +1,152 @@
+%define ver_major 1
+%define ver_minor 9
 %define reldate 20200415
 %define reltype C
 # may be one of: C (current), R (release), S (stable)
 
-Name: hpt
-Version: 1.9.%{reldate}%{reltype}
-Release: 1
-Group: Applications/FTN
-Summary: HPT - the Husky Project tosser
-URL: http://huskyproject.org
+# release number for Release: header
+%define relnum 2
+
+# on default static application binary is built but using
+# 'rpmbuild --without static' produces an application binary that uses
+# dynamic libraries from other subprojects of Husky project
+%bcond_without static
+
+# if you use 'rpmbuild --with debug' then debug binary is produced
+%bcond_with debug
+
+# if you use 'rpmbuild --without perl', then the application binary will be
+# built without Perl
+%bcond_without perl
+
+# for generic build; will override for some distributions
+%define vendor_prefix %nil
+%define vendor_suffix %nil
+%define pkg_group Applications/FTN
+
+# for CentOS, Fedora and RHEL
+%if %_vendor == "redhat"
+%define vendor_suffix %dist
+%endif
+
+# for ALT Linux
+%if %_vendor == "alt"
+%define vendor_prefix %_vendor
+%define pkg_group Networking/FTN
+%endif
+
+%define main_name hpt
+%if %{with static}
+Name: %main_name-static
+%else
+Name: %main_name
+%endif
+Version: %ver_major.%ver_minor.%reldate%reltype
+Release: %{vendor_prefix}%relnum%{vendor_suffix}
+%if %_vendor != "redhat"
+Group: %pkg_group
+%endif
+Summary: HPT is the FTN tosser from the Husky Project
+URL: https://github.com/huskyproject/%main_name/archive/v%ver_major.%ver_minor.%reldate.tar.gz
 License: GPL
-Requires: fidoconf >= 1.9, perl >= 5.8.8
-BuildRequires: huskylib >= 1.9, smapi >= 2.5
-BuildRequires: fidoconf >= 1.9, areafix >= 1.9
-Source: %{name}.tar.gz
-BuildRoot: %{_tmppath}/%{name}-%{version}-root
+Source: %main_name-%ver_major.%ver_minor.%reldate.tar.gz
+%if %{with static}
+BuildRequires: huskylib-static >= 1.9, huskylib-devel >= 1.9
+BuildRequires: smapi-static >= 2.5, smapi-devel >= 1.9
+BuildRequires: fidoconf-static >= 1.9, fidoconf-devel >= 1.9
+BuildRequires: areafix-static >= 1.9, areafix-devel >= 1.9
+%else
+BuildRequires: huskylib >= 1.9, huskylib-devel >= 1.9
+BuildRequires: smapi >= 2.5, smapi-devel >= 1.9
+BuildRequires: fidoconf >= 1.9, fidoconf-devel >= 1.9
+BuildRequires: areafix >= 1.9, areafix-devel >= 1.9
+Requires: huskylib >= 1.9, smapi >= 2.5, fidoconf >= 1.9, areafix >= 1.9
+%endif
+%if %{with perl}
+BuildRequires: perl >= 5.8.8, perl-devel >= 5.8.8
+%if %_vendor == "redhat"
+BuildRequires: perl-ExtUtils-Embed
+%endif
+Requires: perl >= 5.8.8
+%endif
 
 %description
-HPT is the FTN tosser from the Husky Project.
+HPT is the FTN tosser from the Husky Project
+
+
+%if %{with static}
+%define utilities %main_name-utils-static
+%else
+%define utilities %main_name-utils
+%endif
+%package -n %utilities
+%if %_vendor != "redhat"
+Group: %pkg_group
+%endif
+Summary: Optional utilities for %name
+%description -n %utilities
+%summary
 
 %prep
-%setup -q -n %{name}
+%setup -q -n %main_name-%ver_major.%ver_minor.%reldate
 
 %build
-#sed -i -re 's,#LFLAGS =-s,LFLAGS =-s -static,g' makefile.inc
-make
+# parallel build appears to be broken in CentOS, Fedora and RHEL
+%if %_vendor == "redhat"
+    %if %{with static}
+        %if %{with debug}
+            make DEBUG=1
+        %else
+            make
+        %endif
+    %else
+        %if %{with debug}
+            make DYNLIBS=1 DEBUG=1
+        %else
+            make DYNLIBS=1
+        %endif
+    %endif
+%else
+    %if %{with static}
+        %if %{with debug}
+            %make DEBUG=1
+        %else
+            %make
+        %endif
+    %else
+        %if %{with debug}
+            %make DYNLIBS=1 DEBUG=1
+        %else
+            %make DYNLIBS=1
+        %endif
+    %endif
+%endif
+echo Install-name1:%_rpmdir/%_arch/%name-%version-%release.%_arch.rpm > /dev/null
 
-%install
-rm -rf %{buildroot}
-make DESTDIR=%{buildroot} install
-chmod -R a+rX,u+w,go-w %{buildroot}
+# macro 'install' is omitted for debug build because it strips the library
+%if ! %{with debug}
+    %install
+%endif
+umask 022
+%if %{with static}
+    make DESTDIR=%buildroot install
+%else
+    make DESTDIR=%buildroot DYNLIBS=1 install
+%endif
+chmod -R a+rX,u+w,go-w %buildroot
 
+%if %_vendor != "redhat"
 %clean
-rm -rf %{buildroot}
+rm -rf %buildroot
+%endif
 
 %files
 %defattr(-,root,root)
-%{_bindir}/*
-%{_mandir}/man1/*
+%_bindir/hpt
+%_mandir/man1/hpt.*
+
+%files -n %utilities
+%_bindir/*
+%exclude %_bindir/hpt
+%_mandir/man1/*
+%exclude %_mandir/man1/hpt.*
