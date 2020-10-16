@@ -107,33 +107,32 @@ Summary: Optional utilities for %name
 %setup -q -n %main_name-%ver_major.%ver_minor.%reldate
 
 %build
-# parallel build appears to be broken in CentOS, Fedora and RHEL
-%if %_vendor == "redhat"
-    %if %{with static}
-        %if %{with debug}
-            make DEBUG=1
+%if %{with static}
+    %if %{with debug}
+        %if %{with perl}
+            %make_build DEBUG=1
         %else
-            make
+            %make_build PERL=0 DEBUG=1
         %endif
     %else
-        %if %{with debug}
-            make DYNLIBS=1 DEBUG=1
+        %if %{with perl}
+            %make_build
         %else
-            make DYNLIBS=1
+            %make_build PERL=0
         %endif
     %endif
 %else
-    %if %{with static}
-        %if %{with debug}
-            %make DEBUG=1
+    %if %{with debug}
+        %if %{with perl}
+            %make_build DYNLIBS=1 DEBUG=1
         %else
-            %make
+            %make_build PERL=0 DYNLIBS=1 DEBUG=1
         %endif
     %else
-        %if %{with debug}
-            %make DYNLIBS=1 DEBUG=1
+        %if %{with perl}
+            %make_build DYNLIBS=1
         %else
-            %make DYNLIBS=1
+            %make_build PERL=0 DYNLIBS=1
         %endif
     %endif
 %endif
