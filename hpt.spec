@@ -90,17 +90,12 @@ Requires: perl >= 5.8.8
 HPT is the FTN tosser from the Husky Project
 
 
-%if %{with static}
-    %global utilities %main_name-utils-static
-%else
-    %global utilities %main_name-utils
-%endif
-%package -n %utilities
+%package utils
 %if %_vendor != "redhat"
 Group: %pkg_group
 %endif
 Summary: Optional utilities for %name
-%description -n %utilities
+%description utils
 %summary
 
 %prep
@@ -161,7 +156,7 @@ rm -rf %buildroot
 %_bindir/hpt
 %_mandir/man1/hpt.*
 
-%files -n %utilities
+%files utils
 %_bindir/*
 %exclude %_bindir/hpt
 %_mandir/man1/*
