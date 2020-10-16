@@ -64,7 +64,7 @@ Group: %pkg_group
 %endif
 Summary: HPT is the FTN tosser from the Husky Project
 URL: https://github.com/huskyproject/%main_name/archive/v%ver_major.%ver_minor.%reldate.tar.gz
-License: GPL
+License: LGPLv2
 Source: %main_name-%ver_major.%ver_minor.%reldate.tar.gz
 %if %{with static}
 BuildRequires: huskylib-static >= 1.9, huskylib-static-devel >= 1.9
