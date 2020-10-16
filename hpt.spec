@@ -38,7 +38,7 @@
 # for generic build; will override for some distributions
 %global vendor_prefix %nil
 %global vendor_suffix %nil
-%global pkg_group Applications/FTN
+%global pkg_group Applications/Communications
 
 # for CentOS, Fedora and RHEL
 %if %_vendor == "redhat"
