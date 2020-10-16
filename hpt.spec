@@ -67,10 +67,10 @@ URL: https://github.com/huskyproject/%main_name/archive/v%ver_major.%ver_minor.%
 License: GPL
 Source: %main_name-%ver_major.%ver_minor.%reldate.tar.gz
 %if %{with static}
-BuildRequires: huskylib-static >= 1.9, huskylib-devel >= 1.9
-BuildRequires: smapi-static >= 2.5, smapi-devel >= 1.9
-BuildRequires: fidoconf-static >= 1.9, fidoconf-devel >= 1.9
-BuildRequires: areafix-static >= 1.9, areafix-devel >= 1.9
+BuildRequires: huskylib-static >= 1.9, huskylib-static-devel >= 1.9
+BuildRequires: smapi-static >= 2.5, smapi-static-devel >= 1.9
+BuildRequires: fidoconf-static >= 1.9, fidoconf-static-devel >= 1.9
+BuildRequires: areafix-static >= 1.9, areafix-static-devel >= 1.9
 %else
 BuildRequires: huskylib >= 1.9, huskylib-devel >= 1.9
 BuildRequires: smapi >= 2.5, smapi-devel >= 1.9
@@ -79,11 +79,14 @@ BuildRequires: areafix >= 1.9, areafix-devel >= 1.9
 Requires: huskylib >= 1.9, smapi >= 2.5, fidoconf >= 1.9, areafix >= 1.9
 %endif
 %if %{with perl}
-BuildRequires: perl >= 5.8.8, perl-devel >= 5.8.8
 %if %_vendor == "redhat"
-BuildRequires: perl-ExtUtils-Embed
-%endif
+BuildRequires: perl(:VERSION) >= 5.8.8, perl-devel >= 5.8.8
+BuildRequires: perl(ExtUtils::Embed)
+Requires: perl(:VERSION) >= 5.8.8
+%else
+BuildRequires: perl >= 5.8.8, perl-devel >= 5.8.8
 Requires: perl >= 5.8.8
+%endif
 %endif
 
 %description
