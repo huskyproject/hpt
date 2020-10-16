@@ -11,14 +11,27 @@
 # on default static application binary is built but using
 # 'rpmbuild --without static' produces an application binary that uses
 # dynamic libraries from other subprojects of Husky project
-%bcond_without static
+%if %_vendor == "alt"
+    %def_with static
+    %global  __arch_install_post %nil
+%else
+    %bcond_without static
+%endif
 
 # if you use 'rpmbuild --with debug' then debug binary is produced
-%bcond_with debug
+%if %_vendor == "alt"
+    %def_without debug
+%else
+    %bcond_with debug
+%endif
 
 # if you use 'rpmbuild --without perl', then the application binary will be
 # built without Perl
-%bcond_without perl
+%if %_vendor == "alt"
+    %def_with perl
+%else
+    %bcond_without perl
+%endif
 
 # for generic build; will override for some distributions
 %global vendor_prefix %nil
