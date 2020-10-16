@@ -25,6 +25,8 @@
     %bcond_with debug
 %endif
 
+%global debug_package %nil
+
 # if you use 'rpmbuild --without perl', then the application binary will be
 # built without Perl
 %if %_vendor == "alt"
