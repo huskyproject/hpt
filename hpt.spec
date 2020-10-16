@@ -146,11 +146,6 @@ umask 022
 %endif
 chmod -R a+rX,u+w,go-w %buildroot
 
-%if %_vendor != "redhat"
-%clean
-rm -rf %buildroot
-%endif
-
 %files
 %defattr(-,root,root)
 %_bindir/hpt
