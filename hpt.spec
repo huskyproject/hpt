@@ -1,11 +1,11 @@
-%define ver_major 1
-%define ver_minor 9
-%define reldate 20201009
-%define reltype C
+%global ver_major 1
+%global ver_minor 9
+%global reldate 20201016
+%global reltype C
 # may be one of: C (current), R (release), S (stable)
 
 # release number for Release: header
-%define relnum 2
+%global relnum 2
 
 # on default static application binary is built but using
 # 'rpmbuild --without static' produces an application binary that uses
@@ -20,22 +20,22 @@
 %bcond_without perl
 
 # for generic build; will override for some distributions
-%define vendor_prefix %nil
-%define vendor_suffix %nil
-%define pkg_group Applications/FTN
+%global vendor_prefix %nil
+%global vendor_suffix %nil
+%global pkg_group Applications/FTN
 
 # for CentOS, Fedora and RHEL
 %if %_vendor == "redhat"
-%define vendor_suffix %dist
+%global vendor_suffix %dist
 %endif
 
 # for ALT Linux
 %if %_vendor == "alt"
-%define vendor_prefix %_vendor
-%define pkg_group Networking/FTN
+%global vendor_prefix %_vendor
+%global pkg_group Networking/FTN
 %endif
 
-%define main_name hpt
+%global main_name hpt
 %if %{with static}
 Name: %main_name-static
 %else
@@ -75,9 +75,9 @@ HPT is the FTN tosser from the Husky Project
 
 
 %if %{with static}
-%define utilities %main_name-utils-static
+%global utilities %main_name-utils-static
 %else
-%define utilities %main_name-utils
+%global utilities %main_name-utils
 %endif
 %package -n %utilities
 %if %_vendor != "redhat"
