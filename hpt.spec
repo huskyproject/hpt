@@ -1,7 +1,7 @@
 %global ver_major 1
 %global ver_minor 9
 %global ver_patch 0
-%global reldate 20201016
+%global reldate 20201026
 %global reltype C
 # may be one of: C (current), R (release), S (stable)
 

@@ -36,7 +36,7 @@ HPTTREE = $(B)hpttree$(_EXE)
 HPT     = $(B)hpt$(_EXE)
 
 # Header files
-HEADERS = $(H)hptafix.h $(H)cvsdate.h $(H)dupe.h $(H)fcommon.h $(H)global.h \
+HEADERS = $(H)hptafix.h ../$(H)cvsdate.h $(H)dupe.h $(H)fcommon.h $(H)global.h \
           $(H)hpt.h $(H)hptperl.h $(H)link.h $(H)pkt.h $(H)post.h $(H)scan.h \
           $(H)scanarea.h $(H)seenby.h $(H)toss.h $(H)version.h
 

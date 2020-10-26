@@ -67,7 +67,7 @@
 #include <global.h>
 #include <pkt.h>
 #include <version.h>
-#include <cvsdate.h>
+#include "../cvsdate.h"
 
 #define clean_exit(exitcode)   { \
                                 nfree(msg.fromUserName); \

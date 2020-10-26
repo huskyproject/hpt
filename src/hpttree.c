@@ -58,7 +58,7 @@
 #include <fidoconf/common.h>
 
 #include <version.h>
-#include "cvsdate.h"
+#include "../cvsdate.h"
 
 s_fidoconfig *cfg;
 

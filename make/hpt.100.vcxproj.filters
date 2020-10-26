@@ -9,7 +9,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\h\cvsdate.h">
+    <ClInclude Include="..\cvsdate.h">
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="..\h\dupe.h">

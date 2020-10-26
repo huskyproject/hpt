@@ -95,7 +95,7 @@ SOURCE=.\h\areafix.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\h\cvsdate.h
+SOURCE=..\cvsdate.h
 # End Source File
 # Begin Source File
 

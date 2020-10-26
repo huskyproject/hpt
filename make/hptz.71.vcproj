@@ -146,7 +146,7 @@
 			Name="headerz"
 			Filter="">
 			<File
-				RelativePath="..\h\cvsdate.h">
+				RelativePath="..\cvsdate.h">
 			</File>
 			<File
 				RelativePath="..\h\dupe.h">

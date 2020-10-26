@@ -36,7 +36,7 @@
 #include <time.h>
 #include <huskylib/huskylib.h>
 #include <huskylib/typesize.h>
-#include <cvsdate.h>
+#include "../cvsdate.h"
 #include <version.h>
 
 int main()

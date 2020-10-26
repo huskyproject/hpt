@@ -421,7 +421,7 @@
 			Name="headerz"
 			>
 			<File
-				RelativePath="..\h\cvsdate.h"
+				RelativePath="..\cvsdate.h"
 				>
 			</File>
 			<File

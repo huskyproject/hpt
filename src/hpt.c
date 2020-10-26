@@ -79,7 +79,7 @@
 #endif
 
 #include "version.h"
-#include "cvsdate.h"
+#include "../cvsdate.h"
 #include "pkt.h"
 #include "global.h"
 #include "hpt.h"

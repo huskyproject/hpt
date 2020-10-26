@@ -285,7 +285,7 @@ move /Y  hpt.html $(OutDir)
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\h\cvsdate.h" />
+    <ClInclude Include="..\cvsdate.h" />
     <ClInclude Include="..\h\dupe.h" />
     <ClInclude Include="..\h\fcommon.h" />
     <ClInclude Include="..\h\global.h" />
