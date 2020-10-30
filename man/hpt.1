@@ -1,4 +1,4 @@
-.TH HPT 1 "Highly Portable Tosser (v1.1.0)"
+.TH HPT 1 "Highly Portable Tosser (v1.9.0)"
 .SH NAME
 hpt \- toss pkt files to squish/msg/jam bases and export messages
 .SH SYNTAX
@@ -19,14 +19,14 @@ hpt scan
 hpt scan -w
 .br
 .TP
-.B Scan echomail messages from alternative echotoss file
-hpt scan -f <echotoss.log>
+.B Scan only the echo areas listed in this file
+hpt scan -f <file>
 .br
 .TP
-(see info hpt for more details)
+(see \fIinfo hpt\fP for more details)
 .br
 .TP
-.B Scan echomail messages from areas matching <pattern>
+.B Scan echomail messages from the areas matching <pattern>
 hpt scan -a <pattern>
 .br
 .TP
@@ -34,15 +34,58 @@ hpt scan -a <pattern>
 hpt pack
 .br
 .TP
-.B Links echomail messages
+.B Pack netmail only from the areas matching <pattern>
+hpt pack -a <pattern>
+.br
+.TP
+.B Pack netmail only from the areas listed in this file
+hpt pack -f <file>
+.br
+.TP
+.B Link echomail messages
 hpt link [areamask]
 .br
 .TP
+.B Link jam echomail areas using CRC (quicker)
+hpt link -j [areamask]
+.br
+.TP
 .B Process areafix
-hpt afix [<addr> command]
+hpt afix [-f] [-s] [<addr> command]
+.br
+\ \ \ \ - send command to our areafix from the name of <addr>
+.br
+\fB \ \ \ \ \ \ \-f\fP
+- also send the same command to the link's areafix
+.br
+\fB \ \ \ \ \ \ \-s\fP
+- do not send reply from our areafix to the link
+.br
 hpt qupd - update queue file and do some areafix jobs
-hpt qrep - make report based on information from queue file
-hpt qrep -d - print info described above, but show only changes
+.br
+hpt qrep - make report based on information from the queue file
+.br
+hpt qrep -d - make report containing only changes
+.br
+.TP
+.B Refresh subscription for all echo areas we are subscribed at <addr>
+hpt relink <addr>
+.br
+.TP
+.B Refresh subscription for the areas matching the pattern
+hpt relink <pattern> <addr>
+.br
+.TP
+.B Refresh subscription only for the areas listed in this file
+hpt relink -f [file] <addr>
+.br
+.TP
+.B Move subscription for the areas matching the pattern from one link to another
+hpt resubscribe <pattern> <fromaddr> <toaddr>
+.br
+.TP
+.B Move subscription from one link to another for the areas matching the patterns listed in this file with one pattern on a line
+hpt resubscribe -f [file] <fromaddr> <toaddr>
 .br
 .TP
 .B Post a message to area
@@ -51,34 +94,34 @@ hpt post [options] file
 options are:
 .TP 1i
 \fB \ \ \ \ \ \ \-nf "name from"
-message sender's name, if not included \fBpost\fP use sysop name (see \fBfidoconfig\fP) 
+message sender's name, if not defined \fBpost\fP uses sysop name (see \fBfidoconfig\fP) 
 .TP 1i
 \fB \ \ \ \ \ \ \-nt "name to"
-message receiver's name, if not included \fBpost\fP use "All"
+message receiver's name, if not defined \fBpost\fP uses "All"
 .TP 1i
 \fB \ \ \ \ \ \ \-af "address from"
-message sender's address, if not included \fBpost\fP use first system address (see \fBfidoconfig\fP)
+message sender's address, if not defined \fBpost\fP uses the first system address (see \fBfidoconfig\fP)
 .TP 1i
 \fB \ \ \ \ \ \ \-at "address to"
-message receiver's address, \fB*MUST BE PRESENT*\fP
+message receiver's address, \fBMUST BE PRESENT FOR NETMAIL\fP
 .TP 1i
 \fB \ \ \ \ \ \ \-s "subject"
-subject line, if not included then assumed to be empty
+subject line. If not defined, then assumed to be empty
 .TP 1i
 \fB \ \ \ \ \ \ \-e "echo area"
-area to post echomail message into, if not included message is posted to netmail
+area to post echomail message into. If not defined, message is posted to the first netmail area
 .TP 1i
 \fB \ \ \ \ \ \ \-z "tearline"
-tearline, if not included then assumed to be empty line
+tearline. If not defined, then assumed to be no tearline at all. Use -z "" to post with empty tearline
 .TP 1i
 \fB \ \ \ \ \ \ \-o "origin"
-origin, if not included then assumed to be name of station in config-file
+origin. If not defined, then assumed to be the station name from config-file
 .TP 1i
 \fB \ \ \ \ \ \ \-f flag(s)
-flags to set to the posted msg. possible ones are:
+flags to set to the posted msg. Possible ones are:
 pvt, crash, read, sent, att, fwd, orphan, k/s, loc, 
-hld, xx2,  frq, rrq, cpt, arq, urq;
-use it without trailing brackets like this: pvt loc k/s
+hld, xx2,  frq, rrq, cpt, arq, urq.
+Use flags like this: pvt loc k/s OR pvt,loc,k/s OR "pvt loc k/s"
 .TP 1i
 \fB \ \ \ \ \ \ -x\fP export message to echo links
 .TP 1i
@@ -92,12 +135,11 @@ size - number of lines per section(150 for default)
 \fB \ \ \ \ \ \ file\fP - text file to post into echo or "-" for stdin
 .br
 .TP
-.B Refresh area subscription
-hpt relink <addr>
-.br
-.TP
 .B Set pause for links who don't poll our system
 hpt pause
+.br
+.TP
+(see \fIinfo hpt\fP for \fBAutoPassive\fP)
 .br
 .TP
 .B Quiet mode (no screen output)
@@ -109,8 +151,10 @@ hpt -c /path/to/config
 .SH DESCRIPTION
 Highly Portable Tosser is the way to toss your fidonet mail.
 .SH BUGS
-I suppose there are :). So, report me, if you found any.
-Every time you changed the config-file please run tparser to see if 
+I suppose there are :). So, report them in FIDOSOFT.HUSKY or RU.HUSKY echo area, if you found any.
+.br
+.P
+Every time you have changed the configuration file please run tparser to see if 
 your config is valid...
 .SH AUTHORS
 1997-1999: Matthias Tichy, 2:2432/645 (mtt@tichy.de)
