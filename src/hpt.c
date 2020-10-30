@@ -171,6 +171,8 @@ void start_help(void) {
   printf("   hpt link [areamask] - link messages\n");
   printf("   hpt link -j [areamask] - link jam areas using CRC (quicker)\n");
   printf("   hpt afix [-f] [-s] [<addr> command] - process areafix\n");
+  printf("             -f - also send the same command to the link's areafix\n");
+  printf("             -s - do not send reply from our areafix to the link\n");
   printf("   hpt qupd - update queue file and do some areafix jobs\n");
   printf("   hpt qrep - make report based on information from queue file\n");
   printf("   hpt qrep -d - make report containing only changes\n");
