@@ -170,7 +170,8 @@ void start_help(void) {
   printf("   hpt pack -f [filename] - pack netmail only from areas listed in this file\n");
   printf("   hpt link [areamask] - link messages\n");
   printf("   hpt link -j [areamask] - link jam areas using CRC (quicker)\n");
-  printf("   hpt afix [-f] [-s] [<addr> command] - process areafix\n");
+  printf("   hpt afix [-f] [-s] [<addr> command] - send command to our areafix\n");
+  printf("                                         from the name of <addr>\n");
   printf("             -f - also send the same command to the link's areafix\n");
   printf("             -s - do not send reply from our areafix to the link\n");
   printf("   hpt qupd - update queue file and do some areafix jobs\n");
@@ -179,11 +180,11 @@ void start_help(void) {
   printf("   hpt relink <pattern> <addr> - refresh subscription for areas matching\n");
   printf("                        the pattern\n");
   printf("   hpt relink -f [filename] <addr> - refresh only areas listed in this file\n");
-  printf("   hpt resubscribe <pattern> <fromaddr> <toaddr> - move subscription of areas\n");
-  printf("                        matching the pattern from one link to another\n");
-  printf("   hpt resubscribe -f [file] <fromaddr> <toaddr> - move subscription of areas\n");
-  printf("                        matching area patterns listed in this file with one\n");
-  printf("                        pattern on a line from one link to another\n");
+  printf("   hpt resubscribe <pattern> <fromaddr> <toaddr> - move subscription from\n");
+  printf("                        one link to another for the areas matching the pattern\n");
+  printf("   hpt resubscribe -f [file] <fromaddr> <toaddr> - move subscription from one\n");
+  printf("                        link to another for the areas matching the area patterns\n");
+  printf("                        listed in this file with one pattern on a line\n");
   printf("   hpt pause - set pause for links who don't poll our system\n");
   printf("   hpt -q [options] - quiet mode (no screen output)\n");
 }
