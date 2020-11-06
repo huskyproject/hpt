@@ -142,9 +142,17 @@ Summary: Optional utilities for %name
 %install
 umask 022
 %if %{with static}
-    make DESTDIR=%buildroot install
+    %if %{with debug}
+        %make_install DEBUG=1
+    %else
+        %make_install
+    %endif
 %else
-    make DESTDIR=%buildroot DYNLIBS=1 install
+    %if %{with debug}
+        %make_install DYNLIBS=1 DEBUG=1
+    %else
+        %make_install DYNLIBS=1
+    %endif
 %endif
 chmod -R a+rX,u+w,go-w %buildroot
 
