@@ -49,7 +49,6 @@
 #include <global.h>
 #include <fcommon.h>
 #include <pkt.h>
-#include <global.h>
 
 time_t readPktTime(FILE *pkt)
 {

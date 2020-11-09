@@ -51,7 +51,6 @@
 
 #include <version.h>
 #include <areafix/areafix.h>
-#include <global.h>
 #include "../cvsdate.h"
 
 

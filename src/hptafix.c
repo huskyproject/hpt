@@ -33,6 +33,7 @@
 #include <areafix/callback.h>
 #include <areafix/query.h>
 #include "global.h"
+#include "version.h"
 #include "fcommon.h"
 #include "hpt.h"
 #include "dupe.h"
