@@ -147,7 +147,7 @@ sub uu_decode($$;$$)
 	}
 	mkdir $uuedir if !-e $uuedir;
 	$i = 1;
-	while ( $mtext =~ /\r\n?begin 644[ ]+([^ \r\n?]+)\r\n?([^ ]*?\r\n?)end\r\n?/i ){
+	while ( $mtext =~ /\r\n?begin \d+[ ]+([^\r\n?]+)\r\n?([^ ]*?\r\n?)end\r\n?/i ){
 	    @uuelines = split(/\r\n?/,$2);
 	    $decdir = $uuedir . $slash . uc($marea);
 	    $ofile = $decdir . $slash . $1;
@@ -166,7 +166,7 @@ sub uu_decode($$;$$)
 		w_log("Can't open \"$ofile\"\: $!\.") if defined($config{protInbound});
 		print STDERR "Can't open \"$ofile\"\: $!\.\n";
 	    }
-	$mtext =~ s/\r\n?begin 644[ ]+[^ \r\n?]+\r\n?[^ ]*?\r\n?end\r\n?/\r\n/i;
+	$mtext =~ s/\r\n?begin \d+[ ]+[^\r\n?]+\r\n?[^ ]*?\r\n?end\r\n?/\r\n/i;
 	}
 return $i;
 }
