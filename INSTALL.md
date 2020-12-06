@@ -58,9 +58,16 @@ dos:
  ### Compiling and installing using Cmake
  
 - Run CMake to configure the build tree.
-   ```sh
+```sh
+      $ cmake -H. -Bbuild -DBUILD_SHARED_LIBS=OFF
+```
+  This will prepare to build hpt using static libraries. If you want to build
+  hpt using dynamic libraries, then you have to run
+```sh
       $ cmake -H. -Bbuild
-   ```
+```
+  Be shure to build all Husky projects the same way, either statically or
+  dynamically.
 - Afterwards, generated files can be used to compile the project.
    ```sh
       $ cmake --build build
