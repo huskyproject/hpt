@@ -1424,9 +1424,10 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                 statToss.echoMail++;
 
                 /*  if only one downlink, we've got the mail from him */
-                if((echo->downlinkCount > 1) || ((echo->downlinkCount > 0) &&
-                                                 /*  mail from us */
-                                                 (addrComp(pktOrigAddr, *echo->useAka) == 0)))
+                if((echo->downlinkCount > 1) || 
+                   ((echo->downlinkCount > 0) &&
+                    /*  mail from us */
+                    (addrComp(pktOrigAddr, *echo->useAka) == 0)))
                 {
                     forwardMsgToLinks(echo, msg, pktOrigAddr);
                 }
@@ -1712,8 +1713,8 @@ int processMsg(s_message * msg, s_pktHeader * pktHeader, int secure)
               msg->destAddr.point);
 
         if(config->areafixFromPkt &&
-           isOurAka(config,
-                    msg->destAddr) && strlen(msg->toUserName) > 0 &&
+           isOurAka(config, msg->destAddr) &&
+           strlen(msg->toUserName) > 0 &&
            findInStrArray(robot->names, msg->toUserName) >= 0)
         {
             rc = processAreaFix(msg, pktHeader, 0);
