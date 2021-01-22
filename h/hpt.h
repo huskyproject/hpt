@@ -1,5 +1,4 @@
 /* $Id$ */
-
 /*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
@@ -25,7 +24,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -35,9 +34,8 @@
 
 #define LogFileName "hpt.log"
 
-typedef enum exitCode { ex_OK, ex_Help, ex_Error } e_exitCode;
-e_exitCode processCommandLine(int argc, char **argv);
-
+typedef enum exitCode {ex_OK, ex_Help, ex_Error} e_exitCode;
+e_exitCode processCommandLine(int argc, char ** argv);
 void processConfig(void);
 
 #endif

@@ -1,5 +1,4 @@
 /* $Id$ */
-
 /*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
@@ -35,43 +34,50 @@
 #include <pkt.h>
 #include <seenby.h>
 
-struct statToss {
-   int arch, pkts, msgs;
-   int saved, passthrough, exported, CC;
-   int echoMail, netMail;
-   int dupes, bad, empty;
-   int inBytes;
+struct statToss
+{
+    int arch, pkts, msgs;
+    int saved, passthrough, exported, CC;
+    int echoMail, netMail;
+    int dupes, bad, empty;
+    int inBytes;
 /*    time_t startTossing; */
-   time_t realTime;
+    time_t realTime;
 };
+
 typedef struct statToss s_statToss;
-
 enum tossSecurity {secLocalInbound, secProtInbound, secInbound};
+
 typedef enum tossSecurity e_tossSecurity;
-
-
-int  processEMMsg(s_message *msg, hs_addr pktOrigAddr, int dontdocc, dword forceattr);
-int  processNMMsg(s_message *msg, s_pktHeader *pktHeader, s_area *area, int dontdocc, dword forceattr);
-int  processMsg(s_message *msg, s_pktHeader *pktHeader, int secure);
-int  processPkt(char *fileName, e_tossSecurity sec);
-int  putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr);
-void makeMsgToSysop(char *areaName, hs_addr fromAddr, hs_addr *uplinkAddr);
+int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword forceattr);
+int processNMMsg(s_message * msg,
+                 s_pktHeader * pktHeader,
+                 s_area * area,
+                 int dontdocc,
+                 dword forceattr);
+int processMsg(s_message * msg, s_pktHeader * pktHeader, int secure);
+int processPkt(char * fileName, e_tossSecurity sec);
+int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr);
+void makeMsgToSysop(char * areaName, hs_addr fromAddr, hs_addr * uplinkAddr);
 void toss(void);
-void tossTempOutbound(char *directory);
-void arcmail(s_link *link);
+void tossTempOutbound(char * directory);
+void arcmail(s_link * link);
 void tossFromBadArea(char force);
 void writeMsgToSysop(void);
-void forwardToLinks(s_message *msg, s_area *echo, s_arealink **newLinks,
-					s_seenBy **seenBys, UINT *seenByCount,
-					s_seenBy **path, UINT *pathCount);
-void forwardMsgToLinks(s_area *echo, s_message *msg, hs_addr pktOrigAddr);
-int  carbonCopy(s_message *msg, XMSG *xmsg, s_area *echo);
+void forwardToLinks(s_message * msg,
+                    s_area * echo,
+                    s_arealink ** newLinks,
+                    s_seenBy ** seenBys,
+                    UINT * seenByCount,
+                    s_seenBy ** path,
+                    UINT * pathCount);
+void forwardMsgToLinks(s_area * echo, s_message * msg, hs_addr pktOrigAddr);
+int carbonCopy(s_message * msg, XMSG * xmsg, s_area * echo);
 void closeOpenedPkt(void);
-int  isArcMail(char *fname);
-
-s_message* MessForCC(s_message *msg);
+int isArcMail(char * fname);
+s_message * MessForCC(s_message * msg);
 
 #define REC_HDR 0x0001
 #define REC_TXT 0x0002
 
-#endif
+#endif // ifndef TOSS_H

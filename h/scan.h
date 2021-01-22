@@ -1,5 +1,4 @@
 /* $Id$ */
-
 /*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
@@ -25,7 +24,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -34,22 +33,23 @@
 #define SCAN_H
 #include <fidoconf/fidoconf.h>
 
-struct statScan {
-   int areas, msgs;
-   int exported;
+struct statScan
+{
+    int areas, msgs;
+    int exported;
 };
-typedef struct statScan s_statScan;
 
+typedef struct statScan s_statScan;
 extern s_statScan statScan;
 
-#define	SCN_FILE	0x0001
-#define	SCN_ALL		0x0002
-#define	SCN_NAME	0x0004
-#define	SCN_ECHOMAIL	0x0008
-#define	SCN_NETMAIL	0x0010
+#define SCN_FILE 0x0001
+#define SCN_ALL 0x0002
+#define SCN_NAME 0x0004
+#define SCN_ECHOMAIL 0x0008
+#define SCN_NETMAIL 0x0010
 
-void scanExport(int type, char *str);
-void scanEMArea(s_area *echo);
-void makePktHeader(s_link *link, s_pktHeader *header);
+void scanExport(int type, char * str);
+void scanEMArea(s_area * echo);
+void makePktHeader(s_link * link, s_pktHeader * header);
 
 #endif

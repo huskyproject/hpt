@@ -1,5 +1,4 @@
 /* $Id$ */
-
 /*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
@@ -38,52 +37,41 @@
 #include <huskylib/log.h>
 
 extern int initSMAPI;
-
 /*  variables for config statements */
-
-extern s_fidoconfig *config;
-extern char         *cfgFile;
-extern s_robot      *robot;
-
+extern s_fidoconfig * config;
+extern char * cfgFile;
+extern s_robot * robot;
 /*  vriable for current tossing dir */
-extern char *tossDir;
-
+extern char * tossDir;
 /*  var for linkAreas() argument */
-extern char *linkName;
-
+extern char * linkName;
 /*  buffer for msg->text */
-extern UCHAR *globalBuffer;
-
+extern UCHAR * globalBuffer;
 /*  variables for commandline statements */
-
-extern int       cmToss;
-extern int       cmScan;
-extern int       cmPack;
-extern int       cmLink;
-extern int       cmAfix;
-extern int       cmNotifyLink;
-extern int       cmPause;
-extern int       cmQueue;
-extern int       noHighWaters;
-extern int       pkt_count; /*  pkt counter */
-extern int       pkt_aTime;
-extern int       quiet;
+extern int cmToss;
+extern int cmScan;
+extern int cmPack;
+extern int cmLink;
+extern int cmAfix;
+extern int cmNotifyLink;
+extern int cmPause;
+extern int cmQueue;
+extern int noHighWaters;
+extern int pkt_count;       /*  pkt counter */
+extern int pkt_aTime;
+extern int quiet;
 extern e_relinkType cmRelink;
-
 extern hs_addr afixAddr;
-extern char *afixCmd;
+extern char * afixCmd;
 extern hs_addr relinkFromAddr;
 extern hs_addr relinkToAddr;
-extern char *relinkPattern;
-extern char *resubscribePatternFile;
-
+extern char * relinkPattern;
+extern char * resubscribePatternFile;
 extern int lock_fd;
 extern int silent_mode;
 extern int report_changes;
-
-extern char **hpt_environ;
-
+extern char ** hpt_environ;
 /* misc variables */
 extern time_t globalTime;
 
-#endif
+#endif // ifndef GLOBAL_H

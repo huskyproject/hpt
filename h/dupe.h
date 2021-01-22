@@ -1,5 +1,4 @@
 /* $Id$ */
-
 /*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
@@ -18,11 +17,11 @@
  *
  * Alexander Vernigora
  *
- * Fido:     2:4625/69              
+ * Fido:     2:4625/69
  * Internet: alexv@vsmu.vinnica.ua
  *
- * Yunosty 79, app.13 
- * 287100 Vinnitsa   
+ * Yunosty 79, app.13
+ * 287100 Vinnitsa
  * Ukraine
  *
  * This file is part of HPT.
@@ -36,7 +35,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -48,55 +47,50 @@
 #include <huskylib/typesize.h>
 #include <huskylib/tree.h>
 #include <pkt.h>
-
 /* This header file contains the structures of the dupe file */
-
-struct textDupeEntry {
-  time_t  TimeStampOfDupe;
-  char *msgid;
+struct textDupeEntry
+{
+    time_t TimeStampOfDupe;
+    char * msgid;
 };
 
 typedef struct textDupeEntry s_textDupeEntry;
-
 /*
-  A DupeEntry on disk is written in the following way :
-  time_t TimeStampOfDupe
-  UCHAR  fromLength
-  char   from[fromLength];
-  UCHAR  toLength
-  char   to[toLength];
-  UCHAR  subjectLength
-  char   subject[subjectLength+1];
-  UCHAR  msgidLength
-  char   msgid[msgidLength+1];
-  */
-
-struct hashDupeEntry {
-   time_t  TimeStampOfDupe;
-   UINT32  CrcOfDupe;
+   A DupeEntry on disk is written in the following way :
+   time_t TimeStampOfDupe
+   UCHAR  fromLength
+   char   from[fromLength];
+   UCHAR  toLength
+   char   to[toLength];
+   UCHAR  subjectLength
+   char   subject[subjectLength+1];
+   UCHAR  msgidLength
+   char   msgid[msgidLength+1];
+ */
+struct hashDupeEntry
+{
+    time_t TimeStampOfDupe;
+    UINT32 CrcOfDupe;
 };
 
 typedef struct hashDupeEntry s_hashDupeEntry;
-
-
-struct hashMDupeEntry {
-   time_t  TimeStampOfDupe;
-   UINT32  CrcOfDupe;
-   char   *msgid;
+struct hashMDupeEntry
+{
+    time_t TimeStampOfDupe;
+    UINT32 CrcOfDupe;
+    char * msgid;
 };
 
 typedef struct hashMDupeEntry s_hashMDupeEntry;
-
-struct dupeMemory {
-  tree *avlTree;
+struct dupeMemory
+{
+    tree * avlTree;
 };
 
 typedef struct dupeMemory s_dupeMemory;
-
-
-int writeToDupeFile(s_area *area);
-void freeDupeMemory(s_area *area);
-int dupeDetection(s_area *area, const s_message msg);
-char *createDupeFileName(s_area *area);
+int writeToDupeFile(s_area * area);
+void freeDupeMemory(s_area * area);
+int dupeDetection(s_area * area, const s_message msg);
+char * createDupeFileName(s_area * area);
 
 #endif /* DUPE_H */

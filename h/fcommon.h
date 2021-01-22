@@ -1,5 +1,4 @@
 /* $Id$ */
-
 /*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
@@ -38,74 +37,72 @@
 #endif
 #include <stdio.h>
 #include <fidoconf/fidoconf.h>
-
-
 /* common functions */
 void writeDupeFiles(void);
+void exit_hpt(char * logstr, int print);
 
-
-void exit_hpt(char *logstr, int print);
 /*DOC
-  exit to shell with errorlevel 1.
-  print logstr to log file
-  print logstr to stderr if print!=0
-  closed log file, removed lockfile, disposed config
-*/
+   exit to shell with errorlevel 1.
+   print logstr to log file
+   print logstr to stderr if print!=0
+   closed log file, removed lockfile, disposed config
+ */
+void addAnotherPktFile(s_link * link, char * filename);
 
-void addAnotherPktFile(s_link *link, char *filename);
 /*DOC
-  Input:  a pointer to a link structure, a pointer to a filename
-  FZ:     Adds the string pointed to by filename to the list off additional
+   Input:  a pointer to a link structure, a pointer to a filename
+   FZ:     Adds the string pointed to by filename to the list off additional
           pktfiles for the specified link. No checks are performed. The
           string is duplicated internally.
-*/
+ */
+int createTempPktFileName(s_link * link);
 
-int   createTempPktFileName(s_link *link);
 /*DOC
-  Input:  a pointer to a link structure
-  Output: 0 is returned if a pkt filename could be created.
+   Input:  a pointer to a link structure
+   Output: 0 is returned if a pkt filename could be created.
           1 else
-  FZ:     createTempPktFileName tries to compose a new, not used pktfilename.
+   FZ:     createTempPktFileName tries to compose a new, not used pktfilename.
           It takes the least 24bit of the actual time. The last 2 Bytes
           area filled with a counter. So you can get up to 256 different files
           in a second and have the same timestamp only every 291 days.
           The pktFileName is stored in the link structure
-*/
+ */
+int createPackFileName(s_link * link);
 
-int   createPackFileName(s_link *link);
 /*DOC
-  Input:  a pointer to a link structure
-  Output: 0 is returned if a packedfilename could be created.
+   Input:  a pointer to a link structure
+   Output: 0 is returned if a packedfilename could be created.
           1 else
-  FZ:     createPackFileName tries to compose a new, not used packfilename.
+   FZ:     createPackFileName tries to compose a new, not used packfilename.
           Name depends of bundleNameStyle.
           The the packFileName is stored in the link structure
-*/
+ */
+int createOutboundFileName(s_link * link, e_flavour prio, e_pollType typ);
+int createOutboundFileNameAka(s_link * link, e_flavour prio, e_pollType typ, hs_addr * aka);
 
-int    createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ);
-int    createOutboundFileNameAka(s_link *link, e_flavour prio, e_pollType typ, hs_addr *aka);
 /*DOC
-  Input:  link is the link whose OutboundFileName should be created.
+   Input:  link is the link whose OutboundFileName should be created.
           prio is some kind of CRASH, HOLD, NORMAL, DIRECT, IMMEDIATE
           typ is some kind of PKT, REQUEST, FLOFILE
-  Output: a pointer to a char is returned.
-  FZ:     1 is returned if link is busy
+   Output: a pointer to a char is returned.
+   FZ:     1 is returned if link is busy
           0 else
-          */
+ */
 
-#if (defined ( __WATCOMC__ ) || defined ( __MINGW32__ )) && defined ( __NT__ )
-int __stdcall SetConsoleTitleA( const char* lpConsoleTitle );
+#if (defined (__WATCOMC__) || defined (__MINGW32__)) && defined (__NT__)
+int __stdcall SetConsoleTitleA(const char * lpConsoleTitle);
+
 #endif
 
 #ifdef  HAS_IO_H
 #include <io.h>
 #endif
 
-void *safe_malloc(size_t size);
-void *safe_calloc(size_t nmemb, size_t size);
-void *safe_realloc(void *ptr, size_t size);
-char *safe_strdup(const char *src);
+void * safe_malloc(size_t size);
+void * safe_calloc(size_t nmemb, size_t size);
+void * safe_realloc(void * ptr, size_t size);
+char * safe_strdup(const char * src);
 
-#endif
+#endif // ifndef _FCOMMON_H
 
-void writeEchoTossLogEntry(char *areaName);
+void writeEchoTossLogEntry(char * areaName);

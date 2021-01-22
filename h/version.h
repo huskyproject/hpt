@@ -1,5 +1,4 @@
 /* $Id$ */
-
 /*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
@@ -34,13 +33,12 @@
 #define VERSION_H
 
 #include <fidoconf/version.h>
-
 /* basic version number */
 #define VER_MAJOR 1
 #define VER_MINOR 9
 #define VER_PATCH 0
 #define VER_BRANCH BRANCH_CURRENT
 
-extern char *versionStr;
+extern char * versionStr;
 
 #endif

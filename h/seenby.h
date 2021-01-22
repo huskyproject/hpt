@@ -1,5 +1,4 @@
 /* $Id$ */
-
 /*****************************************************************************
  * HPT --- FTN NetMail/EchoMail Tosser
  *****************************************************************************
@@ -25,7 +24,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -34,39 +33,39 @@
 #define SEENBY_H
 #include <huskylib/typesize.h>
 
-struct seenBy {
-   UINT16 net, node;
+struct seenBy
+{
+    UINT16 net, node;
 };
 
 typedef struct seenBy s_seenBy;
-
-void sortSeenBys(s_seenBy *seenBys, UINT count);
-
-char *createControlText(s_seenBy seenBys[], UINT seenByCount, char *lineHeading);
-
-void createSeenByArrayFromMsg(s_area *area, s_message *msg, s_seenBy
-							  **seenBys, UINT *seenByCount);
-
-void createPathArrayFromMsg(s_message *msg, s_seenBy **seenBys, UINT *seenByCount);
+void sortSeenBys(s_seenBy * seenBys, UINT count);
+char * createControlText(s_seenBy seenBys[], UINT seenByCount, char * lineHeading);
+void createSeenByArrayFromMsg(s_area * area,
+                              s_message * msg,
+                              s_seenBy ** seenBys,
+                              UINT * seenByCount);
+void createPathArrayFromMsg(s_message * msg, s_seenBy ** seenBys, UINT * seenByCount);
 
 /*
-  This function puts all the links of the echoarea in the newLink
-  array who does not have got the mail, zoneLinks - the links who
-  receive msg with stripped seen-by's.
-*/
-
-void createNewLinkArray(s_seenBy *seenBys, UINT seenByCount,
-			           s_area *echo,
-                       s_arealink ***newLinks,
-			           s_arealink ***zoneLinks,
-                       s_arealink ***otherLinks,
-                       hs_addr pktOrigAddr);
-
-void createFilteredSeenByArray(s_seenBy *seenBys, UINT seenByCount,
-    s_seenBy **newSeenBys, UINT *newSeenByCount,
-    ps_addr addr, unsigned int addrCount);
-
-void stripSeenByArray(s_seenBy **seenBys, UINT *seenByCount,
-    ps_addr addr, unsigned int addrCount);
+   This function puts all the links of the echoarea in the newLink
+   array who does not have got the mail, zoneLinks - the links who
+   receive msg with stripped seen-by's.
+ */
+void createNewLinkArray(s_seenBy * seenBys,
+                        UINT seenByCount,
+                        s_area * echo,
+                        s_arealink *** newLinks,
+                        s_arealink *** zoneLinks,
+                        s_arealink *** otherLinks,
+                        hs_addr pktOrigAddr);
+void createFilteredSeenByArray(s_seenBy * seenBys,
+                               UINT seenByCount,
+                               s_seenBy ** newSeenBys,
+                               UINT * newSeenByCount,
+                               ps_addr addr,
+                               unsigned int addrCount);
+void stripSeenByArray(s_seenBy ** seenBys, UINT * seenByCount, ps_addr addr,
+                      unsigned int addrCount);
 
 #endif

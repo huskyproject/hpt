@@ -35,58 +35,55 @@
 #include <areafix/areafix.h>
 #include <global.h>
 
-s_fidoconfig *config  = NULL;
-char         *cfgFile = NULL;
-s_robot      *robot   = NULL;
-
-int initSMAPI = -1;
-
+s_fidoconfig * config = NULL;
+char * cfgFile        = NULL;
+s_robot * robot       = NULL;
+int initSMAPI         = -1;
 /* basic version number */
 /*
-const int   VER_MAJOR   = 1;
-const int   VER_MINOR   = 3;
-const int   VER_PATCH   = 0;
-*/
-
+   const int   VER_MAJOR   = 1;
+   const int   VER_MINOR   = 3;
+   const int   VER_PATCH   = 0;
+ */
 /* branch is "" for CVS current, "-stable" for the release candiate branch  */
 /*const char *VER_BRANCH  = ""; */
-
 /* The service version string is empty for the first release done from a    */
 /* release candidate branch.  If subsequent service releases are necessary, */
 /* single letters are used, like "a", "b", ...                              */
 /*const char *VER_SERVICE = "";*/
-
-char       *versionStr=NULL;
-
-char	  *tossDir=NULL;
-
-char      *linkName=NULL;
-
-UCHAR     *globalBuffer = NULL;
-
-int       cmToss = 0;
-int       cmScan = 0;
-int       cmPack = 0;
-int       cmLink = 0;
-int       cmAfix = 0;
-int       cmNotifyLink = 0;
-int       cmPause = 0;
-int       cmQueue = 0;
-int       noHighWaters = 0;
-int       pkt_count = 0;
-int       pkt_aTime = 0;
-int       quiet = 0;
+char * versionStr     = NULL;
+char * tossDir        = NULL;
+char * linkName       = NULL;
+UCHAR * globalBuffer  = NULL;
+int cmToss            = 0;
+int cmScan            = 0;
+int cmPack            = 0;
+int cmLink            = 0;
+int cmAfix            = 0;
+int cmNotifyLink      = 0;
+int cmPause           = 0;
+int cmQueue           = 0;
+int noHighWaters      = 0;
+int pkt_count         = 0;
+int pkt_aTime         = 0;
+int quiet             = 0;
 e_relinkType cmRelink = modeNone;
-
-hs_addr afixAddr   = {0,0,0,0};
-char *afixCmd = NULL;
-hs_addr relinkFromAddr = {0,0,0,0};
-hs_addr relinkToAddr = {0,0,0,0};
-char *relinkPattern = NULL;
-char *resubscribePatternFile = NULL;
-
+hs_addr afixAddr      =
+{
+    0, 0, 0, 0
+};
+char * afixCmd         = NULL;
+hs_addr relinkFromAddr =
+{
+    0, 0, 0, 0
+};
+hs_addr relinkToAddr =
+{
+    0, 0, 0, 0
+};
+char * relinkPattern          = NULL;
+char * resubscribePatternFile = NULL;
 int lock_fd;
-int silent_mode = 0;
+int silent_mode    = 0;
 int report_changes = 0;
-
 time_t globalTime;        /* time when hpt was started */

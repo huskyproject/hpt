@@ -1,5 +1,4 @@
 /* $Id$ */
-
 /*****************************************************************************
  * Link for HPT (FTN NetMail/EchoMail Tosser)
  *****************************************************************************
@@ -31,6 +30,6 @@
 #define __LINK_H
 
 extern int linkJamByCRC;
+void linkAreas(char * name);
 
-void linkAreas(char *name);
 #endif
