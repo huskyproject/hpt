@@ -53,7 +53,7 @@ s_area * afGetArea(char * areaName)
 
 int afIsValidConference(const char * s)
 {
-    if(!s || strlen(s) > 60)
+    if(!s || strlen(s) > MAX_AREA_LEN)
     {
         return BM_AREATAG_TOO_LONG;
     }

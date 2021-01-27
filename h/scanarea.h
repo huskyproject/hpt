@@ -3,6 +3,8 @@
 #ifndef _SCANAREA_H
 #define _SCANAREA_H
 
+#define MAX_AREA_LEN 60
+
 void makeMsg(HMSG hmsg, XMSG xmsg, s_message * msg, s_area * echo, int action);
 
 /* char *createSeenByPath(s_area *echo); */
