@@ -2319,7 +2319,7 @@ int processDir(char * directory, e_tossSecurity sec)
     {
         arcFile = pktFile = 0;
         dummy   = (files[filenum]).fileName;
-        w_log(LL_FILE, "Look incoming file %s", dummy);
+        w_log(LL_FILE, "Process incoming file %s", dummy);
         w_dbglog(LL_DEBUGV, "testing sorted %s", dummy + dirNameLen);
 
         if((pktFile = patimat(dummy + dirNameLen, "*.pkt")) == 0)
