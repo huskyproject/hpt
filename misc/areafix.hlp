@@ -1,66 +1,71 @@
 Here's some help about how you can use AreaFix to change your echomail areas.
+All AreaFix commands are case insensitive, you may use %help as well as %HELP.
 
 Example:
 
  Msg  : 5 of 8                             Pvt
  From : Your Name                          2:5020/960.1    13 Feb 99  19:51:12
  To   : AreaFix                            2:5020/960      15 Feb 99  21:57:42
- Subj : PASSWORD              <- Your password
+ Subj : PASSWORD             <- Your password
 ------------------------------------------------------------------------------
- RA_UTIL                      <- Add (link) area
- +DFUE.GER                    <- same
- -SYSOPS.024                  <- Remove (unlink) area
- U.ENG.*                      <- Add all areas beginning with U.ENG.
- -F.???.COMP.*                <- Remove all areas that match this pattern
- *                            <- Add all areas available for you
- -*                           <- Remove all linked areas
- ~RU.SEX                      <- Delete this area
- %INFO                        <- Ask for general information
- %LIST                        <- List all available areas
- %LIST DN.*                   <- List available areas that match pattern
- %LIST ! DN.*                 <- List all available areas except 
-                                 areas that match pattern
- %QUERY                       <- List of areas which you are currently
-                                 linked to
- %LINKED                      <- same as %QUERY
- %UNLINKED                    <- List available areas which you are not
-                                 currently linked to
- %AVAIL                       <- List all areas that are available at
-                                 this system's uplinks
- %AVAIL DN.*                  <- List areas that are available at
-                                 this system's uplinks and match pattern
- %AVAIL ! DN.*                <- List all areas that are available at this
-                                 system's uplinks except areas that match
-                                 pattern
- %PAUSE                       <- If you go to holiday you can stop receiving
-                                 echomail for that time without manually
-                                 removing each area with '-AREANAME'.
- %RESUME                      <- Switch echomail receiving ON again.
- %HELP                        <- AreaFix will send you this help.
- %RESCAN 541.LOCAL            <- Rescan area
- %RESCAN OS2.*                <- same
- %RESCAN linux.develop.ger 200      <- Rescan the last 200 mails
- %RESCAN linux.develop.ger 30 days  <- Rescan mails for last 30 days
- %RESCAN                      <- Turn on rescanning of following subscription
- NSK.SYSOP /r                 <- Subscribe & rescan area
- NSK.PARTY /r=100             <- Subscribe & rescan the last 100 mails
- NSK.PARTY /r=30 days         <- Subscribe & rescan mails for last 30 days
-%COMPRESS                     <- Ask for list of packers   
-%COMPRESS zip                 <- Switch current packer to 'zip' 
-%COMPRESS none                <- Turn off packing your mail
-%PACKER <packer>              <- same as %compress
-%RSB on                       <- Turn on reduced SEEN-BY mode (FSC-0093)
-%RSB off                      <- Turn off reduced SEEN-BY mode (FSC-0093)
-%RULES on                     <- Start sending rules of any subscribed echo
-%RULES off                    <- Stop sending rules of any subscribed echo
-%PKTSIZE NNN                  <- Set max. packet (*.pkt) size to NNN kb
-%PKTSIZE 0                    <- Set max. packet (*.pkt) size to unlimited
-%ARCMAILSIZE NNN              <- Set max. bundle size to NNN kb
-%ARCMAILSIZE 0                <- Set max. bundle size to unlimited
-%AREAFIXPWD [password]        <- Set new password for areafix requests,
-                                 an empty password is allowed
-%PKTPWD [password]            <- Set new password for *.pkt, maximum 8 chars,
-                                 an empty password is allowed
-
-  Note: you may also specify 1/0 as the aliases for on/off.
-        Ex.: "%RSB 1" acts the same as "%RSB on".
+%HELP                        <- AreaFix will send you this help.
+%INFO                        <- Ask for general information
+%LIST                        <- List accessible areas
+%LIST <areamask>             <- List accessible areas matching the pattern
+%LIST ! <areamask>           <- List accessible areas not matching the pattern
+%QUERY                       <- List the areas you are currently subscribed to
+%LINKED                      <- The same as %QUERY
+%UNLINKED                    <- List the areas you are not subscribed to
+%AVAIL                       <- List all areas that are available at
+                                this system and its uplinks
+%AVAIL <areamask>            <- List the areas available at this system and
+                                its uplinks and matching the pattern
+%AVAIL ! <areamask>          <- List the areas available at this system and
+                                its uplinks and not matching the pattern
+<area>                       <- Subscribe to the area
++<area>                      <- Subscribe to the area
+-<area>                      <- Unsubscribe from the area
+<areamask>                   <- Subscribe to all areas matching the pattern
+-<areamask>                  <- Unsubscribe from the areas matching the pattern
+*                            <- Subscribe to all areas available for you
+-*                           <- Unsubscribe from all linked areas
+~<area>                      <- Delete the area
+<area> /r                    <- Subscribe and rescan the area
+<area> /r=N                  <- Subscribe and rescan the last N messages
+<area> /r=N days             <- Subscribe & rescan mails for the last N days
+%RESCAN <area>               <- Rescan (send all messages from) the area
+%RESCAN <areamask>           <- Rescan the areas matching the pattern
+%RESCAN <area> N             <- Rescan the last N messages from the area
+%RESCAN <area> N days        <- Rescan messages for the last N days
+%RESCAN                      <- Rescan the areas subscribed below in the same
+                                message to areafix
+%PAUSE                       <- Suspend receiving echomail preserving the
+                                subscription
+%RESUME                      <- Resume receiving echomail after the PAUSE
+%COMPRESS                    <- Ask for the list of compression algorithms
+%COMPRESS zip                <- Set current compression to 'zip'
+%COMPRESS none               <- Turn off bundling of your echomail
+%PACKER <packer>             <- The same as %compress
+%RSB on                      <- Turn on reduced SEEN-BY mode (FSC-0093)
+%RSB off                     <- Turn off reduced SEEN-BY mode (FSC-0093)
+%RULES on                    <- Start sending rules of any subscribed echo
+%RULES off                   <- Stop sending rules of any subscribed echo
+%PKTSIZE N                   <- Set max. packet (*.pkt) size to N kb
+%PKTSIZE 0                   <- Set unlimited packet (*.pkt) size
+%ARCMAILSIZE N               <- Set max. bundle size to N kb
+%ARCMAILSIZE 0               <- Set unlimited bundle size
+%AREAFIXPWD [password]       <- Set a new password for areafix requests,
+                                an empty password is allowed
+%PKTPWD [password]           <- Set a new password for .pkt, maximum 8 chars,
+                                an empty password is allowed
+  Notes:
+  Any other lines will be ignored
+  <area>     - an areaname, for example FIDOSOFT.HUSKY
+  <areamask> - areamask may contain '*' and '?' wild card characters,
+               '*' may substitute any string and '?' substitutes one character;
+               for example, ru.*
+  N          - some number
+  [password] - optional password without brackets. If no password is
+               specified, an empty password will be used
+  You may also specify 1/0 as the aliases for on/off.
+  Example: "%RSB 1" acts the same as "%RSB on".
