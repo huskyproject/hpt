@@ -278,7 +278,9 @@ int linkArea(s_area * area, int netMail)
             _grow_handles(msgsNum + 20);
         }
 
-#else /* EMX */ {
+#else
+        {
+            /* EMX */
             DosSetMaxFH(msgsNum + 20);
         }
 #endif
