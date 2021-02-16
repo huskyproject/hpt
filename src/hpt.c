@@ -777,10 +777,13 @@ FARPROC WINAPI ourhook(unsigned dliNotify, PDelayLoadInfo pdli)
 
 static char ** save_envp(char ** envp)
 {
+#ifdef __WATCOMC__
+    return NULL;
+#else
     int envc;
     char ** envp_copy;
 
-    if(envp == NULL)
+    if(*envp == NULL)
     {
         return NULL;
     }
@@ -795,10 +798,12 @@ static char ** save_envp(char ** envp)
     }
     envp_copy[envc] = NULL;
     return envp_copy;
+#endif
 }
 
 void free_envp(char ** envp)
 {
+#ifndef __WATCOMC__
     int ii = 0;
 
     if(envp == NULL)
@@ -812,6 +817,7 @@ void free_envp(char ** envp)
         ++ii;
     }
     nfree(envp);
+#endif
 }
 
 int main(int argc, char ** argv, char ** envp)
