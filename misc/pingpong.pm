@@ -25,15 +25,15 @@
 
 =head1 DESCRIPTION
 
-   This program is Ping robot designed accordingly FTS-5001.006
+   This program is a Ping robot designed accordingly FTS-5001.006
    This is an extended implementation that allows the Ping response to be
-   redirected through any password protcted link.
+   redirected through any password protected link.
 
 Insert into HPT configuration file:
 
     hptperlfile /home/fido/perl/filter.pl
 
-Put pingpong.pm somewere in @INC path. It's strongly recomended for Windows
+Put pingpong.pm somewhere in @INC path. It's strongly recommended for Windows
 users to put it in the same directory with filter.pl.
 
 place to filter.pl some like this:
@@ -115,15 +115,15 @@ sub ping_pong($$$$$$)
 		}
 		$msgdirection = "was received by";
 	}
-	putMsgInArea("NetMail", "Ping Robot", $from_name, "", $from_addr,
-		"Pong", "", $UNS, "Hi $from_name.\r\r".
+	putMsgInArea("", "Ping Robot", $from_name, "", $from_addr,
+		"Pong", "", "", "Hi $from_name.\r\r".
 		"   Your ping-message $msgdirection my system at $time\r\r".
 		"$addline".
 		"---------- Help ------------------------------------------------------------\r".
 		"  Also You may use following commands in Subject line:\r".
 		"  \%RouteTo\: \<3D_address\> \- The ping robot reply will be routed via\r".
-		"                           this node. It MUST be my password protcted link.\r".
-		"  \%Links                 \- Get the list of my password protcted links.\r".
+		"                           this node. It MUST be my password protected link.\r".
+		"  \%Links                 \- Get the list of my password protected links.\r".
 		"  -------- Example ---------------------------------------------\r".
 		"  From: ".sprintf("%-32s", $from_name)."$from_addr\r".
 		"  To  : Ping                            @{$config{addr}}[0]\r".
@@ -197,8 +197,8 @@ sub route_to()
 			     $key =~ /^\d+\:\d+\/\d+$/ &&
 			     $links{$key}{name} !~ /Our virtual lin/i;
 	    }
-	    putMsgInArea("NetMail", "Evil Robot", $fromname, "", $fromaddr,
-	    "Routing", "", $UNS, "Hi $fromname.\r\r".
+	    putMsgInArea("", "Evil Robot", $fromname, "", $fromaddr,
+	    "Routing", "", "", "Hi $fromname.\r\r".
 	    "   You you use command \"\%RouteTo:\" and wish to change ".
 	    "the routing of your message from default via \"$route\" to \"$1\"".
 	    ", but it is not my passworded link. Your message routed by ".
