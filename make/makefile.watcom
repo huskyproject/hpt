@@ -100,5 +100,5 @@ $(BIN6): $(SRC6)
 	$(CC) $(CFLAGS) $(INC) -Fe=$(BIN6) $(SRC6) $(LIBS)
 
 .IGNORE
-clean:
+clean: .SYMBOLIC
 	rm $(BINS)
