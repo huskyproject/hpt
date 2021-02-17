@@ -778,6 +778,13 @@ FARPROC WINAPI ourhook(unsigned dliNotify, PDelayLoadInfo pdli)
 static char ** save_envp(char ** envp)
 {
 #ifdef __WATCOMC__
+    /*
+     *  A third 'envp' parameter for main() isn't supported by Watcom. The code
+     *  compiles without warning but HPT will segfault when envp is read.
+     *
+     *  In any case envp/hpt_environ is only used when hooking Perl, which the
+     *  Watcom build doesn't do!
+     */
     return NULL;
 #else
     int envc;
