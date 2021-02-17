@@ -779,6 +779,8 @@ void * safe_realloc(void * ptr, size_t size)
 
     if(newptr == NULL)
     {
+        free(ptr);
+        ptr = NULL;
         exit_hpt("out of memory (safe_realloc())", 1);
     }
 
