@@ -53,7 +53,7 @@ SRC3=$(SRC_DIR)$(SEP)txt2pkt.c $(SRC_DIR)$(SEP)global.c &
  $(SRC_DIR)$(SEP)fcommon.c $(SRC_DIR)$(SEP)dupe.c
 
 BIN4=hptlink.exe
-SRC4=$(SRC_DIR)$(SEP)hptlink.c $(SRC_DIR)$(SEP)global.c
+SRC4=$(SRC_DIR)$(SEP)hptlink.c
 
 BIN5=hpttree.exe
 SRC5=$(SRC_DIR)$(SEP)hpttree.c
