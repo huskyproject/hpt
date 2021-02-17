@@ -83,7 +83,7 @@ typedef struct origlinks s_origlinks;
 #define LOGFILENAME "hptlink.log"
 
 s_log * hptlink_log = NULL;
-s_fidoconfig * config;
+extern s_fidoconfig * config;
 int singleRepl = 1;
 int hardSearch = 0;
 int useSubj    = 1;
@@ -98,7 +98,7 @@ long links_subj     = 0L;
 long links_revmsgid = 0L;
 long links_total    = 0L;
 long links_ignored  = 0L;
-char * versionStr;
+
 char * skipReSubj(char * subjstr)
 {
     char * ptr;
