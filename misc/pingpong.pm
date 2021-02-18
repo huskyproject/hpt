@@ -27,13 +27,13 @@
 
    This program is a Ping robot designed accordingly FTS-5001.006
    This is an extended implementation that allows the Ping response to be
-   redirected through any password protected link.
+   redirected through any password-protected link.
 
 Insert into HPT configuration file:
 
     hptperlfile /home/fido/perl/filter.pl
 
-Put pingpong.pm somewhere in @INC path. It's strongly recommended for Windows
+Put pingpong.pm somewhere in the @INC path. It's strongly recommended for Windows
 users to put it in the same directory with filter.pl.
 
 place to filter.pl some like this:
@@ -56,7 +56,7 @@ place to filter.pl some like this:
    $text - text message (with kludges)
 
 
-To use "%RouteTo:" command you should place in filter.pl
+To use the "%RouteTo:" command you should place in the filter.pl
 
    sub route{
      return route_to();
@@ -92,19 +92,24 @@ sub ping_pong($$$$$$)
     my $addline = "";
     my $msgdirection = "passed through";
     my $time = localtime;
+    my $lastvia = '';
 
     if ($to_name =~ /^Ping$/i){
 	w_log("Ping message detected." );
-	$mtext =~ s/\r\x01/\r\@/g;
-        $mtext =~ s/^\x01/\@/;
-        $mtext =~ s/\r--- /\r-+- /g;
-        $mtext =~ s/\r \* Origin\:/\r \+ Origin\:/g;
-        $mtext =~ s/\r\%RouteTo\:/\r\@RouteTo\:/gi;
 	if ( istous($to_addr) == 1 ) {
-		if ( $subj =~ /\%RouteTo\: (\d\:\d+\/\d+)/i) {
-		    $addline = "\r\%RouteTo\: $1\r";
+		if ( $mtext =~ /\x01Via (\d+\:\d+\/\d+\.?\d*)[^\r\n]+[\r\n]+$/ ) {
+			$lastvia = $1;
 		}
-		if ( $subj =~ /\%Links/i) {
+		if ( $subj =~ /\%RouteTo\: (\d\:\d+\/\d+)/i) {
+		    w_log( "\'\%RouteTo\:\' command found." );
+		    if ( defined $links{$lastvia}{password} ) {
+		       $addline = "\r\%RouteTo\: $1\r" ;
+                       w_log("Last Via \'$lastvia\' is passworded link. \'\%RouteTo\:\' command is accepted.");
+		    } else {
+                       w_log("Last Via \'$lastvia\' is not passworded link. \'\%RouteTo\:\' command is not accepted.");
+		    }
+		}
+                if ( $subj =~ /\%Links/i) {
 		    $addline = "My links are:\r~~~~~~~~~~~~~\r";
 		    foreach my $key( sort keys %links) {
 		    $addline = $addline . sprintf("%-20s", $key) .
@@ -115,15 +120,20 @@ sub ping_pong($$$$$$)
 		}
 		$msgdirection = "was received by";
 	}
+	$mtext =~ s/\r\x01/\r\@/g;
+        $mtext =~ s/^\x01/\@/;
+        $mtext =~ s/\r--- /\r-+- /g;
+        $mtext =~ s/\r \* Origin\:/\r \+ Origin\:/g;
+        $mtext =~ s/\r\%RouteTo\:/\r\@RouteTo\:/gi;
 	putMsgInArea("", "Ping Robot", $from_name, "", $from_addr,
 		"Pong", "", "", "Hi $from_name.\r\r".
 		"   Your ping-message $msgdirection my system at $time\r\r".
 		"$addline".
 		"---------- Help ------------------------------------------------------------\r".
-		"  Also You may use following commands in Subject line:\r".
-		"  \%RouteTo\: \<3D_address\> \- The ping robot reply will be routed via\r".
-		"                           this node. It MUST be my password protected link.\r".
-		"  \%Links                 \- Get the list of my password protected links.\r".
+		"  Also, You may use the following commands in the Subject line:\r".
+		"  \%RouteTo\: \<3D_address\> \- The Ping robot reply will be routed via\r".
+		"                           this node. It MUST be my password-protected link.\r".
+		"  \%Links                 \- Get the list of my password protected-links.\r".
 		"  -------- Example ---------------------------------------------\r".
 		"  From: ".sprintf("%-32s", $from_name)."$from_addr\r".
 		"  To  : Ping                            @{$config{addr}}[0]\r".
@@ -199,9 +209,9 @@ sub route_to()
 	    }
 	    putMsgInArea("", "Evil Robot", $fromname, "", $fromaddr,
 	    "Routing", "", "", "Hi $fromname.\r\r".
-	    "   You you use command \"\%RouteTo:\" and wish to change ".
+	    "   You use the command \"\%RouteTo:\" and wish to change ".
 	    "the routing of your message from default via \"$route\" to \"$1\"".
-	    ", but it is not my passworded link. Your message routed by ".
+	    ", but it is not my passworded link. Your message is routed by ".
 	    "default.\r\r$addline\r\r".
 	    "--- perl on $hpt_version\r * Origin: $config{origin} \(@{$config{addr}}[0]\)", 1);
 	    $newmail = 1;
