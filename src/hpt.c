@@ -114,7 +114,7 @@ s_message ** msgToSysop = NULL;
 char * scanParmA;
 char * scanParmF;
 char force = 0;
-char ** hpt_environ;
+char ** hpt_environ = NULL;
 /* kn: I've really tried not to break it.
    FIXME: if there is pack and scan options on cmd line - one set
    of options are lost */
@@ -775,12 +775,14 @@ FARPROC WINAPI ourhook(unsigned dliNotify, PDelayLoadInfo pdli)
 #endif /* ifdef DO_PERL */
 #endif /* ifdef _MSC_VER */
 
+#ifndef __WATCOMC__
+
 static char ** save_envp(char ** envp)
 {
     int envc;
     char ** envp_copy;
 
-    if(envp == NULL)
+    if(*envp == NULL)
     {
         return NULL;
     }
@@ -814,7 +816,20 @@ void free_envp(char ** envp)
     nfree(envp);
 }
 
+#endif
+
+#ifdef __WATCOMC__
+    /*
+     *  A third 'envp' parameter for main() isn't supported by Watcom. The code
+     *  compiles without warning but HPT.EXE will segfault when envp is read.
+     *
+     *  In any case envp/hpt_environ is only used when hooking Perl, which the
+     *  Watcom build doesn't do!
+     */
+int main(int argc, char ** argv)
+#else
 int main(int argc, char ** argv, char ** envp)
+#endif
 {
     struct _minf m;
     unsigned int i;
@@ -861,7 +876,9 @@ int main(int argc, char ** argv, char ** envp)
         exit(EX_USAGE);
     }
 
+#ifndef __WATCOMC__
     hpt_environ = save_envp(envp);
+#endif
 
     if(config == NULL)
     {
@@ -1255,6 +1272,8 @@ int main(int argc, char ** argv, char ** envp)
     disposeConfig(config);
     nfree(cfgFile);
     /* Keep memory leaks detector happy */
+#ifndef __WATCOMC__
     free_envp(hpt_environ);
+#endif
     return 0;
 } /* main */

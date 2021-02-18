@@ -1,0 +1,104 @@
+#
+#  Makefile for Open Watcom 2.0.
+#
+#  Use Watcom Make:
+#
+#  wmake -f makefile.watcom NT=1
+#
+#    or
+#
+#  wmake -f makefile.watcom OS2=1
+#
+
+!ifdef __LINUX__
+SEP=/
+!else
+SEP=\
+!endif
+
+CC=wcl386
+WLIB=wlib -q -b
+
+SRC_DIR=..$(SEP)src
+INC=-I..$(SEP)h -I..$(SEP)..$(SEP)huskylib -I..$(SEP)..$(SEP)fidoconf &
+ -I..$(SEP)..$(SEP)smapi -I..$(SEP)..$(SEP)areafix
+
+CFLAGS=-zq -bt=nt -l=nt
+LIBS=..$(SEP)..$(SEP)huskylib$(SEP)make$(SEP)huskywcw.lib &
+ ..$(SEP)..$(SEP)fidoconf$(SEP)make$(SEP)fconfwcw.lib &
+ ..$(SEP)..$(SEP)smapi$(SEP)make$(SEP)smapiwcw.lib &
+ ..$(SEP)..$(SEP)areafix$(SEP)make$(SEP)afixwcw.lib
+
+!ifdef OS2
+CFLAGS=-zq -bt=os2v2 -l=os2v2
+LIBS=..$(SEP)..$(SEP)huskylib$(SEP)make$(SEP)huskywco.lib &
+ ..$(SEP)..$(SEP)fidoconf$(SEP)make$(SEP)fconfwco.lib &
+ ..$(SEP)..$(SEP)smapi$(SEP)make$(SEP)smapiwco.lib &
+ ..$(SEP)..$(SEP)areafix$(SEP)make$(SEP)afixwco.lib
+!endif
+
+BIN1=pktinfo.exe
+SRC1=$(SRC_DIR)$(SEP)pktinfo.c $(SRC_DIR)$(SEP)dupe.c &
+ $(SRC_DIR)$(SEP)pktread.c $(SRC_DIR)$(SEP)fcommon.c &
+ $(SRC_DIR)$(SEP)global.c
+
+BIN2=tpkt.exe
+SRC2=$(SRC_DIR)$(SEP)tpkt.c $(SRC_DIR)$(SEP)global.c &
+ $(SRC_DIR)$(SEP)pktread.c $(SRC_DIR)$(SEP)pktwrite.c &
+ $(SRC_DIR)$(SEP)fcommon.c $(SRC_DIR)$(SEP)dupe.c
+
+BIN3=txt2pkt.exe
+SRC3=$(SRC_DIR)$(SEP)txt2pkt.c $(SRC_DIR)$(SEP)global.c &
+ $(SRC_DIR)$(SEP)pktread.c $(SRC_DIR)$(SEP)pktwrite.c &
+ $(SRC_DIR)$(SEP)fcommon.c $(SRC_DIR)$(SEP)dupe.c
+
+BIN4=hptlink.exe
+SRC4=$(SRC_DIR)$(SEP)hptlink.c
+
+BIN5=hpttree.exe
+SRC5=$(SRC_DIR)$(SEP)hpttree.c
+
+BIN6=hpt.exe
+SRC6=$(SRC_DIR)$(SEP)hpt.c &
+  $(SRC_DIR)$(SEP)global.c &
+  $(SRC_DIR)$(SEP)pktread.c &
+  $(SRC_DIR)$(SEP)pktwrite.c &
+  $(SRC_DIR)$(SEP)fcommon.c &
+  $(SRC_DIR)$(SEP)toss.c &
+  $(SRC_DIR)$(SEP)scan.c &
+  $(SRC_DIR)$(SEP)scanarea.c &
+  $(SRC_DIR)$(SEP)post.c &
+  $(SRC_DIR)$(SEP)hptafix.c &
+  $(SRC_DIR)$(SEP)dupe.c &
+  $(SRC_DIR)$(SEP)seenby.c &
+  $(SRC_DIR)$(SEP)link.c &
+  $(SRC_DIR)$(SEP)carbon.c
+
+BINS=$(BIN1) $(BIN2) $(BIN3) $(BIN4) $(BIN5) $(BIN6)
+
+{$(SRC_DIR)}.c.obj:
+	$(CC) $(CFLAGS) $INC -fo=$@ -c $<
+
+all: $(BINS)
+
+$(BIN1): $(SRC1)
+	$(CC) $(CFLAGS) $(INC) -Fe=$(BIN1) $(SRC1) $(LIBS)
+
+$(BIN2): $(SRC2)
+	$(CC) $(CFLAGS) $(INC) -Fe=$(BIN2) $(SRC2) $(LIBS)
+
+$(BIN3): $(SRC3)
+	$(CC) $(CFLAGS) $(INC) -Fe=$(BIN3) $(SRC3) $(LIBS)
+
+$(BIN4): $(SRC4)
+	$(CC) $(CFLAGS) $(INC) -Fe=$(BIN4) $(SRC4) $(LIBS)
+
+$(BIN5): $(SRC5)
+	$(CC) $(CFLAGS) $(INC) -Fe=$(BIN5) $(SRC5) $(LIBS)
+
+$(BIN6): $(SRC6)
+	$(CC) $(CFLAGS) $(INC) -Fe=$(BIN6) $(SRC6) $(LIBS)
+
+.IGNORE
+clean: .SYMBOLIC
+	rm $(BINS)

@@ -1424,7 +1424,7 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                 statToss.echoMail++;
 
                 /*  if only one downlink, we've got the mail from him */
-                if((echo->downlinkCount > 1) || 
+                if((echo->downlinkCount > 1) ||
                    ((echo->downlinkCount > 0) &&
                     /*  mail from us */
                     (addrComp(pktOrigAddr, *echo->useAka) == 0)))
@@ -3199,7 +3199,8 @@ void writeImportLog(void)
  */
 static void setmaxopen(void)
 {
-    ULONG cur = 0, add = 0;
+    ULONG cur = 0;
+    LONG add = 0;
 
     if(DosSetRelMaxFH(&add, &cur) == 0)
     {
