@@ -98,22 +98,13 @@ sub ping_pong($$$$$$)
     my $addline = "";
     my $msgdirection = "passed through";
     my $time = localtime;
-    my $lastvia = '';
 
     if ($to_name =~ /^Ping$/i){
 	w_log("Ping message detected." );
 	if ( istous($to_addr) == 1 ) {
-		if ( $mtext =~ /\x01Via (\d+\:\d+\/\d+\.?\d*)[^\r\n]+[\r\n]+$/ ) {
-			$lastvia = $1;
-		}
 		if ( $subj =~ /\%RouteTo\: (\d\:\d+\/\d+)/i) {
 		    w_log( "\'\%RouteTo\:\' command found." );
-		    if ( defined $links{$lastvia}{password} ) {
-		       $addline = "\r\%RouteTo\: $1\r" ;
-                       w_log("Last Via \'$lastvia\' is passworded link. \'\%RouteTo\:\' command is accepted.");
-		    } else {
-                       w_log("Last Via \'$lastvia\' is not passworded link. \'\%RouteTo\:\' command is not accepted.");
-		    }
+		    $addline = "\r\%RouteTo\: $1\r" if $secure == 1;
 		}
                 if ( $subj =~ /\%Links/i) {
 		    $addline = "My links are:\r~~~~~~~~~~~~~\r";
