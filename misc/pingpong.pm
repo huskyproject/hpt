@@ -69,7 +69,7 @@ Nothing.
 =head1 BUGS
 
 ping_pong uses the $config{origin} variable. If the Oridjn variable
-is not defined in the Hassky configuration file, then this leads to
+is not defined in the HPT configuration file, then this leads to
 the crush of the whole Perl hook.
 
 =head1 AUTHOR
@@ -132,7 +132,7 @@ sub ping_pong($$$$$$)
         $mtext =~ s/\r \* Origin\:/\r \+ Origin\:/g;
         $mtext =~ s/\r\%RouteTo\:/\r\@RouteTo\:/gi;
 	putMsgInArea("", "Ping Robot", $from_name, "", $from_addr,
-		"Pong", "", $PVT, "Hi $from_name.\r\r".
+		"Pong", "", $LOC, "Hi $from_name.\r\r".
 		"   Your ping-message $msgdirection my system at $time\r\r".
 		"$addline".
 		"---------- Help ------------------------------------------------------------\r".
@@ -214,7 +214,7 @@ sub route_to()
 			     $links{$key}{name} !~ /Our virtual lin/i;
 	    }
 	    putMsgInArea("", "Evil Robot", $fromname, "", $fromaddr,
-	    "Routing", "", $PVT, "Hi $fromname.\r\r".
+	    "Routing", "", $LOC, "Hi $fromname.\r\r".
 	    "   You use the command \"\%RouteTo:\" and wish to change ".
 	    "the routing of your message from default via \"$route\" to \"$1\"".
 	    ", but it is not my passworded link. Your message is routed by ".
