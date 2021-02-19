@@ -110,7 +110,7 @@ and majority of the configuration statements.
 @item Run @code{tparser} from FIDOCONFIG package to test your config
 (read about @code{PublicGroup} or @code{AccessGrp} if you want to use
 groups for @code{EchoAreas})
-@item It is simply, isn't it? Enjoy! :-)
+@item It is simple, isn't it? Enjoy! :-)
 @end enumerate
 
 @menu
@@ -463,9 +463,9 @@ then @ref{AutoPause} is ignored for all links.
 
 The paused link is unsubscribed from the areas which are passthrough with no
 downlinks besides him (see -def in @ref{EchoArea,,,fidoconfig,fidoconfig} to make it work)
-AND which are allowed to be paused 
-(see -pause, -paused, -noautoareapause, -autoareapause in @ref{EchoArea,,,fidoconfig,fidoconfig} 
-and @ref{AutoAreaPause,,,fidoconfig,fidoconfig}). 
+AND which are allowed to be paused
+(see -pause, -paused, -noautoareapause, -autoareapause in @ref{EchoArea,,,fidoconfig,fidoconfig}
+and @ref{AutoAreaPause,,,fidoconfig,fidoconfig}).
 An unsubscribe request is sent to the uplink for those areas. Note that
 this feature is unavailable when using %PAUSE Areafix command.
 
@@ -908,7 +908,7 @@ defined in the nodelist but uses the node address defined by formula:
 
 @code{via_address = (destination_address / 100) * 100}
 
-Here '/ 100' denotes integer division discarding the remainder. E.g. a 
+Here '/ 100' denotes integer division discarding the remainder. E.g. a
 mail to node 2:2433/1245 is sent via 2:2433/1200, but a mail to node
 2:2433/355 is sent via 2:2433/300 which currently does not exist. BE CAREFUL!
 @item boss -- this keyword is used when destination system is a point.
@@ -1426,7 +1426,7 @@ This statement cannot be repeated.
 * LinkMsgBaseDir::              base directory of areas for link
 * NetMailFlavour::              flavour for outgoing netmail
 * NoRules::                     don't send area rules to link on subscription
-* PackAka::                     
+* PackAka::
 * PktSize::                     max size of pkt in arcmail bundle
 * ReducedSeenBY::               reduced seen-by mode (FSC-0093)
 * RescanGrp::                   groups that @code{denyRescan} token applies to
@@ -1460,16 +1460,16 @@ area delete" in FastEcho, and @ref{LinkGrp} must be the same as
 EchoArea's @code{-g <group>} in @value{HPT}).
 
 Our system sends deleting command only for systems with
-@code{AdvancedAreafix} and with @ref{UnsubscribeOnAreaDelete} set to "on" 
-and when default uplink (@code{-def}) unsubscribes from an EchoArea or 
-some link deletes this area by "~areaname" command. Of course if this 
+@code{AdvancedAreafix} and with @ref{UnsubscribeOnAreaDelete} set to "on"
+and when default uplink (@code{-def}) unsubscribes from an EchoArea or
+some link deletes this area by "~areaname" command. Of course if this
 link has the rights to delete this area.
 
 You may also delete an area yourself by running the following command:@*@*
 @code{hpt afix <your main AKA> ~area}@*@*
 Here @code{<your main AKA>} is your main address. @xref{address,,,fidoconfig,FidoConfig Manual}.
 
-If @code{AdvancedAreafix} for the link is "off" (default), then unsubscribe 
+If @code{AdvancedAreafix} for the link is "off" (default), then unsubscribe
 command "-areaname" is sent instead of delete command "~areaname".
 
 This statement can only be repeated for different links.
@@ -2026,11 +2026,11 @@ This statement can only be repeated for different links.
 @end table
 
 If unsubscribeOnAreaDelete is true, link will receive unsubscribe request
-("-area" if @ref{AdvancedAreafix} is off for the link and "~area" if it is on) 
-to his areafix when subscribed area is deleted. An area may be deleted when 
-default uplink (@code{-def}) unsubscribes from the area or some link deletes 
-this area by "~area" command (@ref{LinkGrp} for the link that deletes an area 
-must be the same as EchoArea's @code{-g <group>}). You may also delete an area 
+("-area" if @ref{AdvancedAreafix} is off for the link and "~area" if it is on)
+to his areafix when subscribed area is deleted. An area may be deleted when
+default uplink (@code{-def}) unsubscribes from the area or some link deletes
+this area by "~area" command (@ref{LinkGrp} for the link that deletes an area
+must be the same as EchoArea's @code{-g <group>}). You may also delete an area
 yourself by running the following command:@*@*
 @code{hpt afix <your main AKA> ~area}@*@*
 Here @code{<your main AKA>} is your main address. @xref{address,,,fidoconfig,FidoConfig Manual}.
