@@ -66,6 +66,12 @@ To use the "%RouteTo:" command you should place in the filter.pl
 
 Nothing.
 
+=head1 BUGS
+
+ping_pong uses the $config{origin} variable. If the Oridjn variable
+is not defined in the HPT configuration file, then this leads to
+the crush of the whole Perl hook.
+
 =head1 AUTHOR
 
    Stas Mishchenkov 2:460/58.
@@ -92,22 +98,13 @@ sub ping_pong($$$$$$)
     my $addline = "";
     my $msgdirection = "passed through";
     my $time = localtime;
-    my $lastvia = '';
 
     if ($to_name =~ /^Ping$/i){
 	w_log("Ping message detected." );
 	if ( istous($to_addr) == 1 ) {
-		if ( $mtext =~ /\x01Via (\d+\:\d+\/\d+\.?\d*)[^\r\n]+[\r\n]+$/ ) {
-			$lastvia = $1;
-		}
 		if ( $subj =~ /\%RouteTo\: (\d\:\d+\/\d+)/i) {
 		    w_log( "\'\%RouteTo\:\' command found." );
-		    if ( defined $links{$lastvia}{password} ) {
-		       $addline = "\r\%RouteTo\: $1\r" ;
-                       w_log("Last Via \'$lastvia\' is passworded link. \'\%RouteTo\:\' command is accepted.");
-		    } else {
-                       w_log("Last Via \'$lastvia\' is not passworded link. \'\%RouteTo\:\' command is not accepted.");
-		    }
+		    $addline = "\r\%RouteTo\: $1\r" if $secure == 1;
 		}
                 if ( $subj =~ /\%Links/i) {
 		    $addline = "My links are:\r~~~~~~~~~~~~~\r";
@@ -126,7 +123,7 @@ sub ping_pong($$$$$$)
         $mtext =~ s/\r \* Origin\:/\r \+ Origin\:/g;
         $mtext =~ s/\r\%RouteTo\:/\r\@RouteTo\:/gi;
 	putMsgInArea("", "Ping Robot", $from_name, "", $from_addr,
-		"Pong", "", "", "Hi $from_name.\r\r".
+		"Pong", "", $LOC, "Hi $from_name.\r\r".
 		"   Your ping-message $msgdirection my system at $time\r\r".
 		"$addline".
 		"---------- Help ------------------------------------------------------------\r".
@@ -197,7 +194,7 @@ sub route_to()
 	    $route = $1;
 	    $route =~ /\d+\:\d+\/\d+(\.?\d*)/;
 	    $route .= '.0' unless defined( $1 );
-	    $text =~ s/\r\%RouteTo\:\s+(\d+\:\d+\/\d+\.?\d*)\s*(\d+\:\d+\/\d+){0,1}/\r\x01RoutedTo\: $1 at @{$config{addr}}[0]/i;
+	    $text =~ s/\r\%RouteTo\:\s+(\d+\:\d+\/\d+\.?\d*)\s*(\d+\:\d+\/\d+){0,1}/\rThe answer was Routed To the node $1 at the node @{$config{addr}}[0]/i;
 	    $change=1;
 	} else {
 	    $addline = "\rMy links are:\r~~~~~~~~~~~~~\r\r";
@@ -208,7 +205,7 @@ sub route_to()
 			     $links{$key}{name} !~ /Our virtual lin/i;
 	    }
 	    putMsgInArea("", "Evil Robot", $fromname, "", $fromaddr,
-	    "Routing", "", "", "Hi $fromname.\r\r".
+	    "Routing", "", $LOC, "Hi $fromname.\r\r".
 	    "   You use the command \"\%RouteTo:\" and wish to change ".
 	    "the routing of your message from default via \"$route\" to \"$1\"".
 	    ", but it is not my passworded link. Your message is routed by ".
