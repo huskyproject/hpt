@@ -101,8 +101,19 @@ int displayPkt(char * name, int showHeader, int showText)
                msg->destAddr.net,
                msg->destAddr.node);
 
-        for(p = msg->text; (p = strchr(p, '\r')) != NULL; )
+        /* convert FidoNet '\r' line endings to '\n' newlines suitable for stdout */
+
+        p = msg->text;
+
+        while (1)
         {
+            p = strchr(p, '\r');
+
+            if (p == NULL)
+            {
+                break;
+            }
+
             *p = '\n';
         }
 
