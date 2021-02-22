@@ -897,6 +897,13 @@ int process_parameters(struct post_parameters * p, s_message * msg)
         if(p->origin == NULL)
         {
             p->origin     = safe_strdup((config->origin) ? config->origin : config->name);
+
+            /* use versionStr for the origin line if no Name or Origin has been set in the config file */
+            if (p->origin == NULL)
+            {
+                p->origin = safe_strdup(versionStr);
+            }
+
             p->origin_len = strlen(p->origin);
         }
 
