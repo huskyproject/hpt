@@ -101,7 +101,6 @@ int displayPkt(char * name, int showHeader, int showText)
                msg->destAddr.net,
                msg->destAddr.node);
 
-        /* Fix this \r's FIXME: and how does it do on non-*nix systems ? */
         for(p = msg->text; (p = strchr(p, '\r')) != NULL; )
         {
             *p = '\n';
