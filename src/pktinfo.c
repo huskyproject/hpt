@@ -141,6 +141,8 @@ int displayPkt(char * name, int showHeader, int showText)
     return 0;
 } /* displayPkt */
 
+static struct fidoconfig noConfig;  /* "static" ensures struct is zeroed */
+
 int main(int argc, char * argv[])
 {
     int i, showHeader = 0, showText = 0;
@@ -180,7 +182,15 @@ int main(int argc, char * argv[])
         }
         else
         {
-            config = readConfig(cfgFile);
+            if (cfgFile || getenv("FIDOCONFIG"))
+            {
+                config = readConfig(cfgFile);
+            }
+            else
+            {
+                config = &noConfig;
+            }
+
             displayPkt(argv[i], showHeader, showText);
         }
     }
