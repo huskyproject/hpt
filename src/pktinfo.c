@@ -156,8 +156,15 @@ int main(int argc, char * argv[])
     if(argc == 1)
     {
         printf(
-            "usage: pktinfo [options] <pktNames>\n" "Options: -h\t- means display msg header information (from/to/subject)\n"
-                                                    "\t -t\t- means display msg text\n");
+            "Output the contents of FidoNet mail packet (*.pkt) files.\n"
+            "\n"
+            "Usage: pktinfo [options] <filename> [filename ...]\n"
+            "\n"
+            "Options:\n"
+            "\n"
+            "-c<cfgfile>   Specify FidoConfig config file\n"
+            "-h            Display the message header information (From/To/Subject)\n"
+            "-t            Display the message text\n");
         return 1;
     }
 
