@@ -30,6 +30,7 @@
  *****************************************************************************
  * $Id$
  */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -44,25 +45,33 @@
 #include <version.h>
 #include "../cvsdate.h"
 
+static s_fidoconfig noConfig;  /* "static" ensures struct is zeroed */
+static hs_addr noAddr;
+
+static int msgTotal;
 
 static char * attrStr[] =
 {
-    "pvt", "crash", "read", "sent", "att", "fwd", "orphan", "k/s", "loc", "hld", "xx2", "frq",
-    "rrq", "cpt",   "arq",  "urq"
+    "Private", "Crash", "Received", "Sent", "FileAttached", "InTransit",
+    "Orphan", "Kill/Sent", "Local", "HoldForPickup", "unused", "FileRequest",
+    "ReturnReceiptRequest", "IsReturnReceipt", "AuditRequest",  "FileUpdateReq"
 };
-int displayPkt(char * name, int showHeader, int showText)
+
+int displayPkt(char * filename, int showHeader, int showText, int showCounters)
 {
     s_pktHeader * header;
     s_message * msg;
     FILE * pkt;
     char * p;
     int i;
+    char datestr[32];
+    int msgCount;
 
-    pkt = fopen(name, "rb");
+    pkt = fopen(filename, "rb");
 
     if(pkt == NULL)
     {
-        printf("couldn't open %s\n", name);
+        perror(filename);
         return 2;
     }
 
@@ -70,61 +79,61 @@ int displayPkt(char * name, int showHeader, int showText)
 
     if(header == NULL)
     {
-        printf("wrong or no pkt\n");
+        printf("%s: Corrupt packet\n", filename);
         return 3;
     }
 
-    printf("Pkt-Name:     %s\n", name);
-    printf("OrigAddr:     %u:%u/%u.%u\n",
-           header->origAddr.zone,
-           header->origAddr.net,
-           header->origAddr.node,
-           header->origAddr.point);
-    printf("DestAddr:     %u:%u/%u.%u\n",
-           header->destAddr.zone,
-           header->destAddr.net,
-           header->destAddr.node,
-           header->destAddr.point);
-    printf("pkt created:  %s", ctime(&header->pktCreated));
-    printf("pkt Password: %s\n", header->pktPassword);
+    msgCount = 0;
 
-    /*  printf("pktVersion:   %u\n", header->pktVersion);*/
-    printf("prodCode:     %02x%02x\n", header->hiProductCode, header->loProductCode);
-    printf("prodRevision  %u.%u\n", header->majorProductRev, header->minorProductRev);
-    printf("----------------------------------------\n");
+    printf("Packet header\n");
+    printf("==============================================================================\n");
+
+    printf("Filename       : %s\n", filename);
+
+    printf("OrigAddr       : %u:%u/%u.%u\n",
+      header->origAddr.zone, header->origAddr.net,
+      header->origAddr.node, header->origAddr.point
+    );
+
+    printf("DestAddr       : %u:%u/%u.%u\n",
+      header->destAddr.zone, header->destAddr.net,
+      header->destAddr.node, header->destAddr.point);
+
+    printf("AuxNet         : %u\n", header->auxNet);
+    printf("CapWord        : 0x%04x\n", header->capabilityWord);
+
+    strftime(datestr, sizeof datestr, "%a %Y-%m-%d %H:%M:%S", localtime(&header->pktCreated));
+    printf("DateCreation   : %s\n", datestr);
+
+    printf("Password       : \"%s\"\n", header->pktPassword);
+
+    printf("ProdCode       : %02x%02x\n", header->hiProductCode, header->loProductCode);
+    printf("ProdVersion    : %u.%u\n", header->majorProductRev, header->minorProductRev);
+
+    printf("\n");
+
+    if (showHeader)
+    {
+        printf("Message header\n");
+        printf("------------------------------------------------------------------------------\n");
+    }
 
     while(1 == (readMsgFromPkt(pkt, header, &msg)))
     {
-        printf("Msg: %u/%u -> %u/%u\n",
-               msg->origAddr.net,
-               msg->origAddr.node,
-               msg->destAddr.net,
-               msg->destAddr.node);
+        msgCount++;
 
-        /* convert FidoNet '\r' line endings to '\n' newlines suitable for stdout */
-
-        p = msg->text;
-
-        while (1)
+        if (showHeader)
         {
-            p = strchr(p, '\r');
+            printf("From           : \"%s\"\n", msg->fromUserName);
+            printf("To             : \"%s\"\n", msg->toUserName);
+            printf("Subject        : \"%s\"\n", msg->subjectLine);
+            printf("DateTime       : \"%s\"\n", msg->datetime);
+            printf("Attr           : 0x%04x", msg->attributes);
 
-            if (p == NULL)
+            if (msg->attributes)
             {
-                break;
+                printf(" ->");
             }
-
-            *p = '\n';
-        }
-
-        if(showHeader)
-        {
-            printf("Written at %s\n", msg->datetime);
-            printf("From:    %s\nTo:      %s\nSubject: %s\n",
-                   msg->fromUserName,
-                   msg->toUserName,
-                   msg->subjectLine);
-            printf("Attr:   ");
 
             for(i = 0; i < sizeof(attrStr) / sizeof(char *); i++)
             {
@@ -133,32 +142,77 @@ int displayPkt(char * name, int showHeader, int showText)
                     printf(" %s", attrStr[i]);
                 }
             }
+
             printf("\n");
         }
 
-        if(showText)
+        if (showHeader)
         {
-            printf("--Text----\n%s\n", msg->text);
+	        printf("OrigAddr       : %u/%u\n", msg->origAddr.net, msg->origAddr.node);
+	        printf("DestAddr       : %u/%u\n", msg->destAddr.net, msg->destAddr.node);
+	    }
+	    else
+	    {
+	        printf("%u/%u -> %u/%u\n",
+	          msg->origAddr.net, msg->origAddr.node,
+	          msg->destAddr.net, msg->destAddr.node);
+	    }
+
+        if (showText)
+        {
+	        /* convert FidoNet '\r' line endings to '\n' newlines suitable for stdout */
+
+	        p = msg->text;
+
+	        while (1)
+	        {
+	            p = strchr(p, '\r');
+
+	            if (p == NULL)
+	            {
+	                break;
+	            }
+
+	            *p = '\n';
+	        }
+
+            printf("\n");
+
+		    if (showHeader)
+		    {
+			    printf("Message text\n");
+			    printf("------------------------------------------------------------------------------\n");
+			}
+
+            printf("%s\n", msg->text);
         }
 
         freeMsgBuffers(msg);
         nfree(msg);
-    } /* endwhile */
+    }
+
     nfree(globalBuffer); /*  free msg->text global buffer */
     nfree(header);
     fclose(pkt);
-    printf("\n\n");
-    return 0;
-} /* displayPkt */
 
-static struct fidoconfig noConfig;  /* "static" ensures struct is zeroed */
+    printf("\n");
+
+    if (showCounters)
+    {
+        printf("-- Messages in packet: %5d\n", msgCount);
+        printf("\n");
+    }
+
+    msgTotal += msgCount;
+
+    return 0;
+}
 
 int main(int argc, char * argv[])
 {
-    int i, showHeader = 0, showText = 0;
+    int i, showHeader = 0, showText = 0, showCounters = 0;
     char * cfgFile = NULL;
 
-/*  printf("PktInfo v%u.%u.%u\n",VER_MAJOR, VER_MINOR, VER_PATCH); */
     versionStr = GenVersionStr("PktInfo", VER_MAJOR, VER_MINOR, VER_PATCH, VER_BRANCH, cvs_date);
     printf("%s\n\n", versionStr);
     nfree(versionStr);
@@ -174,7 +228,8 @@ int main(int argc, char * argv[])
             "\n"
             "-c<cfgfile>   Specify FidoConfig config file\n"
             "-h            Display the message header information (From/To/Subject)\n"
-            "-t            Display the message text\n");
+            "-t            Display the message text\n"
+            "-n            Count the number of messages\n");
         return 1;
     }
 
@@ -196,6 +251,11 @@ int main(int argc, char * argv[])
             {
                 showText = 1;
             }
+
+            if(argv[i][1] == 'n')
+            {
+                showCounters = 1;
+            }
         }
         else
         {
@@ -205,11 +265,21 @@ int main(int argc, char * argv[])
             }
             else
             {
+                /* make a dummy empty config if none was provided */
                 config = &noConfig;
+
+                /* avoid segfault on legacy Type 2 packets without zone info */
+                noConfig.addr = &noAddr;
             }
 
-            displayPkt(argv[i], showHeader, showText);
+            displayPkt(argv[i], showHeader, showText, showCounters);
         }
     }
+
+    if (showCounters)
+    {
+        printf("------ Total messages: %5d\n", msgTotal);
+    }
+
     return 0;
-} /* main */
+}
