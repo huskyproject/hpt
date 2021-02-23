@@ -61,7 +61,10 @@ time_t readPktTime(FILE * pkt)
     time.tm_hour  = getUINT16(pkt);
     time.tm_min   = getUINT16(pkt);
     time.tm_sec   = getUINT16(pkt);
-    time.tm_isdst = 0;                  /* disable daylight saving */
+
+    /* attempt to determine whether summer time is in effect */
+    time.tm_isdst = -1;
+
     return mktime(&time);
 }
 
