@@ -266,6 +266,7 @@ void scanEMArea(s_area * echo)
             }
 
             statScan.msgs++;
+            memset(&xmsg, 0, sizeof xmsg);
             MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
 
             if(((xmsg.attr & MSGSENT) != MSGSENT) && ((xmsg.attr & MSGLOCKED) != MSGLOCKED) &&
