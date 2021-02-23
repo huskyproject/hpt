@@ -158,6 +158,8 @@ int displayPkt(char * filename, int showHeader, int showText, int showCounters)
 	          msg->destAddr.net, msg->destAddr.node);
 	    }
 
+        printf("\n");
+
         if (showText)
         {
 	        /* convert FidoNet '\r' line endings to '\n' newlines suitable for stdout */
@@ -176,8 +178,6 @@ int displayPkt(char * filename, int showHeader, int showText, int showCounters)
 	            *p = '\n';
 	        }
 
-            printf("\n");
-
 		    if (showHeader)
 		    {
 			    printf("Message text\n");
@@ -194,8 +194,6 @@ int displayPkt(char * filename, int showHeader, int showText, int showCounters)
     nfree(globalBuffer); /*  free msg->text global buffer */
     nfree(header);
     fclose(pkt);
-
-    printf("\n");
 
     if (showCounters)
     {
