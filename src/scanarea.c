@@ -88,7 +88,17 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message * msg, s_area * echo, int action)
     msg->destAddr.point = xmsg.dest.point;
     msg->attributes     = xmsg.attr & ~MSGLOCAL; /*  msg should not have MSGLOCAL bit set */
 
-    sc_time((union stamp_combo *)&(xmsg.date_written), (char *)msg->datetime);
+    /* if present, use the original DateTime string when exporting to a .PKT */
+
+    if (*xmsg.__ftsc_date)
+    {
+        memcpy(msg->datetime, xmsg.__ftsc_date, sizeof msg->datetime);
+    }
+    else
+    {
+        sc_time((union stamp_combo *)&(xmsg.date_written), (char *)msg->datetime);
+    }
+
     xstrcat(&msg->toUserName, (char *)xmsg.to);
     xstrcat(&msg->fromUserName, (char *)xmsg.from);
     xstrcat(&msg->subjectLine, (char *)xmsg.subj);
@@ -256,6 +266,15 @@ void scanEMArea(s_area * echo)
             }
 
             statScan.msgs++;
+
+            /*
+             *  Ensure xmsg is nulled before we fill it with MsgReadMsg(),
+             *  otherwise xmsg.__ftsc_date may still be junk on return.
+             *  Arguably this is a bug in MsgReadMsg(). FIXME.
+             */
+
+            memset(&xmsg, 0, sizeof xmsg);
+
             MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
 
             if(((xmsg.attr & MSGSENT) != MSGSENT) && ((xmsg.attr & MSGLOCKED) != MSGLOCKED) &&
