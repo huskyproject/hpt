@@ -654,7 +654,7 @@ void linkArea(s_area * area)
                 /*  Link unlinked message */
                 linkTo = (replmap[crepl->treeId - 1]).treeId;
 
-                if(linkTo > highMsg || linkTo <= 0)
+                if(linkTo > highMsg || linkTo == 0)
                 {
                     w_log(LL_CRIT, "Programming error 1 while linking linkTo=%ld", (long)linkTo);
                     closeLog();
@@ -668,7 +668,7 @@ void linkArea(s_area * area)
                     {
                         linkTo = MsgUidToMsgn(harea, (replmap[linkTo - 1]).replies[0], UID_EXACT);
 
-                        if(linkTo > highMsg || linkTo <= 0)
+                        if(linkTo > highMsg || linkTo == 0)
                         {
                             w_log(LL_CRIT,
                                   "Programming error 2 while linking linkTo=%ld",
