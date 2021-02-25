@@ -98,10 +98,12 @@ sub ping_pong($$$$$$)
     my $addline = "";
     my $msgdirection = "passed through";
     my $time = localtime;
+    my $my_aka = @{$config{addr}}[0];
 
     if ($to_name =~ /^Ping$/i){
 	w_log("Ping message detected." );
 	if ( istous($to_addr) == 1 ) {
+		$my_aka = $to_addr;
 		if ( $subj =~ /\%RouteTo\: (\d\:\d+\/\d+)/i) {
 		    w_log( "\'\%RouteTo\:\' command found." );
 		    $addline = "\r\%RouteTo\: $1\r" if $secure == 1;
@@ -122,7 +124,7 @@ sub ping_pong($$$$$$)
         $mtext =~ s/\r--- /\r-+- /g;
         $mtext =~ s/\r \* Origin\:/\r \+ Origin\:/g;
         $mtext =~ s/\r\%RouteTo\:/\r\@RouteTo\:/gi;
-	putMsgInArea("", "Ping Robot", $from_name, "", $from_addr,
+	putMsgInArea("", "Ping Robot", $from_name, $my_aka, $from_addr,
 		"Pong", "", $LOC, "Hi $from_name.\r\r".
 		"   Your ping-message $msgdirection my system at $time\r\r".
 		"$addline".
@@ -133,7 +135,7 @@ sub ping_pong($$$$$$)
 		"  \%Links                 \- Get the list of my password protected-links.\r".
 		"  -------- Example ---------------------------------------------\r".
 		"  From: ".sprintf("%-32s", $from_name)."$from_addr\r".
-		"  To  : Ping                            @{$config{addr}}[0]\r".
+		"  To  : Ping                            $my_aka\r".
 		"  Subj: %RouteTo: 2:292/854\r".
 		"  --------------------------------------------------------------\r".
 		"   - The answer to this message will be routed via 2:292/854.\r".
@@ -146,7 +148,7 @@ sub ping_pong($$$$$$)
 		"============================================================================\r".
 		"$mtext".
 		"============================================================================\r".
-		"--- perl on $hpt_version\r * Origin: $config{origin} \(@{$config{addr}}[0]\)", 1);
+		"--- perl on $hpt_version\r * Origin: $config{origin} \($my_aka\)", 1);
     }
 }
 
