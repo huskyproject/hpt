@@ -9,6 +9,8 @@
 #
 #  wmake -f makefile.watcom OS2=1
 #
+#  Set DEBUG=1 to enable debugging.
+#
 
 CC=wcl386
 WLIB=wlib -q -b
@@ -29,6 +31,10 @@ LIBS=../../huskylib/make/huskywcw.lib ../../fidoconf/make/fconfwcw.lib &
 CFLAGS=-zq -bt=os2v2 -l=os2v2
 LIBS=../../huskylib/make/huskywco.lib ../../fidoconf/make/fconfwco.lib &
  ../../smapi/make/smapiwco.lib ../../areafix/make/afixwco.lib
+!endif
+
+!ifdef DEBUG
+CFLAGS+= -d2
 !endif
 
 BIN1=pktinfo.exe
