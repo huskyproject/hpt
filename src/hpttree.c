@@ -262,7 +262,7 @@ void buildAreaTree(s_area * area)
                 MsgCloseMsg(hmsg);
 
                 /* check time period */
-                if((tperiod) && (abs(actualTime - ttime) >= (tperiod * 24 * 60 * 60)))
+                if((tperiod) && (labs(actualTime - ttime) >= (tperiod * 24 * 60 * 60)))
                 {
                     continue;
                 }
@@ -366,7 +366,7 @@ void buildAreaTree(s_area * area)
                                       *token) == NULL && strncmp(token, "\001PATH:", 6) != 0)
                             {
                                 done++;                                                              /*
-                                                                                                        
+
                                                                                                         something's
                                                                                                         wrong
                                                                                                         */

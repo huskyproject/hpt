@@ -1363,7 +1363,7 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
 
                     if(msgTime != (time_t)-1)
                     {
-                        diffTime  = abs(globalTime - msgTime);
+                        diffTime  = labs(globalTime - msgTime);
                         diffTime /= (60 * 60 * 24);          /* convert to days */
                         days      = (unsigned int)diffTime;
 
