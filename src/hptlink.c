@@ -433,7 +433,7 @@ void linkArea(s_area * area)
                     }
                 }
 
-                if(useSubj && xmsg.subj != NULL)
+                if(useSubj && *xmsg.subj != '\0')
                 {
                     if((ptr = skipReSubj((char *)xmsg.subj)) == NULL)
                     {

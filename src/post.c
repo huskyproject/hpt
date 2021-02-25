@@ -1115,7 +1115,7 @@ void post(int c, unsigned int * n, char * params[])
     time_t t      = time(NULL);
     struct tm * tm;
 
-    if(params[*n] != '\0' && params[*n][1] == 'h')
+    if(params[*n] != NULL && params[*n][1] == 'h')
     {
         print_help(); /* exit */
     }

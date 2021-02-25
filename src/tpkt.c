@@ -92,7 +92,7 @@ int main()
         fts_time((char *)msg.datetime, tm);
         msg.netMail = 1;
         msg.text    = (char *)malloc(300);
-        strcpy(msg.text, "AREA:test.ger\rasdasd\r---\r * Origin: kljöklj (2:2432/605.0)\r");
+        strcpy(msg.text, "AREA:test.ger\rasdasd\r---\r * Origin: klj\xf6klj (2:2432/605.0)\r");
         msg.toUserName = (char *)malloc(15);
         strcpy(msg.toUserName, "arix");
         msg.fromUserName = (char *)malloc(20);
