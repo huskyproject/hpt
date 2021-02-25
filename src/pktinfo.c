@@ -46,16 +46,19 @@
 
 static s_fidoconfig noConfig;  /* "static" ensures struct is zeroed */
 static hs_addr noAddr;
-
 static int msgTotal;
-
 static char * attrStr[] =
 {
-    "Private", "Crash", "Received", "Sent", "FileAttached", "InTransit",
-    "Orphan", "Kill/Sent", "Local", "HoldForPickup", "unused", "FileRequest",
-    "ReturnReceiptRequest", "IsReturnReceipt", "AuditRequest",  "FileUpdateReq"
+    "Private",              "Crash",                        "Received",
+    "Sent",
+    "FileAttached",
+    "InTransit",            "Orphan",                       "Kill/Sent",
+    "Local",                "HoldForPickup",                "unused",
+    "FileRequest",
+    "ReturnReceiptRequest",
+    "IsReturnReceipt",
+    "AuditRequest",         "FileUpdateReq"
 };
-
 int displayPkt(char * filename, int showHeader, int showText, int showCounters)
 {
     s_pktHeader * header;
@@ -83,35 +86,29 @@ int displayPkt(char * filename, int showHeader, int showText, int showCounters)
     }
 
     msgCount = 0;
-
     printf("Packet header\n");
     printf("==============================================================================\n");
-
     printf("Filename       : %s\n", filename);
-
     printf("OrigAddr       : %u:%u/%u.%u\n",
-      header->origAddr.zone, header->origAddr.net,
-      header->origAddr.node, header->origAddr.point
-    );
-
+           header->origAddr.zone,
+           header->origAddr.net,
+           header->origAddr.node,
+           header->origAddr.point);
     printf("DestAddr       : %u:%u/%u.%u\n",
-      header->destAddr.zone, header->destAddr.net,
-      header->destAddr.node, header->destAddr.point);
-
+           header->destAddr.zone,
+           header->destAddr.net,
+           header->destAddr.node,
+           header->destAddr.point);
     printf("AuxNet         : %u\n", header->auxNet);
     printf("CapWord        : 0x%04x\n", header->capabilityWord);
-
     strftime(datestr, sizeof datestr, "%a %Y-%m-%d %H:%M:%S", localtime(&header->pktCreated));
     printf("DateCreation   : %s\n", datestr);
-
     printf("Password       : \"%s\"\n", header->pktPassword);
-
     printf("ProdCode       : %02x%02x\n", header->hiProductCode, header->loProductCode);
     printf("ProdVersion    : %u.%u\n", header->majorProductRev, header->minorProductRev);
-
     printf("\n");
 
-    if (showHeader)
+    if(showHeader)
     {
         printf("Message header\n");
         printf("------------------------------------------------------------------------------\n");
@@ -121,7 +118,7 @@ int displayPkt(char * filename, int showHeader, int showText, int showCounters)
     {
         msgCount++;
 
-        if (showHeader)
+        if(showHeader)
         {
             printf("From           : \"%s\"\n", msg->fromUserName);
             printf("To             : \"%s\"\n", msg->toUserName);
@@ -129,7 +126,7 @@ int displayPkt(char * filename, int showHeader, int showText, int showCounters)
             printf("DateTime       : \"%s\"\n", msg->datetime);
             printf("Attr           : 0x%04x", msg->attributes);
 
-            if (msg->attributes)
+            if(msg->attributes)
             {
                 printf(" ->");
             }
@@ -141,47 +138,48 @@ int displayPkt(char * filename, int showHeader, int showText, int showCounters)
                     printf(" %s", attrStr[i]);
                 }
             }
-
             printf("\n");
         }
 
-        if (showHeader)
+        if(showHeader)
         {
-	        printf("OrigAddr       : %u/%u\n", msg->origAddr.net, msg->origAddr.node);
-	        printf("DestAddr       : %u/%u\n", msg->destAddr.net, msg->destAddr.node);
-	    }
-	    else
-	    {
-	        printf("%u/%u -> %u/%u\n",
-	          msg->origAddr.net, msg->origAddr.node,
-	          msg->destAddr.net, msg->destAddr.node);
-	    }
+            printf("OrigAddr       : %u/%u\n", msg->origAddr.net, msg->origAddr.node);
+            printf("DestAddr       : %u/%u\n", msg->destAddr.net, msg->destAddr.node);
+        }
+        else
+        {
+            printf("%u/%u -> %u/%u\n",
+                   msg->origAddr.net,
+                   msg->origAddr.node,
+                   msg->destAddr.net,
+                   msg->destAddr.node);
+        }
 
         printf("\n");
 
-        if (showText)
+        if(showText)
         {
-	        /* convert FidoNet '\r' line endings to '\n' newlines suitable for stdout */
+            /* convert FidoNet '\r' line endings to '\n' newlines suitable for stdout */
+            p = msg->text;
 
-	        p = msg->text;
+            while(1)
+            {
+                p = strchr(p, '\r');
 
-	        while (1)
-	        {
-	            p = strchr(p, '\r');
+                if(p == NULL)
+                {
+                    break;
+                }
 
-	            if (p == NULL)
-	            {
-	                break;
-	            }
+                *p = '\n';
+            }
 
-	            *p = '\n';
-	        }
-
-		    if (showHeader)
-		    {
-			    printf("Message text\n");
-			    printf("------------------------------------------------------------------------------\n");
-			}
+            if(showHeader)
+            {
+                printf("Message text\n");
+                printf(
+                    "------------------------------------------------------------------------------\n");
+            }
 
             printf("%s\n", msg->text);
         }
@@ -189,21 +187,20 @@ int displayPkt(char * filename, int showHeader, int showText, int showCounters)
         freeMsgBuffers(msg);
         nfree(msg);
     }
-
     nfree(globalBuffer); /*  free msg->text global buffer */
+
     nfree(header);
     fclose(pkt);
 
-    if (showCounters)
+    if(showCounters)
     {
         printf("-- Messages in packet: %5d\n", msgCount);
         printf("\n");
     }
 
     msgTotal += msgCount;
-
     return 0;
-}
+} /* displayPkt */
 
 int main(int argc, char * argv[])
 {
@@ -216,17 +213,16 @@ int main(int argc, char * argv[])
 
     if(argc == 1)
     {
-        printf(
-            "Output the contents of FidoNet mail packet (*.pkt) files.\n"
-            "\n"
-            "Usage: pktinfo [options] <filename> [filename ...]\n"
-            "\n"
-            "Options:\n"
-            "\n"
-            "-c<cfgfile>   Specify FidoConfig config file\n"
-            "-h            Display the message header information (From/To/Subject)\n"
-            "-t            Display the message text\n"
-            "-n            Count the number of messages\n");
+        printf("Output the contents of FidoNet mail packet (*.pkt) files.\n");
+        printf("\n");
+        printf("Usage: pktinfo [options] <filename> [filename ...]\n");
+        printf("\n");
+        printf("Options:\n");
+        printf("\n");
+        printf("-c<cfgfile>   Specify FidoConfig config file\n");
+        printf("-h            Display the message header information (From/To/Subject)\n");
+        printf("-t            Display the message text\n");
+        printf("-n            Count the number of messages\n");
         return 1;
     }
 
@@ -256,7 +252,7 @@ int main(int argc, char * argv[])
         }
         else
         {
-            if (cfgFile || getenv("FIDOCONFIG"))
+            if(cfgFile || getenv("FIDOCONFIG"))
             {
                 config = readConfig(cfgFile);
             }
@@ -264,7 +260,6 @@ int main(int argc, char * argv[])
             {
                 /* make a dummy empty config if none was provided */
                 config = &noConfig;
-
                 /* avoid segfault on legacy Type 2 packets without zone info */
                 noConfig.addr = &noAddr;
             }
@@ -273,10 +268,10 @@ int main(int argc, char * argv[])
         }
     }
 
-    if (showCounters)
+    if(showCounters)
     {
         printf("------ Total messages: %5d\n", msgTotal);
     }
 
     return 0;
-}
+} /* main */
