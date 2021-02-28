@@ -6,19 +6,19 @@
 # may be one of: C (current), R (release), S (stable)
 
 # release number for Release: header
-%global relnum 3
+%global relnum 4
 
 # on default static application binary is built but using
 # 'rpmbuild --without static' produces an application binary that uses
 # dynamic libraries from other subprojects of Husky project
-%if %_vendor == "alt"
+%if "%_vendor" == "alt"
     %def_with static
 %else
     %bcond_without static
 %endif
 
 # if you use 'rpmbuild --with debug' then debug binary is produced
-%if %_vendor == "alt"
+%if "%_vendor" == "alt"
     %def_without debug
 %else
     %bcond_with debug
@@ -28,7 +28,7 @@
 
 # if you use 'rpmbuild --without perl', then the application binary will be
 # built without Perl
-%if %_vendor == "alt"
+%if "%_vendor" == "alt"
     %def_with perl
 %else
     %bcond_without perl
@@ -40,12 +40,12 @@
 %global pkg_group Applications/Communications
 
 # for CentOS, Fedora and RHEL
-%if %_vendor == "redhat"
+%if "%_vendor" == "redhat"
     %global vendor_suffix %dist
 %endif
 
 # for ALT Linux
-%if %_vendor == "alt"
+%if "%_vendor" == "alt"
     %global vendor_prefix %_vendor
     %global pkg_group Networking/FTN
 %endif
@@ -58,7 +58,7 @@ Name: %main_name
 %endif
 Version: %ver_major.%ver_minor.%reldate%reltype
 Release: %{vendor_prefix}%relnum%{vendor_suffix}
-%if %_vendor != "redhat"
+%if "%_vendor" != "redhat"
 Group: %pkg_group
 %endif
 Summary: HPT is the FTN tosser from the Husky Project
@@ -79,7 +79,7 @@ BuildRequires: areafix >= 1.9, areafix-devel >= 1.9
 Requires: huskylib >= 1.9, smapi >= 2.5, fidoconf >= 1.9, areafix >= 1.9
 %endif
 %if %{with perl}
-%if %_vendor == "redhat"
+%if "%_vendor" == "redhat"
 BuildRequires: perl(:VERSION) >= 5.8.8, perl-devel >= 5.8.8
 BuildRequires: perl(ExtUtils::Embed)
 Requires: perl(:VERSION) >= 5.8.8
@@ -94,7 +94,7 @@ HPT is the FTN tosser from the Husky Project
 
 
 %package utils
-%if %_vendor != "redhat"
+%if "%_vendor" != "redhat"
 Group: %pkg_group
 %endif
 Summary: Optional utilities for %name
