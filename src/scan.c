@@ -1049,19 +1049,19 @@ void scanNMArea(s_area * area)
             /* TODO: use correctNMAddr from pktread.c? */
             if(parseINTL(ctl, &intl_orig, &intl_dest) & INTL_FOUND)
             {
-                if(addrComp(orig, intl_orig)) /* addresses are differ */
+                if(addrComp(&orig, &intl_orig)) /* addresses differ */
                 {
-                    orig.zone  = xmsg.orig.zone = intl_orig.zone;
-                    orig.net   = xmsg.orig.net = intl_orig.net;
-                    orig.node  = xmsg.orig.node = intl_orig.node;
+                    orig.zone  = xmsg.orig.zone  = intl_orig.zone;
+                    orig.net   = xmsg.orig.net   = intl_orig.net;
+                    orig.node  = xmsg.orig.node  = intl_orig.node;
                     orig.point = xmsg.orig.point = intl_orig.point;
                 }
 
-                if(addrComp(dest, intl_dest)) /* addresses are differ */
+                if(addrComp(&dest, &intl_dest)) /* addresses are differ */
                 {
-                    dest.zone  = xmsg.dest.zone = intl_dest.zone;
-                    dest.net   = xmsg.dest.net = intl_dest.net;
-                    dest.node  = xmsg.dest.node = intl_dest.node;
+                    dest.zone  = xmsg.dest.zone  = intl_dest.zone;
+                    dest.net   = xmsg.dest.net   = intl_dest.net;
+                    dest.node  = xmsg.dest.node  = intl_dest.node;
                     dest.point = xmsg.dest.point = intl_dest.point;
                 }
             }
@@ -1078,7 +1078,7 @@ void scanNMArea(s_area * area)
 
             for(j = 0; j < config->addrCount; j++)
             {
-                if(addrComp(dest, config->addr[j]) == 0)
+                if(addrComp(&dest, &(config->addr[j])) == 0)
                 {
                     for_us = 1;
                     break;
@@ -1101,7 +1101,7 @@ void scanNMArea(s_area * area)
 
             for(j = 0; j < config->addrCount; j++)
             {
-                if(addrComp(orig, config->addr[j]) == 0)
+                if(addrComp(&orig, &(config->addr[j])) == 0)
                 {
                     from_us = 1;
                     break;

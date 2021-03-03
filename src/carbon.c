@@ -481,7 +481,7 @@ int carbonCopy(s_message * msg, XMSG * xmsg, s_area * echo)
                 break;
 
             case ct_addr:
-                result = !addrComp(msg->origAddr, cb->addr);
+                result = !addrComp(&(msg->origAddr), &(cb->addr));
                 break;
 
             case ct_fromarea:

@@ -1427,7 +1427,7 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                 if((echo->downlinkCount > 1) ||
                    ((echo->downlinkCount > 0) &&
                     /*  mail from us */
-                    (addrComp(pktOrigAddr, *echo->useAka) == 0)))
+                    (addrComp(&pktOrigAddr, echo->useAka) == 0)))
                 {
                     forwardMsgToLinks(echo, msg, pktOrigAddr);
                 }
@@ -1435,7 +1435,7 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                 w_dbglog(LL_SRCLINE, "%s::processEMMsg():%d", __FILE__, __LINE__);
 
                 /* todo: remove TID from local-generated msgs by hpt post -x
-                 * (if (addrComp(pktOrigAddr,*echo->useAka)==0)) */
+                 * (if (addrComp(&pktOrigAddr,echo->useAka)==0)) */
                 if(messCC && !dontdocc)
                 {
                     ccrc = carbonCopy(messCC, NULL, echo);
@@ -1546,7 +1546,7 @@ int processNMMsg(s_message * msg,
 
         for(i = 0; i < config->netMailAreaCount; i++)
         {
-            if(addrComp(msg->destAddr, *(config->netMailAreas[i].useAka)) == 0)
+            if(addrComp(&(msg->destAddr), config->netMailAreas[i].useAka) == 0)
             {
                 area = &(config->netMailAreas[i]);
                 break;
@@ -2947,7 +2947,7 @@ int forwardPkt(const char * fileName, s_pktHeader * header, e_tossSecurity sec)
 
     for(i = 0; i < config->linkCount; i++)
     {
-        if(addrComp(header->destAddr, config->links[i]->hisAka) == 0)
+        if(addrComp(&(header->destAddr), &(config->links[i]->hisAka)) == 0)
         {
             /* we found a link to forward the pkt file to */
             link = config->links[i];
