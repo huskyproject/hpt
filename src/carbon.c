@@ -103,10 +103,10 @@ int processExternal(s_area * echo, s_message * msg, s_carbon carbon)
           carbon.reason ? carbon.reason : "",
           carbon.reason ? "\"" : "",
           msg->fromUserName,
-          aka2str(msg->origAddr),
+          aka2str(&msg->origAddr),
           msg->toUserName,
           msg->netMail ? " " : "",
-          msg->netMail ? aka2str(msg->destAddr) : "");
+          msg->netMail ? aka2str(&msg->destAddr) : "");
 
 #ifdef HAS_popen_close
 
@@ -137,8 +137,8 @@ int processExternal(s_area * echo, s_message * msg, s_carbon carbon)
         fprintf(msgfp, "Area: %s\n", echo->areaName);
     }
 
-    fprintf(msgfp, "From: \"%s\" %s\n", msg->fromUserName, aka2str(msg->origAddr));
-    fprintf(msgfp, "To:   \"%s\" %s\n", msg->toUserName, aka2str(msg->destAddr));
+    fprintf(msgfp, "From: \"%s\" %s\n", msg->fromUserName, aka2str(&msg->origAddr));
+    fprintf(msgfp, "To:   \"%s\" %s\n", msg->toUserName, aka2str(&msg->destAddr));
     fprintf(msgfp, "Date: \"%s\"\n", msg->datetime);
     fprintf(msgfp, "Subject: \"%s\"\n\n", msg->subjectLine);
 
@@ -335,10 +335,10 @@ int processCarbonCopy(s_area * area, s_area * echo, s_message * msg, s_carbon ca
           reason ? reason : "",
           reason ? "\"" : "",
           msg->fromUserName,
-          aka2str(msg->origAddr),
+          aka2str(&msg->origAddr),
           msg->toUserName,
           msg->netMail ? " " : "",
-          msg->netMail ? aka2str(msg->destAddr) : "",
+          msg->netMail ? aka2str(&msg->destAddr) : "",
           rc);
     nfree(msg->text);
     msg->textLength = old_textLength;
@@ -578,10 +578,10 @@ int carbonCopy(s_message * msg, XMSG * xmsg, s_area * echo)
                               cb->reason ? cb->reason : "",
                               cb->reason ? "\"" : "",
                               msg->fromUserName,
-                              aka2str(msg->origAddr),
+                              aka2str(&msg->origAddr),
                               msg->toUserName,
                               msg->netMail ? " " : "",
-                              msg->netMail ? aka2str(msg->destAddr) : "");
+                              msg->netMail ? aka2str(&msg->destAddr) : "");
                     }
 
                     if(config->carbonAndQuit)

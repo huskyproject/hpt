@@ -138,7 +138,7 @@ int afRescanArea(char ** report, s_link * link, s_area * area, long rescanCount,
     if((area->msgbType == MSGTYPE_PASSTHROUGH) || (!arealink->rescan))
     {
         xscatprintf(report, " %s %s  no rescan possible\r", an, print_ch(49 - strlen(an), '.'));
-        w_log(LL_AREAFIX, "areafix: %s area no rescan possible to %s", an, aka2str(link->hisAka));
+        w_log(LL_AREAFIX, "areafix: %s area no rescan possible to %s", an, aka2str(&link->hisAka));
     }
     else
     {
@@ -163,7 +163,7 @@ int afRescanArea(char ** report, s_link * link, s_area * area, long rescanCount,
             w_log(LL_AREAFIX,
                   "areafix: %s -- no access to export for %s",
                   an,
-                  aka2str(link->hisAka));
+                  aka2str(&link->hisAka));
         }
 
         xscatprintf(report,
@@ -171,7 +171,7 @@ int afRescanArea(char ** report, s_link * link, s_area * area, long rescanCount,
                     an,
                     print_ch(49 - strlen(an), '.'),
                     rcc);
-        w_log(LL_AREAFIX, "areafix: %s rescanned %lu mails to %s", an, rcc, aka2str(link->hisAka));
+        w_log(LL_AREAFIX, "areafix: %s rescanned %lu mails to %s", an, rcc, aka2str(&link->hisAka));
     }
 
     return rcc;

@@ -781,7 +781,7 @@ void forwardToLinks(s_message * msg,
                 fputs(" failed: ", f);
             }
 
-            fputs(aka2str(header.destAddr), f);
+            fputs(aka2str(&header.destAddr), f);
             fputc('>', f);
             fputs(get_filename(newLinks[i]->link->pktFile), f);
             fputc(' ', f);
@@ -946,7 +946,7 @@ int putMsgInBadArea(s_message * msg, hs_addr pktOrigAddr, unsigned writeAccess)
     xstrscat(&textBuff,
              msg->text,
              "\rFROM: ",
-             aka2str(pktOrigAddr),
+             aka2str(&pktOrigAddr),
              "\rREASON: ",
              reason,
              "\r",
@@ -1042,12 +1042,12 @@ void makeMsgToSysop(char * areaName, hs_addr fromAddr, ps_addr uplinkAddr)
 
             if(config->reportRequester)
             {
-                xstrcat(&buff, aka2str(fromAddr));
+                xstrcat(&buff, aka2str(&fromAddr));
             }
 
             if(uplinkAddr != NULL)    /*  autocreation with forward request */
             {
-                xstrscat(&buff, " from ", aka2str(*uplinkAddr), NULLP);
+                xstrscat(&buff, " from ", aka2str(uplinkAddr), NULLP);
             }
 
             xstrscat(&strbeg, "Created  ", echo->areaName, NULLP);
@@ -1118,7 +1118,7 @@ void writeMsgToSysop()
                         " \r--- %s\r * Origin: %s (%s)\r",
                         (config->tearline) ? config->tearline : "",
                         (config->origin) ? config->origin : config->name,
-                        aka2str(msgToSysop[i]->origAddr));
+                        aka2str(&msgToSysop[i]->origAddr));
             msgToSysop[i]->textLength = strlen(msgToSysop[i]->text);
 
 #ifdef DO_PERL
@@ -1331,7 +1331,7 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                 xscatprintf(&tmpmsg->text, "      Area: %s\r", echo->areaName);
                 xscatprintf(&tmpmsg->text, "      Date: %s\r", msg->datetime);
                 xscatprintf(&tmpmsg->text, "      From: %s, %s\r", msg->fromUserName,
-                            aka2str(msg->origAddr));
+                            aka2str(&msg->origAddr));
                 xscatprintf(&tmpmsg->text, "        To: %s\r", msg->toUserName);
                 xscatprintf(&tmpmsg->text, "   Subject: %s\r", msg->subjectLine);
                 xstrcat(&tmpmsg->text,
@@ -1344,7 +1344,7 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                 freeMsgBuffers(tmpmsg);
                 nfree(tmpmsg);
                 nfree(reason);
-                w_log(LL_AREAFIX, "areafix: write notification msg for %s", aka2str(link->hisAka));
+                w_log(LL_AREAFIX, "areafix: write notification msg for %s", aka2str(&link->hisAka));
             }
         }
 
@@ -1706,7 +1706,7 @@ int processMsg(s_message * msg, s_pktHeader * pktHeader, int secure)
     {
         w_log(LL_NETMAIL,
               "Netmail from %s to %u:%u/%u.%u",
-              aka2str(msg->origAddr),
+              aka2str(&msg->origAddr),
               msg->destAddr.zone,
               msg->destAddr.net,
               msg->destAddr.node,
@@ -1795,7 +1795,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
             /* if ((to_us(header->destAddr)==0) || (sec == secLocalInbound)) { */
             if(isOurAka(config, header->destAddr) || (sec == secLocalInbound))
             {
-                w_log(LL_PKT, "pkt: %s [%s]", fileName, aka2str(header->origAddr));
+                w_log(LL_PKT, "pkt: %s [%s]", fileName, aka2str(&header->origAddr));
                 statToss.pkts++;
                 link = getLinkFromAddr(config, header->origAddr);
 
@@ -2695,7 +2695,7 @@ void arcmail(s_link * tolink)
                                      "");
                     w_log(LL_BUNDLE,
                           "Packing for %s %s, %s > %s",
-                          aka2str(link->hisAka),
+                          aka2str(&link->hisAka),
                           link->name,
                           get_filename(link->pktFile),
                           get_filename(link->packFile));
@@ -2734,13 +2734,13 @@ void arcmail(s_link * tolink)
                     if(cmdexit == 0)
                     {
                         w_log(LL_BUNDLE, "Leave non-packed mail for %s %s, %s",
-                              aka2str(link->hisAka), link->name, get_filename(link->pktFile));
+                              aka2str(&link->hisAka), link->name, get_filename(link->pktFile));
                     }
                     else
                     {
                         w_log(LL_ERR,
                               "error moving file for %s %s, %s->%s (errorlevel==%i)",
-                              aka2str(link->hisAka),
+                              aka2str(&link->hisAka),
                               link->name,
                               link->pktFile,
                               pkt,
@@ -2808,7 +2808,7 @@ void arcmail(s_link * tolink)
                                          "");
                         w_log(LL_BUNDLE,
                               "Packing for %s %s, %s > %s",
-                              aka2str(link->hisAka),
+                              aka2str(&link->hisAka),
                               link->name,
                               get_filename(link->pktFile),
                               get_filename(link->packFile));
@@ -2907,13 +2907,13 @@ void arcmail(s_link * tolink)
                         {
                             fprintf(flo, "^%s\n", pkt);
                             w_log(LL_BUNDLE, "Leave non-packed mail for %s %s, %s",
-                                  aka2str(link->hisAka), link->name, get_filename(link->pktFile));
+                                  aka2str(&link->hisAka), link->name, get_filename(link->pktFile));
                         }
                         else
                         {
                             w_log(LL_ERR,
                                   "error moving file for %s %s, %s->%s (errorlevel==%i)",
-                                  aka2str(link->hisAka),
+                                  aka2str(&link->hisAka),
                                   link->name,
                                   link->pktFile,
                                   pkt,

@@ -1217,7 +1217,7 @@ static XS(perl_myaddr)
     for(naddr = 0; naddr < config->addrCount; naddr++)
     {
         ST(naddr) = sv_newmortal();
-        sv_setpv((SV *)ST(naddr), aka2str(config->addr[naddr]));
+        sv_setpv((SV *)ST(naddr), aka2str(&config->addr[naddr]));
     }
     XSRETURN(naddr);
 }
@@ -1648,7 +1648,7 @@ void perl_setvars(void)
 
         for(i = 0; i < config->addrCount; i++)
         {
-            if((sv = newSVpv(aka2str(config->addr[i]), 0)) != NULL)
+            if((sv = newSVpv(aka2str(&config->addr[i]), 0)) != NULL)
             {
                 SvREADONLY_on(sv);
                 av_push(av, sv);
@@ -1656,7 +1656,7 @@ void perl_setvars(void)
         }
         SvREADONLY_on(av);
         sv = newRV_noinc((struct sv *)av);
-        /*SvPOK_on(sv); sv_setpv(aka2str(config->addr[0]), 0); SvREADONLY_on(sv);*/
+        /*SvPOK_on(sv); sv_setpv(aka2str(&config->addr[0]), 0); SvREADONLY_on(sv);*/
         VK_ADD_HASH_sv(hv, sv, "addr");
         SvREADONLY_on(hv);
         hv = perl_get_hv("groups", TRUE);
@@ -1682,7 +1682,7 @@ void perl_setvars(void)
         {
             hv2 = newHV();
             VK_ADD_HASH_str(hv2, sv, "name", config->links[i]->name);
-            VK_ADD_HASH_str(hv2, sv, "aka", aka2str(*config->links[i]->ourAka));
+            VK_ADD_HASH_str(hv2, sv, "aka", aka2str(config->links[i]->ourAka));
             VK_ADD_HASH_str(hv2, sv, "password", config->links[i]->defaultPwd);
             VK_ADD_HASH_str(hv2, sv, "filebox", config->links[i]->fileBox);
             VK_ADD_HASH_str(hv2, sv, "robot", config->links[i]->areafix.name);
@@ -1731,7 +1731,7 @@ void perl_setvars(void)
 
             /* val r/o: SvREADONLY_on(hv2); */
             sv = newRV_noinc((struct sv *)hv2);
-            VK_ADD_HASH_sv(hv, sv, aka2str(config->links[i]->hisAka));
+            VK_ADD_HASH_sv(hv, sv, aka2str(&config->links[i]->hisAka));
         }
         /* val: seems to cause problems: SvREADONLY_on(hv); */
     }
@@ -1748,7 +1748,7 @@ void perl_setvars(void)
         {
             hv2 = newHV();
             VK_ADD_HASH_str(hv2, sv, "desc", config->echoAreas[i].description);
-            VK_ADD_HASH_str(hv2, sv, "aka", aka2str(*config->echoAreas[i].useAka));
+            VK_ADD_HASH_str(hv2, sv, "aka", aka2str(config->echoAreas[i].useAka));
             VK_ADD_HASH_str(hv2, sv, "group", config->echoAreas[i].group);
             VK_ADD_HASH_int(hv2, sv, "hide", config->echoAreas[i].hide);
             VK_ADD_HASH_int(hv2,
@@ -1770,7 +1770,7 @@ void perl_setvars(void)
                     VK_ADD_HASH_int(hv3,
                                     sv,
                                     aka2str(
-                                        config->echoAreas[i].downlinks[j]->link->hisAka),
+                                        &config->echoAreas[i].downlinks[j]->link->hisAka),
                                     1 | config->echoAreas[i].downlinks[j]->defLink << 1 |
                                     config->echoAreas[i].downlinks[j]->manual << 2 |
                                     config->echoAreas[i].downlinks[j]->mandatory << 3 |
@@ -2113,7 +2113,7 @@ int perlscanmsg(char * area, s_message * msg)
         svattr     = perl_get_sv("attr", TRUE);
         svaddvia   = perl_get_sv("addvia", TRUE);
         sv_setpv(svfromname, msg->fromUserName);
-        sv_setpv(svfromaddr, aka2str(msg->origAddr));
+        sv_setpv(svfromaddr, aka2str(&msg->origAddr));
         sv_setpv(svtoname, msg->toUserName);
         sv_setuv(svdate, (unsigned long)fts2unix((char *)msg->datetime, NULL));
         sv_setpv(svdate, (char *)msg->datetime);
@@ -2136,7 +2136,7 @@ int perlscanmsg(char * area, s_message * msg)
 
         if(msg->netMail)
         {
-            sv_setpv(svtoaddr, aka2str(msg->destAddr));
+            sv_setpv(svtoaddr, aka2str(&msg->destAddr));
         }
         else
         {
@@ -2344,8 +2344,8 @@ s_route * perlroute(s_message * msg, s_route * defroute)
         svtoname   = perl_get_sv("toname", TRUE);
         svfromname = perl_get_sv("fromname", TRUE);
         svchange   = perl_get_sv("change", TRUE);
-        sv_setpv(svaddr, aka2str(msg->destAddr));
-        sv_setpv(svfrom, aka2str(msg->origAddr));
+        sv_setpv(svaddr, aka2str(&msg->destAddr));
+        sv_setpv(svfrom, aka2str(&msg->origAddr));
         sv_setpv(svfromname, msg->fromUserName);
         sv_setpv(svtoname, msg->toUserName);
         sv_setuv(svdate, (unsigned long)fts2unix((char *)msg->datetime, NULL));
@@ -2360,11 +2360,11 @@ s_route * perlroute(s_message * msg, s_route * defroute)
         {
             if(defroute->target)
             {
-                sv_setpv(svroute, aka2str(defroute->target->hisAka));
+                sv_setpv(svroute, aka2str(&defroute->target->hisAka));
             }
             else /* noroute */
             {
-                sv_setpv(svroute, aka2str(msg->destAddr));
+                sv_setpv(svroute, aka2str(&msg->destAddr));
             }
 
             if(defroute->flavour == flNormal)
@@ -2664,14 +2664,14 @@ int perlfilter(s_message * msg, hs_addr pktOrigAddr, int secure)
         svsecure   = perl_get_sv("secure", TRUE);
         svattr     = perl_get_sv("attr", TRUE);
         sv_setpv(svfromname, msg->fromUserName);
-        sv_setpv(svfromaddr, aka2str(msg->origAddr));
+        sv_setpv(svfromaddr, aka2str(&msg->origAddr));
         sv_setpv(svtoname, msg->toUserName);
         sv_setuv(svdate, (unsigned long)fts2unix((char *)msg->datetime, NULL));
         sv_setpv(svdate, (char *)msg->datetime);
         SvIOK_on(svdate);
         sv_setpv(svsubj, msg->subjectLine);
         sv_setpv(svtext, msg->text);
-        sv_setpv(svpktfrom, aka2str(pktOrigAddr));
+        sv_setpv(svpktfrom, aka2str(&pktOrigAddr));
         sv_setsv(svkill, &sv_undef);
         sv_setsv(svchange, &sv_undef);
         sv_setuv(svattr, msg->attributes | parse_flags(msg->text));
@@ -2693,7 +2693,7 @@ int perlfilter(s_message * msg, hs_addr pktOrigAddr, int secure)
         else
         {
             sv_setsv(svarea, &sv_undef);
-            sv_setpv(svtoaddr, aka2str(msg->destAddr));
+            sv_setpv(svtoaddr, aka2str(&msg->destAddr));
         }
 
         ENTER;
@@ -2759,7 +2759,7 @@ int perlfilter(s_message * msg, hs_addr pktOrigAddr, int secure)
                       msg->fromUserName,
                       sorig,
                       msg->toUserName,
-                      aka2str(msg->destAddr),
+                      aka2str(&msg->destAddr),
                       prc ? ": " : "",
                       prc ? prc : "");
             }
@@ -2888,7 +2888,7 @@ int perlfilter(s_message * msg, hs_addr pktOrigAddr, int secure)
                       msg->fromUserName,
                       sorig,
                       msg->toUserName,
-                      aka2str(msg->destAddr),
+                      aka2str(&msg->destAddr),
                       prc);
             }
 
@@ -3084,14 +3084,14 @@ int perltossbad(s_message * msg, char * areaName, hs_addr pktOrigAddr, char * re
         svattr     = perl_get_sv("attr", TRUE);
         svreason   = perl_get_sv("reason", TRUE);
         sv_setpv(svfromname, msg->fromUserName);
-        sv_setpv(svfromaddr, aka2str(msg->origAddr));
+        sv_setpv(svfromaddr, aka2str(&msg->origAddr));
         sv_setpv(svtoname, msg->toUserName);
         sv_setuv(svdate, (unsigned long)fts2unix((char *)msg->datetime, NULL));
         sv_setpv(svdate, (char *)msg->datetime);
         SvIOK_on(svdate);
         sv_setpv(svsubj, msg->subjectLine);
         sv_setpv(svtext, msg->text);
-        sv_setpv(svpktfrom, aka2str(pktOrigAddr));
+        sv_setpv(svpktfrom, aka2str(&pktOrigAddr));
         sv_setsv(svchange, &sv_undef);
         sv_setuv(svattr, msg->attributes | parse_flags(msg->text));
         sv_setpv(svreason, reason);
@@ -3104,7 +3104,7 @@ int perltossbad(s_message * msg, char * areaName, hs_addr pktOrigAddr, char * re
         else
         {
             sv_setsv(svarea, &sv_undef);
-            sv_setpv(svtoaddr, aka2str(msg->destAddr));
+            sv_setpv(svtoaddr, aka2str(&msg->destAddr));
         }
 
         ENTER;
@@ -3155,7 +3155,7 @@ int perltossbad(s_message * msg, char * areaName, hs_addr pktOrigAddr, char * re
                       msg->fromUserName,
                       sorig,
                       msg->toUserName,
-                      aka2str(msg->destAddr),
+                      aka2str(&msg->destAddr),
                       prc);
             }
 
@@ -3429,12 +3429,12 @@ int perl_afixreq(s_message * msg, hs_addr pktOrigAddr)
         svtext     = perl_get_sv("text", TRUE);
         svpktfrom  = perl_get_sv("pktfrom", TRUE);
         sv_setpv(svfromname, msg->fromUserName);
-        sv_setpv(svfromaddr, aka2str(msg->origAddr));
+        sv_setpv(svfromaddr, aka2str(&msg->origAddr));
         sv_setpv(svtoname, msg->toUserName);
-        sv_setpv(svtoaddr, aka2str(msg->destAddr));
+        sv_setpv(svtoaddr, aka2str(&msg->destAddr));
         sv_setpv(svsubj, msg->subjectLine);
         sv_setpv(svtext, msg->text);
-        sv_setpv(svpktfrom, aka2str(pktOrigAddr));
+        sv_setpv(svpktfrom, aka2str(&pktOrigAddr));
         ENTER;
         SAVETMPS;
         PUSHMARK(SP);
@@ -3545,9 +3545,9 @@ int perl_putmsg(s_area * echo, s_message * msg)
         svattr     = perl_get_sv("attr", TRUE);
         svnetmail  = perl_get_sv("netmail", TRUE);
         sv_setpv(svfromname, msg->fromUserName);
-        sv_setpv(svfromaddr, aka2str(msg->origAddr));
+        sv_setpv(svfromaddr, aka2str(&msg->origAddr));
         sv_setpv(svtoname, msg->toUserName);
-        sv_setpv(svtoaddr, aka2str(msg->destAddr));
+        sv_setpv(svtoaddr, aka2str(&msg->destAddr));
         sv_setuv(svdate, (unsigned long)fts2unix((char *)msg->datetime, NULL));
         sv_setpv(svdate, (char *)msg->datetime);
         SvIOK_on(svdate);
@@ -3712,7 +3712,7 @@ int perl_export(s_area * echo, s_link * link, s_message * msg)
         svchange   = perl_get_sv("change", TRUE);
         svarea     = perl_get_sv("area", TRUE);
         svattr     = perl_get_sv("attr", TRUE);
-        sv_setpv(svtoaddr, aka2str(link->hisAka));
+        sv_setpv(svtoaddr, aka2str(&link->hisAka));
         sv_setpv(svfromname, msg->fromUserName);
         sv_setpv(svtoname, msg->toUserName);
         sv_setuv(svdate, (unsigned long)fts2unix((char *)msg->datetime, NULL));
@@ -3756,7 +3756,7 @@ int perl_export(s_area * echo, s_link * link, s_message * msg)
             w_log(LL_PERL,
                   "PerlExport: Area %s, link %s: %s",
                   echo->areaName,
-                  aka2str(link->hisAka),
+                  aka2str(&link->hisAka),
                   prc);
             return 0;
         }
@@ -3874,9 +3874,9 @@ int perl_robotmsg(s_message * msg, char * type)
         }
 
         sv_setpv(svfromname, msg->fromUserName);
-        sv_setpv(svfromaddr, aka2str(msg->origAddr));
+        sv_setpv(svfromaddr, aka2str(&msg->origAddr));
         sv_setpv(svtoname, msg->toUserName);
-        sv_setpv(svtoaddr, aka2str(msg->destAddr));
+        sv_setpv(svtoaddr, aka2str(&msg->destAddr));
         sv_setpv(svsubj, msg->subjectLine);
         sv_setpv(svtext, msg->text);
         ENTER;

@@ -918,12 +918,12 @@ int packMsg(HMSG SQmsg, XMSG * xmsg, s_area * area)
             {
                 w_log(LL_FROUTE,
                       "no routeFile found or no-pack for %s - leave mail untouched",
-                      aka2str(msg.destAddr));
+                      aka2str(&msg.destAddr));
             }
             else
             {
                 w_log(LL_ROUTE, "no route found or no-pack for %s - leave mail untouched",
-                      aka2str(msg.destAddr));
+                      aka2str(&msg.destAddr));
             }
         }
     }
@@ -1067,12 +1067,12 @@ void scanNMArea(s_area * area)
             }
 
             nfree(ctl);
-//       ctl = safe_strdup(aka2str(dest)); /* use this just as temp buffer */
+//       ctl = safe_strdup(aka2str(&dest)); /* use this just as temp buffer */
 //       w_log( LL_DEBUGB, "%s::%u Msg from %s to %s",__FILE__,__LINE__,
-//             aka2str(orig), ctl);
+//             aka2str(&orig), ctl);
 //       nfree(ctl);
-            xscatprintf(&textforlog, "Msg #%d from %s to ", i, aka2str(orig));
-            xstrcat(&textforlog, aka2str(dest));
+            xscatprintf(&textforlog, "Msg #%d from %s to ", i, aka2str(&orig));
+            xstrcat(&textforlog, aka2str(&dest));
             w_log(LL_DEBUGB, "%s::%u %s", __FILE__, __LINE__, textforlog);
             for_us = 0;
 

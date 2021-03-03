@@ -889,7 +889,7 @@ int process_parameters(struct post_parameters * p, s_message * msg)
 
     if(!msg->netMail || p->origin)
     {
-        char * origAddr = aka2str(msg->origAddr);
+        char * origAddr = aka2str(&msg->origAddr);
         int origLen     = 11 + 3 +     /* " * Origin: " + " ()" */
                           strlen(origAddr);
         assert(origLen < 79);
@@ -912,7 +912,7 @@ int process_parameters(struct post_parameters * p, s_message * msg)
             p->origin[79 - origLen] = '\0';
         }
 
-        xscatprintf(&p->text_foot, " * Origin: %s (%s)\r", p->origin, aka2str(msg->origAddr));
+        xscatprintf(&p->text_foot, " * Origin: %s (%s)\r", p->origin, aka2str(&msg->origAddr));
     }
 
     /*  recoding from internal to transport charSet */
@@ -1048,7 +1048,7 @@ void do_posting(struct post_parameters * p, FILE * text, s_message * msg)
               msg->origAddr.net,
               msg->origAddr.node,
               msg->origAddr.point,
-              msg->netMail ? aka2str(msg->destAddr) : msg->toUserName,
+              msg->netMail ? aka2str(&msg->destAddr) : msg->toUserName,
               (p->area_name) ? p->area_name : p->area->areaName,
               msg->subjectLine);
 
