@@ -108,18 +108,15 @@ int displayPkt(char * filename, int showHeader, int showText, int showCounters)
     printf("ProdVersion    : %u.%u\n", header->majorProductRev, header->minorProductRev);
     printf("\n");
 
-    if(showHeader)
-    {
-        printf("Message header\n");
-        printf("------------------------------------------------------------------------------\n");
-    }
-
     while(1 == (readMsgFromPkt(pkt, header, &msg)))
     {
         msgCount++;
 
         if(showHeader)
         {
+            printf("Message header\n");
+            printf("------------------------------------------------------------------------------\n");
+
             printf("From           : \"%s\"\n", msg->fromUserName);
             printf("To             : \"%s\"\n", msg->toUserName);
             printf("Subject        : \"%s\"\n", msg->subjectLine);
