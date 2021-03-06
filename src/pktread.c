@@ -859,8 +859,8 @@ int readMsgFromPkt(FILE * pkt, s_pktHeader * header, s_message ** message)
             }
         }
         while(len == BUFFERSIZE + 1);
-        strncpy(globalBuffer, aka2str(msg->destAddr), BUFFERSIZE);
-        w_log(LL_ERR, "Message from %s to %s is too big!", aka2str(msg->origAddr), globalBuffer);
+        strncpy(globalBuffer, aka2str(&msg->destAddr), BUFFERSIZE);
+        w_log(LL_ERR, "Message from %s to %s is too big!", aka2str(&msg->origAddr), globalBuffer);
     }
 
 #endif /* if !defined (__DOS__) || defined (__FLAT__) */

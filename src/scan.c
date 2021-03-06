@@ -918,12 +918,12 @@ int packMsg(HMSG SQmsg, XMSG * xmsg, s_area * area)
             {
                 w_log(LL_FROUTE,
                       "no routeFile found or no-pack for %s - leave mail untouched",
-                      aka2str(msg.destAddr));
+                      aka2str(&msg.destAddr));
             }
             else
             {
                 w_log(LL_ROUTE, "no route found or no-pack for %s - leave mail untouched",
-                      aka2str(msg.destAddr));
+                      aka2str(&msg.destAddr));
             }
         }
     }
@@ -1049,36 +1049,36 @@ void scanNMArea(s_area * area)
             /* TODO: use correctNMAddr from pktread.c? */
             if(parseINTL(ctl, &intl_orig, &intl_dest) & INTL_FOUND)
             {
-                if(addrComp(orig, intl_orig)) /* addresses are differ */
+                if(addrComp(&orig, &intl_orig)) /* addresses differ */
                 {
-                    orig.zone  = xmsg.orig.zone = intl_orig.zone;
-                    orig.net   = xmsg.orig.net = intl_orig.net;
-                    orig.node  = xmsg.orig.node = intl_orig.node;
+                    orig.zone  = xmsg.orig.zone  = intl_orig.zone;
+                    orig.net   = xmsg.orig.net   = intl_orig.net;
+                    orig.node  = xmsg.orig.node  = intl_orig.node;
                     orig.point = xmsg.orig.point = intl_orig.point;
                 }
 
-                if(addrComp(dest, intl_dest)) /* addresses are differ */
+                if(addrComp(&dest, &intl_dest)) /* addresses are differ */
                 {
-                    dest.zone  = xmsg.dest.zone = intl_dest.zone;
-                    dest.net   = xmsg.dest.net = intl_dest.net;
-                    dest.node  = xmsg.dest.node = intl_dest.node;
+                    dest.zone  = xmsg.dest.zone  = intl_dest.zone;
+                    dest.net   = xmsg.dest.net   = intl_dest.net;
+                    dest.node  = xmsg.dest.node  = intl_dest.node;
                     dest.point = xmsg.dest.point = intl_dest.point;
                 }
             }
 
             nfree(ctl);
-//       ctl = safe_strdup(aka2str(dest)); /* use this just as temp buffer */
+//       ctl = safe_strdup(aka2str(&dest)); /* use this just as temp buffer */
 //       w_log( LL_DEBUGB, "%s::%u Msg from %s to %s",__FILE__,__LINE__,
-//             aka2str(orig), ctl);
+//             aka2str(&orig), ctl);
 //       nfree(ctl);
-            xscatprintf(&textforlog, "Msg #%d from %s to ", i, aka2str(orig));
-            xstrcat(&textforlog, aka2str(dest));
+            xscatprintf(&textforlog, "Msg #%d from %s to ", i, aka2str(&orig));
+            xstrcat(&textforlog, aka2str(&dest));
             w_log(LL_DEBUGB, "%s::%u %s", __FILE__, __LINE__, textforlog);
             for_us = 0;
 
             for(j = 0; j < config->addrCount; j++)
             {
-                if(addrComp(dest, config->addr[j]) == 0)
+                if(addrComp(&dest, &(config->addr[j])) == 0)
                 {
                     for_us = 1;
                     break;
@@ -1101,7 +1101,7 @@ void scanNMArea(s_area * area)
 
             for(j = 0; j < config->addrCount; j++)
             {
-                if(addrComp(orig, config->addr[j]) == 0)
+                if(addrComp(&orig, &(config->addr[j])) == 0)
                 {
                     from_us = 1;
                     break;

@@ -423,7 +423,7 @@ int checkLink(s_seenBy * seenBys,
     UINT i, j;
 
     /*  the link where we got the mail from */
-    if(addrComp(pktOrigAddr, link->hisAka) == 0)
+    if(addrComp(&pktOrigAddr, &(link->hisAka)) == 0)
     {
         return 1;
     }

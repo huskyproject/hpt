@@ -294,7 +294,7 @@ int createTempPktFileName_legasy(s_link * link)
     pkt_aTime = aTime;
     nfree(link->pktFile);
     link->pktFile = fileName;
-    w_log(LL_CREAT, "pktFile %s created for [%s]", link->pktFile, aka2str(link->hisAka));
+    w_log(LL_CREAT, "pktFile %s created for [%s]", link->pktFile, aka2str(&link->hisAka));
     return 0;
 } /* createTempPktFileName_legasy */
 
@@ -317,7 +317,7 @@ int createTempPktFileName(s_link * link)
     while(fexist(fileName) || fileNameAlreadyUsed(fileName, NULL));
     nfree(link->pktFile);
     link->pktFile = fileName;
-    w_log(LL_CREAT, "pktFile %s created for [%s]", link->pktFile, aka2str(link->hisAka));
+    w_log(LL_CREAT, "pktFile %s created for [%s]", link->pktFile, aka2str(&link->hisAka));
     return 0;
 }
 
@@ -414,8 +414,8 @@ int createPackFileName(s_link * link)
 
             if(bundleNameStyle == eAddrsCRC32 || bundleNameStyle == eAddrsCRC32Always)
             {
-                xscatprintf(&tmp2, "hpt %s ", aka2str(config->addr[0]));
-                xstrcat(&tmp2, aka2str(*aka));
+                xscatprintf(&tmp2, "hpt %s ", aka2str(&config->addr[0]));
+                xstrcat(&tmp2, aka2str(aka));
                 xscatprintf(&tmp, "%08x.", strcrc32(tmp2, 0xFFFFFFFFUL));
                 nfree(tmp2);
             }
