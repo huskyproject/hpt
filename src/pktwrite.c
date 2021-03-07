@@ -65,7 +65,7 @@ FILE * createPkt(char * filename, s_pktHeader * header)
     unsigned int i;
     UCHAR dummy;
 
-    i = open(filename, O_CREAT | O_EXCL | O_RDWR | O_BINARY, S_IREAD | S_IWRITE);
+    i = open(filename, O_CREAT | O_EXCL | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
 
     if(i > 0)
     {
