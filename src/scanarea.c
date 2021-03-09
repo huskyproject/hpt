@@ -267,14 +267,6 @@ void scanEMArea(s_area * echo)
 
             statScan.msgs++;
 
-            /*
-             *  Ensure xmsg is nulled before we fill it with MsgReadMsg(),
-             *  otherwise xmsg.__ftsc_date may still be junk on return.
-             *  Arguably this is a bug in MsgReadMsg(). FIXME.
-             */
-
-            memset(&xmsg, 0, sizeof xmsg);
-
             MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
 
             if(((xmsg.attr & MSGSENT) != MSGSENT) && ((xmsg.attr & MSGLOCKED) != MSGLOCKED) &&
