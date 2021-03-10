@@ -252,7 +252,7 @@ void scanEMArea(s_area * echo)
     {
         statScan.areas++;
         echo->scn++;
-        w_log(LL_START, "Scanning area: %s", echo->areaName);
+        w_log(LL_SCANNING, "Scanning area: %s", echo->areaName);
         i          = (noHighWaters) ? 0 : MsgGetHighWater(area);
         highestMsg = MsgGetNumMsg(area);
 
@@ -295,7 +295,7 @@ void scanEMArea(s_area * echo)
     }
     else
     {
-        w_log(LL_START, "Could not open %s", echo->fileName);
+        w_log(LL_SCANNING, "Could not open %s", echo->fileName);
     } /* endif */
 } /* scanEMArea */
 
