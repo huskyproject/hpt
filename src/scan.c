@@ -1010,7 +1010,7 @@ void scanNMArea(s_area * area)
     {
         statScan.areas++;
         area->scn++;
-        w_log(LL_START, "Scanning NetmailArea %s", area->areaName);
+        w_log(LL_SCANNING, "Scanning NetmailArea %s", area->areaName);
 
         if(area->msgbType == MSGTYPE_SDM)
         {
@@ -1395,19 +1395,19 @@ void scanExport(int type, char * str)
     {
         if(type & SCN_FILE)
         {
-            w_log(LL_START, "EchoTossLogFile not found -> Scanning stopped");
+            w_log(LL_SCANNING, "EchoTossLogFile not found -> Scanning stopped");
             nfree(tmplogname);
             return;
         }
 
         /*  if echotoss file does not exist scan all areas */
-        w_log(LL_START, "EchoTossLogFile not found -> Scanning all areas");
+        w_log(LL_SCANNING, "EchoTossLogFile not found -> Scanning all areas");
         scanAllAreas(type);
     }
     else
     {
         /*  else scan only those areas which are listed in the file */
-        w_log(LL_START, "EchoTossLogFile found -> Scanning only listed areas");
+        w_log(LL_SCANNING, "EchoTossLogFile found -> Scanning only listed areas");
         processed = 0;
 
         while(!feof(f))
@@ -1472,7 +1472,7 @@ void scanExport(int type, char * str)
 
     if((processed == 1) && ((type & SCN_FILE) != SCN_FILE))
     {
-        w_log(LL_START, "EchoTossLogFile found, but contains no areas -> processing all areas.");
+        w_log(LL_SCANNING, "EchoTossLogFile found, but contains no areas -> processing all areas.");
         scanAllAreas(type);
     }
 

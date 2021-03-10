@@ -3558,7 +3558,7 @@ void tossFromBadArea(char force)
 
     if(area != NULL)
     {
-        w_log(LL_START, "Scanning area: %s", config->badArea.areaName);
+        w_log(LL_SCANNING, "Scanning area: %s", config->badArea.areaName);
         highestMsg = MsgGetNumMsg(area);
 
         for(i = 1; i <= highestMsg; highestMsg--)
