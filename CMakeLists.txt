@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 2.8...3.19)
 PROJECT(hpt C)
 set(areafix_VERSION 1.9.0)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
