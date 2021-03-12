@@ -177,7 +177,7 @@ static time_t fts2unix(const char * s, int * ret)
     flags       = parse_ftsc_date(&tm, ss);
     tm.tm_isdst = -1;
 
-    /* free(ss); */
+    /* nfree(ss); */
     if(ret != NULL)
     {
         *ret = flags;
@@ -312,7 +312,7 @@ static char * update_flags(char * s, const unsigned long a, mmode_t mode)
             xscatprintf(&news, "%s", pos);
         }
 
-        free(flags);
+        nfree(flags);
         return news;
     }
     else
@@ -347,7 +347,7 @@ static void insert_line(char ** s, char * sub, char * pos)
         xscatprintf(&news, "%s", pos);
     }
 
-    free(*s);
+    nfree(*s);
     *s = news;
 } /* insert_line */
 
@@ -735,7 +735,7 @@ char * create_kludges(s_message * msg, char ** ptext, char * area, long attr, mm
         if(flgs != NULL)
         {
             xscatprintf(&buff, "\001FLAGS%s\r", flgs);
-            free(flgs);
+            nfree(flgs);
         }
     }
 
@@ -990,7 +990,7 @@ static XS(perl_putMsgInArea)
                 msg.attributes |= _attr;
             }
         }
-        free(sattr);
+        nfree(sattr);
     }
 
     if(!strstr(text, "\r\n"))
@@ -2233,7 +2233,7 @@ int perlscanmsg(char * area, s_message * msg)
             {
                 if(ptr != msg->text)
                 {
-                    free(msg->text);
+                    nfree(msg->text);
                     msg->text = ptr;
                 }
 
@@ -2486,7 +2486,7 @@ s_route * perlroute(s_message * msg, s_route * defroute)
                 {
                     if(ptr != msg->text)
                     {
-                        free(msg->text);
+                        nfree(msg->text);
                         msg->text = ptr;
                     }
 
@@ -2590,7 +2590,7 @@ s_route * perlroute(s_message * msg, s_route * defroute)
                     }
                 }
 
-                free(routeaddr);
+                nfree(routeaddr);
                 return &route;
             }
         }
@@ -2834,7 +2834,7 @@ int perlfilter(s_message * msg, hs_addr pktOrigAddr, int secure)
             {
                 if(ptr != msg->text)
                 {
-                    free(msg->text);
+                    nfree(msg->text);
                     msg->text = ptr;
                 }
 
@@ -3227,7 +3227,7 @@ int perltossbad(s_message * msg, char * areaName, hs_addr pktOrigAddr, char * re
             {
                 if(ptr != msg->text)
                 {
-                    free(msg->text);
+                    nfree(msg->text);
                     msg->text = ptr;
                 }
 
@@ -3655,7 +3655,7 @@ int perl_putmsg(s_area * echo, s_message * msg)
                 {
                     if(ptr != msg->text)
                     {
-                        free(msg->text);
+                        nfree(msg->text);
                         msg->text = ptr;
                     }
 
@@ -3810,7 +3810,7 @@ int perl_export(s_area * echo, s_link * link, s_message * msg)
                 {
                     if(ptr != msg->text)
                     {
-                        free(msg->text);
+                        nfree(msg->text);
                         msg->text = ptr;
                     }
 
