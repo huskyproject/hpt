@@ -92,7 +92,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message * msg, s_area * echo, int action)
 
     if (*xmsg.__ftsc_date)
     {
-        memcpy(msg->datetime, xmsg.__ftsc_date, sizeof msg->datetime);
+        memcpy(msg->datetime, xmsg.__ftsc_date, sizeof xmsg.__ftsc_date);
     }
     else
     {
