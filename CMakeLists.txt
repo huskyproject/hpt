@@ -52,7 +52,7 @@ else ()
     include(FindZLIB)
   endif()
   include_directories("h")
-  ADD_DEFINITIONS(-Wall -DUNIX)
+  ADD_DEFINITIONS(-O -Wall -DUNIX)
 endif (MSVC)
 
 find_library(husky_LIB NAMES husky PATHS "${CMAKE_FIND_ROOT_PATH}")
