@@ -1432,16 +1432,12 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                     forwardMsgToLinks(echo, msg, pktOrigAddr);
                 }
 
-                w_dbglog(LL_SRCLINE, "%s::processEMMsg():%d", __FILE__, __LINE__);
-
                 /* todo: remove TID from local-generated msgs by hpt post -x
                  * (if (addrComp(&pktOrigAddr,echo->useAka)==0)) */
                 if(messCC && !dontdocc)
                 {
                     ccrc = carbonCopy(messCC, NULL, echo);
                 }
-
-                w_dbglog(LL_SRCLINE, "%s::processEMMsg():%d", __FILE__, __LINE__);
 
                 if(ccrc <= 1)
                 {
@@ -2271,7 +2267,6 @@ int processDir(char * directory, e_tossSecurity sec)
 
     while((filename = husky_readdir(dir)) != NULL)
     {
-        w_dbglog(LL_DEBUGV, "testing %s\n", filename);
         dummy = (char *)safe_malloc(dirNameLen + strlen(filename) + 1);
         strcpy(dummy, directory);
         strcat(dummy, filename);
@@ -2317,7 +2312,6 @@ int processDir(char * directory, e_tossSecurity sec)
         arcFile = pktFile = 0;
         dummy   = (files[filenum]).fileName;
         w_log(LL_FILE, "Process incoming file %s", dummy);
-        w_dbglog(LL_DEBUGV, "testing sorted %s", dummy + dirNameLen);
 
         if((pktFile = patimat(dummy + dirNameLen, "*.pkt")) == 0)
         {
