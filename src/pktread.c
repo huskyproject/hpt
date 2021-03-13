@@ -826,8 +826,6 @@ int readMsgFromPkt(FILE * pkt, s_pktHeader * header, s_message ** message)
     }
 
 #if !defined (__DOS__) || defined (__FLAT__)
-    w_dbglog(LL_DEBUG, "readMsgFromPkt()  32bit");
-
     do
     {
         len = fgetsUntil0((UCHAR *)globalBuffer, BUFFERSIZE + 1, pkt, "\n");
