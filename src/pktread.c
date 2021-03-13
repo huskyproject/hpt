@@ -834,7 +834,6 @@ int readMsgFromPkt(FILE * pkt, s_pktHeader * header, s_message ** message)
     }
     while(len == BUFFERSIZE + 1);
 #else
-    w_dbglog(LL_DEBUG, "readMsgFromPkt() DOS-16");
     /* DOS: read only one segment of message */
     len = fgetsUntil0((UCHAR *)globalBuffer, BUFFERSIZE + 1, pkt, "\n");
     xstrcat(&msg->text, globalBuffer);
