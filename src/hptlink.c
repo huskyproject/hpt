@@ -409,7 +409,7 @@ void linkArea(s_area * area)
                 {
                     if(ctl == NULL || ctlen_curr < ctlen + 1)
                     {
-                        ctl = (byte *)srealloc(ctl, ctlen + 1);
+                        ctl = (byte *)realloc(ctl, ctlen + 1);
 
                         if(ctl == NULL)
                         {
