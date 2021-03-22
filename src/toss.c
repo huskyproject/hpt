@@ -3115,6 +3115,32 @@ void tossTempOutbound(char * directory)
     return;
 } /* tossTempOutbound */
 
+
+#ifdef __UNIX__
+static void chownChmodImportLog(void)
+{
+    int rc;
+
+    rc = chown(config->importlog, config->loguid, config->loggid);
+
+    if(rc != 0)
+    {
+        w_log(LL_ERR, "Could not chown() importlogfile: %s", strerror(errno));
+    }
+
+    if(config->logperm != -1)
+    {
+        rc = chmod(config->importlog, config->logperm);
+
+        if(rc != 0)
+        {
+            w_log(LL_ERR, "Could not chmod() importlogfile: %s", strerror(errno));
+        }
+    }
+}
+#endif
+
+
 void writeImportLog(void)
 {
     unsigned int i;
@@ -3153,14 +3179,9 @@ void writeImportLog(void)
                 }
             }
             fclose(f);
+
 #ifdef __UNIX__
-            chown(config->importlog, config->loguid, config->loggid);
-
-            if(config->logperm != -1)
-            {
-                chmod(config->importlog, config->logperm);
-            }
-
+            chownChmodImportLog();
 #endif
         }
         else
