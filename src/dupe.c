@@ -346,7 +346,57 @@ int deleteEntry(char * entry)
     return 1;
 } /* deleteEntry */
 
-void doReading(FILE * f, s_dupeMemory * mem)
+static void xfread(void * ptr, size_t size, size_t nmemb, FILE *stream)
+{
+    size_t rc;
+
+    if(!ptr)
+    {
+        w_log(LL_ERR, "xfread(): Cannot read to NULL pointer");
+        return;
+    }
+
+    if(size == 0)
+    {
+        w_log(LL_ERR, "xfread(): Attempted to fread() zero bytes");
+        return;
+    }
+
+    if(nmemb == 0)
+    {
+        w_log(LL_ERR, "xfread(): Attempted to fread() zero objects");
+        return;
+    }
+
+    if(!stream)
+    {
+        w_log(LL_ERR, "xfread(): Cannot fread() from NULL stream");
+        return;
+    }
+
+    rc = fread(ptr, size, nmemb, stream);
+
+    if(rc == nmemb)
+    {
+        return;
+    }
+
+    if(feof(stream))
+    {
+        w_log(LL_ERR, "xfread(): fread() reached EOF");
+        return;
+    }
+
+    if(ferror(stream))
+    {
+        w_log(LL_ERR, "xfread(): fread() encountered I/O error (%s)", strerror(errno));
+        return;
+    }
+
+    w_log(LL_ERR, "xfread(): Unhandled error");
+}
+
+static void doReading(FILE * f, s_dupeMemory * mem)
 {
     s_textDupeEntry * entxt;
     s_hashDupeEntry * enhash;
@@ -356,7 +406,7 @@ void doReading(FILE * f, s_dupeMemory * mem)
     time_t timedupe;
 
     /*  read Number Of Dupes from dupefile */
-    fread(&DupeCountInHeader, sizeof(UINT32), 1, f);
+    xfread(&DupeCountInHeader, sizeof(UINT32), 1, f);
 
     /*  process all dupes */
     for(i = 0; i < DupeCountInHeader; i++)
@@ -370,18 +420,18 @@ void doReading(FILE * f, s_dupeMemory * mem)
         {
             case hashDupes:
                 enhash = (s_hashDupeEntry *)safe_malloc(sizeof(s_hashDupeEntry));
-                fread(enhash, sizeof(s_hashDupeEntry), 1, f);
+                xfread(enhash, sizeof(s_hashDupeEntry), 1, f);
                 tree_add(&(mem->avlTree), compareEntries, (char *)enhash, deleteEntry);
                 break;
 
             case hashDupesWmsgid:
                 enhashM = (s_hashMDupeEntry *)safe_malloc(sizeof(s_hashMDupeEntry));
-                fread(enhashM, sizeof(time_t) + sizeof(UINT32), 1, f);
+                xfread(enhashM, sizeof(time_t) + sizeof(UINT32), 1, f);
 
                 if((length = (UCHAR)getc(f)) > 0) /* no EOF check :-( */
                 {
                     enhashM->msgid = safe_malloc(length + 1);
-                    fread((UCHAR *)enhashM->msgid, length, 1, f);
+                    xfread((UCHAR *)enhashM->msgid, length, 1, f);
                     enhashM->msgid[length] = '\0';
                 }
                 else
@@ -394,28 +444,28 @@ void doReading(FILE * f, s_dupeMemory * mem)
 
             case textDupes:
                 entxt = (s_textDupeEntry *)safe_malloc(sizeof(s_textDupeEntry));
-                fread(&timedupe, sizeof(time_t), 1, f);
+                xfread(&timedupe, sizeof(time_t), 1, f);
                 entxt->TimeStampOfDupe = timedupe;
 
                 if((length = (UCHAR)getc(f)) > 0)    /* no EOF check :-( */
                 {
-                    fread(hashBuf, length, 1, f);
+                    xfread(hashBuf, length, 1, f);
                 }
 
                 if((length = (UCHAR)getc(f)) > 0)     /* no EOF check :-( */
                 {
-                    fread(hashBuf, length, 1, f);
+                    xfread(hashBuf, length, 1, f);
                 }
 
                 if((length = (UCHAR)getc(f)) > 0)    /* no EOF check :-( */
                 {
-                    fread(hashBuf, length, 1, f);
+                    xfread(hashBuf, length, 1, f);
                 }
 
                 if((length = (UCHAR)getc(f)) > 0)    /* no EOF check :-( */
                 {
                     entxt->msgid = safe_malloc(length + 1);
-                    fread((UCHAR *)entxt->msgid, length, 1, f);
+                    xfread((UCHAR *)entxt->msgid, length, 1, f);
                     entxt->msgid[length] = '\0';
                 }
                 else
@@ -432,7 +482,7 @@ void doReading(FILE * f, s_dupeMemory * mem)
 
             case commonDupeBase:
                 enhash = (s_hashDupeEntry *)safe_malloc(sizeof(s_hashDupeEntry));
-                fread(enhash, sizeof(s_hashDupeEntry), 1, f);
+                xfread(enhash, sizeof(s_hashDupeEntry), 1, f);
                 tree_add(&(mem->avlTree), compareEntries, (char *)enhash, deleteEntry);
                 break;
         } /* switch */
