@@ -1103,7 +1103,7 @@ void makeMsgToSysop(char * areaName, hs_addr fromAddr, ps_addr uplinkAddr)
     }
 } /* makeMsgToSysop */
 
-void writeMsgToSysop()
+void writeMsgToSysop(void)
 {
     char * ptr = NULL, * seenByPath = NULL;
     s_area * echo = NULL;

@@ -523,7 +523,7 @@ void allDiff(char * nam, char * var, ...)
     nfree(diffData);
 } /* allDiff */
 
-void processConfig()
+void processConfig(void)
 {
     char * buff = NULL;
 
