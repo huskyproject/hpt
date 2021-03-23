@@ -182,7 +182,7 @@ s_link_robot * getLinkRobot(s_link * link)
     return &(link->areafix);
 }
 
-void autoPassive()
+void autoPassive(void)
 {
     time_t time_cur, time_test;
     struct   stat stat_file;
