@@ -39,7 +39,7 @@
 #include "../cvsdate.h"
 #include <version.h>
 
-int main()
+int main(void)
 {
     s_pktHeader header;
     s_message msg;
