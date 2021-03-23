@@ -1103,7 +1103,7 @@ void makeMsgToSysop(char * areaName, hs_addr fromAddr, ps_addr uplinkAddr)
     }
 } /* makeMsgToSysop */
 
-void writeMsgToSysop()
+void writeMsgToSysop(void)
 {
     char * ptr = NULL, * seenByPath = NULL;
     s_area * echo = NULL;
@@ -3141,64 +3141,71 @@ static void chownChmodImportLog(void)
 #endif
 
 
-void writeImportLog(void)
+static void deleteEmptyImportLog(void)
+{
+    struct stat buf;
+    /*  remove empty importlog */
+    if(stat(config->importlog, &buf) == 0 && buf.st_size == 0)
+    {
+        remove(config->importlog);
+    }
+}
+
+
+static void writeImportLog(void)
 {
     unsigned int i;
-    FILE * f = NULL;
-    struct stat buf;
+    FILE * f;
 
-    if(config->importlog)
+    if(!config->importlog)
     {
-        /*  write importlog */
-        f = fopen(config->importlog, "a");
+        return;
+    }
 
-        if(f != NULL)
+    /*  write importlog */
+    f = fopen(config->importlog, "a");
+
+    if(f == NULL)
+    {
+        w_log(LL_ERR, "Could not open importlogfile");
+        deleteEmptyImportLog();
+        return;
+    }
+
+    for(i = 0; i < config->netMailAreaCount; i++)
+    {
+        if(config->netMailAreas[i].imported > 0)
         {
-            for(i = 0; i < config->netMailAreaCount; i++)
-            {
-                if(config->netMailAreas[i].imported > 0)
-                {
-                    fprintf(f, "%s\n", config->netMailAreas[i].areaName);
-                }
-            }
-
-            for(i = 0; i < config->echoAreaCount; i++)
-            {
-                if(config->echoAreas[i].imported > 0 &&
-                   config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH)
-                {
-                    fprintf(f, "%s\n", config->echoAreas[i].areaName);
-                }
-            }
-
-            for(i = 0; i < config->localAreaCount; i++)
-            {
-                if(config->localAreas[i].imported > 0)
-                {
-                    fprintf(f, "%s\n", config->localAreas[i].areaName);
-                }
-            }
-            fclose(f);
-
-#ifdef __UNIX__
-            chownChmodImportLog();
-#endif
-        }
-        else
-        {
-            w_log(LL_ERR, "Could not open importlogfile");
-        }
-
-        /*  remove empty importlog */
-        if(stat(config->importlog, &buf) == 0)
-        {
-            if(buf.st_size == 0)
-            {
-                remove(config->importlog);
-            }
+            fprintf(f, "%s\n", config->netMailAreas[i].areaName);
         }
     }
+
+    for(i = 0; i < config->echoAreaCount; i++)
+    {
+        if(config->echoAreas[i].imported > 0 &&
+           config->echoAreas[i].msgbType != MSGTYPE_PASSTHROUGH)
+        {
+            fprintf(f, "%s\n", config->echoAreas[i].areaName);
+        }
+    }
+
+    for(i = 0; i < config->localAreaCount; i++)
+    {
+        if(config->localAreas[i].imported > 0)
+        {
+            fprintf(f, "%s\n", config->localAreas[i].areaName);
+        }
+    }
+
+    fclose(f);
+
+#ifdef __UNIX__
+    chownChmodImportLog();
+#endif
+
+    deleteEmptyImportLog();
 } /* writeImportLog */
+
 
 #define MAXOPEN_DEFAULT 512
 
@@ -3313,7 +3320,7 @@ static void setmaxopen(void)
     }
 } /* setmaxopen */
 
-void toss()
+void toss(void)
 {
     FILE * f = NULL;
     hs_time timer;
