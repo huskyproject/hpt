@@ -490,12 +490,12 @@ int uuencode_line(UCHAR * in_line, int len, UCHAR * out_line, int * sum_r_src, i
 
     if(sum_r_enc != NULL)
     {
-        *sum_r_enc = sum_r(out_line, out_ptr - out_line, *sum_r_enc);
+        *sum_r_enc = sum_r(out_line, (int)(out_ptr - out_line), *sum_r_enc);
         *sum_r_enc = sum_r_byte(0x0a, *sum_r_enc);
     }
 
     *out_ptr++ = '\r';
-    return out_ptr - out_line;
+    return (int)(out_ptr - out_line);
 } /* uuencode_line */
 
 FILE * uuencode_file(FILE * input, struct post_parameters * p)
@@ -566,14 +566,15 @@ FILE * uuencode_file(FILE * input, struct post_parameters * p)
                 fwrite(uu_m, sizeof(uu_m) - 1, 1, tmpfile);
             }
 
-            p->sectioning[part] = ftell(tmpfile);
+            p->sectioning[part] = (long)ftell(tmpfile);
             lines      = sect_size = 0;
             sum_r_sect = 0;
         }
 
         linelen       = fread(inbuf, 1, MAX_LINELEN, input);
-        p->file_size += linelen;
-        sect_size    += outlen = uuencode_line(inbuf, linelen, outbuf, &p->sum_r, &sum_r_sect);
+        p->file_size += (int)linelen;
+        outlen        = (size_t)uuencode_line(inbuf, (int)linelen, outbuf, &p->sum_r, &sum_r_sect);
+        sect_size    += (unsigned int)outlen;
 
         if(fwrite(outbuf, 1, outlen, tmpfile) != outlen) /* error */
         {
@@ -586,7 +587,7 @@ FILE * uuencode_file(FILE * input, struct post_parameters * p)
         ++lines;
     }
     while(linelen != 0);
-    sect_size += fwrite(uu_end, 1, sizeof(uu_end) - 1, tmpfile);
+    sect_size += (unsigned int)fwrite(uu_end, 1, sizeof(uu_end) - 1, tmpfile);
     sum_r_sect = sum_r((UCHAR *)uu_end, sizeof(uu_end) - 2, sum_r_sect);
     sum_r_sect = sum_r_byte(0x0a, sum_r_sect);
     fprintf(tmpfile, "\rsum -r/size %d/%u section (from ", sum_r_sect, sect_size);
@@ -594,7 +595,7 @@ FILE * uuencode_file(FILE * input, struct post_parameters * p)
     fprintf(tmpfile, "sum -r/size %d/%d entire input file\r", p->sum_r, p->file_size);
     ++part;
     assert(part < max_sections);
-    p->sectioning[part] = ftell(tmpfile);
+    p->sectioning[part] = (long)ftell(tmpfile);
     p->sections         = part;
     p->sectioning       = srealloc(p->sectioning, sizeof(long) * (p->sections + 1));
     fclose(input);
@@ -621,7 +622,7 @@ UINT uuencode2buf(struct post_parameters * p, char ** text, UINT msg_len, FILE *
 
     do
     {
-        linelen = fread(inbuf, 1, MAX_LINELEN, input);
+        linelen = (UINT)fread(inbuf, 1, MAX_LINELEN, input);
         assert(msg_len + (MAX_LINELEN / 3 * 4 + 1 + 1) <= max_msg_len);
         outlen =
             uuencode_line(inbuf, linelen, (UCHAR *)*text + msg_len, &p->sum_r, &sum_r_sect);
@@ -772,7 +773,7 @@ int process_parameters(struct post_parameters * p, s_message * msg)
     else
     {
         msg->fromUserName = safe_strdup(config->sysop);
-        p->name_from_len  = strlen(config->sysop);
+        p->name_from_len  = (int)strlen(config->sysop);
     }
 
     if(p->subject != NULL)
@@ -891,7 +892,7 @@ int process_parameters(struct post_parameters * p, s_message * msg)
     {
         char * origAddr = aka2str(&msg->origAddr);
         int origLen     = 11 + 3 +     /* " * Origin: " + " ()" */
-                          strlen(origAddr);
+                          (int)strlen(origAddr);
         assert(origLen < 79);
 
         if(p->origin == NULL)
@@ -904,7 +905,7 @@ int process_parameters(struct post_parameters * p, s_message * msg)
                 p->origin = safe_strdup(versionStr);
             }
 
-            p->origin_len = strlen(p->origin);
+            p->origin_len = (int)strlen(p->origin);
         }
 
         if(origLen + p->origin_len > 79)
@@ -928,7 +929,7 @@ int process_parameters(struct post_parameters * p, s_message * msg)
 
 void process_input_file(struct post_parameters * p, FILE * input, s_message * msg, int * part)
 {
-    UINT msg_len;
+    size_t msg_len;
 
     msg_len = strlen(msg->text);
 
@@ -950,7 +951,7 @@ void process_input_file(struct post_parameters * p, FILE * input, s_message * ms
 
         if(p->temp_file != NULL) /* Load uu-code from temp file */
         {
-            int to_read, was_read;
+            size_t to_read, was_read;
             to_read            = p->sectioning[*part + 1] - p->sectioning[*part];
             msg->text          = srealloc(msg->text, msg_len + to_read + 1);
             msg_len           += was_read = fread(msg->text + msg_len, 1, to_read, input);
@@ -964,7 +965,7 @@ void process_input_file(struct post_parameters * p, FILE * input, s_message * ms
         }
         else /* Encode on the fly based on size prediction */
         {
-            msg_len = uuencode2buf(p, &msg->text, msg_len, input, *part);
+            msg_len = uuencode2buf(p, &msg->text, (UINT)msg_len, input, *part);
         }
 
         /* msg_len += xscatprintf(&msg->text,"section %d end\r", *part + 1); */
@@ -973,7 +974,7 @@ void process_input_file(struct post_parameters * p, FILE * input, s_message * ms
     else /* Ordinary text paste */
     {
         int c;
-        UINT cursize = msg_len;
+        size_t cursize = msg_len;
 
         for( ; msg_len < 4 * 1024 * 1024; ++msg_len) /* impose reasonable restriction on max_len
                                                         */
@@ -1041,7 +1042,7 @@ void do_posting(struct post_parameters * p, FILE * text, s_message * msg)
             xstrcat(&msg->text, p->text_foot + 1);
         }
 
-        msg->textLength = strlen(msg->text);
+        msg->textLength = (hINT32)strlen(msg->text);
         w_log(LL_POSTING,
               "Posting msg from %u:%u/%u.%u -> %s in area: %s with subject: %s",
               msg->origAddr.zone,

@@ -270,7 +270,7 @@ void autoPassive(void)
                                             "\r System switched to passive, your subscription is paused.\r\r" " You are being unsubscribed from echo areas with no downlinks besides you!\r\r" " When you wish to continue receiving echomail, please send requests\r"
                                                                                                                                                                                                " to AreaFix containing the %RESUME command.");
                                     xscatprintf(&msg->text, "\r\r--- %s autopause\r", versionStr);
-                                    msg->textLength = strlen(msg->text);
+                                    msg->textLength = (hINT32)strlen(msg->text);
 #ifdef DO_PERL
                                     perl_robotmsg(msg, robot->name);
 #endif

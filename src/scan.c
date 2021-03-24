@@ -126,7 +126,7 @@ void convertMsgText(HMSG SQmsg, s_message * msg)
     nfree(ctrlBuff);
     /*  make text */
     msg->textLength = MsgGetTextLen(SQmsg); /*  including zero termination??? */
-    ctrlLen         = strlen(msg->text);
+    ctrlLen         = (UINT32)strlen(msg->text);
     xstralloc(&(msg->text), msg->textLength + ctrlLen);
     MsgReadMsg(SQmsg, NULL, 0, msg->textLength, (UCHAR *)msg->text + ctrlLen, 0, NULL);
     /* MsgReadMsg doesn't do zero termination! */
@@ -1178,15 +1178,15 @@ void writeScanStatToLog(void)
     }
 } /* writeScanStatToLog */
 
-s_area * getLocalArea(s_fidoconfig * config, char * areaName)
+s_area * getLocalArea(s_fidoconfig * sconfig, char * areaName)
 {
     UINT i;
 
-    for(i = 0; i < config->localAreaCount; i++)
+    for(i = 0; i < sconfig->localAreaCount; i++)
     {
-        if(stricmp(config->localAreas[i].areaName, areaName) == 0)
+        if(stricmp(sconfig->localAreas[i].areaName, areaName) == 0)
         {
-            return &(config->localAreas[i]);
+            return &(sconfig->localAreas[i]);
         }
     }
     return NULL;

@@ -62,14 +62,14 @@ FILE * createPkt(char * filename, s_pktHeader * header)
 {
     FILE * pkt = NULL;
     struct tm * pktTime;
-    unsigned int i;
+    size_t i;
     UCHAR dummy;
 
     i = open(filename, O_CREAT | O_EXCL | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
 
     if(i > 0)
     {
-        pkt = fdopen(i, "wb+");
+        pkt = fdopen((int)i, "wb+");
 
         if(pkt != NULL)
         {
@@ -205,10 +205,10 @@ int writeMsgToPkt(FILE * pkt, s_message msg)
 
 int writeMsgToPkt(FILE * pkt, s_message msg)
 {
-    char x, y, z;
+    size_t x, y, z;
     byte * buf;
     byte * pbuf;
-    INT32 textLen;
+    size_t textLen;
     size_t rc;
 
     x = strlen(msg.toUserName);

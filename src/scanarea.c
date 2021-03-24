@@ -140,7 +140,7 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message * msg, s_area * echo, int action)
 
     xstrcat(&(msg->text), kludgeLines);
     nfree(kludgeLines);
-    ctrlLen = strlen(msg->text);
+    ctrlLen = (UINT32)strlen(msg->text);
     xstralloc(&(msg->text), ctrlLen + msg->textLength);
     MsgReadMsg(hmsg,
                NULL,

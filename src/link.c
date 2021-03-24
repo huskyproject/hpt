@@ -118,7 +118,7 @@ static s_msginfo * findMsgId(s_msginfo * entries,
     }
     else if(crc32 == 0xFFFFFFFFL)
     {
-        h = crc = Jam_Crc32((UCHAR *)strUpper(msgId), strlen(msgId));
+        h = crc = Jam_Crc32((UCHAR *)strUpper(msgId), (dword)strlen(msgId));
     }
     else
     {

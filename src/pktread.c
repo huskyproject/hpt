@@ -687,16 +687,17 @@ void make_ftsc_date(char * pdate, const struct tm * ptm)
 int readMsgFromPkt(FILE * pkt, s_pktHeader * header, s_message ** message)
 {
     s_message * msg;
-    int len, badmsg = 0;
+    size_t len;
+    int badmsg = 0;
     struct tm tm;
     long unread;
 
     if(2 != getUINT16(pkt))
     {
         *message = NULL;
-        unread   = ftell(pkt);
+        unread   = (long)ftell(pkt);
         fseek(pkt, 0L, SEEK_END);
-        unread = ftell(pkt) - unread; /*  unread bytes */
+        unread = (long)ftell(pkt) - unread; /*  unread bytes */
 
         if(unread)
         {
@@ -830,7 +831,7 @@ int readMsgFromPkt(FILE * pkt, s_pktHeader * header, s_message ** message)
     {
         len = fgetsUntil0((UCHAR *)globalBuffer, BUFFERSIZE + 1, pkt, "\n");
         xstrcat(&msg->text, (char *)globalBuffer);
-        msg->textLength += len - 1; /*  trailing \0 is not the text */
+        msg->textLength += (hINT32)len - 1; /*  trailing \0 is not the text */
     }
     while(len == BUFFERSIZE + 1);
 #else
@@ -873,7 +874,7 @@ int readMsgFromPkt(FILE * pkt, s_pktHeader * header, s_message ** message)
             for(q = p; *q && *q != '\r'; q++)
             {}
             memmove(p, q + 1, msg->textLength - (q - msg->text));
-            msg->textLength -= (q - p + 1);
+            msg->textLength -= (hINT32)(q - p + 1);
         }
     }
 #endif

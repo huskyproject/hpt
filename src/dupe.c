@@ -208,7 +208,7 @@ int writeEntry(char * p_entry)
     const s_textDupeEntry * entxt;
     const s_hashDupeEntry * enhash;
     const s_hashMDupeEntry * enhashM;
-    UINT32 diff = 0;
+    time_t diff = 0;
     time_t currtime;
     const void * entry = (const void *)p_entry;
 
@@ -236,7 +236,7 @@ int writeEntry(char * p_entry)
 
                 if((enhashM->msgid != NULL) && (0 < strlen(enhashM->msgid)))
                 {
-                    fputc(strlen(enhashM->msgid), fDupe);
+                    fputc((int)strlen(enhashM->msgid), fDupe);
                     fputs(enhashM->msgid, fDupe);
                 }
                 else
@@ -282,7 +282,7 @@ int writeEntry(char * p_entry)
 
                 if((entxt->msgid != NULL) && (0 < strlen(entxt->msgid)))
                 {
-                    fputc(strlen(entxt->msgid), fDupe);
+                    fputc((int)strlen(entxt->msgid), fDupe);
                     fputs(entxt->msgid, fDupe);
                 }
                 else
@@ -725,7 +725,7 @@ char * findEndOfContent(char * msg_text)
     char * eol;                         /* end of line */
     char * temp;                        /* temporary pointer */
     unsigned int run = TRUE;            /* loop control flag */
-    unsigned long length;               /* string length */
+    size_t length;               /* string length */
 
     /* sanity check */
     if(msg_text == NULL)
@@ -805,19 +805,19 @@ int dupeDetection(s_area * area, const s_message msg)
 
     if(area->dupeCheck == dcOff)
     {
-        return 1;                           /*  no dupeCheck return 1 "no dupe" */
+        return 1;                           /*  no dupeCheck, return 1 "no dupe" */
     }
 
     str = (char *)MsgGetCtrlToken((byte *)msg.text, (byte *)"MSGID:");
 
-    if(str == NULL) /* Kluge MSGID is not found so make it from crc of message body */
+    if(str == NULL) /* Kludge MSGID is not found so make it from crc of the message body */
     {
         if(msg.text)
         {
             char * hbuf = NULL;    /* buffer */
             char * start;          /* start of content */
             char * end;            /* end of content */
-            char orig;             /* original character */
+            char orig = '\0';      /* original character */
             /* isolate content from message text (no control lines) */
             end   = NULL;
             start = findStartOfContent(msg.text);    /* find start of content */

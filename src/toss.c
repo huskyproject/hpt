@@ -185,7 +185,7 @@ static char * get_filename(char * pathname)
 int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
 {
     char * ctrlBuff = NULL, * textStart = NULL, * textWithoutArea = NULL;
-    UINT textLength = (UINT)msg->textLength;
+    size_t textLength = (size_t)msg->textLength;
     /* HAREA harea = NULL; */
     HMSG hmsg;
     XMSG xmsg;
@@ -322,7 +322,7 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
 
             ctrlBuff = (char *)CopyToControlBuf((UCHAR *)textWithoutArea,
                                                 (UCHAR **)&textStart,
-                                                &textLength);
+                                                &((unsigned int)textLength));
             /*  textStart is a pointer to the first non-kludge line */
             xmsg = createXMSG(config, msg, NULL, forceattr, tossDir);
             w_log(LL_SRCLINE, "%s:%d writing msg", __FILE__, __LINE__);
@@ -656,12 +656,12 @@ void forwardToLinks(s_message * msg,
         }
     }
 
-    msg->textLength = (size_t)(start - msg->text);
+    msg->textLength = (hINT32)(start - msg->text);
     /*  create new seenByText */
     seenByText = createControlText(*seenBys, *seenByCount, "SEEN-BY: ");
     pathText   = createControlText(*path, *pathCount, "\001PATH: ");
     xstrscat(&msg->text, "\r", seenByText, pathText, NULLP);
-    msg->textLength += 1 + strlen(seenByText) + strlen(pathText);
+    msg->textLength += (hINT32)(1 + strlen(seenByText) + strlen(pathText));
     nfree(seenByText);
     nfree(pathText);
 
@@ -705,10 +705,10 @@ void forwardToLinks(s_message * msg,
         /*  check packet size */
         if(newLinks[i]->link->pktFile != NULL && newLinks[i]->link->pktSize != 0)
         {
-            len = newLinks[i]->link->pkt ? ftell(newLinks[i]->link->pkt) : fsize(
-                newLinks[i]->link->pktFile);
+            len = (ULONG)(newLinks[i]->link->pkt ? ftell(newLinks[i]->link->pkt) : 
+                          fsize(newLinks[i]->link->pktFile));
 
-            if(len >= (newLinks[i]->link->pktSize * 1024L))    /*  Stop writing to pkt */
+            if(len >= (newLinks[i]->link->pktSize * 1024L)) /* Stop writing to pkt */
             {
                 if(newLinks[i]->link->pkt)
                 {
@@ -801,7 +801,7 @@ void forwardToLinks(s_message * msg,
         if(config->advStatisticsFile != NULL)
         {
             put_stat(echo, &(header.destAddr), stOUT,
-                     msg->textLength + strlen(msg->text + msg->textLength));
+                     (INT32)(msg->textLength + strlen(msg->text + msg->textLength)));
         }
 
 #endif
@@ -961,7 +961,7 @@ int putMsgInBadArea(s_message * msg, hs_addr pktOrigAddr, unsigned writeAccess)
     nfree(areaName);
     nfree(msg->text);
     msg->text       = textBuff;
-    msg->textLength = strlen(msg->text);
+    msg->textLength = (hINT32)strlen(msg->text);
 
     if(putMsgInArea(&(config->badArea), msg, 0, 0))
     {
@@ -1119,7 +1119,7 @@ void writeMsgToSysop(void)
                         (config->tearline) ? config->tearline : "",
                         (config->origin) ? config->origin : config->name,
                         aka2str(&msgToSysop[i]->origAddr));
-            msgToSysop[i]->textLength = strlen(msgToSysop[i]->text);
+            msgToSysop[i]->textLength = (hINT32)strlen(msgToSysop[i]->text);
 
 #ifdef DO_PERL
             perl_robotmsg(msgToSysop[i], "tosysop");
@@ -1337,7 +1337,7 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                 xstrcat(&tmpmsg->text,
                         "\r Please contact sysop if you think this is a mistake!\r");
                 xscatprintf(&tmpmsg->text, "\r\r--- %s areafix\r", versionStr);
-                tmpmsg->textLength = strlen(tmpmsg->text);
+                tmpmsg->textLength = (hINT32)strlen(tmpmsg->text);
                 processNMMsg(tmpmsg, NULL, getRobotsArea(config), 0, MSGLOCAL);
                 writeEchoTossLogEntry(getRobotsArea(config)->areaName);
                 closeOpenedPkt();
@@ -1363,7 +1363,7 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
 
                     if(msgTime != (time_t)-1)
                     {
-                        diffTime  = labs(globalTime - msgTime);
+                        diffTime  = labs((long)(globalTime - msgTime));
                         diffTime /= (60 * 60 * 24);          /* convert to days */
                         days      = (unsigned int)diffTime;
 
@@ -1626,7 +1626,7 @@ int processNMMsg(s_message * msg,
 
             /* write message */
             if(MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *)bodyStart, len, len,
-                           strlen(ctrlBuf) + 1, (UCHAR *)ctrlBuf) != 0)
+                           (dword)strlen(ctrlBuf) + 1, (UCHAR *)ctrlBuf) != 0)
             {
                 w_log(LL_ERR,
                       "Could not write msg to NetmailArea %s! Check the wholeness of messagebase, please.",
@@ -2247,7 +2247,7 @@ int processDir(char * directory, e_tossSecurity sec)
     }
 
     tossDir    = directory;
-    dirNameLen = strlen(directory);
+    dirNameLen = (int)strlen(directory);
 
 #ifdef NOSLASHES
     directory[dirNameLen - 1] = '\0';
@@ -2394,7 +2394,7 @@ void writeStatLog(void)
             /* then read last personal mail counter and add to actual counter */
             while(fgets(buffer, sizeof(buffer), f))
             {
-                len = strlen(buffer);
+                len = (int)strlen(buffer);
 
                 for(x = 0; x != len; x++)
                 {

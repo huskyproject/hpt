@@ -48,6 +48,7 @@ extern char * linkName;
 /*  buffer for msg->text */
 extern UCHAR * globalBuffer;
 /*  variables for commandline statements */
+extern time_t pkt_aTime;
 extern int cmToss;
 extern int cmScan;
 extern int cmPack;
@@ -58,7 +59,6 @@ extern int cmPause;
 extern int cmQueue;
 extern int noHighWaters;
 extern int pkt_count;       /*  pkt counter */
-extern int pkt_aTime;
 extern int quiet;
 extern e_relinkType cmRelink;
 extern hs_addr afixAddr;

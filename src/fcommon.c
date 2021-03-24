@@ -205,7 +205,7 @@ void cleanEmptyBundles(char * pathName, size_t npos, char * wday)
     husky_DIR * dir;
     char * filename;
     struct stat stbuf;
-    unsigned pathlen;
+    size_t pathlen;
 
     if(npos >= strlen(pathName))
     {

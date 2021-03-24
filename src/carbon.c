@@ -285,7 +285,7 @@ int processCarbonCopy(s_area * area, s_area * echo, s_message * msg, s_carbon ca
 
             if(NULL != (p = strstr(line ? line : text, "\rSEEN-BY:")))
             {
-                i = (size_t)(p - text) + 1;
+                i = (int)((size_t)(p - text) + 1);
             }
         }
 
@@ -297,7 +297,7 @@ int processCarbonCopy(s_area * area, s_area * echo, s_message * msg, s_carbon ca
                  (reason) ? reason : "",
                  (reason) ? "\r" : "",
                  NULLP);
-        msg->textLength = strlen(msg->text);
+        msg->textLength = (hINT32)strlen(msg->text);
     }
 
     xstralloc(&msg->text, i); /*  add i bytes */
