@@ -322,7 +322,7 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
 
             ctrlBuff = (char *)CopyToControlBuf((UCHAR *)textWithoutArea,
                                                 (UCHAR **)&textStart,
-                                                &((unsigned int)textLength));
+                                                (unsigned int *)&textLength);
             /*  textStart is a pointer to the first non-kludge line */
             xmsg = createXMSG(config, msg, NULL, forceattr, tossDir);
             w_log(LL_SRCLINE, "%s:%d writing msg", __FILE__, __LINE__);
