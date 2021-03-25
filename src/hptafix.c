@@ -237,7 +237,7 @@ void autoPassive(void)
                                 time_test = 0;
                             }
 
-                            if(time_test >= (time_t)(config->links[i]->autoPause * 24))
+                            if(time_test >= (time_t)config->links[i]->autoPause * 24)
                             {
                                 w_log(LL_AREAFIX,
                                       "autopause: the file %s is %d days old",
