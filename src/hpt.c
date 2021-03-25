@@ -1174,7 +1174,7 @@ int main(int argc, char ** argv, char ** envp)
 
     if(cmLink == 1)
     {
-        if(linkName && (strstr(linkName, "*") || strstr(linkName, "?")))
+        if(linkName && (strchr(linkName, '*') || strchr(linkName, '?')))
         {
             for(i = 0; i < config->echoAreaCount; i++)
             {
