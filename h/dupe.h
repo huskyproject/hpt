@@ -90,7 +90,7 @@ struct dupeMemory
 typedef struct dupeMemory s_dupeMemory;
 int writeToDupeFile(s_area * area);
 void freeDupeMemory(s_area * area);
-int dupeDetection(s_area * area, const s_message msg);
+int dupeDetection(s_area * area, const s_message * pmsg);
 char * createDupeFileName(s_area * area);
 
 #endif /* DUPE_H */

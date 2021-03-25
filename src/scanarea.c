@@ -189,7 +189,7 @@ void packEMMsg(HMSG hmsg, XMSG * xmsg, s_area * echo)
     makeMsg(hmsg, *xmsg, &msg, echo, 0);
 
     /*  msg is dupe -- return */
-    if(dupeDetection(echo, msg) != 1)
+    if(dupeDetection(echo, &msg) != 1)
     {
         return;
     }

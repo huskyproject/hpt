@@ -749,7 +749,7 @@ char * findEndOfContent(char * msg_text)
     return end;
 } /* findEndOfContent */
 
-int dupeDetection(s_area * area, const s_message msg)
+int dupeDetection(s_area * area, const s_message * pmsg)
 {
     s_dupeMemory * Dupes = area->dupes;
     s_textDupeEntry * entxt;
@@ -765,11 +765,11 @@ int dupeDetection(s_area * area, const s_message msg)
         return 1;                           /*  no dupeCheck, return 1 "no dupe" */
     }
 
-    str = (char *)MsgGetCtrlToken((byte *)msg.text, (byte *)"MSGID:");
+    str = (char *)MsgGetCtrlToken((byte *)pmsg->text, (byte *)"MSGID:");
 
     if(str == NULL) /* Kludge MSGID is not found so make it from crc of the message body */
     {
-        if(msg.text)
+        if(pmsg->text)
         {
             char * hbuf = NULL;    /* buffer */
             char * start;          /* start of content */
@@ -777,7 +777,7 @@ int dupeDetection(s_area * area, const s_message msg)
             char orig = '\0';      /* original character */
             /* isolate content from message text (no control lines) */
             end   = NULL;
-            start = findStartOfContent(msg.text);    /* find start of content */
+            start = findStartOfContent(pmsg->text);    /* find start of content */
 
             if(start)                          /* found start */
             {
@@ -792,16 +792,16 @@ int dupeDetection(s_area * area, const s_message msg)
 
             if(end == NULL)                    /* just in case something went wrong */
             {
-                start = msg.text;              /* use complete message text */
+                start = pmsg->text;              /* use complete message text */
             }
 
             /* create pseudo MSGID */
             xstrscat(&hbuf,
                      start,
-                     msg.fromUserName,
-                     msg.datetime,
-                     msg.toUserName,
-                     msg.subjectLine,
+                     pmsg->fromUserName,
+                     pmsg->datetime,
+                     pmsg->toUserName,
+                     pmsg->subjectLine,
                      NULLP);
             xscatprintf(&str, "MSGID: %08lx", strcrc32(hbuf, 0xFFFFFFFFL));
             nfree(hbuf);
@@ -813,7 +813,7 @@ int dupeDetection(s_area * area, const s_message msg)
         }
         else
         {
-            return 1; /*  without msg.text - message is empty, no dupeCheck */
+            return 1; /*  without pmsg->text - message is empty, no dupeCheck */
         }
     }
 
@@ -841,9 +841,9 @@ int dupeDetection(s_area * area, const s_message msg)
             enhash = safe_malloc(sizeof(s_hashDupeEntry));
             strnzcpy(hashBuf, area->areaName, AREANAMELEN);
             /*
-               strnzcpy(hashBuf, msg.fromUserName, XMSG_FROM_SIZE);
-               strnzcat(hashBuf, msg.toUserName,   XMSG_TO_SIZE);
-               strnzcat(hashBuf, msg.subjectLine,  XMSG_SUBJ_SIZE);
+               strnzcpy(hashBuf, pmsg->fromUserName, XMSG_FROM_SIZE);
+               strnzcat(hashBuf, pmsg->toUserName,   XMSG_TO_SIZE);
+               strnzcat(hashBuf, pmsg->subjectLine,  XMSG_SUBJ_SIZE);
              */
             strnzcat(hashBuf, str + MSGIDPOS, 3 * XMSG_TO_SIZE);
             enhash->CrcOfDupe       = strcrc32(hashBuf, 0xFFFFFFFFL);
@@ -855,9 +855,9 @@ int dupeDetection(s_area * area, const s_message msg)
             enhashM = safe_malloc(sizeof(s_hashMDupeEntry));
             strnzcpy(hashBuf, area->areaName, AREANAMELEN);
             /*
-               strnzcpy(hashBuf, msg.fromUserName, XMSG_FROM_SIZE);
-               strnzcat(hashBuf, msg.toUserName,   XMSG_TO_SIZE);
-               strnzcat(hashBuf, msg.subjectLine,  XMSG_SUBJ_SIZE);
+               strnzcpy(hashBuf, pmsg->fromUserName, XMSG_FROM_SIZE);
+               strnzcat(hashBuf, pmsg->toUserName,   XMSG_TO_SIZE);
+               strnzcat(hashBuf, pmsg->subjectLine,  XMSG_SUBJ_SIZE);
              */
             strnzcat(hashBuf, str + MSGIDPOS, 3 * XMSG_TO_SIZE);
             enhashM->msgid = safe_malloc(strlen(str) + 1 - MSGIDPOS);
@@ -879,9 +879,9 @@ int dupeDetection(s_area * area, const s_message msg)
             enhash = safe_malloc(sizeof(s_hashDupeEntry));
             strnzcpy(hashBuf, area->areaName, AREANAMELEN);
             /*
-               strnzcat(hashBuf, msg.fromUserName, XMSG_FROM_SIZE);
-               strnzcat(hashBuf, msg.toUserName,   XMSG_TO_SIZE);
-               strnzcat(hashBuf, msg.subjectLine,  XMSG_SUBJ_SIZE);
+               strnzcat(hashBuf, pmsg->fromUserName, XMSG_FROM_SIZE);
+               strnzcat(hashBuf, pmsg->toUserName,   XMSG_TO_SIZE);
+               strnzcat(hashBuf, pmsg->subjectLine,  XMSG_SUBJ_SIZE);
              */
             strnzcat(hashBuf, str + MSGIDPOS, 3 * XMSG_TO_SIZE);
             enhash->CrcOfDupe       = strcrc32(hashBuf, 0xFFFFFFFFL);

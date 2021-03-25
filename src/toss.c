@@ -1414,7 +1414,7 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
 
             if(not_dupe)
             {
-                not_dupe = dupeDetection(echo, *msg);
+                not_dupe = dupeDetection(echo, msg);
             }
 
             if(not_dupe)
@@ -1550,7 +1550,7 @@ int processNMMsg(s_message * msg,
         }
     }
 
-    if(dupeDetection(area, *msg) == 0)
+    if(dupeDetection(area, msg) == 0)
     {
         /*  msg is dupe */
         if(area->dupeCheck == dcMove)
@@ -3473,7 +3473,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
 
     if(checkAreaLink(echo, pktOrigAddr, 0) == 0 || force)
     {
-        if(dupeDetection(echo, msg) == 1 || noexp)
+        if(dupeDetection(echo, &msg) == 1 || noexp)
         {
             /*  no dupe or toss whithout export to links */
             if(config->carbonCount != 0)
