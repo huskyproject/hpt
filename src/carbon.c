@@ -431,6 +431,12 @@ int carbonCopy(s_message * msg, XMSG * xmsg, s_area * echo)
                     }
                 }
 
+                if (cb->str == NULL)
+                {
+                    w_log(LL_ERR, "The pattern is NULL");
+                    break;
+                }
+
                 /* cb->str is substring, so pattern must be "*str*" */
                 pattern  = safe_malloc(strlen(cb->str) + 3);
                 *pattern = '*';
