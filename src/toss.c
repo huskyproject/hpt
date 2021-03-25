@@ -705,7 +705,7 @@ void forwardToLinks(s_message * msg,
         /*  check packet size */
         if(newLinks[i]->link->pktFile != NULL && newLinks[i]->link->pktSize != 0)
         {
-            len = (ULONG)(newLinks[i]->link->pkt ? ftell(newLinks[i]->link->pkt) : 
+            len = (ULONG)(newLinks[i]->link->pkt ? ftell(newLinks[i]->link->pkt) :
                           fsize(newLinks[i]->link->pktFile));
 
             if(len >= (newLinks[i]->link->pktSize * 1024L)) /* Stop writing to pkt */
@@ -1029,10 +1029,10 @@ void makeMsgToSysop(char * areaName, hs_addr fromAddr, ps_addr uplinkAddr)
                              NULLP);
                 }
 
-                xstrscat(&(msgToSysop[i]->text), "Action   Name", print_ch(49, ' '), "By\r",
+                xstrscat(&(msgToSysop[i]->text), "Action   Name", repeat_char(49, ' '), "By\r",
                          NULLP);
                 /*  Shitty static variables .... */
-                xstrscat(&(msgToSysop[i]->text), print_ch(79, '-'), "\r", NULLP);
+                xstrscat(&(msgToSysop[i]->text), repeat_char(79, '-'), "\r", NULLP);
                 msgToSysop[i]->recode |= (REC_HDR | REC_TXT);
                 w_log(LL_NETMAIL, "Created msg to sysop");
             }
@@ -1058,7 +1058,7 @@ void makeMsgToSysop(char * areaName, hs_addr fromAddr, ps_addr uplinkAddr)
                 {
                     xstrscat(&(msgToSysop[i]->text), strbeg, "\r", NULLP);
                     nfree(strbeg);
-                    xstrcat(&strbeg, print_ch(9, ' '));
+                    xstrcat(&strbeg, repeat_char(9, ' '));
                 }
                 else
                 {
@@ -1074,7 +1074,7 @@ void makeMsgToSysop(char * areaName, hs_addr fromAddr, ps_addr uplinkAddr)
             {
                 xstrscat(&(msgToSysop[i]->text),
                          "\r",
-                         print_ch(79 - strlen(buff), ' '),
+                         repeat_char(79 - strlen(buff), ' '),
                          buff,
                          "\r",
                          NULLP);
@@ -1082,7 +1082,7 @@ void makeMsgToSysop(char * areaName, hs_addr fromAddr, ps_addr uplinkAddr)
             else if(strlen(strbeg) < 62 && strlen(buff) < 79 - 62)   /*  most beautiful */
             {
                 xstrscat(&(msgToSysop[i]->text),
-                         print_ch(62 - strlen(strbeg), ' '),
+                         repeat_char(62 - strlen(strbeg), ' '),
                          buff,
                          "\r",
                          NULLP);
@@ -1090,7 +1090,7 @@ void makeMsgToSysop(char * areaName, hs_addr fromAddr, ps_addr uplinkAddr)
             else
             {
                 xstrscat(&(msgToSysop[i]->text),
-                         print_ch(79 - strlen(strbeg) - strlen(buff), ' '),
+                         repeat_char(79 - strlen(strbeg) - strlen(buff), ' '),
                          buff,
                          "\r",
                          NULLP);
