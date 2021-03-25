@@ -197,6 +197,7 @@ int writeEntry(char * p_entry)
     switch(config->typeDupeBase)
     {
         case hashDupes:
+        case commonDupeBase:
             enhash = entry;
 
             if((diff = currtime - enhash->TimeStampOfDupe) < maxTimeLifeDupesInArea)
@@ -204,7 +205,6 @@ int writeEntry(char * p_entry)
                 fwrite(enhash, sizeof(s_hashDupeEntry), 1, fDupe);
                 DupeCountInHeader++;
             }
-
             break;
 
         case hashDupesWmsgid:
@@ -226,7 +226,6 @@ int writeEntry(char * p_entry)
 
                 DupeCountInHeader++;
             }
-
             break;
 
         case textDupes:
@@ -272,18 +271,6 @@ int writeEntry(char * p_entry)
 
                 DupeCountInHeader++;
             }
-
-            break;
-
-        case commonDupeBase:
-            enhash = entry;
-
-            if((diff = currtime - enhash->TimeStampOfDupe) < maxTimeLifeDupesInArea)
-            {
-                fwrite(enhash, sizeof(s_hashDupeEntry), 1, fDupe);
-                DupeCountInHeader++;
-            }
-
             break;
     } /* switch */
     return 1;
@@ -300,6 +287,7 @@ int deleteEntry(char * entry)
         switch(config->typeDupeBase)
         {
             case hashDupes:
+            case commonDupeBase:
                 enhash = (s_hashDupeEntry *)entry;
                 nfree(enhash);
                 break;
@@ -314,11 +302,6 @@ int deleteEntry(char * entry)
                 entxt = (s_textDupeEntry *)entry;
                 nfree(entxt->msgid);
                 nfree(entxt);
-                break;
-
-            case commonDupeBase:
-                enhash = (s_hashDupeEntry *)entry;
-                nfree(enhash);
                 break;
         }
     }
@@ -399,6 +382,7 @@ static void doReading(FILE * f, s_dupeMemory * mem)
         switch(config->typeDupeBase)
         {
             case hashDupes:
+            case commonDupeBase:
                 enhash = (s_hashDupeEntry *)safe_malloc(sizeof(s_hashDupeEntry));
                 xfread(enhash, sizeof(s_hashDupeEntry), 1, f);
                 tree_add(&(mem->avlTree), compareEntries, (char *)enhash, deleteEntry);
@@ -457,13 +441,6 @@ static void doReading(FILE * f, s_dupeMemory * mem)
                 {
                     tree_add(&(mem->avlTree), compareEntries, (char *)entxt, deleteEntry);
                 }
-
-                break;
-
-            case commonDupeBase:
-                enhash = (s_hashDupeEntry *)safe_malloc(sizeof(s_hashDupeEntry));
-                xfread(enhash, sizeof(s_hashDupeEntry), 1, f);
-                tree_add(&(mem->avlTree), compareEntries, (char *)enhash, deleteEntry);
                 break;
         } /* switch */
     }
