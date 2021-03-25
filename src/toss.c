@@ -1710,7 +1710,7 @@ int processMsg(s_message * msg, s_pktHeader * pktHeader, int secure)
 
         if(config->areafixFromPkt &&
            isOurAka(config, msg->destAddr) &&
-           strlen(msg->toUserName) > 0 &&
+           msg->toUserName[0] != '\0' &&
            findInStrArray(robot->names, msg->toUserName) >= 0)
         {
             rc = processAreaFix(msg, pktHeader, 0);

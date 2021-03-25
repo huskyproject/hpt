@@ -214,7 +214,7 @@ int writeEntry(char * p_entry)
             {
                 fwrite(enhashM, sizeof(time_t) + sizeof(UINT32), 1, fDupe);
 
-                if((enhashM->msgid != NULL) && (0 < strlen(enhashM->msgid)))
+                if(enhashM->msgid != NULL && enhashM->msgid[0] != '\0')
                 {
                     fputc((int)strlen(enhashM->msgid), fDupe);
                     fputs(enhashM->msgid, fDupe);
@@ -260,7 +260,7 @@ int writeEntry(char * p_entry)
                  */
                 fputc(0, fDupe);
 
-                if((entxt->msgid != NULL) && (0 < strlen(entxt->msgid)))
+                if(entxt->msgid != NULL && entxt->msgid[0] != '\0')
                 {
                     fputc((int)strlen(entxt->msgid), fDupe);
                     fputs(entxt->msgid, fDupe);
