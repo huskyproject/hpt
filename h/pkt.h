@@ -60,7 +60,7 @@ FILE * createPkt(char * filename, s_pktHeader * header);
    FZ:     createPkt creates the pkt and writes the header in a way conforming to
           FSC0039 (2+)
  */
-int writeMsgToPkt(FILE * pkt, s_message msg);
+int writeMsgToPkt(FILE * pkt, s_message * pmsg);
 
 /*DOC
    Input:  pkt is a pointer to a file opened by createPkt

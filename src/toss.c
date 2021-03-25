@@ -751,7 +751,7 @@ void forwardToLinks(s_message * msg,
         msg->destAddr = header.destAddr;
         /*  .. and must come from us */
         msg->origAddr = header.origAddr;
-        rc           += writeMsgToPkt(newLinks[i]->link->pkt, *msg);
+        rc           += writeMsgToPkt(newLinks[i]->link->pkt, msg);
 
         if(rc)
         {

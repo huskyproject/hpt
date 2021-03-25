@@ -1,12 +1,12 @@
 %global ver_major 1
 %global ver_minor 9
 %global ver_patch 0
-%global reldate 20210314
+%global reldate 20210325
 %global reltype C
 # may be one of: C (current), R (release), S (stable)
 
 # release number for Release: header
-%global relnum 4
+%global relnum 1
 
 # on default static application binary is built but using
 # 'rpmbuild --without static' produces an application binary that uses

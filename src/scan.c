@@ -796,7 +796,7 @@ int packMsg(HMSG SQmsg, XMSG * xmsg, s_area * area)
             makePktHeader(virtualLink, &header);
             pkt = openPktForAppending(arcNetmail ? virtualLink->pktFile : virtualLink->floFile,
                                       &header);
-            writeMsgToPkt(pkt, msg);
+            writeMsgToPkt(pkt, &msg);
             closeCreatedPkt(pkt);
             {
                 char * strorigaddr = aka2str5d(msg.origAddr);
@@ -882,7 +882,7 @@ int packMsg(HMSG SQmsg, XMSG * xmsg, s_area * area)
                 }
 
                 pkt = openPktForAppending(arcNetmail ? link->pktFile : link->floFile, &header);
-                writeMsgToPkt(pkt, msg);
+                writeMsgToPkt(pkt, &msg);
                 closeCreatedPkt(pkt);
                 {
                     char * strOA = aka2str5d(msg.origAddr);

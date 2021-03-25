@@ -100,7 +100,7 @@ int main(void)
         msg.subjectLine = (char *)malloc(5);
         strcpy(msg.subjectLine, "xxx");
         msg.textLength = strlen(msg.text);
-        writeMsgToPkt(pkt, msg);
+        writeMsgToPkt(pkt, &msg);
         closeCreatedPkt(pkt);
     }
     else

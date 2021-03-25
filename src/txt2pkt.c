@@ -744,7 +744,7 @@ int main(int argc, char * argv[])
             recodeToTransportCharset((char *)msg.toUserName);
         }
 
-        writeMsgToPkt(pkt, msg);
+        writeMsgToPkt(pkt, &msg);
         closeCreatedPkt(pkt);
 /*      sleep(1); */
     }

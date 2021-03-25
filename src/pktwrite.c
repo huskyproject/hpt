@@ -205,7 +205,7 @@ int writeMsgToPkt(FILE * pkt, s_message msg)
 
 #endif /* if 0 */
 
-int writeMsgToPkt(FILE * pkt, s_message msg)
+int writeMsgToPkt(FILE * pkt, s_message * pmsg)
 {
     size_t x, y, z;
     byte * buf;
@@ -213,28 +213,28 @@ int writeMsgToPkt(FILE * pkt, s_message msg)
     size_t textLen;
     size_t rc;
 
-    x = strlen(msg.toUserName);
+    x = strlen(pmsg->toUserName);
 
     if(x >= XMSG_TO_SIZE)
     {
         x = XMSG_TO_SIZE - 1;
     }
 
-    y = strlen(msg.fromUserName);
+    y = strlen(pmsg->fromUserName);
 
     if(y >= XMSG_FROM_SIZE)
     {
         y = XMSG_FROM_SIZE - 1;
     }
 
-    z = strlen(msg.subjectLine);
+    z = strlen(pmsg->subjectLine);
 
     if(z >= XMSG_SUBJ_SIZE)
     {
         z = XMSG_SUBJ_SIZE - 1;
     }
 
-    textLen = strlen(msg.text);
+    textLen = strlen(pmsg->text);
     buf     = (byte *)safe_malloc(38 + x + y + z + textLen);
     pbuf    = buf;
 
@@ -243,39 +243,39 @@ int writeMsgToPkt(FILE * pkt, s_message msg)
     pbuf[1] = '\000';
     pbuf   += 2;
     /*  net/node info (8 bytes) */
-    put_word(pbuf, (UINT16)msg.origAddr.node);
+    put_word(pbuf, (UINT16)pmsg->origAddr.node);
     pbuf += 2;
-    put_word(pbuf, (UINT16)msg.destAddr.node);
+    put_word(pbuf, (UINT16)pmsg->destAddr.node);
     pbuf += 2;
-    put_word(pbuf, (UINT16)msg.origAddr.net);
+    put_word(pbuf, (UINT16)pmsg->origAddr.net);
     pbuf += 2;
-    put_word(pbuf, (UINT16)msg.destAddr.net);
+    put_word(pbuf, (UINT16)pmsg->destAddr.net);
     pbuf += 2;
     /*  attribute info (2 bytes) */
-    put_word(pbuf, (UINT16)msg.attributes);
+    put_word(pbuf, (UINT16)pmsg->attributes);
     pbuf += 2;
     /*  cost info (2 bytes) */
     put_word(pbuf, 0);
     pbuf += 2;
     /*  date info (20 bytes) */
-    memmove(pbuf, msg.datetime, 20);
+    memmove(pbuf, pmsg->datetime, 20);
     pbuf += 20;
     /*  write userNames */
-    memmove(pbuf, msg.toUserName, x);
+    memmove(pbuf, pmsg->toUserName, x);
     pbuf   += x;
     pbuf[0] = '\0';
     pbuf++;             /*  1 byte */
-    memmove(pbuf, msg.fromUserName, y);
+    memmove(pbuf, pmsg->fromUserName, y);
     pbuf   += y;
     pbuf[0] = '\0';
     pbuf++;             /*  1 byte */
     /*  write subject */
-    memmove(pbuf, msg.subjectLine, z);
+    memmove(pbuf, pmsg->subjectLine, z);
     pbuf   += z;
     pbuf[0] = '\0';
     pbuf++;             /*  1 byte */
     /*  write text */
-    memmove(pbuf, msg.text, textLen);
+    memmove(pbuf, pmsg->text, textLen);
     pbuf   += textLen;
     pbuf[0] = '\0';
     pbuf++;             /*  1 byte */
