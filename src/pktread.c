@@ -550,6 +550,7 @@ flag_t parse_ftsc_date(struct tm * ptm, char * pdatestr)
                             {
                                 psecond = NULL;
 
+                                /*** fixseadog == 0 here
                                 if(fixseadog)
                                 {
                                     rval = FTSC_SEADOG;
@@ -558,6 +559,8 @@ flag_t parse_ftsc_date(struct tm * ptm, char * pdatestr)
                                 {
                                     rval = 0;
                                 }
+                                ***/
+                                rval = 0;
                             }
                         }
                     }
