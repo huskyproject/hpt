@@ -138,6 +138,7 @@ int compareEntries(char * p_e1, char * p_e2)
     switch(config->typeDupeBase)
     {
         case hashDupes:
+        case commonDupeBase:
             ahash = e1;
             bhash = e2;
 
@@ -153,7 +154,6 @@ int compareEntries(char * p_e1, char * p_e2)
             {
                 rc = 0;
             }
-
             break;
 
         case hashDupesWmsgid:
@@ -172,32 +172,12 @@ int compareEntries(char * p_e1, char * p_e2)
             {
                 rc = -1;
             }
-
             break;
 
         case textDupes:
             atxt = e1;
             btxt = e2;
             rc   = sstrcmp(atxt->msgid, btxt->msgid);
-            break;
-
-        case commonDupeBase:
-            ahash = e1;
-            bhash = e2;
-
-            if(ahash->CrcOfDupe > bhash->CrcOfDupe)
-            {
-                rc = 1;
-            }
-            else if(ahash->CrcOfDupe < bhash->CrcOfDupe)
-            {
-                rc = -1;
-            }
-            else
-            {
-                rc = 0;
-            }
-
             break;
     } /* switch */
     return rc;
