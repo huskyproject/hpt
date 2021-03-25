@@ -3033,18 +3033,16 @@ void tossTempOutbound(char * directory)
     s_pktHeader * header = NULL;
     s_link * link        = NULL;
     size_t l;
-
-#ifdef NOSLASHES
-    int dirNameLen;
-#endif
+    size_t dirNameLen;
 
     if(directory == NULL)
     {
         return;
     }
 
-#ifdef NOSLASHES
     dirNameLen = strlen(directory);
+
+#ifdef NOSLASHES
     directory[dirNameLen - 1] = '\0';
 #endif
 
@@ -3065,7 +3063,7 @@ void tossTempOutbound(char * directory)
         if(l > 4 &&
            (stricmp(filename + l - 4, ".pkt") == 0 || stricmp(filename + l - 4, ".qqq") == 0))
         {
-            dummy = (char *)safe_malloc(strlen(directory) + l + 1);
+            dummy = (char *)safe_malloc(dirNameLen + l + 1);
             strcpy(dummy, directory);
             strcat(dummy, filename);
             fix_qqq(dummy);
