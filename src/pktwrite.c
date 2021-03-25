@@ -73,6 +73,8 @@ FILE * createPkt(char * filename, s_pktHeader * header)
 
         if(pkt != NULL)
         {
+            size_t pwdlen = strlen((char*)header->pktPassword);
+
             fputUINT16(pkt, (UINT16)header->origAddr.node);
             fputUINT16(pkt, (UINT16)header->destAddr.node);
             /*  create pkt time */
@@ -102,12 +104,12 @@ FILE * createPkt(char * filename, s_pktHeader * header)
 #endif
 
             /*  write PKT pwd, if strlen(pwd) < 8, fill the rest with \0 */
-            for(i = 0; i < strlen((char *)header->pktPassword); i++)
+            for(i = 0; i < pwdlen; i++)
             {
                 fputc(header->pktPassword[i], pkt);
             }
 
-            for(i = strlen((char *)header->pktPassword); i < 8; i++)
+            for(i = pwdlen; i < 8; i++)
             {
                 fputc(0, pkt);
             }
