@@ -492,6 +492,7 @@ int carbonCopy(s_message * msg, XMSG * xmsg, s_area * echo)
 
                 if(echo->group != NULL)
                 {
+                    size_t grouplen = strlen(echo->group);
                     /* cb->str for example Fido,xxx,.. */
                     testptr = cb->str;
 
@@ -502,9 +503,9 @@ int carbonCopy(s_message * msg, XMSG * xmsg, s_area * echo)
                             break;
                         }
 
-                        testptr += strlen(echo->group);
+                        testptr += grouplen;
                         result   = (*testptr == ',' || *testptr == ' ' || !*testptr);
-                        testptr -= strlen(echo->group);
+                        testptr -= grouplen;
                         ++testptr;
                     }
                     while(!result);
