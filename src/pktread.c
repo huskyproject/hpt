@@ -737,12 +737,7 @@ int readMsgFromPkt(FILE * pkt, s_pktHeader * header, s_message ** message)
 
     len = fgetsUntil0((UCHAR *)globalBuffer, BUFFERSIZE + 1, pkt, NULL);
 
-    if(len == 1)
-    {
-        w_log(LL_ERR, "wrong msg header: toUserName is empty");
-        badmsg++;
-    }
-    else if(len > XMSG_TO_SIZE)
+    if(len > XMSG_TO_SIZE)
     {
         if(config->intab)
         {
@@ -766,12 +761,7 @@ int readMsgFromPkt(FILE * pkt, s_pktHeader * header, s_message ** message)
     xstrcat(&msg->toUserName, (char *)globalBuffer);
     len = fgetsUntil0((UCHAR *)globalBuffer, BUFFERSIZE + 1, pkt, NULL);
 
-    if(len == 1)
-    {
-        w_log(LL_ERR, "wrong msg header: fromUserName is empty");
-        badmsg++;
-    }
-    else if(len > XMSG_FROM_SIZE)
+    if(len > XMSG_FROM_SIZE)
     {
         if(config->intab)
         {
