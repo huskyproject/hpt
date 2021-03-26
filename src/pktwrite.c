@@ -205,7 +205,7 @@ int writeMsgToPkt(FILE * pkt, s_message msg)
 
 #endif /* if 0 */
 
-int writeMsgToPkt(FILE * pkt, s_message * pmsg)
+int writeMsgToPkt(FILE * pkt, const s_message * pmsg)
 {
     size_t x, y, z;
     byte * buf;
@@ -213,26 +213,9 @@ int writeMsgToPkt(FILE * pkt, s_message * pmsg)
     size_t textLen;
     size_t rc;
 
-    x = strlen(pmsg->toUserName);
-
-    if(x >= XMSG_TO_SIZE)
-    {
-        x = XMSG_TO_SIZE - 1;
-    }
-
-    y = strlen(pmsg->fromUserName);
-
-    if(y >= XMSG_FROM_SIZE)
-    {
-        y = XMSG_FROM_SIZE - 1;
-    }
-
-    z = strlen(pmsg->subjectLine);
-
-    if(z >= XMSG_SUBJ_SIZE)
-    {
-        z = XMSG_SUBJ_SIZE - 1;
-    }
+    x = strnlen(pmsg->toUserName, XMSG_TO_SIZE - 1);
+    y = strnlen(pmsg->fromUserName, XMSG_FROM_SIZE - 1);
+    z = strnlen(pmsg->subjectLine, XMSG_SUBJ_SIZE - 1);
 
     textLen = strlen(pmsg->text);
     buf     = (byte *)safe_malloc(38 + x + y + z + textLen);
