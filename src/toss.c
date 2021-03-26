@@ -3377,7 +3377,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
     char * ptmp = NULL, * line = NULL, * areaName = NULL, * area = NULL, noexp = 0;
     s_link * link = NULL;
 
-    makeMsg(hmsg, xmsg, &msg, &(config->badArea), 2);
+    makeMsg(hmsg, &xmsg, &msg, &(config->badArea), 2);
     memset(&pktOrigAddr, '\0', sizeof(hs_addr));
     statToss.msgs++; /*  really processed one more msg */
 

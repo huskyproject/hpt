@@ -66,7 +66,7 @@
 #include <hptperl.h>
 #endif
 
-void makeMsg(HMSG hmsg, XMSG xmsg, s_message * msg, s_area * echo, int action)
+void makeMsg(HMSG hmsg, const XMSG * pxmsg, s_message * msg, s_area * echo, int action)
 {
     /*  action == 0 - scan area */
     /*  action == 1 - rescan area */
@@ -78,30 +78,30 @@ void makeMsg(HMSG hmsg, XMSG xmsg, s_message * msg, s_area * echo, int action)
     UCHAR tid[] = "TID";
 
     memset(msg, '\0', sizeof(s_message));
-    msg->origAddr.zone  = xmsg.orig.zone;
-    msg->origAddr.net   = xmsg.orig.net;
-    msg->origAddr.node  = xmsg.orig.node;
-    msg->origAddr.point = xmsg.orig.point;
-    msg->destAddr.zone  = xmsg.dest.zone;
-    msg->destAddr.net   = xmsg.dest.net;
-    msg->destAddr.node  = xmsg.dest.node;
-    msg->destAddr.point = xmsg.dest.point;
-    msg->attributes     = xmsg.attr & ~MSGLOCAL; /*  msg should not have MSGLOCAL bit set */
+    msg->origAddr.zone  = pxmsg->orig.zone;
+    msg->origAddr.net   = pxmsg->orig.net;
+    msg->origAddr.node  = pxmsg->orig.node;
+    msg->origAddr.point = pxmsg->orig.point;
+    msg->destAddr.zone  = pxmsg->dest.zone;
+    msg->destAddr.net   = pxmsg->dest.net;
+    msg->destAddr.node  = pxmsg->dest.node;
+    msg->destAddr.point = pxmsg->dest.point;
+    msg->attributes     = pxmsg->attr & ~MSGLOCAL; /*  msg should not have MSGLOCAL bit set */
 
     /* if present, use the original DateTime string when exporting to a .PKT */
 
-    if (*xmsg.__ftsc_date)
+    if (*pxmsg->__ftsc_date)
     {
-        memcpy(msg->datetime, xmsg.__ftsc_date, sizeof xmsg.__ftsc_date);
+        memcpy(msg->datetime, pxmsg->__ftsc_date, sizeof pxmsg->__ftsc_date);
     }
     else
     {
-        sc_time((union stamp_combo *)&(xmsg.date_written), (char *)msg->datetime);
+        sc_time((union stamp_combo *)&(pxmsg->date_written), (char *)msg->datetime);
     }
 
-    xstrcat(&msg->toUserName, (char *)xmsg.to);
-    xstrcat(&msg->fromUserName, (char *)xmsg.from);
-    xstrcat(&msg->subjectLine, (char *)xmsg.subj);
+    xstrcat(&msg->toUserName, (char *)pxmsg->to);
+    xstrcat(&msg->fromUserName, (char *)pxmsg->from);
+    xstrcat(&msg->subjectLine, (char *)pxmsg->subj);
     /*  make msgtext */
     /*  convert kludgeLines */
     ctrlLen  = MsgGetCtrlLen(hmsg);
@@ -186,7 +186,7 @@ void packEMMsg(HMSG hmsg, XMSG * xmsg, s_area * echo)
     s_message msg;
     s_message * messCC;
 
-    makeMsg(hmsg, *xmsg, &msg, echo, 0);
+    makeMsg(hmsg, xmsg, &msg, echo, 0);
 
     /*  msg is dupe -- return */
     if(dupeDetection(echo, &msg) != 1)
@@ -300,7 +300,7 @@ void scanEMArea(s_area * echo)
 } /* scanEMArea */
 
 /* rescan functions taken from areafix.c */
-int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area * echo, s_arealink * arealink)
+int repackEMMsg(HMSG hmsg, const XMSG * pxmsg, s_area * echo, s_arealink * arealink)
 {
     s_message msg;
     UINT32 j = 0;
@@ -317,7 +317,7 @@ int repackEMMsg(HMSG hmsg, XMSG xmsg, s_area * echo, s_arealink * arealink)
     }
 
     links[0] = arealink;
-    makeMsg(hmsg, xmsg, &msg, echo, 1);
+    makeMsg(hmsg, pxmsg, &msg, echo, 1);
 
     /* translating name of the area to uppercase */
     while(msg.text[j] != '\r')
@@ -394,7 +394,7 @@ int rescanEMArea(s_area * echo, s_arealink * arealink, long rescanCount, long re
                 if(hmsg != NULL)   /*  msg# does not exist */
                 {
                     MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-                    rc += repackEMMsg(hmsg, xmsg, echo, arealink);
+                    rc += repackEMMsg(hmsg, &xmsg, echo, arealink);
                     MsgCloseMsg(hmsg);
                 }
             }
@@ -458,7 +458,7 @@ int rescanEMArea(s_area * echo, s_arealink * arealink, long rescanCount, long re
             if(hmsg != NULL)       /*  msg# does not exist */
             {
                 MsgReadMsg(hmsg, &xmsg, 0, 0, NULL, 0, NULL);
-                rc += repackEMMsg(hmsg, xmsg, echo, arealink);
+                rc += repackEMMsg(hmsg, &xmsg, echo, arealink);
                 MsgCloseMsg(hmsg);
             }
         }
