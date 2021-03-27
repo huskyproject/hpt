@@ -96,8 +96,8 @@ char * createControlText(s_seenBy seenBys[], UINT seenByCount, char * lineHeadin
         sprintf(addr2d, "%u/%u", seenBys[0].net, seenBys[0].node);
         text    = (char *)safe_malloc((size_t)size);
         text[0] = '\0';
-        strncpy(line, lineHeading, size);
-        strncat(line, addr2d, size);
+        strncpy(line, lineHeading, strnlen(lineHeading, size - 1));
+        strncat(line, addr2d, strnlen(addr2d, size - 1 - strlen(line)));
 
         for(i = 1; i < seenByCount; i++)
         {
