@@ -935,12 +935,12 @@ void process_input_file(struct post_parameters * p, FILE * input, s_message * ms
 
     if(p->uue)
     {
-        msg_len += xscatprintf(&msg->text,
-                               "\rsection %d of %d of file %s < %s >\r\r",
-                               *part + 1,
-                               p->sections,
-                               p->fname,
-                               versionStr);
+        msg_len += (size_t)xscatprintf(&msg->text,
+                                       "\rsection %d of %d of file %s < %s >\r\r",
+                                       *part + 1,
+                                       p->sections,
+                                       p->fname,
+                                       versionStr);
 
         if(*part > 0)
         {
@@ -952,7 +952,7 @@ void process_input_file(struct post_parameters * p, FILE * input, s_message * ms
         if(p->temp_file != NULL) /* Load uu-code from temp file */
         {
             size_t to_read, was_read;
-            to_read            = p->sectioning[*part + 1] - p->sectioning[*part];
+            to_read            = (size_t)(p->sectioning[*part + 1] - p->sectioning[*part]);
             msg->text          = srealloc(msg->text, msg_len + to_read + 1);
             msg_len           += was_read = fread(msg->text + msg_len, 1, to_read, input);
             msg->text[msg_len] = '\0';
@@ -965,7 +965,7 @@ void process_input_file(struct post_parameters * p, FILE * input, s_message * ms
         }
         else /* Encode on the fly based on size prediction */
         {
-            msg_len = uuencode2buf(p, &msg->text, (UINT)msg_len, input, *part);
+            msg_len = (size_t)uuencode2buf(p, &msg->text, (UINT)msg_len, input, *part);
         }
 
         /* msg_len += xscatprintf(&msg->text,"section %d end\r", *part + 1); */
