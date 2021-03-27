@@ -322,7 +322,7 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
 
             ctrlBuff = (char *)CopyToControlBuf((UCHAR *)textWithoutArea,
                                                 (UCHAR **)&textStart,
-                                                (unsigned int *)&textLength);
+                                                &textLength);
             /*  textStart is a pointer to the first non-kludge line */
             xmsg = createXMSG(config, msg, NULL, forceattr, tossDir);
             w_log(LL_SRCLINE, "%s:%d writing msg", __FILE__, __LINE__);
@@ -1529,7 +1529,7 @@ int processNMMsg(s_message * msg,
 {
     HAREA netmail;
     HMSG msgHandle;
-    UINT len         = 0;
+    size_t len         = 0;
     char * bodyStart = NULL;              /*  msg-body without kludgelines start */
     char * ctrlBuf   = NULL;              /*  Kludgelines */
     XMSG msgHeader;
@@ -1625,7 +1625,7 @@ int processNMMsg(s_message * msg,
             ctrlBuf = (char *)CopyToControlBuf((UCHAR *)msg->text, (UCHAR **)&bodyStart, &len);
 
             /* write message */
-            if(MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *)bodyStart, len, len,
+            if(MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *)bodyStart, (dword)len, (dword)len,
                            (dword)strlen(ctrlBuf) + 1, (UCHAR *)ctrlBuf) != 0)
             {
                 w_log(LL_ERR,
