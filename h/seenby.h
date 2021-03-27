@@ -58,7 +58,7 @@ void createNewLinkArray(s_seenBy * seenBys,
                         s_arealink *** newLinks,
                         s_arealink *** zoneLinks,
                         s_arealink *** otherLinks,
-                        hs_addr pktOrigAddr);
+                        const hs_addr * pktOrigAddr);
 void createFilteredSeenByArray(s_seenBy * seenBys,
                                UINT seenByCount,
                                s_seenBy ** newSeenBys,

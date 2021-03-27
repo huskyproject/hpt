@@ -825,7 +825,7 @@ void forwardMsgToLinks(s_area * echo, s_message * msg, hs_addr pktOrigAddr)
     createSeenByArrayFromMsg(echo, msg, &seenBys, &seenByCount);
     createPathArrayFromMsg(msg, &path, &pathCount);
     createNewLinkArray(seenBys, seenByCount, echo, &newLinks, &zoneLinks, &otherLinks,
-                       pktOrigAddr);
+                       &pktOrigAddr);
 
     if(newLinks)
     {

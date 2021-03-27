@@ -481,7 +481,7 @@ void createNewLinkArray(s_seenBy * seenBys,
                         s_arealink *** newLinks,
                         s_arealink *** zoneLinks,
                         s_arealink *** otherLinks,
-                        hs_addr pktOrigAddr)
+                        const hs_addr * pktOrigAddr)
 {
     UINT i, lFound = 0, zFound = 0, oFound = 0;
 
@@ -492,7 +492,7 @@ void createNewLinkArray(s_seenBy * seenBys,
     for(i = 0; i < echo->downlinkCount; i++)
     {
         /*  is the link in SEEN-BYs? */
-        if(checkLink(seenBys, seenByCount, echo->downlinks[i]->link, pktOrigAddr, echo) != 0)
+        if(checkLink(seenBys, seenByCount, echo->downlinks[i]->link, *pktOrigAddr, echo) != 0)
         {
             continue;
         }
@@ -503,7 +503,7 @@ void createNewLinkArray(s_seenBy * seenBys,
             continue;
         }
 
-        if(pktOrigAddr.zone == echo->downlinks[i]->link->hisAka.zone)
+        if(pktOrigAddr->zone == echo->downlinks[i]->link->hisAka.zone)
         {
             /*  links with same zone */
             if(echo->downlinks[i]->link->reducedSeenBy)
