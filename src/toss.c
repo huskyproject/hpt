@@ -2296,6 +2296,21 @@ int processDir(char * directory, e_tossSecurity sec)
             if(stat((files[nfiles - 1]).fileName, &st) == 0)
             {
                 (files[nfiles - 1]).fileTime = st.st_mtime;
+                if(st.st_size == 0)
+                {
+                    if(remove(dummy) != 0)
+                    {
+                        w_log(LL_BUNDLE, "Cannot remove the empty bundle %s", dummy);
+                    }
+                    else
+                    {
+                        w_log(LL_BUNDLE, "The empty bundle %s is removed", dummy);
+                        nfree(dummy);
+                        files[nfiles - 1].fileName = NULL;
+                        files[nfiles - 1].fileTime = 0;
+                        nfiles--;
+                    }
+                }
             }
             else
             {
