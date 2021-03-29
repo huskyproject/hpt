@@ -98,7 +98,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>..\h;..\..\huskylib;..\..\smapi;..\..\fidoconf;..\..\areafix;C:\Perl\lib\CORE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;NO_STRICT;DO_PERL;PERL_MSVCRT_READFIX;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_MAKE_DLL;_CONSOLE;HAS_STDINT_H;_CRT_SECURE_NO_WARNINGS;DELAYIMP_INSECURE_WRITABLE_HOOKS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;NO_STRICT;_MAKE_DLL;_CONSOLE;HAS_STDINT_H;_CRT_SECURE_NO_WARNINGS;DELAYIMP_INSECURE_WRITABLE_HOOKS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>
       </MinimalRebuild>
@@ -156,13 +156,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>..\h;..\..\huskylib;..\..\smapi;..\..\fidoconf;..\..\areafix;C:\Perl\lib\CORE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN64;NDEBUG;NO_STRICT;DO_PERL;PERL_MSVCRT_READFIX;NO_STRICT;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_MAKE_DLL;_CONSOLE;HAS_STDINT_H;_CRT_SECURE_NO_WARNINGS;DELAYIMP_INSECURE_WRITABLE_HOOKS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN64;NDEBUG;NO_STRICT;_MAKE_DLL;_CONSOLE;HAS_STDINT_H;_CRT_SECURE_NO_WARNINGS;DELAYIMP_INSECURE_WRITABLE_HOOKS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>
       </MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <FunctionLevelLinking>
+      </FunctionLevelLinking>
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>
@@ -188,7 +189,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\nd_r\$(Platform)\lib;C:\Perl64\lib\CORE;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <DelayLoadDLLs>perl516.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -199,12 +200,8 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>echo Building documentation
-set PATH=%PATH%%3bF:\compilation\cyg\bin
-cd
-sh -c %27makeinfo --html --no-split --force ../doc/hpt.texi%27
-move /Y  hpt.html $(OutDir)
-</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
