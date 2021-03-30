@@ -2295,6 +2295,15 @@ int processDir(char * directory, e_tossSecurity sec)
 
             if(stat((files[nfiles - 1]).fileName, &st) == 0)
             {
+                if(S_ISDIR(st.st_mode))
+                {
+                    nfree(dummy);
+                    files[nfiles - 1].fileName = NULL;
+                    files[nfiles - 1].fileTime = 0;
+                    nfiles--;
+                    continue;
+                }
+
                 (files[nfiles - 1]).fileTime = st.st_mtime;
                 if(st.st_size == 0)
                 {
