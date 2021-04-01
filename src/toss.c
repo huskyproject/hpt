@@ -2126,6 +2126,7 @@ typedef struct fileInDir
 {
     char * fileName;
     time_t fileTime;
+    _off_t fileSize;
 } s_fileInDir;
 int filesComparer(const void * elem1, const void * elem2)
 {
@@ -2293,7 +2294,9 @@ int processDir(char * directory, e_tossSecurity sec)
         {
             nfiles++;
             files = (s_fileInDir *)safe_realloc(files, nfiles * sizeof(s_fileInDir));
-            (files[nfiles - 1]).fileName = dummy;
+            files[nfiles - 1].fileName = dummy;
+            files[nfiles - 1].fileTime = 0;
+            files[nfiles - 1].fileSize = 0;
 
             if(stat((files[nfiles - 1]).fileName, &st) == 0)
             {
@@ -2306,12 +2309,8 @@ int processDir(char * directory, e_tossSecurity sec)
                     continue;
                 }
 
-                (files[nfiles - 1]).fileTime = st.st_mtime;
-            }
-            else
-            {
-                /*  FixMe - don't know what to set :( */
-                (files[nfiles - 1]).fileTime = 0L;
+                files[nfiles - 1].fileTime = st.st_mtime;
+                files[nfiles - 1].fileSize = st.st_size;
             }
         }
     }
@@ -2321,7 +2320,7 @@ int processDir(char * directory, e_tossSecurity sec)
     for(filenum = 0; filenum < nfiles; filenum++)
     {
         arcFile = pktFile = 0;
-        dummy   = (files[filenum]).fileName;
+        dummy   = files[filenum].fileName;
         w_log(LL_FILE, "Process incoming file %s", dummy);
 
         if((pktFile = patimat(dummy + dirNameLen, "*.pkt")) == 0)
@@ -2334,7 +2333,7 @@ int processDir(char * directory, e_tossSecurity sec)
 
         if(pktFile || (arcFile && !config->noProcessBundles))
         {
-            if(st.st_size == 0)
+            if(files[filenum].fileSize == 0)
             {
                 if(remove(dummy) != OK)
                 {
