@@ -2126,7 +2126,7 @@ typedef struct fileInDir
 {
     char * fileName;
     time_t fileTime;
-    _off_t fileSize;
+    size_t fileSize;
 } s_fileInDir;
 int filesComparer(const void * elem1, const void * elem2)
 {
@@ -2310,7 +2310,7 @@ int processDir(char * directory, e_tossSecurity sec)
                 }
 
                 files[nfiles - 1].fileTime = st.st_mtime;
-                files[nfiles - 1].fileSize = st.st_size;
+                files[nfiles - 1].fileSize = (size_t)st.st_size;
             }
         }
     }
