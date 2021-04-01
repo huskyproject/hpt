@@ -705,7 +705,8 @@ void forwardToLinks(s_message * msg,
         /*  check packet size */
         if(newLinks[i]->link->pktFile != NULL && newLinks[i]->link->pktSize != 0)
         {
-            len = (ULONG)(newLinks[i]->link->pkt ? ftell(newLinks[i]->link->pkt) :
+            len = (ULONG)(newLinks[i]->link->pkt ?
+                          ftell(newLinks[i]->link->pkt) :
                           fsize(newLinks[i]->link->pktFile));
 
             if(len >= (newLinks[i]->link->pktSize * 1024L)) /* Stop writing to pkt */
@@ -1029,7 +1030,10 @@ void makeMsgToSysop(char * areaName, hs_addr fromAddr, ps_addr uplinkAddr)
                              NULLP);
                 }
 
-                xstrscat(&(msgToSysop[i]->text), "Action   Name", repeat_char(49, ' '), "By\r",
+                xstrscat(&(msgToSysop[i]->text),
+                         "Action   Name",
+                         repeat_char(49, ' '),
+                         "By\r",
                          NULLP);
                 /*  Shitty static variables .... */
                 xstrscat(&(msgToSysop[i]->text), repeat_char(79, '-'), "\r", NULLP);
@@ -1090,10 +1094,7 @@ void makeMsgToSysop(char * areaName, hs_addr fromAddr, ps_addr uplinkAddr)
             else
             {
                 xstrscat(&(msgToSysop[i]->text),
-                         repeat_char(79 - strlen(strbeg) - strlen(buff), ' '),
-                         buff,
-                         "\r",
-                         NULLP);
+                         repeat_char(79 - strlen(strbeg) - strlen(buff), ' '), buff, "\r", NULLP);
             }
 
             nfree(buff);
@@ -1344,7 +1345,8 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                 freeMsgBuffers(tmpmsg);
                 nfree(tmpmsg);
                 nfree(reason);
-                w_log(LL_AREAFIX, "areafix: write notification msg for %s", aka2str(&link->hisAka));
+                w_log(LL_AREAFIX, "areafix: write notification msg for %s",
+                      aka2str(&link->hisAka));
             }
         }
 
@@ -1424,10 +1426,9 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                 statToss.echoMail++;
 
                 /*  if only one downlink, we've got the mail from him */
-                if((echo->downlinkCount > 1) ||
-                   ((echo->downlinkCount > 0) &&
-                    /*  mail from us */
-                    (addrComp(&pktOrigAddr, echo->useAka) == 0)))
+                if((echo->downlinkCount > 1) || ((echo->downlinkCount > 0) &&
+                                                 /*  mail from us */
+                                                 (addrComp(&pktOrigAddr, echo->useAka) == 0)))
                 {
                     forwardMsgToLinks(echo, msg, pktOrigAddr);
                 }
@@ -1529,7 +1530,7 @@ int processNMMsg(s_message * msg,
 {
     HAREA netmail;
     HMSG msgHandle;
-    size_t len         = 0;
+    size_t len       = 0;
     char * bodyStart = NULL;              /*  msg-body without kludgelines start */
     char * ctrlBuf   = NULL;              /*  Kludgelines */
     XMSG msgHeader;
@@ -1882,7 +1883,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
                                           header->origAddr.node,
                                           header->origAddr.point);
                                     processIt = 2; /* Unsecure inbound, do not process echomail
-                                                      */
+                                                    */
                                 }
                                 else
                                 {
@@ -2218,6 +2219,7 @@ int isArcMail(char * fname)
     return isalnum((unsigned char)p[2]) && (p[3] == '\0');
 } /* isArcMail */
 
+#define OK 0
 int processDir(char * directory, e_tossSecurity sec)
 {
     husky_DIR * dir = NULL;
@@ -2305,21 +2307,6 @@ int processDir(char * directory, e_tossSecurity sec)
                 }
 
                 (files[nfiles - 1]).fileTime = st.st_mtime;
-                if(st.st_size == 0)
-                {
-                    if(remove(dummy) != 0)
-                    {
-                        w_log(LL_BUNDLE, "Cannot remove the empty bundle %s", dummy);
-                    }
-                    else
-                    {
-                        w_log(LL_BUNDLE, "The empty bundle %s is removed", dummy);
-                        nfree(dummy);
-                        files[nfiles - 1].fileName = NULL;
-                        files[nfiles - 1].fileTime = 0;
-                        nfiles--;
-                    }
-                }
             }
             else
             {
@@ -2347,6 +2334,24 @@ int processDir(char * directory, e_tossSecurity sec)
 
         if(pktFile || (arcFile && !config->noProcessBundles))
         {
+            if(st.st_size == 0)
+            {
+                if(remove(dummy) != OK)
+                {
+                    w_log(LL_ERR, "Cannot remove the empty pkt or bundle %s: %s", dummy,
+                          strerror(errno));
+                }
+                else
+                {
+                    w_log(LL_BUNDLE, "The empty pkt or bundle %s is removed", dummy);
+                    nfree(dummy);
+                    files[nfiles - 1].fileName = NULL;
+                    files[nfiles - 1].fileTime = 0;
+                }
+
+                continue;
+            }
+
             pktCount++;
             rc = 3; /*  nonsence, but compiler warns */
 
@@ -3137,7 +3142,6 @@ void tossTempOutbound(char * directory)
     return;
 } /* tossTempOutbound */
 
-
 #ifdef __UNIX__
 static void chownChmodImportLog(void)
 {
@@ -3160,19 +3164,20 @@ static void chownChmodImportLog(void)
         }
     }
 }
+
 #endif
 
 
 static void deleteEmptyImportLog(void)
 {
     struct stat buf;
+
     /*  remove empty importlog */
     if(stat(config->importlog, &buf) == 0 && buf.st_size == 0)
     {
         remove(config->importlog);
     }
 }
-
 
 static void writeImportLog(void)
 {
@@ -3218,7 +3223,6 @@ static void writeImportLog(void)
             fprintf(f, "%s\n", config->localAreas[i].areaName);
         }
     }
-
     fclose(f);
 
 #ifdef __UNIX__
@@ -3227,7 +3231,6 @@ static void writeImportLog(void)
 
     deleteEmptyImportLog();
 } /* writeImportLog */
-
 
 #define MAXOPEN_DEFAULT 512
 
@@ -3241,7 +3244,7 @@ static void writeImportLog(void)
 static void setmaxopen(void)
 {
     ULONG cur = 0;
-    LONG add = 0;
+    LONG add  = 0;
 
     if(DosSetRelMaxFH(&add, &cur) == 0)
     {
@@ -3316,7 +3319,6 @@ static void setmaxopen(void)
 static void setmaxopen(void)
 {
 #endif /* if defined (__OS2__) */
-
     {
         int handles[MAXOPEN_DEFAULT];
         ULONG i;
