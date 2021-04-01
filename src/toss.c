@@ -2352,7 +2352,6 @@ int processDir(char * directory, e_tossSecurity sec)
                 continue;
             }
 
-            pktCount++;
             rc = 3; /*  nonsence, but compiler warns */
 
             if(config->tossingExt != NULL &&
@@ -2375,6 +2374,11 @@ int processDir(char * directory, e_tossSecurity sec)
             else /*  if (arcFile) */
             {
                 rc = processArc(dummy, sec);
+            }
+
+            if(0 == rc)
+            {
+                pktCount++;
             }
 
             if(rc >= 1 && rc <= 6)
