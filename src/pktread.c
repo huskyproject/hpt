@@ -485,11 +485,18 @@ int get_month(const char * pmon, flag_t * flag)
            safe_toupper(pmon[1]) == safe_toupper(months_ab[i][1]) &&
            safe_toupper(pmon[2]) == safe_toupper(months_ab[i][2]))
         {
-            (*flag) |= FTSC_FLAWY;
+            if(flag != NULL)
+            {
+                (*flag) |= FTSC_FLAWY;
+            }
             return i;
         }
     }
-    (*flag) |= FTSC_BROKEN;
+
+    if(flag != NULL)
+    {
+        (*flag) |= FTSC_BROKEN;
+    }
     return 0;
 } /* get_month */
 
