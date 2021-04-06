@@ -1414,10 +1414,7 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
 
 #endif
 
-            if(not_dupe)
-            {
-                not_dupe = dupeDetection(echo, msg);
-            }
+            not_dupe = dupeDetection(echo, msg);
 
             if(not_dupe)
             {
