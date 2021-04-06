@@ -110,13 +110,15 @@ int processExternal(s_area * echo, s_message * msg, s_carbon carbon)
 
 #ifdef HAS_popen_close
 
-    if(*progname == '|')
+    if(progname != NULL && *progname == '|')
     {
         msgfp = popen(progname + 1, "w");
     }
     else
 #endif
-    msgfp = createTempTextFile(config->tempDir, &fname);
+    {
+        msgfp = createTempTextFile(config->tempDir, &fname);
+    }
 
     if(!msgfp)
     {
