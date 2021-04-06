@@ -423,7 +423,7 @@ int linkArea(s_area * area, int netMail)
 
                 if(msgsNum >= MAX_INCORE)
                 {
-                    MsgCloseMsg(hmsg), curr->msgh = NULL;
+                    MsgCloseMsg(hmsg);
                 }
                 else
                 {
