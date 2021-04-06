@@ -1619,7 +1619,7 @@ int processNMMsg(s_message * msg,
 
 #endif
             /* Create CtrlBuf for SMAPI */
-            len     = msg->textLength;
+            len     = (size_t)msg->textLength;
             ctrlBuf = (char *)CopyToControlBuf((UCHAR *)msg->text, (UCHAR **)&bodyStart, &len);
 
             /* write message */
