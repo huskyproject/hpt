@@ -636,6 +636,12 @@ flag_t parse_ftsc_date(struct tm * ptm, char * pdatestr)
 
         ptm->tm_mon = get_month(pmon, &rval); /* Is the month valid? */
 
+        if(pyear == NULL)
+        {
+            rval |= FTSC_BROKEN;
+            return rval;
+        }
+
         if(strlen(pyear) != 2)         /* year field format check */
         {
             rval |= FTSC_FLAWY;
