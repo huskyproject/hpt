@@ -2559,8 +2559,7 @@ s_route * perlroute(s_message * msg, s_route * defroute)
                     }
 
     #if 1
-                    else if((int)(route.flavour = str2flv(flv)) != -1)
-                    {}
+                    else if((route.flavour = str2flv(flv)) == flUndef)
     #else
                     else if(stricmp(flv, "normal") == 0)
                     {
@@ -2583,7 +2582,6 @@ s_route * perlroute(s_message * msg, s_route * defroute)
                         route.flavour = flImmediate;
                     }
     #endif
-                    else
                     {
                         w_log(LL_PERL, "Perl route unknown flavour %s, set to hold", flv);
                         route.flavour = flHold;
