@@ -619,14 +619,15 @@ void linkArea(s_area * area)
 
                             if(!crepl->treeId) /*  *crepl isn't linked */
                             {
-                                if(srepl->treeId) /*  *srepl linked already */
+                                /*  *srepl linked already */
+                                /* if(srepl->treeId)        srepl->treeId == 0 here!
                                 {
                                     crepl->treeId = srepl->treeId;
                                 }
                                 else
-                                {
+                                { */
                                     crepl->treeId = i; /*  top of new tree */
-                                }
+                               /* } */
                             }
 
                             srepl->treeId = crepl->treeId;
