@@ -1,0 +1,178 @@
+<?xml version="1.0" standalone="yes"?>
+<NewDataSet>
+  <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+      <xs:complexType>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="SuppressVersion">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="CurrentVersion" type="xs:int" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="hpt">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="FileName" type="xs:string" default="" />
+                <xs:element name="ErrorCode" type="xs:string" default="" />
+                <xs:element name="Message" type="xs:string" default="" />
+                <xs:element name="CodePrev" type="xs:unsignedInt" default="0" />
+                <xs:element name="CodeCurrent" type="xs:unsignedInt" default="0" />
+                <xs:element name="CodeNext" type="xs:unsignedInt" default="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+      <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//hpt" />
+        <xs:field xpath="FileName" />
+        <xs:field xpath="ErrorCode" />
+        <xs:field xpath="Message" />
+        <xs:field xpath="CodePrev" />
+        <xs:field xpath="CodeCurrent" />
+        <xs:field xpath="CodeNext" />
+      </xs:unique>
+    </xs:element>
+  </xs:schema>
+  <SuppressVersion>
+    <CurrentVersion>2</CurrentVersion>
+  </SuppressVersion>
+  <hpt>
+    <FileName>fidoconf.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>12115905</CodePrev>
+    <CodeCurrent>123</CodeCurrent>
+    <CodeNext>5907763</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>fidoconf.h</FileName>
+    <ErrorCode>V802</ErrorCode>
+    <Message>On _-bit platform, structure size can be reduced from _ to _ bytes by rearranging the fields according to their sizes in decreasing order.</Message>
+    <CodePrev>24231785</CodePrev>
+    <CodeCurrent>123</CodeCurrent>
+    <CodeNext>38335</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>compiler.h</FileName>
+    <ErrorCode>V1040</ErrorCode>
+    <Message>Possible typo in the spelling of a pre-defined macro name. The '__Linux__' macro is similar to '__linux__'.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>417106776</CodeCurrent>
+    <CodeNext>621071246</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>pktread.c</FileName>
+    <ErrorCode>V1013</ErrorCode>
+    <Message>Suspicious subexpression in a sequence of similar comparisons.</Message>
+    <CodePrev>123</CodePrev>
+    <CodeCurrent>3384711121</CodeCurrent>
+    <CodeNext>3957092931</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>dupe.c</FileName>
+    <ErrorCode>V119</ErrorCode>
+    <Message>More than one sizeof() operator is used in one expression.</Message>
+    <CodePrev>123</CodePrev>
+    <CodeCurrent>3221730357</CodeCurrent>
+    <CodeNext>0</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>dupe.c</FileName>
+    <ErrorCode>V119</ErrorCode>
+    <Message>More than one sizeof() operator is used in one expression.</Message>
+    <CodePrev>4180052608</CodePrev>
+    <CodeCurrent>2351746032</CodeCurrent>
+    <CodeNext>0</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>pktread.c</FileName>
+    <ErrorCode>V1004</ErrorCode>
+    <Message>The 'flag' pointer was used unsafely after it was verified against nullptr. Check lines: _, _.</Message>
+    <CodePrev>125</CodePrev>
+    <CodeCurrent>46606171</CodeCurrent>
+    <CodeNext>11235</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>pktwrite.c</FileName>
+    <ErrorCode>V1004</ErrorCode>
+    <Message>The 'pkt' pointer was used unsafely after it was verified against nullptr. Check lines: _, _.</Message>
+    <CodePrev>278625</CodePrev>
+    <CodeCurrent>3648962164</CodeCurrent>
+    <CodeNext>0</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>scanarea.c</FileName>
+    <ErrorCode>V1004</ErrorCode>
+    <Message>The 'links' pointer was used unsafely after it was verified against nullptr. Check lines: _, _.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>9951165</CodeCurrent>
+    <CodeNext>1252050542</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>post.c</FileName>
+    <ErrorCode>V124</ErrorCode>
+    <Message>Function 'fread' reads '_' bytes. The alignment rules and type sizes have been changed. Consider reviewing this value.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>1596773207</CodeCurrent>
+    <CodeNext>2234741954</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>post.c</FileName>
+    <ErrorCode>V124</ErrorCode>
+    <Message>Function 'fread' reads '_' bytes. The alignment rules and type sizes have been changed. Consider reviewing this value.</Message>
+    <CodePrev>123</CodePrev>
+    <CodeCurrent>1597930783</CodeCurrent>
+    <CodeNext>2173890869</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>post.c</FileName>
+    <ErrorCode>V536</ErrorCode>
+    <Message>Be advised that the utilized constant value is represented by an octal form. Oct: _, Dec: _.</Message>
+    <CodePrev>38157481</CodePrev>
+    <CodeCurrent>817107</CodeCurrent>
+    <CodeNext>51657</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>post.c</FileName>
+    <ErrorCode>V536</ErrorCode>
+    <Message>Be advised that the utilized constant value is represented by an octal form. Oct: _, Dec: _.</Message>
+    <CodePrev>123</CodePrev>
+    <CodeCurrent>817117</CodeCurrent>
+    <CodeNext>125</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>scanarea.c</FileName>
+    <ErrorCode>V1004</ErrorCode>
+    <Message>The 'links' pointer was used unsafely after it was verified against nullptr. Check lines: _, _.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>9951165</CodeCurrent>
+    <CodeNext>2504574555</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>toss.c</FileName>
+    <ErrorCode>V560</ErrorCode>
+    <Message>A part of conditional expression is always true: (processIt == _).</Message>
+    <CodePrev>123</CodePrev>
+    <CodeCurrent>3110837619</CodeCurrent>
+    <CodeNext>123</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>toss.c</FileName>
+    <ErrorCode>V560</ErrorCode>
+    <Message>A part of conditional expression is always false: sec == secLocalInbound.</Message>
+    <CodePrev>1531945420</CodePrev>
+    <CodeCurrent>32643668</CodeCurrent>
+    <CodeNext>4161449506</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>toss.c</FileName>
+    <ErrorCode>V683</ErrorCode>
+    <Message>Consider inspecting the loop expression. It is possible that the 'i' variable should be decremented instead of the 'highestMsg' variable.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>4014139857</CodeCurrent>
+    <CodeNext>123</CodeNext>
+  </hpt>
+</NewDataSet>

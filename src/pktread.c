@@ -593,10 +593,6 @@ flag_t parse_ftsc_date(struct tm * ptm, char * pdatestr)
                 ptm->tm_sec = 0;
             }
         }
-        else
-        {
-            ptm->tm_sec = 0;
-        }
 
         ptm->tm_min = atoi(pminute);   /* Is the number of minutes valid? */
 
