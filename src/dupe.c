@@ -70,7 +70,7 @@ UINT32 DupeCountInHeader, maxTimeLifeDupesInArea;
 s_dupeMemory * CommonDupes = NULL;
 
 #define MSGIDPOS 7
-#define HASHBUFSIZE 3 * XMSG_TO_SIZE /* msgid len */ + AREANAMELEN
+#define HASHBUFSIZE (3 * XMSG_TO_SIZE /* msgid len */ + AREANAMELEN)
 static char hashBuf[HASHBUFSIZE];
 static time_t TimeStamp;
 char * createDupeFileName(s_area * area)
