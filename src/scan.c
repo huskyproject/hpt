@@ -894,7 +894,7 @@ int packMsg(HMSG SQmsg, XMSG * xmsg, s_area * area)
                     nfree(strVA);
                 }
 
-                if(!arcNetmail)
+                if(!arcNetmail && link->bsyFile != NULL)
                 {
                     remove(link->bsyFile);
                     nfree(link->bsyFile);
