@@ -2148,7 +2148,7 @@ static char * validExt[] =
 int isArcMail(char * fname)
 {
     char * p;
-    int i;
+    size_t i;
 
     p = strrchr(fname, PATH_DELIM);
 
