@@ -466,9 +466,18 @@ int get_month(const char * pmon, flag_t * flag)
 {
     int i;
 
+    if(pmon == NULL)
+    {
+        if(flag != NULL)
+        {
+            *flag |= FTSC_BROKEN;
+        }
+        return 0;
+    }
+
     if(strlen(pmon) != 3 && flag != NULL)
     {
-        (*flag) |= FTSC_FLAWY;
+        *flag |= FTSC_FLAWY;
     }
 
     for(i = 0; i < 12; i++)
@@ -487,7 +496,7 @@ int get_month(const char * pmon, flag_t * flag)
         {
             if(flag != NULL)
             {
-                (*flag) |= FTSC_FLAWY;
+                *flag |= FTSC_FLAWY;
             }
             return i;
         }
@@ -495,7 +504,7 @@ int get_month(const char * pmon, flag_t * flag)
 
     if(flag != NULL)
     {
-        (*flag) |= FTSC_BROKEN;
+        *flag |= FTSC_BROKEN;
     }
     return 0;
 } /* get_month */
