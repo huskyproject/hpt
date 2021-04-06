@@ -590,7 +590,7 @@ static XS(perl_alike)
 
     len1  = strlen(str1);
     len2  = strlen(str2);
-    ldist = LENGTH_MISMATCH;
+    /* ldist = LENGTH_MISMATCH; */
     len1  = min(len1, MAX_LDIST_LEN);
     len2  = min(len2, MAX_LDIST_LEN);
     ldist = l_dist_raw(str1, str2, len1, len2);
