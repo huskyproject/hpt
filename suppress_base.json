@@ -1,0 +1,861 @@
+{
+    "version": 1,
+    "warnings": [
+        {
+            "CodeCurrent": 1803559258,
+            "CodeNext": 125,
+            "CodePrev": 123,
+            "ErrorCode": "V1004",
+            "FileName": "carbon.c",
+            "Message": "The 'echo->areaName' pointer was used unsafely after it was verified against nullptr. Check lines: _, _."
+        },
+        {
+            "CodeCurrent": 10605087,
+            "CodeNext": 123,
+            "CodePrev": 0,
+            "ErrorCode": "V1004",
+            "FileName": "carbon.c",
+            "Message": "The 'progname' pointer was used unsafely after it was verified against nullptr. Check lines: _, _."
+        },
+        {
+            "CodeCurrent": 1667064655,
+            "CodeNext": 0,
+            "CodePrev": 568009,
+            "ErrorCode": "V575",
+            "FileName": "carbon.c",
+            "Message": "The potential null pointer is passed into 'strlen' function. Inspect the first argument."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "carbon.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "dupe.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 3955639341,
+            "CodeNext": 0,
+            "CodePrev": 0,
+            "ErrorCode": "V796",
+            "FileName": "fcommon.c",
+            "Message": "It is possible that 'break' statement is missing in switch statement."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "fcommon.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "global.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "hpt.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "hptafix.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 2788585519,
+            "CodeNext": 0,
+            "CodePrev": 123,
+            "ErrorCode": "V701",
+            "FileName": "hptlink.c",
+            "Message": "realloc() possible leak: when realloc() fails in allocating memory, original pointer 'ctl' is lost. Consider assigning realloc() to a temporary pointer."
+        },
+        {
+            "CodeCurrent": 183009626,
+            "CodeNext": 123,
+            "CodePrev": 47567502,
+            "ErrorCode": "V526",
+            "FileName": "hptlink.c",
+            "Message": "The 'strcmp' function returns _ if corresponding strings are equal. Consider examining the condition for mistakes."
+        },
+        {
+            "CodeCurrent": 2949507553,
+            "CodeNext": 125,
+            "CodePrev": 123,
+            "ErrorCode": "V764",
+            "FileName": "hptlink.c",
+            "Message": "Possible incorrect order of arguments passed to 'linkMsgs' function: 'srepl' and 'crepl'."
+        },
+        {
+            "CodeCurrent": 3147162063,
+            "CodeNext": 123,
+            "CodePrev": 3102728206,
+            "ErrorCode": "V526",
+            "FileName": "hptlink.c",
+            "Message": "The 'memcmp' function returns _ if corresponding buffers are equal. Consider examining the condition for mistakes."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "hptlink.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 3002623923,
+            "CodeNext": 0,
+            "CodePrev": 123,
+            "ErrorCode": "V1004",
+            "FileName": "hpttree.c",
+            "Message": "The 'start' pointer was used unsafely after it was verified against nullptr. Check lines: _, _."
+        },
+        {
+            "CodeCurrent": 1482926968,
+            "CodeNext": 4488685,
+            "CodePrev": 123,
+            "ErrorCode": "V576",
+            "FileName": "hpttree.c",
+            "Message": "Incorrect format. Consider checking the third actual argument of the 'fprintf' function. The SIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 1482926968,
+            "CodeNext": 4488685,
+            "CodePrev": 123,
+            "ErrorCode": "V576",
+            "FileName": "hpttree.c",
+            "Message": "Incorrect format. Consider checking the fourth actual argument of the 'fprintf' function. The SIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 1482926968,
+            "CodeNext": 4488685,
+            "CodePrev": 123,
+            "ErrorCode": "V576",
+            "FileName": "hpttree.c",
+            "Message": "Incorrect format. Consider checking the fifth actual argument of the 'fprintf' function. The SIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 2441871113,
+            "CodeNext": 125,
+            "CodePrev": 123,
+            "ErrorCode": "V1027",
+            "FileName": "hpttree.c",
+            "Message": "Pointer to an object of the '_stamp' class is cast to unrelated 'stamp_combo' class."
+        },
+        {
+            "CodeCurrent": 2444046089,
+            "CodeNext": 125,
+            "CodePrev": 123,
+            "ErrorCode": "V1027",
+            "FileName": "hpttree.c",
+            "Message": "Pointer to an object of the '_stamp' class is cast to unrelated 'stamp_combo' class."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "hpttree.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 12838205,
+            "CodeNext": 125,
+            "CodePrev": 123,
+            "ErrorCode": "V522",
+            "FileName": "link.c",
+            "Message": "There might be dereferencing of a potential null pointer '(struct _msgh *) hmsg'."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "link.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 269360541,
+            "CodeNext": 1395506888,
+            "CodePrev": 123,
+            "ErrorCode": "V769",
+            "FileName": "perl.c",
+            "Message": "The 'pos' pointer in the 'pos + _' expression could be nullptr. In such case, resulting value will be senseless and it should not be used."
+        },
+        {
+            "CodeCurrent": 1395506888,
+            "CodeNext": 3749916973,
+            "CodePrev": 269360541,
+            "ErrorCode": "V522",
+            "FileName": "perl.c",
+            "Message": "There might be dereferencing of a potential null pointer 'pos_ = strchr(flgs, '\\r')'."
+        },
+        {
+            "CodeCurrent": 3023252007,
+            "CodeNext": 123,
+            "CodePrev": 123,
+            "ErrorCode": "V1004",
+            "FileName": "perl.c",
+            "Message": "The 'area' pointer was used unsafely after it was verified against nullptr. Check lines: _, _."
+        },
+        {
+            "CodeCurrent": 3260387564,
+            "CodeNext": 2472817,
+            "CodePrev": 125,
+            "ErrorCode": "V694",
+            "FileName": "perl.c",
+            "Message": "The condition (packlist + _ != NULL) is only false if there is pointer overflow which is undefined behavior anyway."
+        },
+        {
+            "CodeCurrent": 3052151629,
+            "CodeNext": 125,
+            "CodePrev": 123,
+            "ErrorCode": "V694",
+            "FileName": "perl.c",
+            "Message": "The condition (grplist + _ != NULL) is only false if there is pointer overflow which is undefined behavior anyway."
+        },
+        {
+            "CodeCurrent": 56412682,
+            "CodeNext": 268,
+            "CodePrev": 123,
+            "ErrorCode": "V617",
+            "FileName": "perl.c",
+            "Message": "Consider inspecting the condition. The '_' argument of the '|' bitwise operation contains a non-zero value."
+        },
+        {
+            "CodeCurrent": 12361,
+            "CodeNext": 28693,
+            "CodePrev": 12891,
+            "ErrorCode": "V587",
+            "FileName": "perl.c",
+            "Message": "An odd sequence of assignments of this kind: A = B; B = A;. Check lines: _, _."
+        },
+        {
+            "CodeCurrent": 12361,
+            "CodeNext": 28693,
+            "CodePrev": 12891,
+            "ErrorCode": "V587",
+            "FileName": "perl.c",
+            "Message": "An odd sequence of assignments of this kind: A = B; B = A;. Check lines: _, _."
+        },
+        {
+            "CodeCurrent": 12361,
+            "CodeNext": 28693,
+            "CodePrev": 12891,
+            "ErrorCode": "V587",
+            "FileName": "perl.c",
+            "Message": "An odd sequence of assignments of this kind: A = B; B = A;. Check lines: _, _."
+        },
+        {
+            "CodeCurrent": 12361,
+            "CodeNext": 28693,
+            "CodePrev": 12891,
+            "ErrorCode": "V587",
+            "FileName": "perl.c",
+            "Message": "An odd sequence of assignments of this kind: A = B; B = A;. Check lines: _, _."
+        },
+        {
+            "CodeCurrent": 12361,
+            "CodeNext": 28693,
+            "CodePrev": 12891,
+            "ErrorCode": "V587",
+            "FileName": "perl.c",
+            "Message": "An odd sequence of assignments of this kind: A = B; B = A;. Check lines: _, _."
+        },
+        {
+            "CodeCurrent": 399348299,
+            "CodeNext": 4154051463,
+            "CodePrev": 394577,
+            "ErrorCode": "V627",
+            "FileName": "perl.c",
+            "Message": "Consider inspecting the expression. The argument of sizeof() is the macro which expands to a number."
+        },
+        {
+            "CodeCurrent": 4154051463,
+            "CodeNext": 354883362,
+            "CodePrev": 399348299,
+            "ErrorCode": "V627",
+            "FileName": "perl.c",
+            "Message": "Consider inspecting the expression. The argument of sizeof() is the macro which expands to a number."
+        },
+        {
+            "CodeCurrent": 354883362,
+            "CodeNext": 1226927951,
+            "CodePrev": 4154051463,
+            "ErrorCode": "V627",
+            "FileName": "perl.c",
+            "Message": "Consider inspecting the expression. The argument of sizeof() is the macro which expands to a number."
+        },
+        {
+            "CodeCurrent": 1226927951,
+            "CodeNext": 12361,
+            "CodePrev": 354883362,
+            "ErrorCode": "V627",
+            "FileName": "perl.c",
+            "Message": "Consider inspecting the expression. The argument of sizeof() is the macro which expands to a number."
+        },
+        {
+            "CodeCurrent": 1705286937,
+            "CodeNext": 2157007563,
+            "CodePrev": 394577,
+            "ErrorCode": "V627",
+            "FileName": "perl.c",
+            "Message": "Consider inspecting the expression. The argument of sizeof() is the macro which expands to a number."
+        },
+        {
+            "CodeCurrent": 2157007563,
+            "CodeNext": 3178632974,
+            "CodePrev": 1705286937,
+            "ErrorCode": "V627",
+            "FileName": "perl.c",
+            "Message": "Consider inspecting the expression. The argument of sizeof() is the macro which expands to a number."
+        },
+        {
+            "CodeCurrent": 3178632974,
+            "CodeNext": 12361,
+            "CodePrev": 2157007563,
+            "ErrorCode": "V627",
+            "FileName": "perl.c",
+            "Message": "Consider inspecting the expression. The argument of sizeof() is the macro which expands to a number."
+        },
+        {
+            "CodeCurrent": 1097,
+            "CodeNext": 125,
+            "CodePrev": 123,
+            "ErrorCode": "V1048",
+            "FileName": "perl.c",
+            "Message": "The 'rc' variable was assigned the same value."
+        },
+        {
+            "CodeCurrent": 3740727136,
+            "CodeNext": 488925982,
+            "CodePrev": 15177913,
+            "ErrorCode": "V1027",
+            "FileName": "perl.c",
+            "Message": "Pointer to an object of the 'av' class is cast to unrelated 'sv' class."
+        },
+        {
+            "CodeCurrent": 1872164676,
+            "CodeNext": 3947,
+            "CodePrev": 125,
+            "ErrorCode": "V1027",
+            "FileName": "perl.c",
+            "Message": "Pointer to an object of the 'av' class is cast to unrelated 'sv' class."
+        },
+        {
+            "CodeCurrent": 3186487190,
+            "CodeNext": 3358660,
+            "CodePrev": 3527196906,
+            "ErrorCode": "V1027",
+            "FileName": "perl.c",
+            "Message": "Pointer to an object of the 'hv' class is cast to unrelated 'sv' class."
+        },
+        {
+            "CodeCurrent": 3186487190,
+            "CodeNext": 3866279507,
+            "CodePrev": 3527196906,
+            "ErrorCode": "V1027",
+            "FileName": "perl.c",
+            "Message": "Pointer to an object of the 'hv' class is cast to unrelated 'sv' class."
+        },
+        {
+            "CodeCurrent": 3186487190,
+            "CodeNext": 3122837650,
+            "CodePrev": 3527196906,
+            "ErrorCode": "V1027",
+            "FileName": "perl.c",
+            "Message": "Pointer to an object of the 'hv' class is cast to unrelated 'sv' class."
+        },
+        {
+            "CodeCurrent": 2748225984,
+            "CodeNext": 4239038912,
+            "CodePrev": 0,
+            "ErrorCode": "V1027",
+            "FileName": "perl.c",
+            "Message": "Pointer to an object of the 'cv' class is cast to unrelated 'sv' class."
+        },
+        {
+            "CodeCurrent": 4239038912,
+            "CodeNext": 4027456475,
+            "CodePrev": 2748225984,
+            "ErrorCode": "V1027",
+            "FileName": "perl.c",
+            "Message": "Pointer to an object of the 'cv' class is cast to unrelated 'sv' class."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "perl.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 84141,
+            "CodeNext": 4487902,
+            "CodePrev": 52712,
+            "ErrorCode": "V1059",
+            "FileName": "perl.c",
+            "Message": "Undefining the '__STDC__' reserved macro may lead to undefined behavior."
+        },
+        {
+            "CodeCurrent": 3911501055,
+            "CodeNext": 2470066230,
+            "CodePrev": 0,
+            "ErrorCode": "V1003",
+            "FileName": "perl.c",
+            "Message": "The macro 'SMALLEST_OF' is a dangerous expression. The parameters 'x', 'y' must be surrounded by parentheses."
+        },
+        {
+            "CodeCurrent": 2470066230,
+            "CodeNext": 2266618733,
+            "CodePrev": 3911501055,
+            "ErrorCode": "V1003",
+            "FileName": "perl.c",
+            "Message": "The macro 'ZERO_IF_EQUAL' is a dangerous expression. The parameters 'ch_', 'ch_' must be surrounded by parentheses."
+        },
+        {
+            "CodeCurrent": 963376877,
+            "CodeNext": 157408454,
+            "CodePrev": 1972241247,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the second actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 963376877,
+            "CodeNext": 157408454,
+            "CodePrev": 1972241247,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the third actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 963376877,
+            "CodeNext": 157408454,
+            "CodePrev": 1972241247,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the fourth actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 963376877,
+            "CodeNext": 157408454,
+            "CodePrev": 1972241247,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the fifth actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 995882733,
+            "CodeNext": 157372614,
+            "CodePrev": 629633209,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the second actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 995882733,
+            "CodeNext": 157372614,
+            "CodePrev": 629633209,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the third actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 995882733,
+            "CodeNext": 157372614,
+            "CodePrev": 629633209,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the fourth actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 995882733,
+            "CodeNext": 157372614,
+            "CodePrev": 629633209,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the fifth actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 3542323814,
+            "CodeNext": 2970782306,
+            "CodePrev": 123,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the second actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 3542323814,
+            "CodeNext": 2970782306,
+            "CodePrev": 123,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the third actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 2970782306,
+            "CodeNext": 125,
+            "CodePrev": 3542323814,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the second actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 2970782306,
+            "CodeNext": 125,
+            "CodePrev": 3542323814,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the third actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 755041408,
+            "CodeNext": 9596544,
+            "CodePrev": 123,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the second actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 755041408,
+            "CodeNext": 9596544,
+            "CodePrev": 123,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the third actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 755041408,
+            "CodeNext": 9596544,
+            "CodePrev": 123,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the fourth actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 755041408,
+            "CodeNext": 9596544,
+            "CodePrev": 123,
+            "ErrorCode": "V576",
+            "FileName": "pktinfo.c",
+            "Message": "Incorrect format. Consider checking the fifth actual argument of the 'printf' function. The UNSIGNED integer type argument is expected."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "pktinfo.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 3384711121,
+            "CodeNext": 3957092931,
+            "CodePrev": 123,
+            "ErrorCode": "V1013",
+            "FileName": "pktread.c",
+            "Message": "Suspicious subexpression in a sequence of similar comparisons."
+        },
+        {
+            "CodeCurrent": 229364976,
+            "CodeNext": 0,
+            "CodePrev": 0,
+            "ErrorCode": "V575",
+            "FileName": "pktread.c",
+            "Message": "The potential null pointer is passed into 'atoi' function. Inspect the first argument."
+        },
+        {
+            "CodeCurrent": 2357846809,
+            "CodeNext": 0,
+            "CodePrev": 0,
+            "ErrorCode": "V575",
+            "FileName": "pktread.c",
+            "Message": "The potential null pointer is passed into 'atoi' function. Inspect the first argument."
+        },
+        {
+            "CodeCurrent": 1261896962,
+            "CodeNext": 0,
+            "CodePrev": 0,
+            "ErrorCode": "V575",
+            "FileName": "pktread.c",
+            "Message": "The potential null pointer is passed into 'atoi' function. Inspect the first argument."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "pktread.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 3650566308,
+            "CodeNext": 0,
+            "CodePrev": 278625,
+            "ErrorCode": "V1004",
+            "FileName": "pktwrite.c",
+            "Message": "The 'pkt' pointer was used unsafely after it was verified against nullptr. Check lines: _, _."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "pktwrite.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 101945,
+            "CodeNext": 51657,
+            "CodePrev": 38157481,
+            "ErrorCode": "V536",
+            "FileName": "post.c",
+            "Message": "Be advised that the utilized constant value is represented by an octal form. Oct: _, Dec: _."
+        },
+        {
+            "CodeCurrent": 208677369,
+            "CodeNext": 125,
+            "CodePrev": 123,
+            "ErrorCode": "V522",
+            "FileName": "post.c",
+            "Message": "There might be dereferencing of a potential null pointer 'p->tearline'."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "post.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 100659969,
+            "CodeNext": 0,
+            "CodePrev": 1341497949,
+            "ErrorCode": "V575",
+            "FileName": "scan.c",
+            "Message": "The potential null pointer is passed into 'stat' function. Inspect the first argument."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "scan.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 9744317,
+            "CodeNext": 2504574947,
+            "CodePrev": 0,
+            "ErrorCode": "V1004",
+            "FileName": "scanarea.c",
+            "Message": "The 'links' pointer was used unsafely after it was verified against nullptr. Check lines: _, _."
+        },
+        {
+            "CodeCurrent": 984258090,
+            "CodeNext": 125,
+            "CodePrev": 123,
+            "ErrorCode": "V1027",
+            "FileName": "scanarea.c",
+            "Message": "Pointer to an object of the '_stamp' class is cast to unrelated 'stamp_combo' class."
+        },
+        {
+            "CodeCurrent": 3056697172,
+            "CodeNext": 0,
+            "CodePrev": 196473,
+            "ErrorCode": "V1027",
+            "FileName": "scanarea.c",
+            "Message": "Pointer to an object of the '_stamp' class is cast to unrelated 'stamp_combo' class."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "scanarea.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 3863633937,
+            "CodeNext": 123,
+            "CodePrev": 0,
+            "ErrorCode": "V526",
+            "FileName": "seenby.c",
+            "Message": "The 'strncmp' function returns _ if corresponding strings are equal. Consider examining the condition for mistakes."
+        },
+        {
+            "CodeCurrent": 3136127255,
+            "CodeNext": 2010504492,
+            "CodePrev": 123,
+            "ErrorCode": "V522",
+            "FileName": "seenby.c",
+            "Message": "There might be dereferencing of a potential null pointer 'addr'."
+        },
+        {
+            "CodeCurrent": 3136127255,
+            "CodeNext": 2010504492,
+            "CodePrev": 123,
+            "ErrorCode": "V522",
+            "FileName": "seenby.c",
+            "Message": "There might be dereferencing of a potential null pointer 'seenBys'."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "seenby.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 20665,
+            "CodeNext": 0,
+            "CodePrev": 2296,
+            "ErrorCode": "V796",
+            "FileName": "toss.c",
+            "Message": "It is possible that 'break' statement is missing in switch statement."
+        },
+        {
+            "CodeCurrent": 86866173,
+            "CodeNext": 152449,
+            "CodePrev": 305121,
+            "ErrorCode": "V575",
+            "FileName": "toss.c",
+            "Message": "The potential null pointer is passed into 'fputs' function. Inspect the first argument."
+        },
+        {
+            "CodeCurrent": 1209,
+            "CodeNext": 1270450474,
+            "CodePrev": 3586397195,
+            "ErrorCode": "V522",
+            "FileName": "toss.c",
+            "Message": "There might be dereferencing of a potential null pointer 'ptr'."
+        },
+        {
+            "CodeCurrent": 2720770307,
+            "CodeNext": 123,
+            "CodePrev": 123,
+            "ErrorCode": "V560",
+            "FileName": "toss.c",
+            "Message": "A part of conditional expression is always true: (processIt == _)."
+        },
+        {
+            "CodeCurrent": 32643668,
+            "CodeNext": 4161442846,
+            "CodePrev": 1531945420,
+            "ErrorCode": "V560",
+            "FileName": "toss.c",
+            "Message": "A part of conditional expression is always false: sec == secLocalInbound."
+        },
+        {
+            "CodeCurrent": 2763844599,
+            "CodeNext": 7782393,
+            "CodePrev": 2298778545,
+            "ErrorCode": "V769",
+            "FileName": "toss.c",
+            "Message": "The 'lastPathDelim' pointer in the '++ lastPathDelim' expression could be nullptr. In such case, resulting value will be senseless and it should not be used."
+        },
+        {
+            "CodeCurrent": 256043479,
+            "CodeNext": 123,
+            "CodePrev": 0,
+            "ErrorCode": "V683",
+            "FileName": "toss.c",
+            "Message": "Consider inspecting the loop expression. It is possible that the 'i' variable should be decremented instead of the 'highestMsg' variable."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "toss.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 1839451875,
+            "CodeNext": 2791303587,
+            "CodePrev": 2612259205,
+            "ErrorCode": "V575",
+            "FileName": "tpkt.c",
+            "Message": "The potential null pointer is passed into 'strcpy' function. Inspect the first argument. Check lines: _, _."
+        },
+        {
+            "CodeCurrent": 2723363002,
+            "CodeNext": 3596609821,
+            "CodePrev": 2791303587,
+            "ErrorCode": "V575",
+            "FileName": "tpkt.c",
+            "Message": "The potential null pointer is passed into 'strcpy' function. Inspect the first argument. Check lines: _, _."
+        },
+        {
+            "CodeCurrent": 2288728935,
+            "CodeNext": 518600,
+            "CodePrev": 3596609821,
+            "ErrorCode": "V575",
+            "FileName": "tpkt.c",
+            "Message": "The potential null pointer is passed into 'strcpy' function. Inspect the first argument. Check lines: _, _."
+        },
+        {
+            "CodeCurrent": 2722105386,
+            "CodeNext": 3335986063,
+            "CodePrev": 518600,
+            "ErrorCode": "V575",
+            "FileName": "tpkt.c",
+            "Message": "The potential null pointer is passed into 'strcpy' function. Inspect the first argument. Check lines: _, _."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "tpkt.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 384044411,
+            "CodeNext": 123,
+            "CodePrev": 0,
+            "ErrorCode": "V526",
+            "FileName": "txt2pkt.c",
+            "Message": "The 'strcmp' function returns _ if corresponding strings are equal. Consider examining the condition for mistakes."
+        },
+        {
+            "CodeCurrent": 375081,
+            "CodeNext": 123,
+            "CodePrev": 0,
+            "ErrorCode": "V547",
+            "FileName": "txt2pkt.c",
+            "Message": "Expression 'pkt != NULL' is always true."
+        },
+        {
+            "CodeCurrent": 2092755107,
+            "CodeNext": 768558191,
+            "CodePrev": 175257233,
+            "ErrorCode": "V1042",
+            "FileName": "txt2pkt.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        }
+    ]
+}
