@@ -571,7 +571,7 @@ flag_t parse_ftsc_date(struct tm * ptm, char * pdatestr)
 
     ptm->tm_sec = ptm->tm_min = ptm->tm_hour = ptm->tm_mday = ptm->tm_mon = ptm->tm_year = 0;
 
-    while(rval != FTSC_BROKEN)     /* at least we could tokenize it! */
+    if(rval != FTSC_BROKEN)     /* at least we could tokenize it! */
     {
         if(psecond != NULL)
         {
@@ -619,7 +619,7 @@ flag_t parse_ftsc_date(struct tm * ptm, char * pdatestr)
         if(ptm->tm_mday < 1 || ptm->tm_mday > 31)
         {
             rval |= FTSC_BROKEN;
-            break;
+            return rval;
         }
 
         ptm->tm_mon = get_month(pmon, &rval); /* Is the month valid? */
@@ -642,13 +642,13 @@ flag_t parse_ftsc_date(struct tm * ptm, char * pdatestr)
             if(*pyear)
             {
                 rval |= FTSC_BROKEN;
-                break;
+                return rval;
             }
         }
         else
         {
             rval |= FTSC_BROKEN;
-            break;
+            return rval;
         }
 
         if(ptm->tm_year < 100)   /* correct date field! */
@@ -669,8 +669,6 @@ flag_t parse_ftsc_date(struct tm * ptm, char * pdatestr)
             ptm->tm_year -= 1900;
             rval         |= FTSC_FLAWY;
         }
-
-        break;
     }
     return rval;
 } /* parse_ftsc_date */
