@@ -731,7 +731,7 @@ int isFreeSpace(char * path)
     if(sp < config->minDiskFreeSpace)
     {
         fprintf(stderr,
-                "no free space in %s! (needed %d mb, available %u mb).\n",
+                "no free space in %s! (needed %u mb, available %u mb).\n",
                 path,
                 config->minDiskFreeSpace,
                 (unsigned)(sp));
