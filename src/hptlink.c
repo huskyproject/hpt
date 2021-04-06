@@ -521,7 +521,7 @@ void linkArea(s_area * area)
                 {
                     replFound = 0;
 
-                    if(!replFound && (crepl->msgId) && (srepl->replyId) &&
+                    if(crepl->msgId && srepl->replyId &&
                        cmpMsgIdReply(crepl->msgId, srepl->replyId) == 0)
                     {
                         replFound++;
