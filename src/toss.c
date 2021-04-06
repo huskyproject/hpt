@@ -3028,7 +3028,7 @@ void fix_qqq(char * filename)
     size_t l       = strlen(filename);
     char * newname = NULL;
 
-    if(l > 3 && newname != NULL && toupper(filename[l - 1]) == 'Q' &&
+    if(l > 3 && toupper(filename[l - 1]) == 'Q' &&
        toupper(filename[l - 2]) == 'Q' && toupper(filename[l - 3]) == 'Q')
     {
         newname = safe_strdup(filename);
