@@ -703,19 +703,41 @@ void processConfig(void)
         exit_hpt("You must define NetmailArea!", 1);
     }
 
-    allDiff("Inbound",
-            config->inbound,
-            "tempInbound",
-            config->tempInbound,
-            "protInbound",
-            config->protInbound,
-            "localInbound",
-            config->localInbound,
-            "outbound",
-            config->outbound,
-            "tempOutbound",
-            config->tempOutbound,
-            NULL);
+    if(config->badInbound)
+    {
+        allDiff("Inbound",
+                config->inbound,
+                "tempInbound",
+                config->tempInbound,
+                "protInbound",
+                config->protInbound,
+                "localInbound",
+                config->localInbound,
+                "badInbound",
+                config->badInbound,
+                "outbound",
+                config->outbound,
+                "tempOutbound",
+                config->tempOutbound,
+                NULL);
+    }
+    else
+    {
+        allDiff("Inbound",
+                config->inbound,
+                "tempInbound",
+                config->tempInbound,
+                "protInbound",
+                config->protInbound,
+                "localInbound",
+                config->localInbound,
+                "outbound",
+                config->outbound,
+                "tempOutbound",
+                config->tempOutbound,
+                NULL);
+    }
+
     /*  load recoding tables */
     initCharsets();
     getctabs(config->intab, config->outtab);

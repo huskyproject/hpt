@@ -2299,6 +2299,7 @@ int processDir(char * directory, e_tossSecurity sec)
             {
                 if(S_ISDIR(st.st_mode))
                 {
+                    /* We do not want to process directories here */
                     nfree(dummy);
                     files[nfiles - 1].fileName = NULL;
                     files[nfiles - 1].fileTime = 0;
@@ -2350,17 +2351,20 @@ int processDir(char * directory, e_tossSecurity sec)
 
             rc = 3; /*  nonsence, but compiler warns */
 
-            if(config->tossingExt != NULL &&
-               (newFileName = changeFileSuffix(dummy, config->tossingExt, 1)) != NULL)
+            if(config->badInbound == NULL)
             {
-                if(arcFile)
+                newFileName = changeFileSuffix(config, dummy, config->tossingExt, RENAME_FILE);
+                if(config->tossingExt != NULL && newFileName != NULL)
                 {
-                    w_log(LL_BUNDLE, "bundle %s: renaming to .%s", dummy, config->tossingExt);
-                }
+                    if(arcFile)
+                    {
+                        w_log(LL_BUNDLE, "bundle %s: renamed to .%s", dummy, config->tossingExt);
+                    }
 
-                nfree(dummy);
-                dummy       = newFileName;
-                newFileName = NULL;
+                    nfree(dummy);
+                    dummy = newFileName;
+                    newFileName = NULL;
+                }
             }
 
             if(pktFile)
@@ -2379,8 +2383,72 @@ int processDir(char * directory, e_tossSecurity sec)
 
             if(rc >= 1 && rc <= 6)
             {
-                w_log(LL_ERR, "Renaming pkt/arc to .%s", ext[rc]);
-                newFileName = changeFileSuffix(dummy, ext[rc], 1);
+                if(config->badInbound == NULL)
+                {
+                    w_log(LL_ERR, "Renaming pkt/arc to .%s", ext[rc]);
+                    newFileName = changeFileSuffix(config, dummy, ext[rc], RENAME_FILE);
+                }
+                else
+                {
+                    char * badfile, * basename;
+
+                    /* Form "badfile", full path of the "dummy" file
+                       after moving it to config->badInbound */
+                    basename = dummy + dirNameLen;
+                    badfile = smalloc(strlen(config->badInbound) + strlen(basename) + 1);
+                    strcpy(badfile, config->badInbound);
+                    strcat(badfile, basename);
+
+                    if(fexist(badfile))
+                    {
+                        /* The filename "badfile" already exists.
+                           Change its filename extension */
+                        newFileName = changeFileSuffix(config, badfile, ext[rc], NO_FILE_RENAMING);
+                        if(newFileName == NULL && errno == EEXIST)
+                        {
+                            /* All allowed filename extensions have already
+                               been used. Delete the "dummy" file. Do not log
+                               anything if the file is successfully deleted in order
+                               to prevent unlimited logfile growth */
+                            if(remove(dummy) != OK)
+                            {
+                                w_log(LL_ERR, "Cannot delete %s: %s", dummy, strerror(errno));
+                            }
+                            nfree(dummy);
+                            nfree(badfile);
+                            nfree(newFileName);
+                            continue;
+                        }
+
+                        if(rename(dummy, newFileName) == OK)
+                        {
+                            w_log(LL_BUNDLE, "The bad file %s moved to %s", dummy, newFileName);
+                        }
+                        else
+                        {
+                            w_log(LL_ERR, "Cannot rename %s to %s: %s", dummy, newFileName,
+                                  strerror(errno));
+                        }
+                        nfree(dummy);
+                        nfree(badfile);
+                        nfree(newFileName);
+                        continue;
+                    }
+
+                    /* The filename "badfile" does not exist, so we can rename to it */
+                    if(rename(dummy, badfile) == OK)
+                    {
+                        w_log(LL_BUNDLE, "The bad file %s moved to %s", dummy, config->badInbound);
+                    }
+                    else
+                    {
+                        w_log(LL_ERR, "Cannot rename the bad file %s to %s: %s", dummy, badfile,
+                              strerror(errno));
+                    }
+
+                    nfree(badfile);
+                }
+
             }
             else
             {
@@ -2392,7 +2460,6 @@ int processDir(char * directory, e_tossSecurity sec)
         }
 
         nfree(dummy);
-        nfree(newFileName);
     }
     nfree(files);
     w_log(LL_FUNC, "%s::processDir() returns %d", __FILE__, pktCount);
