@@ -104,7 +104,7 @@ int readMsgFromPkt(FILE * pkt, s_pktHeader * header, s_message ** message);
           header, when in a netmail no intl kludge is found, header will be used
           to assume intl kludge
           message from pkt reading into *message structure, NULL if no msg
-   Output: number of msg was read (1 or 0), or 2 if error while reading
+   Output: number of msg was read (1 or 0), or -1 if error while reading
    FZ:     readMsgFromPkt reads a message out of the pkt and transforms the data
           to the struct.
  */

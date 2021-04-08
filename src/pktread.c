@@ -721,7 +721,7 @@ int readMsgFromPkt(FILE * pkt, s_pktHeader * header, s_message ** message)
         if(unread)
         {
             w_log(LL_ERR, "There are %d bytes of unknown data at the end of pkt file!", unread);
-            return 2; /*  rename to bad */
+            return -1; /*  rename to bad */
         }
         else
         {

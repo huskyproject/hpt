@@ -1733,7 +1733,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
     s_pktHeader * header = NULL;
     s_message * msg = NULL;
     s_link * link = NULL;
-    int rc = 0, msgrc = 0;
+    int rc = 0, numMsgRead = 0;
     long pktlen;
     /* +AS+ */
     char * extcmd = NULL;
@@ -1917,7 +1917,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
 
                 if(processIt != 0)
                 {
-                    while((msgrc = readMsgFromPkt(pkt, header, &msg)) == 1)
+                    while((numMsgRead = readMsgFromPkt(pkt, header, &msg)) == 1)
                     {
                         if(msg != NULL)
                         {
@@ -1944,7 +1944,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
                         }
                     }
 
-                    if(msgrc == 2)
+                    if(numMsgRead == -1)
                     {
                         rc = 3;           /*  rename to .bad (wrong msg format) */
                     }
@@ -1954,7 +1954,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
             }
             else
             {
-                while((msgrc = readMsgFromPkt(pkt, header, &msg)) == 1)
+                while((numMsgRead = readMsgFromPkt(pkt, header, &msg)) == 1)
                 {
                     if(msg != NULL)
                     {
