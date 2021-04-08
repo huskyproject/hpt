@@ -40,6 +40,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <assert.h>
+#include <huskylib/compiler.h>
+#ifndef __bool_true_false_are_defined
+#include <stdbool.h>
+#endif
 #include <huskylib/huskylib.h>
 
 #ifdef HAS_MALLOC_H

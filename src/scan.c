@@ -42,6 +42,9 @@
 #include <ctype.h>
 /* compiler.h */
 #include <huskylib/compiler.h>
+#ifndef __bool_true_false_are_defined
+#include <stdbool.h>
+#endif
 /* huskylib */
 #include <huskylib/huskylib.h>
 
@@ -1067,10 +1070,10 @@ void scanNMArea(s_area * area)
             }
 
             nfree(ctl);
-//       ctl = safe_strdup(aka2str(&dest)); /* use this just as temp buffer */
-//       w_log( LL_DEBUGB, "%s::%u Msg from %s to %s",__FILE__,__LINE__,
-//             aka2str(&orig), ctl);
-//       nfree(ctl);
+            /* ctl = safe_strdup(aka2str(&dest)); ** use this just as temp buffer **
+            w_log( LL_DEBUGB, "%s::%u Msg from %s to %s",__FILE__,__LINE__,
+            aka2str(&orig), ctl);
+            nfree(ctl); */
             xscatprintf(&textforlog, "Msg #%d from %s to ", i, aka2str(&orig));
             xstrcat(&textforlog, aka2str(&dest));
             w_log(LL_DEBUGB, "%s::%u %s", __FILE__, __LINE__, textforlog);

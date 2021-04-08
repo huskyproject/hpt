@@ -24,6 +24,10 @@
 
 #include <string.h>
 #include <huskylib/xstr.h>
+#include <huskylib/compiler.h>
+#ifndef __bool_true_false_are_defined
+#include <stdbool.h>
+#endif
 #include <smapi/msgapi.h>
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>

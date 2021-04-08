@@ -29,6 +29,9 @@
 #include <string.h>
 
 #include <huskylib/compiler.h>
+#ifndef __bool_true_false_are_defined
+#include <stdbool.h>
+#endif
 
 #ifdef HAS_PROCESS_H
 #  include <process.h>
