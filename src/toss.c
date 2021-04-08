@@ -1739,10 +1739,14 @@ int processPkt(char * fileName, e_tossSecurity sec)
     char * extcmd = NULL;
     int cmdexit;
     /* -AS- */
-    char processIt = 0;        /*  processIt = 1, process all mails */
+    typedef enum pktToProcess
+    {
+        pktDoNotProcess,
+        pktProcessNetmail,
+        pktProcessAll
+    } e_pktToProcess;
+    e_pktToProcess processIt = pktDoNotProcess;
 
-    /*  processIt = 2, process only Netmail */
-    /*  processIt = 0, do not process pkt */
     w_log(LL_FUNC, "toss.c::processPkt()");
 
     if((pktlen = fsize(fileName)) > 60)
@@ -1801,7 +1805,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
                 switch(sec)
                 {
                     case secLocalInbound:
-                        processIt = 1;
+                        processIt = pktProcessAll;
                         break;
 
                     case secProtInbound:
@@ -1810,7 +1814,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
                         {
                             if(stricmp(link->pktPwd, header->pktPassword) == 0)
                             {
-                                processIt = 1;
+                                processIt = pktProcessAll;
                             }
                             else
                             {
@@ -1825,7 +1829,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
                                           header->origAddr.net,
                                           header->origAddr.node,
                                           header->origAddr.point);
-                                    processIt = 1;
+                                    processIt = pktProcessAll;
                                 }
                                 else
                                 {
@@ -1843,7 +1847,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
                         else if((link != NULL) &&
                                 ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "") == 0)))
                         {
-                            processIt = 1;
+                            processIt = pktProcessAll;
                         }
                         else /* if (link == NULL) */
                         {
@@ -1854,7 +1858,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
                                   header->origAddr.net,
                                   header->origAddr.node,
                                   header->origAddr.point);
-                            processIt = 2;
+                            processIt = pktProcessNetmail;
                         }
 
                         break;
@@ -1865,7 +1869,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
                         {
                             if(stricmp(link->pktPwd, header->pktPassword) == 0)
                             {
-                                processIt = 1;
+                                processIt = pktProcessAll;
                             }
                             else
                             {
@@ -1879,8 +1883,8 @@ int processPkt(char * fileName, e_tossSecurity sec)
                                           header->origAddr.net,
                                           header->origAddr.node,
                                           header->origAddr.point);
-                                    processIt = 2; /* Unsecure inbound, do not process echomail
-                                                    */
+                                    /* Unsecure inbound, do not process echomail */
+                                    processIt = pktProcessNetmail; 
                                 }
                                 else
                                 {
@@ -1898,7 +1902,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
                         else if((link != NULL) &&
                                 ((link->pktPwd == NULL) || (strcmp(link->pktPwd, "") == 0)))
                         {
-                            processIt = 1;
+                            processIt = pktProcessAll;
                         }
                         else /* if (link == NULL) */
                         {
@@ -1909,23 +1913,24 @@ int processPkt(char * fileName, e_tossSecurity sec)
                                   header->origAddr.net,
                                   header->origAddr.node,
                                   header->origAddr.point);
-                            processIt = 2;
+                            processIt = pktProcessNetmail;
                         }
 
                         break;
                 } /* switch */
 
-                if(processIt != 0)
+                if(processIt != pktDoNotProcess)
                 {
                     while((numMsgRead = readMsgFromPkt(pkt, header, &msg)) == 1)
                     {
                         if(msg != NULL)
                         {
-                            if((processIt == 1) || ((processIt == 2) && (msg->netMail == 1)))
+                            if((processIt == pktProcessAll) ||
+                               ((processIt == pktProcessNetmail) && (msg->netMail == 1)))
                             {
                                 if(processMsg(msg, header,
                                               (sec == secLocalInbound || sec == secProtInbound ||
-                                               processIt == 1) ? 1 : 0) != 1)
+                                               processIt == pktProcessAll) ? 1 : 0) != 1)
                                 {
                                     if(putMsgInBadArea(msg, header->origAddr,
                                                        BM_MSGAPI_ERROR) == 0)
