@@ -95,4 +95,4 @@ s_message * MessForCC(s_message * msg);
 #define REC_HDR 0x0001
 #define REC_TXT 0x0002
 
-#endif // ifndef TOSS_H
+#endif /* ifndef TOSS_H */

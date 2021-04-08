@@ -103,6 +103,6 @@ void * safe_calloc(size_t nmemb, size_t size);
 void * safe_realloc(void * ptr, size_t size);
 char * safe_strdup(const char * src);
 
-#endif // ifndef _FCOMMON_H
+#endif /* ifndef _FCOMMON_H */
 
 void writeEchoTossLogEntry(char * areaName);

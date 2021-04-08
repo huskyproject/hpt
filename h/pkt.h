@@ -137,4 +137,4 @@ int parseINTL(char * msgtxt, hs_addr * from, hs_addr * to);
           transforms the data to the structs.
  */
 
-#endif // ifndef _PKT_H
+#endif /* ifndef _PKT_H */

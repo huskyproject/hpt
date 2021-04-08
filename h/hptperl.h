@@ -89,4 +89,4 @@ int perl_putmsg(s_area * echo, s_message * msg);
 int perl_export(s_area * echo, s_link * link, s_message * msg);
 int perl_robotmsg(s_message * msg, char * type);
 
-#endif // ifndef _HPTPPERL_H
+#endif /* ifndef _HPTPPERL_H */

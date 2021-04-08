@@ -74,4 +74,4 @@ extern char ** hpt_environ;
 /* misc variables */
 extern time_t globalTime;
 
-#endif // ifndef GLOBAL_H
+#endif /* ifndef GLOBAL_H */
