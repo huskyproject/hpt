@@ -34,7 +34,7 @@
 #include <pkt.h>
 #include <seenby.h>
 
-struct statToss
+typedef struct statToss
 {
     int arch, pkts, msgs;
     int saved, passthrough, exported, CC;
@@ -43,22 +43,37 @@ struct statToss
     int inBytes;
 /*    time_t startTossing; */
     time_t realTime;
-};
+} s_statToss;
 
-typedef struct statToss s_statToss;
-enum tossSecurity {secLocalInbound, secProtInbound, secInbound};
+typedef enum tossSecurity
+{
+    secLocalInbound,
+    secProtInbound,
+    secInbound
+} e_tossSecurity;
 
-typedef enum tossSecurity e_tossSecurity;
-int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword forceattr);
-int processNMMsg(s_message * msg,
+typedef enum processPktResult
+{
+    prPkt_OK,               /* 0 */
+    prPkt_PasswdErr,        /* 1 */
+    prPkt_CantOpenPkt,      /* 2 */
+    prPkt_BadPktFmt,        /* 3 */
+    prPkt_NotToUs,          /* 4 */
+    prPkt_WriteErr,         /* 5 */
+    prPkt_PerlFltReject,    /* 6 */
+    prPkt_UnknownErr        /* 7 */
+} e_processPktResult;
+
+bool processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword forceattr);
+bool processNMMsg(s_message * msg,
                  s_pktHeader * pktHeader,
                  s_area * area,
                  int dontdocc,
                  dword forceattr);
-int processMsg(s_message * msg, s_pktHeader * pktHeader, int secure);
-int processPkt(char * fileName, e_tossSecurity sec);
-int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr);
-void makeMsgToSysop(char * areaName, hs_addr fromAddr, hs_addr * uplinkAddr);
+bool processMsg(s_message * msg, s_pktHeader * pktHeader, int secure);
+e_processPktResult processPkt(char * fileName, e_tossSecurity sec);
+bool putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr);
+void makeMsgToSysop(char * areaName, hs_addr fromAddr, ps_addr uplinkAddr);
 void toss(void);
 void tossTempOutbound(char * directory);
 void arcmail(s_link * link);
@@ -74,7 +89,7 @@ void forwardToLinks(s_message * msg,
 void forwardMsgToLinks(s_area * echo, s_message * msg, hs_addr pktOrigAddr);
 int carbonCopy(s_message * msg, XMSG * xmsg, s_area * echo);
 void closeOpenedPkt(void);
-int isArcMail(char * fname);
+bool isArcMail(char * fname);
 s_message * MessForCC(s_message * msg);
 
 #define REC_HDR 0x0001

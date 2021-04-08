@@ -47,6 +47,9 @@
 /* compiler.h */
 #include <huskylib/compiler.h>
 
+#ifndef __bool_true_false_are_defined
+#include <stdbool.h>
+#endif
 
 #if (defined (__EMX__) || defined (__MINGW32__)) && defined (__NT__)
 /* we can't include windows.h for prevent compiler errors ... */
@@ -128,7 +131,7 @@ extern s_message ** msgToSysop;
 int save_err;
 static ULONG nopenpkt, maxopenpkt;
 s_statToss statToss;
-int forwardPkt(const char * fileName, s_pktHeader * header, e_tossSecurity sec);
+e_processPktResult forwardPkt(const char * fileName, s_pktHeader * header, e_tossSecurity sec);
 int processDir(char * directory, e_tossSecurity sec);
 void makeMsgToSysop(char * areaName, hs_addr fromAddr, ps_addr uplinkAddr);
 static void setmaxopen(void);
@@ -181,8 +184,8 @@ static char * get_filename(char * pathname)
     return ptr;
 }
 
-/* return value: 1 if success, 0 if fail */
-int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
+/* return value: true if success, false if fail */
+bool putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
 {
     char * ctrlBuff = NULL, * textStart = NULL, * textWithoutArea = NULL;
     size_t textLength = (size_t)msg->textLength;
@@ -190,12 +193,12 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
     HMSG hmsg;
     XMSG xmsg;
     char /**slash,*/ * p, * q, * tiny;
-    int rc     = 0;
+    bool rc     = false;
     int recode = 1;
 
     if(echo->msgbType == MSGTYPE_PASSTHROUGH)
     {
-        w_log(LL_ERR, "Can't put message to passthrough area %s!", echo->areaName);
+        w_log(LL_ERR, "Can't put the message in the passthrough area %s!", echo->areaName);
         return rc;
     }
 
@@ -336,7 +339,7 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
             }
             else
             {
-                rc = 1; /*  normal exit */
+                rc = true; /*  normal exit */
             }
 
             w_log(LL_SRCLINE, "%s:%d closing msg", __FILE__, __LINE__);
@@ -344,7 +347,7 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
             if(MsgCloseMsg(hmsg) != 0)
             {
                 w_log(LL_ERR, "Could not close msg in %s!", echo->fileName);
-                rc = 0;
+                rc = false;
             }
 
             nfree(ctrlBuff);
@@ -369,7 +372,7 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
     }
 
     /* endif */
-    w_log(LL_SRCLINE, "%s:%d end rc=%d", __FILE__, __LINE__, rc);
+    w_log(LL_SRCLINE, "%s:%d end rc=%s", __FILE__, __LINE__, rc ? "true" : "false");
     return rc;
 } /* putMsgInArea */
 
@@ -875,9 +878,9 @@ void forwardMsgToLinks(s_area * echo, s_message * msg, hs_addr pktOrigAddr)
     nfree(otherLinks);
 } /* forwardMsgToLinks */
 
-/* return value: 1 if success, 0 if fail */
+/* return value: true if success, false if fail */
 /* writeAccess MUST BE unsigned !!! */
-int putMsgInBadArea(s_message * msg, hs_addr pktOrigAddr, unsigned writeAccess)
+bool putMsgInBadArea(s_message * msg, hs_addr pktOrigAddr, unsigned writeAccess)
 {
     char * tmp = NULL, * line = NULL, * textBuff = NULL, * areaName = NULL, * reason = NULL;
     char buff[128] = "";
@@ -924,7 +927,7 @@ int putMsgInBadArea(s_message * msg, hs_addr pktOrigAddr, unsigned writeAccess)
         nfree(areaName);
         nfree(msg->text);
         w_log(LL_FUNC, "putMsgInBadArea():perltossbad OK (rc=1)");
-        return 1;
+        return true;
     }
 
 #endif
@@ -968,11 +971,11 @@ int putMsgInBadArea(s_message * msg, hs_addr pktOrigAddr, unsigned writeAccess)
     {
         config->badArea.imported++;
         w_log(LL_FUNC, "putMsgInBadArea() OK");
-        return 1;
+        return true;
     }
 
     w_log(LL_FUNC, "putMsgInBadArea() failed");
-    return 0;
+    return false;
 } /* putMsgInBadArea */
 
 void makeMsgToSysop(char * areaName, hs_addr fromAddr, ps_addr uplinkAddr)
@@ -1214,7 +1217,7 @@ void writeMsgToSysop(void)
     }
 } /* writeMsgToSysop */
 
-int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword forceattr)
+bool processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword forceattr)
 {
     char * area = NULL, * p = NULL, * q = NULL;
     s_message * messCC = NULL;
@@ -1224,7 +1227,8 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
     struct tm msg_tm;
     time_t msgTime, diffTime;
     flag_t tFlag;
-    int writeAccess = 0, rc = 0, ccrc = 0;
+    int writeAccess = 0, ccrc = 0;
+    bool rc = false;
 
     w_log(LL_FUNC, "%s::processEMMsg() begin", __FILE__);
     p = strchr(msg->text, '\r');
@@ -1389,27 +1393,29 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                 }
             }
 
-            if(writeAccess)             /* on any problem move message to BadArea */
+            if(writeAccess) /* on any problem move message to BadArea */
             {
                 rc = putMsgInBadArea(msg, pktOrigAddr, writeAccess);
             }
         }
 
-        if(writeAccess == 0)                      /* ok to proceed */
+        if(writeAccess == 0) /* ok to proceed */
         {
             /*  access ok - process msg */
             int not_dupe = 1;
 
 #ifdef DO_PERL
+            int perlrc;
+
             w_log(LL_SRCLINE, "toss.c:%u:processEMMsg() #ifdef DO_PERL", __LINE__);
 
-            if((rc = perlfilter(msg, pktOrigAddr, -1)) == 1)
+            if((perlrc = perlfilter(msg, pktOrigAddr, -1)) == 1)
             {
-                return not_dupe = 0;
+                return prPkt_OK;
             }
-            else if(rc == 2)
+            else if(perlrc == -1)
             {
-                return 1;
+                return prPkt_PasswdErr;
             }
 
 #endif
@@ -1460,7 +1466,7 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                             rc = putMsgInArea(echo, msg, 1, forceattr);
                         }
 
-                        statToss.saved += rc;
+                        statToss.saved += (int)rc;
                     }
                     else   /*  passthrough */
                            /*
@@ -1468,17 +1474,17 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                               rc = putMsgInBadArea(msg, pktOrigAddr, 10);
                               else {
                               statToss.passthrough++;
-                              rc = 1;
+                              rc = true;
                               }
                             */
                     {
                         statToss.passthrough++;
-                        rc = 1;
+                        rc = true;
                     }
                 }
                 else
                 {
-                    rc = 1;    /*  normal exit for carbon move & delete */
+                    rc = true;    /*  normal exit for carbon move & delete */
                 }
 
                 freeMsgBuffers(messCC);
@@ -1494,7 +1500,7 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                 }
                 else
                 {
-                    rc = 1;
+                    rc = true;
                 }
 
                 statToss.dupes++;
@@ -1515,11 +1521,11 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
         }
     }
 
-    w_log(LL_FUNC, "%s::processEMMsg() rc=%d", __FILE__, rc);
+    w_log(LL_FUNC, "%s::processEMMsg() rc=%s", __FILE__, rc ? "true" : "false");
     return rc;
 } /* processEMMsg */
 
-int processNMMsg(s_message * msg,
+bool processNMMsg(s_message * msg,
                  s_pktHeader * pktHeader,
                  s_area * area,
                  int dontdocc,
@@ -1532,7 +1538,8 @@ int processNMMsg(s_message * msg,
     char * ctrlBuf   = NULL;              /*  Kludgelines */
     XMSG msgHeader;
 /*     char   *slash = NULL; */
-    unsigned int rc = 0, ccrc = 0, i;
+    unsigned int ccrc = 0, i;
+    bool rc = false;
 
     if(area == NULL)
     {
@@ -1557,7 +1564,7 @@ int processNMMsg(s_message * msg,
         }
         else
         {
-            rc = 1;
+            rc = true;
         }
 
         statToss.dupes++;
@@ -1632,7 +1639,7 @@ int processNMMsg(s_message * msg,
             }
             else
             {
-                rc = 1; /*  normal exit */
+                rc = true; /*  normal exit */
             }
 
             nfree(ctrlBuf);
@@ -1640,7 +1647,7 @@ int processNMMsg(s_message * msg,
             if(MsgCloseMsg(msgHandle) != 0) /*  can't close */
             {
                 w_log(LL_ERR, "Could not close msg in NetmailArea %s", area->areaName);
-                rc = 0;
+                rc = false;
             }
             else /*  normal close */
             {
@@ -1673,23 +1680,26 @@ int processNMMsg(s_message * msg,
     return rc;
 } /* processNMMsg */
 
-int processMsg(s_message * msg, s_pktHeader * pktHeader, int secure)
+bool processMsg(s_message * msg, s_pktHeader * pktHeader, int secure)
 {
-    int rc;
+    bool rc;
+#ifdef DO_PERL
+    int perlrc;
+#endif
 
-    w_log(LL_FUNC, "toss.c::processMsg()");
+    w_log(LL_FUNC, "toss.c::processMsg() begin");
     statToss.msgs++;
 
 #ifdef DO_PERL
     w_log(LL_SRCLINE, "toss.c:%u:processMsg() #ifdef DO_PERL", __LINE__);
 
-    if((rc = perlfilter(msg, pktHeader->origAddr, secure)) == 1)
+    if((perlrc = perlfilter(msg, pktHeader->origAddr, secure)) == 1)
     {
         return putMsgInBadArea(msg, pktHeader->origAddr, BM_DENY_BY_FILTER);
     }
-    else if(rc == 2)
+    else if(perlrc == -1)
     {
-        return 1;
+        return true;
     }
 
 #else
@@ -1711,7 +1721,8 @@ int processMsg(s_message * msg, s_pktHeader * pktHeader, int secure)
            msg->toUserName[0] != '\0' &&
            findInStrArray(robot->names, msg->toUserName) >= 0)
         {
-            rc = processAreaFix(msg, pktHeader, 0);
+            processAreaFix(msg, pktHeader, 0);
+            rc = true;
         }
         else
         {
@@ -1723,17 +1734,18 @@ int processMsg(s_message * msg, s_pktHeader * pktHeader, int secure)
         rc = processEMMsg(msg, pktHeader->origAddr, 0, 0);
     } /* endif */
 
-    w_log(LL_FUNC, "toss.c::processMsg() rc=%d", rc);
+    w_log(LL_FUNC, "toss.c::processMsg() rc=%s", rc ? "true" : "false");
     return rc;
 } /* processMsg */
 
-int processPkt(char * fileName, e_tossSecurity sec)
+e_processPktResult processPkt(char * fileName, e_tossSecurity sec)
 {
     FILE * pkt = NULL;
     s_pktHeader * header = NULL;
     s_message * msg = NULL;
     s_link * link = NULL;
-    int rc = 0, numMsgRead = 0;
+    int numMsgRead = 0;
+    e_processPktResult rc = prPkt_OK;
     long pktlen;
     /* +AS+ */
     char * extcmd = NULL;
@@ -1840,7 +1852,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
                                           header->origAddr.net,
                                           header->origAddr.node,
                                           header->origAddr.point);
-                                    rc = 1;
+                                    rc = prPkt_PasswdErr;
                                 }
                             }
                         }
@@ -1895,7 +1907,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
                                           header->origAddr.net,
                                           header->origAddr.node,
                                           header->origAddr.point);
-                                    rc = 1;
+                                    rc = prPkt_PasswdErr;
                                 }
                             }
                         }
@@ -1932,16 +1944,16 @@ int processPkt(char * fileName, e_tossSecurity sec)
                                               (sec == secLocalInbound || sec == secProtInbound ||
                                                processIt == pktProcessAll) ? 1 : 0) != 1)
                                 {
-                                    if(putMsgInBadArea(msg, header->origAddr,
-                                                       BM_MSGAPI_ERROR) == 0)
+                                    if(!putMsgInBadArea(msg, header->origAddr, BM_MSGAPI_ERROR))
                                     {
-                                        rc = 5; /*  can't write to badArea - rename to .err */
+                                        /* can't write to badArea - rename to .err */
+                                        rc = prPkt_WriteErr;
                                     }
                                 }
                             }
                             else
                             {
-                                rc = 1;
+                                rc = prPkt_PasswdErr;
                             }
 
                             freeMsgBuffers(msg);
@@ -1951,7 +1963,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
 
                     if(numMsgRead == -1)
                     {
-                        rc = 3;           /*  rename to .bad (wrong msg format) */
+                        rc = prPkt_BadPktFmt; /* rename to .bad (wrong msg format) */
                     }
 
                     /*  real time of process pkt & msg without external programs */
@@ -1965,11 +1977,11 @@ int processPkt(char * fileName, e_tossSecurity sec)
                     {
                         if(msg->netMail == 1)
                         {
-                            if(processMsg(msg, header,
+                            if(!processMsg(msg, header,
                                           (sec == secLocalInbound ||
-                                           sec == secProtInbound) ? 1 : 0) != 1)
+                                           sec == secProtInbound) ? 1 : 0))
                             {
-                                rc = 5;
+                                rc = prPkt_WriteErr;
                             }
                         }
                         else
@@ -2005,7 +2017,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
         else     /*  header == NULL */
         {
             w_log(LL_ERR, "pkt: %s wrong pkt-file", fileName);
-            rc = 3;
+            rc = prPkt_BadPktFmt;
         }
 
         if(pkt)
@@ -2022,22 +2034,22 @@ int processPkt(char * fileName, e_tossSecurity sec)
     perlpktdone(fileName, rc);
 #endif
     closeOpenedPkt();
-    w_log(LL_FUNC, "toss.c::processPkt() OK");
+    w_log(LL_FUNC, "toss.c::processPkt() end");
     return rc;
 } /* processPkt */
 
-int processArc(char * fileName, e_tossSecurity sec)
+e_processPktResult processArc(char * fileName, e_tossSecurity sec)
 {
     unsigned int i;
     int found, j;
     signed int cmdexit;
     FILE * bundle = NULL;
-    char cmd[256];
+    char cmd[MAX_PATH];
 
     if(sec == secInbound)
     {
         w_log(LL_ERR, "bundle %s: tossing in unsecure inbound, security violation", fileName);
-        return 1;
+        return prPkt_PasswdErr;
     }
 
     /*  find what unpacker to use */
@@ -2047,7 +2059,7 @@ int processArc(char * fileName, e_tossSecurity sec)
 
         if(bundle == NULL)
         {
-            return 2;
+            return prPkt_CantOpenPkt;
         }
 
         w_log(LL_FILE, "toss.c:processArc(): opened '%s' (\"rb\" mode)", fileName);
@@ -2095,7 +2107,7 @@ int processArc(char * fileName, e_tossSecurity sec)
         if(cmdexit != 0)
         {
             w_log(LL_ERR, "exec failed, code %d", cmdexit);
-            return 3;
+            return prPkt_BadPktFmt;
         }
 
         if(config->afterUnpack)
@@ -2115,13 +2127,13 @@ int processArc(char * fileName, e_tossSecurity sec)
     else
     {
         w_log(LL_ERR, "bundle %s: cannot find unpacker", fileName);
-        return 3;
+        return prPkt_BadPktFmt;
     }
 
     statToss.arch++;
     remove(fileName);
     processDir(config->tempInbound, sec);
-    return 7;
+    return prPkt_UnknownErr;
 } /* processArc */
 
 typedef struct fileInDir
@@ -2150,10 +2162,11 @@ static char * validExt[] =
 {
     "su", "mo", "tu", "we", "th", "fr", "sa"
 };
-int isArcMail(char * fname)
+bool isArcMail(char * fname)
 {
     char * p;
     size_t i;
+    size_t sizeExt = sizeof(validExt[0]);
 
     p = strrchr(fname, PATH_DELIM);
 
@@ -2182,7 +2195,7 @@ int isArcMail(char * fname)
         {
             if(!isdigit((unsigned char)*p++))
             {
-                return 0;
+                return false;
             }
 
             while(isdigit((unsigned char)*p))
@@ -2192,7 +2205,7 @@ int isArcMail(char * fname)
 
             if(*p++ != '.')
             {
-                return 0;
+                return false;
             }
         }
     }
@@ -2202,24 +2215,24 @@ int isArcMail(char * fname)
 
         if(*p++ != '.')
         {
-            return 0;
+            return false;
         }
     }
 
-    for(i = 0; i < sizeof(validExt) / sizeof(validExt[0]); i++)
+    for(i = 0; i < sizeof(validExt) / sizeExt; i++)
     {
-        if(strncasecmp(p, validExt[i], 2) == 0)
+        if(strncasecmp(p, validExt[i], sizeExt) == 0)
         {
             break;
         }
     }
 
-    if(i == sizeof(validExt) / sizeof(*validExt))
+    if(i == sizeof(validExt) / sizeExt)
     {
-        return 0;
+        return false;
     }
 
-    return isalnum((unsigned char)p[2]) && (p[3] == '\0');
+    return (bool)isalnum((unsigned char)p[2]) && (p[3] == '\0');
 } /* isArcMail */
 
 #define OK 0
@@ -2228,7 +2241,7 @@ int processDir(char * directory, e_tossSecurity sec)
     husky_DIR * dir = NULL;
     char * filename = NULL;
     char * dummy    = NULL;
-    int rc;
+    e_processPktResult rc;
     int pktFile, arcFile;
     long pktCount       = 0;
     s_fileInDir * files = NULL;
@@ -2354,7 +2367,7 @@ int processDir(char * directory, e_tossSecurity sec)
                 continue;
             }
 
-            rc = 3; /*  nonsence, but compiler warns */
+            rc = prPkt_BadPktFmt; /* nonsence, but compiler warns */
 
             if(config->badInbound == NULL && config->tossingExt != NULL)
             {
@@ -2381,12 +2394,12 @@ int processDir(char * directory, e_tossSecurity sec)
                 rc = processArc(dummy, sec);
             }
 
-            if(0 == rc)
+            if(prPkt_OK == rc)
             {
                 pktCount++;
             }
 
-            if(rc >= 1 && rc <= 6)
+            if(rc != prPkt_OK && rc != prPkt_UnknownErr)
             {
                 if(config->badInbound == NULL)
                 {
@@ -2457,7 +2470,7 @@ int processDir(char * directory, e_tossSecurity sec)
             }
             else
             {
-                if(rc != 7)
+                if(rc != prPkt_UnknownErr)
                 {
                     remove(dummy);
                 }
@@ -2476,7 +2489,7 @@ void writeStatLog(void)
     /* write personal mail statistic logfile if statlog is defined in config */
     /* if the log file exists, the existing value is increased */
     FILE * f = NULL;
-    char buffer[256];
+    char buffer[MAX_PATH];
     int len, x, statNetmail, statCC;
 
     statNetmail = statToss.netMail; /* number of just received netmails */
@@ -2722,7 +2735,7 @@ int find_old_arcmail(s_link * link, FILE * flo)
 
 void arcmail(s_link * tolink)
 {
-    char cmd[256], * pkt = NULL, * lastPathDelim = NULL, saveChar;
+    char cmd[MAX_PATH], * pkt = NULL, * lastPathDelim = NULL, saveChar;
     UINT i;
     int cmdexit, foa = 0;
     FILE * flo    = NULL;
@@ -3034,7 +3047,7 @@ void arcmail(s_link * tolink)
 } /* arcmail */
 
 static int forwardedPkts = 0;
-int forwardPkt(const char * fileName, s_pktHeader * header, e_tossSecurity sec)
+e_processPktResult forwardPkt(const char * fileName, s_pktHeader * header, e_tossSecurity sec)
 {
     unsigned int i;
     s_link * link = NULL;
@@ -3050,13 +3063,13 @@ int forwardPkt(const char * fileName, s_pktHeader * header, e_tossSecurity sec)
             /* security checks */
             if(link->forwardPkts == fOff)
             {
-                return 4;
+                return prPkt_NotToUs;
             }
 
             if((link->forwardPkts == fSecure) && (sec != secProtInbound) &&
                (sec != secLocalInbound))
             {
-                return 4;
+                return prPkt_NotToUs;
             }
 
             /* as we have feature freeze currently, */
@@ -3072,19 +3085,20 @@ int forwardPkt(const char * fileName, s_pktHeader * header, e_tossSecurity sec)
                       newfn + strlen(config->tempOutbound));
                 nfree(newfn);
                 forwardedPkts = 1;
-                return 0;
+                return prPkt_OK;
             }
             else
             {
                 w_log(LL_ERR, "Failed moving %s to %s (%s)", fileName, newfn, strerror(errno));
                 nfree(newfn);
-                return 4;
+                return prPkt_NotToUs;
             }
         }
     }
+
     w_log(LL_ERR, "Packet %s is not for us or our links", fileName);
-    return 4;       /* PKT is not for us and we did not find a link to
-                       forward the pkt file to */
+    /* PKT is not for us and we did not find a link to forward the pkt file to */
+    return prPkt_NotToUs;
 } /* forwardPkt */
 
 /* According to the specs, a .QQQ file does not have two leading
@@ -3466,16 +3480,16 @@ void toss(void)
     w_log(LL_STOP, "End tossing");
 } /* toss */
 
-int packBadArea(HMSG hmsg, XMSG xmsg, char force)
+bool packBadArea(HMSG hmsg, XMSG xmsg, char force)
 {
-    int rc = 0;
+    bool rc = false;
     s_message msg;
     s_area * echo = &(config->badArea);
     hs_addr pktOrigAddr;
     char * ptmp = NULL, * line = NULL, * areaName = NULL, * area = NULL, noexp = 0;
     s_link * link = NULL;
 
-    makeMsg(hmsg, &xmsg, &msg, &(config->badArea), 2);
+    makeMsg(hmsg, &xmsg, &msg, &(config->badArea), actRescanBadarea);
     memset(&pktOrigAddr, '\0', sizeof(hs_addr));
     statToss.msgs++; /*  really processed one more msg */
 
@@ -3592,12 +3606,12 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
             if(echo->msgbType != MSGTYPE_PASSTHROUGH)
             {
                 rc              = putMsgInArea(echo, &msg, 1, 0);
-                statToss.saved += rc;
+                statToss.saved += (int)rc;
             }
             else
             {
                 statToss.passthrough++;
-                rc = 1; /*  passthrough always work */
+                rc = true; /*  passthrough always work */
             }
 
             if(noexp == 0) /*  recode & export to links */
@@ -3635,7 +3649,7 @@ int packBadArea(HMSG hmsg, XMSG xmsg, char force)
             }
             else
             {
-                rc = 1; /*  dupeCheck del */
+                rc = true; /*  dupeCheck del */
             }
 
             if(rc)

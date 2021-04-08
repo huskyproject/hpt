@@ -55,6 +55,7 @@
 
 #include <pkt.h>
 #include <scan.h>
+#include <scanarea.h>
 #include <seenby.h>
 #include <global.h>
 #include <version.h>
@@ -66,11 +67,8 @@
 #include <hptperl.h>
 #endif
 
-void makeMsg(HMSG hmsg, const XMSG * pxmsg, s_message * msg, s_area * echo, int action)
+void makeMsg(HMSG hmsg, const XMSG * pxmsg, s_message * msg, s_area * echo, e_scanAction action)
 {
-    /*  action == 0 - scan area */
-    /*  action == 1 - rescan area */
-    /*  action == 2 - rescan badarea */
     char * kludgeLines = NULL, * seenByPath = NULL;
     UCHAR * msgtid   = NULL;
     UCHAR * ctrlBuff = NULL;
@@ -110,7 +108,7 @@ void makeMsg(HMSG hmsg, const XMSG * pxmsg, s_message * msg, s_area * echo, int 
     /* MsgReadMsg does not do zero termination! */
     ctrlBuff[ctrlLen] = '\0';
 
-    if(action == 0 && config->disableTID == 0)
+    if(action == actScanArea && config->disableTID == 0)
     {
         while((msgtid = GetCtrlToken(ctrlBuff, tid)) != NULL)
         {
@@ -123,7 +121,7 @@ void makeMsg(HMSG hmsg, const XMSG * pxmsg, s_message * msg, s_area * echo, int 
     kludgeLines = (char *)CvtCtrlToKludge(ctrlBuff);
     nfree(ctrlBuff);
 
-    if(action == 0)
+    if(action == actScanArea)
     {
         xstrcat(&seenByPath, "SEEN-BY: "); /*  9 bytes */
     }
@@ -132,7 +130,7 @@ void makeMsg(HMSG hmsg, const XMSG * pxmsg, s_message * msg, s_area * echo, int 
     msg->textLength = MsgGetTextLen(hmsg); /*  with trailing \0 */
     msg->text       = NULL;
 
-    if(action != 2)
+    if(action != actRescanBadarea)
     {
         xscatprintf(&(msg->text), "AREA:%s\r", echo->areaName);
         strUpper(msg->text + 5);
@@ -159,14 +157,14 @@ void makeMsg(HMSG hmsg, const XMSG * pxmsg, s_message * msg, s_area * echo, int 
         msg->textLength++;
     }
 
-    if(action == 0)
+    if(action == actScanArea)
     {
         xstrcat(&(msg->text), seenByPath);
         msg->textLength += 9; /*  strlen(seenByPath) */
     }
 
     /*  recoding from internal to transport charSet */
-    if(config->outtab != NULL && action != 2)
+    if(config->outtab != NULL && action != actRescanBadarea)
     {
         recodeToTransportCharset((char *)msg->fromUserName);
         recodeToTransportCharset((char *)msg->toUserName);
@@ -186,7 +184,7 @@ void packEMMsg(HMSG hmsg, XMSG * xmsg, s_area * echo)
     s_message msg;
     s_message * messCC;
 
-    makeMsg(hmsg, xmsg, &msg, echo, 0);
+    makeMsg(hmsg, xmsg, &msg, echo, actScanArea);
 
     /*  msg is dupe -- return */
     if(dupeDetection(echo, &msg) != 1)
@@ -317,7 +315,7 @@ int repackEMMsg(HMSG hmsg, const XMSG * pxmsg, s_area * echo, s_arealink * areal
     }
 
     links[0] = arealink;
-    makeMsg(hmsg, pxmsg, &msg, echo, 1);
+    makeMsg(hmsg, pxmsg, &msg, echo, actRescanArea);
 
     /* translating name of the area to uppercase */
     while(msg.text[j] != '\r')

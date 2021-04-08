@@ -40,6 +40,10 @@
 #endif
 
 #include <huskylib/compiler.h>
+#ifndef __bool_true_false_are_defined
+#include <stdbool.h>
+#endif
+
 #include <huskylib/huskylib.h>
 
 #if defined (__NT__) && !defined (WIN32) /* WIN32 needed for perl-core include files */
@@ -796,7 +800,8 @@ static XS(perl_putMsgInArea)
     int addkludges;
     char * p;
     STRLEN n_a;
-    UINT narea, rc;
+    UINT narea;
+    bool rc;
     s_area * echo;
     s_message msg;
 
@@ -2769,7 +2774,7 @@ int perlfilter(s_message * msg, hs_addr pktOrigAddr, int secure)
             nfree(sorig);
             nfree(prc);
             nfree(area);
-            return 2;
+            return -1;
         }
 
         svchange = perl_get_sv("change", FALSE);
@@ -2965,10 +2970,13 @@ void perlpktdone(const char * fname, int rc)
 {
     const char * res[] =
     {
-        NULL,                  "Security violation",                  "Can't open pkt",
+        NULL,
+        "Security violation",
+        "Can't open pkt",
         "Bad pkt format",
         "Not to us",
-        "Msg tossing problem", "Unknown error",
+        "Msg tossing problem",
+        "Unknown error",
         "Unknown error (pkt already removed)"
     };
     static int do_perlpktdone = 1;

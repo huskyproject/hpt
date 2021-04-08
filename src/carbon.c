@@ -202,10 +202,11 @@ int processExternal(s_area * echo, s_message * msg, s_carbon carbon)
 } /* processExternal */
 
 /* area - area to carbon messages, echo - original echo area */
-int processCarbonCopy(s_area * area, s_area * echo, s_message * msg, s_carbon carbon)
+bool processCarbonCopy(s_area * area, s_area * echo, s_message * msg, s_carbon carbon)
 {
     char * p, * text, * line, * old_text, * reason = carbon.reason;
-    int i, old_textLength, aexport = carbon.aexport, rc = 0;
+    int i, old_textLength, aexport = carbon.aexport;
+    bool rc = false;
 
     statToss.CC++;
     old_textLength = msg->textLength;
@@ -329,7 +330,7 @@ int processCarbonCopy(s_area * area, s_area * echo, s_message * msg, s_carbon ca
     }
 
     w_log(LL_CARBON,
-          "Carbon %s from %s to %s%s%s%s: msg from \"%s\" %s to \"%s\"%s%s. Result code is %d",
+          "Carbon %s from %s to %s%s%s%s: msg from \"%s\" %s to \"%s\"%s%s. Result code is %s",
           carbon.move ? "move" : "copy",
           echo->areaName ? echo->areaName : "netmail",
           area->areaName ? area->areaName : "netmail",
@@ -341,7 +342,7 @@ int processCarbonCopy(s_area * area, s_area * echo, s_message * msg, s_carbon ca
           msg->toUserName,
           msg->netMail ? " " : "",
           msg->netMail ? aka2str(&msg->destAddr) : "",
-          rc);
+          rc ? "true" : "false");
     nfree(msg->text);
     msg->textLength = old_textLength;
     msg->text       = old_text;

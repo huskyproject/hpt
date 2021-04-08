@@ -751,7 +751,7 @@ int readMsgFromPkt(FILE * pkt, s_pktHeader * header, s_message ** message)
     /* val: make_ftsc_date((char*)msg->datetime, &tm); */
     if(globalBuffer == NULL)
     {
-        globalBuffer = (UCHAR *)safe_malloc(BUFFERSIZE + 1); /*  128K (32K in MS-DOS) */
+        globalBuffer = (UCHAR *)safe_malloc(BUFFERSIZE + 1); /* 512K (32K in MS-DOS) */
     }
 
     len = fgetsUntil0((UCHAR *)globalBuffer, BUFFERSIZE + 1, pkt, NULL);
@@ -841,7 +841,7 @@ int readMsgFromPkt(FILE * pkt, s_pktHeader * header, s_message ** message)
         nfree(msg);
         *message = NULL;
         w_log(LL_ERR, "wrong msg header: renaming pkt to bad.");
-        return 2; /*  exit with error */
+        return -1; /*  exit with error */
     }
 
 #if !defined (__DOS__) || defined (__FLAT__)
