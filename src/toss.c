@@ -1937,8 +1937,7 @@ e_processPktResult processPkt(char * fileName, e_tossSecurity sec)
                     {
                         if(msg != NULL)
                         {
-                            if((processIt == pktProcessAll) ||
-                               ((processIt == pktProcessNetmail) && (msg->netMail == 1)))
+                            if(processIt == pktProcessAll || msg->netMail == 1)
                             {
                                 if(processMsg(msg, header,
                                               (sec == secLocalInbound || sec == secProtInbound ||
@@ -1978,8 +1977,7 @@ e_processPktResult processPkt(char * fileName, e_tossSecurity sec)
                         if(msg->netMail == 1)
                         {
                             if(!processMsg(msg, header,
-                                          (sec == secLocalInbound ||
-                                           sec == secProtInbound) ? 1 : 0))
+                                           (sec == secLocalInbound || sec == secProtInbound) ? 1 : 0))
                             {
                                 rc = prPkt_WriteErr;
                             }
@@ -3458,7 +3456,7 @@ void toss(void)
         forwardedPkts = 0;
     }
 
-    statToss.realTime = husky_GetTimer(&timer);
+    statToss.realTime = (time_t)husky_GetTimer(&timer);
     /*  write statToss to Log */
     writeTossStatsToLog();
     tossTempOutbound(config->tempOutbound);

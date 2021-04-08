@@ -175,4 +175,28 @@
     <CodeCurrent>4014139857</CodeCurrent>
     <CodeNext>123</CodeNext>
   </hpt>
+  <hpt>
+    <FileName>scanarea.c</FileName>
+    <ErrorCode>V1004</ErrorCode>
+    <Message>The 'links' pointer was used unsafely after it was verified against nullptr. Check lines: _, _.</Message>
+    <CodePrev>0</CodePrev>
+    <CodeCurrent>9951165</CodeCurrent>
+    <CodeNext>2357178001</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>toss.c</FileName>
+    <ErrorCode>V560</ErrorCode>
+    <Message>A part of conditional expression is always false: sec == secLocalInbound.</Message>
+    <CodePrev>2735710668</CodePrev>
+    <CodeCurrent>32643668</CodeCurrent>
+    <CodeNext>3204535771</CodeNext>
+  </hpt>
+  <hpt>
+    <FileName>toss.c</FileName>
+    <ErrorCode>V560</ErrorCode>
+    <Message>A part of conditional expression is always false: sec == secLocalInbound.</Message>
+    <CodePrev>2735710668</CodePrev>
+    <CodeCurrent>4010188210</CodeCurrent>
+    <CodeNext>123</CodeNext>
+  </hpt>
 </NewDataSet>
