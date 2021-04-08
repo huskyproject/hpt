@@ -2351,10 +2351,10 @@ int processDir(char * directory, e_tossSecurity sec)
 
             rc = 3; /*  nonsence, but compiler warns */
 
-            if(config->badInbound == NULL)
+            if(config->badInbound == NULL && config->tossingExt != NULL)
             {
                 newFileName = changeFileSuffix(config, dummy, config->tossingExt, RENAME_FILE);
-                if(config->tossingExt != NULL && newFileName != NULL)
+                if(newFileName != NULL)
                 {
                     if(arcFile)
                     {
