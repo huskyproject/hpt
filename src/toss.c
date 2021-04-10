@@ -1411,11 +1411,11 @@ bool processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword forc
 
             if((perlrc = perlfilter(msg, pktOrigAddr, -1)) == 1)
             {
-                return prPkt_OK;
+                return pkt_OK;
             }
             else if(perlrc == -1)
             {
-                return prPkt_PasswdErr;
+                return pkt_PasswdErr;
             }
 
 #endif
@@ -1745,7 +1745,7 @@ e_processPktResult processPkt(char * fileName, e_tossSecurity sec)
     s_message * msg = NULL;
     s_link * link = NULL;
     int numMsgRead = 0;
-    e_processPktResult rc = prPkt_OK;
+    e_processPktResult rc = pkt_OK;
     long pktlen;
     /* +AS+ */
     char * extcmd = NULL;
@@ -1852,7 +1852,7 @@ e_processPktResult processPkt(char * fileName, e_tossSecurity sec)
                                           header->origAddr.net,
                                           header->origAddr.node,
                                           header->origAddr.point);
-                                    rc = prPkt_PasswdErr;
+                                    rc = pkt_PasswdErr;
                                 }
                             }
                         }
@@ -1907,7 +1907,7 @@ e_processPktResult processPkt(char * fileName, e_tossSecurity sec)
                                           header->origAddr.net,
                                           header->origAddr.node,
                                           header->origAddr.point);
-                                    rc = prPkt_PasswdErr;
+                                    rc = pkt_PasswdErr;
                                 }
                             }
                         }
@@ -1946,13 +1946,13 @@ e_processPktResult processPkt(char * fileName, e_tossSecurity sec)
                                     if(!putMsgInBadArea(msg, header->origAddr, BM_MSGAPI_ERROR))
                                     {
                                         /* can't write to badArea - rename to .err */
-                                        rc = prPkt_WriteErr;
+                                        rc = pkt_WriteErr;
                                     }
                                 }
                             }
                             else
                             {
-                                rc = prPkt_PasswdErr;
+                                rc = pkt_PasswdErr;
                             }
 
                             freeMsgBuffers(msg);
@@ -1962,7 +1962,7 @@ e_processPktResult processPkt(char * fileName, e_tossSecurity sec)
 
                     if(numMsgRead == -1)
                     {
-                        rc = prPkt_BadPktFmt; /* rename to .bad (wrong msg format) */
+                        rc = pkt_BadPktFmt; /* rename to .bad (wrong msg format) */
                     }
 
                     /*  real time of process pkt & msg without external programs */
@@ -1979,7 +1979,7 @@ e_processPktResult processPkt(char * fileName, e_tossSecurity sec)
                             if(!processMsg(msg, header,
                                            (sec == secLocalInbound || sec == secProtInbound) ? 1 : 0))
                             {
-                                rc = prPkt_WriteErr;
+                                rc = pkt_WriteErr;
                             }
                         }
                         else
@@ -2015,7 +2015,7 @@ e_processPktResult processPkt(char * fileName, e_tossSecurity sec)
         else     /*  header == NULL */
         {
             w_log(LL_ERR, "pkt: %s wrong pkt-file", fileName);
-            rc = prPkt_BadPktFmt;
+            rc = pkt_BadPktFmt;
         }
 
         if(pkt)
@@ -2047,7 +2047,7 @@ e_processPktResult processArc(char * fileName, e_tossSecurity sec)
     if(sec == secInbound)
     {
         w_log(LL_ERR, "bundle %s: tossing in unsecure inbound, security violation", fileName);
-        return prPkt_PasswdErr;
+        return pkt_PasswdErr;
     }
 
     /*  find what unpacker to use */
@@ -2057,7 +2057,7 @@ e_processPktResult processArc(char * fileName, e_tossSecurity sec)
 
         if(bundle == NULL)
         {
-            return prPkt_CantOpenPkt;
+            return pkt_CantOpenPkt;
         }
 
         w_log(LL_FILE, "toss.c:processArc(): opened '%s' (\"rb\" mode)", fileName);
@@ -2105,7 +2105,7 @@ e_processPktResult processArc(char * fileName, e_tossSecurity sec)
         if(cmdexit != 0)
         {
             w_log(LL_ERR, "exec failed, code %d", cmdexit);
-            return prPkt_BadPktFmt;
+            return pkt_BadPktFmt;
         }
 
         if(config->afterUnpack)
@@ -2125,13 +2125,13 @@ e_processPktResult processArc(char * fileName, e_tossSecurity sec)
     else
     {
         w_log(LL_ERR, "bundle %s: cannot find unpacker", fileName);
-        return prPkt_BadPktFmt;
+        return pkt_BadPktFmt;
     }
 
     statToss.arch++;
     remove(fileName);
     processDir(config->tempInbound, sec);
-    return prPkt_UnknownErr;
+    return pkt_UnknownErr;
 } /* processArc */
 
 typedef struct fileInDir
@@ -2365,7 +2365,7 @@ int processDir(char * directory, e_tossSecurity sec)
                 continue;
             }
 
-            rc = prPkt_BadPktFmt; /* nonsence, but compiler warns */
+            rc = pkt_BadPktFmt; /* nonsence, but compiler warns */
 
             if(config->badInbound == NULL && config->tossingExt != NULL)
             {
@@ -2392,12 +2392,12 @@ int processDir(char * directory, e_tossSecurity sec)
                 rc = processArc(dummy, sec);
             }
 
-            if(prPkt_OK == rc)
+            if(pkt_OK == rc)
             {
                 pktCount++;
             }
 
-            if(rc != prPkt_OK && rc != prPkt_UnknownErr)
+            if(rc != pkt_OK && rc != pkt_UnknownErr)
             {
                 if(config->badInbound == NULL)
                 {
@@ -2468,7 +2468,7 @@ int processDir(char * directory, e_tossSecurity sec)
             }
             else
             {
-                if(rc != prPkt_UnknownErr)
+                if(rc != pkt_UnknownErr)
                 {
                     remove(dummy);
                 }
@@ -3061,13 +3061,13 @@ e_processPktResult forwardPkt(const char * fileName, s_pktHeader * header, e_tos
             /* security checks */
             if(link->forwardPkts == fOff)
             {
-                return prPkt_NotToUs;
+                return pkt_NotToUs;
             }
 
             if((link->forwardPkts == fSecure) && (sec != secProtInbound) &&
                (sec != secLocalInbound))
             {
-                return prPkt_NotToUs;
+                return pkt_NotToUs;
             }
 
             /* as we have feature freeze currently, */
@@ -3083,20 +3083,20 @@ e_processPktResult forwardPkt(const char * fileName, s_pktHeader * header, e_tos
                       newfn + strlen(config->tempOutbound));
                 nfree(newfn);
                 forwardedPkts = 1;
-                return prPkt_OK;
+                return pkt_OK;
             }
             else
             {
                 w_log(LL_ERR, "Failed moving %s to %s (%s)", fileName, newfn, strerror(errno));
                 nfree(newfn);
-                return prPkt_NotToUs;
+                return pkt_NotToUs;
             }
         }
     }
 
     w_log(LL_ERR, "Packet %s is not for us or our links", fileName);
     /* PKT is not for us and we did not find a link to forward the pkt file to */
-    return prPkt_NotToUs;
+    return pkt_NotToUs;
 } /* forwardPkt */
 
 /* According to the specs, a .QQQ file does not have two leading

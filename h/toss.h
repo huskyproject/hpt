@@ -54,14 +54,14 @@ typedef enum tossSecurity
 
 typedef enum processPktResult
 {
-    prPkt_OK,               /* 0 */
-    prPkt_PasswdErr,        /* 1 */
-    prPkt_CantOpenPkt,      /* 2 */
-    prPkt_BadPktFmt,        /* 3 */
-    prPkt_NotToUs,          /* 4 */
-    prPkt_WriteErr,         /* 5 */
-    prPkt_PerlFltReject,    /* 6 */
-    prPkt_UnknownErr        /* 7 */
+    pkt_OK,               /* 0 */
+    pkt_PasswdErr,        /* 1 */
+    pkt_CantOpenPkt,      /* 2 */
+    pkt_BadPktFmt,        /* 3 */
+    pkt_NotToUs,          /* 4 */
+    pkt_WriteErr,         /* 5 */
+    pkt_PerlFiltReject,   /* 6 */
+    pkt_UnknownErr        /* 7 */
 } e_processPktResult;
 
 bool processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword forceattr);
