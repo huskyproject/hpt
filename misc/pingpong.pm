@@ -106,7 +106,12 @@ sub ping_pong($$$$$$)
 		$my_aka = $to_addr;
 		if ( $subj =~ /\%RouteTo\: (\d\:\d+\/\d+)/i) {
 		    w_log( "\'\%RouteTo\:\' command found." );
-		    $addline = "\r\%RouteTo\: $1\r" if $secure == 1;
+		    if ( defined $links{$1}{password} ) {
+		       $addline = "\r\%RouteTo\: $1\r" if $secure == 1;
+		    } else {
+			$addline = "$1 isn't my password protecded link. '%RouteTo\: $1' command was ignored.";
+                        w_log("$1 isn't protecded link. \'\%RouteTo\: $1\' command was not accepted.");
+	            }
 		}
                 if ( $subj =~ /\%Links/i) {
 		    $addline = "My links are:\r~~~~~~~~~~~~~\r";
@@ -196,7 +201,8 @@ sub route_to()
 	    $route = $1;
 	    $route =~ /\d+\:\d+\/\d+(\.?\d*)/;
 	    $route .= '.0' unless defined( $1 );
-	    $text =~ s/\r\%RouteTo\:\s+(\d+\:\d+\/\d+\.?\d*)\s*(\d+\:\d+\/\d+){0,1}/\rThe answer was Routed To the node $1 at the node @{$config{addr}}[0]/i;
+	    $text =~ s/\r\%RouteTo\:\s+(\d+\:\d+\/\d+\.?\d*)\s*(\d+\:\d+\/\d+){0,1}//i;
+	    $text = "\x01Routed_To\: $1 at @{$config{addr}}[0]\r$text";
 	    $change=1;
 	} else {
 	    $addline = "\rMy links are:\r~~~~~~~~~~~~~\r\r";
