@@ -29,7 +29,7 @@ script:
 - eval "${MATRIX_EVAL}"
 - cd  ~/build/huskyproject/huskylib
 - if [[ -n "$MY_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$MY_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
+- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; git branch; fi
 - mkdir build
 - cd build
 - cmake .. ${CF}
@@ -37,7 +37,7 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/smapi
 - if [[ -n "$MY_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$MY_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
+- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; git branch; fi
 - mkdir build
 - cd build
 - cmake .. ${CF}
@@ -45,7 +45,7 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/fidoconf
 - if [[ -n "$MY_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$MY_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
+- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; git branch; fi
 - mkdir build
 - cd build
 - cmake .. ${CF}
@@ -53,7 +53,7 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/areafix
 - if [[ -n "$MY_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$MY_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
+- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; git branch; fi
 - mkdir build
 - cd build
 - cmake .. ${CF}
@@ -61,7 +61,7 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/hptzip
 - if [[ -n "$MY_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$MY_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
+- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; git branch; fi
 - mkdir build
 - cd build
 - cmake .. ${CF}
