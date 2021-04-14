@@ -2234,7 +2234,7 @@ int processDir(char * directory, e_tossSecurity sec)
     char * newFileName = NULL;
     char * ext[]       =
     {
-        NULL, "sec", "asc", "bad", "ntu", "err", "flt"
+        NULL, "sec", "acs", "bad", "ntu", "err", "flt"
     };
 
 #ifndef __UNIX__
