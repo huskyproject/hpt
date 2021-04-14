@@ -25,12 +25,14 @@ before_install:
 - sudo apt-get update; sudo apt-get install -y pvs-studio
 
 script:
-- if [[ "$TRAVIS_BRANCH" != "TRAVIS_TAG" && "$TRAVIS_BRANCH" != "master" ]]; then CURR_BRANCH="$TRAVIS_BRANCH"; fi
-- printenv CURR_BRANCH; true
+- echo TRAVIS_BRANCH=$TRAVIS_BRANCH
+- echo TRAVIS_TAG=$TRAVIS_TAG
+- if [[ "$TRAVIS_BRANCH" != "$TRAVIS_TAG" && "$TRAVIS_BRANCH" != "master" ]]; then CURR_BRANCH="$TRAVIS_BRANCH"; fi
+- echo CURR_BRANCH=$CURR_BRANCH
 - eval "${MATRIX_EVAL}"
 - cd  ~/build/huskyproject/huskylib
 - if [[ -n "$CURR_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$CURR_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- printenv MY_BRANCH; true
+- echo MY_BRANCH=$MY_BRANCH
 - if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
 - git branch
 - mkdir build
@@ -40,7 +42,7 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/smapi
 - if [[ -n "$CURR_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$CURR_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- printenv MY_BRANCH; true
+- echo MY_BRANCH=$MY_BRANCH
 - if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
 - git branch
 - mkdir build
@@ -50,7 +52,7 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/fidoconf
 - if [[ -n "$CURR_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$CURR_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- printenv MY_BRANCH; true
+- echo MY_BRANCH=$MY_BRANCH
 - if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
 - git branch
 - mkdir build
@@ -60,7 +62,7 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/areafix
 - if [[ -n "$CURR_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$CURR_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- printenv MY_BRANCH; true
+- echo MY_BRANCH=$MY_BRANCH
 - if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
 - git branch
 - mkdir build
@@ -70,7 +72,7 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/hptzip
 - if [[ -n "$CURR_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$CURR_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- printenv MY_BRANCH; true
+- echo MY_BRANCH=$MY_BRANCH
 - if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
 - git branch
 - mkdir build
@@ -79,6 +81,7 @@ script:
 - cmake --build .
 - sudo make install
 - cd $TRAVIS_BUILD_DIR
+- git branch
 - if [[ -n "$PVS_USERNAME" ]]; then pvs-studio-analyzer credentials -o $TRAVIS_BUILD_DIR/PVS-Studio.lic $PVS_USERNAME $PVS_KEY; fi
 - if [[ -n "$PVS_USERNAME" ]]; then cmake . -Bbuild "${CF}" -DCMAKE_EXPORT_COMPILE_COMMANDS=On -DCPACK_DEBIAN_PACKAGE_MAINTAINER=travis-ci; fi
 - if [[ -z "$PVS_USERNAME" ]]; then cmake . -Bbuild "${CF}" -DCPACK_DEBIAN_PACKAGE_MAINTAINER=travis-ci; fi
