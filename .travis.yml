@@ -25,32 +25,43 @@ before_install:
 - sudo apt-get update; sudo apt-get install -y pvs-studio
 
 script:
+- if [[ "$TRAVIS_BRANCH" != "TRAVIS_TAG" && "$TRAVIS_BRANCH" != "master" ]]; then MY_BRANCH="$TRAVIS_BRANCH"; fi
 - eval "${MATRIX_EVAL}"
 - cd  ~/build/huskyproject/huskylib
+- if [[ -n "$MY_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$MY_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
+- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
 - mkdir build
 - cd build
 - cmake .. ${CF}
 - cmake --build .
 - sudo make install
 - cd  ~/build/huskyproject/smapi
+- if [[ -n "$MY_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$MY_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
+- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
 - mkdir build
 - cd build
 - cmake .. ${CF}
 - cmake --build .
 - sudo make install
 - cd  ~/build/huskyproject/fidoconf
+- if [[ -n "$MY_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$MY_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
+- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
 - mkdir build
 - cd build
 - cmake .. ${CF}
 - cmake --build .
 - sudo make install
 - cd  ~/build/huskyproject/areafix
+- if [[ -n "$MY_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$MY_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
+- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
 - mkdir build
 - cd build
 - cmake .. ${CF}
 - cmake --build .
 - sudo make install
 - cd  ~/build/huskyproject/hptzip
+- if [[ -n "$MY_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$MY_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
+- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
 - mkdir build
 - cd build
 - cmake .. ${CF}
