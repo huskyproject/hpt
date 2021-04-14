@@ -26,11 +26,11 @@ before_install:
 
 script:
 - if [[ "$TRAVIS_BRANCH" != "TRAVIS_TAG" && "$TRAVIS_BRANCH" != "master" ]]; then CURR_BRANCH="$TRAVIS_BRANCH"; fi
-- printenv CURR_BRANCH
+- printenv CURR_BRANCH; true
 - eval "${MATRIX_EVAL}"
 - cd  ~/build/huskyproject/huskylib
 - if [[ -n "$CURR_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$CURR_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- printenv MY_BRANCH
+- printenv MY_BRANCH; true
 - if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
 - git branch
 - mkdir build
@@ -40,7 +40,7 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/smapi
 - if [[ -n "$CURR_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$CURR_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- printenv MY_BRANCH
+- printenv MY_BRANCH; true
 - if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
 - git branch
 - mkdir build
@@ -50,7 +50,7 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/fidoconf
 - if [[ -n "$CURR_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$CURR_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- printenv MY_BRANCH
+- printenv MY_BRANCH; true
 - if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
 - git branch
 - mkdir build
@@ -60,7 +60,7 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/areafix
 - if [[ -n "$CURR_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$CURR_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- printenv MY_BRANCH
+- printenv MY_BRANCH; true
 - if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
 - git branch
 - mkdir build
@@ -70,7 +70,7 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/hptzip
 - if [[ -n "$CURR_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$CURR_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- printenv MY_BRANCH
+- printenv MY_BRANCH; true
 - if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
 - git branch
 - mkdir build
