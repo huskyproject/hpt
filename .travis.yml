@@ -26,10 +26,13 @@ before_install:
 
 script:
 - if [[ "$TRAVIS_BRANCH" != "TRAVIS_TAG" && "$TRAVIS_BRANCH" != "master" ]]; then MY_BRANCH="$TRAVIS_BRANCH"; fi
+- printenv MY_BRANCH
 - eval "${MATRIX_EVAL}"
 - cd  ~/build/huskyproject/huskylib
 - if [[ -n "$MY_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$MY_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; git branch; fi
+- printenv MY_BRANCH
+- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
+- git branch
 - mkdir build
 - cd build
 - cmake .. ${CF}
@@ -37,7 +40,9 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/smapi
 - if [[ -n "$MY_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$MY_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; git branch; fi
+- printenv MY_BRANCH
+- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
+- git branch
 - mkdir build
 - cd build
 - cmake .. ${CF}
@@ -45,7 +50,9 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/fidoconf
 - if [[ -n "$MY_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$MY_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; git branch; fi
+- printenv MY_BRANCH
+- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
+- git branch
 - mkdir build
 - cd build
 - cmake .. ${CF}
@@ -53,7 +60,9 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/areafix
 - if [[ -n "$MY_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$MY_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; git branch; fi
+- printenv MY_BRANCH
+- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
+- git branch
 - mkdir build
 - cd build
 - cmake .. ${CF}
@@ -61,7 +70,9 @@ script:
 - sudo make install
 - cd  ~/build/huskyproject/hptzip
 - if [[ -n "$MY_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$MY_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; git branch; fi
+- printenv MY_BRANCH
+- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
+- git branch
 - mkdir build
 - cd build
 - cmake .. ${CF}
