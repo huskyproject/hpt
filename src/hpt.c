@@ -983,11 +983,8 @@ int main(int argc, char ** argv, char ** envp)
                 nfree(config->pack[zi_pack].packer);
                 nfree(config->pack[zi_pack].call);
 
-                if(zi_pack != config->packCount)
-                {
-                    memmove(config->pack + zi_pack, config->pack + zi_pack + 1,
-                            sizeof(s_pack) * (config->packCount - zi_pack - 1));
-                }
+                memmove(config->pack + zi_pack, config->pack + zi_pack + 1,
+                        sizeof(s_pack) * (config->packCount - zi_pack - 1));
 
                 config->packCount--;
                 /*config->pack = srealloc(config->pack, config->packCount * sizeof(s_pack));*/
@@ -999,11 +996,8 @@ int main(int argc, char ** argv, char ** envp)
                 nfree(config->unpack[zi_unpack].matchCode);
                 nfree(config->unpack[zi_unpack].mask);
 
-                if(zi_unpack != config->unpackCount)
-                {
-                    memmove(config->unpack + zi_unpack, config->unpack + zi_unpack + 1,
-                            sizeof(s_unpack) * (config->unpackCount - zi_unpack - 1));
-                }
+                memmove(config->unpack + zi_unpack, config->unpack + zi_unpack + 1,
+                        sizeof(s_unpack) * (config->unpackCount - zi_unpack - 1));
 
                 config->unpackCount--;
                 /*config->unpack = srealloc(config->unpack, config->unpackCount *
