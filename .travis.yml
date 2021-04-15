@@ -31,9 +31,7 @@ script:
 - echo CURR_BRANCH=$CURR_BRANCH
 - eval "${MATRIX_EVAL}"
 - cd  ~/build/huskyproject/huskylib
-- if [[ -n "$CURR_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$CURR_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- echo MY_BRANCH=$MY_BRANCH
-- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
+- if [[ -n "$CURR_BRANCH" ]]; then git checkout "$CURR_BRANCH"; true fi
 - git branch
 - mkdir build
 - cd build
@@ -41,9 +39,7 @@ script:
 - cmake --build .
 - sudo make install
 - cd  ~/build/huskyproject/smapi
-- if [[ -n "$CURR_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$CURR_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- echo MY_BRANCH=$MY_BRANCH
-- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
+- if [[ -n "$CURR_BRANCH" ]]; then git checkout "$CURR_BRANCH"; true fi
 - git branch
 - mkdir build
 - cd build
@@ -51,9 +47,7 @@ script:
 - cmake --build .
 - sudo make install
 - cd  ~/build/huskyproject/fidoconf
-- if [[ -n "$CURR_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$CURR_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- echo MY_BRANCH=$MY_BRANCH
-- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
+- if [[ -n "$CURR_BRANCH" ]]; then git checkout "$CURR_BRANCH"; true fi
 - git branch
 - mkdir build
 - cd build
@@ -61,9 +55,7 @@ script:
 - cmake --build .
 - sudo make install
 - cd  ~/build/huskyproject/areafix
-- if [[ -n "$CURR_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$CURR_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- echo MY_BRANCH=$MY_BRANCH
-- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
+- if [[ -n "$CURR_BRANCH" ]]; then git checkout "$CURR_BRANCH"; true fi
 - git branch
 - mkdir build
 - cd build
@@ -71,9 +63,7 @@ script:
 - cmake --build .
 - sudo make install
 - cd  ~/build/huskyproject/hptzip
-- if [[ -n "$CURR_BRANCH" ]]; then MY_BRANCH=$(git branch --list "$CURR_BRANCH"); [[ -n "$MY_BRANCH" ]] && MY_BRANCH=${MY_BRANCH:2}; fi
-- echo MY_BRANCH=$MY_BRANCH
-- if [[ -n "$MY_BRANCH" ]]; then git checkout "$MY_BRANCH"; fi
+- if [[ -n "$CURR_BRANCH" ]]; then git checkout "$CURR_BRANCH"; true fi
 - git branch
 - mkdir build
 - cd build
