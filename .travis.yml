@@ -4,12 +4,20 @@ language: c
 
 jobs:
   include:
-    env:
-    - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF ARCH="x86_64" DEPLOY="true"
-    - MATRIX_EVAL="CC='gcc -m32'" CF="-DBUILD_SHARED_LIBS=OFF -DCMAKE_LIBRARY_PATH=/usr/lib32"
-      PACKAGES="gcc-multilib lib32z1-dev" ARCH="i686" DEPLOY="true"
-    - MATRIX_EVAL="CC=gcc" CF="-DBUILD_SHARED_LIBS=ON" ARCH="x86_64"
-      DEPLOY="false"
+    - os: linux
+      language: c
+      env:
+        - MATRIX_EVAL="CC=gcc" CF=-DBUILD_SHARED_LIBS=OFF ARCH="x86_64" DEPLOY="true"
+    - os: linux
+      language: c
+      env:
+        - MATRIX_EVAL="CC='gcc -m32'" CF="-DBUILD_SHARED_LIBS=OFF -DCMAKE_LIBRARY_PATH=/usr/lib32"
+          PACKAGES="gcc-multilib lib32z1-dev" ARCH="i686" DEPLOY="true"
+    - os: linux
+      language: c
+      env:
+        - MATRIX_EVAL="CC=gcc" CF="-DBUILD_SHARED_LIBS=ON" ARCH="x86_64"
+          DEPLOY="false"
 
 before_install:
 - sudo apt-get install -y rpm
@@ -90,9 +98,8 @@ script:
 
 deploy:
   provider: releases
-  api_key: $GITHUB_OAUTH_TOKEN
+  token: $GITHUB_OAUTH_TOKEN
   file_glob: true
-  skip_cleanup: true
   file: 
     - $TRAVIS_BUILD_DIR/build/*.rpm
     - $TRAVIS_BUILD_DIR/build/*.deb
