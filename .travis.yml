@@ -31,7 +31,7 @@ script:
 - echo CURR_BRANCH=$CURR_BRANCH
 - eval "${MATRIX_EVAL}"
 - cd  ~/build/huskyproject/huskylib
-- if [[ -n "$CURR_BRANCH" ]]; then git checkout "$CURR_BRANCH"; true fi
+- if [[ -n "$CURR_BRANCH" ]]; then git checkout "$CURR_BRANCH"; true; fi
 - git branch
 - mkdir build
 - cd build
@@ -39,7 +39,7 @@ script:
 - cmake --build .
 - sudo make install
 - cd  ~/build/huskyproject/smapi
-- if [[ -n "$CURR_BRANCH" ]]; then git checkout "$CURR_BRANCH"; true fi
+- if [[ -n "$CURR_BRANCH" ]]; then git checkout "$CURR_BRANCH"; true; fi
 - git branch
 - mkdir build
 - cd build
@@ -47,7 +47,7 @@ script:
 - cmake --build .
 - sudo make install
 - cd  ~/build/huskyproject/fidoconf
-- if [[ -n "$CURR_BRANCH" ]]; then git checkout "$CURR_BRANCH"; true fi
+- if [[ -n "$CURR_BRANCH" ]]; then git checkout "$CURR_BRANCH"; true; fi
 - git branch
 - mkdir build
 - cd build
@@ -55,7 +55,7 @@ script:
 - cmake --build .
 - sudo make install
 - cd  ~/build/huskyproject/areafix
-- if [[ -n "$CURR_BRANCH" ]]; then git checkout "$CURR_BRANCH"; true fi
+- if [[ -n "$CURR_BRANCH" ]]; then git checkout "$CURR_BRANCH"; true; fi
 - git branch
 - mkdir build
 - cd build
@@ -63,7 +63,7 @@ script:
 - cmake --build .
 - sudo make install
 - cd  ~/build/huskyproject/hptzip
-- if [[ -n "$CURR_BRANCH" ]]; then git checkout "$CURR_BRANCH"; true fi
+- if [[ -n "$CURR_BRANCH" ]]; then git checkout "$CURR_BRANCH"; true; fi
 - git branch
 - mkdir build
 - cd build
