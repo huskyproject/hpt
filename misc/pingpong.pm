@@ -66,8 +66,9 @@ and "link level".
 
     "message attributes" - Sets additional attributes of the Ping Robot
     response message. $PVT - for PVT attribute, $K_S - for K/S attribute,
-    undef or 0 to add nothing. See HPT doc for more details on message attributes.
-    B<Be completely sure of what you are doing by adding message attributes.>
+    undef or 0 to add nothing. See HPT doc for more details on message
+    attributes.
+B<Be completely sure of what you are doing by adding message attributes.>
 
     "link level" - A Number. Used when building a list of password-protected
     links. Only those links will be added to the list, the level of which
@@ -78,11 +79,14 @@ and "link level".
     This parameter also affects, in the same manner, the execution of the
     command "%RouteTo:".
     
-    ping_pong( $fromname, $fromaddr, $toname, $toaddr, $subject, $text, $PVT+$K_S );
+    ping_pong( $fromname, $fromaddr, $toname, $toaddr, $subject,
+               $text, $PVT+$K_S );
     adds PVT and K/S attributes.
     
-    ping_pong( $fromname, $fromaddr, $toname, $toaddr, $subject, $text, undef, 100 );
-    Only nodes with level 100 and higher will be added to the list of links by command %Linx.
+    ping_pong( $fromname, $fromaddr, $toname, $toaddr, $subject,
+               $text, undef, 100 );
+    Only nodes with level 100 and higher will be added to the list of links
+    by command %Links.
      
 To use the "%RouteTo:" command you should place in the filter.pl
 
