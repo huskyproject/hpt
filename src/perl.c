@@ -395,7 +395,7 @@ static void update_addr(s_message * msg)
         insert_line(&(msg->text), intl, pos);
     }
 
-    msg->textLength = strlen(msg->text);
+    msg->textLength = (hINT32)strlen(msg->text);
 } /* update_addr */
 
 /* ---- /val */
@@ -588,8 +588,8 @@ static XS(perl_alike)
         str2 = "";
     }
 
-    len1  = strlen(str1);
-    len2  = strlen(str2);
+    len1  = (int)strlen(str1);
+    len2  = (int)strlen(str2);
     /* ldist = LENGTH_MISMATCH; */
     len1  = min(len1, MAX_LDIST_LEN);
     len2  = min(len2, MAX_LDIST_LEN);
@@ -644,7 +644,7 @@ int reuse_line(char ** ptext, char * pos, mmode_t mode)
     {
         int len;
         ++pos2;
-        len = strlen(pos2);
+        len = (int)strlen(pos2);
         memcpy(pos, pos2, len + 1);
     }
     else
@@ -862,7 +862,7 @@ static XS(perl_putMsgInArea)
     }
     else
     {
-        date = SvUV(ST(6));
+        date = (long)SvUV(ST(6));
     }
 
     if(SvTYPE(ST(7)) == SVt_PV)
@@ -876,7 +876,7 @@ static XS(perl_putMsgInArea)
     }
     else
     {
-        attr = SvUV(ST(7));
+        attr = (long)SvUV(ST(7));
     }
 
     text = (char *)SvPV(ST(8), n_a);
@@ -887,7 +887,7 @@ static XS(perl_putMsgInArea)
     }
 
     /*addkludges = SvTRUE(ST(9));*/
-    addkludges = (items > 9) ? SvIV(ST(9)) : MODE_SMART;
+    addkludges = (int)((items > 9) ? SvIV(ST(9)) : MODE_SMART);
     memset(&msg, '\0', sizeof(msg));
 #if 0
     echo = getArea(config, area);
@@ -1000,7 +1000,7 @@ static XS(perl_putMsgInArea)
     }
     else
     {
-        int len = strlen(p = text);
+        int len = (int)strlen(p = text);
 
         while((p = strchr(p, '\n')) != NULL)
         {
@@ -1038,7 +1038,7 @@ static XS(perl_putMsgInArea)
         msg.text = text;
     }
 
-    msg.textLength = strlen(msg.text);
+    msg.textLength = (hINT32)strlen(msg.text);
     rc             = putMsgInArea(echo, &msg, 1, msg.attributes);
     freeMsgBuffers(&msg);
 
@@ -1101,7 +1101,7 @@ static XS(perl_attr2str)
         XSRETURN_UNDEF;
     }
 
-    attr = SvUV(ST(0));
+    attr = (unsigned long)SvUV(ST(0));
 
     for(i = 0; i < sizeof(flag_name) / sizeof(flag_name[0]); i++)
     {
@@ -1130,7 +1130,7 @@ static XS(perl_flv2str)
         XSRETURN_UNDEF;
     }
 
-    XSRETURN_PV(flv2str(flag2flv(SvUV(ST(0)))));
+    XSRETURN_PV(flv2str(flag2flv((unsigned long)SvUV(ST(0)))));
 }
 
 #ifdef _MSC_VER
@@ -1263,7 +1263,7 @@ static XS(perl_crc32)
     }
 
     str = (char *)SvPV(ST(0), n_a);
-    XSRETURN_IV(memcrc32(str, n_a, 0xFFFFFFFFul));
+    XSRETURN_IV(memcrc32(str, (int)n_a, 0xFFFFFFFFul));
 }
 
 #ifdef _MSC_VER
@@ -1284,12 +1284,12 @@ static XS(perl_mktime)
         XSRETURN_UNDEF;
     }
 
-    tm.tm_sec  = SvUV(ST(0));
-    tm.tm_min  = SvUV(ST(1));
-    tm.tm_hour = SvUV(ST(2));
-    tm.tm_mday = SvUV(ST(3));
-    tm.tm_mon  = SvUV(ST(4));
-    tm.tm_year = SvUV(ST(5));
+    tm.tm_sec  = (int)SvUV(ST(0));
+    tm.tm_min  = (int)SvUV(ST(1));
+    tm.tm_hour = (int)SvUV(ST(2));
+    tm.tm_mday = (int)SvUV(ST(3));
+    tm.tm_mon  = (int)SvUV(ST(4));
+    tm.tm_year = (int)SvUV(ST(5));
 
     if(tm.tm_year < 70)
     {
@@ -1300,8 +1300,8 @@ static XS(perl_mktime)
         tm.tm_year -= 1900;
     }
 
-    tm.tm_wday  = (items > 6) ? SvIV(ST(6)) : -1;
-    tm.tm_yday  = (items > 7) ? SvIV(ST(7)) : -1;
+    tm.tm_wday  = (int)((items > 6) ? SvIV(ST(6)) : -1);
+    tm.tm_yday  = (int)((items > 7) ? SvIV(ST(7)) : -1);
     tm.tm_isdst = -1 /*(items > 8) ? SvIV(ST(8)) : -1*/;
     XSRETURN_IV(mktime(&tm));
 }
@@ -1328,12 +1328,12 @@ static XS(perl_strftime)
 
     if(items > 2)
     {
-        tm.tm_sec  = SvUV(ST(1));
-        tm.tm_min  = SvUV(ST(2));
-        tm.tm_hour = SvUV(ST(3));
-        tm.tm_mday = SvUV(ST(4));
-        tm.tm_mon  = SvUV(ST(5));
-        tm.tm_year = SvUV(ST(6));
+        tm.tm_sec  = (int)SvUV(ST(1));
+        tm.tm_min  = (int)SvUV(ST(2));
+        tm.tm_hour = (int)SvUV(ST(3));
+        tm.tm_mday = (int)SvUV(ST(4));
+        tm.tm_mon  = (int)SvUV(ST(5));
+        tm.tm_year = (int)SvUV(ST(6));
 
         if(tm.tm_year < 70)
         {
@@ -1344,8 +1344,8 @@ static XS(perl_strftime)
             tm.tm_year -= 1900;
         }
 
-        tm.tm_wday  = (items > 7) ? SvIV(ST(8)) : -1;
-        tm.tm_yday  = (items > 8) ? SvIV(ST(9)) : -1;
+        tm.tm_wday  = (int)((items > 7) ? SvIV(ST(8)) : -1);
+        tm.tm_yday  = (int)((items > 8) ? SvIV(ST(9)) : -1);
         tm.tm_isdst = -1 /*(items > 9) ? -1 SvIV(ST(10)) : -1*/;
         mktime(&tm); /* make it valid */
         strftime(buf, sizeof(buf), SvPV(ST(0), n_a), &tm);
@@ -2184,7 +2184,7 @@ int perlscanmsg(char * area, s_message * msg)
             }
 
             msg->text       = safe_strdup(ptr);
-            msg->textLength = strlen(msg->text);
+            msg->textLength = (hINT32)strlen(msg->text);
             ptr             = SvPV(perl_get_sv("toname", FALSE), n_a);
 
             if(n_a == 0)
@@ -2226,7 +2226,7 @@ int perlscanmsg(char * area, s_message * msg)
             /* update message kludges, if needed */
             update_addr(msg);
             /* process flags, update message if needed */
-            attr            = SvUV(perl_get_sv("attr", FALSE));
+            attr            = (unsigned long)SvUV(perl_get_sv("attr", FALSE));
             msg->attributes = attr & 0xffff;
 
             if((ptr = update_flags(msg->text, attr, MODE_REPLACE)) != NULL)
@@ -2237,7 +2237,7 @@ int perlscanmsg(char * area, s_message * msg)
                     msg->text = ptr;
                 }
 
-                msg->textLength = strlen(msg->text);
+                msg->textLength = (hINT32)strlen(msg->text);
             }
 
             /* process date */
@@ -2437,7 +2437,7 @@ s_route * perlroute(s_message * msg, s_route * defroute)
                 }
 
                 msg->text       = safe_strdup(prc);
-                msg->textLength = strlen(msg->text);
+                msg->textLength = (hINT32)strlen(msg->text);
                 prc             = SvPV(perl_get_sv("toname", FALSE), n_a);
 
                 if(n_a == 0)
@@ -2479,7 +2479,7 @@ s_route * perlroute(s_message * msg, s_route * defroute)
                 /* update message kludges, if needed */
                 update_addr(msg);
                 /* process flags, update message if needed */
-                attr            = SvUV(perl_get_sv("attr", FALSE));
+                attr            = (unsigned long)SvUV(perl_get_sv("attr", FALSE));
                 msg->attributes = attr & 0xffff;
 
                 if((ptr = update_flags(msg->text, attr, MODE_REPLACE)) != NULL)
@@ -2490,7 +2490,7 @@ s_route * perlroute(s_message * msg, s_route * defroute)
                         msg->text = ptr;
                     }
 
-                    msg->textLength = strlen(msg->text);
+                    msg->textLength = (hINT32)strlen(msg->text);
                 }
 
                 /* process date */
@@ -2535,7 +2535,7 @@ s_route * perlroute(s_message * msg, s_route * defroute)
 
                 if((SvIOK(svflv)) && (SvUV(svflv) > 0))
                 {
-                    route.flavour = flag2flv(SvUV(svflv));
+                    route.flavour = flag2flv((unsigned long)SvUV(svflv));
                 }
                 else
                 {
@@ -2782,7 +2782,7 @@ int perlfilter(s_message * msg, hs_addr pktOrigAddr, int secure)
             }
 
             msg->text       = safe_strdup(ptr);
-            msg->textLength = strlen(msg->text);
+            msg->textLength = (hINT32)strlen(msg->text);
             ptr             = SvPV(perl_get_sv("toname", FALSE), n_a);
 
             if(n_a == 0)
@@ -2824,7 +2824,7 @@ int perlfilter(s_message * msg, hs_addr pktOrigAddr, int secure)
             /* update message kludges, if needed */
             update_addr(msg);
             /* process flags, update message if needed */
-            attr            = SvUV(perl_get_sv("attr", FALSE));
+            attr            = (unsigned long)SvUV(perl_get_sv("attr", FALSE));
             msg->attributes = attr & 0xffff;
             perl_setattr    = 1;
 
@@ -2836,7 +2836,7 @@ int perlfilter(s_message * msg, hs_addr pktOrigAddr, int secure)
                     msg->text = ptr;
                 }
 
-                msg->textLength = strlen(msg->text);
+                msg->textLength = (hINT32)strlen(msg->text);
             }
 
             /* process date */
@@ -3176,7 +3176,7 @@ int perltossbad(s_message * msg, char * areaName, hs_addr pktOrigAddr, char * re
             }
 
             msg->text       = safe_strdup(ptr);
-            msg->textLength = strlen(msg->text);
+            msg->textLength = (hINT32)strlen(msg->text);
             ptr             = SvPV(perl_get_sv("toname", FALSE), n_a);
 
             if(n_a == 0)
@@ -3218,7 +3218,7 @@ int perltossbad(s_message * msg, char * areaName, hs_addr pktOrigAddr, char * re
             /* update message kludges, if needed */
             update_addr(msg);
             /* process flags, update message if needed */
-            attr            = SvUV(perl_get_sv("attr", FALSE));
+            attr            = (unsigned long)SvUV(perl_get_sv("attr", FALSE));
             msg->attributes = attr & 0xffff;
 
             if((ptr = update_flags(msg->text, attr, MODE_REPLACE)) != NULL)
@@ -3229,7 +3229,7 @@ int perltossbad(s_message * msg, char * areaName, hs_addr pktOrigAddr, char * re
                     msg->text = ptr;
                 }
 
-                msg->textLength = strlen(msg->text);
+                msg->textLength = (hINT32)strlen(msg->text);
             }
 
             /* process date */
@@ -3277,7 +3277,7 @@ int perl_echolist(char ** report, s_listype type, ps_arealist al, char * aka)
 
         for(max = i = 0; i < al->count; i++)
         {
-            len = strlen(al->areas[i].tag);
+            len = (int)strlen(al->areas[i].tag);
 
             if(len > max)
             {
@@ -3305,7 +3305,7 @@ int perl_echolist(char ** report, s_listype type, ps_arealist al, char * aka)
         }
         else
         {
-            rc = SvIV(svret);
+            rc = (int)SvIV(svret);
         }
 
         PUTBACK;
@@ -3339,7 +3339,6 @@ int perl_echolist(char ** report, s_listype type, ps_arealist al, char * aka)
                 return 0;
         }
     }
-    return 0;
 } /* perl_echolist */
 
 int perl_afixcmd(char ** report, int cmd, char * aka, char * line)
@@ -3375,7 +3374,7 @@ int perl_afixcmd(char ** report, int cmd, char * aka, char * line)
         }
         else
         {
-            rc = SvIV(svret);
+            rc = (int)SvIV(svret);
         }
 
         PUTBACK;
@@ -3406,7 +3405,6 @@ int perl_afixcmd(char ** report, int cmd, char * aka, char * line)
             return 0;
         }
     }
-    return 0;
 } /* perl_afixcmd */
 
 int perl_afixreq(s_message * msg, hs_addr pktOrigAddr)
@@ -3447,7 +3445,7 @@ int perl_afixreq(s_message * msg, hs_addr pktOrigAddr)
         }
         else
         {
-            rc = SvIV(svret);
+            rc = (int)SvIV(svret);
         }
 
         PUTBACK;
@@ -3473,7 +3471,7 @@ int perl_afixreq(s_message * msg, hs_addr pktOrigAddr)
             }
 
             msg->text       = safe_strdup(ptr);
-            msg->textLength = strlen(msg->text);
+            msg->textLength = (hINT32)strlen(msg->text);
             ptr             = SvPV(perl_get_sv("toname", FALSE), n_a);
 
             if(n_a == 0)
@@ -3570,7 +3568,7 @@ int perl_putmsg(s_area * echo, s_message * msg)
         }
         else
         {
-            rc = SvIV(svret);
+            rc = (int)SvIV(svret);
         }
 
         PUTBACK;
@@ -3598,7 +3596,7 @@ int perl_putmsg(s_area * echo, s_message * msg)
             }
 
             msg->text       = safe_strdup(ptr);
-            msg->textLength = strlen(msg->text);
+            msg->textLength = (hINT32)strlen(msg->text);
             ptr             = SvPV(perl_get_sv("toname", FALSE), n_a);
 
             if(n_a == 0)
@@ -3644,7 +3642,7 @@ int perl_putmsg(s_area * echo, s_message * msg)
             }
 
             /* process flags, update message if needed */
-            attr            = SvUV(perl_get_sv("attr", FALSE));
+            attr            = (unsigned long)SvUV(perl_get_sv("attr", FALSE));
             msg->attributes = attr & 0xffff;
 
             if(msg->netMail)
@@ -3657,7 +3655,7 @@ int perl_putmsg(s_area * echo, s_message * msg)
                         msg->text = ptr;
                     }
 
-                    msg->textLength = strlen(msg->text);
+                    msg->textLength = (hINT32)strlen(msg->text);
                 }
             }
 
@@ -3773,7 +3771,7 @@ int perl_export(s_area * echo, s_link * link, s_message * msg)
             }
 
             msg->text       = safe_strdup(ptr);
-            msg->textLength = strlen(msg->text);
+            msg->textLength = (hINT32)strlen(msg->text);
             ptr             = SvPV(perl_get_sv("toname", FALSE), n_a);
 
             if(n_a == 0)
@@ -3799,7 +3797,7 @@ int perl_export(s_area * echo, s_link * link, s_message * msg)
 
             msg->subjectLine = safe_strdup(ptr);
             /* process flags, update message if needed */
-            attr            = SvUV(perl_get_sv("attr", FALSE));
+            attr            = (unsigned long)SvUV(perl_get_sv("attr", FALSE));
             msg->attributes = attr & 0xffff;
 
             if(msg->netMail)
@@ -3812,7 +3810,7 @@ int perl_export(s_area * echo, s_link * link, s_message * msg)
                         msg->text = ptr;
                     }
 
-                    msg->textLength = strlen(msg->text);
+                    msg->textLength = (hINT32)strlen(msg->text);
                 }
             }
 
@@ -3891,7 +3889,7 @@ int perl_robotmsg(s_message * msg, char * type)
         }
         else
         {
-            rc = SvIV(svret);
+            rc = (int)SvIV(svret);
         }
 
         PUTBACK;
@@ -3917,7 +3915,7 @@ int perl_robotmsg(s_message * msg, char * type)
             }
 
             msg->text       = safe_strdup(ptr);
-            msg->textLength = strlen(msg->text);
+            msg->textLength = (hINT32)strlen(msg->text);
             ptr             = SvPV(perl_get_sv("toname", FALSE), n_a);
 
             if(n_a == 0)
