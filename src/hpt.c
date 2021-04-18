@@ -757,7 +757,7 @@ FARPROC WINAPI ourhook(unsigned dliNotify, PDelayLoadInfo pdli)
     /*  deinit SMAPI */
     MsgCloseApi();
     w_log(LL_STOP, "End");
-    closeLog(hpt_log);
+    closeLog();
     doneCharsets();
     nfree(versionStr);
 
