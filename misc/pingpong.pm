@@ -25,9 +25,9 @@
 
 =head1 DESCRIPTION
 
-   This program is a Ping robot designed accordingly FTS-5001.006
+   This program is a Ping robot designed according to FTS-5001.006.
    This is an extended implementation that allows the Ping response to be
-   redirected through any password-protected link.
+   redirected via any password-protected link.
 
 Insert into HPT configuration file:
 
@@ -42,7 +42,7 @@ Make sure that the Origin variable is defined in the HPT config. Something like
 Put pingpong.pm somewhere in the @INC path. It's strongly recommended for Windows
 users to put it in the same directory with filter.pl.
 
-place to filter.pl some like this:
+place to filter.pl something like this:
 
   use pingpong;
 
@@ -66,7 +66,7 @@ and "link level".
 
     "message attributes" - Sets additional attributes of the Ping Robot
     response message. $PVT - for PVT attribute, $K_S - for K/S attribute,
-    undef or 0 to add nothing. See HPT doc for more attribute details.
+    undef or 0 to add nothing. See HPT doc for more details on message attributes.
     B<Be completely sure of what you are doing by adding message attributes.>
 
     "link level" - A Number. Used when building a list of password-protected
