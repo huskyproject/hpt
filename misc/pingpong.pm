@@ -25,18 +25,24 @@
 
 =head1 DESCRIPTION
 
-   This program is a Ping robot designed accordingly FTS-5001.006
+   This program is a Ping robot designed according to FTS-5001.006.
    This is an extended implementation that allows the Ping response to be
-   redirected through any password-protected link.
+   redirected via any password-protected link.
 
 Insert into HPT configuration file:
 
     hptperlfile /home/fido/perl/filter.pl
 
+Make sure that the Origin variable is defined in the HPT config. Something like
+
+    Origin "Origin of the message"
+    
+(see section B<BUGS>)
+
 Put pingpong.pm somewhere in the @INC path. It's strongly recommended for Windows
 users to put it in the same directory with filter.pl.
 
-place to filter.pl some like this:
+place to filter.pl something like this:
 
   use pingpong;
 
@@ -55,7 +61,29 @@ place to filter.pl some like this:
    $subject  - subject of message
    $text - text message (with kludges)
 
+Also, you can use two optional additional parameters "message attributes"
+and "link level".
 
+    "message attributes" - Sets additional attributes of the Ping Robot
+    response message. $PVT - for PVT attribute, $K_S - for K/S attribute,
+    undef or 0 to add nothing. See HPT doc for more details on message attributes.
+    B<Be completely sure of what you are doing by adding message attributes.>
+
+    "link level" - A Number. Used when building a list of password-protected
+    links. Only those links will be added to the list, the level of which
+    in the HPT configuration file is equal to or higher than the specified
+    one. For trusted links, you can set the level above the rest in the HPT
+    configuration. Thus, in the Ping Robot response to the %Links command,
+    you can show a list of only trusted links.
+    This parameter also affects, in the same manner, the execution of the
+    command "%RouteTo:".
+    
+    ping_pong( $fromname, $fromaddr, $toname, $toaddr, $subject, $text, $PVT+$K_S );
+    adds PVT and K/S attributes.
+    
+    ping_pong( $fromname, $fromaddr, $toname, $toaddr, $subject, $text, undef, 100 );
+    Only nodes with level 100 and higher will be added to the list of links by command %Linx.
+     
 To use the "%RouteTo:" command you should place in the filter.pl
 
    sub route{
@@ -68,9 +96,9 @@ Nothing.
 
 =head1 BUGS
 
-ping_pong uses the $config{origin} variable. If the Oridjn variable
+ping_pong uses the $config{origin} variable. If the Origin variable
 is not defined in the HPT configuration file, then this leads to
-the crush of the whole Perl hook.
+the crash of the whole Perl hook.
 
 =head1 AUTHOR
 
@@ -92,13 +120,16 @@ B<FTS-5001.006> http://ftsc.org/docs/fts-5001.006
 =cut
 
 
-sub ping_pong($$$$$$)
+sub ping_pong($$$$$$;$$)
 {
-    my ( $from_name, $from_addr, $to_name, $to_addr, $subj, $mtext ) = @_;
-    my $addline = "";
-    my $msgdirection = "passed through";
+    my ( $from_name, $from_addr, $to_name, $to_addr, $subj, $mtext,
+         $m_attr, $m_level ) = @_;
+    my $addline = '';
+    my $msgdirection = 'passed through';
     my $time = localtime;
     my $my_aka = @{$config{addr}}[0];
+    $m_attr = 0 unless defined $m_attr;
+    $m_level = 0 unless defined $m_level;
 
     if ($to_name =~ /^Ping$/i){
 	w_log("Ping message detected." );
@@ -106,20 +137,22 @@ sub ping_pong($$$$$$)
 		$my_aka = $to_addr;
 		if ( $subj =~ /\%RouteTo\: (\d\:\d+\/\d+)/i) {
 		    w_log( "\'\%RouteTo\:\' command found." );
-		    if ( defined $links{$1}{password} ) {
+		    if ( defined $links{$1}{password} &&
+		         $links{$1}{level} >= $m_level ) {
 		       $addline = "\r\%RouteTo\: $1\r" if $secure == 1;
 		    } else {
-			$addline = "$1 isn't my password protecded link. '%RouteTo\: $1' command was ignored.";
+			$addline = "\r$1 isn't my password protecded link. '%RouteTo\: $1' command was ignored.\r";
                         w_log("$1 isn't protecded link. \'\%RouteTo\: $1\' command was not accepted.");
 	            }
 		}
                 if ( $subj =~ /\%Links/i) {
-		    $addline = "My links are:\r~~~~~~~~~~~~~\r";
+		    $addline .= "My links are:\r~~~~~~~~~~~~~\r";
 		    foreach my $key( sort keys %links) {
-		    $addline = $addline . sprintf("%-20s", $key) .
+		    $addline .= sprintf("%-20s", $key) .
 		    "$links{$key}{name}\r" if defined $links{$key}{password} &&
 				     $key =~ /^\d+\:\d+\/\d+$/ &&
-				     $links{$key}{name} !~ /Our virtual lin/i;
+				     $links{$key}{name} !~ /Our virtual lin/i &&
+				     $links{$key}{level} >= $m_level;
 		    }
 		}
 		$msgdirection = "was received by";
@@ -130,7 +163,7 @@ sub ping_pong($$$$$$)
         $mtext =~ s/\r \* Origin\:/\r \+ Origin\:/g;
         $mtext =~ s/\r\%RouteTo\:/\r\@RouteTo\:/gi;
 	putMsgInArea("", "Ping Robot", $from_name, $my_aka, $from_addr,
-		"Pong", "", $LOC, "Hi $from_name.\r\r".
+		"Pong", "", $LOC+$m_attr, "Hi $from_name.\r\r".
 		"   Your ping-message $msgdirection my system at $time\r\r".
 		"$addline".
 		"---------- Help ------------------------------------------------------------\r".
