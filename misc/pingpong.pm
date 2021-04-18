@@ -67,7 +67,7 @@ and "link level".
     "message attributes" - Sets additional attributes of the Ping Robot
     response message. $PVT - for PVT attribute, $K_S - for K/S attribute,
     undef or 0 to add nothing. See HPT doc for more attribute details.
-    B<Be strongly sure of what you are doing by adding message attributes.>
+    B<Be completely sure of what you are doing by adding message attributes.>
 
     "link level" - A Number. Used when building a list of password-protected
     links. Only those links will be added to the list, the level of which
@@ -82,7 +82,7 @@ and "link level".
     adds PVT and K/S attributes.
     
     ping_pong( $fromname, $fromaddr, $toname, $toaddr, $subject, $text, undef, 100 );
-    Only nodes with level 100 and higher will be added to the list of links by command %Lynx.
+    Only nodes with level 100 and higher will be added to the list of links by command %Linx.
      
 To use the "%RouteTo:" command you should place in the filter.pl
 
@@ -96,9 +96,9 @@ Nothing.
 
 =head1 BUGS
 
-ping_pong uses the $config{origin} variable. If the Oridjn variable
+ping_pong uses the $config{origin} variable. If the Origin variable
 is not defined in the HPT configuration file, then this leads to
-the crush of the whole Perl hook.
+the crash of the whole Perl hook.
 
 =head1 AUTHOR
 
