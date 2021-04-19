@@ -100,7 +100,7 @@
 #if defined (__cplusplus)
 extern "C"
 #endif
-extern PfnDliHook
+PfnDliHook
 #if (_MSC_VER >= 1300)
 __pfnDliFailureHook2;
 #else
