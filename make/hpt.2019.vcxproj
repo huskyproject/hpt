@@ -101,8 +101,8 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\h;..\..\huskylib;..\..\smapi;..\..\fidoconf;..\..\areafix;C:\Perl\lib\CORE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;NO_STRICT;_MAKE_DLL;_CONSOLE;HAS_STDINT_H;_CRT_SECURE_NO_WARNINGS;DELAYIMP_INSECURE_WRITABLE_HOOKS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\h;..\..\huskylib;..\..\smapi;..\..\fidoconf;..\..\areafix;C:\Perl64\lib\CORE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;NO_STRICT;_MAKE_DLL;_CONSOLE;HAS_STDINT_H;DO_PERL;PERL_MSVCRT_READFIX;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_CRT_SECURE_NO_WARNINGS;DELAYIMP_INSECURE_WRITABLE_HOOKS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>
       </MinimalRebuild>
@@ -134,12 +134,12 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>fidoconf.lib;smapi.lib;huskylib.lib;Kernel32.lib;delayimp.lib;OLDNAMES.lib;msvcrt.lib;areafix.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>huskylib.lib;smapi.lib;fidoconf.lib;areafix.lib;perl516.lib;Kernel32.lib;delayimp.lib;OLDNAMES.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\nd_r\$(Platform)\lib;C:\Perl\lib\CORE;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\nd_r\$(Platform)\lib;C:\Perl64\lib\CORE;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>perl516.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -163,8 +163,8 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\h;..\..\huskylib;..\..\smapi;..\..\fidoconf;..\..\areafix;C:\Perl\lib\CORE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN64;NDEBUG;NO_STRICT;_MAKE_DLL;_CONSOLE;HAS_STDINT_H;_CRT_SECURE_NO_WARNINGS;DELAYIMP_INSECURE_WRITABLE_HOOKS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\h;..\..\huskylib;..\..\smapi;..\..\fidoconf;..\..\areafix;C:\Perl64\lib\CORE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN64;NDEBUG;NO_STRICT;_MAKE_DLL;_CONSOLE;HAS_STDINT_H;DELAYIMP_INSECURE_WRITABLE_HOOKS=1;DO_PERL;PERL_MSVCRT_READFIX;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>
       </MinimalRebuild>
@@ -195,12 +195,12 @@
       <Culture>0x0419</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>fidoconf.lib;smapi.lib;huskylib.lib;Kernel32.lib;delayimp.lib;OLDNAMES.lib;msvcrt.lib;areafix.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>huskylib.lib;smapi.lib;fidoconf.lib;areafix.lib;perl516.lib;Kernel32.lib;delayimp.lib;OLDNAMES.lib;msvcrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\nd_r\$(Platform)\lib;C:\Perl64\lib\CORE;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>perl516.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -221,8 +221,8 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\h;..\..\huskylib;..\..\smapi;..\..\fidoconf;..\..\areafix;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;DEBUG;_DEBUG;_MAKE_DLL;_CONSOLE;HAS_STDINT_H;_CRT_SECURE_NO_WARNINGS;DELAYIMP_INSECURE_WRITABLE_HOOKS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\h;..\..\huskylib;..\..\smapi;..\..\fidoconf;..\..\areafix;C:\Perl64\lib\CORE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;DEBUG;_DEBUG;_MAKE_DLL;_CONSOLE;HAS_STDINT_H;DO_PERL;PERL_MSVCRT_READFIX;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_CRT_SECURE_NO_WARNINGS;DELAYIMP_INSECURE_WRITABLE_HOOKS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>
       </MinimalRebuild>
       <BasicRuntimeChecks>
@@ -239,7 +239,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
-      <DisableSpecificWarnings>4996;5105;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4267;4706;4996;5105;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <EnablePREfast>false</EnablePREfast>
       <ObjectFileName>$(IntDir)%(Filename).obj</ObjectFileName>
       <SupportJustMyCode>true</SupportJustMyCode>
@@ -253,12 +253,12 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>msvcrtd.lib;huskylib.lib;fidoconf.lib;smapi.lib;Kernel32.lib;delayimp.lib;OLDNAMES.lib;areafix.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>huskylib.lib;smapi.lib;fidoconf.lib;areafix.lib;perl516.lib;Kernel32.lib;delayimp.lib;OLDNAMES.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\nd_d\$(Platform)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\nd_d\$(Platform)\lib;C:\Perl64\lib\CORE;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>perl516.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -273,8 +273,8 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\h;..\..\huskylib;..\..\smapi;..\..\fidoconf;..\..\areafix;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN64;DEBUG;_DEBUG;_MAKE_DLL;_CONSOLE;HAS_STDINT_H;_CRT_SECURE_NO_WARNINGS;DELAYIMP_INSECURE_WRITABLE_HOOKS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\h;..\..\huskylib;..\..\smapi;..\..\fidoconf;..\..\areafix;C:\Perl64\lib\CORE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN64;DEBUG;_DEBUG;_MAKE_DLL;_CONSOLE;HAS_STDINT_H;DELAYIMP_INSECURE_WRITABLE_HOOKS=1;DO_PERL;PERL_MSVCRT_READFIX;NO_STRICT;HAVE_DES_FCRYPT;PERL_IMPLICIT_CONTEXT;PERL_IMPLICIT_SYS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>
       </MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -290,7 +290,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
-      <DisableSpecificWarnings>4996;5105;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4267;4706;4996;5105;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ObjectFileName>$(IntDir)%(Filename).obj</ObjectFileName>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>false</ExceptionHandling>
@@ -303,12 +303,12 @@
       <Culture>0x0419</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>msvcrtd.lib;huskylib.lib;fidoconf.lib;smapi.lib;areafix.lib;perl516.lib;Kernel32.lib;delayimp.lib;OLDNAMES.lib;areafix.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>huskylib.lib;smapi.lib;fidoconf.lib;areafix.lib;perl516.lib;Kernel32.lib;delayimp.lib;OLDNAMES.lib;msvcrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\nd_d\$(Platform)\lib;C:\Perl64\lib\CORE;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>perl516.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -344,6 +344,7 @@
     <ClCompile Include="..\src\hpt.c" />
     <ClCompile Include="..\src\hptafix.c" />
     <ClCompile Include="..\src\link.c" />
+    <ClCompile Include="..\src\perl.c" />
     <ClCompile Include="..\src\pktread.c" />
     <ClCompile Include="..\src\pktwrite.c" />
     <ClCompile Include="..\src\post.c" />
