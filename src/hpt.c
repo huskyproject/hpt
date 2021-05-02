@@ -883,11 +883,6 @@ int main(int argc, char ** argv, char ** envp)
     if(config == NULL)
     {
         processConfig();
-        if(config->origin == NULL)
-        {
-            config->origin = smalloc(1);
-            config->origin[0] = '\0';
-        }
     }
 
 #if defined (__NT__)
