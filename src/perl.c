@@ -1643,6 +1643,10 @@ void perl_setvars(void)
             VK_ADD_HASH_str(hv, sv, "packers", packlist + 1);
             nfree(packlist);
         }
+        else
+        {
+            VK_ADD_HASH_str(hv, sv, "packers", "");
+        }
 
         av = newAV();
 
