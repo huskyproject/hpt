@@ -441,7 +441,7 @@ static XS(perl_log)
         lvl = LL_PERL;
         str = (char *)SvPV(ST(0), n_a);
 
-        if(n_a == 0)
+        if(n_a == 0 && *str != '\0')
         {
             str = "";
         }
