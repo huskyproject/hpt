@@ -388,7 +388,7 @@ void createPathArrayFromMsg(s_message * msg, s_seenBy ** seenBys, UINT * seenByC
         }
     }
 
-    if(*seenByCount != seenByAllocated)
+    if(*seenByCount != seenByAllocated && *seenByCount > 0)
     {
         (*seenBys) = (s_seenBy *)safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
     }
