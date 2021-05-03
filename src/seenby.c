@@ -147,10 +147,10 @@ void createSeenByArrayFromMsg(s_area * area,
     char * seenByText = NULL, * start = NULL, * token = NULL;
     unsigned long temp;
     char * endptr = NULL;
-    UINT seenByAlloced;
+    UINT seenByAllocated;
 
     unused(area);
-    *seenByCount = seenByAlloced = 0;
+    *seenByCount = seenByAllocated = 0;
     start        = strrstr(msg->text, " * Origin:"); /*  jump over Origin */
 
     if(start == NULL)
@@ -200,10 +200,10 @@ void createSeenByArrayFromMsg(s_area * area,
             }
 
             /*  get new memory */
-            if((*seenByCount)++ >= seenByAlloced)
+            if((*seenByCount)++ >= seenByAllocated)
             {
                 (*seenBys) =
-                    (s_seenBy *)safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAlloced += 32));
+                    (s_seenBy *)safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAllocated += 32));
             }
 
             if((*endptr) == '\0')
@@ -216,22 +216,15 @@ void createSeenByArrayFromMsg(s_area * area,
                 {
                     (*seenBys)[*seenByCount - 1].net = (*seenBys)[*seenByCount - 2].net;
                 }
-                else /* Shouldn't really happen. The best way out is unclear. */
-                     /* I propose to drop incorrect seen-by's, as possible dupes seem to be
-                        lesser evil
-                        compared to possible loss of mail if choose to propagate mail with buggy
-                           control
+                else /* Shouldn't really happen. The best way out is unclear */
+                     /* I propose to drop incorrect seen-by's, as possible
+                        dupes seem to be lesser evil compared to possible loss
+                        of mail if choose to propagate mail with buggy control
                         lines --Elfy 2010-03-18 */
                 {
                     w_log(LL_ALERT,
-                          "Buggy SEEN-BY line encountered. Invalid node was removed from the line!");   /*
-                                                                                                           FIXME:
-                                                                                                           print
-                                                                                                           msgid
-                                                                                                           to
-                                                                                                           pinpoint
-                                                                                                           problem?
-                                                                                                           */
+                          "Buggy SEEN-BY line encountered. Invalid node was removed from the line!");
+                    /* FIXME: print msgid to pinpoint the problem? */
                     --*seenByCount;
                 }
             }
@@ -250,7 +243,7 @@ void createSeenByArrayFromMsg(s_area * area,
         }
     } /*  end while */
 
-    if(*seenByCount != seenByAlloced)
+    if(*seenByCount != seenByAllocated)
     {
         if(*seenByCount > 0)
         {
@@ -259,7 +252,7 @@ void createSeenByArrayFromMsg(s_area * area,
         else
         {
             nfree(*seenBys);
-            seenByAlloced = 0;
+            seenByAllocated = 0;
         }
     }
 
@@ -282,13 +275,13 @@ void createPathArrayFromMsg(s_message * msg, s_seenBy ** seenBys, UINT * seenByC
     char * seenByText = NULL, * start = NULL, * token = NULL;
     char * endptr = NULL;
     unsigned long temp;
-    UINT seenByAlloced;
+    UINT seenByAllocated;
 
 #ifdef DEBUG_HPT
     int i;
 #endif
 
-    *seenByCount = seenByAlloced = 0;
+    *seenByCount = seenByAllocated = 0;
     start        = strrstr(msg->text, " * Origin:"); /*  jump over Origin */
 
     if(start == NULL)
@@ -333,7 +326,8 @@ void createPathArrayFromMsg(s_message * msg, s_seenBy ** seenBys, UINT * seenByC
         }
     }
     while(!isdigit(*start));
-    /*  now that we have the start of the PATH' so we can tokenize the lines and read them in */
+    /*  now we have the start of the PATH' so we can tokenize the lines
+        and read them in */
     xstrcat(&seenByText, start);
     token = strtok(seenByText, " \r\t\376");
 
@@ -356,10 +350,10 @@ void createPathArrayFromMsg(s_message * msg, s_seenBy ** seenBys, UINT * seenByC
             }
 
             /*  get new memory */
-            if((*seenByCount)++ >= seenByAlloced)
+            if((*seenByCount)++ >= seenByAllocated)
             {
                 (*seenBys) =
-                    (s_seenBy *)safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAlloced += 32));
+                    (s_seenBy *)safe_realloc(*seenBys, sizeof(s_seenBy) * (seenByAllocated += 32));
             }
 
             if((*endptr) == '\0')
@@ -394,7 +388,7 @@ void createPathArrayFromMsg(s_message * msg, s_seenBy ** seenBys, UINT * seenByC
         }
     }
 
-    if(*seenByCount != seenByAlloced)
+    if(*seenByCount != seenByAllocated)
     {
         (*seenBys) = (s_seenBy *)safe_realloc(*seenBys, sizeof(s_seenBy) * (*seenByCount));
     }
