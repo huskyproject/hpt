@@ -838,6 +838,7 @@ int readMsgFromPkt(FILE * pkt, s_pktHeader * header, s_message ** message)
     if(badmsg)
     {
         freeMsgBuffers(msg);
+        nfree(msg);
         *message = NULL;
         w_log(LL_ERR, "wrong msg header: renaming pkt to bad.");
         return 2; /*  exit with error */
