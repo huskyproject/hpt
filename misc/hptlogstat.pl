@@ -32,88 +32,132 @@
 # "hptlog_stats.pl" - create statistics for all subscribed groups using
 # entire HPT log file etc...
 
+use strict;
+use warnings;
 use Time::Local;
 
-$logname = "z:/hpt/log/hpt.log";
+my $logname = "/home/mike/fido/log/hpt.log";
 
 # this hash is used, when converting verbose months to numeral (Jan = 0)
+my %months;
 @months{qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)} = (0..11);
+
 # working with command line arguments
-if ($#ARGV > 2) {
+if($#ARGV > 2)
+{
     print("Wrong command line arguments number\n");
     exit;
 }
-foreach (@ARGV) {
-    if(/^-traffic$/) { $traff = 1 }
-        elsif(/^\d{1,4}$/ && !$period) { $period = $_ }
-    else { $areaname = $_ }
+
+my ($traff, $period, $areaname);
+foreach(@ARGV)
+{
+    if(/^-traffic$/)
+    {
+        $traff = 1
+    }
+    elsif(/^\d{1,4}$/ && !$period)
+    {
+        $period = $_
+    }
+    else
+    {
+        $areaname = $_
+    }
 }
-$date = time() - (24 * 60 * 60 * ($period - 1)) if $period;
+
+my $date = time() - (24 * 60 * 60 * ($period - 1)) if $period;
+
 # checking if the user enters "*" or "*.*" as areaname
-$long_stats = 1 if !$areaname || $areaname =~ /^\*(\.\*)?$/;
+my $long_stats = 1 if(!$areaname || $areaname =~ /^\*(\.\*)?$/);
 $areaname ||= "*";
 $areaname =~ s/\./\\./g;
 $areaname =~ s/\*/\.*/g;
-open(LOG, "<$logname") || die "can't open $logname: $!";
-while (<LOG>) {
-    if (/-{10}\s+\w+\s(.*),/) {
+
+my ($last, $from, $posted, $bundles, $packets, %count);
+
+open(LOG, "<", "$logname") or die "can't open $logname: $!";
+while(<LOG>)
+{
+    if(/-{10}\s+\w+\s(.*),/)
+    {
         $last = $1;
-        if (!$from) {
-            $found = date_to_period($1);
+        if(!$from)
+        {
+            my $found = date_to_unixtime($1);
             $date ||= $found;
-            $from = $1 if ($found >= $date);
+            $from = $1 if($found >= $date);
         }
         next;
     }
-    if ($from) {
-        $count{"\L$1"} += $2 if (/echo area ($areaname) - (\d*)/i);
-        if (/^5.*\s+posting msg.*area:\s+($areaname)$/i) {
-            $count{"\L$1"}++;
-            $posted++;
+    if($from)
+    {
+        $count{"\L$1\E"} += $2 if(/echo area ($areaname) - (\d*)/i);
+        if(/^5.*\s+posting msg.*area:\s+($areaname)/i)
+        {
+            my $area = $1;
+            # remove possible "with subject: ..."
+            $area =~ s/^(\S+).*$/$1/;
+            if($area ne "netmail")
+            {
+                $count{"\L$area\E"}++;
+                $posted++;
+            }
         }
-        $bundles++ if (/^6.*\s+bundle\s/);
-        $packets++ if (/^7.*\s+pkt\:\s/);
+        $bundles++ if(/^6.*\s+bundle\s/);
+        $packets++ if(/^7.*\s+pkt\:\s/);
     }
 }
-close LOG || die "Can't close $logname: $!";;
+close LOG or die "Can't close $logname: $!";
+
 # error checking
-unless(%count) {
+unless(%count)
+{
     print "No messages in \"$areaname\": non existant areaname" .
-            " or wrong period of days!\n";
+          " or wrong period of days!\n";
     exit;
 }
-$period ||= int ((date_to_period($last) - $date) /24 /60 /60 + 1);
+
+$period ||= int ((date_to_unixtime($last) - $date) /24 /60 /60 + 1);
 print "\nEchomail traffic from \"$from\" to \"$last\" ";
 printf "($period day%s).\n\n", ($period == 1) ? "" : "s";
-print "Echoarea                  Posts\n";
-print "------------------------- -------\n";
-if ($traff) {
-    foreach $key (sort { $count{$b}<=>$count{$a} } keys %count) {
+print "Echoarea                       Posts\n";
+print "------------------------------ -------\n";
+my $all;
+if($traff)
+{
+    foreach my $key (sort { $count{$b}<=>$count{$a} } keys %count)
+    {
        $all += $count{$key};
-       printf "%-25s %-6s\n", $key, $count{$key};
+       printf "%-30s %-6s\n", $key, $count{$key};
     }
-} else {
-    foreach $key (sort keys %count) {
+}
+else
+{
+    foreach my $key (sort keys %count)
+    {
        $all += $count{$key};
        printf "%-25s %-6s\n", $key, $count{$key};
     }
 }
-print "------------------------- -------\n";
-print "Total messages:           $all\n";
-print "Packets:                  $packets\n" if $long_stats;
-print "Bundles:                  $bundles\n" if $long_stats;
-print "(Auto)posted messages:    $posted\n" if $posted;
-print "------------------------- -------\n";
-print "Total echoes processed:   ", scalar(keys %count),"\n";
-print "------------------------- -------\n";
+print "------------------------------ -------\n";
+print "Total messages:                $all\n";
+print "Packets:                       $packets\n" if $long_stats;
+print "Bundles:                       $bundles\n" if $long_stats;
+print "(Auto)posted messages:         $posted\n" if $posted;
+print "------------------------------ -------\n";
+print "Total echoes processed:        ", scalar(keys %count),"\n";
+print "------------------------------ -------\n";
 print  "Average through-put per day:\n";
-printf "        messages:         %.2f\n", $all/$period;
-printf "        packets:          %.2f\n", $packets/$period if $long_stats;
-printf "        bundles:          %.2f\n", $bundles/$period if $long_stats;
-printf "        (auto)posted:     %.2f\n\n", $posted/$period if $posted;
-# converting verbose date to epoch seconds
-sub date_to_period {
-    $_[0] =~ /(\d\d)\s(\w\w\w)\s(\d\d)/i;
-    ($day, $month, $year) = ($1, $2, $3);
+printf "        messages:              %.2f\n", $all/$period;
+printf "        packets:               %.2f\n", $packets/$period if $long_stats;
+printf "        bundles:               %.2f\n", $bundles/$period if $long_stats;
+printf "        (auto)posted:          %.2f\n\n", $posted/$period if $posted;
+
+# convert date in the format "04 May 2021" to unix time in seconds
+sub date_to_unixtime
+{
+    $_[0] =~ /(\d{2})\s(\w{3})\s(\d{4})/;
+    my ($day, $month, $year) = ($1, $2, $3);
     timelocal("59", "59", "23", $day, $months{$month}, $year);
 }
