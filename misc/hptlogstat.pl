@@ -104,7 +104,7 @@ while(<LOG>)
                 $posted++;
             }
         }
-        $bundles++ if(/^6.*\s+bundle\s/);
+        $bundles++ if(/^7.*\s+bundle\s/);
         $packets++ if(/^7.*\s+pkt\:\s/);
     }
 }

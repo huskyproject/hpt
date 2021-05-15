@@ -2083,7 +2083,7 @@ int processArc(char * fileName, e_tossSecurity sec)
         }
         else
         {
-            w_log(LL_EXEC, "bundle %s: unpacking with \"%s\"", fileName, cmd);
+            w_log(LL_BUNDLE, "bundle %s: unpacking with \"%s\"", fileName, cmd);
             cmdexit = cmdcall(cmd);
         }
 
