@@ -30,7 +30,6 @@
 @end ifinfo
 
 @iftex
-@parindent=0pt
 @end iftex
 @iftex
 @afourpaper
@@ -307,14 +306,14 @@ else
 endif
 @end example
 
-HPT define config variable @code{version} with value set to hpt version
-like @code{MAJOR.MINOR.PATHLEVEL}, i.e. @code{@value{VERSION}.0} or
-@code{1.4.1}.
-You may use this variable too for make common config for several hpt versions.
+HPT defines a config variable @code{version} with the value set to the hpt
+version like @code{MAJOR.MINOR.PATCHLEVEL}, for example @code{1.9.0} or
+@code{1.4.1}. You may use this variable to make common config for several
+hpt versions.
 
-To test config for hpt only you may call tparser tool with parameters
-@code{-Dmodule=hpt} and (if need) @code{-Dversion=@value{VERSION}.0}
-(tparser included into fidoconfig package) like this:
+To test config for hpt only you may call tparser tool with arguments
+@code{-Dmodule=hpt} and (if needed) @code{-Dversion=1.9.0}
+(tparser is included into fidoconfig package) like this:
 
 @example
 tparser -Dmodule=hpt
@@ -498,9 +497,13 @@ This statement cannot be repeated.
 @findex BundleNameStyle
 @table @asis
 @item Syntax:
+
 @code{bundleNameStyle <timeStamp | addrDiff | addrsCRC32 | addrDiffAlways | addrsCRC32Always | Amiga>}
+
 @item Example:
+
 @code{bundleNameStyle timeStamp}
+
 @end table
 
 This statement sets a rule for creating names of arcmail bundles:
@@ -523,7 +526,7 @@ case when all higher numbers are already busy.
 @item @code{addrsCRC32Always}
 the same as addrsCRC32 but tryes to use lower free numbers of extension in
 case when all higher numbers are already busy.
-@item @code{Amiga)}
+@item @code{Amiga}
 Amiga Style Outbound (ASO). Bundles are created in @ref{outbound,,,fidoconfig,FidoConfig Manual} directory
 like this:
 @example
@@ -2139,8 +2142,8 @@ If no @code{EchoArea} defined to copy, the carbon msgs goes to the
 Note: You cannot carbonCopy a message from EchoArea to NetmailArea
 and vice versa.
 
-This statement can be placed after different
-carbon@{Addr|To|From|Kludge|Subj|Text@} statements.
+This statement can be placed after different @code{carbonAddr} or @code{carbonTo}
+or @code{carbonFrom} or @code{carbonKludge} or @code{carbonSubj} or @code{carbonText} statements.
 
 @xref{CarbonMove}.
 
@@ -2154,12 +2157,12 @@ carbon@{Addr|To|From|Kludge|Subj|Text@} statements.
 @code{carbonDelete}
 @end table
 
-This statement specifies that selected by previous
-carbon@{Addr|To|From|Kludge|Subj|Text@} statement msgs should not be
+This statement specifies that the messages selected by a previous
+@code{carbonAddr} or @code{carbonTo} or @code{carbonFrom} or @code{carbonKludge} or @code{carbonSubj} or @code{carbonText} statement should not be
 stored into @code{EchoArea}.
 
-This statement can be repeated for each different
-carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
+This statement can be repeated for each different @code{carbonAddr} or @code{carbonTo}
+or @code{carbonFrom} or @code{carbonKludge} or @code{carbonSubj} or @code{carbonText} statement.
 
 @node CarbonExcludeFwdFrom, CarbonExtern, CarbonDelete, Carbon Copy
 @subsection CarbonExcludeFwdFrom
@@ -2186,16 +2189,16 @@ This statement cannot be repeated.
 @end table
 
 This statement specifies external program to run for the previous
-carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
+@code{carbonAddr} or @code{carbonTo} or @code{carbonFrom} or @code{carbonKludge} or @code{carbonSubj} or @code{carbonText} statement.
 
 If this statement is ommitted and no @code{EchoArea} defined for move or
 copy, the carbon msgs gets copyed to the @code{BadArea}.
 
-If program name is prepended with '|' sign, hpt tries to pass data thru
-the pipe, not temporary file.
+If program name is prepended with '|' sign, hpt tries to pass data through
+a pipe, not a temporary file.
 
-This statement can be repeated for each different
-carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
+This statement can be repeated for each different @code{carbonAddr} or @code{carbonTo} or
+@code{carbonFrom} or @code{carbonKludge} or @code{carbonSubj} or @code{carbonText} statement.
 
 @node CarbonFrom, CarbonFromArea, CarbonExtern, Carbon Copy
 @subsection CarbonFrom
@@ -2315,8 +2318,8 @@ This statement can be repeated.
 @code{carbonMove my.echomail}
 @end table
 
-This statement sets the area for the previous
-carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
+This statement sets the area for the previous @code{carbonAddr} or @code{carbonTo} or
+@code{carbonFrom} or @code{carbonKludge} or @code{carbonSubj} or @code{carbonText} statement.
 
 If no @code{EchoArea} defined to copy (or move), the carbon msgs goes to
 the @code{BadArea}.
@@ -2326,8 +2329,8 @@ and vice versa.
 
 Unlike @code{CarbonCopy} msg gets moved, not copied into this area.
 
-This statement can be placed after different
-carbon@{Addr|To|From|Kludge|Subj|Text@} statements.
+This statement can be placed after different @code{carbonAddr} or @code{carbonTo}
+or @code{carbonFrom} or @code{carbonKludge} or @code{carbonSubj} or @code{carbonText} statements.
 
 @xref{CarbonCopy}.
 
@@ -2359,14 +2362,14 @@ This statement cannot be repeated.
 @end table
 
 This statement sets the 'reason string' for the previous
-carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
+@code{carbonAddr} or @code{carbonTo} or @code{carbonFrom} or @code{carbonKludge} or @code{carbonSubj} or @code{carbonText} statement.
 
 This string would be printed after ' * Forwarded ...' line in message
 begining. That's useful when many carbons are made to single area.
 No reason string is printed if this statement is ommitted.
 
-This statement can be repeated for each different
-carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
+This statement can be repeated for each different @code{carbonAddr} or @code{carbonTo} or
+@code{carbonFrom} or @code{carbonKludge} or @code{carbonSubj} or @code{carbonText} statement.
 
 @node CarbonRule, CarbonSubj, CarbonReason, Carbon Copy
 @subsection CarbonRule
@@ -2532,9 +2535,9 @@ This statement cannot be repeated.
 @code{netmailExtern douuedecode}
 @end table
 
-This statement specifies external program to run for the previous
-carbon@{Addr|To|From|Kludge|Subj|Text@} statement for netmail
-messages...
+This statement specifies external program to run for the previous @code{carbonAddr}
+or @code{carbonTo} or @code{carbonFrom} or @code{carbonKludge} or @code{carbonSubj} or
+@code{carbonText} statement for netmail messages...
 
 If this statement is ommitted and no @code{NetMailArea} defined for move or
 copy, the carbon msgs gets copyed to the @code{BadArea}.
@@ -2542,8 +2545,8 @@ copy, the carbon msgs gets copyed to the @code{BadArea}.
 If program name is prepended with '|' sign, hpt tries to pass data thru the
 pipe, not temporary file.
 
-This statement can be repeated for each different
-carbon@{Addr|To|From|Kludge|Subj|Text@} statement.
+This statement can be repeated for each different @code{carbonAddr} or @code{carbonTo} or
+@code{carbonFrom} or @code{carbonKludge} or @code{carbonSubj} or @code{carbonText} statement.
 
 
 @node Advanced Concepts, Keyword Index, Configuration Reference, Top

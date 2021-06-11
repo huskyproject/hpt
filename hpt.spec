@@ -1,7 +1,7 @@
 %global ver_major 1
 %global ver_minor 9
 %global ver_patch 0
-%global reldate 20210515
+%global reldate 20210609
 %global reltype C
 # may be one of: C (current), R (release), S (stable)
 
@@ -34,6 +34,14 @@
     %bcond_without perl
 %endif
 
+# if you use 'rpmbuild --with doc', then hpt-doc package is produced
+# with hpt.info, hpt.html, hpt.txt, hpt.pdf
+%if "%_vendor" == "alt"
+    %def_without doc
+%else
+    %bcond_with doc
+%endif
+
 # for generic build; will override for some distributions
 %global vendor_prefix %nil
 %global vendor_suffix %nil
@@ -61,7 +69,7 @@ Release: %{vendor_prefix}%relnum%{vendor_suffix}
 %if "%_vendor" != "redhat"
 Group: %pkg_group
 %endif
-Summary: HPT is the FTN tosser from the Husky Project
+Summary: HPT is a FTN tosser from the Husky Project
 URL: https://github.com/huskyproject/%main_name/archive/v%ver_major.%ver_minor.%reldate.tar.gz
 License: LGPLv2
 Source: %main_name-%ver_major.%ver_minor.%reldate.tar.gz
@@ -90,7 +98,7 @@ Requires: perl >= 5.8.8
 %endif
 
 %description
-HPT is the FTN tosser from the Husky Project
+HPT is a FTN tosser from the Husky Project
 
 
 %package utils
@@ -101,36 +109,85 @@ Summary: Optional utilities for %name
 %description utils
 %summary
 
+%if %{with doc}
+%package doc
+BuildArch: noarch
+%if "%_vendor" != "redhat"
+Group: %pkg_group
+%endif
+Summary: Documentation for %main_name
+%if "%_vendor" == "redhat"
+BuildRequires: texinfo texinfo-tex
+%else
+BuildRequires: texinfo texi2html texi2dvi
+%endif
+Provides: %main_name-doc = %version-%release
+%description doc
+%summary
+%endif
+
 %prep
 %setup -q -n %main_name-%ver_major.%ver_minor.%reldate
 
 %build
-%if %{with static}
-    %if %{with debug}
-        %if %{with perl}
-            %make_build DEBUG=1
+%if %{with doc}
+    %if %{with static}
+        %if %{with debug}
+            %if %{with perl}
+                %make_build DEBUG=1 all gen-doc
+            %else
+                %make_build PERL=0 DEBUG=1 all gen-doc
+            %endif
         %else
-            %make_build PERL=0 DEBUG=1
+            %if %{with perl}
+                %make_build all gen-doc
+            %else
+                %make_build PERL=0 all gen-doc
+            %endif
         %endif
     %else
-        %if %{with perl}
-            %make_build
+        %if %{with debug}
+            %if %{with perl}
+                %make_build DYNLIBS=1 DEBUG=1 all gen-doc
+            %else
+                %make_build PERL=0 DYNLIBS=1 DEBUG=1 all gen-doc
+            %endif
         %else
-            %make_build PERL=0
+            %if %{with perl}
+                %make_build DYNLIBS=1 all gen-doc
+            %else
+                %make_build PERL=0 DYNLIBS=1 all gen-doc
+            %endif
         %endif
     %endif
 %else
-    %if %{with debug}
-        %if %{with perl}
-            %make_build DYNLIBS=1 DEBUG=1
+    %if %{with static}
+        %if %{with debug}
+            %if %{with perl}
+                %make_build DEBUG=1 all
+            %else
+                %make_build PERL=0 DEBUG=1 all
+            %endif
         %else
-            %make_build PERL=0 DYNLIBS=1 DEBUG=1
+            %if %{with perl}
+                %make_build all
+            %else
+                %make_build PERL=0 all
+            %endif
         %endif
     %else
-        %if %{with perl}
-            %make_build DYNLIBS=1
+        %if %{with debug}
+            %if %{with perl}
+                %make_build DYNLIBS=1 DEBUG=1 all
+            %else
+                %make_build PERL=0 DYNLIBS=1 DEBUG=1 all
+            %endif
         %else
-            %make_build PERL=0 DYNLIBS=1
+            %if %{with perl}
+                %make_build DYNLIBS=1 all
+            %else
+                %make_build PERL=0 DYNLIBS=1 all
+            %endif
         %endif
     %endif
 %endif
@@ -141,28 +198,52 @@ Summary: Optional utilities for %name
 
 %install
 umask 022
-%if %{with static}
-    %if %{with debug}
-        %make_install DEBUG=1
+%if %{with doc}
+    %if %{with static}
+        %if %{with debug}
+            %make_install DEBUG=1 install-doc
+        %else
+            %make_install install-doc
+        %endif
     %else
-        %make_install
+        %if %{with debug}
+            %make_install DYNLIBS=1 DEBUG=1 install-doc
+        %else
+            %make_install DYNLIBS=1 install-doc
+        %endif
     %endif
 %else
-    %if %{with debug}
-        %make_install DYNLIBS=1 DEBUG=1
+    %if %{with static}
+        %if %{with debug}
+            %make_install DEBUG=1
+        %else
+            %make_install
+        %endif
     %else
-        %make_install DYNLIBS=1
+        %if %{with debug}
+            %make_install DYNLIBS=1 DEBUG=1
+        %else
+            %make_install DYNLIBS=1
+        %endif
     %endif
 %endif
 chmod -R a+rX,u+w,go-w %buildroot
 
 %files
 %defattr(-,root,root)
-%_bindir/hpt
-%_mandir/man1/hpt.*
+%_bindir/%main_name
+%_mandir/man1/%main_name.*
 
 %files utils
 %_bindir/*
-%exclude %_bindir/hpt
+%exclude %_bindir/%main_name
 %_mandir/man1/*
-%exclude %_mandir/man1/hpt.*
+%exclude %_mandir/man1/%main_name.*
+
+%if %{with doc}
+%files doc
+%_infodir/*.info.gz
+%_docdir/husky/*.html
+%_docdir/husky/*.txt
+%_docdir/husky/*.pdf
+%endif
