@@ -25,7 +25,7 @@
 @ifinfo
 @dircategory Fidonet Software
 @direntry
-* HPT: (hpt).               HPT is the fidonet tosser
+* HPT: (hpt).               HPT is a Fidonet tosser
 @end direntry
 @end ifinfo
 

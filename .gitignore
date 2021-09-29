@@ -11,4 +11,6 @@ configure-stamp
 .vs/
 out/
 build/
+Build/
 strace_out
+cvsdate.h
