@@ -39,11 +39,8 @@ husky-common (huskybse) package FIRST!
 
 ### Compiling and installing with the standard Makefile and huskymak.cfg
 
-require huskymak.cfg (see huskybse), unixes only:
-```sh
-   $ make
-   $ make install
-```
+See huskybse/INSTALL.asciidoc
+
 ### Compiling with the Legacy Makefiles
 
 unix:
