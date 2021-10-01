@@ -27,11 +27,11 @@ install:
   - cmd: git clone https://github.com/huskyproject/hptzip  C:\projects\hptzip
 before_build:
   - ps:
-      cd C:\projects\huskylib; $huskylib_mdate=git log -1 --date=short --format=format:"%cd" huskylib/*.h src/*.c; echo "char cvs_date[]=""$huskylib_mdate"";" > cvsdate.h
-      cd C:\projects\smapi; $smapi_mdate=git log -1 --date=short --format=format:"%cd" smapi/*.h src/*.c; if($huskylib_mdate -gt $smapi_mdate) {$smapi_mdate=$huskylib_mdate}; echo "char cvs_date[]=""$smapi_mdate"";" > cvsdate.h
-      cd C:\projects\fidoconf; $fidoconf_mdate=git log -1 --date=short --format=format:"%cd" fidoconf/*.h src/*.c; if($smapi_mdate -gt $fidoconf_mdate) {$fidoconf_mdate=$smapi_mdate}; echo "char cvs_date[]=""$fidoconf_mdate"";" > cvsdate.h
-      cd C:\projects\areafix; $areafix_mdate=git log -1 --date=short --format=format:"%cd" areafix/*.h src/*.c; if($fidoconf_mdate -gt $areafix_mdate) {$areafix_mdate=$fidoconf_mdate}; echo "char cvs_date[]=""$areafix_mdate"";" > cvsdate.h
-      cd C:\projects\hptzip; $hptzip_mdate=git log -1 --date=short --format=format:"%cd" hptzip/*.h src/*.c; if($huskylib_mdate -gt $hptzip_mdate) {$hptzip_mdate=$huskylib_mdate}; echo "char cvs_date[]=""$hptzip_mdate"";" > cvsdate.h
+      cd C:\projects\huskylib; $huskylib_mdate=git log -1 --date=short --format=format:"%cd" huskylib/*.h src/*.c; echo "char cvs_date[]=""$huskylib_mdate"";" > cvsdate.h;
+      cd C:\projects\smapi; $smapi_mdate=git log -1 --date=short --format=format:"%cd" smapi/*.h src/*.c; if($huskylib_mdate -gt $smapi_mdate) {$smapi_mdate=$huskylib_mdate}; echo "char cvs_date[]=""$smapi_mdate"";" > cvsdate.h;
+      cd C:\projects\fidoconf; $fidoconf_mdate=git log -1 --date=short --format=format:"%cd" fidoconf/*.h src/*.c; if($smapi_mdate -gt $fidoconf_mdate) {$fidoconf_mdate=$smapi_mdate}; echo "char cvs_date[]=""$fidoconf_mdate"";" > cvsdate.h;
+      cd C:\projects\areafix; $areafix_mdate=git log -1 --date=short --format=format:"%cd" areafix/*.h src/*.c; if($fidoconf_mdate -gt $areafix_mdate) {$areafix_mdate=$fidoconf_mdate}; echo "char cvs_date[]=""$areafix_mdate"";" > cvsdate.h;
+      cd C:\projects\hptzip; $hptzip_mdate=git log -1 --date=short --format=format:"%cd" hptzip/*.h src/*.c; if($huskylib_mdate -gt $hptzip_mdate) {$hptzip_mdate=$huskylib_mdate}; echo "char cvs_date[]=""$hptzip_mdate"";" > cvsdate.h;
       cd C:\projects\hpt; $hpt_mdate=git log -1 --date=short --format=format:"%cd" hpt/*.h src/*.c; if($hptzip_mdate -gt $hpt_mdate) {$hpt_mdate=$hptzip_mdate}; if($areafix_mdate -gt $hpt_mdate) {$hpt_mdate=$areafix_mdate}; echo "char cvs_date[]=""$hpt_mdate"";" > cvsdate.h
 build_script:
   - cmd:
