@@ -222,6 +222,7 @@ endif
 
 
 # Depend
+ifeq ($(MAKECMDGOALS),depend)
 hpt_depend: $(hpt_DEPS) ;
 
 # Build a dependency makefile for every source file
@@ -233,6 +234,7 @@ $(hpt_DEPS): $(hpt_DEPDIR)%$(_DEP): $(hpt_SRCDIR)%.c | $(hpt_DEPDIR)
 
 $(hpt_DEPDIR): | $(hpt_BUILDDIR) do_not_run_depend_as_root
 	[ -d $@ ] || $(MKDIR) $(MKDIROPT) $@
+endif
 
 $(hpt_BUILDDIR):
 	[ -d $@ ] || $(MKDIR) $(MKDIROPT) $@
