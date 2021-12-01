@@ -789,11 +789,11 @@ int main(int argc, char ** argv)
     s_area * area;
 
     setvar("module", "hpt");
-    xscatprintf(&line, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
+    xscatprintf(&line, "%u.%u.%u", hpt_VER_MAJOR, hpt_VER_MINOR, hpt_VER_PATCH);
     setvar("version", line);
     nfree(line);
     SetAppModule(M_HPT);
-    versionStr = GenVersionStr("hptlink", VER_MAJOR, VER_MINOR, VER_PATCH, VER_BRANCH, cvs_date);
+    versionStr = GenVersionStr("hptlink", hpt_VER_MAJOR, hpt_VER_MINOR, hpt_VER_PATCH, hpt_VER_BRANCH, cvs_date);
     printf("%s\n\n", versionStr);
 
     for(j = 1; j < argc; j++)

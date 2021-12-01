@@ -6,9 +6,9 @@
 #
 
 # Version
-hpt_g1:=$(GREP) -Po 'define\s+VER_MAJOR\s+\K\d+'
-hpt_g2:=$(GREP) -Po 'define\s+VER_MINOR\s+\K\d+'
-hpt_g3:=$(GREP) -Po 'define\s+VER_PATCH\s+\K\d+'
+hpt_g1:=$(GREP) -Po 'define\s+hpt_VER_MAJOR\s+\K\d+'
+hpt_g2:=$(GREP) -Po 'define\s+hpt_VER_MINOR\s+\K\d+'
+hpt_g3:=$(GREP) -Po 'define\s+hpt_VER_PATCH\s+\K\d+'
 hpt_g4:=$(GREP) -Po 'char\s+cvs_date\[\]\s*=\s*"\K\d+-\d+-\d+'
 hpt_VERMAJOR := $(shell $(hpt_g1) $(hpt_ROOTDIR)$(hpt_H_DIR)version.h)
 hpt_VERMINOR := $(shell $(hpt_g2) $(hpt_ROOTDIR)$(hpt_H_DIR)version.h)

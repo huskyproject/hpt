@@ -57,8 +57,8 @@ int main(void)
     header.destAddr.point  = 14;
     header.hiProductCode   = HPT_PRODCODE_HIGHBYTE;
     header.loProductCode   = HPT_PRODCODE_LOWBYTE;
-    header.majorProductRev = VER_MAJOR;
-    header.minorProductRev = VER_MINOR;
+    header.majorProductRev = hpt_VER_MAJOR;
+    header.minorProductRev = hpt_VER_MINOR;
 
     /* header.pktPassword[0] = 0; */
     strcpy(header.pktPassword, "xxx");
@@ -66,10 +66,10 @@ int main(void)
     header.capabilityWord = 1;
     header.prodData       = 0;
     versionStr            = GenVersionStr("tpkt",
-                                          VER_MAJOR,
-                                          VER_MINOR,
-                                          VER_PATCH,
-                                          VER_BRANCH,
+                                          hpt_VER_MAJOR,
+                                          hpt_VER_MINOR,
+                                          hpt_VER_PATCH,
+                                          hpt_VER_BRANCH,
                                           cvs_date);
     printf("%s\n\n", versionStr);
     w_log(LL_START, "Start");

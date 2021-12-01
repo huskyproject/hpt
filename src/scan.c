@@ -214,8 +214,8 @@ void makePktHeader(s_link * link, s_pktHeader * header)
         header->destAddr = link->hisAka;
     }
 
-    header->minorProductRev = (UCHAR)VER_MINOR;
-    header->majorProductRev = (UCHAR)VER_MAJOR;
+    header->minorProductRev = (UCHAR)hpt_VER_MINOR;
+    header->majorProductRev = (UCHAR)hpt_VER_MAJOR;
     header->hiProductCode   = 0;
     header->loProductCode   = 0xfe;
     memset(header->pktPassword, '\0', sizeof(header->pktPassword)); /*  no password */

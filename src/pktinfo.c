@@ -204,7 +204,8 @@ int main(int argc, char * argv[])
     int i, showHeader = 0, showText = 0, showCounters = 0;
     char * cfgFile = NULL;
 
-    versionStr = GenVersionStr("PktInfo", VER_MAJOR, VER_MINOR, VER_PATCH, VER_BRANCH, cvs_date);
+    versionStr = GenVersionStr("PktInfo", hpt_VER_MAJOR, hpt_VER_MINOR,
+                               hpt_VER_PATCH, hpt_VER_BRANCH, cvs_date);
     printf("%s\n\n", versionStr);
     nfree(versionStr);
 

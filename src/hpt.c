@@ -534,7 +534,7 @@ void processConfig(void)
 /*    unsigned long pid; */
 /*    FILE *f; */
     setvar("module", "hpt");
-    xscatprintf(&buff, "%u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
+    xscatprintf(&buff, "%u.%u.%u", hpt_VER_MAJOR, hpt_VER_MINOR, hpt_VER_PATCH);
     setvar("version", buff);
     nfree(buff);
     SetAppModule(M_HPT);
@@ -850,7 +850,8 @@ int main(int argc, char ** argv, char ** envp)
     _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_DEBUG);
 #endif
 
-    versionStr = GenVersionStr("hpt", VER_MAJOR, VER_MINOR, VER_PATCH, VER_BRANCH, cvs_date);
+    versionStr = GenVersionStr("hpt", hpt_VER_MAJOR, hpt_VER_MINOR,
+                               hpt_VER_PATCH, hpt_VER_BRANCH, cvs_date);
     rc         = processCommandLine(argc, argv);
 
     if((rc != ex_OK) && config != NULL)

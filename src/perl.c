@@ -1576,7 +1576,8 @@ void perl_setvars(void)
         if((sv = get_sv("hpt_ver", TRUE)) != NULL)
         {
             char * vers = NULL;
-            xscatprintf(&vers, "hpt %u.%u.%u", VER_MAJOR, VER_MINOR, VER_PATCH);
+            xscatprintf(&vers, "hpt %u.%u.%u", hpt_VER_MAJOR, hpt_VER_MINOR,
+                        hpt_VER_PATCH);
        #ifdef __linux__
             xstrcat(&vers, "/lnx");
        #elif defined (__FreeBSD__) || defined (__NetBSD__)

@@ -100,7 +100,7 @@ FILE * createPkt(char * filename, s_pktHeader * header)
             fputc(header->majorProductRev, pkt); /*  put major version number */
 #else
             fputc(HPT_PRODCODE_LOWBYTE, pkt); /*  put lowByte of Prod-Id */
-            fputc(VER_MAJOR, pkt); /*  put major version number */
+            fputc(hpt_VER_MAJOR, pkt); /*  put major version number */
 #endif
 
             /*  write PKT pwd, if strlen(pwd) < 8, fill the rest with \0 */
@@ -128,7 +128,7 @@ FILE * createPkt(char * filename, s_pktHeader * header)
             fputc(header->minorProductRev, pkt); /*  put minor version number */
 #else
             fputc(HPT_PRODCODE_HIGHBYTE, pkt); /*  put hiByte of Prod-Id */
-            fputc(VER_MINOR, pkt);             /*  put minor version number */
+            fputc(hpt_VER_MINOR, pkt);             /*  put minor version number */
 #endif
 
             fputUINT16(pkt, header->capabilityWord);

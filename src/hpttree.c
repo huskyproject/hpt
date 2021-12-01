@@ -433,7 +433,8 @@ int main(int argc, char ** argv)
 
     outlog = stdout;
     setbuf(outlog, NULL);
-    versionStr = GenVersionStr("hpttree", VER_MAJOR, VER_MINOR, VER_PATCH, VER_BRANCH, cvs_date);
+    versionStr = GenVersionStr("hpttree", hpt_VER_MAJOR, hpt_VER_MINOR,
+                               hpt_VER_PATCH, hpt_VER_BRANCH, cvs_date);
     printf("%s\n\n", versionStr);
 
     for(j = 1; j < argc; j++)

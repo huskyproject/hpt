@@ -29,15 +29,15 @@
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *****************************************************************************/
-#ifndef VERSION_H
-#define VERSION_H
+#ifndef HPT_VERSION_H
+#define HPT_VERSION_H
 
 #include <fidoconf/version.h>
 /* basic version number */
-#define VER_MAJOR 1
-#define VER_MINOR 9
-#define VER_PATCH 0
-#define VER_BRANCH BRANCH_CURRENT
+#define hpt_VER_MAJOR  1
+#define hpt_VER_MINOR  9
+#define hpt_VER_PATCH  0
+#define hpt_VER_BRANCH BRANCH_CURRENT
 
 extern char * versionStr;
 

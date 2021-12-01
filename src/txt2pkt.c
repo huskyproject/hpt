@@ -90,7 +90,8 @@ int main(int argc, char * argv[])
 
     memset(&header, '\0', sizeof(s_pktHeader));
     memset(&msg, '\0', sizeof(s_message));
-    versionStr = GenVersionStr("txt2pkt", VER_MAJOR, VER_MINOR, VER_PATCH, VER_BRANCH, cvs_date);
+    versionStr = GenVersionStr("txt2pkt", hpt_VER_MAJOR, hpt_VER_MINOR,
+                               hpt_VER_PATCH, hpt_VER_BRANCH, cvs_date);
 
     if(argc == 1)
     {
@@ -560,8 +561,8 @@ int main(int argc, char * argv[])
 
     header.hiProductCode   = HPT_PRODCODE_HIGHBYTE;
     header.loProductCode   = HPT_PRODCODE_LOWBYTE;
-    header.majorProductRev = VER_MAJOR;
-    header.minorProductRev = VER_MINOR;
+    header.majorProductRev = hpt_VER_MAJOR;
+    header.minorProductRev = hpt_VER_MINOR;
 
     if(passwd != NULL)
     {
