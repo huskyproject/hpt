@@ -95,11 +95,11 @@ hpt_TARGET_BLD = $(addprefix $(hpt_BUILDDIR), $(hpt_TARGET))
 hpt_TARGET_DST = $(addprefix $(BINDIR_DST), $(hpt_TARGET))
 
 
-.PHONY: hpt_all hpt_install hpt_uninstall hpt_clean hpt_distclean hpt_depend \
+.PHONY: hpt_build hpt_install hpt_uninstall hpt_clean hpt_distclean hpt_depend \
         hpt_doc hpt_doc_install hpt_doc_uninstall hpt_doc_clean \
         hpt_doc_distclean hpt_clean_OBJ hpt_main_distclean hpt_rmdir_DEP hpt_rm_DEPS
 
-hpt_all: $(hpt_TARGET_BLD) $(hpt_MAN1BLD) hpt_doc
+hpt_build: $(hpt_TARGET_BLD) $(hpt_MAN1BLD) hpt_doc
 
 ifneq ($(MAKECMDGOALS), depend)
     include $(hpt_DOCDIR)Makefile
