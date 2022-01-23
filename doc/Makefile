@@ -57,8 +57,11 @@ $(hpt_BUILDDIR)hpt.html: $(hpt_TEXI)
 $(hpt_BUILDDIR)hpt.txt: $(hpt_TEXI)
 	-LC_ALL=C $(MAKEINFO) $(MIPTEXT) $(MINOSPLIT) "$<" $(MIOUT) "$@"
 
-$(hpt_BUILDDIR)hpt.dvi: $(hpt_TEXI)
-	-$(TEXI2DVI) "$<"
+$(hpt_BUILDDIR)hpt.dvi: $(hpt_DOCDIR_BLD)hpt.dvi
+	$(LN) $(LNHOPT) "$<" $(hpt_BUILDDIR)
+
+$(hpt_DOCDIR_BLD)hpt.dvi: $(hpt_TEXI)
+	-cd $(hpt_DOCDIR_BLD); LC_ALL=C $(TEXI2DVI) ../../../"$<"
 
 $(hpt_BUILDDIR)hpt.pdf: $(hpt_DOCDIR_BLD)hpt.pdf
 	$(LN) $(LNHOPT) "$<" $(hpt_BUILDDIR)
@@ -148,6 +151,7 @@ hpt_clean_DOC:
 	-$(RM) $(RMOPT) $(hpt_DOCDIR_BLD)hpt.cps
 	-$(RM) $(RMOPT) $(hpt_DOCDIR_BLD)*.log
 	-$(RM) $(RMOPT) $(hpt_DOCDIR_BLD)hpt.texi
+	-$(RM) $(RMOPT) $(hpt_DOCDIR_BLD)hpt.dvi
 	-$(RM) $(RMOPT) $(hpt_DOCDIR_BLD)hpt.pdf
 
 # Distclean
