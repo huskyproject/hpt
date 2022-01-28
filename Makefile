@@ -217,7 +217,7 @@ hpt_depend: $(hpt_DEPS) ;
 $(hpt_DEPS): $(hpt_DEPDIR)%$(_DEP): $(hpt_SRCDIR)%.c | $(hpt_DEPDIR)
 	@set -e; rm -f $@; \
 	$(CC) -MM $(hpt_CFLAGS) $(hpt_CDEFS) $< > $@.$$$$; \
-	sed 's,\($*\)\.o[ :]*,$(hpt_OBJDIR)\1.o $@ : ,g' < $@.$$$$ > $@; \
+	sed 's,\($*\)$(_OBJ)[ :]*,$(hpt_OBJDIR)\1$(_OBJ) $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
 $(hpt_DEPDIR): | $(hpt_BUILDDIR) do_not_run_depend_as_root
