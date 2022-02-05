@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#ifndef _MSC_VER
+#if !defined (_MSC_VER) && !defined (__MINGW32__)
 #include <sys/wait.h>
 #endif
 #ifdef __OS2__
