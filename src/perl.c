@@ -81,6 +81,9 @@ extern "C" {
 # include <unistd.h>
 #endif
 #include <XSUB.h>
+#ifdef USE_PERLIO
+#undef link
+#endif
 #ifdef _MSC_VER
 # include "win32iop.h"
 #endif
