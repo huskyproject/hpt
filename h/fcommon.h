@@ -89,7 +89,8 @@ int createOutboundFileNameAka(s_link * link, e_flavour prio, e_pollType typ, hs_
           0 else
  */
 
-#if (defined (__WATCOMC__) || defined (__MINGW32__)) && defined (__NT__)
+#if defined (__WATCOMC__) && defined (__NT__)
+
 int __stdcall SetConsoleTitleA(const char * lpConsoleTitle);
 
 #endif
