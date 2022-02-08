@@ -44,6 +44,9 @@ ifeq ($(USE_HPTZIP), 1)
 endif
 
 hpt_ALL_SRC = $(wildcard $(hpt_SRCDIR)*.c)
+ifneq ($(PERL),1)
+    hpt_ALL_SRC := $(filter-out $(hpt_SRCDIR)perl.c,$(hpt_ALL_SRC))
+endif
 
 hpt_ALL_OBJFILES = $(notdir $(hpt_ALL_SRC:.c=$(_OBJ)))
 
