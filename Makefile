@@ -19,11 +19,8 @@ hpt_LIBS := $(areafix_TARGET_BLD) $(fidoconf_TARGET_BLD) \
             $(smapi_TARGET_BLD) $(huskylib_TARGET_BLD)
 
 ifeq ($(PERL), 1)
-    hpt_CFLAGS := -DDO_PERL $(shell perl -MExtUtils::Embed -e ccopts) $(CFLAGS)
     PERLLIBS := $(shell perl -MExtUtils::Embed -e ldopts)
     PERLOBJ := perl$(_OBJ)
-else
-    hpt_CFLAGS = $(CFLAGS)
 endif
 
 hpt_CDEFS := $(CDEFS) -I$(areafix_ROOTDIR) \
@@ -43,12 +40,7 @@ ifeq ($(USE_HPTZIP), 1)
     hpt_CDEFS  += -I$(hptzip_ROOTDIR)
 endif
 
-hpt_ALL_SRC = $(wildcard $(hpt_SRCDIR)*.c)
-ifneq ($(PERL),1)
-    hpt_ALL_SRC := $(filter-out $(hpt_SRCDIR)perl.c,$(hpt_ALL_SRC))
-endif
 
-hpt_ALL_OBJFILES = $(notdir $(hpt_ALL_SRC:.c=$(_OBJ)))
 
 hpt_OBJFILES = carbon$(_OBJ) dupe$(_OBJ) fcommon$(_OBJ) global$(_OBJ) \
 	hpt$(_OBJ) hptafix$(_OBJ) link$(_OBJ) $(PERLOBJ) pktread$(_OBJ) \
@@ -57,18 +49,6 @@ hpt_OBJFILES = carbon$(_OBJ) dupe$(_OBJ) fcommon$(_OBJ) global$(_OBJ) \
 
 # Prepend directory
 hpt_OBJS := $(addprefix $(hpt_OBJDIR),$(hpt_OBJFILES))
-hpt_ALL_OBJS := $(addprefix $(hpt_OBJDIR), $(hpt_ALL_OBJFILES))
-
-hpt_DEPS := $(hpt_ALL_OBJFILES)
-ifdef O
-    hpt_DEPS := $(hpt_DEPS:$(O)=)
-endif
-ifdef _OBJ
-    hpt_DEPS := $(hpt_DEPS:$(_OBJ)=$(_DEP))
-else
-    hpt_DEPS := $(addsuffix $(_DEP),$(hpt_DEPS))
-endif
-hpt_DEPS := $(addprefix $(hpt_DEPDIR),$(hpt_DEPS))
 
 ifneq ($(HPT_UTIL), 1)
     hpt_TARGET = hpt$(_EXE)
@@ -210,22 +190,3 @@ hpt_main_uninstall:
 ifdef MAN1DIR
 	-$(RM) $(RMOPT) $(hpt_MAN1DST)
 endif
-
-
-# Depend
-ifeq ($(MAKECMDGOALS),depend)
-hpt_depend: $(hpt_DEPS) ;
-
-# Build a dependency makefile for every source file
-$(hpt_DEPS): $(hpt_DEPDIR)%$(_DEP): $(hpt_SRCDIR)%.c | $(hpt_DEPDIR)
-	@set -e; rm -f $@; \
-	$(CC) -MM $(hpt_CFLAGS) $(hpt_CDEFS) $< > $@.$$$$; \
-	sed 's,\($*\)$(__OBJ)[ :]*,$(hpt_OBJDIR)\1$(_OBJ) $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
-
-$(hpt_DEPDIR): | $(hpt_BUILDDIR) do_not_run_depend_as_root
-	[ -d $@ ] || $(MKDIR) $(MKDIROPT) $@
-endif
-
-$(hpt_BUILDDIR):
-	[ -d $@ ] || $(MKDIR) $(MKDIROPT) $@
