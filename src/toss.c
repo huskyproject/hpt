@@ -1344,7 +1344,6 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                 closeOpenedPkt();
                 freeMsgBuffers(tmpmsg);
                 nfree(tmpmsg);
-                nfree(reason);
                 w_log(LL_AREAFIX, "areafix: write notification msg for %s",
                       aka2str(&link->hisAka));
             }
