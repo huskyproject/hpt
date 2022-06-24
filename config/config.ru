@@ -51,7 +51,7 @@ robot default
 # удалять сообщения с запросами
 killrequests yes
 # атрибуты для сообщений с ответами
-reportsattr loc pvt k/s npd
+reportsattr loc pvt k/s
 
 # настройки только для этого робота
 robot areafix

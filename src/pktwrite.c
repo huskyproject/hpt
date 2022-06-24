@@ -339,7 +339,6 @@ FILE * openPktForAppending(char * fileName, s_pktHeader * header)
               ourAka->zone,ourAka->net,ourAka->node,time(NULL));
 
    if (!config->disableTID) xscatprintf(&buff, "\001PID: %s\r", versionStr);
-   xstrcat(&buff, "\001FLAGS NPD\r");
 
    return buff;
    }
