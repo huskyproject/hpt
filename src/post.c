@@ -111,7 +111,7 @@ void print_help(void)
     fprintf(stdout, "            flags to set to the posted msg. possible ones\n");
     fprintf(stdout, "            are: pvt, crash, read, sent, att, fwd, orphan,\n");
     fprintf(stdout, "            k/s, loc, hld, xx2, frq, rrq, cpt, arq, urq,\n");
-    fprintf(stdout, "            kfs, tfs, dir, imm, cfm;\n");
+    fprintf(stdout, "            kfs, tfs, dir, imm, cfm, npd;\n");
     fprintf(stdout,
             "            use it like this: pvt loc k/s OR pvt,loc,k/s OR \"pvt loc k/s\"\n\n");
     fprintf(stdout, "         -x export message to echo links\n\n");

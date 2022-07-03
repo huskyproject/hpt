@@ -30,7 +30,7 @@ robotsarea NETMAIL
 
 robot default
 killrequests yes
-reportsattr loc pvt k/s
+reportsattr loc pvt k/s npd
 
 robot areafix
 fromname Areafix robot
