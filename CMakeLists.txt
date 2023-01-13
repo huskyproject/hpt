@@ -146,7 +146,7 @@ endif (MSVC)
 set (CPACK_STRIP_FILES TRUE)
 set (CPACK_PACKAGE_VERSION_MAJOR "1")
 set (CPACK_PACKAGE_VERSION_MINOR "9")
-execute_process(COMMAND git log -1 --date=short --format=format:%cd ${CMAKE_CURRENT_SOURCE_DIR}/hpt/*.h ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c
+execute_process(COMMAND git log -1 --date=short --format=format:%cd ${CMAKE_CURRENT_SOURCE_DIR}/h/*.h ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c
     OUTPUT_VARIABLE CPACK_PACKAGE_VERSION_PATCH)
 file(WRITE cvsdate.h "char cvs_date[]=\"${CPACK_PACKAGE_VERSION_PATCH}\";")
 string(REGEX REPLACE "-" "" CPACK_PACKAGE_VERSION_PATCH ${CPACK_PACKAGE_VERSION_PATCH})
