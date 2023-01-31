@@ -3,13 +3,16 @@
 hpttree \- area distribution tree builder for hpt
 .SH SYNOPSIS
 .B hpttree
-[\-p] [areaname ...]
+[\-c config] [\-p] [areaname ...]
 
 .SH DESCRIPTION
 hpttree scan areas bases and prints distribution tree of areas specified
 by arguments \fIareaname\fP.
 
 .SS Options
+.TP
+.B \-c <config>
+husky config file.
 .TP
 .B \-p
 toggle pseudographics mode. Default for UNIXs is do not use pseudographic

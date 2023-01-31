@@ -418,8 +418,9 @@ void buildAreaTree(s_area * area)
 void usage(void)
 {
     printf(
-        "Usage: hpttree [-c config] [options] [areaname ...]\n"
+        "Usage: hpttree [options] [areaname ...]\n"
         "Options:\n"
+        "\t  -c <config>\t- config file\n"
         "\t  -p - toggle pseudographics mode\n"
         "\t  -d <num>\t- for last <num> days\n");
 }

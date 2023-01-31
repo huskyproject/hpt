@@ -772,8 +772,9 @@ void linkArea(s_area * area)
 void usage(void)
 {
     printf(
-        "Usage: hptlink [-c config] [options] [areaname ...]\n"
+        "Usage: hptlink [options] [areaname ...]\n"
         "Options:\n"
+        "\t  -c <config>\t- config file\n"
         "\t  -t\t- build reply TREE\n"
         "\t  -s\t- do not use Subject\n"
         "\t  -a\t- search in all messages (for singlethread only)\n"
