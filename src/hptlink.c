@@ -772,8 +772,14 @@ void linkArea(s_area * area)
 void usage(void)
 {
     printf(
-        "Usage: hptlink [options] [areaname ...]\n" "Options:  -t\t- build reply TREE\n" "\t  -s\t- do not use Subject\n" "\t  -a\t- search in all messages (for singlethread only)\n" "\t  -r\t- do not use REPLY:/MSGID:\n"
-                                                                                                                                                                                       "\t  -n\t- link with 'new' messages only ('new' from last linked + 1)\n");
+        "Usage: hptlink [options] [areaname ...]\n"
+        "Options:\n"
+        "\t  -c <config>\t- config file\n"
+        "\t  -t\t- build reply TREE\n"
+        "\t  -s\t- do not use Subject\n"
+        "\t  -a\t- search in all messages (for singlethread only)\n"
+        "\t  -r\t- do not use REPLY:/MSGID:\n"
+        "\t  -n\t- link with 'new' messages only ('new' from last linked + 1)\n");
 }
 
 int main(int argc, char ** argv)
@@ -783,6 +789,7 @@ int main(int argc, char ** argv)
     struct _minf m;
     char ** argareas = NULL;
     char * line      = NULL;
+    const char * cfg = NULL;
     int nareas       = 0;
     int found;
     FILE * f;
@@ -802,6 +809,17 @@ int main(int argc, char ** argv)
         {
             switch(argv[j][1])
             {
+                case 'c':
+                case 'C':
+                    j++;
+                    if(!argv[j])
+                    {
+                        usage();
+                        exit(EX_USAGE);
+                    }
+                    cfg = argv[j];
+                    break;
+
                 case 't': /* Tree mode */
                 case 'T':
                     singleRepl = 0;
@@ -844,7 +862,7 @@ int main(int argc, char ** argv)
             argareas[nareas - 1] = argv[j];
         }
     }
-    config = readConfig(NULL);
+    config = readConfig(cfg);
 
     if(!config)
     {

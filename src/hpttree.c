@@ -418,8 +418,11 @@ void buildAreaTree(s_area * area)
 void usage(void)
 {
     printf(
-        "Usage: hpttree [options] [areaname ...]\n" "Options:  -p - toggle pseudographics mode\n"
-                                                    "\t  -d <num>\t- for last <num> days\n");
+        "Usage: hpttree [options] [areaname ...]\n"
+        "Options:\n"
+        "\t  -c <config>\t- config file\n"
+        "\t  -p - toggle pseudographics mode\n"
+        "\t  -d <num>\t- for last <num> days\n");
 }
 
 int main(int argc, char ** argv)
@@ -430,6 +433,7 @@ int main(int argc, char ** argv)
     char ** argareas = NULL;
     int nareas       = 0;
     int found;
+    const char * config = NULL;
 
     outlog = stdout;
     setbuf(outlog, NULL);
@@ -443,6 +447,17 @@ int main(int argc, char ** argv)
         {
             switch(argv[j][1])
             {
+                case 'c':
+                case 'C':
+                    j++;
+                    if(!argv[j])
+                    {
+                        usage();
+                        exit(EX_USAGE);
+                    }
+                    config = argv[j];
+                    break;
+
                 case 'p': /* Toggle pseudographics */
                 case 'P':
                     charsPG = (charsPG) ? 0 : 1;
@@ -481,7 +496,7 @@ int main(int argc, char ** argv)
             argareas[nareas - 1] = argv[j];
         }
     }
-    cfg = readConfig(NULL);
+    cfg = readConfig(config);
 
     if(!cfg)
     {
