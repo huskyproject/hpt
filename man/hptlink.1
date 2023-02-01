@@ -3,7 +3,7 @@
 hptlink \- messages linker for hpt
 .SH SYNTAX
 .B hptlink
-[\-c config] [\-t] [\-s] [\-a] [\-r] [\-l loglevel] [\-n] [areaname ...]
+[\-c config] [\-t] [\-s] [\-a] [\-r] [\-n] [areaname ...]
 .TP
 .B \-c <config>
 husky config file.
@@ -23,6 +23,9 @@ do not use REPLY:/MSGID:
 .B \-n
 Link with 'new' messages only ('new' start from last linked + 1). Great speedup
 in repeated linkings, but doesn't relink anything already linked.
+.TP
+.B \-l <loglevel>
+Does nothing. It's here only for compatibility with old versions. 
 
 .SH DESCRIPTION
 hptlink links messages in areas specified by arguments \fIareaname\fP.
