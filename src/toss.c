@@ -1781,7 +1781,7 @@ int processPkt(char * fileName, e_tossSecurity sec)
         }
 
         w_log(LL_FILE, "toss.c:processPkt(): opened '%s' (\"rb\" mode)", fileName);
-        header = openPkt(pkt);
+        header = openPkt(pkt, hpt);
 
         if(header != NULL)
         {
@@ -3102,7 +3102,7 @@ void tossTempOutbound(char * directory)
                 continue;
             }
 
-            header = openPkt(pkt);
+            header = openPkt(pkt, hpt);
 
             if(header != NULL)
             {

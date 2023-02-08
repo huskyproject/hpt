@@ -288,7 +288,7 @@ FILE * openPktForAppending(char * fileName, s_pktHeader * header)
             exit_hpt("can't open pkt for appending", 0);
         }
 
-        openPkt(pkt);
+        openPkt(pkt, hpt);
         fseek(pkt, -2, SEEK_END); /*  go to \0\0 to add a new msg. */
 
         if(ftell(pkt) <= 0)       /* this was a zero length file ... */

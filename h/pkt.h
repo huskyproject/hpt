@@ -50,6 +50,8 @@
 #define BUFFERSIZE (512 * 1024)        /*  work buffer for msg text in pktread */
 #endif
 
+typedef enum {hpt, pktinfo} appType;
+
 FILE * createPkt(char * filename, s_pktHeader * header);
 
 /*DOC
@@ -86,10 +88,12 @@ FILE * openPktForAppending(char * fileName, s_pktHeader * header);
           to the pkt. If the file does not exist it is created using
           createPkt and te param header.
  */
-s_pktHeader * openPkt(FILE * pkt);
+s_pktHeader * openPkt(FILE * pkt, appType app);
 
 /*DOC
    Input:  pkt is a pointer to a FILE which is already open.
+           app is the application using the function; it may be either
+           hpt or pktinfo.
           openPkt will read from the current position of the filepointer
    Output: openPkt returns a pointer to a s_pktHeader struct or NULL if
           pkt is not a PKT which conforms to FSC0039 (2+)

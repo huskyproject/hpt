@@ -76,7 +76,7 @@ void readPktPassword(FILE * pkt, UCHAR * password)
     password[8] = 0;
 }
 
-s_pktHeader * openPkt(FILE * pkt)
+s_pktHeader * openPkt(FILE * pkt, appType app)
 {
     s_pktHeader * header;
     UINT16 pktVersion, capWord;
@@ -141,7 +141,7 @@ s_pktHeader * openPkt(FILE * pkt)
         }
     }
 
-    if(header->origAddr.zone == 0)
+    if(header->origAddr.zone == 0 && app == hpt)
     {
         for(unsigned int i = 0; i < config->linkCount; i++)
         {
@@ -170,7 +170,7 @@ s_pktHeader * openPkt(FILE * pkt)
         }
     }
 
-    if(header->destAddr.zone == 0)
+    if(header->destAddr.zone == 0 && app == hpt)
     {
         for(unsigned int i = 0; i < config->linkCount; i++)
         {

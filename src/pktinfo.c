@@ -77,7 +77,7 @@ int displayPkt(char * filename, int showHeader, int showText, int showCounters)
         return 2;
     }
 
-    header = openPkt(pkt);
+    header = openPkt(pkt, pktinfo);
 
     if(header == NULL)
     {
