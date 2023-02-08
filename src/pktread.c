@@ -143,35 +143,59 @@ s_pktHeader * openPkt(FILE * pkt)
 
     if(header->origAddr.zone == 0)
     {
-        for(capWord = 0; capWord < config->addrCount; capWord++)
+        for(unsigned int i = 0; i < config->linkCount; i++)
         {
-            if(header->origAddr.net == config->addr[capWord].net)
+            if(header->origAddr.net == config->links[i]->hisAka.net)
             {
-                header->origAddr.zone = config->addr[capWord].zone;
+                header->origAddr.zone = config->links[i]->hisAka.zone;
                 break;
             }
         }
 
         if(header->origAddr.zone == 0)
         {
-            header->origAddr.zone = config->addr[0].zone;
+            for(unsigned int i = 0; i < config->addrCount; i++)
+            {
+                if(header->origAddr.net == config->addr[i].net)
+                {
+                    header->origAddr.zone = config->addr[i].zone;
+                    break;
+                }
+            }
+
+            if(header->origAddr.zone == 0)
+            {
+                header->origAddr.zone = config->addr[0].zone;
+            }
         }
     }
 
     if(header->destAddr.zone == 0)
     {
-        for(capWord = 0; capWord < config->addrCount; capWord++)
+        for(unsigned int i = 0; i < config->linkCount; i++)
         {
-            if(header->destAddr.net == config->addr[capWord].net)
+            if(header->destAddr.net == config->links[i]->hisAka.net)
             {
-                header->destAddr.zone = config->addr[capWord].zone;
+                header->destAddr.zone = config->links[i]->hisAka.zone;
                 break;
             }
         }
 
         if(header->destAddr.zone == 0)
         {
-            header->destAddr.zone = config->addr[0].zone;
+            for(unsigned int i = 0; i < config->addrCount; i++)
+            {
+                if(header->destAddr.net == config->addr[i].net)
+                {
+                    header->destAddr.zone = config->addr[i].zone;
+                    break;
+                }
+            }
+
+            if(header->destAddr.zone == 0)
+            {
+                header->destAddr.zone = config->addr[0].zone;
+            }
         }
     }
 
