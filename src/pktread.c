@@ -143,7 +143,9 @@ s_pktHeader * openPkt(FILE * pkt, appType app)
 
     if(header->origAddr.zone == 0 && app == hpt)
     {
-        for(unsigned int i = 0; i < config->linkCount; i++)
+        unsigned int i;
+
+        for(i = 0; i < config->linkCount; i++)
         {
             if(header->origAddr.net == config->links[i]->hisAka.net)
             {
@@ -154,7 +156,7 @@ s_pktHeader * openPkt(FILE * pkt, appType app)
 
         if(header->origAddr.zone == 0)
         {
-            for(unsigned int i = 0; i < config->addrCount; i++)
+            for(i = 0; i < config->addrCount; i++)
             {
                 if(header->origAddr.net == config->addr[i].net)
                 {
@@ -172,7 +174,9 @@ s_pktHeader * openPkt(FILE * pkt, appType app)
 
     if(header->destAddr.zone == 0 && app == hpt)
     {
-        for(unsigned int i = 0; i < config->linkCount; i++)
+        unsigned int i;
+
+        for(i = 0; i < config->linkCount; i++)
         {
             if(header->destAddr.net == config->links[i]->hisAka.net)
             {
@@ -183,7 +187,7 @@ s_pktHeader * openPkt(FILE * pkt, appType app)
 
         if(header->destAddr.zone == 0)
         {
-            for(unsigned int i = 0; i < config->addrCount; i++)
+            for(i = 0; i < config->addrCount; i++)
             {
                 if(header->destAddr.net == config->addr[i].net)
                 {
