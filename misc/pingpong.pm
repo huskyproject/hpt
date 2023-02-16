@@ -129,6 +129,7 @@ sub ping_pong($$$$$$;$$)
     my ( $from_name, $from_addr, $to_name, $to_addr, $subj, $mtext,
          $m_attr, $m_level ) = @_;
     my $addline = '';
+    my $replycludge = '';
     my $msgdirection = 'passed through';
     my $time = localtime;
     my $my_aka = @{$config{addr}}[0];
@@ -161,13 +162,16 @@ sub ping_pong($$$$$$;$$)
 		}
 		$msgdirection = "was received by";
 	}
+        if ( $mtext =~ /\x01MSGID: ([^\r]+)\r/i ) {
+	    $replycludge = "\x01REPLY: $1\r";
+        }
 	$mtext =~ s/\r\x01/\r\@/g;
         $mtext =~ s/^\x01/\@/;
         $mtext =~ s/\r--- /\r-+- /g;
         $mtext =~ s/\r \* Origin\:/\r \+ Origin\:/g;
         $mtext =~ s/\r\%RouteTo\:/\r\@RouteTo\:/gi;
 	putMsgInArea("", "Ping Robot", $from_name, $my_aka, $from_addr,
-		"Pong", "", $LOC+$m_attr, "Hi $from_name.\r\r".
+		"Pong", "", $LOC+$m_attr, "${replycludge}Hi $from_name.\r\r".
 		"   Your ping-message $msgdirection my system at $time\r\r".
 		"$addline".
 		"---------- Help ------------------------------------------------------------\r".
