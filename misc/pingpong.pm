@@ -96,13 +96,13 @@ To use the "%RouteTo:" command you should place in the filter.pl
 
 =head1 RETURN VALUE
 
-Nothing.
+ping_pong() return 1 if a message to Ping was detected, 0 - otherwise.
 
 =head1 BUGS
 
 ping_pong uses the $config{origin} variable. If the Origin variable
 is not defined in the HPT configuration file, then this leads to
-the crash of the whole Perl hook.
+the crash of the whole Perl hook. It was fixed in the hpt version 1.9.0 2021-04-18.
 
 =head1 AUTHOR
 
@@ -128,15 +128,38 @@ sub ping_pong($$$$$$;$$)
 {
     my ( $from_name, $from_addr, $to_name, $to_addr, $subj, $mtext,
          $m_attr, $m_level ) = @_;
+    my ( $links_mask );
+    my $ori_gin = 'Upgrade your HPT to version 1.9.0 2021-04-18 or higher.';
+    $hpt_version =~ /(\d{4})\-(\d{2})\-(\d{2})$/;
+    my $subver = $1.$2.$3;
+    if ( $subver >= 20210418 ) {
+        if ( defined $config{origin} ) {
+            $ori_gin = $config{origin};
+        } else {
+            $ori_gin = 'Ping-Pong Robot by Stas Mishchenkov';
+        }
+    }
     my $addline = '';
+    my $replykludge = '';
     my $msgdirection = 'passed through';
     my $time = localtime;
     my $my_aka = @{$config{addr}}[0];
     $m_attr = 0 unless defined $m_attr;
     $m_level = 0 unless defined $m_level;
+    my $tz = gmtoff();
+    my $tzs = '';
+    my $tze = '0';
+    $tz =~ /(\-?)(\d+)[\.\,]?(\d?)/;
+    $tzs = $1 if defined $1;
+    $tze = $3 . $tze if defined $3;
+    $tz = sprintf("$tzs%02d%02d\r",$2,$tze);
 
     if ($to_name =~ /^Ping$/i){
 	w_log("Ping message detected." );
+	if ($from_name =~ /^Ping$/i){
+            w_log("From name \'$from_name\' not allowed." );
+            $from_name = "Mr. $from_name";
+        }
 	if ( istous($to_addr) == 1 ) {
 		$my_aka = $to_addr;
 		if ( $subj =~ /\%RouteTo\: (\d\:\d+\/\d+)/i) {
@@ -149,25 +172,31 @@ sub ping_pong($$$$$$;$$)
                         w_log("$1 isn't protecded link. \'\%RouteTo\: $1\' command was not accepted.");
 	            }
 		}
-                if ( $subj =~ /\%Links/i) {
+                if ( $subj =~ /\%Links\s?\(?([^\(\)]*)\)?/i) {
+		    $links_mask = $1 if defined $1;
 		    $addline .= "My links are:\r~~~~~~~~~~~~~\r";
 		    foreach my $key( sort keys %links) {
-		    $addline .= sprintf("%-20s", $key) .
-		    "$links{$key}{name}\r" if defined $links{$key}{password} &&
-				     $key =~ /^\d+\:\d+\/\d+$/ &&
-				     $links{$key}{name} !~ /Our virtual lin/i &&
-				     $links{$key}{level} >= $m_level;
+		        next if defined( $links_mask ) && $key !~ /$links_mask/ &&
+                                $links_mask ne '';
+		        $addline .= sprintf("%-20s", $key) .
+		        "$links{$key}{name}\r" if defined $links{$key}{password} &&
+				                  $key =~ /^\d+\:\d+\/\d+$/ &&
+				                  $links{$key}{name} !~ /Our virtual lin/i &&
+				                  $links{$key}{level} >= $m_level;
 		    }
 		}
 		$msgdirection = "was received by";
 	}
+        if ( $mtext =~ /\x01MSGID: ([^\r]+)\r/i ) {
+	    $replykludge = "\x01REPLY: $1\r";
+        }
 	$mtext =~ s/\r\x01/\r\@/g;
         $mtext =~ s/^\x01/\@/;
         $mtext =~ s/\r--- /\r-+- /g;
         $mtext =~ s/\r \* Origin\:/\r \+ Origin\:/g;
         $mtext =~ s/\r\%RouteTo\:/\r\@RouteTo\:/gi;
 	putMsgInArea("", "Ping Robot", $from_name, $my_aka, $from_addr,
-		"Pong", "", $LOC+$m_attr, "Hi $from_name.\r\r".
+		"Pong", "", $LOC+$m_attr, "${replykludge}${tz}Hi $from_name.\r\r".
 		"   Your ping-message $msgdirection my system at $time\r\r".
 		"$addline".
 		"---------- Help ------------------------------------------------------------\r".
@@ -190,8 +219,10 @@ sub ping_pong($$$$$$;$$)
 		"============================================================================\r".
 		"$mtext".
 		"============================================================================\r".
-		"--- perl on $hpt_version\r * Origin: $config{origin} \($my_aka\)", 1);
+		"--- perl on $hpt_version\r * Origin: $ori_gin \($my_aka\)", 1);
+		return 1;
     }
+    return 0;
 }
 
 
