@@ -2,7 +2,7 @@
 #
 =head1  NAME
 
-    attrib.pm - two subs to handle ARQ and RRQ message attributes for HPT perl
+    attrib.pm - two subs to handle ARQ and RRQ message attributes for HPT Perl
     by Stas Mishchenkov 2:460/58.
 
 =head1 SYNOPSIS
@@ -11,42 +11,57 @@
    
    sub filter()
    {
-      is_rrq( $attr );
+      if ( is_rrq( $attr ) )
+      {
+          w_log('RRc message created.');
+      }
    }
    
    sub route()
    {
-      is_arq( $attr, $route );
+      if ( is_arq( $attr, $route ) )
+      {
+          w_log('RRc message created.');
+      }
    }
    
-   $attr - message attributes as defined by HPT perl.
-   $route - message routing as defined by HPT perl.
+   $attr  - message attributes as defined by HPT Perl.
+   $route - message routing as defined by HPT Perl. Optional. If present, 
+            the RRC message will contain the string "and routed via $route".
 
 =head1 DESCRIPTION
 
-   This subs to handle ARQ and RRQ message attributes for HPT perl designed
+   This subs are designed to handle ARQ and RRQ message attributes for HPT Perl 
    according to FTS-0001.016.
-   Insert into HPT configuration file:
+   Since the subroutines will be present inside filter.pl, there should be a line
+   like the following one in your HPT configuration file:
+
       hptperlfile /home/fido/perl/filter.pl
 
    Put attrib.pm somewhere in the @INC path. It's strongly recommended for Windows
    users to put it in the same directory with filter.pl.
-   place to filter.pl something like this:
+   You may use the subroutines inside filter.pl this way:
 
    use attrib;
    
    sub filter()
    {
-      is_rrq( $attr );
+      if ( is_rrq( $attr ) )
+      {
+          w_log("RRc message to $fromname $fromaddr created.");
+      }
    }
    
    sub route()
    {
-      is_arq( $attr, $route );
+      if ( is_arq( $attr, $route ) )
+      {
+          w_log("RRc message to $fromname $fromaddr created.");
+      }
    }
    
-   $attr - message attributes as defined by HPT perl.
-   $route - message routing as defined by HPT perl.
+   $attr - message attributes as defined by HPT Perl.
+   $route - message routing as defined by HPT Perl.
 
 =head1 RETURN VALUE
 
@@ -82,7 +97,7 @@ sub is_arq($;$)
     $m_txt =~ s/[\r]{2,}/\r-----------------------\r\[Message body skipped\]\r-----------------------\r/;
     $m_txt =~ s/\x01/\@/g;
     if ( defined( $rou ) ) {
-	$rou = "and routed via $rou";
+	$rou = " and routed via $rou";
     } else {
 	$rou = ''; 
     }
@@ -92,7 +107,7 @@ sub is_arq($;$)
 	putMsgInArea( '', $config{sysop}, $fromname,
                    @{$config{addr}}[0], $fromaddr, 'Audit receipt.',
                    undef, $LOC+$PVT+$RRC, "${reply}Hello $fromname.\r\r".
-                            "Your message has successfully reached my system $rou.\r\r".
+                            "Your message has successfully reached my system$rou.\r\r".
                             "----------------------------------------------------------\r".
                             " From: ". sprintf( "%-36s    $fromaddr\r", $fromname ).
                             " To  : ". sprintf( "%-36s    $toaddr\r", $toname ).
