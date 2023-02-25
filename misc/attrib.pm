@@ -31,7 +31,7 @@
 
 =head1 DESCRIPTION
 
-   This subs are designed to handle ARQ and RRQ message attributes for HPT Perl 
+   These subs are designed to handle ARQ and RRQ message attributes for HPT Perl 
    according to FTS-0001.016.
    Since the subroutines will be present inside filter.pl, there should be a line
    like the following one in your HPT configuration file:
