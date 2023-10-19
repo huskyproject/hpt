@@ -11,8 +11,8 @@ ifdef MAN1DIR
         hpt_MAN1PAGES += hptlink.1 hpttree.1 pktinfo.1 txt2pkt.1
     endif
 
-    hpt_MAN1BLD := $(foreach man,$(hpt_MAN1PAGES),$(hpt_BUILDDIR)$(man).gz)
-    hpt_MAN1DST := $(foreach man,$(hpt_MAN1PAGES),$(DESTDIR)$(MAN1DIR)$(DIRSEP)$(man).gz)
+    hpt_MAN1BLD := $(foreach man,$(hpt_MAN1PAGES),$(hpt_BUILDDIR)$(man)$(_COMPR))
+    hpt_MAN1DST := $(foreach man,$(hpt_MAN1PAGES),$(DESTDIR)$(MAN1DIR)$(DIRSEP)$(man)$(_COMPR))
 endif
 
 hpt_LIBS := $(areafix_TARGET_BLD) $(fidoconf_TARGET_BLD) \
@@ -86,11 +86,11 @@ hpt_build: $(hpt_TARGET_BLD) $(hpt_MAN1BLD) hpt_doc
 
 ifneq ($(MAKECMDGOALS), depend)
     include $(hpt_DOCDIR)Makefile
-ifneq ($(MAKECMDGOALS), distclean)
-ifneq ($(MAKECMDGOALS), uninstall)
-    include $(hpt_DEPS)
-endif
-endif
+    ifneq ($(MAKECMDGOALS), distclean)
+        ifneq ($(MAKECMDGOALS), uninstall)
+            include $(hpt_DEPS)
+        endif
+    endif
 endif
 
 
@@ -125,8 +125,14 @@ $(hpt_OBJDIR): | $(hpt_BUILDDIR) do_not_run_make_as_root
 
 # Build man pages
 ifdef MAN1DIR
-    $(hpt_MAN1BLD): $(hpt_BUILDDIR)%.gz: $(hpt_MANDIR)% | do_not_run_make_as_root
-	gzip -c $(hpt_MANDIR)$* > $(hpt_BUILDDIR)$*.gz
+    ifdef COMPRESS
+        $(hpt_MAN1BLD): $(hpt_BUILDDIR)%$(_COMPR): $(hpt_MANDIR)% | \
+            do_not_run_make_as_root
+		$(COMPRESS) -c $(hpt_MANDIR)$* > $(hpt_BUILDDIR)$*$(_COMPR)
+    else
+        $(hpt_MAN1BLD): $(hpt_BUILDDIR)%: $(hpt_MANDIR)% | do_not_run_make_as_root
+		$(CP) $(CPOPT) $(hpt_MANDIR)$* $(hpt_BUILDDIR)$*
+    endif
 else
     $(hpt_MAN1BLD): ;
 endif
