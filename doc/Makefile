@@ -13,7 +13,7 @@ else
 endif
 
 ifdef INFODIR
-    hpt_info: $(hpt_BUILDDIR)hpt.info.gz
+    hpt_info: $(hpt_BUILDDIR)hpt.info$(_COMPR)
 else
     hpt_info: ;
 endif
@@ -45,8 +45,10 @@ endif
 hpt_DOCDIR_BLD=$(hpt_BUILDDIR)doc$(DIRSEP)
 hpt_TEXI=$(hpt_DOCDIR_BLD)hpt.texi
 
-$(hpt_BUILDDIR)hpt.info.gz: $(hpt_BUILDDIR)hpt.info
-	gzip -c $? > $@
+ifdef COMPRESS
+$(hpt_BUILDDIR)hpt.info$(_COMPR): $(hpt_BUILDDIR)hpt.info
+	$(COMPRESS) -c $? > $@
+endif
 
 $(hpt_BUILDDIR)hpt.info: $(hpt_TEXI)
 	-$(MAKEINFO) $(MINOSPLIT) "$<" $(MIOUT) "$@"
@@ -176,7 +178,7 @@ endif
 ifdef INFODIR
 # See "all_info_uninstall" in the root Makefile
     hpt_info_uninstall: all_info_uninstall
-		-$(RM) $(RMOPT) $(INFODIR_DST)hpt.info.gz
+		-$(RM) $(RMOPT) $(INFODIR_DST)hpt.info$(_COMPR)
 else
     hpt_info_uninstall: ;
 endif
