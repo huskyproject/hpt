@@ -465,9 +465,13 @@ int checkLink(s_seenBy * seenBys,
 } /* checkLink */
 
 /*
-   This function puts all the links of the echoarea in the newLink
-   array who does not have got the mail, zoneLinks - the links who
-   receive msg with stripped seen-by's.
+   This function creates three arrays: newLinks, zoneLinks, otherLinks.
+   newLinks - the array of the links who receive the message
+               with full SEEN-BYs;
+   zoneLinks - the array of the links who receive the message
+               with stripped SEEN-BYs;
+   otherLinks - the array of the links who receive the message
+               with reduced SEEN-BYs;
  */
 void createNewLinkArray(s_seenBy * seenBys,
                         UINT seenByCount,
@@ -497,9 +501,21 @@ void createNewLinkArray(s_seenBy * seenBys,
             continue;
         }
 
-        if(pktOrigAddr->zone == echo->downlinks[i]->link->hisAka.zone)
+        if(echo->sbkeep_all)
         {
-            /*  links with same zone */
+            /* (*zoneLinks) array will be empty */
+            if(echo->downlinks[i]->link->reducedSeenBy)
+            {
+                (*otherLinks)[oFound++] = echo->downlinks[i];
+            }
+            else
+            {
+                (*newLinks)[lFound++] = echo->downlinks[i];
+            }
+        }
+        else if(pktOrigAddr->zone == echo->downlinks[i]->link->hisAka.zone)
+        {
+            /*  links in the same zone */
             if(echo->downlinks[i]->link->reducedSeenBy)
             {
                 (*otherLinks)[oFound++] = echo->downlinks[i];
