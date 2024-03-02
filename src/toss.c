@@ -2311,6 +2311,10 @@ int processDir(char * directory, e_tossSecurity sec)
         }
     }
     husky_closedir(dir);
+    if(nfiles == 0)
+    {
+        return 0;
+    }
     qsort(files, nfiles, sizeof(s_fileInDir), filesComparer);
 
     for(filenum = 0; filenum < nfiles; filenum++)
