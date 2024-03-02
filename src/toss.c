@@ -2340,8 +2340,6 @@ int processDir(char * directory, e_tossSecurity sec)
                 {
                     w_log(LL_BUNDLE, "The empty pkt or bundle %s is removed", dummy);
                     nfree(dummy);
-                    files[nfiles - 1].fileName = NULL;
-                    files[nfiles - 1].fileTime = 0;
                 }
 
                 continue;
