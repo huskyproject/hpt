@@ -718,7 +718,8 @@ void processConfig(void)
             NULL);
     /*  load recoding tables */
     initCharsets();
-    getctabs(config->intab, config->outtab);
+    if(getctabs(config->intab, config->outtab) == 0 && config->recodeMsgBase)
+        loadInboundChrs(config->intab);
     w_log(LL_START, "Start");
 } /* processConfig */
 

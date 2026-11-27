@@ -181,8 +181,109 @@ static char * get_filename(char * pathname)
     return ptr;
 }
 
+static char inboundSourceCharset[64];
+static char inboundSourceLevel[2];
+static char inboundTargetChrs[sizeof("CHRS: ") + 64 + sizeof(" 2")];
+
+/* An optional first-line annotation describes the loaded byte translation table. */
+void loadInboundChrs(const char * intab)
+{
+    static const char prefix[] = "# CHRS:";
+    FILE * file;
+    char line[512], targetCharset[64], targetLevel[2], extra;
+    char ascii[128], recoded[128];
+    int i;
+
+    inboundTargetChrs[0] = '\0';
+    if(intab == NULL || (file = fopen(intab, "r")) == NULL)
+        return;
+
+    if(fgets(line, sizeof(line), file) != NULL && strncmp(line, prefix, sizeof(prefix) - 1) == 0)
+    {
+        if((strchr(line, '\n') == NULL && !feof(file)) ||
+           sscanf(line + sizeof(prefix) - 1, " %63[A-Za-z0-9_+-] %1[12] -> %63[A-Za-z0-9_+-] %1[12] %c",
+                  inboundSourceCharset, inboundSourceLevel, targetCharset, targetLevel, &extra) != 4)
+        {
+            w_log(LL_ERR, "Invalid CHRS annotation in Intab %s", intab);
+        }
+        else
+        {
+            /* The kludge framing and labels must survive the byte translation. */
+            for(i = 0; i < 127; i++)
+                ascii[i] = (char)(i + 1);
+            ascii[127] = '\0';
+            memcpy(recoded, ascii, sizeof(ascii));
+            recodeToInternalCharset(recoded);
+            if(memcmp(ascii, recoded, sizeof(ascii)) != 0)
+                w_log(LL_ERR, "Ignoring CHRS annotation in Intab %s: table changes ASCII bytes", intab);
+            else
+                sprintf(inboundTargetChrs, "CHRS: %s %s", targetCharset, targetLevel);
+        }
+    }
+    fclose(file);
+}
+
+/* Rewrite only the local SMAPI control buffer. Its tokens are prefixed by SOH. */
+static char * replaceInboundChrs(char * control)
+{
+    const char * token, * end;
+    size_t sourceLength = strlen(inboundSourceCharset);
+    size_t targetLength = strlen(inboundTargetChrs);
+    char * result, * out;
+    int found = 0;
+
+    for(token = control; *token == '\001'; token = end)
+    {
+        const char * value = token + 1;
+        end = value + strcspn(value, "\001");
+        if(sstrnicmp(value, "CHRS:", 5) != 0)
+            continue;
+
+        value += 5;
+        value += strspn(value, " \t");
+        if((size_t)(end - value) <= sourceLength ||
+           sstrnicmp(value, inboundSourceCharset, sourceLength) != 0 ||
+           (value[sourceLength] != ' ' && value[sourceLength] != '\t'))
+            return control;
+        value += sourceLength;
+        value += strspn(value, " \t");
+        if(value == end || *value != inboundSourceLevel[0] ||
+           value + 1 + strspn(value + 1, " \t") != end)
+            return control;
+        found = 1;
+    }
+    if(!found)
+        return control;
+
+    result = out = safe_malloc(strlen(control) + targetLength + 1);
+    found = 0;
+    for(token = control; *token == '\001'; token = end)
+    {
+        end = token + 1 + strcspn(token + 1, "\001");
+        if(sstrnicmp(token + 1, "CHRS:", 5) == 0)
+        {
+            if(!found)
+            {
+                *out++ = '\001';
+                memcpy(out, inboundTargetChrs, targetLength);
+                out += targetLength;
+                found = 1;
+            }
+        }
+        else
+        {
+            memcpy(out, token, (size_t)(end - token));
+            out += end - token;
+        }
+    }
+    *out = '\0';
+    nfree(control);
+    return result;
+}
+
 /* return value: 1 if success, 0 if fail */
-int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
+static int putMsgInAreaInternal(s_area * echo, s_message * msg, int strip, dword forceattr,
+                                int inboundPkt)
 {
     char * ctrlBuff = NULL, * textStart = NULL, * textWithoutArea = NULL;
     size_t textLength = (size_t)msg->textLength;
@@ -192,6 +293,7 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
     char /**slash,*/ * p, * q, * tiny;
     int rc     = 0;
     int recode = 1;
+    int updateChrs = 0;
 
     if(echo->msgbType == MSGTYPE_PASSTHROUGH)
     {
@@ -250,6 +352,8 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
             /*  recode from TransportCharset to internal Charset */
             if((config->recodeMsgBase) && (recode && config->intab != NULL))
             {
+                updateChrs = inboundPkt && echo->msgbType == MSGTYPE_JAM &&
+                    inboundTargetChrs[0] && (msg->recode & (REC_HDR | REC_TXT)) == 0;
                 if((msg->recode & REC_HDR) == 0)
                 {
                     recodeToInternalCharset((char *)msg->fromUserName);
@@ -323,6 +427,9 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
             ctrlBuff = (char *)CopyToControlBuf((UCHAR *)textWithoutArea,
                                                 (UCHAR **)&textStart,
                                                 &textLength);
+            if(updateChrs && ctrlBuff != NULL)
+                ctrlBuff = replaceInboundChrs(ctrlBuff);
+
             /*  textStart is a pointer to the first non-kludge line */
             xmsg = createXMSG(config, msg, NULL, forceattr, tossDir);
             w_log(LL_SRCLINE, "%s:%d writing msg", __FILE__, __LINE__);
@@ -371,7 +478,12 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
     /* endif */
     w_log(LL_SRCLINE, "%s:%d end rc=%d", __FILE__, __LINE__, rc);
     return rc;
-} /* putMsgInArea */
+} /* putMsgInAreaInternal */
+
+int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
+{
+    return putMsgInAreaInternal(echo, msg, strip, forceattr, 0);
+}
 
 void closeOpenedPkt(void)
 {
@@ -1214,7 +1326,8 @@ void writeMsgToSysop(void)
     }
 } /* writeMsgToSysop */
 
-int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword forceattr)
+static int processEchoMessage(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword forceattr,
+                              int inboundPkt)
 {
     char * area = NULL, * p = NULL, * q = NULL;
     s_message * messCC = NULL;
@@ -1452,11 +1565,11 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
                     {
                         if(messCC)
                         {
-                            rc = putMsgInArea(echo, messCC, 1, forceattr);
+                            rc = putMsgInAreaInternal(echo, messCC, 1, forceattr, inboundPkt);
                         }
                         else
                         {
-                            rc = putMsgInArea(echo, msg, 1, forceattr);
+                            rc = putMsgInAreaInternal(echo, msg, 1, forceattr, inboundPkt);
                         }
 
                         statToss.saved += rc;
@@ -1516,7 +1629,12 @@ int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword force
 
     w_log(LL_FUNC, "%s::processEMMsg() rc=%d", __FILE__, rc);
     return rc;
-} /* processEMMsg */
+} /* processEchoMessage */
+
+int processEMMsg(s_message * msg, hs_addr pktOrigAddr, int dontdocc, dword forceattr)
+{
+    return processEchoMessage(msg, pktOrigAddr, dontdocc, forceattr, 0);
+}
 
 int processNMMsg(s_message * msg,
                  s_pktHeader * pktHeader,
@@ -1719,7 +1837,7 @@ int processMsg(s_message * msg, s_pktHeader * pktHeader, int secure)
     }
     else
     {
-        rc = processEMMsg(msg, pktHeader->origAddr, 0, 0);
+        rc = processEchoMessage(msg, pktHeader->origAddr, 0, 0, 1);
     } /* endif */
 
     w_log(LL_FUNC, "toss.c::processMsg() rc=%d", rc);

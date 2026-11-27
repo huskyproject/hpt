@@ -57,6 +57,7 @@ int processNMMsg(s_message * msg,
                  dword forceattr);
 int processMsg(s_message * msg, s_pktHeader * pktHeader, int secure);
 int processPkt(char * fileName, e_tossSecurity sec);
+void loadInboundChrs(const char * intab);
 int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr);
 void makeMsgToSysop(char * areaName, hs_addr fromAddr, hs_addr * uplinkAddr);
 void toss(void);

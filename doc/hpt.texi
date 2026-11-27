@@ -1243,6 +1243,21 @@ characters of the incoming messages from transport to internal
 charset. It is useful in russia.
 If you do not use this statement no recoding will be done.
 
+When @code{RecodeMsgBase} is enabled, the first line of the Intab file
+can describe the source and destination CHRS values for incoming JAM
+echomail. For example:
+
+@example
+# CHRS: CP866 2 -> KOI8-R 2
+@end example
+
+Use a byte translation table that preserves ASCII and CHRS levels 1 or 2.
+HPT applies the destination label to the local JAM copy after recoding
+both the header and body. All original CHRS declarations must agree with
+the configured source for the replacement to take effect. The forwarded
+packet keeps its original CHRS and message bytes. Without this annotation,
+HPT uses the usual Intab behavior.
+
 This statement cannot be repeated.
 
 @node MinDiskFreeSpace, MsgBaseDir, Intab, Files and Paths
