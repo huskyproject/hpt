@@ -731,6 +731,91 @@ void make_ftsc_date(char * pdate, const struct tm * ptm)
             ptm->tm_sec % 100);
 }
 
+#ifndef DO_PERL
+/* Keeps in the ^aFLAGS kludges (FSC-0053) only the flags for the
+   destination: PVT, FIL, FRQ, RRQ, CFM, NPD, XMA and the fax flags. The
+   others tell the system that holds the message how to send it: priority,
+   routing, file and message handling. scan.c acts on DIR, IMM, KFS and TFS
+   when it packs (it finds them anywhere in the kludge), so another system
+   must not set them here. A kludge with no flags left is removed.
+   FSC-0053 lets a system strip flags that pass through it. */
+static void stripLocalFlags(s_message * msg)
+{
+    static const char * keep[] =
+    {
+        "PVT", "FIL", "FRQ", "RRQ", "CFM", "NPD", "XMA", "HIR", "COV", "SIG", "LET", "FAX"
+    };
+    char * line = msg->text, * end, * src, * dst, * tok;
+    size_t i, len, rest;
+    int found;
+
+    while((line = strstr(line, "\001FLAGS")) != NULL)
+    {
+        if(line[6] != ' ' && line[6] != '\t')
+        {
+            line += 6; /* not the FLAGS kludge, e.g. FLAGSX */
+            continue;
+        }
+
+        end = strchr(line, '\r');
+
+        if(end == NULL)
+        {
+            end = line + strlen(line);
+        }
+
+        /* copy the flags to keep over the old ones, each after one space */
+        dst = src = line + 6;
+
+        while(src < end)
+        {
+            while(src < end && (*src == ' ' || *src == '\t'))
+            {
+                src++;
+            }
+            tok = src;
+
+            while(src < end && *src != ' ' && *src != '\t')
+            {
+                src++;
+            }
+            len   = (size_t)(src - tok);
+            found = 0;
+
+            for(i = 0; len == 3 && i < sizeof(keep) / sizeof(keep[0]) && !found; i++)
+            {
+                found = memcmp(tok, keep[i], 3) == 0;
+            }
+
+            if(found)
+            {
+                *dst++ = ' ';
+                memmove(dst, tok, len);
+                dst += len;
+            }
+        }
+
+        if(dst == line + 6)
+        {
+            /* no flags left: remove the line with its CR */
+            dst = line;
+
+            if(*end == '\r')
+            {
+                end++;
+            }
+        }
+
+        /* move the rest of the text with its NUL */
+        rest = strlen(end) + 1;
+        memmove(dst, end, rest);
+        msg->textLength -= (hINT32)(end - dst);
+        line = dst;
+    }
+} /* stripLocalFlags */
+
+#endif
+
 int readMsgFromPkt(FILE * pkt, s_pktHeader * header, s_message ** message)
 {
     s_message * msg;
@@ -911,18 +996,7 @@ int readMsgFromPkt(FILE * pkt, s_pktHeader * header, s_message ** message)
 
     correctAddr(msg, header);
 #ifndef DO_PERL
-    {
-        char * p, * q;
-
-        /*  del "\001FLAGS" from message text */
-        if(NULL != (p = strstr(msg->text, "\001FLAGS")))
-        {
-            for(q = p; *q && *q != '\r'; q++)
-            {}
-            memmove(p, q + 1, msg->textLength - (q - msg->text));
-            msg->textLength -= (hINT32)(q - p + 1);
-        }
-    }
+    stripLocalFlags(msg);
 #endif
     *message = msg;
     return 1;
